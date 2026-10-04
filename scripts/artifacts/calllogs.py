@@ -2,13 +2,13 @@
 __artifacts_v2__ = {
     "get_calllogs": {
         "name": "Call Logs",
-        "description": "Parses call logs (number, start and end time, call type, direction and name) from the contacts and logs provider databases.",
+        "description": "Parses call logs (number, start time and an end time computed by this parser as the start plus the stored duration read as seconds, call type, direction and name) from the contacts and logs provider databases.",
         "author": "@markmckinnon",
         "creation_date": "2021-03-17",
         "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Call Logs",
-        "notes": "The same 'type' column is read from two different schemas, the AOSP 'calls' table in the contacts provider and the Samsung LogsProvider 'logs' table, and the AOSP CallLog.Calls code set is applied to both. Call type decodes 1 Incoming, 2 Outgoing, 3 Missed, 4 Voicemail, 5 Rejected, 6 Blocked and 7 Answered Externally; any other code is reported as its raw value. Direction is only filled in for the incoming (1) and outgoing (2) codes and is left blank for the rest, so the from_id and to_id columns stay empty for those rows and the number column carries the other party. Reference: AOSP, 'CallLog.Calls constants', https://developer.android.com/reference/android/provider/CallLog.Calls",
+        "notes": "The same 'type' column is read from two different schemas, the AOSP 'calls' table in the contacts provider and the Samsung LogsProvider 'logs' table, and the AOSP CallLog.Calls code set is applied to both. Whether the Samsung logs table uses those codes, and whether every row of it is a call, is not established; no listed corpus returned a row. Call type decodes 1 Incoming, 2 Outgoing, 3 Missed, 4 Voicemail, 5 Rejected, 6 Blocked and 7 Answered Externally; any other code is reported as its raw value. Direction is only filled in for the incoming (1) and outgoing (2) codes and is left blank for the rest, so the from_id and to_id columns stay empty for those rows and the number column carries the other party. Reference: Android Developers, 'CallLog.Calls' API reference, https://developer.android.com/reference/android/provider/CallLog.Calls (read 2026-10-03)",
         "paths": ('*/com.android.providers.contacts/databases/contact*', '*/com.sec.android.provider.logsprovider/databases/logs.db*'),
         "output_types": "standard",
         "artifact_icon": "phone",

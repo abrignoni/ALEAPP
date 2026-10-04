@@ -34,13 +34,17 @@ __artifacts_v2__ = {
     },
     "get_teams_calllog": {
         "name": "Teams - Call Log",
-        "description": "Parses Microsoft Teams call logs (connect and end time, state, type, originator, direction and participant) from SkypeTeams.db.",
+        "description": "Parses Microsoft Teams call log properties (connect and end time, state, type, "
+                       "originator, direction and the target's given name) from SkypeTeams.db.",
         "author": "@abrignoni",
         "creation_date": "2021-04-29",
         "last_update_date": "2021-04-29",
         "requirements": "none",
         "category": "Teams",
-        "notes": "",
+        "notes": "One row per MessagePropertyAttribute row whose propertyId is CallLog, joined to "
+                 "the User table row whose mri equals the call's target. A call whose target has "
+                 "no row in the User table is not reported. Target Participant Name is that user's "
+                 "givenName.",
         "paths": ('*/com.microsoft.teams/databases/SkypeTeams.db*',),
         "output_types": "standard",
         "artifact_icon": "phone-call",

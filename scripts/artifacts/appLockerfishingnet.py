@@ -1,7 +1,10 @@
 __artifacts_v2__ = {
     "get_appLockerfishingnet": {
         "name": "App Locker",
-        "description": "Decrypts media hidden by the App Locker / Calculator vault (.privacy_safe, AES-CBC)",
+        "description": "Applies a fixed AES-CBC key to the files under .privacy_safe/picture and "
+                       ".privacy_safe/video that are not already recognised as media, and reports the "
+                       "result as media. A Decrypted? value of True records that the cipher ran without "
+                       "error, not that the output was recognised as media.",
         "author": "@abrignoni",
         "creation_date": "2021-12-14",
         "last_update_date": "2021-12-14",

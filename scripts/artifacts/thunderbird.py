@@ -3,13 +3,21 @@ __artifacts_v2__ = {
     
     "thunderbird_accounts": {
         "name": "Thunderbird - Accounts",
-        "description": "Thunderbird Accounts",
+        "description": "Account settings from the preferences_storage table of the first matched Thunderbird database, one row per account UUID. Username and Password are those of the incoming server settings.",
         "author": "Marco Neumann {kalinko@be-binary.de}",
         "creation_date": "2025-11-18",
         "last_update_date": "2025-11-18",
         "requirements": "re, json",
         "category": "Thunderbird App",
-        "notes": "",
+        "notes": "Only the first matched file is read. An account is a UUID that has an email.0 "
+                 "key. Last Sync Time is the stored lastSyncTime value read as Unix milliseconds. "
+                 "Username, Password and Incoming Server come from incomingServerSettings, and "
+                 "Outgoing Server from outgoingServerSettings. The module does not reset its "
+                 "per-account fields between accounts, so an account that lacks a key (for example "
+                 "lastSyncTime or outgoingServerSettings) is shown with the previous account's "
+                 "value in that column. The first account read shows 0 in Last Sync Time and a "
+                 "blank in the other columns for a key it lacks. Check the preferences_storage "
+                 "table before relying on a value.",
         "paths": ('*/data/net.thunderbird.android/databases/preferences_storage'),
         "output_types": ["standard"],
         "html_columns": ["Signature"],
@@ -17,13 +25,19 @@ __artifacts_v2__ = {
     },
      "thunderbird_messages": {
         "name": "Thunderbird - Messages",
-        "description": "Thunderbird Messages",
+        "description": "Messages from each Thunderbird account database: the date and internal_date columns read as Unix milliseconds, addresses, subject, preview, full text and flags as stored. Rows flagged empty are not included.",
         "author": "Marco Neumann {kalinko@be-binary.de}",
         "creation_date": "2025-11-20",
         "last_update_date": "2025-11-20",
         "requirements": "re, json",
         "category": "Thunderbird App",
-        "notes": "",
+        "notes": "Timestamp Sent is the messages table's date column and Timestamp Stored is its "
+                 "internal_date column, both read as Unix milliseconds. What each column marks is "
+                 "not sourced in this module. Rows whose empty column is 1 are left out. A "
+                 "database whose file name UUID is not an account UUID in preferences_storage is "
+                 "skipped without a log line. In the Sender, Receiver, CC and BCC columns each "
+                 "comma of the stored list is replaced with a line break. The read, flagged, "
+                 "answered and forwarded columns are reported as stored.",
         "paths": ('*data/net.thunderbird.android/databases/*',),
         "output_types": ["standard"],
         "html_columns": ["Content"],

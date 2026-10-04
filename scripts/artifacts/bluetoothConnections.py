@@ -1,8 +1,10 @@
 __artifacts_v2__ = {
     "get_bluetoothConnections": {
         "name": "Bluetooth Connections",
-        "description": "Parses Bluetooth devices recorded in bt_config.conf (the stored "
-                       "Timestamp, device name, MAC address and link key).",
+        "description": "Parses the sections of the first bt_config.conf found that are named by a "
+                       "MAC address (Timestamp key read as Unix seconds, Name, MAC address and "
+                       "LinkKey). What event the Timestamp key records is not sourced here, and a "
+                       "section is not by itself proof of a connection.",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-06-23",
         "last_update_date": "2021-06-23",
@@ -27,7 +29,7 @@ __artifacts_v2__ = {
     },
     "get_bluetoothAdapter": {
         "name": "Bluetooth Adapter Information",
-        "description": "Parses the local Bluetooth adapter information (key and value) from bt_config.conf.",
+        "description": "Parses each key and value line that comes before the first MAC address section of the first bt_config.conf found.",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-06-23",
         "last_update_date": "2021-06-23",

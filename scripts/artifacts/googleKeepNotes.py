@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_googleKeepNotes": {
         "name": "Google Keep - Notes",
-        "description": "Google Keep notes",
+        "description": "Rows of list_item in keep.db joined to account and tree_entity. Creator Email is the name of the account the item is stored under; that it names the note's creator is not established. No tested image held a row.",
         "author": "@bolisettynihith",
         "creation_date": "2021-05-17",
         "last_update_date": "2021-05-17",
@@ -21,7 +21,7 @@ __artifacts_v2__ = {
     },
     "get_googleKeepNotes_sharing": {
         "name": "Google Keep - Notes Sharing",
-        "description": "Google Keep note sharing",
+        "description": "Rows of the sharing table in keep.db joined to the note and its account. Sync Status shows 'Synced' for a stored 1 and 'Not Synced' for any other value; that reading is not sourced. No tested image held a row.",
         "author": "@bolisettynihith",
         "creation_date": "2021-05-17",
         "last_update_date": "2021-05-17",

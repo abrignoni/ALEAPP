@@ -8,8 +8,10 @@ __artifacts_v2__ = {
         "last_update_date": "2025-03-08",
         "requirements": "none",
         "category": "Installed Apps",
-        "notes": "Read from app_icons.db of the Pixel Launcher, com.google.android.apps.nexuslauncher; the path "
-                 "pattern is anchored on that package, so icons kept by other launchers are not covered.",
+        "notes": "Read from one app_icons.db of the Pixel Launcher, "
+                 "com.google.android.apps.nexuslauncher, the first copy found outside a mirror "
+                 "path; any other copy in the extraction is not read. The path pattern is "
+                 "anchored on that package, so icons kept by other launchers are not covered.",
         "paths": ('*/com.google.android.apps.nexuslauncher/databases/app_icons.db*'),
         "output_types": ["html", "lava"],
         "artifact_icon": "package",

@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_googleMapsSearches": {
         "name": "Google Maps Searches",
-        "description": "Recent Google Maps search history (new_recent_history_cache_search.cs)",
+        "description": "Entries decoded from Google Maps' new_recent_history_cache_search.cs: protobuf field 2 read as Unix microseconds, the text of field 4.1, the coordinate values held in field 4.5 or 4.6 as stored, and field 11 as a URL. No source for the field meanings is cited. The file shows the app held these entries; what the timestamp marks is not established.",
         "author": "@abrignoni",
         "creation_date": "2023-10-15",
         "last_update_date": "2023-10-15",

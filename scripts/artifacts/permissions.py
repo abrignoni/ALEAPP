@@ -51,7 +51,10 @@ __artifacts_v2__ = {
     },
     "get_permissions_packages": {
         "name": "Package and Shared User",
-        "description": "Parses packages and their shared user IDs with granted permissions from the system packages.xml.",
+        "description": "Parses the permission entries (perms items) stored under package, "
+                       "shared-user and other elements of the system packages.xml, with the "
+                       "element type, its name, the permission name and the granted attribute as "
+                       "stored.",
         "author": "@abrignoni",
         "creation_date": "2021-01-28",
         "last_update_date": "2021-01-28",

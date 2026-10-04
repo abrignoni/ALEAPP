@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_googleCallScreen": {
         "name": "Google Call Screen",
-        "description": "Transcripts and recordings from Google Assistant's Call Screen feature",
+        "description": "Rows of the Transcript table in the Google Phone app's callscreen_transcripts database, with the recording file each row names where it is present. Timestamp is lastModifiedMillis. The transcript text is decoded from the conversation protobuf by field number, which is not sourced. No tested image held a row.",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-08-06",
         "last_update_date": "2021-08-06",

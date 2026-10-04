@@ -24,13 +24,16 @@ __artifacts_v2__ = {
     },
     "airtagScans": {
         "name": "Android Airtag Scans",
-        "description": "Parses unknown-tracker (AirTag) scan records (timestamps, MAC address, state, RSSI and location) from the Google Play services personalsafety database.",
+        "description": "Parses unknown-tracker (AirTag) scan records (timestamps, MAC address, state, and three values decoded without a schema from the blescan and locationScan blobs) from the Google Play services personalsafety database.",
         "author": "@AlexisBrignoni",
         "creation_date": "2023-08-18",
         "last_update_date": "2025-03-16",
         "requirements": "none",
         "category": "Airtag Detection",
-        "notes": "",
+        "notes": "Possible RSSI is field 2 of the blescan blob. Latitude and Longitude are fields "
+                 "4 and 5 of the locationScan blob divided by 10,000,000. Both blobs are decoded "
+                 "without a schema, and the meaning of those fields and the scale are not "
+                 "established by a published schema.",
         "paths": '*/com.google.android.gms/databases/personalsafety_db*',
         "output_types": "all",
         "artifact_icon": "radar",
@@ -47,13 +50,14 @@ __artifacts_v2__ = {
     },
     "airtagLastScan": {
         "name": "Android Airtag Last Scan",
-        "description": "Parses the last unknown-tracker (AirTag) scan time from the personalsafety_info protobuf file.",
+        "description": "Reports field 1 of the personalsafety_info protobuf file as a timestamp.",
         "author": "@AlexisBrignoni",
         "creation_date": "2023-08-18",
         "last_update_date": "2025-03-16",
         "requirements": "none",
         "category": "Airtag Detection",
-        "notes": "",
+        "notes": "The file is decoded without a schema. That field 1 is the time of the last scan "
+                 "is not established by a published schema.",
         "paths": '*/files/personalsafety/shared/personalsafety_info.pb',
         "output_types": "standard",
         "artifact_icon": "clock-search",
@@ -68,13 +72,14 @@ __artifacts_v2__ = {
     },
     "airtagPassiveScan": {
         "name": "Android Airtag Passive Scan",
-        "description": "Parses the unknown-tracker (AirTag) passive-scan opt-in setting from the personalsafety_optin protobuf file.",
+        "description": "Reports field 1 of the personalsafety_optin protobuf file, printed as On for a stored 1 and Off for a stored 2.",
         "author": "@AlexisBrignoni",
         "creation_date": "2023-08-18",
         "last_update_date": "2025-03-16",
         "requirements": "none",
         "category": "Airtag Detection",
-        "notes": "",
+        "notes": "The file is decoded without a schema. The On and Off mapping has no cited source "
+                 "and no recorded test image. Any other stored value is reported as stored.",
         "paths": '*/files/personalsafety/shared/personalsafety_optin.pb',
         "output_types": "standard",
         "artifact_icon": "radar-2"

@@ -8,11 +8,15 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Tango",
-        "notes": ("Direction is decoded from the messages table 'direction' column. "
-                  "Direction values 1 and 2 are labelled Incoming and Outgoing; that mapping is "
-                  "not vendor-documented and no source or measurement for it is given here, so "
-                  "the labels are unverified. Unrecognized "
-                  "values are reported as stored."),
+        "notes": ("Direction is decoded from the messages table 'direction' column. Message is "
+                  "derived, not stored: the payload column is base64-decoded, bytes outside ASCII "
+                  "are dropped, and the text after the conversation id is shown, so a message with "
+                  "non-ASCII characters is not shown in full. Message is blank when the decoded "
+                  "payload does not hold the conversation id. Create Time reads create_time as "
+                  "Unix milliseconds in UTC. Direction values 1 and 2 are labelled Incoming and "
+                  "Outgoing; that mapping is not vendor-documented and no source or measurement "
+                  "for it is given here, so the labels are unverified. Unrecognized values are "
+                  "reported as stored."),
         "paths": ('*/com.sgiggle.production/files/tc.db*',),
         "output_types": "standard",
         "artifact_icon": "message",

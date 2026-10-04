@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "shutdown_checkpoints": {
         "name": "Shutdown Checkpoints",
-        "description": "Parses powering off and reset events",
+        "description": "Parses 'Shutdown request from' lines of the shutdown-checkpoints files: the request's epoch time, its origin and the full line. AOSP describes these as a recording of the origin of calls to the system shutdown and reboot framework methods (ShutdownCheckPoints.java L42-43 at tag android-14.0.0_r1).",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-01-22",
         "last_update_date": "2025-08-09",

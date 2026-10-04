@@ -32,8 +32,10 @@ __artifacts_v2__ = {
                  "because it falls within one second of the lastModifiedTimeMs recorded by other stores "
                  "in the same sample. No source was found for the record's remaining fields, so they are "
                  "reported as stored under their field numbers. KEY_TARGET_LOCATION_SYNCED carries "
-                 "coordinates with no timestamp. The home screen layout record carries the coordinates "
-                 "its request was made from together with its own creation and expiration times. Field "
+                 "coordinates with no timestamp. The home screen layout record carries a "
+                 "requestLocation member with coordinates, together with creationTime and "
+                 "expirationTime members. What position requestLocation represents was not "
+                 "established here. Field "
                  "mapping was done against a private sample provided by Mattia; no sample data is "
                  "recorded for it.",
         "paths": (
@@ -54,7 +56,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Uber",
         "notes": "The cache is keyed by a cell identifier that is reported as stored. Each entry carries "
-                 "a timestamp in Unix milliseconds, the coordinates the entry was triggered from, and a "
+                 "a timestamp in Unix milliseconds, a triggerLocation member with coordinates, "
+                 "reported as stored under Trigger Latitude and Trigger Longitude, and a "
                  "list of destinations. Latitude and Longitude are the destination coordinates. Presence "
                  "of a destination in this cache does not establish that the rider selected or travelled "
                  "to it. Field mapping was done against a private sample provided by Mattia; no sample "
@@ -104,8 +107,12 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-18",
         "requirements": "none",
         "category": "Uber",
-        "notes": "Token and session values held in the shared preferences are reported by presence and "
-                 "expiry time; the token strings themselves are not written to the report. "
+        "notes": "From oauth_tokens.xml the access and refresh tokens are reported by presence "
+                 "only and the token strings are not written to the report; on that row Timestamp "
+                 "is expire_time_ms and Second Timestamp is rt_expire_time_ms, which are expiry "
+                 "times and not event times. The session identifier and user UUID from that file, "
+                 "and the session and device identifiers from unified_session_swap_store.xml, are "
+                 "written as stored. "
                  "session_LAST_SESSION stores sessionStartTimeMs in Unix milliseconds. Its "
                  "sessionBackgroundedTimeNanos member is reported as stored and not converted: in the "
                  "tested sample it was exactly sessionStartTimeMs multiplied by one million, which one "
@@ -130,9 +137,10 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Uber",
         "notes": "Rows are messages from the message table of ur_message.db; whether a row was "
-                 "queued for upload or uploaded is not established. Each content payload carries "
-                 "a contextual_data.prod_meta block describing the app, device, carrier, "
-                 "network, city and session. createdAt and createdAtNtp are the table's "
+                 "queued for upload or uploaded is not established. In the tested sample the "
+                 "content payloads carried a contextual_data.prod_meta block describing the app, "
+                 "device, carrier, network, city and session; those columns are blank where a "
+                 "payload has none. createdAt and createdAtNtp are the table's "
                  "own columns in Unix milliseconds; createdAtNtp was empty on every row of the tested "
                  "sample. The message_type value is reported as stored. Field mapping was done against a "
                  "private sample provided by Mattia; no sample data is recorded for it.",
@@ -149,8 +157,12 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Uber",
         "notes": "Each cache entry is a pair of files sharing a base name: a .0 metadata file whose "
-                 "first two lines are Unix millisecond timestamps and which also carries the stored HTTP "
-                 "response headers, and a .1 file holding the bytes. The entry base name is a 64 "
+                 "first two lines are Unix millisecond values, shown as Cached At and Response "
+                 "Stored At, and which also carries the stored HTTP response headers, and a .1 "
+                 "file holding the bytes. Those two column names are this parser's labels and "
+                 "what each line records was not established. Entries with no .1 file, or whose "
+                 ".1 file is not a WebP, PNG, JPEG or GIF image, are not reported. The entry base "
+                 "name is a 64 "
                  "character hex string reported as stored; it did not reproduce as MD5, SHA-1 or SHA-256 "
                  "of the one image URL recoverable from the tested sample, and the cache carries no "
                  "journal mapping entries to URLs, so no source URL is reported. Media type is taken "

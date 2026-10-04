@@ -2,8 +2,8 @@ __artifacts_v2__ = {
     "silentphone_zrtp_peers": {
         "name": "Silent Phone - ZRTP Peer Identities",
         "description": "Rows from the ZRTP identity store, pairing this device's own ZID with "
-                       "each remote party it has established a secure media session with, and "
-                       "the name recorded for that party",
+                       "each remote ZID in the zrtpIdRemote table, and the name recorded for that "
+                       "ZID",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
@@ -17,24 +17,26 @@ __artifacts_v2__ = {
                  "dialer preference file records in an entry named sqlcipher_db_version. The "
                  "passphrase is not present in any readable store in the package: every entry "
                  "of all six preference files the application writes was read and none holds "
-                 "key material, and there is no fixed key to try. The contents of those four "
-                 "files were therefore not recovered, which is a boundary of this artifact "
-                 "rather than a property of the data; closing it would need an extraction "
-                 "carrying the key material. files/zids_sqlite.db, which this artifact does "
-                 "read, is plain SQLite. "
-                 "ZRTP is "
-                 "the key agreement used for the app's media sessions, and each party is "
+                 "key material, and no key was found to try. The contents of those four files were "
+                 "therefore not recovered, which is a boundary of this artifact rather than a "
+                 "property of the data; closing it would need an extraction carrying the key "
+                 "material. files/zids_sqlite.db, which this artifact does read, is plain SQLite. "
+                 "ZRTP is the key agreement used for the app's media sessions, and each party is "
                  "identified by a ZID. zrtpIdOwn holds this device's ZID, zrtpIdRemote holds one "
                  "row per remote ZID it has cached retained secrets for, and zrtpNames maps a "
-                 "remote ZID to a name. The three are joined here on the remote and local ZID "
-                 "pair, so a row records that this device holds ZRTP state for that party. "
-                 "Secure Since and Last Update are Unix seconds. Peer Name is the string the app "
-                 "stored: on one corpus below it was a bare account name and on the other a SIP "
-                 "address in angle brackets, and both are reported as stored. RS1, RS2 and MITM "
-                 "Key hold 32 byte retained secrets; the artifact reports only whether each is "
-                 "present and non-zero rather than the bytes, since the values are key material "
-                 "and their presence is what indicates a prior session. Flags and Presh Counter "
-                 "are reported as stored, no source for their meanings having been located. One "
+                 "remote ZID to a name. The three are joined here on the remote and local ZID pair, "
+                 "so a row records that this device holds ZRTP state for that party. Secure Since "
+                 "and Name Last Update are Unix seconds. Peer Name is the string the app stored: on "
+                 "one corpus below it was a bare account name and on the other a SIP address in "
+                 "angle brackets, and both are reported as stored. RS1, RS2 and MITM Key hold 32 "
+                 "byte retained secrets; the artifact reports only whether each is present and "
+                 "non-zero rather than the bytes, since the values are key material. The table and "
+                 "column names match the SQLite cache of the open source ZRTPCPP library "
+                 "(zrtp/zrtpCacheSqliteBackend.c at commit 9bafd1c8, "
+                 "https://github.com/wernerd/ZRTPCPP/blob/9bafd1c8ef1629a3cae27d84a459491cedc28f55/zrtp/zrtpCacheSqliteBackend.c), "
+                 "which stores secureSince and lastUpdate with strftime('%s'). Whether Silent "
+                 "Phone's build matches that source was not checked. Flags and Presh Counter are "
+                 "reported as stored; their values are not decoded here. One "
                  "remote party was present on each of the two corpora below.",
         "paths": ('*/com.silentcircle.silentphone/files/zids_sqlite.db*',),
         "output_types": "standard",
@@ -48,7 +50,7 @@ __artifacts_v2__ = {
         "name": "Silent Phone - Account and Settings",
         "description": "Entries from the application's own preference files, holding the "
                        "provisioned account, its assigned number, the subscription state, the "
-                       "provider's data retention flags and the registered device identifiers",
+                       "DATA_RETENTION_ entries and the registered device identifiers",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
@@ -61,10 +63,9 @@ __artifacts_v2__ = {
                  "shared_prefs file belongs to Google Play services and is not read. The "
                  "provisioning file carries the account identity, including a user id, a display "
                  "name, an assigned telephone number where one is present, the subscription "
-                 "state and expiry, and a set of entries whose names begin DATA_RETENTION_, "
-                 "which record what the service provider retains for that account rather than "
-                 "what is on the device. Those flags are reported as stored and their individual "
-                 "meanings are not expanded, no source for the code list having been located. "
+                 "state and expiry, and a set of entries whose names begin DATA_RETENTION_. What "
+                 "those entries record is not established beyond their names: they are reported as "
+                 "stored, no source for the code list having been located. "
                  "spa_device_id_prod ends in thirteen digits consistent with a Unix millisecond "
                  "value, but what event it records is not established, so it is reported as "
                  "stored and no date is derived from it. Store names the file each row came "
@@ -87,7 +88,7 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-30",
         "requirements": "none",
         "category": "Silent Phone",
-        "notes": "The app caches conversation attachments under cache/objects in a directory "
+        "notes": "The app keeps files under cache/objects in a directory "
                  "named for the two parties joined by an underscore, three colons and an underscore, "
                  "then a directory named "
                  "for an identifier, then the object itself. The object bytes are encrypted and "

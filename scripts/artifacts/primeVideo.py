@@ -8,12 +8,16 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Prime Video",
         "notes": "Read from the playbackHistory table of the app's dbplaybackhistory "
-                 "database. lastAccessed is Unix milliseconds; watched_position, runtime "
+                 "database. lastAccessed is converted as Unix milliseconds; "
+                 "watched_position, runtime "
                  "and credits_start_time_millis are milliseconds of media time, not "
                  "timestamps, and are reported as stored. On one tested sample a row's "
                  "watched_position matched the timecode the bookmark database held for the "
                  "same title exactly, which is what establishes that column as a media "
-                 "offset. contenttype and video_material_type are reported as stored. "
+                 "offset. contenttype and video_material_type are reported as stored. The "
+                 "five flag columns are shown as YES or NO; NO also covers a value that "
+                 "is empty or a column this version of the table does not have, so NO is "
+                 "not evidence the flag was stored as false. "
                  "Field mapping was done against private samples provided by Mattia; no "
                  "sample data is recorded for them.",
         "paths": ('*/com.amazon.avod.thirdpartyclient/files/databases/dbplaybackhistory*',),
@@ -29,8 +33,10 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Prime Video",
         "notes": "Read from the bookmark_cache table of the app's bookmark database. "
-                 "last_update is Unix milliseconds and timecode is milliseconds of media "
-                 "time. The table declares UNIQUE (user_id, asin, timecode_type, "
+                 "last_update is converted as Unix milliseconds. timecode is milliseconds "
+                 "of media time; on one tested sample it equalled the playback history "
+                 "watched_position for the same title. The table declares UNIQUE (user_id, "
+                 "asin, timecode_type, "
                  "profile_id) ON CONFLICT REPLACE, so each new position for a title "
                  "replaces the previous row under a new row id. The database is read twice, "
                  "immutable=1 to ignore the write-ahead log and mode=ro to apply it, and the "
@@ -59,7 +65,8 @@ __artifacts_v2__ = {
                  "named by the file itself rather than inferred. Each tile is a "
                  "TitleCardModel giving the title id, title, content type, season and "
                  "episode numbers and mRemainingTimeInSeconds. The collection's own "
-                 "mIsWatchList flag is reported as stored, so a saved watchlist collection "
+                 "mIsWatchList flag is reported as YES or NO, where NO also covers a "
+                 "stream that does not carry the field, so a saved watchlist collection "
                  "in the same format is reported alongside a Continue Watching one. On the "
                  "one tested sample that carried this file the flag was false and the "
                  "single tile named a title the playback history table did not hold. Field "
@@ -79,8 +86,12 @@ __artifacts_v2__ = {
         "category": "Prime Video",
         "notes": "Read from the LocalSearchQuery table of search_query.db. queryTimeMillis "
                  "is Unix milliseconds. The table's primary key is the query text together "
-                 "with the account and profile, so a repeated query carries only its most "
-                 "recent time. On the one tested sample holding this database the table "
+                 "with the account and profile, so a query has one row per account and "
+                 "profile. Which time a repeated query keeps was not measured. The "
+                 "database is read twice, immutable=1 and mode=ro; a query text present "
+                 "only in the first read is reported with a Source View of "
+                 "Pre-checkpoint. That comparison is on query text alone. On the one "
+                 "tested sample holding this database the table "
                  "existed only in the write-ahead log and the main file carried no schema "
                  "at all, so the log has to travel with the database. Field mapping was "
                  "done against private samples provided by Mattia; no sample data is "
@@ -102,7 +113,12 @@ __artifacts_v2__ = {
                  "The stream carries its own class descriptors, field names and enum "
                  "constant names, so the profile age group, the account role and the "
                  "profiles status are read as the literal names the file stores rather "
-                 "than mapped from an integer. Two tested samples serialised different "
+                 "than mapped from an integer. Account ID and Account Role are those of "
+                 "the first registered user the record lists and are repeated on every "
+                 "profile row; further registered users are not reported. Current "
+                 "Directed ID comes from the last IdentityPreferences.xml read and is "
+                 "not matched to the row's own Android user. Two tested samples "
+                 "serialised different "
                  "class shapes and both are read from their own descriptors. The parsed "
                  "profile ids were confirmed against two independent stores in the same "
                  "extraction: every one also appeared in the map_data_storage token and "
@@ -126,7 +142,8 @@ __artifacts_v2__ = {
         "category": "Prime Video",
         "notes": "map_data_storage.db is the Amazon account store, holding the accounts, "
                  "userdata, tokens and device_data tables. Every row is reported with its "
-                 "own timestamp in Unix milliseconds. On the tested sample that held a "
+                 "own timestamp column, converted as Unix milliseconds; what the "
+                 "timestamp marks is not established. On the tested sample that held a "
                  "registered account, every value across those four tables began with the "
                  "literal characters AES-GCM followed by base64, the display name "
                  "included, so values are reported as stored and no decryption is "
@@ -154,7 +171,11 @@ __artifacts_v2__ = {
                  "the time columns could not be established from data and every one of "
                  "them, including expiry_ms and the drm expiry, is reported as stored "
                  "rather than converted. Download state, download type, error code and "
-                 "media quality are reported as stored. Because no sample exercised it, "
+                 "media quality are reported as stored. Ready To Watch, Fully Watched "
+                 "and Auto Download are shown as YES or NO from is_ready_to_watch, "
+                 "is_fully_watched and is_auto_download; NO also covers an empty value "
+                 "or a schema without that column, and what sets these flags is not "
+                 "established. Because no sample exercised it, "
                  "the query was run against two databases built to the two download "
                  "schemas the samples themselves carry, which differ by three columns, "
                  "with rows authored for the purpose; both returned every value under its "
@@ -175,8 +196,8 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-18",
         "requirements": "none",
         "category": "Prime Video",
-        "notes": "Read from the cached_content_table of the dbcachedcontent database, which "
-                 "records a playback request per title. accessed_time_seconds is Unix "
+        "notes": "Read from the cached_content_table of the dbcachedcontent database. "
+                 "accessed_time_seconds is Unix "
                  "seconds. request_submission_time_ms is not: on the tested sample it held "
                  "a value that decodes to 1970 as a millisecond epoch while the row's own "
                  "accessed time was current, so it is reported as stored. Status, source, "
@@ -202,7 +223,10 @@ __artifacts_v2__ = {
         "notes": "The app keeps two caches whose directory names are title ids: "
                  "files/streaming-plugins holds trickplay images, subtitles and X-Ray data, "
                  "and files/global/global_video_cache holds streaming manifests and media "
-                 "fragments. One row is reported per title id with what each cache holds. "
+                 "fragments. One row is reported per directory name found under either "
+                 "cache, with what both caches hold under that name added together. Copies "
+                 "under more than one Android user are added into the same row, and Source "
+                 "Folder names only the first one read. "
                  "On the tested samples these directories named far more titles than the "
                  "playback history table did, and most of them held no files, so a row with "
                  "no counted files means the directory carried the title id and nothing "
@@ -228,7 +252,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-18",
         "requirements": "none",
         "category": "Prime Video",
-        "notes": "Images cached under files/streaming-plugins are checked in and rendered. "
+        "notes": "Images under the trickplay and xray folders of files/streaming-plugins "
+                 "are checked in and rendered. A file in any other folder there, or one "
+                 "whose leading bytes are not JPEG, PNG, GIF or WEBP, is not reported. "
                  "The title id is the directory the app named after it, which is the "
                  "recorded link between an image and a title; no correlation is used. For a "
                  "trickplay frame the file name is the media offset in milliseconds. The "
@@ -256,7 +282,8 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-18",
         "requirements": "none",
         "category": "Prime Video",
-        "notes": "Read from the events table of the app's event database. Timestamp is Unix "
+        "notes": "Read from the events table of the app's event database. Timestamp is "
+                 "converted as Unix "
                  "milliseconds. Type, Name, Priority and Processed are reported as stored. "
                  "Event Type and Event Subtype are read from the row's own JSON body where "
                  "it holds them. The body itself is not reported: it is large and on the tested "
@@ -280,12 +307,14 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-18",
         "requirements": "none",
         "category": "Prime Video",
-        "notes": "Reports the app's own preference files together with the install referrer "
-                 "records in AppEventsJsonFile. Keys whose name ends in Millis, Time, "
+        "notes": "Reports the app's own preference files together with the JSON lines of "
+                 "AppEventsJsonFile. Keys whose name ends in Millis, Time, "
                  "TimeMs or Timestamp and whose value is a 13 digit number are rendered as "
                  "Unix milliseconds in a separate column beside the stored value; keys "
                  "ending in Epoch held a 10 digit value on the tested samples and are "
-                 "rendered as Unix seconds. Every other value is reported as stored. "
+                 "rendered as Unix seconds. Every other preference value is reported as "
+                 "stored. Each line of AppEventsJsonFile is reported one key per row, "
+                 "with the line's own ts value converted as Unix milliseconds beside it. "
                  "Rendering is decided per key rather than per file because the same file "
                  "carried both units. The base64 serialised household blob is not repeated "
                  "here; it is parsed by the Profiles and Household artifact. Field mapping "

@@ -8,16 +8,19 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Organic Maps",
         "notes": "One row per point bookmark in the KML files under files/bookmarks. Organic Maps stores each "
-                 "bookmark category as its own KML document, so the Category column is the document name, "
-                 "which is also the file name without the extension. Each row carries the bookmark's name, its "
+                 "bookmark category as its own KML document, so the Category column is the KML "
+                 "Document name, and the file name without its extension when the document has no "
+                 "name. Each row carries the bookmark's name, its "
                  "Latitude, Longitude and altitude taken from the KML Point (KML stores coordinates in "
                  "longitude, latitude, altitude order, and they are split back out here), a Timestamp, and any "
                  "description stored with the bookmark. The Timestamp is the KML TimeStamp/when value, an ISO "
                  "8601 time ending in Z, so it is UTC and is reported as stored; on the tested device 14:42 "
-                 "UTC matched the device's 10:42 local clock. A bookmark records that this location was saved "
-                 "on this device. The client can also keep a compiled binary copy of the same bookmarks with a "
-                 ".kmb extension; that is not parsed here because the .kml is the editable source the client "
-                 "writes. Recorded GPS tracks are in the same KML files as line geometry and are reported by "
+                 "UTC matched the device's 10:42 local clock. A row shows the bookmark was present "
+                 "in the app's bookmarks folder. Whether it was created on this device or imported "
+                 "was not established. A file with a .kmb extension in the same folder is not "
+                 "matched by the paths and is not parsed here. Line placemarks (tracks) in the "
+                 "same "
+                 "KML files are reported by "
                  "the Tracks artifact, not here. The app's settings.ini in the same container holds the "
                  "storage path, the last used bookmark category and an assisted GPS timestamp, and is not "
                  "parsed.",
@@ -30,13 +33,14 @@ __artifacts_v2__ = {
     },
     "organicmaps_tracks": {
         "name": "Organic Maps - Tracks",
-        "description": "Parses the recorded GPS tracks of the Organic Maps Android client.",
+        "description": "Parses the line placemarks (tracks) in the bookmarks KML files of "
+                       "the Organic Maps Android client.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
         "category": "Organic Maps",
-        "notes": "One row per recorded track in the KML files under files/bookmarks. A track is a "
+        "notes": "One row per line placemark in the KML files under files/bookmarks. A track is a "
                  "Placemark whose geometry is a line rather than a single point, stored either as a "
                  "LineString or as a gx:Track. Each row gives the track's name, its category (the KML "
                  "document name), the number of points, and the first and last coordinates so the "

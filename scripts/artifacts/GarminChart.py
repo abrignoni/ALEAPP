@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_garmin_chart": {
         "name": "GarminCharts",
-        "description": "Get Information from the table activity_charts and activity_details in the database cache-database from Garmin Connect",
+        "description": "Reads the activity_details and activity_chart_data tables of the Garmin Connect cache-database. Only activities with a chart row are reported. Distance is rounded to a whole number and Duration is the stored duration divided by 60 and rounded.",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
         "creation_date": "2023-02-24",
         "last_update_date": "2026-07-10",

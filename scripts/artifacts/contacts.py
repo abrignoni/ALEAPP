@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "contacts": {
         "name": "Contacts",
-        "description": "Contacts from the device",
+        "description": "Phone numbers and email addresses in the Android contacts database, one row per number or address with the contact's display name",
         "author": "Mark McKinnon",
         "creation_date": "2021-03-11",
         "last_update_date": "2025-09-09",

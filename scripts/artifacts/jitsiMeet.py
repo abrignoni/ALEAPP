@@ -7,22 +7,30 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-30",
         "requirements": "none",
         "category": "Jitsi Meet",
-        "notes": "One row per entry in the app's recent-meeting list. Jitsi Meet is a React Native app "
-                 "and keeps its state in the AsyncStorage database databases/RKStorage, in the "
-                 "catalystLocalStorage table, one JSON document per key. This artifact reads the key "
-                 "@jitsi-meet/features/recent-list, whose entries the app defines as conference, date "
-                 "and duration (the IRecent type in react/features/recent-list/reducer.ts at "
-                 "jitsi/jitsi-meet 98de6219cc7ddbe07ace9fde045aff90a242ba01). Conference URL is the full "
-                 "meeting URL as stored, which carries both the server that hosted the meeting and the "
-                 "room name, and Room Name is the last path segment of that URL. Joined is the date "
-                 "field, set from Date.now() when the conference is added, so it is Unix milliseconds "
-                 "and is reported as UTC; on the tested device 18:26 UTC matched the device's 2:26 PM "
+        "notes": "One row per entry in the app's recent-meeting list. The list holds at most 30 "
+                 "entries and keeps one entry per conference URL, the latest (reducer.ts lines 32 "
+                 "and 87 to 100 at the commit below), so it is not a full history. Jitsi Meet is "
+                 "a React Native app and keeps its state in the AsyncStorage database "
+                 "databases/RKStorage, in the catalystLocalStorage table, one JSON document per "
+                 "key. This artifact reads the key @jitsi-meet/features/recent-list, whose "
+                 "entries the app defines as conference, date and duration (the IRecent type in "
+                 "react/features/recent-list/reducer.ts at jitsi/jitsi-meet "
+                 "98de6219cc7ddbe07ace9fde045aff90a242ba01). Conference URL is the full meeting "
+                 "URL as stored, which carries both the server host and the room name, and Room "
+                 "Name is the last path segment of that URL. The Joined column is the date field, "
+                 "set from Date.now() when the entry is added, so it is Unix milliseconds and is "
+                 "reported as UTC; on the tested device 18:26 UTC matched the device's 2:26 PM "
                  "local clock. Duration is the duration field, which the same source computes as "
-                 "Date.now() minus date when the conference ends, so it is milliseconds and is reported "
-                 "here in seconds. A row records that the app joined that meeting from this device, not "
-                 "who else attended, and the app does not store the participants or the chat "
-                 "here. A zero Duration is reported as stored; what produces it was not "
-                 "exercised.",
+                 "Date.now() minus date when the conference ends, so it is milliseconds and is "
+                 "reported here in seconds. A row records that the app stored that conference URL "
+                 "in its recent list on this device. The entry is added when the room is set, "
+                 "before a join is confirmed (reducer.ts lines 84 to 103 and middleware.ts lines "
+                 "130 to 137 at the same commit), so a row alone does not show the conference was "
+                 "joined. A row does not show who else attended, and the app does not store the "
+                 "participants or the chat here. A zero Duration is reported as stored; the app "
+                 "creates the entry with duration 0 and updates it when the conference is left "
+                 "(reducer.ts line 96 and the _updateConferenceDuration function from line 112, "
+                 "at the same commit).",
         "paths": ('*/org.jitsi.meet/databases/RKStorage*',),
         "output_types": "standard",
         "artifact_icon": "video",
@@ -32,26 +40,25 @@ __artifacts_v2__ = {
     },
     "jitsi_meet_settings": {
         "name": "Jitsi Meet - Settings",
-        "description": "Parses the account-free profile and server settings stored by the Jitsi Meet Android app.",
+        "description": "Parses the profile and server settings stored by the Jitsi Meet Android app.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
         "category": "Jitsi Meet",
         "notes": "One row per reported setting read from the catalystLocalStorage table of "
-                 "databases/RKStorage. Jitsi Meet needs no account, so the identifying values it keeps "
-                 "are these. Display Name and Email come from the @jitsi-meet/features/base/settings "
-                 "document; on the tested device the display name entered at the join screen was "
-                 "stored here and no email was set. Install ID is @jitsi-meet/jitsiMeetId and "
-                 "Call Stats Username is @jitsi-meet/callStatsUserName, both reported as stored; "
-                 "how the app produces them was not sourced. Known Domains is "
-                 "@jitsi-meet/features/base/known-domains, reported as stored; the presence of a "
-                 "domain in the list is not evidence a meeting used it, and how the app "
-                 "populates the list was not sourced. Only "
-                 "the settings named here are reported; the remaining keys in the table hold the fetched "
-                 "server configuration, feature toggles and interface preferences. The value of each "
-                 "setting is reported as stored and a setting the app never wrote is absent rather than "
-                 "empty.",
+                 "databases/RKStorage. Display Name and Email come from the "
+                 "@jitsi-meet/features/base/settings document; on the tested device the display "
+                 "name entered at the join screen was stored here and no email was set. Install "
+                 "ID is @jitsi-meet/jitsiMeetId and Call Stats Username is "
+                 "@jitsi-meet/callStatsUserName, both reported as stored; how the app produces "
+                 "them was not sourced. Known Domains is @jitsi-meet/features/base/known-domains, "
+                 "reported as stored; the presence of a domain in the list is not evidence a "
+                 "meeting used it, and how the app populates the list was not sourced. Only the "
+                 "settings named here are reported; the remaining keys in the table hold the "
+                 "fetched server configuration, feature toggles and interface preferences. The "
+                 "value of each setting is reported as stored and a setting that is missing or "
+                 "stored empty has no row.",
         "paths": ('*/org.jitsi.meet/databases/RKStorage*',),
         "output_types": "standard",
         "artifact_icon": "settings",

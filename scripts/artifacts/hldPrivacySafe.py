@@ -2,34 +2,35 @@ __artifacts_v2__ = {
     "hld_privacy_safe_files": {
         "name": "HLD Vault - Hidden Files",
         "description": "Rows from the FILE_INFO table of the vault's encrypted index, each "
-                       "naming a file taken into the vault, the path it was taken from, the "
-                       "name it was stored under and the times recorded for it",
+                       "with the original and encrypted names and paths the index stores "
+                       "for a file and the times recorded for it",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "sqlcipher3",
         "category": "Encrypting Media Apps",
-        "notes": "The vault's index, .privacy_safe/db/privacy_safe.db, is a SQLCipher database "
-                 "opened by the application through greenDAO. Its passphrase is the same fixed "
-                 "string that decrypts the preferences and the stored media, the ASCII "
-                 "Rny48Ni8aPjYCnUI. The SQLCipher parameter set differs by application version "
-                 "and cannot be read from the file, so this artifact tries the version 4 "
-                 "defaults first and then falls back to the version 3 set (page size 1024, "
-                 "64000 KDF iterations, HMAC_SHA1, PBKDF2_HMAC_SHA1); on the corpora below two "
-                 "images needed the version 3 set and one the version 4 defaults, and a "
-                 "database opened with the wrong set fails outright rather than returning "
-                 "wrong rows. Original Name and Original Path are where the file was taken "
-                 "from, and Encrypted Name and Encrypted Path are what the application wrote "
-                 "in its place; File Length matched the byte size of the stored file on every "
-                 "row below. The stored file itself is not decrypted here, because the "
-                 "existing App Locker artifact already decrypts .privacy_safe/picture and "
+        "notes": "The vault's index, .privacy_safe/db/privacy_safe.db, is a SQLCipher database. "
+                 "Its passphrase is the same fixed string that decrypts the preferences and the "
+                 "stored media, the ASCII Rny48Ni8aPjYCnUI. The SQLCipher parameter set "
+                 "differed between the tested images and is not read from the file, so this "
+                 "artifact tries the version 4 defaults first and then falls back to the "
+                 "version 3 set (page size 1024, 64000 KDF iterations, HMAC_SHA1, "
+                 "PBKDF2_HMAC_SHA1); on the corpora below two images needed the version 3 set "
+                 "and one the version 4 defaults, and a database opened with the wrong set "
+                 "fails outright rather than returning wrong rows. Original Name and Original "
+                 "Path are the ORIGIN_NAME and ORIGIN_PATH columns, and Encrypted Name and "
+                 "Encrypted Path are the ENCRYPT_NAME and ENCRYPT_PATH columns, all reported as "
+                 "stored; File Length matched the byte size of the stored file on the one row "
+                 "of each corpus below. The stored file itself is not decrypted here, because "
+                 "the existing App Locker artifact already decrypts .privacy_safe/picture and "
                  "video with this same key. Media is the THUMBNAIL column, a WebP image the "
-                 "index stores unencrypted, so a preview is available from the index even "
-                 "where the stored file is absent. Added To Vault and Original Created are "
-                 "TEXT written in the device's local time with no zone recorded, so they are "
-                 "reported exactly as stored and are not converted; on one image the value in "
-                 "Original Created was five hours behind the UTC time embedded in the camera "
-                 "file name of the same row, which is how the local reading was established. "
+                 "index stores unencrypted, so a preview is available from the index even where "
+                 "the stored file is absent. Added To Vault and Original Created are TEXT with "
+                 "no zone recorded, so they are reported exactly as stored and are not "
+                 "converted. On one tested image Original Created was five hours behind the "
+                 "time embedded in the camera file name of the same row, taken to be UTC, which "
+                 "is the basis for reading it as device local time; no such check is recorded "
+                 "for Added To Vault. "
                  "Because they carry no zone this artifact emits no datetime column and its "
                  "rows do not reach the timeline. In Decoy Space is the IS_MOCK_SPACE column, "
                  "reported as stored; it was 0 on every row below, and what sets it was not "
@@ -53,29 +54,26 @@ __artifacts_v2__ = {
     "hld_privacy_safe_albums": {
         "name": "HLD Vault - Albums",
         "description": "Rows from the SAFE_BOX table of the vault's encrypted index, one per "
-                       "album the vault presents, with the number of items it holds and its "
+                       "album row in the index, with the number of items it holds and its "
                        "cover",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "sqlcipher3",
         "category": "Encrypting Media Apps",
-        "notes": "SAFE_BOX is the album listing behind the vault's own screens, read from the "
-                 "same SQLCipher index and with the same key and fallback as the Hidden Files "
+        "notes": "Each SAFE_BOX row carries an album name (FOLDER_NAME) and is read from the same "
+                 "SQLCipher index and with the same key and fallback as the Hidden Files "
                  "artifact. Four rows were present on each corpus below, named recycler_bin, "
                  "Pictures, Videos and Files; they are index rows rather than folders on disk, "
                  "File Count is the stored value, and an item's album is not necessarily the "
-                 "directory its stored file "
-                 "sits in. Cover is the THUMBNAIL column, a WebP image stored unencrypted in "
-                 "the index, and Cover File Name names the item it was taken from. Sort Type, "
-                 "Sort Index, Span Count, Cover Type and Rotate are reported as stored, no "
-                 "source for their code lists having been located. In Decoy Space is the "
-                 "IS_MOCK_SPACE column and was 0 on every row below. Account (as stored) held the "
-                 "same value on all four rows of each corpus, being the account the "
-                 "albums belong to rather than a per-album value, and Cover Always First "
-                 "was likewise uniform at 1; both are kept because they are what "
-                 "separates albums on a device carrying more than one account or "
-                 "setting.",
+                 "directory its stored file sits in. Cover is the THUMBNAIL column, a WebP image "
+                 "stored unencrypted in the index, and Cover File Name is the COVER_FILE_NAME "
+                 "column, reported as stored. Sort Type, Sort Index, Span Count, Cover Type and "
+                 "Rotate are reported as stored, no source for their code lists having been "
+                 "located. In Decoy Space is the IS_MOCK_SPACE column and was 0 on every row "
+                 "below. Account (as stored) held the same value on all four rows of each "
+                 "corpus, and what it distinguishes was not exercised; the same is true of "
+                 "Cover Always First, which was 1 on every row. Both are kept as stored.",
         "paths": ('*/.privacy_safe/db/privacy_safe.db*',),
         "output_types": "standard",
         "artifact_icon": "folder",
@@ -95,18 +93,18 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-30",
         "requirements": "none",
         "category": "Encrypting Media Apps",
-        "notes": "com.hld.anzenbokusucal presents as a calculator application. Its preferences "
-                 "file stores both halves of every entry as hexadecimal ciphertext: the entry "
-                 "name and, for string entries, the value. Both decrypt with AES in CBC mode "
-                 "using the key and initialisation vector 526e7934384e693861506a59436e5549, "
-                 "which is the ASCII string Rny48Ni8aPjYCnUI used as both the key and the "
-                 "initialisation vector. That value is fixed rather than derived per device: the "
-                 "same key opens both corpora below and is the one this repository's App Locker "
-                 "Pat artifact has carried for the sibling package com.hld.anzenbokusufake since "
-                 "2021. It is not present as a literal string in base.vdex from the same "
-                 "extraction, in ASCII or in either hex case; where it comes from was not "
-                 "established. Every name decrypted on both corpora below, 20 of 20 "
-                 "13 of 13 and 19 of 19, each to a printable lower case identifier matching the type "
+        "notes": "The share_privacy_safe.xml preferences file of com.hld.anzenbokusucal stores "
+                 "both halves of every entry as hexadecimal ciphertext: the entry name and, for "
+                 "string entries, the value. Both decrypt with AES in CBC mode using the key and "
+                 "initialisation vector 526e7934384e693861506a59436e5549, which is the ASCII "
+                 "string Rny48Ni8aPjYCnUI used as both the key and the initialisation vector. "
+                 "That value is fixed rather than derived per device: the same key opens all "
+                 "three corpora below and is the one this repository's App Locker Pat artifact "
+                 "has carried for the sibling package com.hld.anzenbokusufake since 2021. It is "
+                 "not present as a literal string in base.vdex from the same extraction, in ASCII "
+                 "or in either hex case; where it comes from was not established. Every name "
+                 "decrypted on the three corpora below, 19 of 19, 20 of 20 and 13 of 13, each to "
+                 "a printable lower case identifier matching the type "
                  "of the value stored under it, which is what a correct key produces and a wrong "
                  "one does not. The names recovered include number_password, holding a short "
                  "numeric value; recovery_email, holding an email address; security_question, "

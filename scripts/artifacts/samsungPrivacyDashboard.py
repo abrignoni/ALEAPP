@@ -3,17 +3,15 @@ __artifacts_v2__ = {
         "name": "Samsung Privacy Dashboard Permission Access",
         "description": "Permission accesses logged by the Samsung Privacy Dashboard "
                        "(permission_db, permissionAccessInformations table): the accessing "
-                       "package, permission group, access time and whether the access "
-                       "happened in the background. The operation code is stored as a raw "
-                       "integer and is reported as-is.",
+                       "package, permission group, access time and the BACKGROUND value as stored. "
+                       "The operation code is stored as a raw integer and is reported as-is.",
         "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",
         "category": "Permissions",
         "notes": "More info: https://blog.digital-forensics.it/2025/11/beyond-known-call-to-forensic-research.html. "
-                 "The UID column does not exist on older One UI versions and is reported "
-                 "empty there.",
+                 "Where a permission_db has no UID column the UID cell is left empty.",
         "paths": ('*/com.samsung.android.privacydashboard/databases/permission_db*',),
         "output_types": "standard",
         "artifact_icon": "eye",

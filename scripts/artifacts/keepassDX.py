@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "keepassdx_database_history": {
         "name": "KeePassDX - Database History",
-        "description": "Parses the opened-database history recorded by the KeePassDX Android app.",
+        "description": "Parses the database file history table (file_database_history) of the KeePassDX Android app.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
@@ -9,14 +9,20 @@ __artifacts_v2__ = {
         "category": "KeePassDX",
         "notes": "One row per entry in the file_database_history table of the app's own Room store "
                  "databases/com.kunzisoft.keepass.database. KeePassDX is a password manager; the vault "
-                 "itself (a .kdbx file) is encrypted and its contents are not recovered here. What this "
-                 "table records is which KeePass databases the app has opened and where they are stored. "
+                 "itself (a .kdbx file) is encrypted and its contents are not recovered here. The "
+                 "table holds one row per database URI the app keeps in its file history. The app "
+                 "adds or updates a row through addOrUpdateDatabaseFile and removes rows through "
+                 "deleteDatabaseFile and deleteAll (FileDatabaseHistoryAction.kt lines 145, 209 "
+                 "and 262 at Kunzisoft/KeePassDX 4054d7d844f8386cfca479b1c979b37ca1a9a129), so the "
+                 "absence of a row does not establish that a database was never opened. "
                  "Each row carries the Database URI as stored (a content:// storage-provider URI or a "
-                 "file:// path, depending on where the vault was opened from), the user-set Database "
-                 "Alias, the Keyfile URI if the vault uses a key file, the Hardware Key type as stored "
+                 "file:// path, depending on where the vault was opened from), the Database Alias "
+                 "as stored, the Keyfile URI if the vault uses a key file, the Hardware Key type "
+                 "as stored "
                  "if a hardware key is used, the Read Only and User Verification flags as stored, and "
-                 "Updated, which the app sets to System.currentTimeMillis() when the entry is added or "
-                 "updated (fields per FileDatabaseHistoryEntity.kt at Kunzisoft/KeePassDX "
+                 "Updated, which the app sets to System.currentTimeMillis() in "
+                 "addOrUpdateDatabaseFile (FileDatabaseHistoryAction.kt line 172; fields per "
+                 "FileDatabaseHistoryEntity.kt lines 26 to 49; both at Kunzisoft/KeePassDX "
                  "4054d7d844f8386cfca479b1c979b37ca1a9a129). Updated is Unix milliseconds and was UTC on "
                  "the tested device (16:59 UTC matched the device's 12:59 local clock), so it is reported "
                  "as UTC. User Verification is reported as stored; what the app sets it for is "

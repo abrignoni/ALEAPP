@@ -26,7 +26,7 @@ __artifacts_v2__ = {
     },
     "get_calendar_calendars": {
         "name": "Calendar - Calendars",
-        "description": "Parses provider calendars",
+        "description": "Parses the Calendars table of the calendar provider database. The first column is the cal_sync8 value read as Unix milliseconds; what it marks is not established and the Created Timestamp heading is not sourced.",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2023-01-06",
         "last_update_date": "2023-01-06",
@@ -61,7 +61,11 @@ __artifacts_v2__ = {
         "last_update_date": "2026-07-30",
         "requirements": "none",
         "category": "Calendar",
-        "notes": "Created and Updated are protobuf fields 4 and 5 of the event record. The "
+        "notes": "The fields are read from the event protobuf by number: link 3, Created "
+                 "4, Updated 5, title 6, description 7, calendar id and name 10 (or 35), "
+                 "iCal UID 19, start 36.1 and end 37.1. No source for these field numbers "
+                 "is cited. Account is the PlatformAccountName of the Accounts table row "
+                 "the event points to. The "
                  "event type is stored as a raw integer and is reported as-is.",
         "paths": ('*/com.google.android.calendar/databases/cal_v2a*',),
         "output_types": "standard",

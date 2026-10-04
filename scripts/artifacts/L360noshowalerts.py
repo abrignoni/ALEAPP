@@ -8,7 +8,14 @@ __artifacts_v2__ = {
         'last_update_date': '2026-07-01',
         'requirements': 'none',
         'category': 'Life360',
-        'notes': 'WAL file recovery',
+        'notes': 'Live rows are read from the no_show_alerts table. Rows marked Recovered from WAL '
+                 'are every record found on each copy of database page 4 in the -wal file, one row '
+                 'per record per frame. They are not compared with the live rows, so a recovered '
+                 'row can repeat a live row or an earlier recovered row, and a recovered row is '
+                 'not shown to have been deleted. The page number and the column order are fixed '
+                 'in the code for the schema it was written against. Run At is read as Unix '
+                 'nanoseconds and Last Updated as Unix milliseconds; no source for those units is '
+                 'recorded here.',
         'paths': ('*/com.life360.android.safetymapd/databases/NoShowAlertRoomDatabase*',),
         'output_types': 'standard',
         'artifact_icon': 'alert-triangle',

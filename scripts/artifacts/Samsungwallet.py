@@ -2,9 +2,9 @@ __artifacts_v2__ = {
     "samsung_wallet_cards": {
         "name": "Samsung Wallet - Enrolled Cards",
         "description": "Cards enrolled in Samsung Wallet (formerly Samsung Pay), with each "
-                       "card's issuer, enrollment/reference identifiers, when its state was "
-                       "last updated, whether it is locked, and identity-verification "
-                       "attempt counters.",
+                       "card's issuer, enrollment/reference identifiers, the cardStateTimestamp "
+                       "value as a UTC time, and the isLocked, payReadyFlag, transitSupport and "
+                       "idv* counter values as stored.",
         "author": "@Gear-I, Claude",
         "creation_date": "2026-08-26",
         "last_update_date": "2026-08-28",
@@ -13,8 +13,8 @@ __artifacts_v2__ = {
         "notes": "Source is spay.db's card table. The database file itself was 4 KB on each "
                  "tested extraction and its contents sat in the spay.db-wal write-ahead log, "
                  "so the path pattern takes the sidecars and the file is read with the log "
-                 "applied. Samsung Wallet encrypts several of the fields an examiner would "
-                 "want: on the tested extraction cardLastFour, cardName, tokenLastFour, "
+                 "applied. Several of the fields an examiner would want did not hold readable "
+                 "values: on the tested extraction cardLastFour, cardName, tokenLastFour, "
                  "cardBrand, issuerCountryCode, cardTrType, comboCardType and "
                  "tokenReferenceID held base64-encoded ciphertext. No key for them was "
                  "located in the extraction and this artifact does not attempt to decode "
@@ -66,18 +66,19 @@ __artifacts_v2__ = {
                  "currencyCode, transactionStatus, tokenNumber, transactionID, "
                  "industryCatgCode, industryCode, stamp, paymentMethod and cardBrand held "
                  "base64-encoded ciphertext with no key located in the extraction, so none "
-                 "of them are decoded here. Rewards Redeemed and Watch Transaction are "
-                 "plain integer flags. Merchant Country Code, Merchant Town, Booking Date, "
-                 "Value Date, Sender IBAN and Receiver IBAN exist in the schema but were "
-                 "NULL on the single receipt tested, so whether they are ever stored in "
-                 "plain text on a populated row is unconfirmed. They are read here and left "
-                 "blank rather than assumed either way. This artifact records that a "
-                 "transaction happened and which card it belongs to, not its detail. The "
-                 "receipt table's columns vary between Samsung Wallet releases: the "
-                 "Android 13 extraction tested carries no isWatchTransaction column, "
-                 "which failed the whole read. Each query is compiled against the "
-                 "database it will run on, so a column a release does not carry is "
-                 "reported empty and the remaining columns are still returned.",
+                 "of them are decoded here. Rewards Redeemed is the pwpredeemflag column and "
+                 "Watch Transaction is isWatchTransaction; both are integers reported as stored, "
+                 "and what pwpredeemflag records is not established. Merchant Country Code, "
+                 "Merchant Town, Booking Date, Value Date, Sender IBAN and Receiver IBAN exist in "
+                 "the schema but were NULL on the single receipt tested, so whether they are ever "
+                 "stored in plain text on a populated row is unconfirmed. They are read here and "
+                 "left blank rather than assumed either way. This artifact reports that a receipt "
+                 "row exists and which card row it is linked to. It does not report the "
+                 "transaction's status, type, amount or time. The receipt table's columns vary "
+                 "between Samsung Wallet releases: the Android 13 extraction tested carries no "
+                 "isWatchTransaction column, so that column is reported empty for it. Each query "
+                 "is compiled against the database it will run on, so a column a release does not "
+                 "carry is reported empty and the remaining columns are still returned.",
         "paths": ('*/com.samsung.android.spay/databases/spay.db*',),
         "output_types": ["standard"],
         "artifact_icon": "receipt",

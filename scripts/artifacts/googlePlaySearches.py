@@ -1,13 +1,14 @@
 __artifacts_v2__ = {
     "GooglePlaySearches": {
         "name": "Google Play Searches",
-        "description": "Search history from the Google Play Store",
+        "description": "Rows of the suggestions table in the Google Play Store suggestions.db: the date (read as Unix milliseconds, UTC), display1 and query columns",
         "author": "Alexis Brignoni",
         "creation_date": "2020-04-02",
         "last_update_date": "2025-09-09",
         "requirements": "none",
         "category": "Google Play Store",
-        "notes": "",
+        "notes": "Only the first suggestions.db the file search returns is read. What causes the "
+                 "app to write a row is not established.",
         "paths": ('*/com.android.vending/databases/suggestions.db*'),
         "output_types": "standard",
         'artifact_icon': 'search',

@@ -64,7 +64,9 @@ __artifacts_v2__ = {
                  "the schema declares as the foreign key. last_access is an ISO 8601 string "
                  "and appeared in three spellings in the tested sample, with and without a "
                  "trailing Z and with or without a fractional second, so it is parsed "
-                 "tolerantly. The shared dates are also ISO 8601 and carried one, two or "
+                 "tolerantly; a value with no zone designator is read as UTC, which the store "
+                 "itself does not state. The shared dates are also ISO 8601 and carried one, "
+                 "two or "
                  "three fractional digits. doc_source, viewMode and cloudSource are integers "
                  "with no mapping recoverable from the extraction, so they are reported as "
                  "stored; doc_source held 0 and 8 and viewMode held 0 and 1 in the tested "
@@ -110,8 +112,8 @@ __artifacts_v2__ = {
     },
     "adobe_reader_comments": {
         "name": "Adobe Acrobat Reader - Comment Notifications",
-        "description": "Parses the commenting notifications recorded by the Acrobat Reader "
-                       "Android app.",
+        "description": "Parses the notification records (ARBellNotificationEntity) held by "
+                       "the Acrobat Reader Android app; rows are not filtered by type.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
@@ -148,7 +150,8 @@ __artifacts_v2__ = {
                  "reported and the Record Type column names the table each row came from. "
                  "modifiedDateAtDownload and updatedModifiedDate are Unix milliseconds and "
                  "both use -1 as an absent value, which is reported as an empty cell rather "
-                 "than converted; 21 and 2 of the 48 rows of that table held -1 in the tested "
+                 "than converted; 21 and 2 of the 48 SVBlueHeronEntity rows held -1 in the "
+                 "tested "
                  "sample. lastViewedPageNumber uses -1 the same way. Review type, asset type "
                  "and the favourite, shared, rooted and progress state flags are reported as "
                  "stored. The parcel records hold serialized JSON members for the resource, the "
@@ -217,7 +220,10 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Adobe Acrobat Reader",
         "notes": "Four tables from three databases are reported and the Record Type column "
-                 "names the table each row came from: ARFileInfo and ARCloudTransfer from "
+                 "names the table each row came from. For OpenDocTable rows the Asset ID "
+                 "column holds uniqueCloudIdentifier; for ARShareInProgressFileInfo rows the "
+                 "File Path column holds backupFilePath, and dummyFilePath is not reported. "
+                 "The four tables are ARFileInfo and ARCloudTransfer from "
                  "ARDatabase, OpenDocTable from the multi document database and "
                  "ARShareInProgressFileInfo from the share database. The transfer dates are "
                  "Unix milliseconds. Transfer type is stored as a literal name; transfer "

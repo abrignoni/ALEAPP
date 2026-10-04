@@ -8,7 +8,11 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "GEO Location",
-        "notes": "Updated 2023-12-12 by @segumarc",
+        "notes": "A row is a directions URL (/dir/...) found inside a gmm_storage_table record; "
+                 "records with none are not reported. Latitude and Longitude are the first "
+                 "coordinate pair after /dir/ and To Latitude and To Longitude are taken from the "
+                 "last !1d and !2d values of the URL. Whether the route was followed is not "
+                 "established by this record.",
         "paths": ('*/com.google.android.apps.maps/databases/gmm_storage.db*',),
         "output_types": "standard",
         "artifact_icon": "map-pin",
@@ -33,10 +37,12 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-10",
         "requirements": "none",
         "category": "GEO Location",
-        "notes": ("Updated 2023-12-12 by @segumarc\n"
-                  "Label is read from the sync_item key_string. The keys '0:0' and '1:0' are "
-                  "rendered as 'Home' and 'Work'; that key-to-label mapping is not documented in "
-                  "the data and is not sourced here. A stored label does not establish "
+        "notes": ("Label is read from the sync_item key_string. The keys '0:0' and '1:0' are "
+                  "rendered as 'Home' and 'Work'. That mapping is not sourced: treat those two "
+                  "labels as this module's reading of the key, not as a stored value. Timestamp is "
+                  "the sync_item timestamp column read as Unix milliseconds; what it marks is not "
+                  "established. A row whose protobuf cannot be decoded is not reported. A stored "
+                  "label does not establish "
                   "that the address is the person's residence or workplace, only that the entry "
                   "carries that label. Any other key is reported with the label held in the "
                   "protobuf.\n"

@@ -1,14 +1,17 @@
 __artifacts_v2__ = {
     "SimpleStorage_applaunch": {
         "name": "SimpleStorage - App Launch",
-        "description": "Parses SimpleStorage for application launch",
+        "description": "Parses the EchoAppLaunchMetricsEvents table of the SimpleStorage database (com.google.android.as): timestamp, package name and launch location id",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-12-13",
         "last_update_date": "2022-12-13",
         "last_updated": "2025-09-12",
         "requirements": "none",
         "category": "Android System Intelligence",
-        "notes": "Much thanks to Josh Hickman (@josh_hickman1) for the research, testing and query",
+        "notes": "The query and the Launched From names for launchLocationId values 1, 2, 4, 7, 8, "
+                 "12 and 1000 come from Josh Hickman's (@josh_hickman1) research and testing. No "
+                 "published reference for them is cited here. Any other value is shown as stored. "
+                 "Identical rows are reported once (SELECT DISTINCT).",
         "paths": ('*/com.google.android.as/databases/SimpleStorage*'),
         "output_types": "standard",
         "artifact_icon": "loader",

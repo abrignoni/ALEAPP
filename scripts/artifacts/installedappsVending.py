@@ -7,7 +7,10 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Installed Apps",
-        "notes": "A row records an application known to the appstate table. Whether the application "
+        "notes": "A row records an application known to the appstate table. Auto Update? shows "
+                 "Yes when auto_update is 1 and is blank for 0; any other stored value is not "
+                 "shown. Install Reason is reported as stored and is blank where the table has no "
+                 "install_reason column. Whether the application "
                  "was still installed at the time of extraction is not established by its presence "
                  "here.",
         "paths": ('*/com.android.vending/databases/localappstate.db*',),

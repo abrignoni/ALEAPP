@@ -1,7 +1,9 @@
 __artifacts_v2__ = {
     "get_appLockerfishingnetpat": {
         "name": "App Locker Pat",
-        "description": "Parses the App Locker unlock pattern (encrypted and decrypted) from the share_privacy_safe.xml preferences file.",
+        "description": "Reads one named string from share_privacy_safe.xml of com.hld.anzenbokusufake and applies "
+                       "a fixed AES-CBC key to it. The value is reported encrypted and as decrypted bytes. That "
+                       "the value is the unlock pattern is not shown by a source or a measurement in this module.",
         "author": "@abrignoni",
         "creation_date": "2021-12-14",
         "last_update_date": "2021-12-14",

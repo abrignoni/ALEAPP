@@ -22,45 +22,103 @@ __artifacts_v2__ = {
         notes="ACTIVITY_LOG_ENTRY.DURATION is reported as stored and again divided by 60. The sleep "
               "summary in this same module divides its own DURATION column by 60000, so the unit of "
               "the activity DURATION column is not established and the divided column is labelled "
-              "'Duration / 60' rather than as minutes.", updated="2026-08-01"),
-    "get_fitbit_device": _art("Fitbit - Device Info", "Paired device info (phone)", _PATHS_PHONE_DEV, "device-watch"),
-    "get_fitbit_exercise": _art("Fitbit - Exercise GPS", "Exercise GPS trackpoints (phone)", _PATHS_PHONE_EX, "map-pin", "all"),
-    "get_fitbit_routes": _art("Fitbit - Exercise Routes", "Per-session exercise route map (phone)", _PATHS_PHONE_EX, "map"),
-    "get_fitbit_heart": _art("Fitbit - Heart Rate Summary", "Daily heart-rate summary (phone)", _PATHS_PHONE_HR, "heart"),
-    "get_fitbit_sleep_detail": _art("Fitbit - Sleep Detail", "Sleep level data (phone)", _PATHS_PHONE_SLEEP, "moon"),
+              "'Duration / 60' rather than as minutes. "
+              "No sample_data is recorded for this artifact; its timestamps are read as Unix milliseconds "
+              "without a tested sample, and only the first matching database is read.", updated="2026-08-01"),
+    "get_fitbit_device": _art("Fitbit - Device Info", "Device records from the core_device table (phone)",
+        _PATHS_PHONE_DEV, "device-watch",
+        notes="No sample_data is recorded for this artifact; its timestamps are read as Unix milliseconds "
+              "without a tested sample, and only the first matching database is read."),
+    "get_fitbit_exercise": _art("Fitbit - Exercise GPS", "Exercise GPS trackpoints (phone)", _PATHS_PHONE_EX, "map-pin", "all",
+        notes="No sample_data is recorded for this artifact; its timestamps are read as Unix milliseconds "
+              "without a tested sample, and only the first matching database is read."),
+    "get_fitbit_routes": _art("Fitbit - Exercise Routes", "Per-session exercise route map (phone)", _PATHS_PHONE_EX, "map",
+        notes="No sample_data is recorded for this artifact; its timestamps are read as Unix milliseconds "
+              "without a tested sample, and only the first matching database is read."),
+    "get_fitbit_heart": _art("Fitbit - Heart Rate Summary", "Daily heart-rate summary (phone)", _PATHS_PHONE_HR, "heart",
+        notes="No sample_data is recorded for this artifact; its timestamps are read as Unix milliseconds "
+              "without a tested sample, and only the first matching database is read."),
+    "get_fitbit_sleep_detail": _art("Fitbit - Sleep Detail", "Sleep level data (phone)", _PATHS_PHONE_SLEEP, "moon",
+        notes="No sample_data is recorded for this artifact; its timestamps are read as Unix milliseconds "
+              "without a tested sample, and only the first matching database is read."),
     "get_fitbit_sleep_summary": _art("Fitbit - Sleep Summary", "Sleep log summary (phone)", _PATHS_PHONE_SLEEP, "moon",
         notes="SLEEP_LOG.DURATION is reported as stored and again divided by 60000. The divisor "
               "assumes the column holds milliseconds; the activity log in this same module divides "
               "its own DURATION column by 60, and the two have not been reconciled against a sample "
-              "database.", updated="2026-08-01"),
-    "get_fitbit_friends": _art("Fitbit - Friends", "Friends (phone)", _PATHS_PHONE_SOCIAL, "users"),
-    "get_fitbit_user": _art("Fitbit - User Profile", "User profile (phone)", _PATHS_PHONE_SOCIAL, "user"),
-    "get_fitbit_steps": _art("Fitbit - Steps", "Pedometer minute data (phone)", _PATHS_PHONE_MOBILE, "activity"),
-    "get_fitbit_wearos_profile": _art("Fitbit - User Profile (Wear OS)", "User profile (Wear OS)", _PATHS_USER, "user"),
-    "get_fitbit_wearos_activity": _art("Fitbit - Activity History (Wear OS)", "Activity/workout history (Wear OS)", _PATHS_USER),
+              "database. "
+              "No sample_data is recorded for this artifact; its timestamps are read as Unix milliseconds "
+              "without a tested sample, and only the first matching database is read.", updated="2026-08-01"),
+    "get_fitbit_friends": _art("Fitbit - Friends", "Rows of the FRIEND table (phone)", _PATHS_PHONE_SOCIAL, "users",
+        notes="The table's own FRIEND column is shown in the Friend column as stored, so a row is not "
+              "by itself a friend. No sample_data is recorded for this artifact, and only the first "
+              "matching database is read."),
+    "get_fitbit_user": _art("Fitbit - User Profile", "User profile (phone)", _PATHS_PHONE_SOCIAL, "user",
+        notes="Date of Birth and Joined Date are the stored values read as Unix milliseconds and shown "
+              "in UTC; not checked against a sample. "
+              "No sample_data is recorded for this artifact; its timestamps are read as Unix milliseconds "
+              "without a tested sample, and only the first matching database is read."),
+    "get_fitbit_steps": _art("Fitbit - Steps", "Pedometer minute data (phone)", _PATHS_PHONE_MOBILE, "activity",
+        notes="No sample_data is recorded for this artifact; its timestamps are read as Unix milliseconds "
+              "without a tested sample, and only the first matching database is read."),
+    "get_fitbit_wearos_profile": _art("Fitbit - User Profile (Wear OS)", "User profile (Wear OS)", _PATHS_USER, "user",
+        notes="No sample_data is recorded for this artifact; its values are reported as stored, and only "
+              "the first matching database is read."),
+    "get_fitbit_wearos_activity": _art("Fitbit - Activity History (Wear OS)", "Activity/workout history (Wear OS)", _PATHS_USER,
+        notes="The column headed Duration (min) is ActivityExerciseEntity.duration divided by 60000, "
+              "which assumes the column holds milliseconds; that unit is not established. "
+              "No sample_data is recorded for this artifact; its timestamps are read as Unix milliseconds "
+              "without a tested sample, and only the first matching database is read."),
     "get_fitbit_wearos_daily": _art("Fitbit - Daily Activity (Wear OS)", "Daily sedentary summary (Wear OS)", _PATHS_USER,
         notes="SedentaryDataEntity.longestDuration is reported as stored; the database does not record "
-              "its unit, so it is no longer labelled as minutes. The two totalMinutes* columns are "
-              "named as minutes by the columns themselves.", updated="2026-08-01"),
-    "get_fitbit_wearos_hourly": _art("Fitbit - Hourly Steps (Wear OS)", "Hourly steps from JSON (Wear OS)", _PATHS_USER),
-    "get_fitbit_wearos_sleep_logs": _art("Fitbit - Sleep Logs (Wear OS)", "Sleep session logs (Wear OS)", _PATHS_USER, "moon"),
-    "get_fitbit_wearos_workouts": _art("Fitbit - Workouts (Wear OS)", "Workout summaries (Wear OS)", _PATHS_PASSIVE),
-    "get_fitbit_wearos_gps": _art("Fitbit - GPS Trackpoints (Wear OS)", "GPS trackpoints (Wear OS)", _PATHS_PASSIVE, "map-pin", "all"),
-    "get_fitbit_wearos_gps_route": _art("Fitbit - GPS Route (Wear OS)", "Offline GPS route map (Wear OS)", _PATHS_PASSIVE, "map"),
+              "its unit, so it is not labelled as minutes. The two totalMinutes* columns are "
+              "named as minutes by the columns themselves. "
+              "No sample_data is recorded for this artifact; its values are reported as stored, and only "
+              "the first matching database is read.", updated="2026-08-01"),
+    "get_fitbit_wearos_hourly": _art("Fitbit - Hourly Steps (Wear OS)", "Hourly steps from JSON (Wear OS)", _PATHS_USER,
+        notes="No sample_data is recorded for this artifact; its values are reported as stored, and only "
+              "the first matching database is read."),
+    "get_fitbit_wearos_sleep_logs": _art("Fitbit - Sleep Logs (Wear OS)", "Sleep session logs (Wear OS)", _PATHS_USER, "moon",
+        notes="No sample_data is recorded for this artifact; its timestamps are read as Unix milliseconds "
+              "without a tested sample, and only the first matching database is read."),
+    "get_fitbit_wearos_workouts": _art("Fitbit - Workouts (Wear OS)", "Workout summaries (Wear OS)", _PATHS_PASSIVE,
+        notes="The column headed Start Time is ExerciseSummaryEntity.time; what that time marks is not "
+              "established. "
+              "No sample_data is recorded for this artifact; its timestamps are read as Unix milliseconds "
+              "without a tested sample, and only the first matching database is read."),
+    "get_fitbit_wearos_gps": _art("Fitbit - GPS Trackpoints (Wear OS)", "GPS trackpoints (Wear OS)", _PATHS_PASSIVE, "map-pin", "all",
+        notes="No sample_data is recorded for this artifact; its timestamps are read as Unix milliseconds "
+              "without a tested sample, and only the first matching database is read."),
+    "get_fitbit_wearos_gps_route": _art("Fitbit - GPS Route (Wear OS)",
+        "One route drawn through every ExerciseGpsEntity trackpoint in time order, not split by workout (Wear OS)",
+        _PATHS_PASSIVE, "map",
+        notes="No sample_data is recorded for this artifact; its timestamps are read as Unix milliseconds "
+              "without a tested sample, and only the first matching database is read."),
     "get_fitbit_wearos_hr": _art("Fitbit - Heart Rate Stats (Wear OS)", "Heart-rate stats (Wear OS)", _PATHS_PASSIVE, "heart",
         notes="HeartRateStatEntity.value is reported as stored under the header 'Value'; the database "
-              "does not record its unit, so it is not published as BPM.", updated="2026-08-01"),
-    "get_fitbit_wearos_pace": _art("Fitbit - Live Pace (Wear OS)", "Live pace during workouts (Wear OS)", _PATHS_PASSIVE,
+              "does not record its unit, so it is not published as BPM. "
+              "No sample_data is recorded for this artifact; its timestamps are read as Unix milliseconds "
+              "without a tested sample, and only the first matching database is read.", updated="2026-08-01"),
+    "get_fitbit_wearos_pace": _art("Fitbit - Live Pace (Wear OS)", "LivePaceEntity rows (Wear OS)", _PATHS_PASSIVE,
         notes="LivePaceEntity.timeSeconds is decoded as a Unix epoch in seconds, following the column "
-              "name; earlier versions of this parser decoded it as milliseconds. The change has not "
+              "name; this decoding has not "
               "been checked against a sample database. LivePaceEntity.value is reported as stored; the "
-              "database does not record its unit.", updated="2026-08-01"),
-    "get_fitbit_wearos_sleep": _art("Fitbit - Sleep (Wear OS)", "Local sleep periods (Wear OS)", _PATHS_PASSIVE, "moon"),
-    "get_fitbit_wearos_azm": _art("Fitbit - Active Zones (Wear OS)", "Active zone minutes (Wear OS)", _PATHS_PASSIVE, "heart",
+              "database does not record its unit. No sample_data is recorded for this artifact, and "
+              "only the first matching database is read.", updated="2026-08-01"),
+    "get_fitbit_wearos_sleep": _art("Fitbit - Sleep (Wear OS)", "Local sleep periods (Wear OS)", _PATHS_PASSIVE, "moon",
+        notes="No sample_data is recorded for this artifact; its timestamps are read as Unix milliseconds "
+              "without a tested sample, and only the first matching database is read."),
+    "get_fitbit_wearos_azm": _art("Fitbit - Active Zones (Wear OS)", "PassiveAzmEntity rows (Wear OS)", _PATHS_PASSIVE, "heart",
         notes="PassiveAzmEntity.value is reported as stored under the header 'Value'; the database "
-              "does not record what it counts, so it is not published as points.", updated="2026-08-01"),
-    "get_fitbit_wearos_splits": _art("Fitbit - Workout Splits (Wear OS)", "Workout split metrics (Wear OS)", _PATHS_PASSIVE),
-    "get_fitbit_wearos_opaque_hr": _art("Fitbit - Opaque HR (Wear OS)", "Raw heart-rate readings (Wear OS)", _PATHS_PASSIVE, "heart"),
+              "does not record what it counts, so it is not published as points. "
+              "No sample_data is recorded for this artifact; its timestamps are read as Unix milliseconds "
+              "without a tested sample, and only the first matching database is read.", updated="2026-08-01"),
+    "get_fitbit_wearos_splits": _art("Fitbit - Workout Splits (Wear OS)", "Workout split metrics (Wear OS)", _PATHS_PASSIVE,
+        notes="No sample_data is recorded for this artifact; its timestamps are read as Unix milliseconds "
+              "without a tested sample, and only the first matching database is read."),
+    "get_fitbit_wearos_opaque_hr": _art("Fitbit - Opaque HR (Wear OS)",
+        "OpaqueHeartRateEntity rows: baseHeartRate and confidence as stored (Wear OS)", _PATHS_PASSIVE, "heart",
+        notes="No sample_data is recorded for this artifact; its timestamps are read as Unix milliseconds "
+              "without a tested sample, and only the first matching database is read."),
 }
 
 import datetime

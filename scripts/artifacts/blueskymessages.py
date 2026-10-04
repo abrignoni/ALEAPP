@@ -16,7 +16,7 @@ __artifacts_v2__ = {
     },
     "get_blueskymessages_actors": {
         "name": "Bluesky - Actors",
-        "description": "Bluesky actors (accounts) seen in storage and the http-cache",
+        "description": "Bluesky actors (accounts) seen in the http-cache, plus the first account in the RKStorage session list",
         "author": "Alexis Brignoni",
         "creation_date": "2024-11-19",
         "last_update_date": "2024-11-19",

@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_googleNowPlaying": {
         "name": "GoogleNowPlaying",
-        "description": "Now Playing history (songs recognised near the device)",
+        "description": "Entries of the recognition_history table of the Now Playing history_db, decoded from the history_entry protobuf by field number (the field meanings are not sourced). Consecutive entries for the same song are merged into one row whose Timestamp lists each time. The merge as written does not report the first entry after each change of song, so the table leaves out some of the stored entries. On userb2_a13 the table held 609 entries and 262 distinct title and artist pairs; the report listed 375 of the entries and 209 of the pairs, and it read two copies of the database, so each of the 235 rows appears twice (470 rows).",
         "author": "@abrignoni",
         "creation_date": "2020-03-22",
         "last_update_date": "2020-03-22",

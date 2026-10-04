@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "gettr_messages": {
         "name": "GETTR - Messages",
-        "description": "Direct messages from the app's per-account chat database, with the "
+        "description": "Chat messages from the app's per-account chat database, with the "
                        "sender, the conversation, the message text and the stored attachment "
                        "descriptors",
         "author": "@AlexisBrignoni, Claude",
@@ -10,7 +10,10 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "GETTR",
         "notes": "The chat database is app_flutter/db_u<user id>.sqlite, one per signed-in "
-                 "account, and its schema is the Stream Chat Flutter client's, not GETTR's own. "
+                 "account. Its tables match the Stream Chat Flutter client's local persistence "
+                 "schema. The column names read here are those of the tested store; at the cited "
+                 "commit the Stream source names the message time columns local_created_at and "
+                 "remote_created_at and has no role column on members. "
                  "Message Direction is derived by comparing each message's user id against the "
                  "account id the same database records in connection_events.own_user, so it "
                  "comes from a value the app stored rather than from the file name; it is left "
@@ -18,18 +21,19 @@ __artifacts_v2__ = {
                  "for that id, and falls back to the raw user id when the users row is missing. "
                  "created_at, updated_at and deleted_at are Unix seconds. A row with Message "
                  "Type 'deleted' keeps its sent time and sender but its stored text holds "
-                 "tombstone wording rather than the message; 2 of 17 messages were in that state "
+                 "tombstone wording rather than the message; rows in that state were present "
                  "on the corpus below. Deleting a message in the app was not exercised. "
                  "Attachments holds the descriptor JSON as stored, which carries remote URLs "
                  "rather than local files, and no attachment referenced a file present in the "
                  "extraction, so no media is checked in. Reaction Counts is as stored; the one "
                  "reaction present used a numeric type code that was not resolved to an emoji. "
                  "Message text can be empty on a row whose content is an attachment, which is "
-                 "why Message is blank on 2 rows. Conversation holds the channel identifier and "
+                 "why Message can be blank. Conversation holds the channel identifier and "
                  "carries one value on every row of the corpus below because that extraction "
                  "held a single conversation; it is kept because it is what separates "
                  "conversations on a device that has more than one. Reply Count was 0 on every "
-                 "row there.",
+                 "row there. Reference: GetStream, stream-chat-flutter, "
+                 "https://github.com/GetStream/stream-chat-flutter/blob/483766082667e2b38438cacf808b4c6aec5daca5/packages/stream_chat_persistence/lib/src/entity/connection_events.dart",
         "paths": ('*/com.gettr.gettr/app_flutter/db_u*.sqlite*',),
         "output_types": "standard",
         "artifact_icon": "message-circle",
@@ -63,8 +67,10 @@ __artifacts_v2__ = {
                  "Messages come from the reads table and are blank when that table has no row "
                  "for the pair, which is not evidence the conversation was unread. Member Role "
                  "and Channel Role are the two separate role columns the schema carries and are "
-                 "reported as stored. Invited, Banned and Shadow Banned are the schema's own "
-                 "0 or 1 columns. The times are Unix seconds. On the corpus below both members "
+                 "reported as stored. Invited, Banned In Conversation and Shadow Banned are the "
+                 "members table's own 0 or 1 columns. Account Created, Last Active, Online and "
+                 "Account Banned are the users table's columns for that id, as stored. The "
+                 "times are Unix seconds. On the corpus below both members "
                  "of the one conversation were present in the users table, so no row fell back "
                  "to a bare user id.",
         "paths": ('*/com.gettr.gettr/app_flutter/db_u*.sqlite*',),
@@ -88,8 +94,8 @@ __artifacts_v2__ = {
         "notes": "The store is databases/private_<username>.db, one per signed-in account, and "
                  "the account name is taken from that file name. msg_date is Unix milliseconds "
                  "here, unlike the Unix seconds the chat database uses, so the two are converted "
-                 "differently. msg_action holds a short code; the code seen on the corpus below "
-                 "was 'f' on both rows and it is reported as stored rather than expanded, "
+                 "differently. msg_action holds a short code; the only code seen on the corpus "
+                 "below was 'f' and it is reported as stored rather than expanded, "
                  "because no source for the code list was located. The payload's ruid field "
                  "held the account's own name on both rows below, so it is not repeated as a "
                  "column. Other Account Identifiers and Other Account Display Names come from "
@@ -156,8 +162,8 @@ __artifacts_v2__ = {
                  "container as the database and the image is checked in when it is present; "
                  "Media is blank when it is not. validTill and touched are Unix milliseconds. "
                  "This cache is not the app's only image store: the package also holds a Glide "
-                 "cache under cache/image_manager_disk_cache, 43 files on one corpus below and "
-                 "33 on the other, whose file names are hashes carrying no recorded URL, so "
+                 "cache under cache/image_manager_disk_cache, whose file names are hashes "
+                 "carrying no recorded URL, so "
                  "those files are not reported here and no attempt is made to attribute them.",
         "paths": ('*/com.gettr.gettr/files/libCachedImageData.db*',
                   '*/com.gettr.gettr/cache/libCachedImageData/*'),

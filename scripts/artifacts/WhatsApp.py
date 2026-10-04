@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-27",
         "requirements": "none",
         "category": "WhatsApp",
-        "notes": "Reads the first wa.db matched and reports its wa_contacts rows, except rows whose jid ends in @newsletter, the jid form of the chats msgstore.db's newsletter table describes, and the row whose jid is status@broadcast. When any rows are left out, their number is written to the run log. On the 12 tested images the rows left out numbered 791 (781 @newsletter, 10 status@broadcast); none held a given name, family name, display name or number, so each had shown its jid as Name, JID and Number. wa.db holds more @newsletter jids than msgstore.db's newsletter table holds channels: 275 against 10 channels on kevin_pocox7_a15, 191 against 5 on russell_a14, and 255 on anne_a15, whose newsletter table is empty. The @newsletter jids with no chat in msgstore.db appeared in no other TEXT column of wa.db or msgstore.db on any tested image (full-text index tables were not searched). What those rows record was not established, and an @newsletter jid in wa.db does not show that a channel was followed. Name is given_name and family_name when either is not null, otherwise display_name, otherwise the jid; 1,722 of the 1,809 reported rows across the tested images showed the jid as Name. WhatsApp Name is the wa_name column as stored, and it is never used to fill Name. It was set on 230 of the 1,809 rows, 210 of them rows whose Name was the jid; on the 20 rows where both it and one of given_name, family_name or display_name were set, it differed from Name on 15. In 20 pairs of tested images, one device's own account appeared in the other device's wa_contacts; wa_name was set in 10 of them, and in all 10 it equalled the push_name value in the first device's own WhatsApp preferences (startup_prefs.xml, or com.whatsapp_preferences_light.xml on pixel3_a11 and pixel3_a12). A published description of wa_name is 'WhatsApp name of the contact (as set in their profile)'. Reference: Igor Mikhailov, 'WhatsApp in Plain Sight: Where and How You Can Collect Forensic Artifacts', https://www.group-ib.com/blog/whatsapp-forensic-artifacts/. When wa_name was written, and whether it follows later changes to the contact's profile name, was not established. Number is the number column as stored, with no fallback to the jid; it was empty on 1,731 of the 1,809 rows. Status Text is the status column as stored, and Status Timestamp is status_timestamp read as milliseconds since 1970-01-01 UTC, shown blank where the stored value is 0. Status Text was set on 730 of the 1,809 rows and Status Timestamp on 531, all of them rows with a Status Text; the other 199 rows with a Status Text stored a timestamp of 0. Of the 20 pairs of tested images above, status was set in 15; in the 11 of those whose first device stores a my_current_status value in its own com.whatsapp_preferences_light.xml, status equalled that value in all 11. Where one contact carried the same Status Text on two different tested phones with a timestamp on both (4 contacts), Status Timestamp was identical on both. What event Status Timestamp marks was not established. A published description of status is 'Text in the status line of the contact'. Reference: Igor Mikhailov, 'WhatsApp in Plain Sight: Where and How You Can Collect Forensic Artifacts', https://www.group-ib.com/blog/whatsapp-forensic-artifacts/. Rows whose jid ends in @g.us, @lid or @bot are reported as stored.",
+        "notes": "Reads the first wa.db matched and reports its wa_contacts rows, except rows whose jid ends in @newsletter, the jid form of the chats msgstore.db's newsletter table describes, and the row whose jid is status@broadcast. When any rows are left out, their number is written to the run log. On the 12 tested images the rows left out numbered 791 (781 @newsletter, 10 status@broadcast); none held a given name, family name, display name or number, so each would have shown its jid as Name and JID, with no Number. wa.db holds more @newsletter jids than msgstore.db's newsletter table holds channels: 275 against 10 channels on kevin_pocox7_a15, 191 against 5 on russell_a14, and 255 on anne_a15, whose newsletter table is empty. The @newsletter jids with no chat in msgstore.db appeared in no other TEXT column of wa.db or msgstore.db on any tested image (full-text index tables were not searched). What those rows record was not established, and an @newsletter jid in wa.db does not show that a channel was followed. Name is given_name and family_name when either is not null, otherwise display_name, otherwise the jid; 1,722 of the 1,809 reported rows across the tested images showed the jid as Name. WhatsApp Name is the wa_name column as stored, and it is never used to fill Name. It was set on 230 of the 1,809 rows, 210 of them rows whose Name was the jid; on the 20 rows where both it and one of given_name, family_name or display_name were set, it differed from Name on 15. In 20 pairs of tested images, one device's own account appeared in the other device's wa_contacts; wa_name was set in 10 of them, and in all 10 it equalled the push_name value in the first device's own WhatsApp preferences (startup_prefs.xml, or com.whatsapp_preferences_light.xml on pixel3_a11 and pixel3_a12). A published description of wa_name is 'WhatsApp name of the contact (as set in their profile)'. Reference: Igor Mikhailov, 'WhatsApp in Plain Sight: Where and How You Can Collect Forensic Artifacts', https://www.group-ib.com/blog/whatsapp-forensic-artifacts/. When wa_name was written, and whether it follows later changes to the contact's profile name, was not established. Number is the number column as stored, with no fallback to the jid; it was empty on 1,731 of the 1,809 rows. Status Text is the status column as stored, and Status Timestamp is status_timestamp read as milliseconds since 1970-01-01 UTC, shown blank where the stored value is 0. Status Text was set on 730 of the 1,809 rows and Status Timestamp on 531, all of them rows with a Status Text; the other 199 rows with a Status Text stored a timestamp of 0. Of the 20 pairs of tested images above, status was set in 15; in the 11 of those whose first device stores a my_current_status value in its own com.whatsapp_preferences_light.xml, status equalled that value in all 11. Where one contact carried the same Status Text on two different tested phones with a timestamp on both (4 contacts), Status Timestamp was identical on both. What event Status Timestamp marks was not established. A published description of status is 'Text in the status line of the contact'. Reference: Igor Mikhailov, 'WhatsApp in Plain Sight: Where and How You Can Collect Forensic Artifacts', https://www.group-ib.com/blog/whatsapp-forensic-artifacts/. Rows whose jid ends in @g.us, @lid or @bot are reported as stored.",
         "paths": ('*/com.whatsapp/databases/wa.db*',),
         "output_types": "standard",
         "artifact_icon": "users",
@@ -34,7 +34,7 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-28",
         "requirements": "none",
         "category": "WhatsApp",
-        "notes": "A call whose jid is a LID jid (...@lid) is matched to wa.db contacts through msgstore.db jid_map when that table exists. Calls that match no contact are still reported. For an incoming call that matches no contact, or whose contact has no WhatsApp name, Caller is shown by jid. None of the images listed in sample_data holds a LID-keyed call or a call that matches no contact, so both cases are exercised only by a constructed test (admin/test/scripts/test_whatsapp_lid_contacts.py).",
+        "notes": "A call whose jid is a LID jid (...@lid) is matched to wa.db contacts through msgstore.db jid_map when that table exists. Calls that match no contact are still reported when a wa.db is present. With no wa.db the query cannot run and no calls are reported; the run log says so. Call End Timestamp is not stored: it is the call's timestamp plus its duration read as seconds. On an outgoing call Caller reads Self and Caller JID is blank. For an incoming call that matches no contact, or whose contact has no WhatsApp name, Caller is shown by jid. The LID-keyed case and the no-contact case are exercised by a constructed test (admin/test/scripts/test_whatsapp_lid_contacts.py); whether any image listed in sample_data holds such a call is not stated here.",
         "paths": ('*/com.whatsapp/databases/msgstore.db*', '*/com.whatsapp/databases/wa.db*'),
         "output_types": "standard",
         "artifact_icon": "phone",
@@ -61,7 +61,12 @@ __artifacts_v2__ = {
         "last_update_date": "2021-03-11",
         "requirements": "none",
         "category": "WhatsApp",
-        "notes": "Legacy schema only; modern databases are covered by the One To One / Group Messages artifacts.",
+        "notes": "Legacy schema only (a messages table with a data column); modern databases are "
+                 "covered by the One To One / Group Messages artifacts. The column headed Message "
+                 "ID holds key_remote_jid, the jid of the chat, not a message identifier. Only "
+                 "messages whose key_remote_jid has a row in wa.db's wa_contacts are reported, and "
+                 "none are reported when wa.db is absent. Every image listed in sample_data "
+                 "reports 0 rows, so this artifact is not exercised by the listed data.",
         "paths": ('*/com.whatsapp/databases/msgstore.db*', '*/com.whatsapp/databases/wa.db*'),
         "output_types": "standard",
         "artifact_icon": "message",
@@ -77,13 +82,13 @@ __artifacts_v2__ = {
     },
     "get_whatsapp_one_to_one_messages": {
         "name": "WhatsApp - One To One Messages",
-        "description": "WhatsApp 1:1 messages (modern msgstore.db schema)",
+        "description": "WhatsApp messages whose recipient_count is 0, outside channel chats (modern msgstore.db schema)",
         "author": "@abrignoni",
         "creation_date": "2021-03-11",
         "last_update_date": "2026-09-28",
         "requirements": "none",
         "category": "WhatsApp",
-        "notes": "A chat keyed by a LID jid (...@lid) is matched to wa.db contacts through msgstore.db jid_map when that table exists. Messages whose chat matches no contact are still reported. When no contact matches, or the contact has no WhatsApp name, the participant is shown by jid. The conversation view groups rows by Other Participant WA User Name, so a LID-keyed chat and the phone-number chat that jid_map links it to are shown as one conversation; on sharon_a14, 48 LID-keyed chats each had such a phone-number chat. Messages in channel (newsletter) chats are not reported here; WhatsApp - Channel Messages reports them.",
+        "notes": "Rows are selected by message.recipient_count = 0, not by the type of the chat's jid. Message Type shows this module's label for message_type 0, 1, 2, 3, 5, 7, 9 and 16; other values are shown as stored and no source for the labels is cited here. A chat keyed by a LID jid (...@lid) is matched to wa.db contacts through msgstore.db jid_map when that table exists. Messages whose chat matches no contact are still reported when a wa.db is present. With no wa.db the query cannot run and no messages are reported; the run log says so. When no contact matches, or the contact has no WhatsApp name, the participant is shown by jid. The conversation view groups rows by Other Participant WA User Name, so a LID-keyed chat and the phone-number chat that jid_map links it to are shown as one conversation. Two different contacts that share a WhatsApp name are grouped the same way; the Sending Party JID column tells them apart on incoming rows. On sharon_a14, 48 LID-keyed chats each had such a phone-number chat. Messages in channel (newsletter) chats are not reported here; WhatsApp - Channel Messages reports them.",
         "paths": ('*/com.whatsapp/databases/msgstore.db*', '*/com.whatsapp/databases/wa.db*', '*/WhatsApp/Media/*', '*/com.whatsapp/files/Media/*'),
         "output_types": "standard",
         "artifact_icon": "message",
@@ -116,13 +121,13 @@ __artifacts_v2__ = {
     },
     "get_whatsapp_group_messages": {
         "name": "WhatsApp - Group Messages",
-        "description": "WhatsApp group messages (modern msgstore.db schema)",
+        "description": "WhatsApp messages whose recipient_count is 1 or more (modern msgstore.db schema)",
         "author": "@abrignoni",
         "creation_date": "2021-03-11",
         "last_update_date": "2026-09-26",
         "requirements": "none",
         "category": "WhatsApp",
-        "notes": "A sender keyed by a LID jid (...@lid) is matched to wa.db contacts through msgstore.db jid_map when that table exists. A sender that matches no contact, or has no WhatsApp name, is shown by jid.",
+        "notes": "Rows are selected by message.recipient_count >= 1, not by the type of the chat's jid. Message Type shows this module's label for message_type 0, 1, 2, 3, 5, 7, 9 and 16; other values are shown as stored and no source for the labels is cited here. A sender keyed by a LID jid (...@lid) is matched to wa.db contacts through msgstore.db jid_map when that table exists. A sender that matches no contact, or has no WhatsApp name, is shown by jid. On outgoing rows Sending Party reads Self and Sending Party JID is blank. With no wa.db the query cannot run and no messages are reported; the run log says so.",
         "paths": ('*/com.whatsapp/databases/msgstore.db*', '*/com.whatsapp/databases/wa.db*', '*/WhatsApp/Media/*', '*/com.whatsapp/files/Media/*'),
         "output_types": "standard",
         "artifact_icon": "message",
@@ -162,31 +167,33 @@ __artifacts_v2__ = {
         "category": "WhatsApp",
         "notes": (
             "Reads msgstore.db's chat table joined to jid, one row per chat that carries a subject "
-            "and whose jid_row_id names a jid row; all 27 chats with a subject on the tested images "
-            "had one. The chat table is read directly rather than through chat_view, because "
-            "chat_view has no jid_row_id column on 7 of the 12 tested images (pixel3_a11, "
-            "pixel3_a12, pixel7a_a14, russell_a14, russell_pixel6a_a13, sharon_a13, sharon_a14); on "
-            "the other 5, reading chat gives the same rows as reading chat_view. Chats keyed by a "
-            "newsletter jid (...@newsletter) also carry a subject and are not reported here; "
-            "WhatsApp - Channels reports them. Of the 27 chats with a subject on the tested images, "
-            "18 are newsletter chats (10 on kevin_pocox7_a15, 5 on russell_a14, 3 on "
+            "and whose jid_row_id names a jid row; all 27 chats with a subject on the tested "
+            "images had one. The chat table is read directly rather than through chat_view, "
+            "because chat_view has no jid_row_id column on 7 of the 12 tested images (pixel3_a11, "
+            "pixel3_a12, pixel7a_a14, russell_a14, russell_pixel6a_a13, sharon_a13, sharon_a14); "
+            "on the other 5, reading chat gives the same rows as reading chat_view. Chats keyed by "
+            "a newsletter jid (...@newsletter) also carry a subject and are not reported here; "
+            "WhatsApp - Channels reports them. Of the 27 chats with a subject on the tested "
+            "images, 18 are newsletter chats (10 on kevin_pocox7_a15, 5 on russell_a14, 3 on "
             "samsungs20_a13) and the 9 reported are groups (...@g.us). Group Creation Timestamp is "
-            "chat.created_timestamp. Creator JID is wa.db's wa_group_admin_settings.creator_jid for "
-            "the chat's jid. Creator JID held a value on 4 of the 9 group rows and was blank for "
-            "all 5 groups on pixel7a_a14, russell_a14 and sharon_a14. It is also blank when wa.db "
-            "lacks the creator_jid column, as on pixel3_a11, or when no wa.db is found (exercised "
-            "on a constructed database only). Creator JID (via jid_map) is the jid that "
-            "msgstore.db's jid_map links to a Creator JID recorded as a LID jid (...@lid). Creator "
-            "JID (via jid_map) held a value on the 3 group rows whose Creator JID is a LID jid "
-            "(anne_a15, hc_pixel8pro_a16, hc_pixel8pro_a17), each a ...@s.whatsapp.net jid, and was "
-            "blank on the other 6. Creator JID (via jid_map) is also blank when msgstore.db has no "
-            "jid_map table (exercised on a constructed database only). Creator WA User Name and "
-            "Creator WA Number come from the wa.db wa_contacts row whose jid equals Creator JID "
-            "(via jid_map) when that holds a value, and Creator JID otherwise. Creator WA User Name "
-            "was blank on 8 of the 9 group rows, all but anne_a15, and Creator WA Number was blank "
-            "on all 9: the matching wa_contacts row stores a name and no number on anne_a15, and no "
-            "name or number on hc_pixel8pro_a16, hc_pixel8pro_a17 and sharon_a13. Group Picture is "
-            "the file in com.whatsapp/files/Avatars, in the same app container as the msgstore.db "
+            "chat.created_timestamp as stored. Whether it marks when the group was created or when "
+            "the chat was created on this device is not established here. Creator JID is wa.db's "
+            "wa_group_admin_settings.creator_jid for the chat's jid. Creator JID held a value on 4 "
+            "of the 9 group rows and was blank for all 5 groups on pixel7a_a14, russell_a14 and "
+            "sharon_a14. It is also blank when wa.db lacks the creator_jid column, as on "
+            "pixel3_a11, or when no wa.db is found (exercised on a constructed database only). "
+            "Creator JID (via jid_map) is the jid that msgstore.db's jid_map links to a Creator "
+            "JID recorded as a LID jid (...@lid). Creator JID (via jid_map) held a value on the 3 "
+            "group rows whose Creator JID is a LID jid (anne_a15, hc_pixel8pro_a16, "
+            "hc_pixel8pro_a17), each a ...@s.whatsapp.net jid, and was blank on the other 6. "
+            "Creator JID (via jid_map) is also blank when msgstore.db has no jid_map table "
+            "(exercised on a constructed database only). Creator WA User Name and Creator WA "
+            "Number come from the wa.db wa_contacts row whose jid equals Creator JID (via jid_map) "
+            "when that holds a value, and Creator JID otherwise. Creator WA User Name was blank on "
+            "8 of the 9 group rows, all but anne_a15, and Creator WA Number was blank on all 9: "
+            "the matching wa_contacts row stores a name and no number on anne_a15, and no name or "
+            "number on hc_pixel8pro_a16, hc_pixel8pro_a17 and sharon_a13. Group Picture is the "
+            "file in com.whatsapp/files/Avatars, in the same app container as the msgstore.db "
             "read, whose name is the group's jid followed by .j. Group Picture was blank on 7 of "
             "the 9 group rows and held a value on 2 (sharon_a13 and sharon_a14), both JPEG images. "
             "The file name is the only link between the file and the group; when the file was "
@@ -250,7 +257,7 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-27",
         "requirements": "none",
         "category": "WhatsApp",
-        "notes": "Every message in a channel (newsletter) chat in msgstore.db. Channel Name comes from the newsletter table, falling back to the chat subject and then the jid. On the three tested images holding channel messages (kevin_pocox7_a15, russell_a14, samsungs20_a13; 5,217 rows), sender_jid_row_id was 0 on every message, so msgstore.db records no author and the channel is shown as the sender. Message Direction is from_me as stored: the 36 Outgoing rows on those images were all system messages (message_type 7, message_system action_type 132 or 134), two per channel, carrying the channel chat's created timestamp; what they record was not established. Message Type values the module does not name are reported as stored. Server Message ID is newsletter_message.server_message_id and is blank on the 106 rows with no newsletter_message row; newsletter_message rows with no message row (one on each of the three images) are not reported. Reaction From Me is newsletter_message.reaction_from_me and held no value on any tested image. Of the 2,276 channel messages with a message_media row, 29 recorded a local file path, all on kevin_pocox7_a15, and all 29 render in Media; the others record no local file. Media and Local Path To Media held no value on any row of russell_a14 or samsungs20_a13. Reaction totals from other followers (newsletter_message_reaction) and the channel message search index (the message_newsletter_fts tables) are not reported. Only the first msgstore.db matched is read, as in the module's other artifacts.",
+        "notes": "Every message in a channel (newsletter) chat in msgstore.db. Channel Name comes from the newsletter table, falling back to the chat subject and then the jid. On the three tested images holding channel messages (kevin_pocox7_a15, russell_a14, samsungs20_a13; 5,217 rows), sender_jid_row_id was 0 on every message, so msgstore.db records no author and the channel is shown as the sender. Message Direction shows Incoming where from_me is 0 and Outgoing where it is 1; the conversation view shows Outgoing rows under the label Local User, which does not establish that the account posted them. The 36 Outgoing rows on those images were all system messages (message_type 7, message_system action_type 132 or 134), two per channel, carrying the channel chat's created timestamp; what they record was not established. Message Type shows this module's label for message_type 0 (Text), 1 (Picture), 2 (Audio), 3 (Video), 5 (Static Location), 7 (System Message), 9 (Document) and 16 (Live Location); no source for the labels is cited here, and other values are reported as stored. Server Message ID is newsletter_message.server_message_id and is blank on the 106 rows with no newsletter_message row; newsletter_message rows with no message row (one on each of the three images) are not reported. Reaction From Me is newsletter_message.reaction_from_me and held no value on any tested image. Of the 2,276 channel messages with a message_media row, 29 recorded a local file path, all on kevin_pocox7_a15, and all 29 render in Media; the others record no local file. Media and Local Path To Media held no value on any row of russell_a14 or samsungs20_a13. Reaction totals from other followers (newsletter_message_reaction) and the channel message search index (the message_newsletter_fts tables) are not reported. Only the first msgstore.db matched is read, as in the module's other artifacts.",
         "paths": ('*/com.whatsapp/databases/msgstore.db*', '*/WhatsApp/Media/*', '*/com.whatsapp/files/Media/*'),
         "output_types": "standard",
         "artifact_icon": "message",
@@ -283,13 +290,17 @@ __artifacts_v2__ = {
     },
     "get_whatsapp_user_profile": {
         "name": "WhatsApp - User Profile",
-        "description": "WhatsApp local user profile (shared_prefs xml)",
+        "description": "Values of five keys in WhatsApp's shared_prefs XML files",
         "author": "@abrignoni",
         "creation_date": "2021-03-11",
         "last_update_date": "2021-03-11",
         "requirements": "none",
         "category": "WhatsApp",
-        "notes": "",
+        "notes": "One row. Name is the push_name key, User Status my_current_status, Country Code "
+                 "cc, Mobile Number ph and Version version, each as stored in "
+                 "com.whatsapp_preferences_light.xml or startup_prefs.xml. The first non-empty "
+                 "value found for each key across the matched files is used, so where more than "
+                 "one copy of the app is present the row can combine values from different copies.",
         "paths": ('*/com.whatsapp/shared_prefs/com.whatsapp_preferences_light.xml',
                   '*/com.whatsapp/shared_prefs/startup_prefs.xml'),
         "output_types": "standard",

@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_galleryTrash": {
         "name": "Gallery Trash",
-        "description": "Deleted media held in the Samsung Gallery trash (local.db trash table)",
+        "description": "Rows of the trash table in Samsung Gallery's local.db. Timestamp is the __dateTaken value in the row's __restoreExtra JSON and Date Deleted is __deleteTime, both read as Unix milliseconds. No tested image held a row, so the output is not verified on real data.",
         "author": "@abrignoni",
         "creation_date": "2023-04-25",
         "last_update_date": "2023-04-25",

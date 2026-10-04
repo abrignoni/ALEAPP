@@ -9,9 +9,15 @@ __artifacts_v2__ = {
         "requirements": "",
         "category": "Android Notification History",
         "notes": "Coverage is limited to the protobuf files still present under "
-                 "notification_history/history at the time of extraction, which is a rolling "
-                 "window rather than the device's full notification history. How long that "
-                 "window is was not established from the data.",
+                 "notification_history/history at the time of extraction, which is not the "
+                 "device's full notification history. In AOSP at the android-14.0.0_r1 tag, "
+                 "NotificationHistoryDatabase.prune() deletes history files whose file name "
+                 "time is at or before a boundary HISTORY_RETENTION_DAYS (1) day back "
+                 "(https://android.googlesource.com/platform/frameworks/base/+/"
+                 "299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/services/core/java/com/android/server/"
+                 "notification/NotificationHistoryDatabase.java#56 "
+                 "and lines 229 to 256 of the same file). Other Android releases and vendor "
+                 "builds were not checked.",
         "paths": ('**/system_ce/*/notification_history/history/*',),
         "output_types": "standard",
         "artifact_icon": "bell",
@@ -23,13 +29,17 @@ __artifacts_v2__ = {
     },
     "get_notificationHistory_status": {
         "name": "Android Notification History - Status",
-        "description": 'Indicates whether the "Notification History" feature is enabled (settings_secure.xml).',
+        "description": 'Reports the notification_history_enabled value found in each user\'s '
+                       'settings_secure.xml.',
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2024-07-02",
         "last_update_date": "2024-07-02",
         "requirements": "",
         "category": "Android Notification History",
-        "notes": "",
+        "notes": "A stored 1 is shown as Enabled, 0 as Disabled and any other "
+                 "value as Unknown. No row is produced when the "
+                 "notification_history_enabled key is absent, which is not by "
+                 "itself evidence the feature was off.",
         "paths": ('**/system/users/*/settings_secure.xml',),
         "output_types": "standard",
         "artifact_icon": "toggle-right",
@@ -48,13 +58,23 @@ __artifacts_v2__ = {
     },
     "get_notificationHistory_snoozed": {
         "name": "Android Notification History - Snoozed",
-        "description": "Notifications recorded as snoozed in notification_policy.xml.",
+        "description": "The notification elements under snoozed-notifications in "
+                       "notification_policy.xml, with the stored key and time.",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2024-07-02",
         "last_update_date": "2026-08-01",
         "requirements": "",
         "category": "Android Notification History",
-        "notes": "",
+        "notes": "Reminder Time is the element's time attribute read as Unix "
+                 "milliseconds and Snoozed Notification is its key attribute. "
+                 "In AOSP at the android-14.0.0_r1 tag, SnoozeHelper.writeXml "
+                 "writes the time attribute only when the value is not before "
+                 "the time of writing, and also writes context elements "
+                 "there, which this artifact does not report "
+                 "(https://android.googlesource.com/platform/frameworks/base/+/"
+                 "299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/services/core/java/com/android/server/"
+                 "notification/SnoozeHelper.java#464). "
+                 "Other Android releases and vendor builds were not checked.",
         "paths": ('**/system/notification_policy.xml',),
         "output_types": "standard",
         "artifact_icon": "clock",

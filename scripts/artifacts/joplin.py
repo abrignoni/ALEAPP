@@ -17,8 +17,10 @@ __artifacts_v2__ = {
                  "Due and To-Do Completed times are populated when present. Deleted is the "
                  "deleted_time column, Unix milliseconds; a row carrying a value there is still "
                  "present in the table. Markup is decoded from the app's own MarkupLanguage "
-                 "values, 1 Markdown and 2 HTML (packages/renderer/types.ts at laurent22/joplin "
-                 "3f23202e); any other value is reported as stored. A note whose Encryption "
+                 "values, 1 Markdown, 2 HTML and 3 Any (packages/renderer/types.ts lines 3 to 7 "
+                 "at laurent22/joplin 3f23202ec1d7111eb9612e592ae1338735dba781); any other "
+                 "non-zero value is reported as stored and 0 or empty is blank. A note whose "
+                 "Encryption "
                  "Applied flag is set has a body that is not readable here; the Body column "
                  "reports that it is encrypted for those rows. Source URL and Author are "
                  "reported where the note carries them. The revisions table is not "
@@ -32,7 +34,7 @@ __artifacts_v2__ = {
     },
     "joplin_notebooks": {
         "name": "Joplin - Notebooks",
-        "description": "Parses the notebooks (folders) created in the Joplin Android client.",
+        "description": "Parses the notebooks (folders) stored by the Joplin Android client.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
@@ -59,11 +61,13 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-30",
         "requirements": "none",
         "category": "Joplin",
-        "notes": "One row per resource in the resources table of databases/joplin.sqlite. A resource is "
-                 "a file attached to a note. Each row gives the resource's title, original file "
-                 "name, mime type, file extension and size, and its created and updated times as "
-                 "UTC. OCR Text is the ocr_text column, reported as stored. The attachment bytes "
-                 "are not surfaced here. Encryption Applied is reported as stored.",
+        "notes": "One row per resource in the resources table of databases/joplin.sqlite. A "
+                 "resource row describes a file the app stores; this artifact does not link it to "
+                 "a note. Each row gives the resource's title, original file name, mime type, "
+                 "file extension and size, and its created and updated times as UTC. OCR Text is "
+                 "the ocr_text column, reported as stored. The attachment bytes are not surfaced "
+                 "here. Encryption Applied shows Yes when encryption_applied is 1 and is blank "
+                 "otherwise.",
         "paths": ('*/net.cozic.joplin/databases/joplin.sqlite*',),
         "output_types": "standard",
         "artifact_icon": "paperclip",

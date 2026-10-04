@@ -2,8 +2,10 @@ __artifacts_v2__ = {
     "opera_tabs": {
         "name": "Opera Browser - Tabs",
         "description": "Browser tabs recorded in Opera's session_db tab-state store, "
-                       "open or closed, with each tab's position in the tab bar and "
-                       "the page it was showing. session_db is a separate store from the "
+                       "each marked Closed when it has a recently_closed_tab row and "
+                       "Open otherwise, with its tab_order index and the navigation "
+                       "entry the tab record names as current. session_db is a separate "
+                       "store from the "
                        "Chromium History database.",
         "author": "@Gear-I, Claude", 
         "creation_date": "2026-08-16",
@@ -25,8 +27,8 @@ __artifacts_v2__ = {
                  "the current page's URL, exactly, against Opera's own History database's "
                  "urls.last_visit_time, and is left blank when no exact match exists (this "
                  "happens for Opera's internal 'operaui://startpage' and, on the device this was "
-                 "validated against, for two address-bar searches whose visit did not leave a "
-                 "matching literal URL in History either). Because it is the URL's *last* visit "
+                 "validated against, for two opera-internal://search entries whose URL had no "
+                 "exact match in History). Because it is the URL's *last* visit "
                  "and not necessarily the visit this specific tab made, a URL revisited after "
                  "this tab session would show a later time than when this tab actually had it "
                  "open. Two other Opera-only stores were inspected and left out of this release: "
@@ -36,10 +38,10 @@ __artifacts_v2__ = {
                  "built-in search engines on the device this was validated against. The "
                  "databases-off-the-record folder was empty on the device this was validated "
                  "against, "
-                 "so no parser for it is included here. If an extraction contains more "
-                 "than one Opera profile, only the first session_db/History pair found "
-                 "is used; a device with multiple profiles is a known, untested edge "
-                 "case rather than one confirmed to work.",
+                 "so no parser for it is included here. Every session_db found is read and its "
+                 "URLs are matched only against the History file in the same app_opera folder. "
+                 "Rows from more than one profile or Android user are reported together and "
+                 "carry no column naming their source; that case was not tested.",
         "paths": ('*/app_opera/session_db*', '*/app_opera/History*'),
         "output_types": "standard",
         "artifact_icon": "layout",
@@ -51,9 +53,10 @@ __artifacts_v2__ = {
         "name": "Opera Browser - Tab Navigation History",
         "description": "The back/forward navigation stack recorded inside each Opera "
                        "tab, from session_db's navigation_entry table: the pages the "
-                       "tab moved to, in order, with the page currently on screen "
-                       "flagged. Address-bar searches are decoded from the "
-                       "'opera-internal://search' URL scheme into the search text the URL "
+                       "tab moved to, in order, with the entry the tab record names as "
+                       "current flagged. For entries whose virtual_url begins with "
+                       "'opera-internal://search', Search Query is the display_string "
+                       "parameter the URL "
                        "carries.",
         "author": "@Gear-I, Claude", 
         "creation_date": "2026-08-16",
@@ -72,15 +75,14 @@ __artifacts_v2__ = {
                  "exactly, against Opera's own History database's urls.last_visit_time, "
                  "and is left blank when no exact match exists, which happens for the "
                  "internal 'operaui://startpage' entry tab starts from and, on "
-                 "the device this was validated against, for two address-bar searches "
-                 "whose visit did not leave a matching literal URL in History either. "
+                 "the device this was validated against, for two opera-internal://search entries "
+                 "whose URL had no exact match in History. "
                  "Because it is the URL's *last* visit rather than necessarily the "
                  "visit this entry represents, a URL revisited later than this "
-                 "navigation would show that later time instead. If an extraction "
-                 "contains more than one Opera profile, only the first "
-                 "session_db/History pair found is used; a device with multiple "
-                 "profiles is a known, untested edge case rather than one confirmed "
-                 "to work.",
+                 "navigation would show that later time instead. Every session_db found is read "
+                 "and its URLs are matched only against the History file in the same app_opera "
+                 "folder. Rows from more than one profile or Android user are reported together "
+                 "and carry no column naming their source; that case was not tested.",
         "paths": ('*/app_opera/session_db*', '*/app_opera/History*'),
           "output_types": "standard",
         "artifact_icon": "compass",

@@ -8,19 +8,19 @@ device's local wall clock, with no time zone recorded.
 __artifacts_v2__ = {
     "samsungImsSubscriber": {
         "name": "Samsung IMS Subscriber Identity",
-        "description": "Parses the IMS public user identity Samsung stores in com.sec.imsservice, mapping each SIM's IMSI to the SIP or TEL identity it registered.",
+        "description": "Parses the IMS public user identity Samsung stores in com.sec.imsservice, one row per saved entry, with the key (an IMSI on the tested images) and the SIP or TEL URI stored against it.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
         "requirements": "none",
         "category": "Samsung IMS Service",
-        "notes": "Read from com.sec.imsservice/shared_prefs/saved_impu.xml, which maps a SIM's IMSI to the IMS "
-                 "public user identity the device registered. IMSI (as stored) is the map key, IMPU (as stored) is "
+        "notes": "Read from com.sec.imsservice/shared_prefs/saved_impu.xml, which holds saved entries, each "
+                 "a key and an IMS public user identity. IMSI (as stored) is the map key, IMPU (as stored) is "
                  "the SIP or TEL URI, IMPU User Part is the URI's user portion (a phone number on the tested "
                  "images) and IMPU Domain is the host. IMPU Domain is blank for a tel: URI, which one tested image "
                  "stored with no host. On the 13 tested Android extractions 9 held this file, 10 identities in "
-                 "all, one image carrying two. This file records no time. The identity is the one the SIM "
-                 "presented to the carrier's IMS network as stored.",
+                 "all, one image carrying two. This file records no time. What Samsung uses the saved "
+                 "value for was not sourced; it is reported as stored.",
         "paths": ('*/com.sec.imsservice/shared_prefs/saved_impu.xml',),
         "output_types": "standard",
         "artifact_icon": "user",
@@ -49,9 +49,11 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Samsung IMS Service",
         "notes": "Read from com.sec.imsservice/files/RegiMgr.log, Samsung's IMS registration log. Each line is "
-                 "'MM/DD/YYYY HH:MM:SS.mmm   message' in the device's local wall clock with no time zone recorded, "
-                 "so Timestamp holds that local time stored verbatim and must not be read as UTC, and Time (as "
-                 "stored) keeps the original text. One row per line. SIM Slot, Profile (as stored) and State (as "
+                 "'MM/DD/YYYY HH:MM:SS.mmm   message' with no time zone recorded. That the clock is device local time is not "
+                 "measured or sourced in this field. The module stamps the reading as UTC so the Timestamp column "
+                 "is typed as a datetime; it is the stored reading and not a UTC instant, and Time (as "
+                 "stored) keeps the original text. One row per line that begins with a date and time; a line "
+                 "with no leading timestamp is not reported. SIM Slot, Profile (as stored) and State (as "
                  "stored) come from the slot[N] and [Profile|State] tokens where a line carries them and are blank "
                  "otherwise; on one image whose log held only 22 early lines all three were blank. On the 13 "
                  "tested extractions 9 held this log, 15,049 rows, with SIM Slot on 14,705 and Profile on 13,999. "
@@ -87,13 +89,13 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Samsung IMS Service",
         "notes": "Read from com.sec.imsservice/files/PdnController.log, Samsung's IMS packet data network log, "
-                 "with the same local no-time-zone timestamps as the registration log. Interface (as stored) is "
+                 "with the same no-time-zone timestamps as the registration log. Interface (as stored) is "
                  "the rmnet name from an onPdnConnected or onLinkPropertiesChanged line; Link Addresses (as "
                  "stored) and P-CSCF Addresses (as stored) are the addresses from a full onLinkPropertiesChanged "
                  "block, which some images do not log, leaving those columns blank; SIM Slot comes from slot[N] "
                  "where present. On the 13 tested extractions 9 held this log, 1,574 rows, with Interface on 892 "
-                 "and Link Addresses and P-CSCF Addresses on 786. Link Addresses are the device's own IMS "
-                 "addresses and P-CSCF Addresses the carrier's SIP proxies, both as the carrier assigned them.",
+                 "and Link Addresses and P-CSCF Addresses on 786. Link Addresses and P-CSCF Addresses are the "
+                 "lists logged after LinkAddresses: and PcscfAddresses:, as stored.",
         "paths": ('*/com.sec.imsservice/files/PdnController.log',),
         "output_types": "standard",
         "artifact_icon": "wifi",
@@ -122,13 +124,12 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Samsung IMS Service",
         "notes": "Read from com.sec.imsservice/files/SimManager_slot*.log, Samsung's IMS SIM manager log, with the "
-                 "same local no-time-zone timestamps. MNO Name (as stored) and MVNO Name (as stored) are the "
-                 "operator and virtual-operator names Samsung logged; MVNO Name is blank unless the SIM is an "
-                 "MVNO, so it is empty on most rows, present on 37 of 3,248. SIM Slot comes from slot[N]. The IMSI "
+                 "same no-time-zone timestamps as the registration log. MNO Name (as stored) and MVNO Name (as stored) are the "
+                 "operator and virtual-operator names Samsung logged. MVNO Name is the text after mvnoname= "
+                 "where a line carries one; it was present on 37 of 3,248 rows. SIM Slot comes from slot[N]. The IMSI "
                  "in this log is masked with asterisks, so it is not surfaced here; the SIM's real IMSI is in the "
                  "Samsung IMS Subscriber Identity artifact. On the 13 tested extractions 8 held this log, 3,248 "
-                 "rows; MNO Name values included TMobile_US, TPG_SG, Telefonica_GB, ATT_US and VZW_US, and a SIM "
-                 "change shows as MNO Name changing between rows.",
+                 "rows; MNO Name values included TMobile_US, TPG_SG, Telefonica_GB, ATT_US and VZW_US.",
         "paths": ('*/com.sec.imsservice/files/SimManager_slot*.log',),
         "output_types": "standard",
         "artifact_icon": "smartphone",
@@ -157,12 +158,15 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Samsung IMS Service",
         "notes": "Collects the '> Created (pid: N, binary: <firmware>)' line Samsung writes at the head of each "
-                 "com.sec.imsservice log, deduplicated to one row per process id (the earliest time that pid was "
-                 "seen), with the same local no-time-zone timestamp. Service Start Time is when the IMS service "
-                 "process started and Firmware Build (as stored) is the build string it recorded. Firmware Build "
-                 "is one value on a device that took no update in the log window and several on a device that did, "
-                 "so this doubles as a firmware update timeline; one tested image recorded ten builds. On the 13 "
-                 "tested extractions 9 held these lines, 251 process starts in all.",
+                 "com.sec.imsservice log, with the same no-time-zone timestamp as the registration log, "
+                 "deduplicated to one row per process id (the earliest time that pid was "
+                 "seen), so two starts that were given the same process id at different times appear as one row "
+                 "and the later one is not reported. Service Start "
+                 "Time is the time on the earliest '> Created' line carrying that process id and Firmware Build "
+                 "(as stored) is the text after binary: on that line. The rows of one device can carry one build "
+                 "string or several, so a change of build string between rows is consistent with a firmware "
+                 "change in that window; this was not checked against an update record. One tested image "
+                 "recorded ten builds. On the 13 tested extractions 9 held these lines, 251 rows in all.",
         "paths": ('*/com.sec.imsservice/files/*.log',),
         "output_types": "standard",
         "artifact_icon": "refresh-cw",

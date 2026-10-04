@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "ccleaner_app_storage": {
         "name": "CCleaner App Storage and Data Usage",
-        "description": "Per-app storage size and data usage recorded by a CCleaner scan",
+        "description": "Per-app storage size and data usage stored by CCleaner",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-06",
@@ -10,19 +10,21 @@ __artifacts_v2__ = {
         "sample_data": {
             "emu_a15_oss_v17": "CCleaner 26.12.2 | 95 rows",
         },
-        "notes": "One row per package, built from com.piriform.ccleaner/databases/AppDb.db by "
+        "notes": "One row per package name present in both tables (a package held by only one of "
+                 "them is not reported), built from com.piriform.ccleaner/databases/AppDb.db by "
                  "joining TABLE AppDataUsageItem to AppGrowingSizeItem on packageName. On the "
                  "tested image each table held 95 rows over 95 distinct packages with no package "
                  "repeated in either, and the two package sets were identical, so the join "
                  "returned 95 rows and dropped nothing. The two tables are NOT joined on their "
                  "date columns: each row carries its own write time and the values differ by "
-                 "milliseconds, so a join on date matched only 42 of 95. Data Usage (bytes) and "
-                 "App Size (bytes) are reported as stored and the app's unit for them was not "
-                 "sourced. App Name is looked up from the CachedApp table in the separate "
-                 "databases/cleaner store, which held 78 packages covering 77 of the 95, so the "
-                 "column is blank on the remaining 18. Recorded and Size Recorded are Unix "
-                 "milliseconds rendered as UTC. A row is evidence the scan measured that package "
-                 "at that moment, not evidence of activity by a person.",
+                 "milliseconds, so a join on date matched only 42 of 95. Data Usage and App Size "
+                 "are the dataUsage and appSize columns as stored. The headers say bytes, but the "
+                 "app's unit for them was not sourced. App Name is looked up from the CachedApp "
+                 "table in the separate databases/cleaner store, which held 78 packages covering "
+                 "77 of the 95, so the column is blank on the remaining 18. Recorded and Size "
+                 "Recorded are Unix milliseconds rendered as UTC. A row shows the app stored "
+                 "those values for that package with that date; what triggers the write was not "
+                 "established. It is not evidence of activity by a person.",
         "paths": ('*/com.piriform.ccleaner/databases/AppDb.db*',
                   '*/com.piriform.ccleaner/databases/cleaner*'),
         "output_types": "standard",
@@ -40,11 +42,12 @@ __artifacts_v2__ = {
             "emu_a15_oss_v17": "CCleaner 26.12.2 | 17 rows",
         },
         "notes": "One row per row of MediaDbItem in "
-                 "com.piriform.ccleaner/databases/PhotoAnalyzerDb.db, which is the analyzer's own "
-                 "index of images it found on shared storage. Path is the app's recorded absolute "
-                 "path on the device. Photo Date is Unix milliseconds rendered as UTC; the column "
-                 "stores -1 when the app recorded no date and that is reported as blank, which was "
-                 "the case on 11 of the 17 rows of the tested image. Faces Detected is the app's "
+                 "com.piriform.ccleaner/databases/PhotoAnalyzerDb.db, a table of image paths with "
+                 "dimensions and scores. Path is the app's recorded absolute path on the device. "
+                 "Photo Date is Unix milliseconds rendered as UTC. This parser reports -1, 0 and "
+                 "any other value at or below zero as blank, which was the case on 11 of the 17 "
+                 "rows of the tested image; the column held -1 there, and what -1 means to the app "
+                 "was not sourced. Faces Detected is the app's "
                  "own facesCount and held 0 on every row of that image, so the column is populated "
                  "but its non-zero behaviour was not exercised here. Dark Score, Blurry Score and "
                  "Quality Score are the app's own scores, reported as stored with no scale "
@@ -71,8 +74,10 @@ __artifacts_v2__ = {
                  "mapping a media id to a path, and those ids are MediaDbItem ids: every id in "
                  "both sets of the tested image resolved to a row in MediaDbItem, so the link "
                  "between this artifact and the photo analysis artifact is one the store recorded "
-                 "rather than a match on name or size. Set Detected is Unix milliseconds rendered "
-                 "as UTC. The tested image held 2 sets of 3 and 6 images. Grouping is the app's "
+                 "rather than a match on name or size. Set Detected is the time column of "
+                 "DuplicatesSet, read as Unix milliseconds and rendered as UTC; what the app marks "
+                 "with it was not sourced. The tested image held 2 sets of 3 and 6 images. "
+                 "Grouping is the app's "
                  "own judgement and the basis for it was not sourced, so a row records that "
                  "CCleaner considered the images duplicates, not that they are byte-identical.",
         "paths": ('*/com.piriform.ccleaner/databases/PhotoAnalyzerDb.db*',),
@@ -92,9 +97,10 @@ __artifacts_v2__ = {
         },
         "notes": "One row per row of VideoOptimizerMediaItem in "
                  "com.piriform.ccleaner/databases/VideoOptimizerDb.db. Path is the app's recorded "
-                 "absolute path. Last Modified and Analyzed are Unix milliseconds rendered as UTC; "
-                 "Last Modified is the file's own time as the app read it and Analyzed is when the "
-                 "app inspected it. Duration, dimensions, rotation, frame rate, codecs and "
+                 "absolute path. Last Modified and Analyzed are Unix milliseconds rendered as UTC. "
+                 "Last Modified is the lastModifiedTime column and Analyzed is the analyzedAt "
+                 "column; what the app marks with each was not sourced. Duration, dimensions, "
+                 "rotation, frame rate, codecs and "
                  "bitrates are reported as stored. Has DRM and Is HDR are the app's own flags. The "
                  "tested image held 3 rows, all of them files placed on the device deliberately, "
                  "and the recorded duration, dimensions and codec matched those files. A row is "
@@ -105,7 +111,7 @@ __artifacts_v2__ = {
     },
     "ccleaner_cleaning_history": {
         "name": "CCleaner Cleaning History",
-        "description": "Cleaning operations CCleaner recorded, with the bytes each reported removing",
+        "description": "Rows of CCleaner's CleanedItem table, with the cleaning type and the byte count each row stores",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-06",
@@ -123,8 +129,8 @@ __artifacts_v2__ = {
                  "with Category Id and Group Item empty, so a single cleaning run can write more "
                  "than one row and not every row is categorised. Bytes Cleaned is the app's own "
                  "cleanedValueInBytes. A row records that the app reported removing that many "
-                 "bytes; it does not identify which files were removed, and the store retains no "
-                 "list of them.",
+                 "bytes; it does not identify which files were removed, and no list of removed "
+                 "files was found in the tables of the tested store.",
         "paths": ('*/com.piriform.ccleaner/databases/cleaner*',),
         "output_types": "standard",
         "artifact_icon": "trash-2",

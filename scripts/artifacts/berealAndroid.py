@@ -9,13 +9,15 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "BeReal",
         "notes": "The BeReal Room databases (bereal.core.database.db and the others) are "
-                 "encrypted and are not read by this artifact; no key for them was found in the "
-                 "extraction. "
-                 "The media itself survives in the app caches. The OkHttp network cache stores a "
-                 "'.0' metadata file next to each '.1' body; the source URL is the first line and "
-                 "the response date is a header, and both are reported here. The Coil image caches "
-                 "(memories, friend timeline, profile pictures) keep only response headers, so "
-                 "those rows carry the cache date but no URL. Files are matched to their metadata "
+                 "not read by this artifact. The media itself survives in the app caches. The "
+                 "OkHttp network cache stores a '.0' metadata file next to each '.1' body; the "
+                 "source URL is the first line and the response date is a header, and both are "
+                 "reported here. Rows from the memories, friend timeline and profile picture "
+                 "caches carry a Source URL only when the first line of the .0 file begins with "
+                 "http, and a Cached Response Date only when the file holds a date header. Coil 2 "
+                 "writes its metadata file with response headers and no URL (coil-kt/coil 2.7.0, "
+                 "coil/network/CacheResponse.kt, writeTo); the Coil version inside the app is not "
+                 "established. Files are matched to their metadata "
                  "by name, and content is checked in by signature rather than by any extension.",
         "paths": ('*/com.bereal.ft/cache/network/*',
                   '*/com.bereal.ft/cache/memories_cache/*',
@@ -33,17 +35,22 @@ __artifacts_v2__ = {
     },
     "bereal_friends": {
         "name": "BeReal Friends",
-        "description": "Friends recovered from cached responses of the relationships and friend "
-                       "recommendation endpoints, with the user name, full name and status BeReal "
-                       "returned",
+        "description": "Users listed in cached responses whose URL contains relationships, "
+                       "recommendations or friend. The Status column holds the status the response "
+                       "stored and the Source Endpoint column holds the URL. On hc_pixel8pro_a17 "
+                       "the 1 reported row came from the /api/relationships/friends endpoint with "
+                       "Status accepted. No tested image held a row from a recommendations URL, so "
+                       "whether such rows are friends is not established",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
         "category": "BeReal",
-        "notes": "Read from the JSON bodies in the OkHttp network cache, not from the encrypted "
-                 "databases, so the list reflects what had been fetched and cached rather than the "
-                 "full friend list. The hashed phone number is reported as BeReal stored it.",
+        "notes": "Read from the JSON bodies in the OkHttp network cache, not from the app's "
+                 "databases, so a row is a user a cached response listed, not proof of a "
+                 "friendship; the Status column shows the value the response stored, and the "
+                 "Source Endpoint column shows which response it came from. The hashed phone "
+                 "number is reported as BeReal stored it.",
         "paths": ('*/com.bereal.ft/cache/network/*',),
         "output_types": "standard",
         "artifact_icon": "users",
@@ -61,7 +68,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-06",
         "requirements": "none",
         "category": "BeReal",
-        "notes": "Lists every cached response so an examiner can see which endpoints were called "
+        "notes": "Lists the cached responses whose body is uncompressed JSON and whose metadata "
+                 "file names a URL, so an examiner can see which of those endpoints have a cached "
+                 "response "
                  "and open the JSON bodies that this artifact does not expand, for example the "
                  "moment of the day, block lists and friend requests.",
         "paths": ('*/com.bereal.ft/cache/network/*',),

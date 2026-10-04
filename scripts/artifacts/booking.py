@@ -20,7 +20,8 @@ __artifacts_v2__ = {
                  "hotelTimezone, so the calendar date at the property is carried in its own column "
                  "and the datetime columns hold the UTC reading of the stored value. The "
                  "accommodationDetails shape instead stores ISO 8601 strings carrying an offset, and "
-                 "those are converted from that offset. Status, travel purpose and accommodation "
+                 "those are converted from that offset; a string with no offset is read as UTC. "
+                 "Status, travel purpose and accommodation "
                  "type values are reported as stored. Field mapping was done against private samples "
                  "provided by Mattia; no sample data is recorded for them.",
         "paths": ('*/com.booking/databases/post_booking_reservation_cache*',),
@@ -82,8 +83,9 @@ __artifacts_v2__ = {
                  "the same pref3 prefixed profile keys. On the tested samples remote_profile.xml "
                  "held a subset of the keys in mybooking.xml, and the Source File column says which "
                  "file each row came from. Title, gender, smoking preference and travel purpose are "
-                 "reported as stored. The google state value is the app's own JSON record of a "
-                 "linked Google account and its identifier member is reported as stored. Field "
+                 "reported as stored. The pref3googlestate value is JSON; what it records is not "
+                 "established here, and its id and hasBookingPassword members are reported as "
+                 "stored. Field "
                  "mapping was done against private samples provided by Mattia; no sample data is "
                  "recorded for them.",
         "paths": (
@@ -106,8 +108,9 @@ __artifacts_v2__ = {
                  "the .1 file holds the body. Bodies for this endpoint were gzip compressed on the "
                  "tested samples and are decompressed before parsing. The request time comes from "
                  "the OkHttp-Sent-Millis header OkHttp writes into the cached entry, in Unix "
-                 "milliseconds. The response carries a cc_details list for stored payment cards; it "
-                 "was empty on both tested samples, so no card data is reported from them. Field "
+                 "milliseconds. The response carries a cc_details list, whose length is reported "
+                 "under Stored Card Count; it was empty on both tested samples, so what its entries "
+                 "hold was not measured. Field "
                  "mapping was done against private samples provided by Mattia; no sample data is "
                  "recorded for them.",
         "paths": ('*/com.booking/cache/okhttp/*',),
@@ -187,9 +190,14 @@ __artifacts_v2__ = {
                  "app's OkHttp response cache, where the url request parameter holds the link "
                  "submitted and the body holds what it resolved to; those rows carry the request "
                  "time from the OkHttp-Sent-Millis header in Unix milliseconds. Stored links come "
-                 "from original_link_storage.xml, whose keys are named for the screen each link was "
-                 "kept against and which records no timestamp. Link actions and destination types "
-                 "are reported as stored. Field mapping was done against private samples provided "
+                 "from original_link_storage.xml, whose keys begin original_link- followed by a "
+                 "name that is reported as stored; what that name refers to is not established "
+                 "here. That file records no timestamp. For Resolved link rows the Destination Type "
+                 "and Label columns hold the dest_type and label members of the response. For "
+                 "Stored link rows the Destination Type column holds the part of the preference key "
+                 "after original_link-, or the module's text (no screen) when nothing follows it, and "
+                 "the Label column holds the link_action preference value. The response members and "
+                 "preference values are reported as stored. Field mapping was done against private samples provided "
                  "by Mattia; no sample data is recorded for them.",
         "paths": (
             '*/com.booking/cache/okhttp/*',
@@ -225,11 +233,13 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-18",
         "requirements": "none",
         "category": "Booking.com",
-        "notes": "Read from com.booking_preferences.xml and startup_data.xml. first_use and the "
-                 "deep link attribution expiry are Unix milliseconds. The used key is a counter "
-                 "rather than a time and is reported as stored. The client IP address and client "
-                 "user agent are the values the app recorded for itself, so they describe what the "
-                 "service was told and are reported as stored. PRICE_ALERT_SCREEN_LAST_SEEN is an "
+        "notes": "Read from com.booking_preferences.xml and startup_data.xml. first_use and "
+                 "deeplinking_aid_exp_time are read as Unix milliseconds; the basis for that unit "
+                 "is not recorded here, and the column name for the second is taken from the key "
+                 "name. The used key is reported as stored; what it counts is not established here. "
+                 "The client_ip_address and client_user_agent values are reported as stored; "
+                 "whether the app or the service supplied them, and when, is not established here. "
+                 "PRICE_ALERT_SCREEN_LAST_SEEN is an "
                  "ISO 8601 string and held the same value on all four tested samples, which is a "
                  "date preceding the app versions they carry, so it is reported as stored rather "
                  "than read as a time the screen was opened. Field mapping was done against private "
@@ -251,7 +261,10 @@ __artifacts_v2__ = {
         "category": "Booking.com",
         "notes": "One row for each entry in the app's two OkHttp response caches, okhttp and "
                  "saba-http-cache. The request and response times come from the OkHttp-Sent-Millis "
-                 "and OkHttp-Received-Millis headers OkHttp writes into the cached entry, in Unix "
+                 "and OkHttp-Received-Millis headers OkHttp writes into the cached entry "
+                 "(square/okhttp parent-4.12.0, okhttp3/Cache.kt, Entry.writeTo lines 582 to 589, "
+                 "header names at lines 665 to 668; the OkHttp version inside the app is not "
+                 "established), in Unix "
                  "milliseconds, and the served date is the response's own date header reported as "
                  "stored. The device identifier, app version and language are read from the request "
                  "URL's own parameters. This artifact reports the entries and their metadata; the "

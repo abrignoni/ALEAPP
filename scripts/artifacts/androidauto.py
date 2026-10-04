@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "extract_android_auto": {
         "name": "Android Auto - Connected Cars",
-        "description": "Android Auto connected cars",
+        "description": "Rows of the allowedcars table in Android Auto's carservicedata.db: car and head unit details with the stored connectiontime value",
         "author": "its5Q",
         "creation_date": "2025-07-28",
         "last_update_date": "2026-05-28",

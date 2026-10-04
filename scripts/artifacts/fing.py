@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "fing_app_state": {
         "name": "Fing App State and Last Network",
-        "description": "What the Fing app recorded about itself and the network it last scanned",
+        "description": "What the Fing app recorded about itself and the network recorded in its network.last file",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-06",
@@ -11,21 +11,23 @@ __artifacts_v2__ = {
             "emu_a15_oss_v16": "Fing 12.13.3 | 10 rows",
         },
         "notes": "One row per value read from the app's own preference files and from "
-                 "files/network.last. This artifact is deliberately narrow, and the reason is "
-                 "worth stating plainly: **on the tested device Fing wrote no list of the devices "
-                 "it discovered**. A scan found four and displayed them, and nothing about "
+                 "files/network.last. This artifact is narrow because "
+                 "on the tested device Fing wrote no list of the devices "
+                 "it discovered. A scan found four and displayed them, and nothing about "
                  "those four exists anywhere in the container afterwards. No account was signed "
                  "in, and whether signing in changes that was not tested, so the absence is "
                  "reported for the anonymous case only. The app's databases directory holds only Firebase "
-                 "stores, and the two large files in its cache, AndroidDeviceDB and EthVendorDB, "
-                 "are vendor and device catalogues and are not reported here as anything the "
-                 "device did. What does survive is this: Last Scan is uiprefs last_scan_date and "
+                 "stores. The two large files in its cache, AndroidDeviceDB and EthVendorDB, "
+                 "were not parsed, and what they hold is not established here. "
+                 "What does survive is this: Last Scan is uiprefs last_scan_date and "
                  "Discovery Count is its discovery_count, both written by the app itself. First "
-                 "Used, Last Used and App Version come from marketprefs. Privacy Agreed is that "
+                 "Used, Last Used, App Version and Number Of Runs come from marketprefs; Number Of "
+                 "Runs is the rate.numberofruns key as stored, and what it counts is not "
+                 "established. Privacy Agreed is that "
                  "file's privacy.agreed key, reported as stored. "
                  "All four times are Unix milliseconds and are reported as UTC. "
-                 "BSSID and Network Id come from files/network.last, a Java properties file the "
-                 "app writes for the network it last worked with; the BSSID identifies that "
+                 "BSSID and Network Id come from files/network.last, a Java properties file. What "
+                 "makes a network the one recorded there is not established; the BSSID identifies a "
                  "wireless network, and Current Wifi is the flag stored beside it. The colons in "
                  "the stored BSSID are backslash escaped by the properties writer and are "
                  "unescaped here. "

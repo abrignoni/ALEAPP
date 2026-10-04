@@ -1,13 +1,31 @@
 __artifacts_v2__ = {
     "get_sWipehist": {
         "name": "sWipehist",
-        "description": "Parses Samsung wipe and recovery events (timestamp, wipe events, reason, provider and reboot reason) from the recovery history files.",
+        "description": "Records in the Samsung recovery history files that carry a --wipe_data or "
+                       "--prompt_and_wipe_data argument and a reboot_reason line, with the record's "
+                       "timestamp, reason, reboot reason, locale and requested time.",
         "author": "@abrignoni",
         "creation_date": "2021-08-15",
         "last_update_date": "2021-08-15",
         "requirements": "none",
         "category": "Wipe & Setup",
-        "notes": "",
+        "notes": "A row is written only when a line starting reboot_reason is reached after a "
+                 "--wipe_data or --prompt_and_wipe_data line, so a record with neither argument "
+                 "gives no row. A record that ends with the 'reboot reason:' spelling gives no "
+                 "row, and the values read from it carry into the next record. Wipe reads Yes for "
+                 "either argument and Prompt & Wipe reads Yes for --prompt_and_wipe_data. AOSP "
+                 "documents --wipe_data as erasing user data and cache and --prompt_and_wipe_data "
+                 "as prompting that data is corrupt and erasing it with consent. A row shows the "
+                 "arguments recovery was started with and does not by itself show a wipe was "
+                 "completed. Provider is not a stored field. It is a label this parser assigns "
+                 "from text in the reason value: Samsung Find My Mobile for Fmm.RemoteWipeOut, "
+                 "Google Find My Device for 'Find My Device wiping device remotely' and Local "
+                 "Android UI for MasterClearConfirm, and blank otherwise. No source for that "
+                 "mapping is given here. Timestamp and Request Timestamp are the header and "
+                 "--requested_time text with slashes replaced by dashes; no time zone is stored "
+                 "with them. Reference: AOSP, bootable/recovery/recovery.cpp at tag "
+                 "android-14.0.0_r1, "
+                 "https://android.googlesource.com/platform/bootable/recovery/+/refs/tags/android-14.0.0_r1/recovery.cpp#83",
         "paths": ('*/efs/recovery/history', '*/data/log/recovery_history.log'),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "file",

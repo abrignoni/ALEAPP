@@ -1,7 +1,10 @@
 __artifacts_v2__ = {
     "get_torThumbs": {
         "name": "TOR Thumbnails",
-        "description": "Page thumbnails cached by the Tor Browser (mozac_browser_thumbnails)",
+        "description": "Thumbnail files from the Tor Browser cache folder "
+                       "mozac_browser_thumbnails/thumbnails. Modified Time is the file system "
+                       "modification time of the extracted copy; files that do not open as images "
+                       "are not listed.",
         "author": "@abrignoni",
         "creation_date": "2021-12-23",
         "last_update_date": "2021-12-23",

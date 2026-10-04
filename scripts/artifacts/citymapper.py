@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_citymapperLocationHistory" : {
         "name": "Citymapper - Location History",
-        "description": "Parses location history from the Citymapper App",
+        "description": "Parses the locationhistoryentry table of the Citymapper app database (address, date, coordinates, name and role, as stored); what action adds an entry is not established",
         "author": "Funeoz",
         "creation_date":"2025-12-12",
         "last_update_date": "2025-12-12",
@@ -34,7 +34,12 @@ __artifacts_v2__ = {
         "last_update_date": "2025-12-12",
         "requirements": "none",
         "category" : "Citymapper",
-        "notes" : "Interactive online folium map removed; last known location is exported to KML by the framework.",
+        "notes" : "Interactive online folium map removed. The LAST_LOCATION value is split into "
+                  "Latitude and Longitude and exported to KML; what event sets it is not "
+                  "established. One row is built from the four preference files together, with a "
+                  "later file's value replacing an earlier one for the same key, and the row is "
+                  "written even when no value was read. Onboarding Date and Last Used Date are "
+                  "converted with the unit inferred from the size of the stored number.",
         "paths" : ('*/data/com.citymapper.app.release/shared_prefs/superProperties.xml*',
                    '*/data/com.citymapper.app.release/shared_prefs/preferences.xml*',
                    '*/data/com.citymapper.app.release/shared_prefs/Session.xml*',

@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     'Life360_MemberCircles': {
         'name': 'Life360 Members and Circles',
-        'description': 'Parses Life360 Members and Circles',
+        'description': 'Parses Life360 Members and Circles. created_at is read as Unix seconds and last_updated as Unix milliseconds; no source for those units is recorded here.',
         'author': 'Heather Charpentier',
         'creation_date': '2026-06-10',
         'last_update_date': '2026-06-10',

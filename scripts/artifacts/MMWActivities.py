@@ -2,14 +2,22 @@
 __artifacts_v2__ = {
     "get_mmw_activities": {
         "name": "Map My Walk - Activities",
-        "description": "Map My Walk activities with GPS routes (workout.db)",
+        "description": "One row per localId in the timeSeries table of workout.db, with the first and last stored time and position, the last stored distance value and a route drawn from the stored coordinates",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
         "creation_date": "2023-02-24",
         "last_update_date": "2023-02-24",
         "requirements": "none",
         "category": "Map My Walk",
-        "notes": "Interactive folium map and online reverse-geocoding removed; route shown as an "
-                 "offline image (media) + a downloadable route KML.",
+        "notes": "Start Time, End Time and the start and end coordinates are taken from the "
+                 "first and last timeSeries rows of each localId in the order the database "
+                 "returns them. The query has no ORDER BY, so they are the earliest and latest "
+                 "points only where the rows come back in time order. Timestamps are read as "
+                 "Unix milliseconds. Duration (min) is the difference between those two times. "
+                 "Distance (km) is the last row's stored distance value and Mean Speed is the "
+                 "average of the stored speed values; the unit of neither was established, and "
+                 "no source was found for the km in the header. Only the first workout.db found "
+                 "is read. Route Map is an image drawn from the row's stored coordinates and "
+                 "Route KML holds the same points; neither uses an online service.",
         "paths": ('*com.mapmywalk.android2/databases/workout.db*',),
         "output_types": "all",
         "artifact_icon": "activity",

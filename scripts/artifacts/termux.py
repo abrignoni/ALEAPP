@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "termux_apt_history": {
         "name": "Termux - Package Install History",
-        "description": "Parses the apt package install and removal history recorded by the Termux Android client.",
+        "description": "Parses the package install and removal history that apt records in the Termux Android environment.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
@@ -10,8 +10,11 @@ __artifacts_v2__ = {
         "notes": "One row per apt transaction from files/usr/var/log/apt/history.log, which "
                  "records apt transactions; on the tested image the shipped bootstrap packages "
                  "did not appear in it, only transactions made after setup. Each block carries a "
-                 "Start-Date, the exact Commandline that was run, the Install, Upgrade or Remove "
-                 "line naming the packages and versions, and an End-Date. The Requested By "
+                 "Start-Date, the Commandline, one or more action lines (Install, Reinstall, "
+                 "Upgrade, Downgrade, Remove, Purge) naming the packages and versions, and an "
+                 "End-Date. When a block holds more than one action line only the first, in that "
+                 "order, is reported in Action and Packages; the others are not shown. The "
+                 "Requested By "
                  "column is reported as stored and was blank on the tested image. The timestamps "
                  "are written by apt in the device's local time with no zone stored: on the "
                  "tested emulator image the device time zone was America/New_York and a "
@@ -19,6 +22,10 @@ __artifacts_v2__ = {
                  "09:25:55 at offset -0400, so the value is reported as stored and labelled "
                  "local rather than converted to UTC, because converting a zone-less local time "
                  "as though it were UTC would move every install by the local offset. "
+                 "The two columns are declared with the datetime type. For LAVA output a stored "
+                 "value with two spaces between the date and the time "
+                 "does not parse as an ISO date and is kept as text; a value with a single space "
+                 "would be stored as though it were UTC. "
                  "history.log.1 and the numbered or gzipped rotations are read as well where "
                  "present, "
                  "and a gzipped rotation is decompressed in memory. The full set of packages present on the "
@@ -43,8 +50,11 @@ __artifacts_v2__ = {
                  "anything installed later, and the file carries no install date, so it cannot on its own "
                  "separate the two. The Package Install History artifact is what records which packages were "
                  "installed and when. Package name, version, architecture, the install status, the maintainer "
-                 "and the homepage are reported as stored, along with the one line short description. The "
-                 "Essential flag is reported because the core bootstrap packages carry it. Only entries whose "
+                 "and the homepage are reported as stored, along with the start of the "
+                 "description, up to its first sentence end (this can include text from the long "
+                 "description). The "
+                 "Essential column shows Yes where a package's Essential field is yes and is blank "
+                 "otherwise. Only entries whose "
                  "Status line reports the package as installed are included.",
         "paths": ('*/com.termux/files/usr/var/lib/dpkg/status',),
         "output_types": "standard",
@@ -69,8 +79,9 @@ __artifacts_v2__ = {
                  "Values are reported as stored. Every container in the extraction is read, so a "
                  "second Android user's configuration is reported rather than replacing the "
                  "first. A "
-                 "secondary user's container can hold the installed app with an empty files directory "
-                 "and no configuration, which is reported as such.",
+                 "container that holds the preferences file and no termux.properties is reported "
+                 "with Terminal Properties Set blank. A container that holds neither file produces "
+                 "no row.",
         "paths": ('*/com.termux/shared_prefs/com.termux_preferences.xml',
                   '*/com.termux/files/home/.termux/termux.properties'),
         "output_types": "standard",

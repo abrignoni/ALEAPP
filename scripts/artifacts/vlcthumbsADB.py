@@ -1,26 +1,33 @@
 __artifacts_v2__ = {
     "get_vlcthumbsADB": {
         "name": "VLC Thumbnails (ADB)",
-        "description": "VLC thumbnail cache from an ADB extraction (ef/medialib/thumbnails)",
+        "description": "Files under org.videolan.vlc/ef/medialib/thumbnails",
         "author": "@abrignoni",
         "creation_date": "2022-08-23",
         "last_update_date": "2022-08-23",
         "requirements": "none",
         "category": "VLC",
-        "notes": "",
+        "notes": "One row per file matched. Modified Timestamp is the modification time of the "
+                 "file as staged from the extraction, not a value VLC stored. This artifact lists "
+                 "no sample_data, so no test image is recorded as exercising it.",
         "paths": ('*/org.videolan.vlc/ef/medialib/thumbnails/*.*',),
         "output_types": "standard",
         "artifact_icon": "photo",
     },
     "get_vlcthumbsADB_medialib": {
         "name": "VLC Media Lib (ADB)",
-        "description": "VLC media library images from an ADB extraction (ef/medialib)",
+        "description": "Files under org.videolan.vlc/ef/medialib",
         "author": "@abrignoni",
         "creation_date": "2022-08-23",
         "last_update_date": "2022-08-23",
         "requirements": "none",
         "category": "VLC",
-        "notes": "",
+        "notes": "One row per file matched outside the thumbnails folder; the file type is not "
+                 "checked. A file is left out when the word thumbnails appears anywhere in its "
+                 "staged path, which includes the report output folder's own path. Modified "
+                 "Timestamp is the modification time of the file as staged from the extraction, "
+                 "not a value VLC stored. This artifact lists no sample_data, so no test image is "
+                 "recorded as exercising it.",
         "paths": ('*/org.videolan.vlc/ef/medialib/*.*',),
         "output_types": "standard",
         "artifact_icon": "photo",

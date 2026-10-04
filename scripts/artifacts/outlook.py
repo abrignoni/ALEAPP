@@ -1,7 +1,8 @@
 __artifacts_v2__ = {
     "outlook_accounts": {
         "name": "Outlook - Accounts",
-        "description": "Parses the signed in account recorded by the OneAuth component of "
+        "description": "Parses the account entries held in the OneAuth accounts "
+                       "preferences file of "
                        "the Microsoft Outlook Android app.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-18",
@@ -20,9 +21,10 @@ __artifacts_v2__ = {
                  "claim is opaque token material and is not written to the report. Account "
                  "type, age group, sovereignty and association status are reported as "
                  "stored. Reading a claim here is not evidence the token was accepted by "
-                 "any service. This file records the credential broker's view of the "
-                 "signed in account and is separate from the Outlook account store in "
-                 "acompliAcct.db. Field mapping was done against private samples provided "
+                 "any service. This file is separate from the Outlook account store in "
+                 "acompliAcct.db, which this module does not read. Whether an entry here "
+                 "means the account was signed in at the time of extraction was not "
+                 "established. Field mapping was done against private samples provided "
                  "by Mattia; no sample data is recorded for them.",
         "paths": ('*/com.microsoft.office.outlook/shared_prefs/com.microsoft.oneauth.accounts.xml',),
         "output_types": ["html", "tsv", "timeline", "lava"],
@@ -48,7 +50,9 @@ __artifacts_v2__ = {
                  "parsed. The correlation identifier matched the pref_install_id value in "
                  "the app's own preferences on each tested sample, so it is reported as the "
                  "install identifier. Timestamps are converted from the offset the line "
-                 "carries. A line here records what the app logged when it initialised, not "
+                 "carries; a timestamp with no offset is treated as UTC. Lines with fewer "
+                 "than six tab separated fields are not reported. A line here records what "
+                 "the app logged when it initialised, not "
                  "an interaction. Field mapping was done against private samples provided "
                  "by Mattia; no sample data is recorded for them.",
         "paths": ('*/com.microsoft.office.outlook/app_logs/appUpdates.log*',),

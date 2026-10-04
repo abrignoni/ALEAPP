@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_ChessWithFriends": {
         "name": "Chess With Friends",
-        "description": "Parses Chess With Friends game data",
+        "description": "Parses chat messages from the Chess With Friends database, with the name and email address of the users row each message points to",
         "author": "@mastenp",
         "creation_date": "2020-03-21",
         "last_update_date": "2020-03-21",

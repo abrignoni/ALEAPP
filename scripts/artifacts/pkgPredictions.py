@@ -1,13 +1,21 @@
 __artifacts_v2__ = {
     "get_pkgPredictions": {
         "name": "pkgPredictions",
-        "description": "Package Predictions - Parses Samsung package prediction details",
+        "description": "Parses the tbl_Sample table of Samsung's PkgPredictions.db.",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2023-05-01",
         "last_update_date": "2023-05-01",
         "requirements": "None",
         "category": "Package Predictions",
-        "notes": "",
+        "notes": "launch_time is converted as Unix milliseconds. The Screen "
+                 "Orientation and Day of Launch labels are this module's "
+                 "mapping of the stored integers (0 and 1 to Vertical and "
+                 "Horizontal, 1 to 7 to Sunday through Saturday); no source "
+                 "for that mapping is recorded, and any other value is shown "
+                 "blank. hour_of_day is shown as stored under Hour of Launch "
+                 "(Local); its time zone is not established. The Previous "
+                 "Launch columns are previous_one, previous_two and "
+                 "previous_three as stored.",
         "paths": ('*/system/PkgPredictions.db*',),
         "output_types": "standard",
         "artifact_icon": "package",

@@ -2,7 +2,12 @@
 __artifacts_v2__ = {
     "get_tusky": {
         "name": "Tusky - Timeline",
-        "description": "Parses Tusky timeline",
+        "description": "Statuses cached in the TimelineStatusEntity table of the Tusky database, "
+                       "with the author account, counts and the reblogged, bookmarked and "
+                       "favourited flags of each status. Rows with a createdAt of 0 or less are "
+                       "not reported. Visibility shows Unknown for a stored 0, Public for 1 and "
+                       "Direct for 4; that mapping is not sourced and other values are shown "
+                       "blank.",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-12-12",
         "last_update_date": "2022-12-12",

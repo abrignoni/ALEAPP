@@ -2,13 +2,17 @@
 __artifacts_v2__ = {
     "get_mastodon": {
         "name": "Mastodon - Hashtag Searches",
-        "description": "Parses Mastodon hashtag searches",
+        "description": "Rows of the recent_searches table whose id begins with tag, from one Mastodon database",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-12-07",
         "last_update_date": "2022-12-07",
         "requirements": "BeautifulSoup",
         "category": "Mastodon",
-        "notes": "",
+        "notes": ""
+                 "Only the first file ending in .db that the search returned is read. The path "
+                 "pattern matches every .db file in the app's databases folder, so where the app "
+                 "holds more than one, the others are not read. Timestamp is the time column read "
+                 "as Unix seconds.",
         "paths": ('*/org.joinmastodon.android/databases/*.db*',),
         "output_types": "standard",
         "artifact_icon": "search",
@@ -40,7 +44,15 @@ __artifacts_v2__ = {
         "last_update_date": "2022-12-07",
         "requirements": "BeautifulSoup",
         "category": "Mastodon",
-        "notes": "",
+        "notes": ""
+                 "Notification Type is decoded from the stored integer type as 0 Follow, 2 "
+                 "Mention, 3 Boost and 4 Favorite, the positions of FOLLOW, MENTION, REBLOG and "
+                 "FAVORITE in the app's NotificationType enum "
+                 "(https://github.com/mastodon/mastodon-android/blob/24d8c5d9d012858e8928ab465b455ad52805a9ee/mastodon/src/main/java/org/joinmastodon/android/model/NotificationType.java#L9-L17). "
+                 "That the column holds the enum position was not established. Any other stored "
+                 "value is shown blank. Only the first file ending in .db that the search "
+                 "returned is read. The path pattern matches every .db file in the app's "
+                 "databases folder, so where the app holds more than one, the others are not read.",
         "paths": ('*/org.joinmastodon.android/databases/*.db*',),
         "output_types": "standard",
         "artifact_icon": "bell",

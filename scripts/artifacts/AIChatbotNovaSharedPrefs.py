@@ -8,8 +8,11 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "AI Chatbot - Nova",
         "notes": (
-            "Values are reported as stored in the preference files; JWT payloads are "
-            "base64-decoded for display without signature verification. An extraction can "
+            "Values are reported as stored except that keys beginning KEY_DID_ or KEY_IS_ "
+            "are shown as Yes when the stored value is true and No for any other value, "
+            "key names are reformatted for display, and the Firebase ID token is shown as "
+            "the email, name, user id and sign in provider from its payload; JWT payloads "
+            "are base64-decoded for display without signature verification. An extraction can "
             "carry one copy of this file per Android user, and every copy is read. "
             "Developed against the author's own installation; no registered corpus image "
             "carries this app. The committed test case is the author's own extraction of "
@@ -28,8 +31,11 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "AI Chatbot - Nova",
         "notes": (
-            "Values are reported as stored in the preference files; JWT payloads are "
-            "base64-decoded for display without signature verification. An extraction can "
+            "Only these preference entries are read: the members of "
+            "LAST_SENT_INSTALLATION_META, and from an entry named "
+            "get_purchaser_info_response or PROFILE the is_test_user, total_revenue_usd, "
+            "oldAppInstanceId and paywallType values of its JSON. A value shown as None "
+            "means the attribute was absent from the JSON or null. An extraction can "
             "carry one copy of this file per Android user, and every copy is read. "
             "Developed against the author's own installation; no registered corpus image "
             "carries this app. The committed test case is the author's own extraction of "

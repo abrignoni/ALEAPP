@@ -2,17 +2,19 @@ __artifacts_v2__ = {
     "dropbox_files": {
         "name": "Dropbox - Files",
         "description": "Cloud files and folders listed in the Dropbox app database, with the path, "
-                       "size, MIME type and the modification times the service recorded",
+                       "size, MIME type and the four stored time columns (server_modified_millis, modified_millis, local_modified, accessed_millis)",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
         "requirements": "none",
         "category": "Dropbox",
-        "notes": "Read from the dropbox table of the account database, which the app names with the "
-                 "account id, for example <account id>-db.db, so the path allows for the prefix. "
-                 "This is the listing the app had cached, not necessarily the full account "
-                 "contents. Shared folder id and the vault and read-only flags are reported as the "
-                 "app stored them.",
+        "notes": "Read from the dropbox table of the account database, whose file name carries a "
+                 "prefix before -db.db, so the path allows for it. Whether that prefix is the "
+                 "account id was not established. Only the first database matched is read. This is "
+                 "the listing the app had cached, not necessarily the full account contents. "
+                 "Shared folder id is reported as stored. Is Directory, Favourite, Read Only and "
+                 "Vault Folder are shown as Yes when the stored value is non-zero and No when it "
+                 "is zero or absent.",
         "paths": ('*/com.dropbox.android/databases/*-db.db*',),
         "output_types": "standard",
         "artifact_icon": "cloud",
@@ -22,8 +24,7 @@ __artifacts_v2__ = {
     },
     "dropbox_account": {
         "name": "Dropbox - Account",
-        "description": "The signed-in Dropbox account, with the email, display name, account id and "
-                       "plan read from the account preference values",
+        "description": "Dropbox account values read from the account preferences database: email, Dropbox id, plan text and selected preferences",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
@@ -32,7 +33,10 @@ __artifacts_v2__ = {
         "notes": "Read from the DropboxAccountPrefs table of the account preferences database. The "
                  "ACCOUNT_INFO, FULL_ACCOUNT_INFO_V2 and PLAN_INFO_V2 values are base64 wrapped "
                  "protobuf; the readable strings are extracted from them rather than decoded field "
-                 "by field, so each is reported as the value it was matched from. Timestamp "
+                 "by field, so the labels come from the shape of the text and not from a decoded "
+                 "field: Email is the first string shaped like an email address, Dropbox ID the "
+                 "first string starting with dbid:, and Plan any string starting with 'Dropbox '. "
+                 "The Source Preference column names the preference each was found in. Timestamp "
                  "preferences are reported as epoch milliseconds converted to UTC.",
         "paths": ('*/com.dropbox.android/databases/*-prefs.db*',),
         "output_types": "standard",
@@ -43,16 +47,16 @@ __artifacts_v2__ = {
     },
     "dropbox_thumbnails": {
         "name": "Dropbox - Thumbnails",
-        "description": "Thumbnails the Dropbox app cached, with the cloud path they belong to and "
-                       "the size and format that was cached",
+        "description": "Rows of the thumbnail_info table of the Dropbox app database, with the cloud path, size and format each names",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
         "requirements": "none",
         "category": "Dropbox",
-        "notes": "Read from the thumbnail_info table of the account database. A row shows a "
-                 "thumbnail was cached for that path; the image bytes are held elsewhere in the "
-                 "app cache.",
+        "notes": "Read from the thumbnail_info table of the account database. A row is a "
+                 "thumbnail_info record naming a cloud path, a size and a format. This artifact "
+                 "does not locate or show any image file, and whether a cached image exists for "
+                 "a row was not checked.",
         "paths": ('*/com.dropbox.android/databases/*-db.db*',),
         "output_types": "standard",
         "artifact_icon": "image",

@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_imagemngCache": {
         "name": "Image Manager Cache",
-        "description": "Cached images from app image_manager_disk_cache (Glide) directories, plus files with a .cnt extension observed holding cached image data in the samples examined",
+        "description": "Files from app image_manager_disk_cache (Glide) directories and files with a .cnt extension, reported without checking their content; .cnt files held cached image data in the samples examined. Timestamp Last Modified is the modification time of the file as staged from the extraction",
         "author": "@abrignoni",
         "creation_date": "2022-03-05",
         "last_update_date": "2026-08-15",

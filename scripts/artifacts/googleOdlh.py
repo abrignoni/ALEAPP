@@ -12,8 +12,11 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "GEO Location",
         "notes": "Coordinates are read as E7 fixed-point integers inside the protobuf. "
-                 "Reference: Cellebrite "
-                 "Location Booklet 2025.",
+                 "The pair is read from protobuf path 3.1.4.5, fields 1 and 2, and a "
+                 "value above 2**31 is wrapped to a negative number. What the pair "
+                 "represents is not established here; it is reported as decoded. "
+                 "Reference: Cellebrite, 'Location Booklet 2025'; no URL or page is "
+                 "recorded here for it.",
         "paths": ('*/com.google.android.gms/databases/odlh-storage.db*',),
         "output_types": "all",
         "artifact_icon": "map-pin",
@@ -33,7 +36,7 @@ __artifacts_v2__ = {
         "name": "ODLH Edited Segments",
         "description": "Entries in the edited_segment_table of Google's On Device Location "
                        "History (odlh-storage.db): segment time ranges with the block range "
-                       "they belong to and whether the edit was uploaded.",
+                       "they belong to and the is_edit_uploaded value as stored.",
         "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",

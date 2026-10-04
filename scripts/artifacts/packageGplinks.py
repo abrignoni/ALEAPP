@@ -1,7 +1,9 @@
 __artifacts_v2__ = {
     "get_packageGplinks": {
         "name": "packageGplinks",
-        "description": "Parses installed package names and their possible Google Play Store links from the system packages.list.",
+        "description": "Parses installed package names and a Google Play Store address this module "
+                       "builds from each name. The names come from the system packages.list; the "
+                       "address is not stored there and is not checked to exist.",
         "author": "@abrignoni",
         "creation_date": "2021-03-18",
         "last_update_date": "2021-03-18",

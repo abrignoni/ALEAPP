@@ -1,13 +1,20 @@
 __artifacts_v2__ = {
     "get_walStrings": {
         "name": "walStrings",
-        "description": "Printable strings recovered from SQLite -wal and -journal files",
+        "description": "ASCII strings of four or more characters read from files whose names end in -wal or -journal",
         "author": "@abrignoni",
         "creation_date": "2020-04-17",
         "last_update_date": "2026-07-10",
         "requirements": "none",
         "category": "SQLite Journaling",
-        "notes": "",
+        "notes": "One row per file that yielded at least one string; the Report column links to a "
+                 "text file listing them. A string is a run of four or more printable ASCII "
+                 "characters, white space included. Each distinct string is listed once per file, "
+                 "in the order first seen. The file is read as UTF-8 with undecodable bytes "
+                 "dropped, so bytes that were not adjacent in the file can sit together in one "
+                 "string. Text in other encodings (for example UTF-16) is not extracted. Zero-byte "
+                 "files are skipped. The file is not checked to be a SQLite file, and a string is "
+                 "not tied to a table, row or state of the database.",
         "paths": ('*/*-wal', '*/*-journal'),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "file",

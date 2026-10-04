@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_gboardCache": {
         "name": "Gboard - Clipboard",
-        "description": "Gboard keyboard clipboard entries (gboard_clipboard.db)",
+        "description": "Rows of the clips table in gboard_clipboard.db, with the clipboard image where the file is present. Item Type 1 is shown as 'Pinned' and Entity Type 1 as 'Link'; those labels are not sourced. 0 is shown blank and other values as stored.",
         "author": "@ydkhatri",
         "creation_date": "2021-01-09",
         "last_update_date": "2021-01-09",
@@ -22,7 +22,7 @@ __artifacts_v2__ = {
     },
     "get_gboardCache_keystrokes": {
         "name": "Gboard - Keystroke Cache",
-        "description": "Text entries recorded in the Gboard training cache",
+        "description": "Text decoded from the Gboard trainingcache2, trainingcache3 and trainingcachev2 databases, with the app and input field values stored beside it. The field meanings are not sourced. In trainingcachev2 a session with no decoded text is not reported. No tested image produced a row.",
         "author": "@ydkhatri",
         "creation_date": "2021-01-09",
         "last_update_date": "2026-08-01",

@@ -7,7 +7,11 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Life360DriverBehavior",
-        "notes": "Processes event data from trip JSON files. Speed and distance are reported as stored; "
+        "notes": "Reads the events list of each JSON file under "
+                 "data/com.life360.android.safetymapd/files/DriverBehavior/trips. A file with no "
+                 "events key is skipped, and a copy under another path spelling such as "
+                 "data/user/0 is not read. Timestamp is the event's timestamp value read as Unix "
+                 "seconds, which is an assumption. Speed and distance are reported as stored; "
                  "the JSON records no units for them. The MPH columns multiply the stored speed by "
                  "2.23694, which assumes the stored value is in metres per second.",
         "paths": ('*/trips/*.json',),
@@ -22,7 +26,10 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Life360DriverBehavior",
-        "notes": "Processes waypoint data from trip JSON files. Accuracy is reported as stored; the "
+        "notes": "Reads the waypoints list of each event in the JSON files under "
+                 "data/com.life360.android.safetymapd/files/DriverBehavior/trips. A file with no "
+                 "events key is skipped, and a copy under another path spelling such as "
+                 "data/user/0 is not read. Accuracy is reported as stored; the "
                  "JSON records no unit for it.",
         "paths": ('*/trips/*.json',),
         "output_types": ['html', 'tsv', 'lava'],

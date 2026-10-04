@@ -19,7 +19,7 @@ __artifacts_v2__ = {
     },
     "linkedin_messages": {
         "name": "LinkedIn - Messages",
-        "description": "Messages sent and received from LinkedIn App",
+        "description": "Messages from the LinkedIn app's messenger-sdk database. Sent is 1 where the sender's participant record carries the distance value SELF and 0 otherwise. Delivery Status shows Delivered for a stored status of 5 and Unknown for any other value; no source for the status values was found.",
         "author": "Marco Neumann {kalinko@be-binary.de}",
         'creation_date': '2025-04-26',
         'last_update_date': '2026-08-15',
@@ -29,7 +29,9 @@ __artifacts_v2__ = {
                  "with supported Python builds; an earlier revision used concat(), which SQLite "
                  "added in 3.44.0 (2023-11-01, sqlite.org/changes.html), so on older SQLite "
                  "builds the query failed and the artifact reported no rows while the same "
-                 "statement succeeded in tools carrying a newer SQLite.",
+                 "statement succeeded in tools carrying a newer SQLite."
+                 " A message whose conversation has no ConversationsData row is not reported, "
+                 "and only the first database file found is read.",
         "paths": ('*/com.linkedin.android/databases/messenger-sdk*',),
         "output_types": "standard",
         "data_views": {

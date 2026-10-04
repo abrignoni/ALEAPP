@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_burnerSubscription": {
         "name": "Burner - Subscription",
-        "description": "Parses Burner Subscription Information",
+        "description": "Parses the SubscriptionEntity rows of burnerDatabase.db (burner IDs, creation and renewal dates, SKU, store, trial value and state). The trial value is labelled 1 True and 2 False; any other stored value, including a JSON false, is shown as Unknown.",
         "author": "Heather Charpentier (With Tons of Help from Alexis Brignoni!)",
         "version": "0.0.1",
         "creation_date": "2024-02-15",

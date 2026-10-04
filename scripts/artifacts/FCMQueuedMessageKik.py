@@ -27,7 +27,7 @@ __artifacts_v2__ = {
     },
     "fcm_kik_blanks": {
         "name": "FCM-KIK Notifications Blanks",
-        "description": 'Kik records from the FCM queued messages store, reported with only the FCM timestamp and sender id',
+        "description": 'Kik records from the FCM queued messages store whose only payload key is google.c.sender.id, reported with the FCM timestamp and that sender id',
         "author": "@jfhyla",
         "creation_date": "2025-07-31",
         "last_update_date": "2025-07-31",

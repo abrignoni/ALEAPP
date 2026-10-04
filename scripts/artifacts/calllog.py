@@ -1,13 +1,13 @@
 __artifacts_v2__ = {
     "get_calllog": {
         "name": "Call logs ",
-        "description": "Parses the call log (date, number, type, duration, location and transcription) from the contacts provider calllog.db.",
+        "description": "Parses the call log (date, number, type, duration, the geocoded location stored for the number and transcription) from the contacts provider calllog.db.",
         "author": "@abrignoni",
         "creation_date": "2020-03-02",
         "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Call Logs",
-        "notes": "AOSP documents the DATE column as milliseconds since epoch and DURATION as seconds, and this parser decodes them that way, so the Call Date column is a converted millisecond timestamp and Duration in Secs is the stored value unchanged. The Type column decodes the AOSP CallLog.Calls codes 1 Incoming, 2 Outgoing, 3 Missed, 4 Voicemail, 5 Rejected, 6 Blocked and 7 Answered Externally. Reference: AOSP, 'CallLog.Calls constants', https://developer.android.com/reference/android/provider/CallLog.Calls",
+        "notes": "The Android reference documents the DATE column as milliseconds since epoch and DURATION as seconds, and this parser decodes them that way, so the Call Date column is a converted millisecond timestamp and Duration in Secs is the stored value unchanged. The Type column decodes the AOSP CallLog.Calls codes 1 Incoming, 2 Outgoing, 3 Missed, 4 Voicemail, 5 Rejected, 6 Blocked and 7 Answered Externally. Any other stored value is shown as Unknown and the stored number is not reported. The same codes are applied to the Samsung contacts provider's calllog.db; whether Samsung stores other type values there is not established. Reference: Android Developers, 'CallLog.Calls' API reference, https://developer.android.com/reference/android/provider/CallLog.Calls (read 2026-10-03)",
         "paths": ('*/com.android.providers.contacts/databases/calllog.db*', '*/com.samsung.android.providers.contacts/databases/calllog.db*'),
         "output_types": "standard",
         "artifact_icon": "phone",

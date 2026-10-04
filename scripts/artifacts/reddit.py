@@ -10,14 +10,21 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Reddit",
         "notes": "Reddit chat is stored in databases/matrix_session_<session id>, whose "
-                 "schema follows the Matrix protocol. Rows are the events whose type is "
-                 "m.room.message; the body and msgtype come from the event's content JSON, "
+                 "table names and event type strings match those of the Matrix protocol; "
+                 "the cited article reports the same and notes it is not confirmed by "
+                 "vendor documentation. Rows are the timeline_event rows whose event has "
+                 "the type m.room.message, so an event referenced by more than one "
+                 "timeline_event row is reported once per row. A message event with no "
+                 "timeline_event row is not reported here and is in Reddit - Chat Events. "
+                 "The body and msgtype come from the event's content JSON, "
                  "and the sender's display name is resolved through room_member_summary "
                  "for the same room, falling back to the raw Matrix user id.\n"
                  "Message Direction compares the event sender against the signed-in "
                  "account, taken from session_params.userId in the matrix_auth database "
                  "(observed as @t2_<reddit id>:reddit.com). Blank when that database is "
-                 "absent. Timestamps are Unix milliseconds from originServerTs, reported "
+                 "absent. The first non-empty userId found in any matrix_auth database is "
+                 "used for every session database. Timestamps are Unix milliseconds from "
+                 "originServerTs, reported "
                  "in UTC.\n"
                  "Media. Image messages carry an mxc:// URL and its dimensions rather than "
                  "a local file name, reported here as text. On the tested image neither "
@@ -25,11 +32,13 @@ __artifacts_v2__ = {
                  "app's Glide image_manager_disk_cache, so no reproducible link from a "
                  "message to cached bytes was found and none is asserted. A separate "
                  "blurred-image URL the app records is reported alongside.\n"
-                 "A message removed through a redaction event keeps its row here; see "
+                 "On the tested image the two messages targeted by redaction events still "
+                 "had rows here; see "
                  "Reddit - Chat Events for the redactions themselves, which name the event "
                  "id they target.\n"
                  "Reference: Arun Kalackattu Hari, 'Forensic Analysis of Reddit App: iOS "
-                 "and Android', dfdive.com, 06 April 2026, https://dfdive.com/articles/",
+                 "and Android', dfdive.com, 06 April 2026, https://dfdive.com/articles/ "
+                 "(the site's article list; the article is on that page under its title)",
         "paths": ('*/com.reddit.frontpage/databases/matrix_session_*',
                   '*/com.reddit.frontpage/databases/matrix_auth*'),
         "output_types": "standard",
@@ -67,14 +76,15 @@ __artifacts_v2__ = {
                  "included m.room.message, m.room.member, m.room.create, m.room.join_rules, "
                  "m.room.history_visibility, m.room.power_levels, m.reaction and "
                  "m.room.redaction, plus the app's own com.reddit.chat.type.\n"
-                 "A m.room.redaction row names the event it targets in the Redacts column, "
-                 "which is the mechanism behind a message removed from the conversation. "
+                 "A m.room.redaction row names the event it targets in the Redacts column. "
+                 ""
                  "What a redaction means for the message body on the server is not "
                  "established here.\n"
                  "Content is reported as stored so nothing in the payload is lost to "
                  "interpretation. Timestamps are Unix milliseconds in UTC.\n"
                  "Reference: Arun Kalackattu Hari, 'Forensic Analysis of Reddit App: iOS "
-                 "and Android', dfdive.com, 06 April 2026, https://dfdive.com/articles/",
+                 "and Android', dfdive.com, 06 April 2026, https://dfdive.com/articles/ "
+                 "(the site's article list; the article is on that page under its title)",
         "paths": ('*/com.reddit.frontpage/databases/matrix_session_*',),
         "output_types": "standard",
         "artifact_icon": "list",
@@ -95,12 +105,16 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-16",
         "requirements": "none",
         "category": "Reddit",
-        "notes": "One row per room in room_summary. Room Type and the direct-chat flag are "
-                 "reported as stored; on the tested image a one-to-one chat carried the "
+        "notes": "One row per room in room_summary. Room Type is reported as stored; the "
+                 "direct-chat and unread flags are shown as YES or NO, where NO also "
+                 "covers an empty value. On the tested image a one-to-one chat carried "
+                 "the "
                  "type 'direct' with two joined members. Last Activity is Unix "
                  "milliseconds in UTC.\n"
                  "Reference: Arun Kalackattu Hari, 'Forensic Analysis of Reddit App: iOS "
-                 "and Android', dfdive.com, 06 April 2026, https://dfdive.com/articles/",
+                 "and Android', dfdive.com, 06 April 2026, https://dfdive.com/articles/ "
+                 "(the site's article list; the article is on that page under its "
+                 "title)",
         "paths": ('*/com.reddit.frontpage/databases/matrix_session_*',),
         "output_types": "standard",
         "artifact_icon": "messages",
@@ -125,7 +139,9 @@ __artifacts_v2__ = {
                  "name. The Matrix user id embeds the account's Reddit id in the form "
                  "@t2_<reddit id>:reddit.com. Membership state is reported as stored.\n"
                  "Reference: Arun Kalackattu Hari, 'Forensic Analysis of Reddit App: iOS "
-                 "and Android', dfdive.com, 06 April 2026, https://dfdive.com/articles/",
+                 "and Android', dfdive.com, 06 April 2026, https://dfdive.com/articles/ "
+                 "(the site's article list; the article is on that page under its "
+                 "title)",
         "paths": ('*/com.reddit.frontpage/databases/matrix_session_*',),
         "output_types": "standard",
         "artifact_icon": "users",
@@ -147,12 +163,16 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Reddit",
         "notes": "RedditUserEntity ties a Reddit id to the Matrix id used in chat, which "
-                 "is what allows a chat participant to be named. Blocked and "
-                 "accepting-chats flags are reported as stored. Insert Timestamp is when "
-                 "the app wrote the row, not when the account was created; Cakeday is the "
-                 "account creation value the app cached, in Unix seconds.\n"
+                 "is what allows a chat participant to be named. The NSFW, blocked and "
+                 "accepting-chats flags are shown as YES or NO, where NO also covers an "
+                 "empty value. Insert Timestamp is the "
+                 "insertTimestamp column read as Unix milliseconds and Cakeday is the "
+                 "cakeday column read as Unix seconds. What event each marks is not "
+                 "established here; the column names are the app's own.\n"
                  "Reference: Arun Kalackattu Hari, 'Forensic Analysis of Reddit App: iOS "
-                 "and Android', dfdive.com, 06 April 2026, https://dfdive.com/articles/",
+                 "and Android', dfdive.com, 06 April 2026, https://dfdive.com/articles/ "
+                 "(the site's article list; the article is on that page under its "
+                 "title)",
         "paths": ('*/com.reddit.frontpage/databases/matrix-users-db*',),
         "output_types": "standard",
         "artifact_icon": "user",
@@ -175,8 +195,9 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Reddit",
         "notes": "The database is named reddit_db_<account name>, reported in the Store "
-                 "Account column; a reddit_db_anonymous file is the logged-out store and "
-                 "is reported the same way. The account table is a cache and is not "
+                 "Account column; a reddit_db_anonymous file is reported the same way, "
+                 "and when the app uses it is not established. The account table is a "
+                 "cache and is not "
                  "limited to the device owner: on the tested image the store named for "
                  "the local account held two rows, the local account and the account it "
                  "had exchanged chat messages with. Treat Store Account as the account "
@@ -186,7 +207,8 @@ __artifacts_v2__ = {
                  "The Matrix session's signed-in user id is reported by Reddit - Session, "
                  "which is the value chat direction is derived from.\n"
                  "Reference: Arun Kalackattu Hari, 'Forensic Analysis of Reddit App: iOS "
-                 "and Android', dfdive.com, 06 April 2026, https://dfdive.com/articles/",
+                 "and Android', dfdive.com, 06 April 2026, https://dfdive.com/articles/ "
+                 "(the site's article list; the article is on that page under its title)",
         "paths": ('*/com.reddit.frontpage/databases/reddit_db_*',),
         "output_types": "standard",
         "artifact_icon": "user-circle",
@@ -209,14 +231,16 @@ __artifacts_v2__ = {
         "category": "Reddit",
         "notes": "session_params in the matrix_auth database. The user id is the anchor "
                  "chat direction is derived from, in the form @t2_<reddit id>:reddit.com, "
-                 "and the session id matches the matrix_session_<session id> database file "
+                 "and on the one tested image holding a session row the session id "
+                 "equalled the suffix of the matrix_session_ database file "
                  "name. Date is Unix milliseconds in UTC; what event it marks is not "
                  "established here.\n"
                  "The record also holds a credentials JSON containing an access token. "
                  "Only whether the app considered the token valid is reported; the token "
                  "itself is not expanded into the report.\n"
                  "Reference: Arun Kalackattu Hari, 'Forensic Analysis of Reddit App: iOS "
-                 "and Android', dfdive.com, 06 April 2026, https://dfdive.com/articles/",
+                 "and Android', dfdive.com, 06 April 2026, https://dfdive.com/articles/ "
+                 "(the site's article list; the article is on that page under its title)",
         "paths": ('*/com.reddit.frontpage/databases/matrix_auth*',),
         "output_types": "standard",
         "artifact_icon": "key",
@@ -237,13 +261,15 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-16",
         "requirements": "none",
         "category": "Reddit",
-        "notes": "The subreddit table holds the communities the app had cached, keyed by "
-                 "the t5_ community identifier the article documents as the cross-database "
-                 "linking value. Presence of a row records that the app cached the "
+        "notes": "The subreddit table holds the communities the app had cached, each "
+                 "carrying the t5_ community identifier the article describes as a "
+                 "linking value across databases (the Kind With ID column). Presence of a "
+                 "row records that the app cached the "
                  "community; it does not establish that the user subscribed to it or "
                  "visited it. Created is Unix seconds.\n"
                  "Reference: Arun Kalackattu Hari, 'Forensic Analysis of Reddit App: iOS "
-                 "and Android', dfdive.com, 06 April 2026, https://dfdive.com/articles/",
+                 "and Android', dfdive.com, 06 April 2026, https://dfdive.com/articles/ "
+                 "(the site's article list; the article is on that page under its title)",
         "paths": ('*/com.reddit.frontpage/databases/reddit_db_*',),
         "output_types": "standard",
         "artifact_icon": "users-group",
@@ -268,12 +294,16 @@ __artifacts_v2__ = {
         "notes": "The link table stores one JSON document per post, from which the "
                  "author, title, community, permalink, target URL, score, comment count "
                  "and NSFW flag are read; the document holds many more fields than are "
-                 "reported. Listing Position and Listing ID are the app's own ordering "
-                 "within a cached feed.\n"
+                 "reported. Listing Position and Listing ID are the link table's "
+                 "listingPosition and listingId columns, reported as stored; what a "
+                 "listing is was not established. NSFW is shown as YES or NO from "
+                 "over_18, where NO also covers a document without the key.\n"
                  "A row records that the post was cached on the device, which is not the "
                  "same as the user opening or reading it. Created is Unix seconds.\n"
                  "Reference: Arun Kalackattu Hari, 'Forensic Analysis of Reddit App: iOS "
-                 "and Android', dfdive.com, 06 April 2026, https://dfdive.com/articles/",
+                 "and Android', dfdive.com, 06 April 2026, https://dfdive.com/articles/ "
+                 "(the site's article list; the article is on that page under its "
+                 "title)",
         "paths": ('*/com.reddit.frontpage/databases/reddit_db_*',),
         "output_types": "standard",
         "artifact_icon": "article",

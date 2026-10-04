@@ -1,13 +1,18 @@
 __artifacts_v2__ = {
     "powerOffReset": {
         "name": "Power Off Reset",
-        "description": "Parses powering off and reset events",
+        "description": "Parses the REASON lines of Samsung's power_off_reset_reason.txt and its backup.",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-10-12",
         "last_update_date": "2025-08-09",
         "requirements": "none",
         "category": "Power Events",
-        "notes": "",
+        "notes": "Only lines containing REASON: are reported. Timestamp "
+                 "(Local) is the device local time as written in the log, and "
+                 "Timezone Offset is the offset the same log line carries. No "
+                 "conversion to UTC is made. The column is typed as a "
+                 "datetime, so a viewer that assumes UTC shows the local "
+                 "reading as if it were UTC.",
         "paths": ('*/log/power_off_reset_reason.txt','*/log/power_off_reset_reason_backup.txt'),
         "output_types": "standard",
         "artifact_icon": "power",

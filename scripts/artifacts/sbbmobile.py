@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "cff_searched_places": {
         "name": "SBB Mobile - Searched places",
-        "description": "List of places searched in the past with last time used",
+        "description": "Rows of the SearchedPlaces table: title, favorite flag, type, coordinates and the stored timestamp as UTC. What event the timestamp marks is not established.",
         "author": "jerome.arn@vd.ch",
         "creation_date": "2026-03-26",
         "last_update_date": "2026-08-09",
@@ -34,8 +34,9 @@ __artifacts_v2__ = {
             "names for the stored 'a', 'p', 'c' and 's' values are the labels this parser "
             "assigns; the source for them is not established, and any other value is shown as "
             "stored. Result Coordinates are the "
-            "latitude and longitude stored on the search row, which describe a place in the "
-            "itinerary and not the location of the device when the search was made."
+            "latitude and longitude stored on the search row. What place they describe is not "
+            "established. Nothing in the row shows they are the location of the device when the "
+            "search was made."
         ),
         "paths": ('*/data/ch.sbb.mobile.*/databases/SbbMobile.db*'),
         "output_types": "standard",
@@ -71,7 +72,8 @@ __artifacts_v2__ = {
         "category": "Travel",
         "notes": (
             "Refund State shows the stored refundState value; a value of 'COMPLETE' is "
-            "reported as 'Refunded' and every other value is shown as stored, because the "
+            "shown as 'Refunded', a label this parser assigns with no source established for it, "
+            "and every other value is shown as stored, because the "
             "meaning of the other states is not established."
         ),
         "paths": ('*/data/ch.sbb.mobile.*/databases/SbbMobile.db*'),

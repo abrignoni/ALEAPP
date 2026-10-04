@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_badoo_chat": {
         "name": "Badoo - Users",
-        "description": "Badoo matched users / conversations (com.badoo.mobile)",
+        "description": "Rows from the conversation_info table of the Badoo ChatComDatabase (com.badoo.mobile)",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
         "creation_date": "2023-05-03",
         "last_update_date": "2023-05-03",

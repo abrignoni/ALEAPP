@@ -3,35 +3,38 @@ __artifacts_v2__ = {
         "name": "DJI Drone - Flight GPS Track (MCDatFlightRecords)",
         "description": "Decodes the aircraft flight-controller DAT logs the DJI GO / DJI "
                        "Pilot apps cache on the mobile device and reports the recorded GPS "
-                       "track: one row per positional record with its UTC timestamp, latitude "
+                       "track: one row per positional record that passes its CRC and holds a "
+                       "non-zero position, with its timestamp, latitude "
                        "and longitude.",
         "author": "@riasramadan, @AlexisBrignoni, Claude",
         "creation_date": "2026-08-10",
         "last_update_date": "2026-08-10",
         "requirements": "none",
         "category": "DJI Drone",
-        "notes": "Source files: */DJI/<app>/FlightRecord/MCDatFlightRecords/*.DAT, the flight "
-                 "controller logs the DJI mobile apps copy from the aircraft. The container is "
-                 "the DJI DAT format: a 'BUILD' header, then records framed by a 0x55 start "
-                 "byte, a length byte, a type and a per-record ticket number, each closed by a "
-                 "CRC-16 the parser verifies before trusting the record. Records begin at "
-                 "offset 256 when the header carries the 'DJI_LOG_V3' marker and at 128 "
+        "notes": "Source files: */DJI/<app>/FlightRecord/MCDatFlightRecords/*.DAT, DAT files "
+                 "found in the FlightRecord/MCDatFlightRecords folder of a DJI app's storage. "
+                 "The container is the DJI DAT format: a 'BUILD' header, then records framed by "
+                 "a 0x55 start byte, a length byte, a type and a per-record ticket number, each "
+                 "closed by a CRC-16 the parser verifies before trusting the record. Records "
+                 "begin at offset 256 when the header carries the 'DJI_LOG_V3' marker and at 128 "
                  "otherwise. Positional records (type 2096) carry their payload XOR-obfuscated "
                  "by the low byte of the record ticket number; after that step the first 16 "
                  "bytes are the GPS date, GPS time, longitude and latitude as 1e7-scaled "
                  "integers. The remaining payload bytes hold further telemetry that this "
-                 "artifact does not decode.\n"
-                 "Timestamp is the GPS date and time from the record, reported as UTC; it is not "
-                 "adjusted to any local zone. Latitude and Longitude are the stored integers "
-                 "divided by 1e7.\nThe DAT record framing, CRC and positional layout follow the "
-                 "DJI DAT format documented by the CsvView / DatCon community tooling, carried "
-                 "here from the closed contribution in ALEAPP PR #660.\nValidation: decoded "
-                 "against the VTO Labs / NIST CFReDS drone dataset DF020 (DJI Mavic Pro). Every "
-                 "decoded position for the 2018-06-19 flights falls inside the data sheet's "
-                 "stated GPS boundary in Colorado and on the stated flight date, so timestamp "
-                 "and coordinate decoding are corpus-verified against the data sheet's known "
-                 "values.\nThe paired DJIFlightRecord *.txt files in the same FlightRecord folder "
-                 "are a separate, later container; they are not read by this artifact, which "
+                 "artifact does not decode.\nTimestamp is the GPS date and time from the record, "
+                 "reported as UTC; it is not adjusted to any local zone. Latitude and Longitude "
+                 "are the stored integers divided by 1e7.\nThe DAT record framing, CRC and "
+                 "positional layout follow the DJI DAT format as described by the CsvView / "
+                 "DatCon tooling, carried here from the closed contribution in ALEAPP pull "
+                 "request 660 (https://github.com/abrignoni/ALEAPP/pull/660). The URL and "
+                 "version of that tooling were not recorded.\nValidation: decoded against the "
+                 "VTO Labs / NIST CFReDS drone dataset DF020 (DJI Mavic Pro). Every decoded "
+                 "position for the 2018-06-19 flights falls inside the data sheet's stated GPS "
+                 "boundary in Colorado and on the stated flight date, so the decoded date and "
+                 "coordinates agree with the data sheet's known values; a comparison of the time "
+                 "of day with a known time is not recorded here.\nThe paired DJIFlightRecord "
+                 "*.txt files in the same FlightRecord folder are a separate container; they are "
+                 "not read by this artifact, which "
                  "reads the DAT logs only.",
         "paths": ('*/DJI/*/FlightRecord/MCDatFlightRecords/*.DAT',),
         "output_types": "all",

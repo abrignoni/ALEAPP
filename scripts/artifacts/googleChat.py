@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_googleChat": {
         "name": "Google Chat - Messages",
-        "description": "Google Chat messages (dynamite.db)",
+        "description": "Rows of topic_messages in dynamite.db joined to Groups and users; a message whose group or creator is not in those tables is not reported. Direction is derived, not stored: Outgoing when the creator id equals the user id of the account e-mail named in the database path, Incoming otherwise, and blank when that account cannot be resolved.",
         "author": "Josh Hickman & Alexis Brignoni",
         "creation_date": "2021-02-05",
         "last_update_date": "2026-07-03",
@@ -40,7 +40,7 @@ __artifacts_v2__ = {
     },
     "get_googleChat_groups": {
         "name": "Google Chat - Groups",
-        "description": "Google Chat group information (dynamite.db)",
+        "description": "Rows of the Groups table in dynamite.db with the creator's name from the users table. A group whose creator is not in users is not reported.",
         "author": "Josh Hickman & Alexis Brignoni",
         "creation_date": "2021-02-05",
         "last_update_date": "2021-02-05",

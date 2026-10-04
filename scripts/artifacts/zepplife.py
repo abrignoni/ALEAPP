@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "extract_zepplife_heartrate": {
         "name": "Zepp Life - Heart Rate",
-        "description": "Heart rate history from Zepp Life",
+        "description": "Heart rate records (HEART_RATE table) from the first Zepp Life origin_db database that holds any; TIME is read as Unix seconds",
         "author": "its5Q",
         "creation_date": "2025-07-28",
         "last_update_date": "2025-07-28",

@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_cachelocation": {
         "name": "Cache Location",
-        "description": "Parses cached cell and Wi-Fi location fixes (accuracy, confidence, latitude, longitude and read time) from the Google location cache files.",
+        "description": "Parses the records of the Google location cache files cache.cell and cache.wifi: accuracy, confidence, latitude, longitude and a time read as Unix milliseconds. The record layout follows the forensic blog post 'Decoding cache.cell and cache.wifi files' (forensics.spreitzenbarth.de, 28 October 2011), which describes cache.wifi as a Wi-Fi router database with the MAC and GPS position of the router and cache.cell as a database of mobile cells and their GPS position. Each record is keyed in the file by an identifier this artifact does not report. The coordinates are reported as stored and are not established here as positions of the device.",
         "author": "@markmckinnon",
         "creation_date": "2021-03-17",
         "last_update_date": "2021-03-17",

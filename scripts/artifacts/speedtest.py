@@ -2,13 +2,19 @@
 __artifacts_v2__ = {
     "speedtest_tests": {
         "name": "Speedtest Test Results",
-        "description": "Extracts Speedtest Test metadata and other interaction artifacts",
+        "description": "Rows of the UnivSpeedTestResult table of AmplifyDatastore.db: date, "
+                       "connection type, SSID, latitude, longitude, external and internal IP "
+                       "address, and download and upload speed in Kbps as stored.",
         "author": "its5Q",
         "creation_date": "2025-07-28",
         "last_update_date": "2025-07-28",
         "requirements": "none",
         "category": "Speedtest",
-        "notes": "",
+        "notes": "Only the first matched path is opened, and the path pattern also matches the "
+                 "-wal and -shm sidecar files. Timestamp is the date column read as a Unix time "
+                 "and shown as UTC; the conversion picks the unit from the size of the value, and "
+                 "the unit the app stores is not sourced here. The other columns are reported as "
+                 "stored. No registered test image is listed for this artifact.",
         "paths": ('*/org.zwanoo.android.speedtest/databases/AmplifyDatastore.db*',),
         "output_types": "all",
         "artifact_icon": "loader"
@@ -16,13 +22,20 @@ __artifacts_v2__ = {
 
     "speedtest_reports_location": {
         "name": "Speedtest Reports - Location",
-        "description": "Extracts location data from Speedtest usage reports",
+        "description": "Latitude, longitude, altitude and accuracy from the start.location object "
+                       "of each JSON record in the REPORT table of the speedtest database, with "
+                       "the record's start.timestamp.",
         "author": "its5Q",
         "creation_date": "2025-07-28",
         "last_update_date": "2025-07-28",
         "requirements": "none",
         "category": "Speedtest",
-        "notes": "",
+        "notes": "A record with no start.location gives no row. For a record with no "
+                 "start.timestamp the code substitutes the text 1970-01-01T00:00:00Z, so on Python "
+                 "3.11 and later the row shows 1970-01-01 00:00:00 UTC; Python 3.10 cannot parse "
+                 "that text and the record gives no row. The accuracy column is headed in meters; "
+                 "that unit is not sourced here. What event writes a record is not established "
+                 "here. No registered test image is listed for this artifact.",
         "paths": ('*/org.zwanoo.android.speedtest/databases/speedtest',),
         "output_types": "all",
         "artifact_icon": "map-pin"
@@ -30,13 +43,23 @@ __artifacts_v2__ = {
 
     "speedtest_reports_wifi": {
         "name": "Speedtest Reports - Wi-Fi data",
-        "description": "Extracts Wi-Fi scan data from Speedtest usage reports",
+        "description": "BSSID, SSID and signal level of each entry in "
+                       "start.extended.wifi.scanResults of the JSON records in the REPORT table of "
+                       "the speedtest database, with a computed time.",
         "author": "its5Q",
         "creation_date": "2025-07-28",
         "last_update_date": "2025-07-28",
         "requirements": "none",
         "category": "Speedtest",
-        "notes": "",
+        "notes": "Timestamp is computed, not stored: the record's start.time.timestamp minus its "
+                 "elapsedRealtimeNanos, plus the scan entry's timestamp read as microseconds since "
+                 "boot. It is blank when the record holds no start.time.timestamp or no "
+                 "elapsedRealtimeNanos. AOSP documents ScanResult.timestamp as microseconds since "
+                 "boot when the result was last seen; that the stored entry carries that field is "
+                 "taken from its field names and was not measured here. No registered test image "
+                 "is listed for this artifact. Reference: AOSP, ScanResult.java at tag "
+                 "android-14.0.0_r1, "
+                 "https://android.googlesource.com/platform/packages/modules/Wifi/+/refs/tags/android-14.0.0_r1/framework/java/android/net/wifi/ScanResult.java#621",
         "paths": ('*/org.zwanoo.android.speedtest/databases/speedtest',),
         "output_types": "all",
         "artifact_icon": "wifi"

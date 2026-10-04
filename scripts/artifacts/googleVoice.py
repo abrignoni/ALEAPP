@@ -2,13 +2,19 @@
 __artifacts_v2__ = {
     "googlevoice_accounts": {
         "name": "Google Voice - User Accounts",
-        "description": "Parses Google Voice User Accounts",
+        "description": "Parses the account entries of the Google Voice AccountData.pb and two phone numbers from the VoiceAccountCache database",
         "author": "William Campbell (@campwill), Eli Ehresmann (@H-Seek), Reina Girouard (@rgrd59), Paula Rokusek (@paula-rokusek)",
         "creation_date": "2025-08-08",
         "last_update_date": "2025-10-29",
         "requirements": "blackboxprotobuf",
         "category": "Google Voice",
-        "notes": "Tested on version 2025.07.20.788599304 (October 29th, 2025). Tested on Samsung and Motorola devices.",
+        "notes": "The authors report testing on app version 2025.07.20.788599304 (October 29th, "
+                 "2025) on Samsung and Motorola devices; no count or image from that testing is "
+                 "recorded. The registered image with rows is pixel7a_a14. Account number, name "
+                 "and email address come from field 2 of AccountData.pb. Linked Phone Number is "
+                 "field 3.2.1.1 and Current Google Voice Number is field 3.1.1.1 of the cached "
+                 "response in the VoiceAccountCache database; the names are the authors' and no "
+                 "source for them is cited.",
         "paths": ('*/data/com.google.android.apps.googlevoice/files/AccountData.pb', '*/data/com.google.android.apps.googlevoice/files/accounts/*/SqliteKeyValueCache:VoiceAccountCache.db*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "user",
@@ -18,13 +24,21 @@ __artifacts_v2__ = {
     },
     "googlevoice_calls": {
         "name": "Google Voice - Calls",
-        "description": "Parses Google Voice Call History",
+        "description": "Parses call records from the Google Voice LegacyMsgDbInstance.db message_t table",
         "author": "William Campbell (@campwill), Eli Ehresmann (@H-Seek), Reina Girouard (@rgrd59), Paula Rokusek (@paula-rokusek)",
         "creation_date": "2025-08-20",
         "last_update_date": "2025-11-5",
         "requirements": "blackboxprotobuf",
         "category": "Google Voice",
-        "notes": "Tested on version 2025.07.20.788599304 (October 29th, 2025). Tested on Samsung and Motorola devices.",
+        "notes": "The authors report testing on app version 2025.07.20.788599304 (October 29th, "
+                 "2025) on Samsung and Motorola devices; no count or image from that testing is "
+                 "recorded. The registered image with rows is pixel7a_a14. Direction, Call Status "
+                 "and Voicemail Left are assigned by the module from field 13 of message_blob (0, "
+                 "1, 2 or 3) and from whether field 22 is present. The mapping is the module's "
+                 "own and no source is cited. Call Status reads Missed for value 0, for value 3 "
+                 "and for any record carrying field 22; the module's comments say value 0 covers "
+                 "a call that was declined as well as one that was not answered. Duration is "
+                 "field 9 read as a 32-bit float of seconds.",
         "paths": ('*/data/com.google.android.apps.googlevoice/files/accounts/*/LegacyMsgDbInstance.db*', '*/data/com.google.android.apps.googlevoice/cache/audio/*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "phone",
@@ -34,13 +48,19 @@ __artifacts_v2__ = {
     },
     "googlevoice_voicemails": {
         "name": "Google Voice - Voicemails",
-        "description": "Parses Google Voice Voicemails",
+        "description": "Parses voicemail records (field 13 = 3) from the Google Voice LegacyMsgDbInstance.db message_t table",
         "author": "William Campbell (@campwill), Eli Ehresmann (@H-Seek), Reina Girouard (@rgrd59), Paula Rokusek (@paula-rokusek)",
         "creation_date": "2025-09-03",
         "last_update_date": "2025-10-29",
         "requirements": "blackboxprotobuf",
         "category": "Google Voice",
-        "notes": "Tested on version 2025.07.20.788599304 (October 29th, 2025). Tested on Samsung and Motorola devices.",
+        "notes": "The authors report testing on app version 2025.07.20.788599304 (October 29th, "
+                 "2025) on Samsung and Motorola devices; no count or image from that testing is "
+                 "recorded. The registered image with rows is pixel7a_a14. Read Status is field 6 "
+                 "of the record, 0 shown as Unread and 1 as Read. What sets it is not "
+                 "established, and it does not show that a person listened to the voicemail. "
+                 "Transcript is the text segments stored in field 7.2 joined with spaces; it "
+                 "reads Transcript Not Available when field 7 is absent.",
         "paths": ('*/data/com.google.android.apps.googlevoice/files/accounts/*/LegacyMsgDbInstance.db*', '*/data/com.google.android.apps.googlevoice/cache/audio/*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "record-mail",
@@ -50,13 +70,22 @@ __artifacts_v2__ = {
     },
     "googlevoice_messages": {
         "name": "Google Voice - Messages",
-        "description": "Parses Google Voice Messages",
+        "description": "Parses message records from the Google Voice LegacyMsgDbInstance.db message_t table",
         "author": "William Campbell (@campwill), Eli Ehresmann (@H-Seek), Reina Girouard (@rgrd59), Paula Rokusek (@paula-rokusek)",
         "creation_date": "2025-10-22",
         "last_update_date": "2026-07-03",
         "requirements": "blackboxprotobuf",
         "category": "Google Voice",
-        "notes": "Tested on version 2025.07.20.788599304 (October 29th, 2025). Tested on Samsung and Motorola devices.",
+        "notes": "The authors report testing on app version 2025.07.20.788599304 (October 29th, "
+                 "2025) on Samsung and Motorola devices; no count or image from that testing is "
+                 "recorded. The registered image with rows is pixel7a_a14. Rows are the message_t "
+                 "records whose conversation_id starts with t or g. Direction is assigned by the "
+                 "module, from field 13 (5 Incoming, 6 Outgoing) for t conversations and from "
+                 "whether field 15.5 is present for g conversations; the mapping is the module's "
+                 "own and no source is cited. Read Status is field 6 on incoming rows, 0 shown as "
+                 "Unread and 1 as Read, and is blank on outgoing rows; what sets it is not "
+                 "established. An image is shown only when the message text contains MMS and a "
+                 "cached file named for the message id is present.",
         "paths": ('*/data/com.google.android.apps.googlevoice/files/accounts/*/LegacyMsgDbInstance.db*', '*/data/com.google.android.apps.googlevoice/cache/Photo MMS images/*', '*/data/com.samsung.android.providers.contacts/databases/contact*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "user",

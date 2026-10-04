@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "last_updated": "2025-07-31",
         "requirements": "none",
         "category": "Firebase Cloud Messaging",
-        "notes": "",
+        "notes": "Not exercised: the artifact produced no rows on the ten images listed in sample_data.",
         "paths": ("*/fcm_queued_messages.ldb/*"),
         "output_types": "standard",  # or ["html", "tsv", "timeline", "lava"]
         "artifact_icon": "database",

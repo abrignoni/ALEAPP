@@ -9,8 +9,15 @@ __artifacts_v2__ = {
         "category": "AI Chatbot - Nova",
         "notes": (
             "Integrates chat-ai.db history with filesystem discovery; chat-ai.db holds "
-            "text records only, not the media bytes. A path shown as Not in MediaStore "
-            "means no MediaStore row matched the file name. The MIME column is the value "
+            "text records only, not the media bytes. A path is shown when a MediaStore "
+            "row has the same file name; the match is on the name alone and does not "
+            "establish that the path is this record's file. Not in MediaStore means no "
+            "row had that name. Document and Image rows are every document and image "
+            "record in chat-ai.db, whichever side of the conversation the message belongs "
+            "to, so a row does not establish that a person submitted the file. Orphaned "
+            "Media rows are files under the app's shared media folder that no record "
+            "names. The MIME column is the "
+            "value "
             "the database records where present and blank otherwise; the file bytes are "
             "not sniffed. An extraction can carry one copy of each database per Android "
             "user and every copy is read. The committed test case carries no file under "

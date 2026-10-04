@@ -1,7 +1,11 @@
 __artifacts_v2__ = {
     "get_appopSetupWiz": {
         "name": "appopSetupWiz",
-        "description": "Setup Wizard app-op timestamps from appops.xml",
+        "description": "Access times (the t attribute of each st record) "
+                       "stored for the package com.google.android.setupwizard "
+                       "in appops.xml. The op is not reported. Android 14 and "
+                       "later keep these records in appops_accesses.xml, so "
+                       "the artifact returns nothing there.",
         "author": "@abrignoni",
         "creation_date": "2021-08-15",
         "last_update_date": "2021-08-15",

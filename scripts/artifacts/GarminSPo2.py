@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_garmin_spo2": {
         "name": "GarminSPO2",
-        "description": "Get Information related to Garmin Pulse Ox from acclimation_pulse_ox_details table",
+        "description": "Reads the acclimation_pulse_ox_details table of the Garmin Connect cache-database. Rows with no spo2Value are not reported. SPO2 Value Average is spo2ValueAverage, or spo2Value where the average is empty. The timestamps are reported as stored.",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
         "creation_date": "2023-02-24",
         "last_update_date": "2026-07-10",

@@ -1,25 +1,27 @@
 __artifacts_v2__ = {
     "spotify_account": {
         "name": "Spotify - Account",
-        "description": "The signed-in Spotify account's canonical identifiers, sign-in "
-                       "method, selected language and the app's own first-launch time, "
-                       "read from the app's main preferences file.",
+        "description": "Account identifiers, the stored auth source value, the selected language "
+                       "and the key_date_first_launch value, read from the app's main preferences "
+                       "file.",
         "author": "@Gear-I, Claude",
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-25",
         "requirements": "none",
         "category": "Spotify",
-        "notes": "No email address or display name for the account was found in this extraction; "
-                 "each file under the app's data directory, including shared_prefs and the "
-                 "per-user settings folder, was searched for both. What is recoverable is the "
-                 "account's canonical username (an opaque identifier read from both "
-                 "'crashlytics_user_id' and 'event-sender-event-owner', which agree) and the "
-                 "'Auth Source' value, reported as stored. Two of the twelve tested extractions "
-                 "carry this preferences file with none of those keys in it; those report no row "
-                 "rather than a row of blanks. 'App First Launch Time' is the stored "
-                 "key_date_first_launch value, reported as stored; it is not an install "
-                 "timestamp from "
-                 "the OS or Play Store.",
+        "notes": "No email address or display name for the account was found on the extraction "
+                 "this artifact was built on, which is not named here; each file under the app's "
+                 "data directory there, including shared_prefs and the per-user settings folder, "
+                 "was searched for both. Whether the other tested extractions were searched this "
+                 "way is not recorded. Canonical Username is an opaque identifier read from "
+                 "'crashlytics_user_id'; 'event-sender-event-owner' is reported beside it as Event "
+                 "Owner ID, and how often the two were equal on the tested extractions was not "
+                 "counted. Auth Source is the ADAPTIVE_AUTH_METADATA_AUTH_SOURCE value, reported "
+                 "as stored. A preferences file holding neither identifier gives no row. Two of "
+                 "the twelve tested extractions carry this preferences file with none of those "
+                 "keys in it; those report no row rather than a row of blanks. 'App First Launch "
+                 "Time' is the stored key_date_first_launch value, read as Unix milliseconds; it "
+                 "is not an install timestamp from the OS or Play Store.",
         "paths": ('*/com.spotify.music/shared_prefs/spotify_preferences.xml',),
         "output_types": ["standard"],
         "artifact_icon": "user",
@@ -40,32 +42,32 @@ __artifacts_v2__ = {
     },
     "spotify_playlist_library": {
         "name": "Spotify - Playlist Library Activity",
-        "description": "Playlists Spotify's own local usage-tracking file has a record for, with the earliest time the "
-                       "tracker recorded for each one and a snapshot of two internal usage counters recorded whenever "
-                       "that snapshot changed.",
+        "description": "Entries of the per-account frecency.pb file, one row per stored snapshot, with the "
+                       "time and the two counters each snapshot stores.",
         "author": "@Gear-I, Claude",
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-25",
         "requirements": "none",
         "category": "Spotify",
-        "notes": "Source is frecency.pb, a per-account file; it is not a public format, so this "
-                 "was reverse engineered directly against this device's real data rather than "
-                 "any documentation. A device with more than one Spotify account signed in holds "
-                 "one of these files per account and every one of them is read; 'Account Folder' "
-                 "is the name of the per-account directory a row's file sits in, reported as "
-                 "stored. On the device this was validated against that name is the account's "
-                 "canonical username followed by '-user', so it lines up with the Canonical "
-                 "Username column of Spotify - Account. Each playlist can appear more than once, "
-                 "with a separate row per stored snapshot; what causes a new snapshot to be "
-                 "written, and what the earliest row's time marks, are not established. 'Counter "
-                 "A' and 'Counter B' are reported as raw integers because their exact meaning "
-                 "(e.g. play count vs. skip count vs. a weighted frecency score) could not be "
-                 "confirmed: on the device this was validated against, one playlist's Counter A "
-                 "went from 1 to 21 and Counter B from 1 to 4 across two snapshots roughly six "
-                 "months apart. The large opaque integer stored alongside each snapshot is not "
-                 "included: it did not decode to a timestamp or a count and its meaning is not "
-                 "established. A playlist absent from this file is not evidence that it was "
-                 "absent from the account.",
+        "notes": "Source is frecency.pb, a per-account file; it is not a public format, so the "
+                 "layout was worked out from the file on one tested image, which is not named "
+                 "here, and not from documentation. Snapshot Time is field 4 of a snapshot, read "
+                 "as Unix seconds in UTC. Playlist URI is field 1 of an entry as stored; the code "
+                 "does not check that it is a playlist URI. A device with more than one Spotify "
+                 "account signed in holds one of these files per account and every one of them is "
+                 "read; 'Account Folder' is the name of the per-account directory a row's file "
+                 "sits in, reported as stored. On that image the name is the account's canonical "
+                 "username followed by '-user', so it lines up with the Canonical Username column "
+                 "of Spotify - Account. Each playlist can appear more than once, with a separate "
+                 "row per stored snapshot; what causes a new snapshot to be written, and what the "
+                 "earliest row's time marks, are not established. 'Counter A' and 'Counter B' are "
+                 "reported as raw integers because their exact meaning (e.g. play count vs. skip "
+                 "count vs. a weighted frecency score) could not be confirmed: on that image, one "
+                 "playlist's Counter A went from 1 to 21 and Counter B from 1 to 4 across two "
+                 "snapshots roughly six months apart. The large opaque integer stored alongside "
+                 "each snapshot is not included: it did not decode to a timestamp or a count and "
+                 "its meaning is not established. A playlist absent from this file is not evidence "
+                 "that it was absent from the account.",
         "paths": ('*/com.spotify.music/files/settings/Users/*/frecency.pb',),
         "output_types": ["standard"],
         "artifact_icon": "playlist",
@@ -94,33 +96,34 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-25",
         "requirements": "none",
         "category": "Spotify",
-        "notes": "Source is event-sender.db's Events table, an internal analytics log "
-                 "Spotify's client keeps of its own activity; each row's 'fragments' "
-                 "column is a schema-less protobuf blob decoded the same way this "
-                 "project already decodes undocumented protobuf elsewhere (see "
-                 "YouTube.py). The table holds 58 distinct event types on the device "
-                 "this was validated against, and this artifact reports only these event types, "
-                 "whose names are the app's own and whose meanings are not documented: "
-                 "PlaybackSegments, BoomboxPlaybackSession, CorePlaybackFinished, Download, "
-                 "AudioFileSelection and TrackNotPlayed (the last seen on this device only in an "
-                 "Android Auto context). 'Content URI' is populated only when the event's "
-                 "decoded fields contained a literal spotify:track:* or spotify:playlist:* "
-                 "string; 'Session ID' is an opaque hexadecimal value reported as stored; rows "
-                 "sharing it can be grouped, but its meaning is not established. 'Notes' "
-                 "surfaces other short decoded string fields verbatim (e.g. 'offlined file', "
-                 "'android-auto', 'logout') without interpretation; some of what lands there is "
-                 "an opaque identifier rather than readable status text, and those are reported "
-                 "as stored. The short string an AudioFileSelection event carries for where the "
-                 "audio came from took the values 'offlined file', 'cached file' and 'best "
-                 "matching bitrate' across the tested extractions; the meaning of each of those "
-                 "values is not established. Purely numeric fields (byte counts, bitrates, "
-                 "internal enum values) are not reported, since there is no public "
-                 "schema to confirm what they mean. Where an extraction carries the "
-                 "app's data directory more than once, the duplicate storage views of "
-                 "one file are collapsed and each genuinely separate copy is read, so "
-                 "a second Android user's events are reported alongside the first "
-                 "user's with no column separating them; the source paths listed for "
-                 "the artifact name every database the rows came from.",
+        "notes": "Source is event-sender.db's Events table, a table of named events written by the "
+                 "app; its purpose is not sourced here. Each row's 'fragments' column is a "
+                 "protobuf blob decoded without a schema, so field numbers carry no names. An "
+                 "event whose blob does not decode, or that holds no message field, gives no row. "
+                 "This artifact reports only six event types and no other row of the table. Their "
+                 "names are the app's own and their meanings are not documented: "
+                 "PlaybackSegments, BoomboxPlaybackSession, CorePlaybackFinished, "
+                 "Download, AudioFileSelection and TrackNotPlayed (the last seen only in an "
+                 "Android Auto context on the image this was built on, which is not named here). "
+                 "'Content URI' is populated only when a string field of the event message is a "
+                 "whole spotify: URI of type track, playlist, album, artist, show or episode; "
+                 "where a message holds more than one, the last one read is shown. 'Session ID' is "
+                 "the first field of the message that is either a 16-byte value, shown as "
+                 "hexadecimal, or a 32 to 44 character lowercase hexadecimal string, shown as "
+                 "stored; rows sharing it can be grouped, but its meaning is not established. "
+                 "'Notes' surfaces other short decoded string fields verbatim (e.g. 'offlined "
+                 "file', 'android-auto', 'logout') without interpretation; some of what lands "
+                 "there is an opaque identifier rather than readable status text, and those are "
+                 "reported as stored. The short string an AudioFileSelection event carries for "
+                 "where the audio came from took the values 'offlined file', 'cached file' and "
+                 "'best matching bitrate' across the tested extractions, which are not named here; "
+                 "the meaning of each of those values is not established. Purely numeric fields "
+                 "(byte counts, bitrates, internal enum values) are not reported, since there is "
+                 "no public schema to confirm what they mean. Where an extraction carries the "
+                 "app's data directory more than once, the duplicate storage views of one file are "
+                 "collapsed and each genuinely separate copy is read, so a second Android user's "
+                 "events are reported alongside the first user's with no column separating them; "
+                 "the source paths listed for the artifact name every database the rows came from.",
         "paths": ('*/com.spotify.music/databases/event-sender.db*',),
         "output_types": ["standard"],
         "artifact_icon": "player-play",
@@ -149,31 +152,26 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-25",
         "requirements": "none",
         "category": "Spotify",
-        "notes": "Source is the app's HTTP disk cache (cache/http-cache), specifically "
-                 "a cached response from the recently-played/v3 endpoint; the response "
-                 "body is schema-less protobuf, decoded the same way this project "
-                 "already decodes undocumented protobuf elsewhere. 'Played At' is a "
-                 "millisecond timestamp embedded directly in that response by "
-                 "Spotify's own server, not derived from any local file time. It is a "
-                 "per-entry value rather than a property of the request: on one tested "
-                 "extraction a single cached response carried 50 entries with 50 "
-                 "distinct times in descending order, and on two others the same "
-                 "entries kept byte-identical times across responses fetched weeks "
-                 "apart, five separate fetches on one of them. On the Pixel 7a "
-                 "research image the one entry decodes to 12:54 local on 2024-07-27, "
-                 "inside the 12:38 to 12:56 playback session that image's own creation "
-                 "log documents. Worth knowing when reading a single-entry response: "
-                 "the response's mc-etag header carries the newest entry's value, so "
-                 "where only one entry is cached the two are necessarily the same "
-                 "number, which is not evidence that the value is a collection-level "
-                 "stamp. This "
-                 "endpoint is requested with a limit of 50 entries, but the cached "
-                 "response on the device this was first validated against held only "
-                 "one - so this reflects the cached response to that request, not a full play "
-                 "history. It should "
-                 "be read alongside Spotify - Playback Activity and Spotify - Now "
-                 "Playing View, which recover different, independent evidence of "
-                 "playback from other local sources.",
+        "notes": "Source is the app's HTTP disk cache (cache/http-cache), specifically a cached "
+                 "response from the recently-played/v3 endpoint; the response body is schema-less "
+                 "protobuf, decoded the same way this project already decodes undocumented "
+                 "protobuf elsewhere. 'Played At' is a millisecond timestamp embedded directly in "
+                 "that response by Spotify's own server, not derived from any local file time. It "
+                 "is a per-entry value rather than a property of the request: on one tested "
+                 "extraction a single cached response carried 50 entries with 50 distinct times in "
+                 "descending order, and on two others the same entries kept byte-identical times "
+                 "across responses fetched weeks apart, five separate fetches on one of them. On "
+                 "the Pixel 7a research image the one entry decodes to 12:54 local on 2024-07-27, "
+                 "inside the 12:38 to 12:56 playback session that image's own creation log "
+                 "documents. Worth knowing when reading a single-entry response: the response's "
+                 "mc-etag header carries the newest entry's value, so where only one entry is "
+                 "cached the two are necessarily the same number, which is not evidence that the "
+                 "value is a collection-level stamp. This endpoint is requested with a limit of 50 "
+                 "entries, but the cached response on the device this was first validated against "
+                 "held only one - so this reflects the cached response to that request, not a full "
+                 "play history. It should be read alongside Spotify - Playback Activity and "
+                 "Spotify - Now Playing View, which report other local stores; neither is "
+                 "established here as a record of playback.",
         "paths": ('*/com.spotify.music/cache/http-cache/*',),
         "output_types": ["standard"],
         "artifact_icon": "clock",
@@ -194,30 +192,30 @@ __artifacts_v2__ = {
     },
     "spotify_now_playing_view": {
         "name": "Spotify - Now Playing View",
-        "description": "Tracks recovered from cached responses to Spotify's lyrics and "
-                       "merchandise API calls, with the first cached "
-                       "lyric line for each track.",
+        "description": "Tracks recovered from cached responses to Spotify's lyrics API call, with "
+                       "the first cached lyric line for each track and a flag for a cached "
+                       "merchandise response for the same track id.",
         "author": "@Gear-I, Claude",
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-25",
         "requirements": "none",
         "category": "Spotify",
-        "notes": "Source is the app's HTTP disk cache (cache/http-cache): the "
-                 "color-lyrics/v2 and merch-npv-service/v1 endpoints; what the app requests them "
-                 "for is not established here. The Spotify track ID is read directly from each "
-                 "cached request's URL, not guessed at. 'First Lyric Line' is the first line of "
-                 "the time-synced lyrics decoded from the cached response body (also schema-less "
-                 "protobuf) - it is included, verbatim and without interpretation, because it is "
-                 "a real piece of the track's own lyrics recoverable from the device and is "
-                 "enough for an examiner to identify the song; this project does not maintain a "
-                 "track-ID-to-song-name lookup table, since one built from a single device would "
-                 "not generalise to any other extraction. 'Response Received Time' is the "
-                 "OkHttp-Received-Millis value stored in each cached entry's metadata, read as "
-                 "Unix milliseconds. It is part of the cached data rather than a filesystem "
-                 "time, so it does not change when the evidence is re-staged. It is not a "
-                 "playback timestamp and does not establish that the track was on screen. Left "
-                 "blank on any "
-                 "entry where that pseudo-header is absent, rather than falling back "
+        "notes": "Source is the app's HTTP disk cache (cache/http-cache): the color-lyrics/v2 and "
+                 "merch-npv-service/v1 endpoints; what the app requests them for is not "
+                 "established here. The Spotify track ID is read directly from each cached "
+                 "request's URL, not guessed at. A row is produced only for a cached color-lyrics "
+                 "response. 'Merch Shown For Track' reads Yes when a cached merch-npv-service "
+                 "response exists for the same track id and is blank otherwise; a cached response "
+                 "does not establish that merchandise was shown. 'First Lyric Line' is the first "
+                 "text line found in the cached response body (also schema-less protobuf), shown "
+                 "as stored. Whether it identifies the song is for the examiner to check; this "
+                 "project does not maintain a track-ID-to-song-name lookup table, since one built "
+                 "from a single device would not generalise to any other extraction. 'Response "
+                 "Received Time' is the OkHttp-Received-Millis value stored in each cached entry's "
+                 "metadata, read as Unix milliseconds. It is part of the cached data rather than a "
+                 "filesystem time, so it does not change when the evidence is re-staged. It is not "
+                 "a playback timestamp and does not establish that the track was on screen. Left "
+                 "blank on any entry where that pseudo-header is absent, rather than falling back "
                  "to a filesystem time.",
         "paths": ('*/com.spotify.music/cache/http-cache/*',),
         "output_types": ["standard"],
@@ -247,17 +245,17 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-25",
         "requirements": "none",
         "category": "Spotify",
-        "notes": "Source is the app's HTTP disk cache (cache/http-cache), "
-                 "specifically cached responses from the artist-identity-view/v2 "
-                 "endpoint; what the app requests it for is not established here; the response "
-                 "is plain JSON and 'Artist Name' / 'Artist URI' are read directly from its own "
-                 "'name' and 'artistUri' fields. 'Response Received Time' is the "
-                 "OkHttp-Received-Millis value stored in each cached entry's metadata, read as "
-                 "Unix milliseconds. It is part of the cached data rather than a filesystem "
-                 "time, so it does not change when the evidence is re-staged. It does not "
-                 "establish that a page was opened, how long it was viewed, or that any track by "
-                 "that artist was played. Left blank on any entry where that "
-                 "pseudo-header is absent, rather than falling back to a filesystem "
+        "notes": "Source is the app's HTTP disk cache (cache/http-cache), specifically cached "
+                 "responses from the artist-identity-view/v2 endpoint; what the app requests it "
+                 "for is not established here; the response is plain JSON and 'Artist Name' / "
+                 "'Artist URI' are read directly from its own 'name' and 'artistUri' fields. "
+                 "'Response Received Time' is the OkHttp-Received-Millis value stored in each "
+                 "cached entry's metadata, read as Unix milliseconds. An entry whose response "
+                 "holds neither a name nor an artistUri gives no row. The time is part of the "
+                 "cached data rather than a filesystem time, so it does not change when the "
+                 "evidence is re-staged. It does not establish that a page was opened, how long it "
+                 "was viewed, or that any track by that artist was played. Left blank on any entry "
+                 "where that pseudo-header is absent, rather than falling back to a filesystem "
                  "time.",
         "paths": ('*/com.spotify.music/cache/http-cache/*',),
         "output_types": ["standard"],

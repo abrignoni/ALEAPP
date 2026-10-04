@@ -20,10 +20,12 @@ __artifacts_v2__ = {
                  "message_add_on record and the message it reacted to. In every tested image the "
                  "add-on record's message_add_on_type was 56 for all reaction rows; the value is "
                  "also reported as stored. In tested one-to-one chats the add-on's "
-                 "sender_jid_row_id held -1 (55 of 55 rows), so the Sender columns resolve only "
-                 "in group chats; in a one-to-one chat the Chat JID column identifies the other "
-                 "party and the Direction column identifies which side reacted. "
-                 "Source-table map informed by WAInsight (github.com/akhil-dara/WAInsight, MIT).",
+                 "sender_jid_row_id held -1 (55 of 55 rows), so the Sender columns resolve only in "
+                 "group chats; in a one-to-one chat the Chat JID column identifies the other party "
+                 "and the Direction column shows Outgoing where the add-on's from_me is 1 and "
+                 "Incoming where it is 0. Table and join layout informed by WAInsight, "
+                 "https://github.com/akhil-dara/WAInsight (MIT); the commit read is not recorded "
+                 "here.",
         "paths": ('*/com.whatsapp/databases/msgstore.db*', '*/com.whatsapp/databases/wa.db*'),
         "output_types": "standard",
         "artifact_icon": "thumbs-up",
@@ -50,11 +52,14 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-14",
         "requirements": "none",
         "category": "WhatsApp",
-        "notes": "message_edit_info records the row id of an edited message, the key id the "
-                 "message was originally sent under, and edit timestamps. It does not carry the "
-                 "pre-edit text, and the message table stores a single text_data value per row, "
-                 "so the Message column shows the text as currently stored, not the original. "
-                 "Source-table map informed by WAInsight (github.com/akhil-dara/WAInsight, MIT).",
+        "notes": "message_edit_info holds a message row id (message_row_id), original_key_id, "
+                 "edited_timestamp and sender_timestamp; they are reported under Original Key ID, "
+                 "Last Edit Timestamp and Sender Timestamp as stored, and what each marks is not "
+                 "sourced here. This artifact reads no pre-edit text from that table, and the "
+                 "message table stores a single text_data value per row, so the Message column "
+                 "shows the text as currently stored. Table and join layout informed by WAInsight, "
+                 "https://github.com/akhil-dara/WAInsight (MIT); the commit read is not recorded "
+                 "here.",
         "paths": ('*/com.whatsapp/databases/msgstore.db*', '*/com.whatsapp/databases/wa.db*'),
         "output_types": "standard",
         "artifact_icon": "edit",
@@ -82,13 +87,16 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "WhatsApp",
         "notes": "Rows in message_revoked joined to the message row they reference. Across all "
-                 "tested images (283 rows) text_data on the referenced row was empty, so no "
-                 "message body is available here; the surviving fields are the timestamps, "
-                 "direction, parties and key id. Observed message_type values were 15 and 64 "
-                 "(reported as stored; no lookup table for them exists in the database). Older "
-                 "databases in the tested set (Android 11/12 era) lack the revoke_timestamp and "
-                 "admin_jid_row_id columns; those columns are reported empty there. "
-                 "Source-table map informed by WAInsight (github.com/akhil-dara/WAInsight, MIT).",
+                 "tested images (283 rows) text_data on the referenced row was empty, and this "
+                 "artifact does not read text_data, so no message body is reported; the reported "
+                 "fields are the timestamps, direction, parties and key id. Observed message_type "
+                 "values were 15 and 64 (reported as stored; no lookup table for them exists in "
+                 "the database). On the two oldest tested databases (WhatsApp 2.20.198.15 and "
+                 "2.21.20.20) message_revoked lacks the revoke_timestamp and admin_jid_row_id "
+                 "columns; the query substitutes empty values for them. Both report 0 rows in "
+                 "sample_data, so that path produced no reported row on the tested images. Table "
+                 "and join layout informed by WAInsight, https://github.com/akhil-dara/WAInsight "
+                 "(MIT); the commit read is not recorded here.",
         "paths": ('*/com.whatsapp/databases/msgstore.db*', '*/com.whatsapp/databases/wa.db*'),
         "output_types": "standard",
         "artifact_icon": "trash-2",
@@ -118,10 +126,11 @@ __artifacts_v2__ = {
         "notes": "One row per poll option, joined to the poll's message row; the question is the "
                  "message row's text_data. Vote Total is the integer stored in "
                  "message_poll_option.vote_total, as stored. The per-voter tables "
-                 "(message_add_on_poll_vote and its options table) were present but empty in "
-                 "every tested image, so per-voter votes are not parsed; a corpus exercising "
-                 "them would allow that to be added. "
-                 "Source-table map informed by WAInsight (github.com/akhil-dara/WAInsight, MIT).",
+                 "(message_add_on_poll_vote and its options table) were empty or absent on every "
+                 "tested image, so per-voter votes are not parsed; a corpus exercising them would "
+                 "allow that to be added. Table and join layout informed by WAInsight, "
+                 "https://github.com/akhil-dara/WAInsight (MIT); the commit read is not recorded "
+                 "here.",
         "paths": ('*/com.whatsapp/databases/msgstore.db*', '*/com.whatsapp/databases/wa.db*'),
         "output_types": "standard",
         "artifact_icon": "chart-bar",
@@ -142,7 +151,7 @@ __artifacts_v2__ = {
     },
     "get_whatsapp_message_receipts": {
         "name": "WhatsApp - Message Receipts Per Recipient",
-        "description": "WhatsApp per-recipient delivery, read and played receipts (msgstore.db receipt_user)",
+        "description": "Rows of msgstore.db's receipt_user table: one per recipient per message, with its receipt_timestamp, read_timestamp and played_timestamp",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-14",
         "last_update_date": "2026-08-14",
@@ -151,10 +160,11 @@ __artifacts_v2__ = {
         "notes": "One row per recipient per message from the receipt_user table. The three "
                  "timestamp columns carry the table's own column names (receipt_timestamp, "
                  "read_timestamp, played_timestamp); the database does not document their exact "
-                 "semantics and this artifact does not assert them. Receipt rows whose message "
-                 "row no longer exists are kept, with the message fields empty (112 of 206 rows "
-                 "on one tested image). "
-                 "Source-table map informed by WAInsight (github.com/akhil-dara/WAInsight, MIT).",
+                 "semantics and this artifact does not assert them. Receipt rows whose "
+                 "message_row_id matches no row in the message table are kept, with the message "
+                 "fields empty (112 of 206 rows on one tested image). Table and join layout "
+                 "informed by WAInsight, https://github.com/akhil-dara/WAInsight (MIT); the commit "
+                 "read is not recorded here.",
         "paths": ('*/com.whatsapp/databases/msgstore.db*', '*/com.whatsapp/databases/wa.db*'),
         "output_types": "standard",
         "artifact_icon": "user-check",
@@ -175,7 +185,7 @@ __artifacts_v2__ = {
     },
     "get_whatsapp_system_events": {
         "name": "WhatsApp - System Events",
-        "description": "WhatsApp system messages: group and chat state changes (msgstore.db message_system)",
+        "description": "Rows of msgstore.db's message_system table with their message rows and companion tables",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-14",
         "last_update_date": "2026-08-14",
@@ -185,9 +195,14 @@ __artifacts_v2__ = {
                  "that hold decoded details where present: affected participants "
                  "(message_system_chat_participant), old and new number "
                  "(message_system_number_change), and prior value "
-                 "(message_system_value_change.old_data). action_type is an integer with no "
-                 "lookup table in the database and is reported as stored. "
-                 "Source-table map informed by WAInsight (github.com/akhil-dara/WAInsight, MIT).",
+                 "(message_system_value_change.old_data). action_type is an integer with no lookup "
+                 "table in the database and is reported as stored. Is Me Joined (as stored) is "
+                 "message_system_group.is_me_joined. The companion column names are this module's "
+                 "labels for the joined tables. A query that fails on an unexpected schema reports "
+                 "no rows and is not logged, so an empty result is not evidence the table held "
+                 "nothing. Table and join layout informed by WAInsight, "
+                 "https://github.com/akhil-dara/WAInsight (MIT); the commit read is not recorded "
+                 "here.",
         "paths": ('*/com.whatsapp/databases/msgstore.db*', '*/com.whatsapp/databases/wa.db*'),
         "output_types": "standard",
         "artifact_icon": "activity",

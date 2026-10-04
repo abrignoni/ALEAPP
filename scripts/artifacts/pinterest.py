@@ -33,7 +33,10 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Pinterest",
         "notes": "Each preference entry in the account switcher store is named for an account id "
-                 "and holds that account's own record as JSON. The store carries an access token "
+                 "and holds that account's own record as JSON. Account Switcher Group ID is "
+                 "taken from that record; when the record carries none, the value from the first "
+                 "PREF_ACCUNT_SWITCHER_GROUP_ID.xml file matched is shown instead, which is not "
+                 "tied to the row's own Android user. The store carries an access token "
                  "and two further tokens per account, which are reported as stored; whether they "
                  "are still valid is not established. The tested sample held one "
                  "account, so the multiple account path is code present and unexercised. Field "
@@ -57,10 +60,12 @@ __artifacts_v2__ = {
         "notes": "A selected set of preference keys is reported, one row per key, with the value "
                  "as stored. Preference File names the preference file a key was read from and "
                  "does not separate two Android users' copies of it, so Source File names the file"
-                 " each row came from. A key is converted to a timestamp only when its own name "
-                 "states that it "
-                 "holds a time and its value is a thirteen digit integer, which is the shape every "
-                 "converted value had on the tested sample; every other value is left as text. The "
+                 " each row came from. A key is converted to a timestamp only when its name "
+                 "contains TIME, _AT, _MS or SESSION_KEY and its value is a thirteen digit "
+                 "integer, read as Unix milliseconds; every converted value on the tested sample "
+                 "had that shape. CLOSEUP_SESSION_KEY is included although its name does not "
+                 "state a time. Where a key holds several values only the first thirteen digit "
+                 "one is converted. Every other value is left as text. The "
                  "install referrer and the requested runtime permissions are the values the app "
                  "recorded, not an observation of what was granted. What the app does with each "
                  "preference is not established here, so no meaning is asserted beyond the key name "
@@ -86,14 +91,17 @@ __artifacts_v2__ = {
                  "fetched from on a Pinterest content delivery host, a cache version naming a "
                  "country and gender segment and a dated build, and a single fetch time; the table "
                  "held 25802 rows, all distinct, on a contiguous run of autoincrement ids with no "
-                 "gaps, which is one bulk insert. The suggestion text is therefore not reported, "
+                 "gaps, which is consistent with one bulk insert. The suggestion text is "
+                 "therefore not reported, "
                  "because a list of server supplied terms presented next to a Pinterest account "
                  "reads as a search history and is not one. The row count and the cache identifiers "
                  "are reported instead, and the suggestions remain in the evidence file, where a "
-                 "keyword search of this database will surface them; a hit on one of those strings "
-                 "is not evidence that the account holder entered it. Score also decreases "
-                 "monotonically with the row id across every row, so the table was written once in "
-                 "server rank order, which typed history is not. No store "
+                 "keyword search of this database will surface them; a hit on one of those "
+                 "strings is not evidence that the account holder entered it. The identifiers are "
+                 "read from the first preferences file that holds them and are not matched to the "
+                 "Android user of the database they are shown beside. Score also decreases "
+                 "monotonically with the row id across every row, which is consistent with a table "
+                 "written once in server rank order. No store "
                  "holding terms entered by the user was found in the tested sample. The fetch time "
                  "is stored as formatted text carrying its own UTC offset and is reported as "
                  "stored. Field mapping was done against a private sample provided by Mattia; no "
@@ -117,9 +125,11 @@ __artifacts_v2__ = {
                  "then a little endian eight byte length and that many bytes of cache key, then a "
                  "second length prefixed string, then eight bytes, then a little endian eight byte "
                  "value, then length prefixed UTF-16 little endian strings. The cache key is ASCII "
-                 "and names the list it belongs to; where it carries a nineteen digit run of digits "
-                 "that value is reported as the account id, because it matched the signed in "
-                 "account id recorded in the app's preferences on the tested sample. The eight byte "
+                 "and names the list it belongs to; where it carries a run of 16 to 21 digits the "
+                 "first such run is reported under Account ID. On the tested sample that run was "
+                 "nineteen digits and equalled the signed in account id recorded in the app's "
+                 "preferences; the module does not check that match, so compare the value with "
+                 "the Pinterest - Account artifact before relying on it. The eight byte "
                  "value decoded to a Unix millisecond time in the range of the app's own recorded "
                  "activity on all three tested files, so it is converted, but what event it marks "
                  "is not established and it is labelled only as the timestamp the record carries. "
@@ -178,9 +188,13 @@ __artifacts_v2__ = {
                  "from. In the response cache the entry file name is the MD5 of the request URL, "
                  "confirmed by recomputing it for all 13 entries on the tested sample, the first "
                  "line of the .0 file is that URL and the .1 file is the response body, which was a "
-                 "complete MP4 in every case, so those are checked in and rendered. Requested and "
-                 "Received come from the OkHttp-Sent-Millis and OkHttp-Received-Millis headers the "
-                 "cache writes into that entry, in Unix milliseconds on the device clock; the "
+                 "complete MP4 in all 13 of them. The module checks in every "
+                 ".1 file as an MP4 without testing its leading bytes, so the Content Type (as "
+                 "stored) column should be read beside the media cell. On Response cache rows "
+                 "Requested and Received come from the OkHttp-Sent-Millis and "
+                 "OkHttp-Received-Millis headers stored in that entry, read as Unix milliseconds. "
+                 "On Player cache rows the Requested column instead holds the newest last touch "
+                 "time among that item's fragment rows and Received is empty; the "
                  "server's own date header is reported separately as stored. In the player cache "
                  "the index table maps a cache id to the full media URL and the file metadata table "
                  "names each cached fragment with its length and last touch time in Unix "
@@ -203,7 +217,7 @@ __artifacts_v2__ = {
     },
     "pinterest_idea_pin_drafts": {
         "name": "Pinterest - Idea Pin Drafts",
-        "description": "Parses unpublished idea pin drafts from the Pinterest Android app database.",
+        "description": "Parses the idea_pin_drafts table of the Pinterest Android app database.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
@@ -221,7 +235,9 @@ __artifacts_v2__ = {
                  "the table declares them, so a differing schema version still parses. The "
                  "metadata, page data and extracted image metadata columns hold payloads whose "
                  "structure is not established here, so their presence and length are reported "
-                 "rather than a decode. Timestamps are Unix milliseconds. Field mapping was done "
+                 "rather than a decode. The created, last updated and scheduled columns are "
+                 "converted as Unix milliseconds. That unit is assumed: no populated row was "
+                 "available to confirm it. Field mapping was done "
                  "against a private sample provided by Mattia; no sample data is recorded for it.",
         "paths": ('*/com.pinterest/databases/pinterest-db*',),
         "output_types": ["html", "tsv", "lava"],

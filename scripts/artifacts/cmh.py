@@ -1,13 +1,22 @@
 __artifacts_v2__ = {
     "get_cmh": {
         "name": "cmh",
-        "description": "Parses the Samsung CMH media store (image dates, title, bucket, latitude, longitude, address and path) from cmh.db.",
+        "description": "Parses the Samsung CMH media store (image dates, title, bucket, latitude, longitude, address (from location_view, joined on _id) and path) from cmh.db.",
         "author": "@abrignoni",
         "creation_date": "2020-03-05",
         "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Samsung_CMH",
-        "notes": "Queries the files table directly (media_type 1 = images). In the samples examined, older CMH versions defined an images view over the files table with the same filter and newer CMH versions did not carry that view. Reference: AOSP, 'MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE; DATE_ADDED/DATE_MODIFIED in seconds, DATE_TAKEN in milliseconds', https://developer.android.com/reference/android/provider/MediaStore.MediaColumns",
+        "notes": "Queries the files table directly (media_type 1 = images). In the samples "
+                 "examined, older CMH versions defined an images view over the files table with "
+                 "the same filter and newer CMH versions did not carry that view. The files table "
+                 "uses column names that Android's MediaStore also uses. The units applied here "
+                 "(datetaken in milliseconds, date_added and date_modified in seconds) and "
+                 "media_type 1 for images are MediaStore's documented conventions "
+                 "(https://developer.android.com/reference/android/provider/MediaStore.MediaColumns "
+                 "and "
+                 "https://developer.android.com/reference/android/provider/MediaStore.Files.FileColumns); "
+                 "that the CMH files table follows them was not sourced.",
         "paths": ('*/cmh.db*',),
         "output_types": "all",
         "artifact_icon": "file",

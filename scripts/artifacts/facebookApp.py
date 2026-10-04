@@ -112,8 +112,9 @@ __artifacts_v2__ = {
                  "that the user viewed them. seen_state and image_seen_state are reported as "
                  "stored and their meaning beyond the column name is not established; on "
                  "sharon_a13 "
-                 "seen_state was 0 on 67 rows and 1 on 19. fetched_at is Unix "
-                 "milliseconds, converted at this call site. Media Count is the number of "
+                 "seen_state was 0 on 67 rows and 1 on 19. fetched_at is read as Unix "
+                 "milliseconds. What event the column marks beyond its name is not established. "
+                 "Media Count is the number of "
                  "home_stories_media rows sharing the story's dedup_key.",
         "paths": ('*/com.facebook.katana/databases/*android_facebook_newsfeed_db*',),
         "output_types": "standard",
@@ -140,8 +141,8 @@ __artifacts_v2__ = {
     },
     "facebookAppMentionEntities": {
         "name": "Facebook - Mention Typeahead Entities",
-        "description": "Entities the app downloaded for the mention typeahead "
-                       "(search_bootstrap_db_uid, mentions_entities): the Facebook id, display "
+        "description": "Entities held in the mentions_entities table of the app's search "
+                       "bootstrap database (search_bootstrap_db_uid): the Facebook id, display "
                        "name, entity type and friendship status of each.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-20",
@@ -154,9 +155,9 @@ __artifacts_v2__ = {
                  "interacted with that entity. type and friendship_status are reported as "
                  "stored. On sharon_a13 the 182 rows were 181 of type User and 1 of type "
                  "Place, and friendship_status was CANNOT_REQUEST on 162, OUTGOING_REQUEST on "
-                 "18, CAN_REQUEST on 1 and UNSET_OR_UNRECOGNIZED_ENUM_VALUE on 1. The "
-                 "companion bootstrap_db_properties table recorded only an api version, so no "
-                 "fetch time for this list was available.",
+                 "18, CAN_REQUEST on 1 and UNSET_OR_UNRECOGNIZED_ENUM_VALUE on 1. On "
+                 "sharon_a13 the bootstrap_db_properties table held only an api version, so no "
+                 "fetch time for this list was found there.",
         "paths": ('*/com.facebook.katana/databases/*search_bootstrap_db*',),
         "output_types": "standard",
         "artifact_icon": "at",
@@ -182,7 +183,7 @@ __artifacts_v2__ = {
     },
     "facebookAppTimeInApp": {
         "name": "Facebook - Time In App",
-        "description": "App usage intervals from the intervals table of "
+        "description": "Rows of the intervals table of "
                        "time_in_app_<user id>.db, with the start and end times and the stored "
                        "event codes.",
         "author": "@AlexisBrignoni, Claude",
@@ -190,8 +191,8 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-20",
         "requirements": "none",
         "category": "Facebook",
-        "notes": "One row per intervals table entry. start_walltime and end_walltime are stored "
-                 "as epoch seconds. The start_event and end_event integers are reported as "
+        "notes": "One row per intervals table entry. start_walltime and end_walltime are read "
+                 "as Unix seconds. The start_event and end_event integers are reported as "
                  "stored; nothing in the extraction maps them. The user id in the User ID "
                  "column is taken from the database file name. An interval is a record the app "
                  "wrote in its time_in_app store; what it measures beyond the table and column "
@@ -231,7 +232,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Facebook",
         "notes": "Every row in the table is reported rather than a selected subset, so nothing "
-                 "is filtered out by this module's choices. Most keys are configuration: on "
+                 "is filtered out by this module's choices. On "
                  "sharon_a13 896 rows carried 327 keys under logged_in_user_scoped, 116 under "
                  "config and 88 under ras_blobs, and the remainder were spread across smaller "
                  "groups. The stored type integer is reported as stored. Values are reported as "

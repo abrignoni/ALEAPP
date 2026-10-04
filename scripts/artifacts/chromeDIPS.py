@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_chromeDIPS": {
         "name": "ChromeDIPS",
-        "description": "Parses Chromium DIPS (Detect Incidental Party State)",
+        "description": "Parses the bounces table of the Chromium DIPS (Detect Incidental Party State) database. Column names differ between Chromium versions; a first_bounce_time or last_bounce_time column is shown under the Stateless Bounce headers and a user_activation_time column under the User Interaction headers, which is this parser's mapping and is not sourced here.",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2023-04-07",
         "last_update_date": "2026-07-10",

@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_DocList": {
         "name": "DocList",
-        "description": "Parses Google Drive file metadata (name, owner, type, created/modified/opened dates, URIs, MD5 and size) from the DocList.db database.",
+        "description": "Parses the EntryView rows of the Google Drive DocList.db database (title, owner, kind, creation, last modified and last opened times, URIs, MD5 and size). None of the ten images listed in sample_data produced a row, so the column mapping is not exercised.",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2020-12-21",
         "last_update_date": "2020-12-21",

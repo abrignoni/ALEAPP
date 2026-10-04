@@ -10,9 +10,10 @@ __artifacts_v2__ = {
         "sample_data": {
             "emu_a15_oss_v15": "KMPlayer 36.04.235 | 2 rows",
         },
-        "notes": "One row per live entry of the Hive box "
-                 "com.kmplayer/databases/db/hive_url_meta_box.hive. KMPlayer is written in "
-                 "Flutter and keeps its state in Hive boxes rather than in SQLite. The reader "
+        "notes": "One row per live entry whose value is a stored object, in the Hive box "
+                 "com.kmplayer/databases/db/hive_url_meta_box.hive. On the tested image the app "
+                 "kept this state in Hive boxes (the hive_*.hive files under databases/db). The "
+                 "reader "
                  "treats the box as a flat log of frames in which a later frame for the same key "
                  "supersedes an earlier one, so only the surviving entries are reported; it "
                  "checks the CRC32 each frame carries and stops at the first frame that fails "

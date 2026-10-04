@@ -1,8 +1,9 @@
 __artifacts_v2__ = {
     "twitch_account": {
         "name": "Twitch - Account and Device",
-        "description": "Parses the signed in Twitch account together with the device and "
-                       "install identifiers the Android app records.",
+        "description": "Parses the Twitch account fields held in the Android app's "
+                       "preference files, with the device and install identifiers it "
+                       "records.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
@@ -13,9 +14,10 @@ __artifacts_v2__ = {
                  "identifier file. Account Created is an ISO 8601 value the app stores with "
                  "a trailing Z, reported as the UTC time it states. Device Token Refreshed, "
                  "Amazon Identity Registered and Country Last Updated are Unix "
-                 "milliseconds. Country From IP is the country the app recorded from the "
-                 "address it connected from, which places the connection rather than the "
-                 "device. The account fields are written to two preference files, user.xml "
+                 "milliseconds. Country From IP is the value of the "
+                 "country_code_from_ip_prefs_key preference, reported as stored. How the "
+                 "app sets it was not established here. The account fields are written to "
+                 "two preference files, user.xml "
                  "and twitch_user_prefs.xml, and one row is reported rather than two: on the "
                  "tested device the two agreed on all 21 shared names and the second carried "
                  "only two extra migration flags, so values are read from whichever is "

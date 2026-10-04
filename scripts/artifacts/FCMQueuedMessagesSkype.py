@@ -22,7 +22,7 @@ SOFTWARE.
 __artifacts_v2__ = {
     "get_fcm_skype": {
         "name": "FCM - Skype and Teams Messages",
-        "description": "Skype (com.skype.raider) and Teams (com.microsoft.teams) message/call notifications from fcm_queued_messages.ldb",
+        "description": "Skype (com.skype.raider) and Teams (com.microsoft.teams) records from fcm_queued_messages.ldb whose eventType the module maps to a message (200, 201, 302, 305, 306), a call (107) or a missed call (110); the mapping is not sourced here",
         "author": "Alex Caithness (research [at] cclsolutionsgroup.com)",
         "creation_date": "2022-01-01",
         "last_update_date": "2022-01-01",
@@ -47,7 +47,7 @@ __artifacts_v2__ = {
     },
     "get_fcm_skype_notifications": {
         "name": "FCM - Skype and Teams Notifications",
-        "description": "Skype/Teams other (e.g. missed-chat-reminder) notifications from fcm_queued_messages.ldb",
+        "description": "Skype/Teams records with eventType 404 from fcm_queued_messages.ldb, which the module labels Missed chat reminder (not sourced; not exercised on the tested images)",
         "author": "Alex Caithness (research [at] cclsolutionsgroup.com)",
         "creation_date": "2022-01-01",
         "last_update_date": "2022-01-01",

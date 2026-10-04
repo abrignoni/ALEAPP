@@ -2,7 +2,13 @@
 __artifacts_v2__ = {
     "get_appSemloc": {
         "name": "App Semantic Locations",
-        "description": "Location records from Google Play services' app_semanticlocation_rawsignal LevelDB, with coordinates and accuracy",
+        "description": "Records from Google Play services' app_semanticlocation_rawsignal LevelDB. Timestamp, "
+                       "Latitude, Longitude and Horizontal Acc. are protobuf fields 6, 1, 2 and 3 of the message "
+                       "nested at field 1 of field 1 of each record value, read as Unix milliseconds, degrees "
+                       "times 10,000,000 and thousandths of a unit; the field meanings and units are not "
+                       "documented and were not sourced here. Record versions are not collapsed, so a superseded "
+                       "version that still decodes is listed beside the current one; Rec. Sequence is the LevelDB "
+                       "sequence number.",
         "author": "Alexis 'Brigs' Brignoni",
         "creation_date": "2024/06/21",
         "last_update_date": "2024/06/21",

@@ -7,8 +7,11 @@ __artifacts_v2__ = {
         'last_update_date': '2026-08-01',
         'requirements': 'none',
         'category': 'Life360',
-        'notes': 'Speed is reported as stored. The MPH column multiplies it by 2.23694, which assumes '
-                 'the stored value is in metres per second; the JSON records no unit for it.',
+        'notes': 'Rows are the event rows whose eventVersion is 6; other versions are not read by '
+                 'this artifact. Timestamp is locationData.time read as Unix milliseconds. '
+                 'Speed is reported as stored. The MPH column multiplies it by 2.23694, which '
+                 'assumes the stored value is in metres per second; the JSON records no unit for '
+                 'it.',
         'paths': ('*/com.life360.android.safetymapd/databases/L360EventStore_service.db*',),
         'output_types': ['html', 'tsv', 'lava', 'kml'],
         'artifact_icon': 'map-pin',
@@ -25,8 +28,10 @@ __artifacts_v2__ = {
         'last_update_date': '2026-08-01',
         'requirements': 'none',
         'category': 'Life360',
-        'notes': 'Speed is reported as stored. The MPH column multiplies it by 2.23694, which assumes '
-                 'the stored value is in metres per second; the JSON records no unit for it.',
+        'notes': 'Rows are the type.waypoints elements of event rows whose eventVersion is 1, 3, '
+                 '4 or 5. Speed is reported as stored. The MPH column multiplies it by 2.23694, '
+                 'which assumes the stored value is in metres per second; the JSON records no unit '
+                 'for it.',
         'paths': ('*/com.life360.android.safetymapd/databases/L360EventStore_service.db*',),
         'output_types': ['html', 'tsv', 'lava', 'kml'],
         'artifact_icon': 'map-pin',
@@ -37,7 +42,7 @@ __artifacts_v2__ = {
     },
     'Life360_BatteryLevel': {
         'name': 'Life360 Battery Level',
-        'description': 'Parses Life360 Battery Level Events',
+        'description': 'Parses Life360 battery values from event rows of eventVersion 1, 2 and 6; identical rows are reported once, and Charging State shows True for a stored 1 and False for a stored 0',
         'author': 'Heather Charpentier',
         'creation_date': '2026-06-10',
         'last_update_date': '2026-06-30',

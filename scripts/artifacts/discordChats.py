@@ -7,8 +7,7 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-05",
         "requirements": "none",
         "category": "Discord Chats",
-        "notes": "Reference: Discord Developer Documentation, 'Message Types (DEFAULT=0, CALL=3, USER_JOIN=7, "
-                 "REPLY=19)', https://discord.com/developers/docs/resources/message. Each account's "
+        "notes": "Each account's "
                  "kv-storage/@account.<id>/a database is read separately (one account on each of the 6 tested "
                  "images holding one); Direction is Outgoing when the sender id equals the account id in that "
                  "folder name. Attachment renders the first attachment whose URL path (scheme, host and path, "

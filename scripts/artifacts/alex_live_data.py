@@ -147,14 +147,20 @@ __artifacts_v2__ = {
         "notes": "Rows are the history lines of the batterystats section of the dumpsys. "
                  "A line that begins with a month-day time is read as that date and "
                  "time, with the year taken from the Unix timestamp in the dumpsys file "
-                 "name (1970 when the name carries none); a line that begins with a + "
-                 "offset or a bare 0 is read as that offset from the most recent "
-                 "RESET:TIME line. Both are reported as UTC without adjustment. Battery "
-                 "Level and Mask are as dumped. States (from Mask) decodes the mask "
-                 "against a bit table chosen by the Android major version in "
+                 "name (1970 when the name carries none), and a month and day later than "
+                 "that timestamp's are given the previous year; a line that begins with "
+                 "a + offset or a bare 0 is read as that offset from the most recent "
+                 "line carrying TIME:, and when no such line has been read the offset is "
+                 "reported as written. Both are reported as UTC without adjustment. "
+                 "Battery Level and Mask are as dumped. States (from Mask) decodes the "
+                 "mask against a table of the STATE_ flag bits of AOSP "
+                 "BatteryStats.HistoryItem chosen by the Android major version in "
                  "device_info_alex.json, using the highest of the tables keyed 4, 5, 6 "
                  "and 9 that does not exceed the version; without that file the column "
-                 "is blank. Continuation lines are skipped.",
+                 "is blank. The table keyed 9 was checked against BatteryStats.java at "
+                 "android-14.0.0_r1 and is used for every later version; the tables "
+                 "keyed 4, 5 and 6 carry no recorded check. Continuation lines are "
+                 "skipped.",
         "paths": ('*/extra/dumpsys_*.txt',
             '*/device_info_alex.json'),
         "output_types": ["html", "lava", "tsv"],
@@ -169,8 +175,10 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "ALEX Live Data",
         "notes": "One row per ShortcutInfo block in the shortcut section of the dumpsys. "
-                 "Timestamp is the shortcut's timestamp field, which AOSP ShortcutInfo sets "
-                 "to the last time one of the shortcut's fields changed, converted from "
+                 "Timestamp is the shortcut's timestamp field, which AOSP ShortcutInfo "
+                 "documents as the last time any of the fields was updated "
+                 "(ShortcutInfo.java at android-14.0.0_r1, getLastChangedTimestamp, lines "
+                 "1844 to 1849), converted from "
                  "milliseconds to UTC. Intent is the intents field as dumped: each intent "
                  "followed by its persistable extras. A dumped value of null or [] is "
                  "reported blank in whichever column it lands.",
@@ -194,7 +202,9 @@ __artifacts_v2__ = {
                  "Message Time is the JSON timestamp value in the extras, or scheduled_at "
                  "when there is none; the string is read as UTC and an offset it carries is "
                  "not applied. Timestamp (Shortcut) is the shortcut's own timestamp field, "
-                 "the last time one of its fields changed, converted from milliseconds to "
+                 "which AOSP ShortcutInfo documents as the last time any of the fields was "
+                 "updated (ShortcutInfo.java at android-14.0.0_r1, getLastChangedTimestamp, "
+                 "lines 1844 to 1849), converted from milliseconds to "
                  "UTC. A key that is absent leaves its column blank.",
         "paths": ('*/extra/dumpsys_*.txt'),
         "output_types": ["html", "lava", "tsv"],

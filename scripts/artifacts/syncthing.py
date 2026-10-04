@@ -10,15 +10,19 @@ __artifacts_v2__ = {
         "notes": "One row per device element in files/config.xml, which lists the devices in the "
                  "configuration, the local device included. Each row carries the Device ID, the "
                  "Name, its configured addresses, whether it is paused or marked untrusted, the "
-                 "Auto Accept Folders flag, and the introducer fields. Auto Accept Folders is "
-                 "blank unless the device is set to accept folders offered to it automatically, "
-                 "which neither device was on the tested config. Introduced By is the "
-                 "introducedBy attribute as stored; how Syncthing's introducer feature fills it "
-                 "is not sourced here. The config does not itself flag which entry is the local "
-                 "device; on the tested device the local one carried the device model as its "
-                 "Name. files/cert.pem is not parsed here. A device being present in the "
-                 "configuration does not establish that a transfer "
-                 "took place.",
+                 "Auto Accept Folders flag, and the introducer fields. Auto Accept Folders is Yes "
+                 "when the device element's autoAcceptFolders value is true and blank otherwise. "
+                 "Syncthing's documentation describes that setting as automatically adding, on "
+                 "this installation, folders shared from that device "
+                 "(https://github.com/syncthing/docs/blob/1f79d9ed73a3d3186b0a155e50b2d85b4c848ff1/users/config.rst#L790-L793). "
+                 "It was not true on either device of the tested config. Introduced By is the "
+                 "introducedBy attribute as stored. Syncthing's documentation describes it as the "
+                 "device that introduced this device "
+                 "(https://github.com/syncthing/docs/blob/1f79d9ed73a3d3186b0a155e50b2d85b4c848ff1/users/config.rst#L718-L720). "
+                 "The config does not itself flag which entry is the local device; on the tested "
+                 "device the local one carried the device model as its Name. files/cert.pem is not "
+                 "parsed here. A device being present in the configuration does not establish that "
+                 "a transfer took place.",
         "paths": ('*/com.nutomic.syncthingandroid/files/config.xml',),
         "output_types": "standard",
         "artifact_icon": "devices",
@@ -35,13 +39,13 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Syncthing",
         "notes": "One row per folder element in files/config.xml. Each row gives the folder's ID, the "
-                 "user's Label, the local Path being synced, the folder Type (sendonly, receiveonly or "
-                 "sendreceive as stored), whether it is paused, the rescan interval, and Shared With, "
-                 "the devices the folder is shared with. Shared With resolves each shared device id to "
-                 "the device name from the same config where one is set, so it shows which other "
-                 "devices the folder is configured to be shared with. Path is the folder path as "
-                 "stored. On the tested device the configuration held a sendonly Camera "
-                 "folder for the DCIM directory.",
+                 "Label and the Path the configuration stores for it, the folder Type as stored, "
+                 "whether it is paused, the rescan interval, and Shared With, the devices named under "
+                 "the folder element. Shared With resolves each shared device id to the device name "
+                 "from the same config where one is set, so it lists the devices named under the "
+                 "folder element, which can include the local device. A configured folder does not "
+                 "establish that syncing took place. Path is the folder path as stored. On the tested "
+                 "device the configuration held a sendonly Camera folder for the DCIM directory.",
         "paths": ('*/com.nutomic.syncthingandroid/files/config.xml',),
         "output_types": "standard",
         "artifact_icon": "folder-share",

@@ -1,8 +1,8 @@
 __artifacts_v2__ = {
     "cmh_scene_tags": {
         "name": "CMH Scene Tags",
-        "description": "Scene and sub-scene labels Samsung's CMH media provider stored against "
-                       "image files, joined to the file each label belongs to.",
+        "description": "Labels in Samsung's CMH tag_map table, with the tag type as stored, "
+                       "joined to the file each label belongs to.",
         "author": "Panagiotis Nakoutis - @4n6equals10, @AlexisBrignoni, Claude",
         "creation_date": "2025-05-05",
         "last_update_date": "2026-08-10",
@@ -44,9 +44,10 @@ __artifacts_v2__ = {
                  "separates the segments it read with 0x1F unit separators, which are shown "
                  "here as ' | ' so the row stays readable. The text is reported as stored and "
                  "can be partial or wrong; it is not a transcription verified by anything.\nTag "
-                 "Added Timestamp is the ocr_tag row's tag_added_date, stored in milliseconds "
-                 "and reported as UTC. Recogniser Version is the ocr_tag row's version column, "
-                 "as stored.",
+                 "Added Timestamp is the ocr_tag row's tag_added_date, read as Unix "
+                 "milliseconds and reported as UTC; the unit was not sourced. Recogniser "
+                 "Version is the ocr_tag row's version column, as stored; what it versions is "
+                 "not established.",
         "paths": ('*/cmh.db*',),
         "output_types": "standard",
         "artifact_icon": "file-text",
@@ -71,8 +72,9 @@ __artifacts_v2__ = {
         "notes": "Rows are the tag_map entries whose scene_qr_barcode_info column is "
                  "populated, joined to the files table. The value is reported exactly as "
                  "stored and is not decoded, resolved or requested; a stored URL is text in "
-                 "the database, and its presence records what the provider read from an image "
-                 "on the device, not that anyone opened it.\n"
+                 "the database, and its presence records a value held in the "
+                 "scene_qr_barcode_info column against that file; what produced the value is "
+                 "not recorded in the store, and it does not show that anyone opened it.\n"
                  "The same content can appear on more than one row where the provider "
                  "recorded it against several files or labels.",
         "paths": ('*/cmh.db*',),
@@ -102,8 +104,7 @@ __artifacts_v2__ = {
                  "generation seen on an Android 10 image carries neither, so those rows are "
                  "reported with the tag value alone and no file or time. Absent columns are "
                  "read as NULL rather than assumed.\n"
-                 "Tag Value is the stored user_tag_data. The table name and the values "
-                 "observed are consistent with tags applied through the gallery, but the "
+                 "Tag Value is the stored user_tag_data. The "
                  "database does not record how any individual row was created.",
         "paths": ('*/cmh.db*',),
         "output_types": "standard",

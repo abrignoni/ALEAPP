@@ -10,26 +10,27 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Houseparty",
         "notes": "Read from class_RealmNote in the app's Realm store with the vendored "
-                 "realm_parser. Houseparty was a group video chat app; its publisher removed it "
-                 "from the app stores on 9 September 2021 and shut it down in October 2021, so a "
-                 "store found now is a residue of earlier use. Reference: Sarah Perez, 'Epic "
-                 "Games to shut down Houseparty in October, including the video chat Fortnite "
-                 "Mode feature', TechCrunch, "
+                 "realm_parser. Houseparty was a group video chat app; its publisher announced on "
+                 "9 September 2021 that it would be pulled from the app stores that day and "
+                 "discontinued in October 2021. Reference: Sarah Perez, 'Epic Games to shut down "
+                 "Houseparty in October, including the video chat Fortnite Mode feature', "
+                 "TechCrunch, "
                  "https://techcrunch.com/2021/09/09/epic-games-to-shut-down-houseparty-in-october-including-the-video-chat-fortnite-mode-feature/ "
                  "Direction is derived by comparing each message's senderId against the account "
                  "id in class_RealmUser, which is the identity the store itself records, and is "
                  "left empty when no account row is present. Sender and Recipient are resolved to "
                  "the user name class_RealmPublicUser records for that id, falling back to the id "
                  "as stored when the store holds no row for it. Media reports what the row's "
-                 "facemail link resolves to. On the tested "
-                 "extraction the link was null on every message and class_RealmFacemail held no "
-                 "rows, so Media is empty on all of them and no video message was recovered. Sent "
-                 "At is the store's own sentAt value; the same row separately carries "
-                 "sentAtSeconds and sentAtNanos, which agree with it, and the newest value "
-                 "matches LAST_NOTE_DATE in the app's USERDATA_SHARED_PREFERENCES.xml to the "
-                 "millisecond. Conversation names the other account in the exchange, so it holds "
-                 "one value wherever the store records messages with a single correspondent, as "
-                 "it did on the tested extraction. Read and Hidden are reported as stored.",
+                 "facemail link resolves to. On the tested extraction the link was null on every "
+                 "message and class_RealmFacemail held no rows, so Media is empty on all of them "
+                 "and no video message was recovered. Sent At is the store's own sentAt value; on "
+                 "the tested extraction the same row separately carried sentAtSeconds and "
+                 "sentAtNanos, which agreed with it, and the newest value matched LAST_NOTE_DATE "
+                 "in the app's USERDATA_SHARED_PREFERENCES.xml to the millisecond. Conversation "
+                 "names the other account in the exchange when Direction is known; when Direction "
+                 "is empty it holds the sender. It held one value on the tested extraction. The "
+                 "Read column holds the store's isUnread value as stored, so True there means the "
+                 "store marked the message unread; Hidden is isHidden as stored.",
         "paths": ('*/com.herzick.houseparty/files/default.realm',),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "message-circle",
@@ -52,7 +53,8 @@ __artifacts_v2__ = {
     "housepartyRooms": {
         "name": "Houseparty - Video Rooms",
         "description": "Video rooms the app recorded, with the time each was created, whether "
-                       "it was locked and the media server session it was carried on.",
+                       "it was locked and the media server session and host the store links "
+                       "to it.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-02",
         "last_update_date": "2026-09-04",
@@ -66,11 +68,13 @@ __artifacts_v2__ = {
                  "store: the invitedUsers list on every room row and the users list on every "
                  "session row were empty on the tested extraction, and the parser reads list "
                  "columns elsewhere in the same file, so that is an absence in the data rather "
-                 "than a decoding limit. Locked, Locking User, Video Tech and Secret Version are "
-                 "reported as stored; no room on the tested extraction was locked, so Locking "
-                 "User is empty on all of them. The media server host is joined from the "
-                 "session's own mediaServerEndpoint link and is the server the app was told to "
-                 "use, not an address the device is shown to have reached. Colour is the color "
+                 "than a decoding limit. Locked, Video Tech and Secret Version are reported as "
+                 "stored; Locking User is lockingUserId resolved to the user name "
+                 "class_RealmPublicUser records for it, or the id when there is none. No room on "
+                 "the tested extraction was locked, so Locking User is empty on all of them. The "
+                 "media server host is joined from the session's own mediaServerEndpoint link "
+                 "and is the host the store records for that session, not an address the device "
+                 "is shown to have reached. Colour is the color "
                  "value the room row carries, a hex RGB string reported as stored.",
         "paths": ('*/com.herzick.houseparty/files/default.realm',),
         "output_types": ["html", "tsv", "lava"],
@@ -81,7 +85,8 @@ __artifacts_v2__ = {
     },
     "housepartyAccount": {
         "name": "Houseparty - Account",
-        "description": "The signed-in Houseparty account, with the user name, display name, "
+        "description": "The account record in class_RealmUser of the Houseparty store, with "
+                       "the user name, display name, "
                        "email address, telephone number and birthday the account held, and the "
                        "notification and privacy settings stored alongside it.",
         "author": "@AlexisBrignoni, Claude",
@@ -96,8 +101,9 @@ __artifacts_v2__ = {
                  "they are not verified identifiers. Birthday fell on midnight UTC on the tested "
                  "extraction and is reported as a date rather than a datetime for that reason. "
                  "Session Created and Session Invalidated come from class_RealmToken; an "
-                 "invalidated value of the Unix epoch is the store's not-invalidated sentinel and "
-                 "is reported as empty. The token string itself is not reported. Relevance Reason "
+                 "invalidatedAt value dated in 1970 is reported as empty, and reading the Unix "
+                 "epoch there as 'not invalidated' is not sourced. The token string itself is "
+                 "not reported. Relevance Reason "
                  "and Notification Threshold are reported as stored.",
         "paths": ('*/com.herzick.houseparty/files/default.realm',),
         "output_types": ["html", "tsv", "lava"],
@@ -108,7 +114,8 @@ __artifacts_v2__ = {
     },
     "housepartyContacts": {
         "name": "Houseparty - Contacts",
-        "description": "Other Houseparty accounts the app held, with the user name and display "
+        "description": "Houseparty account records the app held in class_RealmPublicUser, "
+                       "with the user name and display "
                        "name each carried, when each was last seen, and the relationship and "
                        "time-together values the app recorded for them.",
         "author": "@AlexisBrignoni, Claude",
@@ -120,7 +127,8 @@ __artifacts_v2__ = {
                  "joined from class_RealmUserPresence through the row's own userPresence link "
                  "and the relationship, together-minutes and last-interaction values joined "
                  "from class_RealmRelationshipInfo, class_RealmWithSomeoneData and "
-                 "class_RealmLocalWithSomeoneData on the account id. The signed-in account "
+                 "class_RealmLocalWithSomeoneData on the account id. The account in "
+                 "class_RealmUser "
                  "appears here as well as in the Account artifact, because the store keeps a "
                  "public record for it too. Last Seen and Room Created are values stored about "
                  "that account and are not evidence of activity on this device. "
@@ -136,8 +144,8 @@ __artifacts_v2__ = {
     },
     "housepartyInteractions": {
         "name": "Houseparty - Interactions",
-        "description": "Interactions the app recorded between the signed-in account and "
-                       "another account, with the time each happened.",
+        "description": "Rows of class_RealmInteraction in the Houseparty store, with "
+                       "the from and to accounts and the stored happenedAt time.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-02",
         "last_update_date": "2026-09-02",

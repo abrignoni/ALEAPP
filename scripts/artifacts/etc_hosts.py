@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_etc_hosts": {
         "name": "Etc_hosts",
-        "description": "Parses host-to-IP mappings (IP address and hostname) from the system etc/hosts file.",
+        "description": "Parses entries of the system etc/hosts file other than the default 127.0.0.1 localhost and ::1 ip6-localhost lines (first address and first hostname of each line).",
         "author": "@ydkhatri",
         "creation_date": "2020-10-09",
         "last_update_date": "2020-10-09",

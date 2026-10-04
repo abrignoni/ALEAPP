@@ -6,14 +6,16 @@
 __artifacts_v2__ = {
     'romeo_dating_messages': {
         'name': 'Romeo Dating App Messages',
-        'description': 'Parses Romeo Dating App Messages',
+        'description': 'Parses messages from the MessageEntity table of the Romeo Android app database, joined to ChatPartnerEntity for the contact name.',
         'author': 'Marco Neumann {kalinko@be-binary.de}',
         'version': '0.0.1',
         'creation_date': '2026-02-25',
         'last_update_date': '2026-02-25',
         'requirements': '',
         'category': 'Chats',
-        'notes': '',
+        'notes': 'A message whose chat partner has no ChatPartnerEntity row is not reported. A message '
+                 'with more than one image attachment appears once per image. The Timestamp column is '
+                 'the date column as stored. No direction column is reported.',
         'paths': (
             '*/com.planetromeo.android.app/databases/planetromeo-room.db.*' 
             ),
@@ -22,14 +24,16 @@ __artifacts_v2__ = {
     },
     'romeo_dating_contacts': {
         'name': 'Romeo Dating App Contacts',
-        'description': 'Parses Romeo Dating App Contacts',
+        'description': 'Parses contacts from the ContactEntity table of the Romeo Android app database, joined to ChatPartnerEntity.',
         'author': 'Marco Neumann {kalinko@be-binary.de}',
         'version': '0.0.1',
         'creation_date': '2026-02-25',
         'last_update_date': '2026-02-25',
         'requirements': '',
         'category': 'Contacts',
-        'notes': '',
+        'notes': 'Last Fetched and Deleted are fetchDate and deletionDate read as Unix milliseconds, an '
+                 'assumed unit. A NULL stored value is replaced with 0 by the query before conversion. '
+                 'A contact with no ChatPartnerEntity row is not reported.',
         'paths': (
             '*/com.planetromeo.android.app/databases/planetromeo-room.db.*'
             ),

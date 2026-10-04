@@ -2,7 +2,13 @@ __artifacts_v2__ = {
     "googleDialerAnnotatedCallLog": {
         "name": "Google Dialer Annotated Call Log",
         "description": "Call log kept by the Google Phone app (annotated_call_log.db). "
-                       "Call types follow the Android CallLog.Calls constants.",
+                       "Call Type and Presentation are labelled with the Android "
+                       "CallLog.Calls constants, which the AOSP Dialer source says "
+                       "these columns copy (Reference: AOSP Dialer, "
+                       "AnnotatedCallLogContract.java, "
+                       "https://android.googlesource.com/platform/packages/apps/Dialer/+/544da8ba78258e430b16f08dfd5a95133f66dfb1/java/com/android/dialer/calllog/database/contract/AnnotatedCallLogContract.java). "
+                       "The Google build of the app is not open source, so this "
+                       "mapping is taken from the AOSP code.",
         "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
@@ -25,7 +31,10 @@ __artifacts_v2__ = {
         "description": "Caller-id information cached per phone number by the Google Phone "
                        "app (phone_lookup_history.db). The contact name, label and lookup "
                        "URI come from the device contacts (Cp2Info) and the CNAP name from "
-                       "the carrier, per the app's phone_lookup_info protobuf.",
+                       "the carrier, per the AOSP Dialer phone_lookup_info.proto "
+                       "(https://android.googlesource.com/platform/packages/apps/Dialer/+/544da8ba78258e430b16f08dfd5a95133f66dfb1/java/com/android/dialer/phonelookup/phone_lookup_info.proto). "
+                       "Location Info is field 13.1, which is not in the AOSP file; its "
+                       "meaning is not sourced and it is reported as stored.",
         "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
@@ -65,8 +74,8 @@ __artifacts_v2__ = {
     },
     "googleDialerCachedNumberContacts": {
         "name": "Google Dialer Cached Number Contacts",
-        "description": "Caller-id lookups cached per phone number by the Google Phone app "
-                       "(dialer.db, cached_number_contacts).",
+        "description": "Rows of the cached_number_contacts table in the Google Phone "
+                       "app's dialer.db. No tested image held a row.",
         "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",

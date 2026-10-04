@@ -10,13 +10,17 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Hinge",
         "notes": "One row per app data directory. The values come from the app's own "
-                 "basic_choices table, which holds one row per profile attribute with the "
-                 "chosen value marked selected. Birthday is Unix milliseconds. Latitude and "
+                 "basic_choices table, which holds rows keyed by attribute and apiId with the "
+                 "chosen values marked selected. Where an attribute has more than one selected "
+                 "row and is read by attribute alone, only the first row returned is reported. "
+                 "Birthday is read as Unix milliseconds and shown in UTC. Which midnight the "
+                 "stored value marks was not established. Latitude and "
                  "Longitude are the coordinates the app stored for the account's location "
                  "alongside the place name; the table also records that the location came "
-                 "from a geocoding provider, reported here as stored, so the coordinates "
-                 "describe the place the account is set to rather than an observed device "
-                 "position. The remaining attributes are integer codes and are reported as "
+                 "from a geocoding provider, reported here as stored. Whether the coordinates "
+                 "come from a device "
+                 "position was not established. The remaining attributes are integer codes and "
+                 "are reported as "
                  "stored: the same table's display column repeats the numeric identifier "
                  "instead of a label, and the extraction carries no app binary, so no "
                  "mapping from those codes to their meanings could be sourced. Field "
@@ -37,8 +41,8 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-19",
         "requirements": "none",
         "category": "Hinge",
-        "notes": "One row per selected preference. The preference_choices table holds every "
-                 "option the app offers and marks the chosen ones, so only the selected rows "
+        "notes": "One row per selected preference. The preference_choices table holds option rows "
+                 "and marks some of them selected, so only the selected rows "
                  "are reported; on the tested device that was 22 of 89. Values are reported "
                  "as stored, because the table's display column repeats the numeric "
                  "identifier rather than naming the option and the extraction carries no app "
@@ -57,7 +61,7 @@ __artifacts_v2__ = {
         "name": "Hinge - Profiles",
         "description": "Parses the profiles of other people that the Hinge Android app "
                        "cached, including age, home town, location and the profile "
-                       "attributes each person recorded.",
+                       "attributes stored for each.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
@@ -92,9 +96,13 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-19",
         "requirements": "none",
         "category": "Hinge",
-        "notes": "One row per media entry. Owner separates the account holder's own media "
-                 "from media belonging to a cached profile, and carries the profile's user "
-                 "id in the second case. Row Created is Unix milliseconds and records when "
+        "notes": "One row per media entry. Owner reads Account Holder for rows of the "
+                 "player_media table. For rows of the subject_media table it carries the "
+                 "profile's user "
+                 "id, with the first name from the profiles table where one is held. The label is "
+                 "assigned by the module from the table a row sits in; what ties player_media to "
+                 "the account holder was not sourced. Row Created is Unix milliseconds and "
+                 "records when "
                  "the app wrote the row. The rows carry the address of the image on the "
                  "app's media host rather than the bytes; the app's image cache is reported "
                  "separately and only one of its entries could be tied back to a stored "
@@ -117,9 +125,12 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-19",
         "requirements": "none",
         "category": "Hinge",
-        "notes": "One row per answer. Owner separates the account holder's own answers from "
-                 "answers belonging to a cached profile, and carries the profile's user id "
-                 "in the second case. Answer is the text the answer record carries, taken "
+        "notes": "One row per answer. Owner reads Account Holder for rows of the player_answers "
+                 "table. For rows of the subject_answers table it carries the profile's user id, "
+                 "with the first name from the profiles table where one is held. The label is "
+                 "assigned by the module from the table a row sits in; what ties player_answers "
+                 "to the account holder was not sourced. Answer is the text the answer record "
+                 "carries, taken "
                  "from the response field of its stored document; where the record holds a "
                  "different shape the document is reported as stored instead, so no answer "
                  "is dropped for not matching the expected form. Answer Type is the value "
@@ -175,16 +186,21 @@ __artifacts_v2__ = {
                  "times the request was sent and the response received as Unix "
                  "milliseconds, then a header count, then the headers; the three leading "
                  "values are read by position because each is a bare number on its own "
-                 "line. The remaining columns are the response headers as stored. Source "
-                 "Address is filled only where the entry name is the SHA-256 of an image "
-                 "address the app also stored in its database, which on the tested device "
-                 "was 1 of 20 entries; the other 19 were served as WebP and their request "
-                 "address is not recorded anywhere in the extraction, so they could not be "
-                 "tied to a profile. Hashing every address the database holds, and a sweep "
-                 "of size and format variations of those addresses, produced no further "
+                 "line. That layout is the one Coil 3.0.0 writes in CacheNetworkResponse.writeTo; "
+                 "which Coil release the app ships was not established. The remaining columns are "
+                 "the response headers as stored. Source "
+                 "Address is filled only where the entry name is the SHA-256 of an address in "
+                 "subject_media photoUrl, thumbnailUrl or videoUrl, or in player_media photoUrl, "
+                 "which on the tested device "
+                 "was 1 of 20 entries; the other 19 were served as WebP and none of those "
+                 "addresses hashed to their entry names, so they could not be "
+                 "tied to a profile. A sweep "
+                 "of size and format variations of those addresses produced no further "
                  "match. The entry name is reported so the check can be repeated. Field "
                  "mapping was done against a private sample provided by Mattia; no sample "
-                 "data is recorded for it.",
+                 "data is recorded for it. Reference for the metadata layout: Coil 3.0.0, "
+                 "CacheNetworkResponse.kt, "
+                 "https://github.com/coil-kt/coil/blob/3.0.0/coil-network-core/src/commonMain/kotlin/coil3/network/CacheNetworkResponse.kt#L31-L46",
         "paths": (
             '*/co.hinge.app/cache/coil3_disk_cache/*',
             '*/co.hinge.app/databases/db*',

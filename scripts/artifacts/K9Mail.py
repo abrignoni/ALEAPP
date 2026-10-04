@@ -15,13 +15,17 @@ __artifacts_v2__ = {
     },
     "get_k9mail_messages": {
         "name": "K-9 Mail - Messages",
-        "description": "E-Mails from the K-9 Mail App",
+        "description": "E-Mails from the K-9 Mail App. Content is the first body part stored under each message (message_parts seq = 1); further parts are not reported.",
         "author": "Marco Neumann {kalinko@be-binary.de}",
         "creation_date": "2024-05-04",
         "last_update_date": "2024-05-04",
         "requirements": "none",
         "category": "K-9 Mail",
-        "notes": "Based on https://bebinary4n6.blogspot.com/2024/05/app-k-9-mail-for-android.html",
+        "notes": "Based on https://bebinary4n6.blogspot.com/2024/05/app-k-9-mail-for-android.html"
+                 ". Date Sent is the messages.date column and Date Received is the "
+                 "messages.internal_date column, both read as Unix milliseconds. The cited post "
+                 "does not describe those two columns and no other source for their meaning is "
+                 "recorded here.",
         "paths": ('*/com.fsck.k9/databases/*',),
         "output_types": "standard",
         "artifact_icon": "mail",

@@ -1,13 +1,18 @@
 __artifacts_v2__ = {
     "accounts_de": {
         "name": "Accounts_de",
-        "description": "Parses device accounts and their authentication activity (account type and name, last password entry, action type and time) from accounts_de.db.",
+        "description": "Parses device accounts and the account service's debug log entries for each account (account type and name, last password entry, action type and time as stored) from accounts_de.db.",
         "author": "@AlexisBrignoni",
         "creation_date": "2020-03-02",
         "last_update_date": "2025-03-14",
         "requirements": "none",
         "category": "Accounts",
-        "notes": "",
+        "notes": "Rows come from the accounts table joined to debug_table on accounts._id = "
+                 "debug_table._id, so a debug_table row whose _id matches no accounts row is not "
+                 "reported. Debug Time is the debug_table time value. The platform writes that "
+                 "value as a wall clock string with no time zone (AOSP AccountManagerService.java "
+                 "at tag android-14.0.0_r1, lines 277 and 5365; only that tag was read). This "
+                 "parser labels it UTC without conversion, so it is not established to be UTC.",
         "paths": ('*/system_de/*/accounts_de.db*'),
         "output_types": "standard",
         "artifact_icon": "user",

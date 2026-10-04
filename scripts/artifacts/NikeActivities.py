@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_nike_activities": {
         "name": "Nike - Activities",
-        "description": "User activities from the Nike Run app database (com.nike.nrc.room)",
+        "description": "Activity records from the Nike Run Club app database (com.nike.nrc.room)",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
         "creation_date": "2023-03-18",
         "last_update_date": "2026-08-01",
@@ -13,7 +13,12 @@ __artifacts_v2__ = {
                  "instead of relabelling another column. The value reported under 'Source', and the "
                  "columns read from activity_tag and activity_summary, are still read by position; "
                  "that mapping was written against one app version, which is not recorded here, "
-                 "and may not hold on other versions.",
+                 "and is not established on other versions. Duration (min) is "
+                 "as2_sa_active_duration_ms divided by 60000. The units of the speed, distance and "
+                 "pace values are not established and they are reported as stored, rounded to two "
+                 "decimal places where numeric. Only the first database found is read. Both "
+                 "registered corpora returned 0 rows, so no column has been checked against real "
+                 "rows here.",
         "paths": ('*/com.nike.plusgps/databases/com.nike.nrc.room*',),
         "output_types": "standard",
         "artifact_icon": "activity",

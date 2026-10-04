@@ -2,7 +2,9 @@
 __artifacts_v2__ = {
     "get_TorrentData": {
         "name": "TorrentData",
-        "description": "Parses torrent metadata (torrent name, info hash and file paths) from .torrent files.",
+        "description": "Parses the torrent name, the info hash (SHA-1 of the bencoded info "
+                       "dictionary, computed by this parser) and, for multi-file torrents, the "
+                       "first two path components of each listed file from .torrent files.",
         "author": "@abrignoni",
         "creation_date": "2023-09-15",
         "last_update_date": "2023-09-15",

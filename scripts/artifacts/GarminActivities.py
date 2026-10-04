@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_garmin_activities": {
         "name": "GarminActivities",
-        "description": "Get Information related to Garmin activities from the cache-database",
+        "description": "Reads the activity_details and activity_summaries tables of the Garmin Connect cache-database, one row per activityId. Where a summary JSON exists its values are used, otherwise the activity_details columns. No tested image produced a row.",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
         "creation_date": "2023-02-24",
         "last_update_date": "2026-07-10",

@@ -18,7 +18,7 @@ __artifacts_v2__ = {
     },
     "get_imo_messages": {
         "name": "IMO - Messages",
-        "description": "Parses IMO messages (timestamp, sender and recipient IDs, message, direction, read status and attachments) from the IMO imofriends.db.",
+        "description": "Parses IMO messages (timestamp, direction, chat partner, message, sender and recipient IDs, read status and attachment path) from the messages table of imofriends.db. Only messages whose buid has a row in the friends table are reported, and the timestamp column is read as nanoseconds since 1970.",
         "author": "@markmckinnon",
         "creation_date": "2021-03-11",
         "last_update_date": "2026-08-29",

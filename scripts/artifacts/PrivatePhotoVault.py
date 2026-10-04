@@ -2,7 +2,8 @@ __artifacts_v2__ = {
     "private_photo_vault_account": {
         "name": "Private Photo Vault - Account Usage",
         "description": "Install date and the key event count and last key event date the Private Photo Vault app keeps "
-                       "in its main preferences file, reported as stored.",
+                       "in its main preferences file, with the two dates converted as Unix "
+                       "milliseconds and the counts as stored.",
         "author": "@Gear-I & Claude",
         "creation_date": "2026-08-17",
         "last_update_date": "2026-08-17",
@@ -15,8 +16,8 @@ __artifacts_v2__ = {
                  "so this module reports the raw value rather than asserting what triggers it. "
                  "On the device this was validated against, its one recorded event's timestamp "
                  "lands within a second of every imported media file's own creation timestamp, "
-                 "consistent with (but not proof of) the single PIN-setup/import session "
-                 "documented for this app on this device. 'Uses Encrypted Preferences' is the "
+                 "which does not establish what the event is. 'Uses Encrypted Preferences' is "
+                 "the "
                  "app's own usesEncryptedPreferencesV2 flag, reported as stored; what the app "
                  "does when it is set is not established here, and no PIN value was recovered "
                  "from this file.",
@@ -44,7 +45,8 @@ __artifacts_v2__ = {
                  "holding the device's three imported pictures, and one, "
                  "created one millisecond later, with bucket_id 'albums_decoy' and no media in "
                  "it. This module reports the bucket_id exactly as stored rather than asserting "
-                 "what feature it belongs to.",
+                 "what feature it belongs to. Created is parsed from the creation_date text; a "
+                 "value that carries no UTC offset is shown as if it were UTC.",
         "paths": ('*/com.enchantedcloud.photovault/databases/ppv.db*',),
         "output_types": ["standard"],
         "artifact_icon": "album",
@@ -55,25 +57,29 @@ __artifacts_v2__ = {
     "private_photo_vault_media": {
         "name": "Private Photo Vault - Media",
         "description": "Imported media files recorded in Private Photo Vault's "
-                       "local database, with each file's original dimensions, "
-                       "import time, and favourite/deleted/view-count state.",
+                       "local database, with each row's stored creation date, "
+                       "image width and height, and the favourite, deleted "
+                       "and view count columns as stored.",
         "author": "@Gear-I & Claude",
         "creation_date": "2026-08-17",
         "last_update_date": "2026-08-17",
         "requirements": "none",
         "category": "Private Photo Vault",
         "notes": "Read the same way as Private Photo Vault - Albums, including "
-                 "the write-ahead log. The image/video content behind each row "
-                 "is not recoverable from this extraction: on the device this was validated "
+                 "the write-ahead log. The image and video content behind each row was not "
+                 "recovered: on the device this was validated "
                  "against the files at File Path and Thumbnail Path do not begin with any "
                  "recognizable image file signature, and while the database does store a "
                  "per-file 'Encryption Key' and IV for each row, that stored value decodes from "
                  "base64 to 48 bytes, which is not the length of a bare 32-byte AES key, and no "
-                 "key that decrypts the files was recovered from the extraction. The wrapped key "
-                 "and IV are still reported here exactly as stored, in case a future extraction "
-                 "method recovers the missing unwrapping key, but this module makes no attempt "
+                 "key that decrypts the files was recovered from the extraction. The "
+                 "encryption_key and local_iv values are reported exactly as stored. How the 48 "
+                 "byte value relates to the key that encrypts the file is not established, and "
+                 "this module makes no attempt "
                  "to decrypt the media itself. 'View Count', 'Favourite' and 'Deleted' are "
-                 "reported as stored; what updates them is not established.",
+                 "reported as stored; what updates them is not established. Created is parsed "
+                 "from the creation_date text; a value that carries no UTC offset is shown as "
+                 "if it were UTC.",
         "paths": ('*/com.enchantedcloud.photovault/databases/ppv.db*',),
         "output_types": ["standard", "timeline"],
         "artifact_icon": "photo",

@@ -10,7 +10,8 @@ __artifacts_v2__ = {
         "notes": "Message Count (stored) and Attachment Count (stored) are the counter values held in "
                  "the groups table; they are not counts of the messages and attachments recovered by "
                  "this artifact. Group Creator and Creator Role are read from the creator's own "
-                 "membership row for that group; the members table holds one row per group and user.",
+                 "membership row for that group. A group whose creator has no row in the members "
+                 "table is not reported.",
         "paths": ('*/com.groupme.android/databases/groupme.db*',),
         "output_types": "standard",
         "artifact_icon": "users",
@@ -38,11 +39,13 @@ __artifacts_v2__ = {
                  "and 'admin' in the method that handles these two columns "
                  "(com.groupme.android.message.MessageUtils.getAffectedItems, base.apk of "
                  "com.groupme.android vc 240460204). On the one deleted row in the tested images the "
-                 "stored message_text reads the literal 'This message was deleted'. Message Hidden "
+                 "stored message_text reads the literal 'This message was deleted'. Message Is "
+                 "Read is the messages.read column, shown as Yes for 1 and No for 0; what sets it "
+                 "is not established. Message Hidden "
                  "(as stored) is the stored integer rather than Yes/No, because the column takes values "
                  "beyond 0 and 1: the only non-zero value seen is 2, on a system row reading 'A message "
-                 "was deleted.' The app's own migration adds deleted_at and deletion_actor to an existing "
-                 "messages table, so a store written before that release lacks them; absent columns are "
+                 "was deleted.' A store whose messages table lacks deleted_at and deletion_actor "
+                 "has them "
                  "read as NULL, which was exercised on a constructed copy with the two columns dropped "
                  "and not on any tested image.",
         "paths": ('*/com.groupme.android/databases/groupme.db*',),

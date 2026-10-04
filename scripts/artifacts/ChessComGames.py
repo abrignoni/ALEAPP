@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_ChessComGames": {
         "name": "Chess.com Games",
-        "description": "Parses Chess.com game records",
+        "description": "Parses rows of the daily_games table of the Chess.com app database in which the white or black username equals the pref_username stored in the session preferences file. Other rows are not reported.",
         "author": "@kibaffo33",
         "creation_date": "2022-03-27",
         "last_update_date": "2022-03-27",

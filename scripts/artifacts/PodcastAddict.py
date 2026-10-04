@@ -2,13 +2,18 @@
 __artifacts_v2__ = {
     "get_podcasts": {
         "name": "Podcast Addict",
-        "description": "Parses Podcast Addict Episode Database",
+        "description": "Parses the episodes table of the Podcast Addict database.",
         "author": "John Hyla",
         "creation_date": "2023-07-07",
         "last_update_date": "2023-07-07",
         "requirements": "none",
         "category": "Podcast Addict",
-        "notes": "",
+        "notes": "publication_date, playbackDate and downloaded_date are read "
+                 "as Unix milliseconds. What the app stores for an episode "
+                 "that was not played or not downloaded was not measured; a "
+                 "stored 0 is not blanked and would show as a 1970 date. If "
+                 "the query fails, no rows are reported and nothing is "
+                 "logged.",
         "paths": ('*/com.bambuna.podcastaddict/databases/podcastAddict.db*',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "headphones",

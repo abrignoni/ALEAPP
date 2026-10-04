@@ -7,7 +7,8 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-24",
         "requirements": "none",
         "category": "Gmail",
-        "notes": "One row per Gmail.xml, so a device with several Android users reports each "
+        "notes": "One row per Gmail.xml that records an active-account value, so a device "
+                 "with several Android users reports each "
                  "user's active account. Duplicate storage spellings of the same file "
                  "(data/data, data/user/<n>, data_mirror) are collapsed before reading, and "
                  "files are read in sorted path order so the output does not depend on the "

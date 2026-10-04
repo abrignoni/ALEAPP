@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_samsungSmartThings": {
         "name": "samsungSmartThings",
-        "description": "Samsung SmartThings",
+        "description": "Rows of the devices table in the Samsung SmartThings QcDB.db: timeStamp (as UTC), device name, type, network type and MAC addresses as stored. What event timeStamp marks is not established.",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-06-13",
         "last_update_date": "2022-06-13",

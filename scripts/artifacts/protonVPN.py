@@ -14,13 +14,17 @@ __artifacts_v2__ = {
     },
     "get_protonvpn_connection_history": {
         "name": "ProtonVPN - Connection History",
-        "description": "Parses ProtonVPN connection history (server address and timestamp) from the ProtonVPN Data.log.",
+        "description": "Parses lines of the ProtonVPN Data.log that contain 'to:' and a node server name (server address and the line's timestamp).",
         "author": "@nxb1t",
         "creation_date": "2022-09-04",
         "last_update_date": "2026-07-31",
         "requirements": "none",
         "category": "ProtonVPN",
-        "notes": "The server address is reported exactly as recorded in Data.log. Earlier versions "
+        "notes": "The server address is the text on the log line from the first 'node' to the "
+                 "last '.protonvpn.net', with no lookup or change. A row is a log line naming a "
+                 "server, which does not by itself establish that a connection was made. The "
+                 "timestamp is the log's own value, taken as UTC; its time zone is not "
+                 "established. Earlier versions "
                  "resolved the hostname to an IP address at parse time; that lookup was removed "
                  "because it generated network traffic from the examiner's workstation and the "
                  "resolved address reflected DNS at the time of analysis, not the logged connection.",
@@ -30,7 +34,7 @@ __artifacts_v2__ = {
     },
     "get_protonvpn_user_info": {
         "name": "ProtonVPN - User Info",
-        "description": "Parses the ProtonVPN user account (email, name, username, display name and account state) from the ProtonVPN database.",
+        "description": "Parses UserEntity and AccountEntity rows of the ProtonVPN database. The Email, Name, Username, Display Name and Account State columns are read by column position.",
         "author": "@nxb1t",
         "creation_date": "2022-09-04",
         "last_update_date": "2026-08-01",

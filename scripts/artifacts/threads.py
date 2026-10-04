@@ -1,8 +1,7 @@
 __artifacts_v2__ = {
     "threads_accounts": {
         "name": "Threads - Accounts",
-        "description": "Parses the Threads accounts the Android app recorded on the device, "
-                       "with the account it was last using.",
+        "description": "Parses the Threads accounts the Android app recorded on the device, with the ids stored under current_user_id and last_seen_user_id.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
@@ -12,9 +11,10 @@ __artifacts_v2__ = {
                  "the app's own preference files, and the user name and profile picture "
                  "address from the backup preference file, which is the only store in the "
                  "tested extraction that carried them; an account present in one and not the "
-                 "other is still reported, with the missing fields empty. Current and Last "
-                 "Seen mark which account the app recorded as selected and which it recorded "
-                 "as previously selected. Field mapping was done against a private sample "
+                 "other is still reported, with the missing fields empty. Current Account and Last "
+                 "Seen Account mark the ids stored under the current_user_id and last_seen_user_id "
+                 "keys. What the app uses each key for is not established; the values are reported "
+                 "as stored. Field mapping was done against a private sample "
                  "provided by Mattia; no sample data is recorded for it.",
         "paths": (
             '*/com.instagram.barcelona/shared_prefs/com.instagram.barcelona_preferences.xml',
@@ -26,23 +26,25 @@ __artifacts_v2__ = {
     },
     "threads_app_usage": {
         "name": "Threads - App Usage",
-        "description": "Parses the foreground intervals the Threads Android app recorded "
-                       "for each account, with the time each began and ended.",
+        "description": "Parses the rows of the intervals table in the Threads Android app's time_in_app store for each account, with the stored start and end time of each.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
         "category": "Threads",
-        "notes": "One row per recorded interval. The app keeps one of these stores per "
-                 "account and names the file after the account identifier, which is where the "
-                 "Account column comes from. Account comes from the file name, so it does not "
+        "notes": "One row per recorded interval. In the sample the mapping was made from, the "
+                 "store's file name carried a number that matched an account identifier; the "
+                 "Account column is that number from the file name. Because Account comes from the "
+                 "file name, it does not "
                  "separate two Android users' stores for one account, and Source File names the "
                  "store each row came from. Start and End are Unix seconds. Duration is "
                  "the difference between them and is given in seconds. Start Event and End "
                  "Event are integer codes and are reported as stored, because the extraction "
-                 "carries no app binary and nothing in it maps them to a meaning. The store "
-                 "records its own last eviction time, so the earliest interval present is "
-                 "bounded by that rather than by when the app was installed; that time is "
+                 "carries no app binary and nothing in it maps them to a meaning. The store's "
+                 "metadata table holds a last_eviction_timestamp value. What the app removes and "
+                 "when is not established, so the absence of earlier intervals is not evidence "
+                 "that the app was not in use earlier. The last_eviction_timestamp value is read "
+                 "as Unix seconds and "
                  "reported on every row of the store it came from. Field mapping was done "
                  "against a private sample provided by Mattia; no sample data is recorded "
                  "for it.",
@@ -62,14 +64,18 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-19",
         "requirements": "none",
         "category": "Threads",
-        "notes": "One row per post inside a stored feed item. These are posts the app held in "
+        "notes": "One row per post inside a stored feed item; a stored item with no readable post "
+                 "still produces one row with the post columns blank. These are posts the app held "
+                 "in "
                  "the feed store for the account named in the store's file name, with the author "
                  "of each reported as stored. Source is the value the row carries "
                  "for how the item arrived and read background_prefetch on the tested "
                  "device, so a row records that the app fetched the item rather than that "
                  "the account holder saw it. Posted is the post's own Unix second timestamp "
-                 "and Stored is the Unix millisecond time the app wrote the row. Liked By "
-                 "Viewer is the flag the post carries for the account whose store it is. "
+                 "and Stored is the row's stored_age value read as Unix milliseconds; what event "
+                 "it marks is not established. Liked By "
+                 "Viewer is the post's has_liked value, reported as stored. What sets it is not "
+                 "established here. "
                  "Like Count and the account badges are the values the post carries, as "
                  "stored. The images the posts reference were not linked to the app's image "
                  "cache: that cache names its files with a signed integer and neither the "

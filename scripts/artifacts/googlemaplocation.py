@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_googlemaplocation": {
         "name": "Googlemaplocation",
-        "description": "Parses Google Maps navigation destinations (timestamp, destination and source coordinates, title and address) from the da_destination_history database.",
+        "description": "Parses the destination_history table of Google Maps' da_destination_history database: time (read as Unix milliseconds), destination title and address, and destination and source coordinates. Coordinates are shown with a decimal point placed six digits from the right of the stored integer; that scaling is not sourced and values of six digits or fewer are shown unchanged. No tested image is recorded for this artifact.",
         "author": "@markmckinnon",
         "creation_date": "2021-03-17",
         "last_update_date": "2021-03-17",

@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_browserCachefirefox": {
         "name": "Firefox Browser Cache",
-        "description": "Cached web resources extracted from the Firefox browser disk cache (cache2)",
+        "description": "Cached web resources extracted from the Firefox browser disk cache (cache2). Timestamp Modified is the file system modification time of the cache file as extracted. Source URL is the text between the first partitionKey=%28 marker and the first necko text in the file, and is blank when either is absent",
         "author": "@abrignoni",
         "creation_date": "2023-01-30",
         "last_update_date": "2023-01-30",

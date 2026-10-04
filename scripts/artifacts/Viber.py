@@ -2,7 +2,10 @@
 __artifacts_v2__ = {
     "get_Viber": {
         "name": "Viber - Call Logs",
-        "description": "Parses Viber call logs (timestamp, phone number, direction, duration and call type) from the Viber databases.",
+        "description": "Parses Viber call logs (start time, phone number, direction, a computed "
+                       "end time and call type) from the calls table of viber_data. Call Type "
+                       "shows Audio Call for a stored 1 and Video Call for a stored 4; that "
+                       "mapping is not sourced and any other stored value is shown as Unknown.",
         "author": "@markmckinnon",
         "creation_date": "2020-12-24",
         "last_update_date": "2026-08-01",
@@ -50,7 +53,11 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-29",
         "requirements": "none",
         "category": "Viber",
-        "notes": ("Direction is decoded from the messages table 'send_type' column. Direction/status "
+        "notes": ("Direction is decoded from the messages table 'send_type' column. From Phone "
+                  "Number is the number of the participant the message row names, and Recipients "
+                  "lists the other participants of the same conversation. A message is reported "
+                  "only when its participant row exists and its conversation has at least one "
+                  "other participant row. Direction/status "
                   "value mappings are not vendor-documented and the evidence for them is not "
                   "recorded here; unrecognized values are reported "
                   "as stored.\n"
@@ -80,7 +87,10 @@ __artifacts_v2__ = {
     },
     "get_Viber_additional": {
         "name": "Viber - Additional",
-        "description": "Hidden chat PIN (brute-forced from the stored hash)",
+        "description": "Hidden chat PIN hash from the kvdata table of viber_prefs, and the 4 "
+                       "digit PIN this parser finds by trying each one against that hash (SHA-256 "
+                       "of the PIN followed by a fixed string whose source is not cited); 'Not "
+                       "recovered' when none matches",
         "author": "@markmckinnon",
         "creation_date": "2020-12-24",
         "last_update_date": "2020-12-24",

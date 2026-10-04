@@ -26,8 +26,10 @@ __artifacts_v2__ = {
                  'recorded in the row. Rows were present on 2 tested images, both of one test persona, and each holds '
                  'the same 34 rows: 30 from SearchSuggestDataServiceCache and 4 from SearchResultsDataServiceCache. On '
                  'those images all 8 SearchResultsDataServiceCache responses contain the feed address of a podcast '
-                 'that the EpisodeDataCache of the same folder holds, so the requests seen were podcast searches; a '
-                 'request of another kind was not seen in these caches. 2 of the 60 SearchSuggestDataServiceCache rows '
+                 'that the EpisodeDataCache of the same folder holds, which describes the '
+                 'responses and does not establish what kind of search was made; a '
+                 'response of another kind was not seen in these caches. 2 of the 60 '
+                 'SearchSuggestDataServiceCache rows '
                  "have an empty request. Their response lists texts, shown in Listed Text separated by ' | ', and each "
                  'of the 4 texts listed equals, ignoring case, the request text of a SearchResultsDataServiceCache row '
                  'of the same folder. The responses of the other rows are not reported. Response Size is the size of '

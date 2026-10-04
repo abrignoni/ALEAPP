@@ -28,7 +28,7 @@ __artifacts_v2__ = {
     },
     "get_bumble_matches": {
         "name": "Bumble - Matches",
-        "description": "Bumble matches / conversations",
+        "description": "Rows of the conversation_info table of Bumble's ChatComDatabase: user name, age, gender, game mode, profile image URL and user IDs. A row shows the app held a conversation entry for that user; the source of the game mode labels is not stated in this module.",
         "author": "Kevin Pagano (@stark4n6)", "creation_date": "2022-11-07", "last_update_date": "2022-11-07",
         "requirements": "none", "category": "Bumble",
         "paths": ('*/com.bumble.app/databases/ChatComDatabase*',),

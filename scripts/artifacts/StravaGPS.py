@@ -8,8 +8,16 @@ __artifacts_v2__ = {
         "last_update_date": "2023-03-24",
         "requirements": "fitdecode",
         "category": "Strava",
-        "notes": "Interactive folium map and online reverse-geocoding removed; the route is rendered "
-                 "as an offline image (media) and the activity start point is emitted as KML.",
+        "notes": "One row per file whose name ends in fit under com.strava/files that decodes; a "
+                 "file that cannot be decoded is logged and gives no row. Activity Type, Start Time, "
+                 "total time and distance come from the session message. Total Time (minutes) is "
+                 "the decoded total elapsed time divided by 60 and cut to a whole number. Total "
+                 "Distance (km) is the decoded total distance divided by 1000 and rounded to two "
+                 "decimals. End Time is computed as Start Time plus the decoded total elapsed time. "
+                 "A time with no zone is taken as UTC. "
+                 "Latitude and Longitude are the first position record, rounded to five decimals. "
+                 "Route Map is an image drawn from the position records and Route KML holds the same "
+                 "track.",
         "paths": ('*/com.strava/files*',),
         "output_types": "all",
         "artifact_icon": "activity",

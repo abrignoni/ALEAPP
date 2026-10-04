@@ -2,13 +2,15 @@ __artifacts_v2__ = {
   
     "sdhms_config_reloads": {
         "name": "SDHMS Config Reload History",
-        "description": "SDHMS Config Reload History - Shows e.g. Reboot of Device. More info: https://bebinary4n6.blogspot.com/2026/01/inside-android-samsung-dhms-extracting.html",
+        "description": "Rows of the config_history table of the SDHMS anomaly.db: time, reason, configuration key and version as stored. More info: https://bebinary4n6.blogspot.com/2026/01/inside-android-samsung-dhms-extracting.html",
         "author": "Marco Neumann {kalinko@be-binary.de}",
         "creation_date": "2026-01-10",
         "last_update_date": "2026-01-10",
         "requirements": "",
         "category": "Samsung Device Health Management Service",
-        "notes": "",
+        "notes": "The post linked in the description reports that in its test data most rows had the "
+                 "reason BOOT_COMPLETED and that the last five matched that author's device "
+                 "reboots. The reason column is reported as stored.",
         "paths": ('*/com.sec.android.sdhms/databases/anomaly.db*'),
         "output_types": "all",
         "artifact_icon": "settings",
@@ -22,13 +24,15 @@ __artifacts_v2__ = {
     },
     "sdhms_netstat": {
         "name": "SDHMS Netstat",
-        "description": "SDHMS Network Usage per App. More info: https://bebinary4n6.blogspot.com/2026/01/inside-android-samsung-dhms-extracting.html",
+        "description": "Rows of the NETSTAT table of the SDHMS thermal_log database: a time window, package name, uid and net_usage as stored. More info: https://bebinary4n6.blogspot.com/2026/01/inside-android-samsung-dhms-extracting.html",
         "author": "Marco Neumann {kalinko@be-binary.de}",
         "creation_date": "2026-01-10",
         "last_update_date": "2026-01-10",
         "requirements": "",
         "category": "Samsung Device Health Management Service",
-        "notes": "",
+        "notes": "The post linked in the description describes net_usage as bytes transferred in the "
+                 "time window. Start Time and End Time are read as Unix milliseconds. Only the "
+                 "first matched database is read.",
         "paths": ('*/com.sec.android.sdhms/databases/thermal_log*'),
         "output_types": "all",
         "artifact_icon": "chart-bar-popular",
@@ -42,13 +46,15 @@ __artifacts_v2__ = {
     },
     "sdhms_temperature": {
         "name": "SDHMS Temperature Logs",
-        "description": "SDHMS Temperature Logs per Sensor in degree Celsius. More info: https://bebinary4n6.blogspot.com/2026/01/inside-android-samsung-dhms-extracting.html",
+        "description": "SDHMS temperature log, one row per reading with each sensor column divided by 10. More info: https://bebinary4n6.blogspot.com/2026/01/inside-android-samsung-dhms-extracting.html",
         "author": "Marco Neumann {kalinko@be-binary.de}",
         "creation_date": "2026-01-10",
         "last_update_date": "2026-01-10",
         "requirements": "",
         "category": "Samsung Device Health Management Service",
-        "notes": "",
+        "notes": "The post linked in the description says the values are stored in degrees Celsius "
+                 "times 10 and that on devices with different regional settings they may be stored "
+                 "in degrees Fahrenheit, so the unit is not established for every device.",
         "paths": ('*/com.sec.android.sdhms/databases/thermal_log*'),
         "output_types": "all",
         "artifact_icon": "thermometer",
@@ -62,13 +68,16 @@ __artifacts_v2__ = {
     },
     "sdhms_cpustats": {
         "name": "SDHMS CPU Stats",
-        "description": "SDHMS CPU Usage per Process. More info: https://bebinary4n6.blogspot.com/2026/01/inside-android-samsung-dhms-extracting.html",
+        "description": "Rows of the CPUSTAT table of the SDHMS thermal_log database: a time window, uptime, process name, uid, pid and the process_usage figure as stored. More info: https://bebinary4n6.blogspot.com/2026/01/inside-android-samsung-dhms-extracting.html",
         "author": "Marco Neumann {kalinko@be-binary.de}",
         "creation_date": "2026-01-10",
         "last_update_date": "2026-01-10",
         "requirements": "",
         "category": "Samsung Device Health Management Service",
-        "notes": "",
+        "notes": "The post linked in the description describes process_usage as CPU time used in the "
+                 "time window, scaled and dependent on the number of cores, and uptime as seconds. "
+                 "The uid column is shown under the header Package ID. Start Time and End Time are "
+                 "read as Unix milliseconds. Only the first matched database is read.",
         "paths": ('*/com.sec.android.sdhms/databases/thermal_log*'),
         "output_types": "all",
         "artifact_icon": "cpu",

@@ -12,8 +12,9 @@ __artifacts_v2__ = {
                  "through saved strings to parse Untappd FCM push notifications and venue menu "
                  "updates stored as JSON. Deliberately skips the all_notification_ids key to "
                  "focus on message payloads. The timestamp is extracted directly from the XML "
-                 "key (by splitting the string and converting the first value to a UTC datetime "
-                 "as microseconds; no source for that unit is cited here). Extracts the message "
+                 "key (by taking the number between the first ':' and the next '%' of the key "
+                 "and reading it as Unix microseconds, shown in UTC; no source for that unit is "
+                 "cited here). Extracts the message "
                  "ID, title, body, push type, and action ID.",
         "paths": (
             '*/com.untappdllc.app/shared_prefs/io.invertase.firebase.xml',
@@ -32,7 +33,11 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-28",
         "requirements": "none",
         "category": "Social",
-        "notes": "Parses the userProfiles table within the clevertap SQLite database. The user's information is stored as a JSON string within the data column. Extracts plain text profile details including Email, Name, Username, Gender, Last Checkin Beer, Last Checkin Category, Country ID, and Identity. The Date of Birth (DOB) is converted from a Unix epoch integer to a UTC datetime.",
+        "notes": "Parses the userProfiles table within the clevertap SQLite database. The user's "
+                 "information is stored as a JSON string within the data column. Extracts plain "
+                 "text profile details including Email, Name, Username, Gender, Last Checkin "
+                 "Beer, Last Checkin Category, Country ID, and Identity. The dob member is read "
+                 "as Unix seconds and shown as a UTC date and time; the unit was not sourced.",
         "paths": (
             '*/com.untappdllc.app/databases/clevertap*',
         ),
@@ -44,14 +49,23 @@ __artifacts_v2__ = {
     },
     "untappd_dev_events": {
         "name": "Untappd - Device Analytics",
-        "description": "Logs information about the device running the Untappd app "
-                       "such as model, OS version, radio type, approximate IP location, and more",
+        "description": "Device attribute events from the superwall_database of the Untappd "
+                       "app: app version, device model, OS version, radio type and the ipCity, "
+                       "ipRegion, ipCountry, ipContinent and ipTimezone values as stored",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2026-08-28",
         "last_update_date": "2026-08-28",
         "requirements": "none",
         "category": "Social",
-        "notes": "Parses the ManagedEventData table in the superwall_database SQLite database, specifically filtering for device_attributes events. Extracts metadata from the parameters JSON column, capturing granular device state information such as App Version, approximate IP Geolocation (City, Region, Country, Continent, Timezone), Device Model, Platform/OS Version, Radio Type, Days Since Install, and the Session ID. Groups records by Session ID and reports timestamps in UTC, converted from milliseconds.",
+        "notes": "Parses the ManagedEventData table in the superwall_database SQLite database, "
+                 "specifically filtering for device_attributes events. Extracts metadata from the "
+                 "parameters JSON column, capturing granular device state information such as App "
+                 "Version, the ipCity, ipRegion, ipCountry, ipContinent and ipTimezone values as "
+                 "stored, Device Model, Platform/OS Version, Radio Type, Days Since Install, and "
+                 "the Session ID. One row is reported per session id: the query groups the "
+                 "device_attributes events by session id and SQLite keeps the values of one event "
+                 "of each group, which one is not defined. Timestamps are createdAt read as Unix "
+                 "milliseconds and shown in UTC.",
         "paths": (
             '*/com.untappdllc.app/databases/superwall_database*',
         ),
@@ -70,7 +84,12 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-28",
         "requirements": "none",
         "category": "Social",
-        "notes": "Parses the ManagedEventData table in the superwall_database SQLite database to track application usage history. Filters for specific app state changes: app_close, app_open, app_launch, app_install, and session_start, mapping them to human-readable strings. Extracts the associated Session ID from the JSON parameters and reports the event creation time in UTC, converted from milliseconds.",
+        "notes": "Parses the ManagedEventData table in the superwall_database SQLite database and "
+                 "reports its app_close, app_open, app_launch, app_install and session_start "
+                 "rows, mapping those names to readable labels. Whether the table holds every "
+                 "such event was not established. Extracts the associated Session ID from the "
+                 "JSON parameters and reports the event creation time in UTC, converted from "
+                 "milliseconds.",
         "paths": (
             '*/com.untappdllc.app/databases/superwall_database*',
         ),
@@ -91,8 +110,11 @@ __artifacts_v2__ = {
         "category": "Social",
         "notes": "Parses GZIP-compressed binary files (.1 extension) found in the "
                  "cache/http-cache/ directory. Decodes the uncompressed raw bytes into UTF-8 "
-                 "JSON strings to extract check-in data. Captures the Checkin ID, UTC creation "
-                 "date, rating, and user comments. Additionally pulls nested information for the "
+                 "JSON strings to extract check-in data. Captures the Checkin ID, the creation "
+                 "date as stored (the stored offset is not applied, so it is UTC only where the "
+                 "stored offset is +0000), the rating and the comment. The check-in is the one "
+                 "in the cached response and can belong to any user; the UID and Username "
+                 "columns say whose it is. Additionally pulls nested information for the "
                  "user (UID, username, full name), beer (name, ABV), brewery, venue (name, "
                  "latitude, longitude), app source name, attached media (grabbing the "
                  "high-resolution photo_img_lg URL), and container/serving style.",
@@ -143,9 +165,11 @@ __artifacts_v2__ = {
                  "extracts the HTTP Date header from the companion .0 file for the query "
                  "timestamp. The response's location member is reported as Current Latitude and "
                  "Current Longitude, whose meaning is taken from the member name, along with two "
-                 "types of suggested venues: 'Recent' entries (which include past check-in "
-                 "timestamps) and 'Foursquare' entries (which lack timestamps). Reports the "
-                 "venue name, distance in miles, and coordinates for each suggested location.",
+                 "types of suggested venues: 'Recent' entries (which carry a recent_date value, "
+                 "shown without its stored offset applied) and 'Foursquare' entries (which "
+                 "carry none). Reports the venue name, the distance value as stored (its unit "
+                 "was not sourced, although the column header says miles), and coordinates for "
+                 "each suggested location.",
         "paths": (
             '*/com.untappdllc.app/cache/http-cache/*.*',
         ),

@@ -25,8 +25,11 @@ __artifacts_v2__ = {
         "notes": "Reads the db-mail Room store, a Proton Mail for Android store separate from "
                  "the *-MessagesDatabase.db store and the "
                  "uniffi Inbox cache. In the tested image the subject, sender and recipient values "
-                 "are stored in clear text; the message body is kept PGP-encrypted in "
-                 "MessageBodyEntity and is not shown. A cached row reflects what the app had synced "
+                 "are stored in clear text, and the message body in MessageBodyEntity was PGP "
+                 "armoured text; this artifact does not read the body. Read is the stored unread "
+                 "flag inverted, so an empty value also shows Yes; it is the app's flag and does "
+                 "not establish that a person read the message. Replied and Forwarded are the "
+                 "isReplied and isForwarded flags. A cached row reflects what the app had synced "
                  "locally, not necessarily the full mailbox.",
         "paths": ('*/ch.protonmail.android/databases/db-mail*',),
         "output_types": "standard",
@@ -45,7 +48,8 @@ __artifacts_v2__ = {
         "category": "ProtonMail",
         "notes": "Attachment metadata from the db-mail Room store. Rows are metadata only; this "
                  "artifact reads no attachment files. MessageAttachmentMetadataEntity carries a "
-                 "destination content URI column, reported as stored.",
+                 "uri column, reported as stored under Saved To (URI). What the app does with "
+                 "that URI, and whether a file was written there, is not established.",
         "paths": ('*/ch.protonmail.android/databases/db-mail*',),
         "output_types": "standard",
         "artifact_icon": "paperclip",
@@ -71,7 +75,7 @@ __artifacts_v2__ = {
     },
     "protonmailDbMailAccount": {
         "name": "ProtonMail - MailX Account",
-        "description": "Signed-in Proton account details from the Proton Mail Android db-mail (MailX) Room store",
+        "description": "Proton account and user rows from the Proton Mail Android db-mail (MailX) Room store",
         "author": "@AlexisBrignoni",
         "creation_date": "2026-08-14",
         "last_update_date": "2026-08-14",

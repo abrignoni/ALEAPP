@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "xiaohongshu_play_history": {
         "name": "Xiaohongshu (RED) - Play History",
         "description": "Entries in the Xiaohongshu play history store, with the note identifier, "
-                       "the note title and description as stored, the note author's display name "
+                       "the note title and description as stored, the user_name the row stores "
                        "and the recorded timestamp",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07",
@@ -12,26 +12,26 @@ __artifacts_v2__ = {
         "notes": "Read from the historyRecord table of the PlayHistoryRecordDB Room store in "
                  "com.xingin.xhs (Xiaohongshu, also published as RED and as Little Red Book).\n"
                  "Column meanings are taken from the column names the app declares. user_id is "
-                 "reported as Account User ID and user_name as Note Author, under distinct "
-                 "headers, because the two columns need not name the same party; which party "
-                 "each names is taken from the column name alone and is not otherwise "
-                 "established. author_id is populated on some rows and an empty string on "
-                 "others: "
-                 "19 of the 45 rows in the tested corpus held an empty string. It is reported as "
-                 "stored, so an empty cell there means the app recorded no author id for that "
-                 "row rather than that the parser dropped it.\n"
-                 "The timestamp is Unix epoch milliseconds. What the app records in this table is "
-                 "an entry per note; the table is named a play history by the app, and this "
-                 "artifact reports its rows without asserting how much of a note was played or "
-                 "that the account holder saw any particular part of it.\n"
-                 "Note Title and Note Description are stored by the app as the note's own text "
-                 "and are reported as stored, in their original language, hashtags included. The "
-                 "title was empty on some rows in the tested corpus while the description was "
-                 "populated.\n"
-                 "Scope: this is the readable SQLite store. The account profile, recent chats and "
-                 "app launch times are read from the app's MMKV stores by the other artifacts in "
-                 "this module. The message bodies are in the encrypted stores; see the module "
-                 "notes.",
+                 "reported as Account User ID and user_name as Note Author Name, under distinct "
+                 "headers, because the two columns need not name the same party. Which party "
+                 "user_id and user_name each name is not established; the headers Account User "
+                 "ID and Note Author Name are this parser's reading and the values are otherwise "
+                 "reported as stored. author_id is populated on some rows and an empty string on "
+                 "others: 19 of the 45 rows on kevin_pocox7_a15 held an empty string. It is "
+                 "reported as stored, so an empty cell there means the app recorded no author id "
+                 "for that row rather than that the parser dropped it.\nThe timestamp is Unix "
+                 "epoch milliseconds. Each row names a note by its note_id. Whether the table "
+                 "holds one row per note is not established here. The table is named a play "
+                 "history by the app, and this artifact reports its rows without asserting how "
+                 "much of a note was played or that the account holder saw any particular part "
+                 "of it.\nNote Title and Note Description are stored by the app as the note's "
+                 "own text and are reported as stored, in their original language, hashtags "
+                 "included. The title was empty on some rows in the tested corpus while the "
+                 "description was populated.\nScope: this is the readable SQLite store. The "
+                 "account profile, recent chats and app launch times are read from the app's "
+                 "MMKV stores by the other artifacts in this module. databases/msgDB and "
+                 "databases/localRelationDB carried no SQLite header on the tested corpora and "
+                 "are not read.",
         "paths": ('*/com.xingin.xhs/databases/PlayHistoryRecordDB*',),
         "output_types": "standard",
         "artifact_icon": "play-circle",
@@ -42,7 +42,8 @@ __artifacts_v2__ = {
     },
     "xiaohongshu_account": {
         "name": "Xiaohongshu (RED) - Account",
-        "description": "The Xiaohongshu account signed in on the device, with the user id, RED "
+        "description": "The Xiaohongshu account profile and login record the app stored on "
+                       "the device, with the user id, RED "
                        "id, display name, registration time and the profile fields the app "
                        "cached, including follower and following counts",
         "author": "@AlexisBrignoni, Claude",
@@ -54,8 +55,8 @@ __artifacts_v2__ = {
                  "JSON in the com.xingin.xhs store (key_desc_userinfo) and the login record in "
                  "login_user_info_kv (login_account_info_key). One row. Both globs are scoped to "
                  "the package. Register Time is the register_time field, a Unix seconds value; on "
-                 "the tested image it fell 14 seconds after the first install time the platform "
-                 "recorded for the package, and this artifact does not assert whether it dates "
+                 "kevin_pocox7_a15 it fell 14 seconds after the firstInstallTime packages.xml "
+                 "records for the package, and this artifact does not assert whether it dates "
                  "the creation of the account or the app's first registration on the device. "
                  "Gender and Account Role are reported as stored. The count and location fields "
                  "are what the app cached and are blank where the app stored nothing. The "
@@ -79,11 +80,13 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Xiaohongshu",
         "notes": "Read from the IMRecentChatsManager MMKV store, from the keys the app prefixes "
-                 "IMRecentChatsManager_Default_Share_User_. One row per key. Peer User ID and "
-                 "Nickname identify the other party as the app cached them; Group Chat is true "
-                 "for a group. Source and Type are reported as stored. This is a cached list of "
-                 "recent share targets, named that way by the app's own key prefix, not the "
-                 "message history, which is in the encrypted msgDB and is not decoded here.",
+                 "IMRecentChatsManager_Default_Share_User_. One row per entry of the JSON list "
+                 "stored under each such key. Peer User ID, Nickname and Group Chat are the "
+                 "entry's user_id, nickname and is_group_chat fields, reported as stored; "
+                 "their meaning is taken from the field names. Source and Type are reported as "
+                 "stored. This is a cached list of recent share targets, named that way by the "
+                 "app's own key prefix, not a message history. databases/msgDB carried no "
+                 "SQLite header on the tested corpora and is not read here.",
         "paths": ('*/com.xingin.xhs/files/mmkv/IMRecentChatsManager*',),
         "output_types": "standard",
         "artifact_icon": "message-circle",
@@ -100,13 +103,16 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Xiaohongshu",
         "notes": "Read from every write of the last_launch_success_time key in the "
-                 "app_cold_start_record MMKV store. The store is append-only, so each launch is a "
-                 "separate entry; one row per entry, in Unix milliseconds. MMKV appends each "
-                 "write and rewrites the file with duplicate keys removed when it fills, so older "
-                 "entries can be dropped; on the tested image the earliest entry fell two minutes "
-                 "after the first install time the platform recorded for the package, so the 21 "
-                 "entries there read as the full set. Reference: Tencent, MMKV design wiki, "
-                 "https://github.com/Tencent/MMKV/wiki/design",
+                 "app_cold_start_record MMKV store. Each write of the key is a separate entry in "
+                 "the file until MMKV rewrites it; one row per entry, in Unix milliseconds. That "
+                 "each write marks a launch is taken from the key name. MMKV appends each write "
+                 "and rewrites the file with duplicate keys removed when it fills, so older "
+                 "entries can be dropped. On the tested image the earliest entry fell two "
+                 "minutes after the first install time the platform recorded for the package, "
+                 "which is consistent with no rewrite having removed entries since then; whether "
+                 "the app writes the key on every launch is not established. Reference: Tencent, "
+                 "MMKV design wiki, https://github.com/Tencent/MMKV/wiki/design, read 2026-10-03 "
+                 "(the wiki link is not pinned to a revision)",
         "paths": ('*/com.xingin.xhs/files/mmkv/app_cold_start_record',),
         "output_types": "standard",
         "artifact_icon": "rotate-clock",

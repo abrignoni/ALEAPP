@@ -7,8 +7,12 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "WiFi Profiles",
-        "notes": "DefaultGwMacAddress is the MAC address recorded for the network's default "
-                 "gateway, not the address of the device or of any client on the network.",
+        "notes": "DefaultGwMacAddress is reported as stored. AOSP documents the "
+                 "WifiConfiguration field defaultGwMacAddress as 'default Gateway MAC "
+                 "address if known' (framework/java/android/net/wifi/WifiConfiguration.java "
+                 "line 1345 at tag android-14.0.0_r1, "
+                 "https://android.googlesource.com/platform/packages/modules/Wifi/+/refs/tags/android-14.0.0_r1/framework/java/android/net/wifi/WifiConfiguration.java#1345). "
+                 "That the stored name maps to that field was not traced here.",
         "paths": ('*/misc/wifi/WifiConfigStore.xml', '*/misc**/apexdata/com.android.wifi/WifiConfigStore.xml'),
         "output_types": "standard",
         "artifact_icon": "wifi",

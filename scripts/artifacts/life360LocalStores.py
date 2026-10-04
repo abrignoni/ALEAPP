@@ -28,10 +28,12 @@ __artifacts_v2__ = {
                  "across an image whose fixes all shared it. Each image's rows spanned under "
                  "three hours; the longer records are in the Life360 API cache and event store "
                  "artifacts. Of the 7 extractions run, 3 held the store (a public Pixel 7a and two Pixel 8 Pro "
-                 "training images); a file listing scan of all 23 zip-form Android corpora found it on no other, "
+                 "training images); a file listing scan of the zip-form Android corpora "
+                 "registered at the time found it on no other, "
                  "and the tar-form emulator snapshots hold only the lab's open-source apps and were not scanned. "
-                 "The store's smart_realtime_execution_data table, one row of a start time and duration, is "
-                 "service telemetry and is not reported.",
+                 "The store's smart_realtime_execution_data table held one row of a start time "
+                 "and a duration on the tested images. What it records was not established and it "
+                 "is not reported.",
         "paths": ('*/com.life360.android.safetymapd/databases/L360LocationLocalStoreRoomDatabase*',),
         "output_types": "all",
         "artifact_icon": "map-pin",
@@ -59,8 +61,11 @@ __artifacts_v2__ = {
                  "Life360 is closed source, so no mapping is applied. The column names match the fields of "
                  "Google's ActivityTransitionEvent, whose documented vocabulary is DetectedActivity IN_VEHICLE 0, "
                  "ON_BICYCLE 1, ON_FOOT 2, STILL 3, UNKNOWN 4, TILTING 5, WALKING 7 and RUNNING 8 with "
-                 "ActivityTransition ENTER 0 and EXIT 1 (developers.google.com reference pages for "
-                 "com.google.android.gms.location, read 2026-09-05). Every one of the 19 rows on the 3 tested "
+                 "ActivityTransition ENTER 0 and EXIT 1 "
+                 "(https://developers.google.com/android/reference/com/google/android/gms/location/DetectedActivity "
+                 "and "
+                 "https://developers.google.com/android/reference/com/google/android/gms/location/ActivityTransition, "
+                 "read 2026-09-05). Every one of the 19 rows on the 3 tested "
                  "images held a type of 0, 3 or 7 with a transition of 0 or 1, and each exit shared its instant "
                  "with an enter. That match is an inference from the names and the value set, not a statement from "
                  "the app's code.",
@@ -120,8 +125,10 @@ __artifacts_v2__ = {
                  "circle_id for Owner Member; both joins resolved on all 6 rows of the 3 tested images. On one "
                  "tested image every row of this database sat only in the write-ahead log, so the -wal and -shm "
                  "sidecars are read with it. Last Observed and First Observed are the ISO 8601 UTC text the app "
-                 "stored, converted, and Last Updated is a millisecond epoch. One row per device, the last "
-                 "position the app held for it, not a history. Two app builds were seen: the newer one renames "
+                 "stored, converted, and Last Updated is a millisecond epoch. The tested images "
+                 "held 2 rows each. Whether the table keeps more than one row per device was not "
+                 "established, so a row is the position the app held for that device and circle "
+                 "when acquired, not a history. Two app builds were seen: the newer one renames "
                  "battery_level and battery_charging to state_power_battery_level and "
                  "state_power_battery_charging, and the artifact reads whichever pair the store has (Battery Level "
                  "filled on all 6 rows); it also adds an app_version column, so App Version (as stored) is filled "

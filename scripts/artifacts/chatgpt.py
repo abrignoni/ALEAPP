@@ -1,8 +1,7 @@
 __artifacts_v2__ = {
     "get_chatgpt": {
         "name": "ChatGPT - Conversations Metadata",
-        "description": "Metadata for the ChatGPT conversations stored by the app. Exercised on "
-                       "app versions up to 1.2024.177.",
+        "description": "Metadata for the ChatGPT conversations stored by the app.",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2024-07-09",
         "last_update_date": "2026-08-01",
@@ -82,7 +81,7 @@ __artifacts_v2__ = {
     },
     "get_chatgpt_custominstructions": {
         "name": "ChatGPT - Custom Instructions",
-        "description": "User-provided custom instructions for ChatGPT (custom_instructions.preferences_pb)",
+        "description": "Custom instructions text stored by the ChatGPT app (custom_instructions.preferences_pb)",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2024-07-09",
         "last_update_date": "2024-07-09",

@@ -9,23 +9,26 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "MeWe",
         "notes": ("Source: MeWe moved its chat store from 'app_database' to 'app_v3.db'; both are read. "
-                  "An empty 'mewe_old' can sit beside it and is skipped.\nDirection: 'Sent' means "
-                  "the account signed in on this device sent the message. Its user ID is the "
-                  "suffix of the 'user_info<id>' key in SGSession.xml (see MeWe - SGSession), "
-                  "which can be matched against User Id to confirm who the owner is. Message "
-                  "Direction is read from the CHAT_MESSAGE 'currentUserMessage' flag; on a "
+                  "An empty 'mewe_old' can sit beside it and is skipped.\n"
+                  "Direction: Sent is shown where the CHAT_MESSAGE 'currentUserMessage' flag is 1 "
+                  "and Received where it is 0. That the flag marks the signed in account's own "
+                  "messages is read from the column name and was not traced to a source; User Id "
+                  "on Sent rows can be compared with the suffix of the 'user_info<id>' key in "
+                  "SGSession.xml (see MeWe - SGSession). On a "
                   "schema generation that does not carry that column the direction cannot be "
                   "established and Message Direction is blank for every row of that database. In "
                   "the conversation view a blank direction is not attributed to the "
                   "owner.\nThread Name and Group Id are reported as stored; what a Group Id of "
-                  "'contacts' denotes is not established.\nDeleted: 'YES' is the app's own "
-                  "deletion flag. The row and its text are still present here, so a deleted "
-                  "message can remain readable. The flag is read from the CHAT_MESSAGE 'deleted' "
-                  "column; where that column is absent the cell is blank rather than reported as "
+                  "'contacts' denotes is not established.\n"
+                  "Deleted shows YES where the CHAT_MESSAGE 'deleted' column is 1 and NO where it "
+                  "is 0. What the app sets it for was not traced to a source. Where that column "
+                  "is absent the cell is blank rather than reported as "
                   "'NO'.\nA Message Text holding an openstreetmap.org URL carries coordinates in "
                   "its mlat/mlon parameters.\nAttachment Name can be empty even when Message Type "
                   "is set (for example PHOTO); "
-                  "the absence of a name does not mean the absence of an attachment.\n"
+                  "the absence of a name does not mean the absence of an attachment. Message Type "
+                  "is the stored attachmentType, shown blank where it holds UNSUPPORTED. A "
+                  "message whose threadId has no CHAT_THREAD row is not reported.\n"
                   "Timestamps are UTC, converted from whole Unix seconds."),
         "paths": ('*/com.mewe/databases/app_database',
                   '*/com.mewe/databases/app_v3.db*'),
@@ -58,14 +61,14 @@ __artifacts_v2__ = {
         "notes": ("This is cached feed content, not an authorship record. Rows are posts held in "
                   "the app's POST table, so their presence shows what was cached on the device, "
                   "NOT that the device owner wrote, opened or read any of "
-                  "it. In both test images every cached post belongs to someone else "
-                  "(currentUserPost = 0 for all 74). Use 'Posted By Device Owner' = Yes to isolate "
+                  "it. On the one tested image that held posts, currentUserPost was 0 on all 74 "
+                  "rows. Use 'Posted By Device Owner' = Yes to isolate "
                   "the owner's own posts.\n"
-                  "A post is stored once per feed it was loaded into, so the same post can appear "
-                  "more than once with a different Feed Context. That is reported rather than "
-                  "de-duplicated, because which feed surfaced a post is itself informative. Treat "
-                  "the Post Id, not the row, as the unit when counting distinct posts.\n"
-                  "Poll Votes is the total across all voters, not the owner's vote.\n"
+                  "Feed Context lists the feed flags set on the row (isAllfeed, isDiscoveryFeed, "
+                  "isFavoriteFeed, inProfile, isRefpost). Rows are not de-duplicated. Whether one "
+                  "Post Id occurs on more than one row was not measured for these notes, so count "
+                  "distinct Post Ids when counting posts.\n"
+                  "Poll Votes is the POST pollVotes value as stored.\n"
                   "Timestamps are UTC, converted from whole Unix seconds. An Edited value of 0 "
                   "renders blank."),
         "paths": ('*/com.mewe/databases/app_database',
@@ -85,8 +88,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-07-26",
         "requirements": "none",
         "category": "MeWe",
-        "notes": ("Like MeWe - Posts, this is cached feed content: comments written by other people "
-                  "on posts the app downloaded. Presence does not imply the device owner wrote or "
+        "notes": ("Like MeWe - Posts, this is cached feed content: comments held in the app's "
+                  "COMMENT table for posts it cached. Presence does not imply the device owner "
+                  "wrote or "
                   "read them. 'By Device Owner' = Yes marks the owner's own comments; in both test "
                   "images none of the 16 cached comments were the owner's.\n"
                   "'On Post By' and 'On Post Text' come from a LEFT JOIN to the cached post. If the "
@@ -116,8 +120,8 @@ __artifacts_v2__ = {
                   "app's image cache (cache/image_manager_disk_cache), whose file names are "
                   "hashes.\n"
                   "Rows describe media attached to cached feed posts, so the same caveat as MeWe "
-                  "- Posts applies: this is what was delivered to the device, not what the owner "
-                  "posted or viewed.\n"
+                  "- Posts applies: a row shows the media record was cached on the device; it "
+                  "does not establish that the owner posted or viewed it.\n"
                   "Post context is a LEFT JOIN; where the parent post is no longer cached the "
                   "Post Created, Post Author and Group Name columns are blank and the media row "
                   "is still reported; on the Android 14 test image every one of the 69 media rows "
@@ -139,7 +143,7 @@ __artifacts_v2__ = {
         "last_update_date": "2026-07-26",
         "requirements": "none",
         "category": "MeWe",
-        "notes": ("One row per poll option, so a poll spans several rows sharing a Post Id and Question.\nOption Votes and Total Votes are server-reported tallies across all voters. Nothing here records how the account voted, or whether a vote was cast at all; the POST table's pollVoted flag carries that and was 0 for every cached poll in the test image.\nCounts are a snapshot from when the post was cached, not live values."),
+        "notes": ("One row per poll option, so a poll spans several rows sharing a Post Id and Question.\nOption Votes and Total Votes are the POLL_OPTION votes and POST pollVotes values as stored. This artifact reports no column for the account's own vote. The POST table has a pollVoted column, not reported here, that was 0 on every cached poll in the test image; what it records was not established.\nCounts are the stored values and can differ from the live ones."),
         "paths": ('*/com.mewe/databases/app_database',
                   '*/com.mewe/databases/app_v3.db*'),
         "output_types": "standard",
@@ -156,16 +160,16 @@ __artifacts_v2__ = {
         "last_update_date": "2026-07-26",
         "requirements": "none",
         "category": "MeWe",
-        "notes": ("Reactions are stored as a per-emoji tally, not a list of reactors. A Reaction "
-                  "Count of 106 means 106 reactions were reported by the server; it does NOT "
-                  "identify, or make identifiable, who reacted. The single exception is "
-                  "'Device Owner Reacted' = Yes, which is the only attributable reaction in this "
-                  "artifact.\n"
+        "notes": ("Reactions are stored as a per-emoji tally, not a list of reactors. Reaction "
+                  "Count is the stored count for that emoji on that object and names no one. "
+                  "Device Owner Reacted shows Yes where the row's userReacted flag is set; that "
+                  "the flag marks the signed in account's own reaction is read from the column "
+                  "name and was not traced to a source.\n"
                   "'Reacted To' says which object was reacted to (Post, Comment or Chat Message), "
                   "since the three come from separate tables merged here. Target Author, Target "
                   "Text and Target Created are LEFT JOINed from that object and are blank if it is "
                   "no longer cached.\n"
-                  "Counts are a snapshot from when the object was cached, not live values."),
+                  "Counts are the stored values and can differ from the live ones."),
         "paths": ('*/com.mewe/databases/app_database',
                   '*/com.mewe/databases/app_v3.db*'),
         "output_types": "standard",
@@ -188,10 +192,13 @@ __artifacts_v2__ = {
                   "twice, once as a Group or Page and again as a Community; match on Id.\nA "
                   "cached row is not a membership record; why a row is present was not "
                   "established. Confirmed is the isConfirmed flag of the GROUP_ / COMMUNITY row "
-                  "rendered as Yes, and Role is built from the PAGE isOwner, isAdmin and "
-                  "isFollower flags; what the app sets either of them for was not established, "
+                  "rendered as Yes, and Role is the GROUP_ roleEnum value as stored on Group rows "
+                  "and is built from the PAGE isOwner, isAdmin and isFollower flags on Page rows; "
+                  "what the app sets either of them for was not established, "
                   "so neither establishes that the account joined or follows the entity.\nLast "
-                  "Opened is converted from milliseconds; what event the app records it for was "
+                  "Opened is GROUP_ lastOpenTime on Group rows and COMMUNITY lastVisit on "
+                  "Community rows, converted from milliseconds, and is blank on Page rows; what "
+                  "event the app records it for was "
                   "not established, so it is not by itself evidence of a deliberate visit."),
         "paths": ('*/com.mewe/databases/app_database',
                   '*/com.mewe/databases/app_v3.db*'),
@@ -204,7 +211,7 @@ __artifacts_v2__ = {
     },
     "get_mewe_chat_participants": {
         "name": "MeWe - Chat Participants",
-        "description": "Members of each MeWe chat thread.",
+        "description": "Participant rows from MeWe's CHAT_THREAD_PARTICIPANT table, with the thread each one names.",
         "author": "@AlexisBrignoni",
         "creation_date": "2026-07-26",
         "last_update_date": "2026-08-01",
@@ -212,9 +219,11 @@ __artifacts_v2__ = {
         "category": "MeWe",
         "notes": ("Rows are the participants recorded for a thread in CHAT_THREAD_PARTICIPANT. "
                   "Whether the device owner is listed among them was not established; each test "
-                  "image yielded a single participant row in total. Cross-reference Participant Id "
-                  "against the 'user_info<id>' key in SGSession.xml to identify the owner where "
-                  "one is listed.\n"
+                  "image yielded a single participant row in total. Is Owner and Is Admin show "
+                  "Yes where the participant row's isOwner and isAdmin flags are set; what the "
+                  "app sets them for was not established, and Is Owner is not a statement about "
+                  "the device owner. Participant Id can be compared with the suffix of the "
+                  "'user_info<id>' key in SGSession.xml (see MeWe - SGSession).\n"
                   "Status is reported as stored and "
                   "carries no timestamp, so it should not be read as a state at any particular "
                   "moment.\n"
@@ -238,10 +247,11 @@ __artifacts_v2__ = {
         "last_update_date": "2021-11-10",
         "requirements": "none",
         "category": "MeWe",
-        "notes": ("Identifies the account signed in on the device: the key 'user_info<id>' carries "
-                  "the owner's MeWe user ID as its suffix, which is the value to match against "
-                  "User Id / Sender fields in the other MeWe artifacts to establish who the device "
-                  "owner is.\n"
+        "notes": ("Every key and value is reported as stored, including a key of the form "
+                  "'user_info<id>' where one is present. That its suffix is the signed in "
+                  "account's MeWe user id "
+                  "is read from the key name and was not traced to a source here; it can be "
+                  "compared with User Id on chat rows marked Sent.\n"
                   "Contains authentication material (user_token, refresh_token) and a token "
                   "expiration time. Handle accordingly.\n"
                   "Keys containing a dot are skipped."),

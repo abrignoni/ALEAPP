@@ -1,7 +1,9 @@
 __artifacts_v2__ = {
     "get_Twitter": {
         "name": "twitter",
-        "description": "Twitter Searches",
+        "description": "Rows of the search_queries table of the first database whose name ends in "
+                       "-search.db found for the Twitter app. Whether a row is a search entered "
+                       "on the device or a suggestion the app stored is not established.",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2023-04-26",
         "last_update_date": "2023-04-26",

@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "knuddels_chats": {
         "name": "Knuddels - Chat Messages",
-        "description": "Extracts Knuddels chats (text, images/snaps and GIFs) from database files",
+        "description": "Extracts Knuddels chats (text, images/snaps and GIFs) from database files. A message whose sender has no row in the users table is not reported.",
         "author": "@annkirpv",
         "creation_date": "2025-05-04",
         "last_update_date": "2026-08-29",
@@ -45,7 +45,7 @@ __artifacts_v2__ = {
     },
     "knuddels_contacts": {
         "name": "Knuddels - Known Users",
-        "description": "Extracts known Knuddels users (chat partners) from the users table",
+        "description": "Extracts known Knuddels users from the users table",
         "author": "@annkirpv",
         "creation_date": "2026-06-30",
         "last_update_date": "2026-08-01",
@@ -74,9 +74,14 @@ __artifacts_v2__ = {
                   "not been verified against a known password.\n"
                   "session_timestamp, sites_visited_weekly_time and origins_visited_date are "
                   "reported under their shared_prefs key names because what event each one records "
-                  "is not established.\n"
-                  "Active Account is Yes only where a User.xml carrying the same nickname was "
-                  "collected alongside the database. Where no such file was collected the cell is "
+                  "is not established. The first two, and the app_first_installed value, are "
+                  "converted as Unix milliseconds, which is an assumption. Gender is decoded from "
+                  "the User.xml gender value as 1 = Male and 2 = Female; no source or measurement "
+                  "for that mapping is recorded here and any other value is reported as stored.\n"
+                  "Active Account is Yes where a User.xml naming the nickname was collected, with "
+                  "or without a database for that nickname. It records that the shared_prefs file "
+                  "is present for that nickname and nothing more. Where a database has no User.xml "
+                  "naming its nickname the cell is "
                   "left blank, which does not establish that the account is inactive."),
         "paths": (
             "*/com.knuddels.android/shared_prefs/User.xml",

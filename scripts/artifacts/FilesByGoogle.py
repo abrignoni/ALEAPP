@@ -9,7 +9,9 @@ __artifacts_v2__ = {
         "category": "Files By Google",
         "notes": "Root Path is read from each file entry rather than from where the database "
                  "sits, so it does not name the database, and Source File names the database "
-                 "each row came from.",
+                 "each row came from. Media Type shows this module's labels for the stored "
+                 "media_type: 0 App/Data, 1 Picture, 2 Audio, 3 Video, 6 Text. The labels are not "
+                 "sourced, and any other stored value is shown blank.",
         "paths": ('*/com.google.android.apps.nbu.files/databases/files_master_database*'),
         "output_types": "standard",
         "artifact_icon": "file",
@@ -29,7 +31,8 @@ __artifacts_v2__ = {
         "last_update_date": "2025-09-09",
         "requirements": "none",
         "category": "Files By Google",
-        "notes": "",
+        "notes": "Rows come from the search_history_content table; the timestamp column is read as "
+                 "Unix milliseconds. No sample_data is recorded for this artifact.",
         "paths": ('*/com.google.android.apps.nbu.files/databases/search_history_database*'),
         "output_types": "standard",
         "artifact_icon": "search"

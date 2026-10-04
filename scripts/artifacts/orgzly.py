@@ -1,7 +1,9 @@
 __artifacts_v2__ = {
     "orgzly_notes": {
         "name": "Orgzly - Notes",
-        "description": "Parses notes and to-dos from the Orgzly Revived Android app.",
+        "description": "Parses notes and to-dos from the Orgzly Revived Android app "
+                       "(com.orgzlyrevived). The com.orgzly package is also matched "
+                       "and was not tested.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-03",
         "last_update_date": "2026-09-03",
@@ -14,8 +16,7 @@ __artifacts_v2__ = {
                  "notebook and to the scheduled and deadline timestamps the note carries. Orgzly "
                  "Revived is an outliner for Org-mode files, so a note is an Org heading, "
                  "optionally with a to-do State, a Priority, Tags and a Content body. Created is "
-                 "Unix milliseconds reported as UTC. It is the column that separates what a "
-                 "person wrote from what the app shipped: on the tested device 34 of the 35 "
+                 "Unix milliseconds reported as UTC. On the tested device 34 of the 35 "
                  "notes were the sample notebook the app installs on first run and carried no "
                  "Created value at all, while the one note added by hand carried it. On the "
                  "tested device a blank Created coincided with the shipped notes and a filled "
@@ -25,13 +26,18 @@ __artifacts_v2__ = {
                  "device, and is blank on a plain note; the keyword set is configurable, so any "
                  "value is reported as stored. Scheduled and Deadline are the Org timestamps the "
                  "note carries, given both as the raw Org string (which preserves any repeater "
-                 "such as '.+2d') and as a UTC time. Level and Parent Note ID describe the "
+                 "such as '.+2d') and as the stored millisecond value shown in UTC. The app "
+                 "stores that value from a calendar built from the Org string "
+                 "(OrgTimestampMapper.kt line 33 at orgzly-revived/orgzly-android-revived tag "
+                 "v1.23.0); the Org string carries no time zone and the zone of that calendar "
+                 "was not established, so read the date from the Org string. Level and Parent "
+                 "Note ID describe the "
                  "note's place in the outline, so a reply or sub-task can be tied to its parent. "
                  "The note_ancestors table holds the same tree as a closure table and is not "
                  "reported separately. The searches table held four saved searches on the tested "
                  "device, all of which are the app's shipped defaults, so it is not parsed. "
-                 "Title leads this table rather than Created because a note often arrives inside "
-                 "an Org file rather than being typed on the device, and Created was filled on 1 "
+                 "Title leads this table rather than Created because a note can carry no Created "
+                 "value, and Created was filled on 1 "
                  "of the 35 tested "
                  "rows, the one note added by hand. Sorting by Created would therefore hide most "
                  "of the notebook.",
@@ -53,15 +59,16 @@ __artifacts_v2__ = {
         "notes": "One row per entry in the books table of databases/orgzly.db. A notebook is one "
                  "Org file the app holds, and this artifact records where it came from. Last "
                  "Action Message is the useful column: the app writes a sentence describing the "
-                 "last thing that happened to the notebook, and on the tested device it read "
-                 "'Loaded from resource Getting Started with Orgzly', which identifies that "
-                 "notebook as the sample the app installs rather than a file a person created or "
-                 "synced. A notebook loaded from a linked repository was not exercised on the "
+                 "last thing that happened to the notebook. On the tested device it read "
+                 "'Loaded from resource Getting Started with Orgzly', and that notebook was the "
+                 "one the app installed on first run. A notebook loaded from a linked repository "
+                 "was not exercised on the "
                  "tested device. Modified is the notebook's mtime and Last Action is the time of "
-                 "that recorded action, both Unix milliseconds reported as UTC. Sync Status and "
-                 "Is Modified are reported as stored. Preface is the text above the first "
+                 "that recorded action, both Unix milliseconds reported as UTC. Sync Status is "
+                 "reported as stored. Is Modified and Is Deleted show a stored 1 as Yes and 0 as "
+                 "No; any other stored value is shown blank. Preface is the text above the first "
                  "heading and File Tags are tags applied to the whole file. Encoding columns are "
-                 "reported as stored. Is Deleted is reported as stored; what the app sets it for "
+                 "reported as stored. What the app sets Is Deleted for "
                  "was not established. Title is the #+TITLE property from inside the Org file "
                  "and is "
                  "separate from Name, which is the notebook name the app shows; it was empty on "

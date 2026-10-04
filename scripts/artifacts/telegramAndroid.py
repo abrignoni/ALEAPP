@@ -16,7 +16,16 @@ __artifacts_v2__ = {
         "last_update_date": "2026-10-01",
         "requirements": "none",
         "category": "Telegram",
-        "notes": "The data column holds a TL-serialised TLRPC message object. The message "
+        "notes": "The data column holds a TL-serialised TLRPC message object. One cache4.db is "
+                 "read per run, the first one matched under files/. The client keeps the databases "
+                 "of account slots 1 to 3 under files/account1 to files/account3, which the "
+                 "declared paths do not match, so messages of those slots are not reported. "
+                 "Reference: Telegram-Android, 'MessagesStorage.java (database directory per "
+                 "account)', "
+                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/"
+                 "TMessagesProj/src/main/java/org/telegram/messenger/"
+                 "MessagesStorage.java#L309-L313. "
+                 "The message "
                  "constructors and their field order are taken from the open-source Telegram "
                  "Android client; constructors from layer 179 onward read a second flags "
                  "integer before the message id, which this parser accounts for. The "
@@ -108,12 +117,12 @@ __artifacts_v2__ = {
                  "ended its walk that way, so this handling is exercised by tests on "
                  "constructed records, not on an image. Sender ID is the from_id read from the "
                  "record, for a service message as for a message. Every from_id on the nine "
-                 "images listed in sample_data is a user peer (1,846 records); a from_id that "
+                 "images listed in sample_data is a user peer; a from_id that "
                  "is a chat or channel peer is reported by its bare id, without the sign a "
                  "dialog id carries, and no image exercises that. On an incoming row whose "
                  "record holds no from_id, Sender ID is the dialog id; in a group or channel "
-                 "dialog that is the id of the chat. On those images each of the 248 incoming "
-                 "rows in a user dialog whose record holds a from_id holds the dialog id there. "
+                 "dialog that is the id of the chat. On those images each incoming row in a user "
+                 "dialog whose record holds a from_id holds the dialog id there. "
                  "On an incoming row where from_id was not reached (a missing record or one "
                  "under 8 bytes, an unrecognised constructor, an empty message record, a walk "
                  "that could not be completed, or a service header that ends before from_id) "
@@ -139,7 +148,7 @@ __artifacts_v2__ = {
                  "record as a trailing string, which is reported as the recorded media path; "
                  "it is the path the app wrote, and the file is linked only when it is still "
                  "present in the extraction. On the nine images listed in sample_data Recorded "
-                 "Media Path held a value on 3 of 2,026 rows, one on each of three images; no "
+                 "Media Path held a value on some rows; no "
                  "file of the recorded name is in those images' archives; and Media File had no "
                  "value on any row. "
                  "Reference: "
@@ -174,9 +183,7 @@ __artifacts_v2__ = {
     "get_telegramContacts": {
         "name": "Telegram - Contacts",
         "description": (
-            "Parses the device contacts Telegram imported, from the user_contacts_v7 and "
-            "user_phones_v7 tables of cache4.db, including the first and last name as stored "
-            "on the device and the phone numbers recorded for that contact key."
+            "Parses the device contact records Telegram stored, from the user_contacts_v7 and user_phones_v7 tables of cache4.db, including the first and last name as stored on the device and the phone numbers recorded for that contact key."
         ),
         "author": "Alexis Brignoni",
         "creation_date": "2026-08-03",
@@ -184,8 +191,16 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Telegram",
         "notes": "Both tables store their values as plain text. They are joined on the key "
-                 "column, so one contact can carry several phone numbers. The uid column "
-                 "links the imported contact to a Telegram user in the users table.",
+                 "column, so one contact can carry several phone numbers. A phone row whose "
+                 "deleted column is set is not listed. Imported is the integer the table stores, "
+                 "reported as stored. The uid column holds the contact id the client assigned to "
+                 "the device contact when it read the address book (contact_id in the client "
+                 "source). It is not a Telegram user id and is reported as stored; the module "
+                 "heads that column User ID. Reference: Telegram-Android, 'MessagesStorage.java "
+                 "(user_contacts_v7 insert)', "
+                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/"
+                 "TMessagesProj/src/main/java/org/telegram/messenger/"
+                 "MessagesStorage.java#L8306-L8318",
         "paths": ('*/org.telegram.messenger*/files/cache4.db*',),
         "output_types": "standard",
         "artifact_icon": "address-book",
@@ -213,10 +228,17 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Telegram",
         "notes": "The name column stores the display name and username separated by ';;;'. "
-                 "The status column holds the last-seen time as a Unix timestamp when it is "
-                 "positive; negative values also occur and are not a time; what they encode is "
-                 "not sourced here, so only positive "
-                 "values are reported as a timestamp and the raw value is kept alongside.",
+                 "The status column holds the expires value of the user's cached status. The "
+                 "client stores -100 for a 'recently' status, -101 for 'last week' and -102 for "
+                 "'last month' (-1000, -1001 and -1002 when the status is flagged by_me), and "
+                 "otherwise the status object's time: the last-online time of an offline status or "
+                 "the expiry time of an online status. Only positive values are shown in Last "
+                 "Seen, so a Last Seen value can be an online status expiry, and the raw value is "
+                 "kept alongside in Status Value. Reference: Telegram-Android, "
+                 "'MessagesStorage.java (users insert)', "
+                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/"
+                 "TMessagesProj/src/main/java/org/telegram/messenger/"
+                 "MessagesStorage.java#L10666-L10675",
         "paths": ('*/org.telegram.messenger*/files/cache4.db*',),
         "output_types": "standard",
         "artifact_icon": "users",
@@ -234,17 +256,22 @@ __artifacts_v2__ = {
     "get_telegramChats": {
         "name": "Telegram - Chats",
         "description": (
-            "Parses the Telegram chat list from the dialogs table of cache4.db, including the "
-            "resolved chat name, the time of the last activity, unread counts and whether the "
-            "chat is pinned or filed in the archive folder."
+            "Parses the Telegram chat list from the dialogs table of cache4.db, including a chat name where the dialog id as stored equals an id in the users or chats table, the time of the last activity, unread counts and whether the chat is pinned or filed in the archive folder."
         ),
         "author": "Alexis Brignoni",
         "creation_date": "2026-08-03",
         "last_update_date": "2026-08-03",
         "requirements": "none",
         "category": "Telegram",
-        "notes": "The did column is the dialog peer id, resolved against the users and chats "
-                 "tables for a name. A folder_id of 1 is labelled Archived and any other value "
+        "notes": "The did column is the dialog peer id. It is looked up as stored in the users and "
+                 "chats tables for a name; where an id is in both tables the chats name is used "
+                 "when it is not empty. A "
+                 "group or channel dialog id is stored negative and gets no name here: on anne_a15 "
+                 "the 1 row with a negative Dialog ID and on kevin_pocox7_a15 the 4 such rows have "
+                 "a blank Chat, and each of those ids matches a chats row once its sign is "
+                 "dropped. No id was in both the users and chats tables on those two images "
+                 "(counted on runs of 3 Oct 2026). A folder_id of 1 is labelled Archived and any "
+                 "other value "
                  "Main; that mapping is not sourced here. The message "
                  "count is taken from the messages_v2 rows carrying the same dialog id.",
         "paths": ('*/org.telegram.messenger*/files/cache4.db*',),
@@ -263,11 +290,7 @@ __artifacts_v2__ = {
     "get_telegramAccounts": {
         "name": "Telegram - Accounts",
         "description": (
-            "Parses the Telegram account slots from the userconfing.xml and userconfig1-3.xml "
-            "shared preferences files. Reports the signed-in user of each slot, decoded from "
-            "the stored user record, together with the app passcode configuration, the "
-            "auto-lock delay, the last contacts synchronisation time and the last dialled "
-            "number the app recorded."
+            "Parses the Telegram account slots from the userconfing.xml and userconfig1-3.xml shared preferences files. Reports the signed-in user of each slot, decoded from the stored user record, together with the app passcode configuration, the auto-lock delay, the stored lastContactsSyncTime value and the last_call_phone_number value, which the client sets to the number of an incoming phone call it saw ringing."
         ),
         "author": "Alexis Brignoni",
         "creation_date": "2026-08-04",
@@ -278,13 +301,40 @@ __artifacts_v2__ = {
                  "userconfing.xml, spelled that way by the client, and slots 1 to 3 in "
                  "userconfig1.xml through userconfig3.xml. The user key holds a "
                  "base64-encoded TL user record, decoded here for the account id, names, "
-                 "username and phone number. A passcode is in use when passcodeHash1 holds a "
-                 "value; passcodeType 0 is a PIN and 1 is a password. The stored hash and "
-                 "salt are not reported, only whether they are present. Reference: "
-                 "Telegram-Android, 'SharedConfig.java (passcodeHash1, passcodeType, "
-                 "autoLockIn)', https://github.com/DrKLO/Telegram/blob/"
-                 "45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/"
-                 "src/main/java/org/telegram/messenger/SharedConfig.java",
+                 "username and phone number. Two record constructors are read (0x215C4438 and "
+                 "0x31774388). A slot whose record uses another constructor is reported with those "
+                 "fields blank, or not reported at all when it also holds no passcode hash and no "
+                 "last_call_phone_number value. A passcode is in use when passcodeHash1 holds a "
+                 "value; passcodeType 0 is a PIN and 1 is a password. The client keeps these keys, "
+                 "autoLockIn and useFingerprint in userconfing.xml only and they apply to the "
+                 "whole app, so the Passcode, Auto-Lock and Unlock With Fingerprint cells of a "
+                 "slot 1 to 3 row do not describe that slot. Unlock With Fingerprint is blank when "
+                 "the key is absent or false; the client's default for an absent key is true. The "
+                 "stored hash and "
+                 "salt are not reported, only whether they are present. Last Contacts Sync is the "
+                 "stored lastContactsSyncTime value. The client sets it to the current time on a "
+                 "contacts sync and also to 23 hours before the current time when no value exists, "
+                 "so it is not by itself the time of a sync. The column headed Last Dialled Number "
+                 "holds the last_call_phone_number value, which the client sets to the number of "
+                 "an incoming phone call it saw ringing; it is not a dialled number. The key was "
+                 "present in userconfing.xml on hc_pixel8pro_a16, hc_pixel8pro_a17, "
+                 "kevin_pocox7_a15, pixel7a_a14, russell_pixel6a_a13 and sharon_a14 and absent on "
+                 "samsungs20_a13 (counted on runs of 3 Oct 2026). Reference: Telegram-Android, "
+                 "'SharedConfig.java (passcodeHash1, passcodeType, autoLockIn)', "
+                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/"
+                 "TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.java#L60-L61 "
+                 "and "
+                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/"
+                 "TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.java#L432-L444. "
+                 "Reference: Telegram-Android, 'UserConfig.java (preference file names)', "
+                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/"
+                 "TMessagesProj/src/main/java/org/telegram/messenger/UserConfig.java#L412-L416. "
+                 "Reference: Telegram-Android, 'UserConfig.java (lastContactsSyncTime default)', "
+                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/"
+                 "TMessagesProj/src/main/java/org/telegram/messenger/UserConfig.java#L304. "
+                 "Reference: Telegram-Android, 'CallReceiver.java', "
+                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/"
+                 "TMessagesProj/src/main/java/org/telegram/messenger/CallReceiver.java#L22-L30",
         "paths": ('*/org.telegram.messenger*/shared_prefs/userconf*.xml',),
         "output_types": "standard",
         "artifact_icon": "user-circle",
@@ -313,10 +363,18 @@ __artifacts_v2__ = {
         "category": "Telegram",
         "notes": "The info column holds a TL user full record. Across the record versions "
                  "this parser covers, the about field follows the id and precedes the nested "
-                 "objects, so it is read directly; blocked is flag bit 1 and needs no field "
+                 "objects, so it is read directly; blocked is flag bit 0 (mask value 1) and needs "
+                 "no field "
                  "read. Fields that sit after the nested settings and notification objects, "
                  "such as the common chat count, are not read because those objects are not "
-                 "implemented. Names are resolved from the users table. Reference: "
+                 "implemented. Names are resolved from the users table. Pinned shows Yes when the "
+                 "pinned column of user_settings is not zero; the client writes the record's "
+                 "pinned message id to that column. Reference: Telegram-Android, "
+                 "'MessagesStorage.java (user_settings insert)', "
+                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/"
+                 "TMessagesProj/src/main/java/org/telegram/messenger/"
+                 "MessagesStorage.java#L7294-L7299. "
+                 "Reference: "
                  "Telegram-Android, 'generated TlGen_UserFull.kt (record layout and flag "
                  "bits)', https://github.com/DrKLO/Telegram/tree/"
                  "45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj_AppTests"
@@ -349,8 +407,14 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Telegram",
         "notes": "The info column holds a TL chat full or channel full record. The "
-                 "description is written unconditionally after the id, and the member counts "
-                 "follow it behind flags, so both are read directly; fields that sit after "
+                 "description follows the id and the member counts follow it behind flags. The id "
+                 "is read as 64 bits for every record version. The client reads a 32-bit id for "
+                 "older record versions, for example channel full layer 132 (0x2f532f3c) and chat "
+                 "full layer 132 (0x49a0a5d9), so a record stored under one of those is not read "
+                 "correctly by this artifact. The 5 tested records (1 on anne_a15, 4 on "
+                 "kevin_pocox7_a15, counted on runs of 3 Oct 2026) are channel full layer 225 (4) "
+                 "and layer 204 (1), which the client reads with a 64-bit id, so no tested record "
+                 "is of an affected version. Fields that sit after "
                  "the record's nested photo and notification objects are not read because "
                  "those objects are not implemented. Basic group records carry a description "
                  "but no counts. Names are resolved from the chats table. Reference: "
@@ -369,11 +433,7 @@ __artifacts_v2__ = {
     "get_telegramSaveToGallery": {
         "name": "Telegram - Save to Gallery Settings",
         "description": (
-            "Parses the Telegram save-to-gallery configuration from the mainconfig.xml shared "
-            "preferences file, reporting for each category of chat whether incoming photos "
-            "and videos are saved to the device gallery and the video size limit. Telegram "
-            "writes these keys only after the setting is changed, so a category reported as "
-            "not set was still at the app default of off."
+            "Parses the Telegram save-to-gallery configuration from the mainconfig.xml shared preferences file, reporting for each category of chat whether incoming photos and videos are saved to the device gallery and the video size limit. The client writes these keys when a setting is saved or when it migrates the older save_gallery setting. A category reported as not set had no key, and the client then applies its defaults: photos and videos off, video limit 100 MB."
         ),
         "author": "Alexis Brignoni",
         "creation_date": "2026-08-04",
@@ -382,13 +442,18 @@ __artifacts_v2__ = {
         "category": "Telegram",
         "notes": "Keys are <prefix>_save_gallery_photo, <prefix>_save_gallery_video and "
                  "<prefix>_save_gallery_limitVideo, where the prefix is user, groups or "
-                 "channels. The client reads each with a default of false, so an absent key "
-                 "means the category was left at the app default. The older single "
+                 "channels. The client reads the photo and video keys with a default of false and "
+                 "the limitVideo key with a default of 104,857,600 bytes (100 MB), so an absent "
+                 "key means that default applied. The module prints 'Not set (app default, off)' "
+                 "in Video Size Limit when the limit key is absent; the client's default for that "
+                 "key is 100 MB, not off. Per-chat exceptions, which the client keeps in separate "
+                 "preference files, are not read. The older single "
                  "save_gallery key is reported when present. Reference: Telegram-Android, "
                  "'SaveToGallerySettingsHelper.java (preference key names and defaults)', "
                  "https://github.com/DrKLO/Telegram/blob/"
                  "45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/"
-                 "org/telegram/messenger/SaveToGallerySettingsHelper.java",
+                 "org/telegram/messenger/SaveToGallerySettingsHelper.java"
+                 "#L161-L167",
         "paths": ('*/org.telegram.messenger*/shared_prefs/mainconfig.xml',),
         "output_types": "standard",
         "artifact_icon": "photo",
@@ -406,10 +471,7 @@ __artifacts_v2__ = {
     "get_telegramChannelMembers": {
         "name": "Telegram - Channel & Group Members",
         "description": (
-            "Parses the channel and group membership Telegram cached, from the "
-            "channel_users_v2 table of cache4.db, reporting the chat, the member and the "
-            "date recorded against that membership, with names resolved from the users and "
-            "chats tables."
+            "Parses the channel and group membership Telegram cached, from the channel_users_v2 table of cache4.db, reporting the chat, the member and the date value stored with each row, which the client sets from the time it cached the list, with names resolved from the users and chats tables."
         ),
         "author": "Alexis Brignoni",
         "creation_date": "2026-08-05",
@@ -417,7 +479,14 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Telegram",
         "notes": "The dialog id, user id and date columns are stored as plain integers and "
-                 "are reported as such. The data column holds a TL channel participant "
+                 "are reported as such. The client sets date to the time it cached the participant "
+                 "list and lowers it by one second for each participant in list order, so it is "
+                 "not the date a member joined. Reference: Telegram-Android, 'MessagesStorage.java "
+                 "(updateChannelUsers)', "
+                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/"
+                 "TMessagesProj/src/main/java/org/telegram/messenger/"
+                 "MessagesStorage.java#L7063-L7084. "
+                 "The data column holds a TL channel participant "
                  "record; the creator constructor is named where it appears and any other "
                  "constructor is reported by its id rather than guessed at. The membership "
                  "cached here is what the client had retrieved, which is not necessarily "
@@ -443,9 +512,8 @@ __artifacts_v2__ = {
         "category": "Telegram",
         "notes": "The did, rating and date columns are stored as plain values. The type "
                  "column is reported as stored because its values are not documented in the "
-                 "client source that was checked. The rating is the client's own ranking "
-                 "figure; the scale and how it decays over time were not established, so it "
-                 "is reported as stored and is useful for ordering rather than as a count.",
+                 "client source that was checked. The rating value is reported as stored. What it "
+                 "measures and its scale are not established.",
         "paths": ('*/org.telegram.messenger*/files/cache4.db*',),
         "output_types": "standard",
         "artifact_icon": "star",
@@ -471,11 +539,19 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-05",
         "requirements": "none",
         "category": "Telegram",
-        "notes": "The log file name is a call id; where a phone call service message in the chat "
+        "notes": "The client names each log <call id>.log and each statistics log <call "
+                 "id>_stats.log (Reference: Telegram-Android, 'VoIPHelper.java (getLogFilePath)', "
+                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/"
+                 "TMessagesProj/src/main/java/org/telegram/ui/Components/voip/"
+                 "VoIPHelper.java#L795-L816); "
+                 "where a phone call service message in the chat "
                  "carries the same id, the two can be tied together. The timestamps inside the "
                  "log are local-time strings with no timezone, so they are reported as recorded "
-                 "and only their difference is used for the logged span; the file modification "
-                 "time is used as the UTC reference point. The logged span is the difference "
+                 "and only their difference is used for the logged span; the modification time of "
+                 "the log file is reported beside them. It is read from the copy the tool staged. "
+                 "For a zip extraction the tool sets that time from the member's zone-less stored "
+                 "time read in the examiner machine's local zone, so the column headed Log Last "
+                 "Modified (UTC) is not established to be UTC. The logged span is the difference "
                  "between the first and last timestamp in the log and is not a call duration. "
                  "Approach adapted from a Telegram parser contributed by WriteBlocked in "
                  "ALEAPP pull request 716.",
@@ -489,10 +565,7 @@ __artifacts_v2__ = {
     "get_telegramAutoDownload": {
         "name": "Telegram - Auto-Download Settings",
         "description": (
-            "Parses the Telegram media auto-download configuration from the mainconfig.xml "
-            "shared preferences file. Reports, for each network type, whether auto-download "
-            "is enabled, which media types are downloaded automatically for each category of "
-            "chat, and the per-media size limits."
+            "Parses the Telegram media auto-download configuration from the mainconfig.xml shared preferences file. Reports the stored mobilePreset, wifiPreset and roamingPreset strings: the enabled flag, the media types set for each category of chat and the size limits. The client applies these strings only while currentMobilePreset, currentWifiPreset or currentRoamingPreset is not 0, 1 or 2 (the default is 3); for 0, 1 or 2 it applies preset0, preset1 or preset2, which are not reported here."
         ),
         "author": "Alexis Brignoni",
         "creation_date": "2026-08-03",

@@ -8,12 +8,13 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Samsung Browser",
-        "notes": "Field 16 is decoded as milliseconds since the 1601 epoch on an empirical "
-                 "basis: in a Samsung Android 14 image with 261 records, the 14-digit field-16 "
-                 "values resolve to May 2023 as milliseconds, whereas the Chromium base::Time "
-                 "microsecond convention would place them in the 1601 era. The protobuf field "
-                 "positions behind the URL One, URL Two, Domain and Data columns are the "
-                 "positions this parser reads; the source for them is not established.",
+        "notes": "Field 16 is decoded as milliseconds since the 1601 epoch. The unit was chosen "
+                 "from the values seen in one Samsung Android 14 image and is not sourced: read as "
+                 "microseconds, the Chromium base::Time convention, a 14-digit value falls between "
+                 "1601 and 1604. Records whose value does not hold the nested message this parser "
+                 "reads (field 1, field 4 inside it and field 1 inside that) are not reported. The "
+                 "protobuf field positions behind the URL One, URL Two, Domain and Data columns are "
+                 "the positions this parser reads; the source for them is not established.",
         "paths": ('*/data/com.sec.android.app.sbrowser/app_sbrowser/Default/shared_proto_db/*',),
         "output_types": "standard",
         "artifact_icon": "file",

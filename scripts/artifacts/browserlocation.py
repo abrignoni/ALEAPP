@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_browserlocation": {
         "name": "Browser Location",
-        "description": "Parses cached geolocation positions (timestamp, latitude, longitude and accuracy) from the Android Browser CachedGeoposition.db.",
+        "description": "Parses cached geolocation positions (timestamp read as Unix milliseconds and shown as UTC, latitude, longitude and accuracy) from the Android Browser CachedGeoposition.db.",
         "author": "@markmckinnon",
         "creation_date": "2021-03-17",
         "last_update_date": "2021-03-17",

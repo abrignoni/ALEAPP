@@ -2,32 +2,38 @@ __artifacts_v2__ = {
     "slack_messages": {
         "name": "Slack - Messages",
         "description": "Messages and thread replies from the Slack workspace store, with the "
-                       "message text, the sending user, the conversation and any shared file "
-                       "recovered from the app's image cache",
+                       "message text, the sending user, the conversation and the first shared "
+                       "file found in the app's image cache",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
         "requirements": "none",
         "category": "Slack",
         "notes": "Read from the messages and message_threads tables of the per-workspace store "
-                 "databases/org_<team id>. Both tables are reported here, distinguished by the "
-                 "Record Source column, so a thread reply appears alongside the message it "
-                 "replies to.\n"
+                 "databases/org_<team id>. One store is read per run, the first file found that "
+                 "holds the messages, conversation and users tables, so when the extraction holds "
+                 "more than one workspace store only one is reported. Both tables are reported "
+                 "here, distinguished by the Record Source column, so a thread reply appears "
+                 "alongside the message it replies to.\n"
                  "The message text is taken from the text field of the message_json (or "
-                 "message_blob) document on the row; the column itself holds the whole message as "
-                 "returned by the server. Slack writes user mentions into that text as raw "
-                 "<@Uxxxxxxxx> tokens; they are reported as stored rather than substituted, and "
-                 "the Slack - Users artifact maps those ids to names.\n"
+                 "message_blob) document on the row; the column itself holds a JSON document for "
+                 "the whole message. User mentions appear in that text as <@Uxxxxxxxx> tokens, the "
+                 "mention syntax Slack documents for message text (Reference: Slack, 'Formatting "
+                 "message text', https://docs.slack.dev/messaging/formatting-message-text/); they "
+                 "are reported as stored rather than substituted, and the Slack - Users artifact "
+                 "maps those ids to names.\n"
                  "Sender is resolved through users.id, and the conversation name through "
                  "conversation.conversation_id. Timestamps are the ts column, which is Unix epoch "
                  "seconds with a fractional part, held as text.\n"
                  "Subtype is reported as stored. Rows whose subtype is CHANNEL_JOIN and similar "
-                 "are events the client recorded in the same table as ordinary messages, not "
-                 "text the user typed.\n"
-                 "Attachments are linked by recorded identity, not by correlation. Slack's image "
-                 "cache is a DiskLruCache whose entry key is the SHA-256 of the requested URL, so "
-                 "each URL held on the file record is hashed and looked up directly; the matching "
-                 "cache body file is checked in as media. A file with no match means no cached "
+                 "are events the client recorded in the same table as ordinary messages, not text "
+                 "the user typed.\n"
+                 "Attachments are linked by recorded identity, not by correlation. This artifact "
+                 "takes the SHA-256 of each URL held on the file record and looks the hex digest "
+                 "up among the names of the files under slack_image_cache that end in .1; the "
+                 "matching file is checked in as media. When a message carries more than one file, "
+                 "Attachment shows the first one found in the cache and Attachment Names lists "
+                 "them all. A file with no match means no cached "
                  "copy was found in the extraction, which does not establish that the file was "
                  "never on the device.",
         "paths": ('*/com.Slack/databases/org_*',

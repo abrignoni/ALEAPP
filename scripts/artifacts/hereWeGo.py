@@ -17,7 +17,7 @@ __artifacts_v2__ = {
                  "themselves JSON objects. The field names below are the ones the app itself "
                  "writes into that JSON. "
                  "Searched is the entry's own timestamp field. It carries no zone and is not "
-                 "reported as UTC, because it is not UTC: on the tested device the two stored "
+                 "reported as UTC, because on the tested device it was not UTC: the two stored "
                  "values matched the device's local clock at the moment each search was made, and "
                  "the device was four hours behind UTC. Read it against the device's own time "
                  "zone setting. "
@@ -37,7 +37,7 @@ __artifacts_v2__ = {
     },
     "here_wego_saved_places": {
         "name": "HERE WeGo Saved Places",
-        "description": "Place entries in HERE WeGo collections, with their coordinates",
+        "description": "Place entries in the HERE WeGo collection.place.box.hive store, with their coordinates",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
@@ -69,11 +69,17 @@ __artifacts_v2__ = {
                  "held no value on the tested device are not reported. "
                  "A key can appear in more than one frame of the box; the Hive format's append "
                  "behaviour is not sourced here. The current state is the last frame for a key, "
-                 "which is what is reported, and Earlier Writes counts the superseded frames that "
+                 "which is what is reported. A key whose last frame holds no value gives no row, "
+                 "and its earlier frames are not reported. Hive writes a deleted entry as a frame "
+                 "with the key and no value; which Hive release the app ships was not "
+                 "established. Earlier Writes counts the superseded frames that "
                  "remain in the file for that key. "
                  "Entry Key is the key the box stores the entry under. Rows are box entries, not "
                  "distinct places: on the tested device one saved place was present under two "
-                 "different entry keys with identical content, so a place can be counted twice.",
+                 "different entry keys with identical content, so a place can be counted twice. "
+                 "Reference for the frame with a key and no value: hive v2.2.3, "
+                 "BinaryWriterImpl.writeFrame, "
+                 "https://github.com/isar/hive/blob/v2.2.3/hive/lib/src/binary/binary_writer_impl.dart#L271-L300",
         "paths": ('*/com.here.app.maps/app_flutter/collection.place.box.hive',
                   '*/com.here.app.maps/app_flutter/collection.box.hive'),
         "output_types": "all",
@@ -94,14 +100,15 @@ __artifacts_v2__ = {
                  "com.here.app.maps/shared_prefs/FlutterSharedPreferences.xml. "
                  "Last Location is a bare latitude and longitude pair stored under the key "
                  "last_location; what position it records was not sourced. Last Map View Center "
-                 "is a JSON object holding the centre of the map the last time it was displayed, "
-                 "together with a distance and a zoom level, which are reported as stored. These "
-                 "are two different things and the notes are worth reading before either is "
-                 "used. The meaning of each is taken from its key name only. A map view centre "
+                 "is the JSON object stored under the key last_map_view_center: a pos value read "
+                 "as latitude and longitude, a distance and a zoom level, reported as stored. The "
+                 "two values "
+                 "are stored under different keys. The meaning of each is taken from its key name "
+                 "only. A map view centre "
                  "can be panned anywhere without the device going there, so the second is not a "
                  "device position. "
-                 "On the tested device they differed, the map centre sitting about 2.7 kilometres "
-                 "from the recorded device position. "
+                 "On the tested device they differed, the two values sitting about 2.7 kilometres "
+                 "apart. "
                  "Neither value carries a timestamp, so neither can be placed in time from this "
                  "file. KML output is produced for both.",
         "paths": ('*/com.here.app.maps/shared_prefs/FlutterSharedPreferences.xml',),
@@ -126,8 +133,10 @@ __artifacts_v2__ = {
                  "Setting names are the app's own. The meanings of "
                  "is_terms_and_privacy_accepted, is_ftu_complete and prefs_app_version are not "
                  "sourced beyond their names. first_session_monthly_date carries a timestamp "
-                 "that ends in Z and so is UTC, unlike the search timestamps in the Recent "
-                 "Searches artifact. recentSearchResults, last_location and last_map_view_center "
+                 "that ends in Z, the ISO 8601 mark for UTC; it was not compared with a known "
+                 "time. The search timestamps in the Recent "
+                 "Searches artifact carry no zone. recentSearchResults, last_location and "
+                 "last_map_view_center "
                  "are reported by the other three artifacts in this module and are skipped here, "
                  "so that a long encoded value does not sit in this table. Every other key is "
                  "reported as stored, including keys this module does not interpret, because an "
