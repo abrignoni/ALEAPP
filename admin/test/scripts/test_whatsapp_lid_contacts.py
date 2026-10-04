@@ -139,7 +139,7 @@ class WhatsAppLidContactsTest(unittest.TestCase):
         self._build()
         rows = self._run(_GROUP)
         # (Message Direction, Sending Party, Message, Conversation Name, Sending Party JID)
-        self.assertEqual([(r[3], r[4], r[5], r[7], r[8]) for r in rows], [
+        self.assertEqual([(r[3], r[4], r[6], r[5], r[8]) for r in rows], [
             ('Incoming', None, None, 'Club', None),
             ('Incoming', 'Alice', 'group, lid sender', 'Club', ALICE_PN),
             ('Outgoing', 'Self', 'group, outgoing', 'Club', ''),

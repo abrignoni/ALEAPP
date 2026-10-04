@@ -133,7 +133,7 @@ __artifacts_v2__ = {
         "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "WhatsApp",
-        "notes": "Rows are selected by the chat's jid: every message in a chat whose jid ends in @g.us. g.us is the server name the third-party open-source client whatsmeow gives for group jids (GroupServer, https://github.com/tulir/whatsmeow/blob/8b41cfe6d9c487e17858cf00be40e951f575dbe8/types/jid.go#L24); no WhatsApp source for it is cited here. On the 12 listed images this selects the same rows as message.recipient_count >= 1, which this artifact used before. Message Type shows this module's label for message_type 0, 1, 2, 3, 5, 7, 9 and 16; other values are shown as stored and no source for the labels is cited here. A sender keyed by a LID jid (...@lid) is matched to wa.db contacts through msgstore.db jid_map when that table exists. A sender that matches no contact, or has no WhatsApp name, is shown by jid. On outgoing rows Sending Party reads Self and Sending Party JID is blank. With no wa.db every message is still reported and incoming senders are shown by jid; run on copies of the 12 listed images' msgstore.db with wa.db left out, the artifact reported the same number of rows as with it. The conversation view groups rows by Conversation Name, the chat's subject, so two groups with the same subject would be shown as one conversation; no listed image holds two groups with one subject.",
+        "notes": "Rows are selected by the chat's jid: every message in a chat whose jid ends in @g.us. g.us is the server name the third-party open-source client whatsmeow gives for group jids (GroupServer, https://github.com/tulir/whatsmeow/blob/8b41cfe6d9c487e17858cf00be40e951f575dbe8/types/jid.go#L24); no WhatsApp source for it is cited here. On the 12 listed images this selects the same rows as message.recipient_count >= 1, which this artifact used before. Message Type shows this module's label for message_type 0, 1, 2, 3, 5, 7, 9 and 16; other values are shown as stored and no source for the labels is cited here. A sender keyed by a LID jid (...@lid) is matched to wa.db contacts through msgstore.db jid_map when that table exists. A sender that matches no contact, or has no WhatsApp name, is shown by jid. On outgoing rows Sending Party reads Self and Sending Party JID is blank. With no wa.db every message is still reported and incoming senders are shown by jid; run on copies of the 12 listed images' msgstore.db with wa.db left out, the artifact reported the same number of rows as with it. Group JID is the raw_string of the chat's jid row. The conversation view groups rows by Group JID and uses Conversation Name, the chat's subject, as the label. Distinct group jids remain separate conversations when their subjects match or are empty.",
         "paths": ('*/com.whatsapp/databases/msgstore.db*', '*/com.whatsapp/databases/wa.db*', '*/WhatsApp/Media/*', '*/com.whatsapp/files/Media/*'),
         "output_types": "standard",
         "artifact_icon": "message",
@@ -153,7 +153,8 @@ __artifacts_v2__ = {
         },
         "data_views": {
             "conversation": {
-                "conversationDiscriminatorColumn": "Conversation Name",
+                "conversationDiscriminatorColumn": "Group JID",
+                "conversationLabelColumn": "Conversation Name",
                 "textColumn": "Message",
                 "directionColumn": "Message Direction",
                 "directionSentValue": "Outgoing",
@@ -684,7 +685,8 @@ def get_whatsapp_group_messages(context):
             message_location.live_location_share_duration,
             message_location.live_location_final_latitude,
             message_location.live_location_final_longitude,
-            datetime(message_location.live_location_final_timestamp/1000,'unixepoch')
+            datetime(message_location.live_location_final_timestamp/1000,'unixepoch'),
+            chat_jid.raw_string
         FROM message
         JOIN chat ON chat._id=message.chat_row_id
         JOIN jid AS chat_jid ON chat_jid._id=chat.jid_row_id
@@ -699,16 +701,16 @@ def get_whatsapp_group_messages(context):
         ''')
         for row in rows:
             data_list.append((_str_to_utc(row[0]), _str_to_utc(row[1]), _str_to_utc(row[15]),
-                              row[5], row[3], row[7], _media(row[8]), row[2], row[4],
+                              row[5], row[3], row[2], row[7], _media(row[8]), row[4],
                               row[6], row[8], row[9], row[10], row[11],
-                              row[12], row[13], row[14]))
+                              row[12], row[13], row[14], row[16]))
         db.close()
 
     data_headers = (('Message Timestamp', 'datetime'), ('Received Timestamp', 'datetime'),
                     ('Final Location Timestamp', 'datetime'), 'Message Direction',
-                    'Sending Party', 'Message', ('Media', 'media'), 'Conversation Name',
+                    'Sending Party', 'Conversation Name', 'Message', ('Media', 'media'),
                     'Sending Party JID', 'Message Type', 'Local Path To Media',
-                    'Media File Size') + _LOCATION_HEADERS
+                    'Media File Size') + _LOCATION_HEADERS + ('Group JID',)
     return data_headers, data_list, source
 
 
