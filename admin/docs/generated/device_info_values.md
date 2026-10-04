@@ -28,8 +28,10 @@ This document outlines the various device information collected by LEAPP modules
 | Bluetooth address: {val} | settingsSecure |
 | Bluetooth name: {val} | settingsSecure |
 | Device name (user {uid}): {value} | settingsGlobalSystem |
-| Factory Reset Timestamp: {reset_time} | factory_reset |
-| Last Boot Timestamp: {last_boot_time} | last_boot_time |
+| Factory Reset Archive Time (No Zone): {reset_time_as_stored} | factory_reset |
+| Factory Reset Timestamp: {reset_time.strftime('%Y-%m-%d %H:%M:%S')} | factory_reset |
+| Last Boot Archive Time (No Zone): {boot_time_as_stored} | last_boot_time |
+| Last Boot Timestamp: {boot_time.strftime('%Y-%m-%d %H:%M:%S')} | last_boot_time |
 | SIM Display Name: {row[2]} | siminfo |
 | SIM Number & IMSI: {row[0]} - {imsi} | siminfo |
 | {DEVINFO_TEXT.get(label, label)}: {value} | build |
