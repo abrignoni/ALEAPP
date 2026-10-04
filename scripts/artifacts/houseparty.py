@@ -6,7 +6,7 @@ __artifacts_v2__ = {
                        "addressed to and the message text.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-02",
-        "last_update_date": "2026-09-04",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Houseparty",
         "notes": "Read from class_RealmNote in the app's Realm store with the vendored "
@@ -28,9 +28,12 @@ __artifacts_v2__ = {
                  "sentAtNanos, which agreed with it, and the newest value matched LAST_NOTE_DATE "
                  "in the app's USERDATA_SHARED_PREFERENCES.xml to the millisecond. Conversation "
                  "names the other account in the exchange when Direction is known; when Direction "
-                 "is empty it holds the sender. It held one value on the tested extraction. The "
-                 "Read column holds the store's isUnread value as stored, so True there means the "
-                 "store marked the message unread; Hidden is isHidden as stored.",
+                 "is empty it names both the sender and the recipient, in account id order, "
+                 "because neither is known to be the other party. Direction was filled on all 7 "
+                 "rows of the tested extraction, where Conversation held one value; the "
+                 "empty-Direction case was not present there. Is Unread (as stored) holds the "
+                 "store's isUnread value unchanged, which was False on all 7 rows of the tested "
+                 "extraction; Hidden is isHidden as stored.",
         "paths": ('*/com.herzick.houseparty/files/default.realm',),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "message-circle",
@@ -91,7 +94,7 @@ __artifacts_v2__ = {
                        "notification and privacy settings stored alongside it.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-02",
-        "last_update_date": "2026-09-04",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Houseparty",
         "notes": "Read from class_RealmUser in the app's Realm store, with the settings joined "
@@ -101,8 +104,10 @@ __artifacts_v2__ = {
                  "they are not verified identifiers. Birthday fell on midnight UTC on the tested "
                  "extraction and is reported as a date rather than a datetime for that reason. "
                  "Session Created and Session Invalidated come from class_RealmToken; an "
-                 "invalidatedAt value dated in 1970 is reported as empty, and reading the Unix "
-                 "epoch there as 'not invalidated' is not sourced. The token string itself is "
+                 "invalidatedAt value of exactly the Unix epoch (1970-01-01 00:00:00 UTC) is "
+                 "reported as empty, and any other value is reported as stored. The one token "
+                 "row on the tested extraction held the epoch. What the epoch means there is "
+                 "not established. The token string itself is "
                  "not reported. Relevance Reason "
                  "and Notification Threshold are reported as stored.",
         "paths": ('*/com.herzick.houseparty/files/default.realm',),
@@ -176,6 +181,8 @@ from scripts.realm_parser import parse_realm_file
 # Only a store holding this class is this app's; a file that does not is skipped
 # and logged rather than reported under Houseparty's name.
 _MARKER_CLASS = 'class_RealmUser'
+
+_EPOCH = datetime(1970, 1, 1, tzinfo=timezone.utc)
 
 
 def _utc(value):
@@ -285,7 +292,7 @@ def housepartyMessages(context):
         'Message',
         'Media',
         'Recipient',
-        'Read',
+        'Is Unread (as stored)',
         'Hidden',
         'Message ID',
     )
@@ -305,14 +312,20 @@ def housepartyMessages(context):
             else:
                 direction = ''
             # The other party names the conversation; on an outgoing message that
-            # is the recipient, on an incoming one it is the sender.
-            other = recipient_id if direction == 'Outgoing' else sender_id
+            # is the recipient, on an incoming one it is the sender. With no
+            # account id neither is known to be the other party, so both are
+            # named, in id order, and one exchange stays one conversation.
+            if direction:
+                conversation = _who(recipient_id if direction == 'Outgoing' else sender_id, names)
+            else:
+                conversation = ' / '.join(
+                    _who(party, names) for party in sorted({sender_id, recipient_id}) if party)
             media = _linked(facemails, row.get('facemail'))
             data_list.append((
                 _utc(row.get('sentAt')),
                 direction,
                 _who(sender_id, names),
-                _who(other, names),
+                conversation,
                 _text(row.get('content')),
                 _text(media.get('id')) if media else '',
                 _who(recipient_id, names),
@@ -400,8 +413,9 @@ def housepartyAccount(context):
             account_id = str(row.get('id') or '')
             token = next((t for t in tokens if str(t.get('userId') or '') == account_id), {})
             invalidated = _utc(token.get('invalidatedAt'))
-            # The store writes the Unix epoch to mean "not invalidated".
-            if invalidated and invalidated.year == 1970:
+            # A value of exactly the Unix epoch is reported as empty; any other
+            # value, including a later one in 1970, is reported as stored.
+            if invalidated and invalidated == _EPOCH:
                 invalidated = ''
             data_list.append((
                 _utc(row.get('createdAt')),

@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Firefox places.sqlite web history",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-01-12",
-        "last_update_date": "2026-08-15",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Firefox",
         "notes": "Reference: Mozilla application-services, 'places Timestamp is milliseconds on "
@@ -17,20 +17,24 @@ __artifacts_v2__ = {
                  "its bookmarks are additionally reported by the dedicated Tor Browser artifact. "
                  "On the tested emulator Firefox 154.0.1 and Fennec F-Droid 154.0.0 were "
                  "installed side by side and both are reported. "
-                 "Rows are limited by joins on row ids that are not recorded links "
-                 "(moz_places.origin_id to moz_historyvisits.id and, where the table exists, "
-                 "moz_places.id to moz_places_metadata.id), so pages in moz_places can be missing; "
-                 "use Firefox - Web Visits for the visit record. On pixel7a_a14 moz_places held 8 "
-                 "pages, each with a recorded visit, and this artifact reported 7. On "
-                 "emu_a15_oss_v5 it reported all 8 pages (5 in org.mozilla.firefox and 3 in "
+                 "One row per moz_places page that has at least one row in moz_historyvisits, "
+                 "matched on moz_historyvisits.place_id, which the table declares as its foreign "
+                 "key to moz_places(id). Reference: Mozilla application-services, "
+                 "'create_shared_schema.sql', "
+                 "https://github.com/mozilla/application-services/blob/71d8b70bf62e6911d9d439a559aab56d8bef38b9/components/places/sql/create_shared_schema.sql#L74-L86. "
+                 "A page in moz_places with no visit row is not reported; Firefox - Web Visits "
+                 "lists each visit. On pixel7a_a14 moz_places held 8 pages, each with a visit row, and all 8 are reported. On emu_a15_oss_v5 "
+                 "all 8 pages are reported (5 in org.mozilla.firefox and 3 in "
                  "org.mozilla.fennec_fdroid). Last Visit Date and Visit Count are the "
-                 "last_visit_date_local and visit_count_local columns.",
+                 "last_visit_date_local and visit_count_local columns. Hidden and Typed show No "
+                 "or Yes for a stored 0 or 1 and any other stored value as stored; every page on "
+                 "both tested images stored 0 in both.",
         "paths": ('*/files/places.sqlite*',),
         "output_types": "standard",
         "artifact_icon": "globe",
         "sample_data": {
             "emu_a15_oss_v5": "Android 15 | org.mozilla.firefox vc 2016180578, org.mozilla.fennec_fdroid vc 1540020 | 8 rows",
-            "pixel7a_a14": "Android 14 | org.mozilla.firefox vc 2016030615 | 7 rows",
+            "pixel7a_a14": "Android 14 | org.mozilla.firefox vc 2016030615 | 8 rows",
         },
     },
     "get_firefox_visits": {
@@ -38,7 +42,7 @@ __artifacts_v2__ = {
         "description": "Firefox places.sqlite individual page visits",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-01-12",
-        "last_update_date": "2026-08-15",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Firefox",
         "notes": "Reference: Mozilla application-services, 'places Timestamp is milliseconds on "
@@ -46,7 +50,9 @@ __artifacts_v2__ = {
                  "https://github.com/mozilla/application-services/blob/71d8b70bf62e6911d9d439a559aab56d8bef38b9/components/support/types/src/lib.rs. "
                  "Reference: Mozilla, 'nsINavHistoryService TRANSITION_* constants', "
                  "https://github.com/mozilla-firefox/firefox/blob/6d751cf5d0af4b7fcc1b232b6c2ba0551afabe1d/toolkit/components/places/nsINavHistoryService.idl#L929-L977. "
-                 "Any other stored visit_type is shown blank. "
+                 "Any other stored visit_type is shown as stored, and Typed shows a stored "
+                 "value other than 0 or 1 as stored; the tested images stored visit types 1, 5 "
+                 "and 6 and a typed value of 0 only. "
                  "This artifact is not limited to org.mozilla.firefox: the path pattern is "
                  "anchored on the files/places.sqlite layout rather than on a package, so "
                  "Gecko-based forks that use that layout are read too, and the Browser column "
@@ -67,7 +73,7 @@ __artifacts_v2__ = {
         "description": "Firefox places.sqlite bookmarks",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-01-12",
-        "last_update_date": "2026-08-15",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Firefox",
         "notes": "Reference: Mozilla application-services, 'places Timestamp is milliseconds on "
@@ -83,7 +89,8 @@ __artifacts_v2__ = {
                  "Bookmark Type shows URL, Folder or Separator for a stored type of 1, 2 or 3, "
                  "following BookmarkType in components/places/src/types.rs at the same "
                  "application-services commit (Bookmark = 1, Folder = 2, Separator = 3); any other "
-                 "stored value is shown blank.",
+                 "stored value is shown as stored. Every bookmark row on the tested images stored "
+                 "type 2.",
         "paths": ('*/files/places.sqlite*',),
         "output_types": "standard",
         "artifact_icon": "bookmark",
@@ -178,21 +185,17 @@ def get_firefox_history(context):
     sources = []
     for source_path in _dbs(context):
         browser = _browser(source_path)
-        # Older Firefox databases have no moz_places_metadata table, and the inner
-        # join silently returned nothing on them (community report, PR #628). The
-        # join selects no columns, so it is only applied where the table exists.
-        metadata_join = ('INNER JOIN moz_places_metadata ON moz_places.id = moz_places_metadata.id'
-                         if does_table_exist_in_db(source_path, 'moz_places_metadata')
-                         else '')
-        rows = _run(source_path, f'''
+        # A page is reported when moz_historyvisits holds a visit for it, through
+        # place_id, the column the table declares as its foreign key to moz_places.
+        rows = _run(source_path, '''
         SELECT moz_places.last_visit_date_local, moz_places.url, moz_places.title,
         moz_places.visit_count_local, moz_places.description,
-        CASE moz_places.hidden WHEN 0 THEN 'No' WHEN 1 THEN 'Yes' END,
-        CASE moz_places.typed WHEN 0 THEN 'No' WHEN 1 THEN 'Yes' END,
+        CASE moz_places.hidden WHEN 0 THEN 'No' WHEN 1 THEN 'Yes' ELSE moz_places.hidden END,
+        CASE moz_places.typed WHEN 0 THEN 'No' WHEN 1 THEN 'Yes' ELSE moz_places.typed END,
         moz_places.frecency, moz_places.preview_image_url
         FROM moz_places
-        INNER JOIN moz_historyvisits ON moz_places.origin_id = moz_historyvisits.id
-        {metadata_join}
+        WHERE EXISTS (SELECT 1 FROM moz_historyvisits
+                      WHERE moz_historyvisits.place_id = moz_places.id)
         ORDER BY moz_places.last_visit_date_local ASC
     ''')
         data_list.extend((_ms_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8], browser)
@@ -219,8 +222,9 @@ def get_firefox_visits(context):
             WHEN 3 THEN 'TRANSITION_BOOKMARK' WHEN 4 THEN 'TRANSITION_EMBED'
             WHEN 5 THEN 'TRANSITION_REDIRECT_PERMANENT' WHEN 6 THEN 'TRANSITION_REDIRECT_TEMPORARY'
             WHEN 7 THEN 'TRANSITION_DOWNLOAD' WHEN 8 THEN 'TRANSITION_FRAMED_LINK'
-            WHEN 9 THEN 'TRANSITION_RELOAD' END,
-        CASE moz_places.typed WHEN 0 THEN 'No' WHEN 1 THEN 'Yes' END
+            WHEN 9 THEN 'TRANSITION_RELOAD'
+            ELSE moz_historyvisits.visit_type END,
+        CASE moz_places.typed WHEN 0 THEN 'No' WHEN 1 THEN 'Yes' ELSE moz_places.typed END
         FROM moz_historyvisits
         INNER JOIN moz_places ON moz_places.id = moz_historyvisits.place_id
         ORDER BY moz_historyvisits.visit_date ASC
@@ -243,7 +247,8 @@ def get_firefox_bookmarks(context):
         browser = _browser(source_path)
         rows = _run(source_path, '''
         SELECT moz_bookmarks.dateAdded, moz_bookmarks.lastModified, moz_bookmarks.title, moz_places.url,
-        CASE moz_bookmarks.type WHEN 1 THEN 'URL' WHEN 2 THEN 'Folder' WHEN 3 THEN 'Separator' END,
+        CASE moz_bookmarks.type WHEN 1 THEN 'URL' WHEN 2 THEN 'Folder' WHEN 3 THEN 'Separator'
+            ELSE moz_bookmarks.type END,
         moz_bookmarks.id, moz_bookmarks.parent, moz_bookmarks.position, moz_bookmarks.syncStatus
         FROM moz_bookmarks
         LEFT JOIN moz_places ON moz_bookmarks.fk = moz_places.id

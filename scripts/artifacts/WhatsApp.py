@@ -58,12 +58,12 @@ __artifacts_v2__ = {
         "description": "WhatsApp messages (legacy msgstore.db schema with messages.data)",
         "author": "@abrignoni",
         "creation_date": "2021-03-11",
-        "last_update_date": "2021-03-11",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "WhatsApp",
         "notes": "Legacy schema only (a messages table with a data column); modern databases are "
-                 "covered by the One To One / Group Messages artifacts. The column headed Message "
-                 "ID holds key_remote_jid, the jid of the chat, not a message identifier. Only "
+                 "covered by the One To One / Group Messages artifacts. Key Remote JID is "
+                 "messages.key_remote_jid as stored; it is not a message identifier. Only "
                  "messages whose key_remote_jid has a row in wa.db's wa_contacts are reported, and "
                  "none are reported when wa.db is absent. Every image listed in sample_data "
                  "reports 0 rows, so this artifact is not exercised by the listed data.",
@@ -560,7 +560,7 @@ def get_whatsapp_messages(context):
         db.close()
 
     data_headers = (('Message Timestamp', 'datetime'), ('Received Timestamp', 'datetime'),
-                    'Message ID', 'Recipients', 'Direction', 'Message', 'Group Sender', 'Attachment')
+                    'Key Remote JID', 'Recipients', 'Direction', 'Message', 'Group Sender', 'Attachment')
     return data_headers, data_list, source
 
 

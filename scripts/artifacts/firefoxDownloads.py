@@ -4,8 +4,8 @@ __artifacts_v2__ = {
         "description": "Parses Firefox downloads (created time, file name, URL, MIME type, size, status and destination) from the mozac downloads database. The Tor Browser path is also matched.",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-01-12",
-        "last_update_date": "2026-08-15",
-        "notes": "Two schema variants are handled: destination_directory and directory_path. Reference: Mozilla android-components, 'DownloadState.Status (INITIATED=1, DOWNLOADING=2, PAUSED=3, CANCELLED=4, FAILED=5, COMPLETED=6); statuses 1 and 2 and any other value are shown blank', https://github.com/mozilla-firefox/firefox/blob/6d751cf5d0af4b7fcc1b232b6c2ba0551afabe1d/mobile/android/android-components/components/browser/state/src/main/java/mozilla/components/browser/state/state/content/DownloadState.kt",
+        "last_update_date": "2026-10-04",
+        "notes": "Two schema variants are handled: destination_directory and directory_path. Reference: Mozilla android-components, 'DownloadState.Status (INITIATED=1, DOWNLOADING=2, PAUSED=3, CANCELLED=4, FAILED=5, COMPLETED=6); statuses 3 to 6 are shown as Paused, Canceled, Failed and Finished, and statuses 1 and 2 and any other value are shown as stored', https://github.com/mozilla-firefox/firefox/blob/6d751cf5d0af4b7fcc1b232b6c2ba0551afabe1d/mobile/android/android-components/components/browser/state/src/main/java/mozilla/components/browser/state/state/content/DownloadState.kt",
         "requirements": "none",
         "category": "Firefox",
         "paths": ('*/org.mozilla.firefox/databases/mozac_downloads_database*',
@@ -53,6 +53,7 @@ def get_firefoxDownloads(context):
             WHEN 4 THEN 'Canceled'
             WHEN 5 THEN 'Failed'
             WHEN 6 THEN 'Finished'
+            ELSE status
         END AS Status,
         {directory_column} AS DestDir
         FROM downloads
