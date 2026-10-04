@@ -3,30 +3,22 @@ __artifacts_v2__ = {
         "name": "Zoom - Meeting Folders",
         "description": "Parses the folders under the Zoom app's data/Zoom directory, whose "
                        "names begin with a date and a time followed by a title.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Zoom",
-        "notes": "One row per meeting folder. The evidence here is the folder name, not its "
-                 "contents: on the private sample that held these folders all 21 were empty, "
-                 "and the app's own databases are encrypted, so the names are the only "
-                 "record of these meetings the extraction carries. A name is the date, the "
-                 "time and the meeting title, and the date and time are reported separately "
-                 "from the title. Meeting Date is reported as a date and Meeting Time as "
-                 "stored, because the name records no time zone and nothing in the "
-                 "extraction establishes which one the app used, so the values are not "
-                 "converted and are not offered as a UTC datetime. Files In Folder counts "
-                 "the entries the extraction holds inside the folder, which was zero on the "
-                 "tested device; a folder can be present without a recording. What event the "
-                 "date and time in a folder name mark is not established, and the columns "
-                 "headed Meeting Date, Meeting Time (as stored) and Meeting Title are this "
-                 "parser's reading of the name. A folder is not by itself proof that a "
-                 "meeting took place, that a recording "
-                 "was made or that the account holder attended. Names that do not begin with "
-                 "a date and a time are reported with the whole name in the title column "
-                 "rather than being dropped. Field mapping was done against three private "
-                 "samples provided by Mattia; no sample data is recorded for them.",
+        "notes": "One row per distinct folder name under data/Zoom in an app container. "
+                 "A leading date-shaped segment, time-shaped segment and remaining suffix are "
+                 "reported as text under Folder Date Text, Folder Time Text and Folder Suffix. "
+                 "Their event meaning and time zone are not established by the folder name. "
+                 "Names that do not match the pattern are preserved in Folder Suffix. Files In "
+                 "Folder counts matched entries below the folder. The private sample described "
+                 "by the original contributor held 21 empty folders; no registered sample is "
+                 "recorded for that observation. A folder is not by itself proof that a meeting "
+                 "took place, that a recording was made or that the account holder attended. "
+                 "Field mapping was done against three private samples provided by Mattia; "
+                 "no sample data is recorded for them.",
         "paths": (
             '*/us.zoom.videomeetings/data/Zoom/*',
         ),
@@ -80,8 +72,7 @@ from scripts.artifacts.storagePathViews import canonical_path, unique_files
 from scripts.ilapfuncs import artifact_processor
 
 _PACKAGE = 'us.zoom.videomeetings'
-# A folder name begins with the date and the time the app recorded for the meeting, then
-# the title. The separators the app uses between the time parts are read from the name
+# Split a date-shaped prefix, time-shaped prefix and suffix without asserting their event meaning. The separators the app uses between the time parts are read from the name
 # rather than assumed, because they are not the ones used in the date.
 _FOLDER_NAME = re.compile(r'^(\d{4}-\d{2}-\d{2})[ T](\d{2}[.:]\d{2}[.:]\d{2})\s*(.*)$')
 _ACCOUNT = re.compile(r'([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]*xmpp\.zoom\.us)')
@@ -162,9 +153,9 @@ def zoom_meeting_folders(context):
     data_list.sort(key=lambda row: (str(row[0]), str(row[1]), str(row[4])), reverse=True)
 
     data_headers = (
-        ('Meeting Date', 'date'),
-        'Meeting Time (as stored)',
-        'Meeting Title',
+        'Folder Date Text (as stored)',
+        'Folder Time Text (as stored)',
+        'Folder Suffix (as stored)',
         'Files In Folder',
         'Folder Name',
         'Source Path',

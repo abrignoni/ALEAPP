@@ -62,7 +62,7 @@ __artifacts_v2__ = {
     "get_wire_messages": {
         "name": "Wire Messages",
         "description": "Parses messages and call history for Wire Messenger",
-        "author": "@cf-eglendye",
+        "author": "@cf-eglendye, @AlexisBrignoni, Codex",
         "creation_date": "2024-04-24",
         "last_update_date": "2026-10-04",
         "requirements": "None",
@@ -371,18 +371,17 @@ def get_wire_messages(context):
     data_list = []
     asset_name, asset_join = _asset_source(source_path) if source_path else ("''", '')
     for r in _run(source_path, MESSAGES_SQL.format(asset_name=asset_name, asset_join=asset_join)):
-        data_list.append((_str_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], _str_to_utc(r[6]), r[7], r[8], r[9],
-                          ''))
+        data_list.append((_str_to_utc(r[0]), _str_to_utc(r[6]), '', r[1], r[2], r[3], r[4], r[5], r[7], r[8], r[9]))
 
     # Surface deleted messages from MsgDeletion read-only (the original modified the source DB to do this).
     # MsgDeletion.timestamp is not a sent time, so it gets its own column (see the notes for what
     # the legacy source stores in it).
     for d in _run(source_path, 'SELECT message_id, timestamp FROM MsgDeletion'):
-        data_list.append(('', d[0], '', 'Deleted', '', '', '', '', '', '', _ms_to_utc(d[1])))
+        data_list.append(('', '', _ms_to_utc(d[1]), d[0], '', 'Deleted', '', '', '', '', ''))
 
-    data_headers = (('Date / Time Sent', 'datetime'), 'Message ID', 'User Name', 'Message Type',
-                    'Message Content', 'Reaction', ('Date / Time Reacted', 'datetime'), 'Reacted By',
-                    'Call Duration (assumes ms)', 'Asset Name', ('Date / Time Deleted', 'datetime'))
+    data_headers = (('Date / Time Sent', 'datetime'), ('Date / Time Reacted', 'datetime'),
+                    ('MsgDeletion.timestamp', 'datetime'), 'Message ID', 'User Name', 'Message Type',
+                    'Message Content', 'Reaction', 'Reacted By', 'Call Duration (assumes ms)', 'Asset Name')
     return data_headers, data_list, source_path
 
 

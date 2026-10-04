@@ -28,16 +28,16 @@ __artifacts_v2__ = {
     "untappd_profile": {
         "name": "Untappd - User Profile",
         "description": "Parses the Untappd user profile",
-        "author": "Kevin Pagano (@stark4n6)",
+        "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2026-08-28",
-        "last_update_date": "2026-08-28",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Social",
         "notes": "Parses the userProfiles table within the clevertap SQLite database. The user's "
                  "information is stored as a JSON string within the data column. Extracts plain "
                  "text profile details including Email, Name, Username, Gender, Last Checkin "
-                 "Beer, Last Checkin Category, Country ID, and Identity. The dob member is read "
-                 "as Unix seconds and shown as a UTC date and time; the unit was not sourced.",
+                 "Beer, Last Checkin Category, Country ID, and Identity. The dob member is reported "
+                 "as stored because its encoding and time zone are not established.",
         "paths": (
             '*/com.untappdllc.app/databases/clevertap*',
         ),
@@ -103,16 +103,15 @@ __artifacts_v2__ = {
         "name": "Untappd - Cached Checkins",
         "description": "Parses checkin events including user and beer info "
                        "as well as potentially location/venue information",
-        "author": "Kevin Pagano (@stark4n6)",
+        "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2026-08-28",
-        "last_update_date": "2026-08-28",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Social",
         "notes": "Parses GZIP-compressed binary files (.1 extension) found in the "
                  "cache/http-cache/ directory. Decodes the uncompressed raw bytes into UTF-8 "
                  "JSON strings to extract check-in data. Captures the Checkin ID, the creation "
-                 "date as stored (the stored offset is not applied, so it is UTC only where the "
-                 "stored offset is +0000), the rating and the comment. The check-in is the one "
+                 "date converted to UTC using its stored offset, the rating and the comment. The check-in is the one "
                  "in the cached response and can belong to any user; the UID and Username "
                  "columns say whose it is. Additionally pulls nested information for the "
                  "user (UID, username, full name), beer (name, ABV), brewery, venue (name, "
@@ -155,9 +154,9 @@ __artifacts_v2__ = {
         "name": "Untappd - Checkin Location Suggestions",
         "description": "Location suggestions read from cached Untappd HTTP responses, with the "
                        "'recent' and 'foursquare' entries as stored",
-        "author": "Kevin Pagano (@stark4n6)",
+        "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2026-08-28",
-        "last_update_date": "2026-08-28",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Social",
         "notes": "Parses location suggestions stored in GZIP-compressed HTTP cache files; when "
@@ -166,9 +165,9 @@ __artifacts_v2__ = {
                  "timestamp. The response's location member is reported as Current Latitude and "
                  "Current Longitude, whose meaning is taken from the member name, along with two "
                  "types of suggested venues: 'Recent' entries (which carry a recent_date value, "
-                 "shown without its stored offset applied) and 'Foursquare' entries (which "
+                 "converted to UTC using its stored offset) and 'Foursquare' entries (which "
                  "carry none). Reports the venue name, the distance value as stored (its unit "
-                 "was not sourced, although the column header says miles), and coordinates for "
+                 "is not established), and coordinates for "
                  "each suggested location.",
         "paths": (
             '*/com.untappdllc.app/cache/http-cache/*.*',
@@ -315,7 +314,7 @@ def untappd_profile(context):
     json_extract(data, '$.Name'),
     json_extract(data, '$.Username'),
     json_extract(data, '$.Gender'),
-    datetime(json_extract(data, '$.dob'),'unixepoch'),
+    json_extract(data, '$.dob'),
     json_extract(data, '$.last_checkin_beer'),
     json_extract(data, '$.last_checkin_category'),
     json_extract(data, '$.CountryID'),
@@ -327,11 +326,11 @@ def untappd_profile(context):
 
     for record in db_records:
         data_list.append((
+            record[4],
             record[0],
             record[1],
             record[2],
             record[3],
-            record[4],
             record[5],
             record[6],
             record[7],
@@ -339,11 +338,11 @@ def untappd_profile(context):
         ))
 
     data_headers = (
+        'dob (as stored)',
         'Email Address',
         'Name',
         'Username',
         'Gender',
-        'Date of Birth',
         'Last Checkin Beer',
         'Last Checkin Category',
         'Country ID',
@@ -472,13 +471,14 @@ def untappd_cached_checkins(context):
                 
             # Top-Level Checkin Details
             checkin_id = checkin_data.get('checkin_id', '')
-            created_at = checkin_data.get('created_at', '')
+            created_at_raw = checkin_data.get('created_at', '')
+            created_at = created_at_raw
             if created_at:
                 try:
                     dt_obj = datetime.datetime.strptime(created_at, "%a, %d %b %Y %H:%M:%S %z")
-                    created_at = dt_obj.strftime("%Y-%m-%d %H:%M:%S")
+                    created_at = dt_obj.astimezone(datetime.timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
                 except ValueError:
-                    pass
+                    created_at = ''
             
             rating = checkin_data.get('rating_score', '')
             comment = checkin_data.get('checkin_comment', '')
@@ -529,11 +529,11 @@ def untappd_cached_checkins(context):
                 container_name = serving_types.get('container_name','')
 
             data_list.append((
-                created_at, checkin_id, uid, username, full_name, 
+                created_at, created_at_raw, checkin_id, uid, username, full_name,
                 beer_name, beer_abv, brewery_name, rating, comment, 
                 venue_name, lat, lng, app_name, photo_url, container_name, source_name))
     
-    data_headers = (('Checkin Date','datetime'),'Checkin ID','UID','Username','Full Name','Beer Name','Beer ABV %','Brewery Name','Rating','Comment','Venue Name','Venue Latitude','Venue Longitude','App Name','Photo URL','Serving Style','Source File')
+    data_headers = (('Checkin Date','datetime'),'created_at (as stored)','Checkin ID','UID','Username','Full Name','Beer Name','Beer ABV %','Brewery Name','Rating','Comment','Venue Name','Venue Latitude','Venue Longitude','App Name','Photo URL','Serving Style','Source File')
     
     data_list.sort()
     return data_headers, data_list, '\n'.join(sorted(source_paths))
@@ -596,7 +596,8 @@ def untappd_recent_locations(context):
             
             for item in recent_items:
                 entry_type = "Recent"
-                recent_date = item.get('recent_date', '')
+                recent_date_raw = item.get('recent_date', '')
+                recent_date = recent_date_raw
                 venue_name = item.get('venue_name', '')
                 distance = item.get('distance', '')
                 
@@ -608,13 +609,14 @@ def untappd_recent_locations(context):
                 if recent_date:
                     try:
                         dt_obj = datetime.datetime.strptime(recent_date, "%a, %d %b %Y %H:%M:%S %z")
-                        recent_date = dt_obj.strftime("%Y-%m-%d %H:%M:%S")
+                        recent_date = dt_obj.astimezone(datetime.timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
                     except ValueError:
-                        pass
+                        recent_date = ''
                 
                 data_list.append((
                     cache_date,
-                    recent_date, 
+                    recent_date,
+                    recent_date_raw,
                     entry_type,
                     venue_name, 
                     distance, 
@@ -631,6 +633,7 @@ def untappd_recent_locations(context):
             for item in foursquare_items:
                 entry_type = "Foursquare"
                 recent_date = ""  # Foursquare suggestions lack a timestamp
+                recent_date_raw = ''
                 venue_name = item.get('venue_name', '')
                 distance = item.get('distance', '')
                 
@@ -641,6 +644,7 @@ def untappd_recent_locations(context):
                 data_list.append((
                     cache_date,
                     recent_date,
+                    recent_date_raw,
                     entry_type,
                     venue_name,
                     distance,
@@ -653,10 +657,11 @@ def untappd_recent_locations(context):
 
     data_headers = (
         ('Cached Query Timestamp','datetime'),
-        ('Recent Checkin Timestamp','datetime'),
+        ('recent_date','datetime'),
+        'recent_date (as stored)',
         'Entry Type',
         'Venue Name',
-        'Distance (Miles)',
+        'distance (as stored)',
         'Venue Latitude',
         'Venue Longitude',
         'Current Latitude',
