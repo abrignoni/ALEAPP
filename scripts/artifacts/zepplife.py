@@ -2,50 +2,48 @@
 __artifacts_v2__ = {
     "extract_zepplife_heartrate": {
         "name": "Zepp Life - Heart Rate",
-        "description": "Heart rate records (HEART_RATE table) from the first Zepp Life origin_db database that holds any; TIME is read as Unix seconds",
-        "author": "its5Q",
+        "description": "Heart rate records (HEART_RATE table) from the matched Zepp Life origin_db databases; TIME is reported as stored",
+        "author": "its5Q, @AlexisBrignoni, Codex",
         "creation_date": "2025-07-28",
-        "last_update_date": "2025-07-28",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Zepp Life",
-        "notes": "",
+        "notes": "TIME is reported as text because its epoch and unit have not been established. "
+                 "All matched origin_db files are read; SQLite sidecars are excluded.",
         "paths": ('*/com.xiaomi.hm.health/databases/origin_db*',),
         "output_types": "standard",
         "artifact_icon": "heart",
     }
 }
 
-from datetime import datetime, timezone
-from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
+from scripts.artifacts.storagePathViews import unique_files
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
 @artifact_processor
 def extract_zepplife_heartrate(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
 
-    origin = None
+    sources = []
 
     for db_path in files_found:
+        if str(db_path).endswith(("-wal", "-shm", "-journal")):
+            continue
         db = open_sqlite_db_readonly(db_path)
+        if not db:
+            continue
         cursor = db.cursor()
         cursor.execute('''
         SELECT TIME, HR FROM HEART_RATE;
         ''')
 
         rows = cursor.fetchall()
+        db.close()
         if rows:
-            for row in rows:
-                row = list(row)
-                try:
-                    row[0] = datetime.fromtimestamp(row[0], timezone.utc)
-                except Exception as ex:
-                    logfunc(f'Error processing timestamp: {ex}')
+            sources.append(str(db_path))
+            for stamp, heart_rate in rows:
+                data_list.append((str(stamp) if stamp is not None else '', heart_rate,
+                                  context.get_relative_path(db_path)))
 
-                data_list.append(row)
-            
-            origin = db_path
-            break
-
-
-    data_headers = (('Timestamp', 'datetime'), 'Heart Rate')
-    return data_headers, data_list, origin
+    data_headers = ('TIME (as stored)', 'Heart Rate', 'Source File')
+    return data_headers, data_list, '\n'.join(sources)

@@ -74,9 +74,9 @@ __artifacts_v2__ = {
     "youcam_perfect_saved_photos": {
         "name": "YouCam Perfect Saved Photos",
         "description": "Files in the DCIM/YouCam Perfect folder, where the one tested save of the app wrote its output",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-11",
-        "last_update_date": "2026-09-11",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "YouCam Perfect",
         "sample_data": {
@@ -102,11 +102,12 @@ __artifacts_v2__ = {
                  "folder the app writes, not that the app produced this particular file.\nSaved "
                  "renders the file when its name carries an image extension the report can "
                  "display, and is blank otherwise, so a file of another kind saved into this "
-                 "folder is still reported by name and size with nothing rendered. Modified is "
+                 "folder is still reported by name and size with nothing rendered. Staged Copy mtime is "
                  "the modification time the report tool restored on its copy of the file. For a "
                  "tar extraction that is the Unix time the archive stores. For a zip extraction "
                  "it comes from the member's zip date and time, which carry no time zone, so it "
-                 "is not a UTC instant and should be checked against the archive.",
+                 "is not a UTC instant. The numeric staged-copy value is reported as text without "
+                 "an asserted evidence time zone and should be checked against the archive.",
         "paths": ('*/DCIM/YouCam Perfect/*',),
         "output_types": "standard",
         "artifact_icon": "device-floppy",
@@ -354,17 +355,17 @@ def youcam_perfect_saved_photos(context):
         stamp = ('{}-{}-{} {}:{}:{}.{}'.format(*match.groups()) if match else '')
         try:
             size = os.path.getsize(found)
-            modified = _seconds(int(os.path.getmtime(found)))
+            modified = str(os.path.getmtime(found))
         except OSError as error:
             logfunc(f'YouCam Perfect: could not read {name}: {error}')
             size, modified = '', ''
-        data_list.append((_render(found), name, stamp, size, modified,
+        data_list.append((stamp, modified, _render(found), name, size,
                           context.get_relative_path(found)))
         sources.append(found)
 
     data_headers = (
-        ('Saved', 'media'), 'File Name', 'Name Wall Clock (as stored)', 'Size (bytes)',
-        ('Modified', 'datetime'), 'Source File')
+        'Name Wall Clock (as stored)', 'Staged Copy mtime (seconds as stored)',
+        ('Saved', 'media'), 'File Name', 'Size (bytes)', 'Source File')
     return data_headers, data_list, '\n'.join(str(path) for path in sources)
 
 

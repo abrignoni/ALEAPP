@@ -102,15 +102,21 @@ __artifacts_v2__ = {
     "uber_sessions": {
         "name": "Uber - Sessions",
         "description": "Parses session identifiers and token expiry times from the Uber Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Uber",
         "notes": "From oauth_tokens.xml the access and refresh tokens are reported by presence "
-                 "only and the token strings are not written to the report; on that row Timestamp "
-                 "is expire_time_ms and Second Timestamp is rt_expire_time_ms, which are expiry "
-                 "times and not event times. The session identifier and user UUID from that file, "
+                 "only and the token strings are not written to the report. That file's "
+                 "expire_time_ms and rt_expire_time_ms values are read as Unix milliseconds and "
+                 "shown in the columns of those names, not in Timestamp or Second Timestamp, "
+                 "because they are not event times; both columns are blank on rows from the other "
+                 "files, and Timestamp and Second Timestamp are blank on the oauth_tokens.xml row. "
+                 "No source was found for which token each value applies to. Timestamp is "
+                 "sessionStartTimeMs on a session_LAST_SESSION row and the meta object's "
+                 "lastModifiedTimeMs on a KEY_CLIENT_STATUS row, where Second Timestamp is its "
+                 "originTimeMs. The session identifier and user UUID from that file, "
                  "and the session and device identifiers from unified_session_swap_store.xml, are "
                  "written as stored. "
                  "session_LAST_SESSION stores sessionStartTimeMs in Unix milliseconds. Its "
@@ -151,16 +157,16 @@ __artifacts_v2__ = {
     "uber_cached_images": {
         "name": "Uber - Cached Images",
         "description": "Recovers images from the Uber Android app image cache.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Uber",
         "notes": "Each cache entry is a pair of files sharing a base name: a .0 metadata file whose "
-                 "first two lines are Unix millisecond values, shown as Cached At and Response "
-                 "Stored At, and which also carries the stored HTTP response headers, and a .1 "
-                 "file holding the bytes. Those two column names are this parser's labels and "
-                 "what each line records was not established. Entries with no .1 file, or whose "
+                 "first two lines are read as Unix millisecond values and shown as Metadata "
+                 "Line 1 and Metadata Line 2, and which also carries the stored HTTP response "
+                 "headers, and a .1 file holding the bytes. What each of the two lines records "
+                 "was not established, so the columns are named for the line's position. Entries with no .1 file, or whose "
                  ".1 file is not a WebP, PNG, JPEG or GIF image, are not reported. The entry base "
                  "name is a 64 "
                  "character hex string reported as stored; it did not reproduce as MD5, SHA-1 or SHA-256 "
@@ -643,6 +649,8 @@ def uber_sessions(context):
             data_list.append((
                 _ms(record.get('sessionStartTimeMs')),
                 '',
+                '',
+                '',
                 'session_LAST_SESSION',
                 record.get('sessionId', ''),
                 '',
@@ -660,6 +668,8 @@ def uber_sessions(context):
             data_list.append((
                 _ms(meta.get('lastModifiedTimeMs')),
                 _ms(meta.get('originTimeMs')),
+                '',
+                '',
                 'KEY_CLIENT_STATUS',
                 record.get('lastRequestJobUUID', ''),
                 '',
@@ -674,7 +684,11 @@ def uber_sessions(context):
             if not values:
                 continue
             present = [key for key in ('access_token', 'refresh_token') if values.get(key)]
+            # expire_time_ms and rt_expire_time_ms are not event times, so they
+            # stay out of the Timestamp columns and get columns of their own.
             data_list.append((
+                '',
+                '',
                 _ms(values.get('expire_time_ms')),
                 _ms(values.get('rt_expire_time_ms')),
                 'oauth_tokens.xml',
@@ -697,6 +711,8 @@ def uber_sessions(context):
                 data_list.append((
                     '',
                     '',
+                    '',
+                    '',
                     key,
                     session.get('sessionId', ''),
                     '',
@@ -709,6 +725,8 @@ def uber_sessions(context):
     data_headers = (
         ('Timestamp', 'datetime'),
         ('Second Timestamp', 'datetime'),
+        ('expire_time_ms', 'datetime'),
+        ('rt_expire_time_ms', 'datetime'),
         'Record Type',
         'Session or Job UUID',
         'User UUID',
@@ -897,8 +915,8 @@ def uber_cached_images(context):
         sources.append(body)
 
     data_headers = (
-        ('Cached At', 'datetime'),
-        ('Response Stored At', 'datetime'),
+        ('Metadata Line 1', 'datetime'),
+        ('Metadata Line 2', 'datetime'),
         ('Image', 'media'),
         'Detected Media Type',
         'Size (bytes)',

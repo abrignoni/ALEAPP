@@ -11,9 +11,9 @@ __artifacts_v2__ = {
     "get_whatsapp_reactions": {
         "name": "WhatsApp - Message Reactions",
         "description": "WhatsApp emoji reactions to messages (msgstore.db message_add_on_reaction)",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-14",
-        "last_update_date": "2026-08-14",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "WhatsApp",
         "notes": "Each row is one entry in the message_add_on_reaction table joined to its "
@@ -45,16 +45,16 @@ __artifacts_v2__ = {
         },
     },
     "get_whatsapp_message_edits": {
-        "name": "WhatsApp - Message Edit History",
+        "name": "WhatsApp - Message Edit Records",
         "description": "WhatsApp messages recorded as edited (msgstore.db message_edit_info)",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-14",
-        "last_update_date": "2026-08-14",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "WhatsApp",
         "notes": "message_edit_info holds a message row id (message_row_id), original_key_id, "
                  "edited_timestamp and sender_timestamp; they are reported under Original Key ID, "
-                 "Last Edit Timestamp and Sender Timestamp as stored, and what each marks is not "
+                 "edited_timestamp and Sender Timestamp as stored, and what each marks is not "
                  "sourced here. This artifact reads no pre-edit text from that table, and the "
                  "message table stores a single text_data value per row, so the Message column "
                  "shows the text as currently stored. Table and join layout informed by WAInsight, "
@@ -81,15 +81,15 @@ __artifacts_v2__ = {
     "get_whatsapp_revoked_messages": {
         "name": "WhatsApp - Revoked Messages",
         "description": "WhatsApp message rows referenced by msgstore.db's message_revoked table",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-14",
-        "last_update_date": "2026-08-14",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "WhatsApp",
         "notes": "Rows in message_revoked joined to the message row they reference. Across all "
                  "tested images (283 rows) text_data on the referenced row was empty, and this "
-                 "artifact does not read text_data, so no message body is reported; the reported "
-                 "fields are the timestamps, direction, parties and key id. Observed message_type "
+                 "artifact reports text_data as currently stored, including any nonempty value; the "
+                 "other fields are the timestamps, direction, parties and key id. Observed message_type "
                  "values were 15 and 64 (reported as stored; no lookup table for them exists in "
                  "the database). On the two oldest tested databases (WhatsApp 2.20.198.15 and "
                  "2.21.20.20) message_revoked lacks the revoke_timestamp and admin_jid_row_id "
@@ -118,9 +118,9 @@ __artifacts_v2__ = {
     "get_whatsapp_polls": {
         "name": "WhatsApp - Polls",
         "description": "WhatsApp poll questions and options with stored vote totals (msgstore.db)",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-14",
-        "last_update_date": "2026-08-14",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "WhatsApp",
         "notes": "One row per poll option, joined to the poll's message row; the question is the "
@@ -152,9 +152,9 @@ __artifacts_v2__ = {
     "get_whatsapp_message_receipts": {
         "name": "WhatsApp - Message Receipts Per Recipient",
         "description": "Rows of msgstore.db's receipt_user table: one per recipient per message, with its receipt_timestamp, read_timestamp and played_timestamp",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-14",
-        "last_update_date": "2026-08-14",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "WhatsApp",
         "notes": "One row per recipient per message from the receipt_user table. The three "
@@ -186,9 +186,9 @@ __artifacts_v2__ = {
     "get_whatsapp_system_events": {
         "name": "WhatsApp - System Events",
         "description": "Rows of msgstore.db's message_system table with their message rows and companion tables",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-14",
-        "last_update_date": "2026-08-14",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "WhatsApp",
         "notes": "Rows in message_system joined to the message row and to the companion tables "
@@ -199,7 +199,7 @@ __artifacts_v2__ = {
                  "table in the database and is reported as stored. Is Me Joined (as stored) is "
                  "message_system_group.is_me_joined. The companion column names are this module's "
                  "labels for the joined tables. A query that fails on an unexpected schema reports "
-                 "no rows and is not logged, so an empty result is not evidence the table held "
+                 "no rows and logs its SQLite error; an empty result is not evidence the table held "
                  "nothing. Table and join layout informed by WAInsight, "
                  "https://github.com/akhil-dara/WAInsight (MIT); the commit read is not recorded "
                  "here.",
@@ -227,7 +227,7 @@ import sqlite3
 
 from scripts.ilapfuncs import (artifact_processor, attach_sqlite_db_readonly,
                                convert_unix_ts_to_utc, null_absent_columns,
-                               open_sqlite_db_readonly)
+                               open_sqlite_db_readonly, logfunc)
 
 _DIRECTION_CASE = "CASE m.from_me WHEN 1 THEN 'Outgoing' WHEN 0 THEN 'Incoming' END"
 
@@ -289,7 +289,8 @@ def _run(cursor, msg_path, sql):
     try:
         cursor.execute(sql)
         return cursor.fetchall()
-    except sqlite3.Error:
+    except sqlite3.Error as error:
+        logfunc(f'WhatsApp extended: query failed for {msg_path}: {error}')
         return []
 
 
@@ -361,7 +362,7 @@ def get_whatsapp_message_edits(context):
                                   row[5], row[6], row[7], row[8], row[9], row[10]))
         db.close()
 
-    data_headers = (('Last Edit Timestamp', 'datetime'), ('Sender Timestamp', 'datetime'),
+    data_headers = (('edited_timestamp', 'datetime'), ('Sender Timestamp', 'datetime'),
                     ('Message Timestamp', 'datetime'), 'Message (as currently stored)',
                     'Direction', 'Sender JID', 'Sender WA Name', 'Chat JID', 'Chat Name',
                     'Original Key ID', 'Current Key ID')
@@ -381,7 +382,7 @@ def get_whatsapp_revoked_messages(context):
                    {_DIRECTION_CASE},
                    sj.raw_string, {name_col},
                    aj.raw_string, cj.raw_string, ch.subject,
-                   m.message_type, r.revoked_key_id
+                   m.message_type, r.revoked_key_id, m.text_data
             FROM message_revoked r
             JOIN message m ON m._id = r.message_row_id
             LEFT JOIN jid sj ON sj._id = m.sender_jid_row_id
@@ -393,13 +394,13 @@ def get_whatsapp_revoked_messages(context):
             ''')
             for row in rows:
                 data_list.append((_ts(row[0]), _ts(row[1]), _ts(row[2]), row[3], row[4],
-                                  row[5], row[6], row[7], row[8], row[9], row[10]))
+                                  row[5], row[6], row[7], row[8], row[9], row[10], row[11]))
         db.close()
 
     data_headers = (('Revoke Timestamp', 'datetime'), ('Message Timestamp', 'datetime'),
                     ('Received Timestamp', 'datetime'), 'Direction', 'Sender JID',
                     'Sender WA Name', 'Admin JID', 'Chat JID', 'Chat Name',
-                    'Message Type (as stored)', 'Revoked Key ID')
+                    'Message Type (as stored)', 'Revoked Key ID', 'Message (as currently stored)')
     return data_headers, data_list, source
 
 
