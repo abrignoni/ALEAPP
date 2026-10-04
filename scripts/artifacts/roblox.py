@@ -95,17 +95,20 @@ __artifacts_v2__ = {
         "description": "Parses experience joins and game server connections from the Roblox Android client logs.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Roblox",
         "notes": "Read from the client logs in files/appData/logs. A join is assembled from the join "
                  "line, which carries the game job id, the place id and the server address, and the "
                  "game_join_loadtime report line for the same place id in file order, which carries the "
                  "play session id, the user id, the universe id and a referral page. Analytics Session "
-                 "ID, UDMUX Address and RCC Server Address are the last values of each found in that "
-                 "log file and are shown on every join from the file, so in a log holding more than one "
-                 "join they may belong to a later join. Play Session ID shows the analytics session id "
-                 "when the report line carries none. The "
+                 "ID is the value last logged at or before the join line. UDMUX Address and RCC Server "
+                 "Address come from the first UDMUX line logged after the join line and before the next "
+                 "join line, and are blank when there is none. Play Session ID is the sid value of the "
+                 "report line and is blank when no report line was paired. That line order (analytics "
+                 "session id, join, report, UDMUX) was read from the one join in the Roblox iOS client "
+                 "log on hexordia_ios1651, which uses the same line formats; no registered Android "
+                 "corpus holds a Roblox client log. The "
                  "two lines that both carry a place id agreed on the one join present in the sample "
                  "tested, and the play session id from the report line equalled the analytics session "
                  "id. Roblox's own field names are kept as headers. Roblox's engine reference describes "
@@ -546,7 +549,7 @@ def _activity_row(stamp, report, place_id, job_id, server, context_fields):
         place_id,
         report.get('universeid', ''),
         job_id,
-        report.get('sid', '') or context_fields['session_id'],
+        report.get('sid', ''),
         context_fields['session_id'],
         report.get('userid', ''),
         report.get('referral_page', ''),
@@ -556,6 +559,25 @@ def _activity_row(stamp, report, place_id, job_id, server, context_fields):
         context_fields['rcc'],
         context_fields['log_name'],
     )
+
+
+def _line_fields(line_no, positions, log_name):
+    """Values logged for the join at this line: the analytics session id last logged at or
+    before it, and the first UDMUX line after it and before the next join line."""
+    session_ids, udmux_lines, join_line_numbers, line_count = positions
+    session_id = ''
+    for number, value in session_ids:
+        if number > line_no:
+            break
+        session_id = value
+    next_join = min((number for number in join_line_numbers if number > line_no),
+                    default=line_count)
+    udmux = rcc = ''
+    for number, udmux_value, rcc_value in udmux_lines:
+        if line_no < number < next_join:
+            udmux, rcc = udmux_value, rcc_value
+            break
+    return {'session_id': session_id, 'log_name': log_name, 'udmux': udmux, 'rcc': rcc}
 
 
 @artifact_processor
@@ -577,12 +599,13 @@ def roblox_game_activity(context):
             logfunc(f'Roblox: could not read {file_found}: {error}')
             continue
 
-        session_id = ''
-        udmux = udmux_port = rcc = rcc_port = ''
+        # (line number, value) in file order, so each row takes the values logged for it.
+        session_ids = []
+        udmux_lines = []
         joins = []
         reports = {}
 
-        for line in lines:
+        for line_no, line in enumerate(lines):
             stamp = ''
             found_time = LOG_LINE_TIME.match(line)
             if found_time:
@@ -590,18 +613,17 @@ def roblox_game_activity(context):
 
             found = SESSION_LINE.search(line)
             if found:
-                session_id = found.group('sid')
+                session_ids.append((line_no, found.group('sid')))
 
             found = UDMUX_LINE.search(line)
             if found:
-                udmux = found.group('udmux').strip()
-                udmux_port = found.group('udmux_port')
-                rcc = found.group('rcc').strip()
-                rcc_port = found.group('rcc_port')
+                udmux_lines.append((line_no,
+                                    f"{found.group('udmux').strip()}:{found.group('udmux_port')}",
+                                    f"{found.group('rcc').strip()}:{found.group('rcc_port')}"))
 
             found = JOIN_LINE.search(line)
             if found:
-                joins.append({'stamp': stamp, 'jobid': found.group('jobid'),
+                joins.append({'line_no': line_no, 'stamp': stamp, 'jobid': found.group('jobid'),
                               'placeid': found.group('placeid'), 'server': found.group('server')})
 
             found = LOADTIME_LINE.search(line)
@@ -614,19 +636,23 @@ def roblox_game_activity(context):
                     fields[key.strip()] = value.strip()
                 if fields.get('placeid'):
                     fields['stamp'] = stamp
+                    fields['line_no'] = line_no
                     # A log can hold more than one join to the same place, so keep them
                     # in order rather than letting a later report replace an earlier one.
                     reports.setdefault(fields['placeid'], []).append(fields)
 
-        servers = {'session_id': session_id, 'log_name': name,
-                   'udmux': f'{udmux}:{udmux_port}' if udmux else '',
-                   'rcc': f'{rcc}:{rcc_port}' if rcc else ''}
+        join_line_numbers = [join['line_no'] for join in joins]
+
+        def _fields(line_no, positions=(session_ids, udmux_lines, join_line_numbers,
+                                        len(lines)), log_name=name):
+            return _line_fields(line_no, positions, log_name)
 
         for join in joins:
             pending = reports.get(join['placeid']) or []
             report = pending.pop(0) if pending else {}
             data_list.append(_activity_row(join['stamp'], report, join['placeid'],
-                                           join['jobid'], join['server'], servers))
+                                           join['jobid'], join['server'],
+                                           _fields(join['line_no'])))
 
         # A report line no join line covered still evidences a join, so it gets its own
         # row, timed by the log line that carried it rather than by a repeated value.
@@ -635,7 +661,8 @@ def roblox_game_activity(context):
             for report in pending:
                 leftover += 1
                 data_list.append(_activity_row(report.get('stamp', ''), report,
-                                               place_id, '', '', servers))
+                                               place_id, '', '',
+                                               _fields(report['line_no'])))
         if leftover:
             logfunc(f'Roblox: {leftover} game join report line(s) in {name} had no matching '
                     f'join line and are reported on their own row')

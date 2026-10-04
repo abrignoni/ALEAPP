@@ -3,12 +3,10 @@ __artifacts_v2__ = {
     "get_Viber": {
         "name": "Viber - Call Logs",
         "description": "Parses Viber call logs (start time, phone number, direction, a computed "
-                       "end time and call type) from the calls table of viber_data. Call Type "
-                       "shows Audio Call for a stored 1 and Video Call for a stored 4; that "
-                       "mapping is not sourced and any other stored value is shown as Unknown.",
+                       "end time and the stored call type value) from the calls table of viber_data.",
         "author": "@markmckinnon",
         "creation_date": "2020-12-24",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Viber",
         "notes": ("Call Direction is decoded from the calls table 'type' column. Direction/status "
@@ -17,7 +15,11 @@ __artifacts_v2__ = {
                   "mapping does not cover (a missed, rejected or unanswered call, for example) "
                   "appears as the stored number rather than as a direction.\nCall End Time is not "
                   "a stored column: it is computed as start time plus the duration column, which "
-                  "is treated as whole seconds; the unit of duration is not documented."),
+                  "is treated as whole seconds; the unit of duration is not documented.\nViber Call "
+                  "Type (as stored) carries the calls table 'viber_call_type' column as the stored "
+                  "number. No source for the meaning of its values was found, so no label is "
+                  "applied; the stored values were 1 and 4 on the 7 call rows of hc_pixel8pro_a16 "
+                  "and pixel7a_a14."),
         "paths": ('*/com.viber.voip/databases/*',),
         "output_types": "standard",
         "artifact_icon": "phone-call",
@@ -50,14 +52,17 @@ __artifacts_v2__ = {
         "description": "Parses Viber messages (date, sender and recipients, thread, content, direction, unread flag and attachments) from the Viber databases.",
         "author": "@markmckinnon",
         "creation_date": "2020-12-24",
-        "last_update_date": "2026-08-29",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Viber",
         "notes": ("Direction is decoded from the messages table 'send_type' column. From Phone "
                   "Number is the number of the participant the message row names, and Recipients "
-                  "lists the other participants of the same conversation. A message is reported "
-                  "only when its participant row exists and its conversation has at least one "
-                  "other participant row. Direction/status "
+                  "lists the numbers of the other participant rows of the same conversation; it is "
+                  "not a stored recipient list. Every row of the messages table is reported: From "
+                  "Phone Number is blank when the message's participant row is not found in its "
+                  "conversation, and Recipients is blank when the conversation has no other "
+                  "participant row. Neither case occurred on hc_pixel8pro_a16 (17 messages), "
+                  "pixel7a_a14 (34) or sharon_a14 (5051). Direction/status "
                   "value mappings are not vendor-documented and the evidence for them is not "
                   "recorded here; unrecognized values are reported "
                   "as stored.\n"
@@ -151,7 +156,7 @@ def get_Viber(context):
                 SELECT date, canonized_number,
                 case type when 1 then "Incoming" when 2 then "Outgoing" else type end AS direction,
                 duration,
-                case viber_call_type when 1 then "Audio Call" when 4 then "Video Call" else "Unknown" end AS viber_call_type
+                viber_call_type
                 FROM calls
             ''')
             all_rows = cursor.fetchall()
@@ -164,7 +169,7 @@ def get_Viber(context):
             end = _ms_to_utc(int(r[0]) + int(r[3]) * 1000) if r[0] else ''
             data_list.append((start, r[1], r[2], end, r[4]))
 
-    data_headers = (('Call Start Time', 'datetime'), ('Phone Number', 'phonenumber'), 'Call Direction', ('Call End Time (computed: start + duration)', 'datetime'), 'Call Type')
+    data_headers = (('Call Start Time', 'datetime'), ('Phone Number', 'phonenumber'), 'Call Direction', ('Call End Time (computed: start + duration)', 'datetime'), 'Viber Call Type (as stored)')
     return data_headers, data_list, data_db
 
 
@@ -201,18 +206,17 @@ def get_Viber_messages(context):
         cursor = db.cursor()
         try:
             cursor.execute('''
-                SELECT M.msg_date, convo_participants.from_number AS from_number,
-                convo_participants.recipients AS recipients, M.conversation_id AS thread_id, M.body AS msg_content,
+                SELECT M.msg_date, PI.number AS from_number,
+                (SELECT group_concat(PI2.number)
+                 FROM participants AS P2 JOIN participants_info AS PI2 ON P2.participant_info_id = PI2._id
+                 WHERE P2.conversation_id = M.conversation_id AND P2._id != M.participant_id) AS recipients,
+                M.conversation_id AS thread_id, M.body AS msg_content,
                 case M.send_type when 0 then "Incoming" when 1 then "Outgoing" else M.send_type end AS direction,
                 M.unread read_status, M.extra_uri AS file_attachment
-                FROM   (SELECT *, group_concat(TO_RESULT.number) AS recipients
-                        FROM   (SELECT P._id AS FROM_ID, P.conversation_id, PI.number AS FROM_NUMBER
-                                FROM   participants AS P JOIN participants_info AS PI ON P.participant_info_id = PI._id) AS FROM_RESULT
-                               JOIN (SELECT P._id AS TO_ID, P.conversation_id, PI.number
-                                     FROM   participants AS P JOIN participants_info AS PI ON P.participant_info_id = PI._id) AS TO_RESULT
-                                 ON FROM_RESULT.from_id != TO_RESULT.to_id AND FROM_RESULT.conversation_id = TO_RESULT.conversation_id
-                        GROUP  BY FROM_RESULT.from_id) AS convo_participants
-                       JOIN messages AS M ON M.participant_id = convo_participants.from_id AND M.conversation_id = convo_participants.conversation_id
+                FROM messages AS M
+                LEFT JOIN participants AS P ON P._id = M.participant_id AND P.conversation_id = M.conversation_id
+                LEFT JOIN participants_info AS PI ON PI._id = P.participant_info_id
+                ORDER BY M._id
             ''')
             all_rows = cursor.fetchall()
         except Exception as e:

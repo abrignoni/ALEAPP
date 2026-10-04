@@ -35,16 +35,21 @@ __artifacts_v2__ = {
     "get_teams_calllog": {
         "name": "Teams - Call Log",
         "description": "Parses Microsoft Teams call log properties (connect and end time, state, type, "
-                       "originator, direction and the target's given name) from SkypeTeams.db.",
+                       "originator, direction, target and the target's given name) from SkypeTeams.db.",
         "author": "@abrignoni",
         "creation_date": "2021-04-29",
-        "last_update_date": "2021-04-29",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Teams",
-        "notes": "One row per MessagePropertyAttribute row whose propertyId is CallLog, joined to "
-                 "the User table row whose mri equals the call's target. A call whose target has "
-                 "no row in the User table is not reported. Target Participant Name is that user's "
-                 "givenName.",
+        "notes": "One row per MessagePropertyAttribute row whose propertyId is CallLog. Target is the "
+                 "target value of the call log property, as stored. Target Participant Name is the "
+                 "givenName of the User table row whose mri equals that target and whose tenantId "
+                 "equals the property row's tenantId (the User table's primary key is mri and "
+                 "tenantId); it is blank when the User table has no such row, and the call is still "
+                 "reported. On pixel7a_a14 both call log properties matched a User row on both "
+                 "columns. The blank case was exercised on a copy of that database with the "
+                 "target's User row removed (constructed input): 2 rows with a blank name, where "
+                 "the earlier inner join returned 0.",
         "paths": ('*/com.microsoft.teams/databases/SkypeTeams.db*',),
         "output_types": "standard",
         "artifact_icon": "phone-call",
@@ -163,12 +168,15 @@ def get_teams_calllog(context):
         json_extract(attributeValue, '$.originatorDisplayName'),
         json_extract(attributeValue, '$.callDirection'),
         User.givenName,
-        json_extract(attributeValue, '$.sessionType')
-        from MessagePropertyAttribute, User
-        where propertyId = 'CallLog' and json_extract(attributeValue, '$.target') = User.mri
+        json_extract(attributeValue, '$.sessionType'),
+        json_extract(attributeValue, '$.target')
+        from MessagePropertyAttribute
+        left join User on json_extract(attributeValue, '$.target') = User.mri
+        and MessagePropertyAttribute.tenantId = User.tenantId
+        where propertyId = 'CallLog'
     ''')
-    data_list = [(_ms_to_utc(r[0]), _ms_to_utc(r[1]), r[2], r[3], r[4], r[5], r[6], r[7]) for r in rows]
-    data_headers = (('Connect Time', 'datetime'), ('End Time', 'datetime'), 'Call State', 'Call Type', 'Originator', 'Call Direction', 'Target Participant Name', 'Session Type')
+    data_list = [(_ms_to_utc(r[0]), _ms_to_utc(r[1]), r[2], r[3], r[4], r[5], r[8], r[6], r[7]) for r in rows]
+    data_headers = (('Connect Time', 'datetime'), ('End Time', 'datetime'), 'Call State', 'Call Type', 'Originator', 'Call Direction', 'Target', 'Target Participant Name', 'Session Type')
     return data_headers, data_list, source_path
 
 

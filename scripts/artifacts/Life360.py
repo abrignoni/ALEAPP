@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Parses Life360 chat messages (messaging.db)",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2024-01-17",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Life360",
         "notes": "A message with a photo has a message_media row whose photo_key is the photo's "
@@ -21,9 +21,11 @@ __artifacts_v2__ = {
                  "image, Location "
                  "Timestamp, Has Location, Latitude, Longitude, Location Name and Message Dismissed were blank on "
                  "all 20 messages, Message Sent and Message Read were Yes on all 20, and Message Deleted was Yes "
-                 "on 1. Because all 20 belong to one thread, the sender-name join, which matches "
-                 "thread_participant on the sender id alone, was not exercised with a sender "
-                 "present in more than one thread. Each Android user's messaging.db is read "
+                 "on 1. Sender Name is the thread_participant name stored for the message's sender id "
+                 "in the message's own thread; the table is declared UNIQUE(thread_id, "
+                 "participant_id), so a message is reported once. Because all 20 belong to one "
+                 "thread, a sender present in more than one thread was exercised only on a "
+                 "constructed copy of that database, not on a tested image. Each Android user's messaging.db is read "
                  "separately and its photos are resolved from that "
                  "user's own cache.",
         "paths": ('*/com.life360.android.safetymapd/databases/messaging.db*',
@@ -283,6 +285,7 @@ def get_Life360_chat_messages(context):
             {photo_select}
         FROM message
         LEFT JOIN thread_participant ON message.sender_id = thread_participant.participant_id
+            AND message.thread_id = thread_participant.thread_id
         {photo_join}
         ''')
         for row in rows:

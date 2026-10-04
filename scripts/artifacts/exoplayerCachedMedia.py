@@ -7,7 +7,7 @@ __artifacts_v2__ = {
                        "file with its cached audio.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-26",
-        "last_update_date": "2026-09-26",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "ExoPlayer Cache",
         "notes": "Read with the vendored exoprobe (scripts/vendor/exoprobe.py, "
@@ -66,7 +66,9 @@ __artifacts_v2__ = {
                  "addresses, for example), and each is its own row showing the same media: 32 rows "
                  "repeat a media file an earlier row shows. The joined files shown here are also "
                  "kept in the report's _ExoPlayer Rejoined folder. A joined file larger than 1 GiB "
-                 "is listed with no media in its row and is found in that folder. Kind and What "
+                 "(1,073,741,824 bytes) is listed with no media in its row and is found in that "
+                 "folder; What says so on that row. Whether any tested image held one was not "
+                 "measured, and that branch was exercised on a constructed file only. Kind and What "
                  "can hold one value on an image whose caches "
                  "hold one kind of item: What was cached item on every galaxys10_a10 row, and Kind was video on "
                  "every pixel3_a11 row. On the 10 tested images, 625 rows from 19 apps. ffmpeg 9.0.1 decoded all 44 "
@@ -221,6 +223,14 @@ def shows_media(rec):
     return bool(rec.get('path') and rec.get('anchor')) and not _init_only(rec)
 
 
+def _over_limit(rec):
+    """True when the joined file is larger than MAX_MEDIA_BYTES, so media_ref leaves it out."""
+    try:
+        return os.path.getsize(rec['path']) > MAX_MEDIA_BYTES
+    except (KeyError, TypeError, OSError):
+        return False
+
+
 def media_ref(rec):
     """The joined file checked in as media, attributed to the piece it starts with. An
     initialization segment on its own holds no samples, so it is not offered as media."""
@@ -247,7 +257,14 @@ def _utc(ms):
 
 
 def _what(rec):
-    return _shape(rec) + _cut(rec)
+    return _shape(rec) + _cut(rec) + _not_shown(rec)
+
+
+def _not_shown(rec):
+    if rec.get('anchor') and not _init_only(rec) and _over_limit(rec):
+        return (f', larger than {MAX_MEDIA_BYTES:,} bytes: not shown in this row, '
+                f'kept in the report\'s {OUT_FOLDER} folder')
+    return ''
 
 
 def _cut(rec):

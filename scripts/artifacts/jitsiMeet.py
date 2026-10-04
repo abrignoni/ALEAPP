@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Parses the recent meeting list stored by the Jitsi Meet Android app.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-30",
-        "last_update_date": "2026-08-30",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Jitsi Meet",
         "notes": "One row per entry in the app's recent-meeting list. The list holds at most 30 "
@@ -17,7 +17,7 @@ __artifacts_v2__ = {
                  "react/features/recent-list/reducer.ts at jitsi/jitsi-meet "
                  "98de6219cc7ddbe07ace9fde045aff90a242ba01). Conference URL is the full meeting "
                  "URL as stored, which carries both the server host and the room name, and Room "
-                 "Name is the last path segment of that URL. The Joined column is the date field, "
+                 "Name is the last path segment of that URL. The Date column is the date field, "
                  "set from Date.now() when the entry is added, so it is Unix milliseconds and is "
                  "reported as UTC; on the tested device 18:26 UTC matched the device's 2:26 PM "
                  "local clock. Duration is the duration field, which the same source computes as "
@@ -136,7 +136,7 @@ def jitsi_meet_recent_meetings(context):
         if db_path not in sources:
             sources.append(db_path)
 
-    data_headers = (('Joined', 'datetime'), 'Room Name', 'Conference URL',
+    data_headers = (('Date', 'datetime'), 'Room Name', 'Conference URL',
                     'Duration (seconds)', 'Source File')
     return data_headers, data_list, '\n'.join(sources)
 

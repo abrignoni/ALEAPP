@@ -6,16 +6,29 @@
 __artifacts_v2__ = {
     'romeo_dating_messages': {
         'name': 'Romeo Dating App Messages',
-        'description': 'Parses messages from the MessageEntity table of the Romeo Android app database, joined to ChatPartnerEntity for the contact name.',
+        'description': 'Messages from the MessageEntity table of the Romeo Android app database, with the contact name from ChatPartnerEntity where a row for the chat partner exists.',
         'author': 'Marco Neumann {kalinko@be-binary.de}',
         'version': '0.0.1',
         'creation_date': '2026-02-25',
-        'last_update_date': '2026-02-25',
+        'last_update_date': '2026-10-04',
         'requirements': '',
         'category': 'Chats',
-        'notes': 'A message whose chat partner has no ChatPartnerEntity row is not reported. A message '
-                 'with more than one image attachment appears once per image. The Timestamp column is '
-                 'the date column as stored. No direction column is reported.',
+        'notes': 'A message is reported whether or not ChatPartnerEntity holds a row for its chat '
+                 'partner, and is not repeated for each image attached to it. Whether profileId is '
+                 'unique in ChatPartnerEntity is not established; if it is not, a message appears once '
+                 'per matching row. Contact Username is ChatPartnerEntity.name '
+                 'for the row whose profileId equals the message chatPartnerId, and is blank when '
+                 'no such row exists. Image Contained? is Yes when at least one ImageAttachmentEntity '
+                 'row names the message in parentMessageId, and No otherwise; the number of images '
+                 'is not reported. Timestamp is the MessageEntity date column as stored, with no '
+                 'conversion; its stored format and time zone are not established, so the column '
+                 'is reported as text and not as a date and time. Status is transmissionStatus as '
+                 'stored. No direction column is reported; a separate Romeo parser by this '
+                 "module's author treats a transmissionStatus that reads sent, in any letter case, "
+                 'as outgoing and one that reads received as incoming (https://github.com/kalink0/bubbly/blob/'
+                 '8770cbdb03ec13cfa83906d1126b01d638a22deb/parsers/romeo_android_db.py#L193-L198). '
+                 'No registered test image holds this database, so none of the above was measured '
+                 'on real data; the row handling was exercised on a constructed database only.',
         'paths': (
             '*/com.planetromeo.android.app/databases/planetromeo-room.db.*' 
             ),
@@ -80,18 +93,20 @@ def romeo_dating_messages(context):
             me.saved [Saved?],
             me.unread [Unread?],
             me.messageId [Message ID],
-            CASE WHEN iae.imageId IS NOT NULL
+            CASE WHEN EXISTS (
+                SELECT 1 FROM ImageAttachmentEntity iae
+                WHERE iae.parentMessageId = me.messageId
+            )
             THEN
                 "Yes"
             ELSE
                 "No"
             END [Image Contained?]
             FROM MessageEntity me
-            INNER JOIN ChatPartnerEntity cpe ON cpe.profileId = me.chatPartnerId
-            LEFT JOIN ImageAttachmentEntity iae ON me.messageId = iae.parentMessageId
+            LEFT JOIN ChatPartnerEntity cpe ON cpe.profileId = me.chatPartnerId
             '''
 
-    data_headers = (    ('Timestamp', 'datetime'),
+    data_headers = (    'Timestamp',
                         'Contact ID',
                         'Contact Username',
                         'Text', 

@@ -34,10 +34,19 @@ __artifacts_v2__ = {
         "description": "FairEmail Messages",
         "author": "Marco Neumann {kalinko@be-binary.de}",
         "creation_date": "2025-11-16",
-        "last_update_date": "2025-11-16",
+        "last_update_date": "2026-10-04",
         "requirements": "os",
         "category": "FairCode FairEmail App",
-        "notes": "One address is reported per From, To, CC and BCC field for each message: the query expands those lists and then groups by message id, so a message with several addresses in a field shows one of them. An attachment file is linked when a stored attachment id appears anywhere in the file's name, so an id also matches a file named for a longer id that contains it. No sample_data is recorded for this artifact.",
+        "notes": ("The Sender, Recipient, CC and BCC columns list every entry of the message's from, to, cc and bcc "
+                  "fields in stored order, separated by '; '. A name column keeps an empty place for an entry "
+                  "that stores no name, so the nth name belongs to the nth address. Return Path shows the first "
+                  "entry of the return_path field only. An attachment file is linked when the part of its name "
+                  "before the first dot equals an attachment id stored for the message; the app names these "
+                  "files '<id>' or '<id>.<name>' (Reference: M66B, FairEmail, "
+                  "https://github.com/M66B/FairEmail/blob/e54d23edf04068814c387b93e1d4dab8f6f6d2cc/app/src/main/java/eu/faircode/email/EntityAttachment.java#L206-L213). "
+                  "No registered corpus holds this app's data, so the address listing and the attachment "
+                  "matching were exercised on a constructed database built from the app's published schema "
+                  "version 301, not on a device image. No sample_data is recorded for this artifact."),
         "paths": ('*/eu.faircode.email/databases/fairemail*', '*/eu.faircode.email/files/attachments/*', '*/eu.faircode.email/files/messages/*'),
         "output_types": ["standard"],
         "html_columns": ["Content", "Attachments"],
@@ -52,10 +61,37 @@ __artifacts_v2__ = {
 # 2024-04-20: Android 14, App: 1.2178
 
 # Requirements: os
+import json
 import os
 
 from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records, check_in_media
 from scripts.html_safe import safe_source
+
+
+def _address_parts(stored):
+    # message.from, to, cc and bcc each hold a JSON array of objects with an
+    # "address" key and an optional "personal" key. Every entry is returned, in
+    # stored order, joined with '; '. An entry without a personal name keeps an
+    # empty place so the two lists stay in step.
+    if stored is None:
+        return None, None
+    try:
+        entries = json.loads(stored)
+    except (TypeError, ValueError):
+        return stored, None
+    if not isinstance(entries, list):
+        return stored, None
+    addresses = []
+    names = []
+    for entry in entries:
+        if not isinstance(entry, dict):
+            continue
+        addresses.append(str(entry.get('address') or ''))
+        names.append(str(entry.get('personal') or ''))
+    if not addresses:
+        return None, None
+    return ('; '.join(addresses) if any(addresses) else None,
+            '; '.join(names) if any(names) else None)
 
 
 @artifact_processor
@@ -157,14 +193,10 @@ def get_fair_mail_messages(context):
         SELECT m.id [Message ID],
         account.user [Account],
         folder.name [Folder], 
-        json_extract(jefrom.value, '$.address') [From Address],
-        json_extract(jefrom.value, '$.personal') [From Name],
-        json_extract(jeto.value, '$.address') [To Address],
-        json_extract(jeto.value, '$.personal') [To Name],
-        json_extract(jecc.value, '$.address') [CC Address],
-        json_extract(jecc.value, '$.personal') [CC Name],
-        json_extract(jebcc.value, '$.address') [BCC Address],
-        json_extract(jebcc.value, '$.personal') [BCC Name],
+        m."from" [From],
+        m."to" [To],
+        m."cc" [CC],
+        m."bcc" [BCC],
         json_extract(return_path, '$[0].address') [Return Path],
         subject [Subject],
         sent [Timestamp Sent],
@@ -173,20 +205,14 @@ def get_fair_mail_messages(context):
         seen [Read?],
         attachments [# of Attachements], 
         infrastructure [Backend Infrastructure],
-		GROUP_CONCAT(attachment.id, ',') [Attachmernt IDs],
-		m.preview
+        (SELECT GROUP_CONCAT(attachment.id, ',') FROM attachment
+         WHERE attachment.message = m.id) [Attachment IDs],
+        m.preview
         FROM message m
-        LEFT JOIN json_each("from") jefrom
-        LEFT JOIN json_each("to") jeto
-        LEFT JOIN json_each("cc") jecc
-        LEFT JOIN json_each("bcc") jebcc
         INNER JOIN account
         ON account.id = m.account
-		INNER JOIN folder
-		ON folder.id = m.folder
-		LEFT JOIN attachment
-		ON attachment.message = m.id
-		GROUP BY m.id
+        INNER JOIN folder
+        ON folder.id = m.folder
     ''')
 
     db_records = get_sqlite_db_records(main_db, query)
@@ -202,35 +228,34 @@ def get_fair_mail_messages(context):
         message_id = row[0]
         account = row[1]
         folder = row[2]
-        address_from = row[3]
-        name_from = row[4]
-        address_to = row[5]
-        name_to = row[6]
-        address_cc = row[7]
-        name_cc = row[8]
-        address_bcc = row[9]
-        name_bcc = row[10]
-        return_path = row[11]
-        subject = row[12]
-        preview = row[20]
-        sent = convert_unix_ts_to_utc(row[13]/1000) if row[13] is not None else None
-        received = convert_unix_ts_to_utc(row[14]/1000)
-        stored = convert_unix_ts_to_utc(row[15]/1000)
-        seen = row[16]
+        address_from, name_from = _address_parts(row[3])
+        address_to, name_to = _address_parts(row[4])
+        address_cc, name_cc = _address_parts(row[5])
+        address_bcc, name_bcc = _address_parts(row[6])
+        return_path = row[7]
+        subject = row[8]
+        preview = row[16]
+        sent = convert_unix_ts_to_utc(row[9]/1000) if row[9] is not None else None
+        received = convert_unix_ts_to_utc(row[10]/1000)
+        stored = convert_unix_ts_to_utc(row[11]/1000)
+        seen = row[12]
         # check if the mail has attachments, if yes - add them
         # Also inline Attachemts are linked
         attachment = ''
-        if row[19] is not None:
+        if row[15] is not None:
             # Require an actual file so a matched directory is never passed to
             # check_in_media (which returns None for a directory), and only append a
             # truthy ref so no None lands in the media list -- a None serialized to
             # null in the json.dumps'd media cell crashes the LAVA viewer on hover.
+            # FairEmail names an attachment file "<id>" or "<id>.<name>", so the
+            # file is matched on the whole id before the first dot.
             attachment_refs = []
             for att_path in attachments:
                 if not os.path.isfile(att_path):
                     continue
-                for att_id in row[19].split(','):
-                    if str(att_id) in os.path.basename(att_path):
+                att_file_id = os.path.basename(att_path).split('.', 1)[0]
+                for att_id in row[15].split(','):
+                    if str(att_id) == att_file_id:
                         ref = check_in_media(att_path, os.path.basename(att_path))
                         if ref:
                             attachment_refs.append(ref)
@@ -238,7 +263,7 @@ def get_fair_mail_messages(context):
                 attachment = attachment_refs[0]
             elif attachment_refs:
                 attachment = attachment_refs
-        infrastructure = row[18]
+        infrastructure = row[14]
         for path in messages:
             if not os.path.isfile(path):
                 continue

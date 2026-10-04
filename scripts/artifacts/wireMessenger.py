@@ -64,17 +64,38 @@ __artifacts_v2__ = {
         "description": "Parses messages and call history for Wire Messenger",
         "author": "@cf-eglendye",
         "creation_date": "2024-04-24",
-        "last_update_date": "2026-08-15",
+        "last_update_date": "2026-10-04",
         "requirements": "None",
         "category": "Wire Messenger",
         "notes": "The module records a test on Android 13 with Wire 3.81.35; the image used is "
                  "not recorded. Rows were produced on pixel3_a11 and pixel3_a12 (see "
                  "sample_data). Rows taken from the MsgDeletion table are given the Message Type "
                  "Deleted by this parser and carry the table's timestamp column in Date / Time "
-                 "Deleted; what that timestamp marks is not established. These rows "
-                 "have no sent time. Reaction reads Liked where Likings.action is 1; that label "
-                 "is this parser's own and other values are left blank. A message with more than one row "
-                 "in Likings appears once per reaction. The call duration column is rendered by "
+                 "Deleted. These rows have no sent time. On pixel3_a12 the table held 2 rows and "
+                 "neither message id was present in Messages; on pixel3_a11 it held none. In a "
+                 "public copy of the legacy Wire sync engine source dated 2018 (not the vendor's "
+                 "own repository; the app versions on the tested images are not recorded) the "
+                 "insert into MsgDeletion found there stores the device clock time at which the app removed "
+                 "the message, and it is called for a deletion made by the user, a deletion "
+                 "received from another device and an expired timed message "
+                 "(https://github.com/wireappru/wire-android-sync-engine/blob/d42492b5713255f618165ad24da0bde4704b84f7/zmessaging/src/main/scala/com/waz/service/messages/MessagesContentUpdater.scala#L55-L60, "
+                 "https://github.com/wireappru/wire-android-sync-engine/blob/d42492b5713255f618165ad24da0bde4704b84f7/zmessaging/src/main/scala/com/waz/service/GenericMessageService.scala#L59-L73, "
+                 "https://github.com/wireappru/wire-android-sync-engine/blob/d42492b5713255f618165ad24da0bde4704b84f7/zmessaging/src/main/scala/com/waz/service/messages/EphemeralMessagesService.scala#L86-L88); "
+                 "the same copy removes MsgDeletion rows older than 14 days at app start "
+                 "(https://github.com/wireappru/wire-android-sync-engine/blob/d42492b5713255f618165ad24da0bde4704b84f7/zmessaging/src/main/scala/com/waz/content/MsgDeletionStorage.scala#L33-L50). "
+                 "Whether the app versions on the tested images behave the same way is not "
+                 "established. Reaction reads Liked where Likings.action is 1 and Unliked where "
+                 "it is 0, the two values that copy of the source defines as Like and Unlike "
+                 "(https://github.com/wireappru/wire-android-sync-engine/blob/d42492b5713255f618165ad24da0bde4704b84f7/zmessaging/src/main/scala/com/waz/model/Liking.scala#L42-L47); "
+                 "any other value is shown as stored. Likings has one row per message and "
+                 "reacting user (its primary key is message_id, user_id), so a message with "
+                 "rows from more than one user appears once per user, each row naming that user "
+                 "in Reacted By. Date / Time Reacted is blank where Likings.timestamp is 0: the "
+                 "column defaults to 0 and that copy of the source stores the epoch for a "
+                 "reaction made on the device until the server time replaces it "
+                 "(https://github.com/wireappru/wire-android-sync-engine/blob/d42492b5713255f618165ad24da0bde4704b84f7/zmessaging/src/main/scala/com/waz/service/messages/ReactionsService.scala#L40-L52). "
+                 "Likings held no rows on pixel3_a11 or pixel3_a12, so the Reaction columns were "
+                 "exercised only on a constructed database. The call duration column is rendered by "
                  "dividing the stored duration by 1000, which assumes the value is milliseconds; "
                  "that unit has not been independently verified.\nApplies to the legacy app "
                  "generation that keeps a plain-SQLite database named by the account id next to "
@@ -186,8 +207,10 @@ UUID_RE = re.compile(r'[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{
 MESSAGES_SQL = '''
     SELECT datetime(Messages.time/1000,'unixepoch'), Messages._id, Users.name, Messages.msg_type,
     json_extract(Messages.content, '$[0].content'),
-    CASE Likings."action" WHEN 1 THEN 'Liked' END,
-    datetime(Likings."timestamp"/1000,'unixepoch'), Users1.name,
+    CASE Likings."action" WHEN 1 THEN 'Liked' WHEN 0 THEN 'Unliked'
+    ELSE CAST(Likings."action" AS TEXT) END,
+    CASE WHEN Likings."timestamp" > 0 THEN datetime(Likings."timestamp"/1000,'unixepoch') END,
+    Users1.name,
     time(Messages.duration/1000,'unixepoch'), {asset_name}
     FROM Messages
     LEFT JOIN Users ON Users._id = Messages.user_id
@@ -352,7 +375,8 @@ def get_wire_messages(context):
                           ''))
 
     # Surface deleted messages from MsgDeletion read-only (the original modified the source DB to do this).
-    # MsgDeletion.timestamp is a deletion time, not a sent time, so it gets its own column.
+    # MsgDeletion.timestamp is not a sent time, so it gets its own column (see the notes for what
+    # the legacy source stores in it).
     for d in _run(source_path, 'SELECT message_id, timestamp FROM MsgDeletion'):
         data_list.append(('', d[0], '', 'Deleted', '', '', '', '', '', '', _ms_to_utc(d[1])))
 

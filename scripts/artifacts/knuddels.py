@@ -2,10 +2,10 @@
 __artifacts_v2__ = {
     "knuddels_chats": {
         "name": "Knuddels - Chat Messages",
-        "description": "Extracts Knuddels chats (text, images/snaps and GIFs) from database files. A message whose sender has no row in the users table is not reported.",
+        "description": "Extracts Knuddels chats (text, images/snaps and GIFs) from database files.",
         "author": "@annkirpv",
         "creation_date": "2025-05-04",
-        "last_update_date": "2026-08-29",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Chats",
         "notes": ("From Me is derived from the database file name: the owner's nickname is taken to "
@@ -14,6 +14,11 @@ __artifacts_v2__ = {
                   "the file name does not follow that convention the owner cannot be established "
                   "and the column is left blank for every row of that database rather than "
                   "reporting the messages as received.\n"
+                  "User Name and Users Table UID come from the users row whose id equals the "
+                  "message's sender value (Thread Table UID). A message whose sender has no row in "
+                  "the users table is still reported, with User Name, Users Table UID and From Me "
+                  "left blank. That case was exercised on a constructed database only; no "
+                  "registered corpus holds this app's database.\n"
                   "In the conversation view only rows with From Me set to 1 are attributed to "
                   "the device owner; a blank value is not attributed to the owner.\n"
                   "Message Type is derived from markers found in the message text. A message that "
@@ -231,7 +236,7 @@ def knuddels_chats(context):
         END, -- 1 = expired, 0 = not expired
         conversations.participants
         FROM thread
-        JOIN users ON users.id = thread.sender
+        LEFT JOIN users ON users.id = thread.sender
         LEFT JOIN conversations ON conversations.id = thread.cid
         '''
         db_records = get_sqlite_db_records(file_found, query)
@@ -257,7 +262,9 @@ def knuddels_chats(context):
 
             db_name = file_found.split("databases")[1].split("knuddels")[1]
             conversation_key = "chat_" + str(cid) + "_" + db_name
-            from_me = '' if owner_nick is None else (1 if nickname == owner_nick else 0)
+            # A sender with no users row has no nickname to compare with the owner's, so
+            # From Me is left blank instead of reading as received.
+            from_me = '' if owner_nick is None or nickname is None else (1 if nickname == owner_nick else 0)
 
             data_list.append((
                 timestamp,

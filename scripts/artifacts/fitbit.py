@@ -53,10 +53,25 @@ __artifacts_v2__ = {
               "by itself a friend. No sample_data is recorded for this artifact, and only the first "
               "matching database is read."),
     "get_fitbit_user": _art("Fitbit - User Profile", "User profile (phone)", _PATHS_PHONE_SOCIAL, "user",
-        notes="Date of Birth and Joined Date are the stored values read as Unix milliseconds and shown "
-              "in UTC; not checked against a sample. "
-              "No sample_data is recorded for this artifact; its timestamps are read as Unix milliseconds "
-              "without a tested sample, and only the first matching database is read."),
+        notes="Joined Date and Date of Birth show USER_PROFILE.JOINED_DATE and DATE_OF_BIRTH read as Unix "
+              "milliseconds and shown in UTC. Fitbit's Web API documents the matching profile fields, "
+              "memberSince and dateOfBirth, as dates "
+              "(https://dev.fitbit.com/build/reference/web-api/user/get-profile/, read 2026-10-04). On "
+              "the three registered images whose USER_PROFILE table held a row (kevin_pocox7_a15, "
+              "russell_pixel6a_a13 and russell_a14, one row each, read from copies of social_db) both "
+              "values fell on a whole hour that was not midnight in UTC (05:00 on one image, 04:00 on "
+              "the other two), and TIMEZONE and TIMEZONE_OFFSET were empty. That is consistent with a "
+              "calendar date stored at midnight in a zone the row does not record; which zone is not "
+              "established. Under that reading the time of day shown is not a time of an event, and "
+              "for a zone ahead of UTC the UTC rendering would fall on the previous calendar day; no "
+              "tested row showed that. The Timezone and Timezone Offset columns show TIMEZONE and "
+              "TIMEZONE_OFFSET as stored; the unit of TIMEZONE_OFFSET is not established. Last Updated "
+              "was not on a whole hour on the three rows. Five more registered images hold the table "
+              "with no row (pixel7a_a14, hc_pixel8pro_a16, hc_pixel8pro_a17, samsunga53_a14, "
+              "pixel3_a12), and two more that carry the file were not read (userb2_a13, pixel3_a11). "
+              "No sample_data is recorded for this artifact, and only the first matching database is "
+              "read.",
+        updated="2026-10-04"),
     "get_fitbit_steps": _art("Fitbit - Steps", "Pedometer minute data (phone)", _PATHS_PHONE_MOBILE, "activity",
         notes="No sample_data is recorded for this artifact; its timestamps are read as Unix milliseconds "
               "without a tested sample, and only the first matching database is read."),
@@ -312,14 +327,22 @@ def get_fitbit_user(context):
     files_found = context.get_files_found()
     src = _find(files_found, 'social_db')
     rows = _run(src, '''SELECT LAST_UPDATED, DISPLAY_NAME, FULL_NAME, ABOUT_ME, AVATAR_URL,
-        COVER_PHOTO_URL, CITY, STATE, COUNTRY, JOINED_DATE, DATE_OF_BIRTH, HEIGHT, WEIGHT, GENDER, COACH
+        COVER_PHOTO_URL, CITY, STATE, COUNTRY, JOINED_DATE, DATE_OF_BIRTH, HEIGHT, WEIGHT, GENDER, COACH,
+        TIMEZONE, TIMEZONE_OFFSET
         FROM USER_PROFILE''')
+    if not rows:
+        # A table without the two time zone columns: read it without them.
+        rows = _run(src, '''SELECT LAST_UPDATED, DISPLAY_NAME, FULL_NAME, ABOUT_ME, AVATAR_URL,
+            COVER_PHOTO_URL, CITY, STATE, COUNTRY, JOINED_DATE, DATE_OF_BIRTH, HEIGHT, WEIGHT, GENDER,
+            COACH, NULL, NULL
+            FROM USER_PROFILE''')
     rel = context.get_relative_path(src)
     data_list = [(_ms_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8], _ms_to_utc(r[9]),
-                  _ms_to_utc(r[10]), r[11], r[12], r[13], r[14], rel) for r in rows]
+                  _ms_to_utc(r[10]), r[15], r[16], r[11], r[12], r[13], r[14], rel) for r in rows]
     data_headers = (('Last Updated', 'datetime'), 'Display Name', 'Full Name', 'About Me', 'Avatar URL',
                     'Cover Photo URL', 'City', 'State', 'Country', ('Joined Date', 'datetime'),
-                    ('Date of Birth', 'datetime'), 'Height', 'Weight', 'Gender', 'Coach', 'Source File')
+                    ('Date of Birth', 'datetime'), 'Timezone', 'Timezone Offset', 'Height', 'Weight',
+                    'Gender', 'Coach', 'Source File')
     return data_headers, data_list, src
 
 
