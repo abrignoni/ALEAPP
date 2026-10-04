@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "App op access and reject times from the st records of "
                        "appops.xml (the form written by Android 10 to 13; from "
                        "Android 14 these records are in appops_accesses.xml)",
-        "author": "@abrignoni",
+        "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2021-08-15",
         "last_update_date": "2026-08-01",
         "requirements": "none",
@@ -41,19 +41,30 @@ __artifacts_v2__ = {
         "description": "App op access times per uid state from the op attributes of appops.xml "
                        "(the form AppOpsService writes at android-9.0.0_r1; no tested image "
                        "exercised it)",
-        "author": "@abrignoni",
+        "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2021-08-15",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Permissions",
-        "notes": "Timestamp TP, TT, TFS, TF, TB and TC are the op element's tp, tt, tfs, tf, tb "
-                 "and tc attributes: the last access time, read here as Unix milliseconds, while "
-                 "the app's uid state was persistent, top, foreground service, foreground, "
-                 "background and cached. Only the first appops.xml found is read. Reference: "
-                 "Android Open Source Project, AppOpsService.java UID_STATE_TIME_ATTRS at "
-                 "android-9.0.0_r1, "
+        "notes": "Last Access Persistent (tp), Last Access Cached (tc), Last Access Background "
+                 "(tb), Last Access Foreground (tf), Last Access Foreground Service (tfs) and "
+                 "Last Access Top (tt) are the op element's tp, tc, tb, tf, tfs and tt "
+                 "attributes: the last access time, read here as Unix milliseconds, recorded "
+                 "under the uid state each header names. Duration is the d attribute. The "
+                 "reject time attributes of the same element (rp, rt, rfs, rf, rb, rc) are not "
+                 "read. None of the images listed in sample_data holds this form, so the column "
+                 "mapping was checked on a constructed file only. Only the first appops.xml "
+                 "found is read. "
+                 "Reference: Android Open Source Project, AppOpsService.java at "
+                 "android-9.0.0_r1: UID_STATE_TIME_ATTRS, "
                  "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/"
-                 "android-9.0.0_r1/services/core/java/com/android/server/AppOpsService.java#155. "
+                 "android-9.0.0_r1/services/core/java/com/android/server/AppOpsService.java#155; "
+                 "the times are System.currentTimeMillis() values, "
+                 "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/"
+                 "android-9.0.0_r1/services/core/java/com/android/server/AppOpsService.java#1611, "
+                 "written by writeState, "
+                 "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/"
+                 "android-9.0.0_r1/services/core/java/com/android/server/AppOpsService.java#2451. "
                  "Op codes and names: AppOpsManager.java sAppOpInfos at android-14.0.0_r1, "
                  "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/"
                  "android-14.0.0_r1/core/java/android/app/AppOpsManager.java#2347; the table in "
@@ -191,5 +202,5 @@ def get_appops_legacy(context):
                                       _ms_to_utc(a.get('tf')), _ms_to_utc(a.get('tfs')), _ms_to_utc(a.get('tt')),
                                       pkg, a.get('d', ''), a.get('pp', ''), a.get('pu', ''), permission))
 
-    data_headers = (('Timestamp TP', 'datetime'), ('Timestamp TC', 'datetime'), ('Timestamp TB', 'datetime'), ('Timestamp TF', 'datetime'), ('Timestamp TFS', 'datetime'), ('Timestamp TT', 'datetime'), 'Package Name', 'Duration', 'Proxy Package Name', 'Proxy Package UID', 'Permission')
+    data_headers = (('Last Access Persistent (tp)', 'datetime'), ('Last Access Cached (tc)', 'datetime'), ('Last Access Background (tb)', 'datetime'), ('Last Access Foreground (tf)', 'datetime'), ('Last Access Foreground Service (tfs)', 'datetime'), ('Last Access Top (tt)', 'datetime'), 'Package Name', 'Duration', 'Proxy Package Name', 'Proxy Package UID', 'Permission')
     return data_headers, data_list, source_path

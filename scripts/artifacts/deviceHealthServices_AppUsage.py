@@ -2,12 +2,18 @@ __artifacts_v2__ = {
     "get_Turbo_AppUsage": {
         "name": "Turbo_AppUsage",
         "description": "Parses the per-package timestamp lists in Device Health Services' app_usage_stats.xml; what event each time marks is not established here",
-        "author": "Kevin Pagano (@stark4n6)",
+        "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2021-06-29",
-        "last_update_date": "2021-06-29",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Device Health Services",
-        "notes": "",
+        "notes": "Each string in the file's app_usage_stats set is the text before a '#' (shown as App Name; a package "
+                 "name on every string of sharon_a14, samsunga53_a14 and pixel7a_a14) followed by a comma separated list of "
+                 "numbers, one row per number. The numbers are read as Unix milliseconds in UTC: the same file names its "
+                 "own bounds start_time_millis and end_time_millis, every number on those three images had 13 digits, and "
+                 "all 1,835 of them fell between the two bounds of their file. What event each time marks was not "
+                 "established; no source for it was found, so the column is headed Timestamp. The two bounds are not "
+                 "reported.",
         "paths": ('*/com.google.android.apps.turbo/shared_prefs/app_usage_stats.xml',),
         "output_types": "standard",
         "artifact_icon": "chart-bar",
@@ -71,5 +77,5 @@ def get_Turbo_AppUsage(context):
                 timestamp_split = datetime.datetime.fromtimestamp(int(ts) / 1000, datetime.timezone.utc)
                 data_list.append((timestamp_split, app_name))
 
-    data_headers = (('App Launch Timestamp', 'datetime'), 'App Name')
+    data_headers = (('Timestamp', 'datetime'), 'App Name')
     return data_headers, data_list, '\n'.join(source_paths)

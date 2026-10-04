@@ -2,13 +2,18 @@ __artifacts_v2__ = {
     "cff_searched_places": {
         "name": "SBB Mobile - Searched places",
         "description": "Rows of the SearchedPlaces table: title, favorite flag, type, coordinates and the stored timestamp as UTC. What event the timestamp marks is not established.",
-        "author": "jerome.arn@vd.ch",
+        "author": "jerome.arn@vd.ch, @AlexisBrignoni, Codex",
         "creation_date": "2026-03-26",
-        "last_update_date": "2026-08-09",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Travel",
         "notes": (
-            "Timestamps are rendered in UTC. The Type names for the stored 'a', 'p', 'c' "
+            "Timestamp (UTC) is the table's timestamp column read as Unix milliseconds and "
+            "rendered in UTC. What event it marks is not established. The millisecond reading is "
+            "the one measured on the SearchHistory timestamp column of the same database on "
+            "galaxys10_a10 (4 of 4 values are 13-digit integers that give April 2021 dates); "
+            "that image has no SearchedPlaces table, so the reading is not measured for this "
+            "table. The Type names for the stored 'a', 'p', 'c' "
             "and 's' values are the labels this parser assigns; the source for them is not "
             "established, and any other value is shown as "
             "stored."
@@ -24,7 +29,7 @@ __artifacts_v2__ = {
     "cff_search_history": {
         "name": "SBB Mobile - Search History",
         "description": "Search history records stored by the application",
-        "author": "jerome.arn@vd.ch",
+        "author": "jerome.arn@vd.ch, @AlexisBrignoni, Codex",
         "creation_date": "2026-03-26",
         "last_update_date": "2026-08-01",
         "requirements": "none",
@@ -49,7 +54,7 @@ __artifacts_v2__ = {
     "cff_travel_cards": {
         "name": "SBB Mobile - Travel Cards",
         "description": "Information about public transportation pass linked to application",
-        "author": "jerome.arn@vd.ch",
+        "author": "jerome.arn@vd.ch, @AlexisBrignoni, Codex",
         "creation_date": "2026-03-26",
         "last_update_date": "2026-08-09",
         "requirements": "none",
@@ -65,16 +70,15 @@ __artifacts_v2__ = {
     "cff_purchased_tickets": {
         "name": "SBB Mobile - Ticket Purchased recently",
         "description": "List of purchased tickets recorded in the PurchasedTickets table",
-        "author": "jerome.arn@vd.ch",
+        "author": "jerome.arn@vd.ch, @AlexisBrignoni, Codex",
         "creation_date": "2026-03-26",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Travel",
         "notes": (
-            "Refund State shows the stored refundState value; a value of 'COMPLETE' is "
-            "shown as 'Refunded', a label this parser assigns with no source established for it, "
-            "and every other value is shown as stored, because the "
-            "meaning of the other states is not established."
+            "Refund State shows the refundState value as stored. What each stored state means "
+            "is not established. The one registered image holding this table, galaxys10_a10, "
+            "has no rows in it."
         ),
         "paths": ('*/data/ch.sbb.mobile.*/databases/SbbMobile.db*'),
         "output_types": "standard",
@@ -101,10 +105,7 @@ def cff_purchased_tickets(context):
                 validFrom,
                 validUntil,
                 traveler,
-                CASE
-                    WHEN refundState == "COMPLETE" THEN "Refunded"
-                    ELSE refundState
-                END AS refundState,
+                refundState,
                 paymentMethodType,
                 displayInfo_ticketType,
                 displayInfo_titleLine_firstSegment,
@@ -132,7 +133,7 @@ def cff_searched_places(context):
         # Older app generations have no SearchedPlaces table (their searches
         # live in SearchHistory, covered by the CFF search history artifact).
         logfunc(f'CFF searched places: {source_path} has no SearchedPlaces table; no rows reported')
-        return (("Searched timestamp (UTC)", "datetime"), "Title", "Is favorite", "Type",
+        return (("Timestamp (UTC)", "datetime"), "Title", "Is favorite", "Type",
                 "location of places (link)"), data_list, source_path
 
     if source_path:
@@ -157,7 +158,7 @@ def cff_searched_places(context):
                 SearchedPlaces
         '''
 
-        data_headers = (("Searched timestamp (UTC)", "datetime"), "Title", "Is favorite", "Type",
+        data_headers = (("Timestamp (UTC)", "datetime"), "Title", "Is favorite", "Type",
                         "location of places (link)")
         db_records = get_sqlite_db_records(source_path, null_absent_columns(source_path, query))
 

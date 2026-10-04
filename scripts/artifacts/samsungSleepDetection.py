@@ -5,13 +5,15 @@ __artifacts_v2__ = {
                        "detection (SleepDetection.db, screen_data table), with the user "
                        "present and keyguard flags. State values are stored as raw integers "
                        "and are reported as-is.",
-        "author": "@abrignoni",
+        "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-07-30",
-        "last_update_date": "2026-07-30",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Samsung Continuity Service",
-        "notes": "The Time Text (Device Local) column is the timeText string as stored. The "
-                 "zone of that text is not established.",
+        "notes": "The Time Text column is the timeText string as stored; the store records "
+                 "no zone for it. On anne_a15 the text was 7 hours behind the Time column "
+                 "(UTC) on 46 rows and 4 hours behind on 40 rows, changing once in time "
+                 "order, so it is a wall clock reading and not a fixed offset from UTC.",
         "paths": ('*/com.samsung.android.mcfds/databases/SleepDetection.db*',),
         "output_types": "standard",
         "artifact_icon": "smartphone",
@@ -25,14 +27,16 @@ __artifacts_v2__ = {
                        "SleepDetection.db: the startTime, endTime and time values as UTC "
                        "with their stored text forms, and ignoreSleep as stored. What the "
                        "service uses these rows for is not established.",
-        "author": "@abrignoni",
+        "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-07-30",
-        "last_update_date": "2026-07-30",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Samsung Continuity Service",
-        "notes": "The Sleep Start Text (Device Local), Sleep End Text (Device Local) and "
-                 "Recorded Text (Device Local) columns are the stored text forms of the "
-                 "three times. The zone of that text is not established.",
+        "notes": "The Sleep Start Text, Sleep End Text and Recorded Text columns are the "
+                 "startTimeText, endTimeText and timeText strings as stored (month, day, "
+                 "hour and minute, with no year and no zone). On anne_a15 each was 4 hours "
+                 "behind its UTC column on all 5 rows. The headers Sleep Start, Sleep End "
+                 "and Recorded follow the column names startTime, endTime and time.",
         "paths": ('*/com.samsung.android.mcfds/databases/SleepDetection.db*',),
         "output_types": "standard",
         "artifact_icon": "moon",
@@ -97,7 +101,7 @@ def samsungSleepScreenData(context):
 
     data_headers = (
         ('Time', 'datetime'),
-        'Time Text (Device Local)',
+        'Time Text',
         'Screen State',
         'User Present',
         'Use Keyguard',
@@ -132,11 +136,11 @@ def samsungSleepTime(context):
 
     data_headers = (
         ('Sleep Start', 'datetime'),
-        'Sleep Start Text (Device Local)',
+        'Sleep Start Text',
         ('Sleep End', 'datetime'),
-        'Sleep End Text (Device Local)',
+        'Sleep End Text',
         ('Recorded', 'datetime'),
-        'Recorded Text (Device Local)',
+        'Recorded Text',
         'Ignore Sleep',
     )
     return data_headers, data_list, source_path

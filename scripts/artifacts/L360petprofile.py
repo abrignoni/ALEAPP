@@ -1,13 +1,25 @@
 __artifacts_v2__ = {
     'Life360_PetProfile': {
         'name': 'Life360 PetProfile',
-        'description': 'Parses Life360 PetProfile. Birthdate is the stored number read as days since 1970-01-01, which is an assumption.',
+        'description': 'Pet profiles stored in the Life360 Android PetProfileRoomDatabase database.',
         'author': 'Heather Charpentier',
         'creation_date': '2026-06-10',
-        'last_update_date': '2026-06-10',
+        'last_update_date': '2026-10-04',
         'requirements': 'none',
         'category': 'Life360',
-        'notes': '',
+        'notes': (
+            'One row per row of the pet_profile table. Created Timestamp and Updated Timestamp are the '
+            'createdAt and lastUpdated columns read as Unix milliseconds and shown in UTC. The table '
+            'declares createdAt without NOT NULL, so a row that stores none shows a blank Created '
+            'Timestamp; no tested row was like that. '
+            'Birthdate (as stored) is the birthdate column, an INTEGER, shown as the number the '
+            'database holds. The table definition does not state its unit and no source for the unit '
+            'was found. Birthdate Read As Days Since 1970-01-01 is that number counted as days from '
+            '1970-01-01 and shown as a calendar date in text, with no time and no time zone. That '
+            'reading is not established: on hc_pixel8pro_a16 both rows store a five digit number, '
+            'which read as days gives a date in 2019, about seven years before the rows were created. '
+            'The date is plausible and that is all the measurement shows.'
+        ),
         'paths': ('*/com.life360.android.safetymapd/databases/PetProfileRoomDatabase*',),
         'output_types': 'standard',
         'artifact_icon': 'mood-smile',
@@ -59,21 +71,26 @@ def Life360_PetProfile(context):
 
         for record in db_records:
 
-            created_timestamp = datetime.fromtimestamp(int(record[0]) / 1000, tz=timezone.utc)
+            created_timestamp = ''
+            if record[0] is not None:
+                created_timestamp = datetime.fromtimestamp(int(record[0]) / 1000, tz=timezone.utc)
             updated_timestamp = datetime.fromtimestamp(int(record[1]) / 1000, tz=timezone.utc)
-            birthdate = None
+            birthdate = ''
             if record[8] is not None:
-                birthdate = epoch + timedelta(days=int(record[8]))
+                try:
+                    birthdate = (epoch + timedelta(days=int(record[8]))).strftime('%Y-%m-%d')
+                except (ValueError, OverflowError):
+                    birthdate = ''
 
             data_list.append((created_timestamp, updated_timestamp, record[2], record[3], record[4],
-                              record[5], record[6], record[7], birthdate, record[9], record[10],
+                              record[5], record[6], record[7], record[8], birthdate, record[9], record[10],
                               record[11], record[12]))
 
     except Exception as e:  # pylint: disable=broad-exception-caught
         logfunc(f'Error processing Life360 PetProfile: {e}')
 
     data_headers = (('Created Timestamp', 'datetime'), ('Updated Timestamp', 'datetime'), 'Type',
-                    'Pet Type', 'Breed', 'Color', 'Weight kg', 'Gender', ('Birthdate', 'datetime'),
-                    'Name', 'Tracker ID', 'Circle ID', 'Avatar')
+                    'Pet Type', 'Breed', 'Color', 'Weight kg', 'Gender', 'Birthdate (as stored)',
+                    'Birthdate Read As Days Since 1970-01-01', 'Name', 'Tracker ID', 'Circle ID', 'Avatar')
 
     return data_headers, data_list, source_path

@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_AVG": {
         "name": "AVG - Encryption Details",
         "description": "Reports the PIN and pattern hashes stored in the AVG (com.antivirus) PinSettingsImpl.xml, the four-digit PIN and the pattern whose SHA-1 equals each hash when one is found, and the values read from the vault .key_store file with the keys the module derives from that PIN",
-        "author": "@Theincidentalchewtoy",
+        "author": "@Theincidentalchewtoy, @AlexisBrignoni, Codex",
         "creation_date": "2022-05-03",
         "last_update_date": "2022-05-03",
         "requirements": "none",
@@ -31,22 +31,22 @@ __artifacts_v2__ = {
     "get_AVG_media": {
         "name": "AVG - Media Files",
         "description": "Decrypts files held in AVG (com.antivirus) vault folders whose names end in 'pictures', when the module derived the vault master key",
-        "author": "@Theincidentalchewtoy",
+        "author": "@Theincidentalchewtoy, @AlexisBrignoni, Codex",
         "creation_date": "2022-05-03",
-        "last_update_date": "2022-05-03",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Encrypting Media Apps",
         "notes": (
             'Files in the .thumbnail folder are not reported. A file that does not decrypt is '
             'logged and gets no row. The file type is taken from the decrypted bytes. An empty '
-            'result does not establish that the vault held no files. The column headed Encrypted '
-            "Date holds the date value the vault's metadata store holds for the file, read as "
-            'Unix milliseconds and shown in UTC. What it marks is not established. Original File '
+            'result does not establish that the vault held no files. Metadata Date holds the '
+            "date value the vault's metadata store holds for the file, as stored. Its unit and "
+            'what it marks are not established, so it is not converted to a time. Original File '
             "Path and File Size are the metadata store's originFilePath and size as stored. 'No "
-            "Data' in those two columns means no metadata entry was read for the file. The column "
-            'headed Decrypted Full Path holds the path of the encrypted vault file the row was '
-            'decrypted from, as the tool staged it, not the path of a decrypted file. Decrypted '
-            "Filename is the vault file's name with an extension taken from the decrypted bytes, "
+            "Data' in those three columns means no metadata entry was read for the file. Vault "
+            'File is the path in the extraction of the encrypted vault file the row was '
+            'decrypted from. Export Name is the name the decrypted copy is given in the report: '
+            "the vault file's name with an extension taken from the decrypted bytes, "
             'or .unknown when no type is recognised. Vault files are taken from any folder named '
             'Vault in the extraction, matched by folder name only. The module does not check that '
             'the folder belongs to com.antivirus. When more than one file sits in a .key_store or '
@@ -63,7 +63,6 @@ __artifacts_v2__ = {
 }
 
 import base64
-import datetime
 import json
 import xml.etree.ElementTree as ET
 from binascii import unhexlify
@@ -80,15 +79,6 @@ import scripts.filetype as filetype
 from scripts.ilapfuncs import artifact_processor, logfunc, check_in_embedded_media
 
 _CACHE = {}
-
-
-def _ms_to_utc(value):
-    if not value:
-        return ''
-    try:
-        return datetime.datetime.fromtimestamp(int(value) / 1000, datetime.timezone.utc)
-    except (ValueError, OverflowError, OSError, TypeError):
-        return ''
 
 
 def interpret_key_file(key_path):
@@ -239,7 +229,7 @@ def _compute_avg(files_found):
             else:
                 thumb = check_in_embedded_media(vault_file, decrypted, export_name)
             media_list.append((thumb, export_name, info.get('path', 'No Data'),
-                               _ms_to_utc(info.get('date')), info.get('size', 'No Data'), vault_file))
+                               info.get('date', 'No Data'), info.get('size', 'No Data'), vault_file))
 
     source_path = key_store if key_store else 'Multiple Files'
     result = (enc_details, media_list, source_path)
@@ -259,6 +249,7 @@ def get_AVG(context):
 def get_AVG_media(context):
     files_found = context.get_files_found()
     _, media_list, source_path = _compute_avg(files_found)
-    data_headers = (('Media', 'media'), 'Decrypted Filename', 'Original File Path',
-                    ('Encrypted Date', 'datetime'), 'File Size', 'Decrypted Full Path')
-    return data_headers, media_list, source_path
+    data_headers = (('Media', 'media'), 'Export Name', 'Original File Path',
+                    'Metadata Date', 'File Size', 'Vault File')
+    data_list = [row[:5] + (context.get_relative_path(row[5]),) for row in media_list]
+    return data_headers, data_list, source_path

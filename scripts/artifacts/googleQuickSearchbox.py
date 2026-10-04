@@ -2,13 +2,25 @@
 __artifacts_v2__ = {
     "get_quicksearch": {
         "name": "Google Quick Search Queries",
-        "description": "Query text and an embedded audio blob read from the Google app session files (com.google.android.googlequicksearchbox/app_session/*.binarypb), with the modification time of each extracted file. What causes the app to write a session file is not established.",
-        "author": "@abrignoni",
+        "description": "Query text and an embedded audio blob read from the Google app session files (com.google.android.googlequicksearchbox/app_session/*.binarypb), with the modification time the extraction recorded for each file. What causes the app to write a session file is not established.",
+        "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2020-03-22",
-        "last_update_date": "2020-03-22",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Google Now & QuickSearch",
-        "notes": "",
+        "notes": "File Modified Time is the modification time the extraction recorded for the session file "
+                 "as an epoch value, shown in UTC: the extended timestamp field (0x5455) of a zip member, the "
+                 "mtime of a tar member, or the file's own modification time when the input is a folder. It "
+                 "is blank when the extraction recorded no such value. Archive Time Modified (No Zone) is "
+                 "filled only in that case, for a zip member, with the date and time in the member's zip "
+                 "directory entry, shown as stored. A zip directory entry records no time zone, so that "
+                 "reading is not converted and which zone it is in is not established. The time of the "
+                 "staged copy the tool extracts is not used. No time is read from inside a session file. "
+                 "On the registered images checked on 2026-10-04, both matched zip members on "
+                 "russell_pixel6a_a13 carried the extended timestamp, and the zip directory reading was "
+                 "4 hours earlier than it to within 1 second; the one matched member on sharon_a14 "
+                 "carried none. Extraction and acquisition handling can disturb file timestamps, so "
+                 "validate the value against other sources.",
         "paths": ('*/com.google.android.googlequicksearchbox/app_session/*.binarypb',),
         "output_types": "standard",
         "artifact_icon": "search",
@@ -29,13 +41,31 @@ from scripts.ilapfuncs import artifact_processor, check_in_embedded_media
 from scripts.artifacts.storagePathViews import unique_files
 
 
-def _read_unix_time(value):
-    if value in (0, None, ''):
-        return ''
+def _recorded_times(seeker, file_found):
+    """Return (epoch modification time as UTC, zone-less zip directory time as stored).
+
+    The staged copy's own time is not used: for a zip member the seeker sets it from the
+    member's zone-less date and time read in the examiner machine's zone.
+    """
+    info = seeker.file_infos.get(file_found) if seeker else None
+    if not info:
+        return '', ''
+    if info.modification_date:
+        try:
+            return datetime.datetime.fromtimestamp(
+                float(info.modification_date), datetime.timezone.utc), ''
+        except (ValueError, OverflowError, OSError, TypeError):
+            return '', ''
+    zip_file = getattr(seeker, 'zip_file', None)
+    # A name stored more than once with different content is staged from a
+    # chosen entry, which getinfo() does not necessarily return.
+    if zip_file is None or info.source_path in getattr(seeker, '_chosen', {}):
+        return '', ''
     try:
-        return datetime.datetime.fromtimestamp(float(value), datetime.timezone.utc)
-    except (ValueError, OverflowError, TypeError, OSError):
-        return ''
+        stored = zip_file.getinfo(info.source_path).date_time
+    except KeyError:
+        return '', ''
+    return '', '{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}'.format(*stored)
 
 
 def _get_search_query_from_blob(data):
@@ -100,6 +130,7 @@ def _parse_session(values):
 @artifact_processor
 def get_quicksearch(context):
     files_found = unique_files(context)
+    seeker = context.get_seeker()
     data_list = []
     source_path = ''
     for file_found in files_found:
@@ -118,8 +149,10 @@ def get_quicksearch(context):
             name = os.path.splitext(os.path.basename(file_found))[0] + '.mp3'
             response = check_in_embedded_media(file_found, mp3_data, name,
                                                force_type='audio/mpeg', force_extension='mp3')
-        data_list.append((_read_unix_time(os.path.getmtime(file_found)), session_type,
+        modified, modified_as_stored = _recorded_times(seeker, file_found)
+        data_list.append((modified, modified_as_stored, session_type,
                           ', '.join(queries), response, context.get_relative_path(file_found)))
 
-    data_headers = (('File Timestamp', 'datetime'), 'Type', 'Queries', ('Response', 'media'), 'Source File')
+    data_headers = (('File Modified Time', 'datetime'), 'Archive Time Modified (No Zone)', 'Type', 'Queries',
+                    ('Response', 'media'), 'Source File')
     return data_headers, data_list, context.get_relative_path(source_path)

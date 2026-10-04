@@ -1,13 +1,22 @@
 __artifacts_v2__ = {
     "get_kijijiConversations": {
         "name": "kijijiConversations",
-        "description": "Kijiji conversations from messageBoxDatabase. A message whose sender value is 'ME' is shown as sent by Local User and any other value as sent by the counterparty; no source for that mapping is recorded here. Date Sent is the message's sortByDate value as stored.",
-        "author": "Terry Chabot (Krypterry)",
+        "description": "Kijiji messages from the conversations table of messageBoxDatabase, one row per message.",
+        "author": "Terry Chabot (Krypterry), @AlexisBrignoni, Codex",
         "creation_date": "2022-05-13",
-        "last_update_date": "2022-05-13",
+        "last_update_date": "2026-10-04",
         "requirements": "None",
         "category": "Kijiji",
-        "notes": "",
+        "notes": "Each conversations row stores its messages as a JSON list; one row is reported per list item. "
+                 "sortByDate (as stored) is the message's sortByDate value, unchanged; its unit, its time zone and "
+                 "what it marks are not established here, so it is not converted. "
+                 "Sender (as stored) is the message's sender value, unchanged. Sender Is ME is Yes when that value "
+                 "is the text ME and No otherwise. No source was found for what ME or any other sender value means, "
+                 "so the module does not name a sender or a recipient. Counterparty ID and Counterparty Name come "
+                 "from the conversation row's counterParty value and are the same on every message of a "
+                 "conversation; they do not say who sent a message. State is the message's state value as stored. "
+                 "No registered Android corpus holds this database (44 checked on 2026-10-04), so the columns are "
+                 "described from the code and were not measured on data.",
         "paths": ('*/com.ebay.kijiji.ca/databases/messageBoxDatabase.*',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "file",
@@ -19,7 +28,6 @@ import sqlite3
 
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly, does_table_exist_in_db
 
-LOCAL_USER = 'Local User'
 LOCAL_USER_INDICATOR = 'ME'
 
 conversations_query = '''
@@ -37,19 +45,14 @@ def AppendMessageRowsToDataList(data_list, conversationId, advertId, advertTitle
                                 conversationPartyId, conversationPartyName, messagesJson):
     messages = json.loads(messagesJson)
     for message in messages:
-        if message['sender'] == LOCAL_USER_INDICATOR:
-            senderId = ''
-            senderName = LOCAL_USER
-            recipientId = conversationPartyId
-            recipientName = conversationPartyName
-        else:
-            senderId = conversationPartyId
-            senderName = conversationPartyName
-            recipientId = ''
-            recipientName = LOCAL_USER
+        # The sender value is reported as stored. Only the value 'ME' is flagged; what any
+        # other value means is not established, so no sender or recipient is named.
+        sender = message['sender']
+        senderIsMe = 'Yes' if sender == LOCAL_USER_INDICATOR else 'No'
 
         data_list.append((message['sortByDate'], conversationId, advertId, advertTitle, message['identifier'],
-                          senderId, senderName, recipientId, recipientName, message['state'], message['text']))
+                          sender, senderIsMe, conversationPartyId, conversationPartyName,
+                          message['state'], message['text']))
 
 
 @artifact_processor
@@ -81,5 +84,5 @@ def get_kijijiConversations(context):
     else:
         logfunc('The conversations table was not found in the database!')
 
-    data_headers = ('Date Sent', 'Conversation ID', 'Ad ID', 'Ad Title', 'Message ID', 'Sender ID', 'Sender Name', 'Recipient ID', 'Recipient Name', 'State', 'Message')
+    data_headers = ('sortByDate (as stored)', 'Conversation ID', 'Ad ID', 'Ad Title', 'Message ID', 'Sender (as stored)', 'Sender Is ME', 'Counterparty ID', 'Counterparty Name', 'State', 'Message')
     return data_headers, data_list, source_path

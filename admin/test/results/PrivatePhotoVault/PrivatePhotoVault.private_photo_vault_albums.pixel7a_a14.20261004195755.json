@@ -1,0 +1,50 @@
+{
+  "metadata": {
+    "module_name": "PrivatePhotoVault",
+    "artifact_name": "Private Photo Vault - Albums",
+    "function_name": "private_photo_vault_albums",
+    "case_number": "pixel7a_a14",
+    "number_of_columns": 6,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 126,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/PrivatePhotoVault/testdata.PrivatePhotoVault.private_photo_vault_albums.pixel7a_a14.zip",
+    "start_time": "2026-10-04T19:57:55.972706+00:00",
+    "end_time": "2026-10-04T19:57:56.001002+00:00",
+    "run_time_seconds": 0.0008959770202636719,
+    "last_commit": {
+      "hash": "1ec9b7c22e14aa96e25717842aab5186d9dc82ee",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-10-04T08:49:26-04:00",
+      "message": "WIP: time handling fixes from the notes audit, not validated"
+    }
+  },
+  "headers": [
+    "Created",
+    "Creation Date (As Stored)",
+    "Album Name",
+    "Bucket ID",
+    "Order Number",
+    "Deleted"
+  ],
+  "data": [
+    [
+      1714253641,
+      "2024-04-27T17:34:01.611-04:00",
+      "Main Album",
+      "albums",
+      "1008G",
+      ""
+    ],
+    [
+      1714253641,
+      "2024-04-27T17:34:01.618-04:00",
+      "Main Album",
+      "albums_decoy",
+      "100GW",
+      ""
+    ]
+  ]
+}

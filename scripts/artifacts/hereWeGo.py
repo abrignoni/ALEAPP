@@ -1,10 +1,10 @@
 __artifacts_v2__ = {
     "here_wego_recent_searches": {
         "name": "HERE WeGo Recent Searches",
-        "description": "Recent searches HERE WeGo kept, with the time of each",
-        "author": "@AlexisBrignoni, Claude",
+        "description": "Recent searches HERE WeGo kept, with the timestamp stored on each",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "HERE WeGo",
         "sample_data": {
@@ -16,11 +16,13 @@ __artifacts_v2__ = {
                  "list: a base64 marker, an exclamation mark, then a JSON array whose members are "
                  "themselves JSON objects. The field names below are the ones the app itself "
                  "writes into that JSON. "
-                 "Searched is the entry's own timestamp field. It carries no zone and is not "
-                 "reported as UTC, because on the tested device it was not UTC: the two stored "
-                 "values matched the device's local clock at the moment each search was made, and "
-                 "the device was four hours behind UTC. Read it against the device's own time "
-                 "zone setting. "
+                 "Timestamp (as stored) is the entry's own timestamp field, reported as the text "
+                 "the file holds. On the tested device both values had the form of a date and a "
+                 "time to the microsecond with no zone or offset. Which clock the app writes it "
+                 "from is not established for other devices or app versions, so the column "
+                 "asserts no zone and is not typed as a date and time. On the one tested device "
+                 "it was not UTC: the two stored values matched the device's local clock at the "
+                 "moment each search was made, and the device was four hours behind UTC. "
                  "Search Term is the title field, which for a typed search is the text submitted. "
                  "Type read freeText on both rows of the tested device, where both searches were "
                  "typed rather than chosen from a suggestion. Place ID, Address, Category, "
@@ -38,7 +40,7 @@ __artifacts_v2__ = {
     "here_wego_saved_places": {
         "name": "HERE WeGo Saved Places",
         "description": "Place entries in the HERE WeGo collection.place.box.hive store, with their coordinates",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
         "requirements": "none",
@@ -88,7 +90,7 @@ __artifacts_v2__ = {
     "here_wego_map_positions": {
         "name": "HERE WeGo Map Positions",
         "description": "The last_location and last_map_view_center values HERE WeGo recorded",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
         "requirements": "none",
@@ -118,7 +120,7 @@ __artifacts_v2__ = {
     "here_wego_settings": {
         "name": "HERE WeGo Settings",
         "description": "HERE WeGo preferences from FlutterSharedPreferences.xml",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
         "requirements": "none",
@@ -269,7 +271,7 @@ def here_wego_recent_searches(context):
         if found and path not in sources:
             sources.append(path)
 
-    data_headers = ('Searched (device local time)', 'Search Term', 'Type', 'Place ID',
+    data_headers = ('Timestamp (as stored)', 'Search Term', 'Type', 'Place ID',
                     'Address', 'Category', 'Latitude', 'Longitude',
                     'Place Category ID', 'Href', 'Source File')
     return data_headers, data_list, '\n'.join(sources)

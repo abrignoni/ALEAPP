@@ -3,9 +3,9 @@ __artifacts_v2__ = {
         "name": "InShot Projects",
         "description": "Editing project files InShot saved, with the stored creation time and "
                        "open count",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-06",
-        "last_update_date": "2026-09-06",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "InShot",
         "sample_data": {
@@ -19,7 +19,8 @@ __artifacts_v2__ = {
                  "11:42:56.229 for a CreateTime of 15:42:44 UTC, four hours behind and 12 "
                  "seconds later within the minute. Reading the name time as device local rests "
                  "on that one file, so the two are reported side by side and neither is "
-                 "converted. Which event each marks was not established. Open Count is the "
+                 "converted. File Name Time (as stored) is that name time as text, with no "
+                 "zone asserted. Which event each marks was not established. Open Count is the "
                  "file's openCount. Timeline Duration is MediaClipConfig.MCC_2 in microseconds, "
                  "mapped by loading a clip of known length: a 30 second clip gave 30000000. "
                  "Clips is how many entries its ConfigJson holds. Cover is the file under "
@@ -37,7 +38,7 @@ __artifacts_v2__ = {
     "inshot_project_clips": {
         "name": "InShot Project Clips",
         "description": "Media files referenced by InShot projects, with the fileMd5 value stored for each",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-06",
         "requirements": "none",
@@ -130,7 +131,7 @@ def _ms(value):
 
 
 def _name_time(path):
-    """The local time in the file name, as stored, blank when the name does not carry one."""
+    """The time in the file name, as stored, blank when the name does not carry one."""
     match = NAME_TIME.search(os.path.basename(path))
     if not match:
         return ''
@@ -167,7 +168,7 @@ def inshot_projects(context):
 
     data_list.sort(key=lambda row: row[0], reverse=True)
     data_headers = (
-        ('Created', 'datetime'), 'File Name Time (device local, as stored)', 'Project File',
+        ('Created', 'datetime'), 'File Name Time (as stored)', 'Project File',
         'Label', 'Open Count', 'Timeline Duration (microseconds)', 'Clips',
         'Watermark (as stored)', ('Cover', 'media'), 'Source File')
     return data_headers, data_list, '\n'.join(sources)

@@ -2,14 +2,27 @@ __artifacts_v2__ = {
     
     "history_log": {
         "name": "Samsung Knox History Log",
-        "description": 'Entries from the Samsung Knox Secure Folder HistoryLog table (history_log_database), with tag and message. The stored timestamp text carries no zone; this artifact presents it as UTC, which is not established. Only the first matched file is read.',
-        "author": "Alexis Brignoni {linqapp.com/abrignoni}",
+        "description": 'Entries from the Samsung Knox Secure Folder HistoryLog table (history_log_database), with the stored timestamp text, tag and message.',
+        "author": "Alexis Brignoni {linqapp.com/abrignoni}, @AlexisBrignoni, Codex",
         "creation_date": "2026-02-27",
-        "last_update_date": "2025-02-27",
+        "last_update_date": "2026-10-04",
         "requirements": "sqlite",
         "category": "Samsung History Log",
-        "notes": "",
-        "paths": ('*/com.samsung.knox.securefolder/databases/history_log_database'),
+        "notes": (
+            "The timestamp column is text with no zone recorded. Timestamp shows that text as "
+            "stored, with no conversion, and it is not typed as a date and time. Which zone the "
+            "app writes it in is not established. Every matched history_log_database is read, "
+            "with one copy kept where the extraction holds the same file under more than one "
+            "storage path, and Source File names the database each row came from. A database "
+            "with no HistoryLog table is skipped and named in the run log. The write-ahead log "
+            "and journal beside the database are matched so the database is read with them. "
+            "No registered image was found to hold a HistoryLog table: the five images listed "
+            "in the sample data of the Samsung Secure Folder - History Log artifact "
+            "(samsungSecureFolderHistoryLog.py) hold none, and other registered images were "
+            "not checked for this artifact. The reading of more than one database and the "
+            "stored text output were exercised on constructed databases only."
+        ),
+        "paths": ('*/com.samsung.knox.securefolder/databases/history_log_database*',),
         "output_types": ["standard"],
         "artifact_icon": "database"
     }
@@ -17,15 +30,19 @@ __artifacts_v2__ = {
 
 # Samsung Android History Log
 # Author:  Alexis Brignoni (linqapp.com/abrignoni)
-from datetime import datetime, timezone
-from scripts.ilapfuncs import artifact_processor, get_sqlite_db_records
+from scripts.artifacts.storagePathViews import unique_files
+from scripts.ilapfuncs import (
+    artifact_processor,
+    does_table_exist_in_db,
+    get_sqlite_db_records,
+    logfunc,
+)
 
 @artifact_processor
 def history_log(context):
-    files_found = context.get_files_found()
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')
-                   and not x.endswith('journal')]
-     
+    files_found = [x for x in unique_files(context)
+                   if x.endswith('history_log_database')]
+
     query = ('''
         SELECT 
         timestamp,
@@ -35,22 +52,24 @@ def history_log(context):
         FROM HistoryLog
     ''')
 
-    db_records = get_sqlite_db_records(str(files_found[0]), query)
-
     data_list = []
+    sources = []
 
-    for row in db_records:
-        timestamp_str = row[0]
-        # Parse as UTC
-        dt = datetime.strptime(timestamp_str, "%Y-%m-%d %H:%M:%S").replace(tzinfo=timezone.utc)
-        
-        unix_timestamp = int(dt.timestamp())
-        idd = row[1]
-        tag = row[2]
-        message = row[3]
-        
-        data_list.append(( unix_timestamp, idd, tag, message))
+    for file_found in files_found:
+        if not does_table_exist_in_db(file_found, 'HistoryLog'):
+            logfunc(f'Samsung Knox History Log - no HistoryLog table in '
+                    f'{context.get_relative_path(file_found)}')
+            continue
 
-    data_headers = ( ('Timestamp', 'datetime'), 'ID', 'Tag', 'Message')
+        source_file = context.get_relative_path(file_found)
+        db_records = get_sqlite_db_records(file_found, query)
 
-    return data_headers, data_list, files_found[0]
+        for row in db_records:
+            # The stored text carries no zone, so it is reported as stored.
+            data_list.append((row[0], row[1], row[2], row[3], source_file))
+
+        sources.append(file_found)
+
+    data_headers = ('Timestamp', 'ID', 'Tag', 'Message', 'Source File')
+
+    return data_headers, data_list, '\n'.join(sources)

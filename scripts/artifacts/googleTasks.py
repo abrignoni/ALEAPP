@@ -3,9 +3,9 @@ __artifacts_v2__ = {
     "get_googleTasks": {
         "name": "GoogleTasks",
         "description": "Parses Google Tasks (created, modified, completed and due times, task name, details and status) from the Google Tasks data.db.",
-        "author": "@bolisettynihith",
+        "author": "@bolisettynihith, @AlexisBrignoni, Codex",
         "creation_date": "2021-08-21",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Google Tasks",
         "notes": "Protobuf field positions for created/modified/completed times are not "
@@ -14,9 +14,14 @@ __artifacts_v2__ = {
                  "Completed Time field 2.5.1 of the EffectiveTask blob, each read as Unix "
                  "seconds. No registered image is listed for this artifact. Task Due "
                  "Date is reported as stored in the DueDate column, without "
-                 "conversion, unlike Created Time and Last Modified Time, which are converted to "
-                 "UTC. Completed Time is converted only on rows whose Completed column is True; "
-                 "on other rows a value at that field is shown as stored.",
+                 "conversion, unlike Created Time, Last Modified Time and Completed Time, which "
+                 "are converted to UTC. Completed Time is read from field 2.5.1 the same way on "
+                 "every row. On a row whose Completed column is False the column is blank when "
+                 "that field holds no integer; what an integer there marks on such a row is not "
+                 "established, and no data holding one was available. The Google Tasks package "
+                 "appeared on none of the 44 registered Android images when checked on "
+                 "2026-10-04; the conversion on rows whose Completed column is False was "
+                 "exercised only on a constructed record.",
         "paths": ('*/com.google.android.apps.tasks/files/tasks-*/data.db*',),
         "output_types": "standard",
         "artifact_icon": "file-text",
@@ -35,7 +40,12 @@ def b2s(a):
 
 def protobuf_parse_not_completed(data):
     pb = decode_protobuf(data, 'None')
-    completed = pb[0].get('2',{}).get('5',{}).get('1','')
+    completed = pb[0].get('2',{}).get('5',{})
+    completed = completed.get('1','') if isinstance(completed, dict) else ''
+    if isinstance(completed, int):
+        completed = datetime.fromtimestamp(completed, dtimezone.utc)
+    else:
+        completed = ''
     created = datetime.fromtimestamp(pb[0].get('11',{}).get('1',''), dtimezone.utc)
     modified = datetime.fromtimestamp(pb[0].get('3',{}).get('1',''), dtimezone.utc)
     task = pb[0].get('2',{}).get('2','').decode()

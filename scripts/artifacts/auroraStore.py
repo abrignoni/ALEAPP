@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "aurora_store_accounts": {
         "name": "Aurora Store - Accounts",
         "description": "Parses the account table of the Aurora Store Android app.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-01",
         "last_update_date": "2026-09-01",
         "requirements": "none",
@@ -27,7 +27,7 @@ __artifacts_v2__ = {
     "aurora_store_downloads": {
         "name": "Aurora Store - Downloads",
         "description": "Parses the download table of the Aurora Store Android app.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-01",
         "last_update_date": "2026-09-01",
         "requirements": "none",
@@ -55,7 +55,7 @@ __artifacts_v2__ = {
     "aurora_store_favourites": {
         "name": "Aurora Store - Favourites",
         "description": "Parses favourited apps from the Aurora Store Android app.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-01",
         "last_update_date": "2026-09-01",
         "requirements": "none",
@@ -81,9 +81,9 @@ __artifacts_v2__ = {
     "aurora_store_updates": {
         "name": "Aurora Store - Updates and Reviews",
         "description": "Parses the update and review tables of the Aurora Store Android app.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-01",
-        "last_update_date": "2026-09-01",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Aurora Store",
         "sample_data": {
@@ -93,10 +93,14 @@ __artifacts_v2__ = {
                  "because both key on a package and both were empty on the tested device. An "
                  "update row carries a Package, Display Name, Version Name and Code, Developer "
                  "and Size, with the changelog in Text. Aurora Store 4.8.4 declares the update "
-                 "table's updatedOn as a String (Update.kt at tag 4.8.4, "
-                 "ad3d349edce82e119ba239f3a07b3afe028abd19), and this artifact converts the "
-                 "value as Unix milliseconds, so a value that is not a whole number leaves the "
-                 "Timestamp of an update row blank. A review row carries the Title and Comment "
+                 "table's updatedOn as a String (Update.kt line 31 at tag 4.8.4, "
+                 "ad3d349edce82e119ba239f3a07b3afe028abd19), and the table's own CREATE "
+                 "statement declares the column TEXT. The form of that text is not "
+                 "established, because no tested image held an update row, so it is shown "
+                 "unconverted in Updated On (as stored) and the Timestamp of an update row "
+                 "is left blank. Timestamp is filled for review rows only, from the review "
+                 "table's timeStamp, an INTEGER column read here as Unix milliseconds and "
+                 "reported as UTC, a unit no tested row exercised. A review row carries the Title and Comment "
                  "joined in Text, the Rating and the account Email; its Display Name column "
                  "holds the review's userName and Version its appVersion. Both are described "
                  "from the schema, since neither table held a row on the tested device, and "
@@ -222,18 +226,20 @@ def aurora_store_updates(context):
         seen = False
         for r in get_sqlite_db_records(db_path, update_query):
             seen = True
-            data_list.append(('Update', _ms(r[0]), r[1] or '', r[2] or '', r[3] or '',
+            data_list.append(('Update', '', r[0] if r[0] is not None else '',
+                              r[1] or '', r[2] or '', r[3] or '',
                               r[4], r[5] or '', r[6], '', '', r[7] or '',
                               context.get_relative_path(db_path)))
         for r in get_sqlite_db_records(db_path, review_query):
             seen = True
-            data_list.append(('Review', _ms(r[0]), r[6] or '', r[1] or '', r[7] or '',
+            data_list.append(('Review', _ms(r[0]), '', r[6] or '', r[1] or '', r[7] or '',
                               '', '', '', r[4], r[5] or '', f'{r[2] or ""} {r[3] or ""}'.strip(),
                               context.get_relative_path(db_path)))
         if seen and db_path not in sources:
             sources.append(db_path)
 
-    data_headers = ('Kind', ('Timestamp', 'datetime'), 'Display Name', 'Package',
+    data_headers = ('Kind', ('Timestamp', 'datetime'), 'Updated On (as stored)',
+                    'Display Name', 'Package',
                     'Version', 'Version Code', 'Developer', 'Size (bytes)', 'Rating',
                     'Account Email', 'Text', 'Source File')
     return data_headers, data_list, '\n'.join(sources)

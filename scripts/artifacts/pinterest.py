@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "pinterest_account": {
         "name": "Pinterest - Account",
         "description": "Parses the signed in account record stored by the Pinterest Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-29",
         "requirements": "none",
@@ -27,16 +27,19 @@ __artifacts_v2__ = {
     "pinterest_stored_accounts": {
         "name": "Pinterest - Stored Accounts",
         "description": "Parses the accounts held by the Pinterest Android app account switcher.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Pinterest",
         "notes": "Each preference entry in the account switcher store is named for an account id "
                  "and holds that account's own record as JSON. Account Switcher Group ID is "
-                 "taken from that record; when the record carries none, the value from the first "
-                 "PREF_ACCUNT_SWITCHER_GROUP_ID.xml file matched is shown instead, which is not "
-                 "tied to the row's own Android user. The store carries an access token "
+                 "taken from that record; when the record carries none, the value from the "
+                 "PREF_ACCUNT_SWITCHER_GROUP_ID.xml file in the same shared_prefs folder, of the "
+                 "same Android user, is shown instead, and the cell is empty when that folder "
+                 "has no such file. On samsungs20_a13 the one stored record carried its own "
+                 "group id, so the fallback did not run there; it was exercised on a "
+                 "constructed two user folder tree. The store carries an access token "
                  "and two further tokens per account, which are reported as stored; whether they "
                  "are still valid is not established. The tested sample held one "
                  "account, so the multiple account path is code present and unexercised. Field "
@@ -52,20 +55,27 @@ __artifacts_v2__ = {
     "pinterest_app_state": {
         "name": "Pinterest - App State",
         "description": "Parses selected application state preferences of the Pinterest Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Pinterest",
         "notes": "A selected set of preference keys is reported, one row per key, with the value "
                  "as stored. Preference File names the preference file a key was read from and "
                  "does not separate two Android users' copies of it, so Source File names the file"
-                 " each row came from. A key is converted to a timestamp only when its name "
-                 "contains TIME, _AT, _MS or SESSION_KEY and its value is a thirteen digit "
+                 " each row came from. A value is converted to a timestamp only for six keys "
+                 "listed in the module (PREF_TIME_LAST_NOTIF_PERMISSION_REQUESTED, "
+                 "PREF_LAST_TIME_USER_LAND_ON_SEARCH, CLOSEUP_SESSION_KEY, "
+                 "PREF_SHARE_ICON_LAST_ANIMATED_AT, PREF_DOWNLOAD_UPSELL_LAST_SEEN_AT_MS_2022_V1 "
+                 "and PREF_THIRD_PARTY_AD_CONFIG_EXPIRY_MS) and only when it is a thirteen digit "
                  "integer, read as Unix milliseconds; every converted value on the tested sample "
                  "had that shape. CLOSEUP_SESSION_KEY is included although its name does not "
-                 "state a time. Where a key holds several values only the first thirteen digit "
-                 "one is converted. Every other value is left as text. The "
+                 "state a time, and no source was found for what its values mark. Where a key "
+                 "holds several values only the first thirteen digit "
+                 "one is converted. Every other value is left as text. On samsungs20_a13 two of "
+                 "the six keys were converted (PREF_TIME_LAST_NOTIF_PERMISSION_REQUESTED and "
+                 "CLOSEUP_SESSION_KEY), PREF_LAST_TIME_USER_LAND_ON_SEARCH held text and stayed "
+                 "as stored, and the other three were absent. The "
                  "install referrer and the requested runtime permissions are the values the app "
                  "recorded, not an observation of what was granted. What the app does with each "
                  "preference is not established here, so no meaning is asserted beyond the key name "
@@ -81,9 +91,9 @@ __artifacts_v2__ = {
     "pinterest_search_typeahead_cache": {
         "name": "Pinterest - Search Typeahead Cache",
         "description": "Parses the search typeahead suggestion cache of the Pinterest Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Pinterest",
         "notes": "This store holds suggestions the app downloaded, not terms the user searched for. "
@@ -98,8 +108,11 @@ __artifacts_v2__ = {
                  "are reported instead, and the suggestions remain in the evidence file, where a "
                  "keyword search of this database will surface them; a hit on one of those "
                  "strings is not evidence that the account holder entered it. The identifiers are "
-                 "read from the first preferences file that holds them and are not matched to the "
-                 "Android user of the database they are shown beside. Score also decreases "
+                 "read from the pinterest.persist.xml of the same app data folder, and so the "
+                 "same Android user, as the database they are shown beside, and are empty when "
+                 "that folder has no such file; that pairing was exercised on a constructed two "
+                 "user folder tree, and samsungs20_a13 holds no search-typeahead database. Score "
+                 "also decreases "
                  "monotonically with the row id across every row, which is consistent with a table "
                  "written once in server rank order. No store "
                  "holding terms entered by the user was found in the tested sample. The fetch time "
@@ -116,9 +129,9 @@ __artifacts_v2__ = {
     "pinterest_cached_list_pages": {
         "name": "Pinterest - Cached List Pages",
         "description": "Parses cached feed and profile list pages of the Pinterest Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Pinterest",
         "notes": "Each file in the app's paged list cache begins with the four bytes 23 06 14 20, "
@@ -126,12 +139,15 @@ __artifacts_v2__ = {
                  "second length prefixed string, then eight bytes, then a little endian eight byte "
                  "value, then length prefixed UTF-16 little endian strings. The cache key is ASCII "
                  "and names the list it belongs to; where it carries a run of 16 to 21 digits the "
-                 "first such run is reported under Account ID. On the tested sample that run was "
-                 "nineteen digits and equalled the signed in account id recorded in the app's "
-                 "preferences; the module does not check that match, so compare the value with "
-                 "the Pinterest - Account artifact before relying on it. The eight byte "
+                 "first such run is reported under Cache Key Digit Run. On the private sample and on "
+                 "the one file on samsungs20_a13 that run was nineteen digits and equalled the "
+                 "signed in account id recorded in the app's preferences; the module does not "
+                 "check that match, so the column is not labelled as an account id: compare "
+                 "the value with the Pinterest - Account artifact before reading it as one. The "
+                 "eight byte "
                  "value decoded to a Unix millisecond time in the range of the app's own recorded "
-                 "activity on all three tested files, so it is converted, but what event it marks "
+                 "activity on all three tested files and on the one samsungs20_a13 file, so it is "
+                 "converted, but what event it marks "
                  "is not established and it is labelled only as the timestamp the record carries. "
                  "The trailing strings are reported as stored under Referenced Identifiers; on the "
                  "tested sample they were nineteen digit ids in one file and eight character tokens "
@@ -145,7 +161,7 @@ __artifacts_v2__ = {
     "pinterest_cached_images": {
         "name": "Pinterest - Cached Images",
         "description": "Parses and renders the image caches of the Pinterest Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
@@ -179,23 +195,33 @@ __artifacts_v2__ = {
     "pinterest_cached_videos": {
         "name": "Pinterest - Cached Videos",
         "description": "Parses and renders the video caches of the Pinterest Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Pinterest",
         "notes": "Two stores are reported and the Source Store column says which each row came "
                  "from. In the response cache the entry file name is the MD5 of the request URL, "
                  "confirmed by recomputing it for all 13 entries on the tested sample, the first "
                  "line of the .0 file is that URL and the .1 file is the response body, which was a "
-                 "complete MP4 in all 13 of them. The module checks in every "
-                 ".1 file as an MP4 without testing its leading bytes, so the Content Type (as "
-                 "stored) column should be read beside the media cell. On Response cache rows "
-                 "Requested and Received come from the OkHttp-Sent-Millis and "
-                 "OkHttp-Received-Millis headers stored in that entry, read as Unix milliseconds. "
-                 "On Player cache rows the Requested column instead holds the newest last touch "
-                 "time among that item's fragment rows and Received is empty; the "
-                 "server's own date header is reported separately as stored. In the player cache "
+                 "complete MP4 in all 13 of them. A .1 file is checked in as an MP4 only when its "
+                 "bytes 4 to 8 are ftyp, the ISO base media signature; any other body is "
+                 "reported with its size and an empty media cell. That test was exercised on "
+                 "constructed files; samsungs20_a13 holds no response cache. On Response cache "
+                 "rows Requested and Received come from the OkHttp-Sent-Millis and "
+                 "OkHttp-Received-Millis headers stored in that entry, read as Unix "
+                 "milliseconds, and Newest Fragment Last Touch is empty; the "
+                 "server's own date header is reported separately as stored. On Player cache "
+                 "rows Requested and Received are empty and Newest Fragment Last Touch holds "
+                 "the largest last_touch_timestamp among that item's file metadata rows, read "
+                 "as Unix milliseconds. Current ExoPlayer source sets that value from "
+                 "System.currentTimeMillis() when a fragment file is created and again when a "
+                 "fragment is read back from the cache (SimpleCache.java lines 392 and 643, "
+                 "https://github.com/androidx/media/blob/8c6678b657ede1e7883fc164ef73ed483c7796c3/"
+                 "libraries/datasource/src/main/java/androidx/media3/datasource/cache/"
+                 "SimpleCache.java#L392 ); the library version inside the app was not "
+                 "identified. On samsungs20_a13 all 325 stored values were thirteen digit "
+                 "integers and all 57 index rows had fragment rows. In the player cache "
                  "the index table maps a cache id to the full media URL and the file metadata table "
                  "names each cached fragment with its length and last touch time in Unix "
                  "milliseconds, and fragment file names begin with that cache id, which resolved "
@@ -218,7 +244,7 @@ __artifacts_v2__ = {
     "pinterest_idea_pin_drafts": {
         "name": "Pinterest - Idea Pin Drafts",
         "description": "Parses the idea_pin_drafts table of the Pinterest Android app database.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
@@ -253,7 +279,7 @@ import struct
 import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta, timezone
 
-from scripts.artifacts.storagePathViews import unique_files
+from scripts.artifacts.storagePathViews import canonical_path, unique_files
 from scripts.ilapfuncs import (
     artifact_processor,
     check_in_media,
@@ -298,10 +324,19 @@ _STATE_KEYS = (
     'PREF_MAX_TEXTURE_SIZE',
 )
 
-# A key is converted only when its own name states that it holds a time, and only when
-# its value is a thirteen digit integer. A key such as PREF_LAST_TIME_USER_LAND_ON_SEARCH
-# names a time and stores it as text, so it stays as stored.
-_TIME_TOKENS = ('TIME', '_AT', '_MS', 'SESSION_KEY')
+# The reported keys whose value is converted, and only when that value is a thirteen digit
+# integer. They are listed by name: a substring test on '_AT' also matched
+# PREF_ACCOUNT_TRANSFER_ATTEMPTED_ONCE, which names no time. A key such as
+# PREF_LAST_TIME_USER_LAND_ON_SEARCH names a time and stores it as text, so it stays as
+# stored.
+_TIME_KEYS = (
+    'PREF_TIME_LAST_NOTIF_PERMISSION_REQUESTED',
+    'PREF_LAST_TIME_USER_LAND_ON_SEARCH',
+    'CLOSEUP_SESSION_KEY',
+    'PREF_SHARE_ICON_LAST_ANIMATED_AT',
+    'PREF_DOWNLOAD_UPSELL_LAST_SEEN_AT_MS_2022_V1',
+    'PREF_THIRD_PARTY_AD_CONFIG_EXPIRY_MS',
+)
 
 
 def _ms(value):
@@ -350,6 +385,17 @@ def _preference_files(context, names):
     '''The preference files the glob matched whose basename is in names.'''
     return [path for path in unique_files(context)
             if os.path.basename(path) in names]
+
+
+def _app_directory_key(context, file_found):
+    '''A key for the app data directory two levels above file_found.
+
+    Built from the evidence path with the storage view replaced by its storage class and
+    Android user, so shared_prefs and databases files of one Android user share a key and
+    a second Android user's copies get another.
+    '''
+    key, _ = canonical_path(context.get_relative_path(file_found))
+    return key.rsplit('/', 2)[0]
 
 
 def _read_preferences(file_found):
@@ -493,17 +539,19 @@ def pinterest_stored_accounts(context):
     source_paths = []
     group_ids = {}
 
-    # Read as a fallback: the account record usually carries the group id itself.
+    # Read as a fallback: the account record usually carries the group id itself. Keyed on
+    # the app data directory, so a row only falls back to its own Android user's file.
     for file_found in _preference_files(context, {'PREF_ACCUNT_SWITCHER_GROUP_ID.xml'}):
         value = _read_preferences(file_found).get('PREF_ACCUNT_SWITCHER_GROUP_ID')
         if value:
-            group_ids[context.get_relative_path(file_found)] = _text(value)
+            group_ids[_app_directory_key(context, file_found)] = _text(value)
 
     for file_found in unique_files(context):
         if not os.path.basename(file_found).startswith('PREF_MY_USER_USER_ACCOUNTS'):
             continue
         source_paths.append(file_found)
         entries = _read_preferences(file_found)
+        fallback_group_id = group_ids.get(_app_directory_key(context, file_found), '')
         for account_id in entries:
             record = _json_value(entries, account_id)
             if not isinstance(record, dict):
@@ -516,8 +564,7 @@ def pinterest_stored_accounts(context):
                 _text(profile.get('full_name')),
                 _text(profile.get('email')),
                 _text(profile.get('is_partner')),
-                _text(record.get('PREF_ACCUNT_SWITCHER_GROUP_ID')
-                      or next(iter(group_ids.values()), '')),
+                _text(record.get('PREF_ACCUNT_SWITCHER_GROUP_ID') or fallback_group_id),
                 _text(record.get('PREF_ACCESSTOKEN')),
                 _text(record.get('PREF_V5_ACCESS_TOKEN')),
                 _text(record.get('PREF_V5_REFRESH_TOKEN')),
@@ -556,7 +603,7 @@ def pinterest_app_state(context):
                 continue
             value = entries[key]
             timestamp = ''
-            if any(token in key for token in _TIME_TOKENS):
+            if key in _TIME_KEYS:
                 candidates = value if isinstance(value, list) else [value]
                 converted = [_ms(item) for item in candidates
                              if isinstance(item, str) and item.isdigit() and len(item) == 13]
@@ -586,13 +633,16 @@ def pinterest_search_typeahead_cache(context):
     source_path = ''
     settings = {}
 
+    # Keyed on the app data directory, so a database is only shown beside the identifiers
+    # from its own Android user's preferences file.
     for file_found in _preference_files(context, {'pinterest.persist.xml'}):
         entries = _read_preferences(file_found)
+        own = settings.setdefault(_app_directory_key(context, file_found), {})
         for key in ('PREF_TYPEAHEAD_CACHE_TIME', 'PREF_SEARCH_TYPEAHEAD_CACHE_VERSION',
                     'PREF_TYPEAHEAD_CACHE_PARTITIONS', 'PREF_TYPEAHEAD_CACHE_READY',
                     'PREF_TYPEAHEAD_CACHE_LAST_PARTITION_FETCHED'):
-            if key in entries and key not in settings:
-                settings[key] = _text(entries[key])
+            if key in entries:
+                own[key] = _text(entries[key])
 
     for file_found in unique_files(context):
         if os.path.basename(file_found) != 'search-typeahead':
@@ -602,12 +652,13 @@ def pinterest_search_typeahead_cache(context):
         for row in get_sqlite_db_records(
                 file_found, 'SELECT count(*) FROM SearchTypeaheadSuggestionRoom'):
             count = _text(row[0])
+        own = settings.get(_app_directory_key(context, file_found), {})
         data_list.append((
-            settings.get('PREF_TYPEAHEAD_CACHE_TIME', ''),
-            settings.get('PREF_SEARCH_TYPEAHEAD_CACHE_VERSION', ''),
-            settings.get('PREF_TYPEAHEAD_CACHE_PARTITIONS', ''),
-            settings.get('PREF_TYPEAHEAD_CACHE_READY', ''),
-            settings.get('PREF_TYPEAHEAD_CACHE_LAST_PARTITION_FETCHED', ''),
+            own.get('PREF_TYPEAHEAD_CACHE_TIME', ''),
+            own.get('PREF_SEARCH_TYPEAHEAD_CACHE_VERSION', ''),
+            own.get('PREF_TYPEAHEAD_CACHE_PARTITIONS', ''),
+            own.get('PREF_TYPEAHEAD_CACHE_READY', ''),
+            own.get('PREF_TYPEAHEAD_CACHE_LAST_PARTITION_FETCHED', ''),
             count,
             context.get_relative_path(file_found),
         ))
@@ -681,11 +732,11 @@ def pinterest_cached_list_pages(context):
             continue
         key, timestamp, strings = parsed
         source_path = source_path or file_found
-        account = re.search(r'\d{16,21}', key)
+        digit_run = re.search(r'\d{16,21}', key)
         data_list.append((
             _ms(timestamp),
             key,
-            account.group(0) if account else '',
+            digit_run.group(0) if digit_run else '',
             len(strings),
             ', '.join(strings),
             context.get_relative_path(file_found),
@@ -694,7 +745,7 @@ def pinterest_cached_list_pages(context):
     data_headers = (
         ('Record Timestamp', 'datetime'),
         'Cache Key (as stored)',
-        'Account ID',
+        'Cache Key Digit Run',
         'Referenced Identifier Count',
         'Referenced Identifiers (as stored)',
         'Source File',
@@ -794,6 +845,17 @@ def pinterest_cached_images(context):
     return data_headers, data_list, source_path
 
 
+def _is_iso_media(path):
+    '''True when the file's bytes 4 to 8 are 'ftyp', the ISO base media (MP4) signature.'''
+    try:
+        with open(path, 'rb') as handle:
+            head = handle.read(12)
+    except OSError as ex:
+        logfunc(f'Could not read {path}: {ex}')
+        return False
+    return head[4:8] == b'ftyp'
+
+
 def _parse_okhttp_entry(path):
     '''(url, status, headers) from an OkHttp cache metadata file, or None.'''
     try:
@@ -855,12 +917,15 @@ def pinterest_cached_videos(context):
                 size = os.path.getsize(body_path)
             except OSError:
                 size = ''
-            media = check_in_media(body_path, f'{stem}.1',
-                                   force_type=headers.get('content-type') or None,
-                                   force_extension='mp4')
+            # Only a body that opens with the MP4 signature is checked in as one.
+            if _is_iso_media(body_path):
+                media = check_in_media(body_path, f'{stem}.1',
+                                       force_type=headers.get('content-type') or None,
+                                       force_extension='mp4')
         data_list.append((
             _ms(headers.get('okhttp-sent-millis')),
             _ms(headers.get('okhttp-received-millis')),
+            '',
             'Response cache',
             url,
             headers.get('content-type', ''),
@@ -902,8 +967,9 @@ def pinterest_cached_videos(context):
                 total = sum(int(length or 0) for length, _ in recorded)
                 last_touch = max((stamp for _, stamp in recorded), default=None)
                 data_list.append((
-                    _ms(last_touch),
                     '',
+                    '',
+                    _ms(last_touch),
                     'Player cache',
                     _text(url),
                     '',
@@ -919,6 +985,7 @@ def pinterest_cached_videos(context):
     data_headers = (
         ('Requested', 'datetime'),
         ('Received', 'datetime'),
+        ('Newest Fragment Last Touch', 'datetime'),
         'Source Store',
         'Media URL',
         'Content Type (as stored)',

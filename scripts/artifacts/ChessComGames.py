@@ -1,13 +1,17 @@
 __artifacts_v2__ = {
     "get_ChessComGames": {
         "name": "Chess.com Games",
-        "description": "Parses rows of the daily_games table of the Chess.com app database in which the white or black username equals the pref_username stored in the session preferences file. Other rows are not reported.",
-        "author": "@kibaffo33",
+        "description": "Rows of the daily_games table of the Chess.com app database. When the session preferences file stores a pref_username, only rows whose white or black username equals it are reported.",
+        "author": "@kibaffo33, @AlexisBrignoni, Codex",
         "creation_date": "2022-03-27",
-        "last_update_date": "2022-03-27",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Chess.com",
-        "notes": "",
+        "notes": "Game Start Time and Timestamp are the game_start_time and timestamp columns of daily_games, "
+                 "read as Unix seconds and shown as UTC. What event each column marks is not established, and the "
+                 "seconds reading was not checked against a registered corpus because none holds this database. "
+                 "When no session preferences file is found, or it stores no pref_username, every row of "
+                 "daily_games is reported and the run log says so. Rows are in the order of the timestamp column.",
         "paths": ('*/com.chess/databases/chess-database*', '*/data/com.chess/shared_prefs/com.chess.app.session_preferences.xml'),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "layout-grid",
@@ -44,16 +48,23 @@ def get_ChessComGames(context):
     files_found = context.get_files_found()
 
     # Username
-    username = "None"
+    username = None
     session_files = [str(x) for x in files_found if str(x).endswith('.xml')]
     if session_files:
         sesh_root = _parse_xml(session_files[0])
         for item in sesh_root.findall("string"):
-            if item.attrib.get("name") == "pref_username":
+            if item.attrib.get("name") == "pref_username" and item.text:
                 username = item.text
 
     # Chess database
-    source_path = [str(x) for x in files_found if "chess-database" in str(x)][0]
+    db_files = [str(x) for x in files_found if str(x).endswith("chess-database")]
+    if not db_files:
+        logfunc('Chess.com: no chess-database file found')
+        return (), [], ''
+    source_path = db_files[0]
+    if username is None:
+        logfunc('Chess.com: no pref_username found in a session preferences file; '
+                'reporting every row of daily_games')
     db = open_sqlite_db_readonly(source_path)
     cursor = db.cursor()
     cursor.execute('''
@@ -62,17 +73,17 @@ def get_ChessComGames(context):
                CASE daily_games.is_opponent_friend WHEN 1 THEN "Friend" WHEN 0 THEN "User" ELSE "ERROR" END,
                daily_games.result_message
         FROM daily_games
-        WHERE daily_games.white_username = ? OR daily_games.black_username = ?
+        WHERE ? IS NULL OR daily_games.white_username = ? OR daily_games.black_username = ?
         ORDER BY daily_games.timestamp
-    ''', (username, username))
+    ''', (username, username, username))
     all_rows = cursor.fetchall()
     db.close()
 
     data_list = []
     for row in all_rows:
-        first_move = datetime.datetime.fromtimestamp(int(row[0]), datetime.timezone.utc) if row[0] else ''
-        last_move = datetime.datetime.fromtimestamp(int(row[1]), datetime.timezone.utc) if row[1] else ''
-        data_list.append((first_move, last_move, row[2], row[3], row[4], row[5], row[6]))
+        game_start_time = datetime.datetime.fromtimestamp(int(row[0]), datetime.timezone.utc) if row[0] else ''
+        timestamp = datetime.datetime.fromtimestamp(int(row[1]), datetime.timezone.utc) if row[1] else ''
+        data_list.append((game_start_time, timestamp, row[2], row[3], row[4], row[5], row[6]))
 
-    data_headers = (('First Move', 'datetime'), ('Last Move', 'datetime'), 'Game ID', 'White', 'Black', 'Friend Status', 'Result')
+    data_headers = (('Game Start Time', 'datetime'), ('Timestamp', 'datetime'), 'Game ID', 'White', 'Black', 'Friend Status', 'Result')
     return data_headers, data_list, source_path

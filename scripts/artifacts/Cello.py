@@ -1,13 +1,22 @@
 __artifacts_v2__ = {
     "get_Cello": {
         "name": "Cello - Google Drive",
-        "description": "Parses the items table of the Google Drive cello.db (dates read as Unix milliseconds, title, MIME type, quota bytes and flags). The Deleted column reports the trashed flag and the Offline column reports an offlineStatus property of 1; a file checked in as Offline File is the blob the item's content metadata names.",
-        "author": "Kevin Pagano (@stark4n6)",
+        "description": "Parses the items table of the Google Drive cello.db (dates read as Unix milliseconds, title, MIME type, quota bytes and flags). The Trashed column reports the trashed flag and the Offline column reports an offlineStatus property of 1; a file checked in as Offline File is the blob the item's content metadata names.",
+        "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2020-12-21",
-        "last_update_date": "2020-12-21",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Google Drive",
-        "notes": "",
+        "notes": "The Shared With Me Date, Modified By Me Date and Viewed By Me Date columns are the "
+                 "shared_with_me_date, modified_by_me_date and viewed_by_me_date columns of the items "
+                 "table; which account the name refers to is not recorded in the row and is not "
+                 "established here. The Trashed column is the trashed flag as stored; the table also "
+                 "has explicitly_trashed and trashed_date columns that this artifact does not report, "
+                 "and no row was flagged trashed on sharon_a14, samsunga53_a14 or pixel7a_a14 "
+                 "(20, 17 and 4 rows). Read as Unix milliseconds, the date values on those three "
+                 "images fall in 2022 to 2025; no source for the unit was found. A date stored as 0 "
+                 "or NULL is reported blank. A cello.db whose query fails is named in the run log "
+                 "and adds no rows.",
         "paths": ('*/com.google.android.apps.docs/app_cello/*/cello.db*',
                   '*/com.google.android.apps.docs/files/shiny_blobs/blobs/*'),
         "output_types": "standard",
@@ -30,7 +39,7 @@ __artifacts_v2__ = {
 import datetime
 import sqlite3
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, check_in_media
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, check_in_media, logfunc
 from scripts.artifacts.storagePathViews import unique_files
 
 
@@ -72,7 +81,9 @@ def get_Cello(context):
                 FROM items
             ''')
             rows = cursor.fetchall()
-        except sqlite3.Error:
+        except sqlite3.Error as ex:
+            logfunc(f'Cello - Google Drive: could not query items in '
+                    f'{context.get_relative_path(file_found)}: {ex}')
             rows = []
         db.close()
 
@@ -88,7 +99,7 @@ def get_Cello(context):
                               r[7], r[8], r[9], r[10], media_ref, context.get_relative_path(file_found)))
 
     data_headers = (('Created Date', 'datetime'), 'File Name', ('Modified Date', 'datetime'),
-                    ('Shared with User Date', 'datetime'), ('Modified by User Date', 'datetime'),
-                    ('Viewed by User Date', 'datetime'), 'Mime Type', 'Offline', 'Quota Size',
-                    'Folder', 'User is Owner', 'Deleted', ('Offline File', 'media'), 'Source File')
+                    ('Shared With Me Date', 'datetime'), ('Modified By Me Date', 'datetime'),
+                    ('Viewed By Me Date', 'datetime'), 'Mime Type', 'Offline', 'Quota Size',
+                    'Folder', 'User is Owner', 'Trashed', ('Offline File', 'media'), 'Source File')
     return data_headers, data_list, context.get_relative_path(source_path)

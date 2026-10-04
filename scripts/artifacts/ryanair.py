@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "ryanair_user_profile": {
         "name": "Ryanair - User Profile",
         "description": "Parses the myRyanair account profile stored by the Ryanair Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
@@ -20,7 +20,7 @@ __artifacts_v2__ = {
     "ryanair_bookings": {
         "name": "Ryanair - Bookings",
         "description": "Parses bookings stored by the Ryanair Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
@@ -38,7 +38,7 @@ __artifacts_v2__ = {
     "ryanair_flights": {
         "name": "Ryanair - Flights",
         "description": "Parses the flights of each booking stored by the Ryanair Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
@@ -58,7 +58,7 @@ __artifacts_v2__ = {
     "ryanair_passengers": {
         "name": "Ryanair - Passengers",
         "description": "Parses the passengers of each booking stored by the Ryanair Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
@@ -75,9 +75,9 @@ __artifacts_v2__ = {
     "ryanair_boarding_passes": {
         "name": "Ryanair - Boarding Passes",
         "description": "Decrypts and parses boarding passes stored by the Ryanair Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-10-04",
         "requirements": "PyCryptodome",
         "category": "Ryanair",
         "notes": "The boardingpass table stores each pass as an encrypted blob. The key is "
@@ -93,9 +93,9 @@ __artifacts_v2__ = {
                  "Barcode Data is the string the app encodes into the scannable barcode, "
                  "reported as stored. Departure Local and Boarding Time Local are the "
                  "departureTime and boardingTime members, which carry no UTC suffix, reported "
-                 "as stored text. Download Time is the downloadTime member; the module treats "
-                 "it as UTC when the string carries no offset, and whether it is UTC is not "
-                 "established. The tested "
+                 "as stored text. Download Time is the downloadTime member, also reported as "
+                 "stored text: its name carries no UTC suffix and no source for its time zone "
+                 "was found, so the module does not convert it. The tested "
                  "sample without boarding passes also had no key, so the key is not always "
                  "present. Field mapping was done against private samples provided by "
                  "Mattia; no sample data is recorded for them.",
@@ -109,7 +109,7 @@ __artifacts_v2__ = {
     "ryanair_recent_searches": {
         "name": "Ryanair - Recent Searches",
         "description": "Parses flight searches recorded by the Ryanair Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
@@ -131,7 +131,7 @@ __artifacts_v2__ = {
     "ryanair_recent_locations": {
         "name": "Ryanair - Recent Locations",
         "description": "Parses recently used stations and countries from the Ryanair Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
@@ -150,7 +150,7 @@ __artifacts_v2__ = {
     "ryanair_day_of_travel": {
         "name": "Ryanair - Day of Travel Content",
         "description": "Parses the day of travel journey content cached by the Ryanair Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
@@ -173,7 +173,7 @@ __artifacts_v2__ = {
     "ryanair_sessions": {
         "name": "Ryanair - Sessions",
         "description": "Parses session and remember me token claims from the Ryanair Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
@@ -617,7 +617,7 @@ def ryanair_boarding_passes(context):
             data_list.append((
                 _iso(payload.get('departureTimeUTC')),
                 _iso(payload.get('arrivalTimeUTC')),
-                _iso(payload.get('downloadTime')),
+                payload.get('downloadTime', ''),
                 payload.get('departureTime', ''),
                 payload.get('boardingTime', ''),
                 f"{payload.get('carrierCode', '')}{payload.get('flightNumber', '')}",
@@ -644,7 +644,7 @@ def ryanair_boarding_passes(context):
     data_headers = (
         ('Departure UTC', 'datetime'),
         ('Arrival UTC', 'datetime'),
-        ('Download Time', 'datetime'),
+        'Download Time (as stored)',
         'Departure Local (as stored)',
         'Boarding Time Local (as stored)',
         'Flight',

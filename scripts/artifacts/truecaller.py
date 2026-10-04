@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "truecaller_call_history": {
         "name": "Truecaller - Call History",
         "description": "Parses the call history recorded by the Truecaller Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
@@ -26,7 +26,7 @@ __artifacts_v2__ = {
     "truecaller_contacts": {
         "name": "Truecaller - Contacts",
         "description": "Parses the contacts cached by the Truecaller Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
@@ -50,7 +50,7 @@ __artifacts_v2__ = {
     "truecaller_im_users": {
         "name": "Truecaller - Messaging Users",
         "description": "Parses the messaging user directory cached by the Truecaller Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
@@ -71,7 +71,7 @@ __artifacts_v2__ = {
     "truecaller_sms_senders": {
         "name": "Truecaller - SMS Senders",
         "description": "Parses the SMS sender information cached by the Truecaller Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
@@ -91,7 +91,7 @@ __artifacts_v2__ = {
     "truecaller_call_cache": {
         "name": "Truecaller - Call Cache",
         "description": "Parses the call lookup cache of the Truecaller Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
@@ -109,22 +109,22 @@ __artifacts_v2__ = {
     "truecaller_settings": {
         "name": "Truecaller - Settings",
         "description": "Parses the app and account settings of the Truecaller Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Truecaller",
-        "notes": "Each named entry of tc.settings.xml, core_settings.xml and "
-                 "tc_premium_state_settings.xml is reported as stored, with its declared "
-                 "preference type; the members of a string-set entry are not reported. "
-                 "Values are not interpreted and absence of a key is not evidence a "
-                 "feature was unused. Every non-zero entry stored as a long is also "
-                 "rendered in the Timestamp column, read as Unix milliseconds at or above "
-                 "10**12 and as Unix seconds below it. The parser does not know which long "
-                 "entries are times, so a date shown for a counter or identifier is not a "
-                 "time; read the Timestamp column only for settings whose name shows they "
-                 "hold a time. Field mapping was done against a private sample provided "
-                 "by Mattia; no sample data is recorded for it.",
+        "notes": ("Each named entry of tc.settings.xml, core_settings.xml and tc_premium_state_settings.xml is reported as stored, with its "
+                  "declared preference type. For a string-set entry the value is its member strings, one per line, in the order the file "
+                  "lists them. Values are not interpreted and absence of a key is not evidence a feature was unused. The rows carry no "
+                  "timestamp column, because a preference file does not record which entries are times. For an entry stored as a long, "
+                  "the column Value Read as Unix Time (UTC) shows the number read as Unix milliseconds at or above 10**12 and as Unix "
+                  "seconds below it, as text, only when that reading falls between 2000-01-01 and 2099-12-31; it is blank for every "
+                  "other value and every other type. That column is a reading of the number, not an established time: an identifier "
+                  "or counter whose value falls in that range is shown the same way, so rely on it only for settings whose name shows "
+                  "they hold a time. The string-set and time-reading handling was exercised on a constructed preference file; no "
+                  "registered corpus holds the app. Field mapping was done against a private sample provided by Mattia; no sample "
+                  "data is recorded for it."),
         "paths": (
             '*/com.truecaller/shared_prefs/tc.settings.xml',
             '*/com.truecaller/shared_prefs/core_settings.xml',
@@ -203,6 +203,27 @@ def _by_magnitude(value):
     if not value:
         return ''
     return _from_ms(value) if abs(value) >= _MS_THRESHOLD else _from_seconds(value)
+
+
+# A long preference is read as a Unix time only when the reading falls in this range.
+_TIME_FLOOR = datetime(2000, 1, 1, tzinfo=timezone.utc)
+_TIME_CEILING = datetime(2100, 1, 1, tzinfo=timezone.utc)
+
+
+def _plausible_unix_time(value):
+    '''Text of value read as Unix seconds or milliseconds, when that lands in 2000 to 2099.
+
+    A preference file does not say which long entries are times, so the result is a
+    reading of the number and is returned as text, not as a datetime. Anything outside
+    the range (a small counter, a flag, a duration) returns ''.
+    '''
+    try:
+        moment = _by_magnitude(value)
+    except OverflowError:
+        return ''
+    if not moment or not _TIME_FLOOR <= moment < _TIME_CEILING:
+        return ''
+    return moment.strftime('%Y-%m-%d %H:%M:%S')
 
 
 def _files_named(context, *names):
@@ -432,24 +453,29 @@ def truecaller_settings(context):
             name = element.get('name')
             if not name:
                 continue
-            value = element.get('value') if element.get('value') is not None else element.text
-            timestamp = _by_magnitude(value) if element.tag == 'long' else ''
+            if element.tag == 'set':
+                # A string set keeps its members as child <string> elements.
+                value = '\n'.join(child.text or '' for child in element
+                                  if child.tag == 'string')
+            else:
+                value = element.get('value') if element.get('value') is not None else element.text
+            as_time = _plausible_unix_time(value) if element.tag == 'long' else ''
             data_list.append((
-                timestamp,
                 os.path.basename(source_path),
                 name,
                 element.tag,
                 value,
+                as_time,
                 relative_path,
             ))
             sources.append(source_path)
 
     data_headers = (
-        ('Timestamp', 'datetime'),
         'Preference File',
         'Setting',
         'Type',
         'Value (as stored)',
+        'Value Read as Unix Time (UTC)',
         'Source File',
     )
     return data_headers, data_list, '\n'.join(dict.fromkeys(sources))

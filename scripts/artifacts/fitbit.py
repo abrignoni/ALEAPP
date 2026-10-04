@@ -11,7 +11,7 @@ _PATHS_PASSIVE = ('*/com.fitbit.FitbitMobile/databases/passive_stats.db*',)
 
 
 def _art(name, desc, paths, icon='activity', outtypes='standard', notes='', updated='2026-01-12'):
-    return {"name": name, "description": desc, "author": "@AlexisBrignoni / @segumarc / Ganeshbs17",
+    return {"name": name, "description": desc, "author": "@AlexisBrignoni / @segumarc / Ganeshbs17, @AlexisBrignoni, Codex",
             "creation_date": "2021-04-23", "last_update_date": updated, "requirements": "none",
             "category": "Fitbit", "notes": notes, "paths": paths, "output_types": outtypes,
             "artifact_icon": icon}
@@ -53,8 +53,9 @@ __artifacts_v2__ = {
               "by itself a friend. No sample_data is recorded for this artifact, and only the first "
               "matching database is read."),
     "get_fitbit_user": _art("Fitbit - User Profile", "User profile (phone)", _PATHS_PHONE_SOCIAL, "user",
-        notes="Joined Date and Date of Birth show USER_PROFILE.JOINED_DATE and DATE_OF_BIRTH read as Unix "
-              "milliseconds and shown in UTC. Fitbit's Web API documents the matching profile fields, "
+        notes="Joined Date (UTC) and Date of Birth (UTC) show USER_PROFILE.JOINED_DATE and DATE_OF_BIRTH "
+              "read as Unix milliseconds and written out in UTC as plain text. The two columns are not "
+              "typed as date-times, so a report viewer does not shift them to another time zone. Fitbit's Web API documents the matching profile fields, "
               "memberSince and dateOfBirth, as dates "
               "(https://dev.fitbit.com/build/reference/web-api/user/get-profile/, read 2026-10-04). On "
               "the three registered images whose USER_PROFILE table held a row (kevin_pocox7_a15, "
@@ -79,10 +80,13 @@ __artifacts_v2__ = {
         notes="No sample_data is recorded for this artifact; its values are reported as stored, and only "
               "the first matching database is read."),
     "get_fitbit_wearos_activity": _art("Fitbit - Activity History (Wear OS)", "Activity/workout history (Wear OS)", _PATHS_USER,
-        notes="The column headed Duration (min) is ActivityExerciseEntity.duration divided by 60000, "
-              "which assumes the column holds milliseconds; that unit is not established. "
+        notes="ActivityExerciseEntity.duration is reported as stored under 'Duration (as stored)' and "
+              "again divided by 60000 under 'Duration / 60000', with any remainder dropped. The divisor "
+              "gives minutes only if the column holds milliseconds; the unit is not established, so the "
+              "divided column is not labelled as minutes. No registered image was found to hold this "
+              "database (20 zip images and 2 phone tar images listed on 2026-10-04). "
               "No sample_data is recorded for this artifact; its timestamps are read as Unix milliseconds "
-              "without a tested sample, and only the first matching database is read."),
+              "without a tested sample, and only the first matching database is read.", updated="2026-10-04"),
     "get_fitbit_wearos_daily": _art("Fitbit - Daily Activity (Wear OS)", "Daily sedentary summary (Wear OS)", _PATHS_USER,
         notes="SedentaryDataEntity.longestDuration is reported as stored; the database does not record "
               "its unit, so it is not labelled as minutes. The two totalMinutes* columns are "
@@ -96,10 +100,11 @@ __artifacts_v2__ = {
         notes="No sample_data is recorded for this artifact; its timestamps are read as Unix milliseconds "
               "without a tested sample, and only the first matching database is read."),
     "get_fitbit_wearos_workouts": _art("Fitbit - Workouts (Wear OS)", "Workout summaries (Wear OS)", _PATHS_PASSIVE,
-        notes="The column headed Start Time is ExerciseSummaryEntity.time; what that time marks is not "
-              "established. "
+        notes="The column headed Time is ExerciseSummaryEntity.time; what that time marks is not "
+              "established. No registered image was found to hold this database (20 zip images and 2 "
+              "phone tar images listed on 2026-10-04). "
               "No sample_data is recorded for this artifact; its timestamps are read as Unix milliseconds "
-              "without a tested sample, and only the first matching database is read."),
+              "without a tested sample, and only the first matching database is read.", updated="2026-10-04"),
     "get_fitbit_wearos_gps": _art("Fitbit - GPS Trackpoints (Wear OS)", "GPS trackpoints (Wear OS)", _PATHS_PASSIVE, "map-pin", "all",
         notes="No sample_data is recorded for this artifact; its timestamps are read as Unix milliseconds "
               "without a tested sample, and only the first matching database is read."),
@@ -151,6 +156,12 @@ def _ms_to_utc(value):
         return datetime.datetime.fromtimestamp(int(value) / 1000, datetime.timezone.utc)
     except (ValueError, OverflowError, OSError, TypeError):
         return ''
+
+
+def _ms_to_utc_text(value):
+    # A stored date read as Unix milliseconds, shown as plain text and not typed as a date-time.
+    moment = _ms_to_utc(value)
+    return moment.strftime('%Y-%m-%d %H:%M:%S') if moment else ''
 
 
 def _sec_to_utc(value):
@@ -337,11 +348,11 @@ def get_fitbit_user(context):
             COACH, NULL, NULL
             FROM USER_PROFILE''')
     rel = context.get_relative_path(src)
-    data_list = [(_ms_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8], _ms_to_utc(r[9]),
-                  _ms_to_utc(r[10]), r[15], r[16], r[11], r[12], r[13], r[14], rel) for r in rows]
+    data_list = [(_ms_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8], _ms_to_utc_text(r[9]),
+                  _ms_to_utc_text(r[10]), r[15], r[16], r[11], r[12], r[13], r[14], rel) for r in rows]
     data_headers = (('Last Updated', 'datetime'), 'Display Name', 'Full Name', 'About Me', 'Avatar URL',
-                    'Cover Photo URL', 'City', 'State', 'Country', ('Joined Date', 'datetime'),
-                    ('Date of Birth', 'datetime'), 'Timezone', 'Timezone Offset', 'Height', 'Weight',
+                    'Cover Photo URL', 'City', 'State', 'Country', 'Joined Date (UTC)',
+                    'Date of Birth (UTC)', 'Timezone', 'Timezone Offset', 'Height', 'Weight',
                     'Gender', 'Coach', 'Source File')
     return data_headers, data_list, src
 
@@ -375,11 +386,12 @@ def get_fitbit_wearos_profile(context):
 def get_fitbit_wearos_activity(context):
     files_found = context.get_files_found()
     src = _find(files_found, 'user.db')
-    rows = _run(src, '''SELECT startTime, name, duration/1000/60, distance, distanceUnit, steps,
+    rows = _run(src, '''SELECT startTime, name, duration, duration/60000, distance, distanceUnit, steps,
         calories, averageHeartRate, elevationGain, activeZoneMinutes, logId FROM ActivityExerciseEntity
         ORDER BY startTime DESC''')
     data_list = [(_ms_to_utc(r[0]),) + tuple(r[1:]) for r in rows]
-    data_headers = (('Start Time', 'datetime'), 'Activity Name', 'Duration (min)', 'Distance', 'Unit',
+    data_headers = (('Start Time', 'datetime'), 'Activity Name', 'Duration (as stored)', 'Duration / 60000',
+                    'Distance', 'Unit',
                     'Steps', 'Calories', 'Avg HR', 'Elevation', 'AZM', 'Log ID')
     return data_headers, data_list, src
 
@@ -436,7 +448,7 @@ def get_fitbit_wearos_workouts(context):
     rows = _run(src, '''SELECT time, sessionId, exerciseTypeId, totalDistanceMm/1000000.0, steps,
         caloriesBurned, avgHeartRate, elevationGainFt FROM ExerciseSummaryEntity ORDER BY time DESC''')
     data_list = [(_ms_to_utc(r[0]),) + tuple(r[1:]) for r in rows]
-    data_headers = (('Start Time', 'datetime'), 'Session ID', 'Activity Type ID', 'Distance (km)',
+    data_headers = (('Time', 'datetime'), 'Session ID', 'Activity Type ID', 'Distance (km)',
                     'Steps', 'Calories', 'Avg HR', 'Elevation (ft)')
     return data_headers, data_list, src
 

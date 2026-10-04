@@ -3,7 +3,7 @@ __artifacts_v2__ = {
         "name": "Etsy - Account and Device",
         "description": "Parses the account fields and the app and device identifiers "
                        "stored by the Etsy Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
@@ -47,16 +47,16 @@ __artifacts_v2__ = {
         "name": "Etsy - Recently Viewed Listings",
         "description": "Parses listings the Etsy Android app recorded as recently viewed, "
                        "including views recovered from the write-ahead log.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Etsy",
         "notes": "One row per listing id and timestamp pair read. The live table keeps one "
                  "row per listing, so a listing owns more than one row here when earlier "
-                 "timestamp values for it are recovered. The column is headed View Time "
-                 "after the table name, recentlyViewedListings; what event sets it was not "
-                 "established. timestamp is Unix milliseconds. The store is read three "
+                 "timestamp values for it are recovered. The Timestamp column is the "
+                 "table's timestamp column, read as Unix milliseconds; what event sets it "
+                 "was not established. The store is read three "
                  "ways and each row carries the view it came from. Live is the committed "
                  "state with the write-ahead log applied, Pre-checkpoint is the main file "
                  "read with immutable=1 so the log is ignored, and Recovered is a row read "
@@ -73,9 +73,10 @@ __artifacts_v2__ = {
                  "the app's image cache names its entries. Matching is done inside one app "
                  "data directory so a second directory cannot supply another's image. On "
                  "the tested device the variants that matched were il_794xN, il_680x540, "
-                 "il_570xN and il_fullxfull. The largest matched file is the one rendered, "
-                 "and only when its leading bytes are JPEG, PNG or GIF; Cached Renditions "
-                 "gives the number of matched files. The visible column was 1 on "
+                 "il_570xN and il_fullxfull. The matched file rendered is the largest one "
+                 "whose leading bytes are JPEG, PNG or GIF; a matched file of another type, "
+                 "WEBP included, is not rendered. Cached Renditions gives the number of "
+                 "matched files. The visible column was 1 on "
                  "every row on the tested device and is reported as stored rather than "
                  "dropped, because a differing value would be a property of the row worth "
                  "seeing. Field mapping was done against a private sample provided by "
@@ -91,9 +92,9 @@ __artifacts_v2__ = {
         "name": "Etsy - Listing Interactions",
         "description": "Parses the listingInteractions records of the Etsy Android "
                        "app, including rows recovered from the write-ahead log.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Etsy",
         "notes": "timestamp is Unix milliseconds. Interaction type, listing source and "
@@ -102,16 +103,15 @@ __artifacts_v2__ = {
                  "read three ways and each row carries the view it came from, as described "
                  "on Etsy - Recently Viewed Listings. The encoded_data column, where "
                  "populated, begins with a number and a ten digit value before a base64 "
-                 "section. The number is reported as stored. The ten digit value is shown "
-                 "as a date and time, read as Unix seconds; that reading is not sourced "
-                 "and rests on the offsets described below. On the tested device that "
-                 "leading "
-                 "number matched a listing id in the recently viewed store on 4 of the 22 "
+                 "section. Both are reported as stored, the ten digit value under Encoded "
+                 "Data Second Value; what either holds is not sourced. On the tested "
+                 "device the leading number matched a listing id in the recently viewed store on 4 of the 22 "
                  "rows that carry it, and in each of those four the interaction preceded "
                  "the recorded view by between 6 and 89 seconds. That is an observation "
-                 "about one device, not a definition of the field. The ten digit value ran "
-                 "between 97 and 129 seconds earlier than the row's own timestamp on every "
-                 "row that carried it. The base64 section is not reproduced; it is in the "
+                 "about one device, not a definition of the field. Read as Unix seconds, "
+                 "the ten digit value ran between 97 and 129 seconds earlier than the "
+                 "row's own timestamp on every row that carried it on that device; it is "
+                 "not converted here because that reading is not sourced. The base64 section is not reproduced; it is in the "
                  "encoded_data column of the source table. Field mapping was done against "
                  "a private sample provided by Mattia; no sample data is recorded for it.",
         "paths": ('*/com.etsy.android/databases/ListingInteractions*',),
@@ -121,7 +121,7 @@ __artifacts_v2__ = {
     "etsy_ad_impressions": {
         "name": "Etsy - Ad Impressions and Clicks",
         "description": "Parses the adImpressions and adClicks tables of the Etsy Android app's AdImpressions database. No row was present on the tested device.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
@@ -147,7 +147,7 @@ __artifacts_v2__ = {
         "name": "Etsy - Application Logs",
         "description": "Parses the records of the logs table of the Etsy Android app's etsy-logs database, including records "
                        "recovered from the write-ahead log.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
@@ -176,9 +176,9 @@ __artifacts_v2__ = {
         "name": "Etsy - Network Breadcrumbs",
         "description": "Parses the cached request breadcrumbs the Etsy Android app's crash "
                        "reporter held when the file was last written.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Etsy",
         "notes": "The breadcrumb cache is written by the Sentry SDK the app embeds and is "
@@ -188,8 +188,8 @@ __artifacts_v2__ = {
                  "fixed size buffer, so JSON objects are located within it rather than the "
                  "file being parsed as a whole document. Start and end times are Unix "
                  "milliseconds and the duration is their difference. Request Time is the start "
-                 "time; when a breadcrumb carries no start time its own timestamp value is shown "
-                 "as stored. A JSON object with no data map is not reported. Each breadcrumb "
+                 "time and is blank when a breadcrumb carries none. Breadcrumb Timestamp is the "
+                 "breadcrumb's own timestamp value as stored, as text; it is not converted. A JSON object with no data map is not reported. Each breadcrumb "
                  "also carries the full URL and, on some rows, the request's query string; "
                  "neither is reproduced here because the host and path columns already carry the "
                  "request and on the tested device the query string held feature flags. Both "
@@ -203,7 +203,7 @@ __artifacts_v2__ = {
     "etsy_image_caches": {
         "name": "Etsy - Image Cache Summary",
         "description": "Summarises the image caches the Etsy Android app keeps on disk.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
@@ -829,11 +829,12 @@ def etsy_recently_viewed(context):
             for key, values, view in _merge(live, pre, recovered):
                 cached = _cached_renditions(index, container, values[2])
                 media = ''
-                if cached:
-                    label, mime, extension = _sniff_image(_read_head(cached[0]))
+                for candidate in cached:
+                    label, mime, extension = _sniff_image(_read_head(candidate))
                     if label in _RENDERABLE:
-                        media = check_in_media(cached[0], os.path.basename(cached[0]),
+                        media = check_in_media(candidate, os.path.basename(candidate),
                                                force_type=mime, force_extension=extension)
+                        break
                 data_list.append((
                     _ms(values[8]),
                     values[0],
@@ -851,7 +852,7 @@ def etsy_recently_viewed(context):
                 ))
 
     data_headers = (
-        ('View Time', 'datetime'),
+        ('Timestamp', 'datetime'),
         'Listing ID',
         'Title',
         'Original Price',
@@ -915,7 +916,7 @@ def etsy_listing_interactions(context):
                     values[2] or '',
                     values[3] if values[3] is not None else '',
                     match.group(1) if match else '',
-                    _seconds(match.group(2)) if match else '',
+                    match.group(2) if match else '',
                     values[1] or '',
                     view,
                     relative,
@@ -928,7 +929,7 @@ def etsy_listing_interactions(context):
         'Display Location (as stored)',
         'Position (as stored)',
         'Encoded Data Leading Value (as stored)',
-        ('Encoded Data Time (as stored)', 'datetime'),
+        'Encoded Data Second Value (as stored)',
         'Logging Key',
         'Source View',
         'Source File',
@@ -1134,11 +1135,13 @@ def etsy_network_breadcrumbs(context):
                     continue
                 start = payload.get('http.start_timestamp')
                 end = payload.get('http.end_timestamp')
+                stamp = document.get('timestamp')
                 duration = ''
                 if isinstance(start, int) and isinstance(end, int):
                     duration = end - start
                 data_list.append((
-                    _ms(start) or document.get('timestamp', ''),
+                    _ms(start),
+                    str(stamp) if stamp is not None else '',
                     payload.get('method', ''),
                     payload.get('host', ''),
                     payload.get('path', ''),
@@ -1150,6 +1153,7 @@ def etsy_network_breadcrumbs(context):
 
     data_headers = (
         ('Request Time', 'datetime'),
+        'Breadcrumb Timestamp (as stored)',
         'Method',
         'Host',
         'Path',

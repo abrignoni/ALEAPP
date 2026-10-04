@@ -2,13 +2,13 @@ __artifacts_v2__ = {
     "revolut_payment_recipients": {
         "name": "Revolut - Recent Payment Recipients",
         "description": "Parses the recipients listed in the Revolut Android app's recent payment recipients store, with "
-                       "the type of each recipient and the item it links to.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+                       "the type of each recipient and the item identifier stored beside it.",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Revolut",
-        "notes": "One row per row of the payments_recent_v2 table, the app's recent payment recipients list. This is a lead sheet, not a transaction history: the payments themselves are not in this store and the app's transaction and chat databases were encrypted on the tested samples and no key for them was found in those extractions, so no amount, currency, direction or payment date is available. What each row does carry is a recipient and an item identifier. Transaction ID is the itemId column as stored; it was distinct on each of the 17 rows of the tested sample. What the identifier refers to is not established beyond the Item Type stored beside it. Recipient Type is reported as stored and was BANK, CONTACT_CODE or CRYPTO on the tested device: a contact code row carries a readable handle naming a counterparty, while the others carry an opaque identifier, so of the 17 rows there 3 named a counterparty and 14 did not, and 11 of the 17 were crypto. Unread Counter Last Synced is Unix milliseconds and is the unreadSyncTimestamp column; what it records is not established and it is not the time of a payment record in this store. It was zero on 14 of the 17 rows, and the rows are ordered by recipient type and then recipient rather than by it so that they are not presented as though ordered by when a payment happened. Unread Counter was zero on every row of the tested device, so it is carried but was never exercised there. A row records that the app listed the recipient, which is not the same as a payment having been made. Field mapping was done against three private samples provided by Mattia; only one of the three carried this store, and no sample data is recorded for them.",
+        "notes": "One row per row of the payments_recent_v2 table, the app's recent payment recipients list. This is a lead sheet, not a transaction history: the payments themselves are not in this store and the app's transaction and chat databases were encrypted on the tested samples and no key for them was found in those extractions, so no amount, currency, direction or payment date is available. What each row does carry is a recipient and an item identifier. Item ID is the itemId column as stored; it was distinct on each of the 17 rows of the tested sample. What the identifier refers to is not established beyond the Item Type stored beside it. Recipient Type is reported as stored and was BANK, CONTACT_CODE or CRYPTO on the tested device: a contact code row carries a readable handle naming a counterparty, while the others carry an opaque identifier, so of the 17 rows there 3 named a counterparty and 14 did not, and 11 of the 17 were crypto. Unread Sync Timestamp is the unreadSyncTimestamp column, read as Unix milliseconds and shown in UTC; what it records is not established and no source for it was found, and it is not the time of a payment record in this store. It was zero on 14 of the 17 rows, and the rows are ordered by recipient type and then recipient rather than by it so that they are not presented as though ordered by when a payment happened. Unread Counter was zero on every row of the tested device, so it is carried but was never exercised there. A row records that the app listed the recipient, which is not the same as a payment having been made. Field mapping was done against three private samples provided by Mattia; only one of the three carried this store, and no sample data is recorded for them.",
         "paths": (
             '*/com.revolut.revolut/databases/payments_recent_db*',
         ),
@@ -20,9 +20,9 @@ __artifacts_v2__ = {
         "description": "Parses the configuration last modified time and the newest rate cache "
                        "time stored by the Revolut Android app, with row counts of its rate, help "
                        "and device caches.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Revolut",
         "notes": "One row per app data directory. Every timestamp is Unix milliseconds. The "
@@ -32,14 +32,14 @@ __artifacts_v2__ = {
                  "app's help articles with a language value on each row, and the device "
                  "cache holds a catalogue of device models that ran to tens of thousands of "
                  "rows on the tested devices. The largest time_stamp in the rate cache is "
-                 "reported as Rates Last Fetched; that it is the time of a fetch is taken "
-                 "from the table's naming and was not sourced. No time is reported for the "
+                 "reported as Newest Rate Time Stamp; what the app records in that column "
+                 "is not established and no source for it was found. No time is reported for the "
                  "help or device caches. Help Language is the language recorded on one help "
                  "row; the module does not check whether the rows hold more than one "
                  "language. The app's chat "
-                 "and main data stores are encrypted with no key recoverable from the "
-                 "extraction, so no message or transaction content is reported by this "
-                 "module. Field mapping was done against three private samples provided by "
+                 "and main data stores were encrypted on the tested samples and no key for "
+                 "them was found in those extractions, so no message or transaction content "
+                 "is reported by this module. Field mapping was done against three private samples provided by "
                  "Mattia; no sample data is recorded for them.",
         "paths": (
             '*/com.revolut.revolut/databases/rates_database*',
@@ -187,8 +187,8 @@ def revolut_payment_recipients(context):
         'Recipient',
         'Recipient Type (as stored)',
         'Item Type (as stored)',
-        'Transaction ID',
-        ('Unread Counter Last Synced', 'datetime'),
+        'Item ID',
+        ('Unread Sync Timestamp', 'datetime'),
         'Unread Counter',
         'Source File',
     )
@@ -243,7 +243,7 @@ def revolut_app_state(context):
 
     data_headers = (
         ('Configuration Last Modified', 'datetime'),
-        ('Rates Last Fetched', 'datetime'),
+        ('Newest Rate Time Stamp', 'datetime'),
         'Cached Rate Rows',
         'Cached Help Articles',
         'Help Language',

@@ -4,9 +4,9 @@ __artifacts_v2__ = {
         "description": "Parses notes and to-dos from the Orgzly Revived Android app "
                        "(com.orgzlyrevived). The com.orgzly package is also matched "
                        "and was not tested.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-03",
-        "last_update_date": "2026-09-03",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Orgzly",
         "sample_data": {
@@ -24,13 +24,27 @@ __artifacts_v2__ = {
                  "established. The Notebook artifact records where each notebook came from. "
                  "State is the to-do keyword as stored, TODO, NEXT and DONE on the tested "
                  "device, and is blank on a plain note; the keyword set is configurable, so any "
-                 "value is reported as stored. Scheduled and Deadline are the Org timestamps the "
-                 "note carries, given both as the raw Org string (which preserves any repeater "
-                 "such as '.+2d') and as the stored millisecond value shown in UTC. The app "
-                 "stores that value from a calendar built from the Org string "
-                 "(OrgTimestampMapper.kt line 33 at orgzly-revived/orgzly-android-revived tag "
-                 "v1.23.0); the Org string carries no time zone and the zone of that calendar "
-                 "was not established, so read the date from the Org string. Level and Parent "
+                 "value is reported as stored. Scheduled (Org string) and Deadline (Org string) are "
+                 "the Org timestamps the note carries, as stored, which preserves any repeater "
+                 "such as '.+2d'. An Org timestamp is a date, or a date and time, with no time "
+                 "zone. Scheduled Timestamp and Deadline Timestamp are the timestamp column of "
+                 "org_timestamps, a millisecond value reported as the stored number and not "
+                 "converted to a date. The app fills it from a calendar built from the Org "
+                 "string: OrgTimestampMapper.kt line 33 "
+                 "(https://github.com/orgzly-revived/orgzly-android-revived/blob/"
+                 "2b56fe4c1a0c9426a1bb1313b4c757a8e66a48d0/app/src/main/java/com/orgzly/android/"
+                 "db/mappers/OrgTimestampMapper.kt#L33, tag v1.23.0) takes the calendar's time "
+                 "in milliseconds, and org-java 1.3.6, the version that tag builds with, creates "
+                 "that calendar with Calendar.getInstance() "
+                 "(https://github.com/orgzly-revived/org-java/blob/"
+                 "71960c30ccd0e1a0ec24cee9e7530d6338407097/src/main/java/com/orgzly/org/datetime/"
+                 "OrgDateTime.java#L234), which uses the default time zone of the device at the "
+                 "moment the row was written. The database does not record that zone. On "
+                 "emu_a15_oss_v7 the three stored values (two scheduled, one deadline) each read "
+                 "as UTC came out 5 hours after the date and time in the Org string, and the two "
+                 "date-only entries read 05:00. On a device ahead of UTC a date-only entry read "
+                 "as UTC would fall on the previous day; that case was not on the tested device. "
+                 "Read the date from the Org string. Level and Parent "
                  "Note ID describe the "
                  "note's place in the outline, so a reply or sub-task can be tied to its parent. "
                  "The note_ancestors table holds the same tree as a closure table and is not "
@@ -48,7 +62,7 @@ __artifacts_v2__ = {
     "orgzly_notebooks": {
         "name": "Orgzly - Notebooks",
         "description": "Parses notebooks and their sync state from the Orgzly Revived Android app.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-03",
         "last_update_date": "2026-09-03",
         "requirements": "none",
@@ -100,6 +114,10 @@ def _ms(value):
         return ''
 
 
+def _stored(value):
+    return '' if value is None else str(value)
+
+
 def _yesno(value):
     if value in (1, '1'):
         return 'Yes'
@@ -129,7 +147,7 @@ def orgzly_notes(context):
         for r in records:
             data_list.append((
                 r[1] or '', _ms(r[0]), r[2] or '', r[3] or '', r[4] or '',
-                r[6] or '', _ms(r[8]), r[7] or '', _ms(r[10]), r[9] or '',
+                r[6] or '', r[7] or '', _stored(r[8]), r[9] or '', _stored(r[10]),
                 r[5] or '', r[11], r[12] or '', r[13],
                 context.get_relative_path(db_path)))
         if records and db_path not in sources:
@@ -137,8 +155,8 @@ def orgzly_notes(context):
 
     data_headers = (
         'Title', ('Created', 'datetime'), 'State (as stored)', 'Tags', 'Priority',
-        'Notebook', ('Scheduled', 'datetime'), 'Scheduled (Org string)',
-        ('Deadline', 'datetime'), 'Deadline (Org string)', 'Content', 'Level',
+        'Notebook', 'Scheduled (Org string)', 'Scheduled Timestamp (ms, as stored)',
+        'Deadline (Org string)', 'Deadline Timestamp (ms, as stored)', 'Content', 'Level',
         'Parent Note ID', 'Note ID', 'Source File')
     return data_headers, data_list, '\n'.join(sources)
 

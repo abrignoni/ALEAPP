@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_firefoxRecentlyClosedTabs": {
         "name": "Firefox - Recently Closed Tabs",
         "description": "Parses Firefox recently closed tabs (the created_at time as stored, title and URL) from the recently_closed_tabs database.",
-        "author": "Kevin Pagano (@stark4n6)",
+        "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2022-01-12",
         "last_update_date": "2026-10-04",
         "requirements": "none",
@@ -18,7 +18,7 @@ __artifacts_v2__ = {
             "documented there as the last time the tab was selected "
             "(https://github.com/mozilla-mobile/firefox-android/blob/fe8a71cd70ad5674abe1824fe11dc78372b736c2/"
             "android-components/components/browser/state/src/main/java/mozilla/components/browser/"
-            "state/state/recover/TabState.kt#L31). That commit is from June 2024; other app "
+            "state/state/recover/RecoverableTab.kt#L31). That commit is from June 2024; other app "
             "versions were not read. That source does not describe the value as the time the tab was closed "
             "or opened. On pixel7a_a14 the one row's Created At is 100.7 seconds after the only "
             "history visit places.sqlite holds for the same URL; one row cannot show what the "

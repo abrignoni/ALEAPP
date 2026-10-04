@@ -2,10 +2,10 @@
 __artifacts_v2__ = {
     "get_discreteNative": {
         "name": "DiscreteNative",
-        "description": "Parses the last discrete app-ops entry recorded for each package and operation in each discrete file of the system appops discrete records: timestamp, package, the at attribute as stored, the operation (named for ops 1, 26 and 27, otherwise the stored number) and the nd value in seconds.",
-        "author": "@abrignoni",
+        "description": "Parses the discrete app-ops entries in the files of the system appops discrete folder, one row per entry: the nt time, package, the at attribute as stored, the operation (named for ops 1, 26 and 27, otherwise the stored number) and the nd value in seconds.",
+        "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2022-01-19",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Privacy Dashboard",
         "notes": "Op 1 is shown as Fine Location, op 26 as Camera and op 27 as Microphone; AOSP "
@@ -19,21 +19,25 @@ __artifacts_v2__ = {
                  "The at, nt and nd attributes are defined in DiscreteRegistry.java at tag "
                  "android-12.0.0_r1 "
                  "(https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-12.0.0_r1/services/core/java/com/android/server/appop/DiscreteRegistry.java#162). "
-                 "The module reads nt as Unix milliseconds and divides nd by 1000 to report "
-                 "seconds. Only the last entry under each package and op element of a file is "
-                 "reported.",
+                 "That file names at the attribution tag, nt the note time and nd the note "
+                 "duration, and writes nd only when the duration is not -1. The module reads nt "
+                 "as Unix milliseconds and divides nd by 1000 to report seconds. Each entry "
+                 "element is one row; an op element that holds no entry gives no row (one such "
+                 "element on russell_pixel6a_a13, none on the other seven tested images). The "
+                 "Attribution Tag (at) column is blank where the entry's parent element has no at "
+                 "attribute. The us, f, af and ci attributes of an entry are not reported.",
         "paths": ('*/system/appops/discrete/**',),
         "output_types": "standard",
         "artifact_icon": "file",
         "sample_data": {
-            "anne_a15": "Android 15 | 1886 rows",
-            "kevin_pocox7_a15": "Android 15 | 1720 rows",
-            "pixel7a_a14": "Android 14 | 1948 rows",
-            "samsunga53_a14": "Android 14 | 13 rows",
-            "samsungs20_a13": "Android 13 | 41 rows",
-            "sharon_a14": "Android 14 | 281 rows",
-            "russell_pixel6a_a13": "Android 13 | 41 rows",
-            "userb2_a13": "Android 13 | 13 rows",
+            "anne_a15": "Android 15 | 6098 rows",
+            "kevin_pocox7_a15": "Android 15 | 3939 rows",
+            "pixel7a_a14": "Android 14 | 12214 rows",
+            "samsunga53_a14": "Android 14 | 16 rows",
+            "samsungs20_a13": "Android 13 | 296 rows",
+            "sharon_a14": "Android 14 | 662 rows",
+            "russell_pixel6a_a13": "Android 13 | 6777 rows",
+            "userb2_a13": "Android 13 | 20 rows",
         },
     }
 }
@@ -107,9 +111,6 @@ def get_discreteNative(context):
                 ptagattrib = subelem1.attrib["pn"]
                 for subelem2 in subelem1:
                     otagattrib = subelem2.attrib['op']
-                    ntattrib = ''
-                    ndattrib = ''
-                    atagattrib = ''
                     for subelem3 in subelem2:
                         atagattrib = subelem3.attrib.get('at', '')
                         for subelem4 in subelem3:
@@ -120,7 +121,7 @@ def get_discreteNative(context):
                                 ndattrib = ''
                             else:
                                 ndattrib = round(int(ndattrib) / 1000, 1)
-                    data_list.append((timestampcalc(ntattrib), ptagattrib, atagattrib, oplist(otagattrib), ndattrib, filename))
+                            data_list.append((timestampcalc(ntattrib), ptagattrib, atagattrib, oplist(otagattrib), ndattrib, filename))
 
-    data_headers = (('Timestamp', 'datetime'), 'Bundle', 'Module', 'Operation', 'Usage in Seconds', 'Source Filename')
+    data_headers = (('Timestamp', 'datetime'), 'Bundle', 'Attribution Tag (at)', 'Operation', 'Note Duration in Seconds (nd)', 'Source Filename')
     return data_headers, data_list, '\n'.join(source_paths)

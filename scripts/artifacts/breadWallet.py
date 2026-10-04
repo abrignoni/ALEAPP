@@ -4,9 +4,9 @@ __artifacts_v2__ = {
         "description": "Transaction metadata records held in the BRD key-value store, giving the "
                        "transaction hash each record is keyed on and the thetime value, read as "
                        "Unix milliseconds, of the lowest and highest version of each record",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "BRD (BreadWallet)",
         "notes": "Read from the kvStoreTable of databases/platform.db, taking the rows whose key "
@@ -26,10 +26,21 @@ __artifacts_v2__ = {
                  "transaction amount, the counterparty, any user memo and the comment fields a "
                  "TxMetaData record can hold are not recovered. What this artifact establishes is "
                  "that a metadata record exists for that transaction hash, with the thetime values "
-                 "of its versions.\nThe store holds more than one version of a key, so First "
-                 "Written and Last Written are the thetime values, read as Unix milliseconds, of "
-                 "the lowest and highest version of that key and Version Count is how many "
-                 "are present.\n"
+                 "of its versions.\nThe store holds more than one version of a key, so Lowest "
+                 "Version Time (thetime) and Highest Version Time (thetime) are the thetime "
+                 "values, read as Unix milliseconds, of the lowest and highest version of that "
+                 "key and Version Count is how many are present. Value Size (bytes) is the "
+                 "length of the stored value of the highest version; the artifact does not test "
+                 "whether the value is encrypted.\n"
+                 "In the app's published source the store sets thetime from "
+                 "System.currentTimeMillis() when it writes a row locally, and passes the "
+                 "remote record's time when it stores a value fetched during sync, so thetime "
+                 "is not in every case the time the row was written on the device. Reference: "
+                 "https://github.com/breadwallet/breadwallet-android/blob/dfbbfbfc92dae054e47f245e1ce2ac8a39e65e57/"
+                 "app/src/main/java/com/platform/kvstore/ReplicatedKVStore.java#L265-L279 and "
+                 "#L679 in the same file. Which app version wrote the tested store was not "
+                 "compared with that commit. On galaxys10_a10 all 38 thetime values read as "
+                 "milliseconds fall on 2021-04-18.\n"
                  "The whole of platform.db lived in its write-ahead log on the tested corpus: "
                  "read without the WAL the table has no rows at all. The sidecars are in the "
                  "paths above and must travel with the database.",
@@ -42,11 +53,11 @@ __artifacts_v2__ = {
     },
     "breadwallet_kv_store": {
         "name": "BRD (BreadWallet) - Key-Value Store",
-        "description": "Records in the BRD key-value store, with the key, the version, when it "
-                       "was written and the size of the stored value",
-        "author": "@AlexisBrignoni, Claude",
+        "description": "Records in the BRD key-value store, with the key, the version, the "
+                       "thetime value and the size of the stored value",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "BRD (BreadWallet)",
         "notes": "Read from the kvStoreTable of databases/platform.db, without filtering, so the "
@@ -55,7 +66,11 @@ __artifacts_v2__ = {
                  "The values are treated as encrypted, on the basis given in the BRD - Transaction "
                  "Metadata Records notes, and are not decoded; only the size is reported. The keys "
                  "are stored in the clear and are what this artifact is for: they are reported as "
-                 "stored, with the thetime value of each row read as Unix milliseconds.\n"
+                 "stored, with the thetime value of each row read as Unix milliseconds in the "
+                 "Time (thetime) column. What thetime can hold is described, with its source, "
+                 "in the BRD - Transaction Metadata Records notes. Value Size (bytes) is the "
+                 "length of the stored value; the artifact does not test whether it is "
+                 "encrypted.\n"
                  "Keys observed on the tested corpus were wallet-info, asset-index, the "
                  "plat-vuex-* application state keys, and the txn2- transaction metadata keys. "
                  "The meaning of the wallet-info and asset-index keys beyond their names is not "
@@ -77,7 +92,7 @@ __artifacts_v2__ = {
         "description": "The userId value and application state held in shared "
                        "preferences, including the recovery phrase written flag and the wallet "
                        "reward identifier",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
         "requirements": "none",
@@ -109,9 +124,9 @@ __artifacts_v2__ = {
         "name": "BRD (BreadWallet) - Cached Exchange Rates",
         "description": "Exchange rates the BRD app had cached, giving the iso, code, rate and name "
                        "stored on each row",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "BRD (BreadWallet)",
         "notes": "Read from currencyTable_v2 in databases/breadwallet.db.\n"
@@ -119,8 +134,13 @@ __artifacts_v2__ = {
                  "asset and code as the fiat currency, so that the rate is the value of one unit "
                  "of the asset expressed in that currency, is consistent with the stored values: "
                  "the BTC/USD row holds 55506 and the BCH/USD row 913.48, which are of the right "
-                 "order for the dates on the records in the app's key-value store. The columns "
-                 "are named on that reading and the raw column names are given alongside.\n"
+                 "order for the dates on the records in the app's key-value store. The app's "
+                 "published source comments the iso column as 'iso for the currency of exchange "
+                 "(BTC, BCH, ETH)'. Reference: "
+                 "https://github.com/breadwallet/breadwallet-android/blob/dfbbfbfc92dae054e47f245e1ce2ac8a39e65e57/"
+                 "app-core/src/main/java/com/breadwallet/tools/sqlite/BRSQLiteHelper.java#L81 "
+                 "The columns are reported under the stored column names (iso, code, rate, "
+                 "name) and the reading is not applied to the headers.\n"
                  "This table carries no timestamp of its own, so when these rates were fetched is "
                  "not recorded here. They are the rates the client had cached, which is not "
                  "evidence of a transaction at that rate.",
@@ -180,13 +200,13 @@ def breadwallet_transaction_metadata(context):
             ))
 
     data_headers = (
-        ('First Written', 'datetime'),
+        ('Lowest Version Time (thetime)', 'datetime'),
         'Transaction Hash',
-        ('Last Written', 'datetime'),
+        ('Highest Version Time (thetime)', 'datetime'),
         'Version Count',
         'Latest Version',
         'Deleted',
-        'Encrypted Value Size',
+        'Value Size (bytes)',
         'Key (as stored)',
     )
     return data_headers, data_list, source_path
@@ -211,12 +231,12 @@ def breadwallet_kv_store(context):
             ))
 
     data_headers = (
-        ('Written', 'datetime'),
+        ('Time (thetime)', 'datetime'),
         'Key',
         'Version',
         'Remote Version',
         'Deleted',
-        'Encrypted Value Size',
+        'Value Size (bytes)',
     )
     return data_headers, data_list, source_path
 
@@ -266,9 +286,9 @@ def breadwallet_exchange_rates(context):
             ))
 
     data_headers = (
-        'Asset (iso column)',
-        'Currency (code column)',
-        'Rate',
-        'Name (name column)',
+        'iso',
+        'code',
+        'rate',
+        'name',
     )
     return data_headers, data_list, source_path

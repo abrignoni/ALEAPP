@@ -1,13 +1,19 @@
 __artifacts_v2__ = {
     "get_googleDuo": {
         "name": "Google Duo - Call History",
-        "description": "Rows of the activity_history table in tachyon.db (Google Duo / Meet). Activity Type, Call Status and Direction are labels this module assigns to the stored integers; the mapping is not sourced. No tested image held a row.",
-        "author": "Kevin Pagano (@stark4n6)",
+        "description": "Rows of the activity_history table in tachyon.db (Google Duo / Meet), with the stored activity_type, call_state and outgoing values.",
+        "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2021-07-28",
-        "last_update_date": "2026-08-10",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Google Duo",
-        "notes": "",
+        "notes": "Timestamp is timestamp_usec read as microseconds since 1970 UTC, the unit the column name gives. "
+                 "Activity Type (as stored), Call State (as stored) and Outgoing (as stored) are the integers in the "
+                 "activity_type, call_state and outgoing columns. No source for what each value means was found, so "
+                 "no label is applied. The table declares a default of 0 for each of the three columns, so 0 can be "
+                 "a value the app never set. Contact Name comes from the duo_users row whose user_id equals the "
+                 "part of other_id before the first '|'. No tested image held a row in this table (0 rows on the "
+                 "ten images in sample_data), so the columns have not been compared with real records.",
         "paths": ('*/com.google.android.apps.tachyon/databases/tachyon.db*',),
         "output_types": "standard",
         "artifact_icon": "phone-call",
@@ -27,7 +33,7 @@ __artifacts_v2__ = {
     "get_googleDuo_contacts": {
         "name": "Google Duo - Contacts",
         "description": "Google Duo / Meet contacts",
-        "author": "Kevin Pagano (@stark4n6)",
+        "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2021-07-28",
         "last_update_date": "2021-07-28",
         "requirements": "none",
@@ -51,13 +57,21 @@ __artifacts_v2__ = {
     },
     "get_googleDuo_notes": {
         "name": "Google Duo - Notes",
-        "description": "Rows of the messages table in tachyon.db (Google Duo / Meet), with the media file each row names where it is present. Viewed Timestamp is seen_timestamp_millis and File Saved is saved_status; what either records is not sourced. No tested image held a row.",
-        "author": "Kevin Pagano (@stark4n6)",
+        "description": "Rows of the messages table in tachyon.db (Google Duo / Meet), with the media file each row names where it is present.",
+        "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2021-07-28",
-        "last_update_date": "2026-08-10",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Google Duo",
-        "notes": "",
+        "notes": "Sent Timestamp, Received Timestamp and Seen Timestamp are sent_timestamp_millis, "
+                 "received_timestamp_millis and seen_timestamp_millis read as milliseconds since 1970 UTC, the unit "
+                 "the column names give. Each is blank when the stored value is 0, which is the default the table "
+                 "declares for all three. What event the app records in seen_timestamp_millis is not established. "
+                 "Saved Status (as stored) is the integer in saved_status. No source for what its values mean was "
+                 "found, so no label is applied, and the table declares a default of 0 for it. Content is the file "
+                 "among those found whose path contains the last segment of content_uri. No tested image held a row "
+                 "in this table (0 rows on the ten images in sample_data), so the columns have not been compared "
+                 "with real records.",
         "paths": ('*/com.google.android.apps.tachyon/databases/tachyon.db*',
                   '*/com.google.android.apps.tachyon/files/media/*.*'),
         "output_types": "standard",
@@ -133,15 +147,13 @@ def get_googleDuo(context):
     rows = _run(source_path, null_absent_columns(source_path, '''
         SELECT timestamp_usec, substr(self_id, 0, instr(self_id, '|')),
         substr(other_id, 0, instr(other_id, '|')), duo_users.contact_display_name,
-        CASE activity_type WHEN 1 THEN 'Call' WHEN 2 THEN 'Note' WHEN 4 THEN 'Reaction' END,
-        CASE call_state WHEN 0 THEN 'Left Message' WHEN 1 THEN 'Missed Call' WHEN 2 THEN 'Answered' WHEN 4 THEN '' END,
-        CASE outgoing WHEN 0 THEN 'Incoming' WHEN 1 THEN 'Outgoing' END
+        activity_type, call_state, outgoing
         FROM activity_history
         LEFT JOIN duo_users ON duo_users.user_id = substr(other_id, 0, instr(other_id, '|'))
     '''))
     data_list = [(_us_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6]) for r in rows]
     data_headers = (('Timestamp', 'datetime'), 'Local User', 'Remote User', 'Contact Name',
-                    'Activity Type', 'Call Status', 'Direction')
+                    'Activity Type (as stored)', 'Call State (as stored)', 'Outgoing (as stored)')
     return data_headers, data_list, source_path
 
 
@@ -169,7 +181,7 @@ def get_googleDuo_notes(context):
         sender_id, recipient_id, content_uri,
         replace(content_uri, rtrim(content_uri, replace(content_uri, '/', '')), ''),
         content_size_bytes,
-        CASE saved_status WHEN 0 THEN '' WHEN 1 THEN 'Yes' END
+        saved_status
         FROM messages
     '''))
     data_list = []
@@ -184,6 +196,6 @@ def get_googleDuo_notes(context):
         data_list.append((_ms_to_utc(r[0]), _ms_to_utc(r[1]), _ms_to_utc(r[2]), r[3], r[4], content, r[7], r[8]))
 
     data_headers = (('Sent Timestamp', 'datetime'), ('Received Timestamp', 'datetime'),
-                    ('Viewed Timestamp', 'datetime'), 'Sender', 'Recipient', ('Content', 'media'),
-                    'Size', 'File Saved')
+                    ('Seen Timestamp', 'datetime'), 'Sender', 'Recipient', ('Content', 'media'),
+                    'Size', 'Saved Status (as stored)')
     return data_headers, data_list, source_path

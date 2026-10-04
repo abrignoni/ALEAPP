@@ -2,9 +2,9 @@ __artifacts_v2__ = {
     "termux_apt_history": {
         "name": "Termux - Package Install History",
         "description": "Parses the package install and removal history that apt records in the Termux Android environment.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-30",
-        "last_update_date": "2026-08-30",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Termux",
         "notes": "One row per apt transaction from files/usr/var/log/apt/history.log, which "
@@ -12,8 +12,14 @@ __artifacts_v2__ = {
                  "did not appear in it, only transactions made after setup. Each block carries a "
                  "Start-Date, the Commandline, one or more action lines (Install, Reinstall, "
                  "Upgrade, Downgrade, Remove, Purge) naming the packages and versions, and an "
-                 "End-Date. When a block holds more than one action line only the first, in that "
-                 "order, is reported in Action and Packages; the others are not shown. The "
+                 "End-Date. When a block holds more than one action line, Action lists each one "
+                 "present, in that order, separated by a semicolon, and Packages holds one line "
+                 "per action, each starting with the action's name; with a single action line "
+                 "Packages holds that line's value alone. The tested image held one block with "
+                 "one action line, so the multiple-action case was checked on a constructed "
+                 "log only. The action names and the two-space date form are those apt writes "
+                 "(https://github.com/Debian/apt/blob/6b128124271e94bdb0f4e7850d9286170d712b04/apt-pkg/deb/dpkgpm.cc#L1092-L1097 "
+                 "and https://github.com/Debian/apt/blob/6b128124271e94bdb0f4e7850d9286170d712b04/apt-pkg/deb/dpkgpm.cc#L1018). The "
                  "Requested By "
                  "column is reported as stored and was blank on the tested image. The timestamps "
                  "are written by apt in the device's local time with no zone stored: on the "
@@ -22,10 +28,8 @@ __artifacts_v2__ = {
                  "09:25:55 at offset -0400, so the value is reported as stored and labelled "
                  "local rather than converted to UTC, because converting a zone-less local time "
                  "as though it were UTC would move every install by the local offset. "
-                 "The two columns are declared with the datetime type. For LAVA output a stored "
-                 "value with two spaces between the date and the time "
-                 "does not parse as an ISO date and is kept as text; a value with a single space "
-                 "would be stored as though it were UTC. "
+                 "The two columns are plain text in every output, so no output treats the "
+                 "value as UTC. "
                  "history.log.1 and the numbered or gzipped rotations are read as well where "
                  "present, "
                  "and a gzipped rotation is decompressed in memory. The full set of packages present on the "
@@ -40,7 +44,7 @@ __artifacts_v2__ = {
     "termux_installed_packages": {
         "name": "Termux - Installed Packages",
         "description": "Parses the packages currently installed in the Termux Android client's environment.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
@@ -66,7 +70,7 @@ __artifacts_v2__ = {
     "termux_configuration": {
         "name": "Termux - Configuration",
         "description": "Parses the Termux Android client's app preferences and terminal properties.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
@@ -153,14 +157,14 @@ def termux_apt_history(context):
                 fields[key.strip()] = value.strip()
             if 'Start-Date' not in fields:
                 continue
-            # The package action is whichever of these the block carries.
-            action = ''
-            packages = ''
-            for name in ('Install', 'Reinstall', 'Upgrade', 'Downgrade', 'Remove', 'Purge'):
-                if name in fields:
-                    action = name
-                    packages = fields[name]
-                    break
+            # A block can carry more than one of these action lines; report each.
+            present = [name for name in ('Install', 'Reinstall', 'Upgrade', 'Downgrade',
+                                         'Remove', 'Purge') if name in fields]
+            action = '; '.join(present)
+            if len(present) == 1:
+                packages = fields[present[0]]
+            else:
+                packages = '\n'.join(f'{name}: {fields[name]}' for name in present)
             data_list.append((
                 fields.get('Start-Date', ''),
                 fields.get('End-Date', ''),
@@ -175,8 +179,8 @@ def termux_apt_history(context):
             sources.append(file_found)
 
     data_headers = (
-        ('Start Date (local, as stored)', 'datetime'),
-        ('End Date (local, as stored)', 'datetime'),
+        'Start Date (local, as stored)',
+        'End Date (local, as stored)',
         'Command Line', 'Action', 'Packages', 'Requested By', 'Source File',
     )
     return data_headers, data_list, '\n'.join(sources)

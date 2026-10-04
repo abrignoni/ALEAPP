@@ -2,15 +2,17 @@ __artifacts_v2__ = {
     "get_likee": {
         "name": "LIKEE - User Location",
         "description": "Text of the lines containing the word address in LIKEE *_location.kv files, with control characters removed. What the text records is not established.",
-        "author": "@falcon217836",
+        "author": "@falcon217836, @AlexisBrignoni, Codex",
         "creation_date": "2024-05-20",
-        "last_update_date": "2024-05-20",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "LIKEE",
         "notes": ""
-                 "Each kept line is the whole line less its last character. One row is written "
-                 "per *_location.kv file, including a file in which no line matched, where "
-                 "Location Data is blank.",
+                 "Each kept line is the whole line with control characters, the line break "
+                 "included, removed; the kept lines of one file are joined with nothing between "
+                 "them. One row is written per *_location.kv file that holds at least one such "
+                 "line; a file with none gets no row. No registered corpus holds this app's "
+                 "files, so the reader was exercised on a constructed file only.",
         "paths": ('*/video.like/files/*/*location.kv',),
         "output_types": "standard",
         "artifact_icon": "map-pin",
@@ -18,7 +20,7 @@ __artifacts_v2__ = {
     "get_likee_users": {
         "name": "LIKEE - Users",
         "description": "LIKEE user search history (like_pub.db)",
-        "author": "@falcon217836",
+        "author": "@falcon217836, @AlexisBrignoni, Codex",
         "creation_date": "2024-05-20",
         "last_update_date": "2024-05-20",
         "requirements": "none",
@@ -31,7 +33,7 @@ __artifacts_v2__ = {
     "get_likee_messages": {
         "name": "LIKEE - Messages",
         "description": "LIKEE messages (message_u*.db)",
-        "author": "@falcon217836",
+        "author": "@falcon217836, @AlexisBrignoni, Codex",
         "creation_date": "2024-05-20",
         "last_update_date": "2024-05-20",
         "requirements": "none",
@@ -82,25 +84,27 @@ def _run(source_path, sql):
 def get_likee(context):
     files_found = context.get_files_found()
     data_list = []
-    source_path = ''
+    source_paths = []
     for file_found in files_found:
         file_found = str(file_found)
         if not file_found.endswith('_location.kv'):
             continue
-        source_path = file_found
         location_text = ''
         try:
             with open(file_found, 'r', errors='ignore', encoding='utf-8') as handle:
                 for line in handle:
                     if 'address' in line:
-                        cleaned = line[:line.find('address', 0, 6)].replace('\uFFFD\u2660', ' ')
+                        cleaned = line.replace('\uFFFD\u2660', ' ')
                         location_text += _CONTROL_RE.sub('', cleaned)
         except OSError:
-            pass
+            continue
+        if not location_text:
+            continue
+        source_paths.append(context.get_relative_path(file_found))
         data_list.append((os.path.basename(file_found), location_text, context.get_relative_path(file_found)))
 
     data_headers = ('File', 'Location Data', 'Source')
-    return data_headers, data_list, context.get_relative_path(source_path)
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor

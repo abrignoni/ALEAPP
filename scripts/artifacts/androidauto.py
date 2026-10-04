@@ -1,13 +1,18 @@
 __artifacts_v2__ = {
     "extract_android_auto": {
-        "name": "Android Auto - Connected Cars",
+        "name": "Android Auto - Allowed Cars",
         "description": "Rows of the allowedcars table in Android Auto's carservicedata.db: car and head unit details with the stored connectiontime value",
-        "author": "its5Q",
+        "author": "its5Q, @AlexisBrignoni, Codex",
         "creation_date": "2025-07-28",
-        "last_update_date": "2026-05-28",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Android Auto",
-        "notes": "",
+        "notes": "One row per row of the allowedcars table. The same database also has a rejectedcars table with "
+                 "the same columns, which this artifact does not read. Android Auto is closed source and what places "
+                 "a car in allowedcars, or what event the connectiontime column marks, is not established; a row is "
+                 "not by itself shown to be a completed connection. The connectiontime column is declared INTEGER and "
+                 "held a 13-digit value on all 7 rows of the tested images, read here as Unix milliseconds and shown "
+                 "in UTC to the second. Only the first matched copy of carservicedata.db is read.",
         "paths": ('*/com.google.android.projection.gearhead/databases/carservicedata.db*'),
         "output_types": "standard",
         "artifact_icon": "truck",
@@ -48,7 +53,7 @@ def extract_android_auto(context):
     FROM allowedcars;
     '''
 
-    data_headers = (('Connection Time', 'datetime'), 'Manufacturer', 'Model', 'Year', 'Bluetooth MAC', 'Wi-Fi SSID', 'Wi-Fi BSSID', 'Wi-Fi Password', 'Head Unit Make', 'Head Unit Model', 'Head Unit Software Version', 'Vehicle Client ID')
+    data_headers = (('connectiontime', 'datetime'), 'Manufacturer', 'Model', 'Year', 'Bluetooth MAC', 'Wi-Fi SSID', 'Wi-Fi BSSID', 'Wi-Fi Password', 'Head Unit Make', 'Head Unit Model', 'Head Unit Software Version', 'Vehicle Client ID')
 
     db_records = get_sqlite_db_records(source_path, null_absent_columns(source_path, query))
 

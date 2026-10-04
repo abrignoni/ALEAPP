@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "bereal_device_user": {
         "name": "BeReal Android - Authenticated User",
         "description": "Reports one BeReal profile that cached responses or a shared_prefs identifier point to as the account in use, with the basis and a confidence label for each.",
-        "author": "@Gear-I",
+        "author": "@Gear-I, @AlexisBrignoni, Codex",
         "creation_date": "2026-07-19",
         "last_update_date": "2026-07-19",
         "requirements": "none",
@@ -23,7 +23,7 @@ __artifacts_v2__ = {
     "bereal_accepted_friends": {
         "name": "BeReal Android - Accepted Friends",
         "description": "Reports only profiles supported by explicit accepted-friend evidence.",
-        "author": "@Gear-I",
+        "author": "@Gear-I, @AlexisBrignoni, Codex",
         "creation_date": "2026-07-19",
         "last_update_date": "2026-07-19",
         "requirements": "none",
@@ -48,13 +48,13 @@ __artifacts_v2__ = {
     },
     "bereal_posts": {
         "name": "BeReal Android - Posts",
-        "description": "Reports recoverable BeReal posts and front, rear and video media matched by cached URL; for a post under myPosts or userPosts with no cached video, the local BtsVideo file whose filename time is within 120 seconds of the post time is shown instead, which is a match on time and not a recorded link.",
-        "author": "@Gear-I",
+        "description": "Reports recoverable BeReal posts and front, rear and video media matched by cached URL. For a post under myPosts or userPosts, a local BtsVideo file whose filename time is within 120 seconds of the post time is shown in a separate column; that is a match on time and not a recorded link.",
+        "author": "@Gear-I, @AlexisBrignoni, Codex",
         "creation_date": "2026-07-19",
-        "last_update_date": "2026-07-19",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "BeReal - Social Media",
-        "notes": "Field names (id, primaryContent/secondaryContent/btsContent, myPosts/friendsPosts, comments, realMojis) are the key names this module reads. The author reports comparing them with the BeReal Android app's code; the app version and classes compared are not recorded here. The Authorship Basis column says how each author was chosen: nested under myPosts or userPosts (shown as Device User), the user object beside a posts list, a username key on the post itself, or an isMyPost flag. A post found in a friendsPosts list with no user object, or found outside those wrappers, is reported with a blank author.",
+        "notes": "Field names (id, primaryContent/secondaryContent/btsContent, myPosts/friendsPosts, comments, realMojis) are the key names this module reads. The author reports comparing them with the BeReal Android app's code; the app version and classes compared are not recorded here. The Authorship Basis column says how each author was chosen: nested under myPosts or userPosts (shown as Device User), the user object beside a posts list, a username key on the post itself, or an isMyPost flag. A post found in a friendsPosts list with no user object, or found outside those wrappers, is reported with a blank author. For a post nested under myPosts or userPosts, Authorship Basis names the key the post was found under. The Front Camera Media, Rear Camera Media and Video columns show a cached file only when the URL in its cache metadata equals the URL the post stores. Local BtsVideo File Nearest In Time is different: it shows the file under files/bereal_my_user_temp_video whose filename number, read as Unix milliseconds, is nearest the Captured time and no more than 120 seconds from it, for posts under myPosts or userPosts only. Nothing this module reads records which post such a file belongs to, so that column is a match on time and not a recorded link. Local BtsVideo Filename Time Minus Captured (s) gives the difference in seconds, negative when the filename number is earlier. Where several files carry the same filename number, the first by file name is shown. On pixel7a_a14 both posts were found under userPosts, neither had a cached file for its video URL, and the differences were -3.0 and -13.8 seconds; the second post's filename number is shared by three files. A time string that carries no UTC offset is shown as stored and is not used for the time match.",
         "paths": (
                         "*/com.bereal.ft/cache/network/*",
                         "*/com.bereal.ft/cache/bereal_*video_cache/*",
@@ -71,7 +71,7 @@ __artifacts_v2__ = {
     "bereal_profile_pictures": {
         "name": "BeReal Android - Correlated Profile Pictures",
         "description": "Renders cached profile pictures only when their metadata URL maps to a recovered user profile.",
-        "author": "@Gear-I",
+        "author": "@Gear-I, @AlexisBrignoni, Codex",
         "creation_date": "2026-07-19",
         "last_update_date": "2026-07-19",
         "requirements": "none",
@@ -91,9 +91,9 @@ __artifacts_v2__ = {
     "bereal_comments": {
         "name": "BeReal Android - Comments",
         "description": "Reports comment records that can be linked to a post.",
-        "author": "@Gear-I",
+        "author": "@Gear-I, @AlexisBrignoni, Codex",
         "creation_date": "2026-07-19",
-        "last_update_date": "2026-07-19",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "BeReal - Social Media",
         "notes": "Comments are extracted from a post's own embedded \"comments\" array or a "
@@ -114,9 +114,9 @@ __artifacts_v2__ = {
     "bereal_realmojis": {
         "name": "BeReal Android - RealMojis",
         "description": "Reports RealMoji/reaction records linked to a post.",
-        "author": "@Gear-I",
+        "author": "@Gear-I, @AlexisBrignoni, Codex",
         "creation_date": "2026-07-19",
-        "last_update_date": "2026-07-19",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "BeReal - Social Media",
         "notes": "RealMojis are extracted from a post's own embedded \"realMojis\" array. RealMoji "
@@ -261,7 +261,9 @@ def _timestamp(value):
         except ValueError:
             try:
                 parsed = datetime.fromisoformat(text.replace("Z", "+00:00"))
-                return parsed if parsed.tzinfo else parsed.replace(tzinfo=timezone.utc)
+                # A string with no offset is a wall clock with no recorded zone:
+                # it is returned as stored text, not stamped as UTC.
+                return parsed if parsed.tzinfo else text
             except ValueError:
                 return text
     if isinstance(value, (int, float)):
@@ -527,8 +529,9 @@ def _post_fields(obj, author_hint=None, ownership=""):
         _nested(obj, "btsContent.url", "btsContent.uri", "btsMedia.url", "btsMedia.uri", "video.url", "video.mediaUrl")
         or _first(obj, "videoUrl", "videoURL") or ""
     )
-    if ownership == "device_user":
-        author, author_basis = "Device User", "Nested in myPosts"
+    if ownership.startswith("device_user"):
+        own_key = ownership.partition(":")[2] or "myPosts or userPosts"
+        author, author_basis = "Device User", f"Nested in {own_key}"
     elif isinstance(author_hint, dict) and (author_hint.get("id") or author_hint.get("userId") or author_hint.get("username")):
         uid, username, fullname, _ = _user_fields(author_hint)
         author, author_basis = (username or fullname or uid), "Sibling user of posts[] wrapper"
@@ -546,7 +549,8 @@ def _post_fields(obj, author_hint=None, ownership=""):
 
 
 def _iter_posts(files_found):
-    """Yields (post_obj, author_hint, ownership, meta, sources) for every recoverable post,
+    """Yields (post_obj, author_hint, ownership, meta, sources) for every recoverable post
+    (ownership is "device_user:<wrapper key>", "friend" or ""),
     preferring structural extraction (myPosts/friendsPosts, {user, posts} wrappers) over
     generic pattern matching so authorship is derived from schema, not guesswork."""
     for parsed, meta, sources in _json_sources(files_found):
@@ -569,7 +573,7 @@ def _iter_posts(files_found):
                     for post in candidate_posts:
                         if isinstance(post, dict) and _looks_like_post(post):
                             captured_ids.add(id(post))
-                            yield post, None, "device_user", meta, sources
+                            yield post, None, f"device_user:{own_key}", meta, sources
         for _, obj in _walk(parsed):
             if not isinstance(obj, dict):
                 continue
@@ -618,14 +622,14 @@ def _iter_posts(files_found):
                 yield obj, None, "", meta, sources
 
 
-# Correlates a device user's own post to its locally recorded BTS clip in
-# */files/bereal_my_user_temp_video/*. That video is captured locally and never round-trips
-# through the network cache, so a by_url lookup on the remote btsMedia URL will never find
-# it. Filenames embed a capture-time epoch-millis timestamp (BtsVideo<ms>.mp4 /
-# compressed_BtsVideo<ms>.mp4 / BtsVideo<ms>_trimmed.mp4); the closest one to the post's
-# takenAt, within a tolerance window, is used. Confirmed against a real extraction:
-# BtsVideo1722006708445.mp4's embedded timestamp landed within 3 seconds of its post's
-# takenAt.
+# Finds, for a post nested under myPosts or userPosts, the file in
+# */files/bereal_my_user_temp_video/* whose filename number is nearest the post's
+# capture time. Filenames carry a 13-digit number (BtsVideo<ms>.mp4 /
+# compressed_BtsVideo<ms>.mp4 / BtsVideo<ms>_trimmed.mp4) that is read here as Unix
+# milliseconds. This is a match on time, not a link the app records: no cached response
+# or database read on pixel7a_a14 names a post beside one of these files. The result is
+# therefore reported in its own columns and never in the Video column. On pixel7a_a14 the
+# two posts under userPosts were 3.0 and 13.8 seconds after the nearest filename number.
 _BTS_FILENAME_RE = re.compile(r"BtsVideo(\d{10,13})", re.I)
 
 
@@ -643,7 +647,7 @@ def _own_bts_video_index(files_found):
 
 def _closest_own_bts_video(bts_index, captured_at, tolerance_ms=120_000):
     if not bts_index or not isinstance(captured_at, datetime):
-        return ""
+        return "", ""
     # bts_index holds absolute epoch milliseconds read from the filename, so
     # captured_at has to be timezone aware for the two to be comparable.
     # _timestamp() guarantees that on both of its datetime branches. If it ever
@@ -651,12 +655,14 @@ def _closest_own_bts_video(bts_index, captured_at, tolerance_ms=120_000):
     # delta exceeds the tolerance, so this silently matches nothing rather than
     # matching wrongly.
     target_ms = captured_at.timestamp() * 1000
-    best_path, best_delta = "", None
-    for ts, path in bts_index:
+    best_path, best_delta, best_signed = "", None, ""
+    # Several files can carry the same filename number (the compressed and trimmed
+    # copies); sorting makes the one shown the first by file name on every run.
+    for ts, path in sorted(bts_index, key=lambda entry: (entry[0], Path(entry[1]).name)):
         delta = abs(ts - target_ms)
         if delta <= tolerance_ms and (best_delta is None or delta < best_delta):
-            best_path, best_delta = path, delta
-    return best_path
+            best_path, best_delta, best_signed = path, delta, round((ts - target_ms) / 1000, 1)
+    return best_path, best_signed
 
 
 def _comment_fields(obj):
@@ -743,23 +749,27 @@ def bereal_posts(context):
             obj, author_hint, ownership
         )
         front_local, back_local, video_local = by_url.get(front_url, ""), by_url.get(back_url, ""), by_url.get(video_url, "")
-        video_note = ""
-        if ownership == "device_user" and not video_local:
-            local_bts = _closest_own_bts_video(bts_index, captured)
-            if local_bts:
-                video_local = local_bts
-                video_note = " (recovered locally, not the CDN copy)"
+        # The Video column holds only a file whose cached URL equals the post's
+        # video URL. A local BtsVideo file near the post in time is not a recorded
+        # link, so it goes in its own columns with the measured difference.
+        nearest_bts, nearest_delta = "", ""
+        if ownership.startswith("device_user"):
+            nearest_bts, nearest_delta = _closest_own_bts_video(bts_index, captured)
         rows.append((captured, posted, post_id, author, author_basis, caption,
                      front_url, _media_ref(front_local, f"BeReal post {post_id} front"),
                      back_url, _media_ref(back_local, f"BeReal post {post_id} rear"),
-                     video_url, _media_ref(video_local, f"BeReal post {post_id} video (behind-the-scenes){video_note}"),
+                     video_url, _media_ref(video_local, f"BeReal post {post_id} video (behind-the-scenes)"),
+                     _media_ref(nearest_bts, f"BeReal local BtsVideo file nearest in time to post {post_id}"),
+                     nearest_delta if nearest_bts else "",
                      meta.get("url", "")))
         used.extend(sources)
-        used.extend((front_local, back_local, video_local))
+        used.extend((front_local, back_local, video_local, nearest_bts))
     headers = (("Captured", "datetime"), ("Posted/Updated", "datetime"), "Post ID", "Author", "Authorship Basis", "Caption",
                "Front Camera URL", ("Front Camera Media", "media"),
                "Rear Camera URL", ("Rear Camera Media", "media"),
-               "Video (BTS) URL", ("Video", "media"), "Source Endpoint")
+               "Video (BTS) URL", ("Video", "media"),
+               ("Local BtsVideo File Nearest In Time", "media"),
+               "Local BtsVideo Filename Time Minus Captured (s)", "Source Endpoint")
     return headers, _dedupe(rows), _source_path(used)
 
 

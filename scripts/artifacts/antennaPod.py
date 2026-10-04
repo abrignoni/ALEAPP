@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "antennapod_subscriptions": {
         "name": "AntennaPod - Subscriptions",
         "description": "Parses the Feeds table (podcast feeds) of the AntennaPod Android app.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-31",
         "last_update_date": "2026-08-31",
         "requirements": "none",
@@ -32,9 +32,9 @@ __artifacts_v2__ = {
     "antennapod_episodes": {
         "name": "AntennaPod - Episodes",
         "description": "Parses podcast episodes and playback state from the AntennaPod Android app.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-31",
-        "last_update_date": "2026-08-31",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "AntennaPod",
         "sample_data": {
@@ -57,21 +57,29 @@ __artifacts_v2__ = {
                  "Favorite is Yes when it is in the Favorites table; on the tested device one "
                  "episode was marked Played, one was added to the queue and one was favourited. "
                  "Published is Unix milliseconds and is reported as UTC. Position is the saved "
-                 "playback position. Last Played (last_played_time) and Completed "
-                 "(playback_completion_date) are read as Unix milliseconds and reported as UTC. "
-                 "AntennaPod 3.12.0 names these columns the last played time for statistics and "
-                 "the last played time for the playback history, and sets the second to 0 when "
-                 "the playback history is cleared (PodDBAdapter.java lines 114, 115 and 975 at "
-                 "tag 3.12.0), so the header Completed is this artifact's label and not the "
-                 "app's. No tested row held a Position, Last Played or Completed value; on the "
-                 "tested device the episode was marked played and was not played with a saved "
-                 "position. Downloaded read No on all 1,013 rows of emu_a15_oss_v4, where the "
-                 "stored downloaded value was 0 on every row and no row held a local file path. "
-                 "At AntennaPod tag 3.12.0 the downloaded column holds the download time, 0 when "
-                 "not downloaded (PodDBAdapter.java KEY_DOWNLOAD_DATE; FeedMedia.isDownloaded "
-                 "returns downloadDate > 0), and this artifact prints Yes only for a stored 1. A "
-                 "downloaded episode would therefore read No. No tested image holds a downloaded "
-                 "episode. Duration is formatted from milliseconds. File Size is the FeedMedia "
+                 "playback position. Last Played (Statistics) is last_played_time and Last Played "
+                 "(History) is playback_completion_date; both are read as Unix milliseconds and "
+                 "reported as UTC. AntennaPod 3.12.0 names these columns the last played time "
+                 "for statistics and the last played time for the playback history, and sets "
+                 "the second to 0 when the playback history is cleared (PodDBAdapter.java lines "
+                 "114, 115 and 975 at tag 3.12.0), so a blank Last Played (History) does not "
+                 "establish that the episode was not played. No tested row held a Position, Last "
+                 "Played (Statistics) or Last Played (History) value; on the tested device the "
+                 "episode was marked played and was not played with a saved position. At "
+                 "AntennaPod tag 3.12.0 the downloaded column holds the download time, 0 when "
+                 "not downloaded (PodDBAdapter.java line 82, KEY_DOWNLOAD_DATE; FeedMedia.java "
+                 "lines 398 to 400, isDownloaded returns downloadDate > 0), and the app writes "
+                 "System.currentTimeMillis() to it when a download finishes "
+                 "(MediaDownloadedHandler.java line 54). Downloaded is Yes when the stored value "
+                 "is above 0 and No otherwise. Download Time is that value read as Unix "
+                 "milliseconds and reported as UTC; it is blank for a stored 0 and for a stored "
+                 "1, which DBUpgrader.java line 154 at the same tag reads as the downloaded "
+                 "mark of a database at schema version 15 or lower. Downloaded read No and "
+                 "Download Time was blank on all 1,013 rows of emu_a15_oss_v4, where the stored "
+                 "value was 0 on every row and no row held a local file path. No tested image "
+                 "holds a downloaded episode; the Yes and Download Time results were checked "
+                 "only on a constructed copy of that database with one value set by hand. "
+                 "Duration is formatted from milliseconds. File Size is the FeedMedia "
                  "filesize "
                  "value as stored. Media URL is the episode's audio download URL and Episode "
                  "Link is its web page. The SimpleChapters table (chapter markers for episodes) "
@@ -129,6 +137,15 @@ def _yesno(value):
     return 'Yes' if value in (1, '1') else 'No'
 
 
+def _download_value(value):
+    # FeedMedia.downloaded is KEY_DOWNLOAD_DATE at AntennaPod tag 3.12.0: the
+    # download time in Unix milliseconds, 0 when not downloaded.
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return 0
+
+
 @artifact_processor
 def antennapod_subscriptions(context):
     query = '''SELECT title, custom_title, author, download_url, link, language,
@@ -168,17 +185,21 @@ def antennapod_episodes(context):
     for db_path in _db_files(context):
         records = get_sqlite_db_records(db_path, query)
         for r in records:
+            downloaded = _download_value(r[8])
             data_list.append((
                 r[0] or '', r[1] or '', _ms(r[2]), _lookup(READ_STATES, r[3]),
                 _yesno(r[12]), _yesno(r[13]), _hms(r[4]), _ms(r[5]), _ms(r[6]),
-                _hms(r[7]), _yesno(r[8]), r[9], r[10] or '', r[11] or '',
+                _ms(downloaded) if downloaded > 1 else '',
+                _hms(r[7]), 'Yes' if downloaded > 0 else 'No', r[9], r[10] or '',
+                r[11] or '',
                 context.get_relative_path(db_path)))
         if records and db_path not in sources:
             sources.append(db_path)
 
     data_headers = (
         'Feed', 'Episode Title', ('Published', 'datetime'), 'Play State',
-        'In Queue', 'Favorite', 'Position', ('Last Played', 'datetime'),
-        ('Completed', 'datetime'), 'Duration', 'Downloaded', 'File Size (bytes)',
+        'In Queue', 'Favorite', 'Position', ('Last Played (Statistics)', 'datetime'),
+        ('Last Played (History)', 'datetime'), ('Download Time', 'datetime'),
+        'Duration', 'Downloaded', 'File Size (bytes)',
         'Media URL', 'Episode Link', 'Source File')
     return data_headers, data_list, '\n'.join(sources)

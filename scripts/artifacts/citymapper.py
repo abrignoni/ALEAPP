@@ -3,49 +3,65 @@ __artifacts_v2__ = {
     "get_citymapperLocationHistory" : {
         "name": "Citymapper - Location History",
         "description": "Parses the locationhistoryentry table of the Citymapper app database (address, date, coordinates, name and role, as stored); what action adds an entry is not established",
-        "author": "Funeoz",
+        "author": "Funeoz, @AlexisBrignoni, Codex",
         "creation_date":"2025-12-12",
-        "last_update_date": "2025-12-12",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category" : "Citymapper",
-        "notes" : "Interactive online folium map removed; locations are exported to KML by the framework.",
+        "notes" : "Interactive online folium map removed; locations are exported to KML by the framework. "
+                  "The Date column holds the table's date value as stored, with no conversion: its "
+                  "unit and epoch are not established, no source for them was found and no "
+                  "registered test image holds this database. Where an extraction carries the same "
+                  "database under more than one storage path (data/data, data/user/N, data_mirror), "
+                  "one copy per Android user is read.",
         "paths" : ('*/data/com.citymapper.app.release/databases/citymapper.db*'),
-        "output_types": ['html', 'tsv', 'timeline', 'lava', 'kml'],
+        "output_types": ['html', 'tsv', 'lava', 'kml'],
         "artifact_icon": "map-pin",
     },
     "get_citymapperSavedTrips" : {
         "name": "Citymapper - Saved Trips",
-        "description": "Parses saved trips (home/work) from the Citymapper App",
-        "author": "Funeoz",
+        "description": "Parses the savedtripentry table of the Citymapper app database (commute type, created value, home and work coordinates and region code, as stored)",
+        "author": "Funeoz, @AlexisBrignoni, Codex",
         "creation_date":"2025-12-12",
-        "last_update_date": "2025-12-12",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category" : "Citymapper",
-        "notes" : "Interactive online folium map removed; home/work coordinates are shown in the table.",
+        "notes" : "Interactive online folium map removed; home/work coordinates are shown in the table. "
+                  "The Created column holds the table's created value as stored, with no conversion: "
+                  "its unit and epoch are not established, no source for them was found and no "
+                  "registered test image holds this database. Where an extraction carries the same "
+                  "database under more than one storage path (data/data, data/user/N, data_mirror), "
+                  "one copy per Android user is read.",
         "paths" : ('*/data/com.citymapper.app.release/databases/citymapper.db*'),
-        "output_types": ['html', 'tsv', 'timeline', 'lava'],
+        "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "map-pin",
     },
     "get_citymapperAppPreferences" : {
         "name": "Citymapper - App Preferences",
         "description": "Parses app preferences from the Citymapper App",
-        "author": "Funeoz",
+        "author": "Funeoz, @AlexisBrignoni, Codex",
         "creation_date":"2025-12-12",
-        "last_update_date": "2025-12-12",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category" : "Citymapper",
         "notes" : "Interactive online folium map removed. The LAST_LOCATION value is split into "
                   "Latitude and Longitude and exported to KML; what event sets it is not "
-                  "established. One row is built from the four preference files together, with a "
-                  "later file's value replacing an earlier one for the same key, and the row is "
-                  "written even when no value was read. Onboarding Date and Last Used Date are "
-                  "converted with the unit inferred from the size of the stored number.",
+                  "established. One row is built per shared_prefs folder from the preference files "
+                  "in it whose names end in .xml; where an extraction carries the same folder "
+                  "under more than one storage path (data/data, data/user/N, data_mirror), one "
+                  "copy per Android user is read. A folder in which none of the reported keys "
+                  "was read gives no row. If two files of one folder hold the same key, the "
+                  "value from the file read first is kept and the run log names the key and "
+                  "the file whose value was not used. The onboarding_terms_accepted_date and "
+                  "LastUsedDate columns hold those keys' values as stored, with no conversion: "
+                  "their unit and epoch are not established, no source for them was found and "
+                  "no registered test image holds these files.",
         "paths" : ('*/data/com.citymapper.app.release/shared_prefs/superProperties.xml*',
                    '*/data/com.citymapper.app.release/shared_prefs/preferences.xml*',
                    '*/data/com.citymapper.app.release/shared_prefs/Session.xml*',
                    '*/data/com.citymapper.app.release/shared_prefs/no_backup_preferences.xml*'
         ),
-        "output_types": ['html', 'tsv', 'timeline', 'lava', 'kml'],
+        "output_types": ['html', 'tsv', 'lava', 'kml'],
         "artifact_icon": "map-pin",
     }
 }
@@ -61,7 +77,8 @@ __artifacts_v2__ = {
 import re
 import xml.etree.ElementTree as ET
 
-from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly, convert_unix_ts_to_utc
+from scripts.artifacts.storagePathViews import unique_files
+from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
 
 INVALID_XML_CHARS = re.compile(r'[\x00-\x08\x0b\x0c\x0e-\x1f]')
 BARE_AMPERSAND = re.compile(r'&(?!(?:amp|lt|gt|quot|apos|#\d+|#x[0-9A-Fa-f]+);)')
@@ -83,16 +100,18 @@ def _parse_xml(file_found):
 
 @artifact_processor
 def get_citymapperLocationHistory(context):
-    files_found = context.get_files_found()
+    # unique_files collapses the data/data, data/user/N and data_mirror views of one
+    # database, so its rows are reported once per Android user.
+    files_found = unique_files(context)
 
     location_data_list = []
-    source = ''
+    sources = []
 
     for file_found in files_found:
         file_found = str(file_found)
 
         if file_found.endswith('citymapper.db'):
-            source = file_found
+            sources.append(file_found)
             db = open_sqlite_db_readonly(file_found)
             cursor = db.cursor()
 
@@ -114,23 +133,27 @@ def get_citymapperLocationHistory(context):
 
             db.close()
 
-    location_headers = ('ID', 'Address', 'Timestamp', 'Latitude', 'Longitude', 'Name', 'Role')
+    # 'Date' is the stored column's own name: the value is reported as stored, and its
+    # unit and epoch are not established.
+    location_headers = ('ID', 'Address', 'Date', 'Latitude', 'Longitude', 'Name', 'Role')
 
-    return location_headers, location_data_list, source
+    return location_headers, location_data_list, '\n'.join(sources)
 
 
 @artifact_processor
 def get_citymapperSavedTrips(context):
-    files_found = context.get_files_found()
+    # unique_files collapses the data/data, data/user/N and data_mirror views of one
+    # database, so its rows are reported once per Android user.
+    files_found = unique_files(context)
 
     saved_trip_data_list = []
-    source = ''
+    sources = []
 
     for file_found in files_found:
         file_found = str(file_found)
 
         if file_found.endswith('citymapper.db'):
-            source = file_found
+            sources.append(file_found)
             db = open_sqlite_db_readonly(file_found)
             cursor = db.cursor()
 
@@ -154,29 +177,45 @@ def get_citymapperSavedTrips(context):
 
             db.close()
 
-    trip_headers = ('ID', 'Commute Type', 'Timestamp', 'Home Latitude', 'Home Longitude',
+    # 'Created' is the stored column's own name: the value is reported as stored, and
+    # its unit and epoch are not established.
+    trip_headers = ('ID', 'Commute Type', 'Created', 'Home Latitude', 'Home Longitude',
                     'Work Latitude', 'Work Longitude', 'Region Code')
 
-    return trip_headers, saved_trip_data_list, source
+    return trip_headers, saved_trip_data_list, '\n'.join(sources)
+
+
+# Keys of the preference files that the App Preferences row reports.
+_PREFERENCE_KEYS = (
+    'deviceID', 'deviceIp', 'lastSeenVersion', 'earliestSeenVersion', 'LAST_LOCATION',
+    'onboarding_terms_accepted_date', 'LastUsedDate', 'SessionCount', 'Language',
+    'App Installed', 'CM Region', 'Connectivity State', 'OS API Level', 'Build Flavor',
+)
 
 
 @artifact_processor
 def get_citymapperAppPreferences(context):
-    files_found = context.get_files_found()
+    # unique_files collapses the data/data, data/user/N and data_mirror views of one
+    # preference file, so each is read once per Android user.
+    files_found = unique_files(context)
 
     data_list = []
-    source = ''
+    sources = []
 
-    # Dictionary to store parsed data from all files
-    user_data = {}
+    # One dictionary of parsed values per shared_prefs folder, so two Android users'
+    # (or two unrelated folders') values are never merged into one row.
+    folders = {}
 
     for file_found in files_found:
         file_found = str(file_found)
 
-        if file_found.endswith(('-wal', '-shm', '-journal')):
+        # The patterns end in a wildcard; only the preference files themselves are read.
+        if not file_found.endswith('.xml'):
             continue
-        if not source:
-            source = file_found
+
+        relative_path = str(context.get_relative_path(file_found)).replace('\\', '/')
+        folder = relative_path.rsplit('/', 1)[0] if '/' in relative_path else ''
+        user_data = folders.setdefault(folder, {})
 
         try:
             root = _parse_xml(file_found)
@@ -186,77 +225,68 @@ def get_citymapperAppPreferences(context):
 
                 # Handle different XML element types
                 if child.tag == 'string':
-                    user_data[name] = child.text if child.text else ''
-                elif child.tag == 'long':
-                    user_data[name] = child.attrib.get('value', '')
-                elif child.tag == 'boolean':
-                    user_data[name] = child.attrib.get('value', '')
+                    value = child.text if child.text else ''
+                elif child.tag in ('long', 'boolean'):
+                    value = child.attrib.get('value', '')
                 elif child.tag == 'set':
                     # Handle set elements (typically empty or with multiple values)
                     set_values = [item.text for item in child if item.text]
-                    user_data[name] = ', '.join(set_values) if set_values else 'Empty'
+                    value = ', '.join(set_values) if set_values else 'Empty'
+                else:
+                    continue
+
+                if name in user_data:
+                    # The value read first is kept; say so rather than replace it silently.
+                    if name in _PREFERENCE_KEYS and user_data[name][0] != value:
+                        logfunc(f'Citymapper preference key {name} is also in {relative_path} '
+                                'with a different value; the value read first is reported')
+                    continue
+                user_data[name] = (value, file_found)
 
         except Exception as e:
             logfunc(f"Error parsing XML from {file_found}: {e}")
 
-    # Extract and format key data fields with proper timestamp conversion
-    device_id = user_data.get('deviceID', '')
-    device_ip = user_data.get('deviceIp', '')
-    last_seen_version = user_data.get('lastSeenVersion', '')
-    earliest_seen_version = user_data.get('earliestSeenVersion', '')
+    for user_data in folders.values():
+        values = {key: user_data[key][0] for key in _PREFERENCE_KEYS if key in user_data}
+        if not values:
+            continue
+        for key in _PREFERENCE_KEYS:
+            if key in user_data and user_data[key][1] not in sources:
+                sources.append(user_data[key][1])
 
-    # Split the "latitude,longitude" last-known location into separate columns so the
-    # framework can export it to KML (no online map / network tiles).
-    last_location = user_data.get('LAST_LOCATION', '')
-    latitude = ''
-    longitude = ''
-    if last_location:
-        parts = last_location.split(',')
-        if len(parts) == 2:
-            try:
-                latitude = float(parts[0])
-                longitude = float(parts[1])
-            except ValueError:
-                latitude = ''
-                longitude = ''
+        # Split the "latitude,longitude" LAST_LOCATION value into separate columns so the
+        # framework can export it to KML (no online map / network tiles).
+        last_location = values.get('LAST_LOCATION', '')
+        latitude = ''
+        longitude = ''
+        if last_location:
+            parts = last_location.split(',')
+            if len(parts) == 2:
+                try:
+                    latitude = float(parts[0])
+                    longitude = float(parts[1])
+                except ValueError:
+                    latitude = ''
+                    longitude = ''
 
-    # Convert timestamps
-    onboarding_date = user_data.get('onboarding_terms_accepted_date', '')
-    if onboarding_date:
-        onboarding_date = convert_unix_ts_to_utc(int(onboarding_date))
-
-    last_used_date = user_data.get('LastUsedDate', '')
-    if last_used_date:
-        last_used_date = convert_unix_ts_to_utc(int(last_used_date))
-
-    session_count = user_data.get('SessionCount', '')
-
-    # App properties
-    language = user_data.get('Language', '')
-    app_installed = user_data.get('App Installed', '')
-    cm_region = user_data.get('CM Region', '')
-    connectivity_state = user_data.get('Connectivity State', '')
-    os_api_level = user_data.get('OS API Level', '')
-    build_flavor = user_data.get('Build Flavor', '')
-
-    # Add main record with all important fields
-    data_list.append((
-        device_id,
-        device_ip,
-        last_seen_version,
-        earliest_seen_version,
-        latitude,
-        longitude,
-        onboarding_date,
-        last_used_date,
-        session_count,
-        language,
-        app_installed,
-        cm_region,
-        connectivity_state,
-        os_api_level,
-        build_flavor
-    ))
+        data_list.append((
+            values.get('deviceID', ''),
+            values.get('deviceIp', ''),
+            values.get('lastSeenVersion', ''),
+            values.get('earliestSeenVersion', ''),
+            latitude,
+            longitude,
+            # Reported as stored: the unit and epoch of these two values are not established.
+            values.get('onboarding_terms_accepted_date', ''),
+            values.get('LastUsedDate', ''),
+            values.get('SessionCount', ''),
+            values.get('Language', ''),
+            values.get('App Installed', ''),
+            values.get('CM Region', ''),
+            values.get('Connectivity State', ''),
+            values.get('OS API Level', ''),
+            values.get('Build Flavor', '')
+        ))
 
     data_headers = (
         'Device ID',
@@ -265,8 +295,8 @@ def get_citymapperAppPreferences(context):
         'Earliest Seen Version',
         'Latitude',
         'Longitude',
-        ('Onboarding Date', 'datetime'),
-        ('Last Used Date', 'datetime'),
+        'onboarding_terms_accepted_date',
+        'LastUsedDate',
         'Session Count',
         'Language',
         'App Installed',
@@ -276,4 +306,4 @@ def get_citymapperAppPreferences(context):
         'Build Flavor'
     )
 
-    return data_headers, data_list, source
+    return data_headers, data_list, '\n'.join(sources)

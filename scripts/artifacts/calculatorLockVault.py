@@ -4,9 +4,9 @@ __artifacts_v2__ = {
         "description": "Rows from the Hide table of note_contact.db, each pairing a file name "
                        "with a path string, matched where possible to a file of that name under "
                        "the app's storage folder",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-09-28",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Calculator Lock",
         "notes": "com.calculator.lock.hide.photo.video shows a working calculator, and in a "
@@ -35,9 +35,9 @@ __artifacts_v2__ = {
                  "corpus found to carry the app, holds its data for one Android user only, so "
                  "reading a second user's database and storage folder was checked on a "
                  "constructed extraction. File Modified Time is the modification time the "
-                 "extraction records for the file; when the extraction reader holds no record for "
-                 "the file, the time of the copy staged for the report is used instead. A move "
-                 "within one volume can preserve a file's "
+                 "extraction records for the file, and is blank when the extraction reader holds "
+                 "no record for the file; the reader held one for each of the 3 files matched on "
+                 "pixel7a_a14. A move within one volume can preserve a file's "
                  "modification time, so File Modified Time does not establish when the file "
                  "reached the storage folder.",
         "paths": (
@@ -55,9 +55,9 @@ __artifacts_v2__ = {
         "description": "Files present under the .Calculator_Lock folder on external storage, with "
                        "the format detected from each file's own bytes, including files the Hide "
                        "table does not name",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-09-28",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Calculator Lock",
         "notes": "Every file found under a .Calculator_Lock folder gets one row, whether or not "
@@ -81,9 +81,9 @@ __artifacts_v2__ = {
                  "registered corpus found to carry the app, holds its data for one Android user "
                  "only, so reading a second user's storage folder and database was checked on a "
                  "constructed extraction. File Modified Time is the modification time the "
-                 "extraction records for the file; when the extraction reader holds no record for "
-                 "the file, the time of the copy staged for the report is used instead. A move "
-                 "within one volume can "
+                 "extraction records for the file, and is blank when the extraction reader holds "
+                 "no record for the file; the reader held one for each of the 3 files matched on "
+                 "pixel7a_a14. A move within one volume can "
                  "preserve a file's modification time, so File Modified Time does not establish "
                  "when the file reached the storage folder.",
         "paths": (
@@ -100,7 +100,7 @@ __artifacts_v2__ = {
         "name": "Calculator Lock - Notes",
         "description": "Rows from the Note table of note_contact.db, holding a title, a body and "
                        "a date string",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-09-28",
         "requirements": "none",
@@ -144,7 +144,7 @@ __artifacts_v2__ = {
         "name": "Calculator Lock - Contacts",
         "description": "Rows from the Contact table of note_contact.db, holding a name and a "
                        "number string",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-09-28",
         "requirements": "none",
@@ -170,7 +170,7 @@ __artifacts_v2__ = {
         "name": "Calculator Lock - Files",
         "description": "Rows from the File table of note_contact.db, holding a title, two path "
                        "strings, a MIME type and a date string",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-09-28",
         "requirements": "none",
@@ -205,7 +205,7 @@ __artifacts_v2__ = {
         "name": "Calculator Lock - Deleted Data",
         "description": "Rows from the Delete_Data table of note_contact.db, pairing a name with a "
                        "date string",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-09-28",
         "requirements": "none",
@@ -235,7 +235,7 @@ __artifacts_v2__ = {
         "name": "Calculator Lock - Browser History",
         "description": "Rows from the History table of note_contact.db, whose columns are named "
                        "for a name, a URL, an image and a date",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-09-28",
         "requirements": "none",
@@ -271,7 +271,7 @@ __artifacts_v2__ = {
         "name": "Calculator Lock - Preferences",
         "description": "Preference names and values from the app's shared_prefs file, including "
                        "the PASSWORD entry, which the tested version stores in plain text",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-09-28",
         "requirements": "none",
@@ -309,7 +309,7 @@ __artifacts_v2__ = {
         "name": "Calculator Lock - Calculator History",
         "description": "Rows from the history table of HISTORY.DB, each a calculator entry and the "
                        "result the app computed for it",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-28",
         "last_update_date": "2026-09-28",
         "requirements": "none",
@@ -498,15 +498,16 @@ def _storage_folder(path):
 
 
 def _file_times(seeker, path):
-    """Return the extraction's recorded (creation, modification) times for a file."""
+    """Return the extraction's recorded (creation, modification) times for a file.
+
+    Both are blank when the seeker holds no record for the file: the time of the copy
+    staged for the report is the examiner machine's, not the extraction's.
+    """
     info = seeker.file_infos.get(path) if seeker else None
     if info:
         return convert_unix_ts_to_utc(info.creation_date) or '', \
             convert_unix_ts_to_utc(info.modification_date) or ''
-    try:
-        return '', convert_unix_ts_to_utc(int(os.path.getmtime(path)))
-    except OSError:
-        return '', ''
+    return '', ''
 
 
 def _user_order(user):

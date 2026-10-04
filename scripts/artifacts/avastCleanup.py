@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "avast_cleanup_app_storage": {
         "name": "Avast Cleanup App Storage and Data Usage",
         "description": "Per-app storage size and data usage recorded by an Avast Cleanup scan",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-11",
         "last_update_date": "2026-09-11",
         "requirements": "none",
@@ -51,9 +51,9 @@ __artifacts_v2__ = {
     "avast_cleanup_photo_analysis": {
         "name": "Avast Cleanup Photo Analysis",
         "description": "Images on the device that Avast Cleanup's photo analyzer indexed and scored",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-11",
-        "last_update_date": "2026-09-11",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Avast Cleanup",
         "sample_data": {
@@ -68,8 +68,10 @@ __artifacts_v2__ = {
                  "Photo Taken is the dateTaken column, Unix milliseconds reported as UTC. The "
                  "column stores -1 where the app recorded no date and that is reported as blank, "
                  "which was the case on 9 of the 15 rows.\nDark Score, Blurry Score, Colour Score "
-                 "and Quality Score are the dark, blurry, color and cvScore columns, reported as "
-                 "stored with no scale sourced. Marked Bad is the app's classifiedAsBad flag and "
+                 "and CV Score are the dark, blurry, color and cvScore columns, reported as "
+                 "stored with no scale sourced. What cvScore measures was not sourced, so the "
+                 "header repeats the column's name; on the tested image it held 15 distinct "
+                 "values from 0.0 to 0.458 on the 15 rows. Marked Bad is the app's classifiedAsBad flag and "
                  "was set on 1 of the 15 rows. Faces Detected is the "
                  "app's own facesCount and read 0 on every row, so the column is populated and its "
                  "non-zero behaviour was not exercised here. Orientation, Is HDR and Invalid read 0 "
@@ -86,9 +88,9 @@ __artifacts_v2__ = {
     "avast_cleanup_duplicate_photos": {
         "name": "Avast Cleanup Duplicate Photo Sets",
         "description": "Images Avast Cleanup grouped together as duplicates of one another",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-11",
-        "last_update_date": "2026-09-11",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Avast Cleanup",
         "sample_data": {
@@ -106,9 +108,10 @@ __artifacts_v2__ = {
                  "observed values.\n"
                  "Grouping is the app's own judgement and the basis for it was not sourced, so a "
                  "row records that Avast Cleanup considered the images duplicates, not that they "
-                 "are byte-identical. Detected is the table's time column, read as Unix "
-                 "milliseconds and reported as UTC; no tested row exercised it and what the time "
-                 "marks was not sourced.\nThis table is not the one CCleaner uses. CCleaner keeps "
+                 "are byte-identical. Time (as stored) is the table's time column, an integer, "
+                 "reported as the number stored. No tested row exercised it, so its unit and "
+                 "what the time marks are not established and no date is derived from it.\n"
+                 "This table is not the one CCleaner uses. CCleaner keeps "
                  "a DuplicatesSet table "
                  "whose members are a JSON map, so the two apps are read by separate code.",
         "paths": ('*/com.avast.android.cleaner/databases/PhotoAnalyzerDb.db*',),
@@ -118,7 +121,7 @@ __artifacts_v2__ = {
     "avast_cleanup_video_analysis": {
         "name": "Avast Cleanup Video Analysis",
         "description": "Videos on the device that Avast Cleanup's optimizer inspected, with codec detail",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-11",
         "last_update_date": "2026-09-11",
         "requirements": "none",
@@ -157,7 +160,7 @@ __artifacts_v2__ = {
     "avast_cleanup_cleaning_history": {
         "name": "Avast Cleanup Cleaning History",
         "description": "Cleaning operations Avast Cleanup recorded, with the bytes each reported removing",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-11",
         "last_update_date": "2026-09-11",
         "requirements": "none",
@@ -306,7 +309,7 @@ def avast_cleanup_photo_analysis(context):
     data_headers = (
         ('Photo Taken', 'datetime'), 'Path', 'Media Store Id', 'Scanned Size (bytes)',
         'Width', 'Height', 'Orientation', 'Faces Detected', 'Dark Score', 'Blurry Score',
-        'Colour Score', 'Quality Score', 'Marked Bad', 'Is HDR', 'Invalid', 'Source File')
+        'Colour Score', 'CV Score', 'Marked Bad', 'Is HDR', 'Invalid', 'Source File')
     return data_headers, data_list, '\n'.join(sources)
 
 
@@ -318,12 +321,12 @@ def avast_cleanup_duplicate_photos(context):
     for db_path in _files(context, PHOTO_DB):
         records = get_sqlite_db_records(db_path, query)
         for when, set_id, path in records:
-            data_list.append((_ms(when), set_id, path or '',
+            data_list.append((when, set_id, path or '',
                               context.get_relative_path(db_path)))
         if records and db_path not in sources:
             sources.append(db_path)
 
-    data_headers = (('Detected', 'datetime'), 'Set', 'Path', 'Source File')
+    data_headers = ('Time (as stored)', 'Set', 'Path', 'Source File')
     return data_headers, data_list, '\n'.join(sources)
 
 

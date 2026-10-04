@@ -1,15 +1,28 @@
 __artifacts_v2__ = {
     "get_oldpowerOffReset": {
         "name": "oldpowerOffReset",
-        "description": "Parses power-off and reset reasons (timestamp and reason) from the power_off_reset_reason log files.",
-        "author": "@abrignoni",
+        "description": "Parses power-off and reset reasons (recorded time and reason) from the power_off_reset_reason log files.",
+        "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2023-03-14",
-        "last_update_date": "2023-03-14",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Power Events",
-        "notes": "The file records each time with no time zone. This module "
-                 "labels it UTC, which is an assumption, so the Timestamp "
-                 "column should be read as the clock value the file recorded.",
+        "notes": "Each entry begins with a line holding a date and time as "
+                 "yy/mm/dd hh:mm:ss with no time zone. The Timestamp (as "
+                 "recorded) column shows that line as text, unconverted, and "
+                 "the module assigns it no time zone. On galaxys10_a10, "
+                 "samsungs20_a13 and sharon_a14 the same files also hold "
+                 "lines that carry a UTC offset; each of the 26 reported "
+                 "times was 0 to 22 seconds before the local time of the "
+                 "next such line, where the offsets were +0200, -0500, "
+                 "-0400 and -0600. On those images the recorded time is "
+                 "therefore the device's local clock, not UTC. The module "
+                 "does not read the offset lines. Reason is the text after "
+                 "the first colon of the entry's reason line, up to any "
+                 "second colon; every reason line on those three images "
+                 "held one colon. When a caller line sits between the time "
+                 "and the reason (3 of the 26 entries, all on "
+                 "galaxys10_a10), the reason line after it is used.",
         "paths": ('*/log/power_off_reset_reason.txt', '*/log/power_off_reset_reason_backup.txt'),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "battery",
@@ -22,7 +35,6 @@ __artifacts_v2__ = {
 }
 
 import os
-from datetime import datetime, timezone
 
 from scripts.ilapfuncs import artifact_processor
 
@@ -39,13 +51,16 @@ def get_oldpowerOffReset(context):
         with open(file_found, 'r', encoding='utf-8') as f:
             for line in f:
                 if '/' in line and len(line) == 18:
+                    # The line carries no time zone, so it is reported as
+                    # recorded and not converted to an instant.
                     fecha = line.strip()
-                    fecha = datetime.strptime(fecha, '%y/%m/%d %H:%M:%S').replace(tzinfo=timezone.utc)
 
                     reason = next(f)
+                    if reason.startswith('caller'):
+                        reason = next(f)
                     reason = reason.split(':')[1].replace('\n', '')
 
                     data_list.append((fecha, reason, filename))
 
-    data_headers = (('Timestamp', 'datetime'), 'Reason', 'Filename')
+    data_headers = ('Timestamp (as recorded)', 'Reason', 'Filename')
     return data_headers, data_list, source_path

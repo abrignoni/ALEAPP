@@ -3,7 +3,7 @@ __artifacts_v2__ = {
         "name": "App Op Modes (Permission Store)",
         "description": "App op modes the permission subsystem stored in access.abx, with the op, the mode, and "
                        "the app id or package name the mode is stored against.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-07",
         "requirements": "none",
@@ -202,9 +202,9 @@ __artifacts_v2__ = {
         "name": "Permission Grants (Permission Store)",
         "description": "Permission state the permission subsystem stored in access.abx, one row per permission "
                        "held against an app id, with the grant state and the flags it was derived from.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-06",
-        "last_update_date": "2026-09-07",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Permissions",
         "notes": "A row is a permission element in the app-id-permissions section of the permission subsystem's "
@@ -257,12 +257,17 @@ __artifacts_v2__ = {
                  "https://android.googlesource.com/platform/frameworks/base/+/1cdfff555f4a21f71ccc978290e2e212e2f8b168/services/permission/java/com/android/server/permission/access/permission/PermissionFlags.kt#330. "
                  "The stored flags are not always the flags the platform held: the writer removes "
                  "RUNTIME_GRANTED from a permission carrying ONE_TIME before writing it, "
-                 "https://android.googlesource.com/platform/frameworks/base/+/1cdfff555f4a21f71ccc978290e2e212e2f8b168/services/permission/java/com/android/server/permission/access/permission/AppIdPermissionPersistence.kt#219, "
-                 "so a row carrying ONE_TIME does not show whether that one-time grant was in effect. "
-                 "Granted was Yes on 161,798 rows and No on 32,486. AOSP carries a second, stricter "
+                 "https://android.googlesource.com/platform/frameworks/base/+/1cdfff555f4a21f71ccc978290e2e212e2f8b168/services/permission/java/com/android/server/permission/access/permission/AppIdPermissionPersistence.kt#221, "
+                 "so a row carrying ONE_TIME does not show whether that one-time grant was in effect. For that "
+                 "reason Granted departs from the port in one case: a row that carries ONE_TIME, and whose "
+                 "answer would rest on RUNTIME_GRANTED alone, reads Not recorded (ONE_TIME) and not No. "
+                 "Granted was Yes on 161,798 rows, No on 32,459 and Not recorded (ONE_TIME) on 27, which is "
+                 "every row carrying ONE_TIME on the tested images; all 27 are on hc_pixel8pro_a16 and "
+                 "hc_pixel8pro_a17. AOSP carries a second, stricter "
                  "function, "
                  "isAppOpGranted, which additionally treats a restricted or app-op-revoked permission as not "
-                 "granted; the two were computed side by side over every row here and gave the same answer on all "
+                 "granted; the two were computed side by side on the stored flags of every row here and gave "
+                 "the same answer on all "
                  "of them, so only one column is reported.\n"
                  "Not every row records a choice made on the device. AOSP documents INSTALL_GRANTED, "
                  "INSTALL_REVOKED and PROTECTION_GRANTED as the state the platform derives from an app's manifest "
@@ -492,6 +497,10 @@ RUNTIME_GRANTED = 1 << 4
 LEGACY_GRANTED = 1 << 10
 IMPLICIT_GRANTED = 1 << 11
 RESTRICTION_REVOKED = 1 << 18
+ONE_TIME = 1 << 21
+# What Granted reads when the stored flags cannot say: the writer clears RUNTIME_GRANTED on a
+# permission carrying ONE_TIME, so its absence on such a row is not a recorded denial.
+GRANT_NOT_RECORDED = 'Not recorded (ONE_TIME)'
 
 
 def _root(path):
@@ -619,7 +628,11 @@ def _is_granted(value):
     """AOSP's own determination of whether a permission is granted, from its flags.
 
     A port of PermissionFlags.isPermissionGranted. Returned as stored when the value is not an
-    integer, so a value this cannot decide is visible rather than reported as not granted.
+    integer, so a value this cannot decide is visible rather than reported as not granted. The
+    one departure from the port is a row that carries ONE_TIME and whose answer would rest on
+    RUNTIME_GRANTED alone: AppIdPermissionPersistence.serializeAppIdPermission removes
+    RUNTIME_GRANTED from every ONE_TIME permission before writing it, so the stored flags do not
+    say whether the one-time grant was in effect, and that is what the row reports.
     """
     try:
         flags = int(value)
@@ -635,7 +648,11 @@ def _is_granted(value):
         return 'Yes'
     if flags & RESTRICTION_REVOKED:
         return 'No'
-    return 'Yes' if flags & RUNTIME_GRANTED else 'No'
+    if flags & RUNTIME_GRANTED:
+        return 'Yes'
+    if flags & ONE_TIME:
+        return GRANT_NOT_RECORDED
+    return 'No'
 
 
 def _collect(context, section_reader):
