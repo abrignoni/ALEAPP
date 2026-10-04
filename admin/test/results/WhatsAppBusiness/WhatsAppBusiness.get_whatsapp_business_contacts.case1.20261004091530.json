@@ -1,0 +1,62 @@
+{
+  "metadata": {
+    "module_name": "WhatsAppBusiness",
+    "artifact_name": "WhatsApp Business - Contacts",
+    "function_name": "get_whatsapp_business_contacts",
+    "case_number": "case1",
+    "number_of_columns": 7,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 354,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\WhatsAppBusiness\\testdata.WhatsAppBusiness.get_whatsapp_business_contacts.case1.zip",
+    "start_time": "2026-10-04T09:15:30.592566+00:00",
+    "end_time": "2026-10-04T09:15:30.658140+00:00",
+    "run_time_seconds": 0.0020029544830322266,
+    "last_commit": {
+      "hash": "a2f5dca9d833a22698050f244fd076dc008c4688",
+      "author_name": "prcharan592",
+      "author_email": "149227007+prcharan592@users.noreply.github.com",
+      "date": "2026-10-04T14:36:32+05:30",
+      "message": "Add WhatsApp Business artifact parser and tests"
+    }
+  },
+  "headers": [
+    "Name",
+    "WhatsApp Name",
+    "JID",
+    "Number",
+    "Status Text",
+    "Status Timestamp",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Synthetic Customer A",
+      "[w4b] A",
+      "000000000101@s.whatsapp.net",
+      "+15550101",
+      null,
+      null,
+      "Dump/data/data/com.whatsapp.w4b/databases/wa.db"
+    ],
+    [
+      "Customer B",
+      "[w4b] B",
+      "000000000102@s.whatsapp.net",
+      "+15550102",
+      "[w4b] status of B",
+      1767139200,
+      "Dump/data/data/com.whatsapp.w4b/databases/wa.db"
+    ],
+    [
+      "120363000000000101@g.us",
+      null,
+      "120363000000000101@g.us",
+      null,
+      null,
+      null,
+      "Dump/data/data/com.whatsapp.w4b/databases/wa.db"
+    ]
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "metadata": {
+    "module_name": "WhatsAppBusiness",
+    "artifact_name": "WhatsApp Business - Call Logs",
+    "function_name": "get_whatsapp_business_call_logs",
+    "case_number": "case1",
+    "number_of_columns": 9,
+    "number_of_rows": 4,
+    "total_data_size_bytes": 525,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\WhatsAppBusiness\\testdata.WhatsAppBusiness.get_whatsapp_business_call_logs.case1.zip",
+    "start_time": "2026-10-04T09:15:30.421436+00:00",
+    "end_time": "2026-10-04T09:15:30.518557+00:00",
+    "run_time_seconds": 0.004003286361694336,
+    "last_commit": {
+      "hash": "a2f5dca9d833a22698050f244fd076dc008c4688",
+      "author_name": "prcharan592",
+      "author_email": "149227007+prcharan592@users.noreply.github.com",
+      "date": "2026-10-04T14:36:32+05:30",
+      "message": "Add WhatsApp Business artifact parser and tests"
+    }
+  },
+  "headers": [
+    "Call Start Timestamp",
+    "Call End Timestamp",
+    "Call Duration",
+    "Group Name",
+    "Call Direction",
+    "Caller",
+    "Caller JID",
+    "Call Type",
+    "Source File"
+  ],
+  "data": [
+    [
+      1767226800,
+      1767226830,
+      "00:00:30",
+      null,
+      "Incoming",
+      "[w4b] A",
+      "000000000101@s.whatsapp.net",
+      "Audio",
+      "Dump/data/data/com.whatsapp.w4b/databases/msgstore.db"
+    ],
+    [
+      1767226860,
+      1767226905,
+      "00:00:45",
+      null,
+      "Outgoing",
+      "Self",
+      "",
+      "Video",
+      "Dump/data/data/com.whatsapp.w4b/databases/msgstore.db"
+    ],
+    [
+      1767226920,
+      1767226920,
+      "00:00:00",
+      null,
+      "Incoming",
+      "000000000103@s.whatsapp.net",
+      "000000000103@s.whatsapp.net",
+      "Audio",
+      "Dump/data/data/com.whatsapp.w4b/databases/msgstore.db"
+    ],
+    [
+      1767226980,
+      1767227100,
+      "00:02:00",
+      "[w4b] group",
+      "Incoming",
+      "[w4b] B",
+      "000000000102@s.whatsapp.net",
+      "Audio",
+      "Dump/data/data/com.whatsapp.w4b/databases/msgstore.db"
+    ]
+  ]
+}

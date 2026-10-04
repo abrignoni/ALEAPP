@@ -1,0 +1,90 @@
+{
+  "case1": {
+    "description": "Synthetic com.whatsapp.w4b container (no real evidence: every name, number, jid and message is invented), built by build_container(..., avatars=False) in admin/test/scripts/test_whatsapp_business.py: a LID-keyed chat resolved through jid_map, a chat with an unsaved number, a group with LID and phone senders and its creator recorded by LID, a second group with no recorded creator, a channel chat that no artifact reports, picture, static and live location messages in a chat and picture and live location messages in a group, four calls, and both shared_prefs files. It holds no media or Avatars files, so Media, Group Picture and Creator WA Profile Picture are blank: test_module.py replaces check_in_media only in the module under test, and these artifacts reach it through WhatsApp.py. The unit tests in that file cover media and Avatars lookup.",
+    "maker": "@prcharan592",
+    "make_data": {
+      "input_data_path": "wab_synthetic_input.zip",
+      "os": "Windows-10-10.0.26300-SP0",
+      "timestamp": "2026-10-04T14:45:29.599379",
+      "last_commit": {
+        "hash": "a2f5dca9d833a22698050f244fd076dc008c4688",
+        "author_name": "prcharan592",
+        "author_email": "149227007+prcharan592@users.noreply.github.com",
+        "date": "2026-10-04T14:36:32+05:30",
+        "message": "Add WhatsApp Business artifact parser and tests"
+      }
+    },
+    "artifacts": {
+      "get_whatsapp_business_contacts": {
+        "search_patterns": [
+          "*/com.whatsapp.w4b/databases/wa.db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_whatsapp_business_call_logs": {
+        "search_patterns": [
+          "*/com.whatsapp.w4b/databases/msgstore.db*",
+          "*/com.whatsapp.w4b/databases/wa.db*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_whatsapp_business_one_to_one_messages": {
+        "search_patterns": [
+          "*/com.whatsapp.w4b/databases/msgstore.db*",
+          "*/com.whatsapp.w4b/databases/wa.db*",
+          "*/WhatsApp Business/Media/*",
+          "*/com.whatsapp.w4b/files/Media/*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_whatsapp_business_group_messages": {
+        "search_patterns": [
+          "*/com.whatsapp.w4b/databases/msgstore.db*",
+          "*/com.whatsapp.w4b/databases/wa.db*",
+          "*/WhatsApp Business/Media/*",
+          "*/com.whatsapp.w4b/files/Media/*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_whatsapp_business_group_details": {
+        "search_patterns": [
+          "*/com.whatsapp.w4b/databases/msgstore.db*",
+          "*/com.whatsapp.w4b/databases/wa.db*",
+          "*/com.whatsapp.w4b/files/Avatars/*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_whatsapp_business_user_profile": {
+        "search_patterns": [
+          "*/com.whatsapp.w4b/shared_prefs/com.whatsapp.w4b_preferences_light.xml",
+          "*/com.whatsapp.w4b/shared_prefs/startup_prefs.xml"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  }
+}
