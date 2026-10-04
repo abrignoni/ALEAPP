@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "applock_locked_apps": {
         "name": "AppLock Locked Applications",
-        "description": "Packages AppLock holds in its active lock list",
+        "description": "Packages named in the lock table of the AppLock database",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-06",
@@ -18,9 +18,10 @@ __artifacts_v2__ = {
                  "neighbouring locks table is NOT parsed here: it held 19 rows naming packages "
                  "including com.google.android.gallery3d, which is not installed on the tested "
                  "device, so its rows are not treated as a record of what is locked and what the "
-                 "table holds is not established. Presence of a row is evidence the package is "
-                 "in the app's lock list. It "
-                 "is not evidence that anyone was ever prompted for the lock, and the store keeps "
+                 "table holds is not established. A row records that the lock table names the "
+                 "package. Whether the table is the list of apps the app locks was not compared "
+                 "with the app's own screen here. It is not evidence that anyone was ever "
+                 "prompted for the lock, and the store keeps "
                  "no timestamp for when a package was added.",
         "paths": ('*/com.domobile.applockwatcher/databases/domobile_elock.db*',),
         "output_types": "standard",
@@ -28,7 +29,8 @@ __artifacts_v2__ = {
     },
     "applock_vault_media": {
         "name": "AppLock Vault Media",
-        "description": "Media hidden in the AppLock vault, recovered and matched to where it came from",
+        "description": "Media records of the AppLock vault, with the stored copy where the extraction "
+                       "holds it and the path each came from",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-06",
@@ -38,21 +40,24 @@ __artifacts_v2__ = {
             "emu_a15_oss_v17": "AppLock 6.3.3 | 3 rows",
         },
         "notes": "One row per row of SMediaTable in "
-                 "com.domobile.applockwatcher/databases/domobile_elock.db, which records media the "
-                 "app's vault has hidden. Hiding MOVES the file: on the tested device all three "
-                 "source files were gone from the paths the rows name. The bytes are kept twice, "
-                 "each named by the row's uid. The copy under the app's own "
-                 "files/Medias/Photos is the ORIGINAL FILE UNCHANGED, and this artifact renders "
-                 "it and reports its staged location. That was measured: for 3 of 3 rows the "
-                 "MD5 of that copy equalled the srcMd5 column exactly and its length equalled "
-                 "fileSize, and each began with a JPEG signature. The second copy, under "
+                 "com.domobile.applockwatcher/databases/domobile_elock.db, which records media "
+                 "the app's vault has hidden. On the tested device (AppLock 6.3.3) all three "
+                 "source files were gone from the paths the rows name after hiding. The bytes are "
+                 "kept twice, each named by the row's uid. The copy under the app's own "
+                 "files/Medias/Photos "
+                 "is the ORIGINAL FILE UNCHANGED. That was measured: for 3 of 3 rows the MD5 of "
+                 "that copy equalled the srcMd5 column exactly and its length equalled fileSize, "
+                 "and each began with a JPEG signature. This artifact reports that copy's "
+                 "location in the extraction and renders it when its first bytes are a JPEG, PNG "
+                 "or GIF signature. A copy in any other format, a video included, is listed by "
+                 "location only, which no tested row exercised. The second copy, under "
                  "/storage/emulated/0/.do0mo7bi1le1/medias, is NOT readable: all three began with "
                  "the same 16 byte header followed by high entropy data and hashed differently "
                  "from the original, so it is reported by name only and nothing is claimed about "
                  "its contents. Source Path is relative to the shared storage root, not absolute. "
                  "The two timestamps in this table do NOT share a convention and were measured "
-                 "separately. Hidden (UTC) is a true Unix millisecond value: it rendered as "
-                 "17:39 UTC against external copies written at 13:39 in the device's "
+                 "separately. Hidden is a Unix millisecond value: it rendered as 17:39 UTC "
+                 "against external copies written at 13:39 in the device's "
                  "America/New_York zone. Media Date (Device Local) is NOT UTC: on all three rows "
                  "it sat exactly one UTC offset behind the true value, so it holds the device's "
                  "local wall clock stored in an epoch field. It is rendered here as plain "

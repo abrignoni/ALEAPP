@@ -10,13 +10,14 @@ __artifacts_v2__ = {
         "sample_data": {
             "emu_a15_oss_v10": "Nova Launcher 8.9.0 | 19 rows",
         },
-        "notes": "One row per item in the favorites table of "
+        "notes": "One row per row with a container value in the favorites table of "
                  "com.teslacoilsw.launcher/databases/nova.db, which holds what the launcher draws "
                  "on the home screen and in the dock, and also the items sitting inside its "
                  "drawer folders. Modified is Unix milliseconds and is "
-                 "reported as UTC. On the tested device it was 0 on the nine rows imported from "
-                 "the previous launcher at setup and carried the setup time on the rest, so on "
-                 "that device a blank Modified marked an imported item. Location "
+                 "reported as UTC. On the tested device it was 0 on nine rows and carried one "
+                 "shared time on the rest. The nine rows were read as items imported from the "
+                 "previous launcher at setup; how that was established is not recorded here. "
+                 "Location "
                  "resolves the container column, and only the two values seen on the tested device "
                  "are named. Those two are proven by known data rather than by any published "
                  "source: the five items with container -101 were the icons sitting in the dock "
@@ -30,11 +31,12 @@ __artifacts_v2__ = {
                  "on the container number. Item Type is reported as stored for the same "
                  "reason; every item on the tested device was 0. Component is taken out of the "
                  "stored intent and is the package and activity the item launches, which is what "
-                 "identifies the app when the title has been renamed by the user. One internal row "
-                 "with no container and no title is skipped. Span X and Span Y were 1.0 on every "
-                 "row of the tested image because every item there was a single icon; a widget "
-                 "occupies more than one cell and is what makes those two columns vary, so they "
-                 "are kept rather than dropped. A row is evidence the item was in the launcher's "
+                 "identifies the app when the title has been renamed by the user. Rows whose "
+                 "container is empty are not reported; on the tested device that was one row, "
+                 "which also had no title. Span X and Span Y were 1.0 on every "
+                 "row of the tested image because every item there was a single icon; no item with "
+                 "a larger span, such as a widget, was present, so other values of those two "
+                 "columns were not exercised. A row is evidence the item was in the launcher's "
                  "layout, not that it was ever tapped.",
         "paths": ('*/com.teslacoilsw.launcher/databases/nova.db*',),
         "output_types": "standard",
@@ -42,7 +44,8 @@ __artifacts_v2__ = {
     },
     "nova_drawer_groups": {
         "name": "Nova Launcher Drawer Groups",
-        "description": "Nova Launcher drawer folders and the drawer's whole app list, with the apps in each",
+        "description": "Rows of Nova Launcher's appgroups table, each naming an app component and "
+                       "the drawer group it is assigned to",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
@@ -59,11 +62,12 @@ __artifacts_v2__ = {
                  "held exactly the apps shown. Assigned is Unix milliseconds, reported as UTC, and "
                  "is the appgroups row's own modified column. On the tested device every "
                  "component appeared twice, once against its group and once against group -100, "
-                 "read here as the drawer's whole app list rather than a folder; those rows are "
-                 "reported with a blank Group Name and are what shows an app was present in the "
-                 "drawer at all. Hides Apps From Drawer is the drawer_groups hideApps column and "
-                 "was 1 on every category folder of the tested device, where the setting was not "
-                 "changed by hand. Hiding an individual app was not exercised, so this artifact "
+                 "which has no drawer_groups row, so those rows are reported with a blank Group "
+                 "Name. What group -100 stands for was not established. Hides Apps From Drawer "
+                 "shows the drawer_groups hideApps column as Yes for a non-zero value and No for "
+                 "0. It was 1 on every category folder of the tested device, where the setting was "
+                 "not changed by hand. What the app does with the value was not exercised. Hiding "
+                 "an individual app was not exercised, so this artifact "
                  "shows folder membership and the folder's "
                  "hide setting, not a per-app hidden list. Group Type is reported as stored. A row "
                  "is evidence the app was assigned to the group, not that it was launched.",

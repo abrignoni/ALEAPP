@@ -1,14 +1,21 @@
 __artifacts_v2__ = {
     "get_nike_activMoments": {
         "name": "Nike - Activity Moments",
-        "description": "Per-activity moments (pauses, resumes, splits, GPS signal events) from the Nike Run app database (com.nike.nrc.room)",
+        "description": "Rows of the activity_moment table in the Nike Run Club app database "
+                       "(com.nike.nrc.room), with the stored moment type and value and a label "
+                       "this module derives from them",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
         "creation_date": "2023-03-18",
         "last_update_date": "2023-03-18",
         "requirements": "none",
         "category": "Nike-Run",
-        "notes": "Interactive JS timeline replaced with a structured table (one row per activity moment); "
-                 "run start/end and summary metrics are covered by the 'Nike - Activities' artifact.",
+        "notes": "One row per activity_moment row, ordered by activity and time. Moment Type and "
+                 "Value are as stored. Description is a label this module derives from them (halt, "
+                 "split_km, lap, split_mile and gps_signal types; a lap type is labelled Split "
+                 "KM); the mapping has no cited source and was not exercised on the registered "
+                 "corpora, which returned 0 rows. Timestamp is as2_m_timestamp_utc_ms read as Unix "
+                 "milliseconds. Only the first database found is read. Run start, end and summary "
+                 "values are in the Nike - Activities artifact.",
         "paths": ('*/com.nike.plusgps/databases/com.nike.nrc.room*',),
         "output_types": "standard",
         "artifact_icon": "activity",

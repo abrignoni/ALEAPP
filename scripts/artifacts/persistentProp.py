@@ -1,7 +1,11 @@
 __artifacts_v2__ = {
     "get_persistentProp": {
         "name": "persistentProp",
-        "description": "Parses persistent system properties and their set times (timestamp and event) from the persistent_properties file.",
+        "description": "Parses reboot entries from the persistent_properties file: lines beginning "
+                       "with \"persist.sys.boot.reason.historyDreboot\", \"reboot,factory_reset,\" "
+                       "or \"reboot\" followed by one further field. The last comma-separated "
+                       "field is read as Unix seconds and shown in UTC. Other persistent "
+                       "properties are not reported.",
         "author": "@abrignoni",
         "creation_date": "2021-08-18",
         "last_update_date": "2021-08-18",

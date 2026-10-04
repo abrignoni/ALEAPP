@@ -12,8 +12,8 @@ __artifacts_v2__ = {
          "Android Open Source Project, art/libartservice/service/proto/dex_use.proto for the "
          "schema and libartservice/service/java/com/android/server/art/DexUseManagerLocal.java for "
          "the writer, which names that path in its own FILENAME constant. The field numbers taken "
-         "here are identical at android-14.0.0_r1, the first release to ship ART Service, at "
-         "android-15.0.0_r1 and at main: DexUseProto package_dex_use 1; PackageDexUseProto "
+         "here are identical at android-14.0.0_r1, the first release to ship ART Service, and at "
+         "android-15.0.0_r1: DexUseProto package_dex_use 1; PackageDexUseProto "
          "owning_package_name 1, primary_dex_use 2, secondary_dex_use 3; PrimaryDexUseProto "
          "dex_file 1, record 2; PrimaryDexUseRecordProto loading_package_name 1, isolated_process "
          "2, last_used_at_ms 3; SecondaryDexUseProto dex_file 1, user_id 2, record 3; "
@@ -60,8 +60,9 @@ __artifacts_v2__ = {
          "extraction. The path pattern is not anchored on a data/ prefix, so a raw userdata "
          "partition image that carries system/ at its root is matched as well. The three Dex Usage "
          "artifacts partition the store's records without overlap: this one, Cross-Package Code "
-         "Loads, and Secondary Dex Loads. Every field of every message in the schema is reported "
-         "across them, so nothing in the store is left unread.",
+         "Loads, and Secondary Dex Loads. Every field of every message in the schema at the releases named "
+         "above is reported across them. A field added by a later release would be skipped without a log "
+         "line.",
         "paths": ('*/system/package-dex-usage.pb',),
         "output_types": "standard",
         "artifact_icon": "package",
@@ -120,8 +121,8 @@ __artifacts_v2__ = {
          "Android Open Source Project, art/libartservice/service/proto/dex_use.proto for the "
          "schema and libartservice/service/java/com/android/server/art/DexUseManagerLocal.java for "
          "the writer, which names that path in its own FILENAME constant. The field numbers taken "
-         "here are identical at android-14.0.0_r1, the first release to ship ART Service, at "
-         "android-15.0.0_r1 and at main: DexUseProto package_dex_use 1; PackageDexUseProto "
+         "here are identical at android-14.0.0_r1, the first release to ship ART Service, and at "
+         "android-15.0.0_r1: DexUseProto package_dex_use 1; PackageDexUseProto "
          "owning_package_name 1, primary_dex_use 2, secondary_dex_use 3; PrimaryDexUseProto "
          "dex_file 1, record 2; PrimaryDexUseRecordProto loading_package_name 1, isolated_process "
          "2, last_used_at_ms 3; SecondaryDexUseProto dex_file 1, user_id 2, record 3; "
@@ -141,10 +142,9 @@ __artifacts_v2__ = {
          "time: that happened on 23 pairings across 6 of the tested images and is not duplication. "
          "The platform writes the file through a debouncer with a 15 second minimum interval and "
          "also on the shutdown broadcast, so a load in the last seconds before acquisition can be "
-         "absent. One package loading another's code is ordinary platform behaviour far more often "
-         "than not: of the 2232 rows across the tested images, 1159 name Google Play services as "
-         "the owning package and 458 the Android System WebView, which apps load to render web "
-         "content, so the row worth attention is an unexpected pairing rather than the presence of "
+         "absent. Of the 2232 rows across the tested images, 1159 name Google Play services as the owning "
+         "package and 458 the Android System WebView, so the row worth attention is an unexpected pairing "
+         "rather than the presence of "
          "pairings. 1549 of the rows load a file under /data/app and 683 a platform path under "
          "/system, /apex, /product, /vendor or /system_ext. Isolated Process is the record's "
          "isolated_process flag, set for a load into an isolated process; it was true on 3 of "
@@ -170,7 +170,8 @@ __artifacts_v2__ = {
          "data/ prefix, so a raw userdata partition image that carries system/ at its root is "
          "matched as well. The three Dex Usage artifacts partition the store's records without "
          "overlap: App Code Loads, this one, and Secondary Dex Loads. Every field of every message "
-         "in the schema is reported across them, so nothing in the store is left unread.",
+         "in the schema at the releases named above is reported across them. A field added by a later "
+         "release would be skipped without a log line.",
         "paths": ('*/system/package-dex-usage.pb',),
         "output_types": "standard",
         "artifact_icon": "share-2",
@@ -218,8 +219,9 @@ __artifacts_v2__ = {
     },
     "package_dex_usage_secondary": {
         "name": "Dex Usage - Secondary Dex Loads",
-        "description": "Dex, APK and JAR files an app loaded from its own data directory rather than from its "
-         "installation, with the time of the most recent load.",
+        "description": "Secondary dex files (APK or JAR files in a package's data directory, as opposed to "
+         "its installation) recorded as loaded, by loading and owning package, with the time of the most "
+         "recent load.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-06",
@@ -229,8 +231,8 @@ __artifacts_v2__ = {
          "Android Open Source Project, art/libartservice/service/proto/dex_use.proto for the "
          "schema and libartservice/service/java/com/android/server/art/DexUseManagerLocal.java for "
          "the writer, which names that path in its own FILENAME constant. The field numbers taken "
-         "here are identical at android-14.0.0_r1, the first release to ship ART Service, at "
-         "android-15.0.0_r1 and at main: DexUseProto package_dex_use 1; PackageDexUseProto "
+         "here are identical at android-14.0.0_r1, the first release to ship ART Service, and at "
+         "android-15.0.0_r1: DexUseProto package_dex_use 1; PackageDexUseProto "
          "owning_package_name 1, primary_dex_use 2, secondary_dex_use 3; PrimaryDexUseProto "
          "dex_file 1, record 2; PrimaryDexUseRecordProto loading_package_name 1, isolated_process "
          "2, last_used_at_ms 3; SecondaryDexUseProto dex_file 1, user_id 2, record 3; "
@@ -257,8 +259,10 @@ __artifacts_v2__ = {
          "additionally 10, a second Android user, on 18 of them. Class Loader Context is the "
          "record's class_loader_context, the dependency chain the loader was given, as stored; it "
          "carried a value on all 1568 rows of the tested images. ABI is the record's abi_name; it "
-         "was arm64-v8a on all 1568 rows of the tested images, and a load for another ABI would be "
-         "recorded here. Isolated Process was false on all 1568 of these rows across the tested "
+         "was arm64-v8a on all 1568 rows of the tested images, and DexUseManagerLocal fills it with the "
+         "loading package's primary ABI (android-15.0.0_r1, lines 424 to 427), so a package with another "
+         "primary ABI would show that ABI here. Isolated Process was false on all 1568 of these rows "
+         "across the tested "
          "images. An entry outlives the package it names until the platform's cleanup pass runs: "
          "DexUseManagerLocal.cleanup() drops entries whose owning or loading package is no longer "
          "installed, and ArtManagerLocal.cleanup() invokes it as part of the platform's routine "
@@ -280,8 +284,8 @@ __artifacts_v2__ = {
          "extraction. The path pattern is not anchored on a data/ prefix, so a raw userdata "
          "partition image that carries system/ at its root is matched as well. The three Dex Usage "
          "artifacts partition the store's records without overlap: App Code Loads, Cross-Package "
-         "Code Loads, and this one. Every field of every message in the schema is reported across "
-         "them, so nothing in the store is left unread.",
+         "Code Loads, and this one. Every field of every message in the schema at the releases named above "
+         "is reported across them. A field added by a later release would be skipped without a log line.",
         "paths": ('*/system/package-dex-usage.pb',),
         "output_types": "standard",
         "artifact_icon": "terminal",

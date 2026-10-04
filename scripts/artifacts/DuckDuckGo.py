@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "last_update_date": "2025-06-08",
         "requirements": "none",
         "category": "DuckDuckGo",
-        "notes": "Tested on version 5.237.0 (June, 3rd 2025)",
+        "notes": "Tested by the module author on app version 5.237.0 (3 June 2025). The two images listed in sample_data produced no rows, so the query is not exercised on registered data.",
         "paths": ('*/com.duckduckgo.mobile.android/databases/app.db*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "bookmark",
@@ -25,7 +25,7 @@ __artifacts_v2__ = {
         "last_update_date": "2025-06-08",
         "requirements": "none",
         "category": "DuckDuckGo",
-        "notes": "Tested on version 5.237.0 (June, 3rd 2025)",
+        "notes": "Tested by the module author on app version 5.237.0 (3 June 2025). The two images listed in sample_data produced no rows, so the query is not exercised on registered data.",
         "paths": ('*/com.duckduckgo.mobile.android/databases/app.db*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "star",
@@ -45,7 +45,11 @@ __artifacts_v2__ = {
         "notes": (
             "Tested on version 5.237.0 (June, 3rd 2025). Visit Date is the stored "
             "visits_list.timestamp string reproduced as recorded, with the ISO 'T' "
-            "separator replaced by a space; the file carries no time zone for it."
+            "separator replaced by a space; the file carries no time zone for it, "
+            "while the report column is typed as a date and time and will be "
+            "displayed as if UTC; the zone of the stored value is not established. "
+            "History Type shows the stored isSerp flag as 'DuckDuckGo Search' for "
+            "1 and 'Web Page Visit' for 0."
         ),
         "paths": ('*/com.duckduckgo.mobile.android/databases/history.db*'),
         "output_types": ["html", "tsv", "lava"],
@@ -64,12 +68,14 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "DuckDuckGo",
         "notes": (
-            "Tested on version 5.255.0 (Oct, 31st 2025). Cached Tab Preview Time is decoded "
-            "from the tab preview file name, which is a number read as a Unix time in "
-            "milliseconds; that reading is not documented and the file name is "
-            "its only basis. It is rendered in UTC. Tab Last Accessed is the stored "
+            "Tested on version 5.255.0 (Oct, 31st 2025). Cached Tab Preview Time (UTC) is "
+            "decoded from the tab preview file name, which is a number read as a Unix time in "
+            "milliseconds; that reading is not documented and the file name is its only "
+            "basis. It is rendered in UTC. Tab Last Accessed is the stored "
             "tabs.lastAccessTime string reproduced as recorded, with the ISO 'T' separator "
-            "replaced by a space; the file carries no time zone for it, and it is reported as "
+            "replaced by a space; the file carries no time zone for it, while the report "
+            "column is typed as a date and time and will be displayed as if UTC; the zone of "
+            "the stored value is not established. It is reported as "
             "'Unavailable' on versions whose tabs table has no lastAccessTime column."
         ),
         "paths": (
@@ -90,7 +96,7 @@ __artifacts_v2__ = {
         "last_update_date": "2025-11-13",
         "requirements": "none",
         "category": "DuckDuckGo",
-        "notes": "Tested on version 5.255.0 (Oct, 31st 2025)",
+        "notes": "Tested by the module author on app version 5.255.0 (31 October 2025). The two images listed in sample_data produced no rows, so the query is not exercised on registered data.",
         "paths": ('*/com.duckduckgo.mobile.android/databases/app.db*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "globe",
@@ -107,7 +113,7 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "DuckDuckGo",
-        "notes": "Tested on version 5.255.0 (Oct, 31st 2025). Reference: DuckDuckGo Android, 'DownloadStatus (STARTED=0, FINISHED=1)', https://github.com/duckduckgo/Android/blob/develop/downloads/downloads-store/src/main/java/com/duckduckgo/downloads/store/DownloadStatus.kt",
+        "notes": "Tested by the module author on app version 5.255.0 (31 October 2025). The two images listed in sample_data produced no rows, so the query is not exercised on registered data. Reference: DuckDuckGo Android, 'DownloadStatus (STARTED=0, FINISHED=1)', https://github.com/duckduckgo/Android/blob/ce9fb1ffde1f76cea97f78bbc97fab05e5e74ea9/downloads/downloads-store/src/main/java/com/duckduckgo/downloads/store/DownloadStatus.kt#L20-L21. Download Date is the stored createdat value passed through SQLite's DATETIME function; no time zone is stated for it here.",
         "paths": ('*/com.duckduckgo.mobile.android/databases/downloads.db*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "download",
@@ -125,8 +131,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "DuckDuckGo",
         "notes": (
-            "Timestamp is decoded from the thumbnail file name, which is a number read as a "
-            "Unix time in milliseconds; that reading is not documented and the "
+            "Timestamp (UTC) is decoded from the thumbnail file name, which is a number read "
+            "as a Unix time in milliseconds; that reading is not documented and the "
             "file name is its only basis. It is rendered in UTC. Referenced In Tabs Table "
             "records whether the file name appears in the tabs table of app.db; it describes "
             "that reference only and does not establish whether a tab is open or closed."
@@ -143,13 +149,13 @@ __artifacts_v2__ = {
     },
     "duckduckgo_duckai": {
         "name": "DuckDuckGo - Duck AI",
-        "description": "Parses Duck AI Coversations",
+        "description": "Parses Duck AI conversations stored in the WebView Local Storage LevelDB",
         "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
         "creation_date": "2025-11-13",
         "last_update_date": "2025-11-13",
         "requirements": "none",
         "category": "DuckDuckGo",
-        "notes": "Tested on version 5.255.0 (Oct, 31st 2025)",
+        "notes": "Tested by the module author on app version 5.255.0 (31 October 2025). The two images listed in sample_data produced no rows, so the reader is not exercised on registered data.",
         "paths": ('*com.duckduckgo.mobile.android/app_webview/Default/Local Storage/leveldb/*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "message",
@@ -166,7 +172,7 @@ __artifacts_v2__ = {
         "last_update_date": "2025-11-14",
         "requirements": "none",
         "category": "DuckDuckGo",
-        "notes": "Tested on version 5.255.0 (Oct, 31st 2025)",
+        "notes": "Tested by the module author on app version 5.255.0 (31 October 2025). No registered image result is recorded for this artifact.",
         "paths": ('*/com.duckduckgo.mobile.android/app_webview/Default/cookies'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "globe"

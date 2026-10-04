@@ -8,7 +8,7 @@ from scripts.ilapfuncs import (
 __artifacts_v2__ = {
     "deepseek_chat_info": {
         "name": "Deepseek Chat Info",
-        "description": "List of Deepseek chat sessions and last updated timestamps",
+        "description": "List of Deepseek chat sessions and their updated_at values (read as Unix seconds)",
         "author": "RicardoBentoSantos",
         "creation_date": "2026-05-24",
         "last_update_date": "2026-05-24",

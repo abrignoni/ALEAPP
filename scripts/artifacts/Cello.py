@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_Cello": {
         "name": "Cello - Google Drive",
-        "description": "Parses the Cello db for Google Drive metadata",
+        "description": "Parses the items table of the Google Drive cello.db (dates read as Unix milliseconds, title, MIME type, quota bytes and flags). The Deleted column reports the trashed flag and the Offline column reports an offlineStatus property of 1; a file checked in as Offline File is the blob the item's content metadata names.",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2020-12-21",
         "last_update_date": "2020-12-21",

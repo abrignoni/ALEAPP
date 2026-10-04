@@ -2,8 +2,7 @@
 __artifacts_v2__ = {
     "get_textnow_call_logs": {
         "name": "Text Now - Call Logs",
-        "description": "Parses TextNow call logs (start time, a computed end time, participant IDs and direction) from "
-                       "the TextNow textnow_data.db.",
+        "description": "Parses rows of message_type 100 and 102 in the messages table of the TextNow textnow_data.db, which this artifact treats as call records (that mapping is not sourced): start time, a computed end time, participant IDs and direction.",
         "author": "@markmckinnon",
         "creation_date": "2021-03-15",
         "last_update_date": "2026-08-01",
@@ -31,7 +30,10 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Text Now",
-        "notes": ("Direction is decoded from the messages table 'message_direction' column, the same "
+        "notes": ("A message row is reported only when its contact_value is present in the "
+                  "contacts table or in a group; a contact_value present in both yields the row "
+                  "twice. All message_type values other than 100 and 102 are included. "
+                  "Direction is decoded from the messages table 'message_direction' column, the same "
                   "column and mapping used by Text Now - Call Logs. Values 1 and 2 are labelled "
                   "Incoming and Outgoing; that mapping is not vendor-documented and no source or "
                   "measurement for it is given here, so the labels are unverified. Unrecognized "
@@ -42,7 +44,7 @@ __artifacts_v2__ = {
     },
     "get_textnow_contacts": {
         "name": "Text Now - Contacts",
-        "description": "Parses TextNow contacts (number and name) from the TextNow textnow_data.db.",
+        "description": "Parses TextNow contacts (number and name; where no name is stored the name column repeats the number) from the TextNow textnow_data.db.",
         "author": "@markmckinnon",
         "creation_date": "2021-03-15",
         "last_update_date": "2021-03-15",

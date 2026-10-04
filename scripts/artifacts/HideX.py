@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_HideX": {
         "name": "HideX",
-        "description": "Parses the list of apps hidden or locked by the HideX privacy app (package name and active state) from hidex.db.",
+        "description": "Rows of the p_lock_app table in the HideX app's hidex.db (com.flatfish.cal.privacy): id, packageName and isActive. What a row or the isActive value means in the app is not established.",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-10-12",
         "last_update_date": "2021-10-12",

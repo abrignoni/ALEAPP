@@ -9,55 +9,59 @@ __artifacts_v2__ = {
         "requirements": "sqlcipher3",
         "category": "WeChat",
         "notes": "com.tencent.mm stores its messages in EnMicroMsg.db, a SQLCipher database. The "
-                 "key is the first seven characters of the lowercase MD5 of the device IMEI "
-                 "joined to the account uin; no reference for that scheme is cited here, and the "
-                 "derived key is confirmed only by the database opening with it. The uin is read "
-                 "from the application's own auth_info_key_prefs.xml, and the account directory "
-                 "name under MicroMsg is the MD5 of the literal mm joined to that uin, which "
-                 "this artifact checks so it opens each account's database with that account's "
-                 "key. The IMEI is taken from the application's WLOGIN_DEVICE_INFO.xml, and the "
-                 "literal 1234567890ABCDEF is also tried; on the corpus below the database "
-                 "opened with the literal rather than the stored IMEI, and why the application "
-                 "uses that literal is not sourced here. The database is opened with the "
-                 "SQLCipher parameter set this application uses, page size 1024, 4000 KDF "
-                 "iterations and HMAC off, and a database that does not open with the derived "
-                 "key fails outright rather than returning wrong rows. createTime is Unix "
-                 "milliseconds. Is Send is the isSend column, reported as stored; this parser "
-                 "labels 1 as sent by the account and no source for that flag is cited here. "
-                 "Talker is the talker column, reported as stored, and the member who sent a "
-                 "group message is not resolved here. Message Type (as stored) is the type "
-                 "column and is reported as stored, no authoritative source for its full code "
-                 "list having been located; on the corpus below type 1 was text and the other "
-                 "values carried XML documents. Message is the readable form of the content "
-                 "column: for a plain text row it is that text unchanged, and for a row holding "
-                 "a document it is the document's own title and des elements, with Link taken "
-                 "from its url element. Those are the document's own element names, read from it "
-                 "rather than inferred. Content Element names the first element inside the root, "
-                 "so a document carrying no title still says what kind it is. Content (as "
-                 "stored) keeps the raw value in every case, so nothing the summary omits is "
-                 "lost. On the corpus below 587 of 602 rows produced a readable Message and 461 "
-                 "carried a Link; the 15 that produced neither were the rows whose Content "
-                 "Element is img, which hold an image reference and no text, so Message is empty "
-                 "on those by design rather than through a failure to parse. A document that "
-                 "does not parse is logged and leaves Message, Content Element and Link empty, "
-                 "with the stored column as the only record for the row. Media, Attachment File, "
-                 "Attachment Format and Attachment Size are resolved from names the database "
-                 "itself recorded for the row, never by matching a file on size or time. An "
-                 "image row points at its thumbnail through the imgPath column, a voice row is "
-                 "joined to voiceinfo on the message id to get its file name, and a sticker row "
-                 "names its file directly; each name is then looked for only inside that row's "
-                 "own account container, so two accounts holding a file of the same name cannot "
-                 "be confused. Media is checked in only where the resolved thumbnail is a real "
-                 "image by its leading bytes. On the corpus below all 15 image rows resolved to "
-                 "a thumbnail and every one was a plain JPEG, so 15 rows carry a rendered image; "
-                 "21 rows resolved an attachment. Attachment Format is read from the file's "
-                 "leading bytes, and the values seen were the reason the other files are not "
-                 "rendered: the full size images are a wxgf container, the voice files carry a "
-                 "SILK header despite their amr extension, and the two sticker files matched no "
-                 "known signature. Those three are reported by name, format and size so an "
-                 "examiner knows the file exists and where, without this artifact claiming to "
-                 "have decoded it. Image Path (as stored) keeps the raw imgPath token where the "
-                 "row has one.",
+                 "key is the first seven characters of the lowercase MD5 of the device IMEI joined "
+                 "to the account uin; no reference for that scheme is cited here, and the derived "
+                 "key is confirmed only by the database opening with it. The uin is read from the "
+                 "application's own auth_info_key_prefs.xml, and the account directory name under "
+                 "MicroMsg is the MD5 of the literal mm joined to that uin, which this artifact "
+                 "checks. Only the database whose directory matches the uin in the preference file "
+                 "is opened; a database for any other account is logged and not read. The IMEI is "
+                 "taken from the application's WLOGIN_DEVICE_INFO.xml, and the literal "
+                 "1234567890ABCDEF is also tried; on the corpus below the database opened with the "
+                 "literal rather than the stored IMEI, and why the application uses that literal "
+                 "is not sourced here. The database is opened with the SQLCipher parameter set "
+                 "this application uses, page size 1024, 4000 KDF iterations and HMAC off, and a "
+                 "database that does not open with either key is logged in the run log and no rows "
+                 "are reported for it. No rows are reported either when the sqlcipher3 package is "
+                 "not installed, so an empty result is not evidence the store held no messages. "
+                 "createTime is Unix milliseconds. Is Send is the isSend column, reported as "
+                 "stored; the Direction column shows Outgoing where isSend is 1 and Incoming for "
+                 "every other stored value, including an empty one; no source for the meaning of "
+                 "isSend is cited here, so read Is Send for the value as stored. Talker is the "
+                 "talker column, reported as stored, and the member who sent a group message is "
+                 "not resolved here. Message Type (as stored) is the type column and is reported "
+                 "as stored, no authoritative source for its full code list having been located. "
+                 "The attachment lookup treats type 3 as an image row, type 34 as a voice row and "
+                 "type 47 as a sticker row; no source for those three values is cited here. On the "
+                 "corpus below type 1 was text and the other values carried XML documents. Message "
+                 "is the readable form of the content column: for a plain text row it is that text "
+                 "unchanged, and for a row holding a document it is the document's own title and "
+                 "des elements, with Link taken from its url element. Those are the document's own "
+                 "element names, read from it rather than inferred. Content Element names the "
+                 "first element inside the root, so a document carrying no title still says what "
+                 "kind it is. Content (as stored) keeps the raw value in every case, so nothing "
+                 "the summary omits is lost. A row whose Content Element is img holds an image "
+                 "reference and no text, so Message is empty on it by design rather than through a "
+                 "failure to parse. A document that does not parse is logged and leaves Message, "
+                 "Content Element and Link empty, with the stored column as the only record for "
+                 "the row. Media, Attachment File, Attachment Format and Attachment Size are "
+                 "resolved from names the database itself recorded for the row, never by matching "
+                 "a file on size or time. An image row points at its thumbnail through the imgPath "
+                 "column, a voice row is joined to voiceinfo on the message id to get its file "
+                 "name, and a sticker row names its file directly; each name is then looked for "
+                 "only inside the com.tencent.mm folder the row's database sits in, so a file of "
+                 "the same name under another Android user's copy of the app is not picked up. Two "
+                 "WeChat accounts inside one com.tencent.mm folder share the lookup, and the first "
+                 "file of a given name is used. Media is checked in only where the resolved "
+                 "thumbnail is a real image by its leading bytes. On the corpus below image rows "
+                 "resolved to a JPEG thumbnail, which is rendered. Attachment Format is read from "
+                 "the file's leading bytes, and the values seen were the reason the other files "
+                 "are not rendered: the full size images are a wxgf container, the voice files "
+                 "carry a SILK header despite their amr extension, and the sticker files matched "
+                 "no known signature. Those three are reported by name, format and size so an "
+                 "examiner knows the file exists and where, without this artifact claiming to have "
+                 "decoded it. Image Path (as stored) keeps the raw imgPath token where the row has "
+                 "one.",
         "paths": ('*/com.tencent.mm/MicroMsg/*/EnMicroMsg.db*',
                   '*/com.tencent.mm/shared_prefs/auth_info_key_prefs.xml',
                   '*/com.tencent.mm/shared_prefs/WLOGIN_DEVICE_INFO.xml',
@@ -85,7 +89,8 @@ __artifacts_v2__ = {
     "wechat_contacts": {
         "name": "WeChat - Contacts",
         "description": "Rows from the rcontact table of the decrypted EnMicroMsg.db, each a "
-                       "contact the account holds, with the WeChat id, nickname and any remark",
+                       "contact record the database holds, with the WeChat id, nickname and any "
+                       "remark",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
@@ -122,12 +127,12 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-30",
         "requirements": "sqlcipher3",
         "category": "WeChat",
-        "notes": "rconversation is one row per conversation. Username is the other party's "
-                 "WeChat id or the group id, Message Count is the count the application records "
-                 "for that conversation, Unread Count is what it recorded as unread, and Last "
-                 "Message Time is conversationTime as Unix milliseconds. Digest is the preview "
-                 "text of the last message the application stored for the conversation list, so "
-                 "it can hold the text of a message that the message table also carries.",
+        "notes": "rconversation is one row per conversation. Username is the username column, "
+                 "reported as stored. Message Count is the msgCount column and Unread Count the "
+                 "unReadCount column, both as stored. Last Message Time is conversationTime as "
+                 "Unix milliseconds. Digest is the digest column and Digest User the digestUser "
+                 "column, both reported as stored; what the application writes into them is not "
+                 "sourced here. Status (as stored) is the status column.",
         "paths": ('*/com.tencent.mm/MicroMsg/*/EnMicroMsg.db*',
                   '*/com.tencent.mm/shared_prefs/auth_info_key_prefs.xml',
                   '*/com.tencent.mm/shared_prefs/WLOGIN_DEVICE_INFO.xml'),
@@ -148,13 +153,13 @@ __artifacts_v2__ = {
         "category": "WeChat",
         "notes": "userinfo is a key and value table holding the signed-in account's own record. "
                  "The rows are reported with the numeric id the table uses and the value as "
-                 "stored: on the corpus below id 2 held the account's WeChat id, id 4 the "
-                 "display name and id 6 the bound telephone number, which are the fields an "
-                 "examiner would want, but the id to field mapping is the application's own and "
-                 "is not expanded here beyond reporting the id, since no authoritative source "
-                 "for the full list was located. The account uin, taken from "
-                 "auth_info_key_prefs.xml, is reported alongside so the record can be tied to "
-                 "the database directory it came from.",
+                 "stored, except that a stored 0 or empty value is shown blank: on the corpus "
+                 "below id 2 held the account's WeChat id, id 4 the display name and id 6 the "
+                 "bound telephone number, but the id to field mapping is the application's own and "
+                 "is not expanded here beyond reporting the id, since no authoritative source for "
+                 "the full list was located. The account uin, taken from auth_info_key_prefs.xml, "
+                 "is reported alongside so the record can be tied to the database directory it "
+                 "came from.",
         "paths": ('*/com.tencent.mm/MicroMsg/*/EnMicroMsg.db*',
                   '*/com.tencent.mm/shared_prefs/auth_info_key_prefs.xml',
                   '*/com.tencent.mm/shared_prefs/WLOGIN_DEVICE_INFO.xml'),

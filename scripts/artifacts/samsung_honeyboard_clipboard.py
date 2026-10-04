@@ -22,7 +22,9 @@ __artifacts_v2__ = {
             "Parses ClipItem.db clipboard text entries. Supports both the old "
             "schema (caller_app_uid) and new schema (caller_package_name); "
             "old-schema numeric UIDs are resolved via packages.xml when present. "
-            "Decodes ClipData type codes and surfaces html/uri columns."
+            "The type integer is shown with a label (1 Text, 2 Intent, 3 URI, "
+            "4 HTML/Rich Text; the source for these labels is not recorded) and "
+            "the html and uri columns are reported where the table has them."
         ),
         "author": "@segumarc, Al3x101",
         "creation_date": "2024-05-30",
@@ -30,9 +32,11 @@ __artifacts_v2__ = {
         "requirements": "",
         "category": "Clipboard",
         "notes": (
-            "Schema detected automatically. user_id 0 = primary user; "
-            "150 = Samsung Secure Folder. Old-schema UIDs are resolved from "
-            "packages.xml (text XML or, on Android 12+, binary ABX)."
+            "Schema detected automatically. user_id is reported as stored; what "
+            "each value stands for is not sourced here. Old-schema UIDs are "
+            "resolved from the first packages.xml found in the extraction, read as "
+            "text XML or binary ABX. A UID with no match is shown as UID:n and a "
+            "stored 0 or empty UID as Unknown."
         ),
         # Match ClipItem.db*, not just ClipItem.db, so the -wal/-shm are
         # co-extracted — the live schema/rows can reside entirely in an
@@ -50,10 +54,11 @@ __artifacts_v2__ = {
     "get_honeyboard_clipboard_deleted": {
         "name": "Samsung Honeyboard - Clipboard (WAL-recovered deleted entries)",
         "description": (
-            "Recovers deleted clipboard entries from ClipItem.db-wal via direct "
-            "SQLite WAL frame B-tree parsing with last-frame-wins deduplication. "
-            "No external tools required. Entries appear only if the device was "
-            "extracted before the WAL was checkpointed."
+            "Reports clipboard records found in ClipItem.db-wal frames whose row "
+            "id is not in the live clip_table. The WAL is read directly, taking the "
+            "last frame of each page; frame salts and checksums are not checked. A "
+            "record here was in the log and is not in the live table; why it is not "
+            "there is not established."
         ),
         "author": "Al3x101",
         "creation_date": "2026-07-13",
@@ -62,8 +67,15 @@ __artifacts_v2__ = {
         "category": "Clipboard",
         "notes": (
             "WAL Frame and WAL Page columns identify the exact location of each "
-            "recovered record for verification. A blank result means either no WAL "
-            "was present or it had already been checkpointed before extraction. "
+            "recovered record for verification. If the main database is not present "
+            "beside the WAL, every decodable WAL record is reported. A blank result "
+            "does not show that nothing was removed: it also results when no WAL was "
+            "present, when the WAL holds only records still in the live table, or "
+            "when a record has no text, an unlisted type code or could not be "
+            "decoded. On samsungs20_a13, samsunga53_a14, sharon_a14 and anne_a15 the "
+            "WAL was present (9 to 32 frames) and every clipboard record in it (11, "
+            "1, 19 and 8) was also in the live table, so no row was produced. This "
+            "artifact is unexercised on real data. "
             "Records whose payload spills onto SQLite overflow pages are not "
             "reassembled, so very long clips may be truncated."
         ),
@@ -82,10 +94,11 @@ __artifacts_v2__ = {
     "get_honeyboard_screenshot": {
         "name": "Samsung Honeyboard - Clipboard Screenshot Clips",
         "description": (
-            "Parses clipboard screenshot images (extensionless JPEG 'clip' files). "
-            "Extracts copy timestamp (parent directory name), EXIF capture time, "
-            "source app from the Samsung SEFT trailer, image dimensions, and a "
-            "thumbnail."
+            "Parses the image clips in the Honeyboard clipboard folder "
+            "(extensionless JPEG 'clip' files). Reports the parent directory name as "
+            "a time, the EXIF capture time, the package named in the Samsung SEFT "
+            "trailer, the image dimensions and the image itself. Files that are not "
+            "JPEG and files under remote_send are skipped."
         ),
         "author": "@segumarc, Al3x101",
         "creation_date": "2024-05-30",
@@ -93,10 +106,13 @@ __artifacts_v2__ = {
         "requirements": "Pillow (PIL) for EXIF and thumbnail; SEFT decoding is pure Python.",
         "category": "Clipboard",
         "notes": (
-            "Source app decoded from Samsung's proprietary SEFT trailer appended "
-            "after the JPEG EOI marker (FF D9). It is invisible to standard viewers and "
-            "absent from EXIF. Copy time from the parent directory name "
-            "(millisecond Unix epoch); capture time from EXIF DateTimeOriginal."
+            "Source App is the package part of the comp value in the "
+            "Captured_App_Info field of the trailer Samsung appends after the JPEG "
+            "end marker (FF D9), as stored; what Samsung records in that field was "
+            "not sourced. A file with no such field is shown as Unknown. Clipboard "
+            "Copy Time is the parent directory name read as Unix milliseconds; that "
+            "the app names the directory for the moment of the copy was not sourced. "
+            "Capture time is EXIF DateTimeOriginal as stored."
         ),
         "paths": ('*/com.samsung.android.honeyboard/clipboard/*/clip',),
         "output_types": "standard",

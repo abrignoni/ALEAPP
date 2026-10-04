@@ -1,13 +1,18 @@
 __artifacts_v2__ = {
     "get_adidas_user": {
         "name": "AdidasUser",
-        "description": "Get Information related to users from the Adidas Running app stored in user.db",
+        "description": "Parses the userProperty key and value rows of the Adidas Running app's user.db into one row.",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
         "creation_date": "2023-03-24",
         "last_update_date": "2023-03-24",
         "requirements": "Python 3.7 or higher",
         "category": "Adidas-Running",
-        "notes": "",
+        "notes": "LastSync is the lastV3SessionSyncAtLocalTime value read as Unix milliseconds and "
+                 "labelled UTC. The key name says local time, and whether the value is UTC is not "
+                 "established. The My Fitness Pal, Garmin Connect and Polar columns read Connected "
+                 "only when the stored value is the string true and Not Connected for any other "
+                 "stored value; they are blank when the key is absent. One row is emitted even "
+                 "when no key is present.",
         "paths": ('*com.runtastic.android/databases/user.db*',),
         "output_types": "standard",
         "artifact_icon": "user",

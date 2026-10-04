@@ -1,8 +1,8 @@
 __artifacts_v2__ = {
     "what3words_saved_places": {
         "name": "what3words - Saved Places",
-        "description": "Places saved in what3words, with the three word address, the label given to "
-                       "it, the nearest place and the coordinates",
+        "description": "Rows of the what3words LocationRealm store, with the three word address, "
+                       "the stored label, the nearest place and the coordinates",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
@@ -10,7 +10,10 @@ __artifacts_v2__ = {
         "category": "what3words",
         "notes": "Read from the class_LocationRealm table of the app's Realm store "
                  "(files/default.realm) using the vendored realm_parser. The latitude and "
-                 "longitude are the coordinates the app stored for the address.",
+                 "longitude are the coordinates the app stored for the address. Every "
+                 "class_LocationRealm row is reported. Location Type Value is the locationType "
+                 "value as stored; its meaning is not established, so a row is not shown to be a "
+                 "saved place by this artifact alone.",
         "paths": ('*/com.what3words.android/files/default.realm',),
         "output_types": "standard",
         "artifact_icon": "map-pin",
@@ -20,14 +23,19 @@ __artifacts_v2__ = {
     },
     "what3words_lists": {
         "name": "what3words - Location Lists",
-        "description": "Lists that group saved what3words locations, with the list label, the number "
-                       "of locations in it, who created it and when",
+        "description": "Lists that group saved what3words locations, with the list label, the "
+                       "number of locations in it, the stored createdBy value and the created and "
+                       "updated times",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
         "requirements": "none",
         "category": "what3words",
-        "notes": "Read from the class_LocationsListsRealm table of the app's Realm store.",
+        "notes": "Read from the class_LocationsListsRealm table of the app's Realm store. Created "
+                 "By is the createdBy value as stored; what it identifies is not established. "
+                 "Shared List shows Yes where isSharedList is true and No otherwise, including "
+                 "where it is empty. Created and Updated are the createdWhen and updatedAt values "
+                 "read as Unix timestamps.",
         "paths": ('*/com.what3words.android/files/default.realm',),
         "output_types": "standard",
         "artifact_icon": "list",

@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_callTranscription": {
         "name": "Android Call Transcriptions",
-        "description": "Parses recorded calls transcriptions",
+        "description": "Parses the *-transcription.pb files under the Google Dialer fermat_files folder. Fields 2, 3 and 4 of each entry are reported as Transcript, Timestamp (read as Unix milliseconds) and User; the names are this parser's and no schema for the file is cited in this module.",
         "author": "Alexis Brignoni",
         "creation_date": "2025-09-19",
         "last_update_date": "2025-09-19",

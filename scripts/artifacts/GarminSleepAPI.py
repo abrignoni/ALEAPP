@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_sleep_api": {
         "name": "GarminSleepAPI",
-        "description": "Get Information related to Garmin Sleep API",
+        "description": "Parses daily sleep records (dailySleepDTO) from the first matched sleep JSON file in a garmin.api folder. Start Time and End Time are sleepStartTimestampGMT and sleepEndTimestampGMT shown as UTC clock times with no date.",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
         "creation_date": "2023-02-24",
         "last_update_date": "2023-02-24",

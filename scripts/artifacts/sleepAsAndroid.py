@@ -1,28 +1,28 @@
 __artifacts_v2__ = {
     "sleepasandroid_records": {
         "name": "Sleep as Android - Sleep Records",
-        "description": "Rows from the records table of sleep-track.db, each a tracked sleep "
-                       "session with its start and end, the timezone the record carries and the "
-                       "measures the application scored for it",
+        "description": "Rows from the records table of sleep-track.db, each with its stored "
+                       "start and end, the timezone the record carries and the measures the "
+                       "application stored for it",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
         "category": "Sleep as Android",
-        "notes": "com.urbandroid.sleep tracks sleep sessions, so a row bounds a period the "
-                 "application recorded as sleep for the device it ran on. startTime and toTime "
-                 "are Unix milliseconds and are reported in UTC. The record also stores its own "
-                 "IANA timezone name, so Start and End are given again in that zone rather than "
-                 "in one assumed by this parser, and the zone itself is in its own column so the "
-                 "conversion can be redone. Latest To Time is a third stored time whose relation "
-                 "to the other two is not established, so it is reported without interpretation. "
-                 "Quality, Rating, Cycles, Snore and Noise Level are the application's own "
-                 "measures; Snore and Noise Level held -1 on every row of the corpus below, "
-                 "which is the value the columns carry when nothing was recorded rather than a "
-                 "measurement of zero, and Rating held 0.0 on every row. Comment is a free text "
-                 "field and held a tag on every row below. The geo column, which would carry a "
-                 "location for the session, was empty on every row below, so no location was "
-                 "recorded there. The recordData, recordFullData and recordNoiseData columns "
+        "notes": "Each row is one record of the records table with the start and end times the "
+                 "application stored. A row does not by itself establish that a person was asleep "
+                 "between those times. startTime and toTime are Unix milliseconds and are "
+                 "reported in UTC. The record also stores its own IANA timezone name, so Start "
+                 "and End are given again in that zone rather than in one assumed by this parser, "
+                 "and the zone itself is in its own column so the conversion can be redone. "
+                 "Latest To Time is a third stored time whose relation to the other two is not "
+                 "established, so it is reported without interpretation. Quality, Rating, Cycles, "
+                 "Snore and Noise Level are the application's own measures. Snore and Noise Level "
+                 "held -1 and Rating held 0.0 on every row of the corpus below. What -1 means in "
+                 "those columns is not established and it is reported as stored. Comment is a "
+                 "free text field and held a tag on every row below. The geo column was empty on "
+                 "every row below. What it holds when filled is not established. The recordData, "
+                 "recordFullData and recordNoiseData columns "
                  "hold the raw movement and sound series as binary and are not reported, being "
                  "large and not readable as evidence without the application; their presence is "
                  "reported as a byte length instead. Several columns were uniform across the "
@@ -53,8 +53,10 @@ __artifacts_v2__ = {
                  "whatever zone the device was set to, and carry no date. Days Of Week (as "
                  "stored) is the schema's own integer and is not expanded into day names, no "
                  "source for its bit layout having been located; on the corpus below it held 31 "
-                 "and 96. Alarm Time is stored as a Unix millisecond value and was empty on both "
-                 "rows below, so no next firing time was recorded. Enabled held 0 on both rows "
+                 "and 96. Alarm Time is alarms.alarmtime, converted as Unix milliseconds. It was "
+                 "blank on both rows below (the report shows a stored 0 and an empty value the "
+                 "same way), so that conversion was not exercised on real data and what the value "
+                 "marks is not established. Enabled held 0 on both rows "
                  "there, so neither alarm was recorded as enabled, and Message and Alert were "
                  "empty, so neither carried a label or a chosen sound. Those columns are kept "
                  "because a populated value on another extraction is the point of the "

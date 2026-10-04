@@ -1,13 +1,27 @@
 __artifacts_v2__ = {
     "get_appops": {
         "name": "App Ops Permissions",
-        "description": "App permission op timestamps from appops.xml (modern schema)",
+        "description": "App op access and reject times from the st records of "
+                       "appops.xml (the form written by Android 10 to 13; from "
+                       "Android 14 these records are in appops_accesses.xml)",
         "author": "@abrignoni",
         "creation_date": "2021-08-15",
         "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Permissions",
-        "notes": "Reference: AOSP, 'AppOpsManager op constants and AppOpsService XML attributes (times in milliseconds)', https://android.googlesource.com/platform/frameworks/base/+/refs/heads/main/core/java/android/app/AppOpsManager.java",
+        "notes": "Access Timestamp and Reject Timestamp are the t and r attributes of each st "
+                 "record, read as Unix milliseconds; Proxy Package Name and Proxy Package UID are "
+                 "its pp and pu attributes and ID is its id attribute where present. Only the "
+                 "first appops.xml found is read. Reference: Android Open Source Project. Op "
+                 "codes and names: AppOpsManager.java sAppOpInfos at android-14.0.0_r1, "
+                 "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/"
+                 "android-14.0.0_r1/core/java/android/app/AppOpsManager.java#2347; the table in "
+                 "this module names codes 0 to 120 and reports a higher code as its number. The "
+                 "st attributes n, t (access time), r (reject time), d, pp and pu: "
+                 "AppOpsService.java writeState at android-10.0.0_r1, "
+                 "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/"
+                 "android-10.0.0_r1/services/core/java/com/android/server/appop/"
+                 "AppOpsService.java#3063; no source for the id attribute was read here.",
         "paths": ('*/system/appops.xml',),
         "output_types": "standard",
         "artifact_icon": "package",
@@ -24,13 +38,26 @@ __artifacts_v2__ = {
     },
     "get_appops_legacy": {
         "name": "App Ops Permissions - Legacy",
-        "description": "App permission op timestamps from appops.xml (Android 9 and below schema)",
+        "description": "App op access times per uid state from the op attributes of appops.xml "
+                       "(the form AppOpsService writes at android-9.0.0_r1; no tested image "
+                       "exercised it)",
         "author": "@abrignoni",
         "creation_date": "2021-08-15",
         "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Permissions",
-        "notes": "Reference: AOSP, 'AppOpsManager op constants and AppOpsService XML attributes (times in milliseconds)', https://android.googlesource.com/platform/frameworks/base/+/refs/heads/main/core/java/android/app/AppOpsManager.java",
+        "notes": "Timestamp TP, TT, TFS, TF, TB and TC are the op element's tp, tt, tfs, tf, tb "
+                 "and tc attributes: the last access time, read here as Unix milliseconds, while "
+                 "the app's uid state was persistent, top, foreground service, foreground, "
+                 "background and cached. Only the first appops.xml found is read. Reference: "
+                 "Android Open Source Project, AppOpsService.java UID_STATE_TIME_ATTRS at "
+                 "android-9.0.0_r1, "
+                 "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/"
+                 "android-9.0.0_r1/services/core/java/com/android/server/AppOpsService.java#155. "
+                 "Op codes and names: AppOpsManager.java sAppOpInfos at android-14.0.0_r1, "
+                 "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/"
+                 "android-14.0.0_r1/core/java/android/app/AppOpsManager.java#2347; the table in "
+                 "this module names codes 0 to 120 and reports a higher code as its number.",
         "paths": ('*/system/appops.xml',),
         "output_types": "standard",
         "artifact_icon": "package",

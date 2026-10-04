@@ -1,18 +1,19 @@
 __artifacts_v2__ = {
     "get_errp": {
         "name": "Errp",
-        "description": "Parses power on/off, reboot and shutdown events (timestamp, event, code and details) from the system users eRR.p file.",
+        "description": "Parses the records of the eRR.p file under system/users/service or its data subfolder (timestamp, event, code and details as stored).",
         "author": "@abrignoni",
         "creation_date": "2021-08-15",
         "last_update_date": "2026-08-14",
         "requirements": "none",
         "category": "Wipe & Setup",
-        "notes": "The file moved to a data subfolder: current devices store it at "
-                 "system/users/service/data/eRR.p (both the registered Android 10-16 corpora and "
-                 "reporter-supplied Android 15 and 16 samples use that path), while the earlier "
-                 "system/users/service/eRR.p is kept for older images. Each line is "
-                 "'timestamp | event | code | details'; the timestamp carries the device's UTC "
-                 "offset and is also converted to UTC.",
+        "notes": "Two paths are read. The eight registered images listed in sample_data (Android "
+                 "10 to 15) all hold the file at system/users/service/data/eRR.p, as did "
+                 "reporter-supplied Android 15 and 16 samples. The path "
+                 "system/users/service/eRR.p is also read. Each line is 'timestamp | event | "
+                 "code | details'. The timestamp carries a UTC offset; it is shown as written in "
+                 "Timestamp (Local) and converted to UTC in Timestamp. A line whose timestamp "
+                 "cannot be read in that form keeps its row with Timestamp blank.",
         "paths": ('*/system/users/service/eRR.p',
                   '*/system/users/service/data/eRR.p'),
         "output_types": ['html', 'tsv', 'lava'],

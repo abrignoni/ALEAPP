@@ -8,7 +8,8 @@ __artifacts_v2__ = {
         "last_update_date": "2025-11-13",
         "requirements": "none",
         "category": "Ornet Browser",
-        "notes": "Tested on version 1.9.26 (Oct, 22nd 2025)",
+        "notes": "Tested by the author on version 1.9.26 (Oct, 22nd 2025). "
+                 "The test data and row counts are not recorded here.",
         "paths": ('*/com.ornet.torbrowser/databases/appDatabase'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "bookmark"
@@ -22,7 +23,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Ornet Browser",
         "notes": (
-            "Tested on version 1.9.26 (Oct, 22nd 2025). Rows are read from the suggestions "
+            "Tested by the author on version 1.9.26 (Oct, 22nd 2025). The test data and row "
+            "counts are not recorded here. Rows are read from the suggestions "
             "table of appDatabase. What the app stores in that table is not established, so "
             "the entries are reported as stored."
         ),
@@ -39,9 +41,11 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Ornet Browser",
         "notes": (
-            "Tested on version 1.9.26 (Oct, 22nd 2025). Visit Date joins the stored "
-            "history.date and history.time strings and reproduces them as recorded; the "
-            "file carries no time zone for them."
+            "Tested by the author on version 1.9.26 (Oct, 22nd 2025). The test data and "
+            "row counts are not recorded here. Visit Date joins the stored "
+            "history.date and history.time strings as recorded; the file carries no "
+            "time zone for them, and because the column is typed as a date and time the "
+            "report treats the value as UTC, which is not established."
         ),
         "paths": ('*/com.ornet.torbrowser/databases/appDatabase'),
         "output_types": ["html", "tsv", "lava"],
@@ -49,14 +53,15 @@ __artifacts_v2__ = {
     },
     "ornetbrowser_opentabs": {
         "name": "Ornet Browser - Open Tabs",
-        "description": "Parses Ornet Browser Open Tab Information",
+        "description": "Parses the tabs table of the Ornet Browser appDatabase",
         "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
         "creation_date": "2025-11-13",
         "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Ornet Browser",
         "notes": (
-            "Tested on version 1.9.26 (Oct, 22nd 2025). Tab Preview File Name Time is "
+            "Tested by the author on version 1.9.26 (Oct, 22nd 2025). The test data and "
+            "row counts are not recorded here. Tab Preview File Name Time is "
             "decoded from the tab preview file name, which is a number read as a Unix time "
             "in milliseconds; that reading is not documented and the file name "
             "is its only basis. It is rendered in UTC."
@@ -76,7 +81,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Ornet Browser",
         "notes": (
-            "Tested on version 1.9.26 (Oct, 22nd 2025). Rows are read from the frequents "
+            "Tested by the author on version 1.9.26 (Oct, 22nd 2025). The test data and "
+            "row counts are not recorded here. Rows are read from the frequents "
             "table of appDatabase. Count is the stored count value; what increments it is "
             "not established, so it is reported as stored."
         ),
@@ -93,7 +99,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Ornet Browser",
         "notes": (
-            "Tested on version 1.9.26 (Oct, 22nd 2025). Last Modified is the stored "
+            "Tested by the author on version 1.9.26 (Oct, 22nd 2025). The test data "
+            "and row counts are not recorded here. Last Modified is the stored "
             "downloads.last_modified_at value rendered in UTC; the column name is the "
             "field's own name and what the app updates it for is not established."
         ),
@@ -110,7 +117,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Ornet Browser",
         "notes": (
-            "Tested on version 1.9.26 (Oct, 22nd 2025). Timestamp is decoded from the "
+            "Tested by the author on version 1.9.26 (Oct, 22nd 2025). The test data and "
+            "row counts are not recorded here. Timestamp is decoded from the "
             "thumbnail file name, which is a number read as a Unix time in milliseconds; "
             "that reading is not documented and the file name is its only "
             "basis. It is rendered in UTC."
@@ -129,33 +137,45 @@ __artifacts_v2__ = {
         "last_update_date": "2025-11-13",
         "requirements": "none",
         "category": "Ornet Browser",
-        "notes": "Tested on version 1.9.26 (Oct, 22nd 2025)",
+        "notes": "Tested by the author on version 1.9.26 (Oct, 22nd 2025). "
+                 "The test data and row counts are not recorded here.",
         "paths": ('*/com.ornet.torbrowser/databases/appDatabase'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "search"
     },
     "ornetbrowser_cookies": {
         "name": "Ornet Browser - Cookies",
-        "description": "Parses Ornet Browser Cookies",
+        "description": "Parses the moz_cookies table of Ornet Browser's cookies.sqlite",
         "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
         "creation_date": "2025-11-14",
         "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Ornet Browser",
-        "notes": "Tested on version 1.9.26 (Oct, 22nd 2025)",
+        "notes": "Tested by the author on version 1.9.26 (Oct, 22nd 2025). "
+                 "The test data and row counts are not recorded here. The "
+                 "lastAccessed and creationTime values are read as Unix "
+                 "microseconds and expiry as Unix seconds, all shown in UTC; "
+                 "those units are assumed.",
         "paths": ('*/com.ornet.torbrowser/files/mozilla/*/cookies.sqlite*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "globe"
     },
     "ornetbrowser_usageinfo": {
         "name": "Ornet Browser - Usage Info",
-        "description": "Parses Ornet Browser Usage Information",
+        "description": "Reports the currentTab, privateCurrentTab, "
+                       "last_app_close_time and selectedSearchEngine values "
+                       "of the Ornet Browser preferences file",
         "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
         "creation_date": "2025-11-14",
         "last_update_date": "2025-11-14",
         "requirements": "none",
         "category": "Ornet Browser",
-        "notes": "Tested on version 1.9.26 (Oct, 22nd 2025)",
+        "notes": "Tested by the author on version 1.9.26 (Oct, 22nd 2025). "
+                 "The test data and row counts are not recorded here. "
+                 "last_app_close_time is shown as a UTC date read from the "
+                 "stored number as Unix milliseconds, which is assumed; the "
+                 "other three values are as stored. No other key of the file "
+                 "is reported.",
         "paths": ('*/com.ornet.torbrowser/shared_prefs/com.ornet.torbrowser_preferences.xml'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "info-circle"

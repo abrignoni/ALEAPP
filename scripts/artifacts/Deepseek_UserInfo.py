@@ -6,7 +6,7 @@ from scripts.ilapfuncs import (
 __artifacts_v2__ = {
     "deepseek_user_info": {
         "name": "Deepseek User Info",
-        "description": "Deepseek account information including token, email and phone number",
+        "description": "Deepseek account information including token, email and phone number (an empty mobile_number is shown as Not Found, which is the parser's text and not a stored value)",
         "author": "RicardoBentoSantos",
         "creation_date": "2026-05-24",
         "last_update_date": "2026-05-24",

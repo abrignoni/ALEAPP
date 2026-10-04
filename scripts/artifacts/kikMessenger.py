@@ -8,10 +8,13 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-06",
         "requirements": "none",
         "category": "Kik",
-        "notes": "Recent versions name the databases with the account core id, for example "
-                 "<core id>.kikDatabase.db, so the paths allow for a prefix. Direction is taken "
-                 "from the was_me column, which published Kik research describes as marking the "
-                 "party that sent the message. Read state is reported as the stored integer.",
+        "notes": "The code reads a database file whose name ends in kikDatabase.db, so a name "
+                 "that carries a prefix before it is read. Direction is taken from the was_me "
+                 "column: 1 is reported as Outgoing and every other value, including a blank "
+                 "one and status or system message rows, as Incoming. No source for that "
+                 "reading is cited here. Sender on an Outgoing row is the user name from "
+                 "kikCoreDatabase; on any other row it is the conversation partner. Read state "
+                 "is reported as the stored integer.",
         "paths": ('*/kik.android/databases/*kikDatabase.db*',
                   '*/kik.android/databases/kikCoreDatabase.db*',
                   '*/kik.android/*/cache/chatPics*/*',
@@ -66,8 +69,10 @@ __artifacts_v2__ = {
                  "pivots those rows and adds the platform URIs from KIKContentURITable. Property "
                  "names are reported as the app wrote them. Files kept on the device under "
                  "DCIM/Kik or the chatPics caches are matched to a content id by file name and "
-                 "checked in; files in those locations with no matching content id are listed as "
-                 "rows of their own so they are not lost.",
+                 "checked in; files in those locations and in Android/data/kik.android/cache/temp "
+                 "whose name is not shaped like a content id are listed as rows of their own, "
+                 "except files of zero size or with a name starting with a dot. A file named with "
+                 "a content id that has no row in KIKContentTable is not reported.",
         "paths": ('*/kik.android/databases/*kikDatabase.db*',
                   '*/kik.android/*/cache/chatPics*/*',
                   '*/[Dd][Cc][Ii][Mm]/Kik/*',
@@ -82,7 +87,7 @@ __artifacts_v2__ = {
     "kik_chat_metadata": {
         "name": "Kik Chat Metadata",
         "description": "Rows from chatMetaInfTable, including the chat end time and the "
-                       "anonymous-chat flag columns as stored",
+                       "anonymous-chat flag columns shown as Yes or No",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
@@ -99,8 +104,8 @@ __artifacts_v2__ = {
     },
     "kik_local_account": {
         "name": "Kik Local Account",
-        "description": "Account rows from kikCoreDatabase, giving the core id used to name the "
-                       "other databases and the user name held against it",
+        "description": "Account rows from kikCoreDatabase, giving the core id and the user "
+                       "name held against it",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
@@ -124,9 +129,12 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-06",
         "requirements": "none",
         "category": "Kik",
-        "notes": "Both tables keep the profile itself in a protobuf blob that this artifact does "
-                 "not decode; the JIDs are reported so roster membership can be compared against "
-                 "the Kik Users artifact. These databases are also named with the account core id.",
+        "notes": "This artifact reads bare_jid from both tables and last_update_timestamp from "
+                 "ContactProfileEntries; the other columns of the two tables are not read and what "
+                 "they hold was not established here. The JIDs are reported so roster membership "
+                 "can be compared against the Kik Users artifact. Account Core ID is the text of "
+                 "the database file name before its first dot; it is not compared with the core id "
+                 "held in kikCoreDatabase.",
         "paths": ('*/kik.android/databases/*userRosterEntries.db*',
                   '*/kik.android/databases/*contactProfileEntries.db*'),
         "output_types": "standard",

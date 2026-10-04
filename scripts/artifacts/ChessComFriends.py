@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_ChessComFriends": {
         "name": "ChessComFriends",
-        "description": "Chess database",
+        "description": "Rows of the friends table of the Chess.com app database: ID, username, first and last name and the last_login_date value read as Unix seconds",
         "author": "@kibaffo33",
         "creation_date": "2022-02-23",
         "last_update_date": "2022-02-23",

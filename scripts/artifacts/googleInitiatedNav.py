@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_googleInitiatedNav": {
         "name": "Google Initiated Navigation",
-        "description": "Recent navigation destinations (new_recent_history_cache_navigated.cs)",
+        "description": "Entries decoded from Google Maps' new_recent_history_cache_navigated.cs: protobuf field 2 read as Unix microseconds and the text of field 4.1. No source for the field meanings is cited. What the timestamp marks, and whether navigation was started, is not established.",
         "author": "@abrignoni",
         "creation_date": "2023-10-16",
         "last_update_date": "2023-10-16",

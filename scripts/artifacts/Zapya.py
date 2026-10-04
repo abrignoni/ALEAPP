@@ -8,10 +8,11 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "File Transfer",
         "notes": ("direction is decoded from the transfer table 'direction' column. "
-                  "Direction/status value mappings are not vendor-documented and the evidence "
-                  "for them is not recorded here; unrecognized "
-                  "values are reported as stored.\n"
-                  "fromid and toid are populated only when the direction value is recognized; the "
+                  "direction = 1 is shown as Outgoing. No source or measurement for that reading "
+                  "is recorded here, so it is this parser's label and not an established "
+                  "meaning. Any other value is reported as stored.\nfromid is blank on every "
+                  "row. toid "
+                  "repeats the Device value when direction is 1 and is blank otherwise; the "
                   "other device recorded on the row is reported in the Device column regardless."),
         "paths": ('*/com.dewmobile.kuaiya.play/databases/transfer20.db*',),
         "output_types": "standard",

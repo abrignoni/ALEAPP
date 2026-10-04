@@ -38,7 +38,9 @@ __artifacts_v2__ = {
                  "by 3,600,000, that is read as milliseconds and reported in whole hours with the "
                  "remainder truncated. A +5:30 offset therefore renders as 5.\n"
                  "Upload Status is the remote_media.upload_status value as stored; it is not a "
-                 "percentage.",
+                 "percentage.\n"
+                 "Remote URL is the remote_media.remote_url value with the text '=s0-d' removed "
+                 "where it occurs, so it is not shown exactly as stored.",
         "paths": ('*/com.google.android.apps.photos/databases/gphotos*.db*',),
         "output_types": "all",
         "artifact_icon": "photo",
@@ -67,7 +69,9 @@ __artifacts_v2__ = {
                  "by 3,600,000, that is read as milliseconds and reported in whole hours with the "
                  "remainder truncated. A +5:30 offset therefore renders as 5.\n"
                  "Upload Status is the shared_media.upload_status value as stored; it is not a "
-                 "percentage.",
+                 "percentage.\n"
+                 "Remote URL is the shared_media.remote_url value with the text '=s0-d' removed "
+                 "where it occurs, so it is not shown exactly as stored.",
         "paths": ('*/com.google.android.apps.photos/databases/gphotos*.db*',),
         "output_types": "standard",
         "artifact_icon": "photo",
@@ -86,13 +90,17 @@ __artifacts_v2__ = {
     },
     "get_googlePhotos_folders": {
         "name": "Google Photos - Backup Folders",
-        "description": "Folders listed in the backup_folders table (gphotos*.db)",
+        "description": "Folders of local_media rows whose bucket_id is listed in the backup_folders table (gphotos*.db)",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-04-14",
         "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Google Photos",
-        "notes": "A row records a folder listed in the backup_folders table. That listing does not "
+        "notes": "A row is a distinct bucket ID, folder name and folder path taken from the "
+                 "local_media rows whose bucket_id is listed in the backup_folders table. A "
+                 "bucket listed in backup_folders with no local_media row gives no row. Folder "
+                 "Path is the local_media filepath with the file name removed. That listing does "
+                 "not "
                  "establish that any file in the folder was uploaded.",
         "paths": ('*/com.google.android.apps.photos/databases/gphotos*.db*',),
         "output_types": "standard",

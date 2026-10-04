@@ -8,8 +8,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-01",
         "requirements": "polyline",
         "category": "Adidas",
-        "notes": "Interactive folium map and online reverse-geocoding removed; route shown as an "
-                 "offline image (media) + a downloadable route KML. The values temperature -300, "
+        "notes": "The route image and the route KML are built by this parser from the decoded "
+                 "encodedTrace polyline; they are not files the app stored. The values temperature "
+                 "-300, "
                  "max elevation -32768, min elevation 32767 and humidity -1 are treated by this "
                  "parser as sentinels and reported as 'N/A'; no app documentation for them was "
                  "found. The Latitude and "

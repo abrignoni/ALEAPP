@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Settings Services",
-        "notes": "Battery Status decodes the AOSP BatteryManager constants 1 Unknown, 2 Charging, 3 Discharging, 4 Not Charging and 5 Fully Charged; any other value is reported as the raw number. Reference: AOSP, 'BatteryManager status constants', https://developer.android.com/reference/android/os/BatteryManager",
+        "notes": "Battery Status is labelled on the reading that the BatteryStatus column holds the AOSP BatteryManager status constants (1 Unknown, 2 Charging, 3 Discharging, 4 Not Charging, 5 Fully Charged); any other value is reported as the raw number. No source for what this database stores in that column is cited here. Reference: AOSP, 'BatteryManager status constants', https://developer.android.com/reference/android/os/BatteryManager",
         "paths": ('*/com.google.android.settings.intelligence/databases/battery-usage-db-v4*',),
         "output_types": "standard",
         "artifact_icon": "battery",

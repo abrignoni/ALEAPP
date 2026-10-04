@@ -22,13 +22,13 @@ SOFTWARE.
 __artifacts_v2__ = {
     "get_fcm_jungrammer": {
         "name": "FCM - Jungrammer",
-        "description": "Jungrammer chat-app notifications (kr.jungrammer.*) from fcm_queued_messages.ldb",
+        "description": "Jungrammer chat-app records (kr.jungrammer.bluetalk, randomchat, superranchat, talkchat) of type CONNECT, MESSAGE, DISCONNECT or NOTICE that carry a fromToken, from fcm_queued_messages.ldb",
         "author": "Alex Caithness (research [at] cclsolutionsgroup.com)",
         "creation_date": "2022-07-28",
         "last_update_date": "2022-07-28",
         "requirements": "none",
         "category": "Firebase Cloud Messaging",
-        "notes": "",
+        "notes": "Not exercised: the artifact produced no rows on the ten images listed in sample_data.",
         "paths": ('*/fcm_queued_messages.ldb/*',),
         "output_types": "standard",
         "artifact_icon": "message",

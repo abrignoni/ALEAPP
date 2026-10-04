@@ -10,8 +10,10 @@ __artifacts_v2__ = {
         "last_update_date": "2026-07-30",
         "requirements": "none",
         "category": "Samsung Device Health Management Service",
-        "notes": "Times are in milliseconds. The bluetooth_scan column does not exist on "
-                 "older One UI versions and is reported empty there.",
+        "notes": "Window Start and Window End are start_time and end_time read as Unix "
+                 "milliseconds. The duration columns are labelled in milliseconds; that unit "
+                 "is not sourced here. Where the database has no bluetooth_scan column the "
+                 "Bluetooth Scan column is empty.",
         "paths": ('*/com.sec.android.sdhms/databases/sec_batterystats_history*',),
         "output_types": "standard",
         "artifact_icon": "battery-charging",
@@ -33,9 +35,11 @@ __artifacts_v2__ = {
         "last_update_date": "2026-07-30",
         "requirements": "none",
         "category": "Samsung Device Health Management Service",
-        "notes": "Times are in milliseconds. The screen-on count, high-brightness and "
-                 "high-refresh columns do not exist on older One UI versions and are "
-                 "reported empty there.",
+        "notes": "Window Start and Window End are start_time and end_time read as Unix "
+                 "milliseconds. Screen On Time and Screen Off Time are labelled in "
+                 "milliseconds; that unit is not sourced here. Where the database has no "
+                 "screen_on_count column the Screen On Count, High Brightness Time and High "
+                 "Refresh Time columns are empty.",
         "paths": ('*/com.sec.android.sdhms/databases/sec_batterystats_history*',),
         "output_types": "standard",
         "artifact_icon": "smartphone",
@@ -51,15 +55,14 @@ __artifacts_v2__ = {
         "name": "SDHMS Battery Event History",
         "description": "Battery events recorded by the Samsung Device Health Manager Service "
                        "(sec_batterystats_history, BATTERY_EVENT_HISTORY table). Event type "
-                       "and value are stored as raw integers and their encoding differs "
-                       "between One UI versions, so they are reported as-is.",
+                       "and value are stored as integers whose meaning is not established, "
+                       "so they are reported as stored.",
         "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",
         "category": "Samsung Device Health Management Service",
-        "notes": "The id column does not exist on older One UI versions and is reported "
-                 "empty there.",
+        "notes": "Where the table has no id column the ID column is empty.",
         "paths": ('*/com.sec.android.sdhms/databases/sec_batterystats_history*',),
         "output_types": "standard",
         "artifact_icon": "battery",

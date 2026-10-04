@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_installedappsLibrary": {
         "name": "InstalledappsLibrary",
-        "description": "Parses app purchase and ownership records (purchase time, account and doc ID) from the Play Store library.db.",
+        "description": "Parses rows of the ownership table (purchase_time, account and doc_id) from the Play Store library.db. A row does not establish that the item is an application or that it was installed on the device.",
         "author": "@abrignoni",
         "creation_date": "2020-03-01",
         "last_update_date": "2020-03-01",

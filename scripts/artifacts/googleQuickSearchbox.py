@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_quicksearch": {
         "name": "Google Quick Search Queries",
-        "description": "Search query sessions from the Google Search widget / Assistant (Google Now)",
+        "description": "Query text and an embedded audio blob read from the Google app session files (com.google.android.googlequicksearchbox/app_session/*.binarypb), with the modification time of each extracted file. What causes the app to write a session file is not established.",
         "author": "@abrignoni",
         "creation_date": "2020-03-22",
         "last_update_date": "2020-03-22",

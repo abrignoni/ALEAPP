@@ -1,13 +1,20 @@
 __artifacts_v2__ = {
     "get_airGuard": {
         "name": "AirGuard AirTag Tracker",
-        "description": "Parses tracker detections from the AirGuard AirTag app",
+        "description": "Parses the beacon rows of the AirGuard attd_db database with the matching device record",
         "author": "@AlexisBrignoni",
         "creation_date": "2022-01-08",
         "last_update_date": "2026-08-16",
         "requirements": "none",
         "category": "AirTags",
-        "notes": "",
+        "notes": "Timestamp is the device record's lastSeen, Received Time is the beacon's "
+                 "receivedAt, First Time Device Seen is firstDiscovery and Last Time User Notified "
+                 "is lastNotificationSent. The app's source (seemoo-lab/AirGuard at commit "
+                 "d515c53, DateTimeConverter.kt) stores these times as LocalDateTime strings with "
+                 "no time zone. The source was read at that commit, not at the version on the "
+                 "tested image. On russell_pixel6a_a13 none of the 1,960 stored receivedAt values "
+                 "carried a zone or offset. This parser labels the times UTC without conversion. "
+                 "They are not established to be UTC and their offset from UTC was not measured.",
         "paths": ('*/de.seemoo.at_tracking_detection.release/databases/attd_db*',),
         "output_types": "all",
         "artifact_icon": "shield",
@@ -17,13 +24,22 @@ __artifacts_v2__ = {
     },
     "get_airGuard_scans": {
         "name": "AirGuard AirTag Scans",
-        "description": "Parses scan history from the AirGuard AirTag app",
+        "description": "Parses the rows of the scan table in the AirGuard attd_db database",
         "author": "@AlexisBrignoni",
         "creation_date": "2022-01-08",
         "last_update_date": "2026-08-16",
         "requirements": "none",
         "category": "AirTags",
-        "notes": "",
+        "notes": "The app's source (seemoo-lab/AirGuard at commit d515c53, Scan.kt and "
+                 "DateTimeConverter.kt) stores startDate and endDate as LocalDateTime strings with "
+                 "no time zone. This parser labels them UTC without conversion, so they are not "
+                 "established to be UTC. Duration is reported as stored. A comment in Scan.kt at "
+                 "that commit calls the column the duration in seconds of the scan; the source was "
+                 "read at that commit, not at the version on the tested image. On "
+                 "russell_pixel6a_a13 (805 rows) the end time and duration were empty on 110 rows. "
+                 "Of the other 695, duration held 15 on 693 and 8 on 2, and the end time minus the "
+                 "start time was within 1 second of it on 84 rows, so the stored times do not "
+                 "confirm the unit.",
         "paths": ('*/de.seemoo.at_tracking_detection.release/databases/attd_db*',),
         "output_types": "standard",
         "artifact_icon": "search",

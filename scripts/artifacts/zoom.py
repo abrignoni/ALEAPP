@@ -1,25 +1,28 @@
 __artifacts_v2__ = {
     "zoom_meeting_folders": {
         "name": "Zoom - Meeting Folders",
-        "description": "Parses the per meeting folders the Zoom Android app created, whose "
-                       "names carry the date, the time and the meeting title.",
+        "description": "Parses the folders under the Zoom app's data/Zoom directory, whose "
+                       "names begin with a date and a time followed by a title.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
         "category": "Zoom",
         "notes": "One row per meeting folder. The evidence here is the folder name, not its "
-                 "contents: on the tested device all 21 folders were empty, and the app's own "
-                 "databases are encrypted, so the names are the only record of these "
-                 "meetings the extraction carries. A name is the date, the time and the "
-                 "meeting title, and the date and time are reported separately from the "
-                 "title. Meeting Date is reported as a date and Meeting Time as stored, "
-                 "because the name records no time zone and nothing in the extraction "
-                 "establishes which one the app used, so the values are not converted and "
-                 "are not offered as a UTC datetime. Files In Folder counts the entries the "
-                 "extraction holds inside the folder, which was zero on the tested device; a "
-                 "folder can be present without a recording. A folder records that the app "
-                 "created it for a meeting, which is not by itself proof that a recording "
+                 "contents: on the private sample that held these folders all 21 were empty, "
+                 "and the app's own databases are encrypted, so the names are the only "
+                 "record of these meetings the extraction carries. A name is the date, the "
+                 "time and the meeting title, and the date and time are reported separately "
+                 "from the title. Meeting Date is reported as a date and Meeting Time as "
+                 "stored, because the name records no time zone and nothing in the "
+                 "extraction establishes which one the app used, so the values are not "
+                 "converted and are not offered as a UTC datetime. Files In Folder counts "
+                 "the entries the extraction holds inside the folder, which was zero on the "
+                 "tested device; a folder can be present without a recording. What event the "
+                 "date and time in a folder name mark is not established, and the columns "
+                 "headed Meeting Date, Meeting Time (as stored) and Meeting Title are this "
+                 "parser's reading of the name. A folder is not by itself proof that a "
+                 "meeting took place, that a recording "
                  "was made or that the account holder attended. Names that do not begin with "
                  "a date and a time are reported with the whole name in the title column "
                  "rather than being dropped. Field mapping was done against three private "
@@ -39,18 +42,24 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-19",
         "requirements": "none",
         "category": "Zoom",
-        "notes": "One row per app data directory. The account identifier is read from the "
-                 "names the app gives its own per account folder and preference files, "
-                 "because the stores themselves are encrypted; where no such name is present "
-                 "the column is empty and the counts still report what the directory holds. "
-                 "Encrypted Databases counts files whose name marks them as encrypted and "
-                 "which do not begin with the SQLite magic, and Encrypted Preference Files "
-                 "counts the preference files the app names with its encrypted prefix. "
-                 "Neither was recoverable from the tested extractions. The preference files "
-                 "carry the layout of AndroidX EncryptedSharedPreferences, in which entry names "
-                 "and values are both encrypted under a keyset wrapped by an Android Keystore "
-                 "key that a file system extraction does not contain; no source for that layout "
-                 "is cited here, and the module reads none of the key material. The counts are "
+        "notes": "One row per app data directory that holds an account name or at least one "
+                 "counted store. The Account Identifier is the first name of the form "
+                 "<id>@<...>xmpp.zoom.us found in the paths of the app's folders and "
+                 "preference files; any further such name in the same directory is not "
+                 "reported, and that the name identifies the account is taken from the name "
+                 "alone. It is read from names because the stores themselves are encrypted; "
+                 "where no such name is present the column is empty and the counts still "
+                 "report what the directory holds. Encrypted Databases counts files whose name "
+                 "marks them as encrypted and which do not begin with the SQLite magic, and "
+                 "Encrypted Preference Files counts the preference files the app names with "
+                 "its encrypted prefix. Neither was recoverable from the tested extractions. "
+                 "The preference files are named with an enc_ prefix and were not readable on "
+                 "the tested extractions. Whether they follow AndroidX "
+                 "EncryptedSharedPreferences, which the AndroidX reference describes as an "
+                 "implementation of SharedPreferences that encrypts keys and values "
+                 "(https://developer.android.com/reference/androidx/security/crypto/EncryptedSharedPreferences), "
+                 "was not established here, and the module reads none of the key material. The "
+                 "counts are "
                  "reported so an "
                  "examiner can see how much is present and unreadable rather than being left "
                  "to infer it from an empty report. Field mapping was done against three "

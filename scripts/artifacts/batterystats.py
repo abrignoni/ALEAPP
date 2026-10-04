@@ -1,8 +1,11 @@
 __artifacts_v2__ = {
     "battery_stats_daily": {
         "name": "Android Battery Stats Daily",
-        "description": "Parses the Android System batterystats-daily.xml - \
-                        Steps string is in format: [device_state]-[battery_level]-[time_in_ms]",
+        "description": "Parses the Android System batterystats-daily.xml. Each step string is "
+                       "[mode letters]-[battery level, hexadecimal]-[step duration, hexadecimal], "
+                       "as written by BatteryStats.LevelStepTracker.encodeEntryAt (AOSP "
+                       "frameworks/base, android-14.0.0_r1, core/java/android/os/BatteryStats.java "
+                       "lines 1388 to 1425)",
         "author": "Marco Neumann {kalinko@be-binary.de}",
         "creation_date": "2026-03-12",
         "last_update_date": "2026-03-16",

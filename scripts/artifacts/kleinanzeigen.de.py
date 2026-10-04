@@ -8,7 +8,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "kleinanzeigen.de App",
-        "notes": ("Account Registered since is converted from the stored ISO 8601 string. A value "
+        "notes": ("Account Registered since is converted from the stored ISO 8601 string. A "
+                  "string that carries no zone offset is read as UTC, which is an assumption. A "
+                  "value "
                   "that cannot be parsed as a date is left blank rather than shown in the date "
                   "column as stored."),
         "paths": ('*/com.ebay.kleinanzeigen/shared_prefs/com.ebay.kleinanzeigen_preferences.xml',),
@@ -69,8 +71,10 @@ __artifacts_v2__ = {
                   "In the conversation view only rows labelled Outgoing are attributed to the "
                   "device owner; a row whose direction value is blank or unrecognized is not "
                   "attributed to the owner.\n"
-                  "Timestamp is converted from the stored ISO 8601 string; a value that cannot be "
-                  "parsed as a date is left blank."),
+                  "Timestamp is converted from the stored ISO 8601 string, and a string with no "
+                  "zone offset is read as UTC, which is an assumption; a value that cannot be "
+                  "parsed as a date is left blank. The message's state value is lowercased before "
+                  "it is reported."),
         "paths": ('*com.ebay.kleinanzeigen/databases/messageBoxDatabase.db*',),
         "output_types": "standard",
         "artifact_icon": "message",

@@ -1,35 +1,39 @@
 __artifacts_v2__ = {
     "weibo_timeline": {
         "name": "Weibo - Timeline Posts",
-        "description": "Posts cached in the Weibo home timeline, with the post text, the author, "
-                       "the posting time, the engagement counts and the stored posted-from string",
+        "description": "Posts held in the child_flow_item_table of Weibo's feed_database, with the "
+                       "post text, the author, the posting time, the engagement counts and the "
+                       "stored posted-from string",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
         "requirements": "none",
         "category": "Weibo",
-        "notes": "Read from child_flow_item_table in the feed_database Room store. Each row holds "
-                 "the whole post as a JSON document in serialized_data, and the columns reported "
-                 "here are read out of that document: text, created_at, the nested user object, "
-                 "the engagement counts and region_name.\n"
-                 "These are posts the app had cached for the timeline it was showing. That is a "
-                 "record of what the client held, and it does not establish that the account "
-                 "holder read any particular post. The Account UID column is the uid column the "
-                 "row is filed under, reported as stored; it is reported separately from the "
-                 "author because it need not name the same party.\n"
-                 "Posted From is the stored region_name string, which was present on some rows "
-                 "and absent on others in the tested corpus; it is reported as stored and is not "
+        "notes": "Read from child_flow_item_table in the feed_database Room store. The rows read "
+                 "hold the post as a JSON document in serialized_data; rows where that column is "
+                 "empty or does not parse are not reported. The columns reported here are read out "
+                 "of that document: text, created_at, the nested user object, attitudes_count "
+                 "(shown as Likes), comments_count, reposts_count and region_name. Author Verified "
+                 "shows Yes where the user object's verified value is true and No otherwise, "
+                 "including where the key is absent.\n"
+                 "These are posts the app held in this table; which screen or feed the table backs "
+                 "is not established here. That is a record of what the client held, and it does "
+                 "not establish that the account holder read any particular post. The Account UID "
+                 "column is the uid column the row is filed under, reported as stored; it is "
+                 "reported separately from the author because it need not name the same party.\n"
+                 "Posted From is the stored region_name string, which was present on some rows and "
+                 "absent on others in the tested corpus; it is reported as stored and is not "
                  "translated. The separate 'source' field of the JSON is reported as Author "
                  "Subtitle because in the tested corpus it carried the author's own descriptive "
-                 "blurb or follower count rather than a posting client, so it is not labelled as "
-                 "a source application.\n"
+                 "blurb or follower count rather than a posting client, so it is not labelled as a "
+                 "source application.\n"
                  "created_at is a string in the format 'Wed May 21 11:00:20 +0800 2025' and is "
                  "converted to UTC using the offset it carries. Text is stored as written, so "
                  "posts appear in their original language.\n"
-                 "Validation boundary: no row in the tested corpus carried a retweeted_status or "
-                 "a geo object, so reposts and precise post coordinates are not covered. The "
-                 "flow_item_table parent rows were almost all empty of serialized_data in the "
-                 "same corpus, so this artifact reads the child table.",
+                 "Validation boundary: no row in the tested corpus carried a retweeted_status or a "
+                 "geo object, so reposts and precise post coordinates are not covered. The "
+                 "flow_item_table parent rows were almost all empty of serialized_data in the same "
+                 "corpus, so this artifact reads the child table.",
         "paths": ('*/com.sina.weibo/databases/feed_database*',),
         "output_types": "standard",
         "artifact_icon": "message-square",
@@ -39,7 +43,7 @@ __artifacts_v2__ = {
     },
     "weibo_long_posts": {
         "name": "Weibo - Long Posts",
-        "description": "Long-form post bodies cached by Weibo, with the full text, the post id "
+        "description": "Long-form post bodies cached by Weibo, with the stored text, the post id "
                        "and the linked page title and URLs",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07",
@@ -47,18 +51,19 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Weibo",
         "notes": "Read from long_text_table in ArticleDb.db, which holds long post bodies. "
-                 "_own_uid is the local account the row "
-                 "is filed under and is reported as Account UID; _mid is the post id, which is "
-                 "the same identifier the timeline artifact reports as Post ID, so rows can be "
-                 "matched between the two.\n"
-                 "Some rows in this table store more than one value in a single field, joined "
-                 "by the literal separator '#sina#', across the page title, the short and "
-                 "original URLs and the page type. One of the five rows in the tested corpus did "
-                 "so. Those fields are reported as stored, separator included, rather than split "
-                 "on an assumption about which value belongs to which link, so most rows show a "
-                 "single plain value and some show the joined form.\n"
+                 "_own_uid is reported as Account UID, as stored; that it names the signed-in "
+                 "account is not established here. _mid is reported as Post ID. The Weibo - Post "
+                 "Images artifact looks posts up on _mid and on the timeline artifact's Post ID as "
+                 "one key; whether any row here matches a timeline row was not counted.\n"
+                 "Some rows in this table store more than one value in a single field, joined by "
+                 "the literal separator '#sina#', across the page title, the short and original "
+                 "URLs and the page type. One of the five rows in the tested corpus did so. Those "
+                 "fields are reported as stored, separator included, rather than split on an "
+                 "assumption about which value belongs to which link, so most rows show a single "
+                 "plain value and some show the joined form.\n"
                  "Topics are read from the _mblog_topic JSON where present and reported as the "
-                 "topic titles.",
+                 "topic titles. Is Paid shows Yes where _is_paid holds a non-zero value and No "
+                 "otherwise, including where the column is empty.",
         "paths": ('*/com.sina.weibo/databases/ArticleDb.db*',),
         "output_types": "standard",
         "artifact_icon": "file-text",
@@ -78,27 +83,31 @@ __artifacts_v2__ = {
         "notes": "Read from mblog_pic_table in the sina_weibo database. The table records the "
                  "remote URLs Weibo serves each image from at several sizes, together with the "
                  "picture id and the id of the post the image belongs to.\n"
-                 "No image bytes are reported, because none were found. The image files "
-                 "themselves were searched for in the tested corpus and were not located: the "
-                 "localpath column is empty on every row; no picture id appears in any file name "
-                 "anywhere under the package, including its external storage directory; and "
-                 "neither the MD5 of a picture id nor the MD5 of any of the stored URLs matches "
-                 "any of the hash-named cache files present. The image-bearing files that are "
-                 "present under the package are emoji packs and interface card graphics. So this "
-                 "artifact checks nothing in as media, and an entry records that the client held "
-                 "a reference to an image rather than that the image was stored on the device.\n"
+                 "No image bytes are reported, because none were found. The image files themselves "
+                 "were searched for in the tested corpus and were not located: the localpath "
+                 "column is empty on every row; no picture id appears in any file name anywhere "
+                 "under the package, including its external storage directory; and neither the MD5 "
+                 "of a picture id nor the MD5 of any of the stored URLs matches any of the "
+                 "hash-named cache files present. The image-bearing files that are present under "
+                 "the package are emoji packs and interface card graphics. So this artifact checks "
+                 "nothing in as media, and an entry records that the client held a reference to an "
+                 "image rather than that the image was stored on the device.\n"
                  "The URL columns are reported as text. Following one requests the image from "
                  "Sina's servers, which is a live network request, so whether to follow it is a "
                  "decision for the examiner rather than something this artifact does.\n"
                  "Post Author Name and Post Text are looked up by post id from the timeline and "
-                 "long post stores so a row carries its own context; they are blank when the "
-                 "post is in neither store. Post ID matches the Post ID reported by the Weibo - "
-                 "Timeline Posts and Weibo - Long Posts artifacts.\n"
+                 "long post stores so a row carries its own context; they are blank when the post "
+                 "is in neither store, and Post Author Name is also blank when the post is found "
+                 "only in the long post store, from which no author name is read. Post ID is the "
+                 "mblogid column as stored. The lookup treats it as the same identifier as the "
+                 "Post ID of the Weibo - Timeline Posts and Weibo - Long Posts artifacts; how many "
+                 "rows found their post that way was not counted. The timeline JSON carries a "
+                 "separate mblogid field, which that artifact reports as Post Short ID.\n"
                  "Picture ID and the Image IDs column of Weibo - Timeline Posts use the same "
                  "identifier, but the two stores held overlapping rather than identical sets in "
-                 "the tested corpus: 37 picture ids in each, 9 of them in common. So a picture "
-                 "id present in one is not necessarily present in the other, and neither store "
-                 "should be read as the complete set of images the app had referenced.",
+                 "the tested corpus. So a picture id present in one is not necessarily present in "
+                 "the other, and neither store should be read as the complete set of images the "
+                 "app had referenced.",
         "paths": ('*/com.sina.weibo/databases/sina_weibo*',
                   '*/com.sina.weibo/databases/feed_database*',
                   '*/com.sina.weibo/databases/ArticleDb.db*'),

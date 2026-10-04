@@ -1,9 +1,9 @@
 __artifacts_v2__ = {
     "constellationSimVerifications": {
         "name": "Constellation SIM Verifications",
-        "description": "Phone numbers of SIM cards verified on the device by Google Play "
-                       "services (constellation.db, sim_verifications table), with the IMSI "
-                       "and verification time and method.",
+        "description": "Rows of the sim_verifications table kept by Google Play services "
+                       "(constellation.db), with the phone number, IMSI and verification "
+                       "time and method.",
         "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",

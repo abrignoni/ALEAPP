@@ -14,8 +14,8 @@ __artifacts_v2__ = {
                  "it is plaintext the entries are readable and are listed by the Entries "
                  "artifact. An encrypted vault therefore yields no issuers or account names "
                  "here, which is not evidence that no two factor entries exist. The Encryption "
-                 "column reports whether slots are present and how "
-                 "many, as stored.",
+                 "column reads Encrypted, with the number of slots in the header, when the db "
+                 "field is a string or the header lists slots, and None (plaintext) otherwise.",
         "paths": ('*/com.beemdevelopment.aegis/files/aegis.json',),
         "output_types": "standard",
         "artifact_icon": "shield-lock",
@@ -32,9 +32,11 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Aegis",
         "notes": "One row per two factor entry in a plaintext aegis.json vault, with the issuer "
-                 "and account name recorded for each entry. Issuer is the service, Name is the "
-                 "account at that service, and the remaining columns are the OTP parameters: "
-                 "Type, Algorithm, Digits and Period. Type is one of the values defined by the "
+                 "and account name recorded for each entry. Issuer is the service the token is "
+                 "for and Name is the account name (docs/vault.md at beemdevelopment/Aegis "
+                 "17a87a4e), and the remaining columns are the OTP parameters: Type, Algorithm, "
+                 "Digits and Period or Counter, which holds the period where the entry has one "
+                 "and the counter otherwise. Type is one of the values defined by the "
                  "app, totp, hotp, steam, motp or yandex "
                  "(app/src/main/java/com/beemdevelopment/aegis/otp at beemdevelopment/Aegis "
                  "17a87a4e); any other value is reported as stored. Favorite, Note and Groups "

@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "file_commander_recycle_bin": {
         "name": "File Commander Recycle Bin",
-        "description": "Files deleted through File Commander, with the path each one came from",
+        "description": "Entries in File Commander's recycle bin store (TrashBin.db), with the original name and location recorded for each",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-06",
@@ -12,8 +12,9 @@ __artifacts_v2__ = {
         },
         "notes": "One row per row of trash_entries in "
                  "com.mobisystems.fileman/databases/TrashBin.db, joined to trash_folders on "
-                 "trash_folder_id to build the location the deleted bytes were moved to. The app "
-                 "renames a file when it deletes it, so Original Name and Original Location come "
+                 "trash_folder_id to build the location the deleted bytes were moved to. On the "
+                 "tested device the file sent to the Recycle Bin was stored under a new name: "
+                 "Original Name and Original Location come "
                  "from the database while Name In Trash is what the file is called on disk, and "
                  "Recovered From is root_path, relative_path and Name In Trash concatenated. That "
                  "mapping is one the store recorded, not a match on size or time. Measured on the "
@@ -40,12 +41,15 @@ __artifacts_v2__ = {
             "emu_a15_oss_v17": "File Commander 10.7.54240 | 0 rows",
         },
         "notes": "One row per row of the bookmarks table in "
-                 "com.mobisystems.fileman/databases/bookmarks.db. Time is Unix milliseconds "
-                 "rendered as UTC where present. This produced no rows on the tested device, and "
+                 "com.mobisystems.fileman/databases/bookmarks.db. The time column is read as Unix "
+                 "milliseconds and shown as UTC under the header Added; neither the unit nor what "
+                 "the time marks was checked, because no row was available. This produced no rows "
+                 "on the tested device, and "
                  "the reason was measured rather than assumed: the Add to favorites action exists "
                  "in the app's selection menu, and using it opens an upgrade screen reading "
-                 "Favorites, part of File Commander Premium, so the table stays empty on an "
-                 "install without the paid tier. The database and the table are created regardless. "
+                 "Favorites, part of File Commander Premium, and the table was empty on the "
+                 "tested install, which had no paid tier. The database and the table are created "
+                 "regardless. "
                  "An empty result is therefore not evidence that no location was ever of interest "
                  "to a person, and the columns here are reported as stored because no populated "
                  "example was available to check them against.",

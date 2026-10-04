@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "claudeAccountInfo": {
         "name": "Claude Account Information",
-        "description": "Parses the account information for the Claude app",
+        "description": "Parses the account information from the first cache.json found for the Claude app",
         "author": "Brandon Baye",
         "creation_date": "2026-07-23",
         "last_update_date": "2026-08-09",
@@ -27,7 +27,10 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-09",
         "requirements": "none",
         "category": "Claude",
-        "notes": "Data stored as json throughout the database and contained relevant information for overall conversations. "
+        "notes": "Each cachedConversations row holds a JSON object. Conversation Start Time is "
+                 "its created_at value, Incognito Conversation reports its is_temporary value and "
+                 "Conversation Starred its is_starred value; a value other than 0 or 1 is shown "
+                 "as Unknown. What the app does with is_temporary is not established here. "
                  "Timestamps stored as ISO 8601 combined date-time format and converted for LAVA.",
         "paths": ('*/com.anthropic.claude/databases/acc_*_claude_cache.db*'),
         "output_types": "standard",
@@ -46,11 +49,14 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-09",
         "requirements": "none",
         "category": "Claude",
-        "notes": "Join used to provide context of conversation when messages cannot be followed in order by conversation. "
-                 "Timestamps stored as ISO 8601 combined date-time format and converted for LAVA. "
-                 "The image path folder held no files; the file name is reported as stored, and "
-                 "whether the image was retained elsewhere is not established. json_each is used "
-                 "to expand the stored reference URLs, which are reported as stored.",
+        "notes": "Each message is joined to its conversation on the conversation uuid so the "
+                 "conversation name appears on the row. Timestamps stored as ISO 8601 combined "
+                 "date-time format and converted for LAVA. Image File Name is the first file name "
+                 "in the message's files list, whatever its type, as stored; later files are not "
+                 "reported. The module does not look for the file itself, so whether it is in the "
+                 "extraction is not established. Message is the text of the content items of type "
+                 "text, joined with spaces; json_each is used to read them and no reference URL "
+                 "is reported.",
         "paths": ('*/com.anthropic.claude/databases/acc_*_claude_cache.db*'),
         "output_types": "standard",
         "artifact_icon": "message-circle",
@@ -73,13 +79,14 @@ __artifacts_v2__ = {
 
     "claudeProjects": {
         "name": "Claude Projects",
-        "description": "Parses projects made within Claude",
+        "description": "Parses the project records held in the Claude app's cache database",
         "author": "Brandon Baye",
         "creation_date": "2026-07-24",
         "last_update_date": "2026-08-09",
         "requirements": "none",
         "category": "Claude",
-        "notes": "Project creator is stored as the full name in the profile. "
+        "notes": "Project Creator is the creator.full_name value of the project record, as "
+                 "stored. "
                  "Timestamps are ISO 8601 combined date-time format.",
         "paths": ('*/com.anthropic.claude/databases/acc_*_claude_cache.db*'),
         "output_types": "standard",

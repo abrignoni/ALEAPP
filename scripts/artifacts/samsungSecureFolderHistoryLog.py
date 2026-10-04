@@ -3,11 +3,16 @@ __artifacts_v2__ = {
         "name": "Samsung Secure Folder - History Log",
         "description": (
             "Parses the Samsung Secure Folder HistoryLog database "
-            "(com.samsung.knox.securefolder, Android user 150) and reconstructs "
-            "folder move-in/move-out activity between the personal profile "
-            "(user 0) and the Secure Folder. Request/result records are paired "
-            "into events that show direction, source app, requested vs. moved "
-            "file counts, and the source/destination folder paths."
+            "(com.samsung.knox.securefolder; the upstream tool describes the Secure Folder as "
+            "Android user 150, and this parser reads any database under that package's databases "
+            "folder that holds a HistoryLog table) and reconstructs folder move-in/move-out "
+            "activity between the two profile ids each message names. Request and result records "
+            "are paired by this parser: a result is matched to an earlier request with the same "
+            "direction no more than 30 minutes before it, scored on the time gap and on whether the "
+            "counts agree. The parser uses no stored link between the two. Each event shows "
+            "direction, source app, requested and moved counts and folder paths. Moved Count is the "
+            "Total value when the result gives no moved count. The Status, Source Path Note and "
+            "Warnings columns say when a record was not paired or a source path was derived."
         ),
         "author": "4n6Wizard",
         "creation_date": "2026-06-30",
@@ -16,12 +21,15 @@ __artifacts_v2__ = {
         "category": "Knox Secure Folder",
         "notes": (
             "Ported from the Samsung Secure Folder History Log Parser by 4n6Wizard: "
-            "https://github.com/4n6Wizard/Samsung-HistoryLog-Parser . "
-            "Triage tool: it reports live HistoryLog records only and performs no "
-            "carving or deleted-record recovery. The HistoryLog stores the folders "
-            "and the number of files moved, NOT the individual file names. "
-            "Timestamps are stored in the device's LOCAL time zone and are "
-            "reported as recorded (no UTC conversion is applied)."
+            "https://github.com/4n6Wizard/Samsung-HistoryLog-Parser (its README was read at commit "
+            "8d60793652bb8708173ffd4ae4fbbb605676b900). The five registered images in sample_data "
+            "returned 0 rows, so the record patterns and pairing are not exercised on a registered "
+            "image. The statements below about carving and file names come from the upstream tool's "
+            "README. Triage tool: it reports live HistoryLog records only and performs no carving "
+            "or deleted-record recovery. The HistoryLog stores the folders and the number of files "
+            "moved, NOT the individual file names. The timestamp column is text with no zone "
+            "recorded. It is reported as stored and no conversion is applied. Which zone the app "
+            "writes it in is not established."
         ),
         "paths": (
             "*/com.samsung.knox.securefolder/databases/*",

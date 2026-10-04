@@ -1,26 +1,37 @@
 __artifacts_v2__ = {
     "get_Oruxmaps": {
         "name": "Oruxmaps - POI",
-        "description": "Parses saved points of interest (latitude, longitude, altitude, time and name) from the OruxMaps oruxmapstracks.db database.",
+        "description": "Parses the pois table (latitude, longitude, altitude, time and name) of "
+                       "the OruxMaps oruxmapstracks.db database.",
         "author": "@markmckinnon",
         "creation_date": "2021-03-11",
         "last_update_date": "2021-03-11",
         "requirements": "none",
         "category": "GEO Location",
-        "notes": "",
+        "notes": "poitime is read as Unix milliseconds and shown in UTC, "
+                 "which is assumed. Only the first file the paths match is "
+                 "read. No sample data is recorded for this artifact.",
         "paths": ('**/oruxmaps/tracklogs/oruxmapstracks.db*',),
         "output_types": "standard",
         "artifact_icon": "map-pin",
     },
     "get_Oruxmaps_tracks": {
         "name": "Oruxmaps - Tracks",
-        "description": "Parses recorded GPS tracks and their trackpoints (name, description, latitude, longitude, altitude and time) from the OruxMaps oruxmapstracks.db database.",
+        "description": "Parses the tracks, segments and trackpoints tables of the OruxMaps "
+                       "oruxmapstracks.db database, one row per trackpoint (track name, the "
+                       "trackciudad value, segment name, latitude, longitude, altitude and time).",
         "author": "@markmckinnon",
         "creation_date": "2021-03-11",
         "last_update_date": "2021-03-11",
         "requirements": "none",
         "category": "GEO Location",
-        "notes": "",
+        "notes": "The column headed track description holds the "
+                 "tracks.trackciudad value as stored; what the app stores "
+                 "there is not established. trkpttime is read as Unix "
+                 "milliseconds and shown in UTC, which is assumed. A track "
+                 "with no trackpoints produces no row. Only the first file "
+                 "the paths match is read. No sample data is recorded for "
+                 "this artifact.",
         "paths": ('**/oruxmaps/tracklogs/oruxmapstracks.db*',),
         "output_types": "standard",
         "artifact_icon": "map-pin",

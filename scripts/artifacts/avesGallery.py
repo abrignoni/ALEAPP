@@ -17,31 +17,34 @@ __artifacts_v2__ = {
                  "with it. Path, MIME Type, Size, Width and Height describe the file. Date Added "
                  "is Unix seconds and Date Modified and Date Taken are Unix milliseconds, all "
                  "reported as UTC; where each is taken from was not sourced here. Latitude and "
-                 "Longitude are reported as stored and are blank where the row carries none. "
-                 "Country Code and Country Name are reported as stored; on the tested device two "
+                 "Longitude are reported as stored and are blank where the row carries none or "
+                 "carries 0. Country Code and Country Name are reported as stored; on the tested "
+                 "device two "
                  "images carrying known coordinates resolved to IS and US, consistent with the "
                  "app deriving them from the coordinates, and no source for that derivation is "
                  "cited here. The address table also has address line, admin area and locality "
                  "columns which were empty for both tested images, so the geocoding here reached "
-                 "country level only. Date Added leads this table rather than Date Taken because "
-                 "Date Added was filled on every tested entry while Date Taken was filled on 2 "
-                 "of the 6. Title is the entry title the app stores and was empty on all six; "
-                 "what the app writes there was not sourced here. Favorite is the favourites "
+                 "country level only. Date Added leads this table and Date Taken is the second "
+                 "column; a row can carry no Date Taken, because the dateTaken table is joined "
+                 "with a LEFT JOIN. Title is the entry title the app stores and was empty on all "
+                 "six; what the app writes there was not sourced here. Favorite is the favourites "
                  "table flag and was set on one of the six tested entries, on which it had been "
-                 "marked in the app. Rating is the star rating. Resume Position (ms) is the "
-                 "videoPlayback table value for the entry, reported as stored, and is blank "
+                 "marked in the app. Rating is the metadata table's rating value, as stored. "
+                 "Resume Position (ms) is the videoPlayback table value for the entry, reported "
+                 "as stored, and is blank "
                  "where the table has no row for it. "
-                 "KML output is produced from the coordinates. "
-                 "The metadata table's flags column is an undocumented bitmask and is not "
-                 "reported. The covers and dynamicAlbums tables hold album cover choices and "
-                 "saved filter definitions and were empty on the tested device.",
+                 "KML output is produced from the coordinates. Each KML point is labelled with "
+                 "the first filled time column of its row, which is Date Added where the row "
+                 "carries one and not Date Taken. The metadata table's flags column is an "
+                 "undocumented bitmask and is not reported. The covers and dynamicAlbums tables "
+                 "were empty on the tested device and are not read.",
         "paths": ('*/deckers.thibault.aves*/databases/metadata.db*',),
         "output_types": "all",
         "artifact_icon": "image",
     },
     "aves_trash_vaults": {
         "name": "Aves Gallery - Trash and Vaults",
-        "description": "Parses binned items and encrypted vaults from the Aves Gallery Android app.",
+        "description": "Parses the trash and vaults tables of the Aves Gallery Android app.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-03",
         "last_update_date": "2026-09-03",
@@ -50,9 +53,8 @@ __artifacts_v2__ = {
         "sample_data": {
             "emu_a15_oss_v9": "Aves Gallery Libre 1.14.9 | 0 rows, checked: the trash and vaults tables are present and empty",
         },
-        "notes": "Rows from the trash and vaults tables of databases/metadata.db, combined because "
-                 "both describe media the app is deliberately keeping out of the main collection. "
-                 "Kind names which table a row came from. "
+        "notes": "Rows from the trash and vaults tables of databases/metadata.db, combined in one "
+                 "artifact. Kind names which table a row came from. "
                  "A Trash row carries a Path and a Date, as Unix milliseconds reported as UTC. A "
                  "Vault row carries a Name, a Lock Type and an auto-lock flag; the vault's "
                  "contents are not in this table. What the app writes to either table, whether a "

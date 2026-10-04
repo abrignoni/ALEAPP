@@ -3,7 +3,7 @@ __artifacts_v2__ = {
         "name": "Dust - Conversations",
         "description": "Rows from the Chat table of the app's room-db, each naming a "
                        "conversation, the account it belongs to, the other account in it and "
-                       "the time the row was last updated",
+                       "the stored updatedDate value",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
@@ -12,10 +12,11 @@ __artifacts_v2__ = {
         "notes": "com.radicalapps.cyberdust is a messaging app; no message content was found in "
                  "room-db, which has no message table, and its Blasts, Contacts and "
                  "messageKeyPairs tables held no rows on any of the three corpora below. What "
-                 "the Chat table does keep is one row per conversation carrying the other "
-                 "party's display name in title, that party's account identifier in "
-                 "otherAccountId, and updatedDate, so a conversation row and its participants "
-                 "were present on those corpora while no message content was. updatedDate is "
+                 "the Chat table does keep is rows carrying title, otherAccountId and "
+                 "updatedDate values, so Chat rows were present on those corpora while no "
+                 "message content was. title is shown under the header Other Party Display Name; "
+                 "the basis for reading title as the other party's display name is not recorded "
+                 "here. updatedDate is "
                  "Unix milliseconds; what event sets it was not established, so the column is "
                  "named for the field rather than described as a last message time. Subtitle (as "
                  "stored) held the string 'all caught up' on every row of all three corpora, "
@@ -48,8 +49,9 @@ __artifacts_v2__ = {
         "notes": "recipientKeyModels is a JSON object whose keys are device identifiers and "
                  "whose values carry an accountId and a deviceId for each. Device Identifiers "
                  "lists those keys and Accounts In Bundle lists the distinct accountId values "
-                 "inside, so a conversation's participating devices are readable without "
-                 "reading the key material itself. Key Material (as stored) holds the whole "
+                 "inside, so the identifiers the stored bundle names can be read without "
+                 "reading the key values. What role those devices have in the conversation is "
+                 "not established here. Key Material (as stored) holds the whole "
                  "JSON, which includes the stored public key values; this artifact does not "
                  "interpret them and recovering message content from them was not attempted and "
                  "is not implied. One row was present on each of the three corpora below.",
@@ -71,11 +73,13 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-30",
         "requirements": "none",
         "category": "Dust",
-        "notes": "The table records one row per account identifier the app kept an avatar entry "
-                 "for, which on the corpora below included the signed-in account and the other "
-                 "party of each conversation. It is reported separately from the Chat table "
-                 "because it carries its own updatedTime and can name an account that no longer "
-                 "has a conversation row. updatedTime is Unix milliseconds. Photo URL was an "
+        "notes": "Each row is a UserPhotoUrls record holding an account identifier, a photo URL "
+                 "value and an updatedTime. How those identifiers relate to the Chat table's "
+                 "accountId and otherAccountId values was not compared on the corpora below; "
+                 "the row counts were 3, 1 and 1. The table is reported separately from the "
+                 "Chat table because it carries its own updatedTime. updatedTime is Unix "
+                 "milliseconds. "
+                 "Photo URL was an "
                  "empty string on every row of all three corpora, so no avatar address was "
                  "recorded and none is resolved to a file; the column is kept so a populated "
                  "value on another extraction is not dropped.",

@@ -7,7 +7,9 @@ __artifacts_v2__ = {
         "last_update_date": "2023-03-14",
         "requirements": "none",
         "category": "Power Events",
-        "notes": "",
+        "notes": "The file records each time with no time zone. This module "
+                 "labels it UTC, which is an assumption, so the Timestamp "
+                 "column should be read as the clock value the file recorded.",
         "paths": ('*/log/power_off_reset_reason.txt', '*/log/power_off_reset_reason_backup.txt'),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "battery",

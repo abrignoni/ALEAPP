@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "aurora_store_accounts": {
         "name": "Aurora Store - Accounts",
-        "description": "Parses the signed-in account from the Aurora Store Android app.",
+        "description": "Parses the account table of the Aurora Store Android app.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-01",
         "last_update_date": "2026-09-01",
@@ -26,7 +26,7 @@ __artifacts_v2__ = {
     },
     "aurora_store_downloads": {
         "name": "Aurora Store - Downloads",
-        "description": "Parses the app download history from the Aurora Store Android app.",
+        "description": "Parses the download table of the Aurora Store Android app.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-01",
         "last_update_date": "2026-09-01",
@@ -39,8 +39,9 @@ __artifacts_v2__ = {
                  "is an app Aurora Store was asked to download, with its Package, Display Name, "
                  "Version Code, Size in bytes, the Download Status as the app records it, how "
                  "many of the expected files arrived, the Target SDK, whether the app Requires "
-                 "GMS, and Downloaded At as Unix milliseconds reported as UTC. Installed is the "
-                 "app's installed flag, reported as stored. The download table was present and "
+                 "GMS, and Downloaded At, read here as Unix milliseconds and reported as UTC, a "
+                 "unit no tested row exercised. Installed is the app's installed flag, reported "
+                 "as stored. The download table was present and "
                  "empty on the tested device because no app was downloaded through Aurora Store "
                  "there, so the columns are described from the schema rather than from decoded "
                  "rows, and the meaning of the flags is not exercised here; a sample carrying a "
@@ -66,10 +67,12 @@ __artifacts_v2__ = {
                  "favourite is an entry in the app's favourite table; on the tested device the "
                  "one entry was created by marking an app from its page, and whether the app "
                  "writes entries here on its own was not established. Each row carries the "
-                 "Package, the Display Name, Added as Unix milliseconds reported as UTC, and Mode "
-                 "which is the app's own value for how the entry was created and is reported as "
-                 "stored; the tested device recorded MANUAL for an entry added from an app's page. "
-                 "On the tested device one app was favourited and never downloaded, which is the "
+                 "Package, the Display Name, Added as Unix milliseconds reported as UTC, and "
+                 "Mode, reported as stored, which Aurora Store 4.8.4 declares as an enum of "
+                 "MANUAL and IMPORT (Favourite.kt at tag 4.8.4, "
+                 "ad3d349edce82e119ba239f3a07b3afe028abd19); the tested device recorded MANUAL "
+                 "for an entry added from an app's page. On the tested device one app was "
+                 "favourited and never downloaded, which is the "
                  "distinction this artifact exists to show against the Downloads artifact.",
         "paths": ('*/com.aurora.store/databases/aurora_database*',),
         "output_types": "standard",
@@ -77,7 +80,7 @@ __artifacts_v2__ = {
     },
     "aurora_store_updates": {
         "name": "Aurora Store - Updates and Reviews",
-        "description": "Parses pending updates and written reviews from the Aurora Store Android app.",
+        "description": "Parses the update and review tables of the Aurora Store Android app.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-01",
         "last_update_date": "2026-09-01",
@@ -88,10 +91,16 @@ __artifacts_v2__ = {
         },
         "notes": "Rows from the update and review tables of databases/aurora_database, combined "
                  "because both key on a package and both were empty on the tested device. An "
-                 "update row carries a Package, Version Name and Code, Developer, Size and an "
-                 "Updated On date. A review row carries a Title, Comment, Rating and an account "
-                 "Email. Both are described from the schema, since neither table held a row on "
-                 "the tested device, and what the app writes to them was not exercised. Kind "
+                 "update row carries a Package, Display Name, Version Name and Code, Developer "
+                 "and Size, with the changelog in Text. Aurora Store 4.8.4 declares the update "
+                 "table's updatedOn as a String (Update.kt at tag 4.8.4, "
+                 "ad3d349edce82e119ba239f3a07b3afe028abd19), and this artifact converts the "
+                 "value as Unix milliseconds, so a value that is not a whole number leaves the "
+                 "Timestamp of an update row blank. A review row carries the Title and Comment "
+                 "joined in Text, the Rating and the account Email; its Display Name column "
+                 "holds the review's userName and Version its appVersion. Both are described "
+                 "from the schema, since neither table held a row on the tested device, and "
+                 "what the app writes to them was not exercised. Kind "
                  "names which table a row came from. Both tables were present and empty on the "
                  "tested device, where no app was installed through Aurora Store and no review "
                  "was written, so this artifact is a checked absence there; the columns come "

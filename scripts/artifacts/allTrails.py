@@ -10,19 +10,22 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "AllTrails",
         "notes": "Read from the trackpoints table of databases/alltrails.\n"
-                 "lat and lng are stored as integers. Dividing them by 1,000,000 produces a "
-                 "coordinate pair that falls in the same state as the place names recorded in "
-                 "the database's locations table, so that is the scaling used; the scale is not "
-                 "documented.\nTwo timestamps are stored per point and both are reported: time "
-                 "and systemtime, each Unix epoch milliseconds. They differ by a fraction of a "
-                 "second on the tested corpus and nothing in the extraction documents which "
-                 "clock each comes from, so neither is presented as authoritative over the "
-                 "other.\nElevation, accuracy, speed and bearing are reported as stored. The "
-                 "units are not stated in the database; for speed, metres per second is "
-                 "consistent with the recorded track (see the AllTrails - Recorded Activities "
-                 "notes), but the column is reported unlabelled rather than converted.\nTrack ID "
-                 "groups the points of one recording and matches the line the AllTrails - "
-                 "Recorded Activities artifact reports.\nThe -wal and -shm sidecars are included "
+                 "lat and lng are stored as integers. On the tested image, dividing them by "
+                 "1,000,000 produces a coordinate pair that falls in the same state as the place "
+                 "names recorded in the database's locations table, so that is the scaling used; "
+                 "the scale is not documented.\nTwo timestamps are stored per point and both are "
+                 "reported: time and systemtime, each Unix epoch milliseconds, shown to the "
+                 "whole second because the conversion drops the milliseconds. They differ by a "
+                 "fraction of a second on the tested corpus and nothing in the extraction "
+                 "documents which clock each comes from, so neither is presented as "
+                 "authoritative over the other.\nElevation, accuracy, speed and bearing are "
+                 "reported as stored. The units are not stated in the database; for speed, "
+                 "metres per second is consistent with the recorded track (see the AllTrails - "
+                 "Recorded Activities notes), but the column is reported unlabelled rather than "
+                 "converted.\nTrack ID is the track_id column as stored. The AllTrails - "
+                 "Recorded Activities artifact reports lines._id under the same header; no count "
+                 "of how the two columns correspond is recorded here.\nThe -wal and -shm "
+                 "sidecars are included "
                  "in the paths above and must travel with the database, because rows can sit in "
                  "the write ahead log.",
         "paths": ('*/com.alltrails.alltrails/databases/alltrails*',),
@@ -34,27 +37,29 @@ __artifacts_v2__ = {
     },
     "alltrails_recorded_activities": {
         "name": "AllTrails - Recorded Activities",
-        "description": "Activities recorded on the device, with the name, the start and end "
+        "description": "Activity records held in the AllTrails maps table, with the name, "
+                       "the start and end "
                        "times, the total distance, the elevation change and the moving time",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
         "requirements": "none",
         "category": "AllTrails",
-        "notes": "Read from the maps table of databases/alltrails, joined to lines and "
-                 "line_geo_stats through map_id, and to users through user_id.\n"
-                 "Units are derived from the data rather than documented. On the tested corpus "
-                 "speed_average multiplied by time_moving equals distance_total to within a "
-                 "metre (1.5784 x 2216 = 3498, against a stored 3497.75), which is consistent "
-                 "with distance in metres, speed in metres per second and the two time columns "
-                 "in seconds. The column headers say the unit is derived rather than presenting "
-                 "it as documented, and they spell metres per second out in full, because an "
-                 "abbreviated m/s sanitizes to a column name ending in _ms that reads as "
-                 "milliseconds.\n"
-                 "time_start and time_end are Unix epoch milliseconds. They are not identical to "
-                 "the first and last trackpoint of the matching track: on the tested corpus "
-                 "time_start is 0.9 seconds before the first point and time_end 2.6 seconds after "
-                 "the last, so the stats bracket the track rather than matching it exactly. That "
+        "notes": "Read from the maps table of databases/alltrails, joined to lines through map_id "
+                 "and to line_geo_stats through the line's line_geo_stats_id, and to users "
+                 "through user_id.\nUnits are derived from the data rather than documented. On "
+                 "the tested corpus speed_average multiplied by time_moving equals distance_total "
+                 "to within a metre (1.5784 x 2216 = 3498, against a stored 3497.75), which is "
+                 "consistent with distance in metres, speed in metres per second and the two time "
+                 "columns in seconds. The column headers say the unit is derived rather than "
+                 "presenting it as documented, and they spell metres per second out in full, "
+                 "because an abbreviated m/s sanitizes to a column name ending in _ms that reads "
+                 "as milliseconds.\ntime_start and time_end are Unix epoch milliseconds. They are "
+                 "not identical to the first and last trackpoint of the matching track: on the "
+                 "tested corpus the stored time_start is 0.9 seconds before the first point's "
+                 "stored time and time_end 2.6 seconds after the last (measured on the stored "
+                 "millisecond values; the report shows whole seconds), so the stats bracket the "
+                 "track rather than matching it exactly. That "
                  "still cross-checks the epoch and the scale of both readings.\n"
                  "Activity ID and Privacy Level are reported as stored: the database carries no "
                  "table mapping the activity id to an activity name, and the privacy level is a "
@@ -80,7 +85,10 @@ __artifacts_v2__ = {
         "category": "AllTrails",
         "notes": "Read from the map_photos and trail_photos tables of databases/alltrails, "
                  "distinguished by the Record Source column.\n"
-                 "The picture is linked by the path the app recorded for it, not by correlation. "
+                 "The picture is found by the file name at the end of the path the app recorded, "
+                 "looked up among the extracted files under a Pictures folder. The match is on "
+                 "the name; where two extracted files share a name the one shown is not "
+                 "established to be the recorded one. "
                  "map_photos.local_path holds an absolute on-device path; the file name from that "
                  "path is matched against the extracted files and the match is checked in as "
                  "media. On the tested corpus the recorded path resolved to a file present in the "
@@ -104,7 +112,7 @@ __artifacts_v2__ = {
     },
     "alltrails_user": {
         "name": "AllTrails - User",
-        "description": "The AllTrails account held on the device, with the user name, the display "
+        "description": "Rows of the AllTrails users table, with the user name, the display "
                        "name, the account identifier and the recorded home location",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07",
@@ -113,8 +121,9 @@ __artifacts_v2__ = {
         "category": "AllTrails",
         "notes": "Read from the users table of databases/alltrails, joined to locations through "
                  "location_id for the recorded place names.\n"
-                 "Remote ID is the remote_id value as stored, and is the value the userlists "
-                 "table references as its user_id. The referral link contains the account's own "
+                 "Remote ID is the remote_id value as stored, and on the tested image equalled "
+                 "the user_id stored in the userlists table, which this module does not read; "
+                 "no count is recorded. The referral link contains the account's own "
                  "referral code and is reported as stored.\nThe counts on this row (reviews, "
                  "followers, tracks, photos) are reported as stored.",
         "paths": ('*/com.alltrails.alltrails/databases/alltrails*',),

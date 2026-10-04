@@ -14,13 +14,13 @@ __artifacts_v2__ = {
                  "offline hiking and navigation app; a beacon is a location it holds, with a Latitude "
                  "and Longitude, an Elevation in metres (a 50 ft entry on the tested device was stored "
                  "as 15.24), an optional Comment, and an Owner. Owner is decoded from the app's "
-                 "BeaconOwner enum, 0 the User value for a beacon added through the app's beacon form, 1 a beacon derived from a recorded "
-                 "path, 2 a beacon the app dropped for the last cell signal, 3 from a map, 4 from "
-                 "triangulation, 5 from the field guide (BeaconOwner.kt at kylecorry31/Trail-Sense "
-                 "696d2f54fbcfeeab94efbf62e778716a9317e524); any other value is reported as stored. "
-                 "That distinction matters: the User value marks a beacon added through the app, while the others "
-                 "are app-generated, so the tested device held one User beacon and one CellSignal "
-                 "beacon named for the last 4G signal. Temporary is the temporary flag, reported "
+                 "BeaconOwner enum, 0 User, 1 Path, 2 CellSignal, 3 Maps, 4 Triangulate, 5 "
+                 "FieldGuide (BeaconOwner.kt at kylecorry31/Trail-Sense "
+                 "696d2f54fbcfeeab94efbf62e778716a9317e524); any other value is reported as "
+                 "stored. The enum names are the app's own, shown here with CellSignal as 'Cell "
+                 "signal' and FieldGuide as 'Field guide'; which actions write each value was not "
+                 "established here. On the tested device (emu_a15_oss_v4) one beacon had owner "
+                 "User and one had owner CellSignal. Temporary is the temporary flag, reported "
                  "as stored. Comment is the note field on the beacon and "
                  "was empty on the tested beacons. The beacon_group_id and styling columns (color, "
                  "icon) are not reported. KML output is produced from the coordinates. This table holds "
@@ -31,7 +31,8 @@ __artifacts_v2__ = {
     },
     "trailsense_paths": {
         "name": "Trail Sense - Paths",
-        "description": "Parses recorded paths (tracks) from the Trail Sense Android app.",
+        "description": "Parses the paths (tracks) held in the Trail Sense Android app's paths "
+                       "table.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-31",
         "last_update_date": "2026-08-31",
@@ -41,22 +42,29 @@ __artifacts_v2__ = {
             "emu_a15_oss_v4": "Trail Sense 8.1.1 | 1 rows",
         },
         "notes": "One row per entry in the paths table of databases/trail_sense. A path is a track the "
-                 "app recorded. Each row summarises the track: the Name where a name was given "
-                 "to it (a Backtrack path is unnamed, which is why Name was empty on the tested "
-                 "device), the Start and End times, the Distance in metres, the number of "
-                 "Waypoints, and the bounding box of the track as North, East, South and West "
-                 "coordinates. Start and End are Unix milliseconds and were UTC on the tested "
-                 "device (01:52 UTC matched the device's 21:52 local clock). Temporary is the "
-                 "temporary flag, reported as stored. The individual points of each track are in "
-                 "the Waypoints artifact, keyed by Path ID. The styling columns are not "
-                 "reported. A path is evidence the app recorded positions during that time span.",
+                 "app holds. The app can record a path and can also import one from a GPX file "
+                 "(app/src/main/java/com/kylecorry/trail_sense/tools/paths/ui/commands/"
+                 "ImportPathsCommand.kt "
+                 "at kylecorry31/Trail-Sense 696d2f54fbcfeeab94efbf62e778716a9317e524), and this "
+                 "table does not by itself say which. Each row summarises the track: the Name "
+                 "where one is stored (Name was empty on the tested device; the name column is "
+                 "nullable in the app's PathEntity.kt at the same commit), the Start and End "
+                 "times, the Distance in metres, the number of Waypoints, and the bounding box of "
+                 "the track as North, East, South and West coordinates. Start and End are Unix "
+                 "milliseconds and were UTC on the tested device (01:52 UTC matched the device's "
+                 "21:52 local clock). Temporary is the temporary flag, reported as stored. The "
+                 "individual points of each track are in the Waypoints artifact, keyed by Path "
+                 "ID. The styling columns are not reported. A path row holds the start and end "
+                 "times stored for the track; it does not establish that the app recorded "
+                 "positions on this device during that span.",
         "paths": ('*/com.kylecorry.trail_sense/databases/trail_sense*',),
         "output_types": "standard",
         "artifact_icon": "share-2",
     },
     "trailsense_waypoints": {
         "name": "Trail Sense - Waypoints",
-        "description": "Parses recorded path waypoints (location history) from the Trail Sense Android app.",
+        "description": "Parses the path waypoints held in the Trail Sense Android app's waypoints "
+                       "table.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-31",
         "last_update_date": "2026-08-31",
@@ -65,20 +73,28 @@ __artifacts_v2__ = {
         "sample_data": {
             "emu_a15_oss_v4": "Trail Sense 8.1.1 | 1 rows",
         },
-        "notes": "One row per entry in the waypoints table of databases/trail_sense, which are the "
-                 "individual points the app logged along a recorded path (see the Paths artifact). Each "
-                 "row is a location the app recorded for the device, with a Latitude, Longitude and "
-                 "Altitude in metres, the time it was recorded, the Path ID it belongs to, and the cell "
-                 "signal the device saw at that point. Recorded is Unix milliseconds and is reported as "
-                 "UTC. Cell Network is decoded from the app's CellNetwork enum by id, 1 NR (5G), 2 LTE "
-                 "(4G), 3 CDMA, 4 WCDMA, 5 GSM (2G), 6 TD-SCDMA (CellNetwork.kt in kylecorry31/andromeda); "
-                 "Cell Quality is decoded from the Quality enum by position, 0 poor, 1 moderate, 2 good, "
-                 "3 unknown (Quality.kt in the same library); on the tested waypoint these read LTE and "
-                 "Good, which matched the name of the last-signal beacon the app dropped at the same "
-                 "point. Any other value for either is reported as stored, and both are empty where the "
-                 "app recorded no cell signal. Unlike the Beacons table, a waypoint is a position the "
-                 "app recorded along a path with a time attached, so the rows are a location "
-                 "history as the app recorded it. KML output is produced from the coordinates.",
+        "notes": "One row per entry in the waypoints table of databases/trail_sense, which holds "
+                 "the individual points of the paths in the Paths artifact. Each row is a point "
+                 "stored for a path, with a Latitude, Longitude and Altitude in metres, the time "
+                 "stored for it, the Path ID it belongs to, and the cell network and quality "
+                 "values stored with it. Recorded is Unix milliseconds and is reported as UTC. "
+                 "Cell Network is decoded from the app's CellNetwork enum by id, 1 NR (5G), 2 LTE "
+                 "(4G), 3 CDMA, 4 WCDMA, 5 GSM (2G), 6 TD-SCDMA "
+                 "(signal/src/main/java/com/kylecorry/andromeda/signal/CellNetwork.kt at "
+                 "kylecorry31/andromeda a13ec8fea2f13f4ce66dc7c7e9c27f3096ae270f); Cell Quality "
+                 "is decoded from the Quality enum by position, 0 poor, 1 moderate, 2 good, 3 "
+                 "unknown (core/src/main/java/com/kylecorry/andromeda/core/sensors/Quality.kt at "
+                 "the same commit; the andromeda version Trail Sense 8.1.1 builds against was not "
+                 "checked); on the tested waypoint these read LTE and Good, which matched the "
+                 "name of the CellSignal beacon stored at the same point. Any other value for "
+                 "either is reported as stored, and both are empty where no cell value is stored. "
+                 "Recorded is blank where no time is stored. The app can record a path on the "
+                 "device and can import one from a GPX file "
+                 "(app/src/main/java/com/kylecorry/trail_sense/tools/paths/ui/commands/"
+                 "ImportPathsCommand.kt "
+                 "at kylecorry31/Trail-Sense 696d2f54fbcfeeab94efbf62e778716a9317e524); both "
+                 "store their points here, and this table does not say which. KML output is "
+                 "produced from the coordinates.",
         "paths": ('*/com.kylecorry.trail_sense/databases/trail_sense*',),
         "output_types": "all",
         "artifact_icon": "navigation",

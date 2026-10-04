@@ -1,13 +1,19 @@
 __artifacts_v2__ = {
     "get_nike_notifications": {
         "name": "NikeNotifications",
-        "description": "Get Information relative to the notifications stored in the database of the Nike Run Club Mobile application",
+        "description": "Rows of the inbox table in the Nike Run Club ns_inbox.db database, with "
+                       "the stored sender, timestamp, type, message, read and deleted values",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
         "creation_date": "2023-03-18",
         "last_update_date": "2023-03-18",
         "requirements": "Python 3.7 or higher",
         "category": "Nike-Run",
-        "notes": "",
+        "notes": "Read and Deleted show No for a stored 0 and Yes for any "
+                 "other stored value, including an empty one; what the app "
+                 "sets them for is not established. Notification Timestamp is "
+                 "notification_timestamp read as Unix milliseconds. The one "
+                 "registered corpus returned 0 rows, so no column has been "
+                 "checked against real rows here.",
         "paths": ('*/com.nike.plusgps/databases/ns_inbox.db*',),
         "output_types": "standard",
         "artifact_icon": "activity",

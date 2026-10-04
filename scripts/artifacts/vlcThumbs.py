@@ -10,11 +10,11 @@ __artifacts_v2__ = {
         "sample_data": {
             "emu_a15_oss_v4": "VLC 3.7.1 | 1 rows",
         },
-        "notes": "One row per thumbnail JPEG VLC generated for a media-library entry. On the "
-                 "tested device (VLC 3.7.1) the thumbnails were stored in the app's external "
-                 "files directory at Android/data/org.videolan.vlc/files/medialib and were named "
-                 "for the media id (id_media.jpg). The VLC Thumbnail Data artifact "
-                 "joins these images to the media-library rows they belong to.",
+        "notes": "One row per .jpg file under org.videolan.vlc/files/medialib. On the tested "
+                 "device (VLC 3.7.1) the thumbnails were stored in the app's external files "
+                 "directory at Android/data/org.videolan.vlc/files/medialib and were named for the "
+                 "media id (id_media.jpg). The VLC Thumbnail Data artifact joins these images to "
+                 "the media-library rows they belong to.",
         "paths": ('*/org.videolan.vlc/files/medialib/*.jpg',),
         "output_types": "standard",
         "artifact_icon": "photo",
@@ -31,19 +31,26 @@ __artifacts_v2__ = {
             "emu_a15_oss_v4": "VLC 3.7.1 | 2 rows",
         },
         "notes": "One row per entry in the Media table of app_db/vlc_media.db, with the thumbnail "
-                 "image VLC generated for it shown inline. Each media the app has seen carries a "
-                 "Filename, a Type (0 Unknown, 1 Video, 2 Audio, from IMedia.h in "
-                 "videolan/medialibrary), a Play Count and an Is Favorite flag. Last Played and "
-                 "Insertion Date are Unix seconds and are reported as UTC. The thumbnail link is "
-                 "read from the medialibrary's own tables rather than guessed: ThumbnailLinking "
-                 "ties a media id to a Thumbnail row, and the Thumbnail row records the image "
-                 "path in its mrl. The image file lives in the app's external files directory at "
+                 "image VLC generated for it shown inline. Each row reports a Filename, a Type (0 "
+                 "Unknown, 1 Video, 2 Audio, from enum class Type in "
+                 "include/medialibrary/IMedia.h, videolan/medialibrary at code.videolan.org), a "
+                 "Play Count and an Is Favorite flag. Last Played and Insertion Date are Unix "
+                 "seconds and are reported as UTC. The thumbnail link is read from the "
+                 "medialibrary's own tables: ThumbnailLinking ties an entity id and an entity type "
+                 "(media, album, artist or genre) to a Thumbnail row; its primary key is "
+                 "entity_id, entity_type and size_type. The Thumbnail row records the image path "
+                 "in its mrl. This artifact matches on the entity id alone, so a thumbnail linked "
+                 "to another kind of entity with the same numeric id can be shown on a media row. "
+                 "On emu_a15_oss_v4 the table holds 1 row, of entity_type 0, for one of the 2 "
+                 "media rows, so no such collision was present in the tested data. The image file "
+                 "lives in the app's external files directory at "
                  "Android/data/org.videolan.vlc/files/medialib and on the tested device (VLC "
-                 "3.7.1) was named for the media id; where the recorded path is missing the "
-                 "id_media.jpg name is used as a fallback. On the tested device a video produced a "
-                 "512x288 thumbnail that renders in this artifact, and an audio entry had no "
-                 "thumbnail. A thumbnail is evidence the media was present in VLC's library, not "
-                 "that it was played.",
+                 "3.7.1) was named for the media id; where no link is recorded, a file named "
+                 "<id_media>.jpg in that folder is shown instead; that pairing rests on the file "
+                 "name alone and the row does not say which route was used. On the tested device a "
+                 "video produced a 512x288 thumbnail that renders in this artifact, and an audio "
+                 "entry had no thumbnail. A thumbnail is evidence the media was present in VLC's "
+                 "library, not that it was played.",
         "paths": ('*/org.videolan.vlc/files/medialib/*.jpg', '*/org.videolan.vlc/app_db/vlc_media.db*'),
         "output_types": "standard",
         "artifact_icon": "photo",

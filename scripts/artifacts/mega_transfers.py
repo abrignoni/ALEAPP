@@ -7,7 +7,16 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Mega",
-        "notes": "",
+        "notes": ""
+                 "Each cell is AES decrypted with a fixed key written in this module. Direction "
+                 "and State are labelled from the MEGA SDK's MegaTransfer constants "
+                 "(https://github.com/meganz/sdk/blob/74326bb0aa09b13f0a1ec8eab9611e4c0de98cc6/include/megaapi.h#L6902-L6917): "
+                 "type 0 is shown as Download, 1 as Upload and 2, the SDK's "
+                 "TYPE_LOCAL_TCP_DOWNLOAD, also as Download, and State follows STATE_NONE 0 to "
+                 "STATE_FAILED 8. Any other value is shown as decrypted. A row that does not "
+                 "decrypt is logged and not reported. Timestamp is read as Unix milliseconds. "
+                 "Both tested images returned 0 rows, so the decoding is code present and "
+                 "unexercised on the registered images.",
         "paths": ('*/mega.privacy.android.app/databases/megapreferences',),
         "output_types": "standard",
         "artifact_icon": "download",

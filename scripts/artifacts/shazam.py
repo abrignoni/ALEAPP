@@ -23,9 +23,9 @@ __artifacts_v2__ = {
                  "each of those three stored 0.0 in both columns, every place name column was "
                  "empty on every row, and the app's own preferences carry a key recording that "
                  "the coarse location permission had been permanently denied. Those columns are "
-                 "carried despite being uniformly empty here because they are the only record of "
-                 "where a recognition happened. The KML export skips a row whose coordinates are "
-                 "zero, so it produced no points here and that path is code present and "
+                 "carried despite being uniformly empty here because they are the only columns in "
+                 "the table that could hold a place. The KML export skips a row whose coordinates "
+                 "are zero, so it produced no points here and that path is code present and "
                  "unexercised. status was SUCCESSFUL on every row tested, so no failed or "
                  "pending recognition was seen and the column is unexercised beyond that value. "
                  "The table's retry count, audio offset and locale columns are not reported: "
@@ -59,9 +59,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-19",
         "requirements": "none",
         "category": "Shazam",
-        "notes": "A track row is created for a recognition result, so this table holds the "
-                 "distinct tracks behind the rows in Shazam Recognitions rather than a separate "
-                 "activity. Artists are joined through the apple_artist_track table on the "
+        "notes": "This table holds the track rows that tag rows in Shazam Recognitions point to "
+                 "through track_key. Whether the app can hold a track row with no recognition is "
+                 "not established. Artists are joined through the apple_artist_track table on the "
                  "artist_adam_id and artist_id columns, which agreed on 109 of the 110 join rows "
                  "on the device tested; the one row without a match is reported with the artist "
                  "left empty. The artist table is reported through this join rather than as its "
@@ -95,15 +95,16 @@ __artifacts_v2__ = {
                  "its first line, and the entry file name is the MD5 of that URL, which held for "
                  "all 417 entries on the device tested, so the URL to file link is read from the "
                  "cache rather than inferred. Where a URL contains a track key or an artist "
-                 "identifier the library database also holds, the track title is filled in from "
-                 "that database so the row names what was fetched; on the device tested 196 of "
-                 "417 URLs carried a known track key and 153 carried a known artist identifier, "
-                 "and a URL matching neither is reported with those columns empty. The two times "
-                 "are read from response headers the cache itself writes and which name their "
-                 "own units in milliseconds; they describe the app's own fetch and not anything "
-                 "a server recorded. Every entry on the device tested was a GET that returned "
-                 "200, so the method and status columns were dropped as uniformly constant. The "
-                 "response body is reported by size only and is not decoded here.",
+                 "identifier the library database also holds, the track title, or the artist name "
+                 "for an artist identifier, is filled in from that database. The match is on the "
+                 "first run of digits in the URL equal to a track key or artist id; on the device "
+                 "tested 196 of 417 URLs carried a known track key and 153 carried a known artist "
+                 "identifier, and a URL matching neither is reported with those columns empty. The "
+                 "two times are read from response headers the cache itself writes and which name "
+                 "their own units in milliseconds; they describe the app's own fetch and not "
+                 "anything a server recorded. Every entry on the device tested was a GET that "
+                 "returned 200, so the method and status columns were dropped as uniformly "
+                 "constant. The response body is reported by size only and is not decoded here.",
         "paths": ('*/com.shazam.android/cache/OK_HTTP_CACHE/*',
                   '*/com.shazam.android/databases/library.db*'),
         "output_types": "standard",
@@ -112,7 +113,8 @@ __artifacts_v2__ = {
     "shazam_offline_request_queue": {
         "name": "Shazam Offline Request Queue",
         "description": "Rows of the guaranteed_requests table in the Shazam guaranteed requests "
-                       "database, holding HTTP requests the app queued for later delivery",
+                       "database, holding stored HTTP requests (method and URL) with a retries "
+                       "count",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
@@ -148,14 +150,11 @@ __artifacts_v2__ = {
                  "in the file is left unconverted rather than read as a time it is not. The key "
                  "names are the app's own and several are abbreviated; no meaning is assigned to "
                  "a key beyond what its name states. A value longer than 512 characters is "
-                 "reported by length instead of content, because the long values on the device "
-                 "tested were a configuration blob and a category mapping table the app fetches "
-                 "from its own endpoint rather than anything the user entered. The app also keeps "
-                 "a com.shazam.ams.xml preferences file whose keys and values are encrypted: it "
-                 "carries the two androidx security keyset entries that name the scheme, and the "
-                 "master key for it lives in the device keystore rather than in app storage, so "
-                 "it is not recoverable from an extraction of this directory and is not reported "
-                 "here.",
+                 "reported by length instead of content. The long values on the device tested were "
+                 "held under keys that name a configuration and a category mapping; where the app "
+                 "gets them is not established. The app also keeps a com.shazam.ams.xml preferences "
+                 "file whose keys and values are encrypted: it carries the two androidx security "
+                 "keyset entries that name the scheme. This artifact does not read it.",
         "paths": ('*/com.shazam.android/shared_prefs/com.shazam.android_preferences.xml',),
         "output_types": "standard",
         "artifact_icon": "settings",
@@ -192,11 +191,11 @@ __artifacts_v2__ = {
                  "held, so no entry could be tied to a recognition. The times come from the "
                  "third field of the fragment file names, read as Unix milliseconds. No entry "
                  "held its full declared length, so the fragments are partial and are not "
-                 "checked in as media. Home screen announcements: rows the app stored for "
-                 "display, whose payload field names are single letters, and whose count is "
-                 "reported without the payloads because nothing in them names a user action. "
-                 "Stores are counted per app data directory, so a second Android user's caches "
-                 "are reported as their own rows.",
+                 "checked in as media. Home screen announcements: rows of the "
+                 "home_screen_announcement table, whose payload field names are single letters, and "
+                 "whose count is reported without the payloads because nothing in them names a user "
+                 "action. Stores are counted per app data directory, so a second Android user's "
+                 "caches are reported as their own rows.",
         "paths": ('*/com.shazam.android/cache/image_cache/*',
                   '*/com.shazam.android/cache/video_cache/*',
                   '*/com.shazam.android/databases/library.db*'),

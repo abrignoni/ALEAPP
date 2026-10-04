@@ -2,14 +2,22 @@
 __artifacts_v2__ = {
     "get_nike_polyline": {
         "name": "Nike - Activity Route",
-        "description": "GPS activity routes decoded from the Nike Run app (activity_polyline)",
+        "description": "Activity routes decoded from the activity_polyline table of the Nike "
+                       "Run Club app",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
         "creation_date": "2023-02-24",
         "last_update_date": "2023-02-24",
         "requirements": "polyline",
         "category": "Nike-Run",
-        "notes": "Interactive folium map and online reverse-geocoding removed; route shown as an "
-                 "offline image (media) + a downloadable route KML.",
+        "notes": "One row per activity_polyline row that holds an as2_p_encoded_polyline value, "
+                 "joined to its activity. The stored string is decoded as an encoded polyline at "
+                 "5 decimal places, the polyline library's default; that precision is assumed "
+                 "and was not exercised on the registered corpora, which returned 0 rows. "
+                 "Latitude and Longitude are the first decoded point and End Latitude and End "
+                 "Longitude the last; they are blank when the string does not decode. Duration "
+                 "(min) is as2_sa_active_duration_ms divided by 60000. The route image and KML "
+                 "are drawn by this tool from the decoded points. Only the first database found "
+                 "is read.",
         "paths": ('*/com.nike.plusgps/databases/com.nike.nrc.room*',),
         "output_types": "all",
         "artifact_icon": "activity",

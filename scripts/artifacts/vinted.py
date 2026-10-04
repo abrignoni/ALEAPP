@@ -2,18 +2,22 @@ __artifacts_v2__ = {
     "vinted_items": {
         "name": "Vinted - Cached Listings",
         "description": "Parses the Vinted listings the Android app cached, including the "
-                       "title, description, price, seller and the address of the listing.",
+                       "title, description, price, seller and the URL of the listing.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
         "category": "Vinted",
         "notes": "One row per cached listing. The row holds the listing as a stored document "
-                 "and the columns are read from it. Listing Created is the date string the "
-                 "listing carries, reported as a date because it has no time part. Cache "
-                 "Expires is Unix milliseconds and is the app's own expiry for the cached "
-                 "copy, not an action by the account holder. Favourited is the flag the "
-                 "listing carries for the viewing account. View Count and Favourite Count "
+                 "and the columns are read from it. The Condition column is the document's "
+                 "status member as stored; that header is this parser's label and what "
+                 "status describes is not sourced here. Listing Created is the date string "
+                 "the listing carries, reported as a date because it has no time part. "
+                 "Cache Expires is Unix milliseconds and is the app's own expiry for the "
+                 "cached copy, not an action by the account holder. Favourited is the "
+                 "listing document's is_favourite member, reported as stored; whose "
+                 "favourite it records was not established here. View Count and Favourite "
+                 "Count "
                  "are the counts the listing carries, which are the service's figures rather "
                  "than anything measured on the device. A cached listing records that the "
                  "app held it, not that the account holder looked at it. Field mapping was "
@@ -40,11 +44,12 @@ __artifacts_v2__ = {
                  "Unix "
                  "milliseconds and is the app's own expiry rather than an action by the "
                  "account holder; the table carries no time for when a listing was "
-                 "favourited. Title and Address are filled from the cached listing of the "
-                 "same identifier in the same app data directory, and are empty where the "
-                 "app did not also cache that listing. On the tested device 16 rows were "
-                 "recorded against 11 cached listings and 8 of the 16 matched one, so a row "
-                 "without a title is one whose listing the app did not keep. Field "
+                 "favourited. Title, Price and Listing Address are filled from the cached "
+                 "listing of the same identifier in the same database, and are empty where "
+                 "that database holds no listing of that identifier. On the tested device 16 "
+                 "rows were recorded against 11 cached listings and 8 of the 16 matched one, "
+                 "so a row without a title is one whose listing is not in the items table of "
+                 "the same database, or whose cached document carries no title. Field "
                  "mapping was done against three private samples provided by Mattia; no "
                  "sample data is recorded for them.",
         "paths": (
@@ -64,10 +69,11 @@ __artifacts_v2__ = {
         "category": "Vinted",
         "notes": "One row per feedback entry. Row Created is the table's created_at column in "
                  "Unix milliseconds and is distinct from the feedback's own date, which is a "
-                 "date string with no time part and is reported separately. Owner is the account "
-                 "the feedback belongs to, taken from the row rather than from the document. "
-                 "Author is the account that left the feedback and Reply Author is the account "
-                 "that replied, both read from the stored document. Rating is the value the "
+                 "date string with no time part and is reported separately. Owner ID is the "
+                 "row's owner_id column. Author Login and Author ID are read from the "
+                 "document's user member, and Reply Author Login and Reply Author ID from the "
+                 "user member of the document's comment member. What each of those accounts did "
+                 "was not tested here. Rating is the value the "
                  "document carries, as stored. System Feedback is the document's system_feedback "
                  "flag, reported as stored. Field "
                  "mapping was done against three private samples provided by Mattia; no "

@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_hr_api": {
         "name": "GarminHRAPI",
-        "description": "Get Information related to the Heart Rate from the Garmin API using the JSON file extracted",
+        "description": "Parses the calendar date, maximum, minimum and resting heart rate and the lastSevenDaysAvgRestingHeartRate value from AllDayHR JSON files in a garmin.api folder. The column headed 'Average Hearth Rate' holds lastSevenDaysAvgRestingHeartRate.",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
         "creation_date": "2023-02-24",
         "last_update_date": "2023-02-24",

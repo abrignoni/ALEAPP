@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     'zangichats': {
         'name': 'Zangi Chats',
-        'description': 'Parses Zangi Chat database',
+        'description': 'Parses messages from the Zangi message table. From Me is set by this parser where isIncoming is 0, and Local User is this parser\'s label for the device side. Messages with an empty chatWith are not reported. Timestamps are read as Unix milliseconds.',
         'author': '@C_Peter',
         'version': '0.0.1',
         'date': '2025-11-20',
@@ -9,7 +9,10 @@ __artifacts_v2__ = {
         'last_update_date': '2025-11-20',
         'requirements': 'none',
         'category': 'Chats',
-        'notes': '',
+        'notes': 'Only the last matched .db file other than settings.db is read. Where a '
+                 'message\'s attachment value holds no package path, the attachment is looked up '
+                 'by the name pattern files/zangi/Zangi Files/<msgId>.*, which is a name match '
+                 'and not a link the store records.',
         'paths': (
             '*/data/com.beint.zangi/databases/*',
             '*/data/com.beint.zangi/files/zangi/*'),

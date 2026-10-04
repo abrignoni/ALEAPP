@@ -1,17 +1,19 @@
 __artifacts_v2__ = {
     "android_users": {
         "name": "Android Users and Profiles",
-        "description": "The Android users and profiles that exist on the device, with each one's name, type and creation "
-                       "time, and the lastLoggedIn and lastEnteredForeground times the platform stored, as stored.",
+        "description": "The Android user and profile records the platform keeps under the system users folder, "
+                       "with each one's name, type and creation time, and the lastLoggedIn and "
+                       "lastEnteredForeground times the platform stored, as stored.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-03",
         "last_update_date": "2026-09-04",
         "requirements": "none",
         "category": "Device Users",
         "notes": "Read from the user records the platform keeps under the system users folder: "
-                 "the userlist.xml index and one <id>.xml file per user, both ABX binary XML on "
-                 "modern releases and plain XML on older ones. One row per user file. The glob "
-                 "reaches every .xml under that folder because a pattern segment also crosses "
+                 "the userlist.xml index and one <id>.xml file per user, each read as ABX binary "
+                 "XML or plain XML according to the file's own header. One row per user file. "
+                 "The glob reaches every .xml under that folder because a pattern segment also "
+                 "crosses "
                  "path separators, so a file is used only when its name is a number and its root "
                  "element is a user record; anything else, including the per-user "
                  "package-restrictions.xml and settings_ssaid.xml, is skipped. The pattern is not "
@@ -23,10 +25,14 @@ __artifacts_v2__ = {
                  "usage: the platform sets it from setLastEnteredForegroundTimeToNow, called for "
                  "the user being switched to in onUserSwitching and for the system user in "
                  "onUserStarting. Reference: Android Open Source Project, "
-                 "UserManagerService.java, "
-                 "frameworks/base/services/core/java/com/android/server/pm. What sets Last Logged "
-                 "In was not established, so it is reported as stored. A creation value of 0 is "
-                 "reported as blank rather than as 1970. User Type and Flags are reported as "
+                 "UserManagerService.java at android-14.0.0_r1, lines 699 to 733; the attribute "
+                 "is not in that file at android-13.0.0_r1, and the column is blank where a "
+                 "record carries no such attribute. In the same file onUserLoggedIn (lines 6268 "
+                 "to 6281) sets lastLoggedIn to the current clock time, when that is past a "
+                 "platform minimum, together with lastLoggedInFingerprint; which events call it "
+                 "was not traced here, so Last Logged In is reported as stored. A value of 0 or "
+                 "less in Created, Last Logged In or Last Entered Foreground is reported as "
+                 "blank rather than as 1970. User Type and Flags are reported as "
                  "stored; the type string is the platform's own, such as a full secondary user "
                  "or a managed profile. User Name is blank where the record carries no name "
                  "element. User ID and Serial Number were identical on every tested image and "
@@ -34,12 +40,15 @@ __artifacts_v2__ = {
                  "takes the lowest id not in use, so a removed user's id can come back, while "
                  "the serial is taken from a counter the platform only increments and persists "
                  "as nextSerialNumber in userlist.xml. Reference: Android Open Source Project, "
-                 "UserManagerService.java, "
-                 "frameworks/base/services/core/java/com/android/server/pm, "
-                 "scanNextAvailableIdLocked, mNextSerialNumber and writeUserListLP. In Userlist "
-                 "is True when the userlist index also names the user, and a user file present "
-                 "without an index entry, or the reverse, is reported as it was found.\nA user id "
-                 "other than 0 is an additional Android user or profile; an extraction can carry "
+                 "UserManagerService.java at android-14.0.0_r1, scanNextAvailableIdLocked (line "
+                 "6315), mNextSerialNumber (lines 4341 and 4875), "
+                 "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/"
+                 "android-14.0.0_r1/services/core/java/com/android/server/pm/"
+                 "UserManagerService.java (read at that tag only). In Userlist is True when the "
+                 "userlist index also names the user, and a user file present "
+                 "without an index entry is reported with In Userlist False. An id that "
+                 "userlist.xml names with no user file produces no row.\nA user id other than 0 "
+                 "is an additional Android user or profile; an extraction can carry "
                  "that user's app storage under data/user/<id>, and the presence of the record "
                  "does not "
                  "establish who used it.",

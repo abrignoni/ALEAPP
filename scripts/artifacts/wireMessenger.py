@@ -7,13 +7,17 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-15",
         "requirements": "None",
         "category": "Wire Messenger",
-        "notes": "Tested on: Android 13 Wire v.3.81.35. Only the first registered client (clients[0]) "
-                 "is reported; any further clients registered to the account are not listed.\n"
-                 "Applies to the legacy app generation that keeps a plain-SQLite database named by "
-                 "the account id next to com.wire.preferences.xml. Newer app versions store user "
-                 "data in databases/user-db-<account id>-wirecom, whose content is not plain SQLite "
-                 "(the app's own log records a database keying operation, and the app's published "
-                 "core wireapp/kalium carries SqlCipherKey.kt in data/persistence), and their "
+        "notes": "The module records a test on Android 13 with Wire 3.81.35; the image used is "
+                 "not recorded. Rows were produced on pixel3_a11 and pixel3_a12 (see "
+                 "sample_data). Only the first client in the stored clients list (clients[0]) is "
+                 "reported; the order of that list is not established, and any further clients in "
+                 "it are not listed.\nApplies to the legacy app generation that keeps a "
+                 "plain-SQLite database named by the account id next to com.wire.preferences.xml. "
+                 "Newer app versions store user data in databases/user-db-<account id>-wirecom, "
+                 "whose content is not plain SQLite (the app's own log records a database keying "
+                 "operation, and the app's published core wireapp/kalium carries "
+                 "data/persistence/src/androidMain/kotlin/com/wire/kalium/persistence/db/support/SqlCipherKey.kt "
+                 "at commit e9ac68451ad88f9e67dd41216df926ba47b3a581), and their "
                  "shared preferences are encrypted, so nothing is reported for those versions.",
         "paths": ('*/com.wire/**',),
         "output_types": "standard",
@@ -34,12 +38,15 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-15",
         "requirements": "None",
         "category": "Wire Messenger",
-        "notes": "Tested on: Android 13 Wire v.3.81.35.\n"
-                 "Applies to the legacy app generation that keeps a plain-SQLite database named by "
-                 "the account id next to com.wire.preferences.xml. Newer app versions store user "
-                 "data in databases/user-db-<account id>-wirecom, whose content is not plain SQLite "
-                 "(the app's own log records a database keying operation, and the app's published "
-                 "core wireapp/kalium carries SqlCipherKey.kt in data/persistence), and their "
+        "notes": "The module records a test on Android 13 with Wire 3.81.35; the image used is "
+                 "not recorded. Rows were produced on pixel3_a11 and pixel3_a12 (see "
+                 "sample_data).\nApplies to the legacy app generation that keeps a plain-SQLite "
+                 "database named by the account id next to com.wire.preferences.xml. Newer app "
+                 "versions store user data in databases/user-db-<account id>-wirecom, whose "
+                 "content is not plain SQLite (the app's own log records a database keying "
+                 "operation, and the app's published core wireapp/kalium carries "
+                 "data/persistence/src/androidMain/kotlin/com/wire/kalium/persistence/db/support/SqlCipherKey.kt "
+                 "at commit e9ac68451ad88f9e67dd41216df926ba47b3a581), and their "
                  "shared preferences are encrypted, so nothing is reported for those versions.",
         "paths": ('*/com.wire/**',),
         "output_types": "standard",
@@ -60,15 +67,23 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-15",
         "requirements": "None",
         "category": "Wire Messenger",
-        "notes": "Tested on: Android 13 Wire v.3.81.35. Rows taken from the MsgDeletion table carry "
-                 "their timestamp in the Date / Time Deleted column and have no sent time. The call "
-                 "duration column is rendered by dividing the stored duration by 1000, which assumes "
-                 "the value is milliseconds; that unit has not been independently verified.\n"
-                 "Applies to the legacy app generation that keeps a plain-SQLite database named by "
-                 "the account id next to com.wire.preferences.xml. Newer app versions store user "
-                 "data in databases/user-db-<account id>-wirecom, whose content is not plain SQLite "
-                 "(the app's own log records a database keying operation, and the app's published "
-                 "core wireapp/kalium carries SqlCipherKey.kt in data/persistence), and their "
+        "notes": "The module records a test on Android 13 with Wire 3.81.35; the image used is "
+                 "not recorded. Rows were produced on pixel3_a11 and pixel3_a12 (see "
+                 "sample_data). Rows taken from the MsgDeletion table are given the Message Type "
+                 "Deleted by this parser and carry the table's timestamp column in Date / Time "
+                 "Deleted; what that timestamp marks is not established. These rows "
+                 "have no sent time. Reaction reads Liked where Likings.action is 1; that label "
+                 "is this parser's own and other values are left blank. A message with more than one row "
+                 "in Likings appears once per reaction. The call duration column is rendered by "
+                 "dividing the stored duration by 1000, which assumes the value is milliseconds; "
+                 "that unit has not been independently verified.\nApplies to the legacy app "
+                 "generation that keeps a plain-SQLite database named by the account id next to "
+                 "com.wire.preferences.xml. Newer app versions store user data in "
+                 "databases/user-db-<account id>-wirecom, whose content is not plain SQLite (the "
+                 "app's own log records a database keying operation, and the app's published core "
+                 "wireapp/kalium carries "
+                 "data/persistence/src/androidMain/kotlin/com/wire/kalium/persistence/db/support/SqlCipherKey.kt "
+                 "at commit e9ac68451ad88f9e67dd41216df926ba47b3a581), and their "
                  "shared preferences are encrypted, so nothing is reported for those versions.",
         "paths": ('*/com.wire/**',),
         "output_types": "standard",
@@ -93,7 +108,9 @@ __artifacts_v2__ = {
         "notes": "One row per file under files/wire.com/<account id>/ and cache/wire.com/"
                  "<account id>/ inside the app sandbox. On tested images these directories hold "
                  "PNG and JPEG content, some of it in files without an extension; the type is "
-                 "read from the file content (PNG, JPEG and MP4 observed). These files sit "
+                 "read from the first bytes of the file: a PNG signature, a JPEG signature, or "
+                 "ftyp at bytes 4 to 8, which this parser labels mp4 and which other ISO base "
+                 "media files also carry. These files sit "
                  "outside the databases newer app versions encrypt, so they remain readable "
                  "when the message store is not. What each file was used for by the app is not "
                  "asserted.",
@@ -126,7 +143,8 @@ __artifacts_v2__ = {
                  "<value>@<domain> (CryptoSessionId in core/cryptography/src/commonMain/kotlin/"
                  "com/wire/kalium/cryptography/ProteusClient.kt and CryptoQualifiedID in the "
                  "IDs.kt beside it, wireapp/kalium commit e9ac68451ad88f9e67dd41216df926ba47b3a581). "
-                 "Legacy session names predate qualified user ids and carry no domain, which is "
+                 "Session names in the legacy store carried no domain on the tested images "
+                 "(pixel3_a11, pixel3_a12), which is "
                  "reported empty rather than assumed.\n"
                  "These files sit outside the databases current app versions encrypt, so they "
                  "remain readable when the message store is not. A session file records that a "

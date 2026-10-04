@@ -1,8 +1,7 @@
 __artifacts_v2__ = {
     "alex_device_info": {
         "name": "ALEX Info",
-        "description": "Reads device informations \
-            from a PRFS backup created by ALEX.",
+        "description": "Reads the key and value pairs of device_info_alex.json from a PRFS backup created by ALEX. The file's first entry and any pair whose value is - are not reported.",
         "author": "@C_Peter",
         "creation_date": "2025-10-17",
         "last_update_date": "2025-10-17",

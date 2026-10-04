@@ -24,10 +24,14 @@ __artifacts_v2__ = {
                  "Columns of the Track table are read by position; the mapping was written "
                  "against app versions 5.1.4 (Android 6) and 6.3.1 (Android 13), the versions "
                  "recorded in the module's comment header, and may not hold on other versions. "
-                 "Two activity category names are supplied by this parser and are not read from "
-                 "the activityCategory table: 37 ('Sleeping') and 272 ('Activity Tracking "
-                 "started manually'). Both names are this parser's own and are not read from the "
-                 "app or its documentation; the meaning of categories 37 and 272 is not "
+                 "Activity Category Name is filled only for categories 37 ('Sleeping') and 272 "
+                 "('Activity Tracking started manually'), names supplied by this parser. The "
+                 "activityCategory table of the Withings-WiScale database is not read by the "
+                 "current code, so every other category shows 'Not listed - Unknown'; rely on "
+                 "Activity Category ID. Both names come from the cited post, which gives 37 = "
+                 "Sleeping and 272 = Activity started on watch without stating how they were "
+                 "derived; they are not read from the app or its documentation, and the meaning "
+                 "of categories 37 and 272 is not "
                  "established.",
         "paths": ('*/com.withings.wiscale2/databases/room-healthmate*',
                   '*/com.withings.wiscale2/databases/Withings-WiScale*'),
@@ -60,7 +64,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Withings Health Mate",
         "notes": "Based on https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-1-users.html "
-                 "Columns of the chat table are read by position; the mapping was written "
+                 "Columns of the chat table are read by position (the cited post, written against "
+                 "app 5.1.4, names the table chats); the mapping was written "
                  "against app versions 5.1.4 (Android 6) and 6.3.1 (Android 13), the versions "
                  "recorded in the module's comment header, and may not hold on other versions.",
         "paths": ('*/com.withings.wiscale2/databases/Withings-WiScale*'),
@@ -76,7 +81,9 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Withings Health Mate",
         "notes": "Based on https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-1-users.html "
-                 "Columns of the leaderboard table are read by position; the mapping was written "
+                 "Columns of the leaderboard table of the room-healthmate database are read by "
+                 "position (the cited post, written against app 5.1.4, found the table in "
+                 "Withings-WiScale); the mapping was written "
                  "against app versions 5.1.4 (Android 6) and 6.3.1 (Android 13), the versions "
                  "recorded in the module's comment header, and may not hold on other "
                  "versions.",
@@ -92,7 +99,11 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Withings Health Mate",
-        "notes": "Based on https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-3-heart.html "
+        "notes": "Based on "
+                 "https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-3-heart.html "
+                 "The Category names for -16 (Heart Rate) and 16 (Steps) come from that post; the "
+                 "names for -19 (SPO2) and -22 (Core Temperature) are this parser's own and no "
+                 "source for them is recorded here, so Category ID is the value to rely on. "
                  "Columns of the vasistas table, including the values reported as SPO2 and Core "
                  "Temperature, are read by position; the mapping was written against app "
                  "versions 5.1.4 (Android 6) and 6.3.1 (Android 13), the versions recorded in "

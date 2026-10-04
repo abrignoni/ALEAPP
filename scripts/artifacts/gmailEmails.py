@@ -7,8 +7,10 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-24",
         "requirements": "BeautifulSoup",
         "category": "Email",
-        "notes": "Recipient, Reply To, Mailed By, Signed by and Subject Line are read from "
-                 "numbered fields of the zipped message protobuf. Protobuf field positions are "
+        "notes": "Recipient and Recipient Name are protobuf fields 1.2 and 1.3, Reply To and "
+                 "Reply To Name are 11.17 and 11.15, Subject Line is 5, Mailed By is 11.8, Signed "
+                 "by is 11.9 and Timestamp is field 17 read as Unix milliseconds. What Timestamp "
+                 "marks is not established. Protobuf field positions are "
                  "not documented and were assigned from the values seen on tested images; Mailed "
                  "By and Signed by reflect stored header values and are not verified against "
                  "Authentication-Results. Message is the readable text extracted from the stored "
@@ -18,10 +20,13 @@ __artifacts_v2__ = {
                  "own, such as a linked image, still gets a marker, so the words just before a "
                  "marker are not always the link's text. The "
                  "unmodified body stays in the source database. The app keeps one "
-                 "bigTopDataDB.<id> store per signed-in account; every matched store is read, "
-                 "across every Android user of the device, with duplicate storage spellings "
-                 "(data/data, data/user/<n>, data_mirror) collapsed first and stores read in "
-                 "sorted path order. Account ID is the numeric store id as stored. The Account "
+                 "bigTopDataDB.<id> store per signed-in account; every matched store is read "
+                 "except copies under a .magisk mirror path, across every Android user of the "
+                 "device, with duplicate storage spellings (data/data, data/user/<n>, "
+                 "data_mirror) collapsed first and stores read in sorted path order. A message "
+                 "row with no stored protobuf is not reported, and a message with more than one "
+                 "attachment row appears once per attachment. Account ID is the numeric store id "
+                 "as stored. The Account "
                  "column is filled only when the Java String.hashCode of an address recorded in "
                  "the same app instance's Gmail.xml equals the store id, which held for every "
                  "store in the tested images; a store with no matching recorded address keeps a "
@@ -61,7 +66,12 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-24",
         "requirements": "none",
         "category": "Email",
-        "notes": "One row per label per account store. Every matched bigTopDataDB.<id> store is read, across every Android user of the device, with duplicate storage spellings collapsed first and stores read in sorted path order. Account ID is the numeric store id as stored; the Account column is resolved from the same app instance's Gmail.xml as described in Gmail - App Emails. "
+        "notes": "One row per label per account store. Every matched bigTopDataDB.<id> store is "
+                 "read except copies under a .magisk mirror path, across every Android user of the "
+                 "device, with duplicate storage spellings collapsed first and stores read in "
+                 "sorted path order. Account ID is the numeric store id as stored; the Account "
+                 "column is resolved from the same app instance's Gmail.xml as described in Gmail "
+                 "- App Emails. "
                  "Label values are reported as stored. Because the store id followed the address "
                  "and not the Android user on every tested store, Account and Account ID would not"
                  " separate two Android users' stores for one account, so Source File names the "

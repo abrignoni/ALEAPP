@@ -1,26 +1,46 @@
 __artifacts_v2__ = {
     "get_NQVault": {
         "name": "NQ Vault Decrypted PINs",
-        "description": "Recovers NQ Vault (com.netqin.ps) PINs by reversing the stored Java hashcode",
+        "description": "Reports the password_id values stored in the NQ Vault (com.netqin.ps) "
+                       "database, each with a digit string whose Java String hashcode equals it",
         "author": "@abrignoni",
         "creation_date": "2023-05-19",
         "last_update_date": "2023-05-19",
         "requirements": "none",
         "category": "Encrypting Media Apps",
-        "notes": "",
+        "notes": "The Encrypted PIN column is the stored password_id. The "
+                 "Decrypted PIN column is the first digit string of 3 to 15 "
+                 "digits whose 32-bit Java String hashcode equals it, or the "
+                 "entry of a table of four ids built into this module, which "
+                 "holds numbers and shows the id 1477632 as 0. More than one "
+                 "digit string can produce the same hashcode, so the value is "
+                 "a matching candidate and is not shown to be the PIN that "
+                 "was set. No source is cited here for password_id being the "
+                 "hashcode of the PIN. No registered test image produces rows "
+                 "for this artifact.",
         "paths": ('*/SystemAndroid/Data/**',),
         "output_types": "standard",
         "artifact_icon": "key",
     },
     "get_NQVault_media": {
         "name": "NQ Vault Decrypted Media",
-        "description": "Decrypts media hidden by NQ Vault (com.netqin.ps) using the recovered PIN XOR key",
+        "description": "Restores media files held by NQ Vault (com.netqin.ps) by XORing the first "
+                       "128 bytes of each stored .bin file with a one byte key derived from the "
+                       "stored password_id",
         "author": "@abrignoni",
         "creation_date": "2023-05-19",
         "last_update_date": "2023-05-19",
         "requirements": "none",
         "category": "Encrypting Media Apps",
-        "notes": "",
+        "notes": "The key is the low byte of the Java String hashcode of the "
+                 "digit string the NQ Vault Decrypted PINs artifact reports "
+                 "for the file's password_id. Only the first 128 bytes of "
+                 "each .bin file under a .image or .video folder are XORed; "
+                 "the rest is copied unchanged. The Password column shows "
+                 "that digit string, which is a matching candidate and is not "
+                 "shown to be the PIN that was set, and Password Hash is the "
+                 "stored password_id. The scheme has no cited source here and "
+                 "no registered test image produces rows for this artifact.",
         "paths": ('*/SystemAndroid/Data/**',),
         "output_types": "standard",
         "artifact_icon": "photo",

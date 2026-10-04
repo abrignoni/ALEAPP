@@ -9,15 +9,18 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-16",
         "requirements": "none",
         "category": "Instagram",
-        "notes": "Each messages row holds a JSON copy of the message; the text, sender, item "
-                 "type and media fields are read from it. Its thread_key and timestamp fields "
-                 "agreed with the table's own thread_id and timestamp columns on every tested "
-                 "row. Timestamps are stored as epoch microseconds.\n"
-                 "Direction is derived: the session table of the same database holds the "
-                 "signed-in account's user id, and a message whose JSON user_id equals it is "
+        "notes": "Each messages row holds a JSON copy of the message; the sender, content type "
+                 "and media fields are read from it. Message and Item Type are the table's own "
+                 "text and message_type columns. Its thread_key and timestamp fields agreed with "
+                 "the table's own thread_id and timestamp columns on every row of the tested "
+                 "images that held messages. Timestamps are stored as epoch microseconds.\n"
+                 "Direction is derived: the session table of the same database holds a user_id, "
+                 "which this artifact takes as the account's own id (the first row returned); no "
+                 "source for that reading is cited. A message whose JSON user_id equals it is "
                  "reported as Outgoing, otherwise Incoming. Sender Username resolves the JSON "
-                 "user_id against the participant list in the thread's thread_info JSON, and "
-                 "for the signed-in account against the preferences file named in the paths; "
+                 "user_id against the participant list in the thread's thread_info JSON, and for "
+                 "the account the session table names against the preferences file named in the "
+                 "paths; "
                  "it is blank when neither source carries the id.\n"
                  "Item Type is reported as stored. Rows typed video_call_event are reported by "
                  "the Instagram - Direct Call Events artifact, not here. Rows typed media "
@@ -69,7 +72,8 @@ __artifacts_v2__ = {
         "category": "Instagram",
         "notes": "Rows of the messages table whose type is video_call_event. Action, "
                  "Description and Did Join are the stored values of the event JSON; the "
-                 "description is the app's own wording (for example 'You started a video "
+                 "description is the text stored in the event JSON (for example 'You "
+                 "started a video "
                  "chat'). Timestamps are epoch microseconds. Direction follows the same "
                  "session-table derivation as the Instagram - Direct Messages artifact. An "
                  "event row is not a call log; start and end appear as separate rows where "
@@ -104,8 +108,10 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Instagram",
         "notes": "One row per threads table entry. Participants and the inviter are read from "
-                 "the thread_info JSON as username (full name) pairs; on the tested images the "
-                 "signed-in account was not listed among the participants. Last Activity Time is "
+                 "the thread_info JSON as username (full name) pairs. The inviter is shown only "
+                 "in Inviter Username and is left out of Participants. On the tested images the "
+                 "account whose id the session table holds was not listed in the Participants "
+                 "column. Last Activity Time is "
                  "the table's own column, stored as epoch microseconds. Thread Title is the "
                  "stored title, reported as stored.",
         "paths": ('*/com.instagram.android/databases/direct.db*',),
@@ -128,7 +134,8 @@ __artifacts_v2__ = {
     },
     "instagramAccounts": {
         "name": "Instagram - Accounts",
-        "description": "Signed-in account profiles from the Instagram shared preferences file "
+        "description": "Account profiles from the 'current' and 'user_access_map' keys of "
+                       "the Instagram shared preferences file "
                        "com.instagram.android_preferences.xml, with the username, user id and "
                        "profile fields",
         "author": "@AlexisBrignoni, Claude",
@@ -179,9 +186,9 @@ __artifacts_v2__ = {
                  "under their own names. The integer columns contact_type, "
                  "blocked_by_viewer_status and gender are reported as stored; nothing in the "
                  "extraction maps their values. Blocked Since converts "
-                 "blocked_since_timestamp_ms where present. The WAL sidecar is load-bearing "
-                 "for this database: in one tested image five contacts existed only in the "
-                 "WAL, so the sidecars must travel with the database.\n"
+                 "blocked_since_timestamp_ms where present. In one tested image five "
+                 "contacts were present only in the write-ahead log, so the database must "
+                 "be read with its -wal file beside it.\n"
                  "A contact row is an entry in the app's local contact store. Its presence "
                  "does not establish that the account holder communicated with, followed or "
                  "knew the listed account.",
@@ -205,7 +212,7 @@ __artifacts_v2__ = {
     },
     "instagramTimeInApp": {
         "name": "Instagram - Time In App",
-        "description": "App usage intervals from the intervals table of the Instagram database "
+        "description": "Rows from the intervals table of the Instagram database "
                        "time_in_app_<user id>.db, with the start and end times and the stored "
                        "event codes",
         "author": "@AlexisBrignoni, Claude",

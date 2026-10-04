@@ -1,25 +1,27 @@
 __artifacts_v2__ = {
     "nordvpn_app_events": {
         "name": "NordVPN - App Events",
-        "description": "Parses the events the NordVPN Android app queued for its own "
-                       "reporting, with the local time each was recorded and the network "
-                       "the device was on.",
+        "description": "Parses the event records in the queue_elements table of the "
+                       "NordVPN Android app's Moose.db, with the local time each records "
+                       "and the ISP and network type values each carries, as stored.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
         "category": "NordVPN",
-        "notes": "One row per queued event. Timestamp is the event's own Unix second value "
+        "notes": "One row per event record in the queue_elements table. Timestamp is the event's "
+                 "own Unix second value "
                  "rendered in UTC, and Local Time is the value the event separately records "
                  "with the device's UTC offset, kept as stored so the offset stays readable. "
-                 "These are events the app had not yet delivered, so the set present is what "
-                 "remained in the queue rather than a complete history of app use. Event "
+                 "What the app does with a row after it is written was not established, so the "
+                 "set present is not shown to be a complete history of app use. Event "
                  "names, network type and interface are the app's own labels, as stored. ISP "
                  "and ISP ASN are the values each event carries, reported as stored; whether "
                  "they describe the device's own network was not established. On VPN is the flag "
                  "each event carries; on the tested devices every "
                  "event that carried it recorded false, and no event carried a server "
-                 "address, city or country, so these samples evidence no VPN connection. "
+                 "address, city or country, so these samples hold no record of a VPN connection, "
+                 "which is not evidence that none took place. "
                  "Field mapping was done against two private samples provided by Mattia; no "
                  "sample data is recorded for them.",
         "paths": (
@@ -41,20 +43,26 @@ __artifacts_v2__ = {
         "notes": "One row per app data directory. Values come from the app's Settings "
                  "database, from the shared context its reporting library keeps, and from "
                  "its own preference files, all read from the same directory. Server "
-                 "Catalogue Updated is the time the app last refreshed its server list, in "
-                 "Unix milliseconds; the catalogue itself is a server supplied list of servers, "
+                 "Catalogue Updated is the ServerUpdateTime value of the LastUpdateEntity table "
+                 "in Main.db, read as Unix milliseconds; what the app updates it for was not "
+                 "established. The server catalogue itself is a server supplied list of "
+                 "servers, "
                  "tens of thousands of rows on the tested devices, and is "
                  "not reported because it records what the service offers rather than "
                  "anything the device did. Last Cache Date and Token Renew are Unix seconds. "
-                 "Connection fields are reported as stored and were empty on both tested "
+                 "Connection fields are reported as stored. On VPN is the shared context value "
+                 "and, when that is empty, vpn_connected from last_known_state.xml. Threat "
+                 "Protection is the shared context's user_preferences value and, when that is "
+                 "empty, its current_state value. Meshnet is meshnet_enabled from "
+                 "last_meshnet_state.xml and, when that is empty, the shared context value. The "
+                 "connection fields were empty on both tested "
                  "devices, where the app recorded that it was not connected and not signed "
                  "in. SIM Country is the plaintext value the app stores beside its location "
                  "record. The location record's own country, latitude, longitude and update "
-                 "time are held as AES-GCM values with a twelve byte nonce, whose lengths "
-                 "match a two character country code, two short coordinate strings and a "
-                 "thirteen digit millisecond timestamp; the key could not be recovered, "
-                 "because the extraction carries no app binary and no derivation from the "
-                 "seed the app stores reproduced it, so those four values are not reported. "
+                 "time are stored in a form this module does not read; the key could not be "
+                 "recovered, because the extraction carries no app binary and no derivation "
+                 "from the seed the app stores reproduced it, so the cipher and the plaintext "
+                 "were not established and those four values are not reported. "
                  "Field mapping was done against two private samples provided by Mattia; no "
                  "sample data is recorded for them.",
         "paths": (

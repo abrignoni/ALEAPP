@@ -9,9 +9,14 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Google Tasks",
         "notes": "Protobuf field positions for created/modified/completed times are not "
-                 "documented and were assigned from the values seen on tested data. Task Due "
+                 "documented and were assigned by the module from values on data that is not "
+                 "recorded here: Created Time is field 11.1, Last Modified Time field 3.1 and "
+                 "Completed Time field 2.5.1 of the EffectiveTask blob, each read as Unix "
+                 "seconds. No registered image is listed for this artifact. Task Due "
                  "Date is reported as stored in the DueDate column, without "
-                 "conversion, unlike the three converted UTC time columns.",
+                 "conversion, unlike Created Time and Last Modified Time, which are converted to "
+                 "UTC. Completed Time is converted only on rows whose Completed column is True; "
+                 "on other rows a value at that field is shown as stored.",
         "paths": ('*/com.google.android.apps.tasks/files/tasks-*/data.db*',),
         "output_types": "standard",
         "artifact_icon": "file-text",

@@ -2,13 +2,16 @@
 __artifacts_v2__ = {
     "last_boot_time": {
         "name": "Last Boot Time",
-        "description": "Reports the last_boot_time_utc bootstat record; AOSP stores the event value in the file's modification time.",
+        "description": "Reports the last_boot_time_utc bootstat record; AOSP stores the event value in the file's modification time. The time shown is the modification time of the extracted copy as the extraction recorded it, read as UTC; where the container does not keep the device's value or its zone, the time shown is not the stored event value.",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-01-05",
         "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Power Events",
-        "notes": "Reference: AOSP bootstat, 'boot_event_record_store.cpp (event values are stored in the file mtime attribute)', https://android.googlesource.com/platform/system/core/+/refs/heads/main/bootstat/boot_event_record_store.cpp",
+        "notes": "Reference: AOSP bootstat, 'boot_event_record_store.cpp (event values are stored "
+                 "in the file mtime attribute)', "
+                 "https://android.googlesource.com/platform/system/core/+/refs/tags/android-15.0.0_r1/bootstat/boot_event_record_store.cpp#49 "
+                 "(line 49 reads the value from st_mtime; line 89 sets it with utime())",
         "paths": ('*/misc/bootstat/last_boot_time_utc'),
         "output_types": "standard",
         "artifact_icon": "power",

@@ -1,13 +1,16 @@
 __artifacts_v2__ = {
     "get_likee": {
         "name": "LIKEE - User Location",
-        "description": "Address/location text recovered from LIKEE *_location.kv files",
+        "description": "Text of the lines containing the word address in LIKEE *_location.kv files, with control characters removed. What the text records is not established.",
         "author": "@falcon217836",
         "creation_date": "2024-05-20",
         "last_update_date": "2024-05-20",
         "requirements": "none",
         "category": "LIKEE",
-        "notes": "",
+        "notes": ""
+                 "Each kept line is the whole line less its last character. One row is written "
+                 "per *_location.kv file, including a file in which no line matched, where "
+                 "Location Data is blank.",
         "paths": ('*/video.like/files/*/*location.kv',),
         "output_types": "standard",
         "artifact_icon": "map-pin",

@@ -2,13 +2,15 @@
 __artifacts_v2__ = {
     "get_run_user": {
         "name": "RunkeeperUser",
-        "description": "Get User information from the xml file com.fitnesskeeper.runkeeper.pro_preferences.xml in the Runkeeper app related to the user",
+        "description": "Parses selected account preferences from com.fitnesskeeper.runkeeper.pro_preferences.xml of the Runkeeper Android app, one row per preference.",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
         "creation_date": "2023-03-25",
         "last_update_date": "2023-03-25",
         "requirements": "Python 3.7 or higher and ElementTree",
         "category": "Runkeeper",
-        "notes": "",
+        "notes": "lastActive, lastWeightSyncTime and birthday are read as Unix milliseconds and "
+                 "creationTime as Unix seconds, shown as UTC; those units are assumed. Other values "
+                 "are reported as stored. Only the first matched file is read.",
         "paths": ('*/com.fitnesskeeper.runkeeper.pro/shared_prefs/com.fitnesskeeper.runkeeper.pro_preferences*',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "user",

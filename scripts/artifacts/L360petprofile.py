@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     'Life360_PetProfile': {
         'name': 'Life360 PetProfile',
-        'description': 'Parses Life360 PetProfile',
+        'description': 'Parses Life360 PetProfile. Birthdate is the stored number read as days since 1970-01-01, which is an assumption.',
         'author': 'Heather Charpentier',
         'creation_date': '2026-06-10',
         'last_update_date': '2026-06-10',

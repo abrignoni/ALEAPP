@@ -20,7 +20,8 @@ __artifacts_v2__ = {
                  "carries one, and that case was exercised on a constructed tree. On "
                  "cookbook_a11 and samsungs20_a13 a second media.db sits under user/150, "
                  "and each image's system/users/150.xml records user 150 as a managed "
-                 "profile named Secure Folder. The Source DB Path column names the "
+                 "profile named Secure Folder. Latitude and Longitude are left blank when "
+                 "either is NULL or both are 0. The Source DB Path column names the "
                  "database each row came from, and the report's located-at line lists "
                  "every database read, including any that returned no rows. Is Hide and "
                  "Deleted held no value on any row of the ten tested images, and Is "
@@ -60,10 +61,10 @@ __artifacts_v2__ = {
                  "that case was exercised on a constructed tree. On cookbook_a11 and "
                  "samsungs20_a13 a second media.db sits under user/150, and each image's "
                  "system/users/150.xml records user 150 as a managed profile named "
-                 "Secure Folder; on both images that database held no location rows. The "
-                 "Source DB Path column names the database each row came from, and the "
-                 "report's located-at line lists every database read, including any that "
-                 "returned no rows.",
+                 "Secure Folder. Latitude and Longitude are left blank when either is NULL or "
+                 "both are 0. The Source DB Path column names the database each row came from, "
+                 "and the report's located-at line lists every database read, including any "
+                 "that returned no rows.",
         "paths": ('*/com.samsung.android.providers.media/databases/media.db*',),
         "output_types": "all",
         "artifact_icon": "map-pin",

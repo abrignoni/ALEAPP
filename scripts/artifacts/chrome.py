@@ -35,11 +35,14 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Chromium",
         "notes": "Transition Type decodes the core type held in the low byte of the visits.transition "
-                 "value and Qualifier(s) decodes the qualifier bits set in its high byte. The "
-                 "0xC0000000 IS_REDIRECT_MASK is a mask covering the CLIENT_REDIRECT and "
-                 "SERVER_REDIRECT bits rather than a qualifier of its own, so it is not reported as a "
-                 "separate qualifier. Reference: Chromium, 'page_transition_types.h', "
-                 "https://chromium.googlesource.com/chromium/src",
+                 "value (value 6 is shown as START_PAGE, which Chromium's page_transition_types.h "
+                 "at the commit cited below names PAGE_TRANSITION_AUTO_TOPLEVEL; a value above 10 "
+                 "is shown blank) and Qualifier(s) decodes nine qualifier bits above the low byte, "
+                 "0x00800000 BLOCKED through 0x80000000 SERVER_REDIRECT. The 0xC0000000 "
+                 "IS_REDIRECT_MASK is a mask covering the CLIENT_REDIRECT and SERVER_REDIRECT bits "
+                 "rather than a qualifier of its own, so it is not reported as a separate "
+                 "qualifier. Reference: Chromium, 'ui/base/page_transition_types.h', "
+                 "https://github.com/chromium/chromium/blob/8f4baaae073181e7e0fea1807f8db6ad720dbcb7/ui/base/page_transition_types.h#L30-L161",
         "paths": ('*/app_chrome/Default/History*', '*/app_sbrowser/Default/History*', '*/app_opera/History*', '*/app_webview/Default/History*'),
         "output_types": "standard",
         "artifact_icon": "globe",
@@ -59,7 +62,7 @@ __artifacts_v2__ = {
     },
     "get_chromeSearchTerms": {
         "name": "Search Terms",
-        "description": "Parses Search Terms from Chromium based browsers",
+        "description": "Parses the q value out of History URLs that contain search?q= in Chromium based browsers. Search URLs of any other form are not reported; the keyword_search_terms table is reported by Keyword Search Terms.",
         "author": "@abrignoni",
         "creation_date": "2020-03-19",
         "last_update_date": "2020-03-19",
@@ -93,8 +96,15 @@ __artifacts_v2__ = {
         "notes": "Tab URL is the downloads.tab_url column, the page the download was started from. The "
                  "source URL of the downloaded file is held in the downloads_url_chains table, which "
                  "this artifact does not parse. Danger Type and Interrupt Reason decode the stored "
-                 "Chromium enum values. Reference: Chromium, 'download_danger_type.h, "
-                 "download_interrupt_reason_values.h', https://chromium.googlesource.com/chromium/src",
+                 "Chromium enum values for danger types 0 to 23 and the interrupt reasons listed in "
+                 "the code. A stored value outside those sets is shown blank, as 0 is, so a blank "
+                 "cell does not establish that the stored value was 0. Reference: Chromium, "
+                 "'components/history/core/browser/download_constants.h', "
+                 "https://github.com/chromium/chromium/blob/8f4baaae073181e7e0fea1807f8db6ad720dbcb7/components/history/core/browser/download_constants.h; "
+                 "'download_interrupt_reason_values.h', "
+                 "https://github.com/chromium/chromium/blob/8f4baaae073181e7e0fea1807f8db6ad720dbcb7/components/download/public/common/download_interrupt_reason_values.h"
+                 "; 'download_row.h', "
+                 "https://github.com/chromium/chromium/blob/8f4baaae073181e7e0fea1807f8db6ad720dbcb7/components/history/core/browser/download_row.h#L58-L60",
         "paths": ('*/app_chrome/Default/History*', '*/app_sbrowser/Default/History*', '*/app_opera/History*', '*/app_webview/Default/History*'),
         "output_types": "standard",
         "artifact_icon": "download",

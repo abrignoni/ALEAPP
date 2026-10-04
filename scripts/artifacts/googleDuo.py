@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_googleDuo": {
         "name": "Google Duo - Call History",
-        "description": "Google Duo / Meet call history",
+        "description": "Rows of the activity_history table in tachyon.db (Google Duo / Meet). Activity Type, Call Status and Direction are labels this module assigns to the stored integers; the mapping is not sourced. No tested image held a row.",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-07-28",
         "last_update_date": "2026-08-10",
@@ -51,7 +51,7 @@ __artifacts_v2__ = {
     },
     "get_googleDuo_notes": {
         "name": "Google Duo - Notes",
-        "description": "Google Duo / Meet notes (media messages)",
+        "description": "Rows of the messages table in tachyon.db (Google Duo / Meet), with the media file each row names where it is present. Viewed Timestamp is seen_timestamp_millis and File Saved is saved_status; what either records is not sourced. No tested image held a row.",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-07-28",
         "last_update_date": "2026-08-10",

@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "clipboard": {
         "name": "Clipboard Data",
-        "description": "Clipboard artifacts",
+        "description": "Files found under folders whose name ends in clipboard: for a file alone in its folder the text read from a fixed line and character offset, and in a folder holding several files each file other than clip as media, with the modified time of the copy staged in the report folder",
         "author": "Alexis Brignoni",
         "creation_date": "2022-01-08",
         "last_update_date": "2025-09-09",

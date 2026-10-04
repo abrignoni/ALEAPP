@@ -2,7 +2,13 @@
 __artifacts_v2__ = {
     "get_torrentinfo": {
         "name": "torrentinfo",
-        "description": "Parses torrent file metadata (file, info hash and data) from .torrent files.",
+        "description": "Parses .torrent files: the file path, the info hash (SHA-1 of the "
+                       "bencoded info dictionary, computed by this parser) and the top-level keys "
+                       "other than info and pieces as text. Files of a multi-file torrent are "
+                       "listed only when their path has a single component, and each is repeated "
+                       "once for each key of the info dictionary other than pieces. A .torrent "
+                       "that fails to decode, or that has a top-level value that is not a byte "
+                       "string (other than info and creation date), produces no row.",
         "author": "@abrignoni",
         "creation_date": "2023-03-26",
         "last_update_date": "2023-03-26",

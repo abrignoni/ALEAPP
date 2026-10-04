@@ -10,15 +10,21 @@ __artifacts_v2__ = {
         "notes": "Reference: Mozilla application-services, 'places Timestamp is milliseconds on "
                  "Android', "
                  "https://github.com/mozilla/application-services/blob/71d8b70bf62e6911d9d439a559aab56d8bef38b9/components/support/types/src/lib.rs. "
-                 "Reference: Mozilla NSPR, 'prtime.h (PRTime is microseconds since the epoch)', "
-                 "https://github.com/mozilla-firefox/firefox/blob/6d751cf5d0af4b7fcc1b232b6c2ba0551afabe1d/nsprpub/pr/include/prtime.h "
                  "This artifact is not limited to org.mozilla.firefox: the path pattern is "
                  "anchored on the files/places.sqlite layout rather than on a package, so "
                  "Gecko-based forks that use that layout are read too, and the Browser column "
                  "names the package each row came from. Tor Browser also uses this layout and "
                  "its bookmarks are additionally reported by the dedicated Tor Browser artifact. "
                  "On the tested emulator Firefox 154.0.1 and Fennec F-Droid 154.0.0 were "
-                 "installed side by side and both are reported.",
+                 "installed side by side and both are reported. "
+                 "Rows are limited by joins on row ids that are not recorded links "
+                 "(moz_places.origin_id to moz_historyvisits.id and, where the table exists, "
+                 "moz_places.id to moz_places_metadata.id), so pages in moz_places can be missing; "
+                 "use Firefox - Web Visits for the visit record. On pixel7a_a14 moz_places held 8 "
+                 "pages, each with a recorded visit, and this artifact reported 7. On "
+                 "emu_a15_oss_v5 it reported all 8 pages (5 in org.mozilla.firefox and 3 in "
+                 "org.mozilla.fennec_fdroid). Last Visit Date and Visit Count are the "
+                 "last_visit_date_local and visit_count_local columns.",
         "paths": ('*/files/places.sqlite*',),
         "output_types": "standard",
         "artifact_icon": "globe",
@@ -38,10 +44,9 @@ __artifacts_v2__ = {
         "notes": "Reference: Mozilla application-services, 'places Timestamp is milliseconds on "
                  "Android', "
                  "https://github.com/mozilla/application-services/blob/71d8b70bf62e6911d9d439a559aab56d8bef38b9/components/support/types/src/lib.rs. "
-                 "Reference: Mozilla NSPR, 'prtime.h (PRTime is microseconds since the epoch)', "
-                 "https://github.com/mozilla-firefox/firefox/blob/6d751cf5d0af4b7fcc1b232b6c2ba0551afabe1d/nsprpub/pr/include/prtime.h. "
                  "Reference: Mozilla, 'nsINavHistoryService TRANSITION_* constants', "
-                 "https://searchfox.org/mozilla-central/source/toolkit/components/places/nsINavHistoryService.idl "
+                 "https://github.com/mozilla-firefox/firefox/blob/6d751cf5d0af4b7fcc1b232b6c2ba0551afabe1d/toolkit/components/places/nsINavHistoryService.idl#L929-L977. "
+                 "Any other stored visit_type is shown blank. "
                  "This artifact is not limited to org.mozilla.firefox: the path pattern is "
                  "anchored on the files/places.sqlite layout rather than on a package, so "
                  "Gecko-based forks that use that layout are read too, and the Browser column "
@@ -68,15 +73,17 @@ __artifacts_v2__ = {
         "notes": "Reference: Mozilla application-services, 'places Timestamp is milliseconds on "
                  "Android', "
                  "https://github.com/mozilla/application-services/blob/71d8b70bf62e6911d9d439a559aab56d8bef38b9/components/support/types/src/lib.rs. "
-                 "Reference: Mozilla NSPR, 'prtime.h (PRTime is microseconds since the epoch)', "
-                 "https://github.com/mozilla-firefox/firefox/blob/6d751cf5d0af4b7fcc1b232b6c2ba0551afabe1d/nsprpub/pr/include/prtime.h "
                  "This artifact is not limited to org.mozilla.firefox: the path pattern is "
                  "anchored on the files/places.sqlite layout rather than on a package, so "
                  "Gecko-based forks that use that layout are read too, and the Browser column "
                  "names the package each row came from. Tor Browser also uses this layout and "
                  "its bookmarks are additionally reported by the dedicated Tor Browser artifact. "
                  "On the tested emulator Firefox 154.0.1 and Fennec F-Droid 154.0.0 were "
-                 "installed side by side and both are reported.",
+                 "installed side by side and both are reported. "
+                 "Bookmark Type shows URL, Folder or Separator for a stored type of 1, 2 or 3, "
+                 "following BookmarkType in components/places/src/types.rs at the same "
+                 "application-services commit (Bookmark = 1, Folder = 2, Separator = 3); any other "
+                 "stored value is shown blank.",
         "paths": ('*/files/places.sqlite*',),
         "output_types": "standard",
         "artifact_icon": "bookmark",

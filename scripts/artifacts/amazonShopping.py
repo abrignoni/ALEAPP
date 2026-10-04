@@ -17,7 +17,8 @@ __artifacts_v2__ = {
                  "names for username, first name, account id and device name, and the "
                  "tokens table carried cookies and OAuth tokens; values are reported as "
                  "stored and their meaning beyond the key name is not asserted. Timestamps "
-                 "are Unix milliseconds. The Account column resolves the row's account id "
+                 "are read as Unix milliseconds; the unit has no cited source and no "
+                 "recorded measurement. The Account column resolves the row's account id "
                  "to the accounts table's display name where present.\n"
                  "Reference: Gokila Dorai, Shinelle Hutchinson, Beatriz Rodriguez and Umit "
                  "Karabiyik, 'Mobile Commerce - Analysis and Investigation of the Online "
@@ -71,9 +72,10 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-16",
         "requirements": "none",
         "category": "Amazon Shopping",
-        "notes": "A registry of image files the app cached, keyed by the URL they were "
-                 "fetched from; what a cached image was shown for is not established "
-                 "here. Timestamps are Unix milliseconds.",
+        "notes": "Reads the FileCacheRegistry table as stored. No tested image carried "
+                 "this database, so the artifact is code present and unexercised: the "
+                 "table's role, the millisecond unit assumed for the three time "
+                 "columns and the byte unit assumed for size are not established.",
         "paths": ('*/com.amazon.mShop.android.shopping/databases/ssnapImageCacheRegistry.db*',),
         "output_types": "standard",
         "artifact_icon": "photo",
@@ -95,8 +97,9 @@ __artifacts_v2__ = {
         "notes": "Each file in app_mashWebViewState is named <unix ms>MASHWebFragment<n> "
                  "and holds a base64 wrapped, gzip compressed Android saved-state parcel "
                  "for a web view fragment. The parcel format is not parsed; URLs are "
-                 "extracted from the decompressed bytes as found, one row per URL, with "
-                 "their order preserved, so a row states that the URL was present in that "
+                 "extracted from the decompressed bytes with any trailing double quote "
+                 "removed, one row per distinct URL in a file, in the order each first "
+                 "appears, so a row states that the URL was present in that "
                  "fragment's saved state and nothing more. On a tested sample the states "
                  "included storefront, product and order confirmation page URLs.",
         "paths": ('*/com.amazon.mShop.android.shopping/app_mashWebViewState/*',),

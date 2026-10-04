@@ -1,13 +1,18 @@
 __artifacts_v2__ = {
     "get_playgroundVault": {
         "name": "Playground Vault",
-        "description": "Decrypts media hidden by the Playground AppLocker vault (AES-GCM)",
+        "description": "Decrypts files in the Playground AppLocker vault folder with the AES-GCM key stored in the app's crypto.KEY_256.xml.",
         "author": "@abrignoni",
         "creation_date": "2022-01-16",
         "last_update_date": "2022-01-16",
         "requirements": "none",
         "category": "Encrypting Media Apps",
-        "notes": "",
+        "notes": "The AES-GCM authentication tag is not verified, so a file "
+                 "that does not decrypt correctly is still output. The file "
+                 "type is taken from the decrypted bytes. Encrypted On "
+                 "Timestamp is the number that follows EIF or EVF in the "
+                 "vault file name, read as Unix milliseconds. What event that "
+                 "number marks is not established.",
         "paths": ('*/playground.develop.applocker/shared_prefs/crypto.KEY_256.xml', '*/applocker/vault/*'),
         "output_types": "standard",
         "artifact_icon": "photo",

@@ -91,7 +91,11 @@ __artifacts_v2__ = {
                  "both tested passes decrypted, so that path was exercised on a constructed "
                  "copy with the key removed rather than on a sample. "
                  "Barcode Data is the string the app encodes into the scannable barcode, "
-                 "reported as stored. Times without a UTC suffix are local. The tested "
+                 "reported as stored. Departure Local and Boarding Time Local are the "
+                 "departureTime and boardingTime members, which carry no UTC suffix, reported "
+                 "as stored text. Download Time is the downloadTime member; the module treats "
+                 "it as UTC when the string carries no offset, and whether it is UTC is not "
+                 "established. The tested "
                  "sample without boarding passes also had no key, so the key is not always "
                  "present. Field mapping was done against private samples provided by "
                  "Mattia; no sample data is recorded for them.",
@@ -134,8 +138,10 @@ __artifacts_v2__ = {
         "category": "Ryanair",
         "notes": "Covers the recent_stations and recent_countries tables, distinguished by "
                  "the Record Type column. The country type integer is undocumented and is "
-                 "reported as stored. Both tables use Unix milliseconds. recent_stations "
-                 "held no rows in either tested sample. Field mapping was done against "
+                 "reported as stored. recent_countries.last_used held Unix milliseconds on the "
+                 "tested samples. recent_stations held no rows in either tested sample, so "
+                 "reading its last_usage as Unix milliseconds is assumed from the sibling "
+                 "table and is unexercised. Field mapping was done against "
                  "private samples provided by Mattia; no sample data is recorded for them.",
         "paths": ('*/com.ryanair.cheapflights/databases/fr-local-db*',),
         "output_types": ["html", "tsv", "lava"],
@@ -149,9 +155,13 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-18",
         "requirements": "none",
         "category": "Ryanair",
-        "notes": "Rows come from the dot_booking_placeholder and dot_booking_product "
+        "notes": "Modified Date is the modified_date of the dot_booking row with the same "
+                 "booking id and language, read as Unix milliseconds. Availability rows come "
+                 "from the dot_booking_availability table and carry Is Available as stored. "
+                 "The other rows come from the dot_booking_placeholder and dot_booking_product "
                  "tables, which hold the text the app displays for a journey in the "
-                 "language it cached, including the purchased bags and equipment summary. "
+                 "language it cached, which on the tested sample included a bags and "
+                 "equipment summary. "
                  "Text is reported as stored and may contain markup written by the app. "
                  "Placeholder and product identifiers are reported as stored. Field mapping "
                  "was done against private samples provided by Mattia; no sample data is "
@@ -171,7 +181,8 @@ __artifacts_v2__ = {
         "notes": "The remember me preference holds a JSON Web Token. Its issued at and "
                  "expiry claims are reported as timestamps and the subject, token id and "
                  "issuer as identifiers; the signed token string itself is not written to "
-                 "the report. The remaining single letter claims are reported as stored. "
+                 "the report. Claims other than these and aud are listed in Other Claims as "
+                 "stored. An aud claim is not reported. "
                  "The token is read, not validated, so no claim here is evidence the token "
                  "was accepted by the service. Field mapping was done against private "
                  "samples provided by Mattia; no sample data is recorded for them.",

@@ -4,8 +4,9 @@ __artifacts_v2__ = {
         "description": (
             "Conversations from the AI Chatbot - Nova app, one row per message, joining "
             "History, HistoryDetail, HistoryDetailImage, HistoryDetailDocument and "
-            "HistoryDetailLink, with the path the Android MediaStore index holds for each "
-            "attached document and image."
+            "HistoryDetailLink, with the path the Android MediaStore index holds for a "
+            "file of the same name as the first attached document and the first attached "
+            "image."
         ),
         "author": "Guilherme Guilherme",
         "creation_date": "2026-05-30",
@@ -13,7 +14,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "AI Chatbot - Nova",
         "notes": (
-            "Sources: chat-ai.db and the Android MediaStore databases. The AI Model and Assistant Persona names are mapped from the numeric codes as observed in the app by the author; the mapping is not vendor-documented, so the stored code is shown beside every name and an unmapped code is reported as stored. A path shown as Not in MediaStore means no MediaStore row matched the file name, not that the file never existed locally. Attachment URLs are concatenated by SQLite and split on commas, so a URL containing a comma would split wrong; only the first image attachment is rendered as media. An extraction can carry one copy of each database per Android user and every copy is read, so the located at line lists each database and the row identifiers are per database. The committed test case carries no file under the app's shared media folder and no link record, so Image Media, Document Media and Link URL(s) have no value on any of its rows and Image Path reads Not in MediaStore throughout. Developed against the author's own installation; no registered corpus image carries this app."
+            "Sources: chat-ai.db and the Android MediaStore databases. The AI Model and Assistant Persona names are mapped from the numeric codes as observed in the app by the author; the mapping is not vendor-documented, so the stored code is shown beside every name and an unmapped code is reported as stored. Role reads type 0 as USER and 1 as AI ASSISTANT, and Conv. Deleted reads DELETED when softDeleted is 1, on the same basis; what softDeleted records about the conversation is not established. A path is shown when a MediaStore row has the same file name as the attachment; the match is on the name alone, across every MediaStore database read, so it does not establish that the path is this attachment. Not in MediaStore means no row had that name, not that the file never existed locally. Attachment URLs are concatenated by SQLite and split on commas, so a URL containing a comma would split wrong; only the first image attachment is rendered as media. An extraction can carry one copy of each database per Android user and every copy is read, so the located at line lists each database and the row identifiers are per database. The committed test case carries no file under the app's shared media folder and no link record, so Image Media, Document Media and Link URL(s) have no value on any of its rows and Image Path reads Not in MediaStore throughout. Developed against the author's own installation; no registered corpus image carries this app."
         ),
         "paths": (
             "**/com.scaleup.chatai/databases/chat-ai.db",

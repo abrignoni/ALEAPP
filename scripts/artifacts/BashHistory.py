@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "bashHistory": {
         "name": "Bash History",
-        "description": "Parses the bash history entries",
+        "description": "Parses the lines of the first .bash_history file found. Entry Order is the line number in that file",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2020-10-11",
         "last_update_date": "2025-08-09",

@@ -15,15 +15,15 @@ __artifacts_v2__ = {
                  "com.camerasideas.instashot/files/inshot/.VideoProfile. Each is a JSON document "
                  "describing one editing project. Created is the file's own CreateTime, Unix "
                  "milliseconds, reported as UTC. The file name carries a second time, as "
-                 "Video_<yyyyMMdd>_<HHmmssSSS>, and that one is **device local**: on the tested "
-                 "device the name read 114256229 for a CreateTime of 15:42:44 UTC, four hours "
-                 "ahead, so the two are reported side by side rather than one being converted "
-                 "into the other. They also differed by a few seconds on the tested device; "
-                 "which event each marks was not established. Open Count is the file's "
-                 "openCount. Timeline Duration is MediaClipConfig.MCC_2 in microseconds, mapped "
-                 "by loading a clip of known length: a 30 second clip gave 30000000. Clips is "
-                 "how many entries its ConfigJson holds. Cover is the still InShot renders for "
-                 "the project, kept under .ProfileCover and named by a hash; it is surfaced as "
+                 "Video_<yyyyMMdd>_<HHmmssSSS>, and on the tested device the name read "
+                 "11:42:56.229 for a CreateTime of 15:42:44 UTC, four hours behind and 12 "
+                 "seconds later within the minute. Reading the name time as device local rests "
+                 "on that one file, so the two are reported side by side and neither is "
+                 "converted. Which event each marks was not established. Open Count is the "
+                 "file's openCount. Timeline Duration is MediaClipConfig.MCC_2 in microseconds, "
+                 "mapped by loading a clip of known length: a 30 second clip gave 30000000. "
+                 "Clips is how many entries its ConfigJson holds. Cover is the file under "
+                 ".ProfileCover that the project's Cover field names; it is surfaced as "
                  "an image, so the project can be recognised without opening anything. Label is "
                  "the project's name field and was empty on the tested device. "
                  "Watermark is the hasWatermark flag as stored. "
@@ -36,7 +36,7 @@ __artifacts_v2__ = {
     },
     "inshot_project_clips": {
         "name": "InShot Project Clips",
-        "description": "Media files referenced by InShot projects, with the identifier the app stored for each",
+        "description": "Media files referenced by InShot projects, with the fileMd5 value stored for each",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-06",
@@ -47,21 +47,20 @@ __artifacts_v2__ = {
         },
         "notes": "One row per clip inside a project's MediaClipConfig.ConfigJson, read from the "
                  "same .profile files as the Projects artifact. This is the part that names "
-                 "files: a project records the full path of each piece of media placed on its "
-                 "timeline, so the path is available even when that file is no "
-                 "longer on the device. "
-                 "The keys inside a clip are obfuscated and were mapped by loading media of "
-                 "known length and path, not from any published source. Media Path is MCI_1's "
-                 "VFI_1 member, which held exactly the file that was loaded. Clip Duration is "
-                 "MCI_3 in microseconds, which read 30000000 for a 30 second clip. "
-                 "**File Id (as stored) is the clip's fileMd5 member and it is NOT the MD5 of "
-                 "the file's bytes.** That was checked rather than assumed: for a file whose "
-                 "bytes were under control the app stored 4f012347e900031ca5b19677c82ff8f2 while "
-                 "the file's real MD5 was 64b22a793345b56e4f0c135a8a8e29e7. Hashing the path, "
-                 "the size, the modification time, several leading and trailing byte ranges and "
-                 "combinations of those reproduced none of it, so what the value covers was not "
-                 "established and it is reported as stored. Do not try to match it against a "
-                 "file hash; it is useful only as the app's own identifier for the clip. "
+                 "files: on the tested device the clip entry held the full path of the media "
+                 "that was loaded. Whether the entry is kept after that file is removed from "
+                 "the device was not tested. The keys inside a clip are obfuscated and were "
+                 "mapped by loading media of known length and path, not from any published "
+                 "source. Media Path is MCI_1's VFI_1 member, which held exactly the file that "
+                 "was loaded. Clip Duration is MCI_3 in microseconds, which read 30000000 for a "
+                 "30 second clip. File Id (as stored, not a file hash) is the clip's fileMd5 "
+                 "member, and it is not the MD5 of the file's bytes. That was checked rather "
+                 "than assumed: for a file whose bytes were under control the app stored "
+                 "4f012347e900031ca5b19677c82ff8f2 while the file's real MD5 was "
+                 "64b22a793345b56e4f0c135a8a8e29e7. Hashing the path, the size, the "
+                 "modification time, several leading and trailing byte ranges and combinations "
+                 "of those reproduced none of it, so what the value covers was not established "
+                 "and it is reported as stored. Do not try to match it against a file hash. "
                  "A row records what the project referred to, not that the media was exported or "
                  "shared.",
         "paths": ('*/com.camerasideas.instashot/files/inshot/.VideoProfile/*.profile',),

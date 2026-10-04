@@ -14,9 +14,13 @@ __artifacts_v2__ = {
                  "cached_content_index.exi maps an integer id to the cache key (here the segment URL on "
                  "video.twimg.com) and the span files <id>.<position>.<last touch ms>.v3.exo hold the bytes "
                  "(androidx media3 1.11.0 CachedContentIndex.LegacyStorage and SimpleCacheSpan; the index layout "
-                 "is version 2 with per-entry metadata, written since ExoPlayer 2.9; an index whose flags mark it "
+                 "is version 2 with per-entry metadata (VERSION = 2 in google/ExoPlayer CachedContentIndex.java "
+                 "at tag r2.8.0; tag r2.7.3 has VERSION = 1); older version 0 and 1 indexes, which carry a "
+                 "length in place of metadata, are read too; an index whose flags mark it "
                  "encrypted is skipped with a log line, and none was on the tested images). Media Path is the "
-                 "host, media folder and id of the URL as stored, for example video.twimg.com/amplify_video/<id>; "
+                 "host, media folder and id of the URL as stored for the folders amplify_video, ext_tw_video, "
+                 "tweet_video, dm_gif and dm_video, for example video.twimg.com/amplify_video/<id>; a key with "
+                 "any other shape is reported whole, up to its query string; "
                  "a subtitles/<folder>/<id> URL joins its video's row. The id is the media id in the URL and is "
                  "not resolved to a tweet here. Segments counts the index entries (playlists, video and audio "
                  "segments) under that media path, Span Files and Bytes Cached the span files and their sizes, "
@@ -48,7 +52,7 @@ __artifacts_v2__ = {
     },
     "snapchatStreamedMedia": {
         "name": "Snapchat - Streamed Media (ExoPlayer)",
-        "description": "Media the Snapchat app streamed through its ExoPlayer cache (files/streaming): "
+        "description": "Entries in the Snapchat app's ExoPlayer cache index (files/streaming): "
                        "the content type and content ids the app recorded in the cache index, the "
                        "resolved URL, and the time the cached bytes were last touched.",
         "author": "@AlexisBrignoni, Claude",
@@ -65,8 +69,9 @@ __artifacts_v2__ = {
                  "ExoPlayer rewrites when it reads a span again only if the app's cache evictor asks for that "
                  "(SimpleCache.touchSpan); 661 of the 801 entries on the tested images have a single "
                  "span file and 138 have two or more (up to 14), and only the latest touch is reported. Bytes "
-                 "Cached is the size of the span files; Declared Length the exo_len metadata value. Presence "
-                 "records that the app fetched the media into its cache. On the 7 tested images holding entries, "
+                 "Cached is the size of the span files; Declared Length the exo_len metadata value. An entry with "
+                 "span files records that bytes for that key were written to the cache. Whether the media was "
+                 "shown or played is not established by this cache. On the 7 tested images holding entries, "
                  "801 entries (an eighth image held an index with no entries): content types "
                  "discover_story_streaming_snap.discover_story_streaming_snap (530), story_snap.story_snap (265), "
                  "discover_publisher_shows_story_large.discover_publisher_shows_story_large (4) and "
@@ -102,7 +107,8 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-26",
         "requirements": "none",
         "category": "Instagram",
-        "notes": "This cache keeps no index file: each span file is named <key>.<position>.<last touch ms>.v2.exo "
+        "notes": "This artifact reads no index file for this cache: each span file is named "
+                 "<key>.<position>.<last touch ms>.v2.exo "
                  "(androidx media3 1.11.0 SimpleCacheSpan CACHE_FILE_PATTERN_V2), so the key is read from the file "
                  "name. Keys start with two numbers joined by an underscore, sometimes followed by a third "
                  "underscore-joined token (15 of the 330 groups on the tested images); Media ID and Second ID are "
@@ -113,9 +119,9 @@ __artifacts_v2__ = {
                  "span files, which ExoPlayer rewrites when it reads a span again only if the app's cache evictor "
                  "asks for that (SimpleCache.touchSpan); Bytes Cached is the size of the span "
                  "files. Media is the video file ExoPlayer - Rejoined Cached Media joined for this key prefix, shown "
-                 "only when exactly one video file in the same cache folder matches: 62 of the 70 rows. The row's "
-                 "sound, when the app cached it separately, is its own file in that artifact. ffmpeg 9.0.1 reported "
-                 "that 14 of those 62 files (WebM) end prematurely. "
+                 "only when exactly one video file in the same cache folder matches. The row's "
+                 "sound, when the app cached it separately, is its own file in that artifact. On the tested images "
+                 "ffmpeg 9.0.1 reported that 14 of the joined files shown (WebM) end prematurely. "
                  "Android User names the user whose folder the cache is in when the table holds rows from more than "
                  "one user, and is blank when every row comes from one user, as on every tested image.",
         "paths": ('*/com.instagram.android/cache/ExoPlayerCacheDir/videocache/*',),
@@ -143,7 +149,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Reddit",
         "notes": "The index is the SQLite storage of ExoPlayer's cache (androidx media3 1.11.0 "
-                 "CachedContentIndex.DatabaseStorage, available since ExoPlayer 2.11): the "
+                 "CachedContentIndex.DatabaseStorage, present in google/ExoPlayer "
+                 "CachedContentIndex.java at tag r2.10.0 and absent at r2.9.6): the "
                  "ExoPlayerCacheIndex<uid> table maps an id to the cache key (the segment URL) and "
                  "ExoPlayerCacheFileMetadata<uid> records each span file's length and last touch in Unix "
                  "milliseconds. The span files sit in external storage "

@@ -37,19 +37,18 @@ __artifacts_v2__ = {
         },
         "notes": "One row per row of the bookmarks table in "
                  "pl.solidexplorer2/databases/explorer.db. Name is the label shown in the app's "
-                 "drawer and Path is the location it points at. "
-                 "Times Opened is the hitcount column and counts uses of the bookmark. That was "
-                 "measured rather than assumed: on the tested device a bookmark was added and "
-                 "then opened from the drawer twice, and its hitcount went 0, then 1, then 2, "
-                 "while a second bookmark that was never opened stayed at 0. A bookmark can "
-                 "therefore be present and unused, which the column separates. "
-                 "The app ships with a bookmark already present, so a row is not by itself "
-                 "evidence anyone created it; on the tested device the Download bookmark was "
-                 "there before anything was done and is the one that stayed at 0. "
-                 "File System is the id of the row in the file_systems table the bookmark "
-                 "belongs to, which is the link the database itself records, and is what "
-                 "separates a bookmark on local storage from one on a remote connection. "
-                 "Position is reported as stored.",
+                 "drawer and Path is the location it points at. Times Opened is the hitcount "
+                 "column and counts uses of the bookmark. That was measured rather than assumed: "
+                 "on the tested device a bookmark was added and then opened from the drawer twice, "
+                 "and its hitcount went 0, then 1, then 2, while a second bookmark that was never "
+                 "opened stayed at 0. A bookmark can therefore be present and unused, which the "
+                 "column separates. The app ships with a bookmark already present, so a row is not "
+                 "by itself evidence anyone created it; on the tested device the Download bookmark "
+                 "was there before anything was done and is the one that stayed at 0. File System "
+                 "is the id of the row in the file_systems table the bookmark belongs to, which is "
+                 "the link the database itself records; no bookmark on a remote connection was "
+                 "present on the tested device, so its use to tell local from remote bookmarks was "
+                 "not exercised. Position is reported as stored.",
         "paths": ('*/pl.solidexplorer2/databases/explorer.db*',),
         "output_types": "standard",
         "artifact_icon": "bookmark",
@@ -66,17 +65,20 @@ __artifacts_v2__ = {
             "emu_a15_oss_v14": "Solid Explorer 3.5.20 | 4 rows",
         },
         "notes": "One row per row of the search_suggestions and suggestions tables in "
-                 "pl.solidexplorer2/databases/explorer.db. Table says which of the two a row "
-                 "came from. Neither table carries a timestamp, so these terms cannot be placed "
-                 "in time from this store. "
-                 "Search Term is the literal string submitted. It is worth reading literally: on "
-                 "the tested device the app did not clear the search box between searches, so "
-                 "two of the four stored terms are the previous term with the next one appended. "
-                 "That is what the app recorded and it is reported unchanged rather than split. "
-                 "Counter is reported as stored. It read 0 on every row of the tested device, "
-                 "where four terms were submitted and none of them incremented it past zero. "
-                 "Type belongs to the suggestions table only and is blank for rows "
-                 "from search_suggestions. The suggestions table was empty on the tested device.",
+                 "pl.solidexplorer2/databases/explorer.db. Table says which of the two a row came "
+                 "from. Neither table carries a timestamp, so these terms cannot be placed in time "
+                 "from this store. Search Term is the suggestion column of either table. For "
+                 "search_suggestions it held the literal string submitted on the tested device. "
+                 "What the suggestions table stores there is not established, because that table "
+                 "was empty. The search_suggestions terms are worth reading literally: on the "
+                 "tested device the app did not clear the search box between searches, so two of "
+                 "the four stored terms are the previous term with the next one appended. That is "
+                 "what the app recorded and it is reported unchanged rather than split. Counter "
+                 "(as stored) is the counter column unchanged. It read 0 on every row of the "
+                 "tested device, where four terms were submitted and none of them incremented it "
+                 "past zero. Type (as stored) belongs to the suggestions table only and is blank "
+                 "for rows from search_suggestions. The suggestions table was empty on the tested "
+                 "device.",
         "paths": ('*/pl.solidexplorer2/databases/explorer.db*',),
         "output_types": "standard",
         "artifact_icon": "search",
@@ -94,21 +96,19 @@ __artifacts_v2__ = {
             "emu_a15_oss_v14": "Solid Explorer 3.5.20 | 1 rows",
         },
         "notes": "One row per row of the file_systems table in "
-                 "pl.solidexplorer2/databases/explorer.db. This is where a remote connection "
-                 "would be stored: the table carries server, port, user name and remote path "
-                 "columns for it. No remote connection was present on the tested device, so none "
-                 "was exercised. "
-                 "Password Stored reports only whether the password column holds a value. The "
-                 "password itself is not printed. "
-                 "Connection Type and Connection Mode are reported as stored, being undocumented "
-                 "in anything published. "
-                 "The tested device had only the built-in local storage entry. On that single row "
-                 "Server, User, Charset and Extra were empty, Password Stored read No, Port and "
-                 "both Connection columns read 0, and Remote Path read a single slash. Those "
-                 "columns are reported because they are the substance of this table "
-                 "on a device that has a remote connection configured, which is the case worth "
-                 "having. Package Name on that row read as a local storage identifier rather "
-                 "than an Android package.",
+                 "pl.solidexplorer2/databases/explorer.db. This is where a remote connection would "
+                 "be stored: the table carries server, port, user name and remote path columns for "
+                 "it. No remote connection was present on the tested device, so none was "
+                 "exercised. Password Stored reports only whether the password column holds a "
+                 "value. The password itself is not printed. Connection Type (as stored) and "
+                 "Connection Mode (as stored) are the conn_type and conn_mode columns unchanged; "
+                 "no source for their values was found. The tested device had only the built-in "
+                 "local storage entry. On that single row Server, User, Charset and Extra were "
+                 "empty, Password Stored read No, Port and both Connection columns read 0, and "
+                 "Remote Path read a single slash. Those columns are reported because they are the "
+                 "substance of this table on a device that has a remote connection configured, "
+                 "which is the case worth having. Package Name on that row read as a local storage "
+                 "identifier rather than an Android package.",
         "paths": ('*/pl.solidexplorer2/databases/explorer.db*',),
         "output_types": "standard",
         "artifact_icon": "server",
@@ -124,22 +124,21 @@ __artifacts_v2__ = {
         "sample_data": {
             "emu_a15_oss_v14": "Solid Explorer 3.5.20 | 4 rows",
         },
-        "notes": "One row per row of the dirinfo table in "
-                 "pl.solidexplorer2/databases/explorer.db. The table holds per-folder display "
-                 "settings, so a row means the app kept settings for that folder rather than "
-                 "that someone deliberately configured it. A row is not written for every folder "
-                 "opened, which was tested rather than assumed: a folder was opened twice from a "
-                 "bookmark during the session that built the sample and gained no row, while "
-                 "four other folders had rows throughout. So a row shows the app held settings "
-                 "for that folder, and the absence of one is not evidence the folder was never "
-                 "opened. No timestamp is stored either, so nothing here can be placed in time. "
-                 "Sort Mode, View Mode, View Scale and Grouped are the display settings and are "
-                 "reported as stored. Hidden Files Shown is the flag of that name, reported as "
-                 "stored; it read No on every row of the tested device, where the setting was "
-                 "never turned on, and is reported because it separates folders on a device "
-                 "where it varies. File System is the id of the "
-                 "file_systems row the folder belongs to, which is the link the database "
-                 "itself records.",
+        "notes": "One row per row of the dirinfo table in pl.solidexplorer2/databases/explorer.db. "
+                 "The table holds per-folder display settings, so a row means the app kept "
+                 "settings for that folder rather than that someone deliberately configured it. A "
+                 "row is not written for every folder opened, which was tested rather than "
+                 "assumed: a folder was opened twice from a bookmark during the session that built "
+                 "the sample and gained no row, while four other folders had rows throughout. So a "
+                 "row shows the app held settings for that folder, and the absence of one is not "
+                 "evidence the folder was never opened. No timestamp is stored either, so nothing "
+                 "here can be placed in time. Sort Mode (as stored), View Mode (as stored) and "
+                 "View Scale (as stored) are the sort_mode, view_mode and view_scale columns "
+                 "unchanged. Grouped is the grouped column, shown as Yes for a non-zero value and "
+                 "No otherwise. Hidden Files Shown is the hidden column, shown as Yes for a "
+                 "non-zero value and No otherwise. What it controls was not exercised; it read No "
+                 "on every row of the tested device. File System is the id of the file_systems row "
+                 "the folder belongs to, which is the link the database itself records.",
         "paths": ('*/pl.solidexplorer2/databases/explorer.db*',),
         "output_types": "standard",
         "artifact_icon": "folder",

@@ -7,7 +7,10 @@ __artifacts_v2__ = {
         "last_update_date": "2023-05-11",
         "requirements": "none",
         "category": "WiFi Profiles",
-        "notes": "",
+        "notes": "ConnectChoiceTimeStamp is read as Unix milliseconds and reported as UTC; that "
+                 "unit is the parser's assumption and no source for it is recorded here. It is "
+                 "blank when the stored value is not all digits or is 1 or less. CreationTime is "
+                 "reported as the text the file stores.",
         "paths": ('*/misc/wifi/WifiConfigStore.xml', '*/misc**/apexdata/com.android.wifi/WifiConfigStore.xml'),
         "output_types": "standard",
         "artifact_icon": "wifi",

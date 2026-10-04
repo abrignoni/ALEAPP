@@ -13,11 +13,18 @@ __artifacts_v2__ = {
                  "file, followed by a trailer bounded by the markers >>tyfs>> and <<tyfs<<. The "
                  "trailer holds the relocated first 2803 bytes of the original, the original size, "
                  "a DES-ECB wrapped XOR key and a DES-ECB wrapped JSON block naming the file. Both "
-                 "DES blocks use the hard-coded key 'tianxiaw' documented by S-RM in 'Cracking the "
-                 "Vault: Exposing the weaknesses of encrypted apps'; the relocated block is "
-                 "recovered with keystream[i] = xor_key[i % 4] XOR (i AND 0xFF), which was derived "
-                 "and confirmed against the corpora below. Recovery is reported per object and a "
-                 "row is produced even when an object cannot be rebuilt.",
+                 "DES blocks use the hard-coded key 'tianxiaw' documented by S-RM; the relocated "
+                 "block is recovered with keystream[i] = xor_key[i % key length] XOR (i AND 0xFF), "
+                 "which was derived and confirmed against the corpora below. S-RM describes the "
+                 "unwrapped key as 4 bytes. The length of the relocated block is read from the "
+                 "trailer. Recovery is reported per object, and an object whose trailer cannot be "
+                 "parsed or rebuilt still gets a row; a file that cannot be read is logged and "
+                 "gets none. Recovery Status compares the rebuilt length with the stored original "
+                 "size and does not verify content. S-RM reports objects whose encrypted block "
+                 "extends past the trailer, flagged by the check byte. This module reads that byte "
+                 "and does not act on it, so that case is not handled. Reference: S-RM, 'Cracking "
+                 "the Vault: Exposing the weaknesses of encrypted apps', "
+                 "https://www.s-rminform.com/latest-thinking/cracking-the-vault-exposing-the-weaknesses-of-encrypted-apps",
         "paths": ('*/.galleryvault_*/files/*/*',),
         "output_types": "standard",
         "artifact_icon": "lock",
@@ -66,8 +73,10 @@ __artifacts_v2__ = {
     },
     "galleryvault_break_in_reports": {
         "name": "GalleryVault - Break-in Reports",
-        "description": "Failed unlock attempts recorded by GalleryVault, with the code that was "
-                       "entered and the photo captured at the time",
+        "description": "Rows of the break_in_report table in galleryvault.db: timestamp, the "
+                       "wrongly_attempt_code value, locking type, and the image the row's "
+                       "photo_path names where it is present. Values are reported as stored. No "
+                       "tested image held a row, so the output is not verified on real data.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
@@ -92,8 +101,10 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "GalleryVault",
         "notes": "File names follow PS_YYYYMMDD_HHMMSS. The time in the file name carries no "
-                 "zone and is reported as stored under Capture Time (device local); the zone the "
-                 "app writes it in was not sourced. The images sit on external storage and are "
+                 "zone and is reported as written in the name. The column is headed Capture Time "
+                 "(device local), but the zone the app uses for the name was not sourced, so the "
+                 "header's 'device local' is an assumption. The images sit on external storage "
+                 "and are "
                  "reported whether or not a matching database row exists.",
         "paths": ('*/.galleryvault_*/BreakInReports/*',),
         "output_types": "standard",
@@ -105,7 +116,7 @@ __artifacts_v2__ = {
     },
     "galleryvault_locked_apps": {
         "name": "GalleryVault - Locked Apps",
-        "description": "Applications locked by the GalleryVault AppLock feature",
+        "description": "Rows of the locked_app table in GalleryVault's AppLock.db: package name and whether disguise_lock is set. No tested image held a row.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
@@ -122,7 +133,7 @@ __artifacts_v2__ = {
     },
     "galleryvault_applock_break_ins": {
         "name": "GalleryVault - AppLock Break-in Reports",
-        "description": "Failed unlock attempts recorded against individual locked applications",
+        "description": "Rows of the break_in_report_in_applock table in GalleryVault's AppLock.db: timestamp, package name, the wrongly_attempt_code value and the photo path, as stored. No tested image held a row.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
@@ -177,7 +188,7 @@ __artifacts_v2__ = {
     },
     "galleryvault_downloads": {
         "name": "GalleryVault - Downloads",
-        "description": "Download tasks created by the browser built into GalleryVault",
+        "description": "Rows of the download_task table in galleryvault.db: begin and end time, name, URLs, local path, sizes, state and error code as stored. No tested image held a row.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
@@ -194,8 +205,9 @@ __artifacts_v2__ = {
     },
     "galleryvault_unhide_history": {
         "name": "GalleryVault - Unhide and Export History",
-        "description": "Records of files taken back out of the vault, including the path they were "
-                       "written to",
+        "description": "Rows of the export_unhidden_history table in galleryvault.db: action time, "
+                       "file name, action type value, target path and original path as stored. No "
+                       "tested image held a row.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
@@ -213,8 +225,9 @@ __artifacts_v2__ = {
     },
     "galleryvault_recycle_bin": {
         "name": "GalleryVault - Recycle Bin",
-        "description": "Vault files sitting in the GalleryVault recycle bin and when they were "
-                       "deleted",
+        "description": "Rows of the recycle_bin_v1 table in galleryvault.db joined to file_v1: "
+                       "the delete_time value and the file's name, original path, MIME type "
+                       "and size. No tested image held a row.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
@@ -259,15 +272,19 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "GalleryVault",
         "notes": (
-            "Every row reports the interpreted preference label together with the "
-            "original shared_prefs key so the value can be verified directly against "
-            "Kidd.xml. LockPin components are presented as SHA1 and MD5. "
+            "Each row gives a label chosen for this report together with the original "
+            "shared_prefs key. The labels are readings of the key names and are not sourced; "
+            "rely on the Original Key column and the value as stored. A LockPin of 72 "
+            "hexadecimal characters is split into its first 40 characters and the remaining "
+            "32, which S-RM describes as a SHA1 followed by an MD5 of the PIN. "
             "Icon Disguise Enabled and Calculator Disguise Shortcut ID are reported from the "
             "corresponding preference keys as stored. Last Android ID is the value used "
             "elsewhere in this parser "
             "to derive the DES key for AccountProfile.xml. Cloud Storage Type should "
             "be cross-referenced against galleryvault_cloud_account when cloud_cache.db "
-            "is present."
+            "is present. Reference: S-RM, 'Cracking the Vault: Exposing the weaknesses of "
+            "encrypted apps', "
+            "https://www.s-rminform.com/latest-thinking/cracking-the-vault-exposing-the-weaknesses-of-encrypted-apps"
         ),
         "paths": (
             '*/com.thinkyeah.galleryvault/shared_prefs/Kidd.xml*',
@@ -289,7 +306,8 @@ __artifacts_v2__ = {
         "notes": (
             "GalleryVault stores its account fields DES-ECB encrypted in AccountProfile.xml. "
             "The 8-byte key is the first eight characters of the last_android_id value in "
-            "Kidd.xml; this was confirmed by decryption on the tested images, where "
+            "Kidd.xml; this was confirmed by decryption on the two tested images that hold an "
+            "AccountProfile.xml (pixel3_a11 and pixel3_a12), where "
             "AccountEmail, AccountId and the AccountInfo JSON recovered cleanly. "
             "AccountProfile.xml and Kidd.xml are paired within a single app container: the "
             "duplicate storage views of one container are collapsed first, then each "
@@ -338,7 +356,8 @@ __artifacts_v2__ = {
         "category": "GalleryVault",
         "notes": (
             "drive_account_id is the account identifier stored for the cloud provider, reported "
-            "as stored. It names an off-device account; whether any vault content reached it is "
+            "as stored. What the identifier refers to was not sourced. Whether any vault "
+            "content reached a cloud account is "
             "not established by this table (see the Cloud Files and Cloud Upload Tasks "
             "artifacts)."
         ),
@@ -348,7 +367,7 @@ __artifacts_v2__ = {
     },
     "galleryvault_cloud_folders": {
         "name": "GalleryVault - Cloud Folders",
-        "description": "Folder tree of the cloud backup copy of the vault, with resolved parent paths",
+        "description": "Rows of the cloud_folders table in the app's local cloud_cache.db, with parent paths resolved from the same table",
         "author": "@segumarc",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
@@ -363,7 +382,8 @@ __artifacts_v2__ = {
     "galleryvault_cloud_files": {
         "name": "GalleryVault - Cloud Files",
         "description": (
-            "Files present in the cloud backup copy of the vault, with resolved folder "
+            "Rows of the cloud_files table in the app's local cloud_cache.db, with "
+            "resolved folder "
             "path, size, mime type and the per-file encryption key held in the cache"
         ),
         "author": "@segumarc",
@@ -392,8 +412,9 @@ __artifacts_v2__ = {
         "category": "GalleryVault",
         "notes": (
             "Change Action Value is presented as the raw numeric code recorded by the "
-            "app; the mapping to add/modify/delete has not been confirmed against a "
-            "large enough corpus to label with confidence. Entry Name is blank when no row in "
+            "app; the meaning of the codes was not sourced. Entry Type shows 1 as 'Folder' "
+            "and 2 as 'File'; no tested image is recorded for that reading. Entry Name is "
+            "blank when no row in "
             "cloud_files or cloud_folders carries the entry's uuid."
         ),
         "paths": ('*/com.thinkyeah.galleryvault/databases/cloud_cache.db*',),
@@ -403,8 +424,8 @@ __artifacts_v2__ = {
     "galleryvault_cloud_upload_tasks": {
         "name": "GalleryVault - Cloud Upload Tasks",
         "description": (
-            "Sync tasks queued to upload vault files to the cloud, including partial "
-            "and failed transfers, joined to their raw-file/thumbnail parts"
+            "Sync tasks queued to upload vault files to the cloud, with the state and "
+            "error codes as stored, joined to their raw-file/thumbnail parts"
         ),
         "author": "@segumarc",
         "creation_date": "2026-08-18",

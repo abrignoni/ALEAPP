@@ -1,20 +1,45 @@
 __artifacts_v2__ = {
     "get_protonmail_messages": {
         "name": "ProtonMail - Messages",
-        "description": "Parses ProtonMail messages (timestamp, subject, sender, direction, status, size, folder, attachments and recipient lists) from the ProtonMail messages database.",
+        "description": "Parses ProtonMail messages (timestamp, subject, sender, message type, unread flag, size, location, attachments and recipient lists; a message with several attachments has one row per attachment) from the ProtonMail messages database.",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2023-04-26",
         "last_update_date": "2023-04-26",
         "requirements": "none",
         "category": "ProtonMail",
-        "notes": "",
+        "notes": "Message Direction is this module's mapping of "
+                 "messagev3.Type: 0 Incoming, 1 Draft, 2 Outgoing; any other "
+                 "value is blank. The app's source defines Type as 0 INBOX, 1 "
+                 "DRAFT, 2 SENT, 3 INBOX_AND_SENT, so a Type 3 message shows "
+                 "a blank direction. Status is the Unread flag (0 Read, 1 "
+                 "Unread); it is the app's flag and does not establish that a "
+                 "person read the message. Folder maps messagev3.Location 0 "
+                 "Inbox, 1 Drafts, 2 Sent, 3 Trash and 6 Archive and shows 7 "
+                 "as '7 (TBD)'; any other value is blank, so a message in "
+                 "Spam shows no folder. The app's MessageLocationType enum "
+                 "names 1 ALL_DRAFT, 2 ALL_SENT, 4 SPAM, 5 ALL_MAIL, 7 SENT, "
+                 "8 DRAFT, 9 OUTBOX and 10 STARRED. Time is read as Unix "
+                 "seconds and AccessTime as Unix milliseconds; what "
+                 "AccessTime marks is not established. The row count is not a "
+                 "message count: a message with several attachments has one "
+                 "row per attachment. References: ProtonMail Android, "
+                 "Message.kt, "
+                 "https://github.com/ProtonMail/proton-mail-android/blob/"
+                 "0b178613c96d47e9060dcc3ca3db904dfdd1f391/app/src/main/java/"
+                 "ch/protonmail/android/data/local/model/Message.kt#L127 "
+                 "and Constants.kt, "
+                 "https://github.com/ProtonMail/proton-mail-android/blob/"
+                 "0b178613c96d47e9060dcc3ca3db904dfdd1f391/app/src/main/java/"
+                 "ch/protonmail/android/core/Constants.kt#L165-L181. "
+                 "The source was read at that commit only; other app versions "
+                 "were not checked.",
         "paths": ('*/ch.protonmail.android/databases/*-MessagesDatabase.db*',),
         "output_types": "standard",
         "artifact_icon": "mail",
     },
     "get_protonmail_contacts": {
         "name": "ProtonMail - Contacts",
-        "description": "Parses ProtonMail contacts (creation and modified timestamps, name and email) from the ProtonMail contacts database.",
+        "description": "Parses ProtonMail contacts (creation and modified times read as Unix seconds, name and email) from the ProtonMail contacts database, one row per contact email address.",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2023-04-26",
         "last_update_date": "2023-04-26",

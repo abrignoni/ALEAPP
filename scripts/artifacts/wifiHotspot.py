@@ -10,8 +10,9 @@ __artifacts_v2__ = {
         "notes": "SecurityType is read from a named element and is therefore only populated for the "
                  "WifiConfigStoreSoftAp.xml form; it is blank for the binary softap.conf form.\n"
                  "In the binary softap.conf form SSID and Passphrase are taken by byte position: "
-                 "the SSID length is read from byte 5 and the passphrase from the bytes following "
-                 "the last null byte in the file. That layout is not documented, no bounds checking "
+                 "the SSID length is read from byte 5 and the passphrase from the bytes that "
+                 "start two bytes after the last null byte in the file, so the one byte directly "
+                 "after that null is skipped. That layout is not documented, no bounds checking "
                  "is performed, and a file laid out differently can yield a truncated or wrong "
                  "value rather than an error.",
         "paths": ('*/misc/wifi/softap.conf', '*/misc**/apexdata/com.android.wifi/WifiConfigStoreSoftAp.xml'),

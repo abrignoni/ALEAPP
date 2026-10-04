@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     'binance_user_details_msl_plugin': {
         'name': 'Browser Data - Binance User Details (Mister Skinnylegs)',
-        'description': 'Recovers Binance User Details records from the Cache',
+        'description': 'Recovers Binance User Details records from the Chromium cache folder this module locates for the profile; when it cannot locate one, no cache records are read',
         'author': 'Mister Skinnylegs Contributors',
         'creation_date': '2026-07-16',
         'last_update_date': '2026-07-16',
@@ -61,7 +61,7 @@ __artifacts_v2__ = {
     },
     'coinbase_payment_methods_msl_plugin': {
         'name': 'Browser Data - Coinbase Payment Methods (Mister Skinnylegs)',
-        'description': 'Recovers Coinbase Payement Methods records from the Cache',
+        'description': 'Recovers Coinbase Payment Methods records from the Cache',
         'author': 'Mister Skinnylegs Contributors',
         'creation_date': '2026-07-16',
         'last_update_date': '2026-07-16',
@@ -157,7 +157,7 @@ __artifacts_v2__ = {
     },
     'dropbox_session_storage_user_activity_msl_plugin': {
         'name': 'Browser Data - Dropbox Session Storage User Activity (Mister Skinnylegs)',
-        'description': "Recovers user activity from 'uxa' records in Session Storage",
+        'description': "Reports the Dropbox 'uxa' records held in Session Storage (last active time, visit id, previous URL and clicked link values as the site stored them)",
         'author': 'Mister Skinnylegs Contributors',
         'creation_date': '2026-07-16',
         'last_update_date': '2026-07-16',
@@ -229,7 +229,7 @@ __artifacts_v2__ = {
     },
     'google_drive_usage_msl_plugin': {
         'name': 'Browser Data - Google Drive Usage (Mister Skinnylegs)',
-        'description': 'Recovers indications of Google Drive usage',
+        'description': 'Reports the ui:tabFirstStartTimeMsec Session Storage values held for drive.google.com, read as Unix milliseconds',
         'author': 'Mister Skinnylegs Contributors',
         'creation_date': '2026-07-16',
         'last_update_date': '2026-07-16',
@@ -265,7 +265,7 @@ __artifacts_v2__ = {
     },
     'o365_sharepoint_user_activity_msl_plugin': {
         'name': 'Browser Data - O365-Sharepoint user activity (Mister Skinnylegs)',
-        'description': 'Recovers artifacts related to user activity (viewing, editing, downloading, etc.) for Sharepoint and O365',
+        'description': 'Reports cache, history and download records whose URLs match Sharepoint and O365 document view, edit session and download patterns',
         'author': 'Mister Skinnylegs Contributors',
         'creation_date': '2026-07-16',
         'last_update_date': '2026-07-16',
@@ -289,7 +289,7 @@ __artifacts_v2__ = {
     },
     'history_msl_plugin': {
         'name': 'Browser Data - History (Mister Skinnylegs)',
-        'description': 'Dumps History Records',
+        'description': 'Reports the History records of each Chromium profile folder named Default that holds a Web Data file',
         'author': 'Mister Skinnylegs Contributors',
         'creation_date': '2026-07-16',
         'last_update_date': '2026-07-16',

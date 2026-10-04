@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_chromeLoginData": {
         "name": "Login Data",
-        "description": "Parses saved Login Data from Chromium Based Browsers",
+        "description": "Parses the logins table of the Login Data database of Chromium based browsers. The Password column is password_value decrypted with a fixed key (the text peanuts through PBKDF2); the output is not verified, so it is a password only where that key applies and is otherwise meaningless. Created Time is date_created read as microseconds since 1601 or since 1970, whichever gives the year nearer the current year.",
         "author": "@abrignoni",
         "creation_date": "2020-03-20",
         "last_update_date": "2020-03-20",

@@ -10,7 +10,8 @@ __artifacts_v2__ = {
         "last_update_date": "2026-07-30",
         "requirements": "none",
         "category": "Samsung Continuity Service",
-        "notes": "The Time Text column is the device-local time string as stored.",
+        "notes": "The Time Text (Device Local) column is the timeText string as stored. The "
+                 "zone of that text is not established.",
         "paths": ('*/com.samsung.android.mcfds/databases/SleepDetection.db*',),
         "output_types": "standard",
         "artifact_icon": "smartphone",
@@ -20,15 +21,18 @@ __artifacts_v2__ = {
     },
     "samsungSleepTime": {
         "name": "Samsung Sleep Detection Sleep Times",
-        "description": "Sleep windows computed by the Samsung Continuity Service sleep "
-                       "detection (SleepDetection.db, sleep_time table): the recorded start "
-                       "and end of each window and when the record was written.",
+        "description": "Rows of the sleep_time table in the Samsung Continuity Service "
+                       "SleepDetection.db: the startTime, endTime and time values as UTC "
+                       "with their stored text forms, and ignoreSleep as stored. What the "
+                       "service uses these rows for is not established.",
         "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",
         "category": "Samsung Continuity Service",
-        "notes": "The *Text columns are the device-local time strings as stored.",
+        "notes": "The Sleep Start Text (Device Local), Sleep End Text (Device Local) and "
+                 "Recorded Text (Device Local) columns are the stored text forms of the "
+                 "three times. The zone of that text is not established.",
         "paths": ('*/com.samsung.android.mcfds/databases/SleepDetection.db*',),
         "output_types": "standard",
         "artifact_icon": "moon",

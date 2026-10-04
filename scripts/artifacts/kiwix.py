@@ -9,11 +9,17 @@ __artifacts_v2__ = {
         "category": "Kiwix",
         "notes": "One row per entry in the HistoryRoomEntity table of databases/KiwixRoom.db. "
                  "Each row carries the article title and its in content URL, the name of the ZIM "
-                 "file the entry names, and the path to that ZIM on the device as stored. "
+                 "file the entry names, and the zimReaderSource value as stored (the zimFilePath "
+                 "field of the same table is not read). In the app's source at commit "
+                 "b11715c7d9b3a5b5c055f50627ec5cfc5129df2a (kiwix/kiwix-android, "
+                 "core/src/main/java/org/kiwix/kiwixmobile/core/reader/ZimReaderSource.kt line "
+                 "116, toDatabase) the value written is a file's canonical path or, where there is "
+                 "no file, the URI as a string; whether the build on the tested device wrote it "
+                 "the same way was not established. "
                  "Timestamp is Unix milliseconds and was UTC on the tested device (16:13 UTC "
                  "matched the device's 12:13 local clock), so it is reported as UTC; the app "
                  "also stores a human date string which is carried in the Date Text column as "
-                 "stored. The ZIM path names the content file the entry was recorded against. "
+                 "stored. "
                  "The stored favicon for each entry is a base64 image and is not reported. Two "
                  "related stores in the same database are not parsed here: "
                  "RecentSearchRoomEntity is covered by the Searches artifact, and "
@@ -36,10 +42,14 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Kiwix",
         "notes": "One row per entry in the RecentSearchRoomEntity table of databases/KiwixRoom.db. Each "
-                 "row is a term searched inside a ZIM's content, with the ZIM id it was run against and "
-                 "the resulting article URL where stored. This table does not carry a timestamp. It was "
+                 "row carries the searchTerm, zimId and url fields of the app's "
+                 "RecentSearchRoomEntity (kiwix/kiwix-android, "
+                 "core/src/main/java/org/kiwix/kiwixmobile/core/dao/entities/RecentSearchRoomEntity.kt "
+                 "at commit ba5da43c89a1a627a28e13a37d570aaf8ab3cda6, lines 24 to 29). What the "
+                 "url field holds was not measured. This table does not carry a timestamp. It was "
                  "empty on the tested device, so this artifact is code present and exercised against no "
-                 "rows here. The data lives in the KiwixRoom.db WAL sidecar on the tested device.",
+                 "rows here. On the tested device the database's content sat in the KiwixRoom.db "
+                 "-wal sidecar, so the sidecar is in the paths.",
         "paths": ('*/org.kiwix.kiwixmobile*/databases/KiwixRoom.db*',),
         "output_types": "standard",
         "artifact_icon": "search",

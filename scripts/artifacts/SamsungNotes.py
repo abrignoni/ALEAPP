@@ -2,7 +2,7 @@ __artifacts_v2__ = {
   
     "snotes": {
         "name": "Samsung Notes",
-        "description": "Notes from Samsung Notes' sdoc.db, with their text, times, deletion state and media",
+        "description": "Rows of the sdoc table in Samsung Notes' sdoc.db: title, text, the created, modified, opened and recycle-bin-moved times and the isDeleted value as stored, with media files whose path contains the note's file name. When more than one sdoc.db is matched only the last one is read.",
         "author": "Marco Neumann {kalinko@be-binary.de}",
         "creation_date": "2026-01-17",
         "last_update_date": "2026-01-17",

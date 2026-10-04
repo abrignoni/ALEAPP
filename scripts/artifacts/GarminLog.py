@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_log": {
         "name": "GarminLog",
-        "description": "Get Information stored in the Garmin Log file",
+        "description": "Reports values from lines of the first matched Garmin Connect app.log that contain access_token, expires_in, refresh_token, token_type, id_token or Authorization. The first Authorization line is split into its own name=value pairs. A later line replaces an earlier value for the same name. No tested image produced a row.",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
         "creation_date": "2023-02-24",
         "last_update_date": "2023-02-24",

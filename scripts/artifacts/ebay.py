@@ -18,7 +18,8 @@ __artifacts_v2__ = {
                  "match is a SHA-256 equality on the full URL, not a size or time correlation. "
                  "On one tested sample 5 of its 10 watched listings resolved to a cached picture, "
                  "together accounting for 9 cache files because the app had cached several sizes of "
-                 "the same picture; the largest rendition found is the one rendered here, and every "
+                 "the same picture; the picture rendered here is the first match in this order: "
+                 "the stored URL, then the size variants from largest to smallest, and every "
                  "rendition is listed by eBay - Cached Images. Another sample held 370 watched "
                  "listings and no cache directory at all, so none of its rows carry a picture. "
                  "Field mapping was done against private samples; no sample data is "
@@ -46,10 +47,10 @@ __artifacts_v2__ = {
                  "null on every row of every tested sample, so no picture is rendered from it. "
                  "Its productPrefix and isSpelledCorrectly columns are not reported because they "
                  "were empty and zero respectively on every row of every tested sample; sellerPrefix "
-                 "is reported because one sample populated it. The same terms also appear in the "
-                 "separate suggestions.db store reported by eBay - Search Suggestions, which "
-                 "retains a different set; on one tested sample 43 of that store's 44 terms were "
-                 "also here, so neither store is a superset of the other. Field mapping was done "
+                 "is reported because one sample populated it. The separate suggestions.db store "
+                 "reported by eBay - Search Suggestions also holds search terms. On one tested "
+                 "sample 43 of that store's 44 terms were also in this table and one was not. "
+                 "Field mapping was done "
                  "against private samples; no sample data is recorded for them.",
         "paths": ('*/com.ebay.mobile/databases/nautilus_db*',),
         "output_types": ["html", "tsv", "lava"],
@@ -57,22 +58,24 @@ __artifacts_v2__ = {
     },
     "ebay_search_suggestions": {
         "name": "eBay - Search Suggestions",
-        "description": "Parses the saved search queries stored by the eBay Android app.",
+        "description": "Parses the query terms held in the suggestions table of the eBay Android app's suggestions.db.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
         "category": "eBay",
         "notes": "Read from the suggestions table of suggestions.db, whose schema is the one the "
-                 "Android platform's SearchRecentSuggestionsProvider creates. Whether a term was "
-                 "entered on the device or supplied by a server is not recorded in the store; "
-                 "the observations that follow bear on that question. "
-                 "On the tested samples the row ids were gapped rather than a contiguous run, "
-                 "every stored date was distinct and they spanned 122, 205 and 183 days, no two "
-                 "consecutive rows were written within a second of each other, the schema carries "
-                 "no relevance or score column, and no preference naming a fetch, cache version or "
-                 "partition for this store was found in the app's shared_prefs. The terms also "
-                 "cross-check against the app's own separate recent search table. Distinctness of "
+                 "Android platform's SearchRecentSuggestionsProvider creates (AOSP "
+                 "frameworks/base, core/java/android/content/SearchRecentSuggestionsProvider.java "
+                 "at android-14.0.0_r1, lines 141 to 149). Whether a term was entered on the "
+                 "device or supplied by a server is not recorded in the store; the observations "
+                 "that follow bear on that question. On the tested samples the row ids were gapped "
+                 "rather than a contiguous run, every stored date was distinct and they spanned "
+                 "122, 205 and 183 days, no two consecutive rows were written within a second of "
+                 "each other, the schema carries no relevance or score column, and no preference "
+                 "naming a fetch, cache version or partition for this store was found in the app's "
+                 "shared_prefs. On one tested sample 43 of this store's 44 terms were also in the "
+                 "app's separate recent search table. Distinctness of "
                  "the values is not evidence either way here, because the display column is "
                  "declared UNIQUE ON CONFLICT REPLACE and so cannot repeat. Date is a Unix "
                  "millisecond value. The display column equalled the query column on every row of "
@@ -118,8 +121,8 @@ __artifacts_v2__ = {
         "category": "eBay",
         "notes": "Read from the followed_seller_entity table of nautilus_db. The table carries no "
                  "timestamp, so when the seller was followed cannot be established from it. "
-                 "Following is the flag as stored; a row whose value is zero records a seller the "
-                 "app tracked as not currently followed, so presence of a row is not by itself "
+                 "Following is the flag as stored; what a value of zero records was not "
+                 "established, so presence of a row is not by itself "
                  "evidence the account follows that seller. The hashed user id is the same 64 "
                  "character form the recent search table uses, which is what ties these rows to an "
                  "account. Field mapping was done against private samples; no sample data is "
@@ -143,12 +146,13 @@ __artifacts_v2__ = {
                  "boot and is reported as stored. The endTimeElapsedRealtime column is not reported "
                  "because it was zero on every row of every tested sample, so no session end or "
                  "duration can be derived. "
-                 "apls_call table records the app's own network timing and its start column is an "
-                 "offset within the session rather than an epoch; its rows were dominated by "
-                 "telemetry uploads and its listing and product identifier columns were empty on "
-                 "every row of every tested sample, so those calls are counted here rather than "
-                 "enumerated. Screens is the activity names the session recorded, which is what "
-                 "shows which parts of the app were opened. Field mapping was done against private "
+                 "The apls_call table records the app's own network timing; its start column is "
+                 "not read here and what it counts from was not established. Its rows were "
+                 "dominated by telemetry uploads and its listing and product identifier columns "
+                 "were empty on every row of every tested sample, so those calls are counted here "
+                 "rather than enumerated. Screens is the activity names taken from the apls_beacon "
+                 "rows that carry the session guid; what makes the app write a beacon row was not "
+                 "established. Field mapping was done against private "
                  "samples; no sample data is recorded for them.",
         "paths": ('*/com.ebay.mobile/databases/nautilus_db*',),
         "output_types": ["html", "tsv", "lava"],
@@ -156,7 +160,7 @@ __artifacts_v2__ = {
     },
     "ebay_cached_images": {
         "name": "eBay - Cached Images",
-        "description": "Parses the cached listing images stored by the eBay Android app.",
+        "description": "Parses the images held in the eBay Android app's image cache.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
@@ -172,7 +176,9 @@ __artifacts_v2__ = {
                  "the URL cannot be recovered from the name, but a listing whose image URL is held "
                  "elsewhere in the extraction can be matched to its file by hashing; where that "
                  "resolves the listing is named on the row. A row with no listing named is an "
-                 "image the app cached that no watched listing in this extraction points at. Cache "
+                 "image whose file name matched none of the URL variants tried for the watched "
+                 "listings in this extraction. It can still be a picture of a watched listing "
+                 "fetched under another URL. "
                  "A listing whose picture was cached at more than one size owns one row per size, so "
                  "the listing columns can repeat. Cache Expires is the expiration the app recorded, "
                  "not a time the image was viewed. On the tested sample every image was WEBP and "
@@ -195,9 +201,14 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-19",
         "requirements": "none",
         "category": "eBay",
-        "notes": "One row per distinct user identifier found in nautilus_db, naming the table and "
-                 "column it came from. The app stores several different identifier forms for the "
-                 "same person and does not key every table the same way, so the forms are reported "
+        "notes": "One row per distinct value in each of six user id columns of nautilus_db "
+                 "(key_value.publicUserId, RecentSearchEntity.userId, "
+                 "followed_seller_entity.hashedUserId, share_entity.userId, "
+                 "fcm_token.hashedUserId, opt_in_encode_entity.userId), naming the table and "
+                 "column it came from. Empty values and the value 'global' are left out, and an "
+                 "identifier held in two tables appears once per table. The tables hold user "
+                 "identifiers in several forms and are not all keyed the same way, so the forms "
+                 "are reported "
                  "separately rather than merged: a short public user id, a 64 character hashed "
                  "user id, and a longer hashed form used by the push token table. On the tested "
                  "samples the share table's user id equalled the identifier the network log "
@@ -221,10 +232,12 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-19",
         "requirements": "none",
         "category": "eBay",
-        "notes": "Read from the FtsMetadataEntity table of nautilus_db. It states the app "
-                 "version, the eBay marketplace site and country, the language, the Android SDK "
-                 "level and the environment the app was running against, and the fetch time as a "
-                 "Unix millisecond value. Site Code and Country Code are separate values that "
+        "notes": "Read from the FtsMetadataEntity table of nautilus_db. The app version, "
+                 "site code, country code, language code, Android SDK level and environment "
+                 "values are reported as stored. The timestamp column is read as a Unix "
+                 "millisecond value and shown as a UTC date and time; what event sets that "
+                 "timestamp, and what isGbh stands for, were not established. Site Code and "
+                 "Country Code are separate values that "
                  "agree on a marketplace whose site and country codes are the same letters. The "
                  "companion FtsDataEntity table holds feature configuration values; its rows are "
                  "counted here and not listed. Field "
@@ -243,13 +256,14 @@ __artifacts_v2__ = {
         "category": "eBay",
         "notes": "Read from the key_value table of nautilus_db, one row per entry, with the value "
                  "taken from whichever of the table's typed columns the entry populated and the "
-                 "column named on the row. Timestamp is a Unix millisecond value, reported as "
-                 "stored. Entries are keyed by the app's own user id as well as "
-                 "by name, so the same key can appear more than once for different accounts and "
-                 "the user id is reported. What the app does with each entry is not established "
-                 "here, so no meaning is asserted beyond the key name the app itself uses. Two "
-                 "entries hold an encrypted device registration blob; their length is reported and "
-                 "the bytes are not decoded. Field mapping was done against private samples; no "
+                 "column named on the row. Timestamp is a Unix millisecond value, shown as a UTC "
+                 "date and time. Entries are keyed by the app's own user id as well as by name, so "
+                 "the same key can appear more than once for different accounts and the user id is "
+                 "reported. What the app does with each entry is not established here, so no "
+                 "meaning is asserted beyond the key name the app itself uses. An entry whose only "
+                 "value is in the encryptedData column is reported by length and the bytes are not "
+                 "decoded; on the tested samples two entries were of that kind. What the bytes "
+                 "hold is not established here. Field mapping was done against private samples; no "
                  "sample data is recorded for them.",
         "paths": ('*/com.ebay.mobile/databases/nautilus_db*',),
         "output_types": ["html", "tsv", "lava"],
@@ -267,8 +281,9 @@ __artifacts_v2__ = {
                  "destination against the app's user id. The schema names the numeric column "
                  "value; it held a Unix millisecond value on every row of the tested samples and "
                  "is reported both as a date and as stored, because the schema does not state that "
-                 "it is a time. What the channel name records is the destination the app offered "
-                 "or used, and the table does not record what was shared, so a row is not by "
+                 "it is a time. What a channel name records, whether a destination the app offered "
+                 "or one that was used, was not established, and the table does not record what "
+                 "was shared, so a row is not by "
                  "itself evidence that a particular listing was sent. Field mapping was done "
                  "against private samples; no sample data is recorded for them.",
         "paths": ('*/com.ebay.mobile/databases/nautilus_db*',),

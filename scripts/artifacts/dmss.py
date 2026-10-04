@@ -14,39 +14,51 @@ __artifacts_v2__ = {
     },
     "get_dmss_info": {
         "name": "Dahua CCTV - Info",
-        "description": "Information about the connected CCTV system from the Dahua DMSS app",
+        "description": "Device records (name, channel count, UID, IP, port, username and password values as stored) from the devices table of the Dahua DMSS app",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2023-04-13",
         "last_update_date": "2023-04-13",
         "requirements": "none",
         "category": "Dahua Technology (DMSS)",
-        "notes": "",
+        "notes": "The headers mark the IP, Port, Username and Password columns as '(Enc.)'. The "
+                 "values are reported as stored, and the basis for that label is not recorded "
+                 "here. A devices row does not by itself establish that the app connected to the "
+                 "device.",
         "paths": ('*/com.mm.android.DMSS/databases/devicechannel.db*',),
         "output_types": "standard",
         "artifact_icon": "video",
     },
     "get_dmss_sensors": {
         "name": "Dahua IoT - Registered Sensors",
-        "description": "IoT registered sensors connected with the Dahua DMSS app (per account)",
+        "description": "Rows from the AlarmPartEntity table of the Dahua DMSS app databases, labelled with the database they came from",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2023-04-13",
         "last_update_date": "2023-04-13",
         "requirements": "none",
         "category": "Dahua Technology (DMSS)",
-        "notes": "",
+        "notes": "Account is the database file name without its .db ending, or 'Without Account' "
+                 "for the file named .db. Only the file named .db and database files whose name "
+                 "starts with ez or is longer than 25 characters are read. Alarm State and Full "
+                 "Day Alarm show a stored 0 as Off and a stored 1 as On, and Sensitivity shows "
+                 "stored 1, 2 and 3 as Low, Medium and High. Those labels are this parser's "
+                 "rendering, and no source for those meanings is recorded here.",
         "paths": ('*/com.mm.android.DMSS/databases/*',),
         "output_types": "standard",
         "artifact_icon": "shield",
     },
     "get_dmss_cloud": {
         "name": "Dahua IoT - Registered Cloud Devices",
-        "description": "IoT registered cloud devices connected with the Dahua DMSS app (per account)",
+        "description": "Rows from the CloudDevices table of the Dahua DMSS app databases, labelled with the database they came from",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2023-04-13",
         "last_update_date": "2023-04-13",
         "requirements": "none",
         "category": "Dahua Technology (DMSS)",
-        "notes": "",
+        "notes": "Account is the database file name without its .db ending, or 'Without Account' "
+                 "for the file named .db. Only the file named .db and database files whose name "
+                 "starts with ez or is longer than 25 characters are read. Shared Enabled shows a "
+                 "stored 0 as Off and a stored 1 as On, which is this parser's rendering of the "
+                 "stored shareEnable value; no source for that meaning is recorded here.",
         "paths": ('*/com.mm.android.DMSS/databases/*',),
         "output_types": "standard",
         "artifact_icon": "cloud",
@@ -64,7 +76,12 @@ __artifacts_v2__ = {
                  "token-to-label meanings are not documented in the data, and no source or "
                  "measurement supporting them is recorded here. Any token without a mapping is "
                  "reported as stored. "
-                 "Reference: E. Dragonas, C. Lambrinoudakis, M. Kotsis, 'IoT Forensics: "
+                 "Timestamp is alarmTime read as Unix milliseconds and shown in UTC; Device "
+                 "Reported Time is alarmTimeStr as stored. Checked shows the stored checked "
+                 "value as Yes for 1 and No for 0; what it records is not established here. "
+                 "Account is the name of the database file the row came from without its .db "
+                 "ending, or 'Without Account' for the file named .db. Research on this app: "
+                 "E. Dragonas, C. Lambrinoudakis, M. Kotsis, 'IoT Forensics: "
                  "Investigating the Mobile App of Dahua Technology', IEEE CSR 2023, "
                  "https://ieeexplore.ieee.org/document/10224982",
         "paths": ('*/com.mm.android.DMSS/databases/*',),
@@ -73,7 +90,7 @@ __artifacts_v2__ = {
     },
     "get_dmss_media": {
         "name": "Dahua CCTV - Media",
-        "description": "Media files recorded under the DMSS snapshot directory",
+        "description": "JPG, MP4 and DAV files found under the DMSS snapshot directory; thumbnail files and .jpg files on a path containing 'video' are left out",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2023-04-13",
         "last_update_date": "2026-08-01",

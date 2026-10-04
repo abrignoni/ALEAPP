@@ -4,7 +4,11 @@ __artifacts_v2__ = {
         "description": "Extracts content-provenance metadata from media files via two independent paths: (1) C2PA / "
                        "Content Credentials manifests and (2) IPTC/XMP DigitalSourceType tags. Reports the claim "
                        "generator, edit actions, digital source type, author/creator, credit/copyright, ingredients "
-                       "(prior assets), the stated signer certificate and signing time, and an AI-generated indicator. "
+                       "(prior assets), the stated signer certificate and signing time, and an AI "
+                       "Generated? column derived by this parser from the IPTC DigitalSourceType "
+                       "code the file states (Yes, No or Unknown under the parser's own mapping, "
+                       "which marks some codes Yes that the IPTC vocabulary does not define as "
+                       "generative AI; read the Digital Source Type column for the stated code). "
                        "Values are reported as the file carries them and are not cryptographically verified.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-07-12",
@@ -19,8 +23,12 @@ __artifacts_v2__ = {
                  "reader for the IPTC/XMP DigitalSourceType (which a file can carry with no C2PA "
                  "manifest at all), and a COSE_Sign1 + X.509 + RFC 3161 reader for the "
                  "signature. The 'Metadata Source' column distinguishes C2PA from XMP/IPTC "
-                 "findings. JPEG (C2PA + XMP + signature) handling was exercised on test files "
-                 "and on images produced by Google/Gemini tools; PNG and ISOBMFF "
+                 "findings. A file is parsed only when the text c2pa, jumb or DigitalSourceType "
+                 "occurs in its first 512 KiB, and an XMP/IPTC row is written only when the XMP "
+                 "carries a DigitalSourceType, so a file with no row has not been shown to carry "
+                 "no provenance metadata. JPEG (C2PA + XMP + signature) handling was run on test "
+                 "files that are not identified here; the corpora in sample_data returned rows, "
+                 "and the container format of those rows is not recorded here. PNG and ISOBMFF "
                  "(HEIC/AVIF/MP4/MOV) containers are implemented from the C2PA specification, "
                  "and whether they were exercised on any tested file is not recorded here.",
         "paths": (  # case-insensitive extensions; fnmatch '*' already spans '/', so these

@@ -22,7 +22,7 @@ SOFTWARE.
 __artifacts_v2__ = {
     "get_fcm_twitter": {
         "name": "FCM - Twitter DMs",
-        "description": "Twitter direct messages recovered from the fcm_queued_messages.ldb leveldb",
+        "description": "Twitter push records on the dms channel in the fcm_queued_messages.ldb leveldb (not exercised on the tested images)",
         "author": "Alex Caithness (research [at] cclsolutionsgroup.com)",
         "creation_date": "2022-07-28",
         "last_update_date": "2022-07-28",

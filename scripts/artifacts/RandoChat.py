@@ -6,14 +6,21 @@
 __artifacts_v2__ = {
     'randochat_messages': {
         'name': 'RandoChat Messages',
-        'description': 'Parses RandoChat App Messages',
+        'description': 'Parses the mensagens table of the RandoChat database.',
         'author': 'Marco Neumann {kalinko@be-binary.de}',
         'version': '0.0.1',
         'creation_date': '2026-01-15',
         'last_update_date': '2026-01-15',
         'requirements': 'os, path',
         'category': 'Chats',
-        'notes': '',
+        'notes': 'Timestamp is the hora column read as Unix milliseconds. '
+                 'Sent? is the minha column as stored; a comment in the '
+                 'module reads 1 as sent and 2 as received, and no source for '
+                 'those values is recorded. A media file is attached when its '
+                 'file name contains the file name in the message\'s url '
+                 'value. That is a name match and not a recorded path: when '
+                 'several files match, the last one read is shown, and a url '
+                 'value with no file name matches every file.',
         'paths': (
             '*/data/com.random.chat.app/databases/ramdochatV2.db*',
             '*/Android/data/com.random.chat.app/files/Pictures/RandoChat/*',
@@ -26,14 +33,17 @@ __artifacts_v2__ = {
     },
     'randochat_account': {
         'name': 'RandoChat Accounts',
-        'description': 'Parses RandoChat App Accounts',
+        'description': 'Parses the configuracao table of the RandoChat database.',
         'author': 'Marco Neumann {kalinko@be-binary.de}',
         'version': '0.0.1',
         'creation_date': '2026-01-15',
         'last_update_date': '2026-01-15',
         'requirements': '',
         'category': 'Accounts',
-        'notes': '',
+        'notes': 'User Sex and Preferred Sex show the stored H and M as Male '
+                 'and Female, on the reading that the letters stand for the '
+                 'Portuguese homem and mulher. No source for that reading was '
+                 'found, and any other value is shown blank.',
         'paths': (
             '*/data/com.random.chat.app/databases/ramdochatV2.db*'
             ),
@@ -42,14 +52,18 @@ __artifacts_v2__ = {
     },
     'randochat_contacts': {
         'name': 'RandoChat Contacts',
-        'description': 'Parses RandoChat App Contacts',
+        'description': 'Parses the conversa table of the RandoChat database, one row per conversation record.',
         'author': 'Marco Neumann {kalinko@be-binary.de}',
         'version': '0.0.1',
         'creation_date': '2026-01-15',
         'last_update_date': '2026-01-15',
         'requirements': '',
         'category': 'Contacts',
-        'notes': '',
+        'notes': 'Sex shows the stored H and M as Male and Female, on the '
+                 'reading that the letters stand for the Portuguese homem and '
+                 'mulher. No source for that reading was found, and any other '
+                 'value is shown blank. Account ID is the id_pessoa column as '
+                 'stored.',
         'paths': (
             '*/data/com.random.chat.app/databases/ramdochatV2.db*'
             ),

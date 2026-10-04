@@ -7,7 +7,13 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-25",
         "requirements": "none",
         "category": "Cloud Storage",
-        "notes": "Timestamps <= 0 are blanked. Storage path is resolved by recursively walking parent RID references. Cached streams are resolved via seeker.",
+        "notes": "Timestamps of 0 or less are shown blank. Storage Path is built by walking each "
+                 "item's parentRid to the top. Item Type shows File for 1, Image for 3 and Folder "
+                 "for 32, a mapping with no source found, and any other value as stored. Rows "
+                 "whose resourceId is search, Mru, SharedBy or SharedWithMe are not reported. An "
+                 "item with more than one stream_cache row appears once per cached stream. A "
+                 "cached file is looked up in the extraction by its name and the tail of the "
+                 "stored path; where none is found Preview Info says so.",
         "paths": (
             '*/com.microsoft.skydrive/files/QTMetadata.db*',
         ),

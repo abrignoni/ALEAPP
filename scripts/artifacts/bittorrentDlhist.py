@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_bittorrentDlhist": {
         "name": "bittorrentDlhist",
-        "description": "Parses BitTorrent download history (timestamp, filename and download path) from the dlhistory config files.",
+        "description": "Parses the last record of each BitTorrent dlhistory config file; the code does not report the earlier records. Reported are the a value read as Unix milliseconds, the n value and the s value; what each records is not sourced here.",
         "author": "@abrignoni",
         "creation_date": "2023-03-26",
         "last_update_date": "2023-03-26",

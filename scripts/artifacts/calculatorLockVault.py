@@ -34,7 +34,10 @@ __artifacts_v2__ = {
                  "(bytes) and Storage Path are then blank. pixel7a_a14, the only registered "
                  "corpus found to carry the app, holds its data for one Android user only, so "
                  "reading a second user's database and storage folder was checked on a "
-                 "constructed extraction. A move within one volume can preserve a file's "
+                 "constructed extraction. File Modified Time is the modification time the "
+                 "extraction records for the file; when the extraction reader holds no record for "
+                 "the file, the time of the copy staged for the report is used instead. A move "
+                 "within one volume can preserve a file's "
                  "modification time, so File Modified Time does not establish when the file "
                  "reached the storage folder.",
         "paths": (
@@ -77,7 +80,10 @@ __artifacts_v2__ = {
                  "and is blank otherwise, as on the corpus below. pixel7a_a14, the only "
                  "registered corpus found to carry the app, holds its data for one Android user "
                  "only, so reading a second user's storage folder and database was checked on a "
-                 "constructed extraction. A move within one volume can "
+                 "constructed extraction. File Modified Time is the modification time the "
+                 "extraction records for the file; when the extraction reader holds no record for "
+                 "the file, the time of the copy staged for the report is used instead. A move "
+                 "within one volume can "
                  "preserve a file's modification time, so File Modified Time does not establish "
                  "when the file reached the storage folder.",
         "paths": (
@@ -111,7 +117,7 @@ __artifacts_v2__ = {
                  "APK's dex files hold 16 strings containing yyyy. dd-MM-yyyy and dd/MM/yyyy are "
                  "the only two with a numeric day and month and the year last, and both are day "
                  "first; the other 14 name the month or start with the year. MM-dd-yyyy and "
-                 "MM/dd/yyyy occur in none of the APK's 900 files, read as ASCII or UTF-16. On the "
+                 "MM/dd/yyyy occur in none of the APK's files, read as ASCII or UTF-16. On the "
                  "corpus below the one row stores 04-02-2024, and Joshua Hickman's creation "
                  "document for that image records a note created in the app on 2024-02-04 and "
                  "lists no later action on it, which agrees with the day-first reading. "
@@ -286,6 +292,8 @@ __artifacts_v2__ = {
                  "plain text value in the corpus below, which is a finding about how the app "
                  "stores that value on that version, not about any other version. Entries "
                  "beginning IABTCF_ follow the IAB Transparency and Consent Framework key naming "
+                 "(Reference: IAB Tech Lab, 'Consent Management Platform API', TCF v2, "
+                 "https://github.com/InteractiveAdvertisingBureau/GDPR-Transparency-and-Consent-Framework/blob/e8db2af0d3eb13723496282c382bb4421cd1f44e/TCFv2/IAB%20Tech%20Lab%20-%20CMP%20API%20v2.md) "
                  "and are not part of the app's own storage feature: of the three in the corpus "
                  "below, base.apk names only IABTCF_gdprApplies, and only in classes under "
                  "com.google.android.gms.",
@@ -337,7 +345,8 @@ __artifacts_v2__ = {
                  "User names the user whose app folder holds the file when files from more than "
                  "one user are read, and is blank otherwise, as in the test; reading a second "
                  "user's file was checked on a constructed extraction. Of the 42 "
-                 "registered Android corpora that could be searched, only pixel7a_a14 carries "
+                 "registered Android corpora that could be searched when this was written, only "
+                 "pixel7a_a14 carries "
                  "the app, and it holds no HISTORY.DB.",
         "paths": ('*/com.calculator.lock.hide.photo.video/databases/HISTORY.DB*',),
         "output_types": "standard",

@@ -2,13 +2,26 @@
 __artifacts_v2__ = {
     "get_discreteNative": {
         "name": "DiscreteNative",
-        "description": "Parses discrete app-ops permission usage (timestamp, package, permission module and operation, and usage duration) from the system appops discrete records.",
+        "description": "Parses the last discrete app-ops entry recorded for each package and operation in each discrete file of the system appops discrete records: timestamp, package, the at attribute as stored, the operation (named for ops 1, 26 and 27, otherwise the stored number) and the nd value in seconds.",
         "author": "@abrignoni",
         "creation_date": "2022-01-19",
         "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Privacy Dashboard",
-        "notes": "Op 1 is specifically FINE_LOCATION. Reference: AOSP, 'AppOpsManager op constants and AppOpsService XML attributes (times in milliseconds)', https://android.googlesource.com/platform/frameworks/base/+/refs/heads/main/core/java/android/app/AppOpsManager.java",
+        "notes": "Op 1 is shown as Fine Location, op 26 as Camera and op 27 as Microphone; AOSP "
+                 "names them FINE_LOCATION, CAMERA and RECORD_AUDIO. Any other op is shown as its "
+                 "stored number. References: AOSP AppOpsManager.java at tag "
+                 "android-9.0.0_r1, which writes those op numbers out "
+                 "(https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-9.0.0_r1/core/java/android/app/AppOpsManager.java#200), "
+                 "and the app-op enum at tag android-12.0.0_r1, which gives the same three "
+                 "numbers "
+                 "(https://android.googlesource.com/platform/frameworks/proto_logging/+/refs/tags/android-12.0.0_r1/stats/enums/app/enums.proto#111). "
+                 "The at, nt and nd attributes are defined in DiscreteRegistry.java at tag "
+                 "android-12.0.0_r1 "
+                 "(https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-12.0.0_r1/services/core/java/com/android/server/appop/DiscreteRegistry.java#162). "
+                 "The module reads nt as Unix milliseconds and divides nd by 1000 to report "
+                 "seconds. Only the last entry under each package and op element of a file is "
+                 "reported.",
         "paths": ('*/system/appops/discrete/**',),
         "output_types": "standard",
         "artifact_icon": "file",

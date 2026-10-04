@@ -9,7 +9,12 @@ __artifacts_v2__ = {
         "category": "Teleguard",
         "notes": "Is Edited? held 0 on every message row of every tested extraction. The column "
                  "is reported so a row with another value is visible "
-                 "on an extraction that has one. Call events and membership events are rows of this "
+                 "on an extraction that has one. Direction is derived by comparing the row's "
+                 "sender with the local account's serverId from the service table and is blank "
+                 "when either is missing. Media is filled for rows of type MEDIA: for each key of "
+                 "the row's metadata files object it is the first matched file in the same app "
+                 "data directory whose path contains that key. Call events and membership events "
+                 "are rows of this "
                  "same table, of type CALL and SERVICE, and are also reported in full by "
                  "Teleguard - Calls and Teleguard - Chat Events.",
         "paths": ('*/ch.swisscows.messenger.teleguardapp/app_flutter/teleguard_database.db*',
@@ -60,9 +65,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Teleguard",
         "notes": "Personal ID is an optional identifier separate from the Server ID the app issues. "
-                 "The app's own binary labels it 'Personal TeleGuard ID', carries a 'Change personal "
-                 "ID' action and a buyPersonalId endpoint, and adds the column to this table in a "
-                 "migration, so a contact has one only where that feature was used. It was null on "
+                 "What sets the column for a contact is not established. It was null on "
                  "every contact row of every tested extraction, meaning none of those contacts had "
                  "one recorded.",
         "paths": ('*/ch.swisscows.messenger.teleguardapp/app_flutter/teleguard_database.db*',),
@@ -107,16 +110,18 @@ __artifacts_v2__ = {
                  "isSuccessfull, subtext, membersText and callType; all call rows in the tested "
                  "extractions carried all four. Direction is derived by comparing the row's sender "
                  "with the local account's serverId from the service table, which agreed with the "
-                 "app's own English event label on every call row in the tested extractions. "
+                 "app's own English event label on each of the 4 call rows of the tested "
+                 "extraction. "
                  "Duration and outcome are reported as stored: subtext is a localised display string "
                  "giving either a spelled out minutes and seconds count or a word for why the call "
                  "did not connect, not a numeric duration, and no numeric duration is "
                  "stored for these rows. The messages table's userTime column is not reported here "
                  "because it held exactly the same value as createDate on every call row of every "
                  "tested extraction, unlike the text rows of the same table where the two differ. "
-                 "Connected and Chat ID each held one value across the tested Android extraction, "
-                 "which reflects a device whose calls all connected and were all with one contact "
-                 "rather than a column that cannot vary. The database also carries an empty sipcalls "
+                 "Connected shows the isSuccessfull flag as Yes or No; what the app counts as "
+                 "successful is not established here. Connected and Chat ID each held one value on "
+                 "the 4 call rows of the tested Android extraction. The database also carries "
+                 "an empty sipcalls "
                  "table with number, name, duration, date and cost columns; it held no rows in any "
                  "tested extraction and is not reported.",
         "paths": ('*/ch.swisscows.messenger.teleguardapp/app_flutter/teleguard_database.db*',),
@@ -136,8 +141,10 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-21",
         "requirements": "none",
         "category": "Teleguard",
-        "notes": "Membership and invitation events are stored as rows of the messages table with "
-                 "type 'SERVICE'. The event text is the app's own localised display string and is "
+        "notes": "Rows of the messages table with type 'SERVICE' are reported here; 2 such rows "
+                 "were present on one tested extraction (pixel7a_a14). Whether every SERVICE row "
+                 "is a membership or invitation event is not established. The event text is the "
+                 "app's own localised display string and is "
                  "reported as stored. These rows carry no sender in the tested extractions, so no "
                  "direction is derived for them. The messages table's userTime column is not "
                  "reported here because it was null on every service row of every tested extraction.",
@@ -159,9 +166,11 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Teleguard",
         "notes": "The local account is stored as the 'user' row of the service table, whose data "
-                 "column is JSON. Server ID is the account identifier that appears in the sender, "
-                 "receiver and chatId columns of the messages table. The same JSON carries an RSA "
-                 "key pair in PEM form on some app versions. The key material itself is not written "
+                 "column is JSON. Server ID is the serverId value of that JSON; this module "
+                 "compares it with the sender column of the messages table to derive Direction in "
+                 "the Messages and Calls artifacts. Where the same JSON carries publicKey and "
+                 "privateKey values they are read as PEM text; the key type is not checked by this "
+                 "artifact. The key material itself is not written "
                  "to the report; the columns record whether each key was present and a SHA-256 "
                  "fingerprint of the DER body, which is enough to correlate the account across "
                  "extractions without copying a private key into report output. Fields absent from "
@@ -181,7 +190,7 @@ __artifacts_v2__ = {
     },
     "get_teleguard_drafts": {
         "name": "Teleguard - Drafts",
-        "description": "Teleguard unsent message drafts",
+        "description": "Rows of the Teleguard draft table",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-21",
         "last_update_date": "2026-08-21",
@@ -214,18 +223,25 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-21",
         "requirements": "none",
         "category": "Teleguard",
-        "notes": "The app fetches message media through the flutter_downloader plugin, which records "
-                 "each attempt in databases/download_tasks.db. A row records that the app requested "
+        "notes": "databases/download_tasks.db and its task table are the store of the "
+                 "flutter_downloader plugin. Reference: flutter_downloader, 'TaskDbHelper.kt', "
+                 "https://github.com/fluttercommunity/flutter_downloader/blob/"
+                 "67afa544336544958322c4c3d42be5615e451626/android/src/main/kotlin/vn/hunghd/"
+                 "flutterdownloader/TaskDbHelper.kt#L48 "
+                 "and 'TaskEntry.kt' in the same folder. The plugin's DownloadStatus enum lists "
+                 "UNDEFINED, ENQUEUED, RUNNING, COMPLETE, FAILED, CANCELED and PAUSED in that "
+                 "order. That this app uses the plugin for message media rests on the join "
+                 "described below. A row records that the app requested "
                  "one media object and what became of that request; the status and progress values "
                  "are the plugin's own and are reported as stored. The file name is the server file "
                  "identifier, which is the key used in a message's metadata files object, so rows are "
-                 "joined back to the message that carried the media by that identifier. One media "
-                 "object can own more than one row. The "
+                 "joined back to the message that carried the media by that identifier. Every task "
+                 "row is reported, so a server file identifier that has more than one task row "
+                 "yields more than one row here. The "
                  "task's headers column holds a bearer token; the token is not written to the report "
                  "and only the account identifier from its subject claim is reported. MIME Type, "
-                 "Saved Directory and Requesting Account each held one value across the tested "
-                 "extraction, which reflects one account fetching every item into one cache "
-                 "directory with the server declaring a generic type, not columns that cannot vary.",
+                 "Saved Directory and Requesting Account each held one value on the 3 rows of the "
+                 "tested extraction; other values were not observed.",
         "paths": ('*/ch.swisscows.messenger.teleguardapp/databases/download_tasks.db*',
                   '*/ch.swisscows.messenger.teleguardapp/app_flutter/teleguard_database.db*'),
         "output_types": "standard",
@@ -250,8 +266,10 @@ __artifacts_v2__ = {
                  "not byte identical to any avatar blob stored in the contacts table, and what the "
                  "app writes it for is not established here. Files under the device's shared "
                  "Pictures/TeleGuard directory are images present in shared storage rather than in "
-                 "the app's private data. Their names are RFC 4122 version 1 UUIDs, whose embedded "
-                 "timestamp is reported in the UUID Timestamp column; that timestamp is a property of "
+                 "the app's private data. On the tested extraction their names were RFC 4122 "
+                 "version 1 UUIDs, whose embedded timestamp is reported in the UUID Timestamp "
+                 "column; the column is blank for any other name, and that timestamp is a property "
+                 "of "
                  "the identifier, not a recorded file time. Message media held in the app's cache "
                  "directory is reported by Teleguard - Messages, not here.",
         "paths": ('*/ch.swisscows.messenger.teleguardapp/app_flutter/avatar*.jpg',
@@ -274,9 +292,8 @@ __artifacts_v2__ = {
         "category": "Teleguard",
         "notes": "Last Cache Clearing is the flutter.lastCacheClearing value from the app's "
                  "FlutterSharedPreferences file, stored as a Unix millisecond epoch. Database Version "
-                 "is the contents of the app_flutter/db.version file. The same preferences file also "
-                 "holds a bundled emoji catalogue that accounts for most of its size and is not user "
-                 "data; it is not reported.",
+                 "is the contents of the app_flutter/db.version file. Other keys of the same "
+                 "preferences file are not reported.",
         "paths": ('*/ch.swisscows.messenger.teleguardapp/shared_prefs/FlutterSharedPreferences.xml',
                   '*/ch.swisscows.messenger.teleguardapp/app_flutter/db.version'),
         "output_types": "standard",

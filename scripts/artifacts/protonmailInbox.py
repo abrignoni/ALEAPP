@@ -30,9 +30,14 @@ __artifacts_v2__ = {
         "category": "ProtonMail",
         "notes": "Reads the uniffi Inbox cache of Proton Mail for Android, separate from the "
                  "*-MessagesDatabase.db store. In the tested image the subject, sender and "
-                 "recipient values are stored in clear text; the message body is kept PGP-encrypted in "
-                 "raw_message_body and is not shown. Folder is resolved from the app's own labels "
-                 "table. A cached row reflects what the app had synced locally, not necessarily the "
+                 "recipient values are stored in clear text, and raw_message_body held PGP "
+                 "armoured text; this artifact does not read it. Folder lists the name of every "
+                 "row of the app's labels table linked to the message through message_labels, "
+                 "comma separated; the module does not separate folders from other labels. Read "
+                 "is the stored unread flag inverted, so an empty value also shows Yes; it does "
+                 "not establish that a person read the message. Deleted shows No for an empty "
+                 "value. A cached row reflects what the app had synced locally, not necessarily "
+                 "the "
                  "full mailbox.",
         "paths": ('*/ch.protonmail.android/databases/*.db*',),
         "output_types": "standard",
@@ -44,15 +49,19 @@ __artifacts_v2__ = {
     },
     "protonmailInboxAttachments": {
         "name": "ProtonMail - Inbox Attachments",
-        "description": "Attachments cached on disk by the Proton Mail Android Inbox app",
+        "description": "Attachment records of the Proton Mail Android Inbox app, with the cached file where one is present",
         "author": "@AlexisBrignoni",
         "creation_date": "2026-08-14",
         "last_update_date": "2026-08-14",
         "requirements": "none",
         "category": "ProtonMail",
-        "notes": "Attachment metadata from the Inbox cache joined to the files the app wrote under "
-                 "cache/mail-cache/attachments/<attachment id>/. In the tested image those files are "
-                 "decrypted images. The media column shows a file only when it is present in the "
+        "notes": "Attachment metadata from the Inbox cache joined to the files under "
+                 "cache/mail-cache/attachments/<number>/ by matching that number to the "
+                 "attachment's local_id. The match is not limited to the same account or Android "
+                 "user as the database, so on an extraction with more than one copy of the app's "
+                 "data check Source File and Cached Path before relying on the media cell. In the "
+                 "tested image those files are "
+                 "images. The media column shows a file only when it is present in the "
                  "extraction.",
         "paths": ('*/ch.protonmail.android/databases/*.db*',
                   '*/ch.protonmail.android/cache/mail-cache/attachments/*'),
@@ -84,7 +93,7 @@ __artifacts_v2__ = {
     },
     "protonmailInboxAccount": {
         "name": "ProtonMail - Inbox Account",
-        "description": "Signed-in Proton account details cached by the Proton Mail Android Inbox app",
+        "description": "Proton account and user rows cached by the Proton Mail Android Inbox app",
         "author": "@AlexisBrignoni",
         "creation_date": "2026-08-14",
         "last_update_date": "2026-08-14",

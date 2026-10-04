@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_hikvision": {
         "name": "Hikvision - CCTV Channels",
-        "description": "Available CCTV record channels from the Hik-Connect app",
+        "description": "Rows of the channelinfo table in the Hik-Connect database.hik: device id, channel number, channel name and the nEnable value (1 shown as Enabled, 0 as Disabled)",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2023-03-23",
         "last_update_date": "2023-03-23",
@@ -14,7 +14,7 @@ __artifacts_v2__ = {
     },
     "get_hikvision_info": {
         "name": "Hikvision - CCTV Info",
-        "description": "Information about the connected CCTV system from the Hik-Connect app",
+        "description": "Rows of the deviceinfo table in the Hik-Connect database.hik: device name, serial number, ports, channel counts and DDNS address",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2023-03-23",
         "last_update_date": "2023-03-23",
@@ -47,7 +47,9 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Hikvision",
         "notes": ("Video Start Time and Video End Time are reported exactly as stored. Unlike "
-                  "createdTime in the same row, they are not converted, because the format they "
+                  "createdTime in the same row, which is read as Unix milliseconds and shown in "
+                  "UTC (a unit the module assumes), they are not converted, because the format "
+                  "they "
                   "are written in is not established."),
         "paths": ('*/com.connect.enduser/databases/image.db*', '*/0/Pictures/Hik-Connect Album/*'),
         "output_types": "standard",

@@ -8,11 +8,15 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Digital Wellbeing",
         "notes": (
-            "Event-type labels are the AOSP UsageEvents.Event constant names applied to the "
-            "stored codes; Samsung's implementation is not documented and its codes are not "
-            "verified to match those constants, so the labels are unverified. An event type with "
-            "no matching label is shown as stored. "
-            "A label names a recorded transition and does not by itself establish a user "
+            "Event-type labels are taken from the AOSP UsageEvents.Event constant names "
+            "(reference: AOSP, UsageEvents.java at tag android-14.0.0_r1, "
+            "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-14.0.0_r1/core/java/android/app/usage/UsageEvents.java#104) "
+            "and applied to the stored codes. The labels for codes 1 and 2 each show two constant "
+            "names, and the labels for codes 2 and 19 differ in spelling from the constants. "
+            "Samsung's implementation is not documented and its codes are not verified to match "
+            "those constants, so the labels are unverified. An event type with no matching label "
+            "is shown as stored. An event whose package id has no row in foundPackages is not "
+            "reported. A label names a recorded transition and does not by itself establish a user "
             "action."
         ),
         "paths": ('*/com.samsung.android.forest/databases/dwbCommon.db*',),

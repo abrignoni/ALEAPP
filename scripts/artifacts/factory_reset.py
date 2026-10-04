@@ -2,13 +2,13 @@
 __artifacts_v2__ = {
     "factory_reset": {
         "name": "Factory Reset",
-        "description": "Reports the factory_reset bootstat record; AOSP stores the event value in the file's modification time.",
+        "description": "Reports the factory_reset bootstat record; AOSP stores the event value in the file's modification time. bootstat writes this record with the device's current time when it runs and finds no factory_reset record (RecordFactoryReset in bootstat.cpp at tag android-14.0.0_r1, lines 1428 to 1431), so the value is the time of that run by the device clock. The time is read from the staged copy of the file and shown in UTC.",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-01-05",
         "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Wipe & Setup",
-        "notes": "Extraction and acquisition handling can disturb file timestamps, so validate the value against other sources. Reference: AOSP bootstat, 'boot_event_record_store.cpp (event values are stored in the file mtime attribute)', https://android.googlesource.com/platform/system/core/+/refs/heads/main/bootstat/boot_event_record_store.cpp",
+        "notes": "Extraction and acquisition handling can disturb file timestamps, so validate the value against other sources. Reference: AOSP bootstat, 'boot_event_record_store.cpp (event values are stored in the file mtime attribute)', https://android.googlesource.com/platform/system/core/+/refs/tags/android-14.0.0_r1/bootstat/boot_event_record_store.cpp (lines 66 to 91)",
         "paths": ('*/misc/bootstat/factory_reset'),
         "output_types": "standard",
         "artifact_icon": "loader",

@@ -9,8 +9,9 @@ __artifacts_v2__ = {
         "category": "HONOR",
         "notes": "The Hash (as stored) column is the gallery_media.hash column reported unchanged; the "
                  "hashing algorithm is not recorded in the database and has not been established. "
-                 "Recycled? is reported as 'Yes (flag = n)' for every non-zero recycleFlag value based "
-                 "on observations only; the meaning of the individual non-zero values has not been "
+                 "Recycled? shows 'Yes (flag = n)' for every non-zero recycleFlag value. The "
+                 "observations behind that reading are not recorded here, and the meaning of the "
+                 "individual non-zero values has not been "
                  "established.",
         "paths": ('*/com.hihonor.medialibrary/databases/gallery.db*',),
         "output_types": "standard",

@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_kijijiConversations": {
         "name": "kijijiConversations",
-        "description": "Kijiji Conversations",
+        "description": "Kijiji conversations from messageBoxDatabase. A message whose sender value is 'ME' is shown as sent by Local User and any other value as sent by the counterparty; no source for that mapping is recorded here. Date Sent is the message's sortByDate value as stored.",
         "author": "Terry Chabot (Krypterry)",
         "creation_date": "2022-05-13",
         "last_update_date": "2022-05-13",

@@ -1,15 +1,21 @@
 __artifacts_v2__ = {
     "get_roles": {
         "name": "roles",
-        "description": "Parses assigned system role holders (source path variant, user, role and holder package) from the roles.xml file.",
+        "description": "Parses the roles in the roles.xml file, one row per role with the source path variant, the user and one holder package.",
         "author": "@abrignoni",
         "creation_date": "2021-01-25",
         "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "App Roles",
         "notes": "Source Path Variant records which of the two collected paths a row was read from. "
-                 "It is not an Android version: both path forms are seen across Android releases, "
-                 "and the path a file sits at does not establish the OS version of the device.",
+                 "It is not an Android version, "
+                 "and the path a file sits at does not establish the OS version of the device. "
+                 "A role with no holder is reported with a blank Holder (18 of 40 roles on anne_a15, "
+                 "16 of 44 on hc_pixel8pro_a16, 16 of 38 on samsunga53_a14). Where a role lists more "
+                 "than one holder the code keeps only the last; no role on those three images listed "
+                 "more than one, so that case was not exercised. Files under a path component named "
+                 "mirror are skipped; a copy under data_mirror is read, so on samsunga53_a14 each "
+                 "role is reported twice (76 rows).",
         "paths": ('*/system/users/*/roles.xml', '*/misc_de/*/apexdata/com.android.permission/roles.xml'),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "package",

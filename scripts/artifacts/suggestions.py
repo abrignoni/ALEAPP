@@ -1,13 +1,16 @@
 __artifacts_v2__ = {
     "get_suggestions": {
         "name": "suggestions",
-        "description": "Parses settings suggestion events (timestamp and name) from the settings intelligence suggestions.xml.",
+        "description": "Reports three setup_time keys from the Settings Intelligence suggestions.xml "
+                       "preferences file, each with its value read as Unix milliseconds in UTC.",
         "author": "@abrignoni",
         "creation_date": "2021-08-15",
         "last_update_date": "2021-08-15",
         "requirements": "none",
         "category": "Wipe & Setup",
-        "notes": "",
+        "notes": "Only the three keys ending _setup_time that the module lists are reported; every "
+                 "other entry of the file is ignored. Name is the key as stored. What each time "
+                 "marks is not established here.",
         "paths": ('*/com.google.android.settings.intelligence/shared_prefs/suggestions.xml',),
         "output_types": "standard",
         "artifact_icon": "clock",

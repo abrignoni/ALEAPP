@@ -1,26 +1,61 @@
 __artifacts_v2__ = {
     "get_AVG": {
         "name": "AVG - Encryption Details",
-        "description": "Recovers the AVG (com.antivirus) vault PIN/pattern and derives the decryption keys",
+        "description": "Reports the PIN and pattern hashes stored in the AVG (com.antivirus) PinSettingsImpl.xml, the four-digit PIN and the pattern whose SHA-1 equals each hash when one is found, and the values read from the vault .key_store file with the keys the module derives from that PIN",
         "author": "@Theincidentalchewtoy",
         "creation_date": "2022-05-03",
         "last_update_date": "2022-05-03",
         "requirements": "none",
         "category": "Encrypting Media Apps",
-        "notes": "",
+        "notes": (
+            'The PIN search covers 0000 to 9999 only. The pattern search covers patterns of 4 to '
+            '9 points. The pattern is matched to its hash and is not used to derive a key. The '
+            'Derived Key and Master Key rows are written only when a key file was read and a PIN '
+            "matched. 'Java Equivilant' is the password value the module passes to PBKDF2 for "
+            'that PIN, shown in hexadecimal and taken from a table of 10,000 values embedded in '
+            'the module. When no '
+            'settings file is found, each value in that table is tried against the key file, and '
+            'a match adds the User PIN and Derived Key rows. With no key file there are no key '
+            'rows. Vault files are taken from any folder named Vault in the extraction, matched '
+            'by folder name only. The module does not check that the folder belongs to '
+            'com.antivirus. When more than one file sits in a .key_store or .metadata_store '
+            "folder, the last one read is used. The scheme follows the module author's write-up. "
+            "Reference: theincidentalchewtoy, 'Decrypting the AVG Photo Vault', "
+            'https://theincidentalchewtoy.wordpress.com/2022/02/23/decrypting-the-avg-photo-vault/. '
+            'No registered test image is recorded for this artifact.'
+        ),
         "paths": ('*/com.antivirus/shared_prefs/PinSettingsImpl.xml', '*/Vault/*'),
         "output_types": "standard",
         "artifact_icon": "key",
     },
     "get_AVG_media": {
         "name": "AVG - Media Files",
-        "description": "Decrypts media hidden in the AVG (com.antivirus) vault",
+        "description": "Decrypts files held in AVG (com.antivirus) vault folders whose names end in 'pictures', when the module derived the vault master key",
         "author": "@Theincidentalchewtoy",
         "creation_date": "2022-05-03",
         "last_update_date": "2022-05-03",
         "requirements": "none",
         "category": "Encrypting Media Apps",
-        "notes": "",
+        "notes": (
+            'Files in the .thumbnail folder are not reported. A file that does not decrypt is '
+            'logged and gets no row. The file type is taken from the decrypted bytes. An empty '
+            'result does not establish that the vault held no files. The column headed Encrypted '
+            "Date holds the date value the vault's metadata store holds for the file, read as "
+            'Unix milliseconds and shown in UTC. What it marks is not established. Original File '
+            "Path and File Size are the metadata store's originFilePath and size as stored. 'No "
+            "Data' in those two columns means no metadata entry was read for the file. The column "
+            'headed Decrypted Full Path holds the path of the encrypted vault file the row was '
+            'decrypted from, as the tool staged it, not the path of a decrypted file. Decrypted '
+            "Filename is the vault file's name with an extension taken from the decrypted bytes, "
+            'or .unknown when no type is recognised. Vault files are taken from any folder named '
+            'Vault in the extraction, matched by folder name only. The module does not check that '
+            'the folder belongs to com.antivirus. When more than one file sits in a .key_store or '
+            '.metadata_store folder, the last one read is used. The key derivation follows the '
+            "module author's write-up. Reference: theincidentalchewtoy, "
+            "'Decrypting the AVG Photo Vault', "
+            'https://theincidentalchewtoy.wordpress.com/2022/02/23/decrypting-the-avg-photo-vault/. '
+            'No registered test image is recorded for this artifact.'
+        ),
         "paths": ('*/com.antivirus/shared_prefs/PinSettingsImpl.xml', '*/Vault/*'),
         "output_types": "standard",
         "artifact_icon": "photo",

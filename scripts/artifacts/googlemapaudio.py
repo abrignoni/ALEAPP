@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_googlemapaudio": {
         "name": "Google Maps Voice Guidance",
-        "description": "Google Maps text-to-speech voice guidance audio (app_tts-cache)",
+        "description": "Audio files in the Google Maps app_tts-cache folder. Timestamp is the number after the underscore in the file name, read as Unix milliseconds; what it marks is not established. Empty files and names not shaped number_number are not reported.",
         "author": "@kibaffo33",
         "creation_date": "2021-12-27",
         "last_update_date": "2021-12-27",

@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_Turbo_AppUsage": {
         "name": "Turbo_AppUsage",
-        "description": "Parses application usage via Device Health Services",
+        "description": "Parses the per-package timestamp lists in Device Health Services' app_usage_stats.xml; what event each time marks is not established here",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-06-29",
         "last_update_date": "2021-06-29",

@@ -12,7 +12,7 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-29",
         "requirements": "none",
         "category": "Android Intrusion Logging",
-        "notes": "Reads date-named .txt intrusion logs from an androidqf acquisition's intrusion_logs folder, from a Download/Intrusion Logging folder, or at the root of a decrypted log export processed directly as the input. In the tested full filesystem extraction (Pixel 8 Pro, Android 17) the on-device Download/Intrusion Logging folder holds the downloaded logs as a zip archive; nested archives are not opened, so extract that archive and process it as its own input to parse these events.",
+        "notes": "Reads date-named .txt intrusion logs from the intrusion_logs folder an androidqf acquisition creates (Reference: Amnesty International Security Lab, 'Android Intrusion Logging as a new source of data for consensual forensic analysis', https://securitylab.amnesty.org/latest/2026/05/android-intrusion-logging-as-a-new-source-of-data-for-consensual-forensic-analysis/), from a Download/Intrusion Logging folder, or at the root of a decrypted log export processed directly as the input. In the tested full filesystem extraction (Pixel 8 Pro, Android 17) the on-device Download/Intrusion Logging folder holds the downloaded logs as a zip archive; nested archives are not opened, so extract that archive and process it as its own input to parse these events. Timestamp is the event_time value read as Unix time, with the unit taken from the value's magnitude, reported to the whole second in UTC. A line that does not parse as JSON is skipped. IP Count is the event's ip_addresses_count, or the number of listed addresses when the event carries none.",
         "paths": (
             '*/intrusion_logs/*2[0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]*.txt',
             '*/Intrusion Logging/*2[0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]*.txt',
@@ -27,13 +27,13 @@ __artifacts_v2__ = {
     },
     "ail_connect_events": {
         "name": "Android Intrusion Logging - Connection Events",
-        "description": "Parses direct IP connection logs including package name, target IP addresses, and port.",
+        "description": "Parses connect_event lines from the intrusion logs, with the package name, destination IP address and port.",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2026-08-05",
         "last_update_date": "2026-08-29",
         "requirements": "none",
         "category": "Android Intrusion Logging",
-        "notes": "Reads date-named .txt intrusion logs from an androidqf acquisition's intrusion_logs folder, from a Download/Intrusion Logging folder, or at the root of a decrypted log export processed directly as the input. In the tested full filesystem extraction (Pixel 8 Pro, Android 17) the on-device Download/Intrusion Logging folder holds the downloaded logs as a zip archive; nested archives are not opened, so extract that archive and process it as its own input to parse these events.",
+        "notes": "Reads date-named .txt intrusion logs from the intrusion_logs folder an androidqf acquisition creates (Reference: Amnesty International Security Lab, 'Android Intrusion Logging as a new source of data for consensual forensic analysis', https://securitylab.amnesty.org/latest/2026/05/android-intrusion-logging-as-a-new-source-of-data-for-consensual-forensic-analysis/), from a Download/Intrusion Logging folder, or at the root of a decrypted log export processed directly as the input. In the tested full filesystem extraction (Pixel 8 Pro, Android 17) the on-device Download/Intrusion Logging folder holds the downloaded logs as a zip archive; nested archives are not opened, so extract that archive and process it as its own input to parse these events. Timestamp is the event_time value read as Unix time, with the unit taken from the value's magnitude, reported to the whole second in UTC. A line that does not parse as JSON is skipped.",
         "paths": (
             '*/intrusion_logs/*2[0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]*.txt',
             '*/Intrusion Logging/*2[0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]*.txt',
@@ -48,13 +48,13 @@ __artifacts_v2__ = {
     },
     "ail_security_events": {
         "name": "Android Intrusion Logging - Security Events",
-        "description": "Parses system security log events including process executions, package install/uninstall, ADB shell commands, keyguard and key actions and more.",
+        "description": "Parses security_event lines from the intrusion logs, with the action name, one process, package or uid value and the remaining fields in Details. Fields named process, package_name, package or pkg that are not the one shown in Process/Package/UID are not reported.",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2026-08-05",
         "last_update_date": "2026-08-29",
         "requirements": "none",
         "category": "Android Intrusion Logging",
-        "notes": "Reads date-named .txt intrusion logs from an androidqf acquisition's intrusion_logs folder, from a Download/Intrusion Logging folder, or at the root of a decrypted log export processed directly as the input. In the tested full filesystem extraction (Pixel 8 Pro, Android 17) the on-device Download/Intrusion Logging folder holds the downloaded logs as a zip archive; nested archives are not opened, so extract that archive and process it as its own input to parse these events.",
+        "notes": "Reads date-named .txt intrusion logs from the intrusion_logs folder an androidqf acquisition creates (Reference: Amnesty International Security Lab, 'Android Intrusion Logging as a new source of data for consensual forensic analysis', https://securitylab.amnesty.org/latest/2026/05/android-intrusion-logging-as-a-new-source-of-data-for-consensual-forensic-analysis/), from a Download/Intrusion Logging folder, or at the root of a decrypted log export processed directly as the input. In the tested full filesystem extraction (Pixel 8 Pro, Android 17) the on-device Download/Intrusion Logging folder holds the downloaded logs as a zip archive; nested archives are not opened, so extract that archive and process it as its own input to parse these events. Timestamp is the event_time value read as Unix time, with the unit taken from the value's magnitude, reported to the whole second in UTC. A line that does not parse as JSON is skipped.",
         "paths": (
             '*/intrusion_logs/*2[0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]*.txt',
             '*/Intrusion Logging/*2[0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]*.txt',

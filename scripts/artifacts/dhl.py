@@ -8,13 +8,16 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-29",
         "requirements": "none",
         "category": "DHL",
-        "notes": "One row per tracking search. Airway Bill is the shipment number the row "
-                 "records, and Search Date is when the app recorded the search. "
+        "notes": "One row per row of the TBL_TRACK_SHIPMENT table. Airway Bill is the "
+                 "airWayBill column and Search Date is the search_date column, as stored; what "
+                 "action writes a row was not established beyond the table and column names. "
                  "The row carries an account identifier; one of the two rows on the tested "
-                 "device carried a zero value, whose meaning is not established. Search Date is "
-                 "stored as local text with no zone, so "
-                 "it is reported as stored rather than converted. A row records that the "
-                 "number was tracked, not that the account holder is the sender or recipient "
+                 "device carried a zero value, whose meaning is not established. Search Date "
+                 "is stored as text with no zone; which clock wrote it is not established. The "
+                 "module passes the text on as stored. The column is declared as a date and "
+                 "time, so where the stored text parses as an ISO date and time the LAVA "
+                 "output reads it as UTC, which the store does not establish. A row does not "
+                 "show that the account holder is the sender or recipient "
                  "of that shipment. Field mapping was done against a private sample provided "
                  "by Mattia; no sample data is recorded for it.",
         "paths": ('*/com.dhl.exp.dhlmobile/databases/dhledb.db*',),
@@ -30,8 +33,10 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-20",
         "requirements": "none",
         "category": "DHL",
-        "notes": "One row per stored user record. Account ID is the identifier the app keeps "
-                 "for the signed in user. Language and the notification flags are the "
+        "notes": "One row per stored user record. Account ID is the _id column of the "
+                 "TBL_USERSETTING row, as stored; whether it equals the user_id on the tracked "
+                 "shipment rows was not established. Language and the notification flags are "
+                 "the "
                  "settings the record carries, reported as stored. The same database also holds "
                  "a large catalogue of countries, currencies and shipping package types; those "
                  "tables are not "

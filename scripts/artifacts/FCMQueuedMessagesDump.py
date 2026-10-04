@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_fcm_dump": {
         "name": "FCM Dump",
-        "description": "Records recovered from the fcm_queued_messages.ldb leveldb (com.google.android.gms)",
+        "description": "One row per payload key of each value record read from the fcm_queued_messages.ldb table files (com.google.android.gms). Records are read without resolving the store's current state, so a record that a later deletion marker removed is still listed.",
         "author": "Alex Caithness (research [at] cclsolutionsgroup.com)",
         "creation_date": "2022-07-28",
         "last_update_date": "2026-08-01",
@@ -33,7 +33,7 @@ __artifacts_v2__ = {
         "last_update_date": "2022-07-28",
         "requirements": "none",
         "category": "Firebase Cloud Messaging",
-        "notes": "",
+        "notes": "Not exercised: the artifact produced no rows on the ten images listed in sample_data, so its base64 decoding was not run on real records.",
         "paths": ('*/fcm_queued_messages.ldb/*',),
         "output_types": "standard",
         "artifact_icon": "message",
@@ -102,7 +102,7 @@ __artifacts_v2__ = {
     },
     "get_fcm_dump_gqsb": {
         "name": "FCM Decoded - Geolocation",
-        "description": "Geolocation recovered from Google Quick Search Box FCM queued messages",
+        "description": "Latitude, longitude and place text carried in Google Quick Search Box push payloads (key casp) in fcm_queued_messages.ldb. What the coordinates refer to is not established; they are reported as stored.",
         "author": "Alex Caithness (research [at] cclsolutionsgroup.com)",
         "creation_date": "2022-07-28",
         "last_update_date": "2022-07-28",

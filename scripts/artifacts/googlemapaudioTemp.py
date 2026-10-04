@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_googlemapaudioTemp": {
         "name": "Google Maps Voice Guidance (Temp)",
-        "description": "Google Maps text-to-speech voice guidance audio (app_tts-temp)",
+        "description": "Audio files in the Google Maps app_tts-temp folder. Timestamp Modified is the file system modified time of the staged copy, which matches the evidence only where the extraction preserved file times. Empty files are not reported.",
         "author": "@abrignoni",
         "creation_date": "2023-04-27",
         "last_update_date": "2026-07-12",

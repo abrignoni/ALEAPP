@@ -1,13 +1,17 @@
 __artifacts_v2__ = {
     "get_puma_users": {
         "name": "PumaUsers",
-        "description": "Get Information related to the users table in the Puma Trac database",
+        "description": "Parses the users table of the Puma Trac database.",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
         "creation_date": "2023-03-25",
         "last_update_date": "2023-03-25",
         "requirements": "Python 3.7 or higher",
         "category": "Puma-Trac",
-        "notes": "",
+        "notes": "Date of Birth is read as Unix milliseconds. Workout "
+                 "Duration is the stored preferences_workoutDuration value "
+                 "divided by 60; its unit is not established. An empty "
+                 "workout duration or profile image URL is shown as N/A. Only "
+                 "the first database file found is read.",
         "paths": ('*com.pumapumatrac/databases/pumatrac-db*',),
         "output_types": "standard",
         "artifact_icon": "user",

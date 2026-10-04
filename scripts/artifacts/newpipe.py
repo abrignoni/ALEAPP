@@ -8,9 +8,16 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "NewPipe",
         "notes": "One row per stream_history entry in databases/newpipe.db, joined to the streams "
-                 "table it references. Each row records that the client opened a stream, with the "
-                 "Access Date it was last opened, a Repeat Count of how many times, and the stream's "
-                 "title, uploader, url, duration and type as the client cached them. The database is "
+                 "table it references. Each row carries the stored Access Date and Repeat Count "
+                 "and the stream's title, uploader, url, duration and type as the client cached "
+                 "them. In NewPipe's HistoryRecordManager "
+                 "(app/src/main/java/org/schabi/newpipe/local/history/HistoryRecordManager.java, "
+                 "read at tag v0.27.7, commit 81b4e3f9; the tested build is version code 1015 and "
+                 "its tag was not read), onViewed writes a row when a stream is opened, setting "
+                 "Access Date to the current time and adding 1 to Repeat Count, and markAsWatched "
+                 "writes a row with Repeat Count 0 for a stream marked as watched that had no "
+                 "history entry. So a row with Repeat Count 0 does not record an opening. The "
+                 "database is "
                  "a Room database that runs in WAL mode, and on the tested device the main file held "
                  "no tables while the write ahead log held every row, so the -wal sidecar is included "
                  "in the paths and is required; reading the main file alone returns nothing. Access "
@@ -20,8 +27,8 @@ __artifacts_v2__ = {
                  "(extractor/src/main/java/org/schabi/newpipe/extractor/ServiceList.java at "
                  "TeamNewPipe/NewPipeExtractor f9e6bb80): 0 YouTube, 1 SoundCloud, 2 media.ccc.de, "
                  "3 PeerTube, 4 Bandcamp; any other id is reported as stored. Opening a stream is not "
-                 "the same as watching it to the end; the Playback Positions artifact records how far "
-                 "into a stream the client reached. The client has an enable_watch_history "
+                 "the same as watching it to the end; the Playback Positions artifact reports the "
+                 "progress value stored for a stream. The client has an enable_watch_history "
                  "preference; how it gates this table and its default value were not exercised "
                  "or sourced here.",
         "paths": ('*/org.schabi.newpipe/databases/newpipe.db*',),
@@ -40,7 +47,11 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "NewPipe",
         "notes": "One row per search_history entry in databases/newpipe.db. Each row is a query recorded in "
-                 "the search history, with its Creation Date and the service it was run against. Creation Date "
+                 "the search history, with its Creation Date and the service it was run against. "
+                 "In NewPipe's HistoryRecordManager.onSearched (read at tag v0.27.7, commit "
+                 "81b4e3f9; the tested build is version code 1015 and its tag was not read) a "
+                 "search equal to the latest entry updates that entry's Creation Date and adds no "
+                 "row, so Creation Date can be the time of the latest repeat. Creation Date "
                  "is Unix milliseconds and was UTC on the tested device, so it is converted as UTC. Service is "
                  "decoded from the service id per NewPipe Extractor's ServiceList (see the Watch History notes "
                  "for the mapping and pinned source). The client has an enable_search_history "
@@ -86,10 +97,16 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "NewPipe",
         "notes": "One row per stream_state entry in databases/newpipe.db, joined to its stream. "
-                 "Progress Time is how far into the stream the client had reached, stored in "
-                 "milliseconds, shown here alongside the stream's total duration in seconds so the two "
-                 "can be compared. A row records a position the client stored for the stream; "
-                 "the Watch History artifact records only that the stream was opened. The table "
+                 "Progress Time is the stored progress_time value in milliseconds. In NewPipe's "
+                 "HistoryRecordManager (read at tag v0.27.7, commit 81b4e3f9; the tested build is "
+                 "version code 1015 and its tag was not read) saveStreamState stores a playback "
+                 "position and markAsWatched stores the stream's full duration for a stream marked "
+                 "as watched, so a value equal to the full duration does not by itself record "
+                 "playback to the end. It is shown here alongside the stream's total duration in "
+                 "seconds so the two "
+                 "can be compared. A row records a progress value the client stored for the "
+                 "stream; the Watch History artifact reports the stream_history row for the same "
+                 "stream. The table "
                  "carries no timestamp "
                  "of its own; the Access Date for the same stream is in the Watch History artifact. "
                  "The row lives in the newpipe.db WAL sidecar on the tested device.",

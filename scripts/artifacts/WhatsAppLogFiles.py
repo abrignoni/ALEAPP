@@ -1,26 +1,36 @@
 __artifacts_v2__ = {
     "get_WhatsAppLogFiles": {
         "name": "WhatsApp Log Files",
-        "description": "Key events extracted from the WhatsApp application logs: message send "
-                       "and receive markers, conversation focus changes, typing indicators, "
-                       "notifications and message deletions",
+        "description": "Log lines from the WhatsApp application logs that contain one of "
+                       "eight tokens, each shown with the label this parser assigns to that "
+                       "token",
         "author": "Mateus Polastro",
         "creation_date": "2025-05-13",
         "last_update_date": "2026-08-10",
         "requirements": "none",
         "category": "WhatsApp",
-        "notes": "Each row is a log line matching one of eight event tokens; the token-to-event "
-                 "mapping is not vendor-documented and the full line is reported beside it so "
-                 "the reading can be checked. Lines mentioning status@broadcast are skipped by "
-                 "design.\nA JID in a line may carry only trailing "
-                 "digits. The Possible Full Numbers column lists every wa.db contact whose number "
-                 "ends in the same last four digits; that is a candidate list, not an "
-                 "identification, and more than one candidate is shown joined with 'or'. An "
-                 "empty value means no wa.db contact shares the suffix.\n"
-                 "The log declares its own timezone: each logfile header line carries a "
-                 "tz=+/-HHMM offset, and timestamps are converted to UTC using the most recent "
-                 "declared offset. A line seen before any header keeps its timestamp as "
-                 "written.",
+        "notes": "Each row is a log line containing one of eight tokens; a line containing two "
+                 "tokens gives two rows. The Description shown for a token is this parser's "
+                 "label: the token-to-event mapping is not vendor-documented, and the Full Line "
+                 "column is reported beside it so the reading can be checked. For the "
+                 "conversation/window-focus-changed token the Description is set to Exit "
+                 "conversation when the line contains the text false and Enter conversation when "
+                 "it contains true, wherever in the line that text appears; a line with neither "
+                 "text keeps the Description given to the previous such line, or is blank when "
+                 "there was none. Lines mentioning status@broadcast are skipped by design.\nThe "
+                 "Possible Full Numbers column lists every JID read from wa.db (user and group "
+                 "JIDs found in the wa_contacts, wa_vnames, contacts and vnames tables, or in "
+                 "any table with a jid column when those yield none) whose part before the @ "
+                 "ends in the same four characters as the digits before @s.whatsapp.net in the "
+                 "line; when more than one wa.db is matched, only the last one read is used; "
+                 "that is a candidate list, not an identification, and more than one candidate "
+                 "is shown joined with 'or'. An empty value means the line held no JID of the "
+                 "form digits@s.whatsapp.net, or no JID read from wa.db shares the suffix, or "
+                 "wa.db was not available.\nThe log declares its own timezone: each logfile "
+                 "header line carries a tz=+/-HHMM offset, and timestamps are converted to UTC "
+                 "using the most recent declared offset. A line seen before any header is not "
+                 "converted: its timestamp is the log's local reading, and the LAVA output "
+                 "stores it as though it were UTC.",
         "paths": (
             "*/com.whatsapp/files/Logs/*",
             "*/com.whatsapp/databases/wa.db",

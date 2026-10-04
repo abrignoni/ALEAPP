@@ -25,9 +25,12 @@ __artifacts_v2__ = {
         "notes": "Date and time is paymentDate read as a Unix epoch in milliseconds and converted to "
                  "Europe/Copenhagen; both the epoch unit and that timezone are assumptions, neither is "
                  "recorded in the database. Total price is totalPrice divided by 100, which assumes the "
-                 "value is stored in minor units; no currency is recorded in the database. Items lists "
-                 "only those searchText tokens that also appear as a shelfText1 value in "
-                 "ReceiptItemEntity, so tokens with no match are not shown.",
+                 "value is stored in minor units; no currency is recorded in the database. Location is "
+                 "built from the second and third semicolon-separated tokens of searchText with "
+                 "zipString between them; that those tokens name the store is an assumption and is "
+                 "not recorded in the database. Items lists only those searchText tokens, from the "
+                 "fourth on, that also appear as a shelfText1 value in ReceiptItemEntity, so tokens "
+                 "with no match are not shown.",
         "paths": ("*/dk.rema1000.app/databases/receipts.db*"),
         "output_types": "standard",
         "artifact_icon": "shopping-cart"

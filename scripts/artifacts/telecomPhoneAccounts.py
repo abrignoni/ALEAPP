@@ -1,27 +1,27 @@
 __artifacts_v2__ = {
     "telecom_phone_accounts": {
         "name": "Telecom Phone Accounts",
-        "description": "The calling accounts registered with the Android telecom service, "
-                       "covering the SIM subscriptions and the apps that registered themselves to "
-                       "place or receive calls, with the number and carrier label stored for each.",
+        "description": "The calling accounts registered with the Android telecom service, with the "
+                       "label, handle and subscription number stored for each.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-03",
         "last_update_date": "2026-09-04",
         "requirements": "none",
         "category": "Device Connections",
-        "notes": "Read from phone-account-registrar-state.xml in the telecom service's own "
-                 "folder, ABX binary XML on modern releases and plain XML on older ones. One row "
-                 "per phone_account element.\n"
+        "notes": "Read from phone-account-registrar-state.xml in the telecom service's own folder. "
+                 "The file is read as ABX binary XML or as plain XML; the reader decides per file. "
+                 "One row per phone_account element.\n"
                  "Component is the account_handle's component name as stored, and Account ID is "
                  "that handle's id as stored. Handle and Subscription Number are stored as tel "
-                 "URIs and are percent-decoded for display, so a leading plus is shown rather "
-                 "than its escape; the value is otherwise as stored. Label and Short Description "
-                 "are reported as stored.\n"
+                 "URIs and are percent-decoded for display, so a leading plus is shown rather than "
+                 "its escape; the value is otherwise as stored. Label and Short Description are "
+                 "reported as stored.\n"
                  "Capabilities, Highlight Color and Supported Audio Routes are integers the "
-                 "platform defines and are reported as stored. Is Default Outgoing is True for "
-                 "the account the default_outgoing record names for that user. The account icon "
-                 "is stored here as well and is not reported. Enabled is the account's enabled "
-                 "flag as stored; it held both values on three of the tested images.\n"
+                 "platform defines and are reported as stored. Is Default Outgoing is True for the "
+                 "account the first default_outgoing record in the file names; a second record for "
+                 "another user is not read. The account icon is stored here as well and is not "
+                 "reported. Enabled is the account's enabled flag as stored; it held both values "
+                 "on three of the tested images.\n"
                  "A zero length registrar file is reported as no rows and logged; it was present "
                  "and empty on one tested image. A row records that an account was registered on "
                  "the device. It does not establish that a call was placed or received on it.",

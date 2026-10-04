@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "Turbo_Battery": {
         "name": "Turbo - Phone Battery",
-        "description": "Parses battery percentage for devices from Device Health Services",
+        "description": "Parses the battery_event table of Device Health Services' turbo.db: battery level, charge type and battery saver. The charge type and battery saver labels are the parser's and their source is not recorded; the timestamp is shown in the time zone stored on the row.",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-06-29",
         "last_update_date": "2025-03-08",
@@ -26,7 +26,7 @@ __artifacts_v2__ = {
     },
     "Turbo_Bluetooth": {
         "name": "Turbo - Bluetooth Device Info",
-        "description": "Parses bluetooth connected devices from Device Health Services",
+        "description": "Parses the battery and volume level events recorded for Bluetooth devices in Device Health Services' bluetooth.db",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-06-29",
         "last_update_date": "2025-03-08",

@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_fb_user_id": {
         "name": "Facebook Messenger - User ID",
-        "description": "Facebook/Messenger logged-in user id (threads_db2-uid)",
+        "description": "User id stored in the threads_db2-uid file",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-03-03",
         "last_update_date": "2021-03-03",
@@ -31,10 +31,17 @@ __artifacts_v2__ = {
                  "holding both the Facebook app and Messenger can carry a copy of msys_database "
                  "in each sandbox; the join in this query can also emit the same row more than "
                  "once from a single copy. Merging is keyed on row content, not on package name, "
-                 "so a record present in only one sandbox is kept: on one tested image the two "
-                 "copies held 11 and 13 contacts and the merged result is 13. Signed CDN links "
-                 "are excluded from the key, which means two genuinely different items would "
-                 "merge if they matched on every other reported column.",
+                 "so a record present in only one of the copies read is kept: on one tested image "
+                 "the two copies held 11 and 13 contacts and the merged result is 13. A copy whose "
+                 "staged path contains /user/0/ or the word mirror is not read, a message whose "
+                 "sender has no row in contacts is not reported, and Direction is filled only when "
+                 "a threads_db2-uid file is among the files this artifact's path pattern returns. "
+                 "Signed CDN links (the Attachment URL column) are excluded from the key, which "
+                 "means two genuinely different items would merge if they matched on every other "
+                 "reported column. The column headed Snippet holds attachments.title_text, "
+                 "Call/Location Information holds attachments.subtitle_text and Location Lat/Long "
+                 "holds attachment_ctas.native_url, each as stored. No source or measurement for "
+                 "those three header names is recorded here.",
         "paths": ('*/msys_database*',),
         "output_types": "standard",
         "artifact_icon": "message",
@@ -69,10 +76,19 @@ __artifacts_v2__ = {
                  "holding both the Facebook app and Messenger can carry a copy of msys_database "
                  "in each sandbox; the join in this query can also emit the same row more than "
                  "once from a single copy. Merging is keyed on row content, not on package name, "
-                 "so a record present in only one sandbox is kept: on one tested image the two "
-                 "copies held 11 and 13 contacts and the merged result is 13. Signed CDN links "
-                 "are excluded from the key, which means two genuinely different items would "
-                 "merge if they matched on every other reported column.",
+                 "so a record present in only one of the copies read is kept: on one tested image "
+                 "the two copies held 11 and 13 contacts and the merged result is 13. A copy whose "
+                 "staged path contains /user/0/ or the word mirror is not read. Every reported "
+                 "column except Source File takes part in the merge key. Rows come from the "
+                 "call_log table. Call Direction shows Outgoing for a stored call_direction of 1 "
+                 "and Incoming for 2. Video Call shows Yes for a stored call_media_type of 2. The "
+                 "Call Answered column shows the stored has_been_seen value, No for 0 and Yes for "
+                 "1. No source for these three mappings was found and they were not tested "
+                 "against known calls, so what each stored value means is not established. On "
+                 "pixel7a_a14 (8 rows) and hc_pixel8pro_a16 (2 rows) the 3 rows with has_been_seen "
+                 "0 all carried a Call Duration above zero. Party Name is the contacts name whose "
+                 "id equals the call's thread_key. It was filled on 4 of 8 rows on pixel7a_a14 and "
+                 "on 0 of 2 rows on hc_pixel8pro_a16.",
         "paths": ('*/msys_database*',),
         "output_types": "standard",
         "artifact_icon": "phone",
@@ -95,12 +111,18 @@ __artifacts_v2__ = {
         "notes": "Rows that are the same record found in more than one place are merged, and the "
                  "Source File column lists every location a row was found in. An extraction "
                  "holding both the Facebook app and Messenger can carry a copy of msys_database "
-                 "in each sandbox; the join in this query can also emit the same row more than "
-                 "once from a single copy. Merging is keyed on row content, not on package name, "
-                 "so a record present in only one sandbox is kept: on one tested image the two "
-                 "copies held 11 and 13 contacts and the merged result is 13. Signed CDN links "
-                 "are excluded from the key, which means two genuinely different items would "
-                 "merge if they matched on every other reported column.",
+                 "in each sandbox. Merging is keyed on row content, not on package name, "
+                 "so a record present in only one of the copies read is kept: on one tested image "
+                 "the two copies held 11 and 13 contacts and the merged result is 13. A copy whose "
+                 "staged path contains /user/0/ or the word mirror is not read. Signed CDN links "
+                 "(the Profile Pic URL column) are excluded from the key, which means two "
+                 "genuinely different items would merge if they matched on every other reported "
+                 "column. Friendship Status shows this module's labels for the stored "
+                 "friendship_status: 0 N/A (Self), 1 Friends, 2 Friend Request Received, 3 Friend "
+                 "Request Sent, 4 Not Friends. The labels are not sourced, and any other stored "
+                 "value is shown blank. Birthdate (MM-DD) is the month and day of "
+                 "birthday_timestamp read as Unix seconds in UTC, so a birthday stored as local "
+                 "midnight east of UTC shows as the previous day.",
         "paths": ('*/msys_database*',),
         "output_types": "standard",
         "artifact_icon": "users",
@@ -120,7 +142,12 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-10",
         "requirements": "none",
         "category": "Facebook Messenger",
-        "notes": "",
+        "notes": "Not exercised: the artifact produced no rows on the four images listed in "
+                 "sample_data. Messages with msg_type -1 and messages carrying "
+                 "generic_admin_message_extensible_data are not reported. Only the first "
+                 "attachment and the first share of a message are reported. The reaction time is "
+                 "read from whichever of four column spellings the database carries. A copy whose "
+                 "staged path contains /user/0/ or the word mirror is not read.",
         "paths": ('*/*threads_db2',),
         "output_types": "standard",
         "artifact_icon": "message",
@@ -139,7 +166,14 @@ __artifacts_v2__ = {
         "last_update_date": "2021-03-03",
         "requirements": "none",
         "category": "Facebook Messenger",
-        "notes": "",
+        "notes": "Not exercised: the artifact produced no rows on the four images listed in "
+                 "sample_data. Rows are messages whose generic_admin_message_extensible_data is "
+                 "not null; the query does not test that the message is a call. Timestamp is the "
+                 "message time minus the stored call_duration. The columns headed Receiver Name "
+                 "and Receiver ID hold the name and user key from the message's sender field. "
+                 "Video Call shows Yes for any stored video value other than false, a missing key "
+                 "included. None of these readings is sourced. A copy whose staged path contains "
+                 "/user/0/ or the word mirror is not read.",
         "paths": ('*/*threads_db2',),
         "output_types": "standard",
         "artifact_icon": "phone",
@@ -158,7 +192,11 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-10",
         "requirements": "none",
         "category": "Facebook Messenger",
-        "notes": "",
+        "notes": "Not exercised: the artifact produced no rows on the four images listed in "
+                 "sample_data. Is Messenger User shows Yes for any stored is_messenger_user value "
+                 "other than 0, a null included. Friendship Status and Contact Relationship "
+                 "Status are reported as stored. A copy whose staged path contains /user/0/ or "
+                 "the word mirror is not read.",
         "paths": ('*/*threads_db2',),
         "output_types": "standard",
         "artifact_icon": "users",

@@ -8,8 +8,12 @@ __artifacts_v2__ = {
         "last_update_date": "2023-02-24",
         "requirements": "none",
         "category": "Puma",
-        "notes": "Interactive folium map and online reverse-geocoding removed; route shown as an "
-                 "offline image (media) + a downloadable route KML.",
+        "notes": "The route is drawn from the positions rows for each activity and shown as an "
+                 "offline image and a route KML; the interactive folium map and online reverse "
+                 "geocoding were removed. Latitude and Longitude are the first position row "
+                 "returned for the activity and End Latitude and End Longitude the last; the "
+                 "rows are not sorted by time. Start and End Time are read as Unix "
+                 "milliseconds. Only the first pumatrac-db file found is read.",
         "paths": ('*com.pumapumatrac/databases/pumatrac-db*',),
         "output_types": "all",
         "artifact_icon": "activity",

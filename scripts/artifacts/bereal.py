@@ -1,13 +1,13 @@
 __artifacts_v2__ = {
     "bereal_device_user": {
         "name": "BeReal Android - Authenticated User",
-        "description": "Reports an authenticated BeReal user only when explicit current-user evidence is present.",
+        "description": "Reports one BeReal profile that cached responses or a shared_prefs identifier point to as the account in use, with the basis and a confidence label for each.",
         "author": "@Gear-I",
         "creation_date": "2026-07-19",
         "last_update_date": "2026-07-19",
         "requirements": "none",
         "category": "BeReal - Social Media",
-        "notes": "High/Medium confidence requires a current-user endpoint/context or explicit isMe/current-user flag. Low confidence is reported only when a persisted shared_prefs account identifier matches a cached profile with no corroborating endpoint or flag. Generic cached profiles are excluded.",
+        "notes": "High and Medium rows are produced when the cached response URL or the JSON path contains one of the strings /me, /users/me, currentuser, current_user, myprofile or my_profile, or when the profile object carries isCurrentUser, isMe or me set to true. The URL test is a substring match, so a URL that merely contains /me also passes it; read the Source Endpoint column before relying on the label. Low confidence is reported only when a persisted shared_prefs account identifier matches a cached profile with no corroborating endpoint or flag. Profiles with none of this evidence are not reported. Only the highest ranked candidate is reported; where several candidates share the top rank the first one found is kept and the others are not shown. High, Medium and Low are labels this module assigns.",
         "paths": (
                         "*/com.bereal.ft/cache/network/*",
                         "*/com.bereal.ft/shared_prefs/*.xml",
@@ -28,9 +28,13 @@ __artifacts_v2__ = {
         "last_update_date": "2026-07-19",
         "requirements": "none",
         "category": "BeReal - Social Media",
-        "notes": "Accepted friends are read from cached /friends-v1 endpoint responses. Pending "
-                 "requests (/friend-requests/received, /friend-requests/sent) and suggestions "
-                 "(/friends-of-friends) come from other endpoints and are excluded.",
+        "notes": "A profile is reported when a parsed JSON object carries a status, relationship, "
+                 "friendshipStatus or state value of accepted, friend, friends or connected, or an "
+                 "isFriend, areFriends or is_friend flag set to true. The Source Endpoint column "
+                 "shows the cached URL the object came from; the code does not require a "
+                 "particular endpoint. Objects whose cached URL or JSON path contains "
+                 "friend-requests, friends-of-friends, suggest, recommend, request, invitation, "
+                 "search, follower or blocked are not reported.",
         "paths": (
                         "*/com.bereal.ft/cache/network/*",
                         "*/com.bereal.ft/files/*",
@@ -44,13 +48,13 @@ __artifacts_v2__ = {
     },
     "bereal_posts": {
         "name": "BeReal Android - Posts",
-        "description": "Reports recoverable BeReal posts and correlated front/rear/video media.",
+        "description": "Reports recoverable BeReal posts and front, rear and video media matched by cached URL; for a post under myPosts or userPosts with no cached video, the local BtsVideo file whose filename time is within 120 seconds of the post time is shown instead, which is a match on time and not a recorded link.",
         "author": "@Gear-I",
         "creation_date": "2026-07-19",
         "last_update_date": "2026-07-19",
         "requirements": "none",
         "category": "BeReal - Social Media",
-        "notes": "Field names (id, primaryContent/secondaryContent/btsContent, myPosts/friendsPosts, comments, realMojis) confirmed against the BeReal Android client's own serialization DTOs (reverse-engineered from base.apk). Authorship is derived structurally from myPosts/friendsPosts or the posts[] wrapper's sibling user, not guessed from context.",
+        "notes": "Field names (id, primaryContent/secondaryContent/btsContent, myPosts/friendsPosts, comments, realMojis) are the key names this module reads. The author reports comparing them with the BeReal Android app's code; the app version and classes compared are not recorded here. The Authorship Basis column says how each author was chosen: nested under myPosts or userPosts (shown as Device User), the user object beside a posts list, a username key on the post itself, or an isMyPost flag. A post found in a friendsPosts list with no user object, or found outside those wrappers, is reported with a blank author.",
         "paths": (
                         "*/com.bereal.ft/cache/network/*",
                         "*/com.bereal.ft/cache/bereal_*video_cache/*",
@@ -72,7 +76,7 @@ __artifacts_v2__ = {
         "last_update_date": "2026-07-19",
         "requirements": "none",
         "category": "BeReal - Social Media",
-        "notes": "Unassociated cache images are not reported. DiskLruCache .0 metadata is paired with .1 content.",
+        "notes": "A cached image is reported only when its metadata URL equals the profile picture URL of a user object found in a cached response. User objects from responses whose URL contains search, recommend, suggest or friends-of-friends are not used. An image outside profile_picture_friends_cache is reported only when its URL contains profile or avatar. DiskLruCache .0 metadata is paired with .1 content.",
         "paths": (
                         "*/com.bereal.ft/cache/profile_picture_friends_cache/*",
                         "*/com.bereal.ft/cache/network/*",
@@ -94,7 +98,9 @@ __artifacts_v2__ = {
         "category": "BeReal - Social Media",
         "notes": "Comments are extracted from a post's own embedded \"comments\" array or a "
                  "standalone {postId, comments:[...]} endpoint response, not from generic "
-                 "keyword matching.",
+                 "keyword matching."
+                 " Comments with no text are not reported. No listed image has produced a row, so "
+                 "this artifact is not exercised on real data.",
         "paths": (
                         "*/com.bereal.ft/cache/network/*",
         ),
@@ -113,8 +119,10 @@ __artifacts_v2__ = {
         "last_update_date": "2026-07-19",
         "requirements": "none",
         "category": "BeReal - Social Media",
-        "notes": "RealMojis are extracted from a post's own embedded \"realMojis\" array, "
-                 "distinguishing Instant from standard RealMojis as the record marks them.",
+        "notes": "RealMojis are extracted from a post's own embedded \"realMojis\" array. RealMoji "
+                 "Type shows Instant when the record carries isInstant set to true and Standard "
+                 "for every other record, including one with no isInstant key. No listed image has "
+                 "produced a row.",
         "paths": (
                         "*/com.bereal.ft/cache/network/*",
                         "*/com.bereal.ft/cache/profile_picture_friends_cache/*",

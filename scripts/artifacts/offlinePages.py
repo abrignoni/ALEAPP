@@ -1,13 +1,20 @@
 __artifacts_v2__ = {
     "get_offlinePages": {
         "name": "Offline Pages (MHTML)",
-        "description": "Saved offline web pages (MHTML/MHT archives) with source URL, subject and capture time",
+        "description": "Saved offline web pages (MHTML/MHT archives) with the "
+                       "Snapshot-Content-Location, Subject and Date headers each file carries and "
+                       "the file's modification time as extracted",
         "author": "@abrignoni",
         "creation_date": "2023-01-25",
         "last_update_date": "2023-01-25",
         "requirements": "none",
         "category": "Offline Pages",
-        "notes": "",
+        "notes": "Timestamp is the modification time of the file as "
+                 "extracted, which is not a recorded capture time. Web "
+                 "Source, Subject and MIME Date are the "
+                 "Snapshot-Content-Location, Subject and Date headers the "
+                 "file carries. The paths match any .mhtml or .mht file in "
+                 "the extraction, whichever app wrote it.",
         "paths": ('*/*.mhtml', '*/*.mht'),
         "output_types": "standard",
         "artifact_icon": "message",

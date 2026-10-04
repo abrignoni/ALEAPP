@@ -1,8 +1,10 @@
 __artifacts_v2__ = {
     "get_build": {
         "name": "Build",
-        "description": "Parses device build properties (key and value) from the vendor "
-                       "and system build.prop files. When both files are present the "
+        "description": "Parses thirteen named build properties from the vendor and system "
+                       "build.prop files and reports each under a label this module assigns "
+                       "(Manufacturer, Brand, Model, Device, Android Version, SDK, Version "
+                       "Release) with its value. When both files are present the "
                        "vendor values are reported.",
         "author": "@abrignoni",
         "creation_date": "2020-03-30",

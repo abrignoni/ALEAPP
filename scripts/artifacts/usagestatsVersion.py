@@ -7,11 +7,20 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Device Information",
-        "notes": "Each line of the version file is split on ';' and the fields are named by position "
-                 "from the observed format: first the Android version, then the codename, then the "
-                 "build version, then a fourth field reported as Country Specific Code; those "
-                 "names are this parser's labels for the positions and no platform source for "
-                 "the field order is cited here. The country specific code is only "
+        "notes": "Only the first version file the search returns is read. Each line of that file "
+                 "is split on ';', a line with fewer than three fields produces no row, and the "
+                 "fields are named by position from the observed format: first the Android "
+                 "version, then the codename, then the build version, then a fourth field "
+                 "reported as Country Specific Code. Those names are this parser's labels for the "
+                 "positions. The first three positions match the build fingerprint AOSP writes "
+                 "to this file, Build.VERSION.RELEASE, Build.VERSION.CODENAME and "
+                 "Build.VERSION.INCREMENTAL (UsageStatsDatabase.getBuildFingerprint, "
+                 "frameworks/base "
+                 "services/usage/java/com/android/server/usage/UsageStatsDatabase.java at "
+                 "android-14.0.0_r1, lines 426 to 430); AOSP at that tag writes no fourth field, "
+                 "so the name Country Specific Code is this parser's label for a field some "
+                 "vendors add and no source for it is cited here. The country specific code is "
+                 "only "
                  "reported when a line holds exactly five fields, and a fifth field, where present, "
                  "is not reported.",
         "paths": ('*/system/usagestats/*/version', '*/system_ce/*/usagestats/version'),

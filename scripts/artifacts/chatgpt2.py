@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_chatpgt2": {
         "name": "ChatGPT - Conversations",
-        "description": "Android ChatGPT conversations",
+        "description": "Messages rebuilt from the DBMessageChunk table of the ChatGPT conversations database, each with its conversation title",
         "author": "Alexis Brignoni",
         "creation_date": "2025-07-08",
         "last_update_date": "2026-07-10",

@@ -8,8 +8,14 @@ __artifacts_v2__ = {
         "last_update_date": "2023-03-25",
         "requirements": "none",
         "category": "Runkeeper",
-        "notes": "Interactive folium map and online reverse-geocoding removed; route shown as an "
-                 "offline image (media) + a downloadable route KML.",
+        "notes": "One row per row of the trips table. Start Time and Device Sync Time are start_date "
+                 "and device_sync_time read as Unix milliseconds and shown as UTC. Latitude, "
+                 "Longitude, End Latitude and End Longitude are the first and last points the "
+                 "points table returns for the trip; the query does not sort them, so they are the "
+                 "start and end of the route only where the table returns points in recorded "
+                 "order. Distance, Duration, Calories, Heart Rate and Total Climb are reported as "
+                 "stored and their units are not established. The route is drawn as an offline "
+                 "image and a KML file.",
         "paths": ('*com.fitnesskeeper.runkeeper.pro/databases/RunKeeper.sqlite*',),
         "output_types": "all",
         "artifact_icon": "activity",
