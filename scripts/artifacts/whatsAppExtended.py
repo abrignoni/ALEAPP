@@ -11,7 +11,7 @@ __artifacts_v2__ = {
     "get_whatsapp_reactions": {
         "name": "WhatsApp - Message Reactions",
         "description": "WhatsApp emoji reactions to messages (msgstore.db message_add_on_reaction)",
-        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
+        "author": "@AlexisBrignoni, Codex, Claude",
         "creation_date": "2026-08-14",
         "last_update_date": "2026-10-04",
         "requirements": "none",
@@ -47,7 +47,7 @@ __artifacts_v2__ = {
     "get_whatsapp_message_edits": {
         "name": "WhatsApp - Message Edit Records",
         "description": "WhatsApp messages recorded as edited (msgstore.db message_edit_info)",
-        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
+        "author": "@AlexisBrignoni, Codex, Claude",
         "creation_date": "2026-08-14",
         "last_update_date": "2026-10-04",
         "requirements": "none",
@@ -81,7 +81,7 @@ __artifacts_v2__ = {
     "get_whatsapp_revoked_messages": {
         "name": "WhatsApp - Revoked Messages",
         "description": "WhatsApp message rows referenced by msgstore.db's message_revoked table",
-        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
+        "author": "@AlexisBrignoni, Codex, Claude",
         "creation_date": "2026-08-14",
         "last_update_date": "2026-10-04",
         "requirements": "none",
@@ -118,7 +118,7 @@ __artifacts_v2__ = {
     "get_whatsapp_polls": {
         "name": "WhatsApp - Polls",
         "description": "WhatsApp poll questions and options with stored vote totals (msgstore.db)",
-        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
+        "author": "@AlexisBrignoni, Codex, Claude",
         "creation_date": "2026-08-14",
         "last_update_date": "2026-10-04",
         "requirements": "none",
@@ -152,7 +152,7 @@ __artifacts_v2__ = {
     "get_whatsapp_message_receipts": {
         "name": "WhatsApp - Message Receipts Per Recipient",
         "description": "Rows of msgstore.db's receipt_user table: one per recipient per message, with its receipt_timestamp, read_timestamp and played_timestamp",
-        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
+        "author": "@AlexisBrignoni, Codex, Claude",
         "creation_date": "2026-08-14",
         "last_update_date": "2026-10-04",
         "requirements": "none",
@@ -186,7 +186,7 @@ __artifacts_v2__ = {
     "get_whatsapp_system_events": {
         "name": "WhatsApp - System Events",
         "description": "Rows of msgstore.db's message_system table with their message rows and companion tables",
-        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
+        "author": "@AlexisBrignoni, Codex, Claude",
         "creation_date": "2026-08-14",
         "last_update_date": "2026-10-04",
         "requirements": "none",
@@ -377,8 +377,11 @@ def get_whatsapp_revoked_messages(context):
     if db:
         if _table_exists(cursor, 'message_revoked'):
             join, name_col = _name_join(wa_attached, 'sj', 'wc')
+            revoked_columns = {row[1] for row in cursor.execute('PRAGMA table_info(message_revoked)')}
+            revoke_time = 'r.revoke_timestamp' if 'revoke_timestamp' in revoked_columns else 'NULL'
+            admin_id = 'r.admin_jid_row_id' if 'admin_jid_row_id' in revoked_columns else 'NULL'
             rows = _run(cursor, source, f'''
-            SELECT r.revoke_timestamp, m.timestamp, m.received_timestamp,
+            SELECT {revoke_time}, m.timestamp, m.received_timestamp,
                    {_DIRECTION_CASE},
                    sj.raw_string, {name_col},
                    aj.raw_string, cj.raw_string, ch.subject,
@@ -387,7 +390,7 @@ def get_whatsapp_revoked_messages(context):
             JOIN message m ON m._id = r.message_row_id
             LEFT JOIN jid sj ON sj._id = m.sender_jid_row_id
             {join}
-            LEFT JOIN jid aj ON aj._id = r.admin_jid_row_id
+            LEFT JOIN jid aj ON aj._id = {admin_id}
             LEFT JOIN chat ch ON ch._id = m.chat_row_id
             LEFT JOIN jid cj ON cj._id = ch.jid_row_id
             ORDER BY m.timestamp
