@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Parses the watched listings stored by the eBay Android app.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "eBay",
         "notes": "Read from the watch_list table of nautilus_db. Listing End Date is a Unix "
@@ -18,8 +18,11 @@ __artifacts_v2__ = {
                  "match is a SHA-256 equality on the full URL, not a size or time correlation. "
                  "On one tested sample 5 of its 10 watched listings resolved to a cached picture, "
                  "together accounting for 9 cache files because the app had cached several sizes of "
-                 "the same picture; the picture rendered here is the first match in this order: "
-                 "the stored URL, then the size variants from largest to smallest, and every "
+                 "the same picture; the picture rendered here is the first matching cache file that "
+                 "holds a recognised image (JPEG, PNG, GIF or WEBP signature), tried in this "
+                 "order: the stored URL, then the size variants from largest to smallest. A "
+                 "matching cache file that holds no recognised image is passed over; that case "
+                 "was exercised on a constructed cache, not on a tested sample. Every "
                  "rendition is listed by eBay - Cached Images. Another sample held 370 watched "
                  "listings and no cache directory at all, so none of its rows carry a picture. "
                  "Field mapping was done against private samples; no sample data is "
@@ -563,10 +566,11 @@ def ebay_watch_list(context):
                         continue
                     _, _, payload = _cache_entry(cache_path)
                     kind = _image_kind(payload)
-                    if kind:
-                        media = check_in_embedded_media(
-                            cache_path, payload, f'{_text(row[2])}.{kind[2]}',
-                            force_type=kind[1], force_extension=kind[2])
+                    if not kind:
+                        continue
+                    media = check_in_embedded_media(
+                        cache_path, payload, f'{_text(row[2])}.{kind[2]}',
+                        force_type=kind[1], force_extension=kind[2])
                     break
             data_list.append((
                 _ms(row[0]),

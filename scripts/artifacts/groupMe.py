@@ -4,14 +4,18 @@ __artifacts_v2__ = {
         "description": "GroupMe group information",
         "author": "Josh Hickman (josh@thebinaryhick.blog)",
         "creation_date": "2021-02-01",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-10-04",
         "requirements": "None",
         "category": "GroupMe",
         "notes": "Message Count (stored) and Attachment Count (stored) are the counter values held in "
                  "the groups table; they are not counts of the messages and attachments recovered by "
                  "this artifact. Group Creator and Creator Role are read from the creator's own "
-                 "membership row for that group. A group whose creator has no row in the members "
-                 "table is not reported.",
+                 "membership row for that group (the members row matching both the group's "
+                 "creator_user_id and its group_id; the members table has a unique index on user_id "
+                 "and group_id, so a group is reported once). A group whose creator has no row in "
+                 "the members table is reported with both cells empty; no tested image held such a "
+                 "group, and this was exercised on a constructed copy of the pixel7a_a14 database "
+                 "with the creator's members row removed.",
         "paths": ('*/com.groupme.android/databases/groupme.db*',),
         "output_types": "standard",
         "artifact_icon": "users",
@@ -89,7 +93,7 @@ def get_groupMe(context):
         groups.last_message_created_at,
         groups.updated_at
         FROM groups
-        JOIN members ON members.user_id=groups.creator_user_id
+        LEFT JOIN members ON members.user_id=groups.creator_user_id
         AND members.group_id=groups.group_id
         ORDER BY groups.created_at ASC
     ''')

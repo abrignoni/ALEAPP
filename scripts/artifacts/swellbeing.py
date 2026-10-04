@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Parses Samsung Digital Wellbeing app usage events (timestamp, event ID, package and event type) from dwbCommon.db.",
         "author": "@abrignoni",
         "creation_date": "2020-05-21",
-        "last_update_date": "2026-08-03",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Digital Wellbeing",
         "notes": (
@@ -12,11 +12,12 @@ __artifacts_v2__ = {
             "(reference: AOSP, UsageEvents.java at tag android-14.0.0_r1, "
             "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-14.0.0_r1/core/java/android/app/usage/UsageEvents.java#104) "
             "and applied to the stored codes. The labels for codes 1 and 2 each show two constant "
-            "names, and the labels for codes 2 and 19 differ in spelling from the constants. "
+            "names, which that file defines with the same value. "
             "Samsung's implementation is not documented and its codes are not verified to match "
             "those constants, so the labels are unverified. An event type with no matching label "
-            "is shown as stored. An event whose package id has no row in foundPackages is not "
-            "reported. A label names a recorded transition and does not by itself establish a user "
+            "is shown as stored. An event whose package id has no row in foundPackages is reported "
+            "with a blank Package Name; no event on the five tested images was in that state. "
+            "A label names a recorded transition and does not by itself establish a user "
             "action."
         ),
         "paths": ('*/com.samsung.android.forest/databases/dwbCommon.db*',),
@@ -69,7 +70,7 @@ def samsung_wellbeing(context):
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
         # event types pulled from:
-        # https://android.googlesource.com/platform/frameworks/base/+/refs/heads/main/core/java/android/app/usage/UsageEvents.java
+        # https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-14.0.0_r1/core/java/android/app/usage/UsageEvents.java#104
         cursor.execute('''
         SELECT
         usageEvents.timeStamp,
@@ -78,7 +79,7 @@ def samsung_wellbeing(context):
         usageEvents.eventType,
         CASE
         when usageEvents.eventType=1 THEN 'ACTIVITY_RESUMED / MOVE_TO_FOREGROUND'
-        when usageEvents.eventType=2 THEN 'ACTIVITY_PAUSED / MOVE_TO_BACKGROUD'
+        when usageEvents.eventType=2 THEN 'ACTIVITY_PAUSED / MOVE_TO_BACKGROUND'
 		when usageEvents.eventType=3 THEN 'END_OF_DAY'
 		when usageEvents.eventType=4 THEN 'CONTINUE_PREVIOUS_DAY'
         when usageEvents.eventType=5 THEN 'CONFIGURATION_CHANGE'
@@ -95,7 +96,7 @@ def samsung_wellbeing(context):
         when usageEvents.eventType=16 THEN 'SCREEN_NON_INTERACTIVE'
         when usageEvents.eventType=17 THEN 'KEYGUARD_SHOWN'
         when usageEvents.eventType=18 THEN 'KEYGUARD_HIDDEN'
-        when usageEvents.eventType=19 THEN 'FOREGROUND_SERVICE START'
+        when usageEvents.eventType=19 THEN 'FOREGROUND_SERVICE_START'
         when usageEvents.eventType=20 THEN 'FOREGROUND_SERVICE_STOP'
 		when usageEvents.eventType=21 THEN 'CONTINUING_FOREGROUND_SERVICE'
 		when usageEvents.eventType=22 THEN 'ROLLOVER_FOREGROUND_SERVICE'
@@ -111,7 +112,7 @@ def samsung_wellbeing(context):
         else usageEvents.eventType
         END as eventTypeDescription
         FROM usageEvents
-        INNER JOIN foundPackages ON usageEvents.pkgId=foundPackages.pkgId
+        LEFT JOIN foundPackages ON usageEvents.pkgId=foundPackages.pkgId
         ''')
         all_rows = cursor.fetchall()
         db.close()

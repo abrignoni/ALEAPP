@@ -242,26 +242,35 @@ __artifacts_v2__ = {
     "netflix_account": {
         "name": "Netflix Account and Device",
         "description": "Device and account values read from the Netflix nfxpref preferences file "
-                       "and the CurrentCountryCode file, including the ESN, the DRM identifier "
-                       "values (nf_drm_system_id, nf_drm_crypto_provider and the deviceId in "
-                       "nf_drm_migration_identity), the stored country and language and the "
-                       "playAppInstallTime value",
+                       "and the CurrentCountryCode file beside it, including the ESN, the DRM "
+                       "identifier values (nf_drm_system_id, nf_drm_crypto_provider and the "
+                       "deviceId in nf_drm_migration_identity), the stored country and language "
+                       "and the playAppInstallTime value",
         "author": "@AlexisBrignoni",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-08-16",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Netflix",
-        "notes": "One row per nfxpref.xml file when that file carries at least one of the reported "
-                 "values or a CurrentCountryCode.xml value was found. The country code is taken "
-                 "from the last CurrentCountryCode.xml that holds one and is shown on every row, "
-                 "so on a device with more than one Android user it may come from another user's "
-                 "file. An nfxpref.xml file that carries none of the reported values produces no "
-                 "row when no country code was found; its contents still appear in the Netflix "
-                 "Preferences artifact. The headers App Install Time, Widevine System ID and "
-                 "Widevine Device ID follow the key names playAppInstallTime, nf_drm_system_id and "
-                 "the deviceId part of nf_drm_migration_identity; no source for those readings was "
-                 "found. "
-                 "The ESN and the Widevine device id are identifiers "
+        "notes": "One row per nfxpref.xml file when that file, or the CurrentCountryCode.xml in "
+                 "the same shared_prefs folder, carries at least one of the reported values. "
+                 "Current Country Code is the code value of the CurrentCountryCode.xml in the "
+                 "same app data directory and Android user as the row's nfxpref.xml, and is "
+                 "blank when that folder holds no such file; another Android user's file is not "
+                 "used. The five listed corpora each hold one Netflix data directory, so the "
+                 "pairing across two Android users was checked on a constructed two user tree "
+                 "and not on a corpus. An nfxpref.xml file with none of the reported values "
+                 "and no country code beside it produces no row; its contents still appear in "
+                 "the Netflix Preferences artifact. The columns playAppInstallTime, "
+                 "nf_drm_migration_identity deviceId, nf_drm_crypto_provider and "
+                 "nf_drm_system_id are headed with the stored key names because no source for "
+                 "what the app records in them was found. On anne_a15, sharon_a13 and "
+                 "sharon_a14 the nf_drm_migration_identity value is a colon separated list "
+                 "whose parts are named isWidevine, systemId, deviceId and wveaVersion; the "
+                 "deviceId part is the one reported. playAppInstallTime is shown as a date and "
+                 "time on the reading that the stored number is a Unix time: it is a 10 digit "
+                 "number on sharon_a13 and sharon_a14, read as seconds, and on anne_a15 it is "
+                 "0, which is left blank. What event it marks is not established. "
+                 "The ESN and the deviceId value are identifiers "
                  "the app stores for itself; they are reported as stored. Credential bearing keys "
                  "are deliberately not reported: the Netflix ID and Secure Netflix ID cookies, the "
                  "MSL and secure stores, the NGP device id store, the Widevine key request sample "
@@ -347,7 +356,7 @@ from scripts.ilapfuncs import (
     get_sqlite_db_records,
     logfunc,
 )
-from scripts.artifacts.storagePathViews import unique_files
+from scripts.artifacts.storagePathViews import canonical_path, unique_files
 
 # Preference keys that carry an authentication token, a key store or a push token. They are
 # read from the same file as everything else and are deliberately not reported.
@@ -519,6 +528,12 @@ def _read_prefs(path):
         else:
             values[name] = element.get('value') or ''
     return values
+
+
+def _prefs_folder_key(context, path):
+    """Key naming the app data directory and Android user a shared_prefs file belongs to."""
+    key = canonical_path(context.get_relative_path(path))[0]
+    return key.rsplit('/', 1)[0]
 
 
 def _json_field(raw, *keys):
@@ -912,14 +927,20 @@ def netflix_account(context):
     data_list = []
     source_paths = []
 
-    country_files = _paths_matching(files_found, '/shared_prefs/CurrentCountryCode.xml')
-    country_code = ''
-    for path in country_files:
-        country_code = _read_prefs(path).get('code', '') or country_code
+    # The country code file is paired with the nfxpref.xml of the same app data directory
+    # and Android user, so one user's stored country is never shown on another user's row.
+    country_files = {}
+    for path in _paths_matching(files_found, '/shared_prefs/CurrentCountryCode.xml'):
+        country_files[_prefs_folder_key(context, path)] = path
 
     for path in _paths_matching(files_found, '/shared_prefs/nfxpref.xml'):
         source_paths.append(path)
         prefs = _read_prefs(path)
+        country_code = ''
+        country_file = country_files.get(_prefs_folder_key(context, path))
+        if country_file:
+            source_paths.append(country_file)
+            country_code = _read_prefs(country_file).get('code', '')
         row = (
             _timestamp_value(prefs.get('playAppInstallTime')),
             _json_timestamp(prefs.get('device_history'), 'osInfo', 'firstSeenTime'),
@@ -949,16 +970,16 @@ def netflix_account(context):
             data_list.append(row + (context.get_relative_path(path),))
 
     data_headers = (
-        ('App Install Time', 'datetime'),
+        ('playAppInstallTime', 'datetime'),
         ('OS First Seen Time', 'datetime'),
         ('Last Contact With Netflix', 'datetime'),
         ('Netflix Server Time', 'datetime'),
         ('Netflix Device Time', 'datetime'),
         'ESN',
         'DRM Proxy ESN',
-        'Widevine Device ID',
-        'Widevine Crypto Provider',
-        'Widevine System ID',
+        'nf_drm_migration_identity deviceId',
+        'nf_drm_crypto_provider',
+        'nf_drm_system_id',
         'Offline Profile GUID',
         'Current Country Code',
         'Device Config Country Code',

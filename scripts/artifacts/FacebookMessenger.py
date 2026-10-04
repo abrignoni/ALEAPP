@@ -23,7 +23,7 @@ __artifacts_v2__ = {
         "description": "Facebook/Messenger chat messages (msys_database)",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-03-03",
-        "last_update_date": "2026-07-03",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Facebook Messenger",
         "notes": "Rows that are the same record found in more than one place are merged, and the "
@@ -33,15 +33,25 @@ __artifacts_v2__ = {
                  "once from a single copy. Merging is keyed on row content, not on package name, "
                  "so a record present in only one of the copies read is kept: on one tested image "
                  "the two copies held 11 and 13 contacts and the merged result is 13. A copy whose "
-                 "staged path contains /user/0/ or the word mirror is not read, a message whose "
-                 "sender has no row in contacts is not reported, and Direction is filled only when "
-                 "a threads_db2-uid file is among the files this artifact's path pattern returns. "
+                 "staged path contains /user/0/ or the word mirror is not read. Sender is the "
+                 "contacts name whose id equals the message's sender_id and is blank when "
+                 "contacts holds no such row; the messages table declares no foreign key from "
+                 "sender_id to contacts. On cookbook_a11 the Messenger copy held 36 messages, 3 "
+                 "of them from senders with no contacts row. Direction is Outgoing when sender_id "
+                 "equals the facebook_user_id stored in the _user_info table of the same "
+                 "database and Incoming otherwise, and is blank when that table cannot be read. "
+                 "On the 16 database copies read from anne_a15, cookbook_a11, hc_pixel8pro_a16, "
+                 "hc_pixel8pro_a17, pixel3_a12, pixel7a_a14, samsungs20_a13, sharon_a13 and "
+                 "sharon_a14, _user_info held one row and its facebook_user_id equalled the "
+                 "number in the database file name; on the seven of those images that carry a "
+                 "threads_db2-uid file it also equalled that file's content. "
                  "Signed CDN links (the Attachment URL column) are excluded from the key, which "
                  "means two genuinely different items would merge if they matched on every other "
-                 "reported column. The column headed Snippet holds attachments.title_text, "
-                 "Call/Location Information holds attachments.subtitle_text and Location Lat/Long "
-                 "holds attachment_ctas.native_url, each as stored. No source or measurement for "
-                 "those three header names is recorded here.",
+                 "reported column. Attachment Title Text holds attachments.title_text, "
+                 "Attachment Subtitle Text holds attachments.subtitle_text and Attachment CTA "
+                 "Native URL holds attachment_ctas.native_url, each as stored; what the app "
+                 "puts in them is not established. On pixel7a_a14 the two stored native_url "
+                 "values were each a pair of decimal numbers separated by a comma.",
         "paths": ('*/msys_database*',),
         "output_types": "standard",
         "artifact_icon": "message",
@@ -320,19 +330,13 @@ def get_fb_msys_chats(context):
         if 'msys_database_' not in file_found:
             continue
         source = source or file_found
-        # local account uid from the threads_db2-uid file (fetched via paths)
-        fb_uid = ''
-        for uid_file in files_found:
-            if str(uid_file).endswith('threads_db2-uid'):
-                try:
-                    with open(str(uid_file), 'r', encoding='utf-8', errors='replace') as dat:
-                        fb_uid = next((line.strip() for line in dat if line.strip()), '')
-                except OSError:
-                    fb_uid = ''
-                break
         rel = _src(file_found, seeker)
         db = open_sqlite_db_readonly(file_found)
         cursor = db.cursor()
+        # The account id this database records for itself. This artifact's path pattern
+        # does not return the threads_db2-uid file, and the Facebook app's sandbox has none.
+        uid_rows = _q(cursor, 'SELECT facebook_user_id FROM _user_info')
+        fb_uid = str(uid_rows[0][0]) if len(uid_rows) == 1 and uid_rows[0][0] is not None else ''
         rows = _q(cursor, '''
         SELECT
             datetime(messages.timestamp_ms/1000,'unixepoch'),
@@ -355,7 +359,7 @@ def get_fb_msys_chats(context):
             END,
             messages.message_id
         FROM messages
-        JOIN contacts ON contacts.id = messages.sender_id
+        LEFT JOIN contacts ON contacts.id = messages.sender_id
         LEFT JOIN attachments ON attachments.message_id = messages.message_id
         LEFT JOIN attachment_ctas ON messages.message_id = attachment_ctas.message_id
         LEFT JOIN reactions ON reactions.message_id = messages.message_id
@@ -395,12 +399,12 @@ def get_fb_msys_chats(context):
         'Message',
         'Sender ID',
         'Thread Key',
-        'Snippet',
-        'Call/Location Information',
+        'Attachment Title Text',
+        'Attachment Subtitle Text',
         'Attachment Name',
         'Attachment Type',
         'Attachment URL',
-        'Location Lat/Long',
+        'Attachment CTA Native URL',
         'Reaction',
         'Is Admin Message',
         'Message ID',

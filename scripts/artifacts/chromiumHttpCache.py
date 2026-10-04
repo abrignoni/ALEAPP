@@ -6,7 +6,7 @@ __artifacts_v2__ = {
                        "server returned, and the size of the cached body.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Chromium",
         "notes": "Read from the Simple Cache entry files (<16 hex digits>_0 and _1) under a browser's "
@@ -31,7 +31,8 @@ __artifacts_v2__ = {
                  "index); it is blank when the folder has no index (19,826 entries in 5 caches on the "
                  "tested images, 19,653 of them one Chrome cache whose index-dir was empty) or "
                  "when the index does not list the entry (90 entries). 5 entry files of the tested "
-                 "images were skipped as malformed or truncated. The key is "
+                 "images were skipped, each because it did not end with an EOF record; the run log "
+                 "names every skipped file with its reason and gives a count per reason. The key is "
                  "credential_key/post_key/[isolation_key]url; when the third part starts with "
                  "_dk_ the URL is the text after its last space and the text before it is the "
                  "network isolation key (net/http/http_cache.cc, GenerateCacheKey). URL and "
@@ -89,7 +90,7 @@ __artifacts_v2__ = {
                        "number of entries its index lists, the size it records and the entry files present.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Chromium",
         "notes": "Read from index-dir/the-real-index in each Cache_Data folder the Entries artifact covers. The "
@@ -99,16 +100,17 @@ __artifacts_v2__ = {
                  "net/disk_cache/simple/simple_index_file.h and .cc at commit "
                  "5babd82a3403ae4c580afc34df4c677d70779b52. Cache Last Modified and the counts are those "
                  "values, Index Version is the version field (9 on every tested index); Write Reason is the stored integer, whose names are Chromium's own enum and are not "
-                 "interpreted here. Entry Files Present counts the _0 files staged beside the "
-                 "index in the report's data folder, which are there only when the HTTP Cache "
-                 "Entries artifact ran in the same run; when it did not, the column reads 0 or "
-                 "blank and says nothing about the evidence. A difference from Entries Listed "
-                 "means the index and the staged entry files do not agree; the cause is not "
-                 "established. On the tested "
-                 "images 5 of 55 indexes differed, one listing 6,233 entries beside no entry "
+                 "interpreted here. Entry Files Present counts the _0 files in the same "
+                 "Cache_Data folder as the index; the paths match those files as well as the "
+                 "index, so the count is the same whether or not the HTTP Cache Entries artifact "
+                 "is selected, and it includes an entry file that artifact skips. A Cache_Data "
+                 "folder with no index gives no row. A difference from Entries Listed "
+                 "means the index and the entry files in the extraction do not agree; the cause "
+                 "is not established. On the tested "
+                 "images 5 of 57 indexes differed, one listing 6,233 entries beside no entry "
                  "files, and one Chrome cache had an index-dir folder with no index file at all.",
-        "paths": ('*/cache/[Cc]ache/Cache_Data/index-dir/the-real-index',
-                  '*/com.duckduckgo.mobile.android/cache/WebView/*/HTTP Cache/Cache_Data/index-dir/the-real-index'),
+        "paths": ('*/cache/[Cc]ache/Cache_Data/*',
+                  '*/com.duckduckgo.mobile.android/cache/WebView/*/HTTP Cache/Cache_Data/*'),
         "output_types": "standard",
         "artifact_icon": "list",
         "sample_data": {
@@ -208,36 +210,42 @@ def _package_of(path):
 
 
 def _read_entry(path):
-    """Header, key, stream sizes and the stream 0 bytes of a _0 file; None with a log line when malformed."""
+    """(entry, '') for a _0 file, or (None, reason) with a log line when it cannot be read as an entry.
+
+    entry holds the header version, the key, the stream 1 size and the stream 0 bytes.
+    """
     try:
         with open(path, 'rb') as handle:
             data = handle.read()
     except OSError as error:
         logfunc(f'Chromium HTTP cache: could not read {os.path.basename(path)}: {error}')
-        return None
+        return None, 'could not be read'
     if len(data) < _HEADER.size + _EOF.size * 2:
-        return None
+        logfunc(f'Chromium HTTP cache: {os.path.basename(path)} is {len(data)} bytes, shorter than a '
+                f'Simple Cache header and two EOF records')
+        return None, 'shorter than a header and two EOF records'
     magic, version, key_length, _key_hash, _pad = _HEADER.unpack_from(data, 0)
     if magic != _INITIAL_MAGIC or key_length > len(data) - _HEADER.size:
         logfunc(f'Chromium HTTP cache: {os.path.basename(path)} does not start with a Simple Cache header')
-        return None
+        return None, 'no Simple Cache header'
     key = data[_HEADER.size:_HEADER.size + key_length].decode('utf-8', errors='replace')
     eof0_at = len(data) - _EOF.size
     magic0, flags0, _crc0, size0, _pad0 = _EOF.unpack_from(data, eof0_at)
     if magic0 != _FINAL_MAGIC:
         logfunc(f'Chromium HTTP cache: {os.path.basename(path)} has no stream 0 EOF record')
-        return None
+        return None, 'no stream 0 EOF record'
     sha = 32 if flags0 & _FLAG_HAS_KEY_SHA256 else 0
     stream0_at = eof0_at - sha - size0
     eof1_at = stream0_at - _EOF.size
     if eof1_at < _HEADER.size + key_length:
         logfunc(f'Chromium HTTP cache: {os.path.basename(path)} stream sizes overrun the file')
-        return None
+        return None, 'stream sizes overrun the file'
     magic1, _flags1, _crc1, size1, _pad1 = _EOF.unpack_from(data, eof1_at)
     if magic1 != _FINAL_MAGIC:
         logfunc(f'Chromium HTTP cache: {os.path.basename(path)} has no stream 1 EOF record')
-        return None
-    return {'version': version, 'key': key, 'stream0': data[stream0_at:stream0_at + size0], 'stream1_size': size1}
+        return None, 'no stream 1 EOF record'
+    return {'version': version, 'key': key, 'stream0': data[stream0_at:stream0_at + size0],
+            'stream1_size': size1}, ''
 
 
 def _response_info(stream0):
@@ -375,7 +383,7 @@ def chromiumCacheEntries(context):
     )
     data_list = []
     sources = []
-    skipped = 0
+    skipped = {}
     for folder, contents in sorted(_cache_dirs(context, unique_files(context)).items()):
         index = _read_index(contents['index']) if contents['index'] else None
         index_entries = index['entries'] if index else {}
@@ -383,9 +391,9 @@ def chromiumCacheEntries(context):
         for entry_hash, files in sorted(contents['entries'].items()):
             if '0' not in files:
                 continue
-            entry = _read_entry(files['0'])
+            entry, reason = _read_entry(files['0'])
             if entry is None:
-                skipped += 1
+                skipped[reason] = skipped.get(reason, 0) + 1
                 continue
             request_time, response_time, headers = _response_info(entry['stream0'])
             url, isolation = _split_key(entry['key'])
@@ -401,7 +409,8 @@ def chromiumCacheEntries(context):
             ))
             sources.append(files['0'])
     if skipped:
-        logfunc(f'Chromium HTTP cache: {skipped} entry files were skipped as malformed or truncated')
+        reasons = '; '.join(f'{count} {reason}' for reason, count in sorted(skipped.items()))
+        logfunc(f'Chromium HTTP cache: {sum(skipped.values())} entry files were skipped ({reasons})')
     return data_headers, data_list, '\n'.join(context.get_relative_path(p) for p in sources)
 
 
@@ -425,13 +434,9 @@ def chromiumCacheIndexes(context):
         index = _read_index(contents['index'])
         if index is None:
             continue
+        # this artifact's own paths match the entry files too, so the count does not depend on
+        # what another artifact staged in the same run
         present = sum(1 for files in contents['entries'].values() if '0' in files)
-        if not present:
-            # the index artifact's own glob stages only the index; count the siblings on disk
-            try:
-                present = sum(1 for name in os.listdir(folder) if _ENTRY_NAME.match(name) and name.endswith('_0'))
-            except OSError:
-                present = ''
         data_list.append((
             index['last_modified'], _package_of(folder), index['count'], present, index['cache_size'],
             index['version'], index['reason'], context.get_relative_path(contents['index']),

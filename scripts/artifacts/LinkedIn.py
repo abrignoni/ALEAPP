@@ -19,10 +19,10 @@ __artifacts_v2__ = {
     },
     "linkedin_messages": {
         "name": "LinkedIn - Messages",
-        "description": "Messages from the LinkedIn app's messenger-sdk database. Sent is 1 where the sender's participant record carries the distance value SELF and 0 otherwise. Delivery Status shows Delivered for a stored status of 5 and Unknown for any other value; no source for the status values was found.",
+        "description": "Messages from the LinkedIn app's messenger-sdk database. Sent is 1 where the sender's participant record carries the distance value SELF and 0 otherwise. Status (as stored) is the integer in the message row's status column; what its values mean is not established.",
         "author": "Marco Neumann {kalinko@be-binary.de}",
         'creation_date': '2025-04-26',
-        'last_update_date': '2026-08-15',
+        'last_update_date': '2026-10-04',
         "requirements": "",
         "category": "LinkedIn",
         "notes": "The query uses only SQL functions available across the SQLite versions bundled "
@@ -30,8 +30,19 @@ __artifacts_v2__ = {
                  "added in 3.44.0 (2023-11-01, sqlite.org/changes.html), so on older SQLite "
                  "builds the query failed and the artifact reported no rows while the same "
                  "statement succeeded in tools carrying a newer SQLite."
-                 " A message whose conversation has no ConversationsData row is not reported, "
-                 "and only the first database file found is read.",
+                 " Status (as stored) is MessagesData.status as the database holds it. No source "
+                 "for the values was found, so no label is applied; on anne_a15 the one message "
+                 "row holds 5. Each database file the paths match is read, after the duplicate "
+                 "storage views of one file are collapsed, and Source File names the database a "
+                 "row came from; anne_a15 holds one database. A message whose conversation has "
+                 "no ConversationsData row is still reported; its Conversation Label then comes "
+                 "from the conversation's participant rows where those remain and is blank "
+                 "otherwise. "
+                 "MessagesData.conversationUrn is declared as a foreign key to "
+                 "ConversationsData.entityUrn with ON DELETE CASCADE in the anne_a15 database, "
+                 "which held no such message, so that case was exercised only on a copy of "
+                 "that database with the ConversationsData row removed (1 row with the "
+                 "conversation row present, 1 row with it removed).",
         "paths": ('*/com.linkedin.android/databases/messenger-sdk*',),
         "output_types": "standard",
         "data_views": {
@@ -62,6 +73,7 @@ import re
 import xml.etree.ElementTree as ET
 
 from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records, logfunc
+from scripts.artifacts.storagePathViews import unique_files
 
 INVALID_XML_CHARS = re.compile(r'[\x00-\x08\x0b\x0c\x0e-\x1f]')
 BARE_AMPERSAND = re.compile(r'&(?!(?:amp|lt|gt|quot|apos|#\d+|#x[0-9A-Fa-f]+);)')
@@ -139,17 +151,15 @@ def linkedin_account(context):
 
 @artifact_processor
 def linkedin_messages(context):
-    files_found = context.get_files_found()
+    files_found = [str(x) for x in context.get_files_found()]
     files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')
                    and not x.endswith('journal')]
+    files_found = unique_files(context, files_found)
 
     query = ('''
             SELECT
             md.deliveredAt[deliveredAt],
-            CASE WHEN md.status = '5' 
-                THEN 'Delivered'
-                ELSE 'Unknown'
-            END[Status],
+            md.status [Status],
             TRIM(COALESCE(json_extract(pd.entityData, '$.participantType.member.firstName.text'), '') || ' ' || COALESCE(json_extract(pd.entityData, '$.participantType.member.lastName.text'), '')) [Sender Name],
             json_extract(pd.entityData, '$.participantType.member.headline.text') [Sender Headline],
             json_extract(pd.entityData, '$.participantType.member.profileUrl') [Sender Profile URL],
@@ -188,39 +198,41 @@ def linkedin_messages(context):
                 )
             END [Conversation Label]
             FROM MessagesData md
-            JOIN ConversationsData cd ON cd.entityUrn = md.conversationUrn
+            LEFT JOIN ConversationsData cd ON cd.entityUrn = md.conversationUrn
             LEFT JOIN ParticipantsData pd on pd.entityUrn = md.senderUrn
     ''')
-    db_records = get_sqlite_db_records(str(files_found[0]), query)
-
     data_list = []
-    for row in db_records:
-        delivery_date = convert_unix_ts_to_utc(int(row[0])/1000) if row[0] is not None else ''
-        delivery_status = row[1]
-        sender_name = row[2]
-        sender_headline = row[3]
-        sender_profile_url = row[4]
-        sender_distance = row[5]
-        subject = row[6]
-        message = row[7]
-        conversationurn = row[8]
-        sent = row[9]
-        conversation_label = row[10]
+    sources = []
+    for file_found in files_found:
+        source_file = context.get_relative_path(file_found)
+        sources.append(file_found)
+        for row in get_sqlite_db_records(file_found, query):
+            delivery_date = convert_unix_ts_to_utc(int(row[0])/1000) if row[0] is not None else ''
+            delivery_status = row[1]
+            sender_name = row[2]
+            sender_headline = row[3]
+            sender_profile_url = row[4]
+            sender_distance = row[5]
+            subject = row[6]
+            message = row[7]
+            conversationurn = row[8]
+            sent = row[9]
+            conversation_label = row[10]
 
-        data_list.append(   (
-            delivery_date,
-            sent,
-            sender_name,
-            conversation_label,
-            message,
-            delivery_status,
-            sender_headline,
-            sender_profile_url,
-            sender_distance,
-            subject,
-            conversationurn,
-        )
-                        )
+            data_list.append((
+                delivery_date,
+                sent,
+                sender_name,
+                conversation_label,
+                message,
+                delivery_status,
+                sender_headline,
+                sender_profile_url,
+                sender_distance,
+                subject,
+                conversationurn,
+                source_file,
+            ))
 
     data_headers = (
         ('Delivery Date', 'datetime'),
@@ -228,12 +240,13 @@ def linkedin_messages(context):
         'Sender Name',
         'Conversation Label',
         'Message',
-        'Delivery Status',
+        'Status (as stored)',
         'Sender Headline',
         'Sender Profile Url',
         'Sender Distance',
         'Subject',
         'Conversation Urn',
+        'Source File',
                     )
 
-    return data_headers, data_list, files_found[0]
+    return data_headers, data_list, '\n'.join(sources)

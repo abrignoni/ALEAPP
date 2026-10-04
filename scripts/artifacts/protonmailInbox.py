@@ -16,24 +16,26 @@ under cache/mail-cache/attachments/ (present and decrypted). Unlike the iOS
 store, the message body is kept PGP-encrypted in raw_message_body on the tested
 Android version, so no message body is shown here.
 
-Timestamps are Unix seconds. Folder names come from the app's own labels table.
+Timestamps are Unix seconds. Label names come from the app's own labels table.
 Address columns hold JSON, decoded here to 'Name <address>' strings.
 """
 __artifacts_v2__ = {
     "protonmailInboxMessages": {
         "name": "ProtonMail - Inbox Messages",
-        "description": "Messages cached by the Proton Mail Android Inbox app, including subject, sender, recipients and folder",
+        "description": "Messages cached by the Proton Mail Android Inbox app, including subject, sender, recipients and labels",
         "author": "@AlexisBrignoni",
         "creation_date": "2026-08-14",
-        "last_update_date": "2026-08-14",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "ProtonMail",
         "notes": "Reads the uniffi Inbox cache of Proton Mail for Android, separate from the "
                  "*-MessagesDatabase.db store. In the tested image the subject, sender and "
                  "recipient values are stored in clear text, and raw_message_body held PGP "
-                 "armoured text; this artifact does not read it. Folder lists the name of every "
+                 "armoured text; this artifact does not read it. Labels lists the name of every "
                  "row of the app's labels table linked to the message through message_labels, "
-                 "comma separated; the module does not separate folders from other labels. Read "
+                 "comma separated, a name shared by two linked rows shown once; the module does "
+                 "not separate folders from other labels. On hc_pixel8pro_a16 and "
+                 "hc_pixel8pro_a17 each of the 3 messages was linked to 4 or 5 label rows. Read "
                  "is the stored unread flag inverted, so an empty value also shows Yes; it does "
                  "not establish that a person read the message. Deleted shows No for an empty "
                  "value. A cached row reflects what the app had synced locally, not necessarily "
@@ -52,17 +54,20 @@ __artifacts_v2__ = {
         "description": "Attachment records of the Proton Mail Android Inbox app, with the cached file where one is present",
         "author": "@AlexisBrignoni",
         "creation_date": "2026-08-14",
-        "last_update_date": "2026-08-14",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "ProtonMail",
-        "notes": "Attachment metadata from the Inbox cache joined to the files under "
-                 "cache/mail-cache/attachments/<number>/ by matching that number to the "
-                 "attachment's local_id. The match is not limited to the same account or Android "
-                 "user as the database, so on an extraction with more than one copy of the app's "
-                 "data check Source File and Cached Path before relying on the media cell. In the "
-                 "tested image those files are "
-                 "images. The media column shows a file only when it is present in the "
-                 "extraction.",
+        "notes": "One row per row of the attachments table of the Inbox cache. Cached Path is "
+                 "the path the attachment_cache table records for the attachment "
+                 "(attachment_cache.attachment_id equal to attachments.local_id). The media "
+                 "column shows the file at that recorded path, taken from the part after "
+                 "/mail-cache/attachments/ and looked up under the same app data directory as "
+                 "the database that was read, so a file from another copy of the app's data is "
+                 "not shown. It is blank when attachment_cache holds no row for the attachment "
+                 "or the file is not in the extraction. On hc_pixel8pro_a16 and hc_pixel8pro_a17 "
+                 "14 of the 15 rows had a recorded path, each naming a directory numbered as the "
+                 "attachment's local_id, and all 14 files were present; in those images the "
+                 "files are images.",
         "paths": ('*/ch.protonmail.android/databases/*.db*',
                   '*/ch.protonmail.android/cache/mail-cache/attachments/*'),
         "output_types": "standard",
@@ -112,13 +117,13 @@ __artifacts_v2__ = {
 }
 
 import json
-import re
+import os
 
 from scripts.ilapfuncs import (artifact_processor, get_sqlite_db_records,
                                does_table_exist_in_db, convert_unix_ts_to_utc,
                                check_in_media)
 
-_ATTACHMENT_ID_RE = re.compile(r'/mail-cache/attachments/(\d+)/')
+_ATTACHMENT_MARKER = '/cache/mail-cache/attachments/'
 
 
 def _is_mail_cache(file_found):
@@ -157,7 +162,7 @@ def _format_addresses(raw):
 
 
 def _labels_by_message(file_found):
-    """message local_id -> sorted folder names, from labels + message_labels."""
+    """message local_id -> sorted label names, from labels + message_labels."""
     names = {row[0]: row[1] for row in
              get_sqlite_db_records(file_found, 'SELECT local_id, name FROM labels')}
     out = {}
@@ -173,7 +178,7 @@ def _labels_by_message(file_found):
 def protonmailInboxMessages(context):
     data_headers = (
         ('Time', 'datetime'),
-        'Folder',
+        'Labels',
         'Subject',
         'From',
         'To',
@@ -238,16 +243,20 @@ def protonmailInboxAttachments(context):
     data_list = []
     sources = []
 
-    # Map the attachment id embedded in each on-disk cache path to its extracted
-    # file, so the media can be checked in even though the database records the
-    # /data/user/0 symlink form of the path rather than the extracted location.
-    found_by_id = {}
+    # Key each cached file on its app data directory and the part of its path
+    # after /mail-cache/attachments/, so a database row is matched only to the
+    # file its own attachment_cache path names, inside its own copy of the
+    # app's data. The database records the /data/user/0 form of the path, not
+    # the extracted location.
+    found_by_tail = {}
     db_files = []
     for file_found in context.get_files_found():
         file_found = str(file_found)
-        match = _ATTACHMENT_ID_RE.search(file_found.replace('\\', '/'))
-        if match:
-            found_by_id[int(match.group(1))] = file_found
+        file_rel = str(context.get_relative_path(file_found)).replace('\\', '/')
+        root, marker, tail = file_rel.partition(_ATTACHMENT_MARKER)
+        if marker:
+            if tail and not os.path.isdir(file_found):
+                found_by_tail[(root, tail)] = file_found
         elif file_found.endswith('.db'):
             db_files.append(file_found)
 
@@ -255,6 +264,7 @@ def protonmailInboxAttachments(context):
         if not _is_mail_cache(file_found) or not does_table_exist_in_db(file_found, 'attachments'):
             continue
         rel_path = context.get_relative_path(file_found)
+        app_root = str(rel_path).replace('\\', '/').rpartition('/databases/')[0]
 
         cache_paths = {}
         if does_table_exist_in_db(file_found, 'attachment_cache'):
@@ -267,7 +277,9 @@ def protonmailInboxAttachments(context):
                 'SELECT local_id, filename, size, mime_type, remote_message_id FROM attachments'):
             local_id, filename, size, mime_type, remote_message_id = row
             media_ref = ''
-            found_path = found_by_id.get(local_id)
+            cache_tail = str(cache_paths.get(local_id) or '').replace(
+                '\\', '/').partition('/mail-cache/attachments/')[2]
+            found_path = found_by_tail.get((app_root, cache_tail)) if cache_tail else None
             if found_path:
                 media_ref = check_in_media(found_path, filename) or ''
             data_list.append((filename, media_ref, size, mime_type,
