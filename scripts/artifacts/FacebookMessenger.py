@@ -172,23 +172,31 @@ __artifacts_v2__ = {
         },
     },
     "get_fb_threads_calls": {
-        "name": "Facebook Messenger - Calls (threads_db2)",
-        "description": "Facebook/Messenger call log (threads_db2)",
+        "name": "Facebook Messenger - Admin Message Metadata (threads_db2)",
+        "description": "Messages carrying stored admin metadata in threads_db2, with raw metadata and sender fields",
         "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2021-03-03",
         "last_update_date": "2026-10-05",
         "requirements": "none",
         "category": "Facebook Messenger",
-        "notes": "Not exercised: the artifact produced no rows on the four images listed in "
-                 "sample_data. Rows are messages whose generic_admin_message_extensible_data is "
-                 "not null; the query does not test that the message is a call. Timestamp is the "
-                 "message time minus the stored call_duration. Sender Name holds messages.sender name; Sender ID holds the stored user_key "
-                 "with its first nine characters removed, preserving the existing projection. No receiver identity is inferred. "
-                 "Video Call shows Yes for any stored video value other than false, a missing key "
-                 "included. The video and call-related interpretations are not established. Storage aliases are selected by evidence-relative root and Android user, not staged path.",
+        "notes": "The legacy artifact key get_fb_threads_calls is retained. Rows are messages whose "
+                 "generic_admin_message_extensible_data is not NULL and whose thread matches threads; "
+                 "metadata presence does not establish that a message is a call. Message Timestamp "
+                 "uses the existing timestamp_ms/1000 Unix-seconds convention. Derived Timestamp "
+                 "preserves the previous message time minus call_duration expression; its meaning "
+                 "and the duration unit are not established. Duration HH:MM:SS preserves the old "
+                 "strftime formatting and wraps after 24 hours. The raw duration and complete admin "
+                 "metadata remain available. Video (as stored) and Metadata Caller ID hold JSON "
+                 "values without interpretation; complete metadata distinguishes missing keys, JSON "
+                 "null and boolean versus numeric values. Sender Name holds sender.name; Sender ID "
+                 "preserves the existing removal of the first nine characters of sender.user_key. "
+                 "Full sender JSON is retained. Invalid JSON is reported raw with blank extracted "
+                 "fields and a source-specific diagnostic, without suppressing healthy records. "
+                 "Storage aliases use evidence-relative paths and Android user scope. Historical "
+                 "sample_data entries yielded zero rows; positive real legacy coverage remains unavailable.",
         "paths": ('*/*threads_db2',),
         "output_types": "standard",
-        "artifact_icon": "phone",
+        "artifact_icon": "message",
         "sample_data": {
             "anne_a15": "Android 15 | com.facebook.katana vc 465218038 | 0 rows",
             "hc_pixel8pro_a16": "Android 16 | com.facebook.katana vc 472143277 | 0 rows",
@@ -225,7 +233,7 @@ import sqlite3
 
 from scripts.artifacts.storagePathViews import canonical_path, unique_files
 from scripts.context import Context
-from scripts.ilapfuncs import artifact_processor, null_absent_columns, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, logfunc, null_absent_columns, open_sqlite_db_readonly
 
 
 def _str_to_utc(value):
@@ -617,25 +625,39 @@ def get_fb_threads_calls(context):
         cursor = db.cursor()
         rows = _q(cursor, '''
         SELECT
-            datetime((messages.timestamp_ms/1000)-(json_extract(messages.generic_admin_message_extensible_data, '$.call_duration')),'unixepoch'),
-            strftime('%H:%M:%S',json_extract(messages.generic_admin_message_extensible_data, '$.call_duration'), 'unixepoch'),
-            json_extract(messages.generic_admin_message_extensible_data, '$.caller_id'),
-            json_extract(messages.sender, '$.name'),
-            substr(json_extract(messages.sender, '$.user_key'),10),
-            CASE json_extract(messages.generic_admin_message_extensible_data, '$.video')
-                WHEN false THEN '' ELSE 'Yes' END,
-            messages.thread_key
+            datetime(messages.timestamp_ms/1000,'unixepoch'),
+            datetime((messages.timestamp_ms/1000)-(CASE WHEN json_valid(messages.generic_admin_message_extensible_data) THEN json_extract(messages.generic_admin_message_extensible_data, '$.call_duration') END),'unixepoch'),
+            messages.timestamp_ms,
+            messages.msg_id,
+            messages.thread_key,
+            CASE WHEN json_valid(messages.sender) THEN json_extract(messages.sender, '$.name') END,
+            substr(CASE WHEN json_valid(messages.sender) THEN json_extract(messages.sender, '$.user_key') END,10),
+            CASE WHEN json_valid(messages.generic_admin_message_extensible_data) THEN json_extract(messages.generic_admin_message_extensible_data, '$.caller_id') END,
+            CASE WHEN json_valid(messages.generic_admin_message_extensible_data) THEN json_extract(messages.generic_admin_message_extensible_data, '$.call_duration') END,
+            strftime('%H:%M:%S',CASE WHEN json_valid(messages.generic_admin_message_extensible_data) THEN json_extract(messages.generic_admin_message_extensible_data, '$.call_duration') END, 'unixepoch'),
+            CASE WHEN json_valid(messages.generic_admin_message_extensible_data) THEN json_extract(messages.generic_admin_message_extensible_data, '$.video') END,
+            messages.generic_admin_message_extensible_data,
+            messages.sender,
+            json_valid(messages.generic_admin_message_extensible_data),
+            CASE WHEN messages.sender IS NOT NULL AND NOT json_valid(messages.sender) THEN 1 ELSE 0 END
         FROM messages, threads
         WHERE messages.thread_key=threads.thread_key AND generic_admin_message_extensible_data NOT NULL
         ORDER BY messages.thread_key
         ''')
+        invalid_metadata = sum(not row[13] for row in rows)
+        invalid_sender = sum(row[14] for row in rows)
+        if invalid_metadata or invalid_sender:
+            logfunc(f'Messenger admin metadata: preserved {invalid_metadata} rows with invalid '
+                    f'metadata JSON and {invalid_sender} rows with invalid sender JSON in {rel}')
         for row in rows:
-            data_list.append((_str_to_utc(row[0]), row[1], row[2], row[3], row[4], row[5], row[6],
-                              rel))
+            data_list.append((_str_to_utc(row[0]), _str_to_utc(row[1]), *row[2:13], rel))
         db.close()
 
-    data_headers = (('Timestamp', 'datetime'), 'Call Duration', 'Caller ID', 'Sender Name',
-                    'Sender ID', 'Video Call', 'Thread Key', 'Source File')
+    data_headers = (('Message Timestamp', 'datetime'), ('Derived Timestamp', 'datetime'),
+                    'Message Timestamp MS (as stored)', 'Message ID', 'Thread Key',
+                    'Sender Name', 'Sender ID', 'Metadata Caller ID', 'Call Duration (as stored)',
+                    'Duration HH:MM:SS', 'Video (as stored)', 'Admin Metadata (as stored)',
+                    'Sender JSON (as stored)', 'Source File')
     return data_headers, data_list, source
 
 
