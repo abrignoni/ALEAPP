@@ -160,7 +160,7 @@ __artifacts_v2__ = {
         "description": "Parses DuckDuckGo Tab thumbnail Information",
         "author": "@abrignoni & @stark4n6, @AlexisBrignoni, Codex",
         "creation_date": "2022-05-28",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-05",
         "requirements": "none",
         "category": "DuckDuckGo",
         "notes": (
@@ -168,7 +168,8 @@ __artifacts_v2__ = {
             "as a Unix time in milliseconds; that reading is not documented and the "
             "file name is its only basis. It is rendered in UTC. Referenced In Tabs Table "
             "records whether the file name appears in the tabs table of app.db; it describes "
-            "that reference only and does not establish whether a tab is open or closed."
+            "that reference only and does not establish whether a tab is open or closed. "
+            "A nonnumeric or out-of-range file name is retained with a blank timestamp and logged."
         ),
         "paths": (
             '*/com.duckduckgo.mobile.android/cache/tabPreviews/*/*.jpg',
@@ -202,13 +203,18 @@ __artifacts_v2__ = {
         "description": "Parses DuckDuckGo Cookies",
         "author": "Damien Attoe {damien.attoe@spyderforensics.com}, @AlexisBrignoni, Codex",
         "creation_date": "2025-11-14",
-        "last_update_date": "2025-11-14",
+        "last_update_date": "2026-10-05",
         "requirements": "none",
         "category": "DuckDuckGo",
-        "notes": "Tested by the module author on app version 5.255.0 (31 October 2025). No registered image result is recorded for this artifact.",
-        "paths": ('*/com.duckduckgo.mobile.android/app_webview/Default/cookies'),
+        "notes": "Tested by the module author on app version 5.255.0 (31 October 2025). Reads main Cookies or cookies files, excluding sidecars; Source File identifies each row.",
+        "paths": ('*/com.duckduckgo.mobile.android/app_webview/Default/cookies',
+                  '*/com.duckduckgo.mobile.android/app_webview/Default/Cookies'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "globe"
+        "artifact_icon": "globe",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.duckduckgo.mobile.android vc 52831000 | 116 rows",
+            "pixel7a_a14": "Android 14 | com.duckduckgo.mobile.android vc 52072000 | 73 rows",
+        }
     },
 }
 
@@ -217,7 +223,7 @@ import datetime
 import pathlib
 from pathlib import Path
 from scripts.ilapfuncs import (
-    artifact_processor, check_in_media, does_column_exist_in_db, get_sqlite_db_records, get_file_path)
+    artifact_processor, check_in_media, does_column_exist_in_db, get_sqlite_db_records, get_file_path, logfunc)
 from scripts.ccl import ccl_leveldb
 
 
@@ -533,10 +539,7 @@ def duckduckgo_thumbnails(context):
 
     source_paths = set()
 
-    for source_path in files_found:
-        source_path = str(source_path)
-        if source_path.endswith('.db'):
-            break
+    source_path = next((str(p) for p in files_found if Path(p).name == 'app.db'), '')
     open_preview_files = set()
     if source_path:
         source_paths.add(source_path)
@@ -556,20 +559,25 @@ def duckduckgo_thumbnails(context):
             continue
         source_paths.add(str(file_found))
         filename = (media_path.name)
-        utctime = int(media_path.stem)
-
-        timestamp = (datetime.datetime.fromtimestamp(utctime/1000, datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S'))
+        timestamp = None
+        try:
+            utctime = int(media_path.stem)
+            timestamp = datetime.datetime.fromtimestamp(
+                utctime/1000, datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
+        except (ValueError, OverflowError, OSError):
+            logfunc(f'DuckDuckGo thumbnail: timestamp unavailable for '
+                    f'{context.get_relative_path(str(file_found))}')
         media_item = check_in_media(file_found, filename)
 
         if media_item:
             referenced_in_tabs = 'Yes' if filename in open_preview_files else 'No'
 
             data_list.append(
-                (referenced_in_tabs, timestamp, media_item, filename,
+                (timestamp, referenced_in_tabs, media_item, filename,
                  context.get_relative_path(str(file_found))))
 
     data_headers = (
-        'Referenced In Tabs Table', ('Timestamp (UTC)', 'datetime'), ('Thumbnail', 'media'),
+        ('Timestamp (UTC)', 'datetime'), 'Referenced In Tabs Table', ('Thumbnail', 'media'),
         'File Name', 'Location')
 
     return data_headers, data_list, '\n'.join(sorted(source_paths))
@@ -710,10 +718,7 @@ def duckduckgo_duckai(context):
 def duckduckgo_cookies(context):
     files_found = context.get_files_found()
     data_list = []
-    for source_path in files_found:
-        source_path = str(source_path)
-        if source_path.endswith('.sqlite'):
-            break
+    source_paths = []
 
     query = '''
         SELECT
@@ -736,19 +741,16 @@ def duckduckgo_cookies(context):
         FROM cookies
         '''
 
-    db_records = get_sqlite_db_records(source_path, query)
-    for row in db_records:
-        lastaccessed = row[0]
-        host = row[1]
-        name = row[2]
-        value = row[3]
-        creationtime = row[4]
-        expiry = row[5]
-        path = row[6]
+    for file_found in dict.fromkeys(str(p) for p in files_found):
+        if Path(file_found).name not in ('Cookies', 'cookies'):
+            continue
+        source_paths.append(file_found)
+        db_records = get_sqlite_db_records(file_found, query)
+        for row in db_records:
+            data_list.append((row[0], row[4], row[5], row[1], row[2], row[3], row[6],
+                              context.get_relative_path(file_found)))
 
-        data_list.append((lastaccessed, host, name, value, creationtime, expiry, path))
+    data_headers = (('Last Accessed', 'datetime'), ('Creation Time', 'datetime'),
+                    ('Expiry', 'datetime'), 'Host', 'Name', 'Value', 'Path', 'Source File')
 
-    data_headers = (('Last Accessed', 'datetime'), 'Host', 'Name', 'Value', ('Creation Time', 'datetime'),
-                    ('Expiry', 'datetime'), 'Path')
-
-    return data_headers, data_list, context.get_relative_path(source_path)
+    return data_headers, data_list, '\n'.join(context.get_relative_path(p) for p in source_paths)
