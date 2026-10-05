@@ -2,16 +2,16 @@ __artifacts_v2__ = {
     "fbg_master": {
         "name": "Files By Google - Files Master",
         "description": "Parses the master files list from the Files by Google application",
-        "author": "Kevin Pagano (@stark4n6)",
+        "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2021-01-18",
-        "last_update_date": "2026-09-26",
+        "last_update_date": "2026-10-05",
         "requirements": "none",
         "category": "Files By Google",
         "notes": "Root Path is read from each file entry rather than from where the database "
                  "sits, so it does not name the database, and Source File names the database "
-                 "each row came from. Media Type shows this module's labels for the stored "
-                 "media_type: 0 App/Data, 1 Picture, 2 Audio, 3 Video, 6 Text. The labels are not "
-                 "sourced, and any other stored value is shown blank.",
+                 "each row came from. Media Type (as stored) holds media_type without an enum label, "
+                 "preserving NULL and unknown values. The former media-type labels were not "
+                 "sourced; no meaning for the stored values is asserted.",
         "paths": ('*/com.google.android.apps.nbu.files/databases/files_master_database*'),
         "output_types": "standard",
         "artifact_icon": "file",
@@ -67,13 +67,7 @@ def fbg_master(context):
                 file_name,
                 size,
                 mime_type,
-                case media_type
-                    when 0 then 'App/Data'
-                    when 1 then 'Picture'
-                    when 2 then 'Audio'
-                    when 3 then 'Video'
-                    when 6 then 'Text'
-                end as media_type,
+                media_type,
                 uri,
                 case is_hidden
                     when 0 then ''
@@ -97,7 +91,7 @@ def fbg_master(context):
                     data_list_master.append((last_mod_date,row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],context.get_relative_path(file_found)))
             db.close()
             
-    data_headers = (('Date Modified','datetime'),'Root Path','Root Relative Path','File Name','Size','Mime Type','Media Type','URI','Hidden','Title','Parent Folder','Source File') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
+    data_headers = (('Date Modified','datetime'),'Root Path','Root Relative Path','File Name','Size','Mime Type','Media Type (as stored)','URI','Hidden','Title','Parent Folder','Source File') # Don't remove the comma, that is required to make this a tuple as there is only 1 element
     return data_headers, data_list_master, '\n'.join(sorted(source_paths))
             
 @artifact_processor
