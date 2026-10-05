@@ -14,7 +14,11 @@ __artifacts_v2__ = {
                  'of deletion or transaction commitment, and repetitions are retained. Only '
                  'table leaves proven reachable from the snapshot root are supported, including '
                  'INTEGER PRIMARY KEY aliases proven by schema/index metadata. Ambiguous primary keys, '
-                 'overflow records and unresolved schemas/ownership are skipped with diagnostics. Prefix '
+                 'unresolved schemas/ownership and incomplete/cyclic/shared overflow chains are skipped. '
+                 'Complete inline or overflow payloads up to 16 MiB are recovered from available prefix '
+                 'pages only. Overflow Page Sources records main/WAL page origins separately from '
+                 'the observed leaf cell anchor. Existing overflow bytes can predate that leaf update; '
+                 'this is a prefix observation, not a committed transaction reconstruction. Prefix '
                  'replay cannot reconstruct pages predating earlier checkpoints. Run At is '
                  'read as Unix nanoseconds and Last Updated as Unix milliseconds; these units '
                  'remain unverified. Stored values and evidence provenance are retained.',
@@ -92,9 +96,85 @@ def _decode_value(data, pos, serial, end):
     return value, pos + size
 
 
-def parse_leaf_records(page, columns, usable_size, rowid_alias=None):
-    records = []
-    failures = []
+MAX_RECORD_PAYLOAD = 16 * 1024 * 1024
+
+
+def overflow_payload(pointer, remaining, snapshot):
+    """Follow only available, bounded pages linked by this observed cell."""
+    image, size, usable, origins, forbidden = snapshot
+    pages, sources, chunks = [], [], []
+    if remaining > MAX_RECORD_PAYLOAD:
+        raise ValueError('record payload exceeds 16 MiB recovery limit')
+    while remaining:
+        if pointer not in origins or pointer in forbidden or pointer in pages:
+            raise ValueError('unavailable, b-tree, or cyclic overflow page')
+        if len(pages) >= len(origins) or pointer * size > len(image):
+            raise ValueError('overflow chain exceeds available snapshot')
+        page = image[(pointer - 1) * size:pointer * size]
+        take = min(remaining, usable - 4)
+        pages.append(pointer)
+        sources.append(f'page {pointer}: {origins[pointer]}')
+        chunks.append(page[4:4 + take])
+        remaining -= take
+        pointer = int.from_bytes(page[:4], 'big')
+        if not remaining and pointer:
+            raise ValueError('overflow chain has an extra link')
+    return b''.join(chunks), pages, sources
+
+
+def local_payload_size(payload, usable, table_leaf=True):
+    maximum = usable - 35 if table_leaf else ((usable - 12) * 64) // 255 - 23
+    minimum = ((usable - 12) * 32) // 255 - 23
+    candidate = minimum + ((payload - minimum) % (usable - 4))
+    return payload if payload <= maximum else (candidate if candidate <= maximum else minimum)
+
+
+def shared_overflow_pages(snapshot):
+    """Reject chain pages referenced by multiple schema-rooted table/index cells."""
+    image, size, usable, origins, tree = snapshot
+    owners = {}
+    for number in tree:
+        page = image[(number - 1) * size:number * size]
+        start = 100 if number == 1 else 0
+        kind = page[start]
+        if kind not in (2, 10, 13):
+            continue
+        header = 12 if kind == 2 else 8
+        count = int.from_bytes(page[start + 3:start + 5], 'big')
+        pointer_end = start + header + count * 2
+        if pointer_end > usable:
+            continue
+        for index in range(count):
+            try:
+                offset = start + header + index * 2
+                ptr = int.from_bytes(page[offset:offset + 2], 'big')
+                if not pointer_end <= ptr < usable:
+                    continue
+                payload, pos = _read_varint(page, ptr + (4 if kind == 2 else 0), usable)
+                if kind == 13:
+                    _, pos = _read_varint(page, pos, usable)
+                local = local_payload_size(payload, usable, table_leaf=kind == 13)
+                if payload <= local or pos + local + 4 > usable:
+                    continue
+                pointer = int.from_bytes(page[pos + local:pos + local + 4], 'big')
+                linked = set()
+                # Ownership is conservative even for incomplete/oversized payloads.
+                # Do not discard partial links when payload reconstruction would fail.
+                while pointer in origins and pointer not in tree and pointer not in linked:
+                    if pointer * size > len(image) or len(linked) >= len(origins):
+                        break
+                    linked.add(pointer)
+                    owners.setdefault(pointer, set()).add((number, index))
+                    offset = (pointer - 1) * size
+                    pointer = int.from_bytes(image[offset:offset + 4], 'big')
+            except ValueError:
+                continue
+    return {page for page, cells in owners.items() if len(cells) > 1}
+
+
+def parse_leaf_records(page, columns, usable_size, rowid_alias=None, snapshot=None):
+    records, failures = [], []
+    claimed_overflow = set()
     if len(page) < 8 or page[0] != 13:
         return records, ['unsupported interior/child-page layout']
     cells = int.from_bytes(page[3:5], 'big')
@@ -109,38 +189,53 @@ def parse_leaf_records(page, columns, usable_size, rowid_alias=None):
             payload, pos = _read_varint(page, ptr, usable_size)
             rowid, pos = _read_varint(page, pos, usable_size)
             rowid = rowid - (1 << 64) if rowid >= 1 << 63 else rowid
-            # Table-leaf payloads larger than this use overflow pages.
-            if payload > usable_size - 35 or pos + payload > usable_size:
-                raise ValueError('unsupported overflow or truncated payload')
-            payload_end = pos + payload
-            header_start = pos
-            header_size, pos = _read_varint(page, pos, payload_end)
-            header_end = header_start + header_size
-            if not pos <= header_end <= payload_end:
+            if payload > MAX_RECORD_PAYLOAD:
+                raise ValueError('record payload exceeds 16 MiB recovery limit')
+            local = local_payload_size(payload, usable_size)
+            if pos + local + (4 if local < payload else 0) > usable_size:
+                raise ValueError('truncated local payload/overflow pointer')
+            content = bytes(page[pos:pos + local])
+            overflow_pages, overflow_sources = [], []
+            if local < payload:
+                if snapshot is None:
+                    raise ValueError('overflow snapshot unavailable')
+                pointer = int.from_bytes(page[pos + local:pos + local + 4], 'big')
+                extra, overflow_pages, overflow_sources = overflow_payload(pointer, payload - local, snapshot)
+                shared = set(overflow_pages).intersection(claimed_overflow)
+                claimed_overflow.update(overflow_pages)
+                if shared:
+                    records[:] = [record for record in records
+                                  if not shared.intersection(record['_overflow_pages'])]
+                    raise ValueError('shared overflow page between observed cells')
+                content += extra
+            header_size, pos = _read_varint(content, 0, payload)
+            if not pos <= header_size <= payload:
                 raise ValueError('invalid record header bounds')
             serials = []
-            while pos < header_end:
-                serial, pos = _read_varint(page, pos, header_end)
+            while pos < header_size:
+                serial, pos = _read_varint(content, pos, header_size)
                 serials.append(serial)
             if len(serials) != len(columns):
                 raise ValueError('record/schema column-count mismatch')
             record = {}
             for column, serial in zip(columns, serials):
-                record[column], pos = _decode_value(page, pos, serial, payload_end)
-            if pos != payload_end:
+                record[column], pos = _decode_value(content, pos, serial, payload)
+            if pos != payload:
                 raise ValueError('record payload length mismatch')
             if rowid_alias is not None:
                 if record[rowid_alias] is not None:
                     raise ValueError('non-NULL integer-primary-key alias payload')
                 record[rowid_alias] = rowid
             record['_cell_offset'] = ptr
+            record['_overflow_pages'] = overflow_pages
+            record['_overflow_sources'] = overflow_sources
             records.append(record)
         except (ValueError, struct.error) as exc:
             failures.append(f'cell {index}: {exc}')
     return records, failures
 
 
-def reachable_table_leaves(image, root, page_size, usable_size):
+def reachable_table_leaves(image, root, page_size, usable_size, all_pages=False):
     """Prove ownership using only the current replay image's table tree."""
     pages = len(image) // page_size
     pending, visited, leaves = [root], set(), set()
@@ -184,9 +279,38 @@ def reachable_table_leaves(image, root, page_size, usable_size):
             ranges.sort()
             if any(right[0] < left[1] for left, right in zip(ranges, ranges[1:])):
                 raise ValueError('overlapping interior cells')
-        return leaves, None
+        return (visited if all_pages else leaves), None
     except (ValueError, IndexError) as exc:
         return set(), f'unproven table ownership: {exc}'
+
+
+def btree_page_numbers(image, roots, size, usable):
+    """Identify schema-rooted table/index pages that cannot hold overflow bytes."""
+    pending, visited = list(roots | {1}), set()
+    pages = len(image) // size
+    while pending:
+        number = pending.pop()
+        if number in visited or not 1 <= number <= pages:
+            raise ValueError('ambiguous schema b-tree page ownership')
+        visited.add(number)
+        page = image[(number - 1) * size:number * size]
+        start = 100 if number == 1 else 0
+        kind = page[start]
+        if kind not in (2, 5, 10, 13):
+            raise ValueError('unresolved schema b-tree page')
+        if kind in (2, 5):
+            cells = int.from_bytes(page[start + 3:start + 5], 'big')
+            pointer_end = start + 12 + 2 * cells
+            if pointer_end > usable:
+                raise ValueError('truncated schema b-tree pointer array')
+            pending.append(int.from_bytes(page[start + 8:start + 12], 'big'))
+            for index in range(cells):
+                offset = start + 12 + 2 * index
+                ptr = int.from_bytes(page[offset:offset + 2], 'big')
+                if not pointer_end <= ptr <= usable - 4:
+                    raise ValueError('invalid schema b-tree child pointer')
+                pending.append(int.from_bytes(page[ptr:ptr + 4], 'big'))
+    return visited
 
 
 def _snapshot_schema(image):
@@ -220,7 +344,9 @@ def _snapshot_schema(image):
                         'place_id', 'observed_user_id', 'creator_id'}
             if not required.issubset(columns):
                 return None
-            return table[0], columns, alias, unsupported
+            roots = {row[0] for row in db.execute(
+                "SELECT rootpage FROM sqlite_master WHERE rootpage > 0")}
+            return table[0], columns, alias, unsupported, roots
         except sqlite3.Error:
             return None
         finally:
@@ -256,6 +382,8 @@ def recover_wal_observations(main_path, wal_path):
     frames, remainder = divmod(len(data) - 32, frame_size)
     max_page = len(image) // page_size + frames
     unresolved = 0
+    origins = {page: f'main payload offset {(page - 1) * page_size + 4}'
+               for page in range(1, len(image) // page_size + 1)}
     for index in range(frames):
         offset = 32 + index * frame_size
         frame = data[offset:offset + frame_size]
@@ -273,22 +401,34 @@ def recover_wal_observations(main_path, wal_path):
         if len(image) < end:
             image.extend(bytes(end - len(image)))
         image[(page_number - 1) * page_size:end] = frame[24:]
+        origins[page_number] = f'WAL frame {number} payload offset {offset + 28}'
         schema = _snapshot_schema(image)
         if not schema:
             unresolved += 1
             continue
-        root, columns, alias, unsupported_pk = schema
+        root, columns, alias, unsupported_pk, roots = schema
         if unsupported_pk:
             diagnostic(f'frame {number}: unsupported INTEGER PRIMARY KEY record layout')
             continue
         usable = page_size - image[20]
-        leaves, ownership_failure = reachable_table_leaves(image, root, page_size, usable)
+        tree_pages, ownership_failure = reachable_table_leaves(
+            image, root, page_size, usable, all_pages=True)
         if ownership_failure:
             diagnostic(f'frame {number}: {ownership_failure}')
             continue
-        if page_number not in leaves:
+        if page_number not in tree_pages or frame[24] != 13:
             continue
-        records, failures = parse_leaf_records(frame[24:], columns, usable, alias)
+        try:
+            forbidden = btree_page_numbers(image, roots, page_size, usable)
+        except ValueError as exc:
+            diagnostic(f'frame {number}: {exc}')
+            continue
+        snapshot = (image, page_size, usable, origins, forbidden)
+        shared = shared_overflow_pages(snapshot)
+        if shared:
+            diagnostic(f'frame {number}: shared overflow pages {sorted(shared)}')
+            snapshot = (image, page_size, usable, origins, forbidden | shared)
+        records, failures = parse_leaf_records(frame[24:], columns, usable, alias, snapshot)
         for failure in failures:
             diagnostic(f'frame {number}, page {page_number}: {failure}')
         for record in records:
@@ -324,7 +464,7 @@ def Life360_NoShowAlerts(context):
                 for row in records:
                     data_list.append((_date(row[0], 1000), _date(row[1], 1_000_000_000),
                                       row[7], row[0], row[1], *row[2:7], 'Live', '', '', '',
-                                      relative, ''))
+                                      relative, '', '', ''))
             except sqlite3.Error as exc:
                 logfunc(f'Life360_NoShowAlerts DB error for {relative}: {exc}')
             finally:
@@ -343,11 +483,14 @@ def Life360_NoShowAlerts(context):
                                   *[record.get(key) for key in ('trigger_condition', 'type',
                                     'place_id', 'observed_user_id', 'creator_id')],
                                   'Recovered from WAL', f'WAL Frame {record["_wal_frame"]}',
-                                  record['_wal_offset'], record['_wal_page'], relative, wal_relative))
+                                  record['_wal_offset'], record['_wal_page'], relative, wal_relative,
+                                  ', '.join(str(page) for page in record['_overflow_pages']),
+                                  '; '.join(record['_overflow_sources'])))
     data_headers = (
         ('Last Updated', 'datetime'), ('Run At', 'datetime'), 'Alert ID',
         'Raw Last Updated', 'Raw Run At', 'Trigger Condition', 'Type',
         'Place ID', 'Observed User ID', 'Creator ID', 'Source', 'WAL Location',
-        'WAL Offset', 'WAL Page', 'Source File', 'WAL Source File'
+        'WAL Offset', 'WAL Page', 'Source File', 'WAL Source File',
+        'Overflow Pages', 'Overflow Page Sources'
     )
     return data_headers, data_list, '\n'.join(sources)
