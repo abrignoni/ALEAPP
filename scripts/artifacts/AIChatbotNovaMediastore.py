@@ -1,35 +1,18 @@
 __artifacts_v2__ = {
     "nova_user_submissions": {
-        "name": "User Media Submissions",
-        "description": "Media the Nova app recorded, matched to the path the Android MediaStore index holds for each file, with the app's shared media folder swept for files no record names.",
-        "author": "Guilherme Guilherme",
+        "name": "Nova Media Records",
+        "description": "Nova document/image records and discovered app-folder files. Filename candidates retain MediaStore/filesystem sources and Android user scope; they do not establish attachment identity.",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-05-30",
-        "last_update_date": "2026-09-19",
+        "last_update_date": "2026-10-05",
         "requirements": "none",
         "category": "AI Chatbot - Nova",
-        "notes": (
-            "Integrates chat-ai.db history with filesystem discovery; chat-ai.db holds "
-            "text records only, not the media bytes. A path is shown when a MediaStore "
-            "row has the same file name; the match is on the name alone and does not "
-            "establish that the path is this record's file. Not in MediaStore means no "
-            "row had that name. Document and Image rows are every document and image "
-            "record in chat-ai.db, whichever side of the conversation the message belongs "
-            "to, so a row does not establish that a person submitted the file. Orphaned "
-            "Media rows are files under the app's shared media folder that no record "
-            "names. The MIME column is the "
-            "value "
-            "the database records where present and blank otherwise; the file bytes are "
-            "not sniffed. An extraction can carry one copy of each database per Android "
-            "user and every copy is read. The committed test case carries no file under "
-            "the app's shared media folder, so the filesystem sweep and the media column "
-            "are code present and unexercised by it. Developed against the author's own "
-            "installation; no registered corpus image carries this app."
-        ),
+        "notes": "Original parser/research: Guilherme Guilherme. Scope describes the source evidence path, not ownership of a recorded device path. Both message sides are retained; Message Type is the stored value. Matching retains the existing case-insensitive filename comparison. Same-user evidence scope narrows filename candidates but does not prove attachment identity; unknown and other scopes are explicit. Media Candidate renders only a unique same-scope filesystem filename candidate with no unknown-scope collision. Ambiguous/unmatched app-folder files are reported separately, without a submission/deletion claim. MIME is stored, not sniffed. Epoch interpretation is unchanged. The author reference is an own-installation fixture, not a registered corpus sample; positive real-corpus/physical-media coverage is unavailable.",
         "paths": (
             "**/com.scaleup.chatai/databases/chat-ai.db",
             "**/com.android.providers.media/databases/external*.db",
             "**/com.google.android.providers.media.module/databases/external*.db",
-            "**/data/media/0/Android/media/com.scaleup.chatai/Nova/*",
+            "**/data/media/*/Android/media/com.scaleup.chatai/Nova/*",
         ),
         "output_types": ["standard", "lava"],
         "artifact_icon": "folder",
@@ -48,7 +31,10 @@ from scripts.ilapfuncs import (
     open_sqlite_db_readonly,
 )
 
-NOVA_MEDIA_DIR = "Android/media/com.scaleup.chatai/Nova"
+from scripts.artifacts.novaMediaCandidates import (
+    filesystem_candidates, mediastore_candidates, namespace,
+    describe_candidates, unique_file_candidate,
+)
 
 
 def _epoch_to_utc(value):
@@ -68,135 +54,69 @@ def _epoch_to_utc(value):
         return ''
 
 
-def _media_lookup(media_dbs):
-    """File name to recorded device path, from every MediaStore database read.
-
-    A MediaStore database is present whether or not Nova is installed, and some
-    builds carry no files table, so a failed lookup must not end the artifact.
-    """
-    lookup = {}
-    for media_db in media_dbs:
-        try:
-            with open_sqlite_db_readonly(media_db) as db:
-                cur = db.cursor()
-                cur.execute("SELECT _display_name, _data FROM files WHERE _data IS NOT NULL")
-                for name, path in cur.fetchall():
-                    key = (name or os.path.basename(str(path))).lower()
-                    lookup[key] = path
-        except sqlite3.Error as exc:
-            logfunc(f"Nova user submissions - MediaStore lookup unavailable ({exc})")
-    return lookup
-
-
 @artifact_processor
 def nova_user_submissions(context):
     headers = (
-        "File Name",
-        "Type",
-        "Context",
-        ("Date", "datetime"),
-        "MIME",
-        ("Media", "media"),
-        "Path",
+        ("Date", "datetime"), "File Name", "Type", "Context", "MIME",
+        ("Media Candidate", "media"), "MediaStore Candidate Paths",
+        "MediaStore Candidate Sources", "MediaStore Match Scope",
+        "Filesystem Candidate Paths", "Filesystem Candidate Sources",
+        "Filesystem Match Scope", "Message Type", "Source File"
     )
-
-    # unique_files collapses the data/data, data/user/0 and data_mirror views of one
-    # file and keeps a second Android user's own copy, so both users are reported.
-    files_found = [str(f) for f in unique_files(context)]
-    nova_dbs = sorted(f for f in files_found if os.path.basename(f) == "chat-ai.db")
-    media_dbs = sorted(
-        f for f in files_found
-        if os.path.basename(f).startswith("external") and f.endswith(".db")
-    )
-
-    all_items = []
-    sources = []
-    processed_paths = set()
-
-    # Files the extraction carries under the app's shared media folder, by name
-    nova_files_lookup = {
-        os.path.basename(f).lower(): f for f in files_found if NOVA_MEDIA_DIR in f
-    }
-
-    media_lookup = _media_lookup(media_dbs)
-    sources.extend(media_dbs)
-
-    for nova_db in nova_dbs:
-        with open_sqlite_db_readonly(nova_db) as db:
-            cur = db.cursor()
-
-            cur.execute(
-                "SELECT hdd.name, hdd.mimeType, hd.text, hd.createdAt "
-                "FROM HistoryDetailDocument hdd "
-                "INNER JOIN HistoryDetail hd ON hd.id = hdd.historyDetailID"
-            )
-            for name, mime, msg, ts in cur.fetchall():
-                key = (name or "").lower()
-                dev_path = media_lookup.get(key)
-                media_ref = ""
-                ext_path = nova_files_lookup.get(key)
-                if ext_path:
-                    media_ref = check_in_media(ext_path, name=name) or ''
-                    processed_paths.add(ext_path)
-
-                all_items.append(
-                    (
-                        name,
-                        "Document",
-                        msg,
-                        _epoch_to_utc(ts),
-                        mime or "",
-                        media_ref,
-                        dev_path or "Not in MediaStore",
-                    )
-                )
-
-            cur.execute(
-                "SELECT hdi.url, hdi.prompt, hd.text, hd.createdAt "
-                "FROM HistoryDetailImage hdi "
-                "INNER JOIN HistoryDetail hd ON hd.id = hdi.historyDetailID"
-            )
-            for url, prompt, msg, ts in cur.fetchall():
-                fname = os.path.basename(str(url).split("?")[0])
-                key = fname.lower()
-                dev_path = media_lookup.get(key)
-                media_ref = ""
-                ext_path = nova_files_lookup.get(key)
-                if ext_path:
-                    media_ref = check_in_media(ext_path, name=fname) or ''
-                    processed_paths.add(ext_path)
-
-                all_items.append(
-                    (
-                        fname,
-                        "Image",
-                        f"Msg: {msg} | Prompt: {prompt}",
-                        _epoch_to_utc(ts),
-                        "",
-                        media_ref,
-                        dev_path or "Not in MediaStore",
-                    )
-                )
-
-        sources.append(nova_db)
-
-    # Files in the app's shared media folder that no database record named
-    for file_path in sorted(nova_files_lookup.values()):
-        if file_path in processed_paths:
+    files = [str(path) for path in unique_files(context)]
+    nova_dbs = sorted(path for path in files if os.path.basename(path) == 'chat-ai.db')
+    media_dbs = sorted(path for path in files
+                       if os.path.basename(path).startswith('external') and path.endswith('.db'))
+    filesystem = filesystem_candidates(context, files)
+    store = mediastore_candidates(context, media_dbs)
+    rows, processed, sources = [], set(), [context.get_relative_path(p) for p in media_dbs]
+    for path in nova_dbs:
+        source = context.get_relative_path(path)
+        scope = namespace(source)
+        sources.append(source)
+        db = open_sqlite_db_readonly(path)
+        if db is None:
+            logfunc(f'Nova Media Records database unavailable for {source}')
             continue
-        fname = os.path.basename(file_path)
-        media_ref = check_in_media(file_path, name=fname) or ''
-        all_items.append(
-            (
-                fname,
-                "Orphaned Media",
-                "Found in the app's shared media folder with no database record",
-                None,
-                "",
-                media_ref,
-                context.get_relative_path(file_path),
-            )
-        )
-        sources.append(file_path)
-
-    return headers, all_items, "\n".join(sources)
+        try:
+            queries = [
+                ('Document', 'SELECT hdd.name, hdd.mimeType, hd.text, hd.createdAt, hd.type '
+                 'FROM HistoryDetailDocument hdd INNER JOIN HistoryDetail hd '
+                 'ON hd.id=hdd.historyDetailID'),
+                ('Image', 'SELECT hdi.url, hdi.prompt, hd.text, hd.createdAt, hd.type '
+                 'FROM HistoryDetailImage hdi INNER JOIN HistoryDetail hd '
+                 'ON hd.id=hdi.historyDetailID')]
+            for kind, query in queries:
+                for name, detail, message, timestamp, message_type in db.execute(query):
+                    filename = os.path.basename(str(name).split('?')[0]) if kind == 'Image' else name
+                    key = str(filename or '').lower()
+                    candidates = filesystem.get(key, [])
+                    selected = unique_file_candidate(candidates, scope)
+                    reference = ''
+                    if selected:
+                        reference = check_in_media(selected['extracted'],
+                                                   name=os.path.basename(selected['extracted'])) or ''
+                        processed.add(selected['extracted'])
+                    context_text = f'Msg: {message} | Prompt: {detail}' if kind == 'Image' else message
+                    rows.append((_epoch_to_utc(timestamp), filename, kind, context_text,
+                                 detail or '' if kind == 'Document' else '', reference,
+                                 *describe_candidates(store.get(key, []), scope),
+                                 *describe_candidates(candidates, scope), message_type, source))
+        except sqlite3.Error as exc:
+            logfunc(f'Nova Media Records query unavailable for {source}: {exc}')
+        finally:
+            db.close()
+    # Retain physical candidates that could not be uniquely associated by filename.
+    for key in sorted(filesystem):
+        candidates = filesystem[key]
+        for item in sorted(candidates, key=lambda value: value['source']):
+            if item['extracted'] in processed:
+                continue
+            filename = os.path.basename(item['extracted'])
+            reference = check_in_media(item['extracted'], name=filename) or ''
+            rows.append((None, filename, 'Filesystem Media',
+                         'Discovered app-folder file; attachment identity is unestablished', '',
+                         reference, *describe_candidates(store.get(filename.lower(), []), item['scope']),
+                         *describe_candidates([item], item['scope']), None, item['source']))
+            sources.append(item['source'])
+    return headers, rows, '\n'.join(sorted(set(sources)))
