@@ -1,13 +1,23 @@
 __artifacts_v2__ = {
     "get_log": {
-        "name": "GarminLog",
-        "description": "Reports values from lines of the first matched Garmin Connect app.log that contain access_token, expires_in, refresh_token, token_type, id_token or Authorization. The first Authorization line is split into its own name=value pairs. A later line replaces an earlier value for the same name. No tested image produced a row.",
-        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "name": "Garmin - Matching Log Lines",
+        "description": "Reports matching lines from Garmin Connect app.log inputs, with line numbers and evidence sources. Case-sensitive matches use access_token, expires_in, refresh_token, token_type, id_token and Authorization; rows are log-line evidence, not decoded credentials.",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}, @AlexisBrignoni, Codex",
         "creation_date": "2023-02-24",
-        "last_update_date": "2023-02-24",
+        "last_update_date": "2026-10-05",
         "requirements": "Python 3.7 or higher",
         "category": "Garmin",
-        "notes": "",
+        "notes": "One row represents one LF-delimited source line containing any listed attribute; "
+                 "all matched attributes are listed without splitting values or inferring a timestamp. "
+                 "Repeated lines and later Authorization records remain separate. Line terminators "
+                 "are retained in Log Line and Raw Line Bytes (hex). UTF-8 display escapes invalid "
+                 "bytes with backslash notation; the hex column preserves the exact original bytes "
+                 "and distinguishes invalid bytes from literal escape text. Text Decoding identifies "
+                 "this condition. Canonical storage aliases use a preferred evidence path; rotations, "
+                 "other Android users and distinct evidence roots remain separate. Read failures are "
+                 "logged by evidence source and other logs continue. No timestamp, credential validity "
+                 "or account/event meaning is inferred. The registered pixel7a sample contains a log "
+                 "but no matching lines; positive real matching-line coverage remains unavailable.",
         "paths": ('*/com.garmin.android.apps.connectmobile/files/logs/app.log*',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "activity",
@@ -17,36 +27,42 @@ __artifacts_v2__ = {
     }
 }
 
+from pathlib import Path
+
+from scripts.artifacts.storagePathViews import unique_files
 from scripts.ilapfuncs import artifact_processor, logfunc
+
+ATTRIBUTES = ('access_token', 'expires_in', 'refresh_token', 'token_type', 'id_token',
+              'Authorization')
 
 
 @artifact_processor
 def get_log(context):
-    files_found = context.get_files_found()
-    user_info = {}
-    attribute = ["access_token", "expires_in", "refresh_token", "token_type", "id_token", "Authorization"]
-    auth = False
-    logfunc("Processing data for Garmin Logs")
-    source_path = str(files_found[0])
-    logfunc("Processing file: " + source_path)
-
-    with open(source_path, "r", encoding='utf-8', errors='replace') as f:
-        for line in f:
-            for i in attribute:
-                if i in line:
-                    if i == "Authorization" and auth is False:
-                        value = line.split(":")[1].strip().split(",")
-                        for j in value:
-                            j = j.split("=")
-                            user_info[j[0].strip()] = j[1].strip()
-                        auth = True
-                    else:
-                        value = line.split(":")[1].strip().replace('"', '').replace(',', '')
-                        user_info[i] = value
-
     data_list = []
-    for key, value in user_info.items():
-        data_list.append((key, value))
-
-    data_headers = ('Name', 'Value')
-    return data_headers, data_list, source_path
+    source_paths = []
+    files = sorted(unique_files(context), key=context.get_relative_path)
+    for file_found in files:
+        file_found = str(file_found)
+        if not Path(file_found).name.startswith('app.log'):
+            continue
+        relative = context.get_relative_path(file_found)
+        try:
+            with open(file_found, 'rb') as stream:
+                source_paths.append(file_found)
+                for line_number, raw_line in enumerate(stream, 1):
+                    matched = [name for name in ATTRIBUTES if name.encode('ascii') in raw_line]
+                    if not matched:
+                        continue
+                    try:
+                        line = raw_line.decode('utf-8')
+                        decoding = 'UTF-8'
+                    except UnicodeDecodeError:
+                        line = raw_line.decode('utf-8', errors='backslashreplace')
+                        decoding = 'Invalid UTF-8 bytes escaped; original bytes in hex'
+                    data_list.append((line_number, ', '.join(matched), line, raw_line.hex(),
+                                      decoding, relative))
+        except OSError as error:
+            logfunc(f'Garmin log read error for {relative}: {error.strerror or type(error).__name__}')
+    data_headers = ('Line Number', 'Matched Attributes', 'Log Line (as stored)',
+                    'Raw Line Bytes (hex)', 'Text Decoding', 'Source File')
+    return data_headers, data_list, '\n'.join(source_paths)
