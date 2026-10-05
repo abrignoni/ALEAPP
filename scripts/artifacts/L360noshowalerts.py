@@ -13,7 +13,8 @@ __artifacts_v2__ = {
                  'the schema of a main-file plus WAL-prefix replay copy. They are not evidence '
                  'of deletion or transaction commitment, and repetitions are retained. Only '
                  'table leaves proven reachable from the snapshot root are supported, including '
-                 'INTEGER PRIMARY KEY aliases proven by schema/index metadata. Ambiguous primary keys, '
+                 'INTEGER PRIMARY KEY aliases proven by schema/index metadata. Other primary-key values '
+                 'in rowid tables are decoded as stored. WITHOUT ROWID index-format records, '
                  'unresolved schemas/ownership and incomplete/cyclic/shared overflow chains are skipped. '
                  'Complete inline or overflow payloads up to 16 MiB are recovered from available prefix '
                  'pages only. Overflow Page Sources records main/WAL page origins separately from '
@@ -35,7 +36,6 @@ import datetime
 from pathlib import Path
 import sqlite3
 import struct
-import re
 import tempfile
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, logfunc
@@ -336,17 +336,14 @@ def _snapshot_schema(image):
             pk_index = any(row[3] == 'pk' for row in db.execute(
                 'PRAGMA index_list(no_show_alerts)'))
             alias = (primary[0][1] if len(primary) == 1 and
-                     primary[0][2].upper() == 'INTEGER' and not pk_index and
-                     not re.search(r'\bDESC\b', table[1], re.IGNORECASE) else None)
-            unsupported = alias is None and (len(primary) > 1 or any(
-                row[2].upper() in ('INTEGER', 'INT') for row in primary))
+                     primary[0][2].upper() == 'INTEGER' and not pk_index else None)
             required = {'id', 'last_updated', 'run_at', 'trigger_condition', 'type',
                         'place_id', 'observed_user_id', 'creator_id'}
             if not required.issubset(columns):
                 return None
             roots = {row[0] for row in db.execute(
                 "SELECT rootpage FROM sqlite_master WHERE rootpage > 0")}
-            return table[0], columns, alias, unsupported, roots
+            return table[0], columns, alias, roots
         except sqlite3.Error:
             return None
         finally:
@@ -406,10 +403,7 @@ def recover_wal_observations(main_path, wal_path):
         if not schema:
             unresolved += 1
             continue
-        root, columns, alias, unsupported_pk, roots = schema
-        if unsupported_pk:
-            diagnostic(f'frame {number}: unsupported INTEGER PRIMARY KEY record layout')
-            continue
+        root, columns, alias, roots = schema
         usable = page_size - image[20]
         tree_pages, ownership_failure = reachable_table_leaves(
             image, root, page_size, usable, all_pages=True)

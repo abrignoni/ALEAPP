@@ -36,19 +36,55 @@ class TestLife360WalChildren(unittest.TestCase):
                 self.assertEqual([r['id'] for r in rows], [identifier, identifier])
                 self.assertTrue(all(r['trigger_condition'] == 'trigger' for r in rows))
 
-    def test_ambiguous_primary_key_layouts_are_not_guessed(self):
+    def test_ordinary_primary_keys_preserve_stored_values(self):
         with tempfile.TemporaryDirectory() as root:
             layouts = [('id INTEGER PRIMARY KEY DESC', None),
                        ('id INT PRIMARY KEY', None),
                        ('id INTEGER', 'PRIMARY KEY(id,type)')]
             for index, (declaration, tail) in enumerate(layouts):
                 main = create_pair(root, str(index), integer_pk=True,
-                                   pk_declaration=declaration, pk_tail=tail)
+                                   pk_declaration=declaration, pk_tail=tail, rowid_value=-7)
                 with patch.object(module, 'logfunc') as log:
                     rows = module.recover_wal_observations(main, Path(str(main)+'-wal'))
-                self.assertEqual(rows, [])
-                self.assertTrue(any('PRIMARY KEY' in call.args[0]
-                                    for call in log.call_args_list))
+                self.assertEqual([row['id'] for row in rows], [-7, -7])
+                self.assertFalse(any('PRIMARY KEY' in call.args[0]
+                                     for call in log.call_args_list))
+                connection = sqlite3.connect(main.as_uri()+'?mode=ro', uri=True)
+                self.assertEqual(connection.execute('SELECT rowid,id FROM no_show_alerts')
+                                 .fetchone(), (1, -7))
+                connection.close()
+
+    def test_table_constraint_desc_is_a_proven_rowid_alias(self):
+        with tempfile.TemporaryDirectory() as root:
+            main = create_pair(root, integer_pk=True, rowid_value=-7,
+                               pk_declaration='id INTEGER', pk_tail='PRIMARY KEY(id DESC)')
+            with patch.object(module, 'logfunc'):
+                rows = module.recover_wal_observations(main, Path(str(main)+'-wal'))
+            self.assertEqual([row['id'] for row in rows], [-7, -7])
+            connection = sqlite3.connect(main.as_uri()+'?mode=ro', uri=True)
+            self.assertEqual(connection.execute('SELECT rowid,id FROM no_show_alerts')
+                             .fetchone(), (-7, -7))
+            connection.close()
+
+    def test_null_ordinary_key_is_not_replaced_by_hidden_rowid(self):
+        with tempfile.TemporaryDirectory() as root:
+            main = create_pair(root, integer_pk=True, rowid_value=None,
+                               pk_declaration='id INT PRIMARY KEY')
+            with patch.object(module, 'logfunc'):
+                rows = module.recover_wal_observations(main, Path(str(main)+'-wal'))
+            self.assertEqual([row['id'] for row in rows], [None, None])
+
+    def test_without_rowid_recovery_remains_explicitly_deferred(self):
+        with tempfile.TemporaryDirectory() as root:
+            main = create_pair(root, integer_pk=True, rowid_value=-7, without_rowid=True)
+            with patch.object(module, 'logfunc') as log:
+                rows = module.recover_wal_observations(main, Path(str(main)+'-wal'))
+            self.assertEqual(rows, [])
+            self.assertTrue(any('resolvable alert schema' in call.args[0]
+                                for call in log.call_args_list))
+            connection = sqlite3.connect(main.as_uri()+'?mode=ro', uri=True)
+            self.assertEqual(connection.execute('SELECT id FROM no_show_alerts').fetchone(), (-7,))
+            connection.close()
 
     def test_invalid_ownership_graph_and_unrelated_leaf(self):
         with tempfile.TemporaryDirectory() as root:

@@ -13,7 +13,7 @@ COLUMNS = ('id', 'type', 'last_updated', 'trigger_condition', 'critical_alert', 
            'place_id', 'observed_user_id', 'creator_id', 'circle_id', 'daily')
 
 
-def create_pair(root, user='0', reordered=False, count=1, overflow=False, schema_change=False, repeated=False, page_size=512, integer_pk=False, rowid_value=1, checkpoint_tree=False, pk_declaration=None, pk_tail=None):
+def create_pair(root, user='0', reordered=False, count=1, overflow=False, schema_change=False, repeated=False, page_size=512, integer_pk=False, rowid_value=1, checkpoint_tree=False, pk_declaration=None, pk_tail=None, without_rowid=False):
     directory = Path(root)/f'data/user/{user}/com.life360.android.safetymapd/databases'
     directory.mkdir(parents=True, exist_ok=True)
     target = directory/'NoShowAlertRoomDatabase'
@@ -33,7 +33,8 @@ def create_pair(root, user='0', reordered=False, count=1, overflow=False, schema
                         for c in columns]
         if pk_tail:
             declarations.append(pk_tail)
-        db.execute('CREATE TABLE no_show_alerts ('+','.join(declarations)+')')
+        db.execute('CREATE TABLE no_show_alerts ('+','.join(declarations)+')'+
+                   (' WITHOUT ROWID' if without_rowid else ''))
         db.commit()
         for index in range(count):
             identifier = (index + 1 if count > 1 else rowid_value) if integer_pk else (
