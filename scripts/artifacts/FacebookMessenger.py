@@ -90,8 +90,9 @@ __artifacts_v2__ = {
                  "column except Source File takes part in the merge key. Rows come from the "
                  "call_log table. Call Direction shows Outgoing for a stored call_direction of 1 "
                  "and Incoming for 2. Video Call shows Yes for a stored call_media_type of 2. The "
-                 "Call Answered column shows the stored has_been_seen value, No for 0 and Yes for "
-                 "1. No source for these three mappings was found and they were not tested "
+                 "Has Been Seen (as stored) column holds call_log.has_been_seen without a label; "
+                 "its meaning and any answered-call interpretation are not established. "
+                 "No source for the direction and media mappings was found and they were not tested "
                  "against known calls, so what each stored value means is not established. On "
                  "pixel7a_a14 (8 rows) and hc_pixel8pro_a16 (2 rows) the 3 rows with has_been_seen "
                  "0 all carried a Call Duration above zero. Party Name is the contacts name whose "
@@ -444,7 +445,7 @@ def get_fb_msys_calls(context):
             contacts.name,
             CASE call_log.call_direction WHEN 1 THEN "Outgoing" WHEN 2 THEN "Incoming" END,
             CASE call_log.call_media_type WHEN 2 THEN "Yes" ELSE "" END,
-            CASE has_been_seen WHEN 0 THEN 'No' WHEN 1 THEN 'Yes' END,
+            call_log.has_been_seen,
             call_log.thread_key
         FROM call_log
         LEFT JOIN contacts ON contacts.id = call_log.thread_key
@@ -455,7 +456,7 @@ def get_fb_msys_calls(context):
         db.close()
 
     data_headers = (('Call Timestamp', 'datetime'), 'Call Duration', 'Party Name', 'Call Direction',
-                    'Video Call', 'Call Answered', 'Thread Key', 'Source File')
+                    'Video Call', 'Has Been Seen (as stored)', 'Thread Key', 'Source File')
     return data_headers, _merge_by_source(data_list), source
 
 
