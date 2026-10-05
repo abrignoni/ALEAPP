@@ -182,10 +182,10 @@ __artifacts_v2__ = {
         "notes": "Not exercised: the artifact produced no rows on the four images listed in "
                  "sample_data. Rows are messages whose generic_admin_message_extensible_data is "
                  "not null; the query does not test that the message is a call. Timestamp is the "
-                 "message time minus the stored call_duration. The columns headed Receiver Name "
-                 "and Receiver ID hold the name and user key from the message's sender field. "
+                 "message time minus the stored call_duration. Sender Name holds messages.sender name; Sender ID holds the stored user_key "
+                 "with its first nine characters removed, preserving the existing projection. No receiver identity is inferred. "
                  "Video Call shows Yes for any stored video value other than false, a missing key "
-                 "included. None of these readings is sourced. Storage aliases are selected by evidence-relative root and Android user, not staged path.",
+                 "included. The video and call-related interpretations are not established. Storage aliases are selected by evidence-relative root and Android user, not staged path.",
         "paths": ('*/*threads_db2',),
         "output_types": "standard",
         "artifact_icon": "phone",
@@ -634,8 +634,8 @@ def get_fb_threads_calls(context):
                               rel))
         db.close()
 
-    data_headers = (('Timestamp', 'datetime'), 'Call Duration', 'Caller ID', 'Receiver Name',
-                    'Receiver ID', 'Video Call', 'Thread Key', 'Source File')
+    data_headers = (('Timestamp', 'datetime'), 'Call Duration', 'Caller ID', 'Sender Name',
+                    'Sender ID', 'Video Call', 'Thread Key', 'Source File')
     return data_headers, data_list, source
 
 
