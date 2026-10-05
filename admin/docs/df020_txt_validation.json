@@ -1,0 +1,138 @@
+{
+  "archive_name": "Android_Logical.zip",
+  "md5": "6bc5cdc147e813f8744c04814a89e18a",
+  "reference_commit": "cabbce1bb8c24bb00bd861af80aac7601c03e5f6",
+  "logs": [
+    {
+      "source": "Android_Logical/sdcard/DJI/dji.go.v4/FlightRecord/DJIFlightRecord_2018-06-19_[14-50-34].txt",
+      "sha256": "0a9f1816d52a98f840f6e67c08a14473ae5a0a2e75e9484d5de66368c4fd4c4a",
+      "version": 11,
+      "record_count": 13896,
+      "record_types": {
+        "40": 2,
+        "22": 569,
+        "1": 3055,
+        "3": 3054,
+        "5": 2884,
+        "13": 5,
+        "14": 4,
+        "17": 2579,
+        "19": 31,
+        "25": 304,
+        "29": 896,
+        "8": 306,
+        "2": 193,
+        "15": 6,
+        "10": 6,
+        "20": 2
+      },
+      "positions": 3055,
+      "outside_publisher_polygon": 0,
+      "utc_dates": [
+        "2018-06-19"
+      ],
+      "salted_june_flight": true,
+      "reference_comparisons": {
+        "xor_payloads": 13896,
+        "osd_records": 3055,
+        "gimbal_records": 3054,
+        "custom_records": 2884,
+        "camera_records": 304,
+        "smart_battery_records": 306,
+        "home_records": 193
+      },
+      "warnings": [
+        "Invalid record length or terminator at offset 555307; stopped"
+      ],
+      "timestamped_count": 13891
+    },
+    {
+      "source": "Android_Logical/sdcard/DJI/dji.go.v4/FlightRecord/DJIFlightRecord_2018-06-19_[18-48-38].txt",
+      "sha256": "ab5bbc58a921d81c323a76c3a9d955fde58d503536facf43306e7e6bbb208c8d",
+      "version": 11,
+      "record_count": 19377,
+      "record_types": {
+        "40": 4,
+        "22": 791,
+        "1": 4141,
+        "5": 3918,
+        "13": 5,
+        "14": 38,
+        "17": 2203,
+        "29": 5895,
+        "19": 42,
+        "25": 413,
+        "3": 1323,
+        "8": 414,
+        "2": 180,
+        "15": 6,
+        "9": 1,
+        "20": 2,
+        "10": 1
+      },
+      "positions": 4141,
+      "outside_publisher_polygon": 0,
+      "utc_dates": [
+        "2018-06-19"
+      ],
+      "salted_june_flight": true,
+      "reference_comparisons": {
+        "xor_payloads": 19377,
+        "osd_records": 4141,
+        "custom_records": 3918,
+        "camera_records": 413,
+        "gimbal_records": 1323,
+        "smart_battery_records": 414,
+        "home_records": 180
+      },
+      "warnings": [
+        "Invalid record length or terminator at offset 630036; stopped"
+      ],
+      "timestamped_count": 19371
+    },
+    {
+      "source": "Android_Logical/sdcard/DJI/dji.pilot/FlightRecord/DJIFlightRecord_2017-10-10_[10-02-22].txt",
+      "sha256": "f134bef34e6877ae5a030297f56ae6e12fe946b468c5143ef9976c08170295f8",
+      "version": 9,
+      "record_count": 21382,
+      "record_types": {
+        "1": 3207,
+        "3": 3207,
+        "4": 3207,
+        "5": 3207,
+        "17": 1,
+        "19": 33,
+        "16": 6260,
+        "6": 641,
+        "2": 320,
+        "8": 320,
+        "11": 320,
+        "13": 6,
+        "14": 320,
+        "15": 6,
+        "25": 320,
+        "10": 2,
+        "9": 3,
+        "20": 2
+      },
+      "positions": 3207,
+      "outside_publisher_polygon": 113,
+      "utc_dates": [
+        "2017-10-10"
+      ],
+      "salted_june_flight": false,
+      "reference_comparisons": {
+        "xor_payloads": 21382,
+        "osd_records": 3207,
+        "gimbal_records": 3207,
+        "rc_records": 3207,
+        "custom_records": 3207,
+        "home_records": 320,
+        "smart_battery_records": 320,
+        "camera_records": 320
+      },
+      "warnings": [],
+      "timestamped_count": 21379
+    }
+  ]
+}

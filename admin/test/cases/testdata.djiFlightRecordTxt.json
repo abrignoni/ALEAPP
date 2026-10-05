@@ -1,0 +1,152 @@
+{
+  "case1": {
+    "description": "Synthetic version 6 and 12 logs: OSD units, Custom UTC timestamps, Gimbal and unknown payloads. Not a real extraction or DF020.",
+    "maker": "Neal (@Blackwater1224)",
+    "make_data": {
+      "input_data_path": "dji_txt_synthetic_input.zip",
+      "os": "Windows-11-10.0.26200-SP0",
+      "timestamp": "2026-10-01T14:09:38.243358",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-01T14:09:38.156639",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "djiFlightRecordTxtRecords": {
+        "search_patterns": [
+          "*/DJI/dji.*/FlightRecord/DJIFlightRecord*.txt",
+          "*/Android/data/dji.go.v4/files/FlightRecord/DJIFlightRecord*.txt",
+          "*/Android/data/dji.pilot/files/FlightRecord/DJIFlightRecord*.txt",
+          "*/Android/data/dji.go.v5/files/FlightRecord/DJIFlightRecord*.txt"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "djiFlightRecordTxtSummary": {
+        "search_patterns": [
+          "*/DJI/dji.*/FlightRecord/DJIFlightRecord*.txt",
+          "*/Android/data/dji.go.v4/files/FlightRecord/DJIFlightRecord*.txt",
+          "*/Android/data/dji.pilot/files/FlightRecord/DJIFlightRecord*.txt",
+          "*/Android/data/dji.go.v5/files/FlightRecord/DJIFlightRecord*.txt"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    },
+    "image_info": {
+      "os_name": "Android",
+      "os_version": "Synthetic fixture; no device OS"
+    }
+  },
+  "case2": {
+    "description": "Public pydjirecord example DJIFlightRecord_2024-09-01_[14-55-49].txt, version 14: local auxiliary metadata and explicit encrypted telemetry status. Source is not DF020; Android-style paths are fixture packaging, not proven acquisition paths.",
+    "maker": "Neal (@Blackwater1224)",
+    "make_data": {
+      "input_data_path": "dji_txt_public_encrypted_input.zip",
+      "os": "Windows-11-10.0.26200-SP0",
+      "timestamp": "2026-10-01T14:09:39.577125",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-01T14:09:39.508547",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "djiFlightRecordTxtRecords": {
+        "search_patterns": [
+          "*/DJI/dji.*/FlightRecord/DJIFlightRecord*.txt",
+          "*/Android/data/dji.go.v4/files/FlightRecord/DJIFlightRecord*.txt",
+          "*/Android/data/dji.pilot/files/FlightRecord/DJIFlightRecord*.txt",
+          "*/Android/data/dji.go.v5/files/FlightRecord/DJIFlightRecord*.txt"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "djiFlightRecordTxtSummary": {
+        "search_patterns": [
+          "*/DJI/dji.*/FlightRecord/DJIFlightRecord*.txt",
+          "*/Android/data/dji.go.v4/files/FlightRecord/DJIFlightRecord*.txt",
+          "*/Android/data/dji.pilot/files/FlightRecord/DJIFlightRecord*.txt",
+          "*/Android/data/dji.go.v5/files/FlightRecord/DJIFlightRecord*.txt"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    },
+    "provenance": {
+      "url": "https://github.com/rembish/pydjirecord/blob/cabbce1bb8c24bb00bd861af80aac7601c03e5f6/examples/DJIFlightRecord_2024-09-01_%5B14-55-49%5D.txt",
+      "license": "MIT; see data/djiFlightRecordTxt/PROVENANCE.md"
+    }
+  },
+  "case3": {
+    "description": "VTO/NIST DF020 Android logical: two DJI GO 4 version 11 logs from June 19 2018 and one older DJI GO version 9 log from October 10 2017. June OSD positions and dates verified against publisher ground truth; all implemented field decodes and payloads independently compared.",
+    "maker": "Neal (@Blackwater1224)",
+    "make_data": {
+      "input_data_path": "Android_Logical.zip",
+      "os": "Windows-11-10.0.26200-SP0",
+      "timestamp": "2026-10-01T14:54:21.196324",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-01T14:54:21.131067",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "djiFlightRecordTxtRecords": {
+        "search_patterns": [
+          "*/DJI/dji.*/FlightRecord/DJIFlightRecord*.txt",
+          "*/Android/data/dji.go.v4/files/FlightRecord/DJIFlightRecord*.txt",
+          "*/Android/data/dji.pilot/files/FlightRecord/DJIFlightRecord*.txt",
+          "*/Android/data/dji.go.v5/files/FlightRecord/DJIFlightRecord*.txt"
+        ],
+        "file_count": 3,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "djiFlightRecordTxtSummary": {
+        "search_patterns": [
+          "*/DJI/dji.*/FlightRecord/DJIFlightRecord*.txt",
+          "*/Android/data/dji.go.v4/files/FlightRecord/DJIFlightRecord*.txt",
+          "*/Android/data/dji.pilot/files/FlightRecord/DJIFlightRecord*.txt",
+          "*/Android/data/dji.go.v5/files/FlightRecord/DJIFlightRecord*.txt"
+        ],
+        "file_count": 3,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    },
+    "image_info": {
+      "os_name": "Android",
+      "os_version": "Not established by dataset sheet"
+    },
+    "provenance": {
+      "publisher_archive": "Android_Logical.zip",
+      "md5": "6bc5cdc147e813f8744c04814a89e18a",
+      "sample_data_key": "df020_mavic_pro_android",
+      "license": "MIT, Copyright (c) 2017 VTO Inc.; see DF020_DATASET_LICENSE.txt"
+    }
+  }
+}
