@@ -27,14 +27,27 @@ import os
 import tarfile
 import hashlib
 import struct
+import zlib
 
 from pathlib import Path
 from scripts.ilapfuncs import *
 from shutil import copy2, copyfileobj
-from zipfile import ZipFile
+from zipfile import ZipFile, BadZipFile
 from fnmatch import _compile_pattern
 from functools import lru_cache
 normcase = lru_cache(maxsize=None)(os.path.normcase)
+
+# A damaged or unsupported member of an otherwise readable zip (bad CRC-32,
+# truncated deflate stream, unsupported compression or encryption).
+_ZIP_MEMBER_ERRORS = (BadZipFile, zlib.error, RuntimeError, NotImplementedError)
+
+
+def _remove_partial(path):
+    try:
+        if path and os.path.isfile(path):
+            os.remove(path)
+    except OSError:
+        pass
 
 def _probe_volume_case_insensitive(folder):
     """True when this folder's volume folds case.
@@ -736,6 +749,11 @@ class FileSeekerZip(FileSeekerBase):
                     except OSError as ex:
                         logfunc(f'Could not write file to filesystem, path was {member} ' + str(ex))
                         continue
+                    except _ZIP_MEMBER_ERRORS as ex:
+                        # One corrupt member must not abort the whole run.
+                        _remove_partial(self._intended_extract_path(member))
+                        logfunc(f'Could not extract corrupt zip member, skipped: {member} ({ex})')
+                        continue
                     self._stage_other_versions(member)
                 else:
                     extracted_path = self.copied[member]
@@ -765,6 +783,9 @@ class FileSeekerZip(FileSeekerBase):
                         f'entry {index} ({info.file_size} bytes) staged as {dest_path}')
             except OSError as ex:
                 logfunc(f'Could not write file to filesystem, path was {member} (entry {index}) ' + str(ex))
+            except _ZIP_MEMBER_ERRORS as ex:
+                _remove_partial(dest_path)
+                logfunc(f'Could not extract corrupt zip member, skipped: {member} (entry {index}) ({ex})')
 
     def _intended_extract_path(self, member):
         clean_member = sanitize_file_path(member)
