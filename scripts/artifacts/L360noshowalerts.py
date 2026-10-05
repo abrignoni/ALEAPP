@@ -3,19 +3,20 @@ __artifacts_v2__ = {
     'Life360_NoShowAlerts': {
         'name': 'Life360 No Show Alerts',
         'description': 'Parses Life360 No Show Alerts including records recovered from WAL',
-        'author': 'Heather Charpentier',
+        'author': '@AlexisBrignoni, Codex',
         'creation_date': '2026-07-01',
-        'last_update_date': '2026-07-01',
+        'last_update_date': '2026-10-05',
         'requirements': 'none',
         'category': 'Life360',
-        'notes': 'Live rows are read from the no_show_alerts table. Rows marked Recovered from WAL '
-                 'are every record found on each copy of database page 4 in the -wal file, one row '
-                 'per record per frame. They are not compared with the live rows, so a recovered '
-                 'row can repeat a live row or an earlier recovered row, and a recovered row is '
-                 'not shown to have been deleted. The page number and the column order are fixed '
-                 'in the code for the schema it was written against. Run At is read as Unix '
-                 'nanoseconds and Last Updated as Unix milliseconds; no source for those units is '
-                 'recorded here.',
+        'notes': 'Original parser by Heather Charpentier. Live rows come from no_show_alerts. '
+                 'WAL rows are observations in salt/checksum-validated frames, resolved using '
+                 'the schema of a main-file plus WAL-prefix replay copy. They are not evidence '
+                 'of deletion or transaction commitment, and repetitions are retained. Only '
+                 'table-root leaf pages with complete inline records are supported; integer primary '
+                 'key, child and overflow layouts or unresolved schemas are skipped with diagnostics. Prefix '
+                 'replay cannot reconstruct pages predating earlier checkpoints. Run At is '
+                 'read as Unix nanoseconds and Last Updated as Unix milliseconds; these units '
+                 'remain unverified. Stored values and evidence provenance are retained.',
         'paths': ('*/com.life360.android.safetymapd/databases/NoShowAlertRoomDatabase*',),
         'output_types': 'standard',
         'artifact_icon': 'alert-triangle',
@@ -26,242 +27,260 @@ __artifacts_v2__ = {
 }
 
 import datetime
+from pathlib import Path
+import sqlite3
 import struct
+import tempfile
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, logfunc
+from scripts.artifacts.storagePathViews import unique_files
 
 
-COL_NAMES = [
-    'id', 'type', 'last_updated', 'trigger_condition',
-    'critical_alert', 'run_at', 'place_id',
-    'observed_user_id', 'creator_id', 'circle_id', 'daily'
-]
-
-
-def _ms_to_utc(value):
-    if not value:
-        return ''
+def _date(value, divisor):
     try:
-        return datetime.datetime.fromtimestamp(int(value) / 1000, datetime.timezone.utc)
+        return datetime.datetime.fromtimestamp(int(value) / divisor, datetime.timezone.utc)
     except (ValueError, OverflowError, OSError, TypeError):
-        return ''
+        return None
 
 
-def _ns_to_utc(value):
-    """run_at is stored in nanoseconds."""
-    if not value:
-        return ''
-    try:
-        return datetime.datetime.fromtimestamp(int(value) / 1_000_000_000, datetime.timezone.utc)
-    except (ValueError, OverflowError, OSError, TypeError):
-        return ''
+def _checksum(data, endian, state=(0, 0)):
+    first, second = state
+    words = struct.unpack(endian + str(len(data) // 4) + 'I', data)
+    for index in range(0, len(words), 2):
+        first = (first + words[index] + second) & 0xffffffff
+        second = (second + words[index + 1] + first) & 0xffffffff
+    return first, second
 
 
-def _find(context, suffix):
-    for file_found in context.get_files_found():
-        if str(file_found).endswith(suffix):
-            return str(file_found)
-    return ''
+def _read_varint(data, pos, end):
+    value = 0
+    for index in range(9):
+        if pos >= end:
+            raise ValueError('truncated varint')
+        byte = data[pos]
+        pos += 1
+        if index == 8:
+            return (value << 8) | byte, pos
+        value = (value << 7) | (byte & 0x7f)
+        if not byte & 0x80:
+            return value, pos
+    raise ValueError('invalid varint')
 
 
-def _read_varint(data, pos):
-    result = 0
-    for i in range(9):
-        byte = data[pos + i]
-        result = (result << 7) | (byte & 0x7f)
-        if not (byte & 0x80):
-            return result, pos + i + 1
-    return result, pos + 9
+def _decode_value(data, pos, serial, end):
+    sizes = {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 6, 6: 8, 7: 8, 8: 0, 9: 0}
+    if serial in (10, 11):
+        raise ValueError('reserved serial type')
+    size = sizes[serial] if serial < 10 else (serial - 12) // 2
+    if pos + size > end:
+        raise ValueError('truncated serial value')
+    raw = data[pos:pos + size]
+    if serial == 0:
+        value = None
+    elif serial in (8, 9):
+        value = serial - 8
+    elif serial == 7:
+        value = struct.unpack('>d', raw)[0]
+    elif serial < 7:
+        value = int.from_bytes(raw, 'big', signed=True)
+    elif serial % 2:
+        value = raw.decode('utf-8', errors='replace')
+    else:
+        value = raw
+    return value, pos + size
 
 
-def _decode_value(cell, pos, stype):
-    """Decode a SQLite serial type value from cell data."""
-    if stype == 0:
-        return None, pos
-    elif stype == 1:
-        return int.from_bytes(cell[pos:pos+1], 'big', signed=True), pos + 1
-    elif stype == 2:
-        return int.from_bytes(cell[pos:pos+2], 'big', signed=True), pos + 2
-    elif stype == 3:
-        return int.from_bytes(cell[pos:pos+3], 'big', signed=True), pos + 3
-    elif stype == 4:
-        return int.from_bytes(cell[pos:pos+4], 'big', signed=True), pos + 4
-    elif stype == 5:
-        return int.from_bytes(cell[pos:pos+6], 'big', signed=True), pos + 6
-    elif stype == 6:
-        return int.from_bytes(cell[pos:pos+8], 'big', signed=True), pos + 8
-    elif stype == 7:
-        return struct.unpack('>d', cell[pos:pos+8])[0], pos + 8
-    elif stype == 8:
-        return 0, pos   # integer 0, no bytes
-    elif stype == 9:
-        return 1, pos   # integer 1, no bytes
-    elif stype >= 13 and stype % 2 == 1:
-        length = (stype - 13) // 2
-        return cell[pos:pos+length].decode('utf-8', errors='replace'), pos + length
-    elif stype >= 12 and stype % 2 == 0:
-        length = (stype - 12) // 2
-        return bytes(cell[pos:pos+length]), pos + length
-    return None, pos
-
-
-def _parse_leaf_page(page_data, page_offset=0):
-    """Parse a SQLite B-tree leaf table page and return list of record dicts."""
+def parse_leaf_records(page, columns, usable_size):
     records = []
-    if not page_data or page_data[0] != 13:
-        return records  # not a leaf table page
-
-    num_cells = struct.unpack('>H', page_data[3:5])[0]
-    if num_cells == 0:
-        return records
-
-    for i in range(num_cells):
+    failures = []
+    if len(page) < 8 or page[0] != 13:
+        return records, ['unsupported interior/child-page layout']
+    cells = int.from_bytes(page[3:5], 'big')
+    pointer_end = 8 + cells * 2
+    if pointer_end > usable_size:
+        return records, ['truncated cell-pointer array']
+    for index in range(cells):
         try:
-            ptr = struct.unpack('>H', page_data[8 + i * 2: 10 + i * 2])[0]
-            cell = page_data[ptr:]
-
-            _, pos = _read_varint(cell, 0)
-            _, pos = _read_varint(cell, pos)
-
+            ptr = int.from_bytes(page[8 + 2 * index:10 + 2 * index], 'big')
+            if not pointer_end <= ptr < usable_size:
+                raise ValueError('cell pointer outside payload area')
+            payload, pos = _read_varint(page, ptr, usable_size)
+            _, pos = _read_varint(page, pos, usable_size)
+            # Table-leaf payloads larger than this use overflow pages.
+            if payload > usable_size - 35 or pos + payload > usable_size:
+                raise ValueError('unsupported overflow or truncated payload')
+            payload_end = pos + payload
             header_start = pos
-            header_size, pos = _read_varint(cell, pos)
+            header_size, pos = _read_varint(page, pos, payload_end)
             header_end = header_start + header_size
-
-            col_types = []
+            if not pos <= header_end <= payload_end:
+                raise ValueError('invalid record header bounds')
+            serials = []
             while pos < header_end:
-                stype, pos = _read_varint(cell, pos)
-                col_types.append(stype)
-
+                serial, pos = _read_varint(page, pos, header_end)
+                serials.append(serial)
+            if len(serials) != len(columns):
+                raise ValueError('record/schema column-count mismatch')
             record = {}
-            data_pos = pos
-            for j, stype in enumerate(col_types):
-                col_name = COL_NAMES[j] if j < len(COL_NAMES) else f'col{j}'
-                val, data_pos = _decode_value(cell, data_pos, stype)
-                record[col_name] = val
-
-            if record.get('id'):
-                record['_cell_offset'] = page_offset + ptr
-                records.append(record)
-        except Exception:  # pylint: disable=broad-exception-caught
-            continue
-
-    return records
+            for column, serial in zip(columns, serials):
+                record[column], pos = _decode_value(page, pos, serial, payload_end)
+            if pos != payload_end:
+                raise ValueError('record payload length mismatch')
+            record['_cell_offset'] = ptr
+            records.append(record)
+        except (ValueError, struct.error) as exc:
+            failures.append(f'cell {index}: {exc}')
+    return records, failures
 
 
-def _recover_from_wal(wal_path, data_page_num=4):
-    """
-    Parse all WAL frames and collect every record from every version of
-    the data page, including frames before deletion. Each frame version
-    represents a separate update with a different last_updated timestamp,
-    so all are returned as individual rows rather than deduplicated.
-    """
+def _snapshot_schema(image):
+    copy = bytearray(image)
+    copy[18:20] = b'\x01\x01'  # Private snapshot; evidence remains untouched.
+    with tempfile.TemporaryDirectory(prefix='life360-snapshot-') as directory:
+        db = sqlite3.connect(':memory:')
+        try:
+            if callable(getattr(db, 'deserialize', None)):
+                db.deserialize(bytes(copy))
+            else:
+                db.close()
+                snapshot = Path(directory) / 'snapshot.db'
+                snapshot.write_bytes(copy)
+                db = sqlite3.connect(snapshot.as_uri() + '?mode=ro&immutable=1', uri=True)
+            table = db.execute("SELECT rootpage, sql FROM sqlite_master "
+                               "WHERE type='table' AND name='no_show_alerts'").fetchone()
+            if not table or 'WITHOUT ROWID' in table[1].upper():
+                return None
+            info = db.execute('PRAGMA table_info(no_show_alerts)').fetchall()
+            columns = [row[1] for row in info]
+            unsupported = any(row[2].upper() == 'INTEGER' and row[5] for row in info)
+            required = {'id', 'last_updated', 'run_at', 'trigger_condition', 'type',
+                        'place_id', 'observed_user_id', 'creator_id'}
+            if not required.issubset(columns):
+                return None
+            return table[0], columns, unsupported
+        except sqlite3.Error:
+            return None
+        finally:
+            db.close()
+
+
+def recover_wal_observations(main_path, wal_path):
+    """Recover root-leaf observations using validated prefix-local schema only."""
+    image = bytearray(Path(main_path).read_bytes())
+    data = Path(wal_path).read_bytes()
     recovered = []
-    try:
-        with open(wal_path, 'rb') as f:
-            wal_data = f.read()
 
-        if len(wal_data) < 32:
-            return recovered
+    def diagnostic(message):
+        logfunc(f'Life360 WAL skipped/limited {wal_path}: {message}')
 
-        magic = struct.unpack('>I', wal_data[:4])[0]
-        if magic not in (0x377f0682, 0x377f0683):
-            return recovered
-
-        page_size = struct.unpack('>I', wal_data[8:12])[0]
-        frame_size = 24 + page_size
-        num_frames = (len(wal_data) - 32) // frame_size
-
-        for i in range(num_frames):
-            frame_offset = 32 + i * frame_size
-            page_num = struct.unpack('>I', wal_data[frame_offset:frame_offset + 4])[0]
-            if page_num != data_page_num:
-                continue
-
-            page_data = wal_data[frame_offset + 24: frame_offset + 24 + page_size]
-            page_offset = frame_offset + 24
-            for record in _parse_leaf_page(page_data, page_offset):
-                if record.get('id'):
-                    record['_wal_frame'] = i + 1
-                    record['_wal_offset'] = record.get('_cell_offset', '')
-                    recovered.append(record)
-
-    except Exception as e:  # pylint: disable=broad-exception-caught
-        logfunc(f'Life360_NoShowAlerts WAL parse error: {e}')
-
+    if len(image) < 100 or image[:16] != b'SQLite format 3\x00' or len(data) < 32:
+        diagnostic('truncated or invalid database/WAL header')
+        return recovered
+    magic, version, page_size = struct.unpack('>3I', data[:12])
+    encoded_size = int.from_bytes(image[16:18], 'big')
+    main_page_size = 65536 if encoded_size == 1 else encoded_size
+    if (magic not in (0x377f0682, 0x377f0683) or version != 3007000 or
+            page_size != main_page_size or page_size < 512 or page_size > 65536 or
+            page_size & (page_size - 1) or int.from_bytes(image[56:60], 'big') not in (0, 1)):
+        diagnostic('unsupported WAL version, page size, or database encoding')
+        return recovered
+    endian = '<' if magic == 0x377f0682 else '>'
+    state = _checksum(data[:24], endian)
+    if state != struct.unpack('>2I', data[24:32]):
+        diagnostic('WAL header checksum mismatch')
+        return recovered
+    frame_size = page_size + 24
+    frames, remainder = divmod(len(data) - 32, frame_size)
+    max_page = len(image) // page_size + frames
+    unresolved = 0
+    for index in range(frames):
+        offset = 32 + index * frame_size
+        frame = data[offset:offset + frame_size]
+        number = index + 1
+        next_state = _checksum(frame[:8] + frame[24:], endian, state)
+        if frame[8:16] != data[16:24] or next_state != struct.unpack('>2I', frame[16:24]):
+            diagnostic(f'frame {number}: salt/checksum mismatch; stopped validated prefix')
+            break
+        state = next_state
+        page_number = int.from_bytes(frame[:4], 'big')
+        if not 1 <= page_number <= max_page:
+            diagnostic(f'frame {number}: page number outside bounded replay image')
+            break
+        end = page_number * page_size
+        if len(image) < end:
+            image.extend(bytes(end - len(image)))
+        image[(page_number - 1) * page_size:end] = frame[24:]
+        schema = _snapshot_schema(image)
+        if not schema:
+            unresolved += 1
+            continue
+        root, columns, unsupported_pk = schema
+        if page_number != root:
+            continue
+        if unsupported_pk:
+            diagnostic(f'frame {number}: unsupported INTEGER PRIMARY KEY record layout')
+            continue
+        usable = page_size - image[20]
+        records, failures = parse_leaf_records(frame[24:], columns, usable)
+        for failure in failures:
+            diagnostic(f'frame {number}, page {page_number}: {failure}')
+        for record in records:
+            record['_wal_frame'] = number
+            record['_wal_page'] = page_number
+            record['_wal_offset'] = offset + 24 + record['_cell_offset']
+            recovered.append(record)
+    if unresolved:
+        diagnostic(f'{unresolved} frame snapshots lacked a resolvable alert schema')
+    if remainder:
+        diagnostic(f'truncated trailing frame ({remainder} bytes)')
     return recovered
-
-
-def _find_wal(context):
-    """Find the WAL file — it may have a timestamp prefix."""
-    for file_found in context.get_files_found():
-        path = str(file_found)
-        if path.endswith('NoShowAlertRoomDatabase-wal'):
-            return path
-    return ''
 
 
 @artifact_processor
 def Life360_NoShowAlerts(context):
-    source = _find(context, 'NoShowAlertRoomDatabase')
-    wal_path = _find_wal(context)
+    files = unique_files(context)
+    mains = [str(path) for path in files if Path(path).name == 'NoShowAlertRoomDatabase']
+    found = {str(path) for path in files}
     data_list = []
-
-    # --- Live records from the main database ---
-    live_ids = set()
-    if source:
-        try:
-            db = open_sqlite_db_readonly(source)
-            cursor = db.cursor()
-            cursor.execute('''
-                SELECT
-                    last_updated,
-                    run_at,
-                    trigger_condition,
-                    type,
-                    place_id,
-                    observed_user_id,
-                    creator_id,
-                    id
-                FROM no_show_alerts
-            ''')
-            for row in cursor.fetchall():
-                live_ids.add(row[7])
-                data_list.append((
-                    _ms_to_utc(row[0]),
-                    _ns_to_utc(row[1]),
-                    row[2], row[3], row[4], row[5], row[6],
-                    'Live', '', ''
-                ))
-            db.close()
-        except Exception as e:  # pylint: disable=broad-exception-caught
-            logfunc(f'Life360_NoShowAlerts DB error: {e}')
-
-    # --- Deleted records recovered from WAL ---
-    if wal_path:
-        recovered = _recover_from_wal(wal_path)
-        wal_count = 0
-        for rec in recovered:
-            data_list.append((
-                _ms_to_utc(rec.get('last_updated')),
-                _ns_to_utc(rec.get('run_at')),
-                rec.get('trigger_condition', ''),
-                rec.get('type', ''),
-                rec.get('place_id', ''),
-                rec.get('observed_user_id', ''),
-                rec.get('creator_id', ''),
-                'Recovered from WAL',
-                f'WAL Frame {rec.get("_wal_frame", "")}',
-                rec.get('_wal_offset', '')
-            ))
-            wal_count += 1
-        logfunc(f'Life360_NoShowAlerts: {wal_count} record(s) recovered from WAL')
-
-    logfunc(f'Life360_NoShowAlerts: Total records = {len(data_list)}')
-
+    sources = []
+    for source in mains:
+        relative = context.get_relative_path(source)
+        sources.append(relative)
+        wal_path = source + '-wal'
+        wal_relative = context.get_relative_path(wal_path) if wal_path in found else ''
+        db = open_sqlite_db_readonly(source)
+        if db is not None:
+            try:
+                records = db.execute('SELECT last_updated, run_at, trigger_condition, type, '
+                                     'place_id, observed_user_id, creator_id, id '
+                                     'FROM no_show_alerts').fetchall()
+                for row in records:
+                    data_list.append((_date(row[0], 1000), _date(row[1], 1_000_000_000),
+                                      row[7], row[0], row[1], *row[2:7], 'Live', '', '', '',
+                                      relative, ''))
+            except sqlite3.Error as exc:
+                logfunc(f'Life360_NoShowAlerts DB error for {relative}: {exc}')
+            finally:
+                db.close()
+        if wal_relative:
+            sources.append(wal_relative)
+            try:
+                records = recover_wal_observations(source, wal_path)
+            except OSError as exc:
+                logfunc(f'Life360_NoShowAlerts WAL read error for {wal_relative}: {exc}')
+                continue
+            for record in records:
+                updated, run_at = record.get('last_updated'), record.get('run_at')
+                data_list.append((_date(updated, 1000), _date(run_at, 1_000_000_000),
+                                  record.get('id'), updated, run_at,
+                                  *[record.get(key) for key in ('trigger_condition', 'type',
+                                    'place_id', 'observed_user_id', 'creator_id')],
+                                  'Recovered from WAL', f'WAL Frame {record["_wal_frame"]}',
+                                  record['_wal_offset'], record['_wal_page'], relative, wal_relative))
     data_headers = (
-        ('Last Updated', 'datetime'), ('Run At', 'datetime'),
-        'Trigger Condition', 'Type',
-        'Place ID', 'Observed User ID', 'Creator ID',
-        'Source', 'WAL Location', 'WAL Offset'
+        ('Last Updated', 'datetime'), ('Run At', 'datetime'), 'Alert ID',
+        'Raw Last Updated', 'Raw Run At', 'Trigger Condition', 'Type',
+        'Place ID', 'Observed User ID', 'Creator ID', 'Source', 'WAL Location',
+        'WAL Offset', 'WAL Page', 'Source File', 'WAL Source File'
     )
-    return data_headers, data_list, source
+    return data_headers, data_list, '\n'.join(sources)
