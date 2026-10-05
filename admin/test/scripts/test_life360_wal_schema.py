@@ -13,7 +13,7 @@ COLUMNS = ('id', 'type', 'last_updated', 'trigger_condition', 'critical_alert', 
            'place_id', 'observed_user_id', 'creator_id', 'circle_id', 'daily')
 
 
-def create_pair(root, user='0', reordered=False, count=1, overflow=False, schema_change=False, repeated=False, page_size=512, integer_pk=False):
+def create_pair(root, user='0', reordered=False, count=1, overflow=False, schema_change=False, repeated=False, page_size=512, integer_pk=False, rowid_value=1, checkpoint_tree=False, pk_declaration=None, pk_tail=None):
     directory = Path(root)/f'data/user/{user}/com.life360.android.safetymapd/databases'
     directory.mkdir(parents=True, exist_ok=True)
     target = directory/'NoShowAlertRoomDatabase'
@@ -28,12 +28,16 @@ def create_pair(root, user='0', reordered=False, count=1, overflow=False, schema
         db.commit()
         db.execute('PRAGMA wal_checkpoint(TRUNCATE)')
         columns = list(reversed(COLUMNS)) if reordered else list(COLUMNS)
-        declarations = ['id INTEGER PRIMARY KEY' if integer_pk and c == 'id' else c
+        declarations = [(pk_declaration or 'id INTEGER PRIMARY KEY')
+                        if integer_pk and c == 'id' else c
                         for c in columns]
+        if pk_tail:
+            declarations.append(pk_tail)
         db.execute('CREATE TABLE no_show_alerts ('+','.join(declarations)+')')
         db.commit()
         for index in range(count):
-            identifier = index + 1 if integer_pk else 'same' if count == 1 else f'id{index}'
+            identifier = (index + 1 if count > 1 else rowid_value) if integer_pk else (
+                'same' if count == 1 else f'id{index}')
             values = dict(zip(COLUMNS, (identifier, 'type',
                                         1700000000000, 'trigger', 0, 1700000000000000000,
                                         'place', 'observed', user, 'circle', 'daily')))
@@ -42,6 +46,14 @@ def create_pair(root, user='0', reordered=False, count=1, overflow=False, schema
             db.execute('INSERT INTO no_show_alerts VALUES ('+','.join('?' for _ in columns)+')',
                        [values[c] for c in columns])
         db.commit()
+        if checkpoint_tree:
+            db.execute('PRAGMA wal_checkpoint(TRUNCATE)')
+            for identifier in ['id0', f'id{count - 1}']:
+                db.execute('UPDATE no_show_alerts SET last_updated=1700000002000 WHERE id=?',
+                           (identifier,))
+                db.commit()
+            db.execute("INSERT INTO unrelated0 VALUES ('unrelated')")
+            db.commit()
         if schema_change:
             db.execute("ALTER TABLE no_show_alerts ADD COLUMN additional")
             db.commit()
@@ -146,7 +158,10 @@ class TestLife360WalSchema(unittest.TestCase):
                 main = create_pair(root, user, count=count, overflow=overflow)
                 with patch.object(module, 'logfunc') as log:
                     rows = module.recover_wal_observations(main, Path(str(main)+'-wal'))
-                self.assertEqual(rows, [])
+                if count > 1:
+                    self.assertTrue(all(r['id'].startswith('id') for r in rows))
+                else:
+                    self.assertEqual(rows, [])
                 messages = ' '.join(c.args[0] for c in log.call_args_list)
                 if count > 1:
                     self.assertTrue('interior' in messages or 'resolvable alert schema' in messages)
@@ -202,18 +217,18 @@ class TestLife360WalSchema(unittest.TestCase):
                     main, Path(str(main)+'-wal')), [])
             self.assertTrue(any('page size' in call.args[0] for call in log.call_args_list))
 
-    def test_integer_primary_key_layout_is_explicitly_unsupported(self):
+    def test_integer_primary_key_rowid_alias_is_recovered(self):
         with tempfile.TemporaryDirectory() as root:
             main = create_pair(root, integer_pk=True)
             with patch.object(module, 'logfunc') as log:
                 rows = module.recover_wal_observations(main, Path(str(main)+'-wal'))
-            self.assertEqual(rows, [])
-            self.assertTrue(any('INTEGER PRIMARY KEY' in call.args[0]
-                                for call in log.call_args_list))
+            self.assertEqual([r['id'] for r in rows], [1, 1])
+            self.assertFalse(any('INTEGER PRIMARY KEY' in call.args[0]
+                                 for call in log.call_args_list))
             context = Context(root, [main, Path(str(main)+'-wal')])
             with patch.object(module, 'logfunc'):
                 _, rows, _ = module.Life360_NoShowAlerts.__wrapped__(context)
-            self.assertEqual(len(rows), 1)
+            self.assertEqual(len(rows), 3)
             self.assertEqual(rows[0][2], 1)  # SQLite live query resolves the rowid alias.
 
     def test_serial_bounds_and_schema_count(self):
