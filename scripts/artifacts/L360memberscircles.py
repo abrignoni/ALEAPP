@@ -2,12 +2,12 @@ __artifacts_v2__ = {
     'Life360_MemberCircles': {
         'name': 'Life360 Members and Circles',
         'description': 'Parses Life360 Members and Circles. created_at is read as Unix seconds and last_updated as Unix milliseconds; no source for those units is recorded here.',
-        'author': 'Heather Charpentier',
+        'author': '@AlexisBrignoni, Codex',
         'creation_date': '2026-06-10',
-        'last_update_date': '2026-06-10',
+        'last_update_date': '2026-10-05',
         'requirements': 'none',
         'category': 'Life360',
-        'notes': '',
+        'notes': 'Original parser by Heather Charpentier. Invalid or absent timestamps are left blank in converted date columns; the four stored values are retained in raw columns. The existing seconds/milliseconds interpretations remain unverified.',
         'paths': ('*/com.life360.android.safetymapd/databases/MembersEngineRoomDatabase*',),
         'output_types': 'standard',
         'artifact_icon': 'user',
@@ -26,6 +26,14 @@ from scripts.ilapfuncs import (
     get_sqlite_db_records,
     logfunc
 )
+
+
+def _timestamp(value, divisor=1):
+    """Keep rows when a stored timestamp cannot be converted."""
+    try:
+        return datetime.fromtimestamp(int(value) / divisor, tz=timezone.utc)
+    except (TypeError, ValueError, OverflowError, OSError):
+        return None
 
 
 @artifact_processor
@@ -61,21 +69,22 @@ def Life360_MemberCircles(context):
 
         for record in db_records:
 
-            created_timestamp = datetime.fromtimestamp(int(record[0]), tz=timezone.utc)
-            updated_timestamp = datetime.fromtimestamp(int(record[1]) / 1000, tz=timezone.utc)
-            second_created_timestamp = datetime.fromtimestamp(int(record[10]), tz=timezone.utc)
-            second_updated_timestamp = datetime.fromtimestamp(int(record[11]) / 1000, tz=timezone.utc)
-
-            data_list.append((created_timestamp, updated_timestamp, record[2], record[3], record[4],
-                              record[5], record[6], record[7], record[8], record[9],
-                              second_created_timestamp, second_updated_timestamp, record[12]))
+            data_list.append((
+                _timestamp(record[0]), _timestamp(record[1], 1000),
+                _timestamp(record[10]), _timestamp(record[11], 1000),
+                *record[2:10], record[12],
+                record[0], record[1], record[10], record[11]
+            ))
 
     except Exception as e:  # pylint: disable=broad-exception-caught
         logfunc(f'Error processing Life360 MemberCircles: {e}')
 
-    data_headers = (('Created Timestamp', 'datetime'), ('Updated Timestamp', 'datetime'), 'Member ID',
-                    'First Name', 'Last Name', 'Email', 'Phone Number', 'Avatar', 'Admin', 'Role',
-                    ('Circle Created Timestamp', 'datetime'), ('Circle Updated Timestamp', 'datetime'),
-                    'Circle Name')
+    data_headers = (
+        ('Created Timestamp', 'datetime'), ('Updated Timestamp', 'datetime'),
+        ('Circle Created Timestamp', 'datetime'), ('Circle Updated Timestamp', 'datetime'),
+        'Member ID', 'First Name', 'Last Name', 'Email', 'Phone Number', 'Avatar', 'Admin',
+        'Role', 'Circle Name', 'Raw Member Created At', 'Raw Member Last Updated',
+        'Raw Circle Created At', 'Raw Circle Last Updated'
+    )
 
     return data_headers, data_list, source_path
