@@ -205,8 +205,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Facebook Messenger",
         "notes": "Not exercised: the artifact produced no rows on the four images listed in "
-                 "sample_data. Is Messenger User shows Yes for any stored is_messenger_user value "
-                 "other than 0, a null included. Friendship Status and Contact Relationship "
+                 "sample_data. Is Messenger User (as stored) holds is_messenger_user without a "
+                 "label, preserving NULL and unknown values; no membership interpretation is established. Friendship Status and Contact Relationship "
                  "Status are reported as stored. Storage aliases are selected by evidence-relative root and Android user, not staged path.",
         "paths": ('*/*threads_db2',),
         "output_types": "standard",
@@ -657,7 +657,7 @@ def get_fb_threads_contacts(context):
         SELECT
             substr(user_key,10), first_name, last_name, username,
             json_extract(profile_pic_square, '$[0].url'),
-            CASE is_messenger_user WHEN 0 THEN '' ELSE 'Yes' END,
+            is_messenger_user,
             CASE is_friend WHEN 0 THEN 'No' WHEN 1 THEN 'Yes' END,
             friendship_status, contact_relationship_status
         FROM thread_users
@@ -668,6 +668,6 @@ def get_fb_threads_contacts(context):
         db.close()
 
     data_headers = ('User ID', 'First Name', 'Last Name', 'Username', 'Profile Pic URL',
-                    'Is Messenger User', 'Is Friend', 'Friendship Status',
+                    'Is Messenger User (as stored)', 'Is Friend', 'Friendship Status',
                     'Contact Relationship Status', 'Source File')
     return data_headers, data_list, source
