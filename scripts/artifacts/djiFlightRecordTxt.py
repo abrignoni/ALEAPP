@@ -14,7 +14,10 @@ __artifacts_v2__ = {
                  'Custom timestamp, explicitly labeled; records before it have no timestamp. '
                  'Telemetry is not carried between rows. Height is recorded relative height, '
                  'not terrain clearance or MSL. Unknown payloads are retained as hex. '
-                 'Layout: https://github.com/lvauvillier/dji-log-parser (MIT), v0.5.7.',
+                 'Layout: https://github.com/lvauvillier/dji-log-parser (MIT), v0.5.7. '
+                 'In DF020, RC Return Button, RC Shutter Button and RC Record Button '
+                 'are identical: false on decoded RC records and absent on other record types. '
+                 'They remain separate fields because each reads a different stored bit.',
         'paths': ('*/DJI/dji.*/FlightRecord/DJIFlightRecord*.txt',
                   '*/Android/data/dji.go.v4/files/FlightRecord/DJIFlightRecord*.txt',
                   '*/Android/data/dji.pilot/files/FlightRecord/DJIFlightRecord*.txt',
@@ -38,7 +41,10 @@ __artifacts_v2__ = {
         'category': 'DJI Drone',
         'notes': 'Metadata is from Details, locally XOR-decoded from Auxiliary Info on version 13+. '
                  'No network requests, API keys, external executable or CSV import. '
-                 'DF020 validation includes two June 2018 logs and one older October 2017 log.',
+                 'DF020 validation includes two June 2018 logs and one older October 2017 log. '
+                 'In these three DF020 logs, Sub Street and City are uniform: Map Loading. '
+                 'Street and Area are empty in these three logs. '
+                 'These columns retain the source Details location strings when present.',
         'paths': ('*/DJI/dji.*/FlightRecord/DJIFlightRecord*.txt',
                   '*/Android/data/dji.go.v4/files/FlightRecord/DJIFlightRecord*.txt',
                   '*/Android/data/dji.pilot/files/FlightRecord/DJIFlightRecord*.txt',
