@@ -4,10 +4,10 @@ __artifacts_v2__ = {
         "description": "User id stored in the threads_db2-uid file",
         "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2021-03-03",
-        "last_update_date": "2021-03-03",
+        "last_update_date": "2026-10-05",
         "requirements": "none",
         "category": "Facebook Messenger",
-        "notes": "",
+        "notes": "Storage aliases are selected by evidence-relative paths; mirror-only and secondary-user files remain eligible.",
         "paths": ('*/*threads_db2-uid',),
         "output_types": "standard",
         "artifact_icon": "user",
@@ -23,17 +23,16 @@ __artifacts_v2__ = {
         "description": "Facebook/Messenger chat messages (msys_database)",
         "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2021-03-03",
-        "last_update_date": "2026-10-04",
+        "last_update_date": "2026-10-05",
         "requirements": "none",
         "category": "Facebook Messenger",
         "notes": "Rows that are the same record found in more than one place are merged, and the "
                  "Source File column lists every location a row was found in. An extraction "
                  "holding both the Facebook app and Messenger can carry a copy of msys_database "
                  "in each sandbox; the join in this query can also emit the same row more than "
-                 "once from a single copy. Merging is keyed on row content, not on package name, "
+                 "once from a single copy. Merging is keyed on row content within the same evidence root, storage class and Android user, not on package name, "
                  "so a record present in only one of the copies read is kept: on one tested image "
-                 "the two copies held 11 and 13 contacts and the merged result is 13. A copy whose "
-                 "staged path contains /user/0/ or the word mirror is not read. Sender is the "
+                 "the two copies held 11 and 13 contacts and the merged result is 13. Storage aliases are selected by evidence-relative root and Android user, not staged path. Sender is the "
                  "contacts name whose id equals the message's sender_id and is blank when "
                  "contacts holds no such row; the messages table declares no foreign key from "
                  "sender_id to contacts. On cookbook_a11 the Messenger copy held 36 messages, 3 "
@@ -78,17 +77,16 @@ __artifacts_v2__ = {
         "description": "Facebook/Messenger call log (msys_database)",
         "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2021-03-03",
-        "last_update_date": "2021-03-03",
+        "last_update_date": "2026-10-05",
         "requirements": "none",
         "category": "Facebook Messenger",
         "notes": "Rows that are the same record found in more than one place are merged, and the "
                  "Source File column lists every location a row was found in. An extraction "
                  "holding both the Facebook app and Messenger can carry a copy of msys_database "
                  "in each sandbox; the join in this query can also emit the same row more than "
-                 "once from a single copy. Merging is keyed on row content, not on package name, "
+                 "once from a single copy. Merging is keyed on row content within the same evidence root, storage class and Android user, not on package name, "
                  "so a record present in only one of the copies read is kept: on one tested image "
-                 "the two copies held 11 and 13 contacts and the merged result is 13. A copy whose "
-                 "staged path contains /user/0/ or the word mirror is not read. Every reported "
+                 "the two copies held 11 and 13 contacts and the merged result is 13. Storage aliases are selected by evidence-relative root and Android user, not staged path. Every reported "
                  "column except Source File takes part in the merge key. Rows come from the "
                  "call_log table. Call Direction shows Outgoing for a stored call_direction of 1 "
                  "and Incoming for 2. Video Call shows Yes for a stored call_media_type of 2. The "
@@ -115,16 +113,15 @@ __artifacts_v2__ = {
         "description": "Facebook/Messenger contacts (msys_database)",
         "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2021-03-03",
-        "last_update_date": "2026-10-04",
+        "last_update_date": "2026-10-05",
         "requirements": "none",
         "category": "Facebook Messenger",
         "notes": "Rows that are the same record found in more than one place are merged, and the "
                  "Source File column lists every location a row was found in. An extraction "
                  "holding both the Facebook app and Messenger can carry a copy of msys_database "
-                 "in each sandbox. Merging is keyed on row content, not on package name, "
+                 "in each sandbox. Merging is keyed on row content within the same evidence root, storage class and Android user, not on package name, "
                  "so a record present in only one of the copies read is kept: on one tested image "
-                 "the two copies held 11 and 13 contacts and the merged result is 13. A copy whose "
-                 "staged path contains /user/0/ or the word mirror is not read. Signed CDN links "
+                 "the two copies held 11 and 13 contacts and the merged result is 13. Storage aliases are selected by evidence-relative root and Android user, not staged path. Signed CDN links "
                  "(the Profile Pic URL column) are excluded from the key, which means two "
                  "genuinely different items would merge if they matched on every other reported "
                  "column. Friendship Status (as stored) is the friendship_status integer as the "
@@ -155,15 +152,14 @@ __artifacts_v2__ = {
         "description": "Facebook/Messenger chat messages (threads_db2)",
         "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2021-03-03",
-        "last_update_date": "2026-08-10",
+        "last_update_date": "2026-10-05",
         "requirements": "none",
         "category": "Facebook Messenger",
         "notes": "Not exercised: the artifact produced no rows on the four images listed in "
                  "sample_data. Messages with msg_type -1 and messages carrying "
                  "generic_admin_message_extensible_data are not reported. Only the first "
                  "attachment and the first share of a message are reported. The reaction time is "
-                 "read from whichever of four column spellings the database carries. A copy whose "
-                 "staged path contains /user/0/ or the word mirror is not read.",
+                 "read from whichever of four column spellings the database carries. Storage aliases are selected by evidence-relative root and Android user, not staged path.",
         "paths": ('*/*threads_db2',),
         "output_types": "standard",
         "artifact_icon": "message",
@@ -179,7 +175,7 @@ __artifacts_v2__ = {
         "description": "Facebook/Messenger call log (threads_db2)",
         "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2021-03-03",
-        "last_update_date": "2021-03-03",
+        "last_update_date": "2026-10-05",
         "requirements": "none",
         "category": "Facebook Messenger",
         "notes": "Not exercised: the artifact produced no rows on the four images listed in "
@@ -188,8 +184,7 @@ __artifacts_v2__ = {
                  "message time minus the stored call_duration. The columns headed Receiver Name "
                  "and Receiver ID hold the name and user key from the message's sender field. "
                  "Video Call shows Yes for any stored video value other than false, a missing key "
-                 "included. None of these readings is sourced. A copy whose staged path contains "
-                 "/user/0/ or the word mirror is not read.",
+                 "included. None of these readings is sourced. Storage aliases are selected by evidence-relative root and Android user, not staged path.",
         "paths": ('*/*threads_db2',),
         "output_types": "standard",
         "artifact_icon": "phone",
@@ -205,14 +200,13 @@ __artifacts_v2__ = {
         "description": "Facebook/Messenger contacts (threads_db2)",
         "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2021-03-03",
-        "last_update_date": "2026-08-10",
+        "last_update_date": "2026-10-05",
         "requirements": "none",
         "category": "Facebook Messenger",
         "notes": "Not exercised: the artifact produced no rows on the four images listed in "
                  "sample_data. Is Messenger User shows Yes for any stored is_messenger_user value "
                  "other than 0, a null included. Friendship Status and Contact Relationship "
-                 "Status are reported as stored. A copy whose staged path contains /user/0/ or "
-                 "the word mirror is not read.",
+                 "Status are reported as stored. Storage aliases are selected by evidence-relative root and Android user, not staged path.",
         "paths": ('*/*threads_db2',),
         "output_types": "standard",
         "artifact_icon": "users",
@@ -228,6 +222,7 @@ __artifacts_v2__ = {
 import datetime
 import sqlite3
 
+from scripts.artifacts.storagePathViews import canonical_path, unique_files
 from scripts.context import Context
 from scripts.ilapfuncs import artifact_processor, null_absent_columns, open_sqlite_db_readonly
 
@@ -243,9 +238,13 @@ def _str_to_utc(value):
         return ''
 
 
-def _candidate(file_found):
-    # Skip mirror copies and the /user/0/ duplicate of /data/data/com.facebook.orca.
-    return 'mirror' not in file_found and '/user/0/' not in file_found
+def _namespace(relative_path):
+    """Partition copies by evidence root, storage class and Android user."""
+    key, _rank = canonical_path(relative_path)
+    if '\x00' in key:
+        return key.split('\x00', 2)[0:2]
+    # An unrecognized path cannot prove a shared storage/user namespace.
+    return ['unknown', str(relative_path)]
 
 
 def _src(file_found, _seeker):
@@ -270,7 +269,8 @@ def _merge_by_source(data_list, volatile=()):
     (com.facebook.katana/app_mib_msys/v2/<uid>/ and com.facebook.orca/databases/). Without
     this the same message is reported once per copy.
 
-    Rows are keyed on their content rather than filtered by package name, so a record
+    Rows are keyed on their content within a proven evidence-root/storage-user namespace
+    rather than filtered by package name, so a record
     present in only one of the sandboxes is kept. The Source File column, which is last,
     is excluded from the key and the paths of every copy are joined, so the row still
     records each location the record was found in.
@@ -286,7 +286,8 @@ def _merge_by_source(data_list, volatile=()):
     merged = {}
     order = []
     for row in data_list:
-        key = tuple(value for index, value in enumerate(row[:-1]) if index not in skip)
+        key = (tuple(_namespace(row[-1])),
+               tuple(value for index, value in enumerate(row[:-1]) if index not in skip))
         if key not in merged:
             merged[key] = list(row)
             order.append(key)
@@ -300,13 +301,13 @@ def _merge_by_source(data_list, volatile=()):
 
 @artifact_processor
 def get_fb_user_id(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     seeker = context.get_seeker()
     data_list = []
     source = ''
     for file_found in files_found:
         file_found = str(file_found)
-        if not _candidate(file_found) or not file_found.endswith('threads_db2-uid'):
+        if not file_found.endswith('threads_db2-uid'):
             continue
         source = source or file_found
         rel = _src(file_found, seeker)
@@ -325,13 +326,13 @@ def get_fb_user_id(context):
 
 @artifact_processor
 def get_fb_msys_chats(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     seeker = context.get_seeker()
     data_list = []
     source = ''
     for file_found in files_found:
         file_found = str(file_found)
-        if not _candidate(file_found) or file_found.endswith(('-shm', '-wal')):
+        if file_found.endswith(('-shm', '-wal')):
             continue
         if 'msys_database_' not in file_found:
             continue
@@ -422,13 +423,13 @@ def get_fb_msys_chats(context):
 
 @artifact_processor
 def get_fb_msys_calls(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     seeker = context.get_seeker()
     data_list = []
     source = ''
     for file_found in files_found:
         file_found = str(file_found)
-        if not _candidate(file_found) or file_found.endswith(('-shm', '-wal')):
+        if file_found.endswith(('-shm', '-wal')):
             continue
         if 'msys_database_' not in file_found:
             continue
@@ -460,13 +461,13 @@ def get_fb_msys_calls(context):
 
 @artifact_processor
 def get_fb_msys_contacts(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     seeker = context.get_seeker()
     data_list = []
     source = ''
     for file_found in files_found:
         file_found = str(file_found)
-        if not _candidate(file_found) or file_found.endswith(('-shm', '-wal')):
+        if file_found.endswith(('-shm', '-wal')):
             continue
         if 'msys_database_' not in file_found:
             continue
@@ -489,12 +490,13 @@ def get_fb_msys_contacts(context):
                               row[9], row[10], rel))
         db.close()
 
-    data_headers = ('Facebook ID', 'Name', 'Normalized Name', 'User Name', 'Profile Pic URL',
+    data_list = [(row[9], row[10], *row[:9], row[-1]) for row in data_list]
+    data_headers = ('Birthdate (MM-DD)', 'Birthday Timestamp (as stored)',
+                    'Facebook ID', 'Name', 'Normalized Name', 'User Name', 'Profile Pic URL',
                     'Email Address', 'Phone Number', 'Is Messenger User',
-                    'Friendship Status (as stored)', 'Birthdate (MM-DD)',
-                    'Birthday Timestamp (as stored)', 'Source File')
-    # index 4 is Profile Pic URL, a per-app signed CDN link
-    return data_headers, _merge_by_source(data_list, volatile=(4,)), source
+                    'Friendship Status (as stored)', 'Source File')
+    # index 6 is Profile Pic URL, a per-app signed CDN link
+    return data_headers, _merge_by_source(data_list, volatile=(6,)), source
 
 
 _REACTION_TS_COLUMNS = ('reaction_timestamp', 'reaction_timestamp_ms',
@@ -520,7 +522,7 @@ def _reaction_ts_expr(cursor):
 
 @artifact_processor
 def get_fb_threads_chats(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     seeker = context.get_seeker()
     data_list = []
     source = ''
@@ -569,7 +571,7 @@ def get_fb_threads_chats(context):
         '''
     for file_found in files_found:
         file_found = str(file_found)
-        if not _candidate(file_found) or not file_found.endswith('threads_db2'):
+        if not file_found.endswith('threads_db2'):
             continue
         source = source or file_found
         rel = _src(file_found, seeker)
@@ -590,22 +592,23 @@ def get_fb_threads_chats(context):
                                   row[6], row[7], row[8], row[9], _str_to_utc(row[10]), row[11], rel))
         db.close()
 
-    data_headers = (('Timestamp', 'datetime'), 'Sender Name', 'Sender ID', 'Thread Key', 'Message',
+    data_list = [(row[0], row[11], *row[1:11], *row[12:]) for row in data_list]
+    data_headers = (('Timestamp', 'datetime'), ('Message Reaction Timestamp', 'datetime'), 'Sender Name', 'Sender ID', 'Thread Key', 'Message',
                     'Snippet', 'Attachment Name', 'Share Name', 'Share Description', 'Share Link',
-                    'Message Reaction', ('Message Reaction Timestamp', 'datetime'), 'Message ID',
+                    'Message Reaction', 'Message ID',
                     'Source File')
     return data_headers, data_list, source
 
 
 @artifact_processor
 def get_fb_threads_calls(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     seeker = context.get_seeker()
     data_list = []
     source = ''
     for file_found in files_found:
         file_found = str(file_found)
-        if not _candidate(file_found) or not file_found.endswith('threads_db2'):
+        if not file_found.endswith('threads_db2'):
             continue
         source = source or file_found
         rel = _src(file_found, seeker)
@@ -637,13 +640,13 @@ def get_fb_threads_calls(context):
 
 @artifact_processor
 def get_fb_threads_contacts(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     seeker = context.get_seeker()
     data_list = []
     source = ''
     for file_found in files_found:
         file_found = str(file_found)
-        if not _candidate(file_found) or not file_found.endswith('threads_db2'):
+        if not file_found.endswith('threads_db2'):
             continue
         source = source or file_found
         rel = _src(file_found, seeker)
