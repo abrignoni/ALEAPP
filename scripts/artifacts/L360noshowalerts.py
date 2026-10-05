@@ -30,6 +30,7 @@ import datetime
 from pathlib import Path
 import sqlite3
 import struct
+import tempfile
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, logfunc
 from scripts.artifacts.storagePathViews import unique_files
@@ -134,26 +135,33 @@ def parse_leaf_records(page, columns, usable_size):
 
 def _snapshot_schema(image):
     copy = bytearray(image)
-    copy[18:20] = b'\x01\x01'  # Private deserialize image; evidence remains untouched.
-    db = sqlite3.connect(':memory:')
-    try:
-        db.deserialize(bytes(copy))
-        table = db.execute("SELECT rootpage, sql FROM sqlite_master "
-                           "WHERE type='table' AND name='no_show_alerts'").fetchone()
-        if not table or 'WITHOUT ROWID' in table[1].upper():
+    copy[18:20] = b'\x01\x01'  # Private snapshot; evidence remains untouched.
+    with tempfile.TemporaryDirectory(prefix='life360-snapshot-') as directory:
+        db = sqlite3.connect(':memory:')
+        try:
+            if callable(getattr(db, 'deserialize', None)):
+                db.deserialize(bytes(copy))
+            else:
+                db.close()
+                snapshot = Path(directory) / 'snapshot.db'
+                snapshot.write_bytes(copy)
+                db = sqlite3.connect(snapshot.as_uri() + '?mode=ro&immutable=1', uri=True)
+            table = db.execute("SELECT rootpage, sql FROM sqlite_master "
+                               "WHERE type='table' AND name='no_show_alerts'").fetchone()
+            if not table or 'WITHOUT ROWID' in table[1].upper():
+                return None
+            info = db.execute('PRAGMA table_info(no_show_alerts)').fetchall()
+            columns = [row[1] for row in info]
+            unsupported = any(row[2].upper() == 'INTEGER' and row[5] for row in info)
+            required = {'id', 'last_updated', 'run_at', 'trigger_condition', 'type',
+                        'place_id', 'observed_user_id', 'creator_id'}
+            if not required.issubset(columns):
+                return None
+            return table[0], columns, unsupported
+        except sqlite3.Error:
             return None
-        info = db.execute('PRAGMA table_info(no_show_alerts)').fetchall()
-        columns = [row[1] for row in info]
-        unsupported = any(row[2].upper() == 'INTEGER' and row[5] for row in info)
-        required = {'id', 'last_updated', 'run_at', 'trigger_condition', 'type',
-                    'place_id', 'observed_user_id', 'creator_id'}
-        if not required.issubset(columns):
-            return None
-        return table[0], columns, unsupported
-    except sqlite3.Error:
-        return None
-    finally:
-        db.close()
+        finally:
+            db.close()
 
 
 def recover_wal_observations(main_path, wal_path):

@@ -6,6 +6,7 @@ import struct
 import tempfile
 import unittest
 from unittest.mock import patch
+from urllib.parse import unquote, urlparse
 from scripts.artifacts import L360noshowalerts as module
 
 COLUMNS = ('id', 'type', 'last_updated', 'trigger_condition', 'critical_alert', 'run_at',
@@ -151,6 +152,39 @@ class TestLife360WalSchema(unittest.TestCase):
                     self.assertTrue('interior' in messages or 'resolvable alert schema' in messages)
                 else:
                     self.assertTrue('overflow' in messages or 'resolvable alert schema' in messages)
+
+    def test_snapshot_fallback_without_deserialize_api(self):
+        class LegacyConnection:
+            def __init__(self, connection):
+                self.connection = connection
+
+            def execute(self, *args):
+                return self.connection.execute(*args)
+
+            def close(self):
+                self.connection.close()
+
+        connect = sqlite3.connect
+
+        def legacy_connect(*args, **kwargs):
+            return LegacyConnection(connect(*args, **kwargs))
+
+        with tempfile.TemporaryDirectory() as root:
+            main = create_pair(root, schema_change=True)
+            wal = Path(str(main)+'-wal')
+            before = (main.read_bytes(), wal.read_bytes())
+            with patch.object(module.sqlite3, 'connect', side_effect=legacy_connect) as calls:
+                with patch.object(module, 'logfunc'):
+                    rows = module.recover_wal_observations(main, wal)
+            self.assertEqual([r['last_updated'] for r in rows],
+                             [1700000000000, 1700000001000])
+            snapshots = [call.args[0] for call in calls.call_args_list
+                         if str(call.args[0]).startswith('file:')]
+            self.assertTrue(snapshots)
+            self.assertTrue(all('mode=ro&immutable=1' in uri for uri in snapshots))
+            self.assertEqual(before, (main.read_bytes(), wal.read_bytes()))
+            self.assertTrue(all(not Path(unquote(urlparse(uri).path)).parent.exists()
+                                for uri in snapshots))
 
     def test_large_sqlite_pages_preserve_wal_observations(self):
         with tempfile.TemporaryDirectory() as root:
