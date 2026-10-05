@@ -74,8 +74,9 @@ __artifacts_v2__ = {
                  "data directory so a second directory cannot supply another's image. On "
                  "the tested device the variants that matched were il_794xN, il_680x540, "
                  "il_570xN and il_fullxfull. The matched file rendered is the largest one "
-                 "whose leading bytes are JPEG, PNG or GIF; a matched file of another type, "
-                 "WEBP included, is not rendered. Cached Renditions gives the number of "
+                 "identified as JPEG, PNG, GIF or validated WebP. Gzip transfer encoding is "
+                 "decoded before rendering, with the source cache path retained. Other types "
+                 "are not rendered. Cached Renditions gives the number of "
                  "matched files. The visible column was 1 on "
                  "every row on the tested device and is reported as stored rather than "
                  "dropped, because a differing value would be a property of the row worth "
@@ -205,7 +206,7 @@ __artifacts_v2__ = {
         "description": "Summarises the image caches the Etsy Android app keeps on disk.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Etsy",
         "notes": "One row per cache directory per app data directory. Latest Entry Modified "
@@ -217,7 +218,8 @@ __artifacts_v2__ = {
                  "counted by type and not listed one by one here. The entries that do match "
                  "a recently viewed listing are reported and rendered on Etsy - Recently "
                  "Viewed Listings instead. Type counts are taken from each file's leading "
-                 "bytes after any transfer encoding is decoded; on the tested device no "
+                 "bytes after any transfer encoding is decoded; WebP additionally checks its RIFF "
+                 "length and image decoder acceptance. On the tested device no "
                  "entry was stored compressed. image_manager_disk_cache is the default disk "
                  "cache folder name of the Glide image library (bumptech/glide v4.16.0, "
                  "DiskCache.java, DEFAULT_DISK_CACHE_DIR); no source for the appboy "
@@ -236,6 +238,8 @@ __artifacts_v2__ = {
 }
 
 import gzip
+import io
+import zlib
 import hashlib
 import json
 import os
@@ -244,11 +248,13 @@ import sqlite3
 import struct
 import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta, timezone
+from PIL import Image
 
 from scripts.artifacts.storagePathViews import canonical_path, unique_files
 from scripts.ilapfuncs import (
     artifact_processor,
     check_in_media,
+    check_in_embedded_media,
     get_sqlite_db_path,
     logfunc,
     open_sqlite_db_readonly,
@@ -265,7 +271,7 @@ _IMAGE_MAGIC = (
     (b'GIF87a', 'GIF', 'image/gif', 'gif'),
     (b'GIF89a', 'GIF', 'image/gif', 'gif'),
 )
-_RENDERABLE = {'JPEG', 'PNG', 'GIF'}
+_RENDERABLE = {'JPEG', 'PNG', 'GIF', 'WEBP'}
 
 # Size variants of one Etsy image URL. The app requests a rendition rather than the URL
 # the listing row stores, so the stored URL alone finds a cache entry only when those
@@ -602,13 +608,43 @@ def _first(paths, name):
 
 def _sniff_image(head):
     '''(label, mime, extension) from a file's leading bytes.'''
+    if (len(head) >= 20 and head[:4] == b'RIFF' and head[8:12] == b'WEBP'
+            and head[12:16] in (b'VP8 ', b'VP8L', b'VP8X')):
+        size = int.from_bytes(head[4:8], 'little')
+        chunk_size = int.from_bytes(head[16:20], 'little')
+        if size >= 12 and size % 2 == 0 and chunk_size + (chunk_size % 2) <= size - 12:
+            return 'WEBP', 'image/webp', 'webp'
     for magic, label, mime, extension in _IMAGE_MAGIC:
         if head.startswith(magic):
             return label, mime, extension
     return 'Unrecognised', '', ''
 
 
-def _read_head(source_path, count=16):
+
+def _cache_image(source_path):
+    """Identify an image body; retain decoded gzip bytes for export under its source."""
+    try:
+        with open(source_path, 'rb') as handle:
+            data = handle.read()
+        compressed = data.startswith(b'\x1f\x8b')
+        if compressed:
+            data = gzip.decompress(data)
+        label, mime, extension = _sniff_image(data)
+        if label == 'WEBP':
+            # RIFF offsets/lengths come from Google's WebP container specification:
+            # https://developers.google.com/speed/webp/docs/riff_container
+            if len(data) != int.from_bytes(data[4:8], 'little') + 8:
+                return 'Unrecognised', '', '', None
+            with Image.open(io.BytesIO(data)) as image:
+                if image.format != 'WEBP':
+                    return 'Unrecognised', '', '', None
+                image.verify()
+        return label, mime, extension, data if compressed else None
+    except (OSError, EOFError, ValueError, SyntaxError, zlib.error):
+        return 'Unrecognised', '', '', None
+
+
+def _read_head(source_path, count=32):
     '''The leading bytes of a file, decompressed first when it is stored gzipped.
 
     A cache body can be stored under a transfer encoding, in which case the bytes on disk
@@ -830,10 +866,15 @@ def etsy_recently_viewed(context):
                 cached = _cached_renditions(index, container, values[2])
                 media = ''
                 for candidate in cached:
-                    label, mime, extension = _sniff_image(_read_head(candidate))
+                    label, mime, extension, decoded = _cache_image(candidate)
                     if label in _RENDERABLE:
-                        media = check_in_media(candidate, os.path.basename(candidate),
-                                               force_type=mime, force_extension=extension)
+                        if decoded is None:
+                            media = check_in_media(candidate, os.path.basename(candidate),
+                                                   force_type=mime, force_extension=extension)
+                        else:
+                            media = check_in_embedded_media(
+                                candidate, decoded, os.path.basename(candidate),
+                                force_type=mime, force_extension=extension)
                         break
                 data_list.append((
                     _ms(values[8]),
@@ -1191,7 +1232,7 @@ def etsy_image_caches(context):
             modified = os.path.getmtime(file_found)
         except OSError:
             continue
-        label = _sniff_image(_read_head(file_found))[0]
+        label = _cache_image(file_found)[0]
         entry['types'][label] = entry['types'].get(label, 0) + 1
         if entry['earliest'] is None or modified < entry['earliest']:
             entry['earliest'] = modified
