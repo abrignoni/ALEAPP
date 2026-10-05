@@ -5,21 +5,22 @@ __artifacts_v2__ = {
             "Conversations from the AI Chatbot - Nova app, one row per message, joining "
             "History, HistoryDetail, HistoryDetailImage, HistoryDetailDocument and "
             "HistoryDetailLink, with the path the Android MediaStore index holds for a "
-            "file of the same name as the first attached document and the first attached "
-            "image."
+            "file of the same name as the first attached document and first image, reported "
+            "as filename candidates with source/user provenance rather than established attachments."
         ),
-        "author": "Guilherme Guilherme",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-05-30",
-        "last_update_date": "2026-09-19",
+        "last_update_date": "2026-10-05",
         "requirements": "none",
         "category": "AI Chatbot - Nova",
         "notes": (
-            "Sources: chat-ai.db and the Android MediaStore databases. The AI Model and Assistant Persona names are mapped from the numeric codes as observed in the app by the author; the mapping is not vendor-documented, so the stored code is shown beside every name and an unmapped code is reported as stored. Role reads type 0 as USER and 1 as AI ASSISTANT, and Conv. Deleted reads DELETED when softDeleted is 1, on the same basis; what softDeleted records about the conversation is not established. A path is shown when a MediaStore row has the same file name as the attachment; the match is on the name alone, across every MediaStore database read, so it does not establish that the path is this attachment. Not in MediaStore means no row had that name, not that the file never existed locally. Attachment URLs are concatenated by SQLite and split on commas, so a URL containing a comma would split wrong; only the first image attachment is rendered as media. An extraction can carry one copy of each database per Android user and every copy is read, so the located at line lists each database and the row identifiers are per database. The committed test case carries no file under the app's shared media folder and no link record, so Image Media, Document Media and Link URL(s) have no value on any of its rows and Image Path reads Not in MediaStore throughout. Developed against the author's own installation; no registered corpus image carries this app."
+            "Original parser/research: Guilherme Guilherme. Scope describes the source evidence path, not ownership of a recorded device path. Sources: chat-ai.db and Android MediaStore databases. Case-insensitive filename candidates retain source and Android user/evidence scope; they do not establish attachment identity. Only a unique same-scope filesystem filename candidate with no unknown-scope collision is rendered as Media Candidate, with its physical evidence source shown. The AI Model and Assistant Persona names are mapped from the numeric codes as observed in the app by the author; the mapping is not vendor-documented, so the stored code is shown beside every name and an unmapped code is reported as stored. Role reads type 0 as USER and 1 as AI ASSISTANT, and Conv. Deleted reads DELETED when softDeleted is 1, on the same basis; what softDeleted records about the conversation is not established. Attachment URLs are concatenated by SQLite and split on commas, so a URL containing a comma would split wrong; only the first image attachment is rendered as media. An extraction can carry one copy of each database per Android user and every copy is read, so the located at line lists each database and the row identifiers are per database. The committed test case carries no file under the app's shared media folder and no link record, so Media Candidate and Link URL(s) have no value in the author reference; Image MediaStore Candidate Paths is blank throughout. Developed against the author's own installation; no registered corpus image carries this app."
         ),
         "paths": (
             "**/com.scaleup.chatai/databases/chat-ai.db",
             "**/com.android.providers.media/databases/external*.db",
             "**/com.google.android.providers.media.module/databases/external*.db",
+            "**/data/media/*/Android/media/com.scaleup.chatai/Nova/*",
         ),
         "output_types": ["standard", "lava"],
         "artifact_icon": "message-square",
@@ -34,6 +35,11 @@ from scripts.ilapfuncs import (
     logfunc,
     open_sqlite_db_readonly,
     check_in_media,
+)
+
+from scripts.artifacts.novaMediaCandidates import (
+    filesystem_candidates, mediastore_candidates, namespace,
+    describe_candidates, unique_file_candidate,
 )
 
 CHAT_BOT_MODEL_MAP = {
@@ -203,28 +209,9 @@ def nova_chatbot_conversations(context):
         logfunc("Nova conversations - chat-ai.db not found")
         return (), [], ""
 
-    # Pre-build lookup for local files in the extraction
-    nova_files_lookup = {}
-    nova_path_part = "Android/media/com.scaleup.chatai/Nova"
-    for f in files_found:
-        if nova_path_part in f:
-            nova_files_lookup[os.path.basename(f).lower()] = f
-
-    media_lookup = {}
-    sources = []
-    for media_db in media_dbs:
-        try:
-            with open_sqlite_db_readonly(media_db) as db:
-                cur = db.cursor()
-                cur.execute(
-                    "SELECT _display_name, _data FROM files WHERE _data IS NOT NULL"
-                )
-                for display_name, data_path in cur.fetchall():
-                    key = (display_name or os.path.basename(str(data_path))).lower()
-                    media_lookup[key] = data_path
-            sources.append(media_db)
-        except Exception as e:  # pylint: disable=broad-exception-caught
-            logfunc(f"Nova conversations - MediaStore lookup unavailable ({e})")
+    filesystem = filesystem_candidates(context, files_found)
+    media_lookup = mediastore_candidates(context, media_dbs)
+    sources = [context.get_relative_path(path) for path in media_dbs]
 
     rows_raw = []
     for nova_db in nova_dbs:
@@ -232,8 +219,9 @@ def nova_chatbot_conversations(context):
             with open_sqlite_db_readonly(nova_db) as db:
                 cursor = db.cursor()
                 cursor.execute(QUERY)
-                rows_raw.extend(cursor.fetchall())
-            sources.append(nova_db)
+                source = context.get_relative_path(nova_db)
+                rows_raw.extend((row, source) for row in cursor.fetchall())
+            sources.append(context.get_relative_path(nova_db))
         except Exception as e:  # pylint: disable=broad-exception-caught
             logfunc(f"Nova conversations - could not read the database ({e})")
 
@@ -241,32 +229,23 @@ def nova_chatbot_conversations(context):
         return (), [], "\n".join(sources)
 
     headers = (
-        "Conv. ID",
-        "Conv. UUID",
-        "Conv. Title",
-        "AI Model",
-        "Assistant Persona",
-        "Conv. Deleted",
-        "Msg. ID",
-        "Msg. UUID",
-        "Role",
-        "Message Text",
-        "Token Count",
-        "Reasoning Content",
-        ("Message Timestamp (UTC)", "datetime"),
-        "Image Attachment Prompts",
-        ("Image Media", "media"),
-        "Image Path",
-        "Image Cloud URL",
-        "Document Name",
-        ("Document Media", "media"),
-        "Document Path",
-        "Document Cloud URL",
-        "Link URL(s)",
+        ("Message Timestamp (UTC)", "datetime"), "Conv. ID", "Conv. UUID", "Conv. Title",
+        "AI Model", "Assistant Persona", "Conv. Deleted", "Msg. ID", "Msg. UUID", "Role",
+        "Message Text", "Token Count", "Reasoning Content", "Image Attachment Prompts",
+        ("Image Media Candidate", "media"), "Image Media Candidate Source",
+        "Image MediaStore Candidate Paths", "Image MediaStore Candidate Sources",
+        "Image MediaStore Match Scope", "Image Filesystem Candidate Paths",
+        "Image Filesystem Candidate Sources", "Image Filesystem Match Scope", "Image Cloud URL",
+        "Document Name", ("Document Media Candidate", "media"), "Document Media Candidate Source",
+        "Document MediaStore Candidate Paths", "Document MediaStore Candidate Sources",
+        "Document MediaStore Match Scope", "Document Filesystem Candidate Paths",
+        "Document Filesystem Candidate Sources", "Document Filesystem Match Scope",
+        "Document Cloud URL", "Link URL(s)", "Source File"
     )
 
     rows = []
-    for row in rows_raw:
+    for row, source in rows_raw:
+        scope = namespace(source)
         model_int = row[3]
         model_name = "Unknown"
         if model_int is not None:
@@ -288,66 +267,35 @@ def nova_chatbot_conversations(context):
             else f"UNKNOWN ({raw_role})"
         )
 
-        # A. Documents
-        doc_names_raw = row[17]
-        doc_media_ref = ""
-        doc_dev_path = "Not in MediaStore"
+        primary_doc = (row[17] or '').split(',')[0].strip()
+        document_key = primary_doc.lower()
+        doc_files = filesystem.get(document_key, [])
+        doc_selected = unique_file_candidate(doc_files, scope)
+        doc_reference = ''
+        if doc_selected:
+            doc_reference = check_in_media(doc_selected['extracted'],
+                                            name=os.path.basename(doc_selected['extracted'])) or ''
 
-        if doc_names_raw:
-            primary_doc = doc_names_raw.split(",")[0].strip()
-            key = primary_doc.lower()
-            doc_dev_path = media_lookup.get(key, "Not in MediaStore")
-            ext_path = nova_files_lookup.get(key)
-            if ext_path:
-                doc_media_ref = check_in_media(ext_path, name=primary_doc) or ''
-
-        # B. Images
-        img_urls_raw = row[15]
-        img_media_refs = []
-        img_dev_path = "Not in MediaStore"
-
-        if img_urls_raw:
-            # Handle comma separated images
-            url_parts = img_urls_raw.split(",")
-            for i, url_part in enumerate(url_parts):
-                img_name = os.path.basename(url_part.strip().split("?")[0])
-                key = img_name.lower()
-
-                # We map dev path for the first one for the column
-                if i == 0:
-                    img_dev_path = media_lookup.get(key, "Not in MediaStore")
-
-                ext_path = nova_files_lookup.get(key)
-                if ext_path:
-                    ref = check_in_media(ext_path, name=img_name)
-                    if ref:
-                        img_media_refs.append(ref)
-
-        rows.append(
-            (
-                row[0],
-                row[1] or "",
-                row[2] or "",
-                model_name,
-                assistant_persona,
-                "DELETED" if row[5] == 1 else "No",
-                row[7],
-                row[8] or "",
-                role_str,
-                row[10] or "",
-                row[11] if row[11] is not None else "",
-                row[12] or "",
-                _epoch_to_utc(row[13]),
-                row[16] or "",
-                img_media_refs[0] if img_media_refs else "",
-                img_dev_path,
-                row[15] or "",
-                row[17] or "",
-                doc_media_ref,
-                doc_dev_path,
-                row[19] or "",
-                row[20] or "",
-            )
-        )
+        image_key, image_reference, image_source = '', '', ''
+        for index, url in enumerate((row[15] or '').split(',')):
+            key = os.path.basename(url.strip().split('?')[0]).lower()
+            if index == 0:
+                image_key = key
+            selected = unique_file_candidate(filesystem.get(key, []), scope)
+            if selected and not image_reference:
+                image_reference = check_in_media(selected['extracted'],
+                                                  name=os.path.basename(selected['extracted'])) or ''
+                image_source = selected['source']
+        rows.append((
+            _epoch_to_utc(row[13]), row[0], row[1] or '', row[2] or '', model_name,
+            assistant_persona, 'DELETED' if row[5] == 1 else 'No', row[7], row[8] or '',
+            role_str, row[10] or '', row[11] if row[11] is not None else '', row[12] or '',
+            row[16] or '', image_reference, image_source,
+            *describe_candidates(media_lookup.get(image_key, []), scope),
+            *describe_candidates(filesystem.get(image_key, []), scope), row[15] or '',
+            row[17] or '', doc_reference, doc_selected['source'] if doc_selected else '',
+            *describe_candidates(media_lookup.get(document_key, []), scope),
+            *describe_candidates(doc_files, scope), row[19] or '', row[20] or '', source
+        ))
 
     return headers, rows, "\n".join(sources)
