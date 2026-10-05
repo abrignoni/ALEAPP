@@ -12,8 +12,9 @@ __artifacts_v2__ = {
                  'WAL rows are observations in salt/checksum-validated frames, resolved using '
                  'the schema of a main-file plus WAL-prefix replay copy. They are not evidence '
                  'of deletion or transaction commitment, and repetitions are retained. Only '
-                 'table-root leaf pages with complete inline records are supported; integer primary '
-                 'key, child and overflow layouts or unresolved schemas are skipped with diagnostics. Prefix '
+                 'table leaves proven reachable from the snapshot root are supported, including '
+                 'INTEGER PRIMARY KEY aliases proven by schema/index metadata. Ambiguous primary keys, '
+                 'overflow records and unresolved schemas/ownership are skipped with diagnostics. Prefix '
                  'replay cannot reconstruct pages predating earlier checkpoints. Run At is '
                  'read as Unix nanoseconds and Last Updated as Unix milliseconds; these units '
                  'remain unverified. Stored values and evidence provenance are retained.',
@@ -30,6 +31,7 @@ import datetime
 from pathlib import Path
 import sqlite3
 import struct
+import re
 import tempfile
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, logfunc
@@ -90,7 +92,7 @@ def _decode_value(data, pos, serial, end):
     return value, pos + size
 
 
-def parse_leaf_records(page, columns, usable_size):
+def parse_leaf_records(page, columns, usable_size, rowid_alias=None):
     records = []
     failures = []
     if len(page) < 8 or page[0] != 13:
@@ -105,7 +107,8 @@ def parse_leaf_records(page, columns, usable_size):
             if not pointer_end <= ptr < usable_size:
                 raise ValueError('cell pointer outside payload area')
             payload, pos = _read_varint(page, ptr, usable_size)
-            _, pos = _read_varint(page, pos, usable_size)
+            rowid, pos = _read_varint(page, pos, usable_size)
+            rowid = rowid - (1 << 64) if rowid >= 1 << 63 else rowid
             # Table-leaf payloads larger than this use overflow pages.
             if payload > usable_size - 35 or pos + payload > usable_size:
                 raise ValueError('unsupported overflow or truncated payload')
@@ -126,11 +129,64 @@ def parse_leaf_records(page, columns, usable_size):
                 record[column], pos = _decode_value(page, pos, serial, payload_end)
             if pos != payload_end:
                 raise ValueError('record payload length mismatch')
+            if rowid_alias is not None:
+                if record[rowid_alias] is not None:
+                    raise ValueError('non-NULL integer-primary-key alias payload')
+                record[rowid_alias] = rowid
             record['_cell_offset'] = ptr
             records.append(record)
         except (ValueError, struct.error) as exc:
             failures.append(f'cell {index}: {exc}')
     return records, failures
+
+
+def reachable_table_leaves(image, root, page_size, usable_size):
+    """Prove ownership using only the current replay image's table tree."""
+    pages = len(image) // page_size
+    pending, visited, leaves = [root], set(), set()
+    try:
+        while pending:
+            number = pending.pop()
+            if not 1 <= number <= pages or number in visited:
+                raise ValueError('invalid/cyclic/duplicate table child pointer')
+            visited.add(number)
+            page = image[(number - 1) * page_size:number * page_size]
+            start = 100 if number == 1 else 0
+            kind = page[start]
+            if kind not in (5, 13):
+                raise ValueError('unsupported table-tree page type')
+            header_size = 12 if kind == 5 else 8
+            cells = int.from_bytes(page[start + 3:start + 5], 'big')
+            pointer_end = start + header_size + 2 * cells
+            if pointer_end > usable_size:
+                raise ValueError('truncated table-tree pointer array')
+            if kind == 13:
+                leaves.add(number)
+                continue
+            pending.append(int.from_bytes(page[start + 8:start + 12], 'big'))
+            positions = set()
+            ranges = []
+            previous_key = None
+            for index in range(cells):
+                offset = start + header_size + 2 * index
+                ptr = int.from_bytes(page[offset:offset + 2], 'big')
+                if ptr in positions or not pointer_end <= ptr <= usable_size - 5:
+                    raise ValueError('invalid interior cell pointer')
+                positions.add(ptr)
+                child = int.from_bytes(page[ptr:ptr + 4], 'big')
+                key, cell_end = _read_varint(page, ptr + 4, usable_size)
+                key = key - (1 << 64) if key >= 1 << 63 else key
+                if previous_key is not None and key <= previous_key:
+                    raise ValueError('unordered interior rowid separators')
+                previous_key = key
+                ranges.append((ptr, cell_end))
+                pending.append(child)
+            ranges.sort()
+            if any(right[0] < left[1] for left, right in zip(ranges, ranges[1:])):
+                raise ValueError('overlapping interior cells')
+        return leaves, None
+    except (ValueError, IndexError) as exc:
+        return set(), f'unproven table ownership: {exc}'
 
 
 def _snapshot_schema(image):
@@ -152,12 +208,19 @@ def _snapshot_schema(image):
                 return None
             info = db.execute('PRAGMA table_info(no_show_alerts)').fetchall()
             columns = [row[1] for row in info]
-            unsupported = any(row[2].upper() == 'INTEGER' and row[5] for row in info)
+            primary = [row for row in info if row[5]]
+            pk_index = any(row[3] == 'pk' for row in db.execute(
+                'PRAGMA index_list(no_show_alerts)'))
+            alias = (primary[0][1] if len(primary) == 1 and
+                     primary[0][2].upper() == 'INTEGER' and not pk_index and
+                     not re.search(r'\bDESC\b', table[1], re.IGNORECASE) else None)
+            unsupported = alias is None and (len(primary) > 1 or any(
+                row[2].upper() in ('INTEGER', 'INT') for row in primary))
             required = {'id', 'last_updated', 'run_at', 'trigger_condition', 'type',
                         'place_id', 'observed_user_id', 'creator_id'}
             if not required.issubset(columns):
                 return None
-            return table[0], columns, unsupported
+            return table[0], columns, alias, unsupported
         except sqlite3.Error:
             return None
         finally:
@@ -165,7 +228,7 @@ def _snapshot_schema(image):
 
 
 def recover_wal_observations(main_path, wal_path):
-    """Recover root-leaf observations using validated prefix-local schema only."""
+    """Recover reachable leaf observations using validated prefix-local schema only."""
     image = bytearray(Path(main_path).read_bytes())
     data = Path(wal_path).read_bytes()
     recovered = []
@@ -214,14 +277,18 @@ def recover_wal_observations(main_path, wal_path):
         if not schema:
             unresolved += 1
             continue
-        root, columns, unsupported_pk = schema
-        if page_number != root:
-            continue
+        root, columns, alias, unsupported_pk = schema
         if unsupported_pk:
             diagnostic(f'frame {number}: unsupported INTEGER PRIMARY KEY record layout')
             continue
         usable = page_size - image[20]
-        records, failures = parse_leaf_records(frame[24:], columns, usable)
+        leaves, ownership_failure = reachable_table_leaves(image, root, page_size, usable)
+        if ownership_failure:
+            diagnostic(f'frame {number}: {ownership_failure}')
+            continue
+        if page_number not in leaves:
+            continue
+        records, failures = parse_leaf_records(frame[24:], columns, usable, alias)
         for failure in failures:
             diagnostic(f'frame {number}, page {page_number}: {failure}')
         for record in records:
