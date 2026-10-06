@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Per-app storage size and data usage recorded by an Avast Cleanup scan",
         "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-11",
-        "last_update_date": "2026-09-11",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Avast Cleanup",
         "sample_data": {
@@ -19,8 +19,8 @@ __artifacts_v2__ = {
                  "on every one of the 23 "
                  "packages, by between 3,413,949 and 3,414,360 milliseconds, so the two tables were "
                  "written in separate passes about 57 minutes apart and a join on date would have "
-                 "matched nothing.\nData Usage (bytes) and App Size (bytes) are reported as "
-                 "stored. Their headers say bytes; that unit was not sourced or measured here. "
+                 "matched nothing.\nData Usage (as stored) and App Size (as stored) are reported as "
+                 "stored; their units were not sourced or measured here. "
                  "App Name is looked up from the CachedApp table in the separate "
                  "databases/cleaner store of the same container, so a second Android "
                  "user's copy of that cache cannot name this user's packages. It held 6 "
@@ -285,7 +285,7 @@ def avast_cleanup_app_storage(context):
 
     data_headers = (
         ('Recorded', 'datetime'), ('Size Recorded', 'datetime'), 'Package', 'App Name',
-        'Data Usage (bytes)', 'App Size (bytes)', 'Source File')
+        'Data Usage (as stored)', 'App Size (as stored)', 'Source File')
     return data_headers, data_list, '\n'.join(sources)
 
 
