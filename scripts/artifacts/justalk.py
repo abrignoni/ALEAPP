@@ -7,9 +7,9 @@ __artifacts_v2__ = {
                        "content), the "
                        "direction, the sender, the media type and the cached media file where it "
                        "is present in the extraction",
-        "author": "@AlexisBrignoni, @Newhope81, Claude",
+        "author": "@AlexisBrignoni, @Newhope81, Claude; @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "JusTalk",
         "notes": "Messages are read from the class_CallLog table of the per-account Realm store "
@@ -41,7 +41,12 @@ __artifacts_v2__ = {
                  "class_ROKids* tables were all empty in it, so group chats and JusTalk Kids parental controls are not "
                  "covered. The reply, reaction, sticker, poll and link columns of class_CallLog "
                  "were unpopulated and are not reported. A sample exercising any of those would "
-                 "be welcome.",
+                 "be welcome."
+                 " Sources include only Realms contributing rows to this artifact, in first-row "
+                 "encounter order. Source File is appended only when more than one distinct Realm "
+                 "contributes; it identifies the row-supplying Realm, not media or account ownership. "
+                 "Zero-row inputs are excluded from the source union. Repeated occurrences remain. "
+                 "Other artifact source selection, direction and cache ownership remain unchanged.",
         "paths": ('*/com.juphoon.justalk/files/*.realm',
                   '*/com.juphoon.justalk/files/imfilecache/*',
                   '*/com.juphoon.justalk/files/image_manager_disk_cache/*',
@@ -66,9 +71,9 @@ __artifacts_v2__ = {
         "name": "JusTalk - Call Logs",
         "description": "Audio and video calls from the JusTalk Realm store, with the direction, "
                        "the duration and the server call identifier",
-        "author": "@AlexisBrignoni, @Newhope81, Claude",
+        "author": "@AlexisBrignoni, @Newhope81, Claude; @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "JusTalk",
         "notes": "Read from the rows of class_CallLog whose type is AudioCall or VideoCall. "
@@ -84,7 +89,12 @@ __artifacts_v2__ = {
                  "its own column so the conversion can be checked.\n"
                  "The 'state' and 'reason' columns are reported as stored; nothing in the "
                  "extraction documents their values. A duration of zero is not by itself evidence "
-                 "that a call was not answered.",
+                 "that a call was not answered."
+                 " Sources include only Realms contributing rows to this artifact, in first-row "
+                 "encounter order. Source File is appended only when more than one distinct Realm "
+                 "contributes; it identifies the row-supplying Realm, not media or account ownership. "
+                 "Zero-row inputs are excluded from the source union. Repeated occurrences remain. "
+                 "Other artifact source selection, direction and cache ownership remain unchanged.",
         "paths": ('*/com.juphoon.justalk/files/*.realm',),
         "output_types": "standard",
         "artifact_icon": "phone",
@@ -276,9 +286,9 @@ __artifacts_v2__ = {
     "justalk_kids_messages": {
         "name": "JusTalk Kids - Messages",
         "description": 'Chat messages from the JusTalk Kids Realm store, with the message body (on photo, video, voice and location rows that have a file record the Message column shows the message type in brackets in place of the stored content), the direction, the sender, the media type and the cached media file where it is present in the extraction',
-        "author": "@AlexisBrignoni, @Newhope81, Claude",
+        "author": "@AlexisBrignoni, @Newhope81, Claude; @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "JusTalk Kids",
         "notes": "Messages are read from the class_CallLog table of the per-account Realm store "
@@ -311,7 +321,12 @@ __artifacts_v2__ = {
                  "class_ROKids* tables were all empty in it, so group chats and JusTalk Kids parental controls are not "
                  "covered. The reply, reaction, sticker, poll and link columns of class_CallLog "
                  "were unpopulated and are not reported. A sample exercising any of those would "
-                 "be welcome.",
+                 "be welcome."
+                 " Sources include only Realms contributing rows to this artifact, in first-row "
+                 "encounter order. Source File is appended only when more than one distinct Realm "
+                 "contributes; it identifies the row-supplying Realm, not media or account ownership. "
+                 "Zero-row inputs are excluded from the source union. Repeated occurrences remain. "
+                 "Other artifact source selection, direction and cache ownership remain unchanged.",
         "paths": ('*/com.justalk.kids.android/files/*.realm',
                   '*/com.justalk.kids.android/files/imfilecache/*',
                   '*/com.justalk.kids.android/files/image_manager_disk_cache/*',
@@ -335,9 +350,9 @@ __artifacts_v2__ = {
     "justalk_kids_calls": {
         "name": "JusTalk Kids - Call Logs",
         "description": 'Audio and video calls from the JusTalk Kids Realm store, with the direction, the duration and the server call identifier',
-        "author": "@AlexisBrignoni, @Newhope81, Claude",
+        "author": "@AlexisBrignoni, @Newhope81, Claude; @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "JusTalk Kids",
         "notes": "Read from the rows of class_CallLog whose type is AudioCall or VideoCall. "
@@ -357,7 +372,12 @@ __artifacts_v2__ = {
                  "its own column so the conversion can be checked.\n"
                  "The 'state' and 'reason' columns are reported as stored; nothing in the "
                  "extraction documents their values. A duration of zero is not by itself evidence "
-                 "that a call was not answered.",
+                 "that a call was not answered."
+                 " Sources include only Realms contributing rows to this artifact, in first-row "
+                 "encounter order. Source File is appended only when more than one distinct Realm "
+                 "contributes; it identifies the row-supplying Realm, not media or account ownership. "
+                 "Zero-row inputs are excluded from the source union. Repeated occurrences remain. "
+                 "Other artifact source selection, direction and cache ownership remain unchanged.",
         "paths": ('*/com.justalk.kids.android/files/*.realm',),
         "output_types": "standard",
         "artifact_icon": "phone",
@@ -716,10 +736,13 @@ def justalk_messages(context):
     files_found = context.get_files_found()
     source_paths = _account_realms(files_found)
     data_list = []
+    contributors = []
+    row_sources = []
 
     hash_index = _hash_index(files_found)
 
     for source_path in source_paths:
+        first_row = len(data_list)
         file_records = _rows(source_path, 'class_ROFileUrl')
         for row in sorted(_rows(source_path, 'class_CallLog'), key=lambda r: r.get('timestamp') or 0):
             if row.get('type') in CALL_TYPES:
@@ -756,6 +779,11 @@ def justalk_messages(context):
                 row.get('readState'),
             ))
 
+        if len(data_list) > first_row:
+            row_sources.extend([context.get_relative_path(source_path)] * (len(data_list) - first_row))
+            if source_path not in contributors:
+                contributors.append(source_path)
+
     data_headers = (
         ('Timestamp', 'datetime'),
         'Direction',
@@ -778,15 +806,21 @@ def justalk_messages(context):
         'State (as stored)',
         'Read State (as stored)',
     )
-    return data_headers, data_list, source_paths[0] if source_paths else ''
+    if len(contributors) > 1:
+        data_headers += ('Source File',)
+        data_list = [row + (origin,) for row, origin in zip(data_list, row_sources)]
+    return data_headers, data_list, '\n'.join(contributors)
 
 
 @artifact_processor
 def justalk_calls(context):
     source_paths = _account_realms(context.get_files_found())
     data_list = []
+    contributors = []
+    row_sources = []
 
     for source_path in source_paths:
+        first_row = len(data_list)
         for row in sorted(_rows(source_path, 'class_CallLog'), key=lambda r: r.get('timestamp') or 0):
             if row.get('type') not in CALL_TYPES:
                 continue
@@ -804,6 +838,11 @@ def justalk_calls(context):
                 row.get('reason'),
             ))
 
+        if len(data_list) > first_row:
+            row_sources.extend([context.get_relative_path(source_path)] * (len(data_list) - first_row))
+            if source_path not in contributors:
+                contributors.append(source_path)
+
     data_headers = (
         ('Timestamp', 'datetime'),
         'Direction',
@@ -817,7 +856,10 @@ def justalk_calls(context):
         'State (as stored)',
         'Reason (as stored)',
     )
-    return data_headers, data_list, source_paths[0] if source_paths else ''
+    if len(contributors) > 1:
+        data_headers += ('Source File',)
+        data_list = [row + (origin,) for row, origin in zip(data_list, row_sources)]
+    return data_headers, data_list, '\n'.join(contributors)
 
 
 @artifact_processor
