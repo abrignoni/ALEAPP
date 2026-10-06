@@ -10,15 +10,15 @@
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/Samsungwallet/testdata.Samsungwallet.samsung_wallet_cards.case1.zip",
-    "start_time": "2026-08-28T01:47:45.451553+00:00",
-    "end_time": "2026-08-28T01:47:45.483346+00:00",
-    "run_time_seconds": 0.001373291015625,
+    "start_time": "2026-10-06T12:51:26.745819+00:00",
+    "end_time": "2026-10-06T12:51:26.778372+00:00",
+    "run_time_seconds": 0.0019707679748535156,
     "last_commit": {
-      "hash": "747bb6cb24d1e48398f977e1323dc4143c0f7373",
-      "author_name": "Gear-I",
-      "author_email": "dielleaiko@hotmail.com",
-      "date": "2026-08-26T19:29:18-04:00",
-      "message": "Add Samsung Wallet enrolled-cards and receipts artifacts"
+      "hash": "c8ff1f1e064c4653d919a464eb8886135a2ac8ad",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-10-04T02:02:01-04:00",
+      "message": "Correct artifact descriptions and notes against the code and sources"
     }
   },
   "headers": [
@@ -32,10 +32,10 @@
     "Payment Ready",
     "Card Locked",
     "Transit Support",
-    "ID Verification Max Requests",
-    "ID Verification Request Count",
-    "ID Verification Max Retries",
-    "ID Verification Retry Count"
+    "idvMaxRequest (as stored)",
+    "idvRequestCount (as stored)",
+    "idvMaxRetry (as stored)",
+    "idvRetryCount (as stored)"
   ],
   "data": [
     [
