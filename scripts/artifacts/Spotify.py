@@ -4,17 +4,18 @@ __artifacts_v2__ = {
         "description": "Account identifiers, the stored auth source value, the selected language "
                        "and the key_date_first_launch value, read from the app's main preferences "
                        "file.",
-        "author": "@Gear-I, Claude",
+        "author": "@Gear-I, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-08-25",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Spotify",
         "notes": "No email address or display name for the account was found on the extraction "
                  "this artifact was built on, which is not named here; each file under the app's "
                  "data directory there, including shared_prefs and the per-user settings folder, "
                  "was searched for both. Whether the other tested extractions were searched this "
-                 "way is not recorded. Canonical Username is an opaque identifier read from "
-                 "'crashlytics_user_id'; 'event-sender-event-owner' is reported beside it as Event "
+                 "way is not recorded. Crashlytics User ID is an opaque identifier read from "
+                 "'crashlytics_user_id', without proof of a canonical username; "
+                 "'event-sender-event-owner' is reported beside it as Event "
                  "Owner ID, and how often the two were equal on the tested extractions was not "
                  "counted. Auth Source is the ADAPTIVE_AUTH_METADATA_AUTH_SOURCE value, reported "
                  "as stored. A preferences file holding neither identifier gives no row. Two of "
@@ -57,7 +58,7 @@ __artifacts_v2__ = {
                  "account signed in holds one of these files per account and every one of them is "
                  "read; 'Account Folder' is the name of the per-account directory a row's file "
                  "sits in, reported as stored. On that image the name is the account's canonical "
-                 "username followed by '-user', so it lines up with the Canonical Username column "
+                 "username followed by '-user', so it lines up with the Crashlytics User ID column "
                  "of Spotify - Account. Each playlist can appear more than once, with a separate "
                  "row per stored snapshot; what causes a new snapshot to be written, and what the "
                  "earliest row's time marks, are not established. 'Counter A' and 'Counter B' are "
@@ -531,8 +532,8 @@ def _lyrics_first_line(body, response_path):
 @artifact_processor
 def spotify_account(context):
     data_headers = (
-        "Canonical Username", "Event Owner ID", "Auth Source", "Language",
-        ("App First Launch Time", "datetime"), "Installation ID",
+        ("App First Launch Time", "datetime"), "Crashlytics User ID",
+        "Event Owner ID", "Auth Source", "Language", "Installation ID",
     )
 
     files_found = [str(f) for f in unique_files(context)]
@@ -547,11 +548,11 @@ def spotify_account(context):
             continue
         source_paths.add(prefs_path)
         data_list.append((
+            _epoch_ms_to_utc(_xml_value(root, 'key_date_first_launch')),
             username,
             event_owner,
             _xml_value(root, 'ADAPTIVE_AUTH_METADATA_AUTH_SOURCE') or '',
             _xml_value(root, 'user-selected-language') or '',
-            _epoch_ms_to_utc(_xml_value(root, 'key_date_first_launch')),
             _xml_value(root, 'installation_id') or '',
         ))
 
