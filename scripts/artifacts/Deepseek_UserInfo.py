@@ -6,13 +6,13 @@ from scripts.ilapfuncs import (
 __artifacts_v2__ = {
     "deepseek_user_info": {
         "name": "Deepseek User Info",
-        "description": "Deepseek account information including token, email and phone number (an empty mobile_number is shown as Not Found, which is the parser's text and not a stored value)",
-        "author": "RicardoBentoSantos",
+        "description": "Stored Deepseek account fields id, token, email and mobile_number from app_user_info",
+        "author": "RicardoBentoSantos, @AlexisBrignoni, Codex",
         "creation_date": "2026-05-24",
-        "last_update_date": "2026-05-24",
+        "last_update_date": "2026-10-05",
         "requirements": "none",
         "category": "DeepSeek",
-        "notes": "",
+        "notes": "Mobile Number retains mobile_number as stored, including empty, whitespace and zero values. SQL NULL renders blank; stored text Not Found is retained. The stored field does not establish phone validity or account availability.",
         "paths": ('*/data/com.deepseek.chat/databases/deepseek_chat.db*'),
         "output_types": ["html", "lava", "tsv"],
         "artifact_icon": "user"
@@ -55,9 +55,6 @@ def deepseek_user_info(context):
             for row in all_rows:
 
                 user_id, token, email, mobile_number = row
-
-                if not mobile_number or str(mobile_number).strip() == "":
-                    mobile_number = "Not Found"
 
                 data_list.append((
                     user_id,
