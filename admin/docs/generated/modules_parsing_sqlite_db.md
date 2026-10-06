@@ -22,7 +22,6 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | OrnetBrowser |
 | PrivatePhotoVault |
 | ProtonDrive |
-| RandoChat |
 | RomeoDatingApp |
 | SamsungDeviceHealthManagement |
 | SamsungNotes |
@@ -199,6 +198,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | PodcastAddict |
 | PumaActivities |
 | PumaUsers |
+| RandoChat |
 | RunkeeperActivities |
 | SamsungGalleryHiddenAlbum |
 | Todoist |
