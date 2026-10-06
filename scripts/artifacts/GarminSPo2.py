@@ -1,15 +1,18 @@
 __artifacts_v2__ = {
     "get_garmin_spo2": {
         "name": "GarminSPO2",
-        "description": "Reads the acclimation_pulse_ox_details table of the Garmin Connect cache-database. Rows with no spo2Value are not reported. SPO2 Value Average is spo2ValueAverage, or spo2Value where the average is empty. The timestamps are reported as stored.",
-        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "description": "Reads the acclimation_pulse_ox_details table of the Garmin Connect cache-database. Rows with no spo2Value are not reported. spo2Value and spo2ValueAverage are reported separately without fallback; timestamps are as stored.",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}, @AlexisBrignoni, Codex",
         "creation_date": "2023-02-24",
-        "last_update_date": "2026-07-10",
+        "last_update_date": "2026-10-06",
         "requirements": "Python 3.7 or higher",
         "category": "Garmin",
         "notes": "Whether a given Garmin Connect version still populates cache-database is not "
                  "established here; gcm_cache.db and garmin.api files are parsed by the "
-                 "GarminJson, GarminGcmJsonActivities, garmin and Garmin*API artifacts.",
+                 "GarminJson, GarminGcmJsonActivities, garmin and Garmin*API artifacts. "
+                 "The registered Pixel 7a cache-database lacks acclimation_pulse_ox_details, "
+                 "so its zero count reflects an unsupported schema, not an empty SpO2 table. "
+                 "Stored value and average remain distinct; no unit or additional meaning is inferred.",
         "paths": ('*/com.garmin.android.apps.connectmobile/databases/cache-database*',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "activity",
@@ -55,8 +58,8 @@ def get_garmin_spo2(context):
 
     data_list = []
     for row in all_rows:
-        spo2_average = row[4] if row[4] is not None else row[3]
-        data_list.append((row[0], row[1], row[2], spo2_average, row[5]))
+        data_list.append((row[1], row[2], row[0], row[3], row[4], row[5]))
 
-    data_headers = ('User Profile PK', 'Start Timestamp GMT', 'End Timestamp GMT', 'SPO2 Value Average', 'SPO2 Values Array')
+    data_headers = ('Start Timestamp GMT', 'End Timestamp GMT', 'User Profile PK',
+                    'SpO2 Value (as stored)', 'SpO2 Value Average (as stored)', 'SPO2 Values Array')
     return data_headers, data_list, source_path
