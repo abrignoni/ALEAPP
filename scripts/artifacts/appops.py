@@ -6,13 +6,13 @@ __artifacts_v2__ = {
                        "Android 14 these records are in appops_accesses.xml)",
         "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2021-08-15",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Permissions",
         "notes": "Access Timestamp and Reject Timestamp are the t and r attributes of each st "
                  "record, read as Unix milliseconds; Proxy Package Name and Proxy Package UID are "
-                 "its pp and pu attributes and ID is its id attribute where present. Only the "
-                 "first appops.xml found is read. Reference: Android Open Source Project. Op "
+                 "its pp and pu attributes and ID is its id attribute where present. Distinct "
+                 "original appops.xml states are read, collapsing only byte-identical known storage aliases. Reference: Android Open Source Project. Op "
                  "codes and names: AppOpsManager.java sAppOpInfos at android-14.0.0_r1, "
                  "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/"
                  "android-14.0.0_r1/core/java/android/app/AppOpsManager.java#2347; the table in "
@@ -21,7 +21,12 @@ __artifacts_v2__ = {
                  "AppOpsService.java writeState at android-10.0.0_r1, "
                  "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/"
                  "android-10.0.0_r1/services/core/java/com/android/server/appop/"
-                 "AppOpsService.java#3063; no source for the id attribute was read here.",
+                 "AppOpsService.java#3063; no source for the id attribute was read here. Raw Op Code and Raw State Code "
+                 "preserve the op and entry n attributes without assigning additional meanings. "
+                 "Raw Record Attributes preserves parsed root, package, container, operation and entry "
+                 "tags and attributes, not original XML bytes or ABX wire types. Invalid stored times "
+                 "remain in raw attributes with an empty derived date and a diagnostic. Missing package "
+                 "names are diagnosed and omitted. Source File appears only for combined returned sources.",
         "paths": ('*/system/appops.xml',),
         "output_types": "standard",
         "artifact_icon": "package",
@@ -43,7 +48,7 @@ __artifacts_v2__ = {
                        "exercised it)",
         "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2021-08-15",
-        "last_update_date": "2026-10-04",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Permissions",
         "notes": "Last Access Persistent (tp), Last Access Cached (tc), Last Access Background "
@@ -51,10 +56,10 @@ __artifacts_v2__ = {
                  "Last Access Top (tt) are the op element's tp, tc, tb, tf, tfs and tt "
                  "attributes: the last access time, read here as Unix milliseconds, recorded "
                  "under the uid state each header names. Duration is the d attribute. The "
-                 "reject time attributes of the same element (rp, rt, rfs, rf, rb, rc) are not "
-                 "read. None of the images listed in sample_data holds this form, so the column "
-                 "mapping was checked on a constructed file only. Only the first appops.xml "
-                 "found is read. "
+                 "reject time attributes of the same element (rp, rt, rfs, rf, rb, rc) are retained "
+                 "in Raw Record Attributes but are not converted to date columns. None of the images listed in sample_data holds this form, so the column "
+                 "mapping was checked on a constructed file only. Distinct original appops.xml "
+                 "states are read, collapsing only byte-identical known storage aliases. "
                  "Reference: Android Open Source Project, AppOpsService.java at "
                  "android-9.0.0_r1: UID_STATE_TIME_ATTRS, "
                  "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/"
@@ -68,7 +73,13 @@ __artifacts_v2__ = {
                  "Op codes and names: AppOpsManager.java sAppOpInfos at android-14.0.0_r1, "
                  "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/"
                  "android-14.0.0_r1/core/java/android/app/AppOpsManager.java#2347; the table in "
-                 "this module names codes 0 to 120 and reports a higher code as its number.",
+                 "this module names codes 0 to 120 and reports a higher code as its number. "
+                 "Raw Op Code and Raw Record Attributes retain parsed operation and enclosing attributes "
+                 "without new meanings. ABX attributes are decoded strings, not original wire types. "
+                 "Invalid stored times remain in raw attributes with an empty derived date and a "
+                 "diagnostic. Missing package names are diagnosed and omitted. Reject-only operations "
+                 "without access attributes are not selected. Source File appears only for combined "
+                 "returned sources.",
         "paths": ('*/system/appops.xml',),
         "output_types": "standard",
         "artifact_icon": "package",
@@ -86,10 +97,14 @@ __artifacts_v2__ = {
 }
 
 import datetime
+import hashlib
+import json
+from pathlib import Path, PurePosixPath
 import re
 import xml.etree.ElementTree as ET
 
 from scripts.ilapfuncs import artifact_processor, logfunc, abxread, checkabx
+from scripts.artifacts.storagePathViews import canonical_path
 
 INVALID_XML_CHARS = re.compile(r'[\x00-\x08\x0b\x0c\x0e-\x1f]')
 BARE_AMPERSAND = re.compile(r'&(?!(?:amp|lt|gt|quot|apos|#\d+|#x[0-9A-Fa-f]+);)')
@@ -137,7 +152,7 @@ def _ms_to_utc(value):
     return ''
 
 
-def _appops_root(file_found):
+def _appops_root(file_found, display_path=None):
     if checkabx(file_found):
         return abxread(file_found, False).getroot()
     try:
@@ -148,59 +163,139 @@ def _appops_root(file_found):
         try:
             return ET.fromstring(xml)
         except ET.ParseError as ex:
-            logfunc(f'Skipping unparseable XML {file_found}: {ex}')
+            logfunc(f'Skipping unparseable XML {display_path or file_found}: {type(ex).__name__}')
             return ET.Element('empty')
 
 
-def _appops_file(files_found):
-    for file_found in files_found:
-        file_found = str(file_found)
-        if file_found.endswith('appops.xml'):
-            return file_found
-    return ''
+def _appops_files(context):
+    seen_paths = set()
+    seen_states = set()
+    for candidate in context.get_files_found():
+        path = str(candidate)
+        relative = PurePosixPath(context.get_relative_path(path).replace('\\', '/'))
+        physical = Path(path)
+        if (path in seen_paths or physical.name != 'appops.xml' or physical.parent.name != 'system'
+                or relative.name != 'appops.xml' or relative.parent.name != 'system'
+                or physical.is_symlink()):
+            continue
+        seen_paths.add(path)
+        if not physical.is_file():
+            logfunc(f'App Ops: unavailable regular file in {relative}')
+            continue
+        try:
+            digest = hashlib.sha256()
+            with physical.open('rb') as stream:
+                chunk = stream.read(1024 * 1024)
+                while chunk:
+                    digest.update(chunk)
+                    chunk = stream.read(1024 * 1024)
+            identity = (canonical_path(relative)[0], digest.digest())
+        except OSError:
+            logfunc(f'App Ops: unreadable fingerprint in {relative}')
+            identity = (path,)
+        if identity not in seen_states:
+            seen_states.add(identity)
+            yield path, str(relative)
 
 
-@artifact_processor
-def get_appops(context):
-    files_found = context.get_files_found()
-    source_path = _appops_file(files_found)
+class _AppopsDiagnostics:
+    """Bound diagnostics per original file without hiding the omitted total."""
+    def __init__(self, relative):
+        self.relative = relative
+        self.count = 0
+
+    def report(self, reason):
+        self.count += 1
+        if self.count <= 20:
+            logfunc(f'App Ops: {reason} in {self.relative}')
+
+    def finish(self):
+        if self.count > 20:
+            logfunc(f'App Ops: {self.count} field/structure diagnostics in {self.relative}; '
+                    'only the first 20 are individually reported')
+
+
+def _appops_time(value, diagnostic, attribute):
+    try:
+        return _ms_to_utc(value)
+    except (ValueError, OverflowError, OSError, TypeError):
+        diagnostic.report(f'invalid stored time {attribute}; raw value retained')
+        return ''
+
+
+def _appops_attributes(**elements):
+    return json.dumps({key: {'tag': element.tag, 'attributes': dict(element.attrib)}
+                       for key, element in elements.items()}, ensure_ascii=False, sort_keys=True)
+
+
+def _appops_rows(context, legacy=False):
     data_list = []
-    if source_path:
-        root = _appops_root(source_path)
+    sources = []
+    for path, relative in _appops_files(context):
+        try:
+            root = _appops_root(path, relative)
+        # ABX decoder defines its error class inside abxread; limit this boundary to decoding.
+        except Exception as error:  # pylint: disable=broad-exception-caught
+            logfunc(f'App Ops: unreadable XML/ABX ({type(error).__name__}) in {relative}')
+            continue
+        diagnostic = _AppopsDiagnostics(relative)
+        contributed = False
         for elem in root.iter('pkg'):
-            pkg = elem.attrib['n']
-            for subelem in elem:
-                for op in subelem:
-                    permission = PERMISSION_OP.get(op.attrib.get('n'), op.attrib.get('n'))
-                    for entry in op:
-                        access = _ms_to_utc(entry.attrib.get('t'))
-                        reject = _ms_to_utc(entry.attrib.get('r'))
-                        data_list.append((access, reject, pkg, entry.attrib.get('id', ''),
-                                          entry.attrib.get('pp', ''), entry.attrib.get('pu', ''), permission))
-
-    data_headers = (('Access Timestamp', 'datetime'), ('Reject Timestamp', 'datetime'), 'Package Name', 'ID', 'Proxy Package Name', 'Proxy Package UID', 'Permission')
-    return data_headers, data_list, source_path
-
-
-@artifact_processor
-def get_appops_legacy(context):
-    files_found = context.get_files_found()
-    source_path = _appops_file(files_found)
-    data_list = []
-    if source_path:
-        root = _appops_root(source_path)
-        for elem in root.iter('pkg'):
+            if 'n' not in elem.attrib:
+                diagnostic.report('unsupported package without n; records omitted')
+                continue
             pkg = elem.attrib['n']
             for subelem in elem:
                 for op in subelem:
                     a = op.attrib
-                    # legacy rows carry the tp/tc/tb/tf/tfs/tt time attributes directly on the op element
-                    if not any(a.get(k) for k in ('tp', 'tc', 'tb', 'tf', 'tfs', 'tt')):
-                        continue
-                    permission = PERMISSION_OP.get(a.get('n'), a.get('n'))
-                    data_list.append((_ms_to_utc(a.get('tp')), _ms_to_utc(a.get('tc')), _ms_to_utc(a.get('tb')),
-                                      _ms_to_utc(a.get('tf')), _ms_to_utc(a.get('tfs')), _ms_to_utc(a.get('tt')),
-                                      pkg, a.get('d', ''), a.get('pp', ''), a.get('pu', ''), permission))
+                    code = a.get('n')
+                    permission = PERMISSION_OP.get(code, code)
+                    if legacy:
+                        times = ('tp', 'tc', 'tb', 'tf', 'tfs', 'tt')
+                        if not any(a.get(key) for key in times):
+                            continue
+                        dates = tuple(_appops_time(a.get(key), diagnostic, key) for key in times)
+                        raw = _appops_attributes(root=root, package=elem, container=subelem, operation=op)
+                        data_list.append((*dates, pkg, a.get('d', ''), a.get('pp', ''), a.get('pu', ''),
+                                          code, permission, raw, relative))
+                        contributed = True
+                    else:
+                        for entry in op:
+                            access = _appops_time(entry.attrib.get('t'), diagnostic, 't')
+                            reject = _appops_time(entry.attrib.get('r'), diagnostic, 'r')
+                            raw = _appops_attributes(root=root, package=elem, container=subelem,
+                                                     operation=op, entry=entry)
+                            data_list.append((access, reject, pkg, entry.attrib.get('id', ''),
+                                              entry.attrib.get('pp', ''), entry.attrib.get('pu', ''),
+                                              code, permission, entry.attrib.get('n'), raw, relative))
+                            contributed = True
+        diagnostic.finish()
+        if contributed:
+            sources.append(path)
+    if len(sources) <= 1:
+        data_list = [row[:-1] for row in data_list]
+    return data_list, sources
 
-    data_headers = (('Last Access Persistent (tp)', 'datetime'), ('Last Access Cached (tc)', 'datetime'), ('Last Access Background (tb)', 'datetime'), ('Last Access Foreground (tf)', 'datetime'), ('Last Access Foreground Service (tfs)', 'datetime'), ('Last Access Top (tt)', 'datetime'), 'Package Name', 'Duration', 'Proxy Package Name', 'Proxy Package UID', 'Permission')
-    return data_headers, data_list, source_path
+
+@artifact_processor
+def get_appops(context):
+    data_list, sources = _appops_rows(context)
+    data_headers = (('Access Timestamp', 'datetime'), ('Reject Timestamp', 'datetime'),
+                    'Package Name', 'ID', 'Proxy Package Name', 'Proxy Package UID',
+                    'Raw Op Code', 'Permission', 'Raw State Code', 'Raw Record Attributes')
+    if len(sources) > 1:
+        data_headers += ('Source File',)
+    return data_headers, data_list, '\n'.join(sources)
+
+
+@artifact_processor
+def get_appops_legacy(context):
+    data_list, sources = _appops_rows(context, legacy=True)
+    data_headers = (('Last Access Persistent (tp)', 'datetime'), ('Last Access Cached (tc)', 'datetime'),
+                    ('Last Access Background (tb)', 'datetime'), ('Last Access Foreground (tf)', 'datetime'),
+                    ('Last Access Foreground Service (tfs)', 'datetime'), ('Last Access Top (tt)', 'datetime'),
+                    'Package Name', 'Duration', 'Proxy Package Name', 'Proxy Package UID',
+                    'Raw Op Code', 'Permission', 'Raw Record Attributes')
+    if len(sources) > 1:
+        data_headers += ('Source File',)
+    return data_headers, data_list, '\n'.join(sources)
