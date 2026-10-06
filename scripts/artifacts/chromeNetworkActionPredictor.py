@@ -2,9 +2,9 @@ __artifacts_v2__ = {
     "get_chromeNetworkActionPredictor": {
         "name": 'Network Action Predictor',
         "description": 'Parses the Network Action Predictor from Chromium Based Browsers',
-        "author": 'Kevin Pagano (@stark4n6)',
+        "author": 'Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex',
         "creation_date": '2020-03-19',
-        "last_update_date": '2026-09-11',
+        "last_update_date": '2026-10-06',
         "requirements": 'none',
         "category": 'Chromium',
         "notes": 'Reads the network_action_predictor table from the Chromium profiles the declared paths match, one '
@@ -26,7 +26,7 @@ __artifacts_v2__ = {
                   'table and 3 hold it empty, so no Brave or Samsung Browser row was observed. An '
                   'absent browser here is not evidence that browser was unused. Where a device '
                   'carries more than one Android user each profile is read, but the rows share one '
-                  'table with no column naming the user or the source file: on russell_pixel6a_a13 '
+                  'table with Source File only when multiple selected databases contribute rows; it does not assert user ownership. On russell_pixel6a_a13 '
                   'the Android user 0 Chrome profile holds 273 rows '
                   'and the user 10 profile holds none.',
         "paths": ('*/app_chrome/Default/Network Action Predictor*', '*/app_sbrowser/Default/Network Action Predictor*', '*/app_opera/Network Action Predictor*', '*/app_webview/Default/Network Action Predictor*'),
@@ -62,7 +62,8 @@ def get_chromeNetworkActionPredictor(context):
     lava_data_headers = data_headers.copy()
     all_data_headers = lava_data_headers + ['Browser Name']
 
-    report_file = 'Unknown'
+    source_paths = []
+    row_sources = []
 
     for file_found in files_found:
         file_found = str(file_found)
@@ -107,7 +108,8 @@ def get_chromeNetworkActionPredictor(context):
             db.close()
 
         if len(all_rows) > 0:
-            report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
+            if file_found not in source_paths:
+                source_paths.append(file_found)
 
             data_list = []
             for row in all_rows:
@@ -115,7 +117,11 @@ def get_chromeNetworkActionPredictor(context):
 
             data_list = [row + (browser_name,) for row in data_list]
             all_data.extend(data_list)
+            row_sources.extend([context.get_relative_path(file_found)] * len(data_list))
         else:
             logfunc(f'No {browser_name} - Network Action Predictor data available')
 
-    return all_data_headers, all_data, report_file
+    if len(source_paths) > 1:
+        all_data_headers += ['Source File']
+        all_data = [row + (source,) for row, source in zip(all_data, row_sources)]
+    return all_data_headers, all_data, '\n'.join(source_paths)
