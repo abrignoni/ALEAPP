@@ -19,7 +19,7 @@ MASTER = bytes(range(32))
 PNG = base64.b64decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aEbcAAAAASUVORK5CYII=')
 
 
-def create_avg_fixture(root, settings=False, media=False):
+def create_avg_fixture(root, settings=False, media=False, master=MASTER, image=PNG):
     root = Path(root)
     tree = ast.parse(Path(avg.__file__).read_text(encoding='utf-8'))
     function = next(n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == '_compute_avg')
@@ -29,7 +29,7 @@ def create_avg_fixture(root, settings=False, media=False):
     pin, java_pin = base64.b64decode(encoded).split(b'\n')[:2]
     iv = bytes(range(16))
     derived = PBKDF2(unhexlify(java_pin), iv, 16, count=100, hmac_hash_module=SHA1)
-    encrypted = AES.new(derived, AES.MODE_CBC, iv).encrypt(hashlib.sha256(MASTER).digest()+MASTER)
+    encrypted = AES.new(derived, AES.MODE_CBC, iv).encrypt(hashlib.sha256(master).digest()+master)
     key = root/'data/data/com.antivirus/Vault/.key_store/key'
     key.parent.mkdir(parents=True, exist_ok=True)
     key.write_bytes(b'\0'*8+iv+encrypted)
@@ -42,11 +42,11 @@ def create_avg_fixture(root, settings=False, media=False):
         ET.ElementTree(xml).write(path)
         files.append(str(path))
     if media:
-        image = root/'data/data/com.antivirus/Vault/pictures/encrypted-picture'
-        image.parent.mkdir(parents=True, exist_ok=True)
-        ciphertext = AES.new(MASTER, AES.MODE_CBC, iv).encrypt(pad(PNG,16))
-        image.write_bytes(struct.pack('>I',16)+iv+struct.pack('>I',len(ciphertext))+ciphertext)
-        files.append(str(image))
+        image_path = root/'data/data/com.antivirus/Vault/pictures/encrypted-picture'
+        image_path.parent.mkdir(parents=True, exist_ok=True)
+        ciphertext = AES.new(master, AES.MODE_CBC, iv).encrypt(pad(image,16))
+        image_path.write_bytes(struct.pack('>I',16)+iv+struct.pack('>I',len(ciphertext))+ciphertext)
+        files.append(str(image_path))
     return files
 
 
@@ -56,11 +56,11 @@ class TestAvgKeyOnlyReport(unittest.TestCase):
             with self.subTest(settings=settings), tempfile.TemporaryDirectory() as directory:
                 files = create_avg_fixture(directory, settings=settings)
                 _, rows, _ = avg.get_AVG.__wrapped__(Context(directory, files))
-                self.assertEqual([value for label,value in rows if label=='Master Key'], [MASTER.hex()])
-                self.assertIn('Derived Key', dict(rows))
-                self.assertNotIn('Java Equivilant', dict(rows))
-                self.assertEqual('Java Equivalent' in dict(rows), settings)
-                self.assertEqual(len(rows), 8 if settings else 6)
+                self.assertEqual([row[1] for row in rows if row[0]=='Master Key'], [MASTER.hex()])
+                self.assertIn('Derived Key', [row[0] for row in rows])
+                self.assertNotIn('Java Equivilant', [row[0] for row in rows])
+                self.assertIn('Java Equivalent', [row[0] for row in rows])
+                self.assertEqual(len(rows), 9 if settings else 7)
 
     def test_no_key_does_not_fabricate_key_output(self):
         with tempfile.TemporaryDirectory() as directory:

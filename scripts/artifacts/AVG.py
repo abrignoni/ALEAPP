@@ -1,70 +1,95 @@
 __artifacts_v2__ = {
     "get_AVG": {
-        "name": "AVG - Encryption Details",
-        "description": "Reports the PIN and pattern hashes stored in the AVG (com.antivirus) PinSettingsImpl.xml, the four-digit PIN and the pattern whose SHA-1 equals each hash when one is found, and the values read from the vault .key_store file with the keys the module derives from that PIN",
+        "name": "Vault Candidates - Encryption Details (AVG Decoder)",
+        "description": "Reports independently sourced vault candidate key/settings observations",
         "author": "@Theincidentalchewtoy, @AlexisBrignoni, Codex",
         "creation_date": "2022-05-03",
         "last_update_date": "2026-10-05",
         "requirements": "none",
         "category": "Encrypting Media Apps",
         "notes": (
-            'The PIN search covers 0000 to 9999 only. The pattern search covers patterns of 4 to '
-            '9 points. The pattern is matched to its hash and is not used to derive a key. The '
-            'Derived Key and Master Key rows are written after key derivation in the settings '
-            'branch or a successful key-only match. '
-            "'Java Equivalent' is the password value the module passes to PBKDF2 for "
-            'that PIN, shown in hexadecimal and taken from a table of 10,000 values embedded in '
-            'the module. When no '
-            'settings file is found, each value in that table is tried against the key file, and '
-            'a match adds the User PIN, Derived Key and Master Key rows. With no key file there are no key '
-            'rows. Vault files are taken from any folder named Vault in the extraction, matched '
-            'by folder name only. The module does not check that the folder belongs to '
-            'com.antivirus. When more than one file sits in a .key_store or .metadata_store '
-            "folder, the last one read is used. The scheme follows the module author's write-up. "
-            "Reference: theincidentalchewtoy, 'Decrypting the AVG Photo Vault', "
-            'https://theincidentalchewtoy.wordpress.com/2022/02/23/decrypting-the-avg-photo-vault/. '
-            'No registered test image is recorded for this artifact.'
+            'Exact evidence-relative Vault roots are isolated. External settings are '
+            'independent observations and never drive a vault key. Multiple key candidates skip '
+            'media decoding; multiple metadata candidates are not attached. Generic Vault '
+            'folders, successful padding and detected file types do not establish AVG ownership '
+            'or plaintext authenticity. Existing key-only digest criterion and media folder '
+            'selection are retained; metadata date units are not inferred. The PIN search '
+            'covers 0000 to 9999 only. The pattern search covers patterns of 4 to 9 points. The '
+            'pattern is matched to its hash and is not used to derive a key. The Key-derived '
+            'facts follow a successful key-only digest match; settings facts are reported '
+            "independently. 'Java Equivalent' is the password value the module passes to PBKDF2 "
+            'for that PIN, shown in hexadecimal and taken from a table of 10,000 values '
+            'embedded in the module. Each candidate key file is searched independently using '
+            'that table; a digest match adds User PIN, Java Equivalent, Derived Key and Master '
+            'Key rows. With no key file there are no key rows. Vault files are taken from any '
+            'folder named Vault in the extraction, matched by folder name only. The module does '
+            'not check that the folder belongs to com.antivirus. The scheme follows the module '
+            "author's write-up. Reference: theincidentalchewtoy, 'Decrypting the AVG Photo "
+            "Vault', https://theincidentalchewtoy.wordpress.com/2022/02/23/decrypting-the-avg- "
+            'photo-vault/. No registered test image is recorded for this artifact.'
         ),
         "paths": ('*/com.antivirus/shared_prefs/PinSettingsImpl.xml', '*/Vault/*'),
         "output_types": "standard",
         "artifact_icon": "key",
     },
     "get_AVG_media": {
-        "name": "AVG - Media Files",
-        "description": "Decrypts files held in AVG (com.antivirus) vault folders whose names end in 'pictures', when the module derived the vault master key",
+        "name": "Vault Candidates - Media (AVG Decoder)",
+        "description": "Reports root-local media decoded with a unique key candidate, with explicit metadata association status",
         "author": "@Theincidentalchewtoy, @AlexisBrignoni, Codex",
         "creation_date": "2022-05-03",
-        "last_update_date": "2026-10-04",
+        "last_update_date": "2026-10-05",
         "requirements": "none",
         "category": "Encrypting Media Apps",
         "notes": (
-            'Files in the .thumbnail folder are not reported. A file that does not decrypt is '
-            'logged and gets no row. The file type is taken from the decrypted bytes. An empty '
-            'result does not establish that the vault held no files. Metadata Date holds the '
-            "date value the vault's metadata store holds for the file, as stored. Its unit and "
-            'what it marks are not established, so it is not converted to a time. Original File '
-            "Path and File Size are the metadata store's originFilePath and size as stored. 'No "
-            "Data' in those three columns means no metadata entry was read for the file. Vault "
-            'File is the path in the extraction of the encrypted vault file the row was '
-            'decrypted from. Export Name is the name the decrypted copy is given in the report: '
-            "the vault file's name with an extension taken from the decrypted bytes, "
-            'or .unknown when no type is recognised. Vault files are taken from any folder named '
-            'Vault in the extraction, matched by folder name only. The module does not check that '
-            'the folder belongs to com.antivirus. When more than one file sits in a .key_store or '
-            '.metadata_store folder, the last one read is used. The key derivation follows the '
-            "module author's write-up. Reference: theincidentalchewtoy, "
-            "'Decrypting the AVG Photo Vault', "
-            'https://theincidentalchewtoy.wordpress.com/2022/02/23/decrypting-the-avg-photo-vault/. '
-            'No registered test image is recorded for this artifact.'
+            'Exact evidence-relative Vault roots are isolated. External settings are '
+            'independent observations and never drive a vault key. Multiple key candidates skip '
+            'media decoding; multiple metadata candidates are not attached. Generic Vault '
+            'folders, successful padding and detected file types do not establish AVG ownership '
+            'or plaintext authenticity. Existing key-only digest criterion and media folder '
+            'selection are retained; metadata date units are not inferred. Files in the '
+            '.thumbnail folder are not reported. A file that does not decrypt is logged and '
+            'gets no row. The file type is taken from the decrypted bytes. An empty result does '
+            'not establish that the vault held no files. Metadata Date holds the date value the '
+            "vault's metadata store holds for the file, as stored. Its unit and what it marks "
+            'are not established, so it is not converted to a time. Original File Path and File '
+            "Size are the metadata store's originFilePath and size as stored. 'No Data' in "
+            'those three columns means no metadata entry was read for the file. Source File is '
+            'the path in the extraction of the encrypted vault file the row was decrypted from. '
+            'Export Name is the name the decrypted copy is given in the report: the vault '
+            "file's name with an extension taken from the decrypted bytes, or .unknown when no "
+            'type is recognised. Vault files are taken from any folder named Vault in the '
+            'extraction, matched by folder name only. The module does not check that the folder '
+            "belongs to com.antivirus. The key derivation follows the module author's write-up. "
+            "Reference: theincidentalchewtoy, 'Decrypting the AVG Photo Vault', "
+            'https://theincidentalchewtoy.wordpress.com/2022/02/23/decrypting-the-avg-photo- '
+            'vault/. No registered test image is recorded for this artifact.'
         ),
         "paths": ('*/com.antivirus/shared_prefs/PinSettingsImpl.xml', '*/Vault/*'),
         "output_types": "standard",
         "artifact_icon": "photo",
-    }
+    },
+    "get_AVG_inventory": {
+        "name": "Vault Candidate Input Inventory (AVG Decoder)",
+        "description": "Lists located vault and settings source candidates, byte-identical storage aliases and unresolved key or metadata ambiguity",
+        "author": "@Theincidentalchewtoy, @AlexisBrignoni, Codex",
+        "creation_date": "2026-10-05",
+        "last_update_date": "2026-10-05",
+        "requirements": "none",
+        "category": "Encrypting Media Apps",
+        "notes": (
+            'Candidate roles follow the existing decoder folder selectors, not proof of app '
+            'ownership. All distinct conflicting sources remain listed. Byte-identical known '
+            'storage aliases are listed together; unknown prefixes/users remain separate.'
+        ),
+        "paths": ('*/com.antivirus/shared_prefs/PinSettingsImpl.xml', '*/Vault/*'),
+        "output_types": "standard",
+        "artifact_icon": "table",
+    },
 }
 
 import base64
 import json
+import pathlib
 import xml.etree.ElementTree as ET
 from binascii import unhexlify
 from hashlib import sha1, sha256
@@ -77,6 +102,7 @@ from Crypto.Protocol.KDF import PBKDF2
 from Crypto.Util.Padding import unpad
 
 import scripts.filetype as filetype
+from scripts.artifacts.storagePathViews import canonical_path
 from scripts.ilapfuncs import artifact_processor, logfunc, check_in_embedded_media
 
 _CACHE = {}
@@ -195,6 +221,7 @@ def _compute_avg(files_found):
             if digest.hexdigest() == first_decrypted.hex():
                 master_key = candidate_key
                 enc_details.append(('User PIN', pin.decode('utf-8')))
+                enc_details.append(('Java Equivalent', pin_dict[pin].decode('utf-8')))
                 enc_details.append(('Derived Key', derived_key))
                 enc_details.append(('Master Key', master_key.hex()))
                 break
@@ -208,7 +235,7 @@ def _compute_avg(files_found):
             for entry in meta_json['items']:
                 meta[entry['vaultFileName']] = {
                     'path': entry['originFilePath'], 'date': entry['date'], 'size': entry['size']}
-        except (ValueError, KeyError, OSError) as ex:
+        except (ValueError, KeyError, TypeError, OSError) as ex:
             logfunc(f'AVG: could not read metadata store: {ex}')
 
     if file_list and master_key is not None:
@@ -238,20 +265,151 @@ def _compute_avg(files_found):
     _CACHE[cache_key] = result
     return result
 
+def _vault_inputs(context):
+    """Collapse only byte-identical known aliases; keep conflicting candidates."""
+    candidates = {}
+    for source in context.get_files_found():
+        source = str(source)
+        if not isfile(source):
+            continue
+        relative = context.get_relative_path(source)
+        identity, rank = canonical_path(relative)
+        digest = sha256()
+        readable = True
+        try:
+            with open(source, 'rb') as stream:
+                while chunk := stream.read(1024 * 1024):
+                    digest.update(chunk)
+        except OSError:
+            readable = False
+            logfunc(f'AVG decoder: {relative}: source unreadable; candidate retained')
+        fingerprint = digest.hexdigest() if readable else ''
+        alias_identity = fingerprint if readable else 'unreadable:' + relative
+        entry = candidates.setdefault((identity, alias_identity),
+                                      {'paths': [], 'sha256': fingerprint, 'readable': readable})
+        entry['paths'].append((rank, relative, source))
+    roots = {}
+    settings = []
+    inputs = []
+    for entry in candidates.values():
+        paths = sorted(set(entry['paths']))
+        _, relative, source = paths[0]
+        parts = pathlib.PurePosixPath(relative).parts
+        indices = [index for index, part in enumerate(parts[:-1]) if part == 'Vault']
+        root = '/'.join(parts[:indices[-1] + 1]) if indices else ''
+        folder = pathlib.PurePosixPath(relative).parent.name
+        role = ('settings' if basename(source) == 'PinSettingsImpl.xml'
+                else 'key' if folder.endswith('.key_store')
+                else 'metadata' if folder.endswith('.metadata_store')
+                else 'media' if folder.endswith(('.mid_pictures', '.thumbnail', 'pictures'))
+                else 'other')
+        entry.update(source=source, relative=relative, root=root, folder=folder, role=role,
+                     aliases=[p[1] for p in paths])
+        inputs.append(entry)
+        if role == 'settings':
+            settings.append(entry)
+        elif root:
+            root_identity, root_rank = canonical_path(root + '/')
+            group = roots.setdefault(root_identity, {'roots': [], 'entries': []})
+            group['roots'].append((root_rank, root))
+            group['entries'].append(entry)
+    groups = []
+    for group in roots.values():
+        group['root'] = min(group['roots'])[1]
+        group['entries'].sort(key=lambda entry: entry['relative'])
+        groups.append(group)
+    return sorted(groups, key=lambda group: group['root']), sorted(settings, key=lambda e: e['relative']), sorted(inputs, key=lambda e: e['relative'])
+
+
+def _scoped_avg(context):
+    groups, settings, inputs = _vault_inputs(context)
+    details, media = [], []
+    for group in groups:
+        entries, root = group['entries'], group['root']
+        keys = [entry for entry in entries if entry['role'] == 'key']
+        metadata = [entry for entry in entries if entry['role'] == 'metadata']
+        status = ('unique key candidate' if len(keys) == 1 else 'ambiguous key candidates'
+                  if len(keys) > 1 else 'no key candidate')
+        if len(keys) > 1:
+            logfunc(f'AVG decoder: {root}: ambiguous key candidates; media skipped')
+        for key in keys:
+            selected = [key['source']]
+            if len(keys) == 1:
+                selected.extend(entry['source'] for entry in entries
+                                if entry['role'] in ('media', 'other'))
+                if len(metadata) == 1:
+                    selected.append(metadata[0]['source'])
+            try:
+                enc_rows, media_rows, _ = _compute_avg(selected)
+            except (OSError, ValueError, IndexError) as exc:
+                text = str(exc)
+                for entry in entries:
+                    text = text.replace(entry['source'], entry['relative'])
+                logfunc(f'AVG decoder: {root}: candidate failed; {text}')
+                details.append(('Candidate Status', 'key processing failed', root,
+                                key['relative'], status))
+                continue
+            details.extend((label, value, root, key['relative'], status) for label, value in enc_rows)
+            metadata_status = ('unique metadata candidate' if len(metadata) == 1
+                               else 'ambiguous metadata candidates' if len(metadata) > 1
+                               else 'no metadata candidate')
+            if len(metadata) > 1:
+                logfunc(f'AVG decoder: {root}: ambiguous metadata candidates; metadata not associated')
+            for row in media_rows:
+                reference, export_name, original_path, date, size, vault_file = row
+                if len(metadata) > 1:
+                    original_path, date, size = '', '', ''
+                media.append((date, root, key['relative'], metadata[0]['relative'] if len(metadata) == 1 else '',
+                              metadata_status, context.get_relative_path(str(vault_file)),
+                              original_path, size, export_name, reference))
+    for setting in settings:
+        try:
+            enc_rows, _, _ = _compute_avg([setting['source']])
+        except (OSError, ValueError, IndexError, ET.ParseError) as exc:
+            logfunc(f"AVG decoder: {setting['relative']}: independent settings failed; "
+                    f"{str(exc).replace(setting['source'], setting['relative'])}")
+            continue
+        details.extend((label, value, '', setting['relative'], 'independent settings; no vault association')
+                       for label, value in enc_rows)
+    return details, media, '\n'.join(entry['source'] for entry in inputs)
+
 
 @artifact_processor
 def get_AVG(context):
-    files_found = context.get_files_found()
-    enc_details, _, source_path = _compute_avg(files_found)
-    data_headers = ('Encryption Detail', 'Value')
-    return data_headers, enc_details, source_path
+    details, _, source = _scoped_avg(context)
+    return ('Encryption Detail', 'Value', 'Vault Root', 'Source File', 'Association Status'), details, source
 
 
 @artifact_processor
 def get_AVG_media(context):
-    files_found = context.get_files_found()
-    _, media_list, source_path = _compute_avg(files_found)
-    data_headers = (('Media', 'media'), 'Export Name', 'Original File Path',
-                    'Metadata Date', 'File Size', 'Vault File')
-    data_list = [row[:5] + (context.get_relative_path(row[5]),) for row in media_list]
-    return data_headers, data_list, source_path
+    _, media, source = _scoped_avg(context)
+    headers = ('Metadata Date (as stored)', 'Vault Root', 'Key Source File', 'Metadata Source File',
+               'Metadata Association Status', 'Source File', 'Original File Path', 'File Size',
+               'Export Name', ('Media', 'media'))
+    return headers, media, source
+
+
+@artifact_processor
+def get_AVG_inventory(context):
+    groups, _, inputs = _vault_inputs(context)
+    statuses = {}
+    for group in groups:
+        keys = sum(entry['role'] == 'key' for entry in group['entries'])
+        meta = sum(entry['role'] == 'metadata' for entry in group['entries'])
+        status = ('ambiguous key candidates' if keys > 1 else 'no key candidate' if keys == 0
+                  else 'unique key candidate')
+        if meta > 1:
+            status += '; ambiguous metadata candidates'
+        for entry in group['entries']:
+            statuses[entry['relative']] = (group['root'], status)
+    rows = []
+    for entry in inputs:
+        root, status = statuses.get(entry['relative'], ('', 'not associated with a vault'))
+        if entry['role'] == 'settings':
+            status = 'independent settings; no vault association'
+        if not entry['readable']:
+            status += '; source unreadable'
+        rows.append((root, entry['folder'], entry['role'], entry['relative'], entry['sha256'],
+                     json.dumps(entry['aliases'], ensure_ascii=False), status))
+    return ('Vault Root', 'Folder Name', 'Input Role', 'Source File', 'SHA256',
+            'Storage Alias Paths', 'Association Status'), rows, '\n'.join(entry['source'] for entry in inputs)
