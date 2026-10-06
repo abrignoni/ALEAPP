@@ -3,9 +3,9 @@ __artifacts_v2__ = {
     "get_mmw_activities": {
         "name": "Map My Walk - Activities",
         "description": "One row per localId in the timeSeries table of workout.db, with the first and last stored time and position, the last stored distance value and a route drawn from the stored coordinates",
-        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}, @AlexisBrignoni, Codex",
         "creation_date": "2023-02-24",
-        "last_update_date": "2023-02-24",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Map My Walk",
         "notes": "Start Time, End Time and the start and end coordinates are taken from the "
@@ -13,9 +13,11 @@ __artifacts_v2__ = {
                  "returns them. The query has no ORDER BY, so they are the earliest and latest "
                  "points only where the rows come back in time order. Timestamps are read as "
                  "Unix milliseconds. Duration (min) is the difference between those two times. "
-                 "Distance (km) is the last row's stored distance value and Mean Speed is the "
+                 "Last Returned Distance (as stored) is the last non-NULL distance in returned "
+                 "query order, not necessarily the latest-time or largest distance. Mean Speed is the "
                  "average of the stored speed values; the unit of neither was established, and "
-                 "no source was found for the km in the header. Only the first workout.db found "
+                 "the unordered chronology defect remains unresolved. Positive genuine coverage "
+                 "is unavailable. Only the first workout.db found "
                  "is read. Route Map is an image drawn from the row's stored coordinates and "
                  "Route KML holds the same points; neither uses an online service.",
         "paths": ('*com.mapmywalk.android2/databases/workout.db*',),
@@ -96,11 +98,11 @@ def get_mmw_activities(context):
             title = f'Map My Walk {lid}'
             subtitle = start_t.strftime('%Y-%m-%d %H:%M UTC') if start_t else ''
             route_map, route_kml = _route_media(source_path, coords, title, subtitle, f'{lid}_route')
-            data_list.append((lid, start_t, end_t, distance, mean_speed, duration_min, start_lat,
+            data_list.append((start_t, end_t, lid, distance, mean_speed, duration_min, start_lat,
                               start_lon, end_lat, end_lon, route_map, route_kml))
         db.close()
 
-    data_headers = ('ID', ('Start Time', 'datetime'), ('End Time', 'datetime'), 'Distance (km)',
+    data_headers = (('Start Time', 'datetime'), ('End Time', 'datetime'), 'ID', 'Last Returned Distance (as stored)',
                     'Mean Speed', 'Duration (min)', 'Latitude', 'Longitude', 'End Latitude',
                     'End Longitude', ('Route Map', 'media'), ('Route KML', 'media'))
     return data_headers, data_list, source_path
