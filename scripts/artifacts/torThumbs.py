@@ -2,15 +2,18 @@ __artifacts_v2__ = {
     "get_torThumbs": {
         "name": "TOR Thumbnails",
         "description": "Thumbnail files from the Tor Browser cache folder "
-                       "mozac_browser_thumbnails/thumbnails. Modified Time is the file system "
+                       "mozac_browser_thumbnails/thumbnails. Extracted Copy Modification Time is the "
+                       "file system "
                        "modification time of the extracted copy; files that do not open as images "
                        "are not listed.",
-        "author": "@abrignoni",
+        "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2021-12-23",
-        "last_update_date": "2021-12-23",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "TOR",
-        "notes": "",
+        "notes": "Extracted Copy Modification Time is read from the extracted file system copy, "
+                 "not from the thumbnail content. It depends on how the extraction and this "
+                 "tool preserved file times. No sample data is recorded for this artifact.",
         "paths": ('*/org.torproject.torbrowser/cache/mozac_browser_thumbnails/thumbnails/*.0',),
         "output_types": "standard",
         "artifact_icon": "file",
@@ -61,5 +64,5 @@ def get_torThumbs(context):
         data_list.append((_sec_to_utc(os.path.getmtime(file_found)), media, filename,
                           context.get_relative_path(location)))
 
-    data_headers = (('Modified Time', 'datetime'), ('Thumbnail', 'media'), 'Filename', 'Location')
+    data_headers = (('Extracted Copy Modification Time', 'datetime'), ('Thumbnail', 'media'), 'Filename', 'Location')
     return data_headers, data_list, source_path
