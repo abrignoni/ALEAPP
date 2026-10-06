@@ -35,16 +35,16 @@ __artifacts_v2__ = {
     'randochat_account': {
         'name': 'RandoChat Accounts',
         'description': 'Parses the configuracao table of the RandoChat database.',
-        'author': 'Marco Neumann {kalinko@be-binary.de}',
+        'author': 'Marco Neumann {kalinko@be-binary.de}, @AlexisBrignoni, Codex',
         'version': '0.0.1',
         'creation_date': '2026-01-15',
-        'last_update_date': '2026-01-15',
+        'last_update_date': '2026-10-06',
         'requirements': '',
         'category': 'Accounts',
-        'notes': 'User Sex and Preferred Sex show the stored H and M as Male '
-                 'and Female, on the reading that the letters stand for the '
-                 'Portuguese homem and mulher. No source for that reading was '
-                 'found, and any other value is shown blank.',
+        'notes': 'Stored Sex and Stored Sex Search Value retain the values under sexo and sexo_search. '
+                 'Existing SQLite MAX aggregates and name LIKE predicates are preserved, so duplicate '
+                 'keys are not a chronology claim. The H/M vendor meanings are unverified. Only the last '
+                 'matched main database is read.',
         'paths': (
             '*/data/com.random.chat.app/databases/ramdochatV2.db*'
             ),
@@ -54,17 +54,15 @@ __artifacts_v2__ = {
     'randochat_contacts': {
         'name': 'RandoChat Contacts',
         'description': 'Parses the conversa table of the RandoChat database, one row per conversation record.',
-        'author': 'Marco Neumann {kalinko@be-binary.de}',
+        'author': 'Marco Neumann {kalinko@be-binary.de}, @AlexisBrignoni, Codex',
         'version': '0.0.1',
         'creation_date': '2026-01-15',
-        'last_update_date': '2026-01-15',
+        'last_update_date': '2026-10-06',
         'requirements': '',
         'category': 'Contacts',
-        'notes': 'Sex shows the stored H and M as Male and Female, on the '
-                 'reading that the letters stand for the Portuguese homem and '
-                 'mulher. No source for that reading was found, and any other '
-                 'value is shown blank. Account ID is the id_pessoa column as '
-                 'stored.',
+        'notes': 'Stored Sex is c.sexo as stored, including unknown values and NULL. H/M vendor meanings '
+                 'are unverified. Stored Person ID is c.id_pessoa without asserting an account '
+                 'relationship. Only the last matched main database is read.',
         'paths': (
             '*/data/com.random.chat.app/databases/ramdochatV2.db*'
             ),
@@ -169,13 +167,13 @@ def randochat_account(context):
     query = '''
             SELECT 
             MAX(CASE WHEN name LIKE 'apelido' THEN value END) [Username],
-            MAX(CASE WHEN name LIKE 'sexo' THEN (CASE WHEN value = 'H' THEN 'Male' WHEN value = 'M' THEN 'Female' END) END) [User Sex],
+            MAX(CASE WHEN name LIKE 'sexo' THEN value END) [Stored Sex],
             MAX(CASE WHEN name LIKE 'idade' THEN value END) [User Age],
             MAX(CASE WHEN name LIKE 'language' THEN value END) [Language],
             MAX(CASE WHEN name LIKE 'device_id' THEN value END) [Device ID],
             MAX(CASE WHEN name LIKE 'idade_de' THEN value END) [Preferred Age From],
             MAX(CASE WHEN name LIKE 'idade_ate' THEN value END) [Preferred Age To],
-            MAX(CASE WHEN name LIKE 'sexo_search' THEN (CASE WHEN value = 'H' THEN 'Male' WHEN value = 'M' THEN 'Female' END) END) [Preferred Sex]
+            MAX(CASE WHEN name LIKE 'sexo_search' THEN value END) [Stored Sex Search Value]
             FROM configuracao
             '''
 
@@ -197,13 +195,13 @@ def randochat_account(context):
     
     data_headers = (
                         'Username',
-                        'User Sex',
+                        'Stored Sex',
                         'User Age',
                         'Language',
                         'Device ID',
                         'Preferred Age From',
                         'Preferred Age To',
-                        'Preferred Sex'
+                        'Stored Sex Search Value'
                     )
 
     return data_headers, data_list, main_db
@@ -225,13 +223,10 @@ def randochat_contacts(context):
 
     query = '''
             SELECT
-            c.id_pessoa [Account ID],
+            c.id_pessoa [Stored Person ID],
             c.apelido [Username],
             c.idade [Age],
-            CASE
-                WHEN c.sexo = 'M' THEN 'Female' -- From Mulher
-                WHEN c.sexo = 'H' THEN 'Male'  -- From Homem
-            END	[Sex],
+            c.sexo [Stored Sex],
             CASE
                 WHEN c.favorite = 1 THEN 'Yes'
                 WHEN c.favorite = 0 THEN 'No'
@@ -263,6 +258,6 @@ def randochat_contacts(context):
 
         data_list.append((account_id, username, age, sex, favorite, blocked, profile_pic))
     
-    data_headers = ('Account ID', 'Username', 'Age', 'Sex', 'Favorite?', 'Blocked?', 'Link Profile Pic')
+    data_headers = ('Stored Person ID', 'Username', 'Age', 'Stored Sex', 'Favorite?', 'Blocked?', 'Link Profile Pic')
 
     return data_headers, data_list, main_db
