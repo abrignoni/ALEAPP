@@ -101,14 +101,14 @@ __artifacts_v2__ = {
         },
     },
     "get_fcm_dump_gqsb": {
-        "name": "FCM Decoded - Geolocation",
+        "name": "FCM Decoded - Coordinate Payloads (Google Quick Search Box)",
         "description": "Latitude, longitude and place text carried in Google Quick Search Box push payloads (key casp) in fcm_queued_messages.ldb. What the coordinates refer to is not established; they are reported as stored.",
-        "author": "Alex Caithness (research [at] cclsolutionsgroup.com)",
+        "author": "Alex Caithness (research [at] cclsolutionsgroup.com), @AlexisBrignoni, Codex",
         "creation_date": "2022-07-28",
-        "last_update_date": "2022-07-28",
+        "last_update_date": "2026-10-05",
         "requirements": "none",
         "category": "Firebase Cloud Messaging",
-        "notes": "",
+        "notes": "Coordinates and URL or place text are decoded from Google Quick Search Box casp push payloads. The coordinates' referent is not established; these records do not by themselves establish the phone's position.",
         "paths": ('*/fcm_queued_messages.ldb/*',),
         "output_types": "all",
         "artifact_icon": "map-pin",
@@ -290,5 +290,5 @@ def get_fcm_dump_gqsb(context):
         except Exception:
             pass
 
-    data_headers = (('Timestamp', 'datetime'), 'Latitude', 'Longitude', 'URL or Location', 'Originating File')
+    data_headers = (('Timestamp', 'datetime'), 'Latitude', 'Longitude', 'URL or Place Text', 'Originating File')
     return data_headers, data_list, source
