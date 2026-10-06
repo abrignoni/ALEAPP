@@ -1,46 +1,42 @@
 __artifacts_v2__ = {
     "get_NQVault": {
-        "name": "NQ Vault Decrypted PINs",
+        "name": "NQ Vault - Hash Candidates",
         "description": "Reports the password_id values stored in the NQ Vault (com.netqin.ps) "
                        "database, each with a digit string whose Java String hashcode equals it",
-        "author": "@abrignoni",
+        "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2023-05-19",
-        "last_update_date": "2023-05-19",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Encrypting Media Apps",
-        "notes": "The Encrypted PIN column is the stored password_id. The "
-                 "Decrypted PIN column is the first digit string of 3 to 15 "
-                 "digits whose 32-bit Java String hashcode equals it, or the "
-                 "entry of a table of four ids built into this module, which "
-                 "holds numbers and shows the id 1477632 as 0. More than one "
-                 "digit string can produce the same hashcode, so the value is "
-                 "a matching candidate and is not shown to be the PIN that "
-                 "was set. No source is cited here for password_id being the "
-                 "hashcode of the PIN. No registered test image produces rows "
-                 "for this artifact.",
+        "notes": "Stored Password ID is password_id as stored. Matching Digit String Candidate "
+                 "is a built-in digit string or the first searched 3-to-15-digit string whose "
+                 "32-bit Java String hashcode matches that identifier. Built-in candidates "
+                 "preserve leading zeros. Hash collisions prevent this match from establishing "
+                 "the original PIN. The password_id scheme has no cited vendor source, and no "
+                 "registered positive encrypted sample is recorded. Unknown-identifier search "
+                 "cost and global database/media association remain unvalidated.",
         "paths": ('*/SystemAndroid/Data/**',),
         "output_types": "standard",
         "artifact_icon": "key",
     },
     "get_NQVault_media": {
-        "name": "NQ Vault Decrypted Media",
-        "description": "Restores media files held by NQ Vault (com.netqin.ps) by XORing the first "
-                       "128 bytes of each stored .bin file with a one byte key derived from the "
-                       "stored password_id",
-        "author": "@abrignoni",
+        "name": "NQ Vault - XOR Media",
+        "description": "XOR-transforms the first 128 bytes of matched .bin candidates under "
+                       "SystemAndroid/Data using a one-byte key derived from a matching "
+                       "digit-string hash candidate",
+        "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2023-05-19",
-        "last_update_date": "2023-05-19",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Encrypting Media Apps",
-        "notes": "The key is the low byte of the Java String hashcode of the "
-                 "digit string the NQ Vault Decrypted PINs artifact reports "
-                 "for the file's password_id. Only the first 128 bytes of "
-                 "each .bin file under a .image or .video folder are XORed; "
-                 "the rest is copied unchanged. The Password column shows "
-                 "that digit string, which is a matching candidate and is not "
-                 "shown to be the PIN that was set, and Password Hash is the "
-                 "stored password_id. The scheme has no cited source here and "
-                 "no registered test image produces rows for this artifact.",
+        "notes": "Media bytes are transformed using the low byte of the Java String hashcode "
+                 "of the Matching Digit String Candidate. Only the first 128 bytes of each "
+                 ".bin file under a .image or .video folder are XORed; the remainder is copied "
+                 "unchanged. Stored Password ID is the source password_id. The candidate is "
+                 "a hash match, not proof of the original PIN, app ownership or plaintext "
+                 "authenticity. The scheme lacks a cited vendor source and positive genuine "
+                 "encrypted coverage. Existing first-database and filename association remain "
+                 "unchanged and require separate validation.",
         "paths": ('*/SystemAndroid/Data/**',),
         "output_types": "standard",
         "artifact_icon": "photo",
@@ -77,8 +73,10 @@ def java_string_hashcode(pin):
 
 @functools.lru_cache(maxsize=None)
 def brute_force_pin(encoded_pin):
-    # Previously identified PINs (instant)
-    known = {'1509442': 1234, '1477632': 0, '-1867378635': 123456789, '-1812067894': 25101988}
+    # Built-in matching digit strings must retain leading zeros.
+    encoded_pin = str(encoded_pin)
+    known = {'1509442': '1234', '1477632': '0000',
+             '-1867378635': '123456789', '-1812067894': '25101988'}
     if encoded_pin in known:
         return known[encoded_pin]
     logfunc('PIN hash identified - brute forcing 3-15 digit PINs (long PINs can take a while).')
@@ -152,7 +150,7 @@ def _load_db(files_found):
 def get_NQVault(context):
     _, enc_pins, db_path = _load_db(context.get_files_found())
     data_list = [(encoded_pin, brute_force_pin(encoded_pin)) for encoded_pin in enc_pins]
-    data_headers = ('Encrypted PIN', 'Decrypted PIN')
+    data_headers = ('Stored Password ID', 'Matching Digit String Candidate')
     return data_headers, data_list, context.get_relative_path(db_path)
 
 
@@ -195,8 +193,9 @@ def get_NQVault_media(context):
                               context.get_relative_path(file_found), info['timestamp'], info['vid_length'], info['resolution'],
                               info['alb_name'], info['prev_alb_name'], pin_code, info['password_id']))
 
+    data_list = [(row[5], *row[:5], *row[6:]) for row in data_list]
     data_headers = (
-        ('Media', 'media'), 'Original Filename', 'Original Filepath', 'Encrypted Filename', 'Full Path',
-        ('Timestamp', 'datetime'), 'Video Length', 'File Resolution', 'Album Name', 'Previous Album Name',
-        'Password', 'Password Hash')
+        ('Timestamp', 'datetime'), ('Media', 'media'), 'Original Filename', 'Original Filepath', 'Encrypted Filename', 'Full Path',
+        'Video Length', 'File Resolution', 'Album Name', 'Previous Album Name',
+        'Matching Digit String Candidate', 'Stored Password ID')
     return data_headers, data_list, context.get_relative_path(db_path)
