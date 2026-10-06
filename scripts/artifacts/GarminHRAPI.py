@@ -1,13 +1,13 @@
 __artifacts_v2__ = {
     "get_hr_api": {
         "name": "GarminHRAPI",
-        "description": "Parses the calendar date, maximum, minimum and resting heart rate and the lastSevenDaysAvgRestingHeartRate value from AllDayHR JSON files in a garmin.api folder. The column headed 'Average Hearth Rate' holds lastSevenDaysAvgRestingHeartRate.",
-        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "description": "Parses the calendar date, maximum, minimum and resting heart rate and the lastSevenDaysAvgRestingHeartRate value from AllDayHR JSON files in a garmin.api folder. The seven-day column holds lastSevenDaysAvgRestingHeartRate as stored.",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}, @AlexisBrignoni, Codex",
         "creation_date": "2023-02-24",
-        "last_update_date": "2023-02-24",
+        "last_update_date": "2026-10-05",
         "requirements": "Python 3.7 or higher, json",
         "category": "Garmin",
-        "notes": "",
+        "notes": "Date is the payload calendarDate. Last Seven Days Average Resting Heart Rate (as stored) is lastSevenDaysAvgRestingHeartRate, not a general all-day average. Existing N/A rendering for JSON null values is retained.",
         "paths": ('*/garmin.api/heart_rate*',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "activity",
@@ -43,5 +43,5 @@ def get_hr_api(context):
             average_hr = payload['lastSevenDaysAvgRestingHeartRate'] if payload['lastSevenDaysAvgRestingHeartRate'] is not None else 'N/A'
             data_list.append((date, max_hr, min_hr, resting_hr, average_hr))
 
-    data_headers = ('Date', 'Max Hearth Rate', 'Min Hearth Rate', 'Resting Hearth Rate', 'Average Hearth Rate')
+    data_headers = ('Date', 'Max Heart Rate', 'Min Heart Rate', 'Resting Heart Rate', 'Last Seven Days Average Resting Heart Rate (as stored)')
     return data_headers, data_list, source_path
