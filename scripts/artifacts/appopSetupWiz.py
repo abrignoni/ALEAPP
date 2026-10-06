@@ -1,17 +1,17 @@
 __artifacts_v2__ = {
     "get_appopSetupWiz": {
         "name": "appopSetupWiz",
-        "description": "Access times (the t attribute of each st record) "
-                       "stored for the package com.google.android.setupwizard "
-                       "in appops.xml. The op is not reported. Android 14 and "
-                       "later keep these records in appops_accesses.xml, so "
-                       "the artifact returns nothing there.",
-        "author": "@abrignoni",
+        "description": "Records selected under com.google.android.setupwizard in appops.xml, with stored t "
+                       "and nested XML attributes. Converted dates retain the existing positive-millisecond policy. "
+                       "This path does not cover Android 14 and later appops_accesses.xml records.",
+        "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2021-08-15",
-        "last_update_date": "2021-08-15",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Wipe & Setup",
-        "notes": "",
+        "notes": "Nested tags and attributes are source values, without operation/state code interpretation. "
+                 "Blank dates follow the existing nonpositive timestamp policy or indicate missing/invalid text. "
+                 "These observations do not establish a wipe or setup event. Version-specific meanings remain unverified.",
         "paths": ('*/system/appops.xml',),
         "output_types": "standard",
         "artifact_icon": "package",
@@ -29,6 +29,7 @@ __artifacts_v2__ = {
 }
 
 import datetime
+import json
 import re
 import xml.etree.ElementTree as ET
 
@@ -53,18 +54,36 @@ def _parse_xml(file_found):
             return ET.Element('empty')
 
 
+def _timestamp(raw_t):
+    if raw_t is None:
+        return '', 'Missing'
+    try:
+        value = int(raw_t)
+    except ValueError:
+        return '', 'Invalid integer'
+    if value <= 0:
+        return '', 'Nonpositive'
+    try:
+        timestamp = datetime.datetime.fromtimestamp(value / 1000, datetime.timezone.utc)
+    except (ValueError, OverflowError, OSError):
+        return '', 'Out of range'
+    return timestamp, 'Converted positive milliseconds'
+
+
 @artifact_processor
 def get_appopSetupWiz(context):
     files_found = context.get_files_found()
 
     data_list = []
-    source_path = ''
+    sources = []
+    row_sources = []
     for file_found in files_found:
         file_found = str(file_found)
         if not file_found.endswith('appops.xml'):
             continue  # Skip all other files
 
-        source_path = file_found
+        source = context.get_relative_path(file_found)
+        first_row = len(data_list)
         # check if file is abx
         if (checkabx(file_found)):
             multi_root = False
@@ -78,12 +97,21 @@ def get_appopSetupWiz(context):
                 for subelem in elem:
                     for subelem2 in subelem:
                         for subelem3 in subelem2:
-                            test = subelem3.attrib.get('t', 0)
-                            if int(test) > 0:
-                                timestamp = datetime.datetime.fromtimestamp(int(subelem3.attrib['t'])/1000, datetime.timezone.utc)
-                            else:
-                                timestamp = ''
-                            data_list.append((timestamp, pkg))
+                            raw_t = subelem3.attrib.get('t')
+                            timestamp, status = _timestamp(raw_t)
+                            data_list.append((timestamp, raw_t, status, pkg,
+                                              subelem.tag, json.dumps(subelem.attrib),
+                                              subelem2.tag, json.dumps(subelem2.attrib),
+                                              subelem3.tag, json.dumps(subelem3.attrib)))
+                            row_sources.append(source)
+        if len(data_list) > first_row and file_found not in sources:
+            sources.append(file_found)
 
-    data_headers = (('Timestamp', 'datetime'), 'Package')
-    return data_headers, data_list, source_path
+    data_headers = (('Timestamp', 'datetime'), 'Stored t', 'Timestamp Status', 'Package',
+                    'Package Child Tag', 'Package Child Attributes',
+                    'Nested Record Tag', 'Nested Record Attributes',
+                    'State Record Tag', 'State Record Attributes')
+    if len(sources) > 1:
+        data_headers += ('Source File',)
+        data_list = [row + (source,) for row, source in zip(data_list, row_sources)]
+    return data_headers, data_list, '\n'.join(sources)
