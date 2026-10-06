@@ -17,13 +17,12 @@ __artifacts_v2__ = {
         "description": "Device records (name, channel count, UID, IP, port, username and password values as stored) from the devices table of the Dahua DMSS app",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2023-04-13",
-        "last_update_date": "2023-04-13",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Dahua Technology (DMSS)",
-        "notes": "The headers mark the IP, Port, Username and Password columns as '(Enc.)'. The "
-                 "values are reported as stored, and the basis for that label is not recorded "
-                 "here. A devices row does not by itself establish that the app connected to the "
-                 "device.",
+        "notes": "IP, Port, Username and Password are reported as stored. Their encrypted, "
+                 "encoded or plaintext nature is not established here. A devices row does not by "
+                 "itself establish that the app connected to the device.",
         "paths": ('*/com.mm.android.DMSS/databases/devicechannel.db*',),
         "output_types": "standard",
         "artifact_icon": "video",
@@ -208,8 +207,8 @@ def get_dmss_info(context):
     rows = _run(source_path, '''
         SELECT devicename, channelcount, uid, ip, port, username, password FROM devices
     ''')
-    data_headers = ('Name/IP', 'Channels', 'UID', 'IP (Enc.)', 'Port (Enc.)',
-                    'Username (Enc.)', 'Password (Enc.)')
+    data_headers = ('Name/IP', 'Channels', 'UID', 'IP (As Stored)', 'Port (As Stored)',
+                    'Username (As Stored)', 'Password (As Stored)')
     return data_headers, [tuple(r) for r in rows], context.get_relative_path(source_path)
 
 
