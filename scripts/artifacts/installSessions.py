@@ -4,9 +4,9 @@ __artifacts_v2__ = {
         "description": "Application install sessions the package installer still had on record, "
                        "with the package being installed, the app that started the install, the "
                        "size staged and the times the session was created, updated and committed.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude; @AlexisBrignoni, Codex",
         "creation_date": "2026-09-03",
-        "last_update_date": "2026-09-04",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Installed Apps",
         "notes": "Read from install_sessions.xml in the system folder, ABX binary XML on modern "
@@ -19,7 +19,8 @@ __artifacts_v2__ = {
                  "when the attribute is absent (PackageInstallerSession.java at "
                  "android-14.0.0_r1, line 5217).\nInstall Reason, Install Location and Package "
                  "Source are integers the platform defines and are reported as stored. The "
-                 "session's mode attribute is not reported. Two attributes are read under the "
+                 "session's mode attribute is reported as stored without decoding its meaning; "
+                 "absent and explicitly empty values are both blank. Two attributes are read under the "
                  "spellings the platform writes, installRason and updateOwnererPackageName, and "
                  "the corrected spellings are accepted as well so the artifact keeps working if "
                  "they change. Reference: AOSP, PackageInstallerSession.java at "
@@ -129,6 +130,7 @@ def install_sessions(context):
         'Installer UID',
         'Session ID',
         'Parent Session ID',
+        'Mode (as stored)',
         'Size Bytes',
         'Staging Directory',
         'Install Reason (as stored)',
@@ -167,6 +169,7 @@ def install_sessions(context):
                 session.get('installerUid', ''),
                 session.get('sessionId', ''),
                 session.get('parentSessionId', ''),
+                session.get('mode', ''),
                 session.get('sizeBytes', ''),
                 session.get('sessionStageDir', ''),
                 _first(session, 'installRason', 'installReason'),
