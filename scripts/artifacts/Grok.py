@@ -3,9 +3,9 @@ __artifacts_v2__ = {
     "grok_generatedvideos": {
         "name": "Grok - Videos",
         "description": "Lists the files of the Grok app's ExoPlayer video cache and the cache index rows of exoplayer_internal.db, with the address each was cached from",
-        "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
+        "author": "Damien Attoe {damien.attoe@spyderforensics.com}, @AlexisBrignoni, Codex",
         "creation_date": "2025-11-14",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Grok",
         "notes": "The author reports testing on app version 1.0.71 (Nov 11th, 2025); no image or "
@@ -14,11 +14,12 @@ __artifacts_v2__ = {
                  "which evictor the Grok app uses was not established. Filename Timestamp is the "
                  "third part of the cache file name read as Unix milliseconds; Media3 writes the "
                  "current time there when it starts the file (SimpleCache.java lines 392 to 394 "
-                 "and SimpleCacheSpan.java lines 51 to 52 at the commit cited below). Content "
-                 "Type is assigned by this module from the cached address: User Generated when it "
-                 "starts with https://assets.grok.com/users/, Public for any other address, and "
-                 "blank when the cache index holds no address for the file. It does not show who "
-                 "created a video. Cache Video reads Not Present for an index row whose file is "
+                 "and SimpleCacheSpan.java lines 51 to 52 at the commit cited below). Users URL "
+                 "Prefix Match is Matched for the exact case-sensitive prefix "
+                 "https://assets.grok.com/users/, Not matched for another nonempty address, "
+                 "and blank when no address is available. This predicate does not establish "
+                 "creator or visibility. Positive genuine cache coverage remains unavailable. "
+                 "Cache Video reads Not Present for an index row whose file is "
                  "not in the extraction. Reference: AndroidX Media3, "
                  "'CacheSpan.lastTouchTimestamp / SimpleCache.touchSpan (LRU cache bookkeeping "
                  "updated on any read, not a user view)', "
@@ -212,9 +213,9 @@ def grok_generatedvideos(context):
         if file_id is not None and file_id in id_to_url:
             original_url = id_to_url[file_id] or ""
             if original_url.startswith("https://assets.grok.com/users/"):
-                content_type = "User Generated"
+                content_type = "Matched"
             elif original_url:
-                content_type = "Public"
+                content_type = "Not matched"
 
         missing_flag = "Present"
 
@@ -273,9 +274,9 @@ def grok_generatedvideos(context):
         if file_id is not None and file_id in id_to_url:
             original_url = id_to_url[file_id] or ""
             if original_url.startswith("https://assets.grok.com/users/"):
-                content_type = "User Generated"
+                content_type = "Matched"
             elif original_url:
-                content_type = "Public"
+                content_type = "Not matched"
 
         missing_flag = "Not Present"
         media_item = "" 
@@ -294,7 +295,7 @@ def grok_generatedvideos(context):
     data_headers = (
         ('Filename Timestamp', 'datetime'),
         ('Cache Last Touch Timestamp', 'datetime'),
-        'Content Type',
+        'Users URL Prefix Match',
         'Original URL',
         'File Name',
         'Location',
