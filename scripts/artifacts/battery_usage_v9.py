@@ -3,12 +3,12 @@ __artifacts_v2__ = {
         "name": "Settings Services - Battery Usages v9 - Battery States",
         "description": "Battery usage states from the Settings Services battery-usage-db-v9 "
                        "database, seen on Android 14",
-        "author": "Marco Neumann {kalinko@be-binary.de}",
+        "author": "Marco Neumann {kalinko@be-binary.de}, @AlexisBrignoni, Codex",
         "creation_date": "2024-05-12",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-06",
         "requirements": "blackboxprotobuf",
         "category": "Settings Services - Battery Usage v9 - Battery States",
-        "notes": "Getting battery usage data from Settings Services - Android 14 - Based on post https://bebinary4n6.blogspot.com/2024/05/android-14-battery-usage-and-app-usage.html. Battery Status is labelled on the reading that the stored status code holds the AOSP BatteryManager status constants (1 Unknown, 2 Charging, 3 Discharging, 4 Not Charging, 5 Fully charged); any other code is reported as the raw number. No source for what this database stores in that field is cited here. Battery Health is labelled with this module's map 1 Unknown, 2 Good, 3 Overheat, 4 Dead, 5 Over Voltage, 6 Unspecified Failure and 7 Cold, and shows None for any other or missing code. A row whose batteryInformation value does not decode is not reported. Reference: AOSP, 'BatteryManager status constants', https://developer.android.com/reference/android/os/BatteryManager",
+        "notes": "Getting battery usage data from Settings Services - Android 14 - Based on post https://bebinary4n6.blogspot.com/2024/05/android-14-battery-usage-and-app-usage.html. Battery Status is labelled on the reading that the stored status code holds the AOSP BatteryManager status constants (1 Unknown, 2 Charging, 3 Discharging, 4 Not Charging, 5 Fully charged); any other code is reported as the raw number. No source for what this database stores in that field is cited here. Battery Health is labelled with this module's map 1 Unknown, 2 Good, 3 Overheat, 4 Dead, 5 Over Voltage, 6 Unspecified Failure and 7 Cold, with unmapped present codes marked Unmapped and absent codes left blank. Raw decoded status/health values are retained separately; these maps remain existing interpretations without verified field bindings. Proto field 20 is retained raw beside the existing numeric /1000 result without a foreground-service or unit claim. Boot Timestamp retains its existing numeric /1000 conversion. A row whose batteryInformation value does not decode is not reported. Reference: AOSP, 'BatteryManager status constants', https://developer.android.com/reference/android/os/BatteryManager",
         "paths": ('*/user_de/*/com.android.settings/databases/battery-usage-db-v9*',),
         "output_types": "standard",
         "artifact_icon": "battery",
@@ -136,26 +136,31 @@ def get_battery_usage_v9(context):
         debug = _parse_debug(row[6])
         data_list.append((
             _ms_to_utc(row[2]),
+            _ms_field(proto, '3'),                             # Existing Boot Timestamp
             _txt(proto.get('7')),                              # Application label
             row[1],                                            # Package Name
             _txt(proto.get('2')),                              # Hidden
-            _ms_field(proto, '3'),                             # Boot Timestamp
             _txt(proto.get('4')),                              # Timezone
             debug.get('total_power', 'NOVALUE'),
             debug.get('consume_power', 'NOVALUE'),
             _ms_field(proto, '14'),                            # Foreground
-            _ms_field(proto, '20'),                            # Foreground Service (optional - was KeyError)
+            proto.get('20'),                                  # Raw decoded field
+            _ms_field(proto, '20'),                            # Existing arithmetic only
             _ms_field(proto, '15'),                            # Background
             info.get('1', ''),                                 # Battery Level
+            info.get('2'),
             _status(info.get('2')),                            # Battery Status
-            _HEALTH.get(_as_int(info.get('3')), 'None'),       # Battery Health
+            info.get('3'),
+            _HEALTH.get(_as_int(info.get('3')), 'Unmapped') if info.get('3') is not None else '',       # Battery Health
             _txt(proto.get('13'))))                            # Drain Type
 
-    data_headers = (('Timestamp', 'datetime'), 'Application', 'Package Name', 'Hidden',
-                    'Boot Timestamp', 'Timezone', 'Total Power', 'Consumed Power',
-                    'Foreground Usage (Seconds)', 'Foreground Service Usage (seconds)',
-                    'Background Usage (Seconds)', 'Battery Level (%)', 'Battery Status',
-                    'Battery Health', 'Drain Type')
+    data_headers = (('Timestamp', 'datetime'), 'Boot Timestamp', 'Application', 'Package Name',
+                    'Hidden', 'Timezone', 'Total Power', 'Consumed Power',
+                    'Foreground Usage (Seconds)', 'Proto Field 20 (as decoded)',
+                    'Proto Field 20 / 1000 (derived)', 'Background Usage (Seconds)',
+                    'Battery Level (%)', 'Proto 1.2 (stored status)',
+                    'Battery Status (existing interpretation)', 'Proto 1.3 (stored health)',
+                    'Battery Health (existing interpretation)', 'Drain Type')
     return data_headers, data_list, source_path
 
 
