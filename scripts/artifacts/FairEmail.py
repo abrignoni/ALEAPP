@@ -4,12 +4,12 @@ __artifacts_v2__ = {
     "get_fair_mail_accounts": {
         "name": "FairEmail - Accounts",
         "description": "FairEmail Accounts",
-        "author": "Marco Neumann {kalinko@be-binary.de}",
+        "author": "Marco Neumann {kalinko@be-binary.de}, @AlexisBrignoni, Codex",
         "creation_date": "2025-03-08",
-        "last_update_date": "2025-11-15",
+        "last_update_date": "2026-10-05",
         "requirements": "none",
         "category": "FairCode FairEmail App",
-        "notes": "The columns headed IMAP Server and IMAP Port hold account.host and account.port as stored. The query does not limit rows to IMAP accounts. No sample_data is recorded for this artifact.",
+        "notes": "Server Host (as stored) and Server Port (as stored) hold account.host and account.port. The stored fields do not establish a protocol or successful connection. The query does not limit rows to IMAP accounts. No sample_data is recorded for this artifact.",
         "paths": ('*/eu.faircode.email/databases/fairemail*'),
         "output_types": ["standard"],
         "html_columns": ["Signature"],
@@ -128,7 +128,7 @@ def get_fair_mail_accounts(context):
 
         data_list.append(( creationdate, lastconnecteddate, account_id, name, email, display_name, safe_source(signature), server, port, username, password, account_name))
 
-    data_headers = ( 'Creation Date', 'Last Connected Date', 'Account ID', 'Name', 'E-Mail Address', 'Display Name', 'Signature', 'IMAP Server', 'IMAP Port', 'Username', 'Password', 'Account Name')
+    data_headers = ( 'Creation Date', 'Last Connected Date', 'Account ID', 'Name', 'E-Mail Address', 'Display Name', 'Signature', 'Server Host (as stored)', 'Server Port (as stored)', 'Username', 'Password', 'Account Name')
 
     return data_headers, data_list, files_found[0]
 
