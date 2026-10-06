@@ -4,17 +4,19 @@ __artifacts_v2__ = {
         "name": "Nike - Activity Route",
         "description": "Activity routes decoded from the activity_polyline table of the Nike "
                        "Run Club app",
-        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}, @AlexisBrignoni, Codex",
         "creation_date": "2023-02-24",
-        "last_update_date": "2023-02-24",
+        "last_update_date": "2026-10-06",
         "requirements": "polyline",
         "category": "Nike-Run",
         "notes": "One row per activity_polyline row that holds an as2_p_encoded_polyline value, "
                  "joined to its activity. The stored string is decoded as an encoded polyline at "
                  "5 decimal places, the polyline library's default; that precision is assumed "
                  "and was not exercised on the registered corpora, which returned 0 rows. "
-                 "Latitude and Longitude are the first decoded point and End Latitude and End "
-                 "Longitude the last; they are blank when the string does not decode. Duration "
+                 "First and Last Decoded Latitude/Longitude are the endpoint values produced "
+                 "by that decoder; blank values do not establish a physical route. Encoded "
+                 "Polyline preserves the source string and Decoder Precision Applied records "
+                 "5, not a proven source precision. Duration "
                  "(min) is as2_sa_active_duration_ms divided by 60000. The route image and KML "
                  "are drawn by this tool from the decoded points. Only the first database found "
                  "is read.",
@@ -100,10 +102,11 @@ def get_nike_polyline(context):
                 route_kml = check_in_embedded_media(source_path, kml, f'{r[0]}_route.kml',
                                                     force_type='application/vnd.google-earth.kml+xml',
                                                     force_extension='kml') or ''
-            data_list.append((r[0], start_t, _ms_to_utc(r[2]), duration, start_lat, start_lon,
-                              end_lat, end_lon, route_map, route_kml))
+            data_list.append((start_t, _ms_to_utc(r[2]), r[0], duration, start_lat, start_lon,
+                              end_lat, end_lon, r[4], 5, route_map, route_kml))
 
-    data_headers = ('Activity ID', ('Start Time UTC', 'datetime'), ('End Time UTC', 'datetime'),
-                    'Duration (min)', 'Latitude', 'Longitude', 'End Latitude', 'End Longitude',
-                    ('Route Map', 'media'), ('Route KML', 'media'))
+    data_headers = (('Start Time UTC', 'datetime'), ('End Time UTC', 'datetime'), 'Activity ID',
+                    'Duration (min)', 'First Decoded Latitude', 'First Decoded Longitude',
+                    'Last Decoded Latitude', 'Last Decoded Longitude', 'Encoded Polyline',
+                    'Decoder Precision Applied', ('Route Map', 'media'), ('Route KML', 'media'))
     return data_headers, data_list, source_path
