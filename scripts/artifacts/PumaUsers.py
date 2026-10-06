@@ -2,16 +2,16 @@ __artifacts_v2__ = {
     "get_puma_users": {
         "name": "PumaUsers",
         "description": "Parses the users table of the Puma Trac database.",
-        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}, @AlexisBrignoni, Codex",
         "creation_date": "2023-03-25",
-        "last_update_date": "2023-03-25",
+        "last_update_date": "2026-10-06",
         "requirements": "Python 3.7 or higher",
         "category": "Puma-Trac",
-        "notes": "Date of Birth is read as Unix milliseconds. Workout "
-                 "Duration is the stored preferences_workoutDuration value "
-                 "divided by 60; its unit is not established. An empty "
-                 "workout duration or profile image URL is shown as N/A. Only "
-                 "the first database file found is read.",
+        "notes": "Date of Birth is read as Unix milliseconds. Workout Duration (as stored) "
+                 "retains preferences_workoutDuration, including zero and NULL. Workout "
+                 "Duration / 60 (unit unverified) preserves the existing division and N/A "
+                 "fallback; its unit is not established. An empty profile image URL is "
+                 "shown as N/A. Only the first database file found is read.",
         "paths": ('*com.pumapumatrac/databases/pumatrac-db*',),
         "output_types": "standard",
         "artifact_icon": "user",
@@ -56,7 +56,8 @@ def get_puma_users(context):
         # fetch it and disclose the examination to the service. Report the URL as
         # escaped text instead; the evidence is preserved, nothing is fetched.
         image = esc(row[10]) if row[10] else 'N/A'
-        data_list.append((row[0], row[1], row[2], row[3], dob, row[5], row[6], row[7], row[8], row[9], image, row[11], row[12], row[13], row[14], row[15], work_time))
+        data_list.append((row[0], row[1], row[2], row[3], dob, row[5], row[6], row[7], row[8], row[9], image, row[11], row[12], row[13], row[14], row[15], row[16], work_time))
 
-    data_headers = ('ID', 'Email', 'Name', 'Gender', ('Date of Birth', 'datetime'), 'Weight', 'Height', 'Country', 'Location', 'Interests', 'Profile Image URL', 'Total Score', 'Following Count', 'Followers Count', 'Goal', 'Workout Time of Day', 'Workout Duration')
+    data_headers = (('Date of Birth', 'datetime'), 'ID', 'Email', 'Name', 'Gender', 'Weight', 'Height', 'Country', 'Location', 'Interests', 'Profile Image URL', 'Total Score', 'Following Count', 'Followers Count', 'Goal', 'Workout Time of Day', 'Workout Duration (as stored)', 'Workout Duration / 60 (unit unverified)')
+    data_list = [(row[4],) + row[:4] + row[5:] for row in data_list]
     return data_headers, data_list, source_path
