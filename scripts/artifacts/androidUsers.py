@@ -1,17 +1,18 @@
 __artifacts_v2__ = {
     "android_users": {
         "name": "Android Users and Profiles",
-        "description": "The Android user and profile records the platform keeps under the system users folder, "
+        "description": "Android user/profile records and index-only observations under the system users folder, "
                        "with each one's name, type and creation time, and the lastLoggedIn and "
                        "lastEnteredForeground times the platform stored, as stored.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-03",
-        "last_update_date": "2026-09-04",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Device Users",
         "notes": "Read from the user records the platform keeps under the system users folder: "
                  "the userlist.xml index and one <id>.xml file per user, each read as ABX binary "
-                 "XML or plain XML according to the file's own header. One row per user file. "
+                 "XML or plain XML according to the file's own header. User records are reported "
+                 "first, followed by each index entry without a returned matching user record. "
                  "The glob reaches every .xml under that folder because a pattern segment also "
                  "crosses "
                  "path separators, so a file is used only when its name is a number and its root "
@@ -45,10 +46,13 @@ __artifacts_v2__ = {
                  "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/"
                  "android-14.0.0_r1/services/core/java/com/android/server/pm/"
                  "UserManagerService.java (read at that tag only). In Userlist is True when the "
-                 "userlist index also names the user, and a user file present "
+                 "userlist index in the same physical and evidence-relative users folder names "
+                 "the user, and a user file present "
                  "without an index entry is reported with In Userlist False. An id that "
-                 "userlist.xml names with no user file produces no row.\nA user id other than 0 "
-                 "is an additional Android user or profile; an extraction can carry "
+                 "userlist.xml names without a returned matching user record has an index-only row, "
+                 "with blank attributes and its index source. Duplicate index entries are retained. "
+                 "Record Status distinguishes these observations without claiming deletion or a person.\nA returned "
+                 "user record with an id other than 0 describes an additional Android user or profile; an extraction can carry "
                  "that user's app storage under data/user/<id>, and the presence of the record "
                  "does not "
                  "establish who used it.",
@@ -114,6 +118,12 @@ def _child_text(element, tag):
     return (found.text or '').strip()
 
 
+def _scope(context, path):
+    """Ownership requires both staged parent and uncanonicalized evidence parent."""
+    return (os.path.dirname(os.path.abspath(path)),
+            os.path.dirname(str(context.get_relative_path(path)).replace('\\', '/')))
+
+
 @artifact_processor
 def android_users(context):
     data_headers = (
@@ -128,17 +138,22 @@ def android_users(context):
         'Profile Badge (as stored)',
         'In Userlist',
         'Last Logged In Fingerprint',
+        'Record Status',
         'Source File',
     )
     data_list = []
     sources = []
-    listed = set()
+    listed = {}
+    index_entries = []
+    returned = {}
+    issues = {}
     user_files = []
 
     for file_found in context.get_files_found():
         file_found = str(file_found)
         if os.path.isdir(file_found):
             continue
+        scope = _scope(context, file_found)
         name = os.path.basename(file_found)
         parent = os.path.basename(os.path.dirname(file_found))
         if parent != 'users':
@@ -152,18 +167,27 @@ def android_users(context):
             if root.tag == 'users':
                 for entry in root.findall('user'):
                     if entry.get('id'):
-                        listed.add(str(entry.get('id')))
+                        user_id = str(entry.get('id'))
+                        listed.setdefault(scope, set()).add(user_id)
+                        index_entries.append((scope, file_found, user_id))
                 sources.append(file_found)
+            else:
+                logfunc(f'Android Users: non-users index root in {context.get_relative_path(file_found)}')
         elif name[:-4].isdigit() and name.endswith('.xml'):
             user_files.append(file_found)
 
     for file_found in sorted(user_files):
+        scope = _scope(context, file_found)
+        filename_id = os.path.basename(file_found)[:-4]
         try:
             root = _root(file_found)
         except Exception as error:  # pylint: disable=broad-except
-            logfunc(f'Android Users: could not read {os.path.basename(file_found)}: {error}')
+            issues[(scope, filename_id)] = 'unreadable matched user file'
+            logfunc(f'Android Users: could not read {context.get_relative_path(file_found)}: {error}')
             continue
         if root.tag != 'user':
+            issues[(scope, filename_id)] = 'matched XML root is not user'
+            logfunc(f'Android Users: non-user record root in {context.get_relative_path(file_found)}')
             continue
         user_id = str(root.get('id', os.path.basename(file_found)[:-4]))
         data_list.append((
@@ -176,10 +200,23 @@ def android_users(context):
             root.get('serialNumber', ''),
             root.get('flags', ''),
             root.get('profileBadge', ''),
-            user_id in listed,
+            user_id in listed.get(scope, set()),
             root.get('lastLoggedInFingerprint', ''),
+            'User record',
             context.get_relative_path(file_found),
         ))
         sources.append(file_found)
+        returned.setdefault(scope, set()).add(user_id)
+        if user_id != filename_id:
+            issues[(scope, filename_id)] = 'matched user record returned a different ID'
+
+    for scope, index_path, user_id in index_entries:
+        if user_id in returned.get(scope, set()):
+            continue
+        reason = issues.get((scope, user_id), 'no matched user file')
+        status = f'Index entry without returned user record ({reason})'
+        data_list.append(('', '', '', user_id, '', '', '', '', '', True, '',
+                          status, context.get_relative_path(index_path)))
+        logfunc(f'Android Users: index ID {user_id!r} in {context.get_relative_path(index_path)}: {reason}')
 
     return data_headers, data_list, '\n'.join(sources)
