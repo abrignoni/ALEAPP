@@ -2,12 +2,12 @@ __artifacts_v2__ = {
     "get_calllog": {
         "name": "Call logs ",
         "description": "Parses the call log (date, number, type, duration, the geocoded location stored for the number and transcription) from the contacts provider calllog.db.",
-        "author": "@abrignoni",
+        "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2020-03-02",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Call Logs",
-        "notes": "The Android reference documents the DATE column as milliseconds since epoch and DURATION as seconds, and this parser decodes them that way, so the Call Date column is a converted millisecond timestamp and Duration in Secs is the stored value unchanged. The Type column decodes the AOSP CallLog.Calls codes 1 Incoming, 2 Outgoing, 3 Missed, 4 Voicemail, 5 Rejected, 6 Blocked and 7 Answered Externally. Any other stored value is shown as Unknown and the stored number is not reported. The same codes are applied to the Samsung contacts provider's calllog.db; whether Samsung stores other type values there is not established. Reference: Android Developers, 'CallLog.Calls' API reference, https://developer.android.com/reference/android/provider/CallLog.Calls (read 2026-10-03)",
+        "notes": "The Android reference documents the DATE column as milliseconds since epoch and DURATION as seconds, and this parser decodes them that way, so the Call Date column is a converted millisecond timestamp and Duration in Secs is the stored value unchanged. The Type column decodes the AOSP CallLog.Calls codes 1 Incoming, 2 Outgoing, 3 Missed, 4 Voicemail, 5 Rejected, 6 Blocked and 7 Answered Externally. Any other stored value is shown as Unknown. Raw Call Type (as stored) preserves the source value beside the interpreted label. The same codes are applied to the Samsung contacts provider's calllog.db; whether Samsung stores other type values there is not established. Reference: Android Developers, 'CallLog.Calls' API reference, https://developer.android.com/reference/android/provider/CallLog.Calls (read 2026-10-03)",
         "paths": ('*/com.android.providers.contacts/databases/calllog.db*', '*/com.samsung.android.providers.contacts/databases/calllog.db*'),
         "output_types": "standard",
         "artifact_icon": "phone",
@@ -78,7 +78,8 @@ def get_calllog(context):
             CASE WHEN _data is NULL THEN ' ' ELSE _data END as _data,
             CASE WHEN mime_type is NULL THEN ' ' ELSE mime_type END as mime_type,
             CASE WHEN transcription is NULL THEN ' ' ELSE transcription END as transcription,
-            deleted
+            deleted,
+            type
             FROM calls
         ''')
         all_rows = cursor.fetchall()
@@ -88,7 +89,7 @@ def get_calllog(context):
             call_date = datetime.datetime.fromtimestamp(int(row[0]) / 1000, datetime.timezone.utc) if row[0] else ''
             call_type = row[3]
             call_type_html = call_type + CALL_TYPE_ICONS.get(call_type, '')
-            data_list.append((call_date, row[1], row[2], call_type_html, str(row[4]), row[5], row[6], row[7], row[8], row[9], str(row[10])))
+            data_list.append((call_date, row[1], row[2], row[11], call_type_html, str(row[4]), row[5], row[6], row[7], row[8], row[9], str(row[10])))
 
-    data_headers = (('Call Date', 'datetime'), 'Phone Account Address', ('Partner', 'phonenumber'), 'Type', 'Duration in Secs', 'Partner Location', 'Country ISO', 'Data', 'Mime Type', 'Transcription', 'Deleted')
+    data_headers = (('Call Date', 'datetime'), 'Phone Account Address', ('Partner', 'phonenumber'), 'Raw Call Type (as stored)', 'Type', 'Duration in Secs', 'Partner Location', 'Country ISO', 'Data', 'Mime Type', 'Transcription', 'Deleted')
     return data_headers, data_list, '\n'.join(source_paths)
