@@ -25,9 +25,9 @@ __artifacts_v2__ = {
     "googlevoice_calls": {
         "name": "Google Voice - Calls",
         "description": "Parses call records from the Google Voice LegacyMsgDbInstance.db message_t table",
-        "author": "William Campbell (@campwill), Eli Ehresmann (@H-Seek), Reina Girouard (@rgrd59), Paula Rokusek (@paula-rokusek)",
+        "author": "William Campbell (@campwill), Eli Ehresmann (@H-Seek), Reina Girouard (@rgrd59), Paula Rokusek (@paula-rokusek); @AlexisBrignoni, Codex",
         "creation_date": "2025-08-20",
-        "last_update_date": "2025-11-5",
+        "last_update_date": "2026-10-06",
         "requirements": "blackboxprotobuf",
         "category": "Google Voice",
         "notes": "The authors report testing on app version 2025.07.20.788599304 (October 29th, "
@@ -38,7 +38,15 @@ __artifacts_v2__ = {
                  "own and no source is cited. Call Status reads Missed for value 0, for value 3 "
                  "and for any record carrying field 22; the module's comments say value 0 covers "
                  "a call that was declined as well as one that was not answered. Duration is "
-                 "field 9 read as a 32-bit float of seconds.",
+                 "field 9 read as a 32-bit float of seconds. Call Status is explicitly the existing "
+                 "parser classification, not a verified outcome. Raw Field 13 JSON and Raw Field "
+                 "22 JSON retain decoded protobuf decision values using typed JSON nodes: integer "
+                 "decimal text, bytes hexadecimal, list items, and dictionary key/value entries. "
+                 "All nodes are tagged, so a dictionary cannot be confused with a byte tag. "
+                 "Field 22 Present tests membership, including stored zero/empty values; absent "
+                 "field 22 has blank raw output. This representation preserves decoded values, "
+                 "not the original protobuf wire encoding. Existing record selection, account "
+                 "iteration and unsupported/malformed record handling remain unchanged.",
         "paths": ('*/data/com.google.android.apps.googlevoice/files/accounts/*/LegacyMsgDbInstance.db*', '*/data/com.google.android.apps.googlevoice/cache/audio/*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "phone",
@@ -116,6 +124,7 @@ import os
 import time
 import struct
 import inspect
+import json
 from scripts.ilapfuncs import artifact_processor, get_binary_file_content, open_sqlite_db_readonly, does_table_exist_in_db, check_in_media
 
 
@@ -207,10 +216,33 @@ def googlevoice_accounts(context):
 
     return data_headers, data_list, '\n'.join(source_paths)
 
+def _raw_call_value_json(value):
+    """Represent decoded protobuf values with collision-safe, recursively typed nodes."""
+    def node(item):
+        if isinstance(item, (bytes, bytearray)):
+            return {'type': type(item).__name__, 'hex': item.hex()}
+        if isinstance(item, dict):
+            return {'type': 'dict', 'entries': [[node(key), node(val)] for key, val in item.items()]}
+        if isinstance(item, list):
+            return {'type': 'list', 'items': [node(val) for val in item]}
+        if item is None:
+            return {'type': 'null'}
+        if isinstance(item, bool):
+            return {'type': 'bool', 'value': item}
+        if isinstance(item, int):
+            return {'type': 'int', 'decimal': str(item)}
+        if isinstance(item, float):
+            return {'type': 'float', 'hex': item.hex()}
+        if isinstance(item, str):
+            return {'type': 'str', 'value': item}
+        raise TypeError(f'Unsupported decoded protobuf value type: {type(item).__name__}')
+    return json.dumps(node(value), ensure_ascii=False, separators=(',', ':'))
+
+
 @artifact_processor
 def googlevoice_calls(context):
     files_found = context.get_files_found()
-    data_headers = (('Timestamp', 'datetime'), 'Account Number', 'Direction', 'Caller', 'Recipient', 'Call Status', 'Voicemail Left', 'Duration', ('Call Recording', 'media'))
+    data_headers = (('Timestamp', 'datetime'), 'Account Number', 'Direction', 'Caller', 'Recipient', 'Call Status (existing parser classification)', 'Raw Field 13 JSON', 'Field 22 Present', 'Raw Field 22 JSON', 'Voicemail Left', 'Duration', ('Call Recording', 'media'))
     data_list = []
     source_path = ""
 
@@ -298,6 +330,10 @@ def googlevoice_calls(context):
                             elif message[0]['13'] == 1:
                                 call_status = "Answered"
 
+                            raw13 = _raw_call_value_json(message[0]['13'])
+                            present22 = 'Yes' if '22' in message[0] else 'No'
+                            raw22 = _raw_call_value_json(message[0]['22']) if '22' in message[0] else ''
+
                             # Duration
                             duration = ""
                             if '9' in message[0]:
@@ -319,10 +355,10 @@ def googlevoice_calls(context):
                                         recording = check_in_media(audio_file)
                                         break
                                 
-                                data_list.append((timestamp,account_number,direction,from_num,to_num,call_status,voicemail,duration,recording))
+                                data_list.append((timestamp,account_number,direction,from_num,to_num,call_status,raw13,present22,raw22,voicemail,duration,recording))
 
                             else:
-                                data_list.append((timestamp,account_number,direction,from_num,to_num,call_status,voicemail,duration,recording))
+                                data_list.append((timestamp,account_number,direction,from_num,to_num,call_status,raw13,present22,raw22,voicemail,duration,recording))
 
     return data_headers, data_list, source_path
 
