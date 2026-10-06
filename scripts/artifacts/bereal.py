@@ -116,13 +116,18 @@ __artifacts_v2__ = {
         "description": "Reports RealMoji/reaction records linked to a post.",
         "author": "@Gear-I, @AlexisBrignoni, Codex",
         "creation_date": "2026-07-19",
-        "last_update_date": "2026-10-04",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "BeReal - Social Media",
-        "notes": "RealMojis are extracted from a post's own embedded \"realMojis\" array. RealMoji "
-                 "Type shows Instant when the record carries isInstant set to true and Standard "
-                 "for every other record, including one with no isInstant key. No listed image has "
-                 "produced a row.",
+        "notes": "RealMojis are extracted from a post's own embedded \"realMojis\" array. Instant "
+                 "and Standard are historical parser labels applied only to exact JSON Boolean true "
+                 "and false respectively; their BeReal meaning has not been independently established. "
+                 "Missing, null and nonboolean isInstant values are unclassified. Raw isInstant (JSON) "
+                 "preserves the stored JSON value and type; a blank cell means the key is missing, "
+                 "while null and an empty JSON string are shown as null and two quote characters. "
+                 "Raw flag differences can separate rows previously collapsed by displayed-value "
+                 "deduplication; exact repeated displayed rows still collapse. No listed image has "
+                 "produced a RealMoji row.",
         "paths": (
                         "*/com.bereal.ft/cache/network/*",
                         "*/com.bereal.ft/cache/profile_picture_friends_cache/*",
@@ -679,8 +684,19 @@ def _realmoji_fields(obj):
     if isinstance(media_url, dict):
         media_url = _first(media_url, "url", "uri", "src") or ""
     created = _timestamp(_first(obj, "postedAt", "createdAt", "created_at", "date"))
-    is_instant = _first(obj, "isInstant") is True
-    return realmoji_id, reaction, media_url, created, is_instant
+    if "isInstant" not in obj:
+        instant_label, raw_instant = "Unclassified (isInstant missing)", ""
+    else:
+        value = obj["isInstant"]
+        raw_instant = json.dumps(value, ensure_ascii=False, separators=(",", ":"))
+        if type(value) is bool:
+            instant_label = ("Instant (parser label; isInstant=true)" if value else
+                             "Standard (parser label; isInstant=false)")
+        elif value is None:
+            instant_label = "Unclassified (isInstant null)"
+        else:
+            instant_label = "Unclassified (isInstant nonboolean)"
+    return realmoji_id, reaction, media_url, created, instant_label, raw_instant
 
 
 @artifact_processor
@@ -879,7 +895,7 @@ def bereal_realmojis(context):
         for reaction_obj in reactions:
             if not isinstance(reaction_obj, dict):
                 continue
-            _, reaction, media_url, created, is_instant = _realmoji_fields(reaction_obj)
+            _, reaction, media_url, created, instant_label, raw_instant = _realmoji_fields(reaction_obj)
             if not (reaction or media_url):
                 continue
             uid, username, _, author_picture = _user_fields(reaction_obj)
@@ -887,11 +903,11 @@ def bereal_realmojis(context):
             media = _media_ref(local, f"BeReal RealMoji {reaction or post_id}")
             author_local = by_url.get(author_picture, "")
             author_media = _media_ref(author_local, f"BeReal reactor {username or uid}")
-            rows.append((created, post_id, username or uid, reaction, "Instant" if is_instant else "Standard",
+            rows.append((created, post_id, username or uid, reaction, instant_label, raw_instant,
                          media_url, media, author_picture, author_media, meta.get("url", "")))
             used.extend(sources)
             used.extend((local, author_local))
-    headers = (("Created", "datetime"), "Post ID", "Author", "Reaction", "RealMoji Type",
+    headers = (("Created", "datetime"), "Post ID", "Author", "Reaction", "RealMoji Type (Parser Label)", "Raw isInstant (JSON)",
                "Reaction Media URL", ("RealMoji Media", "media"),
                "Author Profile Picture URL", ("Author Profile Picture", "media"), "Source Endpoint")
     return headers, _dedupe(rows), _source_path(used)
