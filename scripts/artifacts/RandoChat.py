@@ -19,9 +19,11 @@ __artifacts_v2__ = {
                  'those values is recorded. Stored Media URL retains url as stored. '
                  'A local media candidate requires an exact, nonempty basename match '
                  'using the stored value without URL decoding. This is a filename '
-                 'candidate, not a proven path or ownership association. Multiple '
-                 'exact candidates still select the last input; namespace ownership '
-                 'and last-main database selection remain unresolved.',
+                 'candidate, not a proven path or ownership association. Candidate count and '
+                 'sorted evidence-relative paths retain every distinct input path. Only '
+                 'a unique candidate is exported; ambiguous matches attach nothing. Repeated '
+                 'identical paths collapse, while aliases remain candidates. Namespace '
+                 'ownership and last-main database selection remain unresolved.',
         'paths': (
             '*/data/com.random.chat.app/databases/ramdochatV2.db*',
             '*/Android/data/com.random.chat.app/files/Pictures/RandoChat/*',
@@ -121,17 +123,18 @@ def randochat_messages(context):
         conv_id = row[5]
         message_id = row[6]
 
-        # Handling attachments
-        if media_file is None:
-            attachment = 0
-        else:
-            attachment = ''
-            filename = os.path.basename(media_file)
-            for att_path in attachments:
-                if filename and filename == os.path.basename(att_path):
-                    attachment = check_in_media(att_path, os.path.basename(att_path))
+        # A filename match identifies candidates, not ownership.
+        filename = os.path.basename(media_file) if media_file is not None else ''
+        candidates = sorted(
+            {path for path in attachments if filename and filename == os.path.basename(path)},
+            key=lambda path: (context.get_relative_path(path), path),
+        )
+        candidate_paths = '\n'.join(context.get_relative_path(path) for path in candidates)
+        attachment = 0 if media_file is None else ''
+        if len(candidates) == 1:
+            attachment = check_in_media(candidates[0], os.path.basename(candidates[0]))
 
-        data_list.append((timestamp, content, contact_name, direction, attachment, media_file, conv_id, message_id))
+        data_list.append((timestamp, content, contact_name, direction, attachment, media_file, len(candidates), candidate_paths, conv_id, message_id))
     
     data_headers = (
                         ('Timestamp', 'datetime'),
@@ -140,6 +143,8 @@ def randochat_messages(context):
                         'Sent?',
                         ('Media File', 'media'),
                         'Stored Media URL',
+                        'Media Filename Candidate Count',
+                        'Media Filename Candidate Paths',
                         'Conversation ID',
                         'Message ID'
                     )
