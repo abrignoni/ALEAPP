@@ -37,7 +37,6 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | androidauto |
 | antennaPod |
 | appLock |
-| appicons |
 | auroraStore |
 | avastCleanup |
 | avesGallery |
@@ -214,6 +213,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | adobeReader |
 | airGuard |
 | amazonShopping |
+| appicons |
 | battery_usage_v4 |
 | battery_usage_v9 |
 | blueskymessages |
