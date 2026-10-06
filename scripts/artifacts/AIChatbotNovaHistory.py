@@ -17,13 +17,14 @@ __artifacts_v2__ = {
     "nova_chatbot_history_detail": {
         "name": "HistoryDetail",
         "description": "Extracts individual messages from Nova AI Chatbot",
-        "author": "Guilherme Guilherme",
+        "author": "Guilherme Guilherme, @AlexisBrignoni, Codex",
         "creation_date": "2026-05-29",
-        "last_update_date": "2026-09-19",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "AI Chatbot - Nova",
         "notes": (
-            "The AI Model and Assistant Persona names are mapped from the numeric codes as observed in the app by the author; the mapping is not vendor-documented, so the stored code is shown beside every name and an unmapped code is reported as stored. Role reads type 0 as USER and 1 as ASSISTANT on the same basis. Token Count is the store's token column as stored; what it counts is not established. Stored epochs are read as milliseconds above 1e11 and as seconds below it, and reported in UTC; every timestamp in the tested extraction was a 13-digit millisecond value. An extraction can carry one chat-ai.db per Android user and every copy is read, so the located at line lists each database and the row identifiers are per database. Developed against the author's own installation; no registered corpus image carries this app. The committed test case is the author's own extraction of the app's private data directory. Has Link reads No on every row of the committed test case because that store's HistoryDetailLink table holds no rows."
+            "Raw code columns retain the source values beside author-observed interpretations; those meanings are not vendor-verified. URL (as stored) does not establish cloud ownership. Source File identifies each database. "
+            "The AI Model and Assistant Persona names are mapped from the numeric codes as observed in the app by the author; the mapping is not vendor-documented, so the stored code is shown beside every name and an unmapped code is reported as stored. Role reads type 0 as USER and 1 as ASSISTANT on the same basis. Token (as stored) is the store's token column as stored; what it counts is not established. Stored epochs are read as milliseconds above 1e11 and as seconds below it, and reported in UTC; every timestamp in the tested extraction was a 13-digit millisecond value. An extraction can carry one chat-ai.db per Android user and every copy is read, so the located at line lists each database and the row identifiers are per database. Developed against the author's own installation; no registered corpus image carries this app. The committed test case is the author's own extraction of the app's private data directory. Has Link reads No on every row of the committed test case because that store's HistoryDetailLink table holds no rows."
         ),
         "paths": ("*/com.scaleup.chatai/databases/chat-ai.db",),
         "output_types": "all",
@@ -32,12 +33,13 @@ __artifacts_v2__ = {
     "nova_chatbot_documents": {
         "name": "HistoryDetailDocuments",
         "description": "Extracts document records from Nova AI Chatbot with the URL stored for each",
-        "author": "Guilherme Guilherme",
+        "author": "Guilherme Guilherme, @AlexisBrignoni, Codex",
         "creation_date": "2026-05-29",
-        "last_update_date": "2026-09-19",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "AI Chatbot - Nova",
         "notes": (
+            "Raw code columns retain the source values beside author-observed interpretations; those meanings are not vendor-verified. URL (as stored) does not establish cloud ownership. Source File identifies each database. "
             "The AI Model and Assistant Persona names are mapped from the numeric codes as observed in the app by the author; the mapping is not vendor-documented, so the stored code is shown beside every name and an unmapped code is reported as stored. Submitted By is the message's type column read as USER for 0 and ASSISTANT for 1 on the same basis; it is the side of the conversation the message belongs to and does not by itself establish who supplied the file. Source Type prints Local File for a stored 0 and Remote File for a stored 1; that mapping is the author's observation and is not vendor-documented. Stored epochs are read as milliseconds above 1e11 and as seconds below it, and reported in UTC; every timestamp in the tested extraction was a 13-digit millisecond value. An extraction can carry one chat-ai.db per Android user and every copy is read, so the located at line lists each database and the row identifiers are per database. Developed against the author's own installation; no registered corpus image carries this app. The committed test case is the author's own extraction of the app's private data directory. The Size (as stored) column is the integer the store keeps under that name, reported without a unit: its unit is not established, and all three records in the tested extraction hold 3, one of them a video."
         ),
         "paths": ("*/com.scaleup.chatai/databases/chat-ai.db",),
@@ -47,12 +49,13 @@ __artifacts_v2__ = {
     "nova_chatbot_images": {
         "name": "HistoryDetailImages",
         "description": "Extracts image records from Nova AI Chatbot with the URL stored for each",
-        "author": "Guilherme Guilherme",
+        "author": "Guilherme Guilherme, @AlexisBrignoni, Codex",
         "creation_date": "2026-05-29",
-        "last_update_date": "2026-09-19",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "AI Chatbot - Nova",
         "notes": (
+            "Raw code columns retain the source values beside author-observed interpretations; those meanings are not vendor-verified. URL (as stored) does not establish cloud ownership. Source File identifies each database. "
             "The AI Model and Assistant Persona names are mapped from the numeric codes as observed in the app by the author; the mapping is not vendor-documented, so the stored code is shown beside every name and an unmapped code is reported as stored. Submitted By is the message's type column read as USER for 0 and ASSISTANT for 1 on the same basis; it does not by itself establish who supplied or generated the image. State prints Pending, Success and Failed for stored 0, 1 and 2; that mapping is the author's observation and is not vendor-documented. Stored epochs are read as milliseconds above 1e11 and as seconds below it, and reported in UTC; every timestamp in the tested extraction was a 13-digit millisecond value. An extraction can carry one chat-ai.db per Android user and every copy is read, so the located at line lists each database and the row identifiers are per database. Developed against the author's own installation; no registered corpus image carries this app. The committed test case is the author's own extraction of the app's private data directory."
         ),
         "paths": ("*/com.scaleup.chatai/databases/chat-ai.db",),
@@ -340,6 +343,8 @@ def nova_chatbot_history(context):
 @artifact_processor
 def nova_chatbot_history_detail(context):
     headers = (
+        ("Message Timestamp", "datetime"),
+        ("Last Modified At", "datetime"),
         "Msg ID",
         "Msg UUID",
         "Conv ID",
@@ -349,16 +354,16 @@ def nova_chatbot_history_detail(context):
         "Assistant Persona",
         "Conv Deleted",
         "Role",
+        "Role Code (as stored)",
         "Message Text",
-        "Token Count",
+        "Token (as stored)",
         "Reasoning Content",
-        ("Message Timestamp", "datetime"),
-        ("Last Modified At", "datetime"),
         "Sync State",
         "Sync Retry Count",
         "Has Image",
         "Has Document",
         "Has Link",
+        "Source File",
     )
 
     db_paths = _nova_databases(context)
@@ -384,25 +389,27 @@ def nova_chatbot_history_detail(context):
         for row in get_sqlite_db_records(db_path, query):
             data_list.append(
                 (
-                    row[0],  # id
-                    row[1] or "",  # UUID
-                    row[2],  # historyID
-                    row[3] or "",  # conversation UUID
-                    row[4] or "",  # conversation title
-                    get_model(row[5]),  # chatBotModel
-                    get_assistant(row[6]),  # assistantId
-                    "Yes" if row[7] else "No",  # softDeleted
-                    get_role(row[8]),  # type
-                    row[9] or "",  # text
-                    _as_stored(row[10]),  # token
-                    row[11] or "",  # reasoningContent
-                    _epoch_to_utc(row[12]),  # createdAt
-                    _epoch_to_utc(row[13]),  # lastModifiedAt
-                    _as_stored(row[14]),  # syncState
-                    _as_stored(row[15]),  # syncRetryCount
-                    "Yes" if row[16] else "No",  # has image
-                    "Yes" if row[17] else "No",  # has document
-                    "Yes" if row[18] else "No",  # has link
+                    _epoch_to_utc(row[12]),
+                    _epoch_to_utc(row[13]),
+                    row[0],
+                    row[1] or "",
+                    row[2],
+                    row[3] or "",
+                    row[4] or "",
+                    get_model(row[5]),
+                    get_assistant(row[6]),
+                    "Yes" if row[7] else "No",
+                    get_role(row[8]),
+                    row[8],
+                    row[9] or "",
+                    _as_stored(row[10]),
+                    row[11] or "",
+                    _as_stored(row[14]),
+                    _as_stored(row[15]),
+                    "Yes" if row[16] else "No",
+                    "Yes" if row[17] else "No",
+                    "Yes" if row[18] else "No",
+                    context.get_relative_path(db_path),
                 )
             )
 
@@ -414,6 +421,7 @@ def nova_chatbot_history_detail(context):
 @artifact_processor
 def nova_chatbot_documents(context):
     headers = (
+        ("Msg Timestamp", "datetime"),
         "Doc ID",
         "Msg ID",
         "Conv ID",
@@ -423,13 +431,15 @@ def nova_chatbot_documents(context):
         "Assistant Persona",
         "Conv Deleted",
         "Submitted By",
+        "Submitted By Code (as stored)",
         "Msg Text",
-        ("Msg Timestamp", "datetime"),
         "File Name",
         "MIME Type",
         "Size (as stored)",
         "Source Type",
-        "Cloud Storage URL",  # plain text; a URL column must never render as a live link
+        "Source Type Code (as stored)",
+        "URL (as stored)",
+        "Source File",
     )
 
     db_paths = _nova_databases(context)
@@ -460,22 +470,25 @@ def nova_chatbot_documents(context):
 
             data_list.append(
                 (
-                    row[0],  # id
-                    row[1],  # historyDetailID
-                    row[7],  # historyID
-                    row[11] or "",  # conversation UUID
-                    row[12] or "",  # conversation title
-                    get_model(row[13]),  # chatBotModel
-                    get_assistant(row[14]),  # assistantId
-                    "Yes" if row[15] else "No",  # softDeleted
-                    get_role(row[8]),  # submitted by
-                    row[9] or "",  # message text
-                    _epoch_to_utc(row[10]),  # createdAt
-                    row[3] or "Unknown",  # file name
-                    row[6] or "",  # mimeType
-                    _as_stored(row[5]),  # size, as stored
-                    doc_type,  # source type
-                    row[2] or "",  # Firebase URL string output safely as text
+                    _epoch_to_utc(row[10]),
+                    row[0],
+                    row[1],
+                    row[7],
+                    row[11] or "",
+                    row[12] or "",
+                    get_model(row[13]),
+                    get_assistant(row[14]),
+                    "Yes" if row[15] else "No",
+                    get_role(row[8]),
+                    row[8],
+                    row[9] or "",
+                    row[3] or "Unknown",
+                    row[6] or "",
+                    _as_stored(row[5]),
+                    doc_type,
+                    row[4],
+                    row[2] or "",
+                    context.get_relative_path(db_path),
                 )
             )
 
@@ -487,6 +500,7 @@ def nova_chatbot_documents(context):
 @artifact_processor
 def nova_chatbot_images(context):
     headers = (
+        ("Msg Timestamp", "datetime"),
         "Image ID",
         "Msg ID",
         "Conv ID",
@@ -496,14 +510,16 @@ def nova_chatbot_images(context):
         "Assistant Persona",
         "Conv Deleted",
         "Submitted By",
+        "Submitted By Code (as stored)",
         "Msg Text",
-        ("Msg Timestamp", "datetime"),
         "Prompt",
         "State",
+        "State Code (as stored)",
         "Pipeline",
         "Style ID",
         "MIME Type",
-        "Cloud Storage URL",  # plain text; a URL column must never render as a live link
+        "URL (as stored)",
+        "Source File",
     )
 
     db_paths = _nova_databases(context)
@@ -533,23 +549,26 @@ def nova_chatbot_images(context):
 
             data_list.append(
                 (
-                    row[0],  # id
-                    row[1],  # historyDetailID
-                    row[8],  # historyID
-                    row[12] or "",  # conversation UUID
-                    row[13] or "",  # conversation title
-                    get_model(row[14]),  # chatBotModel
-                    get_assistant(row[15]),  # assistantId
-                    "Yes" if row[16] else "No",  # softDeleted
-                    get_role(row[9]),  # submitted by
-                    row[10] or "",  # message text
-                    _epoch_to_utc(row[11]),  # createdAt
-                    row[3] or "",  # prompt
-                    state,  # state
-                    row[7] or "",  # pipeline
-                    _as_stored(row[6]),  # styleId
-                    row[5] or "",  # mimeType
-                    row[2] or "",  # Firebase URL string output safely as text
+                    _epoch_to_utc(row[11]),
+                    row[0],
+                    row[1],
+                    row[8],
+                    row[12] or "",
+                    row[13] or "",
+                    get_model(row[14]),
+                    get_assistant(row[15]),
+                    "Yes" if row[16] else "No",
+                    get_role(row[9]),
+                    row[9],
+                    row[10] or "",
+                    row[3] or "",
+                    state,
+                    row[4],
+                    row[7] or "",
+                    _as_stored(row[6]),
+                    row[5] or "",
+                    row[2] or "",
+                    context.get_relative_path(db_path),
                 )
             )
 
