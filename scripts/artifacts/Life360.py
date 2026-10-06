@@ -88,12 +88,12 @@ __artifacts_v2__ = {
     "get_Life360_device_battery": {
         "name": "Life360 - Device Battery",
         "description": "Parses the metaData battery and chargingState values, as stored, from the L360EventStore.db event rows whose eventVersion is 5 and whose tag is BLE; the unit of the battery value is not recorded in the JSON",
-        "author": "Kevin Pagano (@stark4n6)",
+        "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2024-01-17",
-        "last_update_date": "2024-01-17",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Life360",
-        "notes": "",
+        "notes": "Battery (as stored) preserves metaData.battery without assigning a unit or meaning; percentage is not established by these JSON records.",
         "paths": ('*/com.life360.android.safetymapd/databases/L360EventStore.db*',),
         "output_types": "standard",
         "artifact_icon": "battery",
@@ -376,5 +376,5 @@ def get_Life360_device_battery(context):
         for e in _ble_events(source):
             data_list.append((e['time'], e['battery'], e['charging'], Context.get_relative_path(source)))
 
-    data_headers = (('Timestamp', 'datetime'), 'Device Battery (%)', 'Charging', 'Source File')
+    data_headers = (('Timestamp', 'datetime'), 'Battery (as stored)', 'Charging', 'Source File')
     return data_headers, data_list, '\n'.join(Context.get_relative_path(s) for s in sources)
