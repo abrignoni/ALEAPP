@@ -3,15 +3,17 @@ __artifacts_v2__ = {
     "appIcons": {
         "name": "App Icon",
         "description": "Extract App icons from Nexus launcher database",
-        "author": "@ydkhatri",
+        "author": "@ydkhatri, @AlexisBrignoni, Codex",
         "creation_date": "2020-11-03",
-        "last_update_date": "2025-03-08",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Installed Apps",
         "notes": "Read from one app_icons.db of the Pixel Launcher, "
                  "com.google.android.apps.nexuslauncher, the first copy found outside a mirror "
                  "path; any other copy in the extraction is not read. The path pattern is "
-                 "anchored on that package, so icons kept by other launchers are not covered.",
+                 "anchored on that package, so icons kept by other launchers are not covered. "
+                 "Icon choice is heuristic and does not establish the main app icon or user interaction. "
+                 "First-input selection and profile association remain uncorroborated.",
         "paths": ('*/com.google.android.apps.nexuslauncher/databases/app_icons.db*'),
         "output_types": ["html", "lava"],
         "artifact_icon": "package",
@@ -104,7 +106,8 @@ def appIcons(context):
                     key_to_delete = key
                     break
             if key_to_delete:
-                del app.icons[key]
+                app.icon = (app.name, app.main_icon, icon_last_update)
+                del app.icons[key_to_delete]
 
     for app in apps:
         main_icon = ''
