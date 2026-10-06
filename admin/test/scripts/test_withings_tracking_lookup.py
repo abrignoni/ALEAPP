@@ -96,7 +96,7 @@ class WithingsTrackingLookupTest(unittest.TestCase):
                                  [int(original[i] / 1000) for i in [3, 4, 7]])
             self.assertEqual(log.call_count, 2)  # Each conflicting category logs once.
 
-    def test_foreign_user_first_and_second_room_do_not_change_pair(self):
+    def test_foreign_user_first_and_second_room_keep_separate_pairs(self):
         with tempfile.TemporaryDirectory() as folder:
             base = pathlib.Path(folder)
             own = base / 'data/user/0/com.withings.wiscale2/databases'
@@ -108,9 +108,10 @@ class WithingsTrackingLookupTest(unittest.TestCase):
             with patch('scripts.artifacts.WithingsHealthMate.logfunc'):
                 _, rows, source = healthmate_trackings.__wrapped__(
                     Context(folder, [foreign_lookup, room, foreign_room, lookup, lookup]))
-            self.assertEqual(len(rows), 14)
+            self.assertEqual(len(rows), 28)
             self.assertEqual(rows[0][9], 'stored sleep')
-            self.assertEqual(source, f'{room}\n{lookup}')
+            self.assertEqual(rows[14][9], 'wrong user')
+            self.assertEqual(source, f'{room}\n{lookup}\n{foreign_room}\n{foreign_lookup}')
 
     def test_wrong_name_and_other_namespaces_are_missing_lookup(self):
         with tempfile.TemporaryDirectory() as folder:

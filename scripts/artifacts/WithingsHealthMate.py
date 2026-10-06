@@ -26,8 +26,12 @@ __artifacts_v2__ = {
                  "recorded in the module's comment header, and may not hold on other versions. "
                  "Stored Activity Category Name is read without interpretation from id and name "
                  "in activityCategory of the unique Withings-WiScale main in the same physical "
-                 "and evidence-relative app databases folder as the selected room-healthmate main. "
-                 "Only the first eligible room main is read. Missing, conflicting or unreadable "
+                 "and evidence-relative app databases folder as each room-healthmate main. "
+                 "Distinct room and paired lookup main/WAL/journal states are read; identical "
+                 "known storage aliases are collapsed together only when both states match. "
+                 "Source File is appended only when returned rows combine room states. "
+                 "Malformed tracking rows are diagnosed and omitted without invented dates. "
+                 "Missing, conflicting or unreadable "
                  "lookups retain the tracking row and Activity Category ID, with Category Lookup "
                  "Status explaining why no stored name is supplied. The artifact source indicator "
                  "includes the lookup only when its table was successfully consulted. NULL and "
@@ -146,8 +150,10 @@ __artifacts_v2__ = {
 # 2024-04-20: Android 13, App: 6.3.1
 
 # Requirements:  none
+import hashlib
 import sqlite3
 from pathlib import Path, PurePosixPath
+from scripts.artifacts.storagePathViews import canonical_path
 
 from scripts.ilapfuncs import (artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records,
                               get_sqlite_db_path, logfunc)
@@ -251,17 +257,69 @@ def _tracking_mains(context, basename):
     return mains
 
 
-def _tracking_categories(context, room_db, room_relative):
-    """An optional exact sibling lookup; failures cannot discard tracking rows."""
+def _tracking_pair(context, room_db, room_relative):
+    """Resolve the original namespace before any storage-alias comparison."""
     candidates = [item for item in _tracking_mains(context, 'Withings-WiScale')
                   if item[1].parent == room_relative.parent]
     if not candidates:
-        logfunc(f'Withings Trackings: missing lookup for {room_relative}')
-        return {}, 'missing-lookup', ''
+        return 'missing-lookup', None
     if len(candidates) != 1 or Path(candidates[0][0]).parent != Path(room_db).parent:
+        return 'ambiguous-lookup', None
+    return 'paired', candidates[0]
+
+
+def _tracking_state(path):
+    """Missing sidecars differ from empty ones; failed reads prove no equality."""
+    state = []
+    for suffix in ('', '-wal', '-journal'):
+        item = Path(str(path) + suffix)
+        try:
+            item.lstat()
+        except FileNotFoundError:
+            if not suffix:
+                raise
+            state.append(None)
+            continue
+        if item.is_symlink():
+            raise OSError('symlink database state')
+        digest = hashlib.sha256()
+        with item.open('rb') as stream:
+            chunk = stream.read(1024 * 1024)
+            while chunk:
+                digest.update(chunk)
+                chunk = stream.read(1024 * 1024)
+        state.append(digest.digest())
+    return tuple(state)
+
+
+def _tracking_sources(context):
+    seen = set()
+    for room_db, relative in _tracking_mains(context, 'room-healthmate'):
+        status, lookup = _tracking_pair(context, room_db, relative)
+        try:
+            identity = (canonical_path(relative)[0], _tracking_state(room_db), status)
+            if lookup:
+                identity += (canonical_path(lookup[1])[0], _tracking_state(lookup[0]))
+            elif status == 'ambiguous-lookup':
+                identity += (room_db, str(relative))
+        except OSError:
+            logfunc(f'Withings Trackings: unreadable state fingerprint in {relative}')
+            identity = (room_db, str(relative))
+        if identity not in seen:
+            seen.add(identity)
+            yield room_db, relative
+
+
+def _tracking_categories(context, room_db, room_relative):
+    """An optional exact sibling lookup; failures cannot discard tracking rows."""
+    status, lookup = _tracking_pair(context, room_db, room_relative)
+    if status == 'missing-lookup':
+        logfunc(f'Withings Trackings: missing lookup for {room_relative}')
+        return {}, status, ''
+    if status == 'ambiguous-lookup':
         logfunc(f'Withings Trackings: ambiguous lookup namespace for {room_relative}')
-        return {}, 'ambiguous-lookup', ''
-    wiscale_db, relative = candidates[0]
+        return {}, status, ''
+    wiscale_db, relative = lookup
     db = None
     try:
         db = sqlite3.connect(f'file:{get_sqlite_db_path(wiscale_db)}?mode=ro', uri=True)
@@ -303,58 +361,63 @@ def _tracking_category_name(category_id, categories, lookup_status):
 
 @artifact_processor
 def healthmate_trackings(context):
-    room_mains = _tracking_mains(context, 'room-healthmate')
-    room_db = room_mains[0][0] if room_mains else ''
-    activity_categories, lookup_status, wiscale_db = (
-        _tracking_categories(context, *room_mains[0]) if room_mains else ({}, 'missing-lookup', ''))
-    if len(room_mains) > 1:
-        logfunc('Withings Trackings: first eligible room main only; other room states are not read')
-
-    # get activities from database room-healthmate*
     room_query = ('''
         SELECT *
         FROM Track;
     ''')
-
-    db_records_room_db = get_sqlite_db_records(room_db, room_query)
-
     data_list = []
-    logged = set()
-
-    for row in db_records_room_db:
-        entry_id = row[0]
-        wsid = row[1]
-        userid = row[2]
-        starttime = convert_unix_ts_to_utc(row[3]/1000)
-        endtime = convert_unix_ts_to_utc(row[4]/1000)
-        modifiedtime = convert_unix_ts_to_utc(row[7]/1000)
-        device_id = row[9]
-        device_modell = row[10]
-        category_id = row[12]
-        category_name, category_status = _tracking_category_name(
-            category_id, activity_categories, lookup_status)
-        if category_status == 'ambiguous-category' and (type(category_id), category_id) not in logged:
-            logfunc(f'Withings Trackings: ambiguous category {repr(category_id)[:80]} in '
-                    f'{context.get_relative_path(wiscale_db)}')
-            logged.add((type(category_id), category_id))
-        datajson = row[13]
-
-        data_list.append((
-            starttime,
-            endtime,
-            modifiedtime,
-            entry_id,
-            wsid,
-            userid,
-            device_id,
-            device_modell,
-            category_id,
-            category_name,
-            datajson,
-            category_status))
-
-    if isinstance(db_records_room_db, sqlite3.Cursor):
-        db_records_room_db.connection.close()
+    source_paths = []
+    contributing = []
+    labels = set()
+    for room_db, relative in _tracking_sources(context):
+        db = None
+        try:
+            db = sqlite3.connect(f'file:{get_sqlite_db_path(room_db)}?mode=ro', uri=True)
+            records = db.execute(room_query)
+            if len(records.description) < 14:
+                logfunc(f'Withings Trackings: unsupported-room-schema in {relative}')
+                continue
+            categories, lookup_status, lookup_db = _tracking_categories(context, room_db, relative)
+            if lookup_db and lookup_db not in source_paths:
+                source_paths.append(lookup_db)
+            logged = set()
+            count = 0
+            invalid = 0
+            for ordinal, row in enumerate(records.fetchall(), 1):
+                try:
+                    dates = tuple(convert_unix_ts_to_utc(row[i]/1000) for i in (3, 4, 7))
+                    name, status = _tracking_category_name(row[12], categories, lookup_status)
+                    result = (*dates, row[0], row[1], row[2], row[9], row[10], row[12],
+                              name, row[13], status, str(relative))
+                except (TypeError, ValueError, OverflowError, IndexError):
+                    invalid += 1
+                    if invalid <= 20:
+                        logfunc(f'Withings Trackings: invalid-tracking-row {ordinal} in {relative}')
+                    continue
+                if status == 'ambiguous-category' and (type(row[12]), row[12]) not in logged:
+                    logfunc(f'Withings Trackings: ambiguous category {repr(row[12])[:80]} in '
+                            f'{context.get_relative_path(lookup_db)}')
+                    logged.add((type(row[12]), row[12]))
+                data_list.append(result)
+                count += 1
+            if invalid > 20:
+                logfunc(f'Withings Trackings: {invalid} invalid tracking rows omitted in {relative}; '
+                        'only the first 20 are individually diagnosed')
+            if count:
+                contributing.append(room_db)
+                if str(relative) in labels:
+                    logfunc(f'Withings Trackings: source-label collision in {relative}')
+                labels.add(str(relative))
+                if room_db not in source_paths:
+                    # Place the contributing room before its consulted sibling.
+                    position = source_paths.index(lookup_db) if lookup_db in source_paths else len(source_paths)
+                    source_paths.insert(position, room_db)
+        except sqlite3.Error as error:
+            status = 'unsupported-room-schema' if 'no such table' in str(error) else 'unreadable-room'
+            logfunc(f'Withings Trackings: {status} in {relative}')
+        finally:
+            if db is not None:
+                db.close()
 
     data_headers = (
         ('Start Time', 'datetime'),
@@ -371,7 +434,11 @@ def healthmate_trackings(context):
         'Category Lookup Status'
     )
 
-    return data_headers, data_list, '\n'.join(path for path in (room_db, wiscale_db) if path)
+    if len(contributing) > 1:
+        data_headers += ('Source File',)
+    else:
+        data_list = [row[:-1] for row in data_list]
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
