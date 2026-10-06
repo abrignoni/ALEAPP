@@ -3,17 +3,17 @@ __artifacts_v2__ = {
         "name": "NikeNotifications",
         "description": "Rows of the inbox table in the Nike Run Club ns_inbox.db database, with "
                        "the stored sender, timestamp, type, message, read and deleted values",
-        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}, @AlexisBrignoni, Codex",
         "creation_date": "2023-03-18",
-        "last_update_date": "2023-03-18",
+        "last_update_date": "2026-10-06",
         "requirements": "Python 3.7 or higher",
         "category": "Nike-Run",
-        "notes": "Read and Deleted show No for a stored 0 and Yes for any "
-                 "other stored value, including an empty one; what the app "
-                 "sets them for is not established. Notification Timestamp is "
-                 "notification_timestamp read as Unix milliseconds. The one "
-                 "registered corpus returned 0 rows, so no column has been "
-                 "checked against real rows here.",
+        "notes": "Read (as stored) and Deleted (as stored) preserve the inbox values, "
+                 "including NULL, zero and unknown codes; their app semantics are not "
+                 "established. Only the first exact ns_inbox.db main database is read; "
+                 "SQLite uses its adjacent sidecars. Notification Timestamp retains the "
+                 "existing Unix-millisecond conversion. The registered UserB2 sample "
+                 "recorded zero rows, so positive genuine coverage remains unavailable.",
         "paths": ('*/com.nike.plusgps/databases/ns_inbox.db*',),
         "output_types": "standard",
         "artifact_icon": "activity",
@@ -32,8 +32,14 @@ from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readon
 def get_nike_notifications(context):
     files_found = context.get_files_found()
 
-    files_found = [x for x in files_found if not str(x).endswith('-journal')]
-    source_path = str(files_found[0])
+    data_headers = (('Notification Timestamp', 'datetime'), 'ID', 'Sender User ID',
+                    'Sender App ID', 'Notification Type', 'Message',
+                    'Read (as stored)', 'Deleted (as stored)')
+    source_path = next((str(path) for path in files_found
+                        if str(path).replace('\\', '/').rsplit('/', 1)[-1] == 'ns_inbox.db'), '')
+    if not source_path:
+        logfunc('Nike notifications: no exact ns_inbox.db main database found; sidecars skipped')
+        return data_headers, [], ''
     db = open_sqlite_db_readonly(source_path)
     cursor = db.cursor()
     cursor.execute('''
@@ -48,9 +54,6 @@ def get_nike_notifications(context):
     data_list = []
     for row in all_rows:
         timestamp = datetime.datetime.fromtimestamp(int(row[3]) / 1000, datetime.timezone.utc) if row[3] else ''
-        read = 'No' if row[6] == 0 else 'Yes'
-        deleted = 'No' if row[7] == 0 else 'Yes'
-        data_list.append((row[0], row[1], row[2], timestamp, row[4], row[5], read, deleted))
+        data_list.append((timestamp, row[0], row[1], row[2], row[4], row[5], row[6], row[7]))
 
-    data_headers = ('ID', 'Sender User ID', 'Sender App ID', ('Notification Timestamp', 'datetime'), 'Notification Type', 'Message', 'Read', 'Deleted')
     return data_headers, data_list, source_path
