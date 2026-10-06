@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     'zangichats': {
         'name': 'Zangi Chats',
-        'description': 'Parses messages from the Zangi message table. From Me is set by this parser where isIncoming is 0, and Local User is a parser-generated name. Messages are retained when chatWith is empty or NULL. Timestamps are read as Unix milliseconds.',
+        'description': 'Parses messages from the Zangi message table. isIncoming is reported as stored, with names joined from user_profile without assigning local-user ownership. Messages are retained when chatWith is empty or NULL. Timestamps are read as Unix milliseconds.',
         'author': '@C_Peter, @AlexisBrignoni, Codex',
         'version': '0.0.1',
         'date': '2025-11-20',
@@ -12,26 +12,15 @@ __artifacts_v2__ = {
         'notes': 'Only the last matched .db file other than settings.db is read. Where a '
                  'message\'s attachment value holds no package path, the attachment is looked up '
                  'by the name pattern files/zangi/Zangi Files/<msgId>.*, which is a name match '
-                 'and not a link the store records. From Me and Local User remain parser '
-                 'derivations; isIncoming meanings and local-account ownership are not '
-                 'established.',
+                 'and not a link the store records. isIncoming is reported as stored; From Name '
+                 'and To Name are joined profile names. Direction meaning and local-account '
+                 'ownership are not established, so the conversation direction view is '
+                 'unconfigured.',
         'paths': (
             '*/data/com.beint.zangi/databases/*',
             '*/data/com.beint.zangi/files/zangi/*'),
         'output_types': 'standard',
         'artifact_icon': 'message',
-        'data_views': {
-            'conversation': {
-                'conversationDiscriminatorColumn': 'Chat-ID',
-                'conversationLabelColumn': 'Chat',
-                'textColumn': 'Message',
-                'directionColumn': 'From Me',
-                'directionSentValue': 1,
-                'timeColumn': 'Timestamp',
-                'senderColumn': 'Sender Name',
-                'mediaColumn': 'Attachment File'
-            }
-        }
     }
 }
 
@@ -120,29 +109,24 @@ def zangichats(context):
                 attach_file = ""
         else:
             attach_file = ""
-        sender = 'Local User' if record[11] == 0 else record[7]
+        sender = record[7]
         sender_id = record[8]
-        receiver = record[9] if record[11] == 0 else 'Local User'
+        receiver = record[9]
         receiver_id = record[10]
         incoming = record[11]
-        if int(incoming) == 0:
-            outgoing = 1
-        else:
-            outgoing = 0
-        
-        data_list.append((m_time, outgoing, sender, chat_name, message, attach_file, chat_id, message_id, sender_id, receiver, receiver_id))
+        data_list.append((m_time, incoming, sender, chat_name, message, attach_file, chat_id, message_id, sender_id, receiver, receiver_id))
     
     data_headers = (
         ('Timestamp', 'datetime'),
-        'From Me',
-        'Sender Name',
+        'isIncoming (as stored)',
+        'From Name (joined)',
         'Chat',
         'Message',
         ('Attachment File', 'media'),
         'Chat-ID',
         'Message-ID',
         'From ID',
-        'Receiver',
+        'To Name (joined)',
         'To ID',
     )
 
