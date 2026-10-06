@@ -4,9 +4,9 @@ __artifacts_v2__ = {
         "description": "Boot and system restart records the platform's BootReceiver wrote to the system dropbox, "
                        "with the time each record was written and the build, hardware, bootloader, radio and "
                        "kernel strings it carried.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude; @AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Android System Logs",
         "notes": "Read from the entry files under the platform's system dropbox folder. Each "
@@ -38,10 +38,12 @@ __artifacts_v2__ = {
                  "Last Boot Reason is the footer BootReceiver appends to a last-kmsg "
                  "capture from the ro.boot.bootreason property, as stored, and is blank on the "
                  "other tags. Truncated is True when the platform's [[TRUNCATED]] marker is in "
-                 "the first 512 KiB of the entry's content, which is all this artifact reads. A "
-                 "compressed entry whose file is larger than 512 KiB plus one byte is cut before "
-                 "decompression, does not decompress and is read as empty, so its header columns "
-                 "and Last Boot Reason are blank and Truncated is False; the run log names it. "
+                 "the first 512 KiB of the entry's content, which is the returned content prefix. "
+                 "Content Read Status distinguishes complete reads, capped prefixes whose remainder "
+                 "is unchecked, and failed reads with or without an accepted partial prefix. "
+                 "The cap applies to decompressed bytes. A capped or partial prefix does not "
+                 "establish complete gzip integrity or absence of unseen headers or truncation "
+                 "markers. Truncated records only the marker's presence in the available text. "
                  "The dropbox keeps a bounded number of entries and trims old ones, so this is a "
                  "recent window rather than a full boot history. Vendors append their "
                  "own suffixes to some tags, as in SYSTEM_LAST_KMSG_<n>_<date>_<time>_<code> on "
@@ -90,9 +92,9 @@ __artifacts_v2__ = {
         "description": "Application crash, not-responding, wtf, strict-mode and native-crash records the platform "
                        "wrote to the system dropbox, with the time of each, the process and package involved, "
                        "whether it was in the foreground, and the first line of the report.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude; @AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Android System Logs",
         "notes": "Read from the system dropbox entry files whose tag is <class>_<event>, where "
@@ -155,7 +157,10 @@ __artifacts_v2__ = {
                  "window should be weighed against the acquisition itself. A row records that the "
                  "platform logged the event; the dropbox keeps a bounded number of entries and "
                  "trims old ones, and the rate limiter drops repeats, so it is a recent, thinned "
-                 "window rather than a full history.",
+                 "window rather than a full history. Content Read Status records bounded decompressed "
+                 "text reads, including unchecked capped remainders and accepted partial prefixes "
+                 "on read failure. Uncapped binary path identifies the existing binary read path, "
+                 "without asserting that its read or decoding succeeded.",
         "paths": ('*/system/dropbox/*',),
         "output_types": "standard",
         "artifact_icon": "alert-triangle",
@@ -198,9 +203,9 @@ __artifacts_v2__ = {
         "description": "The remaining entries in the system dropbox, with the time each "
                        "was written, its tag, its content flags, its size and its first "
                        "line as stored.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude; @AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Android System Logs",
         "notes": "Read from the system dropbox entry files not reported by the boot or "
@@ -220,7 +225,9 @@ __artifacts_v2__ = {
                  "deleted to save space and which has no body. First Line is the first non-empty "
                  "line of a text entry, as stored and cut at 200 characters; a binary entry "
                  "reports none. This is an inventory of what the platform logged and when, not a "
-                 "decoding of each tag.",
+                 "decoding of each tag. Content Read Status describes bounded decompressed text "
+                 "prefix reads; capped remainders are unchecked, partial prefixes are retained "
+                 "on read failure, and binary entries are not read by this artifact.",
         "paths": ('*/system/dropbox/*',),
         "output_types": "standard",
         "artifact_icon": "archive",
@@ -423,6 +430,7 @@ __artifacts_v2__ = {
 }
 
 import gzip
+import zlib
 import os
 import re
 from datetime import datetime, timedelta, timezone
@@ -465,16 +473,36 @@ def _offset_ts(text):
     return stamp.astimezone(timezone.utc)
 
 
+def _read_prefix(path, cap=_READ_CAP):
+    """Accepted decompressed prefix and read status; capped remainders are unchecked."""
+    accepted = bytearray()
+    try:
+        with open(path, 'rb') as raw:
+            with gzip.GzipFile(fileobj=raw, mode='rb') if path.lower().endswith('.gz') else raw as stream:
+                while len(accepted) < cap + 1:
+                    chunk = stream.read(min(64 * 1024, cap + 1 - len(accepted)))
+                    if not chunk:
+                        return bytes(accepted), 'Complete'
+                    accepted.extend(chunk)
+        return bytes(accepted[:cap]), 'Capped prefix (remainder unchecked)'
+    except (OSError, EOFError, zlib.error) as error:
+        logfunc(f'Android Dropbox: could not read prefix of {os.path.basename(path)}: {error}')
+        status = 'Partial prefix (read failed)' if accepted else 'Read failed'
+        return bytes(accepted[:cap]), status
+
+
 def _read(path, cap=_READ_CAP):
-    """The entry bytes, decompressed when the name says gzip; b'' and a log line when unreadable.
+    """Entry bytes, decompressed for gzip; capped reads retain accepted prefixes on failure.
 
     Dropbox text entries are cut at ``cap`` because only their headers are read. Tombstone
     protobufs and ANR traces are read whole (cap None): a truncated message does not decode, and
     the trace's dump headers run the length of the file.
     """
+    if cap is not None:
+        return _read_prefix(path, cap)[0]
     try:
         with open(path, 'rb') as handle:
-            data = handle.read() if cap is None else handle.read(cap + 1)
+            data = handle.read()
     except OSError as error:
         logfunc(f'Android Dropbox: could not read {os.path.basename(path)}: {error}')
         return b''
@@ -703,13 +731,15 @@ def dropbox_boot_records(context):
         'Kernel',
         'Last Boot Reason',
         'Truncated',
+        'Content Read Status',
         'Size Bytes',
         'Source File',
     )
     data_list = []
     sources = []
     for path, tag, stamp, ext, _gz in _entries(context, _is_boot_tag):
-        text = _text(_read(path)) if ext != 'lost' else ''
+        data, read_status = _read_prefix(path) if ext != 'lost' else (b'', 'Content lost')
+        text = _text(data)
         headers, _body = _split_headers(text)
         reason = re.search(r'^Last boot reason: (.*)$', text, re.M)
         data_list.append((
@@ -723,6 +753,7 @@ def dropbox_boot_records(context):
             headers.get('Kernel', ''),
             reason.group(1).strip() if reason else '',
             '[[TRUNCATED]]' in text,
+            read_status,
             os.path.getsize(path),
             context.get_relative_path(path),
         ))
@@ -734,6 +765,7 @@ def dropbox_boot_records(context):
 def dropbox_process_errors(context):
     data_headers = (
         ('Timestamp', 'datetime'),
+        ('Reported At', 'datetime'),
         'Tag',
         'Process',
         'PID',
@@ -746,19 +778,24 @@ def dropbox_process_errors(context):
         'First Body Line',
         'Signal',
         'Abort Message',
-        ('Reported At', 'datetime'),
         'Frozen',
         'Process Runtime (ms)',
         'Error ID',
         'Dropped Count',
         'Build',
+        'Content Read Status',
         'Size Bytes',
         'Source File',
     )
     data_list = []
     sources = []
     for path, tag, stamp, ext, _gz in _entries(context, _is_process_tag):
-        data = (_read(path, cap=None) if ext == 'dat' else _read(path)) if ext != 'lost' else b''
+        if ext == 'lost':
+            data, read_status = b'', 'Content lost'
+        elif ext == 'dat':
+            data, read_status = _read(path, cap=None), 'Uncapped binary path'
+        else:
+            data, read_status = _read_prefix(path)
         row = {'process': '', 'pid': '', 'uid': '', 'packages': '', 'foreground': '', 'subject': '', 'activity': '',
                'parent': '', 'first': '', 'signal': '', 'abort': '', 'reported': '', 'frozen': '', 'runtime': '',
                'error_id': '', 'dropped': '', 'build': ''}
@@ -794,9 +831,9 @@ def dropbox_process_errors(context):
                            reported=fields['when'] or row['reported'], build=fields['build'] or row['build'],
                            first='')
         data_list.append((
-            stamp, tag, row['process'], row['pid'], row['uid'], row['packages'], row['foreground'], row['subject'],
-            row['activity'], row['parent'], row['first'], row['signal'], row['abort'], _offset_ts(row['reported']),
-            row['frozen'], row['runtime'], row['error_id'], row['dropped'], row['build'],
+            stamp, _offset_ts(row['reported']), tag, row['process'], row['pid'], row['uid'], row['packages'], row['foreground'], row['subject'],
+            row['activity'], row['parent'], row['first'], row['signal'], row['abort'],
+            row['frozen'], row['runtime'], row['error_id'], row['dropped'], row['build'], read_status,
             os.path.getsize(path), context.get_relative_path(path),
         ))
         sources.append(path)
@@ -811,6 +848,7 @@ def dropbox_other_entries(context):
         'Content Type',
         'Compressed',
         'Content Lost',
+        'Content Read Status',
         'Size Bytes',
         'First Line',
         'Source File',
@@ -819,14 +857,17 @@ def dropbox_other_entries(context):
     sources = []
     for path, tag, stamp, ext, gz in _entries(context, lambda t: not _is_boot_tag(t) and not _is_process_tag(t)):
         first = ''
+        read_status = 'Content lost' if ext == 'lost' else 'Not read (binary)'
         if ext == 'txt':
-            first = _first_line(_text(_read(path)))
+            data, read_status = _read_prefix(path)
+            first = _first_line(_text(data))
         data_list.append((
             stamp,
             tag,
             {'txt': 'text', 'dat': 'data', 'lost': ''}[ext],
             gz,
             ext == 'lost',
+            read_status,
             os.path.getsize(path),
             first,
             context.get_relative_path(path),
