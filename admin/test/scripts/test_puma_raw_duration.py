@@ -24,7 +24,7 @@ class PumaRawDurationTest(unittest.TestCase):
     def test_raw_types_zero_null_duplicates_and_existing_derived_values(self):
         with tempfile.TemporaryDirectory() as folder:
             path = make_database(pathlib.Path(folder) / 'pumatrac-db')
-            headers, rows, source = get_puma_users.__wrapped__(SimpleNamespace(get_files_found=lambda: [str(path)]))
+            headers, rows, source = get_puma_users.__wrapped__(SimpleNamespace(get_files_found=lambda: [str(path)], get_relative_path=lambda source: pathlib.Path(source).name))
             raw = headers.index('Workout Duration (as stored)')
             derived = headers.index('Workout Duration / 60 (unit unverified)')
             self.assertEqual([row[raw] for row in rows], VALUES)
@@ -40,5 +40,5 @@ class PumaRawDurationTest(unittest.TestCase):
     def test_empty_table(self):
         with tempfile.TemporaryDirectory() as folder:
             path = make_database(pathlib.Path(folder) / 'pumatrac-db', empty=True)
-            _, rows, _ = get_puma_users.__wrapped__(SimpleNamespace(get_files_found=lambda: [str(path)]))
+            _, rows, _ = get_puma_users.__wrapped__(SimpleNamespace(get_files_found=lambda: [str(path)], get_relative_path=lambda source: pathlib.Path(source).name))
             self.assertEqual(rows, [])
