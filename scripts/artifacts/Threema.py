@@ -104,10 +104,10 @@ __artifacts_v2__ = {
     },
     "threema_messages": {
         "name": "Threema - Messages",
-        "description": "One-to-one messages recorded in Threema's local, SQLCipher-encrypted database: text, file (type 8, labelled Image by this module), static location, and call events, with direction, delivery/read status, and any quote-reply relationship between messages.",
+        "description": "One-to-one messages recorded in Threema's local, SQLCipher-encrypted database: text, file (type 8), static location, and call events, with direction, delivery/read status, and any quote-reply relationship between messages.",
         "author": "@Gear-I & Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-17",
-        "last_update_date": "2026-10-04",
+        "last_update_date": "2026-10-06",
         "requirements": "sqlcipher3",
         "category": "Threema",
         "notes": "Decrypted the same way as Threema - Contacts, including reading "
@@ -123,14 +123,14 @@ __artifacts_v2__ = {
                  "https://github.com/threema-ch/threema-android/blob/"
                  "d44a2b53b2ea2c0bf1065bdaa96987570e5b4e6d/app/src/main/java/ch/threema/storage/"
                  "models/MessageType.kt#L23-L28), "
-                 "which the module labels 'Image' whatever the file is, so read the MIME Type "
+                 "reported as File; read the MIME Type "
                  "column to see what kind of file a row holds (filename, MIME type and file "
                  "size are read from the message's own structured content, matched "
                  "by value rather than by trusting a fixed field position, since "
                  "that content is a positional JSON array with no field names of "
                  "its own); a static location (latitude, longitude, accuracy in "
                  "metres and a resolved address, read by fixed field position, "
-                 "since this content's structure - unlike the image case - showed "
+                 "since this content's structure - unlike the file case - showed "
                  "the same fixed [latitude, longitude, accuracy, address] shape on "
                  "every location message observed); and a call event (status/call "
                  "ID/duration are read by name, since that part of the structure is "
@@ -494,11 +494,12 @@ def _extract_call_info(body_json):
 @artifact_processor
 def threema_messages(context):
     data_headers = (
-        ("Created", "datetime"), "Contact", "Direction", "Content Type",
+        ("Created", "datetime"), ("Delivered", "datetime"), ("Read At", "datetime"),
+        "Contact", "Direction", "Content Type",
         "Text / Filename / Address", "MIME Type", "Size (bytes)",
         "Latitude", "Longitude", "Location Accuracy (m)",
         "Call Status", "Call ID", "Call Duration (s)", "State", "Read",
-        "Quoted Message", ("Delivered", "datetime"), ("Read At", "datetime"),
+        "Quoted Message",
     )
 
     files_found = unique_files(context)
@@ -542,7 +543,7 @@ def threema_messages(context):
                     content_type = "Text"
                     text = body or ''
                 elif mtype == 8:
-                    content_type = "Image"
+                    content_type = "File"
                     filename, mime_type, size = _extract_media_info(body)
                 elif mtype == 4:
                     content_type = "Location"
@@ -558,6 +559,8 @@ def threema_messages(context):
 
                 data_list.append((
                     _epoch_ms_to_utc(created),
+                    _epoch_ms_to_utc(delivered),
+                    _epoch_ms_to_utc(read_at),
                     contact_name,
                     direction,
                     content_type,
@@ -573,8 +576,6 @@ def threema_messages(context):
                     state or '',
                     "Yes" if is_read else "",
                     quoted_text,
-                    _epoch_ms_to_utc(delivered),
-                    _epoch_ms_to_utc(read_at),
                 ))
         finally:
             con.close()
