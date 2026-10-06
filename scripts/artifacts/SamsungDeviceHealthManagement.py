@@ -3,12 +3,12 @@ __artifacts_v2__ = {
     "sdhms_config_reloads": {
         "name": "SDHMS Config Reload History",
         "description": "Rows of the config_history table of the SDHMS anomaly.db: time, reason, configuration key and version as stored. More info: https://bebinary4n6.blogspot.com/2026/01/inside-android-samsung-dhms-extracting.html",
-        "author": "Marco Neumann {kalinko@be-binary.de}",
+        "author": "Marco Neumann {kalinko@be-binary.de}, @AlexisBrignoni, Codex",
         "creation_date": "2026-01-10",
-        "last_update_date": "2026-01-10",
+        "last_update_date": "2026-10-06",
         "requirements": "",
         "category": "Samsung Device Health Management Service",
-        "notes": "The post linked in the description reports that in its test data most rows had the "
+        "notes": "Every distinct main database state is read; known canonical aliases collapse only when main/WAL/journal bytes agree. Conflicts remain separate. Combined inputs carry per-row evidence sources. The post linked in the description reports that in its test data most rows had the "
                  "reason BOOT_COMPLETED and that the last five matched that author's device "
                  "reboots. The reason column is reported as stored.",
         "paths": ('*/com.sec.android.sdhms/databases/anomaly.db*'),
@@ -49,12 +49,12 @@ __artifacts_v2__ = {
     "sdhms_temperature": {
         "name": "SDHMS Temperature Logs",
         "description": "SDHMS temperature log, one row per reading with each sensor column divided by 10. More info: https://bebinary4n6.blogspot.com/2026/01/inside-android-samsung-dhms-extracting.html",
-        "author": "Marco Neumann {kalinko@be-binary.de}",
+        "author": "Marco Neumann {kalinko@be-binary.de}, @AlexisBrignoni, Codex",
         "creation_date": "2026-01-10",
-        "last_update_date": "2026-01-10",
+        "last_update_date": "2026-10-06",
         "requirements": "",
         "category": "Samsung Device Health Management Service",
-        "notes": "The post linked in the description says the values are stored in degrees Celsius "
+        "notes": "Every distinct main database state is read; known canonical aliases collapse only when main/WAL/journal bytes agree. Conflicts remain separate. Combined inputs carry per-row evidence sources. The post linked in the description says the values are stored in degrees Celsius "
                  "times 10 and that on devices with different regional settings they may be stored "
                  "in degrees Fahrenheit, so the unit is not established for every device.",
         "paths": ('*/com.sec.android.sdhms/databases/thermal_log*'),
@@ -139,9 +139,9 @@ def _stat_sources(context):
 
 @artifact_processor
 def sdhms_config_reloads(context):
-    files_found = context.get_files_found()
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')
-                   and not x.endswith('journal')]
+    source_paths = _stat_sources(context)
+    multiple_sources = len(source_paths) > 1
+    reported_sources = set()
 
     query = ('''
         SELECT
@@ -154,16 +154,25 @@ def sdhms_config_reloads(context):
 
     data_list = []
 
-    source_path = str(files_found[0])
-    db_records = get_sqlite_db_records(source_path, null_absent_columns(source_path, query))
+    for source_path in source_paths:
+        columns = {str(row[1]).lower() for row in
+                   get_sqlite_db_records(source_path, "PRAGMA table_info('config_history')")}
+        if not ('time' in columns):
+            logfunc(f'SDHMS: unsupported config_history schema in {context.get_relative_path(source_path)}; '
+                    'required timestamp column absent, continuing other sources')
+            continue
+        db_records = get_sqlite_db_records(source_path, null_absent_columns(source_path, query))
 
-    for row in db_records:
-        config_reload_time = convert_unix_ts_to_utc(int(row[0])/1000)
-        reason = row[1]
-        config_key = row[2]
-        config_version = row[3]
+        for row in db_records:
+            reported_sources.add(source_path)
+            config_reload_time = convert_unix_ts_to_utc(int(row[0])/1000)
+            reason = row[1]
+            config_key = row[2]
+            config_version = row[3]
 
-        data_list.append(( config_reload_time, reason, config_key, config_version))
+            data_list.append(( config_reload_time, reason, config_key, config_version))
+            if multiple_sources:
+                data_list[-1] += (context.get_relative_path(source_path),)
 
     data_headers = (
                         ('Config Reload Time', 'datetime'),
@@ -172,7 +181,9 @@ def sdhms_config_reloads(context):
                         'Config Version'
                     )
 
-    return data_headers, data_list, files_found[0]
+    if multiple_sources:
+        data_headers += ('Source File',)
+    return data_headers, data_list, '\n'.join(sorted(reported_sources))
 
 @artifact_processor
 def sdhms_netstat(context):
@@ -251,9 +262,9 @@ def _temperature_query(source_path, query):
 
 @artifact_processor
 def sdhms_temperature(context):
-    files_found = context.get_files_found()
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')
-                   and not x.endswith('journal')]
+    source_paths = _stat_sources(context)
+    multiple_sources = len(source_paths) > 1
+    reported_sources = set()
 
     query = ('''
         SELECT
@@ -270,29 +281,38 @@ def sdhms_temperature(context):
 
     data_list = []
 
-    source_path = str(files_found[0])
-    query = _temperature_query(source_path, query)
-    db_records = get_sqlite_db_records(source_path, null_absent_columns(source_path, query))
+    for source_path in source_paths:
+        columns = {str(row[1]).lower() for row in
+                   get_sqlite_db_records(source_path, "PRAGMA table_info('TEMPERATURE')")}
+        if not (bool(set(TEMPERATURE_TIME_ALIASES) & columns)):
+            logfunc(f'SDHMS: unsupported TEMPERATURE schema in {context.get_relative_path(source_path)}; '
+                    'required timestamp column absent, continuing other sources')
+            continue
+        source_query = _temperature_query(source_path, query)
+        db_records = get_sqlite_db_records(source_path, null_absent_columns(source_path, source_query))
 
-    for row in db_records:
-        timestamp = convert_unix_ts_to_utc(int(row[0])/1000)
-        skin_temp = row[1]
-        ap_temp = row[2]
-        bat_temp = row[3]
-        usb_temp = row[4]
-        chg_temp = row[5]
-        pa_temp = row[6]
-        wifi_temp = row[7]
+        for row in db_records:
+            reported_sources.add(source_path)
+            timestamp = convert_unix_ts_to_utc(int(row[0])/1000)
+            skin_temp = row[1]
+            ap_temp = row[2]
+            bat_temp = row[3]
+            usb_temp = row[4]
+            chg_temp = row[5]
+            pa_temp = row[6]
+            wifi_temp = row[7]
 
-        data_list.append((  timestamp,
-                            skin_temp,
-                            ap_temp,
-                            bat_temp,
-                            usb_temp,
-                            chg_temp,
-                            pa_temp,
-                            wifi_temp)
-                        )
+            data_list.append((  timestamp,
+                                skin_temp,
+                                ap_temp,
+                                bat_temp,
+                                usb_temp,
+                                chg_temp,
+                                pa_temp,
+                                wifi_temp)
+                            )
+            if multiple_sources:
+                data_list[-1] += (context.get_relative_path(source_path),)
 
     data_headers = (
                         ('Timestamp', 'datetime'),
@@ -305,7 +325,9 @@ def sdhms_temperature(context):
                         'WiFi Temperature'
                     )
 
-    return data_headers, data_list, files_found[0]
+    if multiple_sources:
+        data_headers += ('Source File',)
+    return data_headers, data_list, '\n'.join(sorted(reported_sources))
 
 @artifact_processor
 def sdhms_cpustats(context):
