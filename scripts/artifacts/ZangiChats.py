@@ -1,18 +1,20 @@
 __artifacts_v2__ = {
     'zangichats': {
         'name': 'Zangi Chats',
-        'description': 'Parses messages from the Zangi message table. From Me is set by this parser where isIncoming is 0, and Local User is this parser\'s label for the device side. Messages with an empty chatWith are not reported. Timestamps are read as Unix milliseconds.',
-        'author': '@C_Peter',
+        'description': 'Parses messages from the Zangi message table. From Me is set by this parser where isIncoming is 0, and Local User is a parser-generated name. Messages are retained when chatWith is empty or NULL. Timestamps are read as Unix milliseconds.',
+        'author': '@C_Peter, @AlexisBrignoni, Codex',
         'version': '0.0.1',
         'date': '2025-11-20',
         'creation_date': '2025-11-20',
-        'last_update_date': '2025-11-20',
+        'last_update_date': '2026-10-06',
         'requirements': 'none',
         'category': 'Chats',
         'notes': 'Only the last matched .db file other than settings.db is read. Where a '
                  'message\'s attachment value holds no package path, the attachment is looked up '
                  'by the name pattern files/zangi/Zangi Files/<msgId>.*, which is a name match '
-                 'and not a link the store records.',
+                 'and not a link the store records. From Me and Local User remain parser '
+                 'derivations; isIncoming meanings and local-account ownership are not '
+                 'established.',
         'paths': (
             '*/data/com.beint.zangi/databases/*',
             '*/data/com.beint.zangi/files/zangi/*'),
@@ -128,10 +130,7 @@ def zangichats(context):
         else:
             outgoing = 0
         
-        if chat_id == "" or chat_id == None:
-            pass
-        else:
-            data_list.append((m_time, outgoing, sender, chat_name, message, attach_file, chat_id, message_id, sender_id, receiver, receiver_id))
+        data_list.append((m_time, outgoing, sender, chat_name, message, attach_file, chat_id, message_id, sender_id, receiver, receiver_id))
     
     data_headers = (
         ('Timestamp', 'datetime'),
