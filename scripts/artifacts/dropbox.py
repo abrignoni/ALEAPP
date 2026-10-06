@@ -24,20 +24,26 @@ __artifacts_v2__ = {
     },
     "dropbox_account": {
         "name": "Dropbox - Account",
-        "description": "Dropbox account values read from the account preferences database: email, Dropbox id, plan text and selected preferences",
-        "author": "@AlexisBrignoni, Claude",
+        "description": "Text candidates and selected preferences from the Dropbox account preferences database",
+        "author": "@AlexisBrignoni, Claude; @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Dropbox",
-        "notes": "Read from the DropboxAccountPrefs table of the account preferences database. The "
-                 "ACCOUNT_INFO, FULL_ACCOUNT_INFO_V2 and PLAN_INFO_V2 values are base64 wrapped "
-                 "protobuf; the readable strings are extracted from them rather than decoded field "
-                 "by field, so the labels come from the shape of the text and not from a decoded "
-                 "field: Email is the first string shaped like an email address, Dropbox ID the "
-                 "first string starting with dbid:, and Plan any string starting with 'Dropbox '. "
-                 "The Source Preference column names the preference each was found in. Timestamp "
-                 "preferences are reported as epoch milliseconds converted to UTC.",
+        "notes": "Read from the DropboxAccountPrefs table of the first matched preferences database. "
+                 "ACCOUNT_INFO, FULL_ACCOUNT_INFO_V2 and PLAN_INFO_V2 are base64 wrapped protobuf; "
+                 "printable ASCII runs are extracted without binding them to protobuf fields. "
+                 "The first email-shaped and dbid:-prefixed regex matches and each cleaned run "
+                 "starting with 'Dropbox ' produce text candidates, not verified identity or plan "
+                 "values. Value / Derived Display keeps the existing display, including stripped "
+                 "wrapping characters for Dropbox-prefixed candidates. Raw Matched Candidate Text "
+                 "(JSON) lists each accepted match and its source preference in encounter order: "
+                 "exact regex substrings for email/dbid candidates, full pre-clean printable runs "
+                 "for Dropbox-prefixed candidates. Equal display candidates remain aggregated; "
+                 "repeats are retained in the raw list. This is not a lossless protobuf decoder. "
+                 "Repeated preference names keep the last row read. Source Preference names the "
+                 "preferences used. Timestamp preferences retain the existing Unix milliseconds "
+                 "conversion to UTC; direct preferences have no raw candidate cell.",
         "paths": ('*/com.dropbox.android/databases/*-prefs.db*',),
         "output_types": "standard",
         "artifact_icon": "user",
@@ -68,6 +74,7 @@ __artifacts_v2__ = {
 
 import base64
 import binascii
+import json
 import re
 
 from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records
@@ -177,11 +184,14 @@ def dropbox_account(context):
     # one preference, so each (property, value) pair is reported once with every preference it
     # was matched from, rather than repeated per preference.
     matched = {}
+    raw_matches = {}
 
-    def _record(prop, value, pref_name):
+    def _record(prop, value, pref_name, raw_text):
         if not value:
             return
         matched.setdefault((prop, value), []).append(pref_name)
+        raw_matches.setdefault((prop, value), []).append({
+            'source_preference': pref_name, 'matched_text': raw_text})
 
     for pref_name in ('ACCOUNT_INFO', 'FULL_ACCOUNT_INFO_V2', 'PLAN_INFO_V2'):
         strings = _protobuf_strings(prefs.get(pref_name))
@@ -191,33 +201,41 @@ def dropbox_account(context):
         email = _EMAIL_RE.search(joined)
         dbid = _DBID_RE.search(joined)
         if email:
-            _record('Email', email.group(0), pref_name)
+            _record('Email', email.group(0), pref_name, email.group(0))
         if dbid:
-            _record('Dropbox ID', dbid.group(0), pref_name)
+            _record('Dropbox ID', dbid.group(0), pref_name, dbid.group(0))
         for value in strings:
             cleaned = value.strip('"*() ')
             if cleaned and cleaned.startswith('Dropbox '):
-                _record('Plan', cleaned, pref_name)
+                _record('Plan', cleaned, pref_name, value)
 
+    candidate_labels = {
+        'Email': 'Email-shaped Text Candidate',
+        'Dropbox ID': 'dbid:-prefixed Text Candidate',
+        'Plan': 'Dropbox-prefixed Text Candidate',
+    }
     for (prop, value), pref_names in matched.items():
-        data_list.append((prop, value, ', '.join(pref_names)))
+        raw_text = json.dumps(raw_matches[(prop, value)], ensure_ascii=False,
+                              separators=(',', ':'))
+        data_list.append((candidate_labels[prop], value, raw_text, ', '.join(pref_names)))
 
     for pref_name, label in _TEXT_PREFS.items():
         if prefs.get(pref_name):
-            data_list.append((label, prefs[pref_name], pref_name))
+            data_list.append((label, prefs[pref_name], '', pref_name))
 
     for pref_name, label in _TIME_PREFS.items():
         value = prefs.get(pref_name)
         if not value:
             continue
         try:
-            data_list.append((label, convert_unix_ts_to_utc(int(value)), pref_name))
+            data_list.append((label, convert_unix_ts_to_utc(int(value)), '', pref_name))
         except (TypeError, ValueError):
-            data_list.append((label, value, pref_name))
+            data_list.append((label, value, '', pref_name))
 
     data_headers = (
-        'Property',
-        'Value',
+        'Property / Candidate',
+        'Value / Derived Display',
+        'Raw Matched Candidate Text (JSON)',
         'Source Preference',
     )
     return data_headers, data_list, source_path
