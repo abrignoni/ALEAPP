@@ -25,14 +25,16 @@ __artifacts_v2__ = {
     "sdhms_netstat": {
         "name": "SDHMS Netstat",
         "description": "Rows of the NETSTAT table of the SDHMS thermal_log database: a time window, package name, uid and net_usage as stored. More info: https://bebinary4n6.blogspot.com/2026/01/inside-android-samsung-dhms-extracting.html",
-        "author": "Marco Neumann {kalinko@be-binary.de}",
+        "author": "Marco Neumann {kalinko@be-binary.de}, @AlexisBrignoni, Codex",
         "creation_date": "2026-01-10",
-        "last_update_date": "2026-01-10",
+        "last_update_date": "2026-10-06",
         "requirements": "",
         "category": "Samsung Device Health Management Service",
         "notes": "The post linked in the description describes net_usage as bytes transferred in the "
                  "time window. Start Time and End Time are read as Unix milliseconds. Only the "
-                 "first matched database is read.",
+                 "distinct main databases are read. Known aliases collapse only when main/WAL/journal "
+                 "bytes agree; conflicting states remain separate. Multi-input rows include their "
+                 "evidence-relative Source File.",
         "paths": ('*/com.sec.android.sdhms/databases/thermal_log*'),
         "output_types": "all",
         "artifact_icon": "chart-bar-popular",
@@ -69,15 +71,18 @@ __artifacts_v2__ = {
     "sdhms_cpustats": {
         "name": "SDHMS CPU Stats",
         "description": "Rows of the CPUSTAT table of the SDHMS thermal_log database: a time window, uptime, process name, uid, pid and the process_usage figure as stored. More info: https://bebinary4n6.blogspot.com/2026/01/inside-android-samsung-dhms-extracting.html",
-        "author": "Marco Neumann {kalinko@be-binary.de}",
+        "author": "Marco Neumann {kalinko@be-binary.de}, @AlexisBrignoni, Codex",
         "creation_date": "2026-01-10",
-        "last_update_date": "2026-01-10",
+        "last_update_date": "2026-10-06",
         "requirements": "",
         "category": "Samsung Device Health Management Service",
         "notes": "The post linked in the description describes process_usage as CPU time used in the "
                  "time window, scaled and dependent on the number of cores, and uptime as seconds. "
-                 "The uid column is shown under the header Package ID. Start Time and End Time are "
-                 "read as Unix milliseconds. Only the first matched database is read.",
+                 "The uid column is reported as UID (as stored), without inferred package identity. "
+                 "Start Time and End Time are "
+                 "read as Unix milliseconds. Distinct main databases are read. Known aliases "
+                 "collapse only when main/WAL/journal bytes agree; conflicting states remain "
+                 "separate. Multi-input rows include their evidence-relative Source File.",
         "paths": ('*/com.sec.android.sdhms/databases/thermal_log*'),
         "output_types": "all",
         "artifact_icon": "cpu",
@@ -96,7 +101,41 @@ __artifacts_v2__ = {
 # Author:  Marco Neumann (kalinko@be-binary.de)
 #
 # Requirements:
-from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records, null_absent_columns
+import hashlib
+
+from scripts.artifacts.storagePathViews import canonical_path
+from scripts.ilapfuncs import logfunc, artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records, null_absent_columns
+
+def _stat_sources(context):
+    """Collapse known aliases only when main and logical sidecar bytes agree."""
+    paths = []
+    seen = set()
+    for candidate in context.get_files_found():
+        path = str(candidate)
+        if path.endswith(('wal', 'shm', 'journal')):
+            continue
+        try:
+            state = []
+            for suffix in ('', '-wal', '-journal'):
+                try:
+                    with open(path + suffix, 'rb') as source:
+                        digest = hashlib.sha256()
+                        for chunk in iter(lambda source=source: source.read(1024 * 1024), b''):
+                            digest.update(chunk)
+                    state.append(digest.hexdigest())
+                except FileNotFoundError:
+                    if not suffix:
+                        raise
+                    state.append(None)
+            identity = (canonical_path(context.get_relative_path(path))[0], tuple(state))
+        except OSError as error:
+            logfunc(f'SDHMS: skipping unreadable database {context.get_relative_path(path)}: {error}')
+            continue
+        if identity not in seen:
+            seen.add(identity)
+            paths.append(path)
+    return paths
+
 
 @artifact_processor
 def sdhms_config_reloads(context):
@@ -137,9 +176,9 @@ def sdhms_config_reloads(context):
 
 @artifact_processor
 def sdhms_netstat(context):
-    files_found = context.get_files_found()
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')
-                   and not x.endswith('journal')]
+    source_paths = _stat_sources(context)
+    multiple_sources = len(source_paths) > 1
+    reported_sources = set()
 
     query = ('''
         SELECT
@@ -154,18 +193,28 @@ def sdhms_netstat(context):
 
     data_list = []
 
-    source_path = str(files_found[0])
-    db_records = get_sqlite_db_records(source_path, null_absent_columns(source_path, query))
+    for source_path in source_paths:
+        columns = {str(row[1]).lower() for row in
+                   get_sqlite_db_records(source_path, "PRAGMA table_info('NETSTAT')")}
+        if not {'start_time', 'end_time'}.issubset(columns):
+            logfunc(f'SDHMS: unsupported NETSTAT schema in {context.get_relative_path(source_path)}; '
+                    'required start_time/end_time columns absent, continuing other sources')
+            continue
+        db_records = get_sqlite_db_records(source_path, null_absent_columns(source_path, query))
 
-    for row in db_records:
-        start_time = convert_unix_ts_to_utc(int(row[0])/1000)
-        end_time = convert_unix_ts_to_utc(int(row[1])/1000)
-        entry_id = row[2]
-        package_name = row[3]
-        package_uid = row[4]
-        net_usage = row[5]
+        for row in db_records:
+            reported_sources.add(source_path)
+            start_time = convert_unix_ts_to_utc(int(row[0])/1000)
+            end_time = convert_unix_ts_to_utc(int(row[1])/1000)
+            entry_id = row[2]
+            package_name = row[3]
+            package_uid = row[4]
+            net_usage = row[5]
 
-        data_list.append(( start_time, end_time, entry_id, package_name, package_uid, net_usage))
+            data_list.append(( start_time, end_time, entry_id, package_name, package_uid, net_usage))
+
+            if multiple_sources:
+                data_list[-1] += (context.get_relative_path(source_path),)
 
     data_headers = (
                         ('Start Time', 'datetime'),
@@ -176,7 +225,9 @@ def sdhms_netstat(context):
                         'Network Usage'
                     )
 
-    return data_headers, data_list, files_found[0]
+    if multiple_sources:
+        data_headers += ('Source File',)
+    return data_headers, data_list, '\n'.join(sorted(reported_sources))
 
 # Older releases of this store call the temperature timestamp "time" rather than
 # "timestamp". Both hold the same millisecond epoch in the same table, so the
@@ -258,9 +309,9 @@ def sdhms_temperature(context):
 
 @artifact_processor
 def sdhms_cpustats(context):
-    files_found = context.get_files_found()
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')
-                   and not x.endswith('journal')]
+    source_paths = _stat_sources(context)
+    multiple_sources = len(source_paths) > 1
+    reported_sources = set()
 
     query = ('''
         SELECT
@@ -268,7 +319,7 @@ def sdhms_cpustats(context):
         end_time,
         uptime [Uptime],
         process_name [Process Name],
-        uid [Package ID],
+        uid [UID (as stored)],
         pid [Process ID],
         process_usage [Process Usage]
         FROM CPUSTAT
@@ -276,34 +327,46 @@ def sdhms_cpustats(context):
 
     data_list = []
 
-    source_path = str(files_found[0])
-    db_records = get_sqlite_db_records(source_path, null_absent_columns(source_path, query))
+    for source_path in source_paths:
+        columns = {str(row[1]).lower() for row in
+                   get_sqlite_db_records(source_path, "PRAGMA table_info('CPUSTAT')")}
+        if not {'start_time', 'end_time'}.issubset(columns):
+            logfunc(f'SDHMS: unsupported CPUSTAT schema in {context.get_relative_path(source_path)}; '
+                    'required start_time/end_time columns absent, continuing other sources')
+            continue
+        db_records = get_sqlite_db_records(source_path, null_absent_columns(source_path, query))
 
-    for row in db_records:
-        start_time = convert_unix_ts_to_utc(int(row[0])/1000)
-        end_time = convert_unix_ts_to_utc(int(row[1])/1000)
-        uptime = row[2]
-        process_name = row[3]
-        package_id = row[4]
-        process_id = row[5]
-        process_cpu_usage = row[6]
+        for row in db_records:
+            reported_sources.add(source_path)
+            start_time = convert_unix_ts_to_utc(int(row[0])/1000)
+            end_time = convert_unix_ts_to_utc(int(row[1])/1000)
+            uptime = row[2]
+            process_name = row[3]
+            package_id = row[4]
+            process_id = row[5]
+            process_cpu_usage = row[6]
 
-        data_list.append((  start_time,
-                            end_time,
-                            uptime,
-                            process_name,
-                            package_id,
-                            process_id,
-                            process_cpu_usage))
+            data_list.append((  start_time,
+                                end_time,
+                                uptime,
+                                process_name,
+                                package_id,
+                                process_id,
+                                process_cpu_usage))
+
+            if multiple_sources:
+                data_list[-1] += (context.get_relative_path(source_path),)
 
     data_headers = (
                         ('Start Time', 'datetime'),
                         ('End Time', 'datetime'),
                         'Uptime',
                         'Process Name',
-                        'Package ID',
+                        'UID (as stored)',
                         'Process ID',
                         'Process CPU Usage'
                     )
 
-    return data_headers, data_list, files_found[0]
+    if multiple_sources:
+        data_headers += ('Source File',)
+    return data_headers, data_list, '\n'.join(sorted(reported_sources))
