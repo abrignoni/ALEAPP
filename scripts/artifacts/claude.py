@@ -22,13 +22,13 @@ __artifacts_v2__ = {
     "claudeConversations": {
         "name": "Claude Conversations",
         "description": "Parses Claude Conversations",
-        "author": "Brandon Baye",
+        "author": "Brandon Baye, @AlexisBrignoni, Codex",
         "creation_date": "2026-07-22",
-        "last_update_date": "2026-08-09",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Claude",
         "notes": "Each cachedConversations row holds a JSON object. Conversation Start Time is "
-                 "its created_at value, Incognito Conversation reports its is_temporary value and "
+                 "its created_at value, is_temporary (existing rendering) reports its is_temporary value and "
                  "Conversation Starred its is_starred value; a value other than 0 or 1 is shown "
                  "as Unknown. What the app does with is_temporary is not established here. "
                  "Timestamps stored as ISO 8601 combined date-time format and converted for LAVA.",
@@ -44,14 +44,14 @@ __artifacts_v2__ = {
     "claudeMessages": {
         "name": "Claude Messages",
         "description": "Parses Claude Messages with some Conversation info",
-        "author": "Brandon Baye",
+        "author": "Brandon Baye, @AlexisBrignoni, Codex",
         "creation_date": "2026-07-21",
-        "last_update_date": "2026-08-09",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Claude",
         "notes": "Each message is joined to its conversation on the conversation uuid so the "
                  "conversation name appears on the row. Timestamps stored as ISO 8601 combined "
-                 "date-time format and converted for LAVA. Image File Name is the first file name "
+                 "date-time format and converted for LAVA. First Stored File Name is the first file name "
                  "in the message's files list, whatever its type, as stored; later files are not "
                  "reported. The module does not look for the file itself, so whether it is in the "
                  "extraction is not established. Message is the text of the content items of type "
@@ -200,7 +200,7 @@ def claudeConversations(context):
         'Conversation ID',
         'Conversation Name',
         'Model',
-        'Incognito Conversation',
+        'is_temporary (existing rendering)',
         'Conversation Starred'
     )
     
@@ -248,7 +248,7 @@ def claudeMessages(context):
         'Sender',
         'Conversation Name',
         'Message',
-        'Image File Name',
+        'First Stored File Name',
         'Conversation ID',
     )
     
