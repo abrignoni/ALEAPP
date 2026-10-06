@@ -23,12 +23,12 @@ __artifacts_v2__ = {
     "get_fcm_twitter": {
         "name": "FCM - Twitter DMs",
         "description": "Twitter push records on the dms channel in the fcm_queued_messages.ldb leveldb (not exercised on the tested images)",
-        "author": "Alex Caithness (research [at] cclsolutionsgroup.com)",
+        "author": "Alex Caithness (research [at] cclsolutionsgroup.com), @AlexisBrignoni, Codex",
         "creation_date": "2022-07-28",
-        "last_update_date": "2022-07-28",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Firebase Cloud Messaging",
-        "notes": "",
+        "notes": "Sender Details serializes the users.sender object; it does not establish which participant owns the examined account.",
         "paths": ('*/fcm_queued_messages.ldb/*',),
         "output_types": "standard",
         "artifact_icon": "message",
@@ -120,6 +120,7 @@ def get_fcm_twitter(context):
         except Exception as exc:  # pylint: disable=W0718
             logfunc(f"Twitter FCM: error reading {in_db_path}: {exc}")
 
-    data_headers = ('Conversation Key', 'Other Party', 'Sender', 'Recipient',
-                    ('Timestamp', 'datetime'), 'Text', 'Entities', 'Attachments')
+    data_list = [(row[4], *row[:4], *row[5:]) for row in data_list]
+    data_headers = (('Timestamp', 'datetime'), 'Conversation Key', 'Sender Details',
+                    'Sender', 'Recipient', 'Text', 'Entities', 'Attachments')
     return data_headers, data_list, source
