@@ -25,17 +25,17 @@ __artifacts_v2__ = {
     "get_nova_adapty_prefs": {
         "name": "Shared Preferences - Adapty Payment",
         "description": "Extracts payment profile and installation metadata from AdaptySDKPrefs.xml.",
-        "author": "Guilherme Guilherme",
+        "author": "Guilherme Guilherme, @AlexisBrignoni, Codex",
         "creation_date": "2026-05-30",
-        "last_update_date": "2026-09-19",
+        "last_update_date": "2026-10-05",
         "requirements": "none",
         "category": "AI Chatbot - Nova",
         "notes": (
             "Only these preference entries are read: the members of "
             "LAST_SENT_INSTALLATION_META, and from an entry named "
             "get_purchaser_info_response or PROFILE the is_test_user, total_revenue_usd, "
-            "oldAppInstanceId and paywallType values of its JSON. A value shown as None "
-            "means the attribute was absent from the JSON or null. An extraction can "
+            "oldAppInstanceId and paywallType values of its JSON. Blank selected-field cells "
+            "mean the attribute was absent from the JSON or null; stored text None is retained. An extraction can "
             "carry one copy of this file per Android user, and every copy is read. "
             "Developed against the author's own installation; no registered corpus image "
             "carries this app. The committed test case is the author's own extraction of "
@@ -161,7 +161,7 @@ def get_nova_adapty_prefs(context):
                     ("Total Revenue", attrs.get("total_revenue_usd")),
                     ("Paywall", custom.get("paywallType")),
                 ]:
-                    data_list.append(("Payment Profile", k, str(v)))
+                    data_list.append(("Payment Profile", k, "" if v is None else str(v)))
 
         sources.append(file_path)
 

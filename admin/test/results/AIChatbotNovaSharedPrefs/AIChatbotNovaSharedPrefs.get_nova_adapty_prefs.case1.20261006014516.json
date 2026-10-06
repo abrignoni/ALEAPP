@@ -6,19 +6,19 @@
     "case_number": "case1",
     "number_of_columns": 3,
     "number_of_rows": 22,
-    "total_data_size_bytes": 1085,
+    "total_data_size_bytes": 1081,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/AIChatbotNovaSharedPrefs/testdata.AIChatbotNovaSharedPrefs.get_nova_adapty_prefs.case1.zip",
-    "start_time": "2026-09-20T03:54:17.812357+00:00",
-    "end_time": "2026-09-20T03:54:17.830787+00:00",
-    "run_time_seconds": 0.00043392181396484375,
+    "start_time": "2026-10-06T01:45:16.651409+00:00",
+    "end_time": "2026-10-06T01:45:16.686965+00:00",
+    "run_time_seconds": 0.0004570484161376953,
     "last_commit": {
-      "hash": "0cfab8434883aba1c1daa222295ca463f1c7774f",
+      "hash": "c8ff1f1e064c4653d919a464eb8886135a2ac8ad",
       "author_name": "Brigs",
       "author_email": "abrignoni@gmail.com",
-      "date": "2026-08-10T09:05:12-04:00",
-      "message": "fix: carry the Nova artifacts onto the current core and house vocabulary"
+      "date": "2026-10-04T02:02:01-04:00",
+      "message": "Correct artifact descriptions and notes against the code and sources"
     }
   },
   "headers": [
@@ -130,7 +130,7 @@
     [
       "Payment Profile",
       "Total Revenue",
-      "None"
+      ""
     ],
     [
       "Payment Profile",
