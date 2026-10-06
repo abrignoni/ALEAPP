@@ -94,16 +94,17 @@ __artifacts_v2__ = {
     "healthmate_measurements": {
         "name": "Health Mate - Measurements",
         "description": "Health Mate Measurements",
-        "author": "Marco Neumann {kalinko@be-binary.de}",
+        "author": "Marco Neumann {kalinko@be-binary.de}, @AlexisBrignoni, Codex",
         "creation_date": "2024-04-21",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Withings Health Mate",
         "notes": "Based on "
                  "https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-3-heart.html "
                  "The Category names for -16 (Heart Rate) and 16 (Steps) come from that post; the "
-                 "names for -19 (SPO2) and -22 (Core Temperature) are this parser's own and no "
-                 "source for them is recorded here, so Category ID is the value to rely on. "
+                 "meanings of -19 and -22 are not established, so these values receive no "
+                 "mapped name and use the Unknown Category ID label. Category ID is retained "
+                 "as stored. "
                  "Columns of the vasistas table, including the values reported as SPO2 and Core "
                  "Temperature, are read by position; the mapping was written against app "
                  "versions 5.1.4 (Android 6) and 6.3.1 (Android 13), the versions recorded in "
@@ -462,10 +463,6 @@ def healthmate_measurements(context):
         row_id = row[0]
         category_id = row[24]
         match category_id:
-            case -22:
-                category = 'Core Temperature'
-            case -19:
-                category = 'SPO2'
             case -16:
                 category = 'Heart Rate'
             case 16:
