@@ -2,9 +2,9 @@ __artifacts_v2__ = {
     "kmplayer_playback": {
         "name": "KMPlayer Playback History",
         "description": "Media KMPlayer opened, with the local URI or remote address of each and the time it was opened",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude; @AlexisBrignoni, Codex",
         "creation_date": "2026-09-06",
-        "last_update_date": "2026-09-06",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "KMPlayer",
         "sample_data": {
@@ -39,13 +39,15 @@ __artifacts_v2__ = {
                  "hive_queue_list_box, hive_media_bookmark_box and hive_cloud_info_box were all "
                  "zero bytes on the tested image and are not parsed. The app also ships a VLC "
                  "medialibrary SQLite at databases/db/database.dat; its Media, File and Folder "
-                 "tables were empty on the tested image, and no existing module claims that path.",
+                 "tables were empty on the tested image, and no existing module claims that path. "
+                 "Unsupported live decoded value shapes are skipped with bounded key/type diagnostics.",
         "paths": ('*/com.kmplayer/databases/db/hive_url_meta_box.hive',),
         "output_types": "standard",
         "artifact_icon": "film",
     },
 }
 
+import json
 import struct
 
 from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, logfunc
@@ -62,6 +64,12 @@ ENTRY_SOURCE, ENTRY_TITLE, ENTRY_ADDRESS, ENTRY_OPENED = 0, 1, 3, 10
 def _box_files(context):
     return [str(f).replace('\\', '/') for f in unique_files(context)
             if str(f).replace('\\', '/').endswith(BOX_SUFFIX)]
+
+
+def _diagnostic_preview(value, limit):
+    if isinstance(value, str):
+        return (json.dumps(value[:limit], ensure_ascii=True), len(value), len(value) > limit)
+    return json.dumps(value), None, False
 
 
 def _ms(value):
@@ -90,8 +98,27 @@ def kmplayer_playback(context):
             logfunc(f'KMPlayer: could not read {box_path}: {error}')
             continue
         seen = False
-        for value in entries.values():
+        skipped = 0
+        type_counts = {}
+        path_preview = None
+        path_length = 0
+        path_truncated = False
+        for key, value in entries.items():
             if not isinstance(value, dict):
+                skipped += 1
+                kind = type(value).__name__
+                if kind not in ('NoneType', 'bool', 'int', 'float', 'str', 'bytes', 'list'):
+                    kind = 'other'
+                type_counts[kind] = type_counts.get(kind, 0) + 1
+                if path_preview is None:
+                    path_preview, path_length, path_truncated = _diagnostic_preview(
+                        context.get_relative_path(box_path), 512)
+                if skipped <= 10:
+                    key_preview, key_length, key_truncated = _diagnostic_preview(key, 64)
+                    logfunc(f'KMPlayer: skipped live non-object entry; box={path_preview}; '
+                            f'box_length={path_length}; box_truncated={path_truncated}; '
+                            f'decoded_key={key_preview}; key_length={key_length}; '
+                            f'key_truncated={key_truncated}; decoded_type={kind}')
                 continue
             seen = True
             data_list.append((
@@ -100,6 +127,11 @@ def kmplayer_playback(context):
                 value.get(ENTRY_TITLE) or '',
                 value.get(ENTRY_SOURCE) if value.get(ENTRY_SOURCE) is not None else '',
                 context.get_relative_path(box_path)))
+        if skipped:
+            logfunc(f'KMPlayer: skipped live non-object summary; box={path_preview}; '
+                    f'box_length={path_length}; box_truncated={path_truncated}; '
+                    f'skipped={skipped}; decoded_types={json.dumps(type_counts, sort_keys=True)}; '
+                    f'examples={min(skipped, 10)}; omitted={max(skipped - 10, 0)}')
         if seen and box_path not in sources:
             sources.append(box_path)
 
