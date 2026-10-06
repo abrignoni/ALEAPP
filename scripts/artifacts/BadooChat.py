@@ -2,12 +2,12 @@ __artifacts_v2__ = {
     "get_badoo_chat": {
         "name": "Badoo - Users",
         "description": "Rows from the conversation_info table of the Badoo ChatComDatabase (com.badoo.mobile)",
-        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}, @AlexisBrignoni, Codex",
         "creation_date": "2023-05-03",
-        "last_update_date": "2023-05-03",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Badoo",
-        "notes": "",
+        "notes": "Gender (as stored) is conversation_info.gender without an inferred meaning; NULL and unknown codes are preserved.",
         "paths": ('*com.badoo.mobile/databases/ChatComDatabase*',),
         "output_types": "standard",
         "artifact_icon": "users",
@@ -32,9 +32,6 @@ import json
 import sqlite3
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
-
-_GENDER = {0: 'Male', 1: 'Female'}
-
 
 def _ms_to_utc(value):
     if not value:
@@ -110,9 +107,9 @@ def get_badoo_chat(context):
     ''')
     data_list = []
     for r in rows:
-        data_list.append((r[0], _GENDER.get(r[1], 'Other'), r[2], r[3], r[4], _photo_urls(r[5]),
+        data_list.append((r[0], r[1], r[2], r[3], r[4], _photo_urls(r[5]),
                           r[6], r[7], r[8]))
-    data_headers = ('User ID', 'Gender', 'User Name', 'User Image URL', 'Age', 'User Photos',
+    data_headers = ('User ID', 'Gender (as stored)', 'User Name', 'User Image URL', 'Age', 'User Photos',
                     'Work', 'Education', 'Encrypted User ID')
     return data_headers, data_list, source_path
 
