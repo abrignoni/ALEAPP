@@ -7,20 +7,21 @@ __artifacts_v2__ = {
     'randochat_messages': {
         'name': 'RandoChat Messages',
         'description': 'Parses the mensagens table of the RandoChat database.',
-        'author': 'Marco Neumann {kalinko@be-binary.de}',
+        'author': 'Marco Neumann {kalinko@be-binary.de}, @AlexisBrignoni, Codex',
         'version': '0.0.1',
         'creation_date': '2026-01-15',
-        'last_update_date': '2026-01-15',
+        'last_update_date': '2026-10-06',
         'requirements': 'os, path',
         'category': 'Chats',
         'notes': 'Timestamp is the hora column read as Unix milliseconds. '
                  'Sent? is the minha column as stored; a comment in the '
                  'module reads 1 as sent and 2 as received, and no source for '
-                 'those values is recorded. A media file is attached when its '
-                 'file name contains the file name in the message\'s url '
-                 'value. That is a name match and not a recorded path: when '
-                 'several files match, the last one read is shown, and a url '
-                 'value with no file name matches every file.',
+                 'those values is recorded. Stored Media URL retains url as stored. '
+                 'A local media candidate requires an exact, nonempty basename match '
+                 'using the stored value without URL decoding. This is a filename '
+                 'candidate, not a proven path or ownership association. Multiple '
+                 'exact candidates still select the last input; namespace ownership '
+                 'and last-main database selection remain unresolved.',
         'paths': (
             '*/data/com.random.chat.app/databases/ramdochatV2.db*',
             '*/Android/data/com.random.chat.app/files/Pictures/RandoChat/*',
@@ -127,11 +128,12 @@ def randochat_messages(context):
             attachment = 0
         else:
             attachment = ''
+            filename = os.path.basename(media_file)
             for att_path in attachments:
-                if os.path.basename(media_file) in os.path.basename(att_path):
+                if filename and filename == os.path.basename(att_path):
                     attachment = check_in_media(att_path, os.path.basename(att_path))
 
-        data_list.append((timestamp, content, contact_name, direction, attachment, conv_id, message_id))
+        data_list.append((timestamp, content, contact_name, direction, attachment, media_file, conv_id, message_id))
     
     data_headers = (
                         ('Timestamp', 'datetime'),
@@ -139,6 +141,7 @@ def randochat_messages(context):
                         'Contact Username',
                         'Sent?',
                         ('Media File', 'media'),
+                        'Stored Media URL',
                         'Conversation ID',
                         'Message ID'
                     )
