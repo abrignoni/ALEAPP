@@ -10,47 +10,47 @@
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/Spotify/testdata.Spotify.spotify_now_playing_view.case1.zip",
-    "start_time": "2026-08-26T01:17:23.448083+00:00",
-    "end_time": "2026-08-26T01:17:23.464356+00:00",
-    "run_time_seconds": 0.0014472007751464844,
+    "start_time": "2026-10-06T12:19:32.026218+00:00",
+    "end_time": "2026-10-06T12:19:32.054421+00:00",
+    "run_time_seconds": 0.0015423297882080078,
     "last_commit": {
-      "hash": "591933b74dcaa25828cfc79933a5231063092a98",
-      "author_name": "Gear-I",
-      "author_email": "dielleaiko@hotmail.com",
-      "date": "2026-08-25T19:12:55-04:00",
-      "message": "Add Spotify ALEAPP module with trimmed test fixtures"
+      "hash": "ce21ff8c947aafdcde092b1b54b0e2ae9873466f",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-10-06T07:52:57-04:00",
+      "message": "Name Spotify Crashlytics identifier from its stored field"
     }
   },
   "headers": [
+    "Response Received Time",
     "Track ID",
     "First Lyric Line",
-    "Merch Shown For Track",
-    "Response Received Time"
+    "Merch Cache Pair Matched"
   ],
   "data": [
     [
+      1722112269,
       "2albIR3fBkSoAj76RjqGw7",
       "I'm not a cool guy anymore",
-      "Yes",
-      1722112269
+      "Yes"
     ],
     [
+      1722112305,
       "0IkKz2J93C94Ei4BvDop7P",
       "Party rock!",
-      "Yes",
-      1722112305
+      "Yes"
     ],
     [
+      1722112580,
       "6ITuEsxEy2qPhqMowdDAeI",
       "You say you stand by your man",
-      "Yes",
-      1722112580
+      "Yes"
     ],
     [
+      1722113089,
       "1595LW73XBxkRk2ciQOHfr",
       "Johanna drove slowly into the city",
-      "Yes",
-      1722113089
+      "Yes"
     ]
   ]
 }

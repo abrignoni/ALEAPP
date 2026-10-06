@@ -196,17 +196,17 @@ __artifacts_v2__ = {
         "description": "Tracks recovered from cached responses to Spotify's lyrics API call, with "
                        "the first cached lyric line for each track and a flag for a cached "
                        "merchandise response for the same track id.",
-        "author": "@Gear-I, Claude",
+        "author": "@Gear-I, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-08-25",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Spotify",
         "notes": "Source is the app's HTTP disk cache (cache/http-cache): the color-lyrics/v2 and "
                  "merch-npv-service/v1 endpoints; what the app requests them for is not "
                  "established here. The Spotify track ID is read directly from each cached "
                  "request's URL, not guessed at. A row is produced only for a cached color-lyrics "
-                 "response. 'Merch Shown For Track' reads Yes when a cached merch-npv-service "
-                 "response exists for the same track id and is blank otherwise; a cached response "
+                 "response. 'Merch Cache Pair Matched' reads Yes when a cached merch-npv-service "
+                 "request/response pair exists for the same track id and is blank otherwise; a cached response "
                  "does not establish that merchandise was shown. 'First Lyric Line' is the first "
                  "text line found in the cached response body (also schema-less protobuf), shown "
                  "as stored. Whether it identifies the song is for the examiner to check; this "
@@ -237,13 +237,13 @@ __artifacts_v2__ = {
         },
     },
     "spotify_artist_profile_views": {
-        "name": "Spotify - Artist Profile Views",
+        "name": "Spotify - Cached Artist Responses",
         "description": "Artists recovered from cached responses to Spotify's "
                        "artist-identity-view API call, with the artist's name and URI as the "
                        "response carries them.",
-        "author": "@Gear-I, Claude",
+        "author": "@Gear-I, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-08-25",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Spotify",
         "notes": "Source is the app's HTTP disk cache (cache/http-cache), specifically cached "
@@ -685,8 +685,8 @@ def spotify_recently_played(context):
 @artifact_processor
 def spotify_now_playing_view(context):
     data_headers = (
-        "Track ID", "First Lyric Line", "Merch Shown For Track",
         ("Response Received Time", "datetime"),
+        "Track ID", "First Lyric Line", "Merch Cache Pair Matched",
     )
 
     files_found = [str(f) for f in unique_files(context)]
@@ -723,6 +723,7 @@ def spotify_now_playing_view(context):
         ))
 
     data_list.sort(key=lambda row: (row[3] is None, row[3]))
+    data_list = [(row[3], row[0], row[1], row[2]) for row in data_list]
     logfunc(f"Spotify Now Playing View: {len(data_list)} track(s) recovered "
             f"from cached lyrics/merch responses.")
     return data_headers, data_list, '\n'.join(sorted(source_paths))
@@ -731,7 +732,7 @@ def spotify_now_playing_view(context):
 @artifact_processor
 def spotify_artist_profile_views(context):
     data_headers = (
-        "Artist Name", "Artist URI", ("Response Received Time", "datetime"),
+        ("Response Received Time", "datetime"), "Artist Name", "Artist URI",
     )
 
     files_found = [str(f) for f in unique_files(context)]
@@ -760,6 +761,7 @@ def spotify_artist_profile_views(context):
         data_list.append((name, artist_uri, _okhttp_received_time(request_path)))
 
     data_list.sort(key=lambda row: (row[2] is None, row[2]))
-    logfunc(f"Spotify Artist Profile Views: {len(data_list)} view(s) recovered "
+    data_list = [(row[2], row[0], row[1]) for row in data_list]
+    logfunc(f"Spotify Cached Artist Responses: {len(data_list)} response(s) recovered "
             f"from cached artist-identity-view responses.")
     return data_headers, data_list, '\n'.join(sorted(source_paths))
