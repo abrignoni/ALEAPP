@@ -2,19 +2,25 @@
 __artifacts_v2__ = {
     "get_appSemloc": {
         "name": "App Semantic Locations",
-        "description": "Records from Google Play services' app_semanticlocation_rawsignal LevelDB. Timestamp, "
-                       "Latitude, Longitude and Horizontal Acc. are protobuf fields 6, 1, 2 and 3 of the message "
-                       "nested at field 1 of field 1 of each record value, read as Unix milliseconds, degrees "
-                       "times 10,000,000 and thousandths of a unit; the field meanings and units are not "
-                       "documented and were not sourced here. Record versions are not collapsed, so a superseded "
-                       "version that still decodes is listed beside the current one; Rec. Sequence is the LevelDB "
-                       "sequence number.",
-        "author": "Alexis 'Brigs' Brignoni",
+        "description": "Decoded nested protobuf fields and record provenance from Google Play services' semantic-location LevelDB.",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2024/06/21",
-        "last_update_date": "2024/06/21",
+        "last_update_date": "2026-10-06",
         "requirements": "",
         "category": "App Semantic Locations",
-        "notes": "Thanks to Alex Caithness for the ccl_leveldb libraries",
+        "notes": "Thanks to Alex Caithness for the ccl_leveldb libraries. Raw Nested Field values "
+                 "come from field 1 within field 1 of each decoded record value; raw means decoded "
+                 "protobuf values, not wire bytes or independently established signedness. Field "
+                 "meanings and units are undocumented here. The prior parser read field 6 as Unix "
+                 "milliseconds, fields 1 and 2 divided by 10000000 as coordinates and field 3 divided "
+                 "by 1000 as horizontal accuracy. These derivations are retained with neutral labels, "
+                 "without asserting their meaning or producing coordinate exports. All versions that "
+                 "decode under the existing field checks are retained. Record Operation State is the "
+                 "ccl record flag: Live does not establish that a version is current. No latest-key "
+                 "selection is performed. Record Key Hex preserves the full key, including the internal "
+                 "LDB trailer when present. Undecodable values and tombstones without the required "
+                 "nested fields are not output. Source File appears only when returned rows combine "
+                 "database directories. Recorded sample counts do not verify field semantics.",
         "paths": ('*/com.google.android.gms/app_semanticlocation_rawsignal_db/*',),
         "output_types": "all",
         "artifact_icon": "map-pin",
@@ -54,34 +60,46 @@ def _ms_to_utc(value):
 def get_appSemloc(context):
     files_found = context.get_files_found()
     data_list = []
-    source_path = ''
-    in_dirs = set(pathlib.Path(str(x)).parent for x in files_found)
+    sources = []
+    in_dirs = dict.fromkeys(pathlib.Path(str(x)).parent for x in files_found)
     for in_db_dir in in_dirs:
-        source_path = str(in_db_dir)
         try:
             leveldb_records = ccl_leveldb.RawLevelDb(in_db_dir)
         except (ValueError, OSError):
             continue
-        for record in leveldb_records.iterate_records_raw():
-            try:
-                value, _ = decode_protobuf(record.value)
-            except Exception:
-                continue
-            outer = value.get('1') if isinstance(value, dict) else None
-            latlongrecord = outer.get('1') if isinstance(outer, dict) else None
-            if not isinstance(latlongrecord, dict):
-                continue
-            try:
-                timestamp = _ms_to_utc(latlongrecord['6'])
-                latitude = latlongrecord['1'] / 1e7
-                longitude = latlongrecord['2'] / 1e7
-                accuracy = latlongrecord['3'] / 1000
-            except (KeyError, TypeError):
-                continue
-            origin = str(record.origin_file)
-            origin_pf = f'{pathlib.Path(origin).parent.name}/{pathlib.Path(origin).name}'
-            data_list.append((timestamp, record.seq, latitude, longitude, accuracy, origin_pf))
+        with leveldb_records:
+            for record in leveldb_records.iterate_records_raw():
+                try:
+                    value, _ = decode_protobuf(record.value)
+                except Exception:
+                    continue
+                outer = value.get('1') if isinstance(value, dict) else None
+                latlongrecord = outer.get('1') if isinstance(outer, dict) else None
+                if not isinstance(latlongrecord, dict):
+                    continue
+                try:
+                    timestamp = _ms_to_utc(latlongrecord['6'])
+                    latitude = latlongrecord['1'] / 1e7
+                    longitude = latlongrecord['2'] / 1e7
+                    accuracy = latlongrecord['3'] / 1000
+                except (KeyError, TypeError):
+                    continue
+                origin = str(record.origin_file)
+                origin_pf = f'{pathlib.Path(origin).parent.name}/{pathlib.Path(origin).name}'
+                data_list.append((timestamp, latlongrecord['6'], record.seq, record.key.hex(),
+                                  record.state.name, record.file_type.name, latlongrecord['1'],
+                                  latlongrecord['2'], latlongrecord['3'], latitude, longitude,
+                                  accuracy, origin_pf, context.get_relative_path(origin)))
+                if str(in_db_dir) not in sources:
+                    sources.append(str(in_db_dir))
 
-    data_headers = (('Timestamp', 'datetime'), 'Rec. Sequence', 'Latitude', 'Longitude',
-                    'Horizontal Acc.', 'Origin')
-    return data_headers, data_list, source_path
+    data_headers = (('Field 6 as Unix Milliseconds (Unverified)', 'datetime'),
+                    'Raw Nested Field 6', 'Rec. Sequence', 'Record Key Hex',
+                    'Record Operation State', 'Record File Type', 'Raw Nested Field 1',
+                    'Raw Nested Field 2', 'Raw Nested Field 3', 'Field 1 / 10000000',
+                    'Field 2 / 10000000', 'Field 3 / 1000', 'Origin')
+    if len(sources) > 1:
+        data_headers += ('Source File',)
+    else:
+        data_list = [row[:-1] for row in data_list]
+    return data_headers, data_list, '\n'.join(sources)
