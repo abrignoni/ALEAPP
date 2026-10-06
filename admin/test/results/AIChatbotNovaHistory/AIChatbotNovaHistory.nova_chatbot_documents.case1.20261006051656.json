@@ -4,24 +4,25 @@
     "artifact_name": "HistoryDetailDocuments",
     "function_name": "nova_chatbot_documents",
     "case_number": "case1",
-    "number_of_columns": 16,
+    "number_of_columns": 19,
     "number_of_rows": 3,
-    "total_data_size_bytes": 835,
+    "total_data_size_bytes": 1093,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/AIChatbotNovaHistory/testdata.AIChatbotNovaHistory.nova_chatbot_documents.case1.zip",
-    "start_time": "2026-09-20T03:54:17.383589+00:00",
-    "end_time": "2026-09-20T03:54:17.400860+00:00",
-    "run_time_seconds": 0.0005459785461425781,
+    "start_time": "2026-10-06T05:16:56.785609+00:00",
+    "end_time": "2026-10-06T05:16:56.815420+00:00",
+    "run_time_seconds": 0.0007529258728027344,
     "last_commit": {
-      "hash": "0cfab8434883aba1c1daa222295ca463f1c7774f",
+      "hash": "ae4a008781c05a567be4042c1aaa338bf6e78464",
       "author_name": "Brigs",
       "author_email": "abrignoni@gmail.com",
-      "date": "2026-08-10T09:05:12-04:00",
-      "message": "fix: carry the Nova artifacts onto the current core and house vocabulary"
+      "date": "2026-10-05T21:00:03-04:00",
+      "message": "Select Nova history messages by recorded chronology"
     }
   },
   "headers": [
+    "Msg Timestamp",
     "Doc ID",
     "Msg ID",
     "Conv ID",
@@ -31,16 +32,19 @@
     "Assistant Persona",
     "Conv Deleted",
     "Submitted By",
+    "Submitted By Code (as stored)",
     "Msg Text",
-    "Msg Timestamp",
     "File Name",
     "MIME Type",
     "Size (as stored)",
     "Source Type",
-    "Cloud Storage URL"
+    "Source Type Code (as stored)",
+    "URL (as stored)",
+    "Source File"
   ],
   "data": [
     [
+      1775592752,
       36,
       7,
       3,
@@ -50,15 +54,18 @@
       "",
       "No",
       "USER",
+      0,
       "What is this PDF about?",
-      1775592752,
       "sample-local-pdf.pdf",
       "application/pdf",
       3,
       "Local File",
-      "/document/oxaXUSH6SPOLUG0dx7VVFyd45kV2/1775592705970/document-input-78c45e5f-f15f-4c92-a57a-cf8f348c8547"
+      0,
+      "/document/oxaXUSH6SPOLUG0dx7VVFyd45kV2/1775592705970/document-input-78c45e5f-f15f-4c92-a57a-cf8f348c8547",
+      "full_system_dump_nova_ai_reference/data/data/com.scaleup.chatai/databases/chat-ai.db"
     ],
     [
+      1776760580,
       37,
       27,
       6,
@@ -68,15 +75,18 @@
       "",
       "No",
       "USER",
+      0,
       "What should I do as a Cibersecurity student for this project?\n",
-      1776760580,
       "ps-proposal.pdf",
       "application/pdf",
       3,
       "Local File",
-      "/document/oxaXUSH6SPOLUG0dx7VVFyd45kV2/1776760471697/document-input-fd450a6a-ff96-4c84-a994-2c4d1278b51d"
+      0,
+      "/document/oxaXUSH6SPOLUG0dx7VVFyd45kV2/1776760471697/document-input-fd450a6a-ff96-4c84-a994-2c4d1278b51d",
+      "full_system_dump_nova_ai_reference/data/data/com.scaleup.chatai/databases/chat-ai.db"
     ],
     [
+      1777893350,
       38,
       51,
       14,
@@ -86,13 +96,15 @@
       "",
       "No",
       "USER",
+      0,
       "What is the content of this video?\n",
-      1777893350,
       "file_example_MP4_480_1_5MG.mp4",
       "video/mp4",
       3,
       "Unknown (2)",
-      "/document/oxaXUSH6SPOLUG0dx7VVFyd45kV2/1777893311569/document-input-cb81d6c4-5908-4836-9e3a-ca3cb255a56f"
+      2,
+      "/document/oxaXUSH6SPOLUG0dx7VVFyd45kV2/1777893311569/document-input-cb81d6c4-5908-4836-9e3a-ca3cb255a56f",
+      "full_system_dump_nova_ai_reference/data/data/com.scaleup.chatai/databases/chat-ai.db"
     ]
   ]
 }
