@@ -2,13 +2,13 @@ __artifacts_v2__ = {
     "nova_chatbot_history": {
         "name": "History",
         "description": "Extracts conversation index from Nova AI Chatbot",
-        "author": "Guilherme Guilherme",
+        "author": "Guilherme Guilherme, @AlexisBrignoni, Codex",
         "creation_date": "2026-05-29",
-        "last_update_date": "2026-09-19",
+        "last_update_date": "2026-10-05",
         "requirements": "none",
         "category": "AI Chatbot - Nova",
         "notes": (
-            "The AI Model and Assistant Persona names are mapped from the numeric codes as observed in the app by the author; the mapping is not vendor-documented, so the stored code is shown beside every name and an unmapped code is reported as stored. First User Message is the lowest-sorting text among the conversation's type 0 messages (SQL MIN over the text), which is not necessarily the earliest one; type 0 is read as the user side on the same basis as the model names. Stored epochs are read as milliseconds above 1e11 and as seconds below it, and reported in UTC; every timestamp in the tested extraction was a 13-digit millisecond value. An extraction can carry one chat-ai.db per Android user and every copy is read, so the located at line lists each database and the row identifiers are per database. Developed against the author's own installation; no registered corpus image carries this app. The committed test case is the author's own extraction of the app's private data directory. The store's MyBot table holds two integer columns and no text, and its Assistant table held no rows in the tested extraction, so neither is reported. Created At and Updated At are separate stored columns and hold the same value on every row of the committed test case, where no conversation had been updated after it was created."
+            "Selected User Message uses the earliest non-NULL stored createdAt among type 0 messages, with the lowest message id breaking timestamp ties. Undated messages follow dated messages; when all eligible messages are undated, the lowest id is a deterministic fallback, not evidence of chronological order. Selection Basis identifies the fallback and histories without eligible messages. Selected message text is retained as stored. The AI Model and Assistant Persona names are mapped from the numeric codes as observed in the app by the author; the mapping is not vendor-documented, so the stored code is shown beside every name and an unmapped code is reported as stored. Type 0 is read as the user side on the same basis as the model names. Stored epochs are read as milliseconds above 1e11 and as seconds below it, and reported in UTC; every timestamp in the tested extraction was a 13-digit millisecond value. An extraction can carry one chat-ai.db per Android user and every copy is read, so the located at line lists each database and the row identifiers are per database. Developed against the author's own installation; no registered corpus image carries this app. The committed test case is the author's own extraction of the app's private data directory. The store's MyBot table holds two integer columns and no text, and its Assistant table held no rows in the tested extraction, so neither is reported. Created At and Updated At are separate stored columns and hold the same value on every row of the committed test case, where no conversation had been updated after it was created."
         ),
         "paths": ("*/com.scaleup.chatai/databases/chat-ai.db",),
         "output_types": "all",
@@ -254,6 +254,11 @@ def get_role(role_int):
 @artifact_processor
 def nova_chatbot_history(context):
     headers = (
+        ("Created At", "datetime"),
+        ("Updated At", "datetime"),
+        ("Last Modified At", "datetime"),
+        ("Last Message At", "datetime"),
+        ("Selected User Message At", "datetime"),
         "Conv ID",
         "UUID",
         "Title",
@@ -264,12 +269,11 @@ def nova_chatbot_history(context):
         "Soft Deleted",
         "Sync State",
         "Sync Retry Count",
-        ("Created At", "datetime"),
-        ("Updated At", "datetime"),
-        ("Last Modified At", "datetime"),
         "Message Count",
-        ("Last Message At", "datetime"),
-        "First User Message",
+        "Selected User Message ID",
+        "Selected User Message",
+        "Selection Basis",
+        "Source File",
     )
 
     db_paths = _nova_databases(context)
@@ -281,9 +285,15 @@ def nova_chatbot_history(context):
                h.captionHistoryId, h.starred, h.softDeleted, h.syncState,
                h.syncRetryCount, h.createdAt, h.updatedAt, h.lastModifiedAt,
                COUNT(hd.id), MAX(hd.createdAt),
-               MIN(CASE WHEN hd.type = 0 THEN hd.text END)
+               selected.text, selected.id, selected.createdAt
         FROM History h
         LEFT JOIN HistoryDetail hd ON hd.historyID = h.id
+        LEFT JOIN HistoryDetail selected ON selected.id = (
+            SELECT candidate.id FROM HistoryDetail candidate
+            WHERE candidate.historyID = h.id AND candidate.type = 0
+            ORDER BY (candidate.createdAt IS NULL), candidate.createdAt, candidate.id
+            LIMIT 1
+        )
         GROUP BY h.id
         ORDER BY h.createdAt ASC
     """
@@ -292,24 +302,33 @@ def nova_chatbot_history(context):
     sources = []
     for db_path in db_paths:
         for row in get_sqlite_db_records(db_path, query):
+            basis = (
+                "no eligible message" if row[16] is None
+                else "lowest ID among undated messages" if row[17] is None
+                else "earliest recorded timestamp"
+            )
             data_list.append(
                 (
-                    row[0],  # id
-                    row[1] or "",  # UUID
-                    row[2] or "",  # title
-                    get_model(row[3]),  # chatBotModel
-                    get_assistant(row[4]),  # assistantId
-                    row[5] or "",  # captionHistoryId
-                    "Yes" if row[6] else "No",  # starred
-                    "Yes" if row[7] else "No",  # softDeleted
-                    _as_stored(row[8]),  # syncState
-                    _as_stored(row[9]),  # syncRetryCount
-                    _epoch_to_utc(row[10]),  # createdAt
-                    _epoch_to_utc(row[11]),  # updatedAt
-                    _epoch_to_utc(row[12]),  # lastModifiedAt
-                    row[13] or 0,  # message count
-                    _epoch_to_utc(row[14]),  # last message at
-                    row[15] or "",  # first user message
+                    _epoch_to_utc(row[10]),
+                    _epoch_to_utc(row[11]),
+                    _epoch_to_utc(row[12]),
+                    _epoch_to_utc(row[14]),
+                    _epoch_to_utc(row[17]),
+                    row[0],
+                    row[1] or "",
+                    row[2] or "",
+                    get_model(row[3]),
+                    get_assistant(row[4]),
+                    row[5] or "",
+                    "Yes" if row[6] else "No",
+                    "Yes" if row[7] else "No",
+                    _as_stored(row[8]),
+                    _as_stored(row[9]),
+                    row[13] or 0,
+                    _as_stored(row[16]),
+                    _as_stored(row[15]),
+                    basis,
+                    context.get_relative_path(db_path),
                 )
             )
 
