@@ -54,16 +54,49 @@ class ZangiChatRetentionTest(unittest.TestCase):
             self.assertEqual([row[3] for row in rows], ['Chat Name', None, None, None, None, 'Chat Name'])
             media.assert_not_called()
 
-    def test_existing_name_and_direction_derivations_are_unchanged_not_validated(self):
+    def test_joined_names_and_raw_direction_replace_local_user_derivations(self):
         with tempfile.TemporaryDirectory() as directory:
             path, _ = make_database(pathlib.Path(directory) / 'messages.db')
             headers, rows, _ = zangichats.__wrapped__(SimpleNamespace(get_files_found=lambda: [str(path)]))
-            self.assertEqual(headers[1:4], ('From Me', 'Sender Name', 'Chat'))
-            self.assertEqual(rows[0][1:3], (1, 'Local User'))
+            self.assertEqual(headers[1:4], ('isIncoming (as stored)', 'From Name (joined)', 'Chat'))
+            self.assertEqual(rows[0][1:3], (0, 'Sender'))
             self.assertEqual((rows[0][9], rows[4][1], rows[4][2], rows[4][9]),
-                             ('Receiver', 0, 'Sender', 'Local User'))
-            self.assertEqual(rows[1][1:3], (0, None))
-            self.assertEqual(rows[2][1:3], (1, 'Local User'))
+                             ('Receiver', 1, 'Sender', 'Receiver'))
+            self.assertEqual(rows[1][1:3], (1, None))
+            self.assertEqual(rows[2][1:3], (0, None))
+
+
+    def test_null_text_numeric_incoming_and_duplicate_joined_profiles(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = make_raw_database(pathlib.Path(directory) / 'messages.db')
+            headers, rows, _ = zangichats.__wrapped__(SimpleNamespace(get_files_found=lambda: [str(path)]))
+            self.assertEqual(len(rows), 19)
+            self.assertEqual(len(headers), 11)
+            expected = {6: None, 7: 'Outgoing', 8: '0', 9: 2, 10: 1.0}
+            for message_id, incoming in expected.items():
+                matching = [row for row in rows if row[7] == message_id]
+                self.assertEqual(len(matching), 2)
+                self.assertEqual({row[2] for row in matching}, {'Sender', 'DuplicateSender'})
+                self.assertTrue(all(row[9] == 'Receiver' for row in matching))
+                self.assertTrue(all(row[1] == incoming and type(row[1]) is type(incoming) for row in matching))
+                self.assertTrue(all(row[8] == 20 and row[10] == 30 for row in matching))
+            self.assertNotIn('From Me', headers)
+            self.assertFalse(any('Local User' in row for row in rows))
+            from scripts.artifacts.ZangiChats import __artifacts_v2__  # pylint: disable=import-outside-toplevel
+            self.assertNotIn('data_views', __artifacts_v2__['zangichats'])
+
+
+def make_raw_database(path):
+    path, _ = make_database(path)
+    connection = sqlite3.connect(path)
+    connection.execute("INSERT INTO user_profile VALUES(20,'DuplicateSender',NULL)")
+    records = [(1700000010000 + index * 1000, None if index % 2 else '',
+                6 + index, 'raw' + str(index), 'raw incoming', None, 20, 30, incoming)
+               for index, incoming in enumerate([None, 'Outgoing', '0', 2, 1.0])]
+    connection.executemany('INSERT INTO message VALUES(?,?,?,?,?,?,?,?,?)', records)
+    connection.commit()
+    connection.close()
+    return path
 
 
 if __name__ == '__main__':
