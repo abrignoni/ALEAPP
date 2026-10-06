@@ -9,10 +9,12 @@ __artifacts_v2__ = {
         "category": 'Chromium',
         "notes": 'Reads the network_action_predictor table from the Chromium profiles the declared paths match, one '
                   'storage view per file, and reports user_text, url, number_of_hits and number_of_misses as stored. '
-                  'A Magisk mirror copy is skipped as a duplicate unless it sits under '
-                  'app_sbrowser, where the code does not apply the skip; 1 registered corpus '
-                  'carries a Magisk mirror path and it holds no copy of this file, so that branch '
-                  'is unexercised. Measured over all 42 registered Android corpora on 2026-09-11: '
+                  'Selected Magisk mirror inputs are read consistently for every browser; no equality of their '
+                  'contents or state is assumed. Repeated observations across inputs are not distinct-event claims. '
+                  'The existing canonical path-only helper still collapses known storage aliases without checking '
+                  'main/WAL/journal state; conflicting alias selection remains unresolved. In the historical inventory, '
+                  '1 registered corpus carries a Magisk mirror path and holds no copy of this file, so genuine '
+                  'positive mirror coverage is unavailable. Measured over all 42 registered Android corpora on 2026-09-11: '
                   '34 carry a file named Network Action Predictor and every copy sits under '
                   'app_chrome/Default or app_sbrowser/Default. No copy sits under app_opera or '
                   'app_webview on any of them, although 3 carry an app_opera directory and 39 carry '
@@ -73,8 +75,6 @@ def get_chromeNetworkActionPredictor(context):
         browser_name = get_browser_name(file_found)
         if file_found.find('app_sbrowser') >= 0:
             browser_name = 'Browser'
-        elif file_found.find('.magisk') >= 0 and file_found.find('mirror') >= 0:
-            continue  # Skip sbin/.magisk/mirror/data/.. , it should be duplicate data
 
         db = open_sqlite_db_readonly(file_found)
         if db is None:
