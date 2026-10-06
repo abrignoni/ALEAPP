@@ -2,14 +2,14 @@
 __artifacts_v2__ = {
     "torbrowser_thumbnails": {
         "name": "Tor Browser Tab Thumnails",
-        "description": "Parses Tor Browser Tab thumbnail Information",
-        "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
+        "description": "Tor Browser tab thumbnails with the file system modification time of the extracted copy.",
+        "author": "Damien Attoe {damien.attoe@spyderforensics.com}, @AlexisBrignoni, Codex",
         "creation_date": "2025-11-14",
-        "last_update_date": "2025-11-14",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Tor Browser",
-        "notes": "ModifiedTime is the file system modification time of the extracted copy of the "
-                 "thumbnail file, which depends on how the extraction and this tool preserved "
+        "notes": "Extracted Copy Modification Time is the file system modification time of the "
+                 "extracted copy of the thumbnail file, which depends on how the extraction and this tool preserved "
                  "file times; it is not read from the file's content. No sample data is recorded "
                  "for this artifact.",
         "paths": ('*/org.torproject.torbrowser/cache/mozac_browser_thumbnails/private_thumbnails/*.0'),
@@ -112,7 +112,7 @@ def torbrowser_thumbnails(context):
         if media_item:
             data_list.append((modifiedtime, media_item, filename, location))
 
-    data_headers = (('ModifiedTime', 'datetime'), ('Thumbnail', 'media'), 'File Name', 'Location')
+    data_headers = (('Extracted Copy Modification Time', 'datetime'), ('Thumbnail', 'media'), 'File Name', 'Location')
 
     return data_headers, data_list, '\n'.join(sorted(source_paths))
 
