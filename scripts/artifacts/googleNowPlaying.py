@@ -2,18 +2,28 @@
 __artifacts_v2__ = {
     "get_googleNowPlaying": {
         "name": "GoogleNowPlaying",
-        "description": "Entries of the recognition_history table of the Now Playing history_db, decoded from the history_entry protobuf by field number (the field meanings are not sourced). Consecutive entries for the same song are merged into one row whose Timestamp lists each time. The merge as written does not report the first entry after each change of song, so the table leaves out some of the stored entries. On userb2_a13 the table held 609 entries and 262 distinct title and artist pairs; the report listed 375 of the entries and 209 of the pairs, and it read two copies of the database, so each of the 235 rows appears twice (470 rows).",
-        "author": "@abrignoni",
+        "description": "Decoded entries of the Now Playing recognition_history table, grouped across consecutive matching selected fields.",
+        "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2020-03-22",
-        "last_update_date": "2020-03-22",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Now Playing",
-        "notes": "",
+        "notes": "Protobuf fields are decoded by number; their meanings and the timestamp/duration "
+                 "unit assumptions are not sourced. The existing SQL timestamp conversion and "
+                 "duration display are retained, without a claim of listening or user presence. "
+                 "Consecutive matching selected fields are compared before HTML escaping; each "
+                 "group includes its first entry, and missing or zero duration is displayed empty. "
+                 "The legacy timestamp rule remains: a timestamp equal to the accumulated text "
+                 "is suppressed, while later timestamps are joined with comma/line breaks. "
+                 "This grouped report does not preserve every source occurrence. Duplicate storage "
+                 "views are still read independently, and only the last selected database is named "
+                 "as the source. Prior implementation measurements on userb2_a13: 609 stored entries, "
+                 "375 represented entries, 235 grouped rows read twice (470 rows).",
         "paths": ('*/com.google.intelligence.sense/db/history_db*', '*/com.google.android.as/databases/history_db*'),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "music",
         "sample_data": {
-            "userb2_a13": "Android 13 | com.google.android.as vc 8997612 | 470 rows",
+            "userb2_a13": "Android 13 | com.google.android.as vc 8997612; two storage views, 296 groups each | 592 rows",
         },
         "html_columns": ['Timestamp'],
     }
@@ -100,6 +110,7 @@ def get_googleNowPlaying(context):
                         '6': {'type': 'double', 'name': ''}  # This definition converts field to a double from generic fixed64
                         }}
                         }
+            last_raw_fields = None
             last_data_set = []  # Since there are a lot of similar entries differing only in timestamp, we can combine them.
 
             for row in all_rows:
@@ -127,18 +138,23 @@ def get_googleNowPlaying(context):
                 try:             year = FilterInvalidValue(data["9"]["14"])
                 except KeyError: year = ''
 
+                duration = ''
                 if durationinsecs:
                     duration = time.strftime('%H:%M:%S', time.gmtime(durationinsecs))
+                raw_fields = (timezones, songtitle, artist, duration, album, year)
+                current_row = [timestamp, escape(timezones), escape(songtitle), escape(artist), duration, escape(album), year]
                 if not last_data_set:
-                    last_data_set = [timestamp, escape(timezones), escape(songtitle), escape(artist), duration, escape(album), year]
-                elif AreContentsSame(last_data_set, timezones, songtitle, artist, duration, album, year):
+                    last_data_set = current_row
+                    last_raw_fields = raw_fields
+                elif last_raw_fields == raw_fields:
                     if last_data_set[0] == timestamp:  # exact duplicate, do not add
                         pass
                     else:
                         last_data_set[0] += ',<br />' + esc(timestamp)
                 else:
                     data_list.append(last_data_set)
-                    last_data_set = []
+                    last_data_set = current_row
+                    last_raw_fields = raw_fields
             if last_data_set:
                 data_list.append(last_data_set)
             logfunc("{} entries grouped into {}".format(usageentries, len(data_list)))
