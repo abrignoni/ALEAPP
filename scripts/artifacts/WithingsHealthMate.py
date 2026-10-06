@@ -14,25 +14,29 @@ __artifacts_v2__ = {
     },
     "healthmate_trackings": {
         "name": "Health Mate - Trackings",
-        "description": "Health Mate Trackings",
-        "author": "Marco Neumann {kalinko@be-binary.de}",
+        "description": "Tracking records with stored activity category IDs and names from a paired local lookup.",
+        "author": "Marco Neumann {kalinko@be-binary.de}, @AlexisBrignoni, Codex",
         "creation_date": "2024-04-20",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Withings Health Mate",
         "notes": "Based on https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-2.html "
                  "Columns of the Track table are read by position; the mapping was written "
                  "against app versions 5.1.4 (Android 6) and 6.3.1 (Android 13), the versions "
                  "recorded in the module's comment header, and may not hold on other versions. "
-                 "Activity Category Name is filled only for categories 37 ('Sleeping') and 272 "
-                 "('Activity Tracking started manually'), names supplied by this parser. The "
-                 "activityCategory table of the Withings-WiScale database is not read by the "
-                 "current code, so every other category shows 'Not listed - Unknown'; rely on "
-                 "Activity Category ID. Both names come from the cited post, which gives 37 = "
-                 "Sleeping and 272 = Activity started on watch without stating how they were "
-                 "derived; they are not read from the app or its documentation, and the meaning "
-                 "of categories 37 and 272 is not "
-                 "established.",
+                 "Stored Activity Category Name is read without interpretation from id and name "
+                 "in activityCategory of the unique Withings-WiScale main in the same physical "
+                 "and evidence-relative app databases folder as the selected room-healthmate main. "
+                 "Only the first eligible room main is read. Missing, conflicting or unreadable "
+                 "lookups retain the tracking row and Activity Category ID, with Category Lookup "
+                 "Status explaining why no stored name is supplied. The artifact source indicator "
+                 "includes the lookup only when its table was successfully consulted. NULL and "
+                 "empty stored names have separate statuses. IDs and names are matched by stored "
+                 "type and value; conflicting names for an ID are not selected. "
+                 "The cited post proposes 37 = Sleeping and 272 = Activity started on watch "
+                 "without explaining their derivation. The prior parser labelled 272 Activity "
+                 "Tracking started manually. These remain unverified research interpretations, "
+                 "not stored lookup names, and never override activityCategory values.",
         "paths": ('*/com.withings.wiscale2/databases/room-healthmate*',
                   '*/com.withings.wiscale2/databases/Withings-WiScale*'),
         "output_types": "standard",
@@ -142,7 +146,11 @@ __artifacts_v2__ = {
 # 2024-04-20: Android 13, App: 6.3.1
 
 # Requirements:  none
-from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records
+import sqlite3
+from pathlib import Path, PurePosixPath
+
+from scripts.ilapfuncs import (artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records,
+                              get_sqlite_db_path, logfunc)
 
 
 @artifact_processor
@@ -225,28 +233,82 @@ def healthmate_accounts(context):
     return data_headers, data_list, file_found
 
 
-@artifact_processor
-def healthmate_trackings(context):
-    files_found = context.get_files_found()
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')
-                   and not x.endswith('journal')]
+def _tracking_mains(context, basename):
+    """Exact supplied mains, retaining their physical and evidence namespace."""
+    mains = []
+    seen = set()
+    for candidate in context.get_files_found():
+        path = str(candidate)
+        if (path in seen or not Path(path).is_file() or Path(path).is_symlink()
+                or Path(path).name != basename):
+            continue
+        relative = PurePosixPath(context.get_relative_path(path).replace('\\', '/'))
+        if (relative.name != basename or relative.parent.name != 'databases'
+                or relative.parent.parent.name != 'com.withings.wiscale2'):
+            continue
+        seen.add(path)
+        mains.append((path, relative))
+    return mains
 
-    room_db = next((str(f) for f in files_found if 'room-healthmate' in str(f).lower()), None)
-    wiscale_db = next((str(f) for f in files_found if 'withings-scale' in str(f).lower()), None)
 
-    wiscale_query = '''
+def _tracking_categories(context, room_db, room_relative):
+    """An optional exact sibling lookup; failures cannot discard tracking rows."""
+    candidates = [item for item in _tracking_mains(context, 'Withings-WiScale')
+                  if item[1].parent == room_relative.parent]
+    if not candidates:
+        logfunc(f'Withings Trackings: missing lookup for {room_relative}')
+        return {}, 'missing-lookup', ''
+    if len(candidates) != 1 or Path(candidates[0][0]).parent != Path(room_db).parent:
+        logfunc(f'Withings Trackings: ambiguous lookup namespace for {room_relative}')
+        return {}, 'ambiguous-lookup', ''
+    wiscale_db, relative = candidates[0]
+    db = None
+    try:
+        db = sqlite3.connect(f'file:{get_sqlite_db_path(wiscale_db)}?mode=ro', uri=True)
+        wiscale_query = '''
         SELECT id, name
         FROM activityCategory
     '''
 
-    db_records_wiscale_db = get_sqlite_db_records(wiscale_db, wiscale_query)
+        categories = {}
+        for category_id, name in db.execute(wiscale_query):
+            if category_id is not None:
+                categories.setdefault((type(category_id), category_id), set()).add((type(name), name))
+        return categories, 'ready', wiscale_db
+    except sqlite3.Error as error:
+        status = ('unsupported-lookup-schema' if 'no such table' in str(error)
+                  or 'no such column' in str(error) else 'unreadable-lookup')
+        logfunc(f'Withings Trackings: {status} in {relative}')
+        return {}, status, ''
+    finally:
+        if db is not None:
+            db.close()
 
-    activity_categories = {}
-    for category in db_records_wiscale_db:
-        activity_categories[category[0]] = category[1]
-        # add activity categories that are not part of the listing but were recognizable by manual analysis
-    activity_categories[37] = 'Sleeping'
-    activity_categories[272] = 'Activity Tracking started manually'
+
+def _tracking_category_name(category_id, categories, lookup_status):
+    """Keep NULL, empty and conflicting stored names distinct from absence."""
+    if category_id is None:
+        return '', 'missing-category-ID'
+    if lookup_status != 'ready':
+        return '', lookup_status
+    names = categories.get((type(category_id), category_id))
+    if not names:
+        return '', 'category-not-listed'
+    if len(names) != 1:
+        return '', 'ambiguous-category'
+    name = next(iter(names))[1]
+    return name, ('matched-NULL-name' if name is None else 'matched-empty-name' if name == ''
+                  else 'matched-name')
+
+
+@artifact_processor
+def healthmate_trackings(context):
+    room_mains = _tracking_mains(context, 'room-healthmate')
+    room_db = room_mains[0][0] if room_mains else ''
+    activity_categories, lookup_status, wiscale_db = (
+        _tracking_categories(context, *room_mains[0]) if room_mains else ({}, 'missing-lookup', ''))
+    if len(room_mains) > 1:
+        logfunc('Withings Trackings: first eligible room main only; other room states are not read')
 
     # get activities from database room-healthmate*
     room_query = ('''
@@ -257,6 +319,7 @@ def healthmate_trackings(context):
     db_records_room_db = get_sqlite_db_records(room_db, room_query)
 
     data_list = []
+    logged = set()
 
     for row in db_records_room_db:
         entry_id = row[0]
@@ -268,10 +331,12 @@ def healthmate_trackings(context):
         device_id = row[9]
         device_modell = row[10]
         category_id = row[12]
-        try:
-            category_name = activity_categories[category_id]
-        except KeyError:
-            category_name = "Not listed - Unknown"
+        category_name, category_status = _tracking_category_name(
+            category_id, activity_categories, lookup_status)
+        if category_status == 'ambiguous-category' and (type(category_id), category_id) not in logged:
+            logfunc(f'Withings Trackings: ambiguous category {repr(category_id)[:80]} in '
+                    f'{context.get_relative_path(wiscale_db)}')
+            logged.add((type(category_id), category_id))
         datajson = row[13]
 
         data_list.append((
@@ -285,7 +350,11 @@ def healthmate_trackings(context):
             device_modell,
             category_id,
             category_name,
-            datajson))
+            datajson,
+            category_status))
+
+    if isinstance(db_records_room_db, sqlite3.Cursor):
+        db_records_room_db.connection.close()
 
     data_headers = (
         ('Start Time', 'datetime'),
@@ -297,11 +366,12 @@ def healthmate_trackings(context):
         'Device ID',
         'Device Model',
         'Activity Category ID',
-        'Activity Category Name',
-        'Tracking Data'
+        'Stored Activity Category Name',
+        'Tracking Data',
+        'Category Lookup Status'
     )
 
-    return data_headers, data_list, room_db
+    return data_headers, data_list, '\n'.join(path for path in (room_db, wiscale_db) if path)
 
 
 @artifact_processor
