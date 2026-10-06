@@ -89,13 +89,17 @@ __artifacts_v2__ = {
     },
     "get_dmss_media": {
         "name": "Dahua CCTV - Media",
-        "description": "JPG, MP4 and DAV files found under the DMSS snapshot directory; thumbnail files and .jpg files on a path containing 'video' are left out",
+        "description": "JPG, MP4 and DAV candidate files found under the DMSS snapshot directory, with media previews where supported",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2023-04-13",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Dahua Technology (DMSS)",
-        "notes": "",
+        "notes": "Files with lowercase .jpg, .mp4 or .dav suffixes are reported unless their "
+                 "staged path contains .thumb. A video substring in a directory or filename does "
+                 "not establish a thumbnail relationship and is not used to exclude JPG candidates. "
+                 "Reported file paths and media identify the retained evidence files; no "
+                 "parent-video association is inferred.",
         "paths": ('*/Android/data/com.mm.android.DMSS/files/Download/snapshot/*',),
         "output_types": "standard",
         "artifact_icon": "video",
@@ -267,9 +271,6 @@ def get_dmss_media(context):
         if not file_name.endswith(('.jpg', '.mp4', '.dav')):
             continue
         if '.thumb' in file_found:
-            continue
-        # Intentionally skip jpg thumbnails of videos to reduce duplicate media
-        if file_name.endswith('.jpg') and 'video' in file_found:
             continue
         source_path = os.path.dirname(file_found)
         media = check_in_media(file_found, file_name)
