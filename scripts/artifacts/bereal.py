@@ -1,13 +1,20 @@
 __artifacts_v2__ = {
     "bereal_device_user": {
-        "name": "BeReal Android - Authenticated User",
-        "description": "Reports one BeReal profile that cached responses or a shared_prefs identifier point to as the account in use, with the basis and a confidence label for each.",
+        "name": "BeReal Android - Cached Profile Candidates",
+        "description": "Cached profile occurrences matching bounded URL/JSON-path markers, explicit flags "
+                       "or stored identifiers, with parser evidence rank and conservative media candidates.",
         "author": "@Gear-I, @AlexisBrignoni, Codex",
         "creation_date": "2026-07-19",
-        "last_update_date": "2026-07-19",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "BeReal - Social Media",
-        "notes": "High and Medium rows are produced when the cached response URL or the JSON path contains one of the strings /me, /users/me, currentuser, current_user, myprofile or my_profile, or when the profile object carries isCurrentUser, isMe or me set to true. The URL test is a substring match, so a URL that merely contains /me also passes it; read the Source Endpoint column before relying on the label. Low confidence is reported only when a persisted shared_prefs account identifier matches a cached profile with no corroborating endpoint or flag. Profiles with none of this evidence are not reported. Only the highest ranked candidate is reported; where several candidates share the top rank the first one found is kept and the others are not shown. High, Medium and Low are labels this module assigns.",
+        "notes": "Every qualifying occurrence is retained, including tied and lower-ranked candidates. "
+                 "URL signals use exact path segments, excluding query/fragment; JSON path signals use exact components. "
+                 "High/Medium/Low are parser ranks, not authentication or ownership determinations. "
+                 "Preference identifier matches retain the existing global input scope and do not establish account ownership. "
+                 "Images are associated only for one exact URL candidate sharing the JSON DiskLru body's physical "
+                 "and evidence cache parent. Ambiguous, cross-parent and plain-JSON associations are inventoried "
+                 "without automatic export. No missing candidate implies absence of an account.",
         "paths": (
                         "*/com.bereal.ft/cache/network/*",
                         "*/com.bereal.ft/shared_prefs/*.xml",
@@ -16,7 +23,7 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "user",
         "sample_data": {
-            "pixel7a_a14": "1 row",
+            "pixel7a_a14": "4 rows",
             "hc_pixel8pro_a17": "1 row",
         },
     },
@@ -148,6 +155,7 @@ import re
 import zlib
 from datetime import datetime, timezone
 from pathlib import Path
+from urllib.parse import urlsplit
 from xml.etree import ElementTree
 
 from scripts.ilapfuncs import artifact_processor, check_in_media, logfunc
@@ -443,24 +451,63 @@ def _dedupe(rows):
 
 
 def _current_user_evidence(path, obj, meta, preference_ids):
-    context = f"{path} {meta.get('url', '')}".lower()
-    explicit_flag = _first(obj, "isCurrentUser", "isMe", "me") is True
-    endpoint = any(marker in context for marker in ("/me", "/users/me", "currentuser", "current_user", "myprofile", "my_profile"))
+    markers = {"me", "currentuser", "current_user", "myprofile", "my_profile"}
+    try:
+        url_markers = markers.intersection(urlsplit(meta.get("url", "")).path.lower().split("/"))
+    except ValueError:
+        url_markers = set()
+    json_markers = markers.intersection(re.split(r"[.\[\]]+", path.lower()))
+    signals = []
+    if url_markers:
+        signals.append("URL path marker")
+    if json_markers:
+        signals.append("JSON path marker")
+    if _first(obj, "isCurrentUser", "isMe", "me") is True:
+        signals.append("Explicit profile flag")
     uid, username, _, _ = _user_fields(obj)
-    preference_match = any(value and value in {str(uid), str(username)} for _, value, _ in preference_ids)
-    if explicit_flag and endpoint:
-        return "Explicit current-user flag and current-user endpoint/context", "High"
-    if endpoint and preference_match:
-        return "Current-user endpoint/context corroborated by persisted account identifier", "High"
-    if explicit_flag and preference_match:
-        return "Explicit current-user flag corroborated by persisted account identifier", "High"
-    if endpoint:
-        return "Current-user endpoint/context only", "Medium"
-    if explicit_flag:
-        return "Explicit current-user flag only", "Medium"
-    if preference_match:
-        return "Persisted account identifier (shared_prefs) matches cached profile only; no current-user endpoint or flag observed", "Low"
-    return "", ""
+    if any(value and value in {str(uid), str(username)} for _, value, _ in preference_ids):
+        signals.append("Stored preference identifier match (input-wide)")
+    if not signals:
+        return "", ""
+    endpoint = bool(url_markers or json_markers)
+    flag = "Explicit profile flag" in signals
+    preference = any(signal.startswith("Stored preference") for signal in signals)
+    rank = "High" if (endpoint and (flag or preference)) or (flag and preference) else "Medium"
+    if len(signals) == 1 and signals[0].startswith("Stored preference"):
+        rank = "Low"
+    return "; ".join(signals), rank
+
+
+def _profile_media_candidates(context, entries, picture, body, known_cache):
+    exact = {}
+    for entry in entries:
+        if picture and entry["url"] == picture:
+            exact.setdefault(str(entry["media"]), entry)
+    ordered = sorted(exact.values(), key=lambda entry: (
+        context.get_relative_path(entry["media"]), str(entry["media"])))
+    inventory, eligible = [], []
+    for entry in ordered:
+        media = str(entry["media"])
+        same_cache = (known_cache and Path(media).parent == Path(body).parent and
+                      Path(context.get_relative_path(media)).parent ==
+                      Path(context.get_relative_path(body)).parent)
+        inventory.append({"media": context.get_relative_path(media),
+                          "metadata": context.get_relative_path(entry["metadata"]) if entry["metadata"] else "",
+                          "same_cache_parent": same_cache if known_cache else None})
+        if same_cache:
+            eligible.append(media)
+    if not picture:
+        status = "No stored picture URL"
+    elif not known_cache:
+        status = "Unknown cache ownership; no automatic export"
+    elif len(eligible) > 1:
+        status = "Ambiguous same-cache exact URL candidates; no automatic export"
+    elif len(eligible) == 1:
+        status = "Unique same-cache exact URL candidate"
+    else:
+        status = "No same-cache exact URL candidate"
+    selected = eligible[0] if len(eligible) == 1 else ""
+    return selected, inventory, status, ordered
 
 
 def _accepted_friend_evidence(path, obj, meta):
@@ -703,10 +750,13 @@ def _realmoji_fields(obj):
 def bereal_device_user(context):
     files_found = context.get_files_found()
     preferences = _preference_identifiers(files_found)
-    by_url, _ = _media_index(files_found)
-    rows, used, candidates = [], [], []
+    _, entries = _media_index(files_found)
+    cache_bodies = {str(parts["1"]) for parts in _disk_cache_parts(files_found).values()
+                    if parts.get("0") and parts.get("1")}
+    candidates, used, contributors = [], [], []
     for parsed, meta, sources in _json_sources(files_found):
-        for path, obj in _walk(parsed):
+        body = str(sources[-1])
+        for occurrence, (path, obj) in enumerate(_walk(parsed), 1):
             if not isinstance(obj, dict):
                 continue
             uid, username, fullname, picture = _user_fields(obj)
@@ -715,18 +765,31 @@ def bereal_device_user(context):
             basis, confidence = _current_user_evidence(path, obj, meta, preferences)
             if not basis:
                 continue
-            local_picture = by_url.get(picture, "")
+            local, inventory, status, exact = _profile_media_candidates(
+                context, entries, picture, body, body in cache_bodies)
+            media = _media_ref(local, f"Cached profile candidate image {username or uid}")
+            eligible_count = sum(item["same_cache_parent"] is True for item in inventory)
+            row = (uid, username, fullname, picture, media, meta.get("url", ""), basis,
+                   confidence, path, occurrence, len(inventory), eligible_count, status,
+                   json.dumps(inventory, ensure_ascii=False))
             rank = {"High": 3, "Medium": 2, "Low": 1}.get(confidence, 0)
-            candidates.append((rank, uid, username, fullname, picture, local_picture, basis, confidence, meta.get("url", ""), sources))
-    if candidates:
-        candidates.sort(key=lambda row: row[0], reverse=True)
-        best = candidates[0]
-        _, uid, username, fullname, picture, local_picture, basis, confidence, endpoint, sources = best
-        media = _media_ref(local_picture, f"BeReal authenticated user {username or uid}")
-        rows.append((uid, username, fullname, picture, media, endpoint, basis, confidence))
-        used.extend(sources)
-        used.append(local_picture)
-    headers = ("User ID", "Username", "Full Name", "Profile Picture URL", ("Profile Picture", "media"), "Source Endpoint", "Identification Evidence", "Confidence")
+            candidates.append((rank, row, context.get_relative_path(body)))
+            if body not in contributors:
+                contributors.append(body)
+            used.extend(sources)
+            for entry in exact:
+                used.extend((entry.get("metadata"), entry["media"]))
+            used.extend(pref_source for _, value, pref_source in preferences
+                        if value and value in {str(uid), str(username)})
+    candidates.sort(key=lambda candidate: candidate[0], reverse=True)
+    headers = ("User ID", "Username", "Full Name", "Profile Picture URL", ("Profile Picture", "media"),
+               "Source Endpoint", "Candidate Evidence", "Parser Evidence Rank", "JSON Object Path",
+               "Object Occurrence", "Exact URL Candidate Count", "Same Cache Candidate Count",
+               "Media Association Status", "Media Candidate Inventory (JSON)")
+    rows = [row for _, row, _ in candidates]
+    if len(contributors) > 1:
+        headers += ("Source File",)
+        rows = [row + (source,) for _, row, source in candidates]
     return headers, rows, _source_path(used)
 
 
