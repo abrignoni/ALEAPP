@@ -4,18 +4,19 @@ __artifacts_v2__ = {
         "description": "Reports the PIN and pattern hashes stored in the AVG (com.antivirus) PinSettingsImpl.xml, the four-digit PIN and the pattern whose SHA-1 equals each hash when one is found, and the values read from the vault .key_store file with the keys the module derives from that PIN",
         "author": "@Theincidentalchewtoy, @AlexisBrignoni, Codex",
         "creation_date": "2022-05-03",
-        "last_update_date": "2022-05-03",
+        "last_update_date": "2026-10-05",
         "requirements": "none",
         "category": "Encrypting Media Apps",
         "notes": (
             'The PIN search covers 0000 to 9999 only. The pattern search covers patterns of 4 to '
             '9 points. The pattern is matched to its hash and is not used to derive a key. The '
-            'Derived Key and Master Key rows are written only when a key file was read and a PIN '
-            "matched. 'Java Equivilant' is the password value the module passes to PBKDF2 for "
+            'Derived Key and Master Key rows are written after key derivation in the settings '
+            'branch or a successful key-only match. '
+            "'Java Equivalent' is the password value the module passes to PBKDF2 for "
             'that PIN, shown in hexadecimal and taken from a table of 10,000 values embedded in '
             'the module. When no '
             'settings file is found, each value in that table is tried against the key file, and '
-            'a match adds the User PIN and Derived Key rows. With no key file there are no key '
+            'a match adds the User PIN, Derived Key and Master Key rows. With no key file there are no key '
             'rows. Vault files are taken from any folder named Vault in the extraction, matched '
             'by folder name only. The module does not check that the folder belongs to '
             'com.antivirus. When more than one file sits in a .key_store or .metadata_store '
@@ -180,7 +181,7 @@ def _compute_avg(files_found):
 
         if key_store and current_pin is not None and current_pin in pin_dict:
             java_pin = pin_dict[current_pin]
-            enc_details.append(('Java Equivilant', java_pin.decode('utf-8')))
+            enc_details.append(('Java Equivalent', java_pin.decode('utf-8')))
             master_key, derived_key, _ = identify_master_key(java_pin, master_iv, first_encrypted, second_encrypted)
             enc_details.append(('Derived Key', derived_key))
             enc_details.append(('Master Key', master_key.hex()))
@@ -195,6 +196,7 @@ def _compute_avg(files_found):
                 master_key = candidate_key
                 enc_details.append(('User PIN', pin.decode('utf-8')))
                 enc_details.append(('Derived Key', derived_key))
+                enc_details.append(('Master Key', master_key.hex()))
                 break
 
     meta = {}
