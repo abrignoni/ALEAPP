@@ -2,10 +2,10 @@
 __artifacts_v2__ = {
     "get_gps": {
         "name": "Strava - Activities",
-        "description": "GPS activities decoded from Strava FIT files (com.strava/files/activities)",
-        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "description": "GPS activities decoded from FIT files under com.strava/files",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}, @AlexisBrignoni, Codex",
         "creation_date": "2023-03-24",
-        "last_update_date": "2023-03-24",
+        "last_update_date": "2026-10-06",
         "requirements": "fitdecode",
         "category": "Strava",
         "notes": "One row per file whose name ends in fit under com.strava/files that decodes; a "
@@ -17,7 +17,9 @@ __artifacts_v2__ = {
                  "A time with no zone is taken as UTC. "
                  "Latitude and Longitude are the first position record, rounded to five decimals. "
                  "Route Map is an image drawn from the position records and Route KML holds the same "
-                 "track.",
+                 "track. The source indicator includes only files that produced rows. "
+                 "Rows carry evidence-relative Source File values only when a report combines "
+                 "multiple FIT inputs.",
         "paths": ('*/com.strava/files*',),
         "output_types": "all",
         "artifact_icon": "activity",
@@ -46,12 +48,11 @@ def _to_utc(value):
 def get_gps(context):
     files_found = context.get_files_found()
     data_list = []
-    source_path = ''
+    source_paths = set()
     for file_found in files_found:
         file_found = str(file_found)
         if not file_found.endswith('fit'):
             continue
-        source_path = file_found
         coordinates = []
         sport = ''
         start_time = ''
@@ -110,9 +111,16 @@ def get_gps(context):
                                                 force_type='application/vnd.google-earth.kml+xml',
                                                 force_extension='kml') or ''
         data_list.append((sport, start_time, end_time, total_minutes, total_distance_km,
-                          start_lat, start_lon, route_map, route_kml))
+                          start_lat, start_lon, route_map, route_kml, context.get_relative_path(file_found)))
+        source_paths.add(file_found)
 
-    data_headers = ('Activity Type', ('Start Time', 'datetime'), ('End Time', 'datetime'),
+    data_headers = (('Start Time', 'datetime'), ('End Time', 'datetime'), 'Activity Type',
                     'Total Time (minutes)', 'Total Distance (km)', 'Latitude', 'Longitude',
                     ('Route Map', 'media'), ('Route KML', 'media'))
-    return data_headers, data_list, source_path
+    multiple_sources = len(source_paths) > 1
+    if multiple_sources:
+        data_headers += ('Source File',)
+    else:
+        data_list = [row[:-1] for row in data_list]
+    data_list = [row[1:3] + (row[0],) + row[3:] for row in data_list]
+    return data_headers, data_list, '\n'.join(sorted(source_paths))
