@@ -3,18 +3,18 @@ __artifacts_v2__ = {
         "name": "Dropbox - Files",
         "description": "Cloud files and folders listed in the Dropbox app database, with the path, "
                        "size, MIME type and the four stored time columns (server_modified_millis, modified_millis, local_modified, accessed_millis)",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude; @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Dropbox",
         "notes": "Read from the dropbox table of the account database, whose file name carries a "
                  "prefix before -db.db, so the path allows for it. Whether that prefix is the "
                  "account id was not established. Only the first database matched is read. This is "
                  "the listing the app had cached, not necessarily the full account contents. "
-                 "Shared folder id is reported as stored. Is Directory, Favourite, Read Only and "
-                 "Vault Folder are shown as Yes when the stored value is non-zero and No when it "
-                 "is zero or absent.",
+                 "Shared folder id and is_dir, is_favorite, read_only and is_vault_folder are "
+                 "reported as stored, retaining NULL, zero and other values without assigning "
+                 "boolean meanings.",
         "paths": ('*/com.dropbox.android/databases/*-db.db*',),
         "output_types": "standard",
         "artifact_icon": "cloud",
@@ -136,11 +136,11 @@ def dropbox_files(context):
             record[5],
             record[6],
             record[7],
-            'Yes' if record[8] else 'No',
-            'Yes' if record[9] else 'No',
+            record[8],
+            record[9],
             record[10],
-            'Yes' if record[11] else 'No',
-            'Yes' if record[12] else 'No',
+            record[11],
+            record[12],
             record[13],
         ))
 
@@ -153,11 +153,11 @@ def dropbox_files(context):
         'Path',
         'Size (bytes)',
         'MIME Type',
-        'Is Directory',
-        'Favourite',
+        'is_dir (as stored)',
+        'is_favorite (as stored)',
         'Shared Folder ID',
-        'Read Only',
-        'Vault Folder',
+        'read_only (as stored)',
+        'is_vault_folder (as stored)',
         'Revision',
     )
     return data_headers, data_list, source_path
