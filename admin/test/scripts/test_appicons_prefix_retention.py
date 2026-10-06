@@ -54,8 +54,9 @@ class AppIconsPrefixRetentionTest(unittest.TestCase):
                 image.load()
             return str(target)
         with patch('scripts.artifacts.appicons.check_in_embedded_media', side_effect=export):
-            headers, rows, source = appIcons.__wrapped__(SimpleNamespace(get_files_found=lambda: [str(path)]))
-        self.assertEqual(headers, ('App name', 'Package name', ('Main icon', 'media'), ('Icons', 'media')))
+            headers, rows, source = appIcons.__wrapped__(SimpleNamespace(get_files_found=lambda: [str(path)],
+                                      get_relative_path=lambda p: str(pathlib.Path(p).relative_to(root))))
+        self.assertEqual(headers, ('App name', 'Package name', ('Main icon', 'media'), ('Icons', 'media'), 'Profile ID (as stored)'))
         self.assertEqual(source, str(path))
         self.assertEqual([row[1] for row in rows], ['a.single','b.exact','c.prefix','d.none','e.null'])
         self.assertEqual([row[0] for row in rows], ['Label0','Label1','Label3','','Label8'])
