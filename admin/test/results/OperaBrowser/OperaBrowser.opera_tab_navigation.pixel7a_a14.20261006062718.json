@@ -4,104 +4,122 @@
     "artifact_name": "Opera Browser - Tab Navigation History",
     "function_name": "opera_tab_navigation",
     "case_number": "pixel7a_a14",
-    "number_of_columns": 7,
+    "number_of_columns": 9,
     "number_of_rows": 8,
-    "total_data_size_bytes": 761,
+    "total_data_size_bytes": 1585,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/OperaBrowser/testdata.OperaBrowser.opera_tab_navigation.pixel7a_a14.zip",
-    "start_time": "2026-08-25T04:48:40.345793+00:00",
-    "end_time": "2026-08-25T04:48:40.406206+00:00",
-    "run_time_seconds": 0.001386880874633789,
+    "start_time": "2026-10-06T06:27:18.794029+00:00",
+    "end_time": "2026-10-06T06:27:18.831367+00:00",
+    "run_time_seconds": 0.0012898445129394531,
     "last_commit": {
-      "hash": "Uncommitted",
-      "author_name": "N/A",
-      "author_email": "N/A",
-      "date": "2026-08-25T04:48:40.401561",
-      "message": "File not yet committed to git"
+      "hash": "c8ff1f1e064c4653d919a464eb8886135a2ac8ad",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-10-04T02:02:01-04:00",
+      "message": "Correct artifact descriptions and notes against the code and sources"
     }
   },
   "headers": [
+    "Last Visit Time (History Match)",
     "Internal Tab ID",
     "Entry Index",
     "Is Current Page",
     "Title",
     "URL",
     "Search Query",
-    "Last Visit Time (History Match)"
+    "Session Source File",
+    "History Lookup Source File"
   ],
   "data": [
     [
+      null,
       -2147483647,
       0,
       "",
       "",
       "operaui://startpage",
       "",
-      null
+      "Dump/data/data/com.opera.browser/app_opera/session_db",
+      "Dump/data/data/com.opera.browser/app_opera/History"
     ],
     [
+      1720901661,
       -2147483647,
       1,
       "",
       "MLB.com | The Official Site of Major League Baseball",
       "https://www.mlb.com/",
       "",
-      1720901661
+      "Dump/data/data/com.opera.browser/app_opera/session_db",
+      "Dump/data/data/com.opera.browser/app_opera/History"
     ],
     [
+      1720901726,
       -2147483647,
       2,
       "Yes",
       "Ben Joyce throws 104.5 mph fastball",
       "https://www.mlb.com/news/ben-joyce-throws-104-5-mph-fastball",
       "",
-      1720901726
+      "Dump/data/data/com.opera.browser/app_opera/session_db",
+      "Dump/data/data/com.opera.browser/app_opera/History"
     ],
     [
+      null,
       -2147483646,
       0,
       "",
       "",
       "operaui://startpage",
       "",
-      null
+      "Dump/data/data/com.opera.browser/app_opera/session_db",
+      "Dump/data/data/com.opera.browser/app_opera/History"
     ],
     [
+      null,
       -2147483646,
       1,
       "",
       "mobile phone forensics - Google Search",
       "https://www.google.com/m?q=mobile+phone+forensics&client=ms-opera-mobile&channel=new&espv=1",
       "mobile phone forensics",
-      null
+      "Dump/data/data/com.opera.browser/app_opera/session_db",
+      "Dump/data/data/com.opera.browser/app_opera/History"
     ],
     [
+      1720901899,
       -2147483646,
       2,
       "Yes",
       "Mobile Device Forensics - Cellebrite",
       "https://cellebrite.com/en/digital-forensics/mobile-device-forensics/",
       "",
-      1720901899
+      "Dump/data/data/com.opera.browser/app_opera/session_db",
+      "Dump/data/data/com.opera.browser/app_opera/History"
     ],
     [
+      null,
       -2147483645,
       0,
       "",
       "",
       "operaui://startpage",
       "",
-      null
+      "Dump/data/data/com.opera.browser/app_opera/session_db",
+      "Dump/data/data/com.opera.browser/app_opera/History"
     ],
     [
+      null,
       -2147483645,
       1,
       "Yes",
       "shelley duvall - Google Search",
       "https://www.google.com/m?q=shelley+duvall&client=ms-opera-mobile&channel=new&espv=1",
       "shelley duvall",
-      null
+      "Dump/data/data/com.opera.browser/app_opera/session_db",
+      "Dump/data/data/com.opera.browser/app_opera/History"
     ]
   ]
 }

@@ -4,63 +4,71 @@
     "artifact_name": "Opera Browser - Tabs",
     "function_name": "opera_tabs",
     "case_number": "pixel7a_a14",
-    "number_of_columns": 8,
+    "number_of_columns": 10,
     "number_of_rows": 3,
-    "total_data_size_bytes": 394,
+    "total_data_size_bytes": 703,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/OperaBrowser/testdata.OperaBrowser.opera_tabs.pixel7a_a14.zip",
-    "start_time": "2026-08-25T04:48:40.406512+00:00",
-    "end_time": "2026-08-25T04:48:40.466084+00:00",
-    "run_time_seconds": 0.0009839534759521484,
+    "start_time": "2026-10-06T06:27:18.653495+00:00",
+    "end_time": "2026-10-06T06:27:18.692787+00:00",
+    "run_time_seconds": 0.0016298294067382812,
     "last_commit": {
-      "hash": "Uncommitted",
-      "author_name": "N/A",
-      "author_email": "N/A",
-      "date": "2026-08-25T04:48:40.460065",
-      "message": "File not yet committed to git"
+      "hash": "c8ff1f1e064c4653d919a464eb8886135a2ac8ad",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-10-04T02:02:01-04:00",
+      "message": "Correct artifact descriptions and notes against the code and sources"
     }
   },
   "headers": [
+    "Current Page Last Visit Time (History Match)",
     "Status",
     "Tab Position",
     "Current Page Title",
     "Current Page URL",
-    "Current Page Last Visit Time (History Match)",
     "Navigation Entry Count",
     "Restored",
-    "Internal Tab ID"
+    "Internal Tab ID",
+    "Session Source File",
+    "History Lookup Source File"
   ],
   "data": [
     [
+      1720901726,
       "Open",
       0,
       "Ben Joyce throws 104.5 mph fastball",
       "https://www.mlb.com/news/ben-joyce-throws-104-5-mph-fastball",
-      1720901726,
       3,
       "N/A",
-      -2147483647
+      -2147483647,
+      "Dump/data/data/com.opera.browser/app_opera/session_db",
+      "Dump/data/data/com.opera.browser/app_opera/History"
     ],
     [
+      null,
       "Open",
       1,
       "shelley duvall - Google Search",
       "https://www.google.com/m?q=shelley+duvall&client=ms-opera-mobile&channel=new&espv=1",
-      null,
       2,
       "N/A",
-      -2147483645
+      -2147483645,
+      "Dump/data/data/com.opera.browser/app_opera/session_db",
+      "Dump/data/data/com.opera.browser/app_opera/History"
     ],
     [
+      1720901899,
       "Closed",
       "",
       "Mobile Device Forensics - Cellebrite",
       "https://cellebrite.com/en/digital-forensics/mobile-device-forensics/",
-      1720901899,
       3,
       "",
-      -2147483646
+      -2147483646,
+      "Dump/data/data/com.opera.browser/app_opera/session_db",
+      "Dump/data/data/com.opera.browser/app_opera/History"
     ]
   ]
 }
