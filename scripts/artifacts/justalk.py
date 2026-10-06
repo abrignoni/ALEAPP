@@ -1026,10 +1026,10 @@ def _jwt_claims(token):
 
 
 def _justalk_id(profile_user):
-    """cur_prof_user is a scheme token joined to the account's JusTalk id, as in
-    'username)lola6593'. The same store writes the peer form of that value as a URI,
-    '[username:johnlucas90@justalk.com]', against a class_ServerFriend row whose justalkId
-    column reads 'johnlucas90', so the token before the separator is the scheme and the
+    """cur_prof_user is a scheme token joined to the account's JusTalk id, as in this explicitly synthetic example:
+    'username)synthetic_local_id'. The same store writes the peer form of that value as a URI,
+    '[username:synthetic_peer_id@justalk.com]', against a class_ServerFriend row whose justalkId
+    column reads 'synthetic_peer_id', so the token before the separator is the scheme and the
     part after it is the id. The separator differs because the value is also used as a
     directory name under files/JusTalk/profiles/. Anything not in that shape is returned
     unchanged rather than guessed at."""
