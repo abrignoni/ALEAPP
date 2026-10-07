@@ -4,9 +4,9 @@ __artifacts_v2__ = {
         "description": "Rows from the Chat table of the app's room-db, each naming a "
                        "conversation, the account it belongs to, the other account in it and "
                        "the stored updatedDate value",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Codex; original contribution: @AlexisBrignoni, Claude",
         "creation_date": "2026-08-30",
-        "last_update_date": "2026-08-30",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Dust",
         "notes": "com.radicalapps.cyberdust is a messaging app; no message content was found in "
@@ -14,9 +14,9 @@ __artifacts_v2__ = {
                  "messageKeyPairs tables held no rows on any of the three corpora below. What "
                  "the Chat table does keep is rows carrying title, otherAccountId and "
                  "updatedDate values, so Chat rows were present on those corpora while no "
-                 "message content was. title is shown under the header Other Party Display Name; "
-                 "the basis for reading title as the other party's display name is not recorded "
-                 "here. updatedDate is "
+                 "message content was. Title is the Chat.title value using the existing falsey-to-empty "
+                 "rendering. Its meaning, including whether it names a participant, is not established. "
+                 "updatedDate is "
                  "Unix milliseconds; what event sets it was not established, so the column is "
                  "named for the field rather than described as a last message time. Subtitle (as "
                  "stored) held the string 'all caught up' on every row of all three corpora, "
@@ -151,7 +151,7 @@ def dust_conversations(context):
 
     data_headers = (
         ('Updated Date', 'datetime'),
-        'Other Party Display Name',
+        'Title',
         'Other Account ID',
         'Account ID',
         'Conversation ID',
