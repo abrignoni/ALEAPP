@@ -52,32 +52,37 @@ __artifacts_v2__ = {
         },
     },
     "get_honeyboard_clipboard_deleted": {
-        "name": "Samsung Honeyboard - Clipboard (WAL-recovered deleted entries)",
+        "name": "Samsung Honeyboard - WAL Record Candidates",
         "description": (
-            "Reports clipboard records found in ClipItem.db-wal frames whose row "
-            "id is not in the live clip_table. The WAL is read directly, taking the "
-            "last frame of each page; frame salts and checksums are not checked. A "
-            "record here was in the log and is not in the live table; why it is not "
-            "there is not established."
+            "Reports eligible decoded record candidates from selected ClipItem.db-wal files using the"
+            " existing physical last-frame-per-page parser and live-ID exclusion when available. A "
+            "reported candidate does not establish deletion, table ownership or transaction validity."
         ),
-        "author": "Al3x101, @AlexisBrignoni, Codex",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-07-13",
-        "last_update_date": "2026-07-13",
+        "last_update_date": "2026-10-07",
         "requirements": "",
         "category": "Clipboard",
         "notes": (
-            "WAL Frame and WAL Page columns identify the exact location of each "
-            "recovered record for verification. If the main database is not present "
-            "beside the WAL, every decodable WAL record is reported. A blank result "
-            "does not show that nothing was removed: it also results when no WAL was "
-            "present, when the WAL holds only records still in the live table, or "
-            "when a record has no text, an unlisted type code or could not be "
-            "decoded. On samsungs20_a13, samsunga53_a14, sharon_a14 and anne_a15 the "
-            "WAL was present (9 to 32 frames) and every clipboard record in it (11, "
-            "1, 19 and 8) was also in the live table, so no row was produced. This "
-            "artifact is unexercised on real data. "
-            "Records whose payload spills onto SQLite overflow pages are not "
-            "reassembled, so very long clips may be truncated."
+            "WAL Frame is the zero-based physical frame index and WAL Page is its stored page number."
+            " These positions identify candidate locations, not verified transaction or table "
+            "membership. Frame salts, checksums and commit boundaries are not validated; the last "
+            "complete physical frame for each page is used. The decoded B-tree rowid is compared with"
+            " clip_table.id values when collected from the adjacent main and its own SQLite sidecars;"
+            " equivalence of those identifiers is not established. With no adjacent main, live-ID "
+            "exclusion is empty, but timestamp/type/text and duplicate filters still apply. SQLite "
+            "query errors can leave an empty or partial live-ID set; an open helper returning None "
+            "can instead abort at cursor access. A blank result does not establish absence of records"
+            " or deletion: missing WAL, live-ID matches, filtering and decode failures can also "
+            "produce it. Historical, unremeasured observations reported WALs of 9 to 32 frames and "
+            "clip counts of 11, 1, 19 and 8 on samsungs20_a13, samsunga53_a14, sharon_a14 and "
+            "anne_a15, with no output rows; positive real-data candidate coverage was not established"
+            " by those observations. Overflow payloads are not reassembled and long values may be "
+            "truncated. Global duplicate suppression excludes frame/page/source differences; the "
+            "returned source is the last selected WAL, not per-row provenance. Type labels, timestamp"
+            " meaning, UID/account association, page/table ownership and source-state integrity "
+            "remain research limits. Original Honeyboard work: @segumarc; WAL/parser rewrite: Al3x101"
+            " (MSAB)."
         ),
         # Match ClipItem.db* so the main .db is co-extracted alongside the -wal;
         # the main db supplies live row IDs used to exclude non-deleted rows.
