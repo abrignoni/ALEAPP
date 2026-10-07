@@ -27,35 +27,47 @@ __artifacts_v2__ = {
     },
     "zoom_account": {
         "name": "Zoom - Account and Encrypted Stores",
-        "description": "Parses the Zoom account identifier the Android app records in its "
-                       "own file and folder names, and counts the encrypted stores it holds.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "description": "Reports matching xmpp.zoom.us substrings from selected Zoom paths and the existing "
+                       "store-marker counts per app data directory.",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "Zoom",
-        "notes": "One row per app data directory that holds an account name or at least one "
-                 "counted store. The Account Identifier is the first name of the form "
-                 "<id>@<...>xmpp.zoom.us found in the paths of the app's folders and "
-                 "preference files; any further such name in the same directory is not "
-                 "reported, and that the name identifies the account is taken from the name "
-                 "alone. It is read from names because the stores themselves are encrypted; "
-                 "where no such name is present the column is empty and the counts still "
-                 "report what the directory holds. Encrypted Databases counts files whose name "
-                 "marks them as encrypted and which do not begin with the SQLite magic, and "
-                 "Encrypted Preference Files counts the preference files the app names with "
-                 "its encrypted prefix. Neither was recoverable from the tested extractions. "
-                 "The preference files are named with an enc_ prefix and were not readable on "
-                 "the tested extractions. Whether they follow AndroidX "
-                 "EncryptedSharedPreferences, which the AndroidX reference describes as an "
-                 "implementation of SharedPreferences that encrypts keys and values "
-                 "(https://developer.android.com/reference/androidx/security/crypto/EncryptedSharedPreferences), "
-                 "was not established here, and the module reads none of the key material. The "
-                 "counts are "
-                 "reported so an "
-                 "examiner can see how much is present and unreadable rather than being left "
-                 "to infer it from an empty report. Field mapping was done against three "
-                 "private samples provided by Mattia; no sample data is recorded for them.",
+        "notes": "One row per app data directory that holds an account name or at least one counted store."
+                 " The First xmpp.zoom.us Path Match column preserves the existing first matching "
+                 "substring from the selected paths. That substring alone does not establish an account "
+                 "identity. The xmpp.zoom.us Path Matches (JSON) column retains the existing pattern's "
+                 "non-overlapping finditer matches from every retained path, each paired with that "
+                 "normalized evidence-relative path, in retained path encounter order and then "
+                 "left-to-right match order. It is read from names because the stores themselves are "
+                 "encrypted; where no such name is present the column is empty and the counts still report"
+                 " what the directory holds. Encrypted Databases counts files whose name marks them as "
+                 "encrypted and which do not begin with the SQLite magic, and Encrypted Preference Files "
+                 "counts the preference files the app names with its encrypted prefix. Neither was "
+                 "recoverable from the tested extractions. The preference files are named with an enc_ "
+                 "prefix and were not readable on the tested extractions. Whether they follow AndroidX "
+                 "EncryptedSharedPreferences, which the AndroidX reference describes as an implementation "
+                 "of SharedPreferences that encrypts keys and values "
+                 "(https://developer.android.com/reference/androidx/security/crypto/EncryptedSharedPreferences),"
+                 " was not established here, and the module reads none of the key material. The counts are"
+                 " reported so an examiner can see how much is present and unreadable rather than being "
+                 "left to infer it from an empty report. Field mapping was done against three private "
+                 "samples provided by Mattia; no sample data is recorded for them. The appended field is "
+                 "compact JSON text containing an ordered list of objects with match and path string "
+                 "members; repetitions within and across retained paths remain. An emitted "
+                 "counted-store-only row with no matching name holds [] in this field. Existing canonical "
+                 "alias selection can remove paths before matching; this field does not recover excluded "
+                 "aliases or original path bytes. All four prior native values, row grain, marker/magic "
+                 "counts, first-five sorted display and first-fifty encounter-order source cap are "
+                 "unchanged. Account-only rows can still have empty Source Files and artifact source; "
+                 "candidate paths in the JSON field provide their own scoped path association, without "
+                 "changing that source policy. enc_ XML names and nonempty non-SQLite prefixes are the "
+                 "existing count tests and do not independently prove encryption, unreadability or "
+                 "completeness. Private-sample, AndroidX, library and name-derived identity assertions "
+                 "above remain historical and unverified by this correction. Original contribution "
+                 "credited to @AlexisBrignoni, @mattiaepi (Mattia Epifani) and Claude. No key material is "
+                 "read or decrypted.",
         "paths": (
             '*/us.zoom.videomeetings/data/*',
             '*/us.zoom.videomeetings/shared_prefs/*.xml',
@@ -66,6 +78,7 @@ __artifacts_v2__ = {
 }
 
 import os
+import json
 import re
 
 from scripts.artifacts.storagePathViews import canonical_path, unique_files
@@ -170,6 +183,7 @@ def zoom_account(context):
 
     for entries in _by_container(context).values():
         account = ''
+        path_matches = []
         encrypted_databases = 0
         encrypted_preferences = 0
         seen_databases = set()
@@ -177,6 +191,8 @@ def zoom_account(context):
 
         for relative, path in entries:
             name = os.path.basename(relative)
+            for candidate_match in _ACCOUNT.finditer(relative):
+                path_matches.append({'match': candidate_match.group(1), 'path': relative})
             if not account:
                 match = _ACCOUNT.search(relative)
                 if match:
@@ -206,12 +222,14 @@ def zoom_account(context):
             encrypted_databases,
             encrypted_preferences,
             '; '.join(sorted(relative_paths)[:5]),
+            json.dumps(path_matches, ensure_ascii=True, separators=(',', ':')),
         ))
 
     data_headers = (
-        'Account Identifier',
+        'First xmpp.zoom.us Path Match',
         'Encrypted Databases',
         'Encrypted Preference Files',
         'Source Files',
+        'xmpp.zoom.us Path Matches (JSON)',
     )
     return data_headers, data_list, '; '.join(sorted(set(source_files)))
