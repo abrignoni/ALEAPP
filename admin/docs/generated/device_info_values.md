@@ -18,7 +18,6 @@ This document outlines the various device information collected by LEAPP modules
 | Usagestats | Android version | usagestatsVersion |
 | Usagestats | Build version | usagestatsVersion |
 | Usagestats | Codename | usagestatsVersion |
-| Usagestats | Country Specific Code | usagestatsVersion |
 <!-- DEVICE_INFO_END -->
 
 ### logdevinfo() Usage
