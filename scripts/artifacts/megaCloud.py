@@ -3,9 +3,9 @@ __artifacts_v2__ = {
         "name": "MEGA - Cloud Files",
         "description": 'Files, folders and root nodes in the MEGA node cache, with the folder '
                        'path rebuilt from the stored parent links',
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-09-12",
-        "last_update_date": "2026-09-12",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "Mega",
         "notes": 'Read from the nodes table of megaclient_statecache<version>_<account>.db in '
@@ -58,15 +58,19 @@ __artifacts_v2__ = {
                  '150 cache entries between them for 50 distinct files, and the Cached Media '
                  'artifact reports 50 rows there, so the duplicate views collapse rather than '
                  'multiplying. Measured on the tested images: Share Type was LINK on 4 rows '
-                 'and NO_SHARES on the rest, Favourite was Yes on 0 rows (the column also reads '
-                 'No on a store whose nodes table has no fav column), none of the three '
+                 'and NO_SHARES on the rest, Favourite was Yes on 0 rows (the earlier parser also displayed '
+                 'No on a store whose nodes table had no fav column), none of the three '
                  'flag columns was Yes on any row, and Description and Tags were empty on '
                  'every row. Cached Copy is the file MEGA kept on the device for that node, '
                  'matched on the handle in the cache file name, and Cache Holding the Copy names '
                  'which cache it came from. '
                  'Account Handle and Node Cache Version hold one value per image because each '
                  'tested image held one account\'s cache at one version, and Share Value (as '
-                 'stored) is the integer behind Share Type.',
+                 'stored) is the integer behind Share Type. Favourite is blank when the selected fav '
+                 'value is SQL NULL, including when the optional fav column is absent. Non-NULL '
+                 'values retain the existing Python-truthiness Yes/No display; raw non-NULL '
+                 'values and their meanings are not resolved by this change. Original MEGA '
+                 'node-cache and media parser contribution: @AlexisBrignoni, Claude.',
         "paths": ('*/mega.privacy.android.app/megaclient_statecache*.db*',
                   '*/mega.privacy.android.app/cache/thumbnailsMEGA/*',
                   '*/mega.privacy.android.app/cache/previewsMEGA/*',
@@ -343,7 +347,7 @@ def mega_cloud_files(context):
                 _flag(row[9], _FLAG_IS_IN_RUBBISH),
                 _flag(row[9], _FLAG_IS_VERSION),
                 _flag(row[9], _FLAG_IS_MARKED_SENSITIVE),
-                'Yes' if row[8] else 'No',
+                '' if row[8] is None else ('Yes' if row[8] else 'No'),
                 _share_type(row[7]),
                 _stored(row[10], _LABELS),
                 row[11] or '',
