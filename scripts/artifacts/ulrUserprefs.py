@@ -1,14 +1,22 @@
 __artifacts_v2__ = {
     "get_urluser": {
         "name": "ULR User Prefs",
-        "description": "Names from Google Play services' ULR_USER_PREFS.xml with the value "
-                       "attribute of each entry; the text of string entries is not reported",
-        "author": "Alexis 'Brigs' Brignoni",
+        "description": "Names from Google Play services' ULR_USER_PREFS.xml with each entry's value "
+                 "attribute, or direct parsed text for exact string elements when that attribute is "
+                 "absent",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2024-06-21",
-        "last_update_date": "2024-06-21",
+        "last_update_date": "2026-10-07",
         "requirements": "",
         "category": "App Semantic Locations",
-        "notes": "Thanks to Josh Hickman for the research",
+        "notes": "Thanks to Josh Hickman for the research. An explicitly present value attribute is "
+                 "retained, including an empty attribute. Only when value is absent on an exact "
+                 "unnamespaced string element is its direct parsed child.text reported, or an empty "
+                 "string if that text is absent. Text is not stripped; ElementTree XML normalization "
+                 "and existing recovery apply. This does not retain nested text, tails, sets or "
+                 "original XML bytes, interpret preference meanings, or establish absence versus an "
+                 "explicit empty value. Existing file selection, source union and required name "
+                 "behavior are unchanged.",
         "paths": ('*/com.google.android.gms/shared_prefs/ULR_USER_PREFS.xml',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "map-pin",
@@ -68,7 +76,7 @@ def get_urluser(context):
         for child in root:
             jsondata = child.attrib
             name = jsondata['name']
-            value = jsondata.get('value', '')
+            value = jsondata.get('value', (child.text or '') if child.tag == 'string' else '')
             data_list.append((name, value))
 
     data_headers = ('Name', 'Value')
