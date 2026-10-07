@@ -5,9 +5,9 @@ __artifacts_v2__ = {
                        "address, page title, stored timestamp and HTTP status the browser "
                        "stored for "
                        "each entry, and the tab it belongs to.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-09-04",
-        "last_update_date": "2026-09-04",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Chromium Sessions",
         "notes": "Read from the Sessions/Tabs_<number> files a Chromium browser writes under its "
@@ -16,9 +16,10 @@ __artifacts_v2__ = {
                  "app_chrome/<profile>/Sessions folder, so the Browser column reports the package "
                  "the file was found under and the same glob covers Chrome, Brave and Edge.\nOne "
                  "row per navigation entry in each matched file, taken from the command Chromium "
-                 "calls kCommandUpdateTabNavigation. Mirrored storage views of one file are not "
-                 "collapsed, so an extraction that carries the same file under more than one path "
-                 "reports its entries once per path; Source File names the path. Timestamp is the "
+                 "calls kCommandUpdateTabNavigation. Mirrored storage views with the same canonical "
+                 "identity and exactly equal complete bytes are reported once, using the preferred "
+                 "storage spelling. Different byte states remain separate; Source File names the "
+                 "selected path. Original parser contribution: @AlexisBrignoni, Claude. Timestamp is the "
                  "entry's stored time, microseconds since 1601, and Tab ID and Index identify the "
                  "tab and the position of the entry in that tab's back and forward list, so "
                  "several rows with one Tab ID are one tab's history. Transition Type and "
@@ -74,9 +75,9 @@ __artifacts_v2__ = {
         "name": "Chromium Session Tabs - Tab State",
         "description": "The entry each tab was sitting on in the tab restore file, with the "
                        "timestamp the browser stored against it.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-09-04",
-        "last_update_date": "2026-09-04",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Chromium Sessions",
         "notes": "Read from the same Tabs_<number> files, from the command Chromium calls "
@@ -84,8 +85,10 @@ __artifacts_v2__ = {
                  "not a pickle but a fixed structure of a tab id, the selected navigation index "
                  "and a timestamp, microseconds since 1601. The event at which Chromium records "
                  "that timestamp was not sourced here, so it is reported as stored. One row per "
-                 "record in each matched file; mirrored storage views of one file are not "
-                 "collapsed.\n"
+                 "record in each selected file. Mirrored storage views with the same canonical identity "
+                 "and exactly equal complete bytes are reported once using the preferred spelling; "
+                 "different byte states remain separate. Original parser contribution: "
+                 "@AlexisBrignoni, Claude.\n"
                  "Selected Index refers to the Index column of the navigation entries artifact "
                  "for the same Tab ID, so the two join on Tab ID to show which page the tab was "
                  "on. Browser reports the package the file was found under.",
@@ -121,11 +124,13 @@ __artifacts_v2__ = {
 }
 
 import datetime
+import hashlib
 import os
 import re
 
 from scripts.ilapfuncs import artifact_processor, logfunc
 from scripts.snss_parser import SNSSError, read_navigation_entries, read_selected_navigations
+from scripts.artifacts.storagePathViews import canonical_path
 
 _CHROMIUM_EPOCH = datetime.datetime(1601, 1, 1, tzinfo=datetime.timezone.utc)
 _PACKAGE = re.compile(r'/([^/]+)/app_chrome/', re.I)
@@ -147,14 +152,54 @@ def _browser(path):
     return match.group(1) if match else ''
 
 
+def _file_fingerprint(path):
+    """Index possible aliases without holding file contents in memory."""
+    digest = hashlib.sha256()
+    size = 0
+    with open(path, 'rb') as handle:
+        while chunk := handle.read(65536):
+            size += len(chunk)
+            digest.update(chunk)
+    return size, digest.digest()
+
+
+def _same_file_bytes(left, right):
+    """A digest match is only a candidate; compare every byte before collapsing."""
+    with open(left, 'rb') as left_file, open(right, 'rb') as right_file:
+        while True:
+            left_chunk = left_file.read(65536)
+            right_chunk = right_file.read(65536)
+            if left_chunk != right_chunk:
+                return False
+            if not left_chunk:
+                return True
+
+
 def _tab_files(context):
+    states = {}
+    independent = []
     for file_found in sorted(context.get_files_found()):
         file_found = str(file_found)
         if os.path.isdir(file_found):
             continue
         if not os.path.basename(file_found).startswith('Tabs_'):
             continue
-        yield file_found
+        key, rank = canonical_path(context.get_relative_path(file_found))
+        try:
+            size, digest = _file_fingerprint(file_found)
+            candidates = states.setdefault((key, size, digest), [])
+            for index, (prior_rank, prior_path) in enumerate(candidates):
+                if _same_file_bytes(file_found, prior_path):
+                    if (rank, file_found) < (prior_rank, prior_path):
+                        candidates[index] = (rank, file_found)
+                    break
+            else:
+                candidates.append((rank, file_found))
+        except OSError:
+            # Let the unchanged decoder and wrapper log/handle this path.
+            independent.append(file_found)
+    retained = independent + [path for candidates in states.values() for _, path in candidates]
+    yield from sorted(retained)
 
 
 @artifact_processor
