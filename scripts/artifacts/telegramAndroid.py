@@ -183,7 +183,9 @@ __artifacts_v2__ = {
     "get_telegramContacts": {
         "name": "Telegram - Contacts",
         "description": (
-            "Parses the device contact records Telegram stored, from the user_contacts_v7 and user_phones_v7 tables of cache4.db, including the first and last name as stored on the device and the phone numbers recorded for that contact key."
+            "Reports selected user_contacts_v7 entries and the existing per-main user_phones_v7 "
+            "lookup. The uid column is reported as stored, without resolving a Telegram user or "
+            "establishing contact or account identity."
         ),
         "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-03",
@@ -194,8 +196,10 @@ __artifacts_v2__ = {
                  "contact can carry several phone numbers. A phone row whose deleted column is set is not "
                  "listed. Imported is the integer the table stores, reported as stored. The uid column "
                  "holds the contact id the client assigned to the device contact when it read the address "
-                 "book (contact_id in the client source). It is not a Telegram user id and is reported as "
-                 "stored; the module heads that column User ID. Reference: Telegram-Android, "
+                 "book (contact_id in the client source). The output column uid (as stored) directly "
+                 "projects user_contacts_v7.uid. The client-local contact_id interpretation is retained "
+                 "historical research, not independently verified vendor semantics; no Telegram-user "
+                 "resolution or identity claim is made by this label. Reference: Telegram-Android, "
                  "'MessagesStorage.java (user_contacts_v7 insert)', "
                  "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java#L8306-L8318"
                  " This artifact now reads every admitted exact cache4.db main in the supplied input "
@@ -213,7 +217,12 @@ __artifacts_v2__ = {
                  "independently verified against vendor Java or private samples by this correction. "
                  "Original contribution credited to Alexis Brignoni. Seven other cache4 artifacts retain "
                  "their existing first-input/path limitations; this is not a whole-finding or module "
-                 "repair.",
+                 "repair. This header-only correction preserves all six native cells, conditional "
+                 "multi-origin Source File column, SQL, phone-key lookup and truthy deleted exclusion, "
+                 "falsey name rendering, input/contact occurrences and ordering, contributing-source union"
+                 " and all eleven sibling artifacts. No timestamp is introduced. Typed values, "
+                 "missing/NULL interpretation, vendor meaning and source/account association remain "
+                 "unresolved research or existing behavior.",
         "paths": (
             '*/org.telegram.messenger*/files/cache4.db*',
             '*/org.telegram.messenger*/files/account1/cache4.db*',
@@ -1475,7 +1484,7 @@ def get_telegramMessages(context):
 @artifact_processor
 def get_telegramContacts(context):
     data_headers = (
-        'User ID',
+        "uid (as stored)",
         'First Name',
         'Last Name',
         'Phone Numbers',
