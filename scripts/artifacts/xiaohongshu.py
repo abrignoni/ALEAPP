@@ -4,34 +4,30 @@ __artifacts_v2__ = {
         "description": "Entries in the Xiaohongshu play history store, with the note identifier, "
                        "the note title and description as stored, the user_name the row stores "
                        "and the recorded timestamp",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "Xiaohongshu",
         "notes": "Read from the historyRecord table of the PlayHistoryRecordDB Room store in "
-                 "com.xingin.xhs (Xiaohongshu, also published as RED and as Little Red Book).\n"
-                 "Column meanings are taken from the column names the app declares. user_id is "
-                 "reported as Account User ID and user_name as Note Author Name, under distinct "
-                 "headers, because the two columns need not name the same party. Which party "
-                 "user_id and user_name each name is not established; the headers Account User "
-                 "ID and Note Author Name are this parser's reading and the values are otherwise "
-                 "reported as stored. author_id is populated on some rows and an empty string on "
-                 "others: 19 of the 45 rows on kevin_pocox7_a15 held an empty string. It is "
-                 "reported as stored, so an empty cell there means the app recorded no author id "
-                 "for that row rather than that the parser dropped it.\nThe timestamp is Unix "
-                 "epoch milliseconds. Each row names a note by its note_id. Whether the table "
-                 "holds one row per note is not established here. The table is named a play "
-                 "history by the app, and this artifact reports its rows without asserting how "
-                 "much of a note was played or that the account holder saw any particular part "
-                 "of it.\nNote Title and Note Description are stored by the app as the note's "
-                 "own text and are reported as stored, in their original language, hashtags "
-                 "included. The title was empty on some rows in the tested corpus while the "
-                 "description was populated.\nScope: this is the readable SQLite store. The "
-                 "account profile, recent chats and app launch times are read from the app's "
-                 "MMKV stores by the other artifacts in this module. databases/msgDB and "
-                 "databases/localRelationDB carried no SQLite header on the tested corpora and "
-                 "are not read.",
+                 "com.xingin.xhs (Xiaohongshu, also published as RED and as Little Red Book).\nThe "
+                 "user_name and user_id values are reported under their stored field names without "
+                 "assigning either value to a note author or account owner. Which party each column names "
+                 "is not established; values are reported as stored. Original artifact contribution: "
+                 "@AlexisBrignoni, Claude. author_id is populated on some rows and an empty string on "
+                 "others: 19 of the 45 rows on kevin_pocox7_a15 held an empty string. It is reported as "
+                 "stored, so an empty cell there means the app recorded no author id for that row rather "
+                 "than that the parser dropped it.\nThe timestamp is Unix epoch milliseconds. Each row "
+                 "names a note by its note_id. Whether the table holds one row per note is not established"
+                 " here. The table is named a play history by the app, and this artifact reports its rows "
+                 "without asserting how much of a note was played or that the account holder saw any "
+                 "particular part of it.\nNote Title and Note Description are stored by the app as the "
+                 "note's own text and are reported as stored, in their original language, hashtags "
+                 "included. The title was empty on some rows in the tested corpus while the description "
+                 "was populated.\nScope: this is the readable SQLite store. The account profile, recent "
+                 "chats and app launch times are read from the app's MMKV stores by the other artifacts in"
+                 " this module. databases/msgDB and databases/localRelationDB carried no SQLite header on "
+                 "the tested corpora and are not read.",
         "paths": ('*/com.xingin.xhs/databases/PlayHistoryRecordDB*',),
         "output_types": "standard",
         "artifact_icon": "play-circle",
@@ -211,10 +207,10 @@ def xiaohongshu_play_history(context):
         ('Timestamp', 'datetime'),
         'Note Title',
         'Note Description',
-        'Note Author Name',
+        "user_name (as stored)",
         'Note ID',
         'Note Author ID (as stored)',
-        'Account User ID',
+        "user_id (as stored)",
     )
     return data_headers, data_list, source_path
 
