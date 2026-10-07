@@ -399,18 +399,24 @@ __artifacts_v2__ = {
     "galleryvault_cloud_files": {
         "name": "GalleryVault - Cloud Files",
         "description": (
-            "Rows of the cloud_files table in the app's local cloud_cache.db, with "
-            "resolved folder "
-            "path, size, mime type and the per-file encryption key held in the cache"
+            "Selected cloud_files rows from local cloud_cache.db, including the stored is_complete "
+            "value without assigning an upload-completion meaning."
         ),
-        "author": "@segumarc, @AlexisBrignoni, Codex",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "GalleryVault",
         "notes": (
-            "file_encryption_key is reported as stored; it is a per-file value distinct from the "
-            "DES key used elsewhere in this parser, and what it encrypts was not sourced."
+            "file_encryption_key is reported as stored; it is a per-file value distinct from the DES "
+            "key used elsewhere in this parser, and what it encrypts was not sourced. is_complete (as"
+            " stored) directly retains the selected is_complete value and native SQLite storage type;"
+            " NULL, zero and empty values are not converted to Yes/No. No enum, completion, upload, "
+            "user-action or ownership meaning is established. All other fields, existing has_thumb "
+            "truthiness rendering, dates, first cloud_cache.db selection, folder resolution and "
+            "source indication are unchanged. Positive real cloud_files coverage has not been "
+            "established. Original contribution credited to @segumarc. Other original module research"
+            " credits are preserved."
         ),
         "paths": ('*/com.thinkyeah.galleryvault/databases/cloud_cache.db*',),
         "output_types": "standard",
@@ -1443,7 +1449,7 @@ def galleryvault_cloud_files(context):
         encryption_key = record[12].hex() if record[12] else ''
         data_list.append((
             _ms(record[0]), _ms(record[1]), record[2], folder_path, record[3],
-            record[4], record[5], dimensions, 'Yes' if record[9] else 'No',
+            record[4], record[5], dimensions, record[9],
             'Yes' if record[10] else 'No', _ms(record[13]), record[11],
             encryption_key, record[14], record[15],
         ))
@@ -1457,7 +1463,7 @@ def galleryvault_cloud_files(context):
         'MIME Type',
         'Size (bytes)',
         'Dimensions',
-        'Upload Complete',
+        'is_complete (as stored)',
         'Has Thumbnail',
         ('Moved to Recycle Bin', 'datetime'),
         'Cloud Storage Key',
