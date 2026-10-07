@@ -2,9 +2,9 @@ __artifacts_v2__ = {
     "cloudflare_warp_registration": {
         "name": "Cloudflare 1.1.1.1 WARP Registration and State",
         "description": "The WARP registration this device holds and the VPN state the app recorded",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, Codex",
         "creation_date": "2026-09-06",
-        "last_update_date": "2026-09-06",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Cloudflare WARP",
         "sample_data": {
@@ -17,11 +17,14 @@ __artifacts_v2__ = {
                  "Account Id and Account Type are reported as stored; Account Type read 'free' "
                  "on the tested image. Terms Accepted and Registration Executed are ISO 8601 "
                  "strings that carry their own UTC offset, so they are reported as stored, "
-                 "with any surrounding double quote characters removed, and are not converted; "
+                 "including surrounding double quote characters, and are not converted; "
                  "on the tested device both ended in -04:00. VPN Profile Installed, Service "
-                 "Running, Auto Connect, Tunnel Protocol and Onboarding Complete are the app's "
+                 "Running, Auto Connect, Tunnel Protocol and Onboarding Status (as stored) are the app's "
                  "vpn_profile_installed, is_service_running, auto_connect, "
                  "selected_tunnel_protocol and onboardingstatus values, reported as stored. "
+                 "Scalar preference values retain the text or attribute value produced by XML parsing, including "
+                 "quotes; this does not preserve the original XML byte representation. Onboarding "
+                 "Status is reported without assigning a completion meaning. "
                  "Tunnel Protocol read 'masque'. Installed By is the installer package name "
                  "the app recorded, as stored. The preferences file also holds "
                  "warp_private_key. Its value is not reported; a Private Key row states that "
@@ -62,7 +65,7 @@ SIMPLE = {
     'is_service_running': 'Service Running',
     'auto_connect': 'Auto Connect',
     'installer_package_name': 'Installed By',
-    'onboardingstatus': 'Onboarding Complete',
+    'onboardingstatus': 'Onboarding Status (as stored)',
 }
 
 
@@ -108,7 +111,7 @@ def cloudflare_warp_registration(context):
         rows = []
         for key, label in SIMPLE.items():
             if values.get(key) not in (None, ''):
-                rows.append((label, values[key].strip('"')))
+                rows.append((label, values[key]))
         account_id, account_type = _account(values.get('warp_account'))
         if account_id:
             rows.append(('Account Id', account_id))
