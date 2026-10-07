@@ -2,9 +2,9 @@ __artifacts_v2__ = {
     "easyvoicerecorder_library": {
         "name": "Easy Voice Recorder Library",
         "description": "Audio files listed in the Easy Voice Recorder library",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Codex, Claude",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Easy Voice Recorder",
         "sample_data": {
@@ -27,10 +27,13 @@ __artifacts_v2__ = {
                  "reopened, and its row was still present, so an entry whose path no longer "
                  "resolves is a record that the file was once in the folder. That was measured on "
                  "this app rather than assumed, and it does not generalise. MX Player, tested the "
-                 "same way on the same device, dropped its row on the next scan. Pinned is the "
-                 "should_be_stickied column and was No on every row of the tested image. No item "
-                 "was pinned in the app on the tested device, so a Yes value was not exercised and "
-                 "the reading of the column as a pin flag rests on its name. **Validation limit:** "
+                 "same way on the same device, dropped its row on the next scan. "
+                 "should_be_stickied (as stored) retains the native SQLite value without a "
+                 "Yes/No conversion. What the value means is not established. The earlier parser "
+                 "displayed No on every row of the tested image; that observation does not "
+                 "distinguish zero, NULL or other false-valued stored values. No item was pinned "
+                 "in the app on that device, so the pin interpretation was not exercised. "
+                 "**Validation limit:** "
                  "the tested device is an emulator with no working microphone, so no recording was "
                  "made through the app. The rows were produced by placing known audio in the "
                  "recordings folder and letting the app index it, plus the app's own "
@@ -148,13 +151,13 @@ def easyvoicerecorder_library(context):
             duration = r[1] if r[1] is not None and r[1] >= 0 else ''
             data_list.append((
                 name, folder, duration,
-                'Yes' if r[2] else 'No', r[0] or '', r[3],
+                r[2], r[0] or '', r[3],
                 context.get_relative_path(db_path)))
         if records and db_path not in sources:
             sources.append(db_path)
 
     data_headers = (
-        'File Name', 'Folder', 'Duration (seconds)', 'Pinned', 'Document URI',
+        'File Name', 'Folder', 'Duration (seconds)', 'should_be_stickied (as stored)', 'Document URI',
         'Row ID', 'Source File')
     return data_headers, data_list, '\n'.join(sources)
 
