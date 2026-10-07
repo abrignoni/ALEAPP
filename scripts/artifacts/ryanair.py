@@ -172,20 +172,36 @@ __artifacts_v2__ = {
     },
     "ryanair_sessions": {
         "name": "Ryanair - Sessions",
-        "description": "Parses session and remember me token claims from the Ryanair Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
+        "description": "Decoded claims from selected named Ryanair token preferences, including the aud payload "
+                       "member when present; tokens are not verified.",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "Ryanair",
-        "notes": "The remember me preference holds a JSON Web Token. Its issued at and "
-                 "expiry claims are reported as timestamps and the subject, token id and "
-                 "issuer as identifiers; the signed token string itself is not written to "
-                 "the report. Claims other than these and aud are listed in Other Claims as "
-                 "stored. An aud claim is not reported. "
-                 "The token is read, not validated, so no claim here is evidence the token "
-                 "was accepted by the service. Field mapping was done against private "
-                 "samples provided by Mattia; no sample data is recorded for them.",
+        "notes": "The selected preference value is read as a three-component token; only its base64url "
+                 "JSON payload is decoded, without verifying its header, signature, authenticity or "
+                 "acceptance by any service. Issued At and Expires At preserve the existing conversion and"
+                 " blank policy. Subject, Token ID and Issuer retain existing decoded values. aud (decoded"
+                 " JSON) encodes the decoded aud member with Python json.dumps using ensure_ascii=True and"
+                 " compact separators. A missing member is the empty cell; explicit JSON null is the text "
+                 "null and an empty JSON string is the text pair of quotes. The new native cell uses "
+                 "text, preventing arbitrary-size integer SQLite binding and lone-surrogate UTF8 export "
+                 "failures through ASCII-only JSON text. JSON parsing the cell recovers the decoded value,"
+                 " including native containers and arbitrary-size integers, subject to Python JSON "
+                 "semantics. Existing accepted nonfinite constants encode as NaN/Infinity/-Infinity using "
+                 "unchanged stdlib defaults; these are Python JSON extensions, not strict RFC JSON or "
+                 "evidence of vendor meaning. Original token bytes, number spelling, duplicate JSON object"
+                 " keys and pre-decoder occurrences are not retained. Other Claims keeps its existing "
+                 "sorted f-string rendering and excludes aud; it is not a reversible JSON representation. "
+                 "Non-token fallback rows keep their existing message and receive an empty aud cell. The "
+                 "signed token itself remains omitted. Source selection, named-child order, repeated "
+                 "occurrences and existing Source File are unchanged. No decoded claim proves identity, "
+                 "ownership, intended recipient or service acceptance. Original field mapping against "
+                 "private samples is credited to Mattia Epifani (@mattiaepi), @AlexisBrignoni and Claude; "
+                 "those historical samples/counts are not remeasured here. Existing malformed-payload "
+                 "shape, date overflow, storage-view alias and other artifact semantics require separate "
+                 "review.",
         "paths": (
             '*/com.ryanair.cheapflights/shared_prefs/MyRyanair_RememberMeToken.xml',
             '*/com.ryanair.cheapflights/shared_prefs/PreferencesBasketSessionKey.xml',
@@ -840,7 +856,7 @@ def ryanair_sessions(context):
             claims = _jwt_claims(value)
             if claims is None:
                 data_list.append(('', '', name, '', '', '',
-                                  'value present, not a JSON Web Token', relative_path))
+                                  '', 'value present, not a JSON Web Token', relative_path))
                 sources.append(source_path)
                 continue
             other = '; '.join(f'{key}={claims[key]}' for key in sorted(claims)
@@ -852,6 +868,8 @@ def ryanair_sessions(context):
                 claims.get('sub', ''),
                 claims.get('jti', ''),
                 claims.get('iss', ''),
+                json.dumps(claims['aud'], ensure_ascii=True, separators=(',', ':'))
+                if 'aud' in claims else '',
                 other,
                 relative_path,
             ))
@@ -864,6 +882,7 @@ def ryanair_sessions(context):
         'Subject',
         'Token ID',
         'Issuer',
+        'aud (decoded JSON)',
         'Other Claims (as stored)',
         'Source File',
     )
