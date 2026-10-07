@@ -29,9 +29,9 @@ __artifacts_v2__ = {
     "get_groupMe_chat": {
         "name": "GroupMe - Chat Information",
         "description": "GroupMe chat information",
-        "author": "Josh Hickman (josh@thebinaryhick.blog)",
+        "author": "Josh Hickman (josh@thebinaryhick.blog), @AlexisBrignoni, Codex",
         "creation_date": "2021-02-01",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-10-06",
         "requirements": "None",
         "category": "GroupMe",
         "notes": "Message Deletion Time and Message Deletion Actor (as stored) are the messages table's "
@@ -43,9 +43,9 @@ __artifacts_v2__ = {
                  "and 'admin' in the method that handles these two columns "
                  "(com.groupme.android.message.MessageUtils.getAffectedItems, base.apk of "
                  "com.groupme.android vc 240460204). On the one deleted row in the tested images the "
-                 "stored message_text reads the literal 'This message was deleted'. Message Is "
-                 "Read is the messages.read column, shown as Yes for 1 and No for 0; what sets it "
-                 "is not established. Message Hidden "
+                 "stored message_text reads the literal 'This message was deleted'. read (as stored) "
+                 "is the messages.read value returned by SQLite without a value mapping; what sets it "
+                 "and the meanings of its values are not established. Message Hidden "
                  "(as stored) is the stored integer rather than Yes/No, because the column takes values "
                  "beyond 0 and 1: the only non-zero value seen is 2, on a system row reading 'A message "
                  "was deleted.' A store whose messages table lacks deleted_at and deletion_actor "
@@ -126,7 +126,7 @@ def get_groupMe_chat(context):
         messages.sender_type,
         CASE WHEN messages.is_system=0 THEN "No" WHEN messages.is_system=1 THEN "Yes" END,
         messages.hidden,
-        CASE WHEN messages.read=0 THEN "No" WHEN messages.read=1 THEN "Yes" END,
+        messages.read,
         messages.deletion_actor,
         messages.message_text,
         messages.photo_url,
@@ -153,7 +153,7 @@ def get_groupMe_chat(context):
 
     data_headers = (('Message Time', 'datetime'), ('Message Deletion Time', 'datetime'),
                     'Group Name', 'Message Sender', 'Message Sender Type',
-                    'Is System Message', 'Message Hidden (as stored)', 'Message Is Read',
+                    'Is System Message', 'Message Hidden (as stored)', 'read (as stored)',
                     'Message Deletion Actor (as stored)', 'Message', 'Picture URL',
                     'Picture URI', 'Picture Width', 'Picture Height', 'Picture Is GIF',
                     'Video URL', 'Message Latitude', 'Message Longitude', 'Location Name')
