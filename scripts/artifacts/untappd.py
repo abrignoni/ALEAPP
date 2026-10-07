@@ -52,20 +52,21 @@ __artifacts_v2__ = {
         "description": "Device attribute events from the superwall_database of the Untappd "
                        "app: app version, device model, OS version, radio type and the ipCity, "
                        "ipRegion, ipCountry, ipContinent and ipTimezone values as stored",
-        "author": "Kevin Pagano (@stark4n6)",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-28",
-        "last_update_date": "2026-08-28",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "Social",
-        "notes": "Parses the ManagedEventData table in the superwall_database SQLite database, "
-                 "specifically filtering for device_attributes events. Extracts metadata from the "
-                 "parameters JSON column, capturing granular device state information such as App "
-                 "Version, the ipCity, ipRegion, ipCountry, ipContinent and ipTimezone values as "
-                 "stored, Device Model, Platform/OS Version, Radio Type, Days Since Install, and "
-                 "the Session ID. One row is reported per session id: the query groups the "
-                 "device_attributes events by session id and SQLite keeps the values of one event "
-                 "of each group, which one is not defined. Timestamps are createdAt read as Unix "
-                 "milliseconds and shown in UTC.",
+        "notes": "Parses selected device_attributes rows from ManagedEventData in superwall_database. One "
+                 "output row is retained for each selected source row, including repeated identical "
+                 "projections and rows with shared, missing or NULL app_session_id values; rows are not "
+                 "grouped by session. Reports the existing thirteen projections from createdAt and "
+                 "parameters. createdAt is read as Unix milliseconds and shown in UTC using the existing "
+                 "SQL expression. The ipCity, ipRegion, ipCountry, ipContinent and ipTimezone fields are "
+                 "values as stored, not independently verified device locations. Session identity, field "
+                 "meanings, timestamp encoding and table completeness are not independently established. "
+                 "Only the first main selected by the existing helper is read. Original contribution "
+                 "credited to Kevin Pagano (@stark4n6).",
         "paths": (
             '*/com.untappdllc.app/databases/superwall_database*',
         ),
@@ -373,7 +374,6 @@ def untappd_dev_events(context):
     json_extract(parameters, '$.$app_session_id') as "Session ID"
     from ManagedEventData
     where name IS 'device_attributes'
-    group by "Session ID"
     order by "Timestamp" ASC
     '''
 
