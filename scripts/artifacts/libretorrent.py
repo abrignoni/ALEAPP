@@ -1,13 +1,17 @@
 __artifacts_v2__ = {
     "get_libretorrent": {
-        "name": "Libretorrent",
-        "description": "Parses rows of the Torrent table (timestamp, name, download path, magnet, paused state and visibility) from libretorrent.db.",
-        "author": "@abrignoni",
+        "name": "Torrent Table (libretorrent.db)",
+        "description": "Rows from the Torrent table of the first selected libretorrent.db, including stored name, path, magnet and state fields.",
+        "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2023-09-12",
-        "last_update_date": "2023-09-12",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Libre Torrent",
-        "notes": "",
+        "category": "Torrent Data",
+        "notes": "Selection uses the filename and expected table, not verified app provenance. "
+                 "The filename does not establish which app wrote the database, and a row does "
+                 "not establish a completed download or user action. Only the first exact main "
+                 "is read. Timestamp uses the existing dateAdded millisecond conversion. "
+                 "No cache lifecycle or writing-app ownership is inferred.",
         "paths": ('*/libretorrent.db*',),
         "output_types": "standard",
         "artifact_icon": "download",
