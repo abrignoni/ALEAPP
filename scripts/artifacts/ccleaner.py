@@ -1,30 +1,31 @@
 __artifacts_v2__ = {
     "ccleaner_app_storage": {
         "name": "CCleaner App Storage and Data Usage",
-        "description": "Per-app storage size and data usage stored by CCleaner",
-        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
+        "description": "Joined AppDataUsageItem and AppGrowingSizeItem rows with the stored dataUsage and "
+                       "appSize values and a cached app title.",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-09-06",
-        "last_update_date": "2026-09-06",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "CCleaner",
         "sample_data": {
             "emu_a15_oss_v17": "CCleaner 26.12.2 | 95 rows",
         },
-        "notes": "One row per package name present in both tables (a package held by only one of "
-                 "them is not reported), built from com.piriform.ccleaner/databases/AppDb.db by "
-                 "joining TABLE AppDataUsageItem to AppGrowingSizeItem on packageName. On the "
-                 "tested image each table held 95 rows over 95 distinct packages with no package "
-                 "repeated in either, and the two package sets were identical, so the join "
-                 "returned 95 rows and dropped nothing. The two tables are NOT joined on their "
-                 "date columns: each row carries its own write time and the values differ by "
-                 "milliseconds, so a join on date matched only 42 of 95. Data Usage and App Size "
-                 "are the dataUsage and appSize columns as stored. The headers say bytes, but the "
-                 "app's unit for them was not sourced. App Name is looked up from the CachedApp "
-                 "table in the separate databases/cleaner store, which held 78 packages covering "
-                 "77 of the 95, so the column is blank on the remaining 18. Recorded and Size "
-                 "Recorded are Unix milliseconds rendered as UTC. A row shows the app stored "
-                 "those values for that package with that date; what triggers the write was not "
-                 "established. It is not evidence of activity by a person.",
+        "notes": "Joined rows from com.piriform.ccleaner/databases/AppDb.db, using AppDataUsageItem INNER "
+                 "JOIN AppGrowingSizeItem on packageName. Unmatched rows are not reported, and repeated "
+                 "matching package keys can produce multiple joined rows. dataUsage (as stored) and "
+                 "appSize (as stored) report the selected columns directly, without conversion or a "
+                 "verified unit. The tables are not joined on their date columns. The historically "
+                 "recorded scripted emulator image held 95 rows over 95 distinct packages in each table "
+                 "with identical package sets, so its join returned 95 rows and dropped nothing; joining "
+                 "on the differing date fields matched only 42 of 95. These recorded observations are not "
+                 "remeasured by this header correction. App Name retains the existing package-name lookup "
+                 "pooled from selected cleaner CachedApp stores, with later values for a package replacing"
+                 " earlier values. The historically recorded cache held 78 packages covering 77 of the 95,"
+                 " leaving 18 blank names. Recorded and Size Recorded retain the parser's existing date "
+                 "conversion and blank-value policy; this header correction does not establish the write "
+                 "trigger or change any time value. A joined row does not establish activity by a person. "
+                 "Original contribution credited to @AlexisBrignoni and Claude.",
         "paths": ('*/com.piriform.ccleaner/databases/AppDb.db*',
                   '*/com.piriform.ccleaner/databases/cleaner*'),
         "output_types": "standard",
@@ -210,7 +211,7 @@ def ccleaner_app_storage(context):
 
     data_headers = (
         ('Recorded', 'datetime'), ('Size Recorded', 'datetime'), 'Package', 'App Name',
-        'Data Usage (bytes)', 'App Size (bytes)', 'Source File')
+        'dataUsage (as stored)', 'appSize (as stored)', 'Source File')
     return data_headers, data_list, '\n'.join(sources)
 
 
