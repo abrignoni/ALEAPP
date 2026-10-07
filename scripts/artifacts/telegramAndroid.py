@@ -524,20 +524,27 @@ __artifacts_v2__ = {
         },
     },
     "get_telegramChatHints": {
-        "name": "Telegram - Frequent Chats",
+        "name": "Telegram - Chat Hint Entries",
         "description": (
-            "Parses the chat_hints table of cache4.db. Each row carries a chat and a rating "
-            "value, reported as stored; what the client uses the rating for is not sourced here."
+            "Reports the selected cache4.db chat_hints table entries with existing name enrichment "
+            "and date conversion, ordered by stored rating descending. The stored rating and type do "
+            "not establish chat frequency, use, scale or ownership."
         ),
-        "author": "Alexis Brignoni, @AlexisBrignoni, Codex",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-05",
-        "last_update_date": "2026-08-05",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "Telegram",
-        "notes": "The did, rating and date columns are stored as plain values. The type "
-                 "column is reported as stored because its values are not documented in the "
-                 "client source that was checked. The rating value is reported as stored. What it "
-                 "measures and its scale are not established.",
+        "notes": "The did, rating and date columns are stored as plain values. The type column is reported"
+                 " as stored because its values are not documented in the client source that was checked. "
+                 "The rating value is reported as stored. What it measures and its scale are not "
+                 "established. Artifact naming describes table entries only, not frequent chat events. "
+                 "Existing name lookup, positive-date conversion, first selected main, row occurrences and"
+                 " query ordering are unchanged. Negative/zero/missing dates remain blank under the "
+                 "existing policy; table/schema/version coverage, rating/type meanings, name/peer "
+                 "association and source-state selection remain unresolved. Original contribution credited"
+                 " to Alexis Brignoni; historical client-source and private sample observations are "
+                 "retained but not newly verified.",
         "paths": ('*/org.telegram.messenger*/files/cache4.db*',),
         "output_types": "standard",
         "artifact_icon": "star",
