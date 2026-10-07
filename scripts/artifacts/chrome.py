@@ -62,13 +62,19 @@ __artifacts_v2__ = {
     },
     "get_chromeSearchTerms": {
         "name": "Search Terms",
-        "description": "Parses the q value out of History URLs that contain search?q= in Chromium based browsers. Search URLs of any other form are not reported; the keyword_search_terms table is reported by Keyword Search Terms.",
-        "author": "@abrignoni",
+        "description": "Extracts text after the first ASCII case-insensitive search?q= marker in selected Chromium History URLs and decodes it once with unquote_plus. Search URLs of other forms are not reported; the keyword_search_terms table is reported by Keyword Search Terms.",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2020-03-19",
-        "last_update_date": "2020-03-19",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Chromium",
-        "notes": "",
+        "notes": "The existing SQLite LIKE substring selection is retained. The selected text "
+                 "ends at a second literal search?q= marker or the first ampersand, and is "
+                 "decoded once with unquote_plus: literal plus becomes space and %2B becomes "
+                 "plus. The raw URL is retained. A fragment is retained if it occurs in the "
+                 "selected text before an ampersand; the marker may occur outside a query "
+                 "parameter. A row does not establish a typed search or provider ownership. "
+                 "Other URL forms remain omitted. Original parser credit: @abrignoni.",
         "paths": ('*/app_chrome/Default/History*', '*/app_sbrowser/Default/History*', '*/app_opera/History*', '*/app_webview/Default/History*'),
         "output_types": "standard",
         "artifact_icon": "search",
@@ -346,8 +352,8 @@ def get_chromeSearchTerms(context):
 
         data_list = []
         for r in rows:
-            search = r[0].split('search?q=')[1].split('&')[0]
-            search = urllib.parse.unquote(search).replace('+', ' ')
+            search = re.split(r'search\?q=', r[0], flags=re.IGNORECASE | re.ASCII)[1].split('&')[0]
+            search = urllib.parse.unquote_plus(search)
             data_list.append((_webkit_to_utc(r[3]), search, r[0], r[1], r[2]))
 
         if data_list:
