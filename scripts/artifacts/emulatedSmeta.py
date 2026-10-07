@@ -31,12 +31,12 @@ __artifacts_v2__ = {
     "get_emulatedSmeta_images": {
         "name": "Emulated Storage Metadata - Images",
         "description": "Parses media store metadata (images)",
-        "author": "@AlexisBrignoni",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2020-10-19",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Emulated Storage Metadata",
-        "notes": "Reads each com.google.android.providers.media.module external.db found, including a second Android user's, and takes one copy where one user's database appears under more than one of the data/data, data/user/N and data_mirror paths. A copy under data/misc_ce/N/rollback/, where installd's snapshotAppData copies an app's credential encrypted data, is also read as a separate database: on hc_pixel8pro_a16 every path in the copy is also in the live database, while on pixel3_a12 the copy's files table lists 31 paths that the live database's files table does not. Reference: AOSP, 'InstalldNativeService::snapshotAppData', https://android.googlesource.com/platform/frameworks/native/+/2827a4a16b0340ecd07c2d5a6c89991799b362bb/cmds/installd/InstalldNativeService.cpp#1676 The Source DB Path column names the database each row came from, and the report's 'located at' line lists every database read, including any that returned no rows. MediaStore records ORIENTATION as a rotation in degrees, and this parser labels 0 and 180 as Horizontal and 90 and 270 as Vertical; any other value, including NULL, is passed through unchanged. Those labels are the parser's own; the stored value is the rotation in degrees and does not by itself say whether the picture is wider than it is tall. DATE_ADDED and DATE_MODIFIED are seconds since epoch and DATE_TAKEN is milliseconds, and this parser decodes them that way. Key Timestamp is not a stored column: it shows Date Added, or Date Modified when Date Added is zero or absent. Date Taken is shown in UTC; the Android reference says an image must carry both the EXIF original time and its offset for this value to be reliably placed in relation to the epoch, so where the file had no offset the instant is not established. Reference: AOSP, 'MediaStore.MediaColumns.ORIENTATION', https://developer.android.com/reference/android/provider/MediaStore.MediaColumns#ORIENTATION",
+        "notes": "Reads each com.google.android.providers.media.module external.db found, including a second Android user's, and takes one copy where one user's database appears under more than one of the data/data, data/user/N and data_mirror paths. A copy under data/misc_ce/N/rollback/, where installd's snapshotAppData copies an app's credential encrypted data, is also read as a separate database: on hc_pixel8pro_a16 every path in the copy is also in the live database, while on pixel3_a12 the copy's files table lists 31 paths that the live database's files table does not. Reference: AOSP, 'InstalldNativeService::snapshotAppData', https://android.googlesource.com/platform/frameworks/native/+/2827a4a16b0340ecd07c2d5a6c89991799b362bb/cmds/installd/InstalldNativeService.cpp#1676 The Source DB Path column names the database each row came from, and the report's 'located at' line lists every database read, including any that returned no rows. Orientation (As Stored) reports the SQLite orientation value directly, including NULL and values outside the former parser mapping. It does not establish aspect ratio or displayed orientation. Original parser and research credit: @AlexisBrignoni. DATE_ADDED and DATE_MODIFIED are seconds since epoch and DATE_TAKEN is milliseconds, and this parser decodes them that way. Key Timestamp is not a stored column: it shows Date Added, or Date Modified when Date Added is zero or absent. Date Taken is shown in UTC; the Android reference says an image must carry both the EXIF original time and its offset for this value to be reliably placed in relation to the epoch, so where the file had no offset the instant is not established. Reference: AOSP, 'MediaStore.MediaColumns.ORIENTATION', https://developer.android.com/reference/android/provider/MediaStore.MediaColumns#ORIENTATION",
         "paths": ('*/com.google.android.providers.media.module/databases/external.db*', '*/com.android.providers.media/databases/external.db*'),
         "output_types": "standard",
         "artifact_icon": "photo",
@@ -59,12 +59,12 @@ __artifacts_v2__ = {
     "get_emulatedSmeta_files": {
         "name": "Emulated Storage Metadata - Files",
         "description": "Parses media store metadata (files)",
-        "author": "@AlexisBrignoni",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2020-10-19",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Emulated Storage Metadata",
-        "notes": "Reads each com.google.android.providers.media.module external.db found, including a second Android user's, and takes one copy where one user's database appears under more than one of the data/data, data/user/N and data_mirror paths. A copy under data/misc_ce/N/rollback/, where installd's snapshotAppData copies an app's credential encrypted data, is also read as a separate database: on hc_pixel8pro_a16 every path in the copy is also in the live database, while on pixel3_a12 the copy's files table lists 31 paths that the live database's files table does not. Reference: AOSP, 'InstalldNativeService::snapshotAppData', https://android.googlesource.com/platform/frameworks/native/+/2827a4a16b0340ecd07c2d5a6c89991799b362bb/cmds/installd/InstalldNativeService.cpp#1676 The Source DB Path column names the database each row came from, and the report's 'located at' line lists every database read, including any that returned no rows. MediaStore records ORIENTATION as a rotation in degrees, and this parser labels 0 and 180 as Horizontal and 90 and 270 as Vertical; any other value, including NULL, is passed through unchanged. Those labels are the parser's own; the stored value is the rotation in degrees and does not by itself say whether the picture is wider than it is tall. DATE_ADDED and DATE_MODIFIED are seconds since epoch and DATE_TAKEN is milliseconds, and this parser decodes them that way. Key Timestamp is not a stored column: it shows Date Added, or Date Modified when Date Added is zero or absent. Date Taken is shown in UTC; the Android reference says an image must carry both the EXIF original time and its offset for this value to be reliably placed in relation to the epoch, so where the file had no offset the instant is not established. Reference: AOSP, 'MediaStore.MediaColumns.ORIENTATION', https://developer.android.com/reference/android/provider/MediaStore.MediaColumns#ORIENTATION",
+        "notes": "Reads each com.google.android.providers.media.module external.db found, including a second Android user's, and takes one copy where one user's database appears under more than one of the data/data, data/user/N and data_mirror paths. A copy under data/misc_ce/N/rollback/, where installd's snapshotAppData copies an app's credential encrypted data, is also read as a separate database: on hc_pixel8pro_a16 every path in the copy is also in the live database, while on pixel3_a12 the copy's files table lists 31 paths that the live database's files table does not. Reference: AOSP, 'InstalldNativeService::snapshotAppData', https://android.googlesource.com/platform/frameworks/native/+/2827a4a16b0340ecd07c2d5a6c89991799b362bb/cmds/installd/InstalldNativeService.cpp#1676 The Source DB Path column names the database each row came from, and the report's 'located at' line lists every database read, including any that returned no rows. Orientation (As Stored) reports the SQLite orientation value directly, including NULL and values outside the former parser mapping. It does not establish aspect ratio or displayed orientation. Original parser and research credit: @AlexisBrignoni. DATE_ADDED and DATE_MODIFIED are seconds since epoch and DATE_TAKEN is milliseconds, and this parser decodes them that way. Key Timestamp is not a stored column: it shows Date Added, or Date Modified when Date Added is zero or absent. Date Taken is shown in UTC; the Android reference says an image must carry both the EXIF original time and its offset for this value to be reliably placed in relation to the epoch, so where the file had no offset the instant is not established. Reference: AOSP, 'MediaStore.MediaColumns.ORIENTATION', https://developer.android.com/reference/android/provider/MediaStore.MediaColumns#ORIENTATION",
         "paths": ('*/com.google.android.providers.media.module/databases/external.db*', '*/com.android.providers.media/databases/external.db*'),
         "output_types": "standard",
         "artifact_icon": "file",
@@ -87,12 +87,12 @@ __artifacts_v2__ = {
     "get_emulatedSmeta_videos": {
         "name": "Emulated Storage Metadata - Videos",
         "description": "Parses media store metadata (videos)",
-        "author": "@AlexisBrignoni",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2020-10-19",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Emulated Storage Metadata",
-        "notes": "Reads each com.google.android.providers.media.module external.db found, including a second Android user's, and takes one copy where one user's database appears under more than one of the data/data, data/user/N and data_mirror paths. A copy under data/misc_ce/N/rollback/, where installd's snapshotAppData copies an app's credential encrypted data, is also read as a separate database: on hc_pixel8pro_a16 every path in the copy is also in the live database, while on pixel3_a12 the copy's files table lists 31 paths that the live database's files table does not. Reference: AOSP, 'InstalldNativeService::snapshotAppData', https://android.googlesource.com/platform/frameworks/native/+/2827a4a16b0340ecd07c2d5a6c89991799b362bb/cmds/installd/InstalldNativeService.cpp#1676 The Source DB Path column names the database each row came from, and the report's 'located at' line lists every database read, including any that returned no rows. MediaStore records ORIENTATION as a rotation in degrees, and this parser labels 0 and 180 as Horizontal and 90 and 270 as Vertical; any other value, including NULL, is passed through unchanged. Those labels are the parser's own; the stored value is the rotation in degrees and does not by itself say whether the picture is wider than it is tall. DATE_ADDED and DATE_MODIFIED are seconds since epoch and DATE_TAKEN is milliseconds, and this parser decodes them that way. Key Timestamp is not a stored column: it shows Date Added, or Date Modified when Date Added is zero or absent. Date Taken is shown in UTC; the Android reference says an image must carry both the EXIF original time and its offset for this value to be reliably placed in relation to the epoch, so where the file had no offset the instant is not established. Reference: AOSP, 'MediaStore.MediaColumns.ORIENTATION', https://developer.android.com/reference/android/provider/MediaStore.MediaColumns#ORIENTATION",
+        "notes": "Reads each com.google.android.providers.media.module external.db found, including a second Android user's, and takes one copy where one user's database appears under more than one of the data/data, data/user/N and data_mirror paths. A copy under data/misc_ce/N/rollback/, where installd's snapshotAppData copies an app's credential encrypted data, is also read as a separate database: on hc_pixel8pro_a16 every path in the copy is also in the live database, while on pixel3_a12 the copy's files table lists 31 paths that the live database's files table does not. Reference: AOSP, 'InstalldNativeService::snapshotAppData', https://android.googlesource.com/platform/frameworks/native/+/2827a4a16b0340ecd07c2d5a6c89991799b362bb/cmds/installd/InstalldNativeService.cpp#1676 The Source DB Path column names the database each row came from, and the report's 'located at' line lists every database read, including any that returned no rows. Orientation (As Stored) reports the SQLite orientation value directly, including NULL and values outside the former parser mapping. It does not establish aspect ratio or displayed orientation. Original parser and research credit: @AlexisBrignoni. DATE_ADDED and DATE_MODIFIED are seconds since epoch and DATE_TAKEN is milliseconds, and this parser decodes them that way. Key Timestamp is not a stored column: it shows Date Added, or Date Modified when Date Added is zero or absent. Date Taken is shown in UTC; the Android reference says an image must carry both the EXIF original time and its offset for this value to be reliably placed in relation to the epoch, so where the file had no offset the instant is not established. Reference: AOSP, 'MediaStore.MediaColumns.ORIENTATION', https://developer.android.com/reference/android/provider/MediaStore.MediaColumns#ORIENTATION",
         "paths": ('*/com.google.android.providers.media.module/databases/external.db*', '*/com.android.providers.media/databases/external.db*'),
         "output_types": "standard",
         "artifact_icon": "video",
@@ -143,12 +143,12 @@ __artifacts_v2__ = {
     "get_emulatedSmeta_files_legacy": {
         "name": "Emulated Storage Metadata - Files (Legacy)",
         "description": "Parses media store metadata (files, older schema)",
-        "author": "@AlexisBrignoni",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2020-10-19",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Emulated Storage Metadata",
-        "notes": "Reads each com.android.providers.media external.db found and takes one copy where one user's database appears under more than one of the data/data, data/user/N and data_mirror paths. The Source DB Path column names the database each row came from, and the report's 'located at' line lists every database read, including any that returned no rows. MediaStore records ORIENTATION as a rotation in degrees, and this parser labels 0 and 180 as Horizontal and 90 and 270 as Vertical; any other value, including NULL, is passed through unchanged. Those labels are the parser's own; the stored value is the rotation in degrees and does not by itself say whether the picture is wider than it is tall. DATE_ADDED and DATE_MODIFIED are seconds since epoch and DATE_TAKEN is milliseconds, and this parser decodes them that way. Timestamp Taken is shown in UTC; the Android reference says an image must carry both the EXIF original time and its offset for this value to be reliably placed in relation to the epoch, so where the file had no offset the instant is not established. Reference: AOSP, 'MediaStore.MediaColumns.ORIENTATION', https://developer.android.com/reference/android/provider/MediaStore.MediaColumns#ORIENTATION",
+        "notes": "Reads each com.android.providers.media external.db found and takes one copy where one user's database appears under more than one of the data/data, data/user/N and data_mirror paths. The Source DB Path column names the database each row came from, and the report's 'located at' line lists every database read, including any that returned no rows. Orientation (As Stored) reports the SQLite orientation value directly, including NULL and values outside the former parser mapping. It does not establish aspect ratio or displayed orientation. Original parser and research credit: @AlexisBrignoni. DATE_ADDED and DATE_MODIFIED are seconds since epoch and DATE_TAKEN is milliseconds, and this parser decodes them that way. Timestamp Taken is shown in UTC; the Android reference says an image must carry both the EXIF original time and its offset for this value to be reliably placed in relation to the epoch, so where the file had no offset the instant is not established. Reference: AOSP, 'MediaStore.MediaColumns.ORIENTATION', https://developer.android.com/reference/android/provider/MediaStore.MediaColumns#ORIENTATION",
         "paths": ('*/com.google.android.providers.media.module/databases/external.db*', '*/com.android.providers.media/databases/external.db*'),
         "output_types": "standard",
         "artifact_icon": "file",
@@ -175,9 +175,8 @@ import datetime
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
 from scripts.artifacts.storagePathViews import unique_files
 
-# MediaStore stores ORIENTATION as a rotation in degrees; unexpected values stay raw
-ORIENTATION = ("case orientation when 0 then 'Horizontal' when 180 then 'Horizontal' "
-               "when 90 then 'Vertical' when 270 then 'Vertical' else orientation end")
+# Retain the SQLite orientation value without a parser interpretation.
+ORIENTATION = 'orientation'
 YESNO = "case {0} when 0 then '' when 1 then 'Yes' end"
 
 
@@ -273,7 +272,7 @@ def get_emulatedSmeta_images(context):
             data_list.append((_keytime(r[0], r[1]), _sec_to_utc(r[0]), _sec_to_utc(r[1]), _ms_to_utc(r[2]),
                               r[3], r[4], r[5], r[6], r[7], r[8], r[9], r[10], r[11], r[12], r[13], r[14], r[15], source_db))
     data_headers = (('Key Timestamp', 'datetime'), ('Date Added', 'datetime'), ('Date Modified', 'datetime'), ('Date Taken', 'datetime'),
-                    'Path', 'Title', 'Display Name', 'Size', 'Latitude', 'Longitude', 'Orientation', 'Owner Package Name',
+                    'Path', 'Title', 'Display Name', 'Size', 'Latitude', 'Longitude', 'Orientation (As Stored)', 'Owner Package Name',
                     'Bucket Display Name', 'Relative Path', 'Is Downloaded?', 'Is Favorited?', 'Is Trashed?', 'Source DB Path')
     return data_headers, data_list, '\n'.join(source_paths)
 
@@ -294,7 +293,7 @@ def get_emulatedSmeta_files(context):
             data_list.append((_keytime(r[0], r[1]), _sec_to_utc(r[0]), _sec_to_utc(r[1]), _ms_to_utc(r[2]),
                               r[3], r[4], r[5], r[6], r[7], r[8], r[9], r[10], r[11], r[12], r[13], r[14], r[15], r[16], r[17], source_db))
     data_headers = (('Key Timestamp', 'datetime'), ('Date Added', 'datetime'), ('Date Modified', 'datetime'), ('Date Taken', 'datetime'),
-                    'Path', 'Title', 'Display Name', 'Size', 'Latitude', 'Longitude', 'Orientation', 'Owner Package Name',
+                    'Path', 'Title', 'Display Name', 'Size', 'Latitude', 'Longitude', 'Orientation (As Stored)', 'Owner Package Name',
                     'Bucket Display Name', 'Referer URI', 'Download URI', 'Relative Path', 'Is Downloaded?', 'Is Favorited?', 'Is Trashed?', 'Source DB Path')
     return data_headers, data_list, '\n'.join(source_paths)
 
@@ -315,7 +314,7 @@ def get_emulatedSmeta_videos(context):
             data_list.append((_keytime(r[0], r[1]), _sec_to_utc(r[0]), _sec_to_utc(r[1]), _ms_to_utc(r[2]),
                               r[3], r[4], r[5], r[6], r[7], r[8], r[9], r[10], r[11], r[12], r[13], r[14], r[15], source_db))
     data_headers = (('Key Timestamp', 'datetime'), ('Date Added', 'datetime'), ('Date Modified', 'datetime'), ('Date Taken', 'datetime'),
-                    'Path', 'Title', 'Display Name', 'Size', 'Latitude', 'Longitude', 'Orientation', 'Owner Package Name',
+                    'Path', 'Title', 'Display Name', 'Size', 'Latitude', 'Longitude', 'Orientation (As Stored)', 'Owner Package Name',
                     'Bucket Display Name', 'Relative Path', 'Is Downloaded?', 'Is Favorited?', 'Is Trashed?', 'Source DB Path')
     return data_headers, data_list, '\n'.join(source_paths)
 
@@ -356,6 +355,6 @@ def get_emulatedSmeta_files_legacy(context):
             data_list.append((_sec_to_utc(r[0]), _sec_to_utc(r[1]), _ms_to_utc(r[2]),
                               r[3], r[4], r[5], r[6], r[7], r[8], r[9], r[10], r[11], r[12], r[13], source_db))
     data_headers = (('Timestamp Added', 'datetime'), ('Timestamp Modified', 'datetime'), ('Timestamp Taken', 'datetime'),
-                    'Path', 'Title', 'Display Name', 'Size', 'Latitude', 'Longitude', 'Orientation', 'Bucket Display Name',
+                    'Path', 'Title', 'Display Name', 'Size', 'Latitude', 'Longitude', 'Orientation (As Stored)', 'Bucket Display Name',
                     'Width', 'Height', 'ID', 'Source DB Path')
     return data_headers, data_list, '\n'.join(source_paths)
