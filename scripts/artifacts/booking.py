@@ -101,22 +101,27 @@ __artifacts_v2__ = {
     },
     "booking_cached_profile": {
         "name": "Booking - Cached Profile Response",
-        "description": "Parses cached account profile responses from the Booking.com Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
+        "description": "Parses cached profile responses and reports the number of decoded cc_details list "
+                       "entries from the Booking.com Android app.",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "Booking.com",
-        "notes": "Read from the app's OkHttp response cache, where each entry is a pair of files "
-                 "sharing a name: the .0 file holds the request URL and the response headers and "
-                 "the .1 file holds the body. Bodies for this endpoint were gzip compressed on the "
-                 "tested samples and are decompressed before parsing. The request time comes from "
-                 "the OkHttp-Sent-Millis header OkHttp writes into the cached entry, in Unix "
-                 "milliseconds. The response carries a cc_details list, whose length is reported "
-                 "under Stored Card Count; it was empty on both tested samples, so what its entries "
-                 "hold was not measured. Field "
-                 "mapping was done against private samples provided by Mattia; no sample data is "
-                 "recorded for them.",
+        "notes": "Read from the app's OkHttp response cache, where each entry is a pair of files sharing a"
+                 " name: the .0 file holds the request URL and the response headers and the .1 file holds "
+                 "the body. Bodies for this endpoint were gzip compressed on the tested samples and are "
+                 "decompressed before parsing. The request time comes from the OkHttp-Sent-Millis header "
+                 "OkHttp writes into the cached entry, in Unix milliseconds. The response carries a "
+                 "cc_details list, whose length is reported under cc_details Entry Count; it was empty on "
+                 "both tested samples, so what its entries hold was not measured. Field mapping was done "
+                 "against private samples provided by Mattia; no sample data is recorded for them. The "
+                 "count is the decoded cc_details list length, including every member regardless of shape;"
+                 " an empty list is integer 0, while absent, JSON null and non-list values are blank "
+                 "through the unchanged projection. The entries are not verified payment-card records and "
+                 "their contents/ownership are not established. Original contribution credited to "
+                 "@mattiaepi (Mattia Epifani) and Claude. Historical private-sample observations above are"
+                 " not remeasured by this header correction.",
         "paths": ('*/com.booking/cache/okhttp/*',),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "id"
@@ -1068,7 +1073,7 @@ def booking_cached_profile(context):
         'Has Email (as stored)',
         'Has Confirmed Phone (as stored)',
         'Avatar Available (as stored)',
-        'Stored Card Count',
+        'cc_details Entry Count',
         'Direct Partner Chat Available (as stored)',
         'Device ID',
         'App Version',
