@@ -42,32 +42,34 @@ __artifacts_v2__ = {
     },
     "tasks_org_locations": {
         "name": "Tasks.org - Locations",
-        "description": "Parses saved places and location reminders from the Tasks.org Android app.",
-        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
+        "description": "Rows selected from places, left joined to geofences and tasks, with the stored radius "
+                       "value from the Tasks.org database.",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-31",
-        "last_update_date": "2026-08-31",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "Tasks.org",
         "sample_data": {
             "emu_a15_oss_v4": "Tasks.org 15.10 | 1 rows",
         },
-        "notes": "One row per entry in the places table of databases/database, left joined to the "
-                 "geofences table and, through it, to the task the place is attached to. A place "
-                 "is a location added in the app, with a Place Name, Address, Latitude, Longitude, "
-                 "and a Radius (the places.radius column, 250 on the tested device, which is the "
-                 "column's default in Place.kt at tasks/tasks tag 15.10, "
-                 "b4b8c9dfb4864a2fd74ea8e75043b6df86c4aa4b; the column is headed Radius (m) and "
-                 "the unit is not sourced here). On the tested device an address searched in the "
-                 "app's location picker was stored as 1600 Pennsylvania Avenue Northwest at "
-                 "38.897684, -77.036574 with a radius of 250. Arrival and Departure are the "
-                 "geofence trigger flags from the geofences table, reported as Yes when set; both "
-                 "were No on the tested device (a place was attached to a task but neither trigger "
-                 "was enabled). Task and Task ID name the task the place is attached to; a saved "
-                 "place with no geofence has these blank. Phone and URL are place fields and were "
-                 "empty on the tested device. KML output is produced from the coordinates. A place "
-                 "is a location stored in the app, not a position the device was independently "
-                 "measured at. On the tested device it was added through the app's location "
-                 "picker.",
+        "notes": "One row per selected places/geofences/tasks join result from databases/database. "
+                 "Duplicate matching join keys can repeat a place; a place with no matching geofence is "
+                 "retained. A place is a location added in the app, with a Place Name, Address, Latitude, "
+                 "Longitude, and a Radius (the places.radius column, 250 on the tested device, which is "
+                 "the column's default in Place.kt at tasks/tasks tag 15.10, "
+                 "b4b8c9dfb4864a2fd74ea8e75043b6df86c4aa4b; the column is headed Radius (as stored), with "
+                 "no unit established here). On the tested device an address searched in the app's "
+                 "location picker was stored as 1600 Pennsylvania Avenue Northwest at 38.897684, "
+                 "-77.036574 with a radius of 250. Arrival and Departure are the geofence trigger flags "
+                 "from the geofences table, reported as Yes when set; both were No on the tested device (a"
+                 " place was attached to a task but neither trigger was enabled). Task and Task ID name "
+                 "the task the place is attached to; a saved place with no geofence has these blank. Phone"
+                 " and URL are place fields and were empty on the tested device. KML output is produced "
+                 "from the coordinates. A place is a location stored in the app, not a position the device"
+                 " was independently measured at. On the tested device it was added through the app's "
+                 "location picker. Original contribution credited to Claude. The saved emulator "
+                 "observation and cited default above are historical; this header correction does not "
+                 "remeasure them or verify the radius unit.",
         "paths": ('*/org.tasks/databases/database*',),
         "output_types": "all",
         "artifact_icon": "map-pin",
@@ -275,7 +277,7 @@ def tasks_org_locations(context):
 
     data_headers = (
         'Task', 'Task ID', 'Place Name', 'Address', 'Latitude', 'Longitude',
-        'Radius (m)', 'Arrival', 'Departure', 'Phone', 'URL', 'Source File')
+        'Radius (as stored)', 'Arrival', 'Departure', 'Phone', 'URL', 'Source File')
     return data_headers, data_list, '\n'.join(sources)
 
 
