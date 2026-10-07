@@ -79,9 +79,9 @@ __artifacts_v2__ = {
     "googlevoice_messages": {
         "name": "Google Voice - Messages",
         "description": "Parses message records from the Google Voice LegacyMsgDbInstance.db message_t table",
-        "author": "William Campbell (@campwill), Eli Ehresmann (@H-Seek), Reina Girouard (@rgrd59), Paula Rokusek (@paula-rokusek)",
+        "author": "William Campbell (@campwill), Eli Ehresmann (@H-Seek), Reina Girouard (@rgrd59), Paula Rokusek (@paula-rokusek); @AlexisBrignoni, Codex",
         "creation_date": "2025-10-22",
-        "last_update_date": "2026-07-03",
+        "last_update_date": "2026-10-06",
         "requirements": "blackboxprotobuf",
         "category": "Google Voice",
         "notes": "The authors report testing on app version 2025.07.20.788599304 (October 29th, "
@@ -93,7 +93,13 @@ __artifacts_v2__ = {
                  "own and no source is cited. Read Status is field 6 on incoming rows, 0 shown as "
                  "Unread and 1 as Read, and is blank on outgoing rows; what sets it is not "
                  "established. An image is shown only when the message text contains MMS and a "
-                 "cached file named for the message id is present.",
+                 "cached file named for the message id is present."
+                 " Nontext conversation IDs and individual records missing field 13 are skipped "
+                 "with diagnostics. The separate Unclassified Legacy Store Records artifact, when "
+                 "enabled, retains their raw evidence. Unknown individual field 13 values retain "
+                 "the existing blank classification here and may also appear in that artifact; "
+                 "overlap does not represent additional messages. Other malformed recognized "
+                 "records, source/account iteration and media association remain unchanged.",
         "paths": ('*/data/com.google.android.apps.googlevoice/files/accounts/*/LegacyMsgDbInstance.db*', '*/data/com.google.android.apps.googlevoice/cache/Photo MMS images/*', '*/data/com.samsung.android.providers.contacts/databases/contact*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "user",
@@ -116,6 +122,37 @@ __artifacts_v2__ = {
                 "mediaColumn": "Image"
             }
         },
+    },
+    "googlevoice_unclassified_store_records": {
+        "name": "Google Voice - Unclassified Legacy Store Records",
+        "description": "Retains raw Google Voice store records outside the supported message classification.",
+        "author": "William Campbell (@campwill), Eli Ehresmann (@H-Seek), Reina Girouard (@rgrd59), Paula Rokusek (@paula-rokusek); @AlexisBrignoni, Codex",
+        "creation_date": "2026-10-06",
+        "last_update_date": "2026-10-06",
+        "requirements": "blackboxprotobuf",
+        "category": "Google Voice",
+        "notes": "One row per selected query occurrence with a NULL/nontext/empty/unsupported "
+                 "conversation ID, or an individual t record with missing/unsupported field 13 "
+                 "or failed decoding. These may be calls, voicemail or other records; no message, "
+                 "event, outcome, direction or ownership is inferred. Unknown individual field 13 "
+                 "records may also appear in Messages; overlap is not additional messages. "
+                 "Raw Field 2 JSON is the decoded position the existing parser uses for timestamp, "
+                 "not an interpreted time for these unclassified records. Query Row Ordinal is "
+                 "the current unordered SELECT enumeration, not chronology or a durable row ID. "
+                 "Stored Message Blob JSON retains the SQL value using collision-safe "
+                 "typed nodes, including original BLOB bytes as hexadecimal. Decoded fields use "
+                 "the same typed representation, not reconstructed wire bytes. Failed decoding "
+                 "has no invented decoded fields. Source File appears only with multiple actual "
+                 "contributing mains; zero-target mains are excluded from the source union. "
+                 "Input occurrences are not deduplicated. No media is associated here. Existing "
+                 "recognized-payload errors, account/state iteration and field meanings remain "
+                 "separate limitations. Original Google Voice parser research is credited above.",
+        "paths": ('*/data/com.google.android.apps.googlevoice/files/accounts/*/LegacyMsgDbInstance.db*',),
+        "output_types": ["html", "tsv", "lava"],
+        "artifact_icon": "file",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.google.android.apps.googlevoice vc 3579017 | 5 rows",
+        },
     }
 }
 
@@ -125,7 +162,8 @@ import time
 import struct
 import inspect
 import json
-from scripts.ilapfuncs import artifact_processor, get_binary_file_content, open_sqlite_db_readonly, does_table_exist_in_db, check_in_media
+import sqlite3
+from scripts.ilapfuncs import artifact_processor, get_binary_file_content, open_sqlite_db_readonly, does_table_exist_in_db, check_in_media, logfunc
 
 
 def _decode_text(value):
@@ -519,10 +557,16 @@ def googlevoice_messages(context):
                 usageentries = len(all_rows)
                 if usageentries > 0:
                     for row in all_rows:
+                        if not isinstance(row[1], str):
+                            logfunc(f'Google Voice Messages skips a nontext conversation ID: {context.get_relative_path(file)}; raw evidence is available through Unclassified Legacy Store Records when enabled.')
+                            continue
                         # conversation_id starts with "t" for individual messages
                         if row[1].startswith("t"):
                             pb = row[0]
                             message = decode_protobuf(pb)
+                            if '13' not in message[0]:
+                                logfunc(f'Google Voice Messages skips an individual record missing field 13: {context.get_relative_path(file)}; raw evidence is available through Unclassified Legacy Store Records when enabled.')
+                                continue
 
                             # Conversation ID
                             conversation_id = row[1]
@@ -658,3 +702,67 @@ def googlevoice_messages(context):
                                 data_list.append((timestamp, direction, from_num, message_content, "", account_number, conversation_id, to_nums, read_status))
 
     return data_headers, data_list, source_path
+
+
+@artifact_processor
+def googlevoice_unclassified_store_records(context):
+    data_headers = ('Raw Field 2 JSON (existing timestamp position)', 'Query Row Ordinal',
+                    'Conversation ID JSON', 'Classification Reason', 'Raw Field 13 JSON',
+                    'Field 13 Present', 'Stored Message Blob JSON', 'Decoded Record JSON')
+    data_list = []
+    contributors = []
+    origins = []
+    for path in context.get_files_found():
+        path = str(path)
+        if os.path.basename(path) != 'LegacyMsgDbInstance.db':
+            continue
+        relative = context.get_relative_path(path)
+        db = open_sqlite_db_readonly(path)
+        if db is None:
+            logfunc(f'Google Voice unclassified store could not be opened: {relative}')
+            continue
+        try:
+            records = db.execute('SELECT message_blob, conversation_id FROM message_t').fetchall()
+        except sqlite3.Error as error:
+            logfunc(f'Google Voice unclassified store query unavailable: {relative}: {error}')
+            continue
+        finally:
+            db.close()
+        first_row = len(data_list)
+        for ordinal, (blob, conversation) in enumerate(records, 1):
+            if not isinstance(conversation, str):
+                reason = 'Conversation ID is SQL NULL' if conversation is None else 'Conversation ID is nontext'
+            elif not conversation:
+                reason = 'Conversation ID is empty'
+            elif conversation.startswith('g'):
+                continue
+            elif not conversation.startswith('t'):
+                reason = 'Conversation ID prefix is unsupported'
+            else:
+                reason = ''
+            decoded = None
+            try:
+                decoded = decode_protobuf(blob)[0]
+            except (TypeError, ValueError, IndexError, KeyError, struct.error) as error:
+                reason = (reason + '; ' if reason else '') + f'Protobuf decode failed ({type(error).__name__})'
+                logfunc(f'Google Voice unclassified store decode unavailable: {relative}: query occurrence {ordinal} ({type(error).__name__})')
+            if decoded is not None and not reason:
+                if '13' not in decoded:
+                    reason = 'Individual field 13 is absent'
+                elif decoded['13'] not in (5, 6):
+                    reason = 'Individual field 13 is unsupported'
+                else:
+                    continue
+            field2 = _raw_call_value_json(decoded['2']) if decoded is not None and '2' in decoded else ''
+            present13 = decoded is not None and '13' in decoded
+            field13 = _raw_call_value_json(decoded['13']) if present13 else ''
+            data_list.append((field2, ordinal, _raw_call_value_json(conversation), reason,
+                              field13, 'Yes' if present13 else 'No', _raw_call_value_json(blob),
+                              _raw_call_value_json(decoded) if decoded is not None else ''))
+            origins.append(relative)
+        if len(data_list) > first_row and path not in contributors:
+            contributors.append(path)
+    if len(contributors) > 1:
+        data_headers += ('Source File',)
+        data_list = [row + (origin,) for row, origin in zip(data_list, origins)]
+    return data_headers, data_list, '\n'.join(contributors)
