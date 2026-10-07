@@ -2,21 +2,22 @@ __artifacts_v2__ = {
     "fossify_notes": {
         "name": "Fossify Notes",
         "description": "Parses notes stored by the Fossify Notes Android app and its Simple Mobile Tools predecessor.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Codex, Claude",
         "creation_date": "2026-08-30",
-        "last_update_date": "2026-08-30",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Fossify Notes",
         "notes": "One row per entry in the notes table of databases/notes.db. Each row is a note the app "
-                 "holds, with its Title, the note content in the Note column as stored, the Type, the "
+                 "holds, with its Title, notes.value in Note Value (as stored), the Type, the "
                  "Path, and the note-lock state in Protection. Type is decoded from the app's NoteType "
-                 "enum, 0 a plain text note and 1 a checklist; for a checklist the Note column holds the "
+                 "enum, 0 a plain text note and 1 a checklist; for a checklist the value column holds the "
                  "app's serialised list of items rather than plain text (NoteType.kt at FossifyOrg/Notes "
                  "786fc41f68d1aed8d82144a6de0127ed4dbe8b61). Path is the note's path column, "
                  "reported as stored. Where it is not empty the app reads the note's content from the "
                  "file at that path and not from the value column (getNoteStoredValue in Note.kt at "
-                 "the same FossifyOrg/Notes commit), so the Note column may not hold that note's "
-                 "content. Protection is decoded from protection_type using the "
+                 "the same FossifyOrg/Notes commit), so the reported database value may not hold that note's "
+                 "content. This parser does not recover file-backed note content. Existing falsey title, "
+                 "value and path values render as empty strings. Protection is decoded from protection_type using the "
                  "shared Fossify Commons constants, -1 none, 0 pattern, 1 PIN, 2 fingerprint "
                  "(Constants.kt at FossifyOrg/Commons 92aef4c0ee9d0134f9c44440c96a7b1c733767e0); "
                  "a value other than none marks a note with a lock type set. The note's "
@@ -78,5 +79,5 @@ def fossify_notes(context):
         if db_path not in sources:
             sources.append(db_path)
 
-    data_headers = ('Title', 'Note', 'Type', 'Path', 'Protection', 'Source File')
+    data_headers = ('Title', 'Note Value (as stored)', 'Type', 'Path', 'Protection', 'Source File')
     return data_headers, data_list, '\n'.join(sources)
