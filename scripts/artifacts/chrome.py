@@ -29,12 +29,13 @@ __artifacts_v2__ = {
     "get_chromeWebVisits": {
         "name": "Web Visits",
         "description": "Parses Web Visits from Chromium based browsers",
-        "author": "@abrignoni",
+        "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2020-03-19",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Chromium",
-        "notes": "Transition Type decodes the core type held in the low byte of the visits.transition "
+        "notes": "Transition (As Stored) retains the full visits.transition SQLite value without conversion. "
+                 "Core Transition Interpretation retains the existing interpretation of the SQLite low-byte result "
                  "value (value 6 is shown as START_PAGE, which Chromium's page_transition_types.h "
                  "at the commit cited below names PAGE_TRANSITION_AUTO_TOPLEVEL; a value above 10 "
                  "is shown blank) and Qualifier(s) decodes nine qualifier bits above the low byte, "
@@ -272,7 +273,7 @@ def get_chrome(context):
 def get_chromeWebVisits(context):
     files_found = unique_files(context)
     all_data = []
-    data_headers = ['Visit Timestamp', 'URL', 'Title', 'Duration', 'Transition Type', 'Qualifier(s)', 'From Visit URL']
+    data_headers = ['Visit Timestamp', 'URL', 'Title', 'Duration', 'Transition (As Stored)', 'Core Transition Interpretation', 'Qualifier(s)', 'From Visit URL']
     lava_data_headers = data_headers.copy()
     lava_data_headers[0] = (lava_data_headers[0], 'datetime')
     all_data_headers = lava_data_headers + ['Browser Name']
@@ -312,7 +313,8 @@ def get_chromeWebVisits(context):
         CASE WHEN visits.transition & 0x40000000 THEN 'CLIENT_REDIRECT, ' ELSE '' END ||
         CASE WHEN visits.transition & 0x80000000 THEN 'SERVER_REDIRECT, ' ELSE '' END),', ')
         AS Qualifiers,
-        Query2.url AS FromURL
+        Query2.url AS FromURL,
+        visits.transition AS RawTransition
         FROM visits
         LEFT JOIN urls ON visits.url = urls.id
         LEFT JOIN (SELECT urls.url,urls.title,visits.visit_time,visits.id FROM visits LEFT JOIN urls ON visits.url = urls.id) Query2 ON visits.from_visit = Query2.id
@@ -321,7 +323,7 @@ def get_chromeWebVisits(context):
             continue
         report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
 
-        data_list = [(_webkit_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6]) for r in rows]
+        data_list = [(_webkit_to_utc(r[0]), r[1], r[2], r[3], r[7], r[4], r[5], r[6]) for r in rows]
         if data_list:
             all_data.extend([row + (browser_name,) for row in data_list])
         else:
