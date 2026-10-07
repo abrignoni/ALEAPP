@@ -203,31 +203,37 @@ __artifacts_v2__ = {
     },
     "etsy_image_caches": {
         "name": "Etsy - Image Cache Summary",
-        "description": "Summarises the image caches the Etsy Android app keeps on disk.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
+        "description": "Summarises selected Etsy cache directories with entry counts, on-disk file sizes, image "
+                       "classifications and extrema of staged file modification times.",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-10-04",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "Etsy",
-        "notes": "One row per cache directory per app data directory. Latest Entry Modified "
-                 "and Earliest Entry Modified are the newest and oldest file modification "
-                 "times of the entries as this tool staged them. They are file system "
-                 "times, not values the app stored, and they match the evidence only where "
-                 "the extraction and the staging kept the file times. The caches are "
-                 "summarised rather than listed: an entry name is a digest, so entries are "
-                 "counted by type and not listed one by one here. The entries that do match "
-                 "a recently viewed listing are reported and rendered on Etsy - Recently "
-                 "Viewed Listings instead. Type counts are taken from each file's leading "
-                 "bytes after any transfer encoding is decoded; WebP additionally checks its RIFF "
-                 "length and image decoder acceptance. On the tested device no "
-                 "entry was stored compressed. image_manager_disk_cache is the default disk "
-                 "cache folder name of the Glide image library (bumptech/glide v4.16.0, "
-                 "DiskCache.java, DEFAULT_DISK_CACHE_DIR); no source for the appboy "
-                 "directory name was checked here. Both directories are scoped here to the "
-                 "app's own data directory. The files "
-                 "themselves remain in the extraction at the reported path. Field mapping "
-                 "was done against a private sample provided by Mattia; no sample data is "
-                 "recorded for it.",
+        "notes": "One row per cache directory per app data directory. Latest Staged File mtime and "
+                 "Earliest Staged File mtime are the newest and oldest file modification times of the "
+                 "entries as this tool staged them. They are file system times, not values the app stored,"
+                 " and they match the evidence only where the extraction and the staging kept the file "
+                 "times. The caches are summarised rather than listed: an entry name is a digest, so "
+                 "entries are counted by type and not listed one by one here. The entries that do match a "
+                 "recently viewed listing are reported and rendered on Etsy - Recently Viewed Listings "
+                 "instead. Type counts are taken from each file's leading bytes after any transfer "
+                 "encoding is decoded; WebP additionally checks its RIFF length and image decoder "
+                 "acceptance. On the tested device no entry was stored compressed. "
+                 "image_manager_disk_cache is the default disk cache folder name of the Glide image "
+                 "library (bumptech/glide v4.16.0, DiskCache.java, DEFAULT_DISK_CACHE_DIR); no source for "
+                 "the appboy directory name was checked here. Both directories are scoped here to the "
+                 "app's own data directory. The files themselves remain in the extraction at the reported "
+                 "path. Field mapping was done against a private sample provided by Mattia; no sample data"
+                 " is recorded for it. The timestamp headers identify os.path.getmtime values of the "
+                 "supplied staged paths; the existing UTC epoch-plus-seconds conversion and zero-to-blank "
+                 "policy are unchanged. They are not app event or acquisition timestamps. This header "
+                 "correction does not establish whether any particular extraction/staging preserved or "
+                 "changed evidence mtime. Original contribution credited to @AlexisBrignoni, @mattiaepi "
+                 "(Mattia Epifani) and Claude. Historical private-sample image, compression and "
+                 "directory-library observations above are not remeasured by this correction. Existing "
+                 "cache classification, aliases, count/stat failure behavior and source-path aggregation "
+                 "are unchanged.",
         "paths": (
             '*/com.etsy.android/cache/image_manager_disk_cache/*',
             '*/com.etsy.android/cache/appboy.imageloader.lru.cache/*',
@@ -1255,8 +1261,8 @@ def etsy_image_caches(context):
         ))
 
     data_headers = (
-        ('Latest Entry Modified', 'datetime'),
-        ('Earliest Entry Modified', 'datetime'),
+        ('Latest Staged File mtime', 'datetime'),
+        ('Earliest Staged File mtime', 'datetime'),
         'Cache Directory',
         'Entries',
         'Bytes On Disk',
