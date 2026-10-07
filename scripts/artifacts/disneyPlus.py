@@ -78,15 +78,15 @@ __artifacts_v2__ = {
     "disneyplus_session": {
         "name": "Disney+ - Session State",
         "description": "Parses the streaming SDK session state of the Disney+ Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Disney+",
         "notes": "Read from the BAM_SDK_STORAGE shared preferences file. The session state "
                  "value records when the access context was generated, when it expires, the "
                  "service region, the token type, an attempts value and a lastFailure time "
-                 "(shown as Refresh Attempts and Last Refresh Failure; what they count is "
+                 "(shown as Attempts (stored attempts) and Last Failure (stored lastFailure); their meaning is "
                  "not established), all as ISO 8601 strings carrying their own offset. On "
                  "the one tested sample the access and refresh tokens were five part compact "
                  "serialisations, the form JWE uses, so their claims are encrypted and are "
@@ -100,7 +100,7 @@ __artifacts_v2__ = {
                  "was the same profile id the resume points table and the recent search store "
                  "carry. The device grant records only its grant type. Field mapping was done "
                  "against one private sample from a single device; no sample data is recorded "
-                 "for it.",
+                 "for it. Original contribution: @mattiaepi (Mattia Epifani), Claude.",
         "paths": ('*/com.disney.disneyplus/shared_prefs/BAM_SDK_STORAGE.xml',),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "key"
@@ -726,7 +726,7 @@ def disneyplus_session(context):
 
     data_headers = (
         ('Generated On', 'datetime'), ('Expiration', 'datetime'),
-        ('Last Refresh Failure', 'datetime'), 'Refresh Attempts', 'Token Type', 'Region',
+        ('Last Failure (stored lastFailure)', 'datetime'), 'Attempts (stored attempts)', 'Token Type', 'Region',
         'Session State Type', 'Offline Fallback Profile ID', 'Device Grant Type',
         'Configuration Version', 'Access Token Form', 'Refresh Token Form', 'Source File')
     return data_headers, data_list, source_path
