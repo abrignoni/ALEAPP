@@ -116,29 +116,31 @@ __artifacts_v2__ = {
     "solid_explorer_folders_viewed": {
         "name": "Solid Explorer Folders Viewed",
         "description": "Folders Solid Explorer holds display settings for",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "Solid Explorer",
         "sample_data": {
             "emu_a15_oss_v14": "Solid Explorer 3.5.20 | 4 rows",
         },
-        "notes": "One row per row of the dirinfo table in pl.solidexplorer2/databases/explorer.db. "
-                 "The table holds per-folder display settings, so a row means the app kept "
-                 "settings for that folder rather than that someone deliberately configured it. A "
-                 "row is not written for every folder opened, which was tested rather than "
-                 "assumed: a folder was opened twice from a bookmark during the session that built "
-                 "the sample and gained no row, while four other folders had rows throughout. So a "
-                 "row shows the app held settings for that folder, and the absence of one is not "
-                 "evidence the folder was never opened. No timestamp is stored either, so nothing "
-                 "here can be placed in time. Sort Mode (as stored), View Mode (as stored) and "
-                 "View Scale (as stored) are the sort_mode, view_mode and view_scale columns "
-                 "unchanged. Grouped is the grouped column, shown as Yes for a non-zero value and "
-                 "No otherwise. Hidden Files Shown is the hidden column, shown as Yes for a "
-                 "non-zero value and No otherwise. What it controls was not exercised; it read No "
-                 "on every row of the tested device. File System is the id of the file_systems row "
-                 "the folder belongs to, which is the link the database itself records.",
+        "notes": "One row per row of the dirinfo table in pl.solidexplorer2/databases/explorer.db. The "
+                 "table holds per-folder display settings, so a row means the app kept settings for that "
+                 "folder rather than that someone deliberately configured it. A row is not written for "
+                 "every folder opened, which was tested rather than assumed: a folder was opened twice "
+                 "from a bookmark during the session that built the sample and gained no row, while four "
+                 "other folders had rows throughout. So a row shows the app held settings for that folder, "
+                 "and the absence of one is not evidence the folder was never opened. No timestamp is "
+                 "stored either, so nothing here can be placed in time. Sort Mode (as stored), View Mode "
+                 "(as stored) and View Scale (as stored) are the sort_mode, view_mode and view_scale "
+                 "columns unchanged. Grouped is the grouped column, shown as Yes for a non-zero value and "
+                 "No otherwise. Hidden (As Stored) is the dirinfo.hidden column without boolean conversion "
+                 "or an interpretation of what it controls. Its meaning was not exercised on the tested "
+                 "device; the earlier report showed No on every row using the prior truthiness conversion. "
+                 "This historical display observation does not establish the underlying stored value or "
+                 "visibility state. Original parser and recorded sample observations credited to "
+                 "@AlexisBrignoni, Claude. File System is the id of the file_systems row the folder "
+                 "belongs to, which is the link the database itself records.",
         "paths": ('*/pl.solidexplorer2/databases/explorer.db*',),
         "output_types": "standard",
         "artifact_icon": "folder",
@@ -235,8 +237,8 @@ def solid_explorer_folders_viewed(context):
     query = '''SELECT file_id, file_system, sort_mode, view_mode, view_scale, grouped, hidden
                FROM dirinfo ORDER BY file_id'''
     headers = ('Folder', 'File System', 'Sort Mode (as stored)', 'View Mode (as stored)',
-               'View Scale (as stored)', 'Grouped', 'Hidden Files Shown', 'Source File')
+               'View Scale (as stored)', 'Grouped', 'Hidden (As Stored)', 'Source File')
     return _rows(context, query,
                  lambda r: (r[0] or '', r[1], r[2], r[3], r[4],
-                            'Yes' if r[5] else 'No', 'Yes' if r[6] else 'No'),
+                            'Yes' if r[5] else 'No', r[6]),
                  headers)
