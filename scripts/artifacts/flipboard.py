@@ -2,9 +2,9 @@ __artifacts_v2__ = {
     "flipboard_article_history": {
         "name": "Flipboard Article History",
         "description": "Entries in Flipboard's article view history, with publisher and source URL",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Codex, Claude",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Flipboard",
         "sample_data": {
@@ -14,8 +14,8 @@ __artifacts_v2__ = {
                  "flipboard.app/databases/view_history_database. Viewed is Unix seconds and is "
                  "reported as UTC. Each row also carries a JSON copy of the item, "
                  "in the valid_item column, and Source URL, Author, "
-                 "Published and Excerpt are read out of that JSON rather than fetched from "
-                 "anywhere. The column headed Published is the item's own dateCreated field, read as "
+                 "dateCreated and Excerpt are read out of that JSON rather than fetched from "
+                 "anywhere. The column headed dateCreated is the item's own dateCreated field, read as "
                  "Unix seconds, and is "
                  "kept in a separate column from Viewed; what event dateCreated marks was not "
                  "sourced. Excerpt is the app's own strippedExcerptText, reported as stored and "
@@ -32,12 +32,12 @@ __artifacts_v2__ = {
         "artifact_icon": "book-open",
     },
     "flipboard_sections": {
-        "name": "Flipboard Followed Sections",
+        "name": "Flipboard Section Entries",
         "description": "Sections listed in Flipboard's sections table, with feed type, remote id "
                        "and position",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Codex, Claude",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Flipboard",
         "sample_data": {
@@ -127,7 +127,7 @@ def flipboard_article_history(context):
             sources.append(db_path)
 
     data_headers = (
-        ('Viewed', 'datetime'), ('Published', 'datetime'), 'Title', 'Publisher',
+        ('Viewed', 'datetime'), ('dateCreated', 'datetime'), 'Title', 'Publisher',
         'Domain', 'Source URL', 'Author', 'Excerpt', 'Item Type', 'Read',
         'Bookmarked', 'Item ID', 'Source File')
     return data_headers, data_list, '\n'.join(sources)
