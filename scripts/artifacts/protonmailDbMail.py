@@ -41,15 +41,17 @@ __artifacts_v2__ = {
     "protonmailDbMailAttachments": {
         "name": "ProtonMail - MailX Attachments",
         "description": "Attachment metadata from the Proton Mail Android db-mail (MailX) Room store",
-        "author": "@AlexisBrignoni",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-14",
-        "last_update_date": "2026-08-14",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "ProtonMail",
-        "notes": "Attachment metadata from the db-mail Room store. Rows are metadata only; this "
-                 "artifact reads no attachment files. MessageAttachmentMetadataEntity carries a "
-                 "uri column, reported as stored under Saved To (URI). What the app does with "
-                 "that URI, and whether a file was written there, is not established.",
+        "notes": "Attachment metadata from the db-mail Room store. Rows are metadata only; this artifact "
+                 "reads no attachment files. MessageAttachmentMetadataEntity.uri is reported under uri (as "
+                 "stored). What the app does with that value, and whether a file was written there, is not "
+                 "established. The current optional metadata lookup retains its last encountered duplicate "
+                 "value per messageId/attachmentId pair; absent lookup entries render an empty string, while "
+                 "a stored NULL remains NULL. Original contribution: @AlexisBrignoni.",
         "paths": ('*/ch.protonmail.android/databases/db-mail*',),
         "output_types": "standard",
         "artifact_icon": "paperclip",
@@ -190,7 +192,7 @@ def protonmailDbMailAttachments(context):
         'Size',
         'MIME Type',
         'Disposition',
-        'Saved To (URI)',
+        'uri (as stored)',
         'Message ID',
         'Source File')
     data_list = []
