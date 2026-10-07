@@ -2,37 +2,31 @@ __artifacts_v2__ = {
     "usagestatsVersion": {
         "name": "OS Version",
         "description": "Extracts OS Version from Usagestats",
-        "author": "@AlexisBrignoni",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2021-04-15",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Device Information",
-        "notes": "Only the first version file the search returns is read. Each line of that file "
-                 "is split on ';', a line with fewer than three fields produces no row, and the "
-                 "fields are named by position from the observed format: first the Android "
-                 "version, then the codename, then the build version, then a fourth field "
-                 "reported as Country Specific Code. Those names are this parser's labels for the "
-                 "positions. The first three positions match the build fingerprint AOSP writes "
-                 "to this file, Build.VERSION.RELEASE, Build.VERSION.CODENAME and "
-                 "Build.VERSION.INCREMENTAL (UsageStatsDatabase.getBuildFingerprint, "
-                 "frameworks/base "
+        "notes": "Only the first version file the search returns is read. Each line is stripped "
+                 "and split on ';'; fewer than three fields produce no row. The first three "
+                 "positions match the build fingerprint AOSP writes: Build.VERSION.RELEASE, "
+                 "Build.VERSION.CODENAME and Build.VERSION.INCREMENTAL "
+                 "(UsageStatsDatabase.getBuildFingerprint, frameworks/base "
                  "services/usage/java/com/android/server/usage/UsageStatsDatabase.java at "
-                 "android-14.0.0_r1, lines 426 to 430); AOSP at that tag writes no fourth field, "
-                 "so the name Country Specific Code is this parser's label for a field some "
-                 "vendors add and no source for it is cited here. The country specific code is "
-                 "only "
-                 "reported when a line holds exactly five fields, and a fifth field, where present, "
-                 "is not reported.",
+                 "android-14.0.0_r1, lines 426 to 430). Additional positions are reported as "
+                 "Field N (as stored), including empty split tokens, without assigning meaning. "
+                 "Values retain the existing whole-line whitespace trimming, so these tokens "
+                 "are not a lossless representation of the original file bytes.",
         "paths": ('*/system/usagestats/*/version', '*/system_ce/*/usagestats/version'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "chart-bar",
         "sample_data": {
-            "anne_a15": "Android 15 | 4 rows",
+            "anne_a15": "Android 15 | 5 rows",
             "galaxys10_a10": "Android 10 | 4 rows",
             "hc_pixel8pro_a16": "Android 16 | 3 rows",
             "kevin_pocox7_a15": "Android 15 | 3 rows",
             "pixel7a_a14": "Android 14 | 3 rows",
-            "samsunga53_a14": "Android 14 | 4 rows",
+            "samsunga53_a14": "Android 14 | 5 rows",
             "samsungs20_a13": "Android 13 | 4 rows",
             "sharon_a14": "Android 14 | 4 rows",
             "russell_pixel6a_a13": "Android 13 | 3 rows",
@@ -70,9 +64,8 @@ def usagestatsVersion(context):
             device_info("Usagestats", "Build version", splits[2])
             data_list.append(('Build version', splits[2]))
 
-        if totalvalues == 5:
-            device_info("Usagestats", "Country Specific Code", splits[3])
-            data_list.append(('Country Specific Code', splits[3]))            
+        for position, value in enumerate(splits[3:], start=4):
+            data_list.append((f'Field {position} (as stored)', value))
 
     data_headers = ('Property', 'Property Value')
     return data_headers, data_list, source_path
