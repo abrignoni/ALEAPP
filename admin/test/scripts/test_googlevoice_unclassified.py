@@ -48,7 +48,7 @@ class GoogleVoiceUnclassifiedTest(unittest.TestCase):
             _,legacy,_=parser.googlevoice_messages.__wrapped__(ctx)
             self.assertEqual(len(legacy),3);self.assertEqual(legacy[-1][1],'Outgoing')
             messages=[call.args[0] for call in logger.call_args_list]
-            self.assertEqual(len(messages),4);self.assertTrue(all('when enabled' in m for m in messages))
+            self.assertEqual(len(messages),4);self.assertTrue(all('when enabled' in m and 'unordered query ordinal ' in m for m in messages))
             _,rows,_=parser.googlevoice_unclassified_store_records.__wrapped__(ctx)
             self.assertEqual(len(rows),8)
             for row in rows:
@@ -75,6 +75,25 @@ class GoogleVoiceUnclassifiedTest(unittest.TestCase):
             self.assertEqual(restored(json.loads(rows[4][2])),'x-wal')
             headers,rows,source=parser.googlevoice_unclassified_store_records.__wrapped__(context(root,[str(first),str(first)]))
             self.assertEqual(len(headers),8);self.assertEqual(len(rows),10);self.assertEqual(source,str(first))
+
+    def test_actual_truncated_length_wire_retains_raw_and_bounded_diagnostics(self):
+        with tempfile.TemporaryDirectory() as folder, patch.object(parser,'logfunc') as logger:
+            root=pathlib.Path(folder);path,_=make_database(root,'SAFE')
+            db=sqlite3.connect(path)
+            db.execute('DELETE FROM message_t')
+            db.execute('INSERT INTO message_t VALUES(?,?)',(b'\x0a\x05a','t-truncated'))
+            db.execute('INSERT INTO message_t VALUES(?,?)',(wire(0),'x-later'))
+            db.commit();db.close()
+            ctx=context(root,[str(path)])
+            with patch.object(ctx,'get_relative_path',return_value='long\n"'+('x'*1000)):
+                _,rows,_=parser.googlevoice_unclassified_store_records.__wrapped__(ctx)
+            self.assertEqual(len(rows),2)
+            self.assertEqual(restored(json.loads(rows[0][6])),b'\x0a\x05a')
+            self.assertIn('DecodeError',rows[0][3])
+            diagnostic=logger.call_args_list[0].args[0]
+            self.assertNotIn('\n',diagnostic);self.assertIn('\\n',diagnostic)
+            self.assertIn('[truncated]',diagnostic);self.assertLess(len(diagnostic),400)
+
 
 
 if __name__=='__main__':

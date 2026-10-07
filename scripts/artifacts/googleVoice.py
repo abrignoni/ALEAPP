@@ -157,6 +157,7 @@ __artifacts_v2__ = {
 }
 
 from scripts.ilapfuncs import decode_protobuf
+from google.protobuf.message import DecodeError
 import os
 import time
 import struct
@@ -556,16 +557,16 @@ def googlevoice_messages(context):
                 all_rows = cursor.fetchall()
                 usageentries = len(all_rows)
                 if usageentries > 0:
-                    for row in all_rows:
+                    for query_ordinal, row in enumerate(all_rows, 1):
                         if not isinstance(row[1], str):
-                            logfunc(f'Google Voice Messages skips a nontext conversation ID: {context.get_relative_path(file)}; raw evidence is available through Unclassified Legacy Store Records when enabled.')
+                            logfunc(f'Google Voice Messages skips a nontext conversation ID: {_diagnostic_text(context.get_relative_path(file))}; unordered query ordinal {query_ordinal}; raw evidence is available through Unclassified Legacy Store Records when enabled.')
                             continue
                         # conversation_id starts with "t" for individual messages
                         if row[1].startswith("t"):
                             pb = row[0]
                             message = decode_protobuf(pb)
                             if '13' not in message[0]:
-                                logfunc(f'Google Voice Messages skips an individual record missing field 13: {context.get_relative_path(file)}; raw evidence is available through Unclassified Legacy Store Records when enabled.')
+                                logfunc(f'Google Voice Messages skips an individual record missing field 13: {_diagnostic_text(context.get_relative_path(file))}; unordered query ordinal {query_ordinal}; raw evidence is available through Unclassified Legacy Store Records when enabled.')
                                 continue
 
                             # Conversation ID
@@ -704,6 +705,12 @@ def googlevoice_messages(context):
     return data_headers, data_list, source_path
 
 
+def _diagnostic_text(value):
+    """Bound and escape source/error text for single-line diagnostics."""
+    text = str(value)
+    return json.dumps(text[:240], ensure_ascii=True) + (' [truncated]' if len(text) > 240 else '')
+
+
 @artifact_processor
 def googlevoice_unclassified_store_records(context):
     data_headers = ('Raw Field 2 JSON (existing timestamp position)', 'Query Row Ordinal',
@@ -719,12 +726,12 @@ def googlevoice_unclassified_store_records(context):
         relative = context.get_relative_path(path)
         db = open_sqlite_db_readonly(path)
         if db is None:
-            logfunc(f'Google Voice unclassified store could not be opened: {relative}')
+            logfunc(f'Google Voice unclassified store could not be opened: {_diagnostic_text(relative)}')
             continue
         try:
             records = db.execute('SELECT message_blob, conversation_id FROM message_t').fetchall()
         except sqlite3.Error as error:
-            logfunc(f'Google Voice unclassified store query unavailable: {relative}: {error}')
+            logfunc(f'Google Voice unclassified store query unavailable: {_diagnostic_text(relative)}: {_diagnostic_text(error)}')
             continue
         finally:
             db.close()
@@ -743,9 +750,9 @@ def googlevoice_unclassified_store_records(context):
             decoded = None
             try:
                 decoded = decode_protobuf(blob)[0]
-            except (TypeError, ValueError, IndexError, KeyError, struct.error) as error:
+            except (TypeError, ValueError, IndexError, KeyError, struct.error, DecodeError) as error:
                 reason = (reason + '; ' if reason else '') + f'Protobuf decode failed ({type(error).__name__})'
-                logfunc(f'Google Voice unclassified store decode unavailable: {relative}: query occurrence {ordinal} ({type(error).__name__})')
+                logfunc(f'Google Voice unclassified store decode unavailable: {_diagnostic_text(relative)}: query occurrence {ordinal} ({type(error).__name__})')
             if decoded is not None and not reason:
                 if '13' not in decoded:
                     reason = 'Individual field 13 is absent'
