@@ -1,13 +1,15 @@
 __artifacts_v2__ = {
     "get_hikvision": {
         "name": "Hikvision - CCTV Channels",
-        "description": "Rows of the channelinfo table in the Hik-Connect database.hik: device id, channel number, channel name and the nEnable value (1 shown as Enabled, 0 as Disabled)",
-        "author": "Evangelos Dragonas (@theAtropos4n6)",
+        "description": "Rows of the channelinfo table in the Hik-Connect database.hik: device id, channel number, channel name and the stored nEnable value",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2023-03-23",
-        "last_update_date": "2023-03-23",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Hikvision",
-        "notes": "",
+        "notes": ("Original parser by Evangelos Dragonas (@theAtropos4n6). "
+                  "nEnable is reported as returned by SQLite. Its meaning and the actions "
+                  "that set it have not been established."),
         "paths": ('*/com.connect.enduser/databases/database.hik*',),
         "output_types": "standard",
         "artifact_icon": "video",
@@ -103,10 +105,10 @@ def get_hikvision(context):
     source_path = _db(files_found, 'database.hik')
     rows = _run(source_path, '''
         SELECT nDeviceID, nChannelNo, chChannelName,
-        CASE nEnable WHEN '0' THEN 'Disabled' WHEN '1' THEN 'Enabled' END
+        nEnable
         FROM channelinfo
     ''')
-    data_headers = ('Device ID', 'Channel No.', 'Channel Name', 'Status')
+    data_headers = ('Device ID', 'Channel No.', 'Channel Name', 'nEnable (As Stored)')
     return data_headers, [tuple(r) for r in rows], source_path
 
 
