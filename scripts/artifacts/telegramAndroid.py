@@ -244,28 +244,39 @@ __artifacts_v2__ = {
     "get_telegramUsers": {
         "name": "Telegram - Users",
         "description": (
-            "Parses the Telegram users cached in the users table of cache4.db, including the "
-            "display name, username and last-seen status. A user can appear here without any "
-            "exchanged "
-            "messages."
+            "Reports users-table entries from the first selected cache4.db, including the existing "
+            "display-name and username rendering, a converted positive status time and the stored "
+            "status value. Status Time does not establish a last-seen event or distinguish a status "
+            "expiry."
         ),
-        "author": "Alexis Brignoni, @AlexisBrignoni, Codex",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-03",
-        "last_update_date": "2026-08-03",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "Telegram",
-        "notes": "The name column stores the display name and username separated by ';;;'. "
-                 "The status column holds the expires value of the user's cached status. The "
-                 "client stores -100 for a 'recently' status, -101 for 'last week' and -102 for "
-                 "'last month' (-1000, -1001 and -1002 when the status is flagged by_me), and "
-                 "otherwise the status object's time: the last-online time of an offline status or "
-                 "the expiry time of an online status. Only positive values are shown in Last "
-                 "Seen, so a Last Seen value can be an online status expiry, and the raw value is "
-                 "kept alongside in Status Value. Reference: Telegram-Android, "
-                 "'MessagesStorage.java (users insert)', "
-                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/"
-                 "TMessagesProj/src/main/java/org/telegram/messenger/"
-                 "MessagesStorage.java#L10666-L10675",
+        "notes": "The query selects uid, name and status from users in the first selected cache4.db. The "
+                 "existing name rendering splits on ';;;', strips the first component as Display Name and "
+                 "the final component as Username when more than one exists; intermediate components are "
+                 "not separately reported. Status Value preserves the selected status value. Status Time "
+                 "(existing conversion) keeps the existing expression: a truthy status greater than zero "
+                 "is passed to convert_unix_ts_to_utc, otherwise the time cell is blank. That helper "
+                 "converts through int and magnitude-based unit divisions before applying a UTC epoch; "
+                 "this label correction does not verify the stored unit or temporal meaning. It does not "
+                 "identify last activity, distinguish online expiry from offline last-online time, or "
+                 "resolve a user/account identity. The query has no ORDER BY, filter, join or "
+                 "deduplication; returned duplicate rows remain. Only the first selected main is read, "
+                 "with the existing source and sidecar handling. Historical notes described users.name as "
+                 "display name and username separated by ';;;', status as the cached status object's "
+                 "expires value, negative sentinels -100/-101/-102 for recently/last week/last month and "
+                 "-1000/-1001/-1002 when by_me, and positive times as either offline last-online time or "
+                 "online expiry. Those client/version/constructor/sentinel interpretations and sample "
+                 "counts are retained as unverified historical research, not established by this "
+                 "correction. Reference retained for research: Telegram-Android, 'MessagesStorage.java "
+                 "(users insert)', "
+                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java#L10666-L10675."
+                 " Original contribution credited to Alexis Brignoni. Unsupported value types, conversion "
+                 "range/unit limits, first-source/account association and client-status interpretation "
+                 "remain separate research limits.",
         "paths": ('*/org.telegram.messenger*/files/cache4.db*',),
         "output_types": "standard",
         "artifact_icon": "users",
@@ -1547,7 +1558,7 @@ def get_telegramContacts(context):
 @artifact_processor
 def get_telegramUsers(context):
     data_headers = (
-        ('Last Seen', 'datetime'),
+        ("Status Time (existing conversion)", 'datetime'),
         'User ID',
         'Display Name',
         'Username',
