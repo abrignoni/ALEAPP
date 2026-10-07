@@ -1,30 +1,37 @@
 __artifacts_v2__ = {
     "galleryvault_vault_files": {
         "name": "GalleryVault - Vault Files",
-        "description": "Recovers files hidden by GalleryVault from the encrypted objects stored "
-                       "under the vault folder on external storage, together with the original "
-                       "file name and creation time held in each object's own trailer",
-        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
+        "description": "Reports rebuilt GalleryVault object bytes and stored trailer fields. Status describes "
+                       "the returned rebuilt length after the existing stored-size cap, without verifying "
+                       "content or the parsed check byte.",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-06",
-        "last_update_date": "2026-08-06",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "GalleryVault",
-        "notes": "Each vault object is a 2803-byte decoy PNG, followed by the tail of the original "
-                 "file, followed by a trailer bounded by the markers >>tyfs>> and <<tyfs<<. The "
-                 "trailer holds the relocated first 2803 bytes of the original, the original size, "
-                 "a DES-ECB wrapped XOR key and a DES-ECB wrapped JSON block naming the file. Both "
-                 "DES blocks use the hard-coded key 'tianxiaw' documented by S-RM; the relocated "
-                 "block is recovered with keystream[i] = xor_key[i % key length] XOR (i AND 0xFF), "
-                 "which was derived and confirmed against the corpora below. S-RM describes the "
-                 "unwrapped key as 4 bytes. The length of the relocated block is read from the "
-                 "trailer. Recovery is reported per object, and an object whose trailer cannot be "
-                 "parsed or rebuilt still gets a row; a file that cannot be read is logged and "
-                 "gets none. Recovery Status compares the rebuilt length with the stored original "
-                 "size and does not verify content. S-RM reports objects whose encrypted block "
-                 "extends past the trailer, flagged by the check byte. This module reads that byte "
-                 "and does not act on it, so that case is not handled. Reference: S-RM, 'Cracking "
-                 "the Vault: Exposing the weaknesses of encrypted apps', "
-                 "https://www.s-rminform.com/latest-thinking/cracking-the-vault-exposing-the-weaknesses-of-encrypted-apps",
+        "notes": "Each vault object is a 2803-byte decoy PNG, followed by the tail of the original file, "
+                 "followed by a trailer bounded by the markers >>tyfs>> and <<tyfs<<. The trailer holds "
+                 "the relocated first 2803 bytes of the original, the original size, a DES-ECB wrapped XOR"
+                 " key and a DES-ECB wrapped JSON block naming the file. Both DES blocks use the "
+                 "hard-coded key 'tianxiaw' documented by S-RM; the relocated block is recovered with "
+                 "keystream[i] = xor_key[i % key length] XOR (i AND 0xFF), which was derived and confirmed"
+                 " against the corpora below. S-RM describes the unwrapped key as 4 bytes. The length of "
+                 "the relocated block is read from the trailer. Recovery is reported per object, and an "
+                 "object whose trailer cannot be parsed or rebuilt still gets a row; a file that cannot be"
+                 " read is logged and gets none. Recovery Status compares the rebuilt length with the "
+                 "stored original size and does not verify content. S-RM reports objects whose encrypted "
+                 "block extends past the trailer, flagged by the check byte. This module reads that byte "
+                 "and does not act on it, so that case is not handled. Reference: S-RM, 'Cracking the "
+                 "Vault: Exposing the weaknesses of encrypted apps', "
+                 "https://www.s-rminform.com/latest-thinking/cracking-the-vault-exposing-the-weaknesses-of-encrypted-apps"
+                 " Status wording distinguishes no nonempty rebuilt bytes from a returned rebuilt length "
+                 "equal to or shorter than the stored size. The recovery helper slices output to the "
+                 "stored size before this comparison; equal length does not prove content integrity or "
+                 "that no truncation occurred. The existing non-object status, decryption, recovery bytes,"
+                 " format fallback, admission, source and dates are unchanged. The parsed check byte "
+                 "remains unused and its layout implications remain unresolved. Original contribution "
+                 "credited to Alexis Brignoni and Claude; cited S-RM research and historical sample claims"
+                 " retained, not newly verified.",
         "paths": ('*/.galleryvault_*/files/*/*',),
         "output_types": "standard",
         "artifact_icon": "lock",
@@ -786,13 +793,13 @@ def galleryvault_vault_files(context):
         recovered = _recover_vault_file(raw, parsed)
         media = ''
         kind = ''
-        status = 'Not recovered'
+        status = 'No nonempty rebuilt bytes'
         if recovered:
             kind, mime, extension = _sniff(recovered, metadata.get('name', ''))
             if len(recovered) == parsed['original_size']:
-                status = 'Recovered'
+                status = 'Rebuilt length equals stored size (capped to stored size; content not verified)'
             else:
-                status = f'Recovered {len(recovered)} of {parsed["original_size"]} bytes'
+                status = f'Rebuilt length {len(recovered)} of {parsed["original_size"]} bytes (capped to stored size; content not verified)'
             name = metadata.get('name') or f'{uuid}.{extension or "bin"}'
             if mime:
                 media = check_in_embedded_media(file_found, recovered, name,
