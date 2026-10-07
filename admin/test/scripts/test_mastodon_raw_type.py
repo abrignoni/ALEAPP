@@ -62,19 +62,21 @@ class MastodonRawTypeTest(unittest.TestCase):
             selected = db.execute(notification_query()).fetchall()
             db.close()
             headers, rows, source = module.get_mastodon_notifications.__wrapped__(Context([path]))
-            expected = [(datetime.fromisoformat(r[0]).astimezone(timezone.utc) if r[0] else '', r[1], r[2], r[8], r[3],
-                         'first & last' if r[4] else r[4], r[5], datetime.fromisoformat(r[6]).astimezone(timezone.utc) if r[6] else '', r[7]) for r in selected]
+            expected = [(datetime.fromisoformat(r[0]).astimezone(timezone.utc) if r[0] else '', datetime.fromisoformat(r[6]).astimezone(timezone.utc) if r[6] else '', r[1], r[2], r[8], r[3],
+                         'first & last' if r[4] else r[4], r[5], r[7]) for r in selected]
             self.assertEqual(rows, expected)
             self.assertEqual(len(rows), 16)
-            self.assertEqual([row[3] for row in rows[:14]], type_cases())
-            self.assertEqual([type(row[3]) for row in rows[:14]], [type(v) for v in type_cases()])
-            self.assertEqual([row[2] for row in rows[:14]],
+            self.assertEqual([row[4] for row in rows[:14]], type_cases())
+            self.assertEqual([type(row[4]) for row in rows[:14]], [type(v) for v in type_cases()])
+            self.assertEqual([row[3] for row in rows[:14]],
                              [None, 'Follow', None, 'Mention', 'Boost', 'Favorite', None,
                               None, None, None, None, None, None, None])
             self.assertEqual(rows[7], rows[14])
-            self.assertEqual(rows[0][0], rows[0][7])
-            self.assertEqual(rows[0][5], 'first & last')
-            self.assertEqual(headers[2:4], ('Notification Type Interpretation', 'Type (As Stored)'))
+            self.assertEqual(rows[0][0], rows[0][1])
+            self.assertEqual(rows[0][6], 'first & last')
+            self.assertEqual(headers[:2], (('Notification Created Timestamp', 'datetime'),
+                                          ('Status Created Timestamp', 'datetime')))
+            self.assertEqual(headers[3:5], ('Notification Type Interpretation', 'Type (As Stored)'))
             self.assertEqual(source, str(path))
 
     def test_target_integer_affinity_schema(self):
@@ -91,8 +93,8 @@ class MastodonRawTypeTest(unittest.TestCase):
             expected = db.execute('select type from notifications_all').fetchall()
             db.close()
             _, rows, _ = module.get_mastodon_notifications.__wrapped__(Context([path]))
-            self.assertEqual([row[3] for row in rows], [row[0] for row in expected])
-            self.assertEqual([type(row[3]) for row in rows], [type(row[0]) for row in expected])
+            self.assertEqual([row[4] for row in rows], [row[0] for row in expected])
+            self.assertEqual([type(row[4]) for row in rows], [type(row[0]) for row in expected])
             self.assertEqual(len(rows), len(values))
 
     def test_actual_wal_first_main_and_protected_bytes(self):

@@ -222,8 +222,8 @@ def get_mastodon_notifications(context):
         notifications_all.type
         from notifications_all
     ''')
-    data_list = [(_iso_to_utc(r[0]), r[1], r[2], r[8], r[3], _strip_html(r[4]), r[5], _iso_to_utc(r[6]), r[7]) for r in rows]
-    data_headers = (('Notification Created Timestamp', 'datetime'), 'Notification From', 'Notification Type Interpretation', 'Type (As Stored)', 'Reference URL', 'Text Content', 'Visibility', ('Status Created Timestamp', 'datetime'), 'ID')
+    data_list = [(_iso_to_utc(r[0]), _iso_to_utc(r[6]), r[1], r[2], r[8], r[3], _strip_html(r[4]), r[5], r[7]) for r in rows]
+    data_headers = (('Notification Created Timestamp', 'datetime'), ('Status Created Timestamp', 'datetime'), 'Notification From', 'Notification Type Interpretation', 'Type (As Stored)', 'Reference URL', 'Text Content', 'Visibility', 'ID')
     return data_headers, data_list, source_path
 
 
