@@ -380,6 +380,7 @@ def main():
         lava_project_path = os.path.join(out_params.output_folder_base, lava_json_name)
         history.record_recent_run(leapp_name.lower(), leapp_version, lava_project_path)
 
+@screen_log_session
 def crunch_artifacts(
         plugins: typing.Sequence[plugin_loader.PluginSpec], extracttype, input_path, out_params, wrap_text,
         loader: plugin_loader.PluginLoader, casedata, profile_filename, image_password=None):
