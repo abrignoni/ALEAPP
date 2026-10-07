@@ -36,9 +36,9 @@ __artifacts_v2__ = {
     "mxplayer_media_library": {
         "name": "MX Player Media Library",
         "description": "Media files MX Player has indexed, played or not",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "MX Player",
         "sample_data": {
@@ -67,9 +67,9 @@ __artifacts_v2__ = {
                  "and the two unopened files held none, so the columns matched by coincidence of "
                  "this sample rather than because one is derived from the other. Subtitle Tracks "
                  "was 0 throughout, since none of the tested files carried a subtitle track. "
-                 "Played shows Yes where the VideoFile Read column is non-zero and No otherwise; "
-                 "what the app sets Read for was not traced to a source, and whether it agrees "
-                 "with Last Watched was not measured for these notes. A row "
+                 "Read (As Stored) is the VideoFile Read value returned by SQLite, without Boolean "
+                 "conversion. Its meaning and relationship to playback or Last Watched have not "
+                 "been established. Original contribution credited to Claude. A row "
                  "is evidence the app saw the file, not that a person watched it.",
         "paths": ('*/com.mxtech.videoplayer.ad/databases/medias.db*',),
         "output_types": "standard",
@@ -156,7 +156,7 @@ def _rows(context, watched_only):
                 data_list.append((
                     _ms(r[2]), _ms(r[0]), r[3] or '', folder, r[6], r[5],
                     r[7], r[8], r[9], r[10], r[11],
-                    'Yes' if r[12] else 'No', r[13],
+                    r[12], r[13],
                     context.get_relative_path(db_path)))
         if used and db_path not in sources:
             sources.append(db_path)
@@ -180,6 +180,6 @@ def mxplayer_media_library(context):
     data_headers = (
         ('File Modified', 'datetime'), ('Last Watched', 'datetime'), 'File Name',
         'Folder', 'Size (bytes)', 'Duration (ms)', 'Width', 'Height',
-        'Video Tracks', 'Audio Tracks', 'Subtitle Tracks', 'Played', 'Media ID',
+        'Video Tracks', 'Audio Tracks', 'Subtitle Tracks', 'Read (As Stored)', 'Media ID',
         'Source File')
     return data_headers, data_list, sources
