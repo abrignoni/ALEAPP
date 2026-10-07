@@ -4,9 +4,9 @@ __artifacts_v2__ = {
         "description": "Parses TikTok direct messages (timestamp, user, nickname, message, "
                        "links, read state and conversation) from the TikTok IM databases, "
                        "covering each <uid>_im.db file found.",
-        "author": "@abrignoni",
+        "author": "@abrignoni; @AlexisBrignoni, Codex",
         "creation_date": "2021-03-02",
-        "last_update_date": "2026-09-12",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "TikTok",
         "notes": "Every database named <uid>_im.db is parsed, including those named "
@@ -21,9 +21,9 @@ __artifacts_v2__ = {
                  "Link GIF Name and Link GIF URL columns are filled only when the row's "
                  "content field holds JSON; rows whose content is not JSON report the SQL "
                  "columns alone, with Message Type and Deleted as stored since no source "
-                 "for those integers was verified. Local Info labels read_status 0 as Not read and "
-                 "1 as Read; that mapping is not sourced, and the stored value is in the Read? "
-                 "column.\n"
+                 "for those integers was verified. read_status (as stored) carries the selected "
+                 "database value without a read or unread interpretation; its meaning has not "
+                 "been established. No derived Local Info label is reported.\n"
                  "Sender names are resolved against SIMPLE_USER in db_im_xx and "
                  "IM_USER_BASE_INFO in the db_im_contact databases, where present. A sender "
                  "in neither store shows a bare UID.\n"
@@ -375,12 +375,6 @@ def get_tikTok(context):
                        conversation_id
                 FROM msg ORDER BY created_time'''):
             unique_id, nickname = names.get(sender, ('', ''))
-            if read_status == 0:
-                local_info = 'Not read'
-            elif read_status == 1:
-                local_info = 'Read'
-            else:
-                local_info = read_status
             if sender is not None and account_uid:
                 direction = 'Outgoing' if str(sender) == account_uid else 'Incoming'
             else:
@@ -397,7 +391,6 @@ def get_tikTok(context):
                 message_type,
                 deleted,
                 read_status,
-                local_info,
                 conversation_id,
                 account_uid,
                 source_file,
@@ -414,8 +407,7 @@ def get_tikTok(context):
         'Link GIF URL',
         'Message Type (as stored)',
         'Deleted (as stored)',
-        'Read?',
-        'Local Info',
+        'read_status (as stored)',
         'Conversation ID',
         'Account ID',
         'Source File',
