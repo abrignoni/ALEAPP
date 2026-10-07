@@ -1,14 +1,21 @@
 __artifacts_v2__ = {
     "get_burnerSubscription": {
         "name": "Burner - Subscription",
-        "description": "Parses the SubscriptionEntity rows of burnerDatabase.db (burner IDs, creation and renewal dates, SKU, store, trial value and state). The trial value is labelled 1 True and 2 False; any other stored value, including a JSON false, is shown as Unknown.",
-        "author": "Heather Charpentier (With Tons of Help from Alexis Brignoni!)",
+        "description": "Parses the SubscriptionEntity rows of burnerDatabase.db (burner IDs, creation and renewal dates, SKU, store, trial value and state). Trial Extracted Value and Trial JSON Type retain SQLite json_extract/json_type results without assigning trial-state meanings.",
+        "author": "Heather Charpentier (With Tons of Help from Alexis Brignoni!), @AlexisBrignoni, Codex",
         "version": "0.0.1",
         "creation_date": "2024-02-15",
-        "last_update_date": "2024-02-15",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Burner",
-        "notes": "",
+        "notes": "Trial Extracted Value is SQLite json_extract(value, '$.trial'); Trial JSON Type "
+                 "is json_type for the same path. Boolean true/false extract as 1/0 but their "
+                 "types distinguish them from numbers. JSON null has type null and a SQL NULL "
+                 "value; a SQL NULL type means the path was not returned, including absent keys "
+                 "or SQL NULL/non-object roots. Arrays/objects are SQLite-returned JSON text, "
+                 "not the original lexical JSON bytes. Every matched main is read in encounter "
+                 "order; the artifact source still names the last main, so combined-input row "
+                 "provenance remains unresolved. Existing date conversions are unchanged.",
         "paths": ('*/data/com.adhoclabs.burner/databases/burnerDatabase.db*',),
         "output_types": "standard",
         "artifact_icon": "credit-card",
@@ -50,11 +57,8 @@ def get_burnerSubscription(context):
             json_extract(SubscriptionEntity.value, '$.renewalDate') as 'Renewal Date',
             json_extract(SubscriptionEntity.value, '$.sku') as 'SKU',
             json_extract(SubscriptionEntity.value, '$.store') as 'Store',
-            CASE json_extract(SubscriptionEntity.value, '$.trial')
-                WHEN 1 THEN 'True'
-                WHEN 2 THEN 'False'
-                ELSE 'Unknown'
-            END as Trial,
+            json_extract(SubscriptionEntity.value, '$.trial') as 'Trial Extracted Value',
+            json_type(SubscriptionEntity.value, '$.trial') as 'Trial JSON Type',
             json_extract(SubscriptionEntity.value, '$.state') as 'State'
             FROM SubscriptionEntity
         ''')
@@ -62,7 +66,8 @@ def get_burnerSubscription(context):
         db.close()
 
         for row in all_rows:
-            data_list.append((row[0], _ms_to_utc(row[1]), _ms_to_utc(row[2]), row[3], row[4], row[5], row[6]))
+            data_list.append((_ms_to_utc(row[1]), _ms_to_utc(row[2]), row[0], row[3], row[4], row[5], row[6], row[7]))
 
-    data_headers = ('User ID', ('Timestamp', 'datetime'), ('Renewal Date', 'datetime'), 'SKU', 'Store', 'Trial', 'State')
+    data_headers = (('Timestamp', 'datetime'), ('Renewal Date', 'datetime'), 'User ID', 'SKU', 'Store',
+                    'Trial Extracted Value', 'Trial JSON Type', 'State')
     return data_headers, data_list, source_path
