@@ -100,30 +100,32 @@ __artifacts_v2__ = {
     "get_teleguard_calls": {
         "name": "Teleguard - Calls",
         "description": "Teleguard audio and video call events",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-21",
-        "last_update_date": "2026-08-21",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "Teleguard",
         "notes": "Call events are stored as rows of the messages table with type 'CALL', not in a "
                  "separate call log. Each row carries a JSON metadata object with the keys "
                  "isSuccessfull, subtext, membersText and callType; all call rows in the tested "
-                 "extractions carried all four. Direction is derived by comparing the row's sender "
-                 "with the local account's serverId from the service table, which agreed with the "
-                 "app's own English event label on each of the 4 call rows of the tested "
-                 "extraction. "
-                 "Duration and outcome are reported as stored: subtext is a localised display string "
-                 "giving either a spelled out minutes and seconds count or a word for why the call "
-                 "did not connect, not a numeric duration, and no numeric duration is "
-                 "stored for these rows. The messages table's userTime column is not reported here "
-                 "because it held exactly the same value as createDate on every call row of every "
-                 "tested extraction, unlike the text rows of the same table where the two differ. "
-                 "Connected shows the isSuccessfull flag as Yes or No; what the app counts as "
-                 "successful is not established here. Connected and Chat ID each held one value on "
-                 "the 4 call rows of the tested Android extraction. The database also carries "
-                 "an empty sipcalls "
-                 "table with number, name, duration, date and cost columns; it held no rows in any "
-                 "tested extraction and is not reported.",
+                 "extractions carried all four. Direction is derived by comparing the row's sender with "
+                 "the local account's serverId from the service table, which agreed with the app's own "
+                 "English event label on each of the 4 call rows of the tested extraction. Duration and "
+                 "outcome are reported as stored: subtext is a localised display string giving either a "
+                 "spelled out minutes and seconds count or a word for why the call did not connect, not "
+                 "a numeric duration, and no numeric duration is stored for these rows. The messages "
+                 "table's userTime column is not reported here because it held exactly the same value as "
+                 "createDate on every call row of every tested extraction, unlike the text rows of the "
+                 "same table where the two differ. isSuccessfull (As Decoded) is the metadata JSON "
+                 "isSuccessfull value returned by the current JSON decoder, without a Yes/No conversion "
+                 "or a claim that a call connected. A missing key and JSON null both return None through "
+                 "the existing lookup; this artifact does not distinguish their presence. What the app "
+                 "counts as successful is not established here. The previous Connected display and Chat "
+                 "ID each held one value on the 4 call rows of the historical tested Android extraction; "
+                 "that display observation does not establish the raw flag classes or values. Original "
+                 "parser and recorded sample observations credited to @AlexisBrignoni, Claude. The "
+                 "database also carries an empty sipcalls table with number, name, duration, date and "
+                 "cost columns; it held no rows in any tested extraction and is not reported.",
         "paths": ('*/ch.swisscows.messenger.teleguardapp/app_flutter/teleguard_database.db*',),
         "output_types": "standard",
         "artifact_icon": "phone",
@@ -584,7 +586,7 @@ def get_teleguard_calls(context):
         ('Timestamp', 'datetime'),
         'Direction',
         'Call Type',
-        'Connected',
+        'isSuccessfull (As Decoded)',
         'Duration or Result (as stored)',
         'Members (as stored)',
         'Event Label (as stored)',
@@ -620,7 +622,7 @@ def get_teleguard_calls(context):
                 _str_to_utc(row[0]),
                 direction,
                 meta.get('callType', ''),
-                '' if connected is None else ('Yes' if connected else 'No'),
+                connected,
                 meta.get('subtext', ''),
                 meta.get('membersText') or '',
                 row[3],
