@@ -3,26 +3,27 @@ __artifacts_v2__ = {
         "name": "Vinted - Cached Listings",
         "description": "Parses the Vinted listings the Android app cached, including the "
                        "title, description, price, seller and the URL of the listing.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "Vinted",
-        "notes": "One row per cached listing. The row holds the listing as a stored document "
-                 "and the columns are read from it. The Condition column is the document's "
-                 "status member as stored; that header is this parser's label and what "
-                 "status describes is not sourced here. Listing Created is the date string "
-                 "the listing carries, reported as a date because it has no time part. "
-                 "Cache Expires is Unix milliseconds and is the app's own expiry for the "
-                 "cached copy, not an action by the account holder. Favourited is the "
-                 "listing document's is_favourite member, reported as stored; whose "
-                 "favourite it records was not established here. View Count and Favourite "
-                 "Count "
-                 "are the counts the listing carries, which are the service's figures rather "
-                 "than anything measured on the device. A cached listing records that the "
-                 "app held it, not that the account holder looked at it. Field mapping was "
-                 "done against three private samples provided by Mattia; no sample data is "
-                 "recorded for them.",
+        "notes": "One row per cached listing. The row holds the listing as a stored document and the "
+                 "columns are read from it. The status (existing rendering) column is the document's "
+                 "status member rendered by the existing str(value or '') expression; zero, False, None "
+                 "and an empty string therefore render empty. No raw-value retention is claimed, and what "
+                 "status describes is not sourced here. Listing Created is the date string the listing "
+                 "carries, reported as a date because it has no time part. Cache Expires is Unix "
+                 "milliseconds and is the app's own expiry for the cached copy, not an action by the "
+                 "account holder. Favourited is the listing document's is_favourite member, reported as "
+                 "stored; whose favourite it records was not established here. View Count and Favourite "
+                 "Count are the counts the listing carries, which are the service's figures rather than "
+                 "anything measured on the device. A cached listing records that the app held it, not that "
+                 "the account holder looked at it. Field mapping was done against three private samples "
+                 "provided by Mattia; no sample data is recorded for them. Listing URL reports the "
+                 "existing rendered url member; no address, ownership or visit interpretation is assigned. "
+                 "Original parser and private sample research credited to @AlexisBrignoni, @mattiaepi "
+                 "(Mattia Epifani), Claude.",
         "paths": (
             '*/fr.vinted/databases/vinted_database_2.db*',
         ),
@@ -33,25 +34,24 @@ __artifacts_v2__ = {
         "name": "Vinted - Favourited Listings",
         "description": "Parses the listings in the Vinted Android app's favourites store, with the favourited flag as "
                        "stored and the listing title where the app also cached the listing.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "Vinted",
-        "notes": "One row per recorded listing. Favourited is the flag the row carries, "
-                 "reported as stored, so a row marked false is not evidence the listing was "
-                 "favourited; why the app holds such rows is not established. Cache Expires is "
-                 "Unix "
-                 "milliseconds and is the app's own expiry rather than an action by the "
-                 "account holder; the table carries no time for when a listing was "
-                 "favourited. Title, Price and Listing Address are filled from the cached "
-                 "listing of the same identifier in the same database, and are empty where "
-                 "that database holds no listing of that identifier. On the tested device 16 "
-                 "rows were recorded against 11 cached listings and 8 of the 16 matched one, "
-                 "so a row without a title is one whose listing is not in the items table of "
-                 "the same database, or whose cached document carries no title. Field "
-                 "mapping was done against three private samples provided by Mattia; no "
-                 "sample data is recorded for them.",
+        "notes": "One row per recorded listing. Favourited is the flag the row carries, reported as "
+                 "stored, so a row marked false is not evidence the listing was favourited; why the app "
+                 "holds such rows is not established. Cache Expires is Unix milliseconds and is the app's "
+                 "own expiry rather than an action by the account holder; the table carries no time for "
+                 "when a listing was favourited. Title, Price and Listing URL are filled from the cached "
+                 "listing of the same identifier in the same database, and are empty where that database "
+                 "holds no listing of that identifier. On the tested device 16 rows were recorded against "
+                 "11 cached listings and 8 of the 16 matched one, so a row without a title is one whose "
+                 "listing is not in the items table of the same database, or whose cached document carries "
+                 "no title. Field mapping was done against three private samples provided by Mattia; no "
+                 "sample data is recorded for them. Listing URL reports the existing rendered url member; "
+                 "no address, ownership or visit interpretation is assigned. Original parser and private "
+                 "sample research credited to @AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude.",
         "paths": (
             '*/fr.vinted/databases/vinted_database_2.db*',
         ),
@@ -282,7 +282,7 @@ def vinted_items(context):
         'Title',
         'Description',
         'Price',
-        'Condition (as stored)',
+        'status (existing rendering)',
         'Brand',
         'Seller Login',
         'Seller ID',
@@ -291,7 +291,7 @@ def vinted_items(context):
         'Favourited (as stored)',
         'Closed (as stored)',
         'Reserved (as stored)',
-        'Listing Address',
+        'Listing URL',
         'Listing ID',
         'Source File',
     )
@@ -329,7 +329,7 @@ def vinted_favorites(context):
         'Favourited (as stored)',
         'Title',
         'Price',
-        'Listing Address',
+        'Listing URL',
         'Source File',
     )
     return data_headers, data_list, '; '.join(sorted(set(source_files)))
