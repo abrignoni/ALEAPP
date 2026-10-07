@@ -6,16 +6,19 @@ __artifacts_v2__ = {
         "description": "Account settings from the preferences_storage table of the first matched Thunderbird database, one row per account UUID. Username and Password are those of the incoming server settings.",
         "author": "Marco Neumann {kalinko@be-binary.de}, @AlexisBrignoni, Codex",
         "creation_date": "2025-11-18",
-        "last_update_date": "2026-10-04",
+        "last_update_date": "2026-10-07",
         "requirements": "re, json",
         "category": "Thunderbird App",
-        "notes": "Only the first matched file is read. An account is a UUID that has an email.0 "
-                 "key. Last Sync Time is the stored lastSyncTime value read as Unix milliseconds. "
-                 "Username, Password and Incoming Server come from incomingServerSettings, and "
-                 "Outgoing Server from outgoingServerSettings. A column is blank for an account "
-                 "that lacks the key it is read from. No registered corpus holds this app (20 zip "
-                 "listings and 24 tar indexes checked on 2026-10-04); the blank for a missing key "
-                 "was checked on a constructed database.",
+        "notes": "Only the first matched file is read. An account is a UUID that has an email.0 key. Last "
+                 "Sync Time is the stored lastSyncTime value read as Unix milliseconds. Username, Password"
+                 " and Incoming Server come from incomingServerSettings, and Outgoing Server from "
+                 "outgoingServerSettings. A column is blank for an account that lacks the key it is read "
+                 "from. No registered corpus holds this app (20 zip listings and 24 tar indexes checked on"
+                 " 2026-10-04); the blank for a missing key was checked on a constructed database. The "
+                 "preference query results are materialized before the UUID mapping and per-account scans,"
+                 " so each scan sees the query result instead of an exhausted single-pass cursor. First "
+                 "matched file selection, per-account missing-key defaults and the existing UUID set "
+                 "iteration order are unchanged.",
         "paths": ('*/data/net.thunderbird.android/databases/preferences_storage'),
         "output_types": ["standard"],
         "html_columns": ["Signature"],
@@ -26,36 +29,32 @@ __artifacts_v2__ = {
         "description": "Messages from each Thunderbird account database: the date and internal_date columns read as Unix milliseconds and shown in UTC, addresses, subject, preview, full text and flags as stored. Rows flagged empty are not included.",
         "author": "Marco Neumann {kalinko@be-binary.de}, @AlexisBrignoni, Codex",
         "creation_date": "2025-11-20",
-        "last_update_date": "2026-10-04",
+        "last_update_date": "2026-10-07",
         "requirements": "re, json",
         "category": "Thunderbird App",
-        "notes": "Date is the messages table's date column and Internal Date is its "
-                 "internal_date column, both read as Unix milliseconds and shown in UTC. In the "
-                 "app's source at commit 9aee4a9, date is the time parsed from the message's Date "
-                 "header, or the device time when the message was saved if there is none, and "
-                 "internal_date is the message's internal date, which the IMAP code fills from the "
-                 "server's INTERNALDATE, or the device time when the message was saved if there is "
-                 "none "
-                 "(https://github.com/thunderbird/thunderbird-android/blob/"
-                 "9aee4a9adcb44ca084ca4e13ee3da564286b0af1/legacy/core/src/main/java/com/fsck/k9/"
-                 "mailstore/SaveMessageDataCreator.kt#L22-L24, "
-                 "https://github.com/thunderbird/thunderbird-android/blob/"
-                 "9aee4a9adcb44ca084ca4e13ee3da564286b0af1/mail/common/src/main/java/com/fsck/k9/"
-                 "mail/internet/MimeMessage.java#L144-L158, "
-                 "https://github.com/thunderbird/thunderbird-android/blob/"
-                 "9aee4a9adcb44ca084ca4e13ee3da564286b0af1/mail/protocols/imap/src/main/java/com/"
-                 "fsck/k9/mail/store/imap/RealImapFolder.kt#L797-L799). "
-                 "So neither column can be read as the time of sending without the message's own "
-                 "headers: a Date header is set by the sender, and a row cannot show whether a "
-                 "value is the save time. Which app version wrote a tested database is not "
-                 "recorded here. Rows whose empty column is 1 are left out. A database is matched "
-                 "to its account by the 36-character UUID in its file name. A file ending in db "
-                 "whose name holds no such UUID, or whose UUID is not an account UUID in "
-                 "preferences_storage, is skipped and named in the run log. No registered corpus "
-                 "holds this app (20 zip listings and 24 tar indexes checked on 2026-10-04); the "
-                 "skips were checked on constructed databases. In the Sender, Receiver, CC and BCC columns each "
-                 "comma of the stored list is replaced with a line break. The read, flagged, "
-                 "answered and forwarded columns are reported as stored.",
+        "notes": "Date is the messages table's date column and Internal Date is its internal_date column, "
+                 "both read as Unix milliseconds and shown in UTC. In the app's source at commit 9aee4a9, "
+                 "date is the time parsed from the message's Date header, or the device time when the "
+                 "message was saved if there is none, and internal_date is the message's internal date, "
+                 "which the IMAP code fills from the server's INTERNALDATE, or the device time when the "
+                 "message was saved if there is none "
+                 "(https://github.com/thunderbird/thunderbird-android/blob/9aee4a9adcb44ca084ca4e13ee3da564286b0af1/legacy/core/src/main/java/com/fsck/k9/mailstore/SaveMessageDataCreator.kt#L22-L24,"
+                 " "
+                 "https://github.com/thunderbird/thunderbird-android/blob/9aee4a9adcb44ca084ca4e13ee3da564286b0af1/mail/common/src/main/java/com/fsck/k9/mail/internet/MimeMessage.java#L144-L158,"
+                 " "
+                 "https://github.com/thunderbird/thunderbird-android/blob/9aee4a9adcb44ca084ca4e13ee3da564286b0af1/mail/protocols/imap/src/main/java/com/fsck/k9/mail/store/imap/RealImapFolder.kt#L797-L799)."
+                 " So neither column can be read as the time of sending without the message's own headers:"
+                 " a Date header is set by the sender, and a row cannot show whether a value is the save "
+                 "time. Which app version wrote a tested database is not recorded here. Rows whose empty "
+                 "column is 1 are left out. A database is matched to its account by the 36-character UUID "
+                 "in its file name. A file ending in db whose name holds no such UUID, or whose UUID is "
+                 "not an account UUID in preferences_storage, is skipped and named in the run log. No "
+                 "registered corpus holds this app (20 zip listings and 24 tar indexes checked on "
+                 "2026-10-04); the skips were checked on constructed databases. In the Sender, Receiver, "
+                 "CC and BCC columns each comma of the stored list is replaced with a line break. The "
+                 "read, flagged, answered and forwarded columns are reported as stored. Preference rows "
+                 "used for the account UUID mapping are materialized so both mapper passes see the same "
+                 "query result. Account matching, file selection and message projection are unchanged.",
         "paths": ('*data/net.thunderbird.android/databases/*',),
         "output_types": ["standard"],
         "html_columns": ["Content"],
@@ -88,7 +87,7 @@ def _map_uuid_to_account(file):
     WHERE primkey LIKE '%email.0%'
     ''')
 
-    db_records = get_sqlite_db_records(str(file), query)
+    db_records = list(get_sqlite_db_records(str(file), query))
 
     # Get the UUIDs of the existing accounts
     uuid_regex = re.compile(r'^[0-9a-fA-F-]{36}')
@@ -120,7 +119,7 @@ def thunderbird_accounts(context):
         OR primkey LIKE '%outgoingServerSettings%'
     ''')
 
-    db_records = get_sqlite_db_records(str(files_found[0]), query)
+    db_records = list(get_sqlite_db_records(str(files_found[0]), query))
 
     uuid_mapping = _map_uuid_to_account(str(files_found[0]))
     uuids = list(uuid_mapping.keys())
