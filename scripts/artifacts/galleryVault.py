@@ -73,16 +73,26 @@ __artifacts_v2__ = {
     },
     "galleryvault_break_in_reports": {
         "name": "GalleryVault - Break-in Reports",
-        "description": "Rows of the break_in_report table in galleryvault.db: timestamp, the "
-                       "wrongly_attempt_code value, locking type, and the image the row's "
-                       "photo_path names where it is present. Values are reported as stored. No "
-                       "tested image held a row, so the output is not verified on real data.",
-        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
+        "description": "Selected break_in_report rows from galleryvault.db, including stored "
+                       "wrongly_attempt_code and is_new values and an optional reference to the file named by "
+                       "photo_path.",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-06",
-        "last_update_date": "2026-08-06",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "GalleryVault",
-        "notes": "",
+        "notes": "One row per selected break_in_report query result, ordered by timestamp within each "
+                 "selected galleryvault.db; all returned occurrences are retained. wrongly_attempt_code "
+                 "(as stored) and is_new (as stored) retain their selected values and types without "
+                 "establishing an entered-code, unread, attempt, or user-action meaning. Timestamp retains"
+                 " the existing conversion and blank policy. Photo is the existing optional media "
+                 "reference resolved from photo_path; the remaining stored fields and current "
+                 "source-selection policy are unchanged. The historically recorded hc_pixel8pro_a17 and "
+                 "pixel7a_a14 samples each had zero rows; those observations are not fresh measurements or"
+                 " positive event/photo coverage. A row does not establish who operated the app or what "
+                 "caused its creation. Source association across selected databases, alias-state "
+                 "equivalence, locking_type, location fields, and other app meanings require separate "
+                 "review. Original contribution credited to @AlexisBrignoni and Claude.",
         "paths": ('*/com.thinkyeah.galleryvault/databases/galleryvault.db*',),
         "output_types": "standard",
         "artifact_icon": "user-x",
@@ -910,14 +920,14 @@ def galleryvault_break_in_reports(context):
 
     data_headers = (
         ('Timestamp', 'datetime'),
-        'Code Entered',
+        'wrongly_attempt_code (as stored)',
         'Locking Type',
         ('Photo', 'media'),
         'Photo Path',
         'Latitude',
         'Longitude',
         'Address',
-        'Unread',
+        'is_new (as stored)',
     )
     return data_headers, data_list, '\n'.join(source_paths)
 
