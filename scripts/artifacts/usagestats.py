@@ -6,18 +6,18 @@ __artifacts_v2__ = {
             "Package usage records, device configuration records and event-log entries read "
             "from the Android UsageStats XML and protobuf stores."
         ),
-        "author": "Alexis Brignoni",
+        "author": "Alexis Brignoni, @AlexisBrignoni, Codex",
         "creation_date": "2020-02-25",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Usage Stats",
         "notes": (
             "Usage Type names the record kind a row was read from: 'packages' and "
             "'configurations' are per-interval aggregates written by the platform, "
             "'event-log' rows are individually recorded events. Interval is set to daily, "
-            "weekly, monthly or yearly by looking for that word in the path of the file the "
-            "record came from; the test covers the whole path of the extracted copy, so a "
-            "report folder whose name contains one of those words affects it. In the tested "
+            "weekly, monthly or yearly when exactly one directory component beneath the "
+            "selected store folder has that exact name. No match or multiple matching "
+            "components leave Interval empty; host folders and file names are excluded. In the tested "
             "images the same record appears in more than one interval folder, so rows "
             "repeated across intervals are not necessarily separate occurrences. Event Type "
             "shows the name of the UsageEvents.Event constant whose value matches the "
@@ -496,6 +496,24 @@ def get_usagestats(context):
     )
     return data_headers, data_list, source
 
+def _usage_interval(file_path, store_folder):
+    """Classify directory components beneath the selected store, not host folders."""
+    try:
+        relative = os.path.relpath(file_path, store_folder)
+    except ValueError:
+        return ''
+    if os.path.isabs(relative):
+        return ''
+    if os.altsep:
+        relative = relative.replace(os.altsep, os.sep)
+    parts = relative.split(os.sep)
+    if '..' in parts:
+        return ''
+    matches = [part for part in parts[:-1]
+               if part in ('daily', 'weekly', 'monthly', 'yearly')]
+    return matches[0] if len(matches) == 1 else ''
+
+
 def add_xml_or_v1_usagestats_to_db(folder, db):
     '''Process usagestats xml files or version 1 of protobuf files'''
     err=0
@@ -509,17 +527,7 @@ def add_xml_or_v1_usagestats_to_db(folder, db):
             if file_name == 'version':
                 continue
             else:
-                # Reset per file: without this a file outside the interval folders would
-                # keep the previous file's interval label.
-                sourced = ''
-                if 'daily' in filename:
-                    sourced = 'daily'
-                elif 'weekly' in filename:
-                    sourced = 'weekly'
-                elif 'monthly' in filename:
-                    sourced = 'monthly'
-                elif 'yearly' in filename:
-                    sourced = 'yearly'
+                sourced = _usage_interval(filename, folder)
 
                 try:
                     file_name_int = int(file_name)
@@ -670,17 +678,7 @@ def add_v2_usagestats_to_db(folder, db):
             if file_name in ('version', 'migrated', 'mappings'):
                 continue
 
-            # Reset per file: without this a file outside the interval folders would keep
-            # the previous file's interval label.
-            sourced = ''
-            if 'daily' in filepath:
-                sourced = 'daily'
-            elif 'weekly' in filepath:
-                sourced = 'weekly'
-            elif 'monthly' in filepath:
-                sourced = 'monthly'
-            elif 'yearly' in filepath:
-                sourced = 'yearly'
+            sourced = _usage_interval(filepath, folder)
 
             try:
                 file_name_int = int(file_name)
