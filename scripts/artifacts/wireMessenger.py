@@ -119,22 +119,32 @@ __artifacts_v2__ = {
     },
     "get_wire_cached_files": {
         "name": "Wire Cached Files",
-        "description": "Files the Wire app stores on disk per account, shown as media where the "
-                       "content is an image",
-        "author": "@AlexisBrignoni, Claude",
+        "description": "Reports selected Wire cached files and existing media references. PNG/JPEG prefixes "
+                       "retain their existing export suffixes; the ftyp-only branch uses a generic bin suffix "
+                       "without inferring a specific container or codec.",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-15",
-        "last_update_date": "2026-08-15",
+        "last_update_date": "2026-10-07",
         "requirements": "None",
         "category": "Wire Messenger",
-        "notes": "One row per file under files/wire.com/<account id>/ and cache/wire.com/"
-                 "<account id>/ inside the app sandbox. On tested images these directories hold "
-                 "PNG and JPEG content, some of it in files without an extension; the type is "
-                 "read from the first bytes of the file: a PNG signature, a JPEG signature, or "
-                 "ftyp at bytes 4 to 8, which this parser labels mp4 and which other ISO base "
-                 "media files also carry. These files sit "
-                 "outside the databases newer app versions encrypt, so they remain readable "
-                 "when the message store is not. What each file was used for by the app is not "
-                 "asserted.",
+        "notes": "One row per file under files/wire.com/<account id>/ and cache/wire.com/<account id>/ "
+                 "inside the app sandbox. On tested images these directories hold PNG and JPEG content, "
+                 "some of it in files without an extension; the type is read from the first bytes of the "
+                 "file: a PNG signature, a JPEG signature, or ftyp at bytes 4 to 8, whose surviving branch"
+                 " requests the generic bin export suffix. That marker alone does not establish a specific"
+                 " container or codec. These files sit outside the databases newer app versions encrypt, "
+                 "so they remain readable when the message store is not. What each file was used for by "
+                 "the app is not asserted. Only the ftyp branch export-suffix request changed; PNG/JPEG "
+                 "prefix precedence, all four native fields, selected row occurrences/order, existing "
+                 "canonical alias selection and source aggregation are unchanged. Native File contains a "
+                 "media reference ID, not a type label. Shared media MIME sniffing is independent of this "
+                 "suffix and is not changed or certified here. Existing media reference or item reuse can "
+                 "retain an earlier registered extension; this change does not rename existing media items"
+                 " or force a new registration. Newly registered surviving ftyp candidates request bin "
+                 "even if independent MIME sniffing recognizes a format. Prefix tests do not verify "
+                 "complete media integrity, and no file bytes are transcoded. Historical app/database "
+                 "encryption/private sample counts and account-path meanings are not newly verified. "
+                 "Original contribution credited to @AlexisBrignoni and Claude.",
         "paths": ('*/com.wire/files/wire.com/*/*',
                   '*/com.wire/cache/wire.com/*/*'),
         "output_types": "standard",
@@ -412,7 +422,7 @@ def get_wire_cached_files(context):
         elif magic.startswith(b'\xff\xd8'):
             extension = 'jpg'
         elif magic[4:8] == b'ftyp':
-            extension = 'mp4'
+            extension = 'bin'
         media_ref = ''
         if extension:
             media_ref = check_in_media(file_found, basename(file_found),
