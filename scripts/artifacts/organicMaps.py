@@ -32,25 +32,32 @@ __artifacts_v2__ = {
         },
     },
     "organicmaps_tracks": {
-        "name": "Organic Maps - Tracks",
-        "description": "Parses the line placemarks (tracks) in the bookmarks KML files of "
-                       "the Organic Maps Android client.",
-        "author": "@AlexisBrignoni, Claude",
+        "name": "Organic Maps - Line Placemark Summaries",
+        "description": "Summaries of LineString and gx:Track placemarks in Organic Maps bookmarks KML "
+                       "files; how the geometry was created is not established.",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-30",
-        "last_update_date": "2026-08-30",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "Organic Maps",
-        "notes": "One row per line placemark in the KML files under files/bookmarks. A track is a "
-                 "Placemark whose geometry is a line rather than a single point, stored either as a "
-                 "LineString or as a gx:Track. Each row gives the track's name, its category (the KML "
-                 "document name), the number of points, and the first and last coordinates so the "
-                 "extent is visible; the Latitude and Longitude columns hold the first point so the row "
-                 "maps. A gx:Track can also carry a when time per point, and the first and last of "
-                 "those are reported as the start and end times when present, as stored. This was "
-                 "empty on the tested device, so the line and gx:Track parsing is code-present and "
-                 "exercised against no rows here. The full point list is not enumerated one row per "
-                 "point; the KML itself in files/bookmarks holds every point for an examiner who needs "
-                 "the whole line.",
+        "notes": "One row per direct-child line Placemark selected from a direct-child KML "
+                 "Document in files/bookmarks. The parser uses the LineString coordinates branch "
+                 "when that element has nonempty text; otherwise it examines gx:Track. The "
+                 "geometry may have been recorded, drawn or imported; its origin is not "
+                 "established by this artifact. Name and Category come from the placemark and "
+                 "document names, with the file name used when the document name is absent. Point "
+                 "Count is the number of coordinate entries the current parser returns. Latitude "
+                 "and Longitude contain the first returned point; End Latitude and End Longitude "
+                 "contain the last. Start Time and End Time contain the first and last encountered "
+                 "when text from gx:Track, as stored, and are blank for LineString. These labels "
+                 "do not establish recording, chronological order, point-to-time alignment or a "
+                 "journey start and end. All ten values and their order are unchanged. The full "
+                 "point sequence remains in the source KML; this report summarizes endpoints "
+                 "rather than enumerating points. The generated KML export uses the existing "
+                 "point-export helper and does not reproduce the full line. The registered "
+                 "scripted emulator reference historically yielded zero line rows; this does not "
+                 "establish how geometry was created. Original parser and recorded sample "
+                 "observations credited to @AlexisBrignoni, Claude.",
         "paths": ('*/app.organicmaps*/files/bookmarks/*.kml',),
         "output_types": "all",
         "artifact_icon": "route",
