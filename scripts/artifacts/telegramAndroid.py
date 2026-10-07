@@ -444,32 +444,47 @@ __artifacts_v2__ = {
     "get_telegramChatDetails": {
         "name": "Telegram - Chat Details",
         "description": (
-            "Parses the cached group and channel detail Telegram stores in the "
-            "chat_settings_v2 table of cache4.db, reporting the description and, where the "
-            "record carries them, the participant, administrator, removed, banned and online "
-            "member counts."
+            "Reports the existing cached chat_settings_v2 description and count projection from the "
+            "first selected cache4.db. The partial TL decoder uses explicit 32-bit ID reads for two "
+            "verified layer132 constructors; other recognized paths and reported fields keep their "
+            "existing handling."
         ),
-        "author": "Alexis Brignoni, @AlexisBrignoni, Codex",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-04",
-        "last_update_date": "2026-08-15",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "Telegram",
-        "notes": "The info column holds a TL chat full or channel full record. The "
-                 "description follows the id and the member counts follow it behind flags. The id "
-                 "is read as 64 bits for every record version. The client reads a 32-bit id for "
-                 "older record versions, for example channel full layer 132 (0x2f532f3c) and chat "
-                 "full layer 132 (0x49a0a5d9), so a record stored under one of those is not read "
-                 "correctly by this artifact. The 5 tested records (1 on anne_a15, 4 on "
-                 "kevin_pocox7_a15, counted on runs of 3 Oct 2026) are channel full layer 225 (4) "
-                 "and layer 204 (1), which the client reads with a 64-bit id, so no tested record "
-                 "is of an affected version. Fields that sit after "
-                 "the record's nested photo and notification objects are not read because "
-                 "those objects are not implemented. Basic group records carry a description "
-                 "but no counts. Names are resolved from the chats table. Reference: "
-                 "Telegram-Android, 'generated TlGen_ChatFull.kt (record layouts and flag "
-                 "bits)', https://github.com/DrKLO/Telegram/tree/"
-                 "45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj_AppTests"
-                 "/src/androidTest/kotlin/org/telegram/tgnet/model/generated",
+        "notes": "The info column is passed to the existing partial TL chat/channel decoder; names are "
+                 "resolved from chats and the output Chat ID remains the SQL uid, not the discarded inner "
+                 "TL id. Two explicit constructors use a signed 32-bit inner ID read: channelFull layer132"
+                 " 0x2f532f3c and chatFull layer132 0x49a0a5d9. Their readParams and serializeToStream "
+                 "declarations at Telegram-Android commit 45ab8f4308496e1f01026a97fcdb0d58a5274474 both "
+                 "use Int32 for that wire field despite inherited Java long storage. The selected channel "
+                 "class reads and writes kicked_count followed by banned_count under the same FLAG_2, with"
+                 " optional participants_count FLAG_0, admins_count FLAG_1 and online_count FLAG_13; the "
+                 "current paired-count projection is retained. The selected basic-chat class reads about "
+                 "then nested participants rather than these scalar counts; the existing early return "
+                 "after about is retained. These are bounded published-source layout observations, not "
+                 "proof of the app version or complete object validity in an acquired database. The other "
+                 "44 recognized constructors keep the existing 64-bit ID read and have not been "
+                 "layout-certified by this correction; possible older no-banned layouts remain unverified."
+                 " Fields after nested photo/notification/participants objects are not decoded, and the "
+                 "existing TL string/truncation/replacement and error behavior remain unchanged. Only the "
+                 "first selected main and existing own-sidecar handling are used; SQL row occurrences and "
+                 "native eight-field projection remain. Historical notes recorded five tested records "
+                 "(Anne1 and Kevin4) on 3 Oct 2026 as channelFull layer225(4) and layer204(1). Those "
+                 "counts/version associations and private samples are historical, not revalidated by these"
+                 " source exceptions. Original contribution credited to Alexis Brignoni; Telegram-Android "
+                 "research retained. Verified source references: "
+                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/tgnet/TLRPC.java#L11713-L11969"
+                 " and "
+                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/tgnet/TLObject.java#L15-L54."
+                 " Historical generated-layout reference retained: "
+                 "https://github.com/DrKLO/Telegram/tree/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj_AppTests/src/androidTest/kotlin/org/telegram/tgnet/model/generated."
+                 " TLObject flag constants match the numeric masks used locally; its external BitwiseUtils"
+                 " implementation was not independently verified. Source/account association, unsupported "
+                 "constructors, partial decoding, count meanings and broader version coverage remain "
+                 "research limits.",
         "paths": ('*/org.telegram.messenger*/files/cache4.db*',),
         "output_types": "standard",
         "artifact_icon": "users-group",
@@ -1856,7 +1871,7 @@ def _decode_chat_full(blob):
         flags = reader.read_uint32()
         if constructor in _CHAT_FULL_A:
             reader.read_uint32()                         # flags2
-        reader.read_int64()                              # id
+        reader.read_int32() if constructor in (0x2F532F3C, 0x49A0A5D9) else reader.read_int64()  # pylint: disable=expression-not-assigned
         record = {'about': reader.read_string()}
         if constructor in _CHAT_FULL_C:
             return record                                # basic group: no counts
