@@ -375,34 +375,38 @@ __artifacts_v2__ = {
     "get_telegramPeerDetails": {
         "name": "Telegram - Peer Details",
         "description": (
-            "Parses the cached profile detail Telegram stores for users in the user_settings "
-            "table of cache4.db, reporting the profile bio and whether the user is blocked. "
-            "The record can exist for a user "
-            "with no exchanged messages."
+            "Reports selected user_settings entries with existing user-name and TL-prefix enrichment."
+            " The pinned column is displayed through the existing Python truthiness rule; this report"
+            " does not establish pin activity, state or ownership."
         ),
-        "author": "Alexis Brignoni, @AlexisBrignoni, Codex",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-04",
-        "last_update_date": "2026-08-15",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "Telegram",
-        "notes": "The info column holds a TL user full record. Across the record versions "
-                 "this parser covers, the about field follows the id and precedes the nested "
-                 "objects, so it is read directly; blocked is flag bit 0 (mask value 1) and needs "
-                 "no field "
-                 "read. Fields that sit after the nested settings and notification objects, "
-                 "such as the common chat count, are not read because those objects are not "
-                 "implemented. Names are resolved from the users table. Pinned shows Yes when the "
-                 "pinned column of user_settings is not zero; the client writes the record's "
-                 "pinned message id to that column. Reference: Telegram-Android, "
-                 "'MessagesStorage.java (user_settings insert)', "
-                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/"
-                 "TMessagesProj/src/main/java/org/telegram/messenger/"
-                 "MessagesStorage.java#L7294-L7299. "
-                 "Reference: "
-                 "Telegram-Android, 'generated TlGen_UserFull.kt (record layout and flag "
-                 "bits)', https://github.com/DrKLO/Telegram/tree/"
-                 "45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj_AppTests"
-                 "/src/androidTest/kotlin/org/telegram/tgnet/model/generated",
+        "notes": "The info column holds a TL user full record. Across the record versions this parser "
+                 "covers, the about field follows the id and precedes the nested objects, so it is read "
+                 "directly; blocked is flag bit 0 (mask value 1) and needs no field read. Fields that sit "
+                 "after the nested settings and notification objects, such as the common chat count, are "
+                 "not read because those objects are not implemented. Names are resolved from the users "
+                 "table. The pinned column is displayed as Yes when its fetched Python value is truthy, "
+                 "and as an empty string otherwise. This is the existing rendering, not a raw value, SQL "
+                 "non-zero comparison, or verified pin state. Native NULL, numeric zero and empty "
+                 "text/bytes render blank; nonempty text such as '0', negative numbers and nonempty bytes "
+                 "render Yes. Historical research attributes this column to the record's pinned message "
+                 "id; that vendor attribution is retained but not independently verified here. Reference: "
+                 "Telegram-Android, 'MessagesStorage.java (user_settings insert)', "
+                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java#L7294-L7299."
+                 " Reference: Telegram-Android, 'generated TlGen_UserFull.kt (record layout and flag "
+                 "bits)', "
+                 "https://github.com/DrKLO/Telegram/tree/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj_AppTests/src/androidTest/kotlin/org/telegram/tgnet/model/generated"
+                 " The decoder/profile/blocked-layout claims and client-source links above are retained "
+                 "historical research, not newly verified. All six native values, users dictionary and "
+                 "TL-prefix decoder, SQL row occurrences/order, first selected main, headers other than "
+                 "the pinned qualifier, source paths and eleven sibling artifacts are unchanged. Raw "
+                 "pinned values and NULL/zero/type distinctions are not added by this header change. "
+                 "First-source/account-state selection, peer/name association and constructor/version "
+                 "meanings remain unresolved. Original contribution credited to Alexis Brignoni.",
         "paths": ('*/org.telegram.messenger*/files/cache4.db*',),
         "output_types": "standard",
         "artifact_icon": "address-book",
@@ -1726,7 +1730,7 @@ def get_telegramPeerDetails(context):
         'Username',
         'Bio',
         'Blocked',
-        'Pinned',
+        "pinned (existing truthiness rendering)",
     )
     data_list = []
     db_file = get_file_path(context.get_files_found(), 'cache4.db')
