@@ -38,19 +38,20 @@ __artifacts_v2__ = {
     },
     "get_mastodon_notifications": {
         "name": "Mastodon - Notifications",
-        "description": "Parses Mastodon notifications",
-        "author": "Kevin Pagano (@stark4n6)",
+        "description": "Reports Mastodon notifications with the stored type and the existing type interpretation",
+        "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2022-12-07",
-        "last_update_date": "2022-12-07",
+        "last_update_date": "2026-10-06",
         "requirements": "BeautifulSoup",
         "category": "Mastodon",
         "notes": ""
-                 "Notification Type is decoded from the stored integer type as 0 Follow, 2 "
+                 "Notification Type Interpretation is decoded from the stored integer type as 0 Follow, 2 "
                  "Mention, 3 Boost and 4 Favorite, the positions of FOLLOW, MENTION, REBLOG and "
                  "FAVORITE in the app's NotificationType enum "
                  "(https://github.com/mastodon/mastodon-android/blob/24d8c5d9d012858e8928ab465b455ad52805a9ee/mastodon/src/main/java/org/joinmastodon/android/model/NotificationType.java#L9-L17). "
                  "That the column holds the enum position was not established. Any other stored "
-                 "value is shown blank. Only the first file ending in .db that the search "
+                 "value is shown blank in the interpretation. Type (As Stored) retains notifications_all.type "
+                 "without coercion, including NULL and unrecognized values; it does not establish their meaning. Only the first file ending in .db that the search "
                  "returned is read. The path pattern matches every .db file in the app's "
                  "databases folder, so where the app holds more than one, the others are not read.",
         "paths": ('*/org.joinmastodon.android/databases/*.db*',),
@@ -217,11 +218,12 @@ def get_mastodon_notifications(context):
         json_extract(notifications_all.json, '$.status.content'),
         json_extract(notifications_all.json, '$.status.visibility'),
         json_extract(notifications_all.json, '$.status.created_at'),
-        id
+        id,
+        notifications_all.type
         from notifications_all
     ''')
-    data_list = [(_iso_to_utc(r[0]), r[1], r[2], r[3], _strip_html(r[4]), r[5], _iso_to_utc(r[6]), r[7]) for r in rows]
-    data_headers = (('Notification Created Timestamp', 'datetime'), 'Notification From', 'Notification Type', 'Reference URL', 'Text Content', 'Visibility', ('Status Created Timestamp', 'datetime'), 'ID')
+    data_list = [(_iso_to_utc(r[0]), _iso_to_utc(r[6]), r[1], r[2], r[8], r[3], _strip_html(r[4]), r[5], r[7]) for r in rows]
+    data_headers = (('Notification Created Timestamp', 'datetime'), ('Status Created Timestamp', 'datetime'), 'Notification From', 'Notification Type Interpretation', 'Type (As Stored)', 'Reference URL', 'Text Content', 'Visibility', 'ID')
     return data_headers, data_list, source_path
 
 
