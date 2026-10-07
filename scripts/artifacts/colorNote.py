@@ -2,9 +2,9 @@ __artifacts_v2__ = {
     "colornote_notes": {
         "name": "ColorNote Notes",
         "description": "Notes and checklists held by the ColorNote notepad app",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Codex; original contribution: @AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "ColorNote",
         "sample_data": {
@@ -26,14 +26,13 @@ __artifacts_v2__ = {
                  "32 and 256 and Reminder Type 16 and 128 appear in the app's own queries and "
                  "were not exercised here. A reminder_date of -1 is reported as a blank "
                  "Reminder, with Reminder Type reported beside it as stored. On the tested image "
-                 "every row showed Encrypted as No (the code prints No for a stored 0 or an "
-                 "empty value) and Latitude and Longitude were blank (a stored 0 is shown "
-                 "blank). The decompiled "
-                 "build associates Encrypted with a password-locked note and Latitude and "
-                 "Longitude with a location reminder; neither a locked note nor a location "
-                 "reminder was created on the tested device, so those meanings were not "
-                 "exercised and all three columns are "
-                 "reported as checked absences and not as evidence the features are missing. The "
+                 "Latitude and Longitude were blank (a stored 0 is shown blank). Encrypted (as stored) "
+                 "retains the encrypted column without Boolean conversion, including NULL and 0; "
+                 "it does not establish whether a note is password locked or cryptographically encrypted. "
+                 "The private decompiled build associates encrypted with a password-locked note and "
+                 "Latitude and Longitude with a location reminder; neither feature was exercised on "
+                 "the tested device. Latitude and Longitude remain reported as checked absences, not "
+                 "as evidence the location-reminder feature is missing. The "
                  "folder_id, tags and importance columns are left unparsed: each was constant on "
                  "the tested image and none carries content the note does not already show. A row "
                  "is evidence the note was in the store, not that anyone read it.",
@@ -115,7 +114,7 @@ def colornote_notes(context):
                 _label(r[6], NOTE_TYPES), _label(r[7], NOTE_STATES),
                 _label(r[8], NOTE_SPACES), _label(r[9], REMINDER_TYPES),
                 r[10] if r[10] is not None else '',
-                'Yes' if r[11] else 'No',
+                r[11],
                 _coord(r[12]), _coord(r[13]), r[14] or '',
                 context.get_relative_path(db_path)))
         if records and db_path not in sources:
@@ -125,5 +124,5 @@ def colornote_notes(context):
         ('Created', 'datetime'), ('Modified', 'datetime'),
         ('Minor Modified', 'datetime'), ('Reminder', 'datetime'),
         'Title', 'Note', 'Note Type', 'Status', 'Storage', 'Reminder Type',
-        'Colour Index', 'Encrypted', 'Latitude', 'Longitude', 'UUID', 'Source File')
+        'Colour Index', 'Encrypted (as stored)', 'Latitude', 'Longitude', 'UUID', 'Source File')
     return data_headers, data_list, '\n'.join(sources)
