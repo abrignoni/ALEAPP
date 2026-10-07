@@ -179,26 +179,28 @@ __artifacts_v2__ = {
     },
     "get_sms_mms_attachments": {
         "name": "MMS Attachments",
-        "description": "MMS attachment files from the telephony provider's app_parts and parts folders, with the message a part row links each file to, and files found there that no part row references.",
-        "author": "@AlexisBrignoni, Claude",
+        "description": "Telephony-provider part-file associations, known-layout unreferenced files and unresolved-layout file candidates from app_parts and parts.",
+        "author": "@AlexisBrignoni, Codex, Claude",
         "creation_date": "2026-09-02",
-        "last_update_date": "2026-09-02",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "SMS & MMS",
         "notes": "One row per part row that records a file path (part._data), joined to its pdu "
-                 "row for Date, Direction and From Address, plus one row per file found under "
-                 "app_parts or parts that no part row references. Files are indexed only when "
+                 "row for Date, Direction and From Address, plus known-layout files not matched by a "
+                 "returned part row and unresolved-layout file candidates. Association keys are indexed when "
                  "their path in the extraction sits under data/data, data/user/<n>, "
                  "data/user_de/<n> or the data_mirror/data_ce and data_mirror/data_de equivalents; "
-                 "a file under any other layout is not listed as unreferenced, and a part row "
-                 "whose recorded path is in one of those layouts shows 'Referenced, file not in "
-                 "extraction' for it. Status says which case a row "
+                 "files in other layouts are appended as file candidates with unresolved storage identity, "
+                 "without an asserted message association. Distinct evidence paths remain distinct "
+                 "even if they share bytes or physical storage; repeated identical staged paths are "
+                 "listed once. Candidate previews export the file itself. Status says which case a row "
                  "is: 'Referenced by message', 'Referenced by a part row with no message row' "
                  "(the part's mid names a pdu row that is not in the table, so Date, Direction, "
                  "MSG ID and Thread ID are blank), 'Referenced, file not in extraction', or 'Not "
                  "referenced by any part row'. Files are matched to part rows on the recorded "
-                 "_data path (storage class, Android user, package and file name), never on the "
-                 "file name alone. Content Type is part.ct as stored and Detected Type is sniffed "
+                 "_data path (storage class, Android user, package and file name); an unknown stored "
+                 "layout already permits a unique app_parts/parts filename-tail fallback. No new "
+                 "association is inferred for unresolved inventory candidates. Content Type is part.ct as stored and Detected Type is sniffed "
                  "independently from the file's own bytes; an ISO base media file (MP4, M4A, 3GP, "
                  "HEIC, AVIF) is reported by its ftyp brand, because the container does not say "
                  "whether its tracks are audio or video. On the 26 tested images holding "
@@ -379,6 +381,25 @@ def _part_files(context, files_found):
         tail = f'{parent[-2]}/{parent[-1]}'
         by_tail[tail] = None if tail in by_tail else file_found
     return by_key, by_tail
+
+
+def _unresolved_part_files(context, files_found, referenced):
+    """Selected file origins outside known storage layouts, without inferred ownership."""
+    normalized = lambda path: os.path.normpath(str(path)).replace('\\', '/')
+    seen = {normalized(path) for path in referenced}
+    candidates = sorted((str(path) for path in files_found),
+                        key=lambda path: (context.get_relative_path(path), normalized(path)))
+    result = []
+    for path in candidates:
+        physical = normalized(path)
+        parent = physical.rsplit('/', 2)
+        if physical in seen or len(parent) < 3 or parent[-2] not in ('app_parts', 'parts'):
+            continue
+        if os.path.isdir(path) or _storage_key(context.get_relative_path(path)) is not None:
+            continue
+        seen.add(physical)
+        result.append(path)
+    return result
 
 
 def _find_part_file(data_path, part_files):
@@ -648,6 +669,17 @@ def get_sms_mms_attachments(context):
             '', '', '', '',
             context.get_relative_path(file_found),
         ))
+
+    for file_found in _unresolved_part_files(context, files_found, referenced):
+        size, detected = _sniff(file_found)
+        media_ref = (check_in_media(file_found, os.path.basename(file_found)) or '') if size else ''
+        data_list.append((
+            '', '', '', os.path.basename(file_found), media_ref, '', detected,
+            'File candidate, storage identity unresolved', size,
+            '', '', '', '', context.get_relative_path(file_found),
+        ))
+        if file_found not in source_paths:
+            source_paths.append(file_found)
 
     data_headers = (
         ('Date', 'datetime'),
