@@ -8,101 +8,93 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-06",
         "requirements": "none",
         "category": "Android System",
-        "notes": "Read from the platform's dex use store at /data/system/package-dex-usage.list. "
-         "Reference: Android Open Source Project, "
-         "frameworks/base/services/core/java/com/android/server/pm/dex/PackageDexUsage.java, "
-         "whose constructor names the file and whose base class AbstractStatsBase.getFile() "
-         "places it under Environment.getDataDirectory()/system. The grammar here was read from "
-         "that class's write() and read() methods at android-13.0.0_r1, where the file is byte "
-         "identical to android-12.0.0_r1, android-14.0.0_r1 and android-15.0.0_r1; "
-         "android-10.0.0_r1 and android-11.0.0_r1 differ elsewhere in the class but emit the "
-         "same lines. The file is a header line naming the format version, then for each package "
-         "a line holding the package name, a \"+\" line for each primary code path followed by an "
-         "\"@\" line listing the packages that loaded it, and a \"#\" line for each secondary dex "
-         "file followed by a line of Android user, used-by-other-apps flag and instruction sets, "
-         "an \"@\" line, and a class loader context line. The four lines of a \"#\" block are read "
-         "in the order write() emits them; the comment inside read() lists them in a different "
-         "order, and this artifact follows the code rather than that comment, which every store "
-         "read here confirms. PACKAGE_DEX_USAGE_VERSION is 2, which the class's own comment "
-         "dates to Oreo with version 1 support dropped in R, and every store read here carried "
-         "version 2. Version 1 is a different grammar, so a file declaring any other version is "
-         "logged and skipped rather than read with these rules. This artifact reports the \"+\" "
-         "primary code path records, which are installed APKs and their splits, one row for each "
-         "code path and loading package. The store does not record a package loading its own "
-         "primary code: DexManager.notifyDexLoadInternal skips the record when the file is a "
-         "primary or split APK and the loading package equals the owning package, an exemption "
-         "that is unconditional at android-10.0.0_r1 and gated on the platform package \"android\" "
-         "from android-11.0.0_r1. The store therefore has no equivalent of the protobuf store's "
-         "app's-own-code rows, and this artifact is the whole of the primary side. 1 row of the "
-         "1058 read here shows the same package in both columns, and that is the isolated "
-         "process case described below, where the platform had recorded the loader under a name "
-         "that differed from the owning package. 18 rows of the 1058 carry a blank Loading "
-         "Package. Those are code paths whose recorded loaders have all been removed: from "
-         "android-11.0.0_r1 PackageDexUsage.syncData drops a loading package that is no longer "
-         "installed while keeping the code path, and DexManager.loadInternal calls syncData at "
-         "every boot. The android-10.0.0_r1 syncData does not prune loading packages at all and "
-         "reaches an empty list only by propagating a pre-upgrade used-by-other-apps flag onto a "
-         "code path with no loader named. They are reported with the column blank rather than "
-         "dropped, and a blank there is not evidence that nothing loaded the file. Isolated "
-         "Process is true when the recorded loading package carried DexManager's "
-         "ISOLATED_PROCESS_PACKAGE_SUFFIX \"..isolated\", which the platform appends so that a "
-         "load from an isolated process counts as coming from a different package; the Loading "
-         "Package column reports the name without that suffix. The suffix was added at "
-         "android-12.0.0_r1 and is absent from android-10.0.0_r1 and android-11.0.0_r1. It was "
-         "set on 1 row of the 1058 read here, and that row is the only one whose loading package "
-         "equals its owning package once the suffix is removed. 477 of the 1058 rows read here "
-         "name Google Play services as the owning package and 140 the Android System WebView, so "
-         "the row worth attention is an unexpected pairing "
-         "rather than the presence of pairings. 662 of the rows load a file under /data and 396 "
-         "a platform path under /apex, /product, /system, /system_ext. The format records no "
-         "time. There is no timestamp field anywhere in the writer, so a row records that a load "
-         "happened at some point before the file was last written and says nothing about when. "
-         "That is the difference from the protobuf store at /data/system/package-dex-usage.pb "
-         "that replaces it, whose records each carry a last_used_at_ms. Only the file's own "
-         "modification time bounds the store, and it bounds the whole file rather than any row. "
-         "The platform writes through AbstractStatsBase.maybeWriteAsync, whose WRITE_INTERVAL_MS "
-         "leaves at least 30 minutes between background writes on a production build, so a load "
-         "in the last half hour before acquisition can be absent. The record of an owning package "
-         "does not outlive the package past the next boot. A loading package is different: "
-         "syncData removes one that is no longer installed only from primary code paths and only "
-         "from android-11.0.0_r1, and it does not remove loading packages from a secondary dex "
-         "record at any release read here, so a loading package name can outlive the package. "
-         "PackageDexUsage.syncData removes the record of an owning package "
-         "that is no longer installed, removes secondary dex entries for a user that no longer "
-         "exists, removes a code path the owning package no longer declares, and removes the "
-         "whole package record once nothing is left; DexManager.loadInternal calls it at every "
-         "boot. From android-11.0.0_r1 it passes an empty list of packages to keep data about, "
-         "and android-10.0.0_r1 has no such parameter, so nothing is exempted on either. That is "
-         "read from the source and was not exercised against a device here, so an owning package "
-         "named here was installed at the last boot or has been recorded since, which is not the "
-         "same as installed at acquisition; a loading package named on a record carries no such "
-         "bound, and a "
-         "name absent is not evidence the package was never installed. Across the 39 registered "
-         "Android corpora the file is populated on 13 images, which report Android 10, 11, 12, "
-         "13 and 14. 4 images reporting Android 14 and 15 carry it reduced to its 38 byte header "
-         "line, and it is absent from 17 Android 15 emulator images and 2 images reporting "
-         "Android 16 and 17. The remaining 3 corpora are extractions that carry no /data/system "
-         "content at all rather than devices without the store, which was checked by listing "
-         "their members. The store is not simply superseded at Android 14: "
-         "DexManager.notifyDexLoadInternal still calls PackageDexUsage.record at "
-         "android-14.0.0_r1, and 2 of the images reporting Android 14 carry a populated file "
-         "whose recorded modification time is within days of the extraction. Why the file stops "
-         "being maintained on some Android 14 and 15 devices and not others was not established "
-         "here, and because the format carries no times it cannot be settled from the file "
-         "itself. One set of rows is reported per store found, each row carrying its own Source "
-         "File, so an extraction holding the folder under more than one root reports each copy "
-         "rather than merging them; every corpus read here held exactly one copy, and the "
-         "two-copy case was exercised on a constructed tree. The path pattern is not anchored on "
-         "a data/ prefix, so a raw userdata partition image that carries system/ at its root is "
-         "matched as well, which is how one of the images read here is laid out. A file matching "
-         "the pattern that does not begin with the format's header line is logged and not read. "
-         "The two Dex Usage (Legacy) artifacts partition the file without overlap: this one and "
-         "Secondary Dex Loads. Every package, code path and dex record of the file is reported by "
-         "one of the two. A short dex data line or a line placed before any package line is logged "
-         "and skipped, and a truncated block is logged and ends the read of that file. Two things "
-         "the file holds are not shown for a secondary record: the used-by-other-apps flag, for "
-         "the reason given in the Secondary Dex Loads notes, and the \"..isolated\" suffix of a "
-         "loading package, which is removed.",
+        "notes": (
+            "Read from the platform's dex use store at /data/system/package-dex-usage.list. Reference: "
+            'Android Open Source Project, '
+            'frameworks/base/services/core/java/com/android/server/pm/dex/PackageDexUsage.java, whose '
+            'constructor names the file and whose base class AbstractStatsBase.getFile() places it under '
+            "Environment.getDataDirectory()/system. The grammar here was read from that class's write() and "
+            'read() methods at android-13.0.0_r1, where the file is byte identical to android-12.0.0_r1, '
+            'android-14.0.0_r1 and android-15.0.0_r1; android-10.0.0_r1 and android-11.0.0_r1 differ '
+            'elsewhere in the class but emit the same lines. The file is a header line naming the format '
+            'version, then for each package a line holding the package name, a "+" line for each primary code'
+            ' path followed by an "@" line listing the packages that loaded it, and a "#" line for each '
+            'secondary dex file followed by a line of Android user, used-by-other-apps flag and instruction '
+            'sets, an "@" line, and a class loader context line. The four lines of a "#" block are read in '
+            'the order write() emits them; the comment inside read() lists them in a different order, and '
+            'this artifact follows the code rather than that comment, which every store read here confirms. '
+            "PACKAGE_DEX_USAGE_VERSION is 2, which the class's own comment dates to Oreo with version 1 "
+            'support dropped in R, and every store read here carried version 2. Version 1 is a different '
+            'grammar, so a file declaring any other version is logged and skipped rather than read with these'
+            ' rules. This artifact reports the "+" primary code path records, which are installed APKs and '
+            'their splits, one row for each code path and loading package. The store does not record a '
+            'package loading its own primary code: DexManager.notifyDexLoadInternal skips the record when the'
+            ' file is a primary or split APK and the loading package equals the owning package, an exemption '
+            'that is unconditional at android-10.0.0_r1 and gated on the platform package "android" from '
+            "android-11.0.0_r1. The store therefore has no equivalent of the protobuf store's app's-own-code "
+            'rows, and this artifact is the whole of the primary side. 1 row of the 1058 read here shows the '
+            'same package in both columns, and that is the isolated process case described below, where the '
+            'platform had recorded the loader under a name that differed from the owning package. 18 rows of '
+            'the 1058 carry a blank Loading Package. Those are code paths whose recorded loaders have all '
+            'been removed: from android-11.0.0_r1 PackageDexUsage.syncData drops a loading package that is no'
+            ' longer installed while keeping the code path, and DexManager.loadInternal calls syncData at '
+            'every boot. The android-10.0.0_r1 syncData does not prune loading packages at all and reaches an'
+            ' empty list only by propagating a pre-upgrade used-by-other-apps flag onto a code path with no '
+            'loader named. They are reported with the column blank rather than dropped, and a blank there is '
+            'not evidence that nothing loaded the file. Isolated Process is true when the recorded loading '
+            'package carried DexManager\'s ISOLATED_PROCESS_PACKAGE_SUFFIX "..isolated", which the platform '
+            'appends so that a load from an isolated process counts as coming from a different package; the '
+            'Loading Package column reports the name without that suffix. The suffix was added at '
+            'android-12.0.0_r1 and is absent from android-10.0.0_r1 and android-11.0.0_r1. It was set on 1 '
+            'row of the 1058 read here, and that row is the only one whose loading package equals its owning '
+            'package once the suffix is removed. 477 of the 1058 rows read here name Google Play services as '
+            'the owning package and 140 the Android System WebView, so the row worth attention is an '
+            'unexpected pairing rather than the presence of pairings. 662 of the rows load a file under /data'
+            ' and 396 a platform path under /apex, /product, /system, /system_ext. The format records no '
+            'time. There is no timestamp field anywhere in the writer, so a row records that a load happened '
+            'at some point before the file was last written and says nothing about when. That is the '
+            'difference from the protobuf store at /data/system/package-dex-usage.pb that replaces it, whose '
+            "records each carry a last_used_at_ms. Only the file's own modification time bounds the store, "
+            'and it bounds the whole file rather than any row. The platform writes through '
+            'AbstractStatsBase.maybeWriteAsync, whose WRITE_INTERVAL_MS leaves at least 30 minutes between '
+            'background writes on a production build, so a load in the last half hour before acquisition can '
+            'be absent. The record of an owning package does not outlive the package past the next boot. A '
+            'loading package is different: syncData removes one that is no longer installed only from primary'
+            ' code paths and only from android-11.0.0_r1, and it does not remove loading packages from a '
+            'secondary dex record at any release read here, so a loading package name can outlive the '
+            'package. PackageDexUsage.syncData removes the record of an owning package that is no longer '
+            'installed, removes secondary dex entries for a user that no longer exists, removes a code path '
+            'the owning package no longer declares, and removes the whole package record once nothing is '
+            'left; DexManager.loadInternal calls it at every boot. From android-11.0.0_r1 it passes an empty '
+            'list of packages to keep data about, and android-10.0.0_r1 has no such parameter, so nothing is '
+            'exempted on either. That is read from the source and was not exercised against a device here, so'
+            ' an owning package named here was installed at the last boot or has been recorded since, which '
+            'is not the same as installed at acquisition; a loading package named on a record carries no such'
+            ' bound, and a name absent is not evidence the package was never installed. Across the 39 '
+            'registered Android corpora the file is populated on 13 images, which report Android 10, 11, 12, '
+            '13 and 14. 4 images reporting Android 14 and 15 carry it reduced to its 38 byte header line, and'
+            ' it is absent from 17 Android 15 emulator images and 2 images reporting Android 16 and 17. The '
+            'remaining 3 corpora are extractions that carry no /data/system content at all rather than '
+            'devices without the store, which was checked by listing their members. The store is not simply '
+            'superseded at Android 14: DexManager.notifyDexLoadInternal still calls PackageDexUsage.record at'
+            ' android-14.0.0_r1, and 2 of the images reporting Android 14 carry a populated file whose '
+            'recorded modification time is within days of the extraction. Why the file stops being maintained'
+            ' on some Android 14 and 15 devices and not others was not established here, and because the '
+            'format carries no times it cannot be settled from the file itself. One set of rows is reported '
+            'per store found, each row carrying its own Source File, so an extraction holding the folder '
+            'under more than one root reports each copy rather than merging them; every corpus read here held'
+            ' exactly one copy, and the two-copy case was exercised on a constructed tree. The path pattern '
+            'is not anchored on a data/ prefix, so a raw userdata partition image that carries system/ at its'
+            ' root is matched as well, which is how one of the images read here is laid out. A file matching '
+            "the pattern that does not begin with the format's header line is logged and not read. The two "
+            'Dex Usage (Legacy) artifacts partition the file without overlap: this one and Secondary Dex '
+            'Loads. Every package, code path and dex record of the file is reported by one of the two. A '
+            'short dex data line or a line placed before any package line is logged and skipped, and a '
+            'truncated block is logged and ends the read of that file. The used-by-other-apps flag is not '
+            'shown for a secondary record, for the reason given in the Secondary Dex Loads notes. Loading '
+            'Packages (parsed) in Secondary Dex Loads retains parsed loading package names including their '
+            '"..isolated" suffixes.'
+        ),
         "paths": ('*/system/package-dex-usage.list',),
         "output_types": "standard",
         "artifact_icon": "share-2",
@@ -152,106 +144,99 @@ __artifacts_v2__ = {
         "name": "Dex Usage (Legacy) - Secondary Dex Loads",
         "description": "Dex and jar files a package loaded from outside its own installation, with the Android "
          "user, instruction sets and class loader context as stored, and no times.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": '@AlexisBrignoni, Codex',
         "creation_date": "2026-09-06",
-        "last_update_date": "2026-09-06",
+        "last_update_date": '2026-10-07',
         "requirements": "none",
         "category": "Android System",
-        "notes": "Read from the platform's dex use store at /data/system/package-dex-usage.list. "
-         "Reference: Android Open Source Project, "
-         "frameworks/base/services/core/java/com/android/server/pm/dex/PackageDexUsage.java, "
-         "whose constructor names the file and whose base class AbstractStatsBase.getFile() "
-         "places it under Environment.getDataDirectory()/system. The grammar here was read from "
-         "that class's write() and read() methods at android-13.0.0_r1, where the file is byte "
-         "identical to android-12.0.0_r1, android-14.0.0_r1 and android-15.0.0_r1; "
-         "android-10.0.0_r1 and android-11.0.0_r1 differ elsewhere in the class but emit the "
-         "same lines. The file is a header line naming the format version, then for each package "
-         "a line holding the package name, a \"+\" line for each primary code path followed by an "
-         "\"@\" line listing the packages that loaded it, and a \"#\" line for each secondary dex "
-         "file followed by a line of Android user, used-by-other-apps flag and instruction sets, "
-         "an \"@\" line, and a class loader context line. The four lines of a \"#\" block are read "
-         "in the order write() emits them; the comment inside read() lists them in a different "
-         "order, and this artifact follows the code rather than that comment, which every store "
-         "read here confirms. PACKAGE_DEX_USAGE_VERSION is 2, which the class's own comment "
-         "dates to Oreo with version 1 support dropped in R, and every store read here carried "
-         "version 2. Version 1 is a different grammar, so a file declaring any other version is "
-         "logged and skipped rather than read with these rules. This artifact reports the \"#\" "
-         "secondary dex records, one row for each dex or jar file a package loaded from outside "
-         "its own installation. Android User is the owner user id the platform recorded; it was "
-         "0 on 1114 of the 1227 rows read here and named a second Android user on 113, so the "
-         "column separates a second Android user's records from the first user's. Also "
-         "Loaded By "
-         "lists the packages on the record's \"@\" line with the \"..isolated\" suffix removed. "
-         "The platform appends that suffix (ISOLATED_PROCESS_PACKAGE_SUFFIX, from "
-         "android-12.0.0_r1) to the name of a package loading from an isolated process, and this "
-         "artifact has no column saying which names carried it. "
-         "PackageDexUsage.maybeAddLoadingPackage adds a loading package to that line only when its "
-         "recorded name differs from the owner, so the owning package appears there only for a "
-         "load it made from an isolated process. An empty Also Loaded By therefore means only the "
-         "owning package was recorded as loading the file, not that nothing loaded it; 134 of "
-         "the 1227 rows name another package. The record also carries a used-by-other-apps flag, "
-         "which PackageDexUsage.writeBoolean writes as 1 or 0. It is not reported as its own "
-         "column: the writer sets it from the same comparison that decides whether a loader is "
-         "added, and on all 1227 rows read here it was true exactly when Also Loaded By is not "
-         "empty, so a separate column would repeat that one. Instruction Sets holds the "
-         "instruction sets the platform recorded for the load, joined by a comma; arm64 and arm "
-         "were the values on the rows read here. Class Loader Context is the encoding as stored; "
-         "\"=VariableClassLoaderContext=\" "
-         "is the marker PackageDexUsage.VARIABLE_CLASS_LOADER_CONTEXT writes when a file was "
-         "loaded under more than one context, and it was the value on 225 of the 1227 rows, so "
-         "on those rows the column names no classpath. The platform caps a package at "
-         "MAX_SECONDARY_FILES_PER_OWNER, 100 secondary dex files, and that cap is reached in "
-         "this data: com.samsung.android.app.routines holds exactly 100 rows on 4 of the images "
-         "read here, so for that package the list is truncated by the platform and its absence "
-         "of a file is not evidence the file was not loaded. The format records no time. There "
-         "is no timestamp field anywhere in the writer, so a row records that a load happened at "
-         "some point before the file was last written and says nothing about when. That is the "
-         "difference from the protobuf store at /data/system/package-dex-usage.pb that replaces "
-         "it, whose records each carry a last_used_at_ms. Only the file's own modification time "
-         "bounds the store, and it bounds the whole file rather than any row. The platform "
-         "writes through AbstractStatsBase.maybeWriteAsync, whose WRITE_INTERVAL_MS leaves at "
-         "least 30 minutes between background writes on a production build, so a load in the "
-         "last half hour before acquisition can be absent. The record of an owning package does "
-         "not outlive the package past the next boot. A loading package is different: syncData "
-         "removes one that is no longer installed only from primary code paths and only from "
-         "android-11.0.0_r1, and it does not remove loading packages from a secondary dex record "
-         "at any release read here, so a loading package name can outlive the package. "
-         "PackageDexUsage.syncData removes the record of an owning package that is no "
-         "longer installed, removes secondary dex entries for a user that no longer exists, "
-         "removes a code path the owning package no longer declares, and removes the whole "
-         "package record once nothing is left; DexManager.loadInternal calls it at every boot. "
-         "From android-11.0.0_r1 it passes an empty list of packages to keep data about, and "
-         "android-10.0.0_r1 has no such parameter, so nothing is exempted on either. That is "
-         "read from the source and was not exercised against a device here, so an owning package "
-         "named here was installed at the last boot or has been recorded since, which is not the "
-         "same as installed at acquisition; a loading package named on a record carries no such "
-         "bound, and a "
-         "name absent is not evidence the package was never installed. Across the 39 registered "
-         "Android corpora the file is populated on 13 images, which report Android 10, 11, 12, "
-         "13 and 14. 4 images reporting Android 14 and 15 carry it reduced to its 38 byte header "
-         "line, and it is absent from 17 Android 15 emulator images and 2 images reporting "
-         "Android 16 and 17. The remaining 3 corpora are extractions that carry no /data/system "
-         "content at all rather than devices without the store, which was checked by listing "
-         "their members. The store is not simply superseded at Android 14: "
-         "DexManager.notifyDexLoadInternal still calls PackageDexUsage.record at "
-         "android-14.0.0_r1, and 2 of the images reporting Android 14 carry a populated file "
-         "whose recorded modification time is within days of the extraction. Why the file stops "
-         "being maintained on some Android 14 and 15 devices and not others was not established "
-         "here, and because the format carries no times it cannot be settled from the file "
-         "itself. One set of rows is reported per store found, each row carrying its own Source "
-         "File, so an extraction holding the folder under more than one root reports each copy "
-         "rather than merging them; every corpus read here held exactly one copy, and the "
-         "two-copy case was exercised on a constructed tree. The path pattern is not anchored on "
-         "a data/ prefix, so a raw userdata partition image that carries system/ at its root is "
-         "matched as well, which is how one of the images read here is laid out. A file matching "
-         "the pattern that does not begin with the format's header line is logged and not read. "
-         "The two Dex Usage (Legacy) artifacts partition the file without overlap: this one and "
-         "Cross-Package Code Loads. Every package, code path and dex record of the file is "
-         "reported by one of the two. A short dex data line or a line placed before any package "
-         "line is logged and skipped, and a truncated block is logged and ends the read of that "
-         "file. Two things the file holds are not shown on these rows: the used-by-other-apps "
-         "flag, for the reason given above, and the \"..isolated\" suffix of a loading package, "
-         "which is removed.",
+        "notes": (
+            "Read from the platform's dex use store at /data/system/package-dex-usage.list. Reference: "
+            'Android Open Source Project, '
+            'frameworks/base/services/core/java/com/android/server/pm/dex/PackageDexUsage.java, whose '
+            'constructor names the file and whose base class AbstractStatsBase.getFile() places it under '
+            "Environment.getDataDirectory()/system. The grammar here was read from that class's write() and "
+            'read() methods at android-13.0.0_r1, where the file is byte identical to android-12.0.0_r1, '
+            'android-14.0.0_r1 and android-15.0.0_r1; android-10.0.0_r1 and android-11.0.0_r1 differ '
+            'elsewhere in the class but emit the same lines. The file is a header line naming the format '
+            'version, then for each package a line holding the package name, a "+" line for each primary code'
+            ' path followed by an "@" line listing the packages that loaded it, and a "#" line for each '
+            'secondary dex file followed by a line of Android user, used-by-other-apps flag and instruction '
+            'sets, an "@" line, and a class loader context line. The four lines of a "#" block are read in '
+            'the order write() emits them; the comment inside read() lists them in a different order, and '
+            'this artifact follows the code rather than that comment, which every store read here confirms. '
+            "PACKAGE_DEX_USAGE_VERSION is 2, which the class's own comment dates to Oreo with version 1 "
+            'support dropped in R, and every store read here carried version 2. Version 1 is a different '
+            'grammar, so a file declaring any other version is logged and skipped rather than read with these'
+            ' rules. This artifact reports the "#" secondary dex records, one row for each dex or jar file a '
+            'package loaded from outside its own installation. Android User is the owner user id the platform'
+            ' recorded; it was 0 on 1114 of the 1227 rows read here and named a second Android user on 113, '
+            "so the column separates a second Android user's records from the first user's. Loading Packages "
+            '(parsed) lists the nonempty package-name tokens parsed from the record\'s "@" line, retaining '
+            'their recorded "..isolated" suffixes, order and repetitions and joining the tokens with '
+            'comma-space. This is parsed text, not the original line bytes; empty comma-delimited tokens were'
+            ' already discarded by the existing parser. The existing platform research describes '
+            'ISOLATED_PROCESS_PACKAGE_SUFFIX from android-12.0.0_r1; this change preserves the token without '
+            'adding a new interpretation column. PackageDexUsage.maybeAddLoadingPackage adds a loading '
+            'package to that line only when its recorded name differs from the owner, so the owning package '
+            'appears there only for a load it made from an isolated process. An empty Loading Packages '
+            '(parsed) therefore means only the owning package was recorded as loading the file, not that '
+            'nothing loaded it; 134 of the 1227 rows name another package. The record also carries a '
+            'used-by-other-apps flag, which PackageDexUsage.writeBoolean writes as 1 or 0. It is not reported'
+            ' as its own column: the writer sets it from the same comparison that decides whether a loader is'
+            ' added, and on all 1227 rows read here it was true exactly when Loading Packages (parsed) is not'
+            ' empty, so a separate column would repeat that one. Instruction Sets holds the instruction sets '
+            'the platform recorded for the load, joined by a comma; arm64 and arm were the values on the rows'
+            ' read here. Class Loader Context is the encoding as stored; "=VariableClassLoaderContext=" is '
+            'the marker PackageDexUsage.VARIABLE_CLASS_LOADER_CONTEXT writes when a file was loaded under '
+            'more than one context, and it was the value on 225 of the 1227 rows, so on those rows the column'
+            ' names no classpath. The platform caps a package at MAX_SECONDARY_FILES_PER_OWNER, 100 secondary'
+            ' dex files, and that cap is reached in this data: com.samsung.android.app.routines holds exactly'
+            ' 100 rows on 4 of the images read here, so for that package the list is truncated by the '
+            'platform and its absence of a file is not evidence the file was not loaded. The format records '
+            'no time. There is no timestamp field anywhere in the writer, so a row records that a load '
+            'happened at some point before the file was last written and says nothing about when. That is the'
+            ' difference from the protobuf store at /data/system/package-dex-usage.pb that replaces it, whose'
+            " records each carry a last_used_at_ms. Only the file's own modification time bounds the store, "
+            'and it bounds the whole file rather than any row. The platform writes through '
+            'AbstractStatsBase.maybeWriteAsync, whose WRITE_INTERVAL_MS leaves at least 30 minutes between '
+            'background writes on a production build, so a load in the last half hour before acquisition can '
+            'be absent. The record of an owning package does not outlive the package past the next boot. A '
+            'loading package is different: syncData removes one that is no longer installed only from primary'
+            ' code paths and only from android-11.0.0_r1, and it does not remove loading packages from a '
+            'secondary dex record at any release read here, so a loading package name can outlive the '
+            'package. PackageDexUsage.syncData removes the record of an owning package that is no longer '
+            'installed, removes secondary dex entries for a user that no longer exists, removes a code path '
+            'the owning package no longer declares, and removes the whole package record once nothing is '
+            'left; DexManager.loadInternal calls it at every boot. From android-11.0.0_r1 it passes an empty '
+            'list of packages to keep data about, and android-10.0.0_r1 has no such parameter, so nothing is '
+            'exempted on either. That is read from the source and was not exercised against a device here, so'
+            ' an owning package named here was installed at the last boot or has been recorded since, which '
+            'is not the same as installed at acquisition; a loading package named on a record carries no such'
+            ' bound, and a name absent is not evidence the package was never installed. Across the 39 '
+            'registered Android corpora the file is populated on 13 images, which report Android 10, 11, 12, '
+            '13 and 14. 4 images reporting Android 14 and 15 carry it reduced to its 38 byte header line, and'
+            ' it is absent from 17 Android 15 emulator images and 2 images reporting Android 16 and 17. The '
+            'remaining 3 corpora are extractions that carry no /data/system content at all rather than '
+            'devices without the store, which was checked by listing their members. The store is not simply '
+            'superseded at Android 14: DexManager.notifyDexLoadInternal still calls PackageDexUsage.record at'
+            ' android-14.0.0_r1, and 2 of the images reporting Android 14 carry a populated file whose '
+            'recorded modification time is within days of the extraction. Why the file stops being maintained'
+            ' on some Android 14 and 15 devices and not others was not established here, and because the '
+            'format carries no times it cannot be settled from the file itself. One set of rows is reported '
+            'per store found, each row carrying its own Source File, so an extraction holding the folder '
+            'under more than one root reports each copy rather than merging them; every corpus read here held'
+            ' exactly one copy, and the two-copy case was exercised on a constructed tree. The path pattern '
+            'is not anchored on a data/ prefix, so a raw userdata partition image that carries system/ at its'
+            ' root is matched as well, which is how one of the images read here is laid out. A file matching '
+            "the pattern that does not begin with the format's header line is logged and not read. The two "
+            'Dex Usage (Legacy) artifacts partition the file without overlap: this one and Cross-Package Code'
+            ' Loads. Every package, code path and dex record of the file is reported by one of the two. A '
+            'short dex data line or a line placed before any package line is logged and skipped, and a '
+            'truncated block is logged and ends the read of that file. The used-by-other-apps flag remains '
+            'unreported as its own column, for the reason given above. Loading Packages (parsed) now retains '
+            'the parsed loader suffixes; other input parsing and legacy full-tuple row ordering remain '
+            'unchanged. Original contribution and research credit: Claude.'
+        ),
         "paths": ('*/system/package-dex-usage.list',),
         "output_types": "standard",
         "artifact_icon": "terminal",
@@ -480,7 +465,7 @@ def package_dex_usage_list_secondary(context):
         'Owning Package',
         'Dex File',
         'Android User',
-        'Also Loaded By',
+        'Loading Packages (parsed)',
         'Instruction Sets',
         'Class Loader Context',
         'Source File',
@@ -492,7 +477,11 @@ def package_dex_usage_list_secondary(context):
         relative = context.get_relative_path(path)
         for owner, dex_path, user, _used_by_others, isas, loaders, class_loader in secondary:
             names = [_isolated(loader)[0] for loader in loaders]
-            data_list.append((owner, dex_path, user, ', '.join(names),
-                              ', '.join(isas), class_loader, relative))
-    data_list.sort()
+            legacy_row = (owner, dex_path, user, ', '.join(names),
+                          ', '.join(isas), class_loader, relative)
+            reported_row = legacy_row[:3] + (', '.join(loaders),) + legacy_row[4:]
+            data_list.append((legacy_row, reported_row))
+    # Preserve the complete legacy sort key and its stable order for tied rows.
+    data_list.sort(key=lambda pair: pair[0])
+    data_list = [reported_row for _, reported_row in data_list]
     return data_headers, data_list, '\n'.join(sources)
