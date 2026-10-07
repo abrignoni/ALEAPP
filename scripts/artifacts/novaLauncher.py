@@ -46,31 +46,31 @@ __artifacts_v2__ = {
         "name": "Nova Launcher Drawer Groups",
         "description": "Rows of Nova Launcher's appgroups table, each naming an app component and "
                        "the drawer group it is assigned to",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "Nova Launcher",
         "sample_data": {
             "emu_a15_oss_v10": "Nova Launcher 8.9.0 | 20 rows",
         },
-        "notes": "One row per row of the appgroups table in "
-                 "com.teslacoilsw.launcher/databases/nova.db, joined to the drawer_groups row its "
-                 "groupId names. The join is the one the database records: appgroups.groupId is "
-                 "the _id of a drawer_groups row, which was confirmed on the tested device where "
-                 "groups 2, 7 and 8 resolved to the Entertainment, Social and Travel folders that "
-                 "held exactly the apps shown. Assigned is Unix milliseconds, reported as UTC, and "
-                 "is the appgroups row's own modified column. On the tested device every "
-                 "component appeared twice, once against its group and once against group -100, "
-                 "which has no drawer_groups row, so those rows are reported with a blank Group "
-                 "Name. What group -100 stands for was not established. Hides Apps From Drawer "
-                 "shows the drawer_groups hideApps column as Yes for a non-zero value and No for "
-                 "0. It was 1 on every category folder of the tested device, where the setting was "
-                 "not changed by hand. What the app does with the value was not exercised. Hiding "
-                 "an individual app was not exercised, so this artifact "
-                 "shows folder membership and the folder's "
-                 "hide setting, not a per-app hidden list. Group Type is reported as stored. A row "
-                 "is evidence the app was assigned to the group, not that it was launched.",
+        "notes": "One row per row of the appgroups table in com.teslacoilsw.launcher/databases/nova.db, "
+                 "joined to the drawer_groups row its groupId names. The join is the one the database "
+                 "records: appgroups.groupId is the _id of a drawer_groups row, which was confirmed on "
+                 "the tested device where groups 2, 7 and 8 resolved to the Entertainment, Social and "
+                 "Travel folders that held exactly the apps shown. Assigned is Unix milliseconds, "
+                 "reported as UTC, and is the appgroups row's own modified column. On the tested device "
+                 "every component appeared twice, once against its group and once against group -100, "
+                 "which has no drawer_groups row, so those rows are reported with a blank Group Name. "
+                 "What group -100 stands for was not established. hideApps (as stored) reports the "
+                 "drawer_groups hideApps value without Boolean conversion; NULL and unknown values are "
+                 "retained as returned by SQLite. A NULL can also result from an appgroups row with no "
+                 "matching drawer_groups row; this query does not distinguish those cases. In the "
+                 "historical sample hideApps was 1 on every category folder, where the setting was not "
+                 "changed by hand. What the app does with the value and hiding an individual app were not"
+                 " exercised; no hidden-app status is established by this field. Group Type is reported "
+                 "as stored. A row is evidence the app was assigned to the group, not that it was "
+                 "launched. Original parser and sample notes: Claude.",
         "paths": ('*/com.teslacoilsw.launcher/databases/nova.db*',),
         "output_types": "standard",
         "artifact_icon": "folder",
@@ -163,7 +163,7 @@ def nova_drawer_groups(context):
         for r in records:
             data_list.append((
                 _ms(r[0]), r[1] or '', r[2], r[3] or '', r[4] or '',
-                'Yes' if r[5] else ('No' if r[5] is not None else ''),
+                r[5],
                 r[6] if r[6] is not None else '', r[7],
                 context.get_relative_path(db_path)))
         if records and db_path not in sources:
@@ -171,5 +171,5 @@ def nova_drawer_groups(context):
 
     data_headers = (
         ('Assigned', 'datetime'), 'Group Name', 'Group ID', 'Component', 'Group Type',
-        'Hides Apps From Drawer', 'Tab Order', 'Assignment ID', 'Source File')
+        'hideApps (as stored)', 'Tab Order', 'Assignment ID', 'Source File')
     return data_headers, data_list, '\n'.join(sources)
