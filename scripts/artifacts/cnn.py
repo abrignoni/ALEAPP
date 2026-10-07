@@ -32,13 +32,13 @@ __artifacts_v2__ = {
         },
     },
     "cnnAndroidArticles": {
-        "name": "CNN - Article Views",
+        "name": "CNN - Stored Article Identifiers",
         "description": "Article identifiers held under the CNN app's article_meter_set and "
                        "current_article keys, "
                        "decoded from the form the app stores.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-09-01",
-        "last_update_date": "2026-09-01",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "CNN",
         "notes": "Read from files/datastore/article_meter.preferences_pb and "
@@ -56,7 +56,13 @@ __artifacts_v2__ = {
                  "/_pages/<id> path value; the store holds no "
                  "headline or URL, so none is reported. The app's DataStore files were present on 2 of "
                  "the registered Android corpora swept for them and both carry rows, so the counts "
-                 "recorded here come from two independent extractions.",
+                 "recorded here come from two independent extractions. "
+                 "The report lists stored identifiers and does not establish article views, who "
+                 "accessed an article, or a complete reading history. Meter Reset Date is "
+                 "document-level context from the same preferences file, repeated beside its "
+                 "identifiers; it is not a per-article event time. The stored reset value is "
+                 "retained without date parsing or validation. Original parser and research "
+                 "credit: @AlexisBrignoni, Claude.",
         "paths": ('*/com.cnn.mobile.android.phone/files/datastore/article_meter.preferences_pb',
                   '*/com.cnn.mobile.android.phone/files/datastore/article_shown.preferences_pb'),
         "output_types": ["html", "tsv", "lava"],
