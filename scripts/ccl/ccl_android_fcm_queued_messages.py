@@ -77,8 +77,13 @@ class FcmIterator:
     def __init__(self, db_path: os.PathLike):
         self._db = ccl_leveldb.RawLevelDb(db_path)
         # Pre-populate a list of deleted keys, although that's likely to be all of them really...
-        self._deleted_keys = frozenset(
-            rec.key for rec in self._db.iterate_records_raw() if rec.state == ccl_leveldb.KeyState.Deleted)
+        # __exit__ cannot run if this constructor fails. @AlexisBrignoni, Codex.
+        try:
+            self._deleted_keys = frozenset(
+                rec.key for rec in self._db.iterate_records_raw() if rec.state == ccl_leveldb.KeyState.Deleted)
+        except BaseException:
+            self._db.close()
+            raise
 
     def __iter__(self) -> typing.Iterable[FcmRecord]:
         for rec in self._db.iterate_records_raw():
