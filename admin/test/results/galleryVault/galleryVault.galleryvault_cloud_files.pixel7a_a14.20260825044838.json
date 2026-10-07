@@ -30,7 +30,7 @@
     "MIME Type",
     "Size (bytes)",
     "Dimensions",
-    "Upload Complete",
+    "is_complete (as stored)",
     "Has Thumbnail",
     "Moved to Recycle Bin",
     "Cloud Storage Key",
