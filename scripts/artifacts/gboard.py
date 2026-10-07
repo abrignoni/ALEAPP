@@ -1,10 +1,10 @@
 __artifacts_v2__ = {
     "get_gboardCache": {
         "name": "Gboard - Clipboard",
-        "description": "Rows of the clips table in gboard_clipboard.db, with the clipboard image where the file is present. Item Type 1 is shown as 'Pinned' and Entity Type 1 as 'Link'; those labels are not sourced. 0 is shown blank and other values as stored.",
-        "author": "@ydkhatri",
+        "description": "Rows of the clips table in gboard_clipboard.db, with the clipboard image where the file is present. item_type and entity_type are reported as stored, including NULL, zero and unknown values. Their meanings are not established here.",
+        "author": "@ydkhatri, @AlexisBrignoni, Codex",
         "creation_date": "2021-01-09",
-        "last_update_date": "2021-01-09",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Gboard Keyboard",
         "notes": "",
@@ -217,8 +217,8 @@ def get_gboardCache(context):
         cursor = db.cursor()
         cursor.execute('''
             SELECT datetime(timestamp/1000,'unixepoch'), text, html_text, uri,
-            CASE item_type WHEN 0 THEN '' WHEN 1 THEN 'Pinned' ELSE item_type END,
-            CASE entity_type WHEN 0 THEN '' WHEN 1 THEN 'Link' ELSE entity_type END,
+            item_type,
+            entity_type,
             _id,
             replace(uri, rtrim(uri, replace(uri, '/', '')), '')
             FROM clips
@@ -239,7 +239,7 @@ def get_gboardCache(context):
             data_list.append((_str_to_utc(row[0]), row[1], row[2], row[3], image, row[4], row[5], row[6]))
 
     data_headers = (('Timestamp', 'datetime'), 'Text', 'HTML Text', 'URI', ('Image', 'media'),
-                    'Item Type', 'Entity Type', 'ID')
+                    'item_type (as stored)', 'entity_type (as stored)', 'ID')
     return data_headers, data_list, source_path
 
 
