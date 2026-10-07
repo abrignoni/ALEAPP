@@ -470,27 +470,37 @@ __artifacts_v2__ = {
     "get_telegramSaveToGallery": {
         "name": "Telegram - Save to Gallery Settings",
         "description": (
-            "Parses the Telegram save-to-gallery configuration from the mainconfig.xml shared preferences file, reporting for each category of chat whether incoming photos and videos are saved to the device gallery and the video size limit. The client writes these keys when a setting is saved or when it migrates the older save_gallery setting. A category reported as not set had no key, and the client then applies its defaults: photos and videos off, video limit 100 MB."
+            "Reports the selected mainconfig.xml save-to-gallery preference renderings for private "
+            "chats, groups and channels, plus the legacy setting when present. Video Size Limit "
+            "preserves each nonempty decoded string; absent or empty decoded limits are labeled "
+            "without inferring a client default, numeric unit or saved state."
         ),
-        "author": "Alexis Brignoni, @AlexisBrignoni, Codex",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-04",
-        "last_update_date": "2026-08-15",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "Telegram",
         "notes": "Keys are <prefix>_save_gallery_photo, <prefix>_save_gallery_video and "
-                 "<prefix>_save_gallery_limitVideo, where the prefix is user, groups or "
-                 "channels. The client reads the photo and video keys with a default of false and "
-                 "the limitVideo key with a default of 104,857,600 bytes (100 MB), so an absent "
-                 "key means that default applied. The module prints 'Not set (app default, off)' "
-                 "in Video Size Limit when the limit key is absent; the client's default for that "
-                 "key is 100 MB, not off. Per-chat exceptions, which the client keeps in separate "
-                 "preference files, are not read. The older single "
-                 "save_gallery key is reported when present. Reference: Telegram-Android, "
-                 "'SaveToGallerySettingsHelper.java (preference key names and defaults)', "
-                 "https://github.com/DrKLO/Telegram/blob/"
-                 "45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/"
-                 "org/telegram/messenger/SaveToGallerySettingsHelper.java"
-                 "#L161-L167",
+                 "<prefix>_save_gallery_limitVideo, where the prefix is user, groups or channels. Video "
+                 "Size Limit reports a nonempty decoded string unchanged, including '0' and whitespace; an"
+                 " absent key or empty decoded value is shown as 'Not stored or empty (decoded value)'. "
+                 "This does not distinguish absence from explicit empty XML or establish a numeric unit or"
+                 " applied client default. The existing XML value-attribute-or-text fallback and last "
+                 "duplicate key assignment remain unchanged. Save Photos and Save Videos keep their "
+                 "existing exact-'true' Yes/otherwise No rendering and absent-key 'Not set (app default, "
+                 "off)' wording; that wording is not newly verified by this correction. Successful XML "
+                 "parsing emits the three category rows; presence of save_gallery adds the existing"
+                 " legacy row. Only the first selected mainconfig.xml is read; per-chat exceptions and "
+                 "other preference states are not added. Historical notes cited a default of false for "
+                 "photo/video and 104,857,600 bytes (100 MB) for limitVideo, and described older "
+                 "save_gallery migration. Those client/version/default/unit claims and historical sample "
+                 "counts have not been independently verified here. Reference retained for research: "
+                 "Telegram-Android, 'SaveToGallerySettingsHelper.java (preference key names and "
+                 "defaults)', "
+                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/messenger/SaveToGallerySettingsHelper.java#L161-L167."
+                 " Original contribution credited to Alexis Brignoni. Missing-versus-empty/raw XML "
+                 "representation, flag semantics, source/account association and client defaults remain "
+                 "research limits.",
         "paths": ('*/org.telegram.messenger*/shared_prefs/mainconfig.xml',),
         "output_types": "standard",
         "artifact_icon": "photo",
@@ -1936,7 +1946,7 @@ def get_telegramSaveToGallery(context):
             label,
             flag(f'{prefix}_save_gallery_photo'),
             flag(f'{prefix}_save_gallery_video'),
-            limit if limit else _GALLERY_DEFAULT,
+            limit if limit else 'Not stored or empty (decoded value)',
         ))
     if 'save_gallery' in values:
         data_list.append((
