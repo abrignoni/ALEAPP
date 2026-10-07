@@ -308,51 +308,57 @@ __artifacts_v2__ = {
     "get_telegramAccounts": {
         "name": "Telegram - Accounts",
         "description": (
-            "Parses the Telegram account slots from the userconfing.xml and userconfig1-3.xml shared preferences files. Reports the signed-in user of each slot, decoded from the stored user record, together with the app passcode configuration, the auto-lock delay, the stored lastContactsSyncTime value and the last_call_phone_number value, which the client sets to the number of an incoming phone call it saw ringing."
+            "Reports the existing decoded user-record and per-file configuration projections from "
+            "selected Telegram userconf XML files, including lastContactsSyncTime through the "
+            "existing datetime conversion and the stored last_call_phone_number value. These keys "
+            "alone do not establish a contacts-sync event or a dialled call."
         ),
-        "author": "Alexis Brignoni, @AlexisBrignoni, Codex",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-04",
-        "last_update_date": "2026-08-15",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "Telegram",
-        "notes": "Telegram supports several accounts on one device; slot 0 is stored in "
-                 "userconfing.xml, spelled that way by the client, and slots 1 to 3 in "
-                 "userconfig1.xml through userconfig3.xml. The user key holds a "
-                 "base64-encoded TL user record, decoded here for the account id, names, "
-                 "username and phone number. Two record constructors are read (0x215C4438 and "
-                 "0x31774388). A slot whose record uses another constructor is reported with those "
-                 "fields blank, or not reported at all when it also holds no passcode hash and no "
-                 "last_call_phone_number value. A passcode is in use when passcodeHash1 holds a "
-                 "value; passcodeType 0 is a PIN and 1 is a password. The client keeps these keys, "
-                 "autoLockIn and useFingerprint in userconfing.xml only and they apply to the "
-                 "whole app, so the Passcode, Auto-Lock and Unlock With Fingerprint cells of a "
-                 "slot 1 to 3 row do not describe that slot. Unlock With Fingerprint is blank when "
-                 "the key is absent or false; the client's default for an absent key is true. The "
-                 "stored hash and "
-                 "salt are not reported, only whether they are present. Last Contacts Sync is the "
-                 "stored lastContactsSyncTime value. The client sets it to the current time on a "
-                 "contacts sync and also to 23 hours before the current time when no value exists, "
-                 "so it is not by itself the time of a sync. The column headed Last Dialled Number "
-                 "holds the last_call_phone_number value, which the client sets to the number of "
-                 "an incoming phone call it saw ringing; it is not a dialled number. The key was "
-                 "present in userconfing.xml on hc_pixel8pro_a16, hc_pixel8pro_a17, "
-                 "kevin_pocox7_a15, pixel7a_a14, russell_pixel6a_a13 and sharon_a14 and absent on "
-                 "samsungs20_a13 (counted on runs of 3 Oct 2026). Reference: Telegram-Android, "
+        "notes": "Telegram supports several accounts on one device; slot 0 is stored in userconfing.xml, "
+                 "spelled that way by the client, and slots 1 to 3 in userconfig1.xml through "
+                 "userconfig3.xml. The user key holds a base64-encoded TL user record, decoded here for "
+                 "the account id, names, username and phone number. Two record constructors are read "
+                 "(0x215C4438 and 0x31774388). A slot whose record uses another constructor is reported "
+                 "with those fields blank, or not reported at all when it also holds no passcode hash and "
+                 "no last_call_phone_number value. A passcode is in use when passcodeHash1 holds a value; "
+                 "passcodeType 0 is a PIN and 1 is a password. The client keeps these keys, autoLockIn and"
+                 " useFingerprint in userconfing.xml only and they apply to the whole app, so the "
+                 "Passcode, Auto-Lock and Unlock With Fingerprint cells of a slot 1 to 3 row do not "
+                 "describe that slot. Unlock With Fingerprint is blank when the key is absent or false; "
+                 "the client's default for an absent key is true. The stored hash and salt are not "
+                 "reported, only whether they are present. The lastContactsSyncTime (stored value) column "
+                 "is the stored key passed through the existing integer/magnitude-normalizing UTC "
+                 "conversion when nonzero; zero, missing and invalid integer text still render blank. The "
+                 "datetime annotation and conversion are unchanged. Historical references below state: The"
+                 " client sets it to the current time on a contacts sync and also to 23 hours before the "
+                 "current time when no value exists, so it is not by itself the time of a sync. The "
+                 "last_call_phone_number (as stored) column retains the existing XML-derived key value, "
+                 "including existing attribute/text/empty fallback behavior, without inferring call "
+                 "direction or an event. The historical CallReceiver reference below attributes that key "
+                 "to an incoming ringing number; vendor-version applicability is not verified by this "
+                 "header correction. The key was present in userconfing.xml on hc_pixel8pro_a16, "
+                 "hc_pixel8pro_a17, kevin_pocox7_a15, pixel7a_a14, russell_pixel6a_a13 and sharon_a14 and "
+                 "absent on samsungs20_a13 (counted on runs of 3 Oct 2026). Reference: Telegram-Android, "
                  "'SharedConfig.java (passcodeHash1, passcodeType, autoLockIn)', "
-                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/"
-                 "TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.java#L60-L61 "
-                 "and "
-                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/"
-                 "TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.java#L432-L444. "
-                 "Reference: Telegram-Android, 'UserConfig.java (preference file names)', "
-                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/"
-                 "TMessagesProj/src/main/java/org/telegram/messenger/UserConfig.java#L412-L416. "
-                 "Reference: Telegram-Android, 'UserConfig.java (lastContactsSyncTime default)', "
-                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/"
-                 "TMessagesProj/src/main/java/org/telegram/messenger/UserConfig.java#L304. "
-                 "Reference: Telegram-Android, 'CallReceiver.java', "
-                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/"
-                 "TMessagesProj/src/main/java/org/telegram/messenger/CallReceiver.java#L22-L30",
+                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.java#L60-L61"
+                 " and "
+                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.java#L432-L444."
+                 " Reference: Telegram-Android, 'UserConfig.java (preference file names)', "
+                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/messenger/UserConfig.java#L412-L416."
+                 " Reference: Telegram-Android, 'UserConfig.java (lastContactsSyncTime default)', "
+                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/messenger/UserConfig.java#L304."
+                 " Reference: Telegram-Android, 'CallReceiver.java', "
+                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/messenger/CallReceiver.java#L22-L30"
+                 " Header neutralization only: all eleven native values, per-slot projection/defaults, two"
+                 " admitted user constructors, selected input occurrences, row order and existing source "
+                 "aggregation are unchanged. Historical vendor defaults/global configuration/private "
+                 "sample observations and remaining constructor/source semantics are not newly verified or"
+                 " repaired. Original contribution credited to Alexis Brignoni; cited Telegram-Android "
+                 "research retained.",
         "paths": ('*/org.telegram.messenger*/shared_prefs/userconf*.xml',),
         "output_types": "standard",
         "artifact_icon": "user-circle",
@@ -1603,7 +1609,7 @@ def _decode_account_user(raw):
 @artifact_processor
 def get_telegramAccounts(context):
     data_headers = (
-        ('Last Contacts Sync', 'datetime'),
+        ("lastContactsSyncTime (stored value)", 'datetime'),
         'Account Slot',
         'User ID',
         'First Name',
@@ -1613,7 +1619,7 @@ def get_telegramAccounts(context):
         'Passcode',
         'Auto-Lock',
         'Unlock With Fingerprint',
-        'Last Dialled Number',
+        "last_call_phone_number (as stored)",
     )
     data_list = []
     sources = []
