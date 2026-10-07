@@ -88,17 +88,17 @@ __artifacts_v2__ = {
     "get_chromeDownloads": {
         "name": "Downloads",
         "description": "Parses Downloads from Chromium based browsers",
-        "author": "@abrignoni",
+        "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2020-03-19",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Chromium",
         "notes": "Tab URL is the downloads.tab_url column, the page the download was started from. The "
                  "source URL of the downloaded file is held in the downloads_url_chains table, which "
-                 "this artifact does not parse. Danger Type and Interrupt Reason decode the stored "
-                 "Chromium enum values for danger types 0 to 23 and the interrupt reasons listed in "
-                 "the code. A stored value outside those sets is shown blank, as 0 is, so a blank "
-                 "cell does not establish that the stored value was 0. Reference: Chromium, "
+                 "this artifact does not parse. State, Danger Type and Interrupt Reason retain the "
+                 "stored downloads.state, danger_type and interrupt_reason values without enum "
+                 "interpretation. They do not establish completion, safety or user intent. "
+                 "Historical mapping research references (not verified across browser versions): Chromium, "
                  "'components/history/core/browser/download_constants.h', "
                  "https://github.com/chromium/chromium/blob/8f4baaae073181e7e0fea1807f8db6ad720dbcb7/components/history/core/browser/download_constants.h; "
                  "'download_interrupt_reason_values.h', "
@@ -362,8 +362,8 @@ def get_chromeSearchTerms(context):
 def get_chromeDownloads(context):
     files_found = unique_files(context)
     all_data = []
-    data_headers = ['Start Time', 'End Time', 'Last Access Time', 'Tab URL', 'Target Path', 'State',
-                    'Danger Type', 'Interrupt Reason', 'Opened?', 'Received Bytes', 'Total Bytes']
+    data_headers = ['Start Time', 'End Time', 'Last Access Time', 'Tab URL', 'Target Path', 'State (as stored)',
+                    'Danger Type (as stored)', 'Interrupt Reason (as stored)', 'Opened?', 'Received Bytes', 'Total Bytes']
     lava_data_headers = data_headers.copy()
     for i in (0, 1, 2):
         lava_data_headers[i] = (lava_data_headers[i], 'datetime')
@@ -382,71 +382,9 @@ def get_chromeDownloads(context):
         {last_access_sel},
         {tab_url_sel},
         target_path,
-        CASE state
-            WHEN "0" THEN "In Progress"
-            WHEN "1" THEN "Complete"
-            WHEN "2" THEN "Canceled"
-            WHEN "3" THEN "Interrupted"
-            WHEN "4" THEN "Interrupted"
-        END,
-        CASE danger_type
-            WHEN "0" THEN ""
-            WHEN "1" THEN "Dangerous"
-            WHEN "2" THEN "Dangerous URL"
-            WHEN "3" THEN "Dangerous Content"
-            WHEN "4" THEN "Content May Be Malicious"
-            WHEN "5" THEN "Uncommon Content"
-            WHEN "6" THEN "Dangerous But User Validated"
-            WHEN "7" THEN "Dangerous Host"
-            WHEN "8" THEN "Potentially Unwanted"
-            WHEN "9" THEN "Allowlisted by Policy"
-            WHEN "10" THEN "Pending Scan"
-            WHEN "11" THEN "Blocked - Password Protected"
-            WHEN "12" THEN "Blocked - Too Large"
-            WHEN "13" THEN "Warning - Sensitive Content"
-            WHEN "14" THEN "Blocked - Sensitive Content"
-            WHEN "15" THEN "Safe - Deep Scanned"
-            WHEN "16" THEN "Dangerous, But User Opened"
-            WHEN "17" THEN "Prompt For Scanning"
-            WHEN "18" THEN "Blocked - Unsupported Type"
-            WHEN "19" THEN "Dangerous - Account Compromise"
-            WHEN "20" THEN "Deep Scan Failed"
-            WHEN "21" THEN "Encrypted - Prompt User for Password for Local Scanning"
-            WHEN "22" THEN "Encrypted - Pending Detailed Verdict after Local Scanning"
-            WHEN "23" THEN "Blocked - Scan Failed"
-        END,
-        CASE interrupt_reason
-            WHEN "0" THEN ""
-            WHEN "1" THEN "File Error"
-            WHEN "2" THEN "Access Denied"
-            WHEN "3" THEN "Disk Full"
-            WHEN "5" THEN "Path Too Long"
-            WHEN "6" THEN "File Too Large"
-            WHEN "7" THEN "Virus"
-            WHEN "10" THEN "Temporary Problem"
-            WHEN "11" THEN "Blocked"
-            WHEN "12" THEN "Security Check Failed"
-            WHEN "13" THEN "Resume Error"
-            WHEN "14" THEN "File Hash Mismatch"
-            WHEN "15" THEN "File Same as Source"
-            WHEN "20" THEN "Network Error"
-            WHEN "21" THEN "Operation Timed Out"
-            WHEN "22" THEN "Connection Lost"
-            WHEN "23" THEN "Server Down"
-            WHEN "30" THEN "Server Error"
-            WHEN "31" THEN "Range Request Error"
-            WHEN "32" THEN "Server Precondition Error"
-            WHEN "33" THEN "Unable To Get File"
-            WHEN "34" THEN "Server Unauthorized"
-            WHEN "35" THEN "Server Certificate Problem"
-            WHEN "36" THEN "Server Access Forbidden"
-            WHEN "37" THEN "Server Unreachable"
-            WHEN "38" THEN "Content Lenght Mismatch"
-            WHEN "39" THEN "Cross Origin Redirect"
-            WHEN "40" THEN "Canceled"
-            WHEN "41" THEN "Browser Shutdown"
-            WHEN "50" THEN "Browser Crashed"
-        END,
+        state,
+        danger_type,
+        interrupt_reason,
         CASE opened WHEN 0 THEN '' WHEN 1 THEN 'Yes' END,
         received_bytes,
         total_bytes
