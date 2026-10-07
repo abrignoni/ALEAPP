@@ -60,9 +60,9 @@ __artifacts_v2__ = {
     "bitwarden_vault_items": {
         "name": "Bitwarden - Vault Items",
         "description": "Parses the vault item records stored by the Bitwarden Android password manager.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, Codex",
         "creation_date": "2026-08-30",
-        "last_update_date": "2026-08-30",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Bitwarden",
         "notes": "One row per entry in the ciphers table of databases/vault_database. Bitwarden is end "
@@ -76,15 +76,20 @@ __artifacts_v2__ = {
                  "and the whole app directory was then searched for that name, which returned nothing. "
                  "What the same JSON does hold in plain text, and what is reported here, is the item's "
                  "metadata: the Item ID, the owning User ID, the Type, the Created and Last Revised "
-                 "dates, the Favorite and Master Password Reprompt columns, which show Yes when the "
-                 "stored favorite or reprompt value is set and No otherwise, including when the key is "
-                 "absent, and the Organization ID where the item belongs to an organisation rather than "
+                 "dates, the favorite and reprompt fields as compact status documents with their parsed "
+                 "values encoded as JSON text, and the Organization ID where the item belongs to an organisation rather than "
                  "the personal vault. That gives an examiner how many items a vault held, of what kinds, "
                  "and when each was created and last changed, without their contents. Type is decoded "
                  "from the app's own enum, 1 login, 2 secure note, 3 card, 4 identity, 5 SSH key, 6 bank "
                  "account, 7 drivers licence, 8 passport (CipherTypeJson.kt at bitwarden/android "
                  "59d0faaf1266a03ccddc2809332cfa9c95393f78); any other value is reported as stored. "
-                 "Dates are ISO 8601 with a Z suffix and are reported as UTC. Three sibling tables in "
+                 "Dates are ISO 8601 with a Z suffix and are reported as UTC. Field documents distinguish "
+                 "missing keys, explicit null, false, zero, invalid input and non-object roots; non-object "
+                 "documents contain only the root kind. Inner JSON text follows Python JSON semantics, "
+                 "including NaN and Infinity extensions. It preserves parsed values rather than original "
+                 "bytes, number spelling or duplicate object keys. No favorite or reprompt enum meaning is "
+                 "assigned. Truthy non-object roots remain unsupported by the existing row projection. "
+                 "Three sibling tables in "
                  "the same database are not parsed here and were empty on the tested device: folders, "
                  "collections and sends; what they hold was not measured. The database runs in WAL mode "
                  "and held its rows in the -wal "
@@ -222,6 +227,33 @@ def bitwarden_account(context):
     return data_headers, data_list, '\n'.join(sources)
 
 
+def _field_document(raw, field):
+    """Report one parsed JSON field without conflating absence with false."""
+    if raw is None:
+        document = {'status': 'sql_null_input'}
+    elif not isinstance(raw, (str, bytes, bytearray)):
+        document = {'status': 'unsupported_json_input_type'}
+    elif len(raw) == 0:
+        document = {'status': 'empty_input'}
+    else:
+        try:
+            root = json.loads(raw)
+        except (TypeError, ValueError):
+            document = {'status': 'invalid_json'}
+        else:
+            if isinstance(root, dict):
+                if field in root:
+                    document = {'status': 'present', 'json': json.dumps(
+                        root[field], ensure_ascii=True, separators=(',', ':'))}
+                else:
+                    document = {'status': 'missing_key'}
+            else:
+                kinds = {type(None): 'null', bool: 'boolean', int: 'integer',
+                         float: 'float', str: 'string', list: 'array'}
+                document = {'status': 'decoded_non_object', 'root_kind': kinds[type(root)]}
+    return json.dumps(document, ensure_ascii=True, separators=(',', ':'), allow_nan=False)
+
+
 @artifact_processor
 def bitwarden_vault_items(context):
     query = '''SELECT id, user_id, cipher_type, cipher_json, organization_id
@@ -235,12 +267,11 @@ def bitwarden_vault_items(context):
         for record in records:
             counted = True
             payload = _json(record[3]) or {}
-            reprompt = payload.get('reprompt')
             data_list.append((
                 _iso(payload.get('creationDate')), _iso(payload.get('revisionDate')),
                 record[0] or '', _lookup(CIPHER_TYPES, record[2]),
-                'Yes' if payload.get('favorite') else 'No',
-                'Yes' if reprompt else 'No',
+                _field_document(record[3], 'favorite'),
+                _field_document(record[3], 'reprompt'),
                 record[4] or '', record[1] or '', rel,
             ))
         if counted and db_path not in sources:
@@ -248,6 +279,6 @@ def bitwarden_vault_items(context):
 
     data_headers = (
         ('Created', 'datetime'), ('Last Revised', 'datetime'), 'Item ID', 'Type',
-        'Favorite', 'Master Password Reprompt', 'Organization ID', 'User ID', 'Source File',
+        'favorite (typed JSON)', 'reprompt (typed JSON)', 'Organization ID', 'User ID', 'Source File',
     )
     return data_headers, data_list, '\n'.join(sources)
