@@ -2,39 +2,38 @@ __artifacts_v2__ = {
     "musicolet_library": {
         "name": "Musicolet Library and Play Counts",
         "description": "Audio files Musicolet has indexed, with play counts and last played times",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "Musicolet",
         "sample_data": {
             "emu_a15_oss_v12": "Musicolet 6.14.1 | 5 rows",
         },
-        "notes": "One row per row of TABLE_SONGS in "
-                 "in.krosbits.musicolet/databases/DB_SONGS_LOG, which is the player's own index "
-                 "of the audio it has found. Last Played, Date Added and Date Modified are Unix "
-                 "milliseconds and are reported as UTC. Date Added and Date Modified come from the "
-                 "file rather than from any play, so they are filled on a track that was never "
-                 "opened; the stored Last Played and Play Count are 0 on such a track, shown here "
-                 "as a blank Last Played and a Play Count of 0, which is what "
-                 "separates a file the app merely indexed from one it played. Both cases were "
-                 "produced on the tested device: two tracks were played and three were indexed and "
-                 "left alone. Album Artist, Genre and Composer each held the single value "
-                 "<unknown> on every row; the audio this image was built from carries no such "
-                 "tags. Play Count is COL_NUM_PLAYED. Plays This Week, Plays This Month and Plays "
-                 "This Year are COL_NUM_PLAYED_W, COL_NUM_PLAYED_M and COL_NUM_PLAYED_Y, named "
-                 "here from their suffixes; what period each covers was not established. All four "
-                 "held the same value on every row of the tested "
-                 "image; the only plays happened in the same week they were counted in. How the "
-                 "three suffixed counters behave over a longer period was not exercised. Resume "
-                 "Position (ms) is the app's COL_LASTPOS and was 0 on every row here; both "
-                 "played tracks were played to the end. Storage "
-                 "Path is the app's own readable COL_LOGPATH; Media Path is COL_PATH, a "
-                 "musicolet:// URI, as stored. Whether the number in it is the file's MediaStore "
-                 "id was not checked. Rating is COL_RATING as stored and was 0 on every row. A "
-                 "row is "
-                 "evidence the app indexed the file, and a non-zero Play Count is evidence it "
-                 "played it, neither being evidence a person listened.",
+        "notes": "One row per row of TABLE_SONGS in in.krosbits.musicolet/databases/DB_SONGS_LOG, "
+                 "which is the player's own index of the audio it has found. Last Played, Date Added "
+                 "and Date Modified are Unix milliseconds and are reported as UTC. Date Added and Date "
+                 "Modified come from the file rather than from any play, so they are filled on a track "
+                 "that was never opened; the stored Last Played and Play Count are 0 on such a track, "
+                 "shown here as a blank Last Played and a Play Count of 0, which is what separates a "
+                 "file the app merely indexed from one it played. Both cases were produced on the "
+                 "tested device: two tracks were played and three were indexed and left alone. Album "
+                 "Artist, Genre and Composer each held the single value <unknown> on every row; the "
+                 "audio this image was built from carries no such tags. Play Count is COL_NUM_PLAYED. "
+                 "COL_DURATION, COL_NUM_PLAYED_W, COL_NUM_PLAYED_M and COL_NUM_PLAYED_Y are reported "
+                 "as stored. The unit of COL_DURATION and the periods or reset rules of the W, M and Y "
+                 "columns have not been established. Play Count and the W, M and Y counters held the "
+                 "same value on every row of the tested image; the only plays happened in the same "
+                 "week they were counted in. How the three suffixed counters behave over a longer "
+                 "period was not exercised. Resume Position (ms) is the app's COL_LASTPOS and was 0 on "
+                 "every row here; both played tracks were played to the end. Storage Path is the app's "
+                 "own readable COL_LOGPATH; Media Path is COL_PATH, a musicolet:// URI, as stored. "
+                 "Whether the number in it is the file's MediaStore id was not checked. Rating is "
+                 "COL_RATING as stored and was 0 on every row. A row is evidence the app indexed the "
+                 "file, and a non-zero Play Count is evidence it played it, neither being evidence a "
+                 "person listened. Original parser and recorded Musicolet observations credited to "
+                 "@AlexisBrignoni, Claude. The four source-column headers replace Duration (ms), Plays "
+                 "This Week, Plays This Month and Plays This Year without changing the stored values.",
         "paths": ('*/in.krosbits.musicolet/databases/DB_SONGS_LOG*',),
         "output_types": "standard",
         "artifact_icon": "music",
@@ -179,8 +178,8 @@ def musicolet_library(context):
     data_headers = (
         ('Date Added', 'datetime'), ('Last Played', 'datetime'),
         ('Date Modified', 'datetime'), 'Title', 'Artist', 'Album', 'Album Artist',
-        'Genre', 'Composer', 'Year', 'Track No', 'Duration (ms)', 'Play Count',
-        'Plays This Week', 'Plays This Month', 'Plays This Year',
+        'Genre', 'Composer', 'Year', 'Track No', 'COL_DURATION (As Stored)', 'Play Count',
+        'COL_NUM_PLAYED_W (As Stored)', 'COL_NUM_PLAYED_M (As Stored)', 'COL_NUM_PLAYED_Y (As Stored)',
         'Resume Position (ms)', 'Rating', 'Storage Path', 'Media Path', 'Source File')
     return data_headers, data_list, '\n'.join(sources)
 
