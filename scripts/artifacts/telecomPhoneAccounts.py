@@ -3,9 +3,9 @@ __artifacts_v2__ = {
         "name": "Telecom Phone Accounts",
         "description": "The calling accounts registered with the Android telecom service, with the "
                        "label, handle and subscription number stored for each.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Codex, Claude",
         "creation_date": "2026-09-03",
-        "last_update_date": "2026-09-04",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Device Connections",
         "notes": "Read from phone-account-registrar-state.xml in the telecom service's own folder. "
@@ -126,13 +126,14 @@ def telecom_phone_accounts(context):
             logfunc(f'Telecom Phone Accounts: could not read {os.path.basename(file_found)}: {error}')
             continue
 
-        default_handle = root.find('default_outgoing/default_outgoing_phone_account_handle')
-        default_key = ('', '', '')
-        if default_handle is not None:
+        default_keys = []
+        for default_handle in root.findall('default_outgoing/default_outgoing_phone_account_handle'):
+            default_key = ('', '', '')
             inner = default_handle.find('account_handle/phone_account_handle')
             if inner is not None:
                 default_key = (_text(inner, 'component_name'), _text(inner, 'id'),
                                _text(default_handle, 'user_serial_number'))
+            default_keys.append(default_key)
 
         rows = 0
         for account in root.iter('phone_account'):
@@ -148,7 +149,7 @@ def telecom_phone_accounts(context):
                 account_id,
                 user_serial,
                 _text(account, 'enabled'),
-                (component, account_id, user_serial) == default_key and any(default_key),
+                (component, account_id, user_serial) in default_keys and any((component, account_id, user_serial)),
                 ', '.join(s for s in schemes if s),
                 _text(account, 'capabilities'),
                 _text(account, 'highlight_color'),
