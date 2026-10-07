@@ -28,8 +28,8 @@ __artifacts_v2__ = {
     },
     "get_bumble_matches": {
         "name": "Bumble - Matches",
-        "description": "Rows of the conversation_info table of Bumble's ChatComDatabase: user name, age, gender, game mode, profile image URL and user IDs. A row shows the app held a conversation entry for that user; the source of the game mode labels is not stated in this module.",
-        "author": "Kevin Pagano (@stark4n6)", "creation_date": "2022-11-07", "last_update_date": "2022-11-07",
+        "description": "Rows of the conversation_info table of Bumble's ChatComDatabase: user name, age, gender, game mode, profile image URL and user IDs. A row shows the app held a conversation entry for that user; game_mode is reported as stored without assigning enum meanings.",
+        "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex", "creation_date": "2022-11-07", "last_update_date": "2026-10-06",
         "requirements": "none", "category": "Bumble",
         "paths": ('*/com.bumble.app/databases/ChatComDatabase*',),
         "output_types": "standard", "artifact_icon": "users",
@@ -666,12 +666,11 @@ def get_bumble_matches(context):
     source_path = _chat_db(files_found)
     rows = _run(source_path, """
         SELECT user_name, age, gender,
-               CASE game_mode WHEN 0 THEN 'Bumble Date' WHEN 1 THEN 'Bumble Friends'
-                    WHEN 5 THEN 'Bumble Bizz' END,
+               game_mode,
                user_image_url, user_id, encrypted_user_id
         FROM conversation_info ORDER BY user_id
     """)
     data_list = [(r[0], r[1], r[2], r[3], r[4], r[5], r[6]) for r in rows]
-    data_headers = ('User Name', 'Age', 'Gender', 'Mode', 'Profile Image URL', 'User ID',
+    data_headers = ('User Name', 'Age', 'Gender', 'game_mode (as stored)', 'Profile Image URL', 'User ID',
                     'Encrypted User ID')
     return data_headers, data_list, source_path
