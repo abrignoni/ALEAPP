@@ -1,21 +1,22 @@
 __artifacts_v2__ = {
     "get_roles": {
         "name": "roles",
-        "description": "Parses the roles in the roles.xml file, one row per role with the source path variant, the user and one holder package.",
-        "author": "@abrignoni",
+        "description": "Parses the roles in the roles.xml file, one row per returned direct-child name occurrence, with the source path variant, user and role. A role with no returned child name has one blank row.",
+        "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2021-01-25",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "App Roles",
-        "notes": "Source Path Variant records which of the two collected paths a row was read from. "
-                 "It is not an Android version, "
-                 "and the path a file sits at does not establish the OS version of the device. "
-                 "A role with no holder is reported with a blank Holder (18 of 40 roles on anne_a15, "
-                 "16 of 44 on hc_pixel8pro_a16, 16 of 38 on samsunga53_a14). Where a role lists more "
-                 "than one holder the code keeps only the last; no role on those three images listed "
-                 "more than one, so that case was not exercised. Files under a path component named "
-                 "mirror are skipped; a copy under data_mirror is read, so on samsunga53_a14 each "
-                 "role is reported twice (76 rows).",
+        "notes": "Source Path Variant records the collected path, not an Android version. "
+                 "Every direct child with a name attribute is reported in XML order, including "
+                 "blank names, duplicates and named children with other tags. A blank Holder row "
+                 "means no child name was returned, not proof that no holder exists. Missing child "
+                 "or role name attributes are diagnosed; malformed children or roles alone are "
+                 "skipped. Source File is included only when rows come from multiple distinct "
+                 "evidence-relative origins. Historical Anne, HC Pixel and Samsung A53 runs had no "
+                 "multiple-holder role; that boundary uses constructed XML. Files under a path component named "
+                 "mirror are skipped; copies under data_mirror are read. Samsung A53 historically "
+                 "returned 76 rows from these copies; state identity is not established here.",
         "paths": ('*/system/users/*/roles.xml', '*/misc_de/*/apexdata/com.android.permission/roles.xml'),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "package",
@@ -34,6 +35,7 @@ __artifacts_v2__ = {
     }
 }
 
+import json
 import re
 import xml.etree.ElementTree as ET
 
@@ -58,6 +60,11 @@ def _parse_xml(file_found):
             return ET.Element('empty')
 
 
+def _role_diagnostic(value):
+    text = str(value)
+    return json.dumps(text[:240], ensure_ascii=True) + (' [truncated]' if len(text) > 240 else '')
+
+
 @artifact_processor
 def get_roles(context):
     files_found = context.get_files_found()
@@ -65,6 +72,8 @@ def get_roles(context):
     slash = '\\' if is_platform_windows() else '/'
     data_list = []
     source_paths = []
+    origins = []
+    contributors = []
 
     for file_found in files_found:
         file_found = str(file_found)
@@ -86,12 +95,27 @@ def get_roles(context):
 
         source_paths.append(file_found)
         root = _parse_xml(file_found)
-        for elem in root:
-            holder = ''
+        relative = context.get_relative_path(file_found)
+        first_row = len(data_list)
+        for role_ordinal, elem in enumerate(root, 1):
+            if 'name' not in elem.attrib:
+                logfunc(f'Roles: missing role name at {_role_diagnostic(relative)}; role ordinal {role_ordinal}')
+                continue
             role = elem.attrib['name']
-            for subelem in elem:
-                holder = subelem.attrib['name']
-            data_list.append((path_variant, user, role, holder))
+            holders = []
+            for child_ordinal, subelem in enumerate(elem, 1):
+                if 'name' not in subelem.attrib:
+                    logfunc(f'Roles: missing child name at {_role_diagnostic(relative)}; role ordinal {role_ordinal}; child ordinal {child_ordinal}')
+                    continue
+                holders.append(subelem.attrib['name'])
+            for holder in holders or ['']:
+                data_list.append((path_variant, user, role, holder))
+                origins.append(relative)
+        if len(data_list) > first_row and relative not in contributors:
+            contributors.append(relative)
 
     data_headers = ('Source Path Variant', 'User', 'Role', 'Holder')
+    if len(contributors) > 1:
+        data_headers += ('Source File',)
+        data_list = [row + (origin,) for row, origin in zip(data_list, origins)]
     return data_headers, data_list, '\n'.join(source_paths)
