@@ -185,23 +185,41 @@ __artifacts_v2__ = {
         "description": (
             "Parses the device contact records Telegram stored, from the user_contacts_v7 and user_phones_v7 tables of cache4.db, including the first and last name as stored on the device and the phone numbers recorded for that contact key."
         ),
-        "author": "Alexis Brignoni, @AlexisBrignoni, Codex",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-03",
-        "last_update_date": "2026-08-03",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "Telegram",
-        "notes": "Both tables store their values as plain text. They are joined on the key "
-                 "column, so one contact can carry several phone numbers. A phone row whose "
-                 "deleted column is set is not listed. Imported is the integer the table stores, "
-                 "reported as stored. The uid column holds the contact id the client assigned to "
-                 "the device contact when it read the address book (contact_id in the client "
-                 "source). It is not a Telegram user id and is reported as stored; the module "
-                 "heads that column User ID. Reference: Telegram-Android, 'MessagesStorage.java "
-                 "(user_contacts_v7 insert)', "
-                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/"
-                 "TMessagesProj/src/main/java/org/telegram/messenger/"
-                 "MessagesStorage.java#L8306-L8318",
-        "paths": ('*/org.telegram.messenger*/files/cache4.db*',),
+        "notes": "Both tables store their values as plain text. They are joined on the key column, so one "
+                 "contact can carry several phone numbers. A phone row whose deleted column is set is not "
+                 "listed. Imported is the integer the table stores, reported as stored. The uid column "
+                 "holds the contact id the client assigned to the device contact when it read the address "
+                 "book (contact_id in the client source). It is not a Telegram user id and is reported as "
+                 "stored; the module heads that column User ID. Reference: Telegram-Android, "
+                 "'MessagesStorage.java (user_contacts_v7 insert)', "
+                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java#L8306-L8318"
+                 " This artifact now reads every admitted exact cache4.db main in the supplied input "
+                 "order, at the direct files path or the explicitly bounded account1, account2 and "
+                 "account3 subdirectories. The subdirectory spelling is a source location, not proof of "
+                 "account identity or a complete version-specific storage layout. Each main keeps its own "
+                 "phone lookup and contact query; observations from repeated inputs and aliases are "
+                 "retained without deduplication or cross-database joins. The Source File column is "
+                 "appended only when returned rows combine more than one distinct contributing relative "
+                 "input origin; the artifact source lists contributing mains in first-contribution order. "
+                 "Empty or query-failing inputs contribute no origin unless their contacts query actually "
+                 "returns rows. The existing truthy deleted-phone exclusion, duplicate phone sequence, "
+                 "falsey name rendering and ORDER BY fname are unchanged; equal-name ordering is "
+                 "unspecified. The historical client-source/identity interpretation above has not been "
+                 "independently verified against vendor Java or private samples by this correction. "
+                 "Original contribution credited to Alexis Brignoni. Seven other cache4 artifacts retain "
+                 "their existing first-input/path limitations; this is not a whole-finding or module "
+                 "repair.",
+        "paths": (
+            '*/org.telegram.messenger*/files/cache4.db*',
+            '*/org.telegram.messenger*/files/account1/cache4.db*',
+            '*/org.telegram.messenger*/files/account2/cache4.db*',
+            '*/org.telegram.messenger*/files/account3/cache4.db*',
+        ),
         "output_types": "standard",
         "artifact_icon": "address-book",
         "sample_data": {
@@ -1448,28 +1466,46 @@ def get_telegramContacts(context):
         'Device Contact Key',
     )
     data_list = []
-    db_file = get_file_path(context.get_files_found(), 'cache4.db')
-    if not db_file:
-        return data_headers, data_list, ''
-
-    phones = {}
-    for key, phone, deleted in get_sqlite_db_records(
-            db_file, 'SELECT key, phone, deleted FROM user_phones_v7') or []:
-        if deleted:
+    origins = []
+    contributors = []
+    for db_file in context.get_files_found():
+        relative = context.get_relative_path(db_file)
+        parts = relative.replace('\\', '/').split('/')
+        if not parts or parts[-1] != 'cache4.db':
             continue
-        phones.setdefault(key, []).append(phone)
-
-    query = 'SELECT key, uid, fname, sname, imported FROM user_contacts_v7 ORDER BY fname'
-    for key, uid, fname, sname, imported in get_sqlite_db_records(db_file, query) or []:
-        data_list.append((
-            uid,
-            fname or '',
-            sname or '',
-            ', '.join(phones.get(key, [])),
-            imported,
-            key,
-        ))
-    return data_headers, data_list, db_file
+        if len(parts) >= 3 and parts[-2] == 'files':
+            package = parts[-3]
+        elif len(parts) >= 4 and parts[-2] in ('account1', 'account2', 'account3') and parts[-3] == 'files':
+            package = parts[-4]
+        else:
+            continue
+        if not package.startswith('org.telegram.messenger'):
+            continue
+        phones = {}
+        for key, phone, deleted in get_sqlite_db_records(
+                db_file, 'SELECT key, phone, deleted FROM user_phones_v7') or []:
+            if deleted:
+                continue
+            phones.setdefault(key, []).append(phone)
+        query = 'SELECT key, uid, fname, sname, imported FROM user_contacts_v7 ORDER BY fname'
+        contributed = False
+        for key, uid, fname, sname, imported in get_sqlite_db_records(db_file, query) or []:
+            data_list.append((
+                uid,
+                fname or '',
+                sname or '',
+                ', '.join(phones.get(key, [])),
+                imported,
+                key,
+            ))
+            origins.append(relative)
+            contributed = True
+        if contributed:
+            contributors.append(db_file)
+    if len(set(origins)) > 1:
+        data_headers += ('Source File',)
+        data_list = [row + (origin,) for row, origin in zip(data_list, origins)]
+    return data_headers, data_list, '\n'.join(dict.fromkeys(contributors))
 
 
 @artifact_processor
