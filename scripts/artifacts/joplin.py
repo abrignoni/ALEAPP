@@ -56,9 +56,9 @@ __artifacts_v2__ = {
     "joplin_resources": {
         "name": "Joplin - Attachments",
         "description": "Parses the attachments (resources) stored by the Joplin Android client.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-30",
-        "last_update_date": "2026-08-30",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Joplin",
         "notes": "One row per resource in the resources table of databases/joplin.sqlite. A "
@@ -66,8 +66,9 @@ __artifacts_v2__ = {
                  "a note. Each row gives the resource's title, original file name, mime type, "
                  "file extension and size, and its created and updated times as UTC. OCR Text is "
                  "the ocr_text column, reported as stored. The attachment bytes are not surfaced "
-                 "here. Encryption Applied shows Yes when encryption_applied is 1 and is blank "
-                 "otherwise.",
+                 "here. encryption_applied is reported as returned by SQLite. Its meaning and "
+                 "the actions that set it have not been established. Original contribution "
+                 "credited to Claude.",
         "paths": ('*/net.cozic.joplin/databases/joplin.sqlite*',),
         "output_types": "standard",
         "artifact_icon": "paperclip",
@@ -185,11 +186,11 @@ def joplin_resources(context):
         for r in records:
             data_list.append((_ms(r[0]), _ms(r[1]), r[2] or '', r[3] or '', r[4] or '',
                               r[5] or '', r[6], r[7] or '',
-                              'Yes' if r[8] == 1 else '', r[9] or ''))
+                              r[8], r[9] or ''))
         if db_path not in sources:
             sources.append(db_path)
 
     data_headers = (('Created', 'datetime'), ('Updated', 'datetime'), 'Title', 'File Name',
-                    'Mime Type', 'File Extension', 'Size', 'OCR Text', 'Encryption Applied',
+                    'Mime Type', 'File Extension', 'Size', 'OCR Text', 'encryption_applied (As Stored)',
                     'Resource ID')
     return data_headers, data_list, '\n'.join(sources)
