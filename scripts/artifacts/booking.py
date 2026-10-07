@@ -188,26 +188,34 @@ __artifacts_v2__ = {
     },
     "booking_deep_links": {
         "name": "Booking - Deep Links",
-        "description": "Parses deep links stored and resolved by the Booking.com Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
+        "description": "Reports selected cached mobile.decodeUniversalLink response fields and "
+                       "original_link_storage.xml preference entries from the Booking.com Android app.",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "Booking.com",
-        "notes": "Two sources are reported and the Record Type column says which each row came "
-                 "from. Resolved links come from cached mobile.decodeUniversalLink responses in the "
-                 "app's OkHttp response cache, where the url request parameter holds the link "
-                 "submitted and the body holds what it resolved to; those rows carry the request "
-                 "time from the OkHttp-Sent-Millis header in Unix milliseconds. Stored links come "
-                 "from original_link_storage.xml, whose keys begin original_link- followed by a "
-                 "name that is reported as stored; what that name refers to is not established "
-                 "here. That file records no timestamp. For Resolved link rows the Destination Type "
-                 "and Label columns hold the dest_type and label members of the response. For "
-                 "Stored link rows the Destination Type column holds the part of the preference key "
-                 "after original_link-, or the module's text (no screen) when nothing follows it, and "
-                 "the Label column holds the link_action preference value. The response members and "
-                 "preference values are reported as stored. Field mapping was done against private samples provided "
-                 "by Mattia; no sample data is recorded for them.",
+        "notes": "Two sources are reported and the Record Type column says which each row came from. "
+                 "Resolved links come from cached mobile.decodeUniversalLink responses in the app's OkHttp"
+                 " response cache, where the url request parameter holds the link submitted and the body "
+                 "holds what it resolved to; those rows carry the request time from the OkHttp-Sent-Millis"
+                 " header in Unix milliseconds. Stored links come from original_link_storage.xml, whose "
+                 "keys begin original_link- followed by a name that is reported as stored; what that name "
+                 "refers to is not established here. That file records no timestamp. For Resolved link "
+                 "rows, dest_type / original_link- key suffix holds the response dest_type member through "
+                 "the existing _text rendering, and label / link_action holds the response label member "
+                 "through that rendering. For Stored link rows, the first holds the exact preference-key "
+                 "suffix after original_link-, including an empty suffix as an empty string, and the "
+                 "second holds the link_action preference value. The stored suffix is not established as a"
+                 " destination or screen type, and link_action is not established as a response label. "
+                 "_text retains native scalar values except None becomes empty and booleans become text; "
+                 "dictionaries and lists are JSON rendered. These report cells do not preserve complete "
+                 "original source bytes. Field mapping was done against private samples provided by "
+                 "Mattia; no sample data is recorded for them. Original contribution credited to "
+                 "@AlexisBrignoni, @mattiaepi (Mattia Epifani) and Claude. Historical private-sample "
+                 "mappings and observations above are not remeasured by this correction. Preference "
+                 "duplicate-key replacement, query-parameter decoding, cache-body decoding, source-alias "
+                 "selection and source association retain their existing behavior and limitations.",
         "paths": (
             '*/com.booking/cache/okhttp/*',
             '*/com.booking/shared_prefs/original_link_storage.xml',
@@ -1304,7 +1312,7 @@ def booking_deep_links(context):
                 'Stored link',
                 value,
                 '',
-                name[len('original_link-'):] or '(no screen)',
+                name[len('original_link-'):],
                 '',
                 '',
                 action,
@@ -1318,10 +1326,10 @@ def booking_deep_links(context):
         'Record Type',
         'Link',
         'Resolved Booking URL',
-        'Destination Type (as stored)',
+        'dest_type / original_link- key suffix',
         'Destination ID',
         'Affiliate ID',
-        'Label (as stored)',
+        'label / link_action',
         'Landing Page Subheader',
         'Source File',
     )
