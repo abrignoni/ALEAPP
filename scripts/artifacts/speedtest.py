@@ -2,19 +2,13 @@
 __artifacts_v2__ = {
     "speedtest_tests": {
         "name": "Speedtest Test Results",
-        "description": "Rows of the UnivSpeedTestResult table of AmplifyDatastore.db: date, "
-                       "connection type, SSID, latitude, longitude, external and internal IP "
-                       "address, and download and upload speed in Kbps as stored.",
-        "author": "its5Q, @AlexisBrignoni, Codex",
+        "description": "Rows selected from UnivSpeedTestResult in each matched AmplifyDatastore.db main: timestamp, connection type, SSID, coordinates, IP values and the stored downloadKbps and uploadKbps values.",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2025-07-28",
-        "last_update_date": "2025-07-28",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "Speedtest",
-        "notes": "Only the first matched path is opened, and the path pattern also matches the "
-                 "-wal and -shm sidecar files. Timestamp is the date column read as a Unix time "
-                 "and shown as UTC; the conversion picks the unit from the size of the value, and "
-                 "the unit the app stores is not sourced here. The other columns are reported as "
-                 "stored. No registered test image is listed for this artifact.",
+        "notes": "Original parser contribution credited to its5Q. Exact AmplifyDatastore.db main filenames are processed in matched input encounter order; standalone WAL/SHM/journal paths are excluded and each main is opened with its own available sidecars. Repeated input occurrences, including repeated aliases, are retained without byte-hash or canonical-path deduplication. Equal stored result rows are retained. Timestamp is the date column read as a Unix time and shown as UTC; the conversion picks the unit from the size of the value, and the unit the app stores is not sourced here. The other eight values and the existing Kbps headers are unchanged; their units and meanings are not independently established by this selection correction. A Source File column is appended only when more than one distinct matched main path contributes rows, using the existing extraction-relative path helper. The artifact source indicator lists distinct contributing paths in encounter order; when no rows are found it lists successfully queried empty mains instead. Unreadable mains or failed queries are logged and skipped; this does not establish a complete result history. A matched path is a source indicator, not an account, user or device ownership assertion. No registered positive test image was previously listed for this artifact; the historical 44-image absence statements belong to the unchanged REPORT siblings and are not revalidated here.",
         "paths": ('*/org.zwanoo.android.speedtest/databases/AmplifyDatastore.db*',),
         "output_types": "all",
         "artifact_icon": "loader"
@@ -77,6 +71,8 @@ from datetime import datetime, timezone, timedelta
 from scripts.ilapfuncs import open_sqlite_db_readonly, logfunc, artifact_processor, convert_unix_ts_to_utc
 import json
 import re
+import os
+import sqlite3
 
 
 def _iso_to_utc(text):
@@ -102,31 +98,60 @@ def _iso_to_utc(text):
     return parsed.astimezone(timezone.utc)
 
 
+def _speedtest_error(context, file_path, error):
+    source = ascii(context.get_relative_path(file_path))[:256]
+    detail = ascii(str(error))[:256]
+    logfunc(f'Error retrieving Speedtest test results from {source}: {type(error).__name__}: {detail}')
+
+
 @artifact_processor
 def speedtest_tests(context):
     files_found = context.get_files_found()
-    file_path = files_found[0]
     headers = [('Timestamp', 'datetime'), 'Connection type', 'SSID', 'Latitude', 'Longitude', 'External IP', 'Internal IP', 'Download speed (Kbps)', 'Upload speed (Kbps)']
-
-    db = open_sqlite_db_readonly(file_path)
-    cur = db.cursor()
-
-    try:
-        cur.execute('SELECT date, connectionType, ssid, userLatitude, userLongitude, externalIp, internalIp, downloadKbps, uploadKbps FROM UnivSpeedTestResult')
-        result = cur.fetchall()
-    except Exception as ex:
-        logfunc(f'Error retrieving Speedtest test results: {ex}')
-
     timestamped_result = []
-    for row in result:
-        row = list(row)
+    row_sources = []
+    contributors = []
+    queried_sources = []
+    for file_found in files_found:
+        file_path = str(file_found)
+        if os.path.basename(file_path) != 'AmplifyDatastore.db':
+            continue
+        db = None
+        result = []
         try:
-            row[0] = convert_unix_ts_to_utc(row[0])
-        except Exception as ex:
-            logfunc(f'Error converting timestamp for Speedtest test result: {ex}')
-        timestamped_result.append(row)
-
-    return headers, timestamped_result, file_path
+            db = open_sqlite_db_readonly(file_path)
+            if db is None:
+                _speedtest_error(context, file_path, OSError('read-only database open returned no connection'))
+                continue
+            cur = db.cursor()
+            cur.execute('SELECT date, connectionType, ssid, userLatitude, userLongitude, externalIp, internalIp, downloadKbps, uploadKbps FROM UnivSpeedTestResult')
+            result = cur.fetchall()
+            if file_path not in queried_sources:
+                queried_sources.append(file_path)
+        except (sqlite3.Error, OSError) as ex:
+            _speedtest_error(context, file_path, ex)
+            continue
+        finally:
+            if db is not None:
+                try:
+                    db.close()
+                except sqlite3.Error as ex:
+                    _speedtest_error(context, file_path, ex)
+        if result and file_path not in contributors:
+            contributors.append(file_path)
+        for row in result:
+            row = list(row)
+            try:
+                row[0] = convert_unix_ts_to_utc(row[0])
+            except Exception as ex:
+                logfunc(f'Error converting timestamp for Speedtest test result: {ex}')
+            timestamped_result.append(row)
+            row_sources.append(file_path)
+    if len(contributors) > 1:
+        headers = headers + ['Source File']
+        timestamped_result = [row + [context.get_relative_path(path)] for row, path in zip(timestamped_result, row_sources)]
+    source_path = '\n'.join(contributors or queried_sources)
+    return headers, timestamped_result, source_path
 
 @artifact_processor
 def speedtest_reports_location(context):
