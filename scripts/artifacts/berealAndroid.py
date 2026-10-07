@@ -34,16 +34,16 @@ __artifacts_v2__ = {
         },
     },
     "bereal_friends": {
-        "name": "BeReal Friends",
-        "description": "Users listed in cached responses whose URL contains relationships, "
+        "name": "BeReal - Selected Cached Response Entries",
+        "description": "Entries expanded from cached responses whose URL contains relationships, "
                        "recommendations or friend. The Status column holds the status the response "
                        "stored and the Source Endpoint column holds the URL. On hc_pixel8pro_a17 "
                        "the 1 reported row came from the /api/relationships/friends endpoint with "
                        "Status accepted. No tested image held a row from a recommendations URL, so "
                        "whether such rows are friends is not established",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, Codex",
         "creation_date": "2026-08-06",
-        "last_update_date": "2026-08-06",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "BeReal",
         "notes": "Read from the JSON bodies in the OkHttp network cache, not from the app's "
@@ -56,7 +56,7 @@ __artifacts_v2__ = {
         "artifact_icon": "users",
         "sample_data": {
             "pixel7a_a14": "Android 14 | com.bereal.ft | 0 rows",
-            "hc_pixel8pro_a17": "Android 17 | com.bereal.ft | 1 friend cached",
+            "hc_pixel8pro_a17": "Android 17 | com.bereal.ft | 1 cached response entry",
         },
     },
     "bereal_cached_api": {
