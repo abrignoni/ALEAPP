@@ -124,15 +124,17 @@ __artifacts_v2__ = {
         "name": "Kik Roster and Contact Profiles",
         "description": "Bare JIDs held in the user roster and contact profile databases, with the "
                        "profile update time where the app records one",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-06",
-        "last_update_date": "2026-08-06",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "Kik",
-        "notes": "This artifact reads bare_jid from both tables and last_update_timestamp from "
+        "notes": "Original contribution credited to Claude. This artifact reads bare_jid from both "
+                 "tables and last_update_timestamp from "
                  "ContactProfileEntries; the other columns of the two tables are not read and what "
                  "they hold was not established here. The JIDs are reported so roster membership "
-                 "can be compared against the Kik Users artifact. Account Core ID is the text of "
+                 "can be compared against the Kik Users artifact. Database File Name Prefix is the "
+                 "text of "
                  "the database file name before its first dot; it is not compared with the core id "
                  "held in kikCoreDatabase.",
         "paths": ('*/kik.android/databases/*userRosterEntries.db*',
@@ -502,6 +504,6 @@ def kik_roster(context):
         ('Profile Update Time', 'datetime'),
         'Bare JID',
         'Held In',
-        'Account Core ID',
+        'Database File Name Prefix',
     )
     return data_headers, data_list, '\n'.join(sources)
