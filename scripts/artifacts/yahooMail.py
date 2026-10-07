@@ -110,9 +110,9 @@ __artifacts_v2__ = {
         "description": "Parses the install, update and session record the Yahoo Mail "
                        "Android app keeps for itself, with the MILESTONE_MESSAGE_OPEN_COUNT "
                        "and EMAILS_DELETED values it stores.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "Yahoo Mail",
         "notes": "One row per account that has records in the AppConfig table, built from "
@@ -124,7 +124,11 @@ __artifacts_v2__ = {
                  "its name is not established here; it matched the mailbox setup timestamp "
                  "exactly on the tested device. Field mapped from a private sample provided "
                  "by Mattia; no sample data is recorded for it, and the counts in these notes "
-                 "rest on that sample and cannot be re-derived from the registered corpora.",
+                 "rest on that sample and cannot be re-derived from the registered corpora."
+                 " MILESTONE_MESSAGE_OPEN_COUNT names the AppConfig key. The parser displays its "
+                 "existing string conversion; the key's event meaning and counting period are "
+                 "not established. Original artifact and field research: @mattiaepi (Mattia "
+                 "Epifani), Claude.",
         "paths": (
             '*/com.yahoo.mobile.client.android.mail/databases/flux_database.db*',
         ),
@@ -648,7 +652,7 @@ def yahoo_mail_app_usage(context):
         'App Session Count',
         'User Session Count',
         'Mailbox Session Count',
-        'Messages Opened Count',
+        'MILESTONE_MESSAGE_OPEN_COUNT',
         'Emails Deleted Count',
         'First Delete Event',
         'First Install Version Code',
