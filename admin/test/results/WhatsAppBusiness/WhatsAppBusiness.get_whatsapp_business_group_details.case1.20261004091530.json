@@ -1,0 +1,59 @@
+{
+  "metadata": {
+    "module_name": "WhatsAppBusiness",
+    "artifact_name": "WhatsApp Business - Group Details",
+    "function_name": "get_whatsapp_business_group_details",
+    "case_number": "case1",
+    "number_of_columns": 9,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 233,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\WhatsAppBusiness\\testdata.WhatsAppBusiness.get_whatsapp_business_group_details.case1.zip",
+    "start_time": "2026-10-04T09:15:30.812200+00:00",
+    "end_time": "2026-10-04T09:15:30.879773+00:00",
+    "run_time_seconds": 0.0029993057250976562,
+    "last_commit": {
+      "hash": "a2f5dca9d833a22698050f244fd076dc008c4688",
+      "author_name": "prcharan592",
+      "author_email": "149227007+prcharan592@users.noreply.github.com",
+      "date": "2026-10-04T14:36:32+05:30",
+      "message": "Add WhatsApp Business artifact parser and tests"
+    }
+  },
+  "headers": [
+    "Group Creation Timestamp",
+    "Group Name",
+    "Group Picture",
+    "Creator JID",
+    "Creator JID (via jid_map)",
+    "Creator WA User Name",
+    "Creator WA Number",
+    "Creator WA Profile Picture",
+    "Source File"
+  ],
+  "data": [
+    [
+      1767052800,
+      "[w4b] group",
+      "",
+      "100000000000101@lid",
+      "000000000101@s.whatsapp.net",
+      "[w4b] A",
+      "+15550101",
+      "",
+      "Dump/data/data/com.whatsapp.w4b/databases/msgstore.db"
+    ],
+    [
+      1767052800,
+      "[w4b] second group",
+      "",
+      null,
+      null,
+      null,
+      null,
+      "",
+      "Dump/data/data/com.whatsapp.w4b/databases/msgstore.db"
+    ]
+  ]
+}

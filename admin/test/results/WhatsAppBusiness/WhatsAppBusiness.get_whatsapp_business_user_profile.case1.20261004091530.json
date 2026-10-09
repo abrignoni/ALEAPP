@@ -1,0 +1,42 @@
+{
+  "metadata": {
+    "module_name": "WhatsAppBusiness",
+    "artifact_name": "WhatsApp Business - User Profile",
+    "function_name": "get_whatsapp_business_user_profile",
+    "case_number": "case1",
+    "number_of_columns": 6,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 185,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\WhatsAppBusiness\\testdata.WhatsAppBusiness.get_whatsapp_business_user_profile.case1.zip",
+    "start_time": "2026-10-04T09:15:30.519557+00:00",
+    "end_time": "2026-10-04T09:15:30.590554+00:00",
+    "run_time_seconds": 0.001007080078125,
+    "last_commit": {
+      "hash": "a2f5dca9d833a22698050f244fd076dc008c4688",
+      "author_name": "prcharan592",
+      "author_email": "149227007+prcharan592@users.noreply.github.com",
+      "date": "2026-10-04T14:36:32+05:30",
+      "message": "Add WhatsApp Business artifact parser and tests"
+    }
+  },
+  "headers": [
+    "Version",
+    "Name",
+    "User Status",
+    "Country Code",
+    "Mobile Number",
+    "Source Files"
+  ],
+  "data": [
+    [
+      "2.26.1.1",
+      "[w4b] owner",
+      "[w4b] about",
+      "1",
+      "5550100",
+      "Dump/data/data/com.whatsapp.w4b/shared_prefs/com.whatsapp.w4b_preferences_light.xml; Dump/data/data/com.whatsapp.w4b/shared_prefs/startup_prefs.xml"
+    ]
+  ]
+}
