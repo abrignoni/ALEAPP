@@ -2,34 +2,12 @@ __artifacts_v2__ = {
     "elementx_log_identifiers": {
         "name": "Element X - Identifiers in Logs",
         "description": "Parses the Matrix identifiers recorded in the Element X Android app's own log files.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-30",
-        "last_update_date": "2026-08-30",
+        "last_update_date": "2026-10-08",
         "requirements": "none",
         "category": "Element X",
-        "notes": "One row per distinct identifier per log file, read from the app's own log files "
-                 "under cache/logs. Element X is a Matrix client whose stored data is encrypted "
-                 "(see the Sessions and Stores artifact), but the log files it writes are plain "
-                 "text and they carry Matrix identifiers. Three kinds are reported, each "
-                 "recognised by the form Matrix defines for it: a User ID begins with @, a Room ID "
-                 "begins with !, and both are followed by the homeserver name, which is why the "
-                 "homeserver is broken out into its own column. A Device ID is read from the "
-                 "device_id=\"...\" field the Rust SDK logs beside a user. Rows are aggregated per "
-                 "log file, so each identifier appears once for each log file that names it, with "
-                 "First Seen, Last Seen and the number of lines within that file, rather than one "
-                 "row per log line; the log is mostly HTTP client debug output and enumerating it "
-                 "would bury these. On emu_a15_oss_v3 the app directory held one log file and the "
-                 "4 rows all come from it, so the several-file case was not exercised. Timestamps "
-                 "are the ISO 8601 values at the start of each log line, which carry a Z suffix "
-                 "and are reported as UTC. A Room ID here is text in Matrix room id form found on "
-                 "a log line; what the client did with that room is not established by its "
-                 "presence. It is not the room's name, which is not in the log; the room's name, "
-                 "members and messages are in the encrypted stores. The log file name carries the date "
-                 "and hour it covers and these files sit in the cache directory, so the window they "
-                 "cover depends on what the device retained and is not a complete account history. On "
-                 "the tested device the log held the signed-in user, that account's device, and two "
-                 "room identifiers, and the room count agreed with the room_info table of the encrypted "
-                 "state store.",
+        "notes": 'One row per distinct identifier per log file, read from the app\'s own log files under cache/logs. Element X is a Matrix client whose stored data is encrypted (see the Sessions and Stores artifact), but the log files it writes are plain text and they carry Matrix identifiers. Three kinds are reported, each recognised by the form Matrix defines for it: a User ID begins with @, a Room ID begins with !, and both are followed by the homeserver name, which is why the homeserver is broken out into its own column. A Device ID is read from the device_id="..." field the Rust SDK logs beside a user. Rows are aggregated per log file, so each identifier appears once for each log file that names it, with First Seen, Last Seen and the number of regular-expression matches within that file, rather than one row per log line; repeated occurrences of the same identifier on one physical line each increase the count; the log is mostly HTTP client debug output and enumerating it would bury these. On emu_a15_oss_v3 the app directory held one log file and the 4 rows all come from it, so the several-file case was not exercised. Timestamps are the ISO 8601 values at the start of each log line, which carry a Z suffix and are reported as UTC. A Room ID here is text in Matrix room id form found on a log line; what the client did with that room is not established by its presence. It is not the room\'s name, which is not in the log; the room\'s name, members and messages are in the encrypted stores. The log file name carries the date and hour it covers and these files sit in the cache directory, so the window they cover depends on what the device retained and is not a complete account history. On the tested device the log held the signed-in user, that account\'s device, and two room identifiers, and the room count agreed with the room_info table of the encrypted state store. Original artifact contribution: @AlexisBrignoni, Claude.',
         "paths": ('*/io.element.android.x/cache/logs/*.log',),
         "output_types": "standard",
         "artifact_icon": "user",
@@ -172,7 +150,7 @@ def elementx_log_identifiers(context):
 
     data_headers = (
         ('First Seen', 'datetime'), ('Last Seen', 'datetime'), 'Identifier Type',
-        'Identifier', 'Local Part', 'Homeserver', 'Log Lines', 'Source File',
+        'Identifier', 'Local Part', 'Homeserver', 'Regex Match Count', 'Source File',
     )
     return data_headers, data_list, '\n'.join(sources)
 
