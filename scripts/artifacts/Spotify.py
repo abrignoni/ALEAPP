@@ -192,13 +192,13 @@ __artifacts_v2__ = {
         },
     },
     "spotify_now_playing_view": {
-        "name": "Spotify - Now Playing View",
+        "name": "Spotify - Cached Color-Lyrics Responses",
         "description": "Tracks recovered from cached responses to Spotify's lyrics API call, with "
                        "the first cached lyric line for each track and a flag for a cached "
                        "merchandise response for the same track id.",
         "author": "@Gear-I, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-10-06",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Spotify",
         "notes": "Source is the app's HTTP disk cache (cache/http-cache): the color-lyrics/v2 and "
@@ -724,7 +724,7 @@ def spotify_now_playing_view(context):
 
     data_list.sort(key=lambda row: (row[3] is None, row[3]))
     data_list = [(row[3], row[0], row[1], row[2]) for row in data_list]
-    logfunc(f"Spotify Now Playing View: {len(data_list)} track(s) recovered "
+    logfunc(f"Spotify Cached Color-Lyrics Responses: {len(data_list)} track(s) recovered "
             f"from cached lyrics/merch responses.")
     return data_headers, data_list, '\n'.join(sorted(source_paths))
 
