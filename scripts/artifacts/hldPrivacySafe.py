@@ -6,7 +6,7 @@ __artifacts_v2__ = {
                        "for a file and the times recorded for it",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-30",
-        "last_update_date": "2026-08-30",
+        "last_update_date": "2026-10-09",
         "requirements": "sqlcipher3",
         "category": "Encrypting Media Apps",
         "notes": "The vault's index, .privacy_safe/db/privacy_safe.db, is a SQLCipher database. "
@@ -28,9 +28,10 @@ __artifacts_v2__ = {
                  "the stored file is absent. Added To Vault and Original Created are TEXT with "
                  "no zone recorded, so they are reported exactly as stored and are not "
                  "converted. On one tested image Original Created was five hours behind the "
-                 "time embedded in the camera file name of the same row, taken to be UTC, which "
-                 "is the basis for reading it as device local time; no such check is recorded "
-                 "for Added To Vault. "
+                 "time embedded in the camera file name of the same row, taken to be UTC; that "
+                 "one row is the only comparison recorded, so which clock either column "
+                 "follows is not established, and no such check is recorded for Added To "
+                 "Vault. "
                  "Because they carry no zone this artifact emits no datetime column and its "
                  "rows do not reach the timeline. In Decoy Space is the IS_MOCK_SPACE column, "
                  "reported as stored; it was 0 on every row below, and what sets it was not "
@@ -258,8 +259,8 @@ _CIPHER_PARAMETER_SETS = (
 )
 
 FILE_HEADERS = (
-    'Added To Vault (as stored, device local)',
-    'Original Created (as stored, device local)',
+    'Added To Vault (as stored)',
+    'Original Created (as stored)',
     ('Media', 'media'),
     'Original Name',
     'Original Path',

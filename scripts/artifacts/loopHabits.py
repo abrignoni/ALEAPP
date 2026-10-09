@@ -39,20 +39,21 @@ __artifacts_v2__ = {
         "description": "Parses habit check-ins from the Loop Habit Tracker Android app.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-01",
-        "last_update_date": "2026-09-01",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Loop Habit Tracker",
         "sample_data": {
             "emu_a15_oss_v5": "Loop Habit Tracker 2.3.1 | 2 rows",
         },
         "notes": "One row per entry in the Repetitions table of databases/uhabits.db, joined to "
-                 "its habit. Each row is a check-in recorded against a habit for one day. Value is "
-                 "decoded from the app's Entry constants, -1 Unknown, 0 No, 1 Yes (automatic), 2 "
-                 "Yes (manual), 3 Skip (Entry.kt at iSoron/uhabits tag v2.3.1, "
-                 "516bf394f85a5a3ab25f476da230ae2a93815a40); any other value is reported as "
-                 "stored. The Value label is applied to every row without regard to the habit's "
-                 "type, so for a numerical habit a stored amount of -1 to 3 is shown under an "
-                 "Entry label it does not have; read Value Raw for those rows. That a numerical "
+                 "its habit. Each row is an entry recorded against a habit for one day. Value is "
+                 "decoded from the app's Entry constants, -1 Unknown, 0 No, 1 Not performed, not "
+                 "expected (YES_AUTO), 2 Yes (manual), 3 Skip (Entry.kt at iSoron/uhabits tag "
+                 "v2.3.1, 516bf394f85a5a3ab25f476da230ae2a93815a40); any other value is reported "
+                 "as stored. The Value label is assigned only where the joined habit's stored "
+                 "type is 0 (Yes/No); for any other habit type, or where no habit row joins, "
+                 "Value is blank and Value Raw carries the stored value. Habit Type is the "
+                 "joined habit's type, decoded from the same HabitType enum. That a numerical "
                  "habit stores its amount in this column was not exercised on the tested image. "
                  "Date is the day the check-in belongs to. The stored timestamp is "
                  "Unix milliseconds and lands on midnight UTC, so it marks a calendar day rather "
@@ -63,9 +64,9 @@ __artifacts_v2__ = {
                  "that tag documents the two Yes values: YES_MANUAL (2) marks that the user "
                  "performed the habit "
                  "at that timestamp, and YES_AUTO (1) marks that the user did not perform it but "
-                 "was not expected to, because of the habit's frequency. A Value of Yes "
-                 "(automatic) is therefore a day on which the source says the habit was not "
-                 "performed. Notes is the optional "
+                 "was not expected to, because of the habit's frequency. A stored value of 1 "
+                 "is therefore a day on which the source says the habit was not "
+                 "performed, and Value is worded accordingly. Notes is the optional "
                  "note attached to a check-in.",
         "paths": ('*/org.isoron.uhabits/databases/uhabits.db*',),
         "output_types": "standard",
@@ -82,7 +83,8 @@ DB_SUFFIX = 'databases/uhabits.db'
 
 # HabitType.kt and Entry.kt at iSoron/uhabits tag v2.3.1.
 HABIT_TYPES = {0: 'Yes/No', 1: 'Numerical'}
-ENTRY_VALUES = {-1: 'Unknown', 0: 'No', 1: 'Yes (automatic)', 2: 'Yes (manual)', 3: 'Skip'}
+ENTRY_VALUES = {-1: 'Unknown', 0: 'No', 1: 'Not performed, not expected (YES_AUTO)',
+                2: 'Yes (manual)', 3: 'Skip'}
 
 
 def _db_files(context):
@@ -154,7 +156,7 @@ def loop_habits(context):
 
 @artifact_processor
 def loop_habits_checkins(context):
-    query = '''SELECT r.timestamp, h.name, r.value, r.notes, r.habit, r.id
+    query = '''SELECT r.timestamp, h.name, r.value, r.notes, r.habit, r.id, h.type
                FROM Repetitions r
                LEFT JOIN Habits h ON h.id = r.habit
                ORDER BY r.timestamp DESC'''
@@ -163,12 +165,14 @@ def loop_habits_checkins(context):
     for db_path in _db_files(context):
         records = get_sqlite_db_records(db_path, query)
         for r in records:
-            data_list.append((_day(r[0]), r[1] or '', _lookup(ENTRY_VALUES, r[2]), r[2],
+            # Entry.kt's constants describe Yes/No habits (type 0) only.
+            value = _lookup(ENTRY_VALUES, r[2]) if r[6] in (0, '0') else ''
+            data_list.append((_day(r[0]), r[1] or '', _lookup(HABIT_TYPES, r[6]), value, r[2],
                               r[3] or '', r[4], r[5],
                               context.get_relative_path(db_path)))
         if records and db_path not in sources:
             sources.append(db_path)
 
-    data_headers = (('Date', 'date'), 'Habit', 'Value', 'Value Raw', 'Notes', 'Habit ID',
+    data_headers = (('Date', 'date'), 'Habit', 'Habit Type', 'Value', 'Value Raw', 'Notes', 'Habit ID',
                     'Check-in ID', 'Source File')
     return data_headers, data_list, '\n'.join(sources)

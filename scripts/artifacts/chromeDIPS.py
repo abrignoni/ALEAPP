@@ -1,10 +1,10 @@
 __artifacts_v2__ = {
     "get_chromeDIPS": {
         "name": "ChromeDIPS",
-        "description": "Parses the bounces table of the Chromium DIPS (Detect Incidental Party State) database. Column names differ between Chromium versions; a first_bounce_time or last_bounce_time column is shown under the Stateless Bounce headers and a user_activation_time column under the User Interaction headers, which is this parser's mapping and is not sourced here.",
+        "description": "Parses the bounces table of the Chromium DIPS (Detect Incidental Party State) database. Column names differ between Chromium versions; each header names the stored columns it can hold. The User Interaction or Activation headers hold first_user_interaction_time and last_user_interaction_time, or first_user_activation_time and last_user_activation_time when the former are absent. The Stateless Bounce or Bounce headers hold first_stateless_bounce_time and last_stateless_bounce_time, or first_bounce_time and last_bounce_time when the former are absent. Whether the two column names in a pair record the same event is not established here.",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2023-04-07",
-        "last_update_date": "2026-07-10",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Chromium",
         "notes": "",
@@ -57,12 +57,12 @@ def get_chromeDIPS(context):
         'Site',
         'First Site Storage Timestamp',
         'Last Site Storage Timestamp',
-        'First User Interaction Timestamp',
-        'Last User Interaction Timestamp',
+        'First User Interaction or Activation Timestamp',
+        'Last User Interaction or Activation Timestamp',
         'First Stateful Bounce Timestamp',
         'Last Stateful Bounce Timestamp',
-        'First Stateless Bounce Timestamp',
-        'Last Stateless Bounce Timestamp',
+        'First Stateless Bounce or Bounce Timestamp',
+        'Last Stateless Bounce or Bounce Timestamp',
     ]
 
     lava_data_headers = data_headers.copy()

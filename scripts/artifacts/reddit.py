@@ -6,7 +6,7 @@ __artifacts_v2__ = {
                        "room_member_summary.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-08-16",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Reddit",
         "notes": "Reddit chat is stored in databases/matrix_session_<session id>, whose "
@@ -22,8 +22,12 @@ __artifacts_v2__ = {
                  "Message Direction compares the event sender against the signed-in "
                  "account, taken from session_params.userId in the matrix_auth database "
                  "(observed as @t2_<reddit id>:reddit.com). Blank when that database is "
-                 "absent. The first non-empty userId found in any matrix_auth database is "
-                 "used for every session database. Timestamps are Unix milliseconds from "
+                 "absent. For each session database the session_params row whose sessionId "
+                 "equals the suffix of the matrix_session_ file name supplies the userId. "
+                 "With no such row the userId is used only when every session_params row "
+                 "read carries the same one; otherwise Message Direction is blank, because "
+                 "which account the session database belongs to is not established here. "
+                 "Timestamps are Unix milliseconds from "
                  "originServerTs, reported "
                  "in UTC.\n"
                  "Media. Image messages carry an mxc:// URL and its dimensions rather than "
@@ -102,12 +106,12 @@ __artifacts_v2__ = {
                        "member counts and last activity, as stored.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-08-16",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Reddit",
         "notes": "One row per room in room_summary. Room Type is reported as stored; the "
-                 "direct-chat and unread flags are shown as YES or NO, where NO also "
-                 "covers an empty value. On the tested image a one-to-one chat carried "
+                 "direct-chat and unread flags are shown as YES or NO, and blank when the "
+                 "column holds no value. On the tested image a one-to-one chat carried "
                  "the "
                  "type 'direct' with two joined members. Last Activity is Unix "
                  "milliseconds in UTC.\n"
@@ -132,7 +136,7 @@ __artifacts_v2__ = {
                        "display name and membership state as stored.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-08-16",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Reddit",
         "notes": "The table the message artifact uses to resolve a sender to a display "
@@ -159,13 +163,13 @@ __artifacts_v2__ = {
                        "and cakeday, with the row's insert timestamp.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-08-16",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Reddit",
         "notes": "RedditUserEntity ties a Reddit id to the Matrix id used in chat, which "
                  "is what allows a chat participant to be named. The NSFW, blocked and "
-                 "accepting-chats flags are shown as YES or NO, where NO also covers an "
-                 "empty value. Insert Timestamp is the "
+                 "accepting-chats flags are shown as YES or NO, and blank when the column "
+                 "holds no value. Insert Timestamp is the "
                  "insertTimestamp column read as Unix milliseconds and Cakeday is the "
                  "cakeday column read as Unix seconds. What event each marks is not "
                  "established here; the column names are the app's own.\n"
@@ -191,7 +195,7 @@ __artifacts_v2__ = {
                        "fields as stored.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-08-16",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Reddit",
         "notes": "The database is named reddit_db_<account name>, reported in the Store "
@@ -226,7 +230,7 @@ __artifacts_v2__ = {
                        "server and session date.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-08-16",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Reddit",
         "notes": "session_params in the matrix_auth database. The user id is the anchor "
@@ -288,7 +292,7 @@ __artifacts_v2__ = {
                        "JSON.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-08-16",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Reddit",
         "notes": "The link table stores one JSON document per post, from which the "
@@ -297,7 +301,7 @@ __artifacts_v2__ = {
                  "reported. Listing Position and Listing ID are the link table's "
                  "listingPosition and listingId columns, reported as stored; what a "
                  "listing is was not established. NSFW is shown as YES or NO from "
-                 "over_18, where NO also covers a document without the key.\n"
+                 "over_18, and blank for a document without the key.\n"
                  "A row records that the post was cached on the device, which is not the "
                  "same as the user opening or reading it. Created is Unix seconds.\n"
                  "Reference: Arun Kalackattu Hari, 'Forensic Analysis of Reddit App: iOS "
@@ -374,17 +378,36 @@ def _reddit_dbs(context):
                      and not n.endswith(('-wal', '-shm', '-journal', '.lck')))
 
 
-def _local_user_id(context):
-    '''The signed-in Matrix user id from matrix_auth, or '' when unavailable.'''
+def _local_user_ids(context):
+    '''{sessionId: userId} for every session_params row with a userId, from matrix_auth.'''
+    by_session = {}
     for auth_db in _matching(context, lambda n: n.startswith('matrix_auth')
                              and not n.endswith(('-wal', '-shm', '-journal'))):
-        for (user_id,) in _rows(auth_db, 'SELECT userId FROM session_params'):
+        for user_id, session_id in _rows(
+                auth_db, 'SELECT userId, sessionId FROM session_params'):
             if user_id:
-                return user_id
-    return ''
+                by_session.setdefault(session_id, user_id)
+    return by_session
+
+
+def _local_user_id(by_session, session_db):
+    '''The signed-in Matrix user id for one session database, or '' when not established.
+
+    The session_params row whose sessionId equals the suffix of the matrix_session_
+    file name is used when there is one. Otherwise the userId is used only when every
+    row carries the same one.
+    '''
+    suffix = os.path.basename(str(session_db))[len('matrix_session_'):]
+    if suffix and suffix in by_session:
+        return by_session[suffix]
+    user_ids = set(by_session.values())
+    return user_ids.pop() if len(user_ids) == 1 else ''
 
 
 def _yes_no(value):
+    '''YES or NO for a stored flag; blank when the store holds no value.'''
+    if value is None or value == '':
+        return ''
     return 'YES' if value else 'NO'
 
 
@@ -392,8 +415,9 @@ def _yes_no(value):
 def get_reddit_chat_messages(context):
     data_list = []
     source_path = ''
-    local_user_id = _local_user_id(context)
+    local_user_ids = _local_user_ids(context)
     for session_db in _session_dbs(context):
+        local_user_id = _local_user_id(local_user_ids, session_db)
         source_path = source_path or session_db
         source_file = context.get_relative_path(session_db)
         for (timestamp, sender, display_name, body, msgtype, media_url, blurred_url,

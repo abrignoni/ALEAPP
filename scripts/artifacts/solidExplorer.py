@@ -55,10 +55,10 @@ __artifacts_v2__ = {
     },
     "solid_explorer_searches": {
         "name": "Solid Explorer Searches",
-        "description": "Search terms submitted in Solid Explorer",
+        "description": "Rows of Solid Explorer's search_suggestions and suggestions tables",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Solid Explorer",
         "sample_data": {
@@ -67,7 +67,7 @@ __artifacts_v2__ = {
         "notes": "One row per row of the search_suggestions and suggestions tables in "
                  "pl.solidexplorer2/databases/explorer.db. Table says which of the two a row came "
                  "from. Neither table carries a timestamp, so these terms cannot be placed in time "
-                 "from this store. Search Term is the suggestion column of either table. For "
+                 "from this store. Suggestion (as stored) is the suggestion column of either table. For "
                  "search_suggestions it held the literal string submitted on the tested device. "
                  "What the suggestions table stores there is not established, because that table "
                  "was empty. The search_suggestions terms are worth reading literally: on the "
@@ -211,7 +211,7 @@ def solid_explorer_searches(context):
                UNION ALL
                SELECT suggestion, counter, type, 'suggestions' AS src
                FROM suggestions'''
-    headers = ('Search Term', 'Counter (as stored)', 'Type (as stored)', 'Table', 'Source File')
+    headers = ('Suggestion (as stored)', 'Counter (as stored)', 'Type (as stored)', 'Table', 'Source File')
     return _rows(context, query,
                  lambda r: (r[0] or '', r[1], r[2] if r[2] is not None else '', r[3]),
                  headers)

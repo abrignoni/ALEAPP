@@ -31,11 +31,11 @@ __artifacts_v2__ = {
         "artifact_icon": "player-play"
     },
     "disneyplus_last_played": {
-        "name": "Disney+ - Last Played Item",
+        "name": "Disney+ - Bookmarks Handshake Values",
         "description": "Parses the bookmarksHandshake preference values of the Disney+ Android app.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Disney+",
         "notes": "Read from the bookmarksHandshake keys of the app's default shared "
@@ -43,7 +43,8 @@ __artifacts_v2__ = {
                  "id, a series id, a content identifier type and a timestamp in Unix "
                  "milliseconds. On the one tested sample there was one bookmarksHandshake "
                  "key without a series identifier and one whose name carried a series "
-                 "identifier; what event writes each is not established. On the one tested "
+                 "identifier; what event writes each is not established, so a row is not shown "
+                 "to be the last item played. On the one tested "
                  "sample the content id of the key without a series identifier was "
                  "also present in the resume points table, which is a recorded link rather "
                  "than a correlation, and the two keys held identical values. "
@@ -122,8 +123,8 @@ __artifacts_v2__ = {
                  "and the value is a thirteen digit integer; on the one tested sample the app "
                  "backgrounded key resolved to within a second of the most recent resume "
                  "point write, which is what supports reading it as milliseconds. The "
-                 "bookmarksHandshake keys of the same file are reported by the Last Played "
-                 "Item artifact instead of here. Third party software development kit "
+                 "bookmarksHandshake keys of the same file are reported by the Bookmarks "
+                 "Handshake Values artifact instead of here. Third party software development kit "
                  "preference files that sit in the same directory are not read by this "
                  "artifact. Field mapping was done against one private sample from a single "
                  "device; no sample data is recorded for it.",
@@ -139,7 +140,7 @@ __artifacts_v2__ = {
         "description": "Summarises the cached streaming requests of the Disney+ Android app.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Disney+",
         "notes": "One row per media identifier, summarising the request URLs recorded in the "
@@ -147,8 +148,9 @@ __artifacts_v2__ = {
                  "manifest fetches are counted rather than listed, because an examiner cannot "
                  "act on each one. On the one tested sample every one of them carried the "
                  "same media identifier and the same ~did, ~aid and ~kid values. The first "
-                 "value of each is reported under Device ID, Account ID and Key ID, names "
-                 "taken from the parameter letters and not from a source. The cache "
+                 "value of each is reported under ~did (as stored), ~aid (as stored) and ~kid "
+                 "(as stored), headers that carry the parameter names; what each "
+                 "identifies is not established. The cache "
                  "directory still holds each entry. The exp= values are read as Unix "
                  "seconds. What they mark is not sourced; the earliest and latest are "
                  "reported as stored values and are not event times. A cached request "
@@ -900,7 +902,7 @@ def disneyplus_playback_requests(context):
     data_headers = (
         ('Earliest Token Expiry', 'datetime'), ('Latest Token Expiry', 'datetime'),
         'Media ID', 'Manifest Requests', 'Trickplay Index Requests', 'Other Requests',
-        'Device ID', 'Account ID', 'Key ID', 'Request Form', 'Delivery Hosts',
+        '~did (as stored)', '~aid (as stored)', '~kid (as stored)', 'Request Form', 'Delivery Hosts',
         'Source File')
     return data_headers, data_list, source_path
 

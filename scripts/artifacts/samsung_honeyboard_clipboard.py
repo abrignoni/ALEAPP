@@ -60,7 +60,7 @@ __artifacts_v2__ = {
         ),
         "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-07-13",
-        "last_update_date": "2026-10-07",
+        "last_update_date": "2026-10-09",
         "requirements": "",
         "category": "Clipboard",
         "notes": (
@@ -71,8 +71,8 @@ __artifacts_v2__ = {
             " clip_table.id values when collected from the adjacent main and its own SQLite sidecars;"
             " equivalence of those identifiers is not established. With no adjacent main, live-ID "
             "exclusion is empty, but timestamp/type/text and duplicate filters still apply. SQLite "
-            "query errors can leave an empty or partial live-ID set; an open helper returning None "
-            "can instead abort at cursor access. A blank result does not establish absence of records"
+            "query errors can leave an empty or partial live-ID set; a main database that cannot be "
+            "opened leaves it empty and is logged. A blank result does not establish absence of records"
             " or deletion: missing WAL, live-ID matches, filtering and decode failures can also "
             "produce it. Historical, unremeasured observations reported WALs of 9 to 32 frames and "
             "clip counts of 11, 1, 19 and 8 on samsungs20_a13, samsunga53_a14, sharon_a14 and "
@@ -637,12 +637,16 @@ def get_honeyboard_clipboard_deleted(context):
         if os.path.exists(main_db_path):
             try:
                 db = open_sqlite_db_readonly(main_db_path)
-                cur = db.cursor()
-                pragma_cols = [r[1] for r in cur.execute("PRAGMA table_info(clip_table)")]
-                new_schema = "caller_package_name" in pragma_cols
-                for (rid,) in cur.execute("SELECT id FROM clip_table"):
-                    live_ids.add(rid)
-                db.close()
+                if db is None:
+                    logfunc(f"honeyboard_clipboard WAL: could not open {main_db_path}; "
+                            "no live IDs collected")
+                else:
+                    cur = db.cursor()
+                    pragma_cols = [r[1] for r in cur.execute("PRAGMA table_info(clip_table)")]
+                    new_schema = "caller_package_name" in pragma_cols
+                    for (rid,) in cur.execute("SELECT id FROM clip_table"):
+                        live_ids.add(rid)
+                    db.close()
             except sqlite3.Error:
                 pass
 

@@ -47,10 +47,10 @@ __artifacts_v2__ = {
                        "with their display name, user name and roster flags",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
-        "last_update_date": "2026-08-06",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Kik",
-        "notes": "",
+        "notes": "A column the store version does not have is reported empty.",
         "paths": ('*/kik.android/databases/*kikDatabase.db*',),
         "output_types": "standard",
         "artifact_icon": "users",
@@ -104,6 +104,7 @@ __artifacts_v2__ = {
         "sample_data": {
             "pixel7a_a14": "Android 14 | kik.android | 1 row",
             "hc_pixel8pro_a17": "Android 17 | kik.android | 0 rows",
+            "pixel3_a12": "Android 12 | kik.android | 67 rows",
         },
     },
     "kik_local_account": {
@@ -159,6 +160,7 @@ from scripts.ilapfuncs import (
     check_in_media,
     convert_unix_ts_to_utc,
     get_sqlite_db_records,
+    null_absent_columns,
 )
 from scripts.artifacts.storagePathViews import unique_files
 
@@ -350,6 +352,9 @@ def kik_users(context):
     FROM KIKcontactsTable
     ORDER BY display_name
     '''
+    # Older stores lack some of these columns (user_type on the version 20 schema).
+    if source_path:
+        query = null_absent_columns(source_path, query)
     for record in _query(source_path, 'KIKcontactsTable', query):
         data_list.append((
             record[0], record[1], record[2], record[3], 'Yes' if record[4] else 'No', record[5],

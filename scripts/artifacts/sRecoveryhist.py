@@ -1,10 +1,10 @@
 __artifacts_v2__ = {
     "get_sRecoveryhist": {
         "name": "sRecoveryhist",
-        "description": "Parses Samsung recovery history (timestamp, firmware build, wipe events, reason, reboot reason and locale) from the efs recovery history file.",
+        "description": "Parses Samsung recovery history (timestamp, firmware build, wipe and prompt-and-wipe arguments, reason, reboot reason and locale) from the efs recovery history file.",
         "author": "@abrignoni",
         "creation_date": "2021-08-15",
-        "last_update_date": "2026-08-14",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Wipe & Setup",
         "notes": "Each record begins with a '+ [tag | timestamp | build]' header. A record can end "
@@ -15,8 +15,9 @@ __artifacts_v2__ = {
                  "started with the argument AOSP documents as erasing user data and cache. A record "
                  "with --prompt_and_wipe_data shows recovery was started with the argument AOSP "
                  "documents as prompting that data is corrupt and erasing it with consent; the "
-                 "record does not show whether the erase went ahead. Wipe reads Yes for either "
-                 "argument. The --carry_out value is reported as stored in Carry Out; its meaning is "
+                 "record does not show whether the erase went ahead. Wipe reads Yes only for "
+                 "--wipe_data; a --prompt_and_wipe_data record reads Yes under Prompt & Wipe and "
+                 "leaves Wipe blank unless the record also carries --wipe_data. The --carry_out value is reported as stored in Carry Out; its meaning is "
                  "not sourced here. Reference: AOSP, bootable/recovery/recovery.cpp at tag "
                  "android-14.0.0_r1, "
                  "https://android.googlesource.com/platform/bootable/recovery/+/refs/tags/android-14.0.0_r1/recovery.cpp#83",
@@ -99,7 +100,6 @@ def get_sRecoveryhist(context):
                     record['wipe'] = 'Yes'
                 elif line.startswith('--prompt_and_wipe_data'):
                     record['promptwipe'] = 'Yes'
-                    record['wipe'] = 'Yes'
                 elif line.startswith('--reason'):
                     record['reason'] = line.split('=', 1)[1] if '=' in line else ''
                 elif line.startswith('--locale'):

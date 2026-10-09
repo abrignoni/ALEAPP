@@ -4,10 +4,10 @@ __artifacts_v2__ = {
         "description": "Parses messages from the encrypted Signal database, including sender, recipient, direction and body.",
         "author": "Alexis Brignoni",
         "creation_date": "2026-07-25",
-        "last_update_date": "2026-08-15",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Signal",
-        "notes": "Requires the SQLCipher key from extra/Secrets/secrets.json, produced by the extraction tool. Without it the database cannot be read. Signal stores expires_in in milliseconds, so the disappearing-message timer is divided by 1000 and reported in seconds. Direction and status are decoded from the MessageTypes base type, the low five bits of the message type column. Base types 20 to 24 and 27 are named; any other base type, including call and other event rows and types 25, 26 and 28 that Signal treats as outgoing, is shown with Direction 'Unknown' and an empty Status (MessageTypes.java L36-70 at the commit linked below). Quoted Message ID is the first message whose date_sent equals the stored quote_id; it is derived by this parser, not stored. Sender and Recipient show the profile name, else the contact name, else the phone number, else the username. Reference: Signal-Android, 'MessageTable.kt (expires_in stored in milliseconds)', https://github.com/signalapp/Signal-Android/blob/ad141bb6af88ef67aea05d3d0e55cf9760fe56eb/app/src/main/java/org/thoughtcrime/securesms/database/MessageTable.kt. Reference: Signal-Android, 'MessageTypes.java (base type mask and base types)', https://github.com/signalapp/Signal-Android/blob/ad141bb6af88ef67aea05d3d0e55cf9760fe56eb/app/src/main/java/org/thoughtcrime/securesms/database/MessageTypes.java",
+        "notes": "Requires the SQLCipher key from extra/Secrets/secrets.json, produced by the extraction tool. Without it the database cannot be read. Signal stores expires_in in milliseconds, so the disappearing-message timer is divided by 1000 and reported in seconds. Direction and status are decoded from the MessageTypes base type, the low five bits of the message type column. Base type 20 is shown as Incoming and 27 as Draft. Direction is Outgoing for every base type in OUTGOING_MESSAGE_TYPES (MessageTypes.java L65-70 at the commit linked below): 21 to 26, 28, and the outgoing audio and video call types 2 and 11. Status is named for 21 to 24 and 27 only. Any other base type, including incoming and missed call rows and other event rows, is shown with Direction 'Unknown' and an empty Status. Whether a tested image holds rows of types 2, 11, 25, 26 or 28 was not measured. Quoted Message ID is derived by this parser, not stored: it is the ID of the message whose date_sent equals the stored quote_id, and where more than one message shares that date_sent every matching ID is listed, separated by commas, because which of them was quoted is not established here. Sender and Recipient show the profile name, else the contact name, else the phone number, else the username. Reference: Signal-Android, 'MessageTable.kt (expires_in stored in milliseconds)', https://github.com/signalapp/Signal-Android/blob/ad141bb6af88ef67aea05d3d0e55cf9760fe56eb/app/src/main/java/org/thoughtcrime/securesms/database/MessageTable.kt. Reference: Signal-Android, 'MessageTypes.java (base type mask and base types)', https://github.com/signalapp/Signal-Android/blob/ad141bb6af88ef67aea05d3d0e55cf9760fe56eb/app/src/main/java/org/thoughtcrime/securesms/database/MessageTypes.java",
         "paths": ('*/org.thoughtcrime.securesms/databases/signal.db*',),
         "output_types": "standard",
         "artifact_icon": "message-circle",
@@ -42,10 +42,10 @@ __artifacts_v2__ = {
         "description": "Parses Signal recipients, including phone numbers, ACI/PNI identifiers, usernames and profile names.",
         "author": "Alexis Brignoni",
         "creation_date": "2026-07-25",
-        "last_update_date": "2026-08-08",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Signal",
-        "notes": "Requires the SQLCipher key from extra/Secrets/secrets.json. Recipient Type is a label this parser assigns to the stored type: 0 Individual, 1 MMS, 2 Group, 3 Distribution list, 4 Call link, and Unknown with the stored number for any other value. These labels do not follow RecipientType in RecipientTable.kt at commit ad141bb6af88ef67aea05d3d0e55cf9760fe56eb (L5158-5164), which defines INDIVIDUAL(0), MMS(1), GV1(2), GV2(3), DISTRIBUTION_LIST(4) and CALL_LINK(5). Read a row labelled Distribution list as stored type 3, which is GV2 in that source, and a row labelled Call link as stored type 4, which is DISTRIBUTION_LIST in that source. A stored 5 is shown as Unknown (5). On pixel7a_a14 (15 rows), hc_pixel8pro_a16 (4 rows) and sharon_a14 (25 rows) the stored type was 0 on 14, 3 and 23 rows, 4 on one row of each image, and 3 on one row of sharon_a14. No tested row stored 1, 2 or 5. On russell_pixel6a_a13 (6 rows) no type value was read and the column shows Unknown (None). The rows of type 3 and 4 were not compared with the groups or distribution list tables. Reference: Signal-Android, RecipientTable.kt, https://github.com/signalapp/Signal-Android/blob/ad141bb6af88ef67aea05d3d0e55cf9760fe56eb/app/src/main/java/org/thoughtcrime/securesms/database/RecipientTable.kt#L5158-L5164",
+        "notes": "Requires the SQLCipher key from extra/Secrets/secrets.json. Recipient Type names the stored type after RecipientType in RecipientTable.kt at commit ad141bb6af88ef67aea05d3d0e55cf9760fe56eb (L5158-5164), which defines INDIVIDUAL(0), MMS(1), GV1(2), GV2(3), DISTRIBUTION_LIST(4) and CALL_LINK(5): 0 Individual, 1 MMS, 2 Group V1, 3 Group V2, 4 Distribution list, 5 Call link, and Unknown with the stored number for any other value. That commit is one version of the app's source; the app versions that wrote the tested databases were not compared with it. On pixel7a_a14 (15 rows), hc_pixel8pro_a16 (4 rows) and sharon_a14 (25 rows) the stored type was 0 on 14, 3 and 23 rows, 4 on one row of each image, and 3 on one row of sharon_a14. No tested row stored 1, 2 or 5. On russell_pixel6a_a13 (6 rows) no type value was read and the column shows Unknown (None). The rows of type 3 and 4 were not compared with the groups or distribution list tables. Reference: Signal-Android, RecipientTable.kt, https://github.com/signalapp/Signal-Android/blob/ad141bb6af88ef67aea05d3d0e55cf9760fe56eb/app/src/main/java/org/thoughtcrime/securesms/database/RecipientTable.kt#L5158-L5164",
         "paths": ('*/org.thoughtcrime.securesms/databases/signal.db*',),
         "output_types": "standard",
         "artifact_icon": "users",
@@ -78,10 +78,10 @@ __artifacts_v2__ = {
         "description": "Parses metadata for attachments referenced by Signal messages.",
         "author": "Alexis Brignoni",
         "creation_date": "2026-07-25",
-        "last_update_date": "2026-08-15",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Signal",
-        "notes": "Attachment files are decrypted with the modernKey from secrets.json and each attachment's data_random. The stored file format is detected from its content, which can differ from the content type recorded in the database. The Direction column is decoded from the MessageTypes base type of the message the attachment belongs to. Attachments are read from the attachment table where a release has one and from the part table otherwise, whose equivalent columns are mid, ct and _data; both are joined to the message table on the message id, so each attachment carries the date, thread, sender and direction of the message it belongs to. The Attachment cell shows every decrypted attachment of that message, not only the row's own file. The part schema has no transfer_state column, so Transfer State is empty for databases using it. Reference: Signal-Android, 'MessageTypes.java (base type mask and base types)', https://github.com/signalapp/Signal-Android/blob/ad141bb6af88ef67aea05d3d0e55cf9760fe56eb/app/src/main/java/org/thoughtcrime/securesms/database/MessageTypes.java",
+        "notes": "Attachment files are decrypted with the modernKey from secrets.json and each attachment's data_random. The stored file format is detected from its content, which can differ from the content type recorded in the database. The Direction column is decoded from the MessageTypes base type of the message the attachment belongs to. Attachments are read from the attachment table where a release has one and from the part table otherwise, whose equivalent columns are mid, ct and _data; both are joined to the message table on the message id, so each attachment carries the date, thread, sender and direction of the message it belongs to. The Attachment cell shows the row's own decrypted file and is empty where that file was not decrypted. The part schema has no transfer_state column, so Transfer State is empty for databases using it. Reference: Signal-Android, 'MessageTypes.java (base type mask and base types)', https://github.com/signalapp/Signal-Android/blob/ad141bb6af88ef67aea05d3d0e55cf9760fe56eb/app/src/main/java/org/thoughtcrime/securesms/database/MessageTypes.java",
         "paths": ('*/org.thoughtcrime.securesms/databases/signal.db*',
                   '*/org.thoughtcrime.securesms/app_parts/*'),
         "output_types": "standard",
@@ -122,17 +122,26 @@ SIGNAL_HMAC = 'sha1'
 
 # MessageTypes.java base types (type & 0x1F)
 MESSAGE_BASE_TYPE_MASK = 0x1F
+# Outgoing is every member of OUTGOING_MESSAGE_TYPES (MessageTypes.java L65-70 at
+# ad141bb6), which includes the outgoing audio (2) and video (11) call types.
 MESSAGE_DIRECTIONS = {
+    2: 'Outgoing',
+    11: 'Outgoing',
     20: 'Incoming',
     21: 'Outgoing',
     22: 'Outgoing',
     23: 'Outgoing',
     24: 'Outgoing',
+    25: 'Outgoing',
+    26: 'Outgoing',
     27: 'Draft',
+    28: 'Outgoing',
 }
 MESSAGE_STATUS = {21: 'Outbox', 22: 'Sending', 23: 'Sent', 24: 'Failed', 27: 'Draft'}
 
-RECIPIENT_TYPES = {0: 'Individual', 1: 'MMS', 2: 'Group', 3: 'Distribution list', 4: 'Call link'}
+# RecipientTable.kt RecipientType at ad141bb6 (L5158-5164)
+RECIPIENT_TYPES = {0: 'Individual', 1: 'MMS', 2: 'Group V1', 3: 'Group V2',
+                   4: 'Distribution list', 5: 'Call link'}
 CALL_TYPES = {0: 'Audio', 1: 'Video', 3: 'Group', 4: 'Ad hoc'}
 CALL_DIRECTIONS = {0: 'Incoming', 1: 'Outgoing'}
 CALL_EVENTS = {
@@ -363,18 +372,19 @@ def _checked_in_attachments(connection, modern_key, stored_files):
     registers it once and returns the same reference.
 
     Returns (references_by_message_id, detected_type_by_attachment_id,
-    thumbnail_reference_by_attachment_id).
+    thumbnail_reference_by_attachment_id, reference_by_attachment_id).
     """
     references = {}
+    own_references = {}
     detected_types = {}
     thumbnails = {}
     if not modern_key:
-        return references, detected_types, thumbnails
+        return references, detected_types, thumbnails, own_references
 
     attachment_table, attachment_columns = _attachment_table(connection)
     if not attachment_table or not all(
             _attachment_name(attachment_columns, name) for name in ('data_file', 'data_random')):
-        return references, detected_types, thumbnails
+        return references, detected_types, thumbnails, own_references
 
     cursor = connection.cursor()
     cursor.execute(f'''
@@ -415,9 +425,11 @@ def _checked_in_attachments(connection, modern_key, stored_files):
                 thumbnails[attachment_id] = reference
             else:
                 detected_types[attachment_id] = mime or 'unknown'
+                if reference:
+                    own_references[attachment_id] = reference
                 if reference and message_id is not None:
                     references.setdefault(message_id, []).append(reference)
-    return references, detected_types, thumbnails
+    return references, detected_types, thumbnails, own_references
 
 
 def _table_columns(connection, table):
@@ -469,6 +481,15 @@ def _select_list(available, table_alias, columns):
     return ', '.join(expressions)
 
 
+def _quoted_ids(message_ids):
+    """One ID as stored, several as a comma separated list, none as empty."""
+    if not message_ids:
+        return ''
+    if len(message_ids) == 1:
+        return message_ids[0]
+    return ', '.join(str(message_id) for message_id in message_ids)
+
+
 @artifact_processor
 def get_signalMessages(context):
     data_list = []
@@ -478,15 +499,16 @@ def get_signalMessages(context):
 
     for connection, source_path in _open_signal_database(context):
         recipient_columns = _table_columns(connection, 'recipient')
-        attachments_by_message, _, _ = _checked_in_attachments(
+        attachments_by_message, _, _, _ = _checked_in_attachments(
             connection, modern_key, stored_files)
 
+        # More than one message can share a date_sent, so every match is kept.
         # Signal stores the quoted message's send time in quote_id, so the
         # original can be resolved back to its own row
         original_by_sent_time = {}
         for sent, message_id in connection.execute(
-                'SELECT date_sent, _id FROM message WHERE date_sent IS NOT NULL'):
-            original_by_sent_time.setdefault(sent, message_id)
+                'SELECT date_sent, _id FROM message WHERE date_sent IS NOT NULL ORDER BY _id'):
+            original_by_sent_time.setdefault(sent, []).append(message_id)
 
         cursor = connection.cursor()
         message_columns = _table_columns(connection, 'message')
@@ -531,7 +553,7 @@ def get_signalMessages(context):
                 row[17] or '',
                 row[21] or '',
                 convert_unix_ts_to_utc(row[19]) if row[19] else '',
-                original_by_sent_time.get(row[19], '') if row[19] else '',
+                _quoted_ids(original_by_sent_time.get(row[19])) if row[19] else '',
                 'Yes' if row[20] else 'No',
                 _expires_in_seconds(row[18]),
                 row[5],
@@ -740,7 +762,7 @@ def get_signalAttachments(context):
 
     for connection, source_path in _open_signal_database(context):
         recipient_columns = _table_columns(connection, 'recipient')
-        references, detected_types, thumbnails = _checked_in_attachments(
+        _, detected_types, thumbnails, own_references = _checked_in_attachments(
             connection, modern_key, stored_files)
         decrypted_count += len(detected_types)
 
@@ -771,9 +793,9 @@ def get_signalAttachments(context):
             attachment_id = row[1]
             message_id = row[13]
             base_type = row[15] & MESSAGE_BASE_TYPE_MASK if row[15] is not None else None
-            # Same media reference the message row uses, so both views point at one copy
-            media = [ref for ref in references.get(message_id, [])] if message_id is not None else []
-            own_media = media[0] if len(media) == 1 else media
+            # The row's own file. It is the same media reference the message row uses,
+            # so both views point at one copy.
+            own_media = own_references.get(attachment_id, '')
 
             data_list.append((
                 convert_unix_ts_to_utc(row[0]) if row[0] else '',

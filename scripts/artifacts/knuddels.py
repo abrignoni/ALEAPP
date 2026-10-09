@@ -69,7 +69,7 @@ __artifacts_v2__ = {
         "description": "Extracts the local Knuddels account and app-usage info from shared_prefs XML",
         "author": "@annkirpv",
         "creation_date": "2026-06-30",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Accounts",
         "notes": ("passwordU (as stored) is the raw value of the shared_prefs key 'passwordU'. "
@@ -80,13 +80,13 @@ __artifacts_v2__ = {
                   "session_timestamp, sites_visited_weekly_time and origins_visited_date are "
                   "reported under their shared_prefs key names because what event each one records "
                   "is not established. The first two, and the app_first_installed value, are "
-                  "converted as Unix milliseconds, which is an assumption. Gender is decoded from "
-                  "the User.xml gender value as 1 = Male and 2 = Female; no source or measurement "
-                  "for that mapping is recorded here and any other value is reported as stored.\n"
-                  "Active Account is Yes where a User.xml naming the nickname was collected, with "
-                  "or without a database for that nickname. It records that the shared_prefs file "
-                  "is present for that nickname and nothing more. Where a database has no User.xml "
-                  "naming its nickname the cell is "
+                  "converted as Unix milliseconds, which is an assumption. gender (as stored) is "
+                  "the User.xml gender value with no mapping applied; what its values mean is not "
+                  "established.\n"
+                  "User.xml Collected is Yes where a User.xml naming the nickname was collected, "
+                  "with or without a database for that nickname. It records that the shared_prefs "
+                  "file is present for that nickname and nothing more. Where a database has no "
+                  "User.xml naming its nickname the cell is "
                   "left blank, which does not establish that the account is inactive."),
         "paths": (
             "*/com.knuddels.android/shared_prefs/User.xml",
@@ -406,7 +406,7 @@ def knuddels_account(context):
             "nickname": user.get("nickname", ""),
             "alias": alias,
             "age": user.get("age", ""),
-            "gender": {"1": "Male", "2": "Female"}.get(str(user.get("gender", "")), user.get("gender", "")),
+            "gender": user.get("gender", ""),
             "uuid": user.get("uuid", ""),
             "autologin": user.get("autologin", ""),
             "isloggedin": user.get("isLoggedIn", ""),
@@ -451,8 +451,8 @@ def knuddels_account(context):
             data_list.append(active_row(nickname, info, last_msg, [db]))
             matched_instances.add(instance)
         else:
-            # No User.xml carrying this nickname was collected, so whether the account is
-            # active cannot be established; the cell is left blank rather than reading 'No'.
+            # No User.xml carrying this nickname was collected; the cell is left blank
+            # rather than reading 'No'.
             data_list.append((
                 nickname, "", "", "", "", "", "", "", "", "",
                 "", "", "", "", last_msg, Context.get_relative_path(db),
@@ -464,10 +464,10 @@ def knuddels_account(context):
 
     data_headers = (
         'Nickname',
-        'Active Account',
+        'User.xml Collected',
         'Alias Nicks',
         'Age',
-        'Gender',
+        'gender (as stored)',
         'UUID',
         'Auto Login',
         'Is Logged In',

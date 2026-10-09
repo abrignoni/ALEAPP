@@ -19,14 +19,14 @@ __artifacts_v2__ = {
         "author": "Nicolai Martini",
         "version": "1.2",
         "creation_date": "2026-04-17",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-09",
         "requirements": "Cellebrite UFED After First Unlock data acquisition, or similar",
         "category": "Rema1000 | Scan Selv",
         "notes": "Date and time is paymentDate read as a Unix epoch in milliseconds and converted to "
                  "Europe/Copenhagen; both the epoch unit and that timezone are assumptions, neither is "
                  "recorded in the database. Total price is totalPrice divided by 100, which assumes the "
-                 "value is stored in minor units; no currency is recorded in the database. Location is "
-                 "built from the second and third semicolon-separated tokens of searchText with "
+                 "value is stored in minor units; no currency is recorded in the database. The Location "
+                 "column is built from the second and third semicolon-separated tokens of searchText with "
                  "zipString between them; that those tokens name the store is an assumption and is "
                  "not recorded in the database. Items lists only those searchText tokens, from the "
                  "fourth on, that also appear as a shelfText1 value in ReceiptItemEntity, so tokens "
@@ -78,7 +78,8 @@ def rema1000_receipt_prettified(context):
         "Å": "AA", "å": "aa",
         ".": ""
     })
-    data_headers = ("Date and time (Europe/Copenhagen)", "Location", "Items",
+    data_headers = ("Date and time (Europe/Copenhagen)",
+                    "Location (searchText tokens 2 and 3, zipString)", "Items",
                     "Total price (totalPrice/100)", "Payment method", "Payment Card Type",
                     "Masked PAN")
     query = """SELECT shelfText1 FROM ReceiptItemEntity;"""

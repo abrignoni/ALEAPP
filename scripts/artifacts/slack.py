@@ -154,19 +154,21 @@ __artifacts_v2__ = {
                        "address, the team name and domain and the last accessed time",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Slack",
         "notes": "Read from the accounts table of databases/account_manager.\n"
                  "That table also holds token_encrypted and token_encrypted_ext1 columns. Those "
                  "are session credentials for the account, so they are deliberately not reported "
                  "by this artifact; reporting them into a case file would put a usable "
-                 "authentication secret into the report.",
+                 "authentication secret into the report.\n"
+                 "A column the store version does not have is reported empty.",
         "paths": ('*/com.Slack/databases/account_manager*',),
         "output_types": "standard",
         "artifact_icon": "user-check",
         "sample_data": {
             "pixel7a_a14": "Android 14 | Slack | 1 row",
+            "pixel3_a12": "Android 12 | Slack | 1 row",
         },
     },
 }
@@ -177,7 +179,8 @@ import os
 
 from scripts.artifacts.storagePathViews import unique_files
 from scripts.ilapfuncs import (artifact_processor, check_in_media, convert_unix_ts_to_utc,
-                               does_table_exist_in_db, get_file_path, get_sqlite_db_records)
+                               does_table_exist_in_db, get_file_path, get_sqlite_db_records,
+                               null_absent_columns)
 
 # The workspace store is named after the team id, so it cannot be matched by a
 # fixed name. These tables identify it.
@@ -551,6 +554,9 @@ def slack_account(context):
                environment_variant, secondary_auth_enabled, is_logged_out, created_ts, team_json
         FROM accounts
         '''
+        # Older stores lack environment_variant and is_logged_out; a column the
+        # store does not have, or holds as NULL, is reported empty.
+        query = null_absent_columns(source_path, query)
         for record in get_sqlite_db_records(source_path, query):
             team = _json_or_empty(record[10])
             data_list.append((
@@ -562,8 +568,8 @@ def slack_account(context):
                 record[3],
                 record[5],
                 record[6],
-                'Yes' if record[7] else 'No',
-                'Yes' if record[8] else 'No',
+                '' if record[7] is None else 'Yes' if record[7] else 'No',
+                '' if record[8] is None else 'Yes' if record[8] else 'No',
                 convert_unix_ts_to_utc(record[9]) if record[9] else '',
             ))
 

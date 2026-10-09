@@ -50,17 +50,21 @@ __artifacts_v2__ = {
         },
     },
     "get_permissions_packages": {
-        "name": "Package and Shared User",
+        "name": "Permission Entries by Element",
         "description": "Parses the permission entries (perms items) stored under package, "
                        "shared-user and other elements of the system packages.xml, with the "
                        "element type, its name, the permission name and the granted attribute as "
                        "stored.",
         "author": "@abrignoni",
         "creation_date": "2021-01-28",
-        "last_update_date": "2021-01-28",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Permissions",
-        "notes": "",
+        "notes": "Element Type is the tag of any top-level element, other than "
+                 "permission-trees and permissions, that has a perms child, and Element Name is "
+                 "that element's name attribute. granted (as stored) is the granted attribute "
+                 "text of the perms item, blank when the attribute is absent; it is not converted "
+                 "and whether the permission is in effect is not established here.",
         "paths": ('*/system/packages.xml',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "settings",
@@ -164,5 +168,5 @@ def get_permissions_packages(context):
                     for sub_subelem in subelem:
                         data_list.append((elem.tag, elem.attrib.get('name', ''), sub_subelem.attrib.get('name', ''), sub_subelem.attrib.get('granted', '')))
 
-    data_headers = ('Type', 'Package', 'Permission', 'Granted?')
+    data_headers = ('Element Type', 'Element Name', 'Permission', 'granted (as stored)')
     return data_headers, data_list, source_path

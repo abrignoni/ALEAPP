@@ -67,7 +67,7 @@ __artifacts_v2__ = {
                        "table.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-31",
-        "last_update_date": "2026-08-31",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Trail Sense",
         "sample_data": {
@@ -77,7 +77,7 @@ __artifacts_v2__ = {
                  "the individual points of the paths in the Paths artifact. Each row is a point "
                  "stored for a path, with a Latitude, Longitude and Altitude in metres, the time "
                  "stored for it, the Path ID it belongs to, and the cell network and quality "
-                 "values stored with it. Recorded is Unix milliseconds and is reported as UTC. "
+                 "values stored with it. Created On is the createdOn value, Unix milliseconds, reported as UTC. "
                  "Cell Network is decoded from the app's CellNetwork enum by id, 1 NR (5G), 2 LTE "
                  "(4G), 3 CDMA, 4 WCDMA, 5 GSM (2G), 6 TD-SCDMA "
                  "(signal/src/main/java/com/kylecorry/andromeda/signal/CellNetwork.kt at "
@@ -88,7 +88,7 @@ __artifacts_v2__ = {
                  "checked); on the tested waypoint these read LTE and Good, which matched the "
                  "name of the CellSignal beacon stored at the same point. Any other value for "
                  "either is reported as stored, and both are empty where no cell value is stored. "
-                 "Recorded is blank where no time is stored. The app can record a path on the "
+                 "Created On is blank where no time is stored. The app can record a path on the "
                  "device and can import one from a GPX file "
                  "(app/src/main/java/com/kylecorry/trail_sense/tools/paths/ui/commands/"
                  "ImportPathsCommand.kt "
@@ -109,7 +109,9 @@ DB_SUFFIX = 'databases/trail_sense'
 # BeaconOwner.kt at kylecorry31/Trail-Sense 696d2f54fbcfeeab94efbf62e778716a9317e524.
 BEACON_OWNERS = {0: 'User', 1: 'Path', 2: 'Cell signal', 3: 'Maps',
                  4: 'Triangulate', 5: 'Field guide'}
-# CellNetwork.kt (by id) and Quality.kt (by ordinal) in kylecorry31/andromeda.
+# CellNetwork.kt (by id) and Quality.kt (by ordinal) at kylecorry31/andromeda
+# a13ec8fea2f13f4ce66dc7c7e9c27f3096ae270f; the andromeda version the app builds against
+# was not checked.
 CELL_NETWORKS = {1: 'NR (5G)', 2: 'LTE (4G)', 3: 'CDMA', 4: 'WCDMA',
                  5: 'GSM (2G)', 6: 'TD-SCDMA'}
 CELL_QUALITY = {0: 'Poor', 1: 'Moderate', 2: 'Good', 3: 'Unknown'}
@@ -201,6 +203,6 @@ def trailsense_waypoints(context):
         if records and db_path not in sources:
             sources.append(db_path)
 
-    data_headers = (('Recorded', 'datetime'), 'Latitude', 'Longitude', 'Altitude (m)',
+    data_headers = (('Created On', 'datetime'), 'Latitude', 'Longitude', 'Altitude (m)',
                     'Cell Network', 'Cell Quality', 'Path ID', 'Waypoint ID', 'Source File')
     return data_headers, data_list, '\n'.join(sources)

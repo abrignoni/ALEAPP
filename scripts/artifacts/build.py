@@ -8,10 +8,13 @@ __artifacts_v2__ = {
                        "vendor values are reported.",
         "author": "@abrignoni",
         "creation_date": "2020-03-30",
-        "last_update_date": "2026-07-30",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Device Information",
-        "notes": "",
+        "notes": "The Label column holds this module's label, not the stored property key. A "
+                 "label is reported once, from the first file and line that carries one of its "
+                 "keys, vendor file first. Recognized Build Property Observations lists every "
+                 "matching line with its stored key.",
         "paths": ('*/vendor/build.prop', '*/system/build.prop'),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "info-circle",
@@ -113,7 +116,7 @@ def get_build(context):
     if not source_paths:
         source_paths.append(files_found[0])
 
-    data_headers = ('Key', 'Value')
+    data_headers = ('Label', 'Value')
     return data_headers, data_list, '\n'.join(source_paths)
 
 
