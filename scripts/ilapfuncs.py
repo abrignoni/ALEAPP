@@ -971,23 +971,77 @@ def attach_sqlite_db_readonly(path, db_name):
     path = get_sqlite_db_path(path)
     return  f'''ATTACH DATABASE "file:{path}?mode=ro" AS {db_name}'''
 
-def get_sqlite_db_records(path, query, attach_query=None):
-    db = open_sqlite_db_readonly(path)
-    if db:
+class SqliteRecords:
+    """The rows of one query, read as the caller iterates.
+
+    Closes its cursor and connection when the rows run out, when a read fails,
+    on close(), and when the object is dropped. `description` is the cursor's.
+    """
+    def __init__(self, db, cursor):
+        self._db = db
+        self._cursor = cursor
+        self.description = cursor.description
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self._cursor is None:
+            raise StopIteration
         try:
-            cursor = db.cursor()
-            if attach_query:
-                cursor.execute(attach_query)
-            cursor.execute(query)
-            # NOTE: we return the cursor directly, to be iterated by the caller
-            #   to keep it as a generator
-            return cursor
-        except sqlite3.OperationalError as e:
-            logfunc(f"Error with {path}:")
-            logfunc(f" - {str(e)}")
-        except sqlite3.ProgrammingError as e:
-            logfunc(f"Error with {path}:")
-            logfunc(f" - {str(e)}")
+            return next(self._cursor)
+        except BaseException:
+            # StopIteration ends the rows; a read error still reaches the caller.
+            self.close()
+            raise
+
+    def close(self):
+        """Release the cursor and the connection. Safe to call more than once."""
+        cursor, db = self._cursor, self._db
+        self._cursor = self._db = None
+        try:
+            if cursor is not None:
+                cursor.close()
+        finally:
+            if db is not None:
+                db.close()
+
+    def __del__(self):
+        try:
+            self.close()
+        except sqlite3.Error:
+            pass
+
+
+def get_sqlite_db_records(path, query, attach_query=None):
+    """Run a query and return its rows as a SqliteRecords, or [] when it fails.
+
+    The query runs here, not on first iteration. The connection is closed once
+    the rows are exhausted; a caller that keeps the result and stops early
+    should call close() or use contextlib.closing.
+    """
+    db = open_sqlite_db_readonly(path)
+    if db is None:
+        return []
+    cursor = None
+    try:
+        cursor = db.cursor()
+        if attach_query:
+            cursor.execute(attach_query)
+        cursor.execute(query)
+        records = SqliteRecords(db, cursor)
+        db = cursor = None
+        return records
+    except (sqlite3.OperationalError, sqlite3.ProgrammingError) as e:
+        logfunc(f"Error with {path}:")
+        logfunc(f" - {str(e)}")
+    finally:
+        try:
+            if cursor is not None:
+                cursor.close()
+        finally:
+            if db is not None:
+                db.close()
     return []
 
 def get_results_with_extra_sourcepath_if_needed(path_list, query, data_headers):

@@ -36,10 +36,9 @@ class TestThunderbirdCursorSnapshots(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             path = self.preferences(Path(temp))
             cursor = get_sqlite_db_records(str(path), 'SELECT * FROM preferences_storage')
-            self.assertIsInstance(cursor, sqlite3.Cursor)
+            self.assertNotIsInstance(cursor, list)
             self.assertTrue(list(cursor))
             self.assertEqual(list(cursor), [])
-            cursor.connection.close()
             self.assertEqual(_map_uuid_to_account(str(path)),
                              dict(zip(self.uuids, ['0@example.test', '1@example.test'])))
 
