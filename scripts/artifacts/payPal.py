@@ -34,10 +34,10 @@ __artifacts_v2__ = {
                        "app records, with a count of the encrypted account stores it holds.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "PayPal",
-        "notes": "One row per app data directory. Configuration Cached is the elmo_cache_time "
+        "notes": "One row per app data directory. The elmo_cache_time column is the elmo_cache_time "
                  "value of PayPal.xml, read as Unix milliseconds and shown in UTC. What the app "
                  "records at that time is not established here. The account itself is not "
                  "reported because it is not "
@@ -48,9 +48,9 @@ __artifacts_v2__ = {
                  "what is "
                  "present and unreadable, so an examiner can see how much account state the "
                  "device holds rather than inferring it from an empty report; the keyset entry "
-                 "itself is not counted as an entry. Keep Me Logged In Opt Out is the "
-                 "kmliOptOutFlag value of FoundationAccount.AccountState.xml, as stored. The "
-                 "column name is this artifact's reading of the key name, and what the app does "
+                 "itself is not counted as an entry. kmliOptOutFlag (as stored) is the "
+                 "kmliOptOutFlag value of FoundationAccount.AccountState.xml. The "
+                 "column is named after the stored key, and what the key means or what the app does "
                  "with the value is not established here. On the tested samples it was the one "
                  "account state value stored in the clear beside the encrypted ones. The app's "
                  "home and hub databases are not reported: "
@@ -246,13 +246,13 @@ def paypal_device(context):
         ))
 
     data_headers = (
-        ('Configuration Cached', 'datetime'),
+        ('elmo_cache_time', 'datetime'),
         'Device ID',
         'App Installation GUID',
         'App Version',
         'Encrypted Preference Files',
         'Encrypted Entries',
-        'Keep Me Logged In Opt Out (as stored)',
+        'kmliOptOutFlag (as stored)',
         'Source Files',
     )
     return data_headers, data_list, '; '.join(sorted(set(source_files)))

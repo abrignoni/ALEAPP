@@ -4,16 +4,16 @@ __artifacts_v2__ = {
         "description": "Parses the Threads accounts the Android app recorded on the device, with the ids stored under current_user_id and last_seen_user_id.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Threads",
         "notes": "One row per account the app recorded. Account identifiers are read from "
                  "the app's own preference files, and the user name and profile picture "
                  "address from the backup preference file, which is the only store in the "
                  "tested extraction that carried them; an account present in one and not the "
-                 "other is still reported, with the missing fields empty. Current Account and Last "
-                 "Seen Account mark the ids stored under the current_user_id and last_seen_user_id "
-                 "keys. What the app uses each key for is not established; the values are reported "
+                 "other is still reported, with the missing fields empty. Matches current_user_id and "
+                 "Matches last_seen_user_id show Yes where the account id equals the value stored "
+                 "under that key. What the app uses each key for is not established; the values are reported "
                  "as stored. Field mapping was done against a private sample "
                  "provided by Mattia; no sample data is recorded for it.",
         "paths": (
@@ -61,7 +61,7 @@ __artifacts_v2__ = {
                        "was made.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Threads",
         "notes": "One row per post inside a stored feed item; a stored item with no readable post "
@@ -72,9 +72,9 @@ __artifacts_v2__ = {
                  "for how the item arrived and read background_prefetch on the tested "
                  "device, so a row records that the app fetched the item rather than that "
                  "the account holder saw it. Posted is the post's own Unix second timestamp "
-                 "and Stored is the row's stored_age value read as Unix milliseconds; what event "
-                 "it marks is not established. Liked By "
-                 "Viewer is the post's has_liked value, reported as stored. What sets it is not "
+                 "and stored_age is the row's stored_age value read as Unix milliseconds; what event "
+                 "it marks is not established. has_liked (as stored) "
+                 "is the post's has_liked value, reported as stored. What sets it is not "
                  "established here. "
                  "Like Count and the account badges are the values the post carries, as "
                  "stored. The images the posts reference were not linked to the app's image "
@@ -258,8 +258,8 @@ def threads_accounts(context):
         'Account ID',
         'User Name',
         'Profile Picture Address',
-        'Current Account',
-        'Last Seen Account',
+        'Matches current_user_id',
+        'Matches last_seen_user_id',
         'Has Preference File',
         'Source Files',
     )
@@ -390,13 +390,13 @@ def threads_feed_items(context):
 
     data_headers = (
         ('Posted', 'datetime'),
-        ('Stored', 'datetime'),
+        ('stored_age', 'datetime'),
         'Account',
         'Author User Name',
         'Author Full Name',
         'Post Text',
         'Like Count (as stored)',
-        'Liked By Viewer (as stored)',
+        'has_liked (as stored)',
         'Post Code',
         'Media Type (as stored)',
         'Author Verified (as stored)',

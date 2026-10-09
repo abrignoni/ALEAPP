@@ -6,7 +6,7 @@ __artifacts_v2__ = {
                        "address is not stored there and is not checked to exist.",
         "author": "@abrignoni",
         "creation_date": "2021-03-18",
-        "last_update_date": "2021-03-18",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Installed Apps",
         "notes": "",
@@ -24,7 +24,7 @@ __artifacts_v2__ = {
             "russell_pixel6a_a13": "Android 13 | 303 rows",
             "userb2_a13": "Android 13 | 303 rows",
         },
-        "html_columns": ['Possible Google Play Store Link'],
+        "html_columns": ['Play Store Address (built from the package name)'],
     }
 }
 
@@ -54,5 +54,5 @@ def get_packageGplinks(context):
             url = esc(f'https://play.google.com/store/apps/details?id={bundleid[0]}')
             data_list.append((bundleid[0], url))
 
-    data_headers = ('Bundle ID', 'Possible Google Play Store Link')
+    data_headers = ('Bundle ID', 'Play Store Address (built from the package name)')
     return data_headers, data_list, source_path

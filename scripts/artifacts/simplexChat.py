@@ -5,7 +5,7 @@ __artifacts_v2__ = {
                        "database, with the direction, the contact and the message text.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-20",
-        "last_update_date": "2026-08-20",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "SimpleX Chat",
         "notes": "One row per chat item. The app keeps its database encrypted with SQLCipher, and "
@@ -20,8 +20,10 @@ __artifacts_v2__ = {
                  "(simplex-chat, Store/Messages.hs, createNewChatItem_, "
                  "https://github.com/simplex-chat/simplex-chat/blob/26697277545408f09bf4b9a3ef30658ee5b7d427/src/Simplex/Chat/Store/Messages.hs#L538-L561; "
                  "that commit is one version of the app's source and the version that wrote the "
-                 "samples is not recorded here). A value of 1 is shown as Sent and 0 or empty as "
-                 "Received; every row of the two samples held 1 or 0. Timestamps are stored as "
+                 "samples is not recorded here). A value of 1 is shown as Sent and 0 as Received, "
+                 "the meanings the schema comment on that column gives at the same commit, where "
+                 "it is declared NOT NULL (chat_schema.sql L407); an empty value would leave "
+                 "Direction and Sender blank. Every row of the two samples held 1 or 0. Timestamps are stored as "
                  "text with nanosecond precision and the fraction is trimmed to microseconds "
                  "before parsing, because Python releases before 3.11 parse only three or six "
                  "fractional digits. Deleted and Edited are the flags the row carries, so a "
@@ -118,7 +120,7 @@ __artifacts_v2__ = {
                        "record what a message said before it was changed.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-20",
-        "last_update_date": "2026-08-20",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "SimpleX Chat",
         "notes": "One row per stored version of a message. The app keeps the previous "
@@ -127,7 +129,9 @@ __artifacts_v2__ = {
                  "Created and Updated were identical on every row of the tested device, so no stored "
                  "version was itself revised after it was written. "
                  "to. Version Time is when that version was current. Content is the stored "
-                 "structured content, as stored. Field mapping was done against two private "
+                 "structured content, as stored. Direction is the item_sent value of the message "
+                 "the version belongs to, 1 shown as Sent and 0 as Received, and is blank where "
+                 "no chat_items row matches the version. Field mapping was done against two private "
                  "samples provided by Mattia; no sample data is recorded for them.",
         "paths": (
             '*/chat.simplex.app/files_chat.db',
@@ -209,6 +213,13 @@ def _timestamp(value):
 def _text(value):
     '''A stored value as text, with a stored null read as absent.'''
     return '' if value is None else str(value)
+
+
+def _direction(item_sent):
+    '''Sent for a set item_sent, Received for 0, blank where no value is stored.'''
+    if item_sent is None or item_sent == '':
+        return ''
+    return 'Sent' if item_sent else 'Received'
 
 
 def _passphrase(files_found):
@@ -324,7 +335,7 @@ def simplex_messages(context):
              quoted_content, quoted_sent, item_live, timed_ttl, timed_delete_at,
              user_mention, chat_item_id) = row
             contact = names.get(contact_id, _text(contact_id))
-            direction = 'Sent' if item_sent else 'Received'
+            direction = _direction(item_sent)
             source_files.append(relative)
             data_list.append((
                 _timestamp(item_ts),
@@ -332,7 +343,7 @@ def simplex_messages(context):
                 _timestamp(updated_at),
                 _timestamp(item_deleted_ts),
                 direction,
-                'Account Holder' if item_sent else contact,
+                {'Sent': 'Account Holder', 'Received': contact}.get(direction, ''),
                 contact,
                 _text(item_text),
                 _text(item_status),
@@ -524,7 +535,7 @@ def simplex_message_edits(context):
                 _timestamp(version_ts),
                 _timestamp(created_at),
                 _timestamp(updated_at),
-                'Sent' if item_sent else 'Received',
+                _direction(item_sent),
                 _text(content),
                 _text(current_text),
                 _text(chat_item_id),

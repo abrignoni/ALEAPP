@@ -176,7 +176,7 @@ __artifacts_v2__ = {
                        "the times the app requested and received each one.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Hinge",
         "notes": "One row per cache entry. The cache is a libcore.io.DiskLruCache in which "
@@ -190,8 +190,9 @@ __artifacts_v2__ = {
                  "which Coil release the app ships was not established. The remaining columns are "
                  "the response headers as stored. Source "
                  "Address is filled only where the entry name is the SHA-256 of an address in "
-                 "subject_media photoUrl, thumbnailUrl or videoUrl, or in player_media photoUrl, "
-                 "which on the tested device "
+                 "the photoUrl, thumbnailUrl or videoUrl column of subject_media or player_media. "
+                 "With subject_media's three columns and player_media photoUrl, that on the "
+                 "tested device "
                  "was 1 of 20 entries; the other 19 were served as WebP and none of those "
                  "addresses hashed to their entry names, so they could not be "
                  "tied to a profile. A sweep "
@@ -818,8 +819,10 @@ def hinge_cached_images(context):
         for _, database in _databases(paths):
             for statement in ('SELECT photoUrl FROM subject_media',
                               'SELECT thumbnailUrl FROM subject_media',
+                              'SELECT videoUrl FROM subject_media',
                               'SELECT photoUrl FROM player_media',
-                              'SELECT videoUrl FROM subject_media'):
+                              'SELECT thumbnailUrl FROM player_media',
+                              'SELECT videoUrl FROM player_media'):
                 for (address,) in _rows(database, statement):
                     if address:
                         addresses[hashlib.sha256(address.encode()).hexdigest()] = address

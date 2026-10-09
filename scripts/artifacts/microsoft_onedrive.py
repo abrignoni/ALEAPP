@@ -4,12 +4,12 @@ __artifacts_v2__ = {
         "description": "Parses Microsoft OneDrive metadata and previews cached stream media",
         "author": "Kevin Pagano (@stark4n6), Matt Beers, Anthony Reince",
         "creation_date": "2025-04-17",
-        "last_update_date": "2026-08-25",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Cloud Storage",
         "notes": "Timestamps of 0 or less are shown blank. Storage Path is built by walking each "
-                 "item's parentRid to the top. Item Type shows File for 1, Image for 3 and Folder "
-                 "for 32, a mapping with no source found, and any other value as stored. Rows "
+                 "item's parentRid to the top. itemType (as stored) is the items.itemType value "
+                 "without a label; what each value denotes was not established. Rows "
                  "whose resourceId is search, Mru, SharedBy or SharedWithMe are not reported. An "
                  "item with more than one stream_cache row appears once per cached stream. A "
                  "cached file is looked up in the extraction by its name and the tail of the "
@@ -134,12 +134,7 @@ def microsoft_onedrive(context):
             items.itemDate,
             items.creationDate,
             items.modifiedDateOnClient,
-            CASE items.itemType
-                WHEN 1 then 'File'
-                WHEN 3 then 'Image'
-                WHEN 32 then 'Folder'
-                ELSE items.itemType
-            end,
+            items.itemType,
             COALESCE(items.name, '') || COALESCE(items.extension, ''),
             items.extension,
             items.ownerName,
@@ -225,7 +220,7 @@ def microsoft_onedrive(context):
         ('Item Date', 'datetime'),
         ('Creation Date', 'datetime'),
         ('Modified Date on Client', 'datetime'),
-        'Item Type',
+        'itemType (as stored)',
         'Item Name',
         'Item Extension',
         'Owner Name',

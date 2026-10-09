@@ -5,12 +5,14 @@ __artifacts_v2__ = {
         "description": "Statuses cached in the TimelineStatusEntity table of the Tusky database, "
                        "with the author account, counts and the reblogged, bookmarked and "
                        "favourited flags of each status. Rows with a createdAt of 0 or less are "
-                       "not reported. Visibility shows Unknown for a stored 0, Public for 1 and "
-                       "Direct for 4; that mapping is not sourced and other values are shown "
-                       "blank.",
+                       "not reported. Visibility (as stored) is the visibility column value "
+                       "with no label applied; the meaning of each value is not established "
+                       "here. Reblogged, Bookmarked and Favourited show True for a stored 1 "
+                       "and are named after their columns; which account each flag refers to "
+                       "is not established here.",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-12-12",
-        "last_update_date": "2022-12-12",
+        "last_update_date": "2026-10-09",
         "requirements": "BeautifulSoup",
         "category": "Tusky",
         "notes": "",
@@ -98,7 +100,7 @@ def get_tusky(context):
                 case TimelineStatusEntity.bookmarked when 0 then "" when 1 then "True" end,
                 case TimelineStatusEntity.favourited when 0 then "" when 1 then "True" end,
                 case TimelineStatusEntity.sensitive when 0 then "" when 1 then "True" end,
-                case TimelineStatusEntity.visibility when 0 then "Unknown" when 1 then "Public" when 4 then "Direct" end as "Visibility",
+                TimelineStatusEntity.visibility,
                 json_extract(TimelineStatusEntity.application, '$.name') as "Application"
                 from TimelineStatusEntity
                 left join TimelineAccountEntity on TimelineAccountEntity.serverId = TimelineStatusEntity.authorServerId
@@ -114,7 +116,7 @@ def get_tusky(context):
             data_list.append((_ms_to_utc(row[0]), row[1], row[2], row[3], _strip_html(row[4]), _attachment_urls(row[5]),
                               row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14]))
 
-    data_headers = (('Timestamp', 'datetime'), 'User Name', 'Display Name', 'URL', 'Text Content', 'Attachments', 'Boost Count', 'Favorite Count', 'Replies Count', 'User Boosted?', 'User Bookmarked?', 'User Favorited?', 'Sensitive', 'Visibility', 'Application')
+    data_headers = (('Timestamp', 'datetime'), 'User Name', 'Display Name', 'URL', 'Text Content', 'Attachments', 'Boost Count', 'Favorite Count', 'Replies Count', 'Reblogged', 'Bookmarked', 'Favourited', 'Sensitive', 'Visibility (as stored)', 'Application')
     return data_headers, data_list, source_path
 
 

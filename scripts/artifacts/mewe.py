@@ -55,15 +55,16 @@ __artifacts_v2__ = {
         "description": "Feed posts cached by MeWe, including group, author, text, link, media and poll details.",
         "author": "@AlexisBrignoni",
         "creation_date": "2026-07-26",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "MeWe",
         "notes": ("This is cached feed content, not an authorship record. Rows are posts held in "
                   "the app's POST table, so their presence shows what was cached on the device, "
                   "NOT that the device owner wrote, opened or read any of "
-                  "it. On the one tested image that held posts, currentUserPost was 0 on all 74 "
-                  "rows. Use 'Posted By Device Owner' = Yes to isolate "
-                  "the owner's own posts.\n"
+                  "it. currentUserPost is the POST column of that name, reported as stored; that "
+                  "it marks posts written by the signed in account is read from the column name "
+                  "and was not traced to a source. On the one tested image that held posts it "
+                  "was 0 on all 74 rows.\n"
                   "Feed Context lists the feed flags set on the row (isAllfeed, isDiscoveryFeed, "
                   "isFavoriteFeed, inProfile, isRefpost). Rows are not de-duplicated. Whether one "
                   "Post Id occurs on more than one row was not measured for these notes, so count "
@@ -85,14 +86,16 @@ __artifacts_v2__ = {
         "description": "Comments on MeWe posts, with the text of the post each one replies to.",
         "author": "@AlexisBrignoni",
         "creation_date": "2026-07-26",
-        "last_update_date": "2026-07-26",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "MeWe",
         "notes": ("Like MeWe - Posts, this is cached feed content: comments held in the app's "
                   "COMMENT table for posts it cached. Presence does not imply the device owner "
                   "wrote or "
-                  "read them. 'By Device Owner' = Yes marks the owner's own comments; in both test "
-                  "images none of the 16 cached comments were the owner's.\n"
+                  "read them. currentUserPost is the COMMENT column of that name, reported as "
+                  "stored; that it marks the signed in account's own comments is read from the "
+                  "column name and was not traced to a source. On the two test images it was "
+                  "not set on any of the 16 cached comments.\n"
                   "'On Post By' and 'On Post Text' come from a LEFT JOIN to the cached post. If the "
                   "parent post is no longer cached these are blank, and the comment is still "
                   "reported rather than dropped; use Post Id to correlate.\n"
@@ -154,16 +157,16 @@ __artifacts_v2__ = {
     },
     "get_mewe_reactions": {
         "name": "MeWe - Reactions",
-        "description": "Emoji reactions on posts, comments and chat messages, including whether a reaction was recorded for the account.",
+        "description": "Emoji reaction tallies on posts, comments and chat messages, with the stored userReacted flag of each tally row.",
         "author": "@AlexisBrignoni",
         "creation_date": "2026-07-26",
-        "last_update_date": "2026-07-26",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "MeWe",
         "notes": ("Reactions are stored as a per-emoji tally, not a list of reactors. Reaction "
                   "Count is the stored count for that emoji on that object and names no one. "
-                  "Device Owner Reacted shows Yes where the row's userReacted flag is set; that "
-                  "the flag marks the signed in account's own reaction is read from the column "
+                  "userReacted is the column of that name on the tally row, reported as stored; "
+                  "that it marks the signed in account's own reaction is read from the column "
                   "name and was not traced to a source.\n"
                   "'Reacted To' says which object was reacted to (Post, Comment or Chat Message), "
                   "since the three come from separate tables merged here. Target Author, Target "
@@ -520,14 +523,14 @@ POSTS_QUERY = '''
 @artifact_processor
 def get_mewe_posts(context):
     headers = (('Created', 'datetime'), ('Edited', 'datetime'), 'Author', 'Author Handle',
-               'Group Name', 'Group Id', 'Text', 'Posted By Device Owner', 'Comments',
+               'Group Name', 'Group Id', 'Text', 'currentUserPost', 'Comments',
                'Media Count', 'Shares', 'Link URL', 'Link Title', 'Album Name',
                'Poll Question', 'Poll Votes', 'Event Name', 'Event Location',
                'Feed Context', 'Post Id')
 
     def build(r):
         return (_epoch(r[0]), _epoch(r[1]), r[2], r[3], r[4], r[5], r[6],
-                'Yes' if r[7] else '', r[8], r[9], r[10],
+                r[7], r[8], r[9], r[10],
                 r[12] if r[11] else '', r[13] if r[11] else '', r[14],
                 r[15], r[16] if r[15] else '', r[17], r[18],
                 _feed_context(r[19], r[20], r[21], r[22], r[23]), r[24])
@@ -549,13 +552,13 @@ COMMENTS_QUERY = '''
 @artifact_processor
 def get_mewe_comments(context):
     headers = (('Created', 'datetime'), ('Edited', 'datetime'), 'Author', 'Author Handle',
-               'Comment Text', 'By Device Owner', 'Replies', 'Has Photo', 'Photo Name',
+               'Comment Text', 'currentUserPost', 'Replies', 'Has Photo', 'Photo Name',
                'Has Audio', 'Audio Duration', 'Link URL', 'Document Name',
                'On Post By', 'On Post Text', 'Post Id', 'Comment Id')
 
     def build(r):
         return (_epoch(r[0]), _epoch(r[1]), r[2], r[3], r[4],
-                'Yes' if r[5] else '', r[6], 'Yes' if r[7] else '', r[8],
+                r[5], r[6], 'Yes' if r[7] else '', r[8],
                 'Yes' if r[9] else '', r[10], r[12] if r[11] else '', r[13],
                 r[16], r[15], r[14], r[17])
 
@@ -623,7 +626,7 @@ REACTION_SOURCES = (
 @artifact_processor
 def get_mewe_reactions(context):
     headers = (('Target Created', 'datetime'), 'Reacted To', 'Emoji', 'Reaction Count',
-               'Device Owner Reacted', 'Target Author', 'Target Text', 'Target Id')
+               'userReacted', 'Target Author', 'Target Text', 'Target Id')
     data_list = []
     sources = []
 
@@ -635,7 +638,7 @@ def get_mewe_reactions(context):
             for row in _rows(db_path, query):
                 found_any = True
                 data_list.append((_epoch(row[6]), label, row[0], row[1],
-                                  'Yes' if row[2] else '', row[4], row[5], row[3]))
+                                  row[2], row[4], row[5], row[3]))
         if found_any:
             sources.append(db_path)
 

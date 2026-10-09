@@ -2,11 +2,11 @@ __artifacts_v2__ = {
     "yahoo_mail_messages": {
         "name": "Yahoo Mail - Messages",
         "description": "Parses messages cached by the Yahoo Mail Android app, including "
-                       "sender and recipient addresses, subject, snippet, folder, read "
+                       "sender and recipient addresses, subject, snippet, folder name as stored, read "
                        "and flagged state and the message body where the app cached it.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Yahoo Mail",
         "notes": "One row per cached message. The app stores its state in flux_database.db, "
@@ -22,10 +22,11 @@ __artifacts_v2__ = {
                  "consistent with a length cap, so a snippet ending mid word should not be read "
                  "as the end of the message. Decorations and Category are reported as stored: "
                  "the extraction carries no app binary, so no mapping for those codes could be "
-                 "sourced. Folder names the folder the cached record carries, resolved through "
-                 "the Folders table of the same account. Where the stored folder name decodes "
-                 "from base64 to printable text the decoded text is shown in place of the "
-                 "stored name; the Folders artifact shows both. Message Body is the HTML the "
+                 "sourced. Folder Name (as stored) is the folderName of the folder the cached record "
+                 "carries, resolved through the Folders table of the same account. Folder Name "
+                 "(base64 decoded) is filled only where that stored name decodes from base64 to "
+                 "printable text; whether the app encodes folder names that way is not "
+                 "established. Message Body is the HTML the "
                  "app cached, as stored; on the tested device 1 of 6 messages carried one, so "
                  "an empty column means no body was cached rather than that the message was "
                  "empty. No message on the tested device carried an attachment: every "
@@ -403,11 +404,12 @@ def yahoo_mail_messages(context):
 
                 folder_id = folder_ids.get((mailbox, message_id))
                 folder_name = ''
+                folder_decoded = ''
                 if folder_id is not None:
                     folder = folders.get((mailbox, str(folder_id)))
                     if folder:
                         folder_name = folder.get('folderName') or ''
-                        folder_name = _decoded_name(folder_name) or folder_name
+                        folder_decoded = _decoded_name(folder_name)
 
                 attachment_ids = attachment.get('attachmentIds')
                 source_files.append(relative)
@@ -415,6 +417,7 @@ def yahoo_mail_messages(context):
                     _ms(document.get('date')),
                     _ms(document.get('serverSyncTimestamp')),
                     folder_name,
+                    folder_decoded,
                     str(folder_id) if folder_id is not None else '',
                     subject,
                     snippet,
@@ -439,12 +442,13 @@ def yahoo_mail_messages(context):
 
     # Most recent message first, with the message id breaking ties so the order is the
     # same on every run rather than depending on the order the rows were read.
-    data_list.sort(key=lambda row: (str(row[0]), row[19]), reverse=True)
+    data_list.sort(key=lambda row: (str(row[0]), row[20]), reverse=True)
 
     data_headers = (
         ('Date', 'datetime'),
         ('Server Sync Time', 'datetime'),
-        'Folder',
+        'Folder Name (as stored)',
+        'Folder Name (base64 decoded)',
         'Folder ID',
         'Subject',
         'Snippet',

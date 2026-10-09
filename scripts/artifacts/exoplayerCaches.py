@@ -51,13 +51,13 @@ __artifacts_v2__ = {
         },
     },
     "snapchatStreamedMedia": {
-        "name": "Snapchat - Streamed Media (ExoPlayer)",
+        "name": "Snapchat - Media Cache Index Entries (ExoPlayer)",
         "description": "Entries in the Snapchat app's ExoPlayer cache index (files/streaming): "
                        "the content type and content ids the app recorded in the cache index, the "
                        "resolved URL, and the time the cached bytes were last touched.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-26",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Snapchat",
         "notes": "Read from files/streaming/cached_content_index.exi (androidx media3 1.11.0 "

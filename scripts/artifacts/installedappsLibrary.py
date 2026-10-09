@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Parses rows of the ownership table (purchase_time, account and doc_id) from the Play Store library.db. A row does not establish that the item is an application or that it was installed on the device.",
         "author": "@abrignoni",
         "creation_date": "2020-03-01",
-        "last_update_date": "2020-03-01",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Installed Apps",
         "notes": "",
@@ -61,7 +61,7 @@ def get_installedappsLibrary(context):
 
         for row in all_rows:
             purchase_time = datetime.datetime.fromtimestamp(int(row[0]) / 1000, datetime.timezone.utc) if row[0] else ''
-            data_list.append((user, purchase_time, row[1], row[2]))
+            data_list.append((purchase_time, user, row[1], row[2]))
 
-    data_headers = ('User', ('Purchase Time', 'datetime'), 'Account', 'Doc ID')
+    data_headers = (('Purchase Time', 'datetime'), 'User', 'Account', 'Doc ID')
     return data_headers, data_list, '\n'.join(source_paths)

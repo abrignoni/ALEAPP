@@ -2,10 +2,10 @@
 __artifacts_v2__ = {
     "get_googlemaplocation": {
         "name": "Googlemaplocation",
-        "description": "Parses the destination_history table of Google Maps' da_destination_history database: time (read as Unix milliseconds), destination title and address, and destination and source coordinates. Coordinates are shown with a decimal point placed six digits from the right of the stored integer; that scaling is not sourced and values of six digits or fewer are shown unchanged. No tested image is recorded for this artifact.",
+        "description": "Parses the destination_history table of Google Maps' da_destination_history database: time (read as Unix milliseconds), destination title and address, and destination and source coordinates. The four coordinate columns are reported as stored, under their column names, with no decimal point inserted; the scale of the stored values is not sourced. No tested image is recorded for this artifact.",
         "author": "@markmckinnon",
         "creation_date": "2021-03-17",
-        "last_update_date": "2021-03-17",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "GEO Location",
         "notes": "",
@@ -18,13 +18,6 @@ __artifacts_v2__ = {
 import datetime
 
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
-
-
-def convertGeo(s):
-    length = len(s)
-    if length > 6:
-        return s[0: length - 6] + "." + s[length - 6: length]
-    return s
 
 
 @artifact_processor
@@ -54,7 +47,7 @@ def get_googlemaplocation(context):
 
         for row in all_rows:
             timestamp = datetime.datetime.fromtimestamp(int(row[0]), datetime.timezone.utc) if row[0] else ''
-            data_list.append((timestamp, convertGeo(str(row[1])), convertGeo(str(row[2])), row[3], row[4], convertGeo(str(row[5])), convertGeo(str(row[6]))))
+            data_list.append((timestamp, row[1], row[2], row[3], row[4], row[5], row[6]))
 
-    data_headers = (('timestamp', 'datetime'), 'destination_latitude', 'destination_longitude', 'destination_title', 'destination_address', 'source_latitude', 'source_longitude')
+    data_headers = (('timestamp', 'datetime'), 'dest_lat (as stored)', 'dest_lng (as stored)', 'destination_title', 'destination_address', 'source_lat (as stored)', 'source_lng (as stored)')
     return data_headers, data_list, source_path

@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Bluetooth accessories the device holds a Fast Pair record for, with the accessory's address and, where the record carries them, its device name, the name shown for it and the times it was first and last observed.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-04",
-        "last_update_date": "2026-09-04",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Nearby",
         "notes": "Read from the Play services LevelDB store "
@@ -32,13 +32,13 @@ __artifacts_v2__ = {
                  "the bare model on some superseded copies, so the two are reported separately. "
                  "State is reported as stored. The record also holds the accessory's image, which "
                  "is reported only as a byte count, and a short binary account key that is not "
-                 "reported. Model ID is the item's id (field 1), which the cited proto describes "
-                 "as a unique item ID; that it is the accessory's Fast Pair model id was not "
+                 "reported. Item ID is the item's id (field 1), which the cited proto describes "
+                 "as a unique item ID; whether it is the accessory's Fast Pair model id was not "
                  "established and it is reported as stored. Manufacturer is company_name (field "
                  "6) of fast_pair_information (field 46). MAC Address is the item's mac_address "
                  "and, where the item has none, the outer record's field 1. On an image whose "
                  "records are all for one accessory, MAC Address, "
-                 "Manufacturer, Model ID and Image Bytes each hold a single value; they are kept "
+                 "Manufacturer, Item ID and Image Bytes each hold a single value; they are kept "
                  "as columns because an image with several accessories separates them.\n"
                  "LevelDB keeps superseded copies of a key, so the same address can appear more "
                  "than once; Superseded is True for every copy but the newest for the same "
@@ -82,7 +82,7 @@ __artifacts_v2__ = {
                        "signal strength and the times the item was first and last observed.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-04",
-        "last_update_date": "2026-09-04",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Nearby",
         "notes": "Read from the Play services LevelDB store "
@@ -101,14 +101,14 @@ __artifacts_v2__ = {
                  "and RSSI is field 22, which the cited proto describes as the beacon's RSSI "
                  "value, reported as stored; no unit is given there, and it is not a distance.\n"
                  "Device name (field 6) and title (field 7) are not read for this store, so those "
-                 "columns are not reported. Item ID is the identifier the cache filed the entry "
-                 "under, reported as stored. Status Text is field 37, which the cited proto names "
+                 "columns are not reported. Item ID is the item's id (field 1), "
+                 "reported as stored. Debug Message is field 37, which the cited proto names "
                  "debug_message and describes as a message written to the bug report for "
                  "developers; it is "
                  "reported as stored. Type and State "
                  "are integers reported as stored.\n"
                  "LevelDB keeps superseded copies of a key, so Superseded is True for every copy "
-                 "but the newest for that identifier. A row records that the device's Nearby "
+                 "but the newest for the same LevelDB key. A row records that the device's Nearby "
                  "cache held an entry for that item; it does not establish that the user "
                  "interacted with it.",
         "paths": ('*/nearby-discovery/nearby_discovery_item_cache.db/*',),
@@ -237,7 +237,7 @@ def nearby_fast_pair(context):
         'Device Name',
         'Title',
         'Manufacturer',
-        'Model ID',
+        'Item ID',
         ('Last Observed', 'datetime'),
         ('First Observed', 'datetime'),
         'Description',
@@ -296,7 +296,7 @@ def nearby_discovery(context):
         'Item ID',
         'MAC Address',
         'RSSI',
-        'Status Text',
+        'Debug Message',
         'Type (as stored)',
         'State (as stored)',
         'Superseded',

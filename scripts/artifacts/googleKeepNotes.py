@@ -1,10 +1,10 @@
 __artifacts_v2__ = {
     "get_googleKeepNotes": {
         "name": "Google Keep - Notes",
-        "description": "Rows of list_item in keep.db joined to account and tree_entity. Creator Email is the name of the account the item is stored under; that it names the note's creator is not established. No tested image held a row.",
+        "description": "Rows of list_item in keep.db joined to account and tree_entity. Account Name is account.name for the account the item is stored under; that it names the note's creator is not established. No tested image held a row.",
         "author": "@bolisettynihith",
         "creation_date": "2021-05-17",
-        "last_update_date": "2021-05-17",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Google Keep",
         "notes": "",
@@ -21,10 +21,10 @@ __artifacts_v2__ = {
     },
     "get_googleKeepNotes_sharing": {
         "name": "Google Keep - Notes Sharing",
-        "description": "Rows of the sharing table in keep.db joined to the note and its account. Sync Status shows 'Synced' for a stored 1 and 'Not Synced' for any other value; that reading is not sourced. No tested image held a row.",
+        "description": "Rows of the sharing table in keep.db joined to the note and its account. Account Name is account.name for the account the item is stored under. Sync Status (as stored) is the sync_status value unchanged; the meaning of its values is not established. No tested image held a row.",
         "author": "@bolisettynihith",
         "creation_date": "2021-05-17",
-        "last_update_date": "2021-05-17",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Google Keep",
         "notes": "",
@@ -95,7 +95,7 @@ def get_googleKeepNotes(context):
     data_list = [(_ms_to_utc(r[0]), _ms_to_utc(r[1]), r[2], r[3], r[4], r[5], r[6],
                   'True' if r[7] == 1 else 'False', r[8]) for r in rows]
     data_headers = (('Notes Creation Time', 'datetime'), ('Notes Last Modified Time', 'datetime'),
-                    'List Parent ID', 'Creator Email', 'Title', 'Text', 'Synced Text', 'Is deleted',
+                    'List Parent ID', 'Account Name', 'Title', 'Text', 'Synced Text', 'Is deleted',
                     'Last Modifier Email')
     return data_headers, data_list, source_path
 
@@ -113,7 +113,7 @@ def get_googleKeepNotes_sharing(context):
         INNER JOIN sharing ON list_item._id == sharing.tree_entity_id
     ''')
     data_list = [(_ms_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5],
-                  'Synced' if r[6] == 1 else 'Not Synced', 'True' if r[7] == 1 else 'False') for r in rows]
-    data_headers = (('Notes Shared Timestamp', 'datetime'), 'List Parent ID', 'Creator Email', 'Shared Email',
-                    'Title', 'Text', 'Sync Status', 'Is deleted')
+                  r[6], 'True' if r[7] == 1 else 'False') for r in rows]
+    data_headers = (('Notes Shared Timestamp', 'datetime'), 'List Parent ID', 'Account Name', 'Shared Email',
+                    'Title', 'Text', 'Sync Status (as stored)', 'Is deleted')
     return data_headers, data_list, source_path

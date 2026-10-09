@@ -1,11 +1,11 @@
 __artifacts_v2__ = {
     "what3words_saved_places": {
-        "name": "what3words - Saved Places",
+        "name": "what3words - Locations",
         "description": "Rows of the what3words LocationRealm store, with the three word address, "
                        "the stored label, the nearest place and the coordinates",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "what3words",
         "notes": "Read from the class_LocationRealm table of the app's Realm store "
@@ -23,18 +23,18 @@ __artifacts_v2__ = {
     },
     "what3words_lists": {
         "name": "what3words - Location Lists",
-        "description": "Lists that group saved what3words locations, with the list label, the "
+        "description": "Rows of the what3words LocationsListsRealm store, with the list label, the "
                        "number of locations in it, the stored createdBy value and the created and "
                        "updated times",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "what3words",
-        "notes": "Read from the class_LocationsListsRealm table of the app's Realm store. Created "
-                 "By is the createdBy value as stored; what it identifies is not established. "
-                 "Shared List shows Yes where isSharedList is true and No otherwise, including "
-                 "where it is empty. Created and Updated are the createdWhen and updatedAt values "
+        "notes": "Read from the class_LocationsListsRealm table of the app's Realm store. "
+                 "createdBy (as stored) is the createdBy value; what it identifies is not "
+                 "established. isSharedList (as stored) is the isSharedList value with no label "
+                 "applied, and is blank where the row holds none. Created and Updated are the createdWhen and updatedAt values "
                  "read as Unix timestamps.",
         "paths": ('*/com.what3words.android/files/default.realm',),
         "output_types": "standard",
@@ -126,7 +126,7 @@ def what3words_lists(context):
             row.get('count'),
             row.get('createdBy'),
             row.get('color'),
-            'Yes' if row.get('isSharedList') else 'No',
+            '' if row.get('isSharedList') is None else str(row.get('isSharedList')),
             row.get('shareType'),
             row.get('sharedListId'),
             row.get('id'),
@@ -137,9 +137,9 @@ def what3words_lists(context):
         ('Updated', 'datetime'),
         'Label',
         'Location Count',
-        'Created By',
+        'createdBy (as stored)',
         'Colour',
-        'Shared List',
+        'isSharedList (as stored)',
         'Share Type',
         'Shared List ID',
         'List ID',

@@ -6,7 +6,7 @@ __artifacts_v2__ = {
                        "content or the parsed check byte.",
         "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-06",
-        "last_update_date": "2026-10-07",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "GalleryVault",
         "notes": "Each vault object is a 2803-byte decoy PNG, followed by the tail of the original file, "
@@ -20,8 +20,8 @@ __artifacts_v2__ = {
                  "object whose trailer cannot be parsed or rebuilt still gets a row; a file that cannot be"
                  " read is logged and gets none. Recovery Status compares the rebuilt length with the "
                  "stored original size and does not verify content. S-RM reports objects whose encrypted "
-                 "block extends past the trailer, flagged by the check byte. This module reads that byte "
-                 "and does not act on it, so that case is not handled. Reference: S-RM, 'Cracking the "
+                 "block extends past the trailer, flagged by the check byte. This module reports that byte "
+                 "in Check Byte (as stored) and does not act on it, so that case is not handled. Reference: S-RM, 'Cracking the "
                  "Vault: Exposing the weaknesses of encrypted apps', "
                  "https://www.s-rminform.com/latest-thinking/cracking-the-vault-exposing-the-weaknesses-of-encrypted-apps"
                  " Status wording distinguishes no nonempty rebuilt bytes from a returned rebuilt length "
@@ -29,7 +29,7 @@ __artifacts_v2__ = {
                  "stored size before this comparison; equal length does not prove content integrity or "
                  "that no truncation occurred. The existing non-object status, decryption, recovery bytes,"
                  " format fallback, admission, source and dates are unchanged. The parsed check byte "
-                 "remains unused and its layout implications remain unresolved. Original contribution "
+                 "is reported as stored and not otherwise used; its layout implications remain unresolved. Original contribution "
                  "credited to Alexis Brignoni and Claude; cited S-RM research and historical sample claims"
                  " retained, not newly verified.",
         "paths": ('*/.galleryvault_*/files/*/*',),
@@ -152,10 +152,10 @@ __artifacts_v2__ = {
     },
     "galleryvault_applock_break_ins": {
         "name": "GalleryVault - AppLock Break-in Reports",
-        "description": "Rows of the break_in_report_in_applock table in GalleryVault's AppLock.db: timestamp, package name, the wrongly_attempt_code value and the photo path, as stored. No tested image held a row.",
+        "description": "Rows of the break_in_report_in_applock table in GalleryVault's AppLock.db: timestamp, package name, the wrongly_attempt_code and is_new values and the photo path, as stored. What wrongly_attempt_code and is_new mean is not established. No tested image held a row.",
         "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-06",
-        "last_update_date": "2026-08-06",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "GalleryVault",
         "notes": "",
@@ -786,7 +786,7 @@ def galleryvault_vault_files(context):
         is_thumbnail = uuid.endswith('_t')
         if parsed is None:
             data_list.append(('', '', '', 'Not a GalleryVault object', '', '', '', '',
-                              uuid, context.get_relative_path(file_found), ''))
+                              uuid, context.get_relative_path(file_found), '', ''))
             continue
 
         metadata = parsed['metadata']
@@ -817,6 +817,7 @@ def galleryvault_vault_files(context):
             metadata.get('uuid', ''),
             context.get_relative_path(file_found),
             parsed['version'],
+            parsed['check_byte'],
         ))
 
     data_headers = (
@@ -831,6 +832,7 @@ def galleryvault_vault_files(context):
         'UUID',
         'Vault Object Path',
         'Trailer Version',
+        'Check Byte (as stored)',
     )
     return data_headers, data_list, source_path
 
@@ -1005,11 +1007,11 @@ def galleryvault_applock_break_ins(context):
     data_headers = (
         ('Timestamp', 'datetime'),
         'Package Name',
-        'Code Entered',
+        'wrongly_attempt_code (as stored)',
         'Locking Type',
         ('Photo', 'media'),
         'Photo Path',
-        'Unread',
+        'is_new (as stored)',
     )
     return data_headers, data_list, source_path
 

@@ -6,7 +6,7 @@ __artifacts_v2__ = {
                        "for media messages",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-08-16",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Instagram",
         "notes": "Each messages row holds a JSON copy of the message; the sender, content type "
@@ -15,9 +15,10 @@ __artifacts_v2__ = {
                  "the table's own thread_id and timestamp columns on every row of the tested "
                  "images that held messages. Timestamps are stored as epoch microseconds.\n"
                  "Direction is derived: the session table of the same database holds a user_id, "
-                 "which this artifact takes as the account's own id (the first row returned); no "
+                 "which this artifact takes as the account's own id; no "
                  "source for that reading is cited. A message whose JSON user_id equals it is "
-                 "reported as Outgoing, otherwise Incoming. Sender Username resolves the JSON "
+                 "reported as Outgoing, otherwise Incoming. Where the session table holds no "
+                 "user_id, or more than one distinct user_id, Direction is left blank. Sender Username resolves the JSON "
                  "user_id against the participant list in the thread's thread_info JSON, and for "
                  "the account the session table names against the preferences file named in the "
                  "paths; "
@@ -67,7 +68,7 @@ __artifacts_v2__ = {
                        "direct.db, with the stored action, description and joined flag",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-08-16",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Instagram",
         "notes": "Rows of the messages table whose type is video_call_event. Action, "
@@ -104,14 +105,14 @@ __artifacts_v2__ = {
                        "time",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-08-16",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Instagram",
         "notes": "One row per threads table entry. Participants and the inviter are read from "
-                 "the thread_info JSON as username (full name) pairs. The inviter is shown only "
-                 "in Inviter Username and is left out of Participants. On the tested images the "
-                 "account whose id the session table holds was not listed in the Participants "
-                 "column. Last Activity Time is "
+                 "the thread_info JSON as username (full name) pairs. Participants is the stored "
+                 "recipients (or users) list, each id once; the inviter appears there only "
+                 "where that list holds it, and is also shown in Inviter Username. Last "
+                 "Activity Time is "
                  "the table's own column, stored as epoch microseconds. Thread Title is the "
                  "stored title, reported as stored.",
         "paths": ('*/com.instagram.android/databases/direct.db*',),
@@ -358,8 +359,11 @@ def _account_username_map(context):
 
 
 def _session_user_id(source_path):
-    rows = _rows(source_path, 'SELECT user_id FROM session')
-    return str(rows[0][0]) if rows else ''
+    '''The one user_id the session table holds, or blank when it holds none or
+    more than one distinct value, so that no row is picked by return order.'''
+    rows = _rows(source_path,
+                 'SELECT DISTINCT user_id FROM session WHERE user_id IS NOT NULL')
+    return str(rows[0][0]) if len(rows) == 1 else ''
 
 
 def _participants(info):
@@ -551,11 +555,15 @@ def instagramDirectThreads(context):
             participants = []
             inviter = info.get('inviter')
             inviter = inviter if isinstance(inviter, dict) else {}
-            inviter_id = _participant_id(inviter)
             seen = set()
-            for user in _participants(info):
+            stored = []
+            for key in ('recipients', 'users'):
+                value = info.get(key)
+                if isinstance(value, list):
+                    stored.extend(user for user in value if isinstance(user, dict))
+            for user in stored:
                 pk = _participant_id(user)
-                if pk and (pk in seen or pk == inviter_id):
+                if pk and pk in seen:
                     continue
                 seen.add(pk)
                 username = user.get('username', '')

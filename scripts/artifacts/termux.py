@@ -46,7 +46,7 @@ __artifacts_v2__ = {
         "description": "Parses the packages currently installed in the Termux Android client's environment.",
         "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-30",
-        "last_update_date": "2026-08-30",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Termux",
         "notes": "One row per package from the dpkg status database at files/usr/var/lib/dpkg/status. This is "
@@ -54,9 +54,10 @@ __artifacts_v2__ = {
                  "anything installed later, and the file carries no install date, so it cannot on its own "
                  "separate the two. The Package Install History artifact is what records which packages were "
                  "installed and when. Package name, version, architecture, the install status, the maintainer "
-                 "and the homepage are reported as stored, along with the start of the "
-                 "description, up to its first sentence end (this can include text from the long "
-                 "description). The "
+                 "and the homepage are reported as stored. Description is the first line of the "
+                 "package's Description field as stored, which the Debian control file format "
+                 "defines as the synopsis (Debian Policy Manual, section 5.6.13); the continuation "
+                 "lines holding the long description are not reported. The "
                  "Essential column shows Yes where a package's Essential field is yes and is blank "
                  "otherwise. Only entries whose "
                  "Status line reports the package as installed are included.",
@@ -205,6 +206,7 @@ def termux_installed_packages(context):
             if not block:
                 continue
             fields = {}
+            first_lines = {}
             key = None
             for line in block.splitlines():
                 if line[:1] in (' ', '\t') and key:
@@ -216,13 +218,15 @@ def termux_installed_packages(context):
                 key, _, value = line.partition(':')
                 key = key.strip()
                 fields[key] = value.strip()
+                first_lines[key] = value.strip()
             if 'Package' not in fields:
                 continue
             status = fields.get('Status', '')
             # dpkg records desired/error/state; only report packages actually installed.
             if 'installed' not in status.split():
                 continue
-            description = fields.get('Description', '')
+            # The first line of Description is the synopsis; the rest is the long text.
+            description = first_lines.get('Description', '')
             data_list.append((
                 fields.get('Package', ''),
                 fields.get('Version', ''),
@@ -231,7 +235,7 @@ def termux_installed_packages(context):
                 'Yes' if fields.get('Essential', '').lower() == 'yes' else '',
                 fields.get('Maintainer', ''),
                 fields.get('Homepage', ''),
-                description.split('. ')[0] if description else '',
+                description,
                 context.get_relative_path(file_found),
             ))
             read_any = True

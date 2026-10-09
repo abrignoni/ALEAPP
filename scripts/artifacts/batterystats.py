@@ -8,10 +8,17 @@ __artifacts_v2__ = {
                        "lines 1388 to 1425)",
         "author": "Marco Neumann {kalinko@be-binary.de}",
         "creation_date": "2026-03-12",
-        "last_update_date": "2026-03-16",
+        "last_update_date": "2026-10-09",
         "requirements": "xmltodict, xml",
         "category": "Android Battery Statistics",
-        "notes": "",
+        "notes": "Prefix Meaning is this module's reading of the mode letters. Lowercase letters "
+                 "come from the step's initial mode bits and uppercase letters from its modified "
+                 "mode bits, which a comment in AOSP BatteryStats.java at android-14.0.0_r1 (line "
+                 "3471) describes as the modes that changed during the step. encodeEntryAt in "
+                 "that file (lines 1388 to 1425) writes one of F, O, D or Z for every "
+                 "step from the value of the two modified screen-state bits, so those letters are "
+                 "reported as that bit value and not as a display change. How the writer sets "
+                 "those two bits was not read here.",
         "output_types": ["standard"],
         "paths": (  '*/system/batterystats-daily.xml'),
         "artifact_icon": "battery-charging",
@@ -63,7 +70,8 @@ def battery_stats_daily(context):
             return value
         return [value]
 
-    # Mappings from https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/os/BatteryStats.java
+    # Letters from BatteryStats.LevelStepTracker.encodeEntryAt, AOSP frameworks/base at
+    # android-14.0.0_r1, core/java/android/os/BatteryStats.java lines 1388 to 1425.
     initial_state_meanings = {
         "f": "Screen OFF at step start (Display.STATE_OFF)",
         "o": "Screen ON at step start (Display.STATE_ON)",
@@ -74,10 +82,10 @@ def battery_stats_daily(context):
     }
 
     change_flag_meanings = {
-        "F": "Display changed to OFF during step",
-        "O": "Display changed to ON during step",
-        "D": "Display changed to DOZE during step",
-        "Z": "Display changed to DOZE SUSPEND during step",
+        "F": "Modified screen-state bits equal Display.STATE_OFF - 1",
+        "O": "Modified screen-state bits equal Display.STATE_ON - 1",
+        "D": "Modified screen-state bits equal Display.STATE_DOZE - 1",
+        "Z": "Modified screen-state bits equal Display.STATE_DOZE_SUSPEND - 1",
         "P": "Power save mode changed during step",
         "I": "Device idle mode changed during step",
     }

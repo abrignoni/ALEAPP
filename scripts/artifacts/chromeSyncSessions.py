@@ -84,13 +84,14 @@ __artifacts_v2__ = {
                        "its windows listed.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-04",
-        "last_update_date": "2026-09-04",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Chrome Sync",
         "notes": "Read from the same Chrome sync LevelDB store, from the session records that "
                  "carry a header rather than a tab. One row per window in a header record; a "
-                 "header record that lists no window is reported as one row with a blank Window "
-                 "ID and 0 tabs.\nField numbers are Chromium's, from "
+                 "header record that lists no window is reported as one row with Window ID, Tabs "
+                 "In Window and Browser Type blank, so it is distinguishable from a listed "
+                 "window that holds 0 tab ids.\nField numbers are Chromium's, from "
                  "components/sync/protocol/session_specifics.proto at commit "
                  "5babd82a3403ae4c580afc34df4c677d70779b52 "
                  "(https://github.com/chromium/chromium/blob/5babd82a3403ae4c580afc34df4c677d70779b52/components/sync/protocol/session_specifics.proto): "
@@ -366,10 +367,14 @@ def chrome_sync_devices(context):
             tag = _text(message.get(_SESSION_TAG))
             name = _text(header.get(_HDR_CLIENT_NAME))
             device_type = header.get(_HDR_DEVICE_TYPE, '')
-            windows = _repeated(header, _HDR_WINDOW) or [{}]
+            listed = _repeated(header, _HDR_WINDOW)
+            # A header that lists no window still yields one row; its window cells stay blank.
+            windows = listed or [{}]
             for window in windows:
                 tabs = window.get(_WIN_TABS)
-                if isinstance(tabs, list):
+                if not listed:
+                    tab_count = ''
+                elif isinstance(tabs, list):
                     tab_count = len(tabs)
                 elif tabs in (None, ''):
                     tab_count = 0

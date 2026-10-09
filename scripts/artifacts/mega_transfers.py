@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Parses MEGA transfer records (timestamp, folder, filename, size, direction and state) from the completedtransfers table of the MEGA megapreferences database.",
         "author": "@kibaffo33",
         "creation_date": "2022-06-04",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Mega",
         "notes": ""
@@ -12,7 +12,7 @@ __artifacts_v2__ = {
                  "and State are labelled from the MEGA SDK's MegaTransfer constants "
                  "(https://github.com/meganz/sdk/blob/74326bb0aa09b13f0a1ec8eab9611e4c0de98cc6/include/megaapi.h#L6902-L6917): "
                  "type 0 is shown as Download, 1 as Upload and 2, the SDK's "
-                 "TYPE_LOCAL_TCP_DOWNLOAD, also as Download, and State follows STATE_NONE 0 to "
+                 "TYPE_LOCAL_TCP_DOWNLOAD, as Local TCP Download, and State follows STATE_NONE 0 to "
                  "STATE_FAILED 8. Any other value is shown as decrypted. A row that does not "
                  "decrypt is logged and not reported. Timestamp is read as Unix milliseconds. "
                  "Both tested images returned 0 rows, so the decoding is code present and "
@@ -37,7 +37,7 @@ from Crypto.Cipher import AES
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, logfunc
 from scripts.artifacts.storagePathViews import unique_files
 
-DIRECTION = {"0": "Download", "1": "Upload", "2": "Download"}
+DIRECTION = {"0": "Download", "1": "Upload", "2": "Local TCP Download"}
 STATE = {
     "0": "None", "1": "Queued", "2": "Active", "3": "Paused", "4": "Retrying",
     "5": "Completing", "6": "Completed", "7": "Cancelled", "8": "Failed",

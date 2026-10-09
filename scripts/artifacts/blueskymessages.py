@@ -5,7 +5,7 @@ __artifacts_v2__ = {
         "description": "Bluesky direct messages",
         "author": "Alexis Brignoni",
         "creation_date": "2024-11-19",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Bluesky",
         "notes": "",
@@ -16,13 +16,16 @@ __artifacts_v2__ = {
     },
     "get_blueskymessages_actors": {
         "name": "Bluesky - Actors",
-        "description": "Bluesky actors (accounts) seen in the http-cache, plus the first account in the RKStorage session list",
+        "description": "Bluesky actors (accounts) seen in the http-cache, plus each account object in the RKStorage session accounts list",
         "author": "Alexis Brignoni",
         "creation_date": "2024-11-19",
-        "last_update_date": "2024-11-19",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Bluesky",
-        "notes": "",
+        "notes": "RKStorage rows carry the did, handle and email members of each object in "
+                 "session.accounts of the BSKY_STORAGE value, as stored, with the other columns "
+                 "blank. Identical rows are reported once. Reading more than one account from "
+                 "that list was not exercised on a tested image.",
         "paths": ('*/xyz.blueskyweb.app/databases/RKStorage*',
                   '*/xyz.blueskyweb.app/cache/http-cache/*.*'),
         "output_types": "standard",
@@ -97,10 +100,16 @@ def _build_actors(files_found):
             db.close()
             for row in rows:
                 try:
-                    account = json.loads(row[0])['session']['accounts'][0]
-                except (ValueError, KeyError, IndexError, TypeError):
+                    accounts = json.loads(row[0])['session']['accounts']
+                except (ValueError, KeyError, TypeError):
                     continue
-                add(('', account.get('did'), account.get('handle'), '', '', '', '', '', account.get('email')))
+                if not isinstance(accounts, list):
+                    continue
+                for account in accounts:
+                    if not isinstance(account, dict):
+                        continue
+                    add(('', account.get('did'), account.get('handle'), '', '', '', '', '',
+                         account.get('email')))
             continue
 
         data = _load_json(file_found)

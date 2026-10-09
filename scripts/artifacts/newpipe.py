@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "newpipe_watch_history": {
         "name": "NewPipe - Watch History",
-        "description": "Parses the video watch history recorded by the NewPipe Android client.",
+        "description": "Rows of the stream_history table kept by the NewPipe Android client, with the stored access date and repeat count for each stream. A row can be written without playback.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
@@ -90,7 +90,7 @@ __artifacts_v2__ = {
     },
     "newpipe_playback_positions": {
         "name": "NewPipe - Playback Positions",
-        "description": "Parses the saved playback resume positions kept by the NewPipe Android client.",
+        "description": "Rows of the stream_state table kept by the NewPipe Android client, with the stored progress value for each stream. A row can be written without playback.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",

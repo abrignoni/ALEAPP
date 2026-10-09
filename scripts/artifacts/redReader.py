@@ -44,12 +44,12 @@ __artifacts_v2__ = {
         "artifact_icon": "globe",
     },
     "redreader_subreddits": {
-        "name": "RedReader - Subreddits Opened",
+        "name": "RedReader - Cached Subreddits",
         "description": "Parses the cached subreddit records from the RedReader Android app, one "
                        "per subreddit whose details the app fetched.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-03",
-        "last_update_date": "2026-09-03",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "RedReader",
         "sample_data": {
@@ -85,7 +85,7 @@ __artifacts_v2__ = {
         "description": "Parses the account list and subreddit subscription list from the RedReader Android app.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-03",
-        "last_update_date": "2026-09-03",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "RedReader",
         "sample_data": {
@@ -105,7 +105,7 @@ __artifacts_v2__ = {
                  "was not exercised here. The Account Hash column gives the SHA-1 of the "
                  "value in the Username column. On Kind Account rows that is the username as "
                  "stored, which is what the per-account subreddit database file name described "
-                 "in the Subreddits Opened artifact is built from. On Kind Subscriptions rows "
+                 "in the Cached Subreddits artifact is built from. On Kind Subscriptions rows "
                  "the stored key is the app's canonical username, lower-cased "
                  "(RedditAccount.java lines 50 to 51 and "
                  "RedditSubredditSubscriptionManager.java line 123 at QuantumBadger/RedReader "

@@ -47,7 +47,10 @@ class TestGalleryVaultLengthStatus(unittest.TestCase):
                               side_effect=lambda source, data, name, **kw:
                               captured.append(data) or 'media'):
                 headers, rows, _ = galleryVault.galleryvault_vault_files.__wrapped__(context)
-            self.assertEqual(len(headers), 11)
+            self.assertEqual(len(headers), 12)
+            self.assertEqual(headers[11], 'Check Byte (as stored)')
+            self.assertEqual([rows[0][11], rows[1][11]], [0, 255])
+            self.assertTrue(all(len(r) == 12 for r in rows))
             self.assertEqual(len(rows), 7)
             self.assertEqual(captured, [plain, plain, plain, plain[:-3], plain])
             self.assertEqual(rows[0][3], rows[1][3])

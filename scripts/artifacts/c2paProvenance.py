@@ -6,16 +6,26 @@ __artifacts_v2__ = {
                        "generator, edit actions, digital source type, author/creator, credit/copyright, ingredients "
                        "(prior assets), the stated signer certificate and signing time, and an AI "
                        "Generated? column derived by this parser from the IPTC DigitalSourceType "
-                       "code the file states (Yes, No or Unknown under the parser's own mapping, "
-                       "which marks some codes Yes that the IPTC vocabulary does not define as "
-                       "generative AI; read the Digital Source Type column for the stated code). "
+                       "code the file states (Yes, No or Unknown under the parser's own mapping; "
+                       "Yes only for the three codes the IPTC vocabulary defines as generative AI; "
+                       "read the Digital Source Type column for the stated code). "
                        "Values are reported as the file carries them and are not cryptographically verified.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-07-12",
-        "last_update_date": "2026-07-12",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "AI Provenance",
-        "notes": "SIGNATURE CAVEAT: the signer, issuer, algorithm, and signing time are read "
+        "notes": "AI Generated? is Yes for trainedAlgorithmicMedia, "
+                 "compositeWithTrainedAlgorithmicMedia and compositeSynthetic, whose definitions in "
+                 "the IPTC Digital Source Type vocabulary (cv.iptc.org/newscodes/digitalsourcetype, "
+                 "release dated 2024-10-23) name generative AI or a trained AI model. It is Unknown "
+                 "for algorithmicMedia, algorithmicallyEnhanced, digitalArt and dataDrivenMedia, "
+                 "whose definitions there do not, for virtualRecording, whose definition allows "
+                 "generative AI or captured elements, and for any code the parser "
+                 "does not map. No is the parser's own reading of the capture, scan, human edit, "
+                 "screen capture and software image codes. When one manifest states several codes, "
+                 "any Yes makes the row Yes and Unknown codes leave the others' result unchanged. "
+                 "SIGNATURE CAVEAT: the signer, issuer, algorithm, and signing time are read "
                  "from the C2PA manifest AS STATED. This artifact does NOT cryptographically "
                  "verify the signature, validate the certificate chain, or check revocation, so "
                  "'Signed By' is a lead to corroborate, not proof of origin. Implementation is "
@@ -414,16 +424,18 @@ def _cheap_has_provenance(path):
 # ===========================================================================
 # Normalization: flatten manifests into forensic row fields.
 # IPTC DigitalSourceType codes -> (human label, is_ai_generated)
+# True only where the IPTC definition names generative AI or a trained AI model
+# (cv.iptc.org/newscodes/digitalsourcetype, release dated 2024-10-23); None where it does not.
 # ===========================================================================
 _DIGITAL_SOURCE_TYPES = {
     'trainedAlgorithmicMedia': ('AI-generated (trained algorithmic media)', True),
     'compositeWithTrainedAlgorithmicMedia': ('AI composite (with trained algorithmic media)', True),
-    'algorithmicMedia': ('Algorithmically generated', True),
-    'algorithmicallyEnhanced': ('Algorithmically enhanced', True),
+    'algorithmicMedia': ('Algorithmically generated', None),
+    'algorithmicallyEnhanced': ('Algorithmically enhanced', None),
     'compositeSynthetic': ('Composite synthetic', True),
-    'digitalArt': ('Digital art', True),
-    'virtualRecording': ('Virtual recording', True),
-    'dataDrivenMedia': ('Data-driven media', True),
+    'digitalArt': ('Digital art', None),
+    'virtualRecording': ('Virtual recording', None),
+    'dataDrivenMedia': ('Data-driven media', None),
     'digitalCapture': ('Digital capture (camera)', False),
     'originalPhotograph': ('Original photograph', False),
     'minorHumanEdits': ('Minor human edits', False),

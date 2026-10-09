@@ -83,10 +83,10 @@ __artifacts_v2__ = {
         "name": "Shazam HTTP Cache",
         "description": "Entries of the app's HTTP response cache, each holding the URL the app "
                        "requested, the times the request was sent and the response received, and "
-                       "the track the URL refers to where the library database records it",
+                       "the library track or artist whose identifier equals a number in the URL",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Shazam",
         "notes": "Each entry dates a fetch the app made, which is why the entries are reported "
@@ -97,7 +97,10 @@ __artifacts_v2__ = {
                  "cache rather than inferred. Where a URL contains a track key or an artist "
                  "identifier the library database also holds, the track title, or the artist name "
                  "for an artist identifier, is filled in from that database. The match is on the "
-                 "first run of digits in the URL equal to a track key or artist id; on the device "
+                 "first run of digits in the URL equal to a track key or artist id, wherever in the "
+                 "URL that run sits; the URL layout is not read, so an unrelated number that equals "
+                 "a key or id would be labelled the same way and the URL column is the value to "
+                 "check the label against. On the device "
                  "tested 196 of 417 URLs carried a known track key and 153 carried a known artist "
                  "identifier, and a URL matching neither is reported with those columns empty. The "
                  "two times are read from response headers the cache itself writes and which name "
@@ -587,7 +590,7 @@ def shazam_http_cache(context):
     data_headers = (
         ('Request Sent', 'datetime'),
         ('Response Received', 'datetime'),
-        'Track or Artist Named In URL',
+        'Library Track or Artist Matching a URL Number',
         'URL',
         'Track Key',
         'Content Type',
