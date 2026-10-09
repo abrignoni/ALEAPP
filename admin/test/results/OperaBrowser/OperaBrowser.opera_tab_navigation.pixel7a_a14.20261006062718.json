@@ -25,7 +25,7 @@
     "Last Visit Time (History Match)",
     "Internal Tab ID",
     "Entry Index",
-    "Is Current Page",
+    "Current Entry Lookup Equals Entry Index",
     "Title",
     "URL",
     "Search Query",
