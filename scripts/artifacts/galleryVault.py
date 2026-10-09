@@ -64,18 +64,21 @@ __artifacts_v2__ = {
         "description": "GalleryVault folders, their child counts and creation times",
         "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-06",
-        "last_update_date": "2026-08-06",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "GalleryVault",
         "notes": "The folder type labels come from the names the app gives its own default "
                  "folders in this table; a type of 0 matched no default folder name and is "
-                 "labelled 'User created', a reading that is not sourced.",
+                 "labelled 'User created', a reading that is not sourced. A column the store "
+                 "version does not have is reported empty; the pixel3_a12 store has no "
+                 "child_folder_count column.",
         "paths": ('*/com.thinkyeah.galleryvault/databases/galleryvault.db*',),
         "output_types": "standard",
         "artifact_icon": "folder",
         "sample_data": {
             "hc_pixel8pro_a17": "Android 17 | com.thinkyeah.galleryvault vc 406018 | 0 rows",
             "pixel7a_a14": "Android 14 | com.thinkyeah.galleryvault vc 40309 | 15 rows",
+            "pixel3_a12": "Android 12 | com.thinkyeah.galleryvault | 14 rows",
         },
     },
     "galleryvault_break_in_reports": {
@@ -210,10 +213,10 @@ __artifacts_v2__ = {
         "description": "Rows of the download_task table in galleryvault.db: begin and end time, name, URLs, local path, sizes, state and error code as stored. No tested image held a row.",
         "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-06",
-        "last_update_date": "2026-08-06",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "GalleryVault",
-        "notes": "",
+        "notes": "A column the store version does not have is reported empty.",
         "paths": ('*/com.thinkyeah.galleryvault/databases/galleryvault.db*',),
         "output_types": "standard",
         "artifact_icon": "download",
@@ -491,6 +494,7 @@ from scripts.ilapfuncs import (
     convert_unix_ts_to_utc,
     get_file_path,
     get_sqlite_db_records,
+    null_absent_columns,
     logfunc,
 )
 
@@ -670,6 +674,12 @@ def _query_all(db_paths, table, query):
     """Rows of the query from every database, in db path order."""
     for db_path in db_paths:
         yield from _query(db_path, table, query)
+
+
+def _query_all_drift(db_paths, table, query):
+    """As _query_all, with columns a store version lacks read as NULL."""
+    for db_path in db_paths:
+        yield from _query(db_path, table, null_absent_columns(db_path, query))
 
 
 def _cloud_cache_db(files_found):
@@ -896,7 +906,8 @@ def galleryvault_folders(context):
     FROM folder_v1
     ORDER BY create_time_utc, folder_v1.rowid
     '''
-    for record in _query_all(source_paths, 'folder_v1', query):
+    # Older stores lack child_folder_count; an absent column is reported empty.
+    for record in _query_all_drift(source_paths, 'folder_v1', query):
         data_list.append((
             _ms(record[0]), record[1], FOLDER_TYPES.get(record[2], record[2]), record[3],
             record[4], record[5], 'Yes' if record[6] else 'No', record[7], record[8],
@@ -1066,7 +1077,8 @@ def galleryvault_downloads(context):
     FROM download_task
     ORDER BY begin_time
     '''
-    for record in _query_all(source_paths, 'download_task', query):
+    # Older stores lack web_url and download_percentage; an absent column is reported empty.
+    for record in _query_all_drift(source_paths, 'download_task', query):
         data_list.append((
             _ms(record[0]), _ms(record[1]), record[2], record[3], record[4], record[5],
             record[6], record[7], record[8], record[9], record[10], record[11], record[12],
