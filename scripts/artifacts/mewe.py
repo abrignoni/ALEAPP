@@ -63,8 +63,10 @@ __artifacts_v2__ = {
                   "NOT that the device owner wrote, opened or read any of "
                   "it. currentUserPost is the POST column of that name, reported as stored; that "
                   "it marks posts written by the signed in account is read from the column name "
-                  "and was not traced to a source. On the one tested image that held posts it "
-                  "was 0 on all 74 rows.\n"
+                  "and was not traced to a source. On the two tested images that held posts it "
+                  "was 0 on every row (74 on pixel7a_a14, 30 on pixel3_a12). A column the store "
+                  "version does not have is reported empty; the pixel3_a12 store has no "
+                  "ownerHandle, isDiscoveryFeed or isFavoriteFeed column.\n"
                   "Feed Context lists the feed flags set on the row (isAllfeed, isDiscoveryFeed, "
                   "isFavoriteFeed, inProfile, isRefpost). Rows are not de-duplicated. Whether one "
                   "Post Id occurs on more than one row was not measured for these notes, so count "
@@ -79,6 +81,7 @@ __artifacts_v2__ = {
         "sample_data": {
             "pixel7a_a14": "Android 14 | app_v3.db | 74 rows",
             "hc_pixel8pro_a16": "Android 16 | app_v3.db | 0 rows (POST empty)",
+            "pixel3_a12": "Android 12 | app_database | 30 rows",
         },
     },
     "get_mewe_comments": {
@@ -94,8 +97,10 @@ __artifacts_v2__ = {
                   "wrote or "
                   "read them. currentUserPost is the COMMENT column of that name, reported as "
                   "stored; that it marks the signed in account's own comments is read from the "
-                  "column name and was not traced to a source. On the two test images it was "
-                  "not set on any of the 16 cached comments.\n"
+                  "column name and was not traced to a source. It was 0 on all 16 cached "
+                  "comments of pixel7a_a14 and on the 1 of pixel3_a12. A column the store version "
+                  "does not have is reported empty; the pixel3_a12 store has no ownerHandle "
+                  "column.\n"
                   "'On Post By' and 'On Post Text' come from a LEFT JOIN to the cached post. If the "
                   "parent post is no longer cached these are blank, and the comment is still "
                   "reported rather than dropped; use Post Id to correlate.\n"
@@ -107,6 +112,7 @@ __artifacts_v2__ = {
         "sample_data": {
             "pixel7a_a14": "Android 14 | app_v3.db | 16 rows",
             "hc_pixel8pro_a16": "Android 16 | app_v3.db | 0 rows (COMMENT empty)",
+            "pixel3_a12": "Android 12 | app_database | 1 row",
         },
     },
     "get_mewe_post_media": {
@@ -187,7 +193,7 @@ __artifacts_v2__ = {
         "description": "Cached group, page and community records from the MeWe database.",
         "author": "@AlexisBrignoni",
         "creation_date": "2026-07-26",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "MeWe",
         "notes": ("Three tables are merged and the Type column says which one a row came from: "
@@ -202,7 +208,9 @@ __artifacts_v2__ = {
                   "Opened is GROUP_ lastOpenTime on Group rows and COMMUNITY lastVisit on "
                   "Community rows, converted from milliseconds, and is blank on Page rows; what "
                   "event the app records it for was "
-                  "not established, so it is not by itself evidence of a deliberate visit."),
+                  "not established, so it is not by itself evidence of a deliberate visit.\nA "
+                  "column the store version does not have is reported empty; the pixel3_a12 "
+                  "GROUP_ table has no ownerId column."),
         "paths": ('*/com.mewe/databases/app_database',
                   '*/com.mewe/databases/app_v3.db*'),
         "output_types": "standard",
@@ -210,6 +218,7 @@ __artifacts_v2__ = {
         "sample_data": {
             "hc_pixel8pro_a16": "Android 16 | app_v3.db | 4 rows (1 group, 1 page, 2 community)",
             "pixel7a_a14": "Android 14 | app_v3.db | 2 rows",
+            "pixel3_a12": "Android 12 | app_database | 2 rows",
         },
     },
     "get_mewe_chat_participants": {
@@ -217,12 +226,15 @@ __artifacts_v2__ = {
         "description": "Participant rows from MeWe's CHAT_THREAD_PARTICIPANT table, with the thread each one names.",
         "author": "@AlexisBrignoni",
         "creation_date": "2026-07-26",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "MeWe",
         "notes": ("Rows are the participants recorded for a thread in CHAT_THREAD_PARTICIPANT. "
-                  "Whether the device owner is listed among them was not established; each test "
-                  "image yielded a single participant row in total. Is Owner and Is Admin show "
+                  "Whether the device owner is listed among them was not established; "
+                  "pixel7a_a14 and hc_pixel8pro_a16 each yielded a single participant row and "
+                  "pixel3_a12 three. A column the store version does not have is reported empty: "
+                  "the pixel3_a12 table has no handle, isOwner or isAdmin column, so Handle, Is "
+                  "Owner and Is Admin are blank there. Is Owner and Is Admin show "
                   "Yes where the participant row's isOwner and isAdmin flags are set; what the "
                   "app sets them for was not established, and Is Owner is not a statement about "
                   "the device owner. Participant Id can be compared with the suffix of the "
@@ -240,6 +252,7 @@ __artifacts_v2__ = {
         "sample_data": {
             "hc_pixel8pro_a16": "Android 16 | app_v3.db | 1 row",
             "pixel7a_a14": "Android 14 | app_v3.db | 1 row",
+            "pixel3_a12": "Android 12 | app_database | 3 rows",
         },
     },
     "get_mewe_session": {
@@ -274,7 +287,7 @@ import sqlite3
 import xml.etree.ElementTree as ET
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, logfunc, \
-    does_column_exist_in_db, does_table_exist_in_db
+    does_column_exist_in_db, does_table_exist_in_db, null_absent_columns
 from scripts.artifacts.storagePathViews import unique_files
 
 # Module-level constants (kept for backwards-compatibility; snapchat.py imports APP_NAME)
@@ -455,7 +468,12 @@ def _chat_databases(files_found):
 
 
 def _rows(db_path, query):
-    """Run a read-only query, logging and swallowing schema mismatches."""
+    """Run a read-only query, logging and swallowing schema mismatches.
+
+    A column this version of the store does not have is read as NULL, so the rows
+    are still reported with that cell empty.
+    """
+    query = null_absent_columns(db_path, query)
     db = open_sqlite_db_readonly(db_path)
     try:
         return db.cursor().execute(query).fetchall()
