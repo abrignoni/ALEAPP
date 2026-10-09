@@ -1,14 +1,14 @@
 # pylint: disable=W0718
 __artifacts_v2__ = {
     "get_googleInitiatedNav": {
-        "name": "Google Initiated Navigation",
+        "name": "Google Maps - Navigated Cache Entries",
         "description": "Entries decoded from Google Maps' new_recent_history_cache_navigated.cs: protobuf field 2 read as Unix microseconds and the text of field 4.1. No source for the field meanings is cited. What the timestamp marks, and whether navigation was started, is not established.",
-        "author": "@abrignoni",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2023-10-16",
-        "last_update_date": "2023-10-16",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "GEO Location",
-        "notes": "",
+        "notes": "Field 4.1 Text is the UTF-8 text projection returned by the existing schemaless protobuf decoder from a decoded field 1 entry's field 4.1. Navigated in the artifact name follows the source cache filename new_recent_history_cache_navigated.cs; it does not establish that navigation was started. Timestamp preserves the module's existing interpretation of field 2 as Unix microseconds; the field meanings and the event the timestamp marks remain unestablished. Input is decoded after skipping its first 8 bytes. Preferred storage-path views are selected by the existing unique_files rules; other views are not compared. The report-level source is the last visited selected file, including one that contributes no row; individual rows are not associated with files. Existing decode, filtering, UTF-8 and malformed-shape limits remain. Original artifact contribution: @abrignoni.",
         "paths": ('*/new_recent_history_cache_navigated.cs',),
         "output_types": "standard",
         "artifact_icon": "map-pin",
@@ -65,5 +65,5 @@ def get_googleInitiatedNav(context):
             except (KeyError, TypeError, AttributeError):
                 continue
 
-    data_headers = (('Timestamp', 'datetime'), 'Initiated Navigation Destination')
+    data_headers = (('Timestamp', 'datetime'), 'Field 4.1 Text')
     return data_headers, data_list, source_path
