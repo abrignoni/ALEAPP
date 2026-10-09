@@ -62,7 +62,7 @@ __artifacts_v2__ = {
                        "carries.",
         "author": "@Gear-I, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-10-06",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Opera",
         "notes": "This is the tab's navigation stack as stored, not a full visit log; a page "
@@ -86,7 +86,11 @@ __artifacts_v2__ = {
                  "folder. Session Source File identifies each row's session database. History Lookup Source File "
                  "identifies the paired timestamp lookup database, whether or not the URL matched; "
                  "blank means no paired History file. Current-page flags describe stored index "
-                 "comparisons, not live device state.",
+                 "comparisons, not live device state. Current Entry Lookup Equals Entry Index "
+                 "reports Yes exactly when current_entry_by_tab.get(tab_id) == ix, and otherwise "
+                 "reports an empty value. An absent tab lookup defaults to None; an absent lookup "
+                 "or a stored NULL current_entry compares equal to a NULL entry index. No tab "
+                 "presence or live current-page state is established by this equality.",
         "paths": ('*/app_opera/session_db*', '*/app_opera/History*'),
           "output_types": "standard",
         "artifact_icon": "compass",
@@ -236,7 +240,7 @@ def opera_tabs(context):
 def opera_tab_navigation(context):
     data_headers = (
         ("Last Visit Time (History Match)", "datetime"),
-        "Internal Tab ID", "Entry Index", "Is Current Page", "Title", "URL",
+        "Internal Tab ID", "Entry Index", "Current Entry Lookup Equals Entry Index", "Title", "URL",
         "Search Query", "Session Source File", "History Lookup Source File",
     )
 
