@@ -27,7 +27,7 @@ __artifacts_v2__ = {
         "description": "Parses call records from the Google Voice LegacyMsgDbInstance.db message_t table",
         "author": "William Campbell (@campwill), Eli Ehresmann (@H-Seek), Reina Girouard (@rgrd59), Paula Rokusek (@paula-rokusek); @AlexisBrignoni, Codex",
         "creation_date": "2025-08-20",
-        "last_update_date": "2026-10-06",
+        "last_update_date": "2026-10-09",
         "requirements": "blackboxprotobuf",
         "category": "Google Voice",
         "notes": "The authors report testing on app version 2025.07.20.788599304 (October 29th, "
@@ -35,9 +35,10 @@ __artifacts_v2__ = {
                  "recorded. The registered image with rows is pixel7a_a14. Direction, Call Status "
                  "and Voicemail Left are assigned by the module from field 13 of message_blob (0, "
                  "1, 2 or 3) and from whether field 22 is present. The mapping is the module's "
-                 "own and no source is cited. Call Status reads Missed for value 0, for value 3 "
-                 "and for any record carrying field 22; the module's comments say value 0 covers "
-                 "a call that was declined as well as one that was not answered. Duration is "
+                 "own and no source is cited. Call Status reads Not Answered for value 0, for "
+                 "value 3 and for any record carrying field 22; the module's comments say value 0 "
+                 "covers a call that was declined as well as one that was missed, and the stored "
+                 "values do not tell the two apart. Duration is "
                  "field 9 read as a 32-bit float of seconds. Call Status is explicitly the existing "
                  "parser classification, not a verified outcome. Raw Field 13 JSON and Raw Field "
                  "22 JSON retain decoded protobuf decision values using typed JSON nodes: integer "
@@ -81,7 +82,7 @@ __artifacts_v2__ = {
         "description": "Parses message records from the Google Voice LegacyMsgDbInstance.db message_t table",
         "author": "William Campbell (@campwill), Eli Ehresmann (@H-Seek), Reina Girouard (@rgrd59), Paula Rokusek (@paula-rokusek); @AlexisBrignoni, Codex",
         "creation_date": "2025-10-22",
-        "last_update_date": "2026-10-06",
+        "last_update_date": "2026-10-09",
         "requirements": "blackboxprotobuf",
         "category": "Google Voice",
         "notes": "The authors report testing on app version 2025.07.20.788599304 (October 29th, "
@@ -94,10 +95,13 @@ __artifacts_v2__ = {
                  "Unread and 1 as Read, and is blank on outgoing rows; what sets it is not "
                  "established. An image is shown only when the message text contains MMS and a "
                  "cached file named for the message id is present."
-                 " Nontext conversation IDs and individual records missing field 13 are skipped "
-                 "with diagnostics. The separate Unclassified Legacy Store Records artifact, when "
-                 "enabled, retains their raw evidence. Unknown individual field 13 values retain "
-                 "the existing blank classification here and may also appear in that artifact; "
+                 " Nontext conversation IDs, conversation IDs that start with neither t nor g, "
+                 "and individual records missing field 13 are skipped with a log line each. The "
+                 "separate Unclassified Legacy Store Records artifact, when "
+                 "enabled, retains their raw evidence. A t record whose field 13 is neither 5 nor "
+                 "6 keeps its row: Direction shows the stored value as 'Field 13 = <value> (as "
+                 "stored)', and Sender, Recipient(s) and Read Status are blank because which party "
+                 "sent it is not established. Such a record may also appear in that artifact; "
                  "overlap does not represent additional messages. Other malformed recognized "
                  "records, source/account iteration and media association remain unchanged.",
         "paths": ('*/data/com.google.android.apps.googlevoice/files/accounts/*/LegacyMsgDbInstance.db*', '*/data/com.google.android.apps.googlevoice/cache/Photo MMS images/*', '*/data/com.samsung.android.providers.contacts/databases/contact*'),
@@ -365,7 +369,7 @@ def googlevoice_calls(context):
                             # Call Status
                             call_status = ""
                             if ('22' in message[0]) or message[0]['13'] == 3 or message[0]['13'] == 0:
-                                call_status = "Missed"
+                                call_status = "Not Answered"
                             elif message[0]['13'] == 1:
                                 call_status = "Answered"
 
@@ -601,6 +605,9 @@ def googlevoice_messages(context):
                                 from_num = message[0]['3'].decode('utf-8') # GV number
                                 to_num = message[0]['4']['1'].decode('utf-8')
 
+                            else:
+                                direction = f"Field 13 = {message[0]['13']} (as stored)"
+
                             # Message
                             message_content = ""
                             if '10' in message[0]:
@@ -701,6 +708,9 @@ def googlevoice_messages(context):
 
                             else:
                                 data_list.append((timestamp, direction, from_num, message_content, "", account_number, conversation_id, to_nums, read_status))
+
+                        else:
+                            logfunc(f'Google Voice Messages skips a conversation ID starting with neither t nor g: {_diagnostic_text(context.get_relative_path(file))}; unordered query ordinal {query_ordinal}; raw evidence is available through Unclassified Legacy Store Records when enabled.')
 
     return data_headers, data_list, source_path
 

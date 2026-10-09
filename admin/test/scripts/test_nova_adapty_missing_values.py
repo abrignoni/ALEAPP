@@ -17,7 +17,7 @@ def create_adapty_fixture(root):
                   {'is_test_user': False, 'total_revenue_usd': '',
                    'custom_attributes': {'oldAppInstanceId': ' ', 'paywallType': 'None'}}]:
         ET.SubElement(xml, 'string', name='PROFILE').text = json.dumps({'attributes': attrs})
-    ET.SubElement(xml, 'string', name='LAST_SENT_INSTALLATION_META').text = json.dumps({'unchanged': None})
+    ET.SubElement(xml, 'string', name='LAST_SENT_INSTALLATION_META').text = json.dumps({'null_member': None})
     ET.ElementTree(xml).write(path, encoding='utf-8')
     return [path]
 
@@ -29,5 +29,5 @@ class TestAdaptyMissingValues(unittest.TestCase):
             _, rows, _ = nova.get_nova_adapty_prefs.__wrapped__(Context(directory, files))
             self.assertEqual([row[2] for row in rows],
                              ['', '', '', '', '', 'None', '0', 'False',
-                              'False', ' ', '', 'None', 'None'])
-            self.assertEqual(rows[-1][:2], ('Installation Meta', 'unchanged'))
+                              'False', ' ', '', 'None', ''])
+            self.assertEqual(rows[-1][:2], ('Installation Meta', 'null_member'))

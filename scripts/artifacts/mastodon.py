@@ -2,16 +2,16 @@
 __artifacts_v2__ = {
     "get_mastodon": {
         "name": "Mastodon - Hashtag Searches",
-        "description": "Rows of the recent_searches table whose id begins with tag, from one Mastodon database",
+        "description": "Rows of the recent_searches table whose id begins with tag, from the Mastodon databases",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-12-07",
-        "last_update_date": "2022-12-07",
+        "last_update_date": "2026-10-09",
         "requirements": "BeautifulSoup",
         "category": "Mastodon",
         "notes": ""
-                 "Only the first file ending in .db that the search returned is read. The path "
-                 "pattern matches every .db file in the app's databases folder, so where the app "
-                 "holds more than one, the others are not read. Timestamp is the time column read "
+                 "Every file ending in .db that the search returned is read, one storage view of "
+                 "each, and a database without the recent_searches table is passed over. Source "
+                 "File names the database a row came from. Timestamp is the time column read "
                  "as Unix seconds.",
         "paths": ('*/org.joinmastodon.android/databases/*.db*',),
         "output_types": "standard",
@@ -25,10 +25,10 @@ __artifacts_v2__ = {
         "description": "Parses Mastodon account searches",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-12-07",
-        "last_update_date": "2022-12-07",
+        "last_update_date": "2026-10-09",
         "requirements": "BeautifulSoup",
         "category": "Mastodon",
-        "notes": "",
+        "notes": "Every file ending in .db that the search returned is read, one storage view of each, and a database without the recent_searches table is passed over. Source File names the database a row came from.",
         "paths": ('*/org.joinmastodon.android/databases/*.db*',),
         "output_types": "standard",
         "artifact_icon": "search",
@@ -41,7 +41,7 @@ __artifacts_v2__ = {
         "description": "Reports Mastodon notifications with the stored type and the existing type interpretation",
         "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2022-12-07",
-        "last_update_date": "2026-10-06",
+        "last_update_date": "2026-10-09",
         "requirements": "BeautifulSoup",
         "category": "Mastodon",
         "notes": ""
@@ -51,9 +51,9 @@ __artifacts_v2__ = {
                  "(https://github.com/mastodon/mastodon-android/blob/24d8c5d9d012858e8928ab465b455ad52805a9ee/mastodon/src/main/java/org/joinmastodon/android/model/NotificationType.java#L9-L17). "
                  "That the column holds the enum position was not established. Any other stored "
                  "value is shown blank in the interpretation. Type (As Stored) retains notifications_all.type "
-                 "without coercion, including NULL and unrecognized values; it does not establish their meaning. Only the first file ending in .db that the search "
-                 "returned is read. The path pattern matches every .db file in the app's "
-                 "databases folder, so where the app holds more than one, the others are not read.",
+                 "without coercion, including NULL and unrecognized values; it does not establish their meaning. Every file ending in .db that the search "
+                 "returned is read, one storage view of each, and a database without the "
+                 "notifications_all table is passed over. Source File names the database a row came from.",
         "paths": ('*/org.joinmastodon.android/databases/*.db*',),
         "output_types": "standard",
         "artifact_icon": "bell",
@@ -66,10 +66,10 @@ __artifacts_v2__ = {
         "description": "Parses Mastodon timeline",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-12-07",
-        "last_update_date": "2022-12-07",
+        "last_update_date": "2026-10-09",
         "requirements": "BeautifulSoup",
         "category": "Mastodon",
-        "notes": "",
+        "notes": "Every file ending in .db that the search returned is read, one storage view of each, and a database without the home_timeline table is passed over. Source File names the database a row came from.",
         "paths": ('*/org.joinmastodon.android/databases/*.db*',),
         "output_types": "standard",
         "artifact_icon": "message",
@@ -118,6 +118,7 @@ import os
 from bs4 import BeautifulSoup
 
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
+from scripts.artifacts.storagePathViews import unique_files
 
 
 def _sec_to_utc(value):
@@ -150,12 +151,9 @@ def _strip_html(value):
     return BeautifulSoup(value, 'html.parser').get_text()
 
 
-def _mastodon_db(files_found):
-    for file_found in files_found:
-        file_found = str(file_found)
-        if file_found.lower().endswith('.db'):
-            return file_found
-    return ''
+def _mastodon_dbs(context):
+    """Every database file the search returned, one storage view of each."""
+    return [f for f in unique_files(context) if f.lower().endswith('.db')]
 
 
 def _query(source_path, sql):
@@ -167,32 +165,42 @@ def _query(source_path, sql):
         cursor.execute(sql)
         rows = cursor.fetchall()
     except Exception as e:
-        logfunc(str(e))
+        logfunc(f'Mastodon: {os.path.basename(source_path)}: {e}')
         rows = []
     db.close()
     return rows
 
 
+def _query_all(context, table, sql):
+    """Run sql on every database that holds table; return (rows, relative path) pairs and the files read."""
+    results = []
+    sources = []
+    for source_path in _mastodon_dbs(context):
+        if not _query(source_path, "select 1 from sqlite_master where type='table' and name='" + table + "'"):
+            continue
+        sources.append(source_path)
+        relative = context.get_relative_path(source_path)
+        for row in _query(source_path, sql):
+            results.append((row, relative))
+    return results, '\n'.join(sources)
+
+
 @artifact_processor
 def get_mastodon(context):
-    files_found = context.get_files_found()
-    source_path = _mastodon_db(files_found)
-    rows = _query(source_path, '''
+    rows, source_path = _query_all(context, 'recent_searches', '''
         select time,
         json_extract(recent_searches.json, '$.hashtag.name'),
         json_extract(recent_searches.json, '$.hashtag.url')
         from recent_searches where id like 'tag%'
     ''')
-    data_list = [(_sec_to_utc(r[0]), r[1], r[2]) for r in rows]
-    data_headers = (('Timestamp', 'datetime'), 'Hashtag Name', 'Hashtag URL')
+    data_list = [(_sec_to_utc(r[0]), r[1], r[2], src) for r, src in rows]
+    data_headers = (('Timestamp', 'datetime'), 'Hashtag Name', 'Hashtag URL', 'Source File')
     return data_headers, data_list, source_path
 
 
 @artifact_processor
 def get_mastodon_account_searches(context):
-    files_found = context.get_files_found()
-    source_path = _mastodon_db(files_found)
-    rows = _query(source_path, '''
+    rows, source_path = _query_all(context, 'recent_searches', '''
         select time,
         json_extract(recent_searches.json, '$.account.username'),
         json_extract(recent_searches.json, '$.account.display_name'),
@@ -200,16 +208,14 @@ def get_mastodon_account_searches(context):
         json_extract(recent_searches.json, '$.account.id')
         from recent_searches where id like 'acc%'
     ''')
-    data_list = [(_sec_to_utc(r[0]), r[1], r[2], r[3], r[4]) for r in rows]
-    data_headers = (('Timestamp', 'datetime'), 'Username', 'Display Name', 'URL', 'ID')
+    data_list = [(_sec_to_utc(r[0]), r[1], r[2], r[3], r[4], src) for r, src in rows]
+    data_headers = (('Timestamp', 'datetime'), 'Username', 'Display Name', 'URL', 'ID', 'Source File')
     return data_headers, data_list, source_path
 
 
 @artifact_processor
 def get_mastodon_notifications(context):
-    files_found = context.get_files_found()
-    source_path = _mastodon_db(files_found)
-    rows = _query(source_path, '''
+    rows, source_path = _query_all(context, 'notifications_all', '''
         select
         json_extract(notifications_all.json, '$.created_at'),
         json_extract(notifications_all.json, '$.account.acct'),
@@ -222,16 +228,14 @@ def get_mastodon_notifications(context):
         notifications_all.type
         from notifications_all
     ''')
-    data_list = [(_iso_to_utc(r[0]), _iso_to_utc(r[6]), r[1], r[2], r[8], r[3], _strip_html(r[4]), r[5], r[7]) for r in rows]
-    data_headers = (('Notification Created Timestamp', 'datetime'), ('Status Created Timestamp', 'datetime'), 'Notification From', 'Notification Type Interpretation', 'Type (As Stored)', 'Reference URL', 'Text Content', 'Visibility', 'ID')
+    data_list = [(_iso_to_utc(r[0]), _iso_to_utc(r[6]), r[1], r[2], r[8], r[3], _strip_html(r[4]), r[5], r[7], src) for r, src in rows]
+    data_headers = (('Notification Created Timestamp', 'datetime'), ('Status Created Timestamp', 'datetime'), 'Notification From', 'Notification Type Interpretation', 'Type (As Stored)', 'Reference URL', 'Text Content', 'Visibility', 'ID', 'Source File')
     return data_headers, data_list, source_path
 
 
 @artifact_processor
 def get_mastodon_timeline(context):
-    files_found = context.get_files_found()
-    source_path = _mastodon_db(files_found)
-    rows = _query(source_path, '''
+    rows, source_path = _query_all(context, 'home_timeline', '''
         select
         json_extract(home_timeline.json, '$.created_at'),
         json_extract(home_timeline.json, '$.account.acct'),
@@ -249,15 +253,15 @@ def get_mastodon_timeline(context):
         from home_timeline
     ''')
     data_list = []
-    for r in rows:
+    for r, src in rows:
         attachments = ''
         try:
             attachments = '\n'.join(x.get('url', '') for x in json.loads(r[13]).get('media_attachments', []))
         except (ValueError, TypeError):
             pass
         data_list.append((_iso_to_utc(r[0]), r[1], r[2], _strip_html(r[3]), attachments, r[4], r[5],
-                          _strip_html(r[6]), r[7], r[8], r[9], r[10], r[11], r[12]))
-    data_headers = (('Timestamp', 'datetime'), 'Account Name', 'App Name', 'Text Content', 'Attachment URL', 'URL', 'Boosted Account Name', 'Boosted Content', 'Boosted URL', 'Replies Count', 'Boosted Count', 'Favorites Count', 'Visibility', 'ID')
+                          _strip_html(r[6]), r[7], r[8], r[9], r[10], r[11], r[12], src))
+    data_headers = (('Timestamp', 'datetime'), 'Account Name', 'App Name', 'Text Content', 'Attachment URL', 'URL', 'Boosted Account Name', 'Boosted Content', 'Boosted URL', 'Replies Count', 'Boosted Count', 'Favorites Count', 'Visibility', 'ID', 'Source File')
     return data_headers, data_list, source_path
 
 

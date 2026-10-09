@@ -45,7 +45,7 @@ __artifacts_v2__ = {
                        "the application with its time, the days it repeats and its label",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-30",
-        "last_update_date": "2026-08-30",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Sleep as Android",
         "notes": "An alarm row records a configured wake time rather than an event that "
@@ -53,10 +53,11 @@ __artifacts_v2__ = {
                  "whatever zone the device was set to, and carry no date. Days Of Week (as "
                  "stored) is the schema's own integer and is not expanded into day names, no "
                  "source for its bit layout having been located; on the corpus below it held 31 "
-                 "and 96. Alarm Time is alarms.alarmtime, converted as Unix milliseconds. It was "
-                 "blank on both rows below (the report shows a stored 0 and an empty value the "
-                 "same way), so that conversion was not exercised on real data and what the value "
-                 "marks is not established. Enabled held 0 on both rows "
+                 "and 96. Alarm Time is alarms.alarmtime, converted as Unix milliseconds, and is "
+                 "blank for a stored 0 and for an empty value. Alarm Time (as stored) is the same "
+                 "column unchanged, so a stored 0 shows as 0 and an empty value as blank. Alarm "
+                 "Time was blank on both rows below, so that conversion was not exercised on real "
+                 "data and what the value marks is not established. Enabled held 0 on both rows "
                  "there, so neither alarm was recorded as enabled, and Message and Alert were "
                  "empty, so neither carried a label or a chosen sound. Those columns are kept "
                  "because a populated value on another extraction is the point of the "
@@ -191,6 +192,7 @@ def sleepasandroid_alarms(context):
              suspend, window, captcha, row_id) = row
             data_list.append((
                 convert_unix_ts_to_utc(alarm_time / 1000) if alarm_time else '',
+                alarm_time if alarm_time is not None else '',
                 hour if hour is not None else '',
                 minutes if minutes is not None else '',
                 days if days is not None else '',
@@ -206,6 +208,7 @@ def sleepasandroid_alarms(context):
 
     data_headers = (
         ('Alarm Time', 'datetime'),
+        'Alarm Time (as stored)',
         'Hour',
         'Minutes',
         'Days Of Week (as stored)',

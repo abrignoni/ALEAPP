@@ -9,7 +9,7 @@ __artifacts_v2__ = {
                        "is present in the extraction",
         "author": "@AlexisBrignoni, @Newhope81, Claude; @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-10-06",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "JusTalk",
         "notes": "Messages are read from the class_CallLog table of the per-account Realm store "
@@ -21,7 +21,7 @@ __artifacts_v2__ = {
                  "holds chat messages and call records in the same table; rows whose type is "
                  "AudioCall or VideoCall are reported by the JusTalk - Call Logs artifact instead.\n"
                  "Direction is taken from the boolean 'incoming' column: a true value is reported "
-                 "as Incoming and any other value, including a missing one, as Outgoing. The "
+                 "as Incoming and a false value as Outgoing; a missing or null value leaves Direction blank. The "
                  "separate 'state' "
                  "column is reported as stored: nothing in the extraction documents its values.\n"
                  "Media is linked without guessing. The message's 'fileUrl' column is a row index "
@@ -73,12 +73,12 @@ __artifacts_v2__ = {
                        "the duration and the server call identifier",
         "author": "@AlexisBrignoni, @Newhope81, Claude; @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-10-06",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "JusTalk",
         "notes": "Read from the rows of class_CallLog whose type is AudioCall or VideoCall. "
                  "Direction is taken from the boolean 'incoming' column: a true value is reported "
-                 "as Incoming and any other value, including a missing one, as Outgoing. Duration "
+                 "as Incoming and a false value as Outgoing; a missing or null value leaves Direction blank. Duration "
                  "(seconds) is blank when the stored duration is 0.\n"
                  "Duration on these rows is reported both as stored and converted from "
                  "milliseconds. Milliseconds is an inference: in the sample, three calls were "
@@ -106,7 +106,7 @@ __artifacts_v2__ = {
                        "the extraction, plus any cached files the store does not account for",
         "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "JusTalk",
         "notes": "Each row is one class_ROFileUrl record. The record's 'md5' column is base64 of "
@@ -141,7 +141,7 @@ __artifacts_v2__ = {
                        "online time",
         "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "JusTalk",
         "notes": "Read from the class_ServerFriend table. The class_Contact table was empty in "
@@ -162,7 +162,7 @@ __artifacts_v2__ = {
         "description": "Rows from the class_ServerMember table of the JusTalk Realm store",
         "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-10",
-        "last_update_date": "2026-08-10",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "JusTalk",
         "notes": "Read from the class_ServerMember table.",
@@ -176,7 +176,7 @@ __artifacts_v2__ = {
         "description": "Rows from the class_Moment table of the JusTalk Realm store",
         "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-10",
-        "last_update_date": "2026-08-10",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "JusTalk",
         "notes": "Read from the class_Moment table.",
@@ -191,7 +191,7 @@ __artifacts_v2__ = {
                        "name, the app's provisioning file and the Realm schema version",
         "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "JusTalk",
         "notes": "The per-account Realm store is named after the local account's own user id, so "
@@ -288,7 +288,7 @@ __artifacts_v2__ = {
         "description": 'Chat messages from the JusTalk Kids Realm store, with the message body (on photo, video, voice and location rows that have a file record the Message column shows the message type in brackets in place of the stored content), the direction, the sender, the media type and the cached media file where it is present in the extraction',
         "author": "@AlexisBrignoni, @Newhope81, Claude; @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-10-06",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "JusTalk Kids",
         "notes": "Messages are read from the class_CallLog table of the per-account Realm store "
@@ -301,7 +301,7 @@ __artifacts_v2__ = {
                  "AudioCall or VideoCall are reported by the JusTalk Kids - Call Logs artifact "
                  "instead.\n"
                  "Direction is taken from the boolean 'incoming' column: a true value is reported "
-                 "as Incoming and any other value, including a missing one, as Outgoing. The "
+                 "as Incoming and a false value as Outgoing; a missing or null value leaves Direction blank. The "
                  "separate 'state' "
                  "column is reported as stored: nothing in the extraction documents its values.\n"
                  "Media is linked without guessing. The message's 'fileUrl' column is a row index "
@@ -352,12 +352,12 @@ __artifacts_v2__ = {
         "description": 'Audio and video calls from the JusTalk Kids Realm store, with the direction, the duration and the server call identifier',
         "author": "@AlexisBrignoni, @Newhope81, Claude; @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-10-06",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "JusTalk Kids",
         "notes": "Read from the rows of class_CallLog whose type is AudioCall or VideoCall. "
                  "Direction is taken from the boolean 'incoming' column: a true value is reported "
-                 "as Incoming and any other value, including a missing one, as Outgoing. Duration "
+                 "as Incoming and a false value as Outgoing; a missing or null value leaves Direction blank. Duration "
                  "(seconds) is blank when the stored duration is 0.\n"
                  "This artifact reuses the JusTalk reader with the JusTalk Kids paths. This module "
                  "does not record whether the sample was taken from JusTalk or from JusTalk Kids, "
@@ -388,7 +388,7 @@ __artifacts_v2__ = {
         "description": 'File records from the JusTalk Kids Realm store with the cached copies found in the extraction, plus any cached files the store does not account for',
         "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "JusTalk Kids",
         "notes": "Each row is one class_ROFileUrl record. The record's 'md5' column is base64 of "
@@ -421,7 +421,7 @@ __artifacts_v2__ = {
         "description": 'Contacts from the JusTalk Kids Realm store, with the JusTalk ID, the display and nickname, the client version reported for that account and the last online time',
         "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "JusTalk Kids",
         "notes": "Read from the class_ServerFriend table. The class_Contact table was empty in "
@@ -442,7 +442,7 @@ __artifacts_v2__ = {
         "description": "Rows from the class_ServerMember table of the JusTalk Kids Realm store",
         "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-10",
-        "last_update_date": "2026-08-10",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "JusTalk Kids",
         "notes": "Read from the class_ServerMember table.",
@@ -456,7 +456,7 @@ __artifacts_v2__ = {
         "description": "Rows from the class_Moment table of the JusTalk Kids Realm store",
         "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-10",
-        "last_update_date": "2026-08-10",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "JusTalk Kids",
         "notes": "Read from the class_Moment table.",
@@ -470,7 +470,7 @@ __artifacts_v2__ = {
         "description": "The local JusTalk Kids account identifiers taken from the Realm store file name, the app's provisioning file and the Realm schema version",
         "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "JusTalk Kids",
         "notes": "The per-account Realm store is named after the local account's own user id, so "
@@ -705,6 +705,14 @@ def _file_record(file_records, link):
         return {}
 
 
+def _direction(value):
+    """Direction from the stored 'incoming' value. A missing or null value is left blank
+    rather than reported as either direction."""
+    if value is None:
+        return ''
+    return 'Incoming' if value else 'Outgoing'
+
+
 def _int_or_blank(value):
     try:
         return int(value)
@@ -747,7 +755,6 @@ def justalk_messages(context):
         for row in sorted(_rows(source_path, 'class_CallLog'), key=lambda r: r.get('timestamp') or 0):
             if row.get('type') in CALL_TYPES:
                 continue
-            outgoing = not row.get('incoming')
             media = _file_record(file_records, row.get('fileUrl'))
             matches = hash_index.get(_md5_hex(media.get('md5')), []) if media else []
             
@@ -758,7 +765,7 @@ def justalk_messages(context):
                 
             data_list.append((
                 convert_unix_ts_to_utc(row.get('timestamp')),
-                'Outgoing' if outgoing else 'Incoming',
+                _direction(row.get('incoming')),
                 row.get('senderName'),
                 msg_content,
                 _check_in(matches),
@@ -826,7 +833,7 @@ def justalk_calls(context):
                 continue
             data_list.append((
                 convert_unix_ts_to_utc(row.get('timestamp')),
-                'Outgoing' if not row.get('incoming') else 'Incoming',
+                _direction(row.get('incoming')),
                 row.get('type'),
                 row.get('name'),
                 _seconds_from_ms(row.get('duration')),
@@ -938,7 +945,7 @@ def justalk_media(context):
         'Message Log ID',
         'Cached File Names',
     )
-    return data_headers, data_list, source_paths[0] if source_paths else ''
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
@@ -989,7 +996,7 @@ def justalk_contacts(context):
         'Muted',
         'Pinned',
     )
-    return data_headers, data_list, source_paths[0] if source_paths else ''
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 def _profile_user(files_found):
@@ -1145,7 +1152,7 @@ def justalk_account(context):
             context.get_relative_path(mmkv_profile_path) if mmkv_profile_path else '',
         ))
 
-    return _account_headers(), data_list, source_paths[0] if source_paths else profile_path
+    return _account_headers(), data_list, '\n'.join(source_paths) if source_paths else profile_path
 
 
 def _account_headers():
@@ -1252,7 +1259,7 @@ def justalk_members(context):
         'Relation Type (as stored)',
         'Server Friend (as stored)',
     )
-    return data_headers, data_list, source_paths[0] if source_paths else ''
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
@@ -1297,7 +1304,7 @@ def justalk_moments(context):
         'Link',
         'Is Liked (as stored)',
     )
-    return data_headers, data_list, source_paths[0] if source_paths else ''
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor

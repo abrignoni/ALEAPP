@@ -31,14 +31,17 @@ __artifacts_v2__ = {
         "description": "Parses Web Visits from Chromium based browsers",
         "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2020-03-19",
-        "last_update_date": "2026-10-06",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Chromium",
         "notes": "Transition (As Stored) retains the full visits.transition SQLite value without conversion. "
-                 "Core Transition Interpretation retains the existing interpretation of the SQLite low-byte result "
-                 "value (value 6 is shown as START_PAGE, which Chromium's page_transition_types.h "
-                 "at the commit cited below names PAGE_TRANSITION_AUTO_TOPLEVEL; a value above 10 "
-                 "is shown blank) and Qualifier(s) decodes nine qualifier bits above the low byte, "
+                 "Core Transition Interpretation names the low byte of that value, 0 through 10, with the "
+                 "names Chromium's page_transition_types.h gives them at the commit cited below, without "
+                 "the PAGE_TRANSITION_ prefix (0 is PAGE_TRANSITION_LINK there and 6 is "
+                 "PAGE_TRANSITION_AUTO_TOPLEVEL). A low byte above 10 is left blank in that column and "
+                 "its number can be read from Transition (As Stored). The names are those of the cited "
+                 "commit; whether the browser version that wrote a row used the same names was not "
+                 "checked. Qualifier(s) decodes nine qualifier bits above the low byte, "
                  "0x00800000 BLOCKED through 0x80000000 SERVER_REDIRECT. The 0xC0000000 "
                  "IS_REDIRECT_MASK is a mask covering the CLIENT_REDIRECT and SERVER_REDIRECT bits "
                  "rather than a qualifier of its own, so it is not reported as a separate "
@@ -296,7 +299,7 @@ def get_chromeWebVisits(context):
             WHEN 3 THEN 'AUTO_SUBFRAME'
             WHEN 4 THEN 'MANUAL_SUBFRAME'
             WHEN 5 THEN 'GENERATED'
-            WHEN 6 THEN 'START_PAGE'
+            WHEN 6 THEN 'AUTO_TOPLEVEL'
             WHEN 7 THEN 'FORM_SUBMIT'
             WHEN 8 THEN 'RELOAD'
             WHEN 9 THEN 'KEYWORD'

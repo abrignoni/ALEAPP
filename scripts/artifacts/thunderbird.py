@@ -3,22 +3,24 @@ __artifacts_v2__ = {
     
     "thunderbird_accounts": {
         "name": "Thunderbird - Accounts",
-        "description": "Account settings from the preferences_storage table of the first matched Thunderbird database, one row per account UUID. Username and Password are those of the incoming server settings.",
+        "description": "Account settings from the preferences_storage table of each matched Thunderbird preferences database, one row per account UUID. Username and Password are those of the incoming server settings.",
         "author": "Marco Neumann {kalinko@be-binary.de}, @AlexisBrignoni, Codex",
         "creation_date": "2025-11-18",
-        "last_update_date": "2026-10-07",
+        "last_update_date": "2026-10-09",
         "requirements": "re, json",
         "category": "Thunderbird App",
-        "notes": "Only the first matched file is read. An account is a UUID that has an email.0 key. Last "
+        "notes": "Every matched preferences_storage file is read. A copy of the same Android "
+                 "user's file under another storage path (data/data, data/user/<n> or "
+                 "data_mirror/data_ce/<volume>/<n>) is read once. When more than one file gives "
+                 "rows, a Source File column names the file of each row. An account is a UUID that has an email.0 key. Last "
                  "Sync Time is the stored lastSyncTime value read as Unix milliseconds. Username, Password"
                  " and Incoming Server come from incomingServerSettings, and Outgoing Server from "
                  "outgoingServerSettings. A column is blank for an account that lacks the key it is read "
                  "from. No registered corpus holds this app (20 zip listings and 24 tar indexes checked on"
                  " 2026-10-04); the blank for a missing key was checked on a constructed database. The "
                  "preference query results are materialized before the UUID mapping and per-account scans,"
-                 " so each scan sees the query result instead of an exhausted single-pass cursor. First "
-                 "matched file selection, per-account missing-key defaults and the existing UUID set "
-                 "iteration order are unchanged.",
+                 " so each scan sees the query result instead of an exhausted single-pass cursor. Reading "
+                 "more than one file was checked on constructed databases only.",
         "paths": ('*/data/net.thunderbird.android/databases/preferences_storage'),
         "output_types": ["standard"],
         "html_columns": ["Signature"],
@@ -29,7 +31,7 @@ __artifacts_v2__ = {
         "description": "Messages from each Thunderbird account database: the date and internal_date columns read as Unix milliseconds and shown in UTC, addresses, subject, preview, full text and flags as stored. Rows flagged empty are not included.",
         "author": "Marco Neumann {kalinko@be-binary.de}, @AlexisBrignoni, Codex",
         "creation_date": "2025-11-20",
-        "last_update_date": "2026-10-07",
+        "last_update_date": "2026-10-09",
         "requirements": "re, json",
         "category": "Thunderbird App",
         "notes": "Date is the messages table's date column and Internal Date is its internal_date column, "
@@ -54,7 +56,10 @@ __artifacts_v2__ = {
                  "CC and BCC columns each comma of the stored list is replaced with a line break. The "
                  "read, flagged, answered and forwarded columns are reported as stored. Preference rows "
                  "used for the account UUID mapping are materialized so both mapper passes see the same "
-                 "query result. Account matching, file selection and message projection are unchanged.",
+                 "query result. The account UUIDs of every matched preferences_storage file are used, "
+                 "and a copy of the same Android user's database under another storage path "
+                 "(data/data, data/user/<n> or data_mirror/data_ce/<volume>/<n>) is read once; both "
+                 "were checked on constructed databases only.",
         "paths": ('*data/net.thunderbird.android/databases/*',),
         "output_types": ["standard"],
         "html_columns": ["Content"],
@@ -77,6 +82,34 @@ import json
 from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records, logfunc
 from scripts.context import Context
 from scripts.html_safe import safe_source
+
+_VIEW_PATTERNS = (
+    (re.compile(r'(?:^|/)data_mirror/data_ce/[^/]+/(\d+)/'), None),
+    (re.compile(r'(?:^|/)data/user/(\d+)/'), None),
+    (re.compile(r'(?:^|/)data/data/'), '0'),
+)
+
+
+def _view_key(path):
+    """The path in the extraction with the storage view of one Android user collapsed."""
+    relative = Context.get_relative_path(str(path)).replace('\\', '/')
+    for pattern, user in _VIEW_PATTERNS:
+        match = pattern.search(relative)
+        if match:
+            return 'user ' + (user or match.group(1)) + '/' + relative[match.end():]
+    return relative
+
+
+def _one_per_view(files):
+    """The files in order, keeping the first of each Android user's storage views."""
+    kept, seen = [], set()
+    for file in files:
+        key = _view_key(file)
+        if key not in seen:
+            seen.add(key)
+            kept.append(file)
+    return kept
+
 
 def _map_uuid_to_account(file):
     # Helper method to get the mapping of the uuid to the set up accounts
@@ -119,46 +152,56 @@ def thunderbird_accounts(context):
         OR primkey LIKE '%outgoingServerSettings%'
     ''')
 
-    db_records = list(get_sqlite_db_records(str(files_found[0]), query))
-
-    uuid_mapping = _map_uuid_to_account(str(files_found[0]))
-    uuids = list(uuid_mapping.keys())
-
     data_list = []
+    origins = []
+    sources = []
 
-    for uuid in uuids:
+    for file_found in _one_per_view(files_found):
+        db_records = list(get_sqlite_db_records(str(file_found), query) or [])
 
-        last_sync_time = ''
-        account_name = ''
-        address = ''
-        name = ''
-        username = ''
-        password = ''
-        incoming_server = ''
-        outgoing_server = ''
+        uuid_mapping = _map_uuid_to_account(str(file_found))
+        uuids = list(uuid_mapping.keys())
+        if uuids:
+            sources.append(str(file_found))
 
-        for row in db_records:
-            if uuid + '.lastSyncTime' == row[0]:
-                last_sync_time = convert_unix_ts_to_utc(int(row[1])/1000)
-            if uuid + '.description' == row[0]:
-                account_name = row[1]
-            if uuid + '.email.0' == row[0]:
-                address = row[1]
-            if uuid + '.name.0' == row[0]:
-                name = row[1]
-            if uuid + '.incomingServerSettings' == row[0]:
-                username = json.loads(row[1])["username"]
-                password = json.loads(row[1])["password"]
-                incoming_server = json.loads(row[1])["host"]
-            if uuid + '.outgoingServerSettings' == row[0]:
-                outgoing_server = json.loads(row[1])["host"]
+        for uuid in uuids:
+
+            last_sync_time = ''
+            account_name = ''
+            address = ''
+            name = ''
+            username = ''
+            password = ''
+            incoming_server = ''
+            outgoing_server = ''
+
+            for row in db_records:
+                if uuid + '.lastSyncTime' == row[0]:
+                    last_sync_time = convert_unix_ts_to_utc(int(row[1])/1000)
+                if uuid + '.description' == row[0]:
+                    account_name = row[1]
+                if uuid + '.email.0' == row[0]:
+                    address = row[1]
+                if uuid + '.name.0' == row[0]:
+                    name = row[1]
+                if uuid + '.incomingServerSettings' == row[0]:
+                    username = json.loads(row[1])["username"]
+                    password = json.loads(row[1])["password"]
+                    incoming_server = json.loads(row[1])["host"]
+                if uuid + '.outgoingServerSettings' == row[0]:
+                    outgoing_server = json.loads(row[1])["host"]
 
 
-        data_list.append(( last_sync_time, account_name, address, name, username, password, incoming_server, outgoing_server))
+            origins.append(Context.get_relative_path(str(file_found)))
+            data_list.append(( last_sync_time, account_name, address, name, username, password, incoming_server, outgoing_server))
 
     data_headers = ( 'Last Sync Time', 'Account Name', 'Mail Address', 'Shown Name', 'Username', 'Password', 'Incoming Server', 'Outgoing Server')
 
-    return data_headers, data_list, files_found[0]
+    if len(sources) > 1:
+        data_headers += ('Source File',)
+        data_list = [row + (origin,) for row, origin in zip(data_list, origins)]
+
+    return data_headers, data_list, '\n'.join(sources)
 
 
 @artifact_processor
@@ -166,8 +209,10 @@ def thunderbird_messages(context):
     files_found = context.get_files_found()
 
     preferences_file = [x for x in files_found if "preferences_storage" in x and not x.endswith('journal')]
-    uuid_mapping = _map_uuid_to_account(str(preferences_file[0]))
-    files_found = [x for x in files_found if x.endswith('db')]
+    uuid_mapping = {}
+    for preferences in _one_per_view(preferences_file):
+        uuid_mapping.update(_map_uuid_to_account(str(preferences)))
+    files_found = _one_per_view([x for x in files_found if x.endswith('db')])
     uuid_regex = re.compile(r'[0-9a-fA-F-]{36}')
 
     query = ('''

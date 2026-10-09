@@ -5,7 +5,7 @@ __artifacts_v2__ = {
                        "message with its conversation, direction, time and content",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-30",
-        "last_update_date": "2026-08-30",
+        "last_update_date": "2026-10-09",
         "requirements": "sqlcipher3",
         "category": "WeChat",
         "notes": "com.tencent.mm stores its messages in EnMicroMsg.db, a SQLCipher database. The "
@@ -25,9 +25,9 @@ __artifacts_v2__ = {
                  "are reported for it. No rows are reported either when the sqlcipher3 package is "
                  "not installed, so an empty result is not evidence the store held no messages. "
                  "createTime is Unix milliseconds. Is Send is the isSend column, reported as "
-                 "stored; the Direction column shows Outgoing where isSend is 1 and Incoming for "
-                 "every other stored value, including an empty one; no source for the meaning of "
-                 "isSend is cited here, so read Is Send for the value as stored. Talker is the "
+                 "stored; the Direction column shows Outgoing where isSend is 1, Incoming where it "
+                 "is 0 and is blank for any other value, including an empty one; no source for the "
+                 "meaning of isSend is cited here, so read Is Send for the value as stored. Talker is the "
                  "talker column, reported as stored, and the member who sent a group message is "
                  "not resolved here. Message Type (as stored) is the type column and is reported "
                  "as stored, no authoritative source for its full code list having been located. "
@@ -49,10 +49,9 @@ __artifacts_v2__ = {
                  "a file on size or time. An image row points at its thumbnail through the imgPath "
                  "column, a voice row is joined to voiceinfo on the message id to get its file "
                  "name, and a sticker row names its file directly; each name is then looked for "
-                 "only inside the com.tencent.mm folder the row's database sits in, so a file of "
-                 "the same name under another Android user's copy of the app is not picked up. Two "
-                 "WeChat accounts inside one com.tencent.mm folder share the lookup, and the first "
-                 "file of a given name is used. Media is checked in only where the resolved "
+                 "only inside the MicroMsg account folder the row's database sits in, so a file of "
+                 "the same name under another account folder, or under another Android user's copy "
+                 "of the app, is not picked up. Media is checked in only where the resolved "
                  "thumbnail is a real image by its leading bytes. On the corpus below image rows "
                  "resolved to a JPEG thumbnail, which is rendered. Attachment Format is read from "
                  "the file's leading bytes, and the values seen were the reason the other files "
@@ -148,12 +147,12 @@ __artifacts_v2__ = {
                        "EnMicroMsg.db and the account's own preference files",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-30",
-        "last_update_date": "2026-08-30",
+        "last_update_date": "2026-10-09",
         "requirements": "sqlcipher3",
         "category": "WeChat",
         "notes": "userinfo is a key and value table holding the signed-in account's own record. "
                  "The rows are reported with the numeric id the table uses and the value as "
-                 "stored, except that a stored 0 or empty value is shown blank: on the corpus "
+                 "stored, a stored 0 included; an empty value is shown blank: on the corpus "
                  "below id 2 held the account's WeChat id, id 4 the display name and id 6 the "
                  "bound telephone number, but the id to field mapping is the application's own and "
                  "is not expanded here beyond reporting the id, since no authoritative source for "
@@ -264,6 +263,9 @@ def _connections(context):
     """Yield (connection, uin, db path) for each account database opened."""
     files_found = [str(f) for f in unique_files(context)]
     if not _SQLCIPHER_AVAILABLE:
+        if any(os.path.basename(f) == 'EnMicroMsg.db' for f in files_found):
+            logfunc('WeChat: EnMicroMsg.db is present but was not read because the sqlcipher3 '
+                    'package is not installed; no rows are reported for it')
         return
     uin = _pref_value(files_found, 'auth_info_key_prefs.xml', '_auth_uin')
     if not uin:
@@ -345,20 +347,20 @@ def _media_index(files_found):
     for file_found in files_found:
         if os.path.isdir(file_found):
             continue
-        parts = file_found.replace('\\', '/').split('/')
-        container = ''
-        for position in range(len(parts) - 1, -1, -1):
-            if parts[position] == 'com.tencent.mm':
-                container = '/'.join(parts[:position + 1])
-                break
-        index.setdefault((container, os.path.basename(file_found)), file_found)
+        index.setdefault((_container_of(file_found), os.path.basename(file_found)), file_found)
     return index
 
 
 def _container_of(path):
+    """The account folder a file sits in: .../com.tencent.mm/MicroMsg/<account folder>.
+
+    A file outside an account folder falls back to its com.tencent.mm folder.
+    """
     parts = str(path).replace('\\', '/').split('/')
     for position in range(len(parts) - 1, -1, -1):
         if parts[position] == 'com.tencent.mm':
+            if len(parts) > position + 3 and parts[position + 1] == 'MicroMsg':
+                return '/'.join(parts[:position + 3])
             return '/'.join(parts[:position + 1])
     return ''
 
@@ -457,7 +459,7 @@ def wechat_messages(context):
 
         data_list.append((
             convert_unix_ts_to_utc(created / 1000) if created else '',
-            'Outgoing' if is_send == 1 else 'Incoming',
+            'Outgoing' if is_send == 1 else ('Incoming' if is_send == 0 else ''),
             talker or '',
             readable,
             media,
@@ -562,7 +564,7 @@ def wechat_account(context):
         row_id, value = row
         data_list.append((
             row_id if row_id is not None else '',
-            value or '',
+            value if value is not None else '',
             uin,
         ))
     data_headers = ('Field ID (as stored)', 'Value', 'Account UIN')

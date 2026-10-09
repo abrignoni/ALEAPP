@@ -50,7 +50,7 @@ class UnresolvedInventoryTest(unittest.TestCase):
             with patch.object(parser,'check_in_media',side_effect=lambda p,*_:'media:'+p):
                 headers,rows,source=parser.get_sms_mms_attachments.__wrapped__(context(root,paths+[paths[3]]))
             self.assertEqual(len(headers),14)
-            self.assertEqual([r[7] for r in rows[:3]],['Referenced by message','Referenced, file not in extraction','Not referenced by any part row'])
+            self.assertEqual([r[7] for r in rows[:3]],['Referenced by message','Referenced, no file at the recorded path, same-named file candidate in an unresolved layout','Not referenced by any part row'])
             candidates=rows[3:];self.assertEqual(len(candidates),6)
             self.assertTrue(all(r[7]=='File candidate, storage identity unresolved' and r[:3]==('','','') and r[9:13]==('','','','') for r in candidates))
             origins=[r[13] for r in candidates];self.assertEqual(origins,sorted(origins));self.assertEqual(len(set(origins)),6)

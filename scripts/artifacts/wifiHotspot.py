@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Parses the Wi-Fi hotspot (SoftAP) configuration (SSID and passphrase, plus security type where the configuration is in XML form) from the softap configuration files.",
         "author": "@ydkhatri",
         "creation_date": "2020-11-18",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "WiFi Profiles",
         "notes": "SecurityType is read from a named element and is therefore only populated for the "
@@ -12,9 +12,12 @@ __artifacts_v2__ = {
                  "In the binary softap.conf form SSID and Passphrase are taken by byte position: "
                  "the SSID length is read from byte 5 and the passphrase from the bytes that "
                  "start two bytes after the last null byte in the file, so the one byte directly "
-                 "after that null is skipped. That layout is not documented, no bounds checking "
-                 "is performed, and a file laid out differently can yield a truncated or wrong "
-                 "value rather than an error.",
+                 "after that null is skipped. No source for that layout is cited here. A file "
+                 "shorter than the SSID length it stores is logged and not reported, and the "
+                 "passphrase is left blank when the position found does not fall after the SSID "
+                 "and inside the file, as when the file ends in a null byte. A file laid out "
+                 "differently can still yield a truncated or wrong value rather than an error. A "
+                 "WifiConfigStoreSoftAp.xml that does not parse is logged and not reported.",
         "paths": ('*/misc/wifi/softap.conf', '*/misc**/apexdata/com.android.wifi/WifiConfigStoreSoftAp.xml'),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "wifi",
@@ -35,7 +38,7 @@ __artifacts_v2__ = {
 
 import xml.etree.ElementTree as ET
 
-from scripts.ilapfuncs import artifact_processor
+from scripts.ilapfuncs import artifact_processor, logfunc
 
 
 @artifact_processor
@@ -55,16 +58,26 @@ def get_wifiHotspot(context):
         if file_found.endswith('.conf'):
             with open(file_found, 'rb') as f:
                 data = f.read()
-                ssid_len = data[5]
-                ssid = data[6: 6 + ssid_len].decode('utf8', 'ignore')
+            if len(data) < 6 or 6 + data[5] > len(data):
+                logfunc(f'wifiHotspot: {file_found} is too short for the SSID length it '
+                        f'stores ({len(data)} bytes); not reported')
+                continue
+            ssid_len = data[5]
+            ssid = data[6: 6 + ssid_len].decode('utf8', 'ignore')
 
-                data_len = len(data)
-                start_pos = -1
-                while data[start_pos] != 0 and (-start_pos < data_len):
-                    start_pos -= 1
-                passphrase = data[start_pos + 2:].decode('utf8', 'ignore')
+            # The passphrase is taken from two bytes after the last null byte. The
+            # position is absolute and must fall after the SSID and inside the file;
+            # a file that ends in a null byte, or holds none after the SSID, gives
+            # no passphrase.
+            pass_start = data.rfind(b'\x00') + 2
+            if 6 + ssid_len < pass_start < len(data):
+                passphrase = data[pass_start:].decode('utf8', 'ignore')
         else:
-            tree = ET.parse(file_found)
+            try:
+                tree = ET.parse(file_found)
+            except ET.ParseError as error:
+                logfunc(f'wifiHotspot: could not parse {file_found}: {error}')
+                continue
             for node in tree.iter('SoftAp'):
                 for elem in node.iter():
                     if elem.tag != node.tag:

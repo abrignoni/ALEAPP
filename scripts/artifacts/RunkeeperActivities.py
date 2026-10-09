@@ -5,15 +5,16 @@ __artifacts_v2__ = {
         "description": "Runkeeper activities with GPS routes (RunKeeper.sqlite)",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
         "creation_date": "2023-03-25",
-        "last_update_date": "2023-03-25",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Runkeeper",
         "notes": "One row per row of the trips table. Start Time and Device Sync Time are start_date "
                  "and device_sync_time read as Unix milliseconds and shown as UTC. Latitude, "
-                 "Longitude, End Latitude and End Longitude are the first and last points the "
-                 "points table returns for the trip; the query does not sort them, so they are the "
-                 "start and end of the route only where the table returns points in recorded "
-                 "order. Distance, Duration, Calories, Heart Rate and Total Climb are reported as "
+                 "Longitude, End Latitude and End Longitude are the first and last points of the "
+                 "trip in ascending rowid of the points table, which is also the order the route "
+                 "is drawn in. No time column of the points table is read; whether rowid order is "
+                 "the recorded order of the route is not established. If the table has no rowid "
+                 "the points are taken in the order the table returns them. Distance, Duration, Calories, Heart Rate and Total Climb are reported as "
                  "stored and their units are not established. The route is drawn as an offline "
                  "image and a KML file.",
         "paths": ('*com.fitnesskeeper.runkeeper.pro/databases/RunKeeper.sqlite*',),
@@ -54,6 +55,17 @@ def _q(cursor, sql, params=()):
         return []
 
 
+def _points(cursor, trip_id):
+    """A trip's points in ascending rowid, so the first and last do not depend on the plan."""
+    sql = 'SELECT latitude, longitude FROM points WHERE trip_id = ?'
+    try:
+        cursor.execute(sql + ' ORDER BY rowid', (trip_id,))
+        return cursor.fetchall()
+    except sqlite3.Error:
+        # A table declared WITHOUT ROWID has no rowid to sort on.
+        return _q(cursor, sql, (trip_id,))
+
+
 def _route_media(source, coords, title, subtitle, base):
     route_map = ''
     png = render_gps_track_png(coords, title=title, subtitle=subtitle)
@@ -81,7 +93,7 @@ def get_run_activities(context):
             activity_type, calories, heart_rate, totalClimb, uuid, nickname FROM trips''')
         for t in trips:
             tid = t[0]
-            pts = _q(cursor, 'SELECT latitude, longitude FROM points WHERE trip_id = ?', (tid,))
+            pts = _points(cursor, tid)
             coords = [(p[0], p[1]) for p in pts if p[0] is not None and p[1] is not None]
             start_lat, start_lon = coords[0] if coords else ('', '')
             end_lat, end_lon = coords[-1] if coords else ('', '')

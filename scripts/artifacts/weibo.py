@@ -6,16 +6,17 @@ __artifacts_v2__ = {
                        "stored posted-from string",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Weibo",
         "notes": "Read from child_flow_item_table in the feed_database Room store. The rows read "
                  "hold the post as a JSON document in serialized_data; rows where that column is "
                  "empty or does not parse are not reported. The columns reported here are read out "
                  "of that document: text, created_at, the nested user object, attitudes_count "
-                 "(shown as Likes), comments_count, reposts_count and region_name. Author Verified "
-                 "shows Yes where the user object's verified value is true and No otherwise, "
-                 "including where the key is absent.\n"
+                 "(shown as Attitudes Count, the field's own name; what the count measures is not "
+                 "sourced here), comments_count, reposts_count and region_name. Author Verified "
+                 "shows Yes where the user object's verified value is true, No where it is false "
+                 "and is blank where the key is absent or empty.\n"
                  "These are posts the app held in this table; which screen or feed the table backs "
                  "is not established here. That is a record of what the client held, and it does "
                  "not establish that the account holder read any particular post. The Account UID "
@@ -47,7 +48,7 @@ __artifacts_v2__ = {
                        "and the linked page title and URLs",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Weibo",
         "notes": "Read from long_text_table in ArticleDb.db, which holds long post bodies. "
@@ -62,8 +63,8 @@ __artifacts_v2__ = {
                  "assumption about which value belongs to which link, so most rows show a single "
                  "plain value and some show the joined form.\n"
                  "Topics are read from the _mblog_topic JSON where present and reported as the "
-                 "topic titles. Is Paid shows Yes where _is_paid holds a non-zero value and No "
-                 "otherwise, including where the column is empty.",
+                 "topic titles. Is Paid shows Yes where _is_paid holds 1, No where it holds 0, "
+                 "is blank where the column is empty, and shows any other value as stored.",
         "paths": ('*/com.sina.weibo/databases/ArticleDb.db*',),
         "output_types": "standard",
         "artifact_icon": "file-text",
@@ -140,6 +141,18 @@ def _weibo_ts(value):
         return str(value)
 
 
+def _yes_no(value):
+    """Yes or No for a stored true/false or 1/0; blank for an absent value and any
+    other value as stored, so an absent value is not shown as No."""
+    if value is None or value == '':
+        return ''
+    if value in (True, 1, '1'):
+        return 'Yes'
+    if value in (False, 0, '0'):
+        return 'No'
+    return str(value)
+
+
 def _json_or_none(value):
     if not value:
         return None
@@ -192,7 +205,7 @@ def weibo_timeline(context):
                 user.get('screen_name', ''),
                 str(user.get('idstr') or user.get('id') or ''),
                 user.get('location', ''),
-                'Yes' if user.get('verified') else 'No',
+                _yes_no(user.get('verified')) if 'verified' in user else '',
                 user.get('verified_reason', ''),
                 post.get('region_name') or '',
                 post.get('attitudes_count'),
@@ -216,7 +229,7 @@ def weibo_timeline(context):
         'Author Verified',
         'Author Verified Reason',
         'Posted From',
-        'Likes',
+        'Attitudes Count',
         'Comments',
         'Reposts',
         'Image Count',
@@ -248,7 +261,7 @@ def weibo_long_posts(context):
                 record[2],
                 record[3],
                 record[4],
-                'Yes' if record[6] else 'No',
+                _yes_no(record[6]),
                 record[7],
                 record[8],
                 record[0],

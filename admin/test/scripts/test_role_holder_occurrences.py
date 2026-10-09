@@ -65,6 +65,23 @@ class RoleHolderOccurrencesTest(unittest.TestCase):
             self.assertEqual(rows, [])
             self.assertEqual(source, empty)
 
+    def test_data_mirror_misc_de_copy_is_skipped_only_beside_its_counterpart(self):
+        tail = 'apexdata/com.android.permission/roles.xml'
+        body = '<roles><role name="r"><holder name="h"/></role></roles>'
+        with tempfile.TemporaryDirectory() as folder, patch.object(roles, 'logfunc') as logger:
+            root = pathlib.Path(folder)
+            kept = write_xml(root, f'data/misc_de/0/{tail}', body)
+            mirror = write_xml(root, f'data_mirror/misc_de/null/0/{tail}', body)
+            other_user = write_xml(root, f'data_mirror/misc_de/null/10/{tail}', body)
+            headers, rows, source = roles.get_roles.__wrapped__(context(root, [mirror, kept, other_user]))
+            self.assertEqual([(r[1], r[2], r[3]) for r in rows], [('0', 'r', 'h'), ('10', 'r', 'h')])
+            self.assertEqual(headers[-1], 'Source File')
+            self.assertEqual(source, '\n'.join([kept, other_user]))
+            self.assertEqual(len(logger.call_args_list), 1)
+            headers, rows, source = roles.get_roles.__wrapped__(context(root, [mirror]))
+            self.assertEqual([(r[1], r[2], r[3]) for r in rows], [('0', 'r', 'h')])
+            self.assertEqual(source, mirror)
+
 
 if __name__ == '__main__':
     unittest.main()

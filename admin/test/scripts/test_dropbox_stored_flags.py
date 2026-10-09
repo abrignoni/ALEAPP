@@ -52,21 +52,22 @@ class DropboxStoredFlagsTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as root:
             path, inputs = make_database(root)
             headers, rows, source = dropbox_files.__wrapped__(
-                SimpleNamespace(get_files_found=lambda: [str(path)]))
+                SimpleNamespace(get_relative_path=str, get_files_found=lambda: [str(path)]))
             con = sqlite3.connect('file:' + str(path) + '?mode=ro', uri=True)
             selected = con.execute(query_text()).fetchall()
             storage = con.execute('SELECT typeof(is_dir),typeof(is_favorite),'
                                   'typeof(read_only),typeof(is_vault_folder) FROM dropbox').fetchall()
             con.close()
             self.assertEqual(len(rows), len(inputs))
-            self.assertEqual(len(headers), 14)
+            self.assertEqual(len(headers), 15)
             self.assertEqual(source, str(path))
             self.assertEqual(headers[:4], (('Server Modified', 'datetime'), ('Modified', 'datetime'),
                                           ('Local Modified', 'datetime'), ('Accessed', 'datetime')))
             self.assertEqual(tuple(headers[i] for i in FLAG_INDICES), RAW_HEADERS)
-            self.assertNotIn('Source File', headers)
+            self.assertEqual(headers[-1], 'Source File')
             for actual, record in zip(rows, selected):
-                expected = tuple(convert_unix_ts_to_utc(v) if v else '' for v in record[:4]) + record[4:]
+                expected = (tuple(convert_unix_ts_to_utc(v) if v else '' for v in record[:4]) + record[4:]
+                            + (str(path),))
                 self.assertEqual(actual, expected)
                 for index in FLAG_INDICES:
                     self.assertIs(type(actual[index]), type(record[index]))
@@ -74,14 +75,15 @@ class DropboxStoredFlagsTest(unittest.TestCase):
             for index in range(4):
                 self.assertEqual({row[index] for row in storage}, {'null', 'integer', 'real', 'text'})
 
-    def test_first_main_selection_remains_separate_pending_work(self):
+    def test_every_main_database_is_read_and_named(self):
         with tempfile.TemporaryDirectory() as root:
             first, inputs = make_database(root)
             second, _ = make_database(root, 'two-db.db')
             sidecars = [str(first) + suffix for suffix in ('-wal', '-shm', '-journal')]
             for mains in ([first, second], [second, first]):
                 headers, rows, source = dropbox_files.__wrapped__(
-                    SimpleNamespace(get_files_found=lambda mains=mains: sidecars + list(map(str, mains))))
-                self.assertEqual(source, str(mains[0]))
-                self.assertEqual(len(rows), len(inputs))
-                self.assertNotIn('Source File', headers)
+                    SimpleNamespace(get_relative_path=str, get_files_found=lambda mains=mains: sidecars + list(map(str, mains))))
+                self.assertEqual(sorted(source.split('\n')), sorted(map(str, mains)))
+                self.assertEqual(len(rows), 2 * len(inputs))
+                self.assertEqual({row[-1] for row in rows}, set(map(str, mains)))
+                self.assertEqual(headers[-1], 'Source File')

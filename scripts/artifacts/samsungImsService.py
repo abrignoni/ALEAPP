@@ -155,27 +155,34 @@ __artifacts_v2__ = {
         "description": "Collects the process-start lines the Samsung IMS service writes at the head of its logs in com.sec.imsservice, with the process id and firmware build as stored.",
         "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-10-04",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Samsung IMS Service",
         "notes": "Collects the '> Created (pid: N, binary: <firmware>)' line Samsung writes at the head of each "
-                 "com.sec.imsservice log, with the same no-time-zone timestamp as the registration log, reported as text, "
-                 "deduplicated to one row per process id (the earliest time that pid was "
-                 "seen), so two starts that were given the same process id at different times appear as one row "
-                 "and the later one is not reported. Created Line "
-                 "Time (no zone recorded) is the time on the earliest '> Created' line carrying that process id and Firmware Build "
-                 "(as stored) is the text after binary: on that line. The rows of one device can carry one build "
-                 "string or several, so a change of build string between rows is consistent with a firmware "
-                 "change in that window; this was not checked against an update record. One tested image "
-                 "recorded ten builds. On the 13 tested extractions 9 held these lines, 251 rows in all.",
+                 "com.sec.imsservice log, with the same no-time-zone timestamp as the registration log, reported as text. "
+                 "One row per Android user, process id and firmware build string. Created Line Time (no zone recorded) "
+                 "is the time on the earliest '> Created' line of that group, Last Created Line Time (no zone recorded) "
+                 "is the time on the latest, and Created Lines is how many such lines the group holds across the logs "
+                 "read. Firmware Build (as stored) is the text after binary:. The lines carry nothing that tells one "
+                 "start from a later start that was given the same process id under the same build, so those still "
+                 "share a row; the row then spans both. On three of the tested images the lines of one process id "
+                 "were mostly within seconds of each other (median spread 1.9 to 4.9 seconds) while some process ids "
+                 "spanned days, so a wide gap between the two times is consistent with a reused process id; what "
+                 "gap separates one start from two is not established. The Android user is taken from the file's "
+                 "path; every tested image held these logs for one user only, so the split by user is not exercised "
+                 "on real data. The rows of one device can carry one build string or several, so a change of build "
+                 "string between rows is consistent with a firmware change in that window; this was not checked "
+                 "against an update record. On the 13 tested extractions 9 held these lines, 257 rows in all, 6 more "
+                 "than one row per process id would give: on four images a process id appeared under more than one "
+                 "build string.",
         "paths": ('*/com.sec.imsservice/files/*.log',),
         "output_types": "standard",
         "artifact_icon": "refresh-cw",
         "sample_data": {
             "adams_ss135dl_a13": "Android 13 | 24 rows",
-            "anne_a15": "Android 15 | 47 rows",
+            "anne_a15": "Android 15 | 48 rows",
             "cookbook_a11": "Android 11 | 16 rows",
-            "falken_a326u_a13": "Android 326 | 26 rows",
+            "falken_a326u_a13": "Android 326 | 27 rows",
             "galaxys10_a10": "Android 10 | no com.sec.imsservice logs | 0 rows",
             "hc_pixel8pro_a17": "Android 17 | no com.sec.imsservice logs | 0 rows",
             "kevin_pocox7_a15": "Android 15 | no com.sec.imsservice logs | 0 rows",
@@ -183,8 +190,8 @@ __artifacts_v2__ = {
             "s20fe_a13": "Android 13 | 23 rows",
             "samsunga53_a14": "Android 14 | 9 rows",
             "samsungs20_a13": "Android 13 | 19 rows",
-            "sharon_a13": "Android 13 | 20 rows",
-            "sharon_a14": "Android 14 | 67 rows",
+            "sharon_a13": "Android 13 | 21 rows",
+            "sharon_a14": "Android 14 | 70 rows",
         },
     },
 }
@@ -384,6 +391,7 @@ def samsungImsServiceStarts(context):
         except OSError:
             continue
         source_paths.add(str(source_path))
+        android_user = _android_user('/' + str(context.get_relative_path(source_path)).replace('\\', '/'))
         for line in lines:
             mo = _LINE.match(line.rstrip('\n'))
             if not mo:
@@ -391,13 +399,24 @@ def samsungImsServiceStarts(context):
             cr = _CREATED.match(mo.group(8))
             if not cr:
                 continue
-            pid, firmware = cr.group(1), cr.group(2)
+            # A process id is reused over time, so it does not identify one start on
+            # its own. The Android user and the build string are the only other things a
+            # '> Created' line and its file carry, so the key uses all three.
+            key = (android_user, cr.group(1), cr.group(2))
             when = _when(mo)
-            rec = instances.get(pid)
-            if rec is None or when < rec[0]:
-                instances[pid] = [when, _stored(mo), firmware]
+            rec = instances.get(key)
+            if rec is None:
+                instances[key] = [when, _stored(mo), when, 1]
+                continue
+            rec[3] += 1
+            if when < rec[0]:
+                rec[0], rec[1] = when, _stored(mo)
+            if when > rec[2]:
+                rec[2] = when
 
-    data_list = [(rec[0], rec[1], pid, rec[2]) for pid, rec in instances.items()]
+    data_list = [(rec[0], rec[1], rec[2], rec[3], key[1], key[2], key[0])
+                 for key, rec in instances.items()]
     data_headers = ('Created Line Time (no zone recorded)', 'Time (as stored)',
-                    'Process PID (as stored)', 'Firmware Build (as stored)')
+                    'Last Created Line Time (no zone recorded)', 'Created Lines',
+                    'Process PID (as stored)', 'Firmware Build (as stored)', 'Android User')
     return data_headers, data_list, '\n'.join(sorted(source_paths))

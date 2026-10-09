@@ -96,7 +96,7 @@ class TestNovaMediaCandidates(unittest.TestCase):
             self.assertEqual(headers[0], ('Message Timestamp (UTC)', 'datetime'))
             records = named_rows(headers, rows)
             self.assertEqual(len({row['Source File'] for row in records}), 3)
-            images = [row for row in records if row['Image Cloud URL']]
+            images = [row for row in records if row['Image URL (as stored)']]
             self.assertTrue(all(not row['Image Media Candidate'] for row in images))
             self.assertTrue(all('unknown' in row['Image Filesystem Match Scope'] for row in images))
             self.assertTrue(all(len(row['Image MediaStore Candidate Sources'].splitlines()) == 6
@@ -118,7 +118,7 @@ class TestNovaMediaCandidates(unittest.TestCase):
             with patch.object(conversations, 'check_in_media', return_value='candidate'):
                 headers, rows, _ = conversations.nova_chatbot_conversations.__wrapped__(
                     Context(root, files))
-            images = [row for row in named_rows(headers, rows) if row['Image Cloud URL']]
+            images = [row for row in named_rows(headers, rows) if row['Image URL (as stored)']]
             ten = next(row for row in images if '/user/10/' in row['Source File'])
             self.assertEqual(ten['Image Media Candidate'], 'candidate')
             self.assertTrue(ten['Image Media Candidate Source'].startswith('data/media/10/'))

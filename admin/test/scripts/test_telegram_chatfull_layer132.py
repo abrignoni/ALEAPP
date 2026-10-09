@@ -54,7 +54,8 @@ class Layer132PrefixTest(unittest.TestCase):
 
     def test_actual_sqlite_keeps_uid_names_repeated_rows_and_source(self):
         with tempfile.TemporaryDirectory() as temp:
-            path = Path(temp) / 'cache4.db'
+            path = Path(temp) / 'data/data/org.telegram.messenger/files/cache4.db'
+            path.parent.mkdir(parents=True)
             blob = struct.pack('<IIi', 0x2F532F3C, 4, -1) + encode_string(b'row') + struct.pack('<ii', 3, 4)
             with sqlite3.connect(path) as db:
                 db.execute('CREATE TABLE chats(uid, name)')

@@ -58,11 +58,11 @@ __artifacts_v2__ = {
     },
     "get_notificationHistory_snoozed": {
         "name": "Android Notification History - Snoozed",
-        "description": "The notification elements under snoozed-notifications in "
+        "description": "The child elements of snoozed-notifications in "
                        "notification_policy.xml, with the stored key and time.",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2024-07-02",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-09",
         "requirements": "",
         "category": "Android Notification History",
         "notes": "Reminder Time is the element's time attribute read as Unix "
@@ -70,11 +70,18 @@ __artifacts_v2__ = {
                  "In AOSP at the android-14.0.0_r1 tag, SnoozeHelper.writeXml "
                  "writes the time attribute only when the value is not before "
                  "the time of writing, and also writes context elements "
-                 "there, which this artifact does not report "
+                 "there "
                  "(https://android.googlesource.com/platform/frameworks/base/+/"
                  "299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/services/core/java/com/android/server/"
                  "notification/SnoozeHelper.java#464). "
-                 "Other Android releases and vendor builds were not checked.",
+                 "Other Android releases and vendor builds were not checked. "
+                 "One row is reported per child element, whatever its tag. Element "
+                 "is the tag as stored, Reminder Time is blank where the element has "
+                 "no time attribute, and Other Attributes lists every remaining "
+                 "attribute as name=value as stored; the meaning of the attributes "
+                 "of a context element is not established here. No recorded sample "
+                 "held a child element, so the context rows are not exercised on "
+                 "real data.",
         "paths": ('**/system/notification_policy.xml',),
         "output_types": "standard",
         "artifact_icon": "clock",
@@ -168,12 +175,14 @@ def get_notificationHistory_snoozed(context):
         root = _xml_root(file_found, False)
         for elem in root:
             if elem.tag == 'snoozed-notifications':
-                for notification in elem:
-                    if notification.tag == 'notification':
-                        data_list.append((_ms_to_utc(notification.attrib.get('time')),
-                                          notification.attrib.get('key')))
+                for child in elem:
+                    other = '; '.join(f'{name}={value}' for name, value in child.attrib.items()
+                                      if name not in ('time', 'key'))
+                    data_list.append((_ms_to_utc(child.attrib.get('time')),
+                                      child.attrib.get('key'), child.tag, other))
 
-    data_headers = (('Reminder Time', 'datetime'), 'Snoozed Notification')
+    data_headers = (('Reminder Time', 'datetime'), 'Snoozed Notification', 'Element',
+                    'Other Attributes')
     return data_headers, data_list, source_path
 
 

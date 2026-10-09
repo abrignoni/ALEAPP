@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Parses the roles in the roles.xml file, one row per returned direct-child name occurrence, with the source path variant, user and role. A role with no returned child name has one blank row.",
         "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2021-01-25",
-        "last_update_date": "2026-10-06",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "App Roles",
         "notes": "Source Path Variant records the collected path, not an Android version. "
@@ -15,8 +15,12 @@ __artifacts_v2__ = {
                  "skipped. Source File is included only when rows come from multiple distinct "
                  "evidence-relative origins. Historical Anne, HC Pixel and Samsung A53 runs had no "
                  "multiple-holder role; that boundary uses constructed XML. Files under a path component named "
-                 "mirror are skipped; copies under data_mirror are read. Samsung A53 historically "
-                 "returned 76 rows from these copies; state identity is not established here.",
+                 "mirror are skipped. A copy under data_mirror/misc_de/<volume>/<user> is not read when "
+                 "the extraction also holds data/misc_de/<user> roles.xml for the same user beside it; "
+                 "the skip is written to the run log and the two copies are not compared. On "
+                 "samsunga53_a14 the archive listing gives both copies the same size and CRC-32, and "
+                 "the artifact returned 76 rows before this rule and 38 with it. Any other copy "
+                 "under data_mirror is read.",
         "paths": ('*/system/users/*/roles.xml', '*/misc_de/*/apexdata/com.android.permission/roles.xml'),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "package",
@@ -26,7 +30,7 @@ __artifacts_v2__ = {
             "hc_pixel8pro_a16": "Android 16 | 44 rows",
             "kevin_pocox7_a15": "Android 15 | 40 rows",
             "pixel7a_a14": "Android 14 | 38 rows",
-            "samsunga53_a14": "Android 14 | 76 rows",
+            "samsunga53_a14": "Android 14 | 38 rows",
             "samsungs20_a13": "Android 13 | 63 rows",
             "sharon_a14": "Android 14 | 38 rows",
             "russell_pixel6a_a13": "Android 13 | 66 rows",
@@ -60,6 +64,31 @@ def _parse_xml(file_found):
             return ET.Element('empty')
 
 
+_MISC_DE = re.compile(r'(^|.*/)data/misc_de/(\d+)/apexdata/com\.android\.permission/roles\.xml$')
+_MISC_DE_MIRROR = re.compile(
+    r'(^|.*/)data_mirror/misc_de/[^/]+/(\d+)/apexdata/com\.android\.permission/roles\.xml$')
+
+
+def _mirror_duplicates(context, files_found):
+    """Files under data_mirror/misc_de whose data/misc_de counterpart for the same user is present.
+
+    An extraction can hold misc_de a second time under data_mirror (samsunga53_a14 does), so
+    one roles.xml is matched at two paths. The data/misc_de spelling is the one kept.
+    """
+    kept = set()
+    mirrors = {}
+    for file_found in files_found:
+        relative = str(context.get_relative_path(str(file_found))).replace('\\', '/')
+        match = _MISC_DE.match(relative)
+        if match:
+            kept.add((match.group(1), match.group(2)))
+            continue
+        match = _MISC_DE_MIRROR.match(relative)
+        if match:
+            mirrors[str(file_found)] = (match.group(1), match.group(2))
+    return {path for path, key in mirrors.items() if key in kept}
+
+
 def _role_diagnostic(value):
     text = str(value)
     return json.dumps(text[:240], ensure_ascii=True) + (' [truncated]' if len(text) > 240 else '')
@@ -74,9 +103,14 @@ def get_roles(context):
     source_paths = []
     origins = []
     contributors = []
+    duplicates = _mirror_duplicates(context, files_found)
 
     for file_found in files_found:
         file_found = str(file_found)
+        if file_found in duplicates:
+            logfunc('Roles: not read, the same user\'s data/misc_de copy is present: '
+                    f'{_role_diagnostic(context.get_relative_path(file_found))}')
+            continue
 
         parts = file_found.split(slash)
         # Which path the file was collected from, not an OS version: both forms occur

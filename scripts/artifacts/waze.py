@@ -13,7 +13,7 @@ __artifacts_v2__ = {
         "description": "Parses and extracts account information",
         "author": "@djangofaiola",
         "creation_date": "2026-06-27",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Waze",
         "notes": "Reference: Django Faiola, 'Comprehensive Waze Forensic Parsing for Android', "
@@ -22,8 +22,8 @@ __artifacts_v2__ = {
                  "count, image or source for them is recorded here. First Use comes from the "
                  "General.First use key of the user file; on the row read from cached_data it is "
                  "field 10 of the profile message, whose meaning is not established. Invisible "
-                 "Mode shows On for a stored 1, N/A for an empty value and Off for any other "
-                 "stored value.",
+                 "Mode shows On for a stored 1, Off for a stored 0, N/A for an empty value and "
+                 "any other value as stored.",
         "paths": ("*/com.waze/user",
                   "*/com.waze/waze/cached_data*"),
         "output_types": ["standard"],
@@ -87,17 +87,19 @@ __artifacts_v2__ = {
         }
     },
     "waze_search_history": {
-        "name": "Waze - Search History",
-        "description": "Parses and extracts location entries from the PLACES table",
+        "name": "Waze - Places",
+        "description": "Rows of the PLACES table in the Waze user.db, one per stored place record",
         "author": "@djangofaiola",
         "creation_date": "2026-06-27",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Waze",
         "notes": "Reference: Django Faiola, 'Comprehensive Waze Forensic Parsing for Android', "
                  "https://djangofaiola.blogspot.com/2026/07/comprehensive-waze-forensic-parsing-for.html "
                  "(written by this parser's author). One row per row of the PLACES table in "
-                 "user.db. The table holds place records the app stored; a row does not establish "
+                 "user.db, with no filter on how a place came to be stored. The function and "
+                 "report file names keep the earlier search history wording. The table holds "
+                 "place records the app stored; a row does not establish "
                  "that the place was searched for. Field mappings are the parser's own; no test "
                  "count, image or source for them is recorded here; unrecognized values are "
                  "reported as stored.",
@@ -114,14 +116,15 @@ __artifacts_v2__ = {
         "description": "Parses and extracts recent locations information",
         "author": "@djangofaiola",
         "creation_date": "2026-06-27",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Waze",
         "notes": "Reference: Django Faiola, 'Comprehensive Waze Forensic Parsing for Android', "
                  "https://djangofaiola.blogspot.com/2026/07/comprehensive-waze-forensic-parsing-for.html "
                  "(written by this parser's author). Type shows this parser's label for the stored "
-                 "RECENTS.type integer: -1 N/A, 0 User Search, 1 Advertising, 2 Map Interaction, 3 "
-                 "Shared, 4 Navigation History; any other value is shown as stored. No test count, "
+                 "RECENTS.type integer, with the stored integer in parentheses after it: -1 N/A, 0 "
+                 "User Search, 1 Advertising, 2 Map Interaction, 3 Shared, 4 Navigation History; "
+                 "any other value is shown as stored with no label. No test count, "
                  "image or source for these labels is recorded here, so a label does not establish "
                  "how the entry came to be stored.",
         "paths": ("*/com.waze/user.db*"),
@@ -137,14 +140,15 @@ __artifacts_v2__ = {
         "description": "Parses and extracts favorite locations information",
         "author": "@djangofaiola",
         "creation_date": "2026-06-27",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Waze",
         "notes": "Reference: Django Faiola, 'Comprehensive Waze Forensic Parsing for Android', "
                  "https://djangofaiola.blogspot.com/2026/07/comprehensive-waze-forensic-parsing-for.html "
                  "(written by this parser's author). Type shows this parser's label for the stored "
-                 "favourite type: -1 N/A, 0 Custom, 1 Home, 2 Work, 3 Events, 4 Saved POI; any "
-                 "other value is shown with the stored value. No test count, image or source for "
+                 "favourite type, with the stored integer in parentheses after it: -1 N/A, 0 "
+                 "Custom, 1 Home, 2 Work, 3 Events, 4 Saved POI; any other value is shown with the "
+                 "stored value and no label of that list. No test count, image or source for "
                  "these labels is recorded here. Neither listed image produced rows, so this "
                  "artifact is not exercised by the listed data.",
         "paths": ("*/com.waze/user.db*",
@@ -182,14 +186,15 @@ __artifacts_v2__ = {
         "description": "Parses and extracts the EVENTS_PLACES table and its linked place records.",
         "author": "@djangofaiola",
         "creation_date": "2026-06-27",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Waze",
         "notes": "Reference: Django Faiola, 'Comprehensive Waze Forensic Parsing for Android', "
                  "https://djangofaiola.blogspot.com/2026/07/comprehensive-waze-forensic-parsing-for.html "
                  "(written by this parser's author). Type shows this parser's label for the stored "
-                 "EVENTS_PLACES.type integer: 1 Calendar, 2 Partner, 6 Reservation; any other "
-                 "value is shown as stored and an empty one as N/A. All Day shows No for 0 and Yes "
+                 "EVENTS_PLACES.type integer, with the stored integer in parentheses after it: 1 "
+                 "Calendar, 2 Partner, 6 Reservation; any other value is shown as stored with no "
+                 "label and an empty one as N/A. All Day shows No for 0 and Yes "
                  "for 1. No test count, image or source for these labels is recorded here. Neither "
                  "listed image produced rows, so this artifact is not exercised by the listed "
                  "data.",
@@ -955,7 +960,8 @@ def _parse_account_user(source_path: str, context, data_list: list, data_list_ht
 
             elif key == 'Realtime.Invisible mode':
                 fields[F_INVISIBLE_MODE] = (
-                    'N/A' if value == '' else ('On' if value == '1' else 'Off')
+                    'N/A' if value == '' else
+                    ('On' if value == '1' else ('Off' if value == '0' else value))
                 )
             elif key == 'General.First use':
                 fields[F_FIRST_USE] = (
@@ -1687,12 +1693,12 @@ def waze_recent_locations(context):
         P.id,
         R.access_time,
         CASE R.type
-            WHEN -1 THEN 'N/A'
-            WHEN 0 THEN 'User Search'
-            WHEN 1 THEN 'Advertising'
-            WHEN 2 THEN 'Map Interaction'
-            WHEN 3 THEN 'Shared'
-            WHEN 4 THEN 'Navigation History'
+            WHEN -1 THEN 'N/A (-1)'
+            WHEN 0 THEN 'User Search (0)'
+            WHEN 1 THEN 'Advertising (1)'
+            WHEN 2 THEN 'Map Interaction (2)'
+            WHEN 3 THEN 'Shared (3)'
+            WHEN 4 THEN 'Navigation History (4)'
             ELSE CAST(R.type AS TEXT)
         END AS "entry_type",
         coalesce(R.name, P.name) AS "name",
@@ -1888,17 +1894,17 @@ def _parse_favorite_cached(source_path: str, context, data_list: list) -> None:
             # loc_type_str = _safe_str(_pbget(saved_place, 2))
             loc_type = _safe_str(_pbget(saved_place, 3))
             if loc_type == '-1':
-                loc_type_str = 'N/A'
+                loc_type_str = 'N/A (-1)'
             elif loc_type == '0':
-                loc_type_str = 'Custom'
+                loc_type_str = 'Custom (0)'
             elif loc_type == '1':
-                loc_type_str = 'Home'
+                loc_type_str = 'Home (1)'
             elif loc_type == '2':
-                loc_type_str = 'Work'
+                loc_type_str = 'Work (2)'
             elif loc_type == '3':
-                loc_type_str = 'Events'
+                loc_type_str = 'Events (3)'
             elif loc_type == '4':
-                loc_type_str = 'Saved POI'
+                loc_type_str = 'Saved POI (4)'
             else:
                 loc_type_str = f"{loc_type}"
 
@@ -1968,12 +1974,12 @@ def _parse_favorite_user_db(source_path: str, context, data_list: list) -> None:
         P.id,
         F.access_time,
         CASE f.type
-            WHEN -1 THEN 'N/A'
-            WHEN 0 THEN 'Custom'
-            WHEN 1 THEN 'Home'
-            WHEN 2 THEN 'Work'
-            WHEN 3 THEN 'Events'
-            WHEN 4 THEN 'Saved POI'
+            WHEN -1 THEN 'N/A (-1)'
+            WHEN 0 THEN 'Custom (0)'
+            WHEN 1 THEN 'Home (1)'
+            WHEN 2 THEN 'Work (2)'
+            WHEN 3 THEN 'Events (3)'
+            WHEN 4 THEN 'Saved POI (4)'
             ELSE 'Unknown (' || IFNULL(f.type, 'N/A') || ')'
         END AS "entry_type",
         F.name,
@@ -2354,9 +2360,9 @@ def waze_planned_events(context):
             {has_op_id},
             E.created_time,
             CASE
-                WHEN E.type = 1 THEN 'Calendar'
-                WHEN E.type = 2 THEN 'Partner'
-                WHEN E.type = 6 THEN 'Reservation'
+                WHEN E.type = 1 THEN 'Calendar (1)'
+                WHEN E.type = 2 THEN 'Partner (2)'
+                WHEN E.type = 6 THEN 'Reservation (6)'
                 ELSE coalesce(CAST(E.type AS TEXT), 'N/A')
             END AS "event_type",
             E.name,

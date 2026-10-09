@@ -182,7 +182,7 @@ __artifacts_v2__ = {
         "description": "Telephony-provider part-file associations, known-layout unreferenced files and unresolved-layout file candidates from app_parts and parts.",
         "author": "@AlexisBrignoni, Codex, Claude",
         "creation_date": "2026-09-02",
-        "last_update_date": "2026-10-06",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "SMS & MMS",
         "notes": "One row per part row that records a file path (part._data), joined to its pdu "
@@ -196,7 +196,11 @@ __artifacts_v2__ = {
                  "listed once. Candidate previews export the file itself. Status says which case a row "
                  "is: 'Referenced by message', 'Referenced by a part row with no message row' "
                  "(the part's mid names a pdu row that is not in the table, so Date, Direction, "
-                 "MSG ID and Thread ID are blank), 'Referenced, file not in extraction', or 'Not "
+                 "MSG ID and Thread ID are blank), 'Referenced, file not in extraction', "
+                 "'Referenced, no file at the recorded path, same-named file candidate in an "
+                 "unresolved layout' (no file was found at the recorded path while a file with the "
+                 "same folder and file name is listed as an unresolved-layout candidate; the two are "
+                 "not associated here), or 'Not "
                  "referenced by any part row'. Files are matched to part rows on the recorded "
                  "_data path (storage class, Android user, package and file name); an unknown stored "
                  "layout already permits a unique app_parts/parts filename-tail fallback. No new "
@@ -299,6 +303,8 @@ _STATUS_LINKED = 'Referenced by message'
 _STATUS_NO_PDU = 'Referenced by a part row with no message row'
 _STATUS_MISSING = 'Referenced, file not in extraction'
 _STATUS_ORPHAN = 'Not referenced by any part row'
+_STATUS_MISSING_CANDIDATE = ('Referenced, no file at the recorded path, same-named file '
+                             'candidate in an unresolved layout')
 
 
 # Telephony.Mms msg_box values; wording mirrors the SMS type CASE
@@ -400,6 +406,19 @@ def _unresolved_part_files(context, files_found, referenced):
         seen.add(physical)
         result.append(path)
     return result
+
+
+def _unresolved_tails(context, files_found):
+    """The 'app_parts/<name>' and 'parts/<name>' tails of files outside known layouts."""
+    tails = set()
+    for file_found in files_found:
+        file_found = str(file_found)
+        parent = file_found.replace('\\', '/').rsplit('/', 2)
+        if len(parent) < 3 or parent[-2] not in ('app_parts', 'parts') or os.path.isdir(file_found):
+            continue
+        if _storage_key(context.get_relative_path(file_found)) is None:
+            tails.add(f'{parent[-2]}/{parent[-1]}')
+    return tails
 
 
 def _find_part_file(data_path, part_files):
@@ -622,6 +641,7 @@ def _sniff(file_found):
 def get_sms_mms_attachments(context):
     files_found = unique_files(context)
     part_files = _part_files(context, files_found)
+    unresolved_tails = _unresolved_tails(context, files_found)
     referenced = set()
     data_list = []
     source_paths = []
@@ -639,6 +659,11 @@ def get_sms_mms_attachments(context):
             else:
                 size, detected, media_ref, file_path = '', '', '', ''
                 status = _STATUS_MISSING
+                # a file of the same name sits under app_parts or parts in a layout whose
+                # storage class and user are not known: say so, and associate nothing
+                recorded = data_path.replace('\\', '/').rsplit('/', 2)
+                if len(recorded) == 3 and f'{recorded[-2]}/{recorded[-1]}' in unresolved_tails:
+                    status = _STATUS_MISSING_CANDIDATE
             data_list.append((
                 _sec_to_utc(r['date']),
                 _MMS_BOX_DIRECTION.get(r['msg_box'], r['msg_box']) if r['mms_id'] is not None else '',

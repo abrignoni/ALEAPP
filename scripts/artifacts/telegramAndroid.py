@@ -13,157 +13,119 @@ __artifacts_v2__ = {
         ),
         "author": "Alexis Brignoni, John Hyla, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-03",
-        "last_update_date": "2026-10-01",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Telegram",
-        "notes": "The data column holds a TL-serialised TLRPC message object. One cache4.db is "
-                 "read per run, the first one matched under files/. The client keeps the databases "
-                 "of account slots 1 to 3 under files/account1 to files/account3, which the "
-                 "declared paths do not match, so messages of those slots are not reported. "
-                 "Reference: Telegram-Android, 'MessagesStorage.java (database directory per "
-                 "account)', "
-                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/"
-                 "TMessagesProj/src/main/java/org/telegram/messenger/"
-                 "MessagesStorage.java#L309-L313. "
-                 "The message "
-                 "constructors and their field order are taken from the open-source Telegram "
-                 "Android client; constructors from layer 179 onward read a second flags "
-                 "integer before the message id, which this parser accounts for. The "
-                 "constructors 0x3ae56482, 0x95ef6f2b and 0x7600b9d3 can carry a sender rank "
-                 "string ahead of the dialog peer, and the last two a further peer ahead of "
-                 "the reply header; both are stepped over. No image listed in sample_data "
-                 "holds a message stored under any of those three constructors, so that "
-                 "handling is exercised by round-trip tests only. "
-                 "Six older constructors differ in fields that sit ahead of the text, and are "
-                 "read as the client's own readers read them. 0xbce383d2, 0x58ae39c9 and "
-                 "0xf52e6b7f read via_bot_id as a 32-bit integer where the newer constructors "
-                 "this parser covers read 64 bits. 0xf52e6b7f also reads from_id as a bare "
-                 "32-bit user id and reply_to as a bare 32-bit message id. 0x1e4c8a69 and "
-                 "0xa66c7efc read from_boosts_applied after from_id. 0xa4e97f37 is read with "
-                 "the layout of 0x2357bf25, the class the client maps it to. No image listed in "
-                 "sample_data holds a message stored under any of those six constructors, so "
-                 "these layouts are verified against the client source and by round-trip tests, "
-                 "not against an image. Reference: Telegram-Android, 'TL_legacy_message.java "
-                 "(TL_message_layer118 readParams)', "
-                 "https://github.com/DrKLO/Telegram/blob/"
-                 "f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/"
-                 "org/telegram/tgnet/tl/legacy/TL_legacy_message.java#L3091-L3104"
-                 ". Reference: Telegram-Android, 'TL_legacy_message.java (via_bot_id in "
-                 "TL_message_layer131 and TL_message_layer123)', "
-                 "https://github.com/DrKLO/Telegram/blob/"
-                 "f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/"
-                 "org/telegram/tgnet/tl/legacy/TL_legacy_message.java#L2835"
-                 " and "
-                 "https://github.com/DrKLO/Telegram/blob/"
-                 "f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/"
-                 "org/telegram/tgnet/tl/legacy/TL_legacy_message.java#L2970"
-                 ". Reference: Telegram-Android, 'TL_legacy_message.java (from_boosts_applied "
-                 "in TL_message_layer176 and TL_message_layer175)', "
-                 "https://github.com/DrKLO/Telegram/blob/"
-                 "f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/"
-                 "org/telegram/tgnet/tl/legacy/TL_legacy_message.java#L2080"
-                 " and "
-                 "https://github.com/DrKLO/Telegram/blob/"
-                 "f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/"
-                 "org/telegram/tgnet/tl/legacy/TL_legacy_message.java#L2243"
-                 ". Reference: Telegram-Android, 'TLRPC.java (Message.fromConstructor)', "
-                 "https://github.com/DrKLO/Telegram/blob/"
-                 "f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/"
-                 "org/telegram/tgnet/TLRPC.java#L57589-L57591"
-                 ". "
-                 "Seventeen further message classes are read from their readers in the client's "
-                 "TLRPC.java: the four before layer 118 (0x452c0e65, 0x44f9b43d, 0x90dddc11, "
-                 "0xc09be45f), which read the same fields ahead of the text as 0xf52e6b7f; ten "
-                 "older ones (0xc992e15c, 0x5ba66c13, 0x2bebfa86, 0xf07814c8, 0xc3060325, "
-                 "0xa7ab1991, 0x567699b3, 0x22eb6aba, 0xa367e716, 0x05f46804); and the three "
-                 "secret chat classes (0x555555fa, 0x555555f9, 0x555555f8), which read a ttl "
-                 "integer after the message id. The two TL_messageEmpty constructors "
-                 "(0x90a6ca84, 0x83e5de54) are reported as '[Empty message record]'. No image "
-                 "listed in sample_data holds a record under any of those nineteen "
-                 "constructors, so they are verified against the client source and by "
-                 "round-trip tests, not against an image. Where a record's media object carries "
-                 "its own caption the client uses that caption as the message text; this parser "
-                 "does not read media objects, so for such a record the Message column holds "
-                 "the record's text field only. Reference: Telegram-Android, 'TLRPC.java "
-                 "(Message.fromConstructor, the classes it names)', "
-                 "https://github.com/DrKLO/Telegram/blob/"
-                 "f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/"
-                 "org/telegram/tgnet/TLRPC.java#L57517-L57616"
-                 ". Reference: Telegram-Android, 'TLRPC.java (caption taken from the media, "
-                 "TL_message_layer117)', "
-                 "https://github.com/DrKLO/Telegram/blob/"
-                 "f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/"
-                 "org/telegram/tgnet/TLRPC.java#L58530-L58537"
-                 ". "
-                 "Forward and "
-                 "reply headers are stepped over field by field using the same source, so "
-                 "forwarded messages and replies are decoded structurally. A reply that "
-                 "carries inline reply media, quoted entities or a poll option holds a "
-                 "further object tree this parser does not implement; for those, and for any "
-                 "header constructor not covered, the text is instead located by searching "
-                 "the blob for the row's own date value, which sits immediately before the "
-                 "text, and is accepted only when it is a well-formed TL string that decodes "
-                 "as strict UTF-8. The same fallback is used when a structural walk ends on a "
-                 "date that disagrees with the date column. Text that neither route recovers is "
-                 "reported as not recovered rather than guessed at. A reply or forward that was "
-                 "walked to its text and whose text is empty has an empty Message; the not "
-                 "recovered labels are used only where the walk stopped before the text. "
-                 "A record whose walk cannot be completed, because a field is not what the "
-                 "layout expects or the record ends early, is still reported: the timestamp, "
-                 "dialog, direction, read state and message id are the table's own columns, the "
-                 "text is looked for after the row's date value as above, and where that finds "
-                 "nothing the Message column reads '[Message not decoded]'. Each such record is "
-                 "named in the run log. No record on the nine images listed in sample_data "
-                 "ended its walk that way, so this handling is exercised by tests on "
-                 "constructed records, not on an image. Sender ID is the from_id read from the "
-                 "record, for a service message as for a message. Every from_id on the nine "
-                 "images listed in sample_data is a user peer; a from_id that "
-                 "is a chat or channel peer is reported by its bare id, without the sign a "
-                 "dialog id carries, and no image exercises that. On an incoming row whose "
-                 "record holds no from_id, Sender ID is the dialog id; in a group or channel "
-                 "dialog that is the id of the chat. On those images each incoming row in a user "
-                 "dialog whose record holds a from_id holds the dialog id there. "
-                 "On an incoming row where from_id was not reached (a missing record or one "
-                 "under 8 bytes, an unrecognised constructor, an empty message record, a walk "
-                 "that could not be completed, or a service header that ends before from_id) "
-                 "Sender ID is the dialog id when the dialog id is a user id by the client's "
-                 "own test, a positive value with neither the secret chat bit nor the folder "
-                 "bit set, and is blank otherwise. An outgoing row with no from_id read has a "
-                 "blank Sender ID. Reference: Telegram-Android, 'DialogObject.java "
-                 "(isUserDialog, isEncryptedDialog)', "
-                 "https://github.com/DrKLO/Telegram/blob/"
-                 "f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/"
-                 "org/telegram/messenger/DialogObject.java#L105-L111"
-                 ". "
-                 "All eight TL_messageService constructors are recognised; their header is "
-                 "walked the same way, its from_id is read, and the action that follows is "
-                 "named from the client's own action "
-                 "constructors, so system events such as a phone call, a screenshot "
-                 "notification, a cleared history or an auto-delete timer change are "
-                 "identified rather than reported as an unlabelled service message. Detail "
-                 "fields are read for the actions that carry them, including the outcome and "
-                 "duration of a call and the new value of an auto-delete timer; an action "
-                 "with no reader implemented is reported by name alone. When the client "
-                 "stored the message's media at a known location it appends that path to the "
-                 "record as a trailing string, which is reported as the recorded media path; "
-                 "it is the path the app wrote, and the file is linked only when it is still "
-                 "present in the extraction. On the nine images listed in sample_data Recorded "
-                 "Media Path held a value on some rows; no "
-                 "file of the recorded name is in those images' archives; and Media File had no "
-                 "value on any row. "
-                 "Reference: "
-                 "Telegram-Android, "
-                 "'TL_legacy_message.java (TL_message layer constructors)', "
-                 "https://github.com/DrKLO/Telegram/blob/"
-                 "45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/"
-                 "org/telegram/tgnet/tl/legacy/TL_legacy_message.java. Reference: "
-                 "Telegram-Android, 'generated TlGen_MessageReplyHeader.kt, "
-                 "TlGen_MessageFwdHeader.kt, TlGen_Message.kt and TlGen_MessageAction.kt "
-                 "(header field order, flag bits, service constructors and action "
-                 "constructors)', https://github.com/DrKLO/Telegram/tree/"
-                 "45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj_AppTests/"
-                 "src/androidTest/kotlin/org/telegram/tgnet/model/generated",
+        "notes": (
+            'The data column holds a TL-serialised TLRPC message object. Each cache4.db matched at files/'
+            ' or at files/account1 to files/account3 of an org.telegram.messenger package is read, one '
+            'copy per package, Android user and folder: the same file under data/data, data/user/<n> or '
+            'data_mirror/data_ce/<volume>/<n> is read once. When more than one database is read, a Source'
+            " File column names the database of each row, and names are resolved inside the row's own "
+            'database. The account folder is a location in the extraction and is not by itself proof of '
+            'which account the rows belong to. Reading more than one database was checked on constructed '
+            'databases only (2026-10-09). The client keeps the databases of account slots 1 to 3 under '
+            "files/account1 to files/account3. Reference: Telegram-Android, 'MessagesStorage.java "
+            "(database directory per account)', "
+            'https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java#L309-L313.'
+            ' The message constructors and their field order are taken from the open-source Telegram '
+            'Android client; constructors from layer 179 onward read a second flags integer before the '
+            'message id, which this parser accounts for. The constructors 0x3ae56482, 0x95ef6f2b and '
+            '0x7600b9d3 can carry a sender rank string ahead of the dialog peer, and the last two a '
+            'further peer ahead of the reply header; both are stepped over. No image listed in '
+            'sample_data holds a message stored under any of those three constructors, so that handling '
+            'is exercised by round-trip tests only. Six older constructors differ in fields that sit '
+            "ahead of the text, and are read as the client's own readers read them. 0xbce383d2, "
+            '0x58ae39c9 and 0xf52e6b7f read via_bot_id as a 32-bit integer where the newer constructors '
+            'this parser covers read 64 bits. 0xf52e6b7f also reads from_id as a bare 32-bit user id and '
+            'reply_to as a bare 32-bit message id. 0x1e4c8a69 and 0xa66c7efc read from_boosts_applied '
+            'after from_id. 0xa4e97f37 is read with the layout of 0x2357bf25, the class the client maps '
+            'it to. No image listed in sample_data holds a message stored under any of those six '
+            'constructors, so these layouts are verified against the client source and by round-trip '
+            "tests, not against an image. Reference: Telegram-Android, 'TL_legacy_message.java "
+            "(TL_message_layer118 readParams)', "
+            'https://github.com/DrKLO/Telegram/blob/f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/org/telegram/tgnet/tl/legacy/TL_legacy_message.java#L3091-L3104.'
+            " Reference: Telegram-Android, 'TL_legacy_message.java (via_bot_id in TL_message_layer131 and"
+            " TL_message_layer123)', "
+            'https://github.com/DrKLO/Telegram/blob/f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/org/telegram/tgnet/tl/legacy/TL_legacy_message.java#L2835'
+            ' and '
+            'https://github.com/DrKLO/Telegram/blob/f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/org/telegram/tgnet/tl/legacy/TL_legacy_message.java#L2970.'
+            " Reference: Telegram-Android, 'TL_legacy_message.java (from_boosts_applied in "
+            "TL_message_layer176 and TL_message_layer175)', "
+            'https://github.com/DrKLO/Telegram/blob/f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/org/telegram/tgnet/tl/legacy/TL_legacy_message.java#L2080'
+            ' and '
+            'https://github.com/DrKLO/Telegram/blob/f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/org/telegram/tgnet/tl/legacy/TL_legacy_message.java#L2243.'
+            " Reference: Telegram-Android, 'TLRPC.java (Message.fromConstructor)', "
+            'https://github.com/DrKLO/Telegram/blob/f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/org/telegram/tgnet/TLRPC.java#L57589-L57591.'
+            " Seventeen further message classes are read from their readers in the client's TLRPC.java: "
+            'the four before layer 118 (0x452c0e65, 0x44f9b43d, 0x90dddc11, 0xc09be45f), which read the '
+            'same fields ahead of the text as 0xf52e6b7f; ten older ones (0xc992e15c, 0x5ba66c13, '
+            '0x2bebfa86, 0xf07814c8, 0xc3060325, 0xa7ab1991, 0x567699b3, 0x22eb6aba, 0xa367e716, '
+            '0x05f46804); and the three secret chat classes (0x555555fa, 0x555555f9, 0x555555f8), which '
+            'read a ttl integer after the message id. The two TL_messageEmpty constructors (0x90a6ca84, '
+            "0x83e5de54) are reported as '[Empty message record]'. No image listed in sample_data holds a"
+            ' record under any of those nineteen constructors, so they are verified against the client '
+            "source and by round-trip tests, not against an image. Where a record's media object carries "
+            'its own caption the client uses that caption as the message text; this parser does not read '
+            "media objects, so for such a record the Message column holds the record's text field only. "
+            "Reference: Telegram-Android, 'TLRPC.java (Message.fromConstructor, the classes it names)', "
+            'https://github.com/DrKLO/Telegram/blob/f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/org/telegram/tgnet/TLRPC.java#L57517-L57616.'
+            " Reference: Telegram-Android, 'TLRPC.java (caption taken from the media, "
+            "TL_message_layer117)', "
+            'https://github.com/DrKLO/Telegram/blob/f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/org/telegram/tgnet/TLRPC.java#L58530-L58537.'
+            ' Forward and reply headers are stepped over field by field using the same source, so '
+            'forwarded messages and replies are decoded structurally. A reply that carries inline reply '
+            'media, quoted entities or a poll option holds a further object tree this parser does not '
+            'implement; for those, and for any header constructor not covered, the text is instead '
+            "located by searching the blob for the row's own date value, which sits immediately before "
+            'the text, and is accepted only when it is a well-formed TL string that decodes as strict '
+            'UTF-8. The same fallback is used when a structural walk ends on a date that disagrees with '
+            'the date column. Text that neither route recovers is reported as not recovered rather than '
+            'guessed at. A reply or forward that was walked to its text and whose text is empty has an '
+            'empty Message; the not recovered labels are used only where the walk stopped before the '
+            'text. A record whose walk cannot be completed, because a field is not what the layout '
+            'expects or the record ends early, is still reported: the timestamp, dialog, direction, read '
+            "state and message id are the table's own columns, the text is looked for after the row's "
+            "date value as above, and where that finds nothing the Message column reads '[Message not "
+            "decoded]'. Each such record is named in the run log. No record on the nine images listed in "
+            'sample_data ended its walk that way, so this handling is exercised by tests on constructed '
+            'records, not on an image. Sender ID is the from_id read from the record, for a service '
+            'message as for a message. Every from_id on the nine images listed in sample_data is a user '
+            'peer; a from_id that is a chat or channel peer is reported by its bare id, without the sign '
+            'a dialog id carries, and no image exercises that. On an incoming row whose record holds no '
+            'from_id, Sender ID is the dialog id; in a group or channel dialog that is the id of the '
+            'chat. On those images each incoming row in a user dialog whose record holds a from_id holds '
+            'the dialog id there. On an incoming row where from_id was not reached (a missing record or '
+            'one under 8 bytes, an unrecognised constructor, an empty message record, a walk that could '
+            'not be completed, or a service header that ends before from_id) Sender ID is the dialog id '
+            "when the dialog id is a user id by the client's own test, a positive value with neither the "
+            'secret chat bit nor the folder bit set, and is blank otherwise. An outgoing row with no '
+            "from_id read has a blank Sender ID. Reference: Telegram-Android, 'DialogObject.java "
+            "(isUserDialog, isEncryptedDialog)', "
+            'https://github.com/DrKLO/Telegram/blob/f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/org/telegram/messenger/DialogObject.java#L105-L111.'
+            ' All eight TL_messageService constructors are recognised; their header is walked the same '
+            "way, its from_id is read, and the action that follows is named from the client's own action "
+            'constructors, so system events such as a phone call, a screenshot notification, a cleared '
+            'history or an auto-delete timer change are identified rather than reported as an unlabelled '
+            'service message. Detail fields are read for the actions that carry them, including the '
+            'outcome and duration of a call and the new value of an auto-delete timer; an action with no '
+            "reader implemented is reported by name alone. When the client stored the message's media at "
+            'a known location it appends that path to the record as a trailing string, which is reported '
+            'as the recorded media path; it is the path the app wrote, and the file is linked only when '
+            'it is still present in the extraction. On the nine images listed in sample_data Recorded '
+            "Media Path held a value on some rows; no file of the recorded name is in those images' "
+            'archives; and Media File had no value on any row. Reference: Telegram-Android, '
+            "'TL_legacy_message.java (TL_message layer constructors)', "
+            'https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/tgnet/tl/legacy/TL_legacy_message.java.'
+            " Reference: Telegram-Android, 'generated TlGen_MessageReplyHeader.kt, "
+            'TlGen_MessageFwdHeader.kt, TlGen_Message.kt and TlGen_MessageAction.kt (header field order, '
+            "flag bits, service constructors and action constructors)', "
+            'https://github.com/DrKLO/Telegram/tree/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj_AppTests/src/androidTest/kotlin/org/telegram/tgnet/model/generated'
+        ),
         "paths": ('*/org.telegram.messenger*/files/cache4.db*',
+                  '*/org.telegram.messenger*/files/account1/cache4.db*',
+                  '*/org.telegram.messenger*/files/account2/cache4.db*',
+                  '*/org.telegram.messenger*/files/account3/cache4.db*',
                   '*/org.telegram.messenger*/cache/**',
                   '*/org.telegram.messenger*/files/Telegram/**'),
         "output_types": "standard",
@@ -192,37 +154,36 @@ __artifacts_v2__ = {
         "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "Telegram",
-        "notes": "Both tables store their values as plain text. They are joined on the key column, so one "
-                 "contact can carry several phone numbers. A phone row whose deleted column is set is not "
-                 "listed. Imported is the integer the table stores, reported as stored. The uid column "
-                 "holds the contact id the client assigned to the device contact when it read the address "
-                 "book (contact_id in the client source). The output column uid (as stored) directly "
-                 "projects user_contacts_v7.uid. The client-local contact_id interpretation is retained "
-                 "historical research, not independently verified vendor semantics; no Telegram-user "
-                 "resolution or identity claim is made by this label. Reference: Telegram-Android, "
-                 "'MessagesStorage.java (user_contacts_v7 insert)', "
-                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java#L8306-L8318"
-                 " This artifact now reads every admitted exact cache4.db main in the supplied input "
-                 "order, at the direct files path or the explicitly bounded account1, account2 and "
-                 "account3 subdirectories. The subdirectory spelling is a source location, not proof of "
-                 "account identity or a complete version-specific storage layout. Each main keeps its own "
-                 "phone lookup and contact query; observations from repeated inputs and aliases are "
-                 "retained without deduplication or cross-database joins. The Source File column is "
-                 "appended only when returned rows combine more than one distinct contributing relative "
-                 "input origin; the artifact source lists contributing mains in first-contribution order. "
-                 "Empty or query-failing inputs contribute no origin unless their contacts query actually "
-                 "returns rows. The existing truthy deleted-phone exclusion, duplicate phone sequence, "
-                 "falsey name rendering and ORDER BY fname are unchanged; equal-name ordering is "
-                 "unspecified. The historical client-source/identity interpretation above has not been "
-                 "independently verified against vendor Java or private samples by this correction. "
-                 "Original contribution credited to Alexis Brignoni. Seven other cache4 artifacts retain "
-                 "their existing first-input/path limitations; this is not a whole-finding or module "
-                 "repair. This header-only correction preserves all six native cells, conditional "
-                 "multi-origin Source File column, SQL, phone-key lookup and truthy deleted exclusion, "
-                 "falsey name rendering, input/contact occurrences and ordering, contributing-source union"
-                 " and all eleven sibling artifacts. No timestamp is introduced. Typed values, "
-                 "missing/NULL interpretation, vendor meaning and source/account association remain "
-                 "unresolved research or existing behavior.",
+        "notes": (
+            'Both tables store their values as plain text. They are joined on the key column, so one '
+            'contact can carry several phone numbers. A phone row whose deleted column is set is not '
+            'listed. Imported is the integer the table stores, reported as stored. The uid column holds '
+            'the contact id the client assigned to the device contact when it read the address book '
+            '(contact_id in the client source). The output column uid (as stored) directly projects '
+            'user_contacts_v7.uid. The client-local contact_id interpretation is retained historical '
+            'research, not independently verified vendor semantics; no Telegram-user resolution or '
+            "identity claim is made by this label. Reference: Telegram-Android, 'MessagesStorage.java "
+            "(user_contacts_v7 insert)', "
+            'https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java#L8306-L8318'
+            ' This artifact now reads every admitted exact cache4.db main in the supplied input order, at'
+            ' the direct files path or the explicitly bounded account1, account2 and account3 '
+            'subdirectories. The subdirectory spelling is a source location, not proof of account '
+            'identity or a complete version-specific storage layout. Each main keeps its own phone lookup'
+            ' and contact query; observations from repeated inputs and aliases are retained without '
+            'deduplication or cross-database joins. The Source File column is appended only when returned'
+            ' rows combine more than one distinct contributing relative input origin; the artifact source'
+            ' lists contributing mains in first-contribution order. Empty or query-failing inputs '
+            'contribute no origin unless their contacts query actually returns rows. The existing truthy '
+            'deleted-phone exclusion, duplicate phone sequence, falsey name rendering and ORDER BY fname '
+            'are unchanged; equal-name ordering is unspecified. The historical client-source/identity '
+            'interpretation above has not been independently verified against vendor Java or private '
+            'samples by this correction. Original contribution credited to Alexis Brignoni. This '
+            'header-only correction preserves all six native cells, conditional multi-origin Source File '
+            'column, SQL, phone-key lookup and truthy deleted exclusion, falsey name rendering, '
+            'input/contact occurrences and ordering, contributing-source union and all eleven sibling '
+            'artifacts. No timestamp is introduced. Typed values, missing/NULL interpretation, vendor '
+            'meaning and source/account association remain unresolved research or existing behavior.'
+        ),
         "paths": (
             '*/org.telegram.messenger*/files/cache4.db*',
             '*/org.telegram.messenger*/files/account1/cache4.db*',
@@ -244,40 +205,52 @@ __artifacts_v2__ = {
     "get_telegramUsers": {
         "name": "Telegram - Users",
         "description": (
-            "Reports users-table entries from the first selected cache4.db, including the existing "
-            "display-name and username rendering, a converted positive status time and the stored "
-            "status value. Status Time does not establish a last-seen event or distinguish a status "
-            "expiry."
+            (
+            'Reports users-table entries from each cache4.db read, including the existing display-name '
+            'and username rendering, a converted positive status time and the stored status value. Status'
+            ' Time does not establish a last-seen event or distinguish a status expiry.'
+        )
         ),
         "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-03",
-        "last_update_date": "2026-10-07",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Telegram",
-        "notes": "The query selects uid, name and status from users in the first selected cache4.db. The "
-                 "existing name rendering splits on ';;;', strips the first component as Display Name and "
-                 "the final component as Username when more than one exists; intermediate components are "
-                 "not separately reported. Status Value preserves the selected status value. Status Time "
-                 "(existing conversion) keeps the existing expression: a truthy status greater than zero "
-                 "is passed to convert_unix_ts_to_utc, otherwise the time cell is blank. That helper "
-                 "converts through int and magnitude-based unit divisions before applying a UTC epoch; "
-                 "this label correction does not verify the stored unit or temporal meaning. It does not "
-                 "identify last activity, distinguish online expiry from offline last-online time, or "
-                 "resolve a user/account identity. The query has no ORDER BY, filter, join or "
-                 "deduplication; returned duplicate rows remain. Only the first selected main is read, "
-                 "with the existing source and sidecar handling. Historical notes described users.name as "
-                 "display name and username separated by ';;;', status as the cached status object's "
-                 "expires value, negative sentinels -100/-101/-102 for recently/last week/last month and "
-                 "-1000/-1001/-1002 when by_me, and positive times as either offline last-online time or "
-                 "online expiry. Those client/version/constructor/sentinel interpretations and sample "
-                 "counts are retained as unverified historical research, not established by this "
-                 "correction. Reference retained for research: Telegram-Android, 'MessagesStorage.java "
-                 "(users insert)', "
-                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java#L10666-L10675."
-                 " Original contribution credited to Alexis Brignoni. Unsupported value types, conversion "
-                 "range/unit limits, first-source/account association and client-status interpretation "
-                 "remain separate research limits.",
-        "paths": ('*/org.telegram.messenger*/files/cache4.db*',),
+        "notes": (
+            'The query selects uid, name and status from users in each cache4.db read. The existing name '
+            "rendering splits on ';;;', strips the first component as Display Name and the final "
+            'component as Username when more than one exists; intermediate components are not separately '
+            'reported. Status Value preserves the selected status value. Status Time (existing '
+            'conversion) keeps the existing expression: a truthy status greater than zero is passed to '
+            'convert_unix_ts_to_utc, otherwise the time cell is blank. That helper converts through int '
+            'and magnitude-based unit divisions before applying a UTC epoch; this label correction does '
+            'not verify the stored unit or temporal meaning. It does not identify last activity, '
+            'distinguish online expiry from offline last-online time, or resolve a user/account identity.'
+            ' The query has no ORDER BY, filter, join or deduplication; returned duplicate rows remain. '
+            'Each cache4.db matched at files/ or at files/account1 to files/account3 of an '
+            'org.telegram.messenger package is read, one copy per package, Android user and folder: the '
+            'same file under data/data, data/user/<n> or data_mirror/data_ce/<volume>/<n> is read once. '
+            'When more than one database is read, a Source File column names the database of each row, '
+            "and names are resolved inside the row's own database. The account folder is a location in "
+            'the extraction and is not by itself proof of which account the rows belong to. Reading more '
+            'than one database was checked on constructed databases only (2026-10-09). Historical notes '
+            "described users.name as display name and username separated by ';;;', status as the cached "
+            "status object's expires value, negative sentinels -100/-101/-102 for recently/last week/last"
+            ' month and -1000/-1001/-1002 when by_me, and positive times as either offline last-online '
+            'time or online expiry. Those client/version/constructor/sentinel interpretations and sample '
+            'counts are retained as unverified historical research, not established by this correction. '
+            "Reference retained for research: Telegram-Android, 'MessagesStorage.java (users insert)', "
+            'https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java#L10666-L10675.'
+            ' Original contribution credited to Alexis Brignoni. Unsupported value types, conversion '
+            'range/unit limits, source/account association and client-status interpretation remain '
+            'separate research limits.'
+        ),
+        "paths": (
+            '*/org.telegram.messenger*/files/cache4.db*',
+            '*/org.telegram.messenger*/files/account1/cache4.db*',
+            '*/org.telegram.messenger*/files/account2/cache4.db*',
+            '*/org.telegram.messenger*/files/account3/cache4.db*',
+        ),
         "output_types": "standard",
         "artifact_icon": "users",
         "sample_data": {
@@ -298,21 +271,32 @@ __artifacts_v2__ = {
         ),
         "author": "Alexis Brignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-03",
-        "last_update_date": "2026-08-03",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Telegram",
-        "notes": "The did column is the dialog peer id. It is looked up as stored in the users and "
-                 "chats tables for a name; where an id is in both tables the chats name is used "
-                 "when it is not empty. A "
-                 "group or channel dialog id is stored negative and gets no name here: on anne_a15 "
-                 "the 1 row with a negative Dialog ID and on kevin_pocox7_a15 the 4 such rows have "
-                 "a blank Chat, and each of those ids matches a chats row once its sign is "
-                 "dropped. No id was in both the users and chats tables on those two images "
-                 "(counted on runs of 3 Oct 2026). A folder_id of 1 is labelled Archived and any "
-                 "other value "
-                 "Main; that mapping is not sourced here. The message "
-                 "count is taken from the messages_v2 rows carrying the same dialog id.",
-        "paths": ('*/org.telegram.messenger*/files/cache4.db*',),
+        "notes": (
+            'The did column is the dialog peer id. It is looked up as stored in the users and chats '
+            'tables for a name; where an id is in both tables the chats name is used when it is not '
+            'empty. A group or channel dialog id is stored negative and gets no name here: on anne_a15 '
+            'the 1 row with a negative Dialog ID and on kevin_pocox7_a15 the 4 such rows have a blank '
+            'Chat, and each of those ids matches a chats row once its sign is dropped. No id was in both '
+            'the users and chats tables on those two images (counted on runs of 3 Oct 2026). A folder_id '
+            'of 1 is labelled Archived and any other value Main; that mapping is not sourced here. The '
+            'message count is taken from the messages_v2 rows carrying the same dialog id. Each cache4.db'
+            ' matched at files/ or at files/account1 to files/account3 of an org.telegram.messenger '
+            'package is read, one copy per package, Android user and folder: the same file under '
+            'data/data, data/user/<n> or data_mirror/data_ce/<volume>/<n> is read once. When more than '
+            'one database is read, a Source File column names the database of each row, and names are '
+            "resolved inside the row's own database. The account folder is a location in the extraction "
+            'and is not by itself proof of which account the rows belong to. Reading more than one '
+            'database was checked on constructed databases only (2026-10-09).'
+        ),
+        "paths": (
+            '*/org.telegram.messenger*/files/cache4.db*',
+            '*/org.telegram.messenger*/files/account1/cache4.db*',
+            '*/org.telegram.messenger*/files/account2/cache4.db*',
+            '*/org.telegram.messenger*/files/account3/cache4.db*',
+        ),
         "output_types": "standard",
         "artifact_icon": "messages",
         "sample_data": {
@@ -335,50 +319,49 @@ __artifacts_v2__ = {
         ),
         "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-04",
-        "last_update_date": "2026-10-07",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Telegram",
-        "notes": "Telegram supports several accounts on one device; slot 0 is stored in userconfing.xml, "
-                 "spelled that way by the client, and slots 1 to 3 in userconfig1.xml through "
-                 "userconfig3.xml. The user key holds a base64-encoded TL user record, decoded here for "
-                 "the account id, names, username and phone number. Two record constructors are read "
-                 "(0x215C4438 and 0x31774388). A slot whose record uses another constructor is reported "
-                 "with those fields blank, or not reported at all when it also holds no passcode hash and "
-                 "no last_call_phone_number value. A passcode is in use when passcodeHash1 holds a value; "
-                 "passcodeType 0 is a PIN and 1 is a password. The client keeps these keys, autoLockIn and"
-                 " useFingerprint in userconfing.xml only and they apply to the whole app, so the "
-                 "Passcode, Auto-Lock and Unlock With Fingerprint cells of a slot 1 to 3 row do not "
-                 "describe that slot. Unlock With Fingerprint is blank when the key is absent or false; "
-                 "the client's default for an absent key is true. The stored hash and salt are not "
-                 "reported, only whether they are present. The lastContactsSyncTime (stored value) column "
-                 "is the stored key passed through the existing integer/magnitude-normalizing UTC "
-                 "conversion when nonzero; zero, missing and invalid integer text still render blank. The "
-                 "datetime annotation and conversion are unchanged. Historical references below state: The"
-                 " client sets it to the current time on a contacts sync and also to 23 hours before the "
-                 "current time when no value exists, so it is not by itself the time of a sync. The "
-                 "last_call_phone_number (as stored) column retains the existing XML-derived key value, "
-                 "including existing attribute/text/empty fallback behavior, without inferring call "
-                 "direction or an event. The historical CallReceiver reference below attributes that key "
-                 "to an incoming ringing number; vendor-version applicability is not verified by this "
-                 "header correction. The key was present in userconfing.xml on hc_pixel8pro_a16, "
-                 "hc_pixel8pro_a17, kevin_pocox7_a15, pixel7a_a14, russell_pixel6a_a13 and sharon_a14 and "
-                 "absent on samsungs20_a13 (counted on runs of 3 Oct 2026). Reference: Telegram-Android, "
-                 "'SharedConfig.java (passcodeHash1, passcodeType, autoLockIn)', "
-                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.java#L60-L61"
-                 " and "
-                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.java#L432-L444."
-                 " Reference: Telegram-Android, 'UserConfig.java (preference file names)', "
-                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/messenger/UserConfig.java#L412-L416."
-                 " Reference: Telegram-Android, 'UserConfig.java (lastContactsSyncTime default)', "
-                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/messenger/UserConfig.java#L304."
-                 " Reference: Telegram-Android, 'CallReceiver.java', "
-                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/messenger/CallReceiver.java#L22-L30"
-                 " Header neutralization only: all eleven native values, per-slot projection/defaults, two"
-                 " admitted user constructors, selected input occurrences, row order and existing source "
-                 "aggregation are unchanged. Historical vendor defaults/global configuration/private "
-                 "sample observations and remaining constructor/source semantics are not newly verified or"
-                 " repaired. Original contribution credited to Alexis Brignoni; cited Telegram-Android "
-                 "research retained.",
+        "notes": (
+            'Telegram supports several accounts on one device; slot 0 is stored in userconfing.xml, '
+            'spelled that way by the client, and slots 1 to 3 in userconfig1.xml through userconfig3.xml.'
+            ' The user key holds a base64-encoded TL user record, decoded here for the account id, names,'
+            ' username and phone number. Two record constructors are read (0x215C4438 and 0x31774388). A '
+            'slot whose record uses another constructor is reported with those fields blank, or not '
+            'reported at all when it also holds no passcode hash and no last_call_phone_number value. A '
+            'passcode is in use when passcodeHash1 holds a value; passcodeType 0 is a PIN and 1 is a '
+            'password. The client keeps these keys, autoLockIn and useFingerprint in userconfing.xml only'
+            ' and they apply to the whole app, so the Passcode, Auto-Lock and useFingerprint (as stored) '
+            'cells of a slot 1 to 3 row do not describe that slot. The useFingerprint (as stored) column '
+            'is the stored value of that key, blank when the key is absent. Earlier research on the cited'
+            ' client source read an absent key as defaulting to true; that reading was not rechecked '
+            'here. The stored hash and salt are not reported, only whether they are present. The '
+            'lastContactsSyncTime (stored value) column is the stored key passed through the existing '
+            'integer/magnitude-normalizing UTC conversion when nonzero; zero, missing and invalid integer'
+            ' text still render blank. The datetime annotation and conversion are unchanged. Historical '
+            'references below state: The client sets it to the current time on a contacts sync and also '
+            'to 23 hours before the current time when no value exists, so it is not by itself the time of'
+            ' a sync. The last_call_phone_number (as stored) column retains the existing XML-derived key '
+            'value, including existing attribute/text/empty fallback behavior, without inferring call '
+            'direction or an event. The historical CallReceiver reference below attributes that key to an'
+            ' incoming ringing number; vendor-version applicability is not verified by this header '
+            'correction. The key was present in userconfing.xml on hc_pixel8pro_a16, hc_pixel8pro_a17, '
+            'kevin_pocox7_a15, pixel7a_a14, russell_pixel6a_a13 and sharon_a14 and absent on '
+            'samsungs20_a13 (counted on runs of 3 Oct 2026). Reference: Telegram-Android, '
+            "'SharedConfig.java (passcodeHash1, passcodeType, autoLockIn)', "
+            'https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.java#L60-L61'
+            ' and '
+            'https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.java#L432-L444.'
+            " Reference: Telegram-Android, 'UserConfig.java (preference file names)', "
+            'https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/messenger/UserConfig.java#L412-L416.'
+            " Reference: Telegram-Android, 'UserConfig.java (lastContactsSyncTime default)', "
+            'https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/messenger/UserConfig.java#L304.'
+            " Reference: Telegram-Android, 'CallReceiver.java', "
+            'https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/messenger/CallReceiver.java#L22-L30'
+            ' Historical vendor defaults/global configuration/private sample observations and remaining '
+            'constructor/source semantics are not newly verified or repaired. Original contribution '
+            'credited to Alexis Brignoni; cited Telegram-Android research retained.'
+        ),
         "paths": ('*/org.telegram.messenger*/shared_prefs/userconf*.xml',),
         "output_types": "standard",
         "artifact_icon": "user-circle",
@@ -395,39 +378,48 @@ __artifacts_v2__ = {
     "get_telegramPeerDetails": {
         "name": "Telegram - Peer Details",
         "description": (
-            "Reports selected user_settings entries with existing user-name and TL-prefix enrichment."
-            " The pinned column is displayed through the existing Python truthiness rule; this report"
-            " does not establish pin activity, state or ownership."
+            (
+            'Reports selected user_settings entries with existing user-name and TL-prefix enrichment. The'
+            ' pinned column is reported as stored; this report does not establish pin activity, state or '
+            'ownership.'
+        )
         ),
         "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-04",
-        "last_update_date": "2026-10-07",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Telegram",
-        "notes": "The info column holds a TL user full record. Across the record versions this parser "
-                 "covers, the about field follows the id and precedes the nested objects, so it is read "
-                 "directly; blocked is flag bit 0 (mask value 1) and needs no field read. Fields that sit "
-                 "after the nested settings and notification objects, such as the common chat count, are "
-                 "not read because those objects are not implemented. Names are resolved from the users "
-                 "table. The pinned column is displayed as Yes when its fetched Python value is truthy, "
-                 "and as an empty string otherwise. This is the existing rendering, not a raw value, SQL "
-                 "non-zero comparison, or verified pin state. Native NULL, numeric zero and empty "
-                 "text/bytes render blank; nonempty text such as '0', negative numbers and nonempty bytes "
-                 "render Yes. Historical research attributes this column to the record's pinned message "
-                 "id; that vendor attribution is retained but not independently verified here. Reference: "
-                 "Telegram-Android, 'MessagesStorage.java (user_settings insert)', "
-                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java#L7294-L7299."
-                 " Reference: Telegram-Android, 'generated TlGen_UserFull.kt (record layout and flag "
-                 "bits)', "
-                 "https://github.com/DrKLO/Telegram/tree/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj_AppTests/src/androidTest/kotlin/org/telegram/tgnet/model/generated"
-                 " The decoder/profile/blocked-layout claims and client-source links above are retained "
-                 "historical research, not newly verified. All six native values, users dictionary and "
-                 "TL-prefix decoder, SQL row occurrences/order, first selected main, headers other than "
-                 "the pinned qualifier, source paths and eleven sibling artifacts are unchanged. Raw "
-                 "pinned values and NULL/zero/type distinctions are not added by this header change. "
-                 "First-source/account-state selection, peer/name association and constructor/version "
-                 "meanings remain unresolved. Original contribution credited to Alexis Brignoni.",
-        "paths": ('*/org.telegram.messenger*/files/cache4.db*',),
+        "notes": (
+            'The info column holds a TL user full record. Across the record versions this parser covers, '
+            'the about field follows the id and precedes the nested objects, so it is read directly; '
+            'blocked is flag bit 0 (mask value 1) and needs no field read. Fields that sit after the '
+            'nested settings and notification objects, such as the common chat count, are not read '
+            'because those objects are not implemented. Names are resolved from the users table. The '
+            'pinned (as stored) column is the user_settings pinned value as the table stores it, with no '
+            'Yes or No rendering; what a value means is not established here. Historical research '
+            "attributes this column to the record's pinned message id; that vendor attribution is "
+            'retained but not independently verified here. Reference: Telegram-Android, '
+            "'MessagesStorage.java (user_settings insert)', "
+            'https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java#L7294-L7299.'
+            " Reference: Telegram-Android, 'generated TlGen_UserFull.kt (record layout and flag bits)', "
+            'https://github.com/DrKLO/Telegram/tree/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj_AppTests/src/androidTest/kotlin/org/telegram/tgnet/model/generated'
+            ' The decoder/profile/blocked-layout claims and client-source links above are retained '
+            'historical research, not newly verified. Each cache4.db matched at files/ or at '
+            'files/account1 to files/account3 of an org.telegram.messenger package is read, one copy per '
+            'package, Android user and folder: the same file under data/data, data/user/<n> or '
+            'data_mirror/data_ce/<volume>/<n> is read once. When more than one database is read, a Source'
+            " File column names the database of each row, and names are resolved inside the row's own "
+            'database. The account folder is a location in the extraction and is not by itself proof of '
+            'which account the rows belong to. Reading more than one database was checked on constructed '
+            'databases only (2026-10-09). Peer/name association and constructor/version meanings remain '
+            'unresolved. Original contribution credited to Alexis Brignoni.'
+        ),
+        "paths": (
+            '*/org.telegram.messenger*/files/cache4.db*',
+            '*/org.telegram.messenger*/files/account1/cache4.db*',
+            '*/org.telegram.messenger*/files/account2/cache4.db*',
+            '*/org.telegram.messenger*/files/account3/cache4.db*',
+        ),
         "output_types": "standard",
         "artifact_icon": "address-book",
         "sample_data": {
@@ -444,48 +436,62 @@ __artifacts_v2__ = {
     "get_telegramChatDetails": {
         "name": "Telegram - Chat Details",
         "description": (
-            "Reports the existing cached chat_settings_v2 description and count projection from the "
-            "first selected cache4.db. The partial TL decoder uses explicit 32-bit ID reads for two "
-            "verified layer132 constructors; other recognized paths and reported fields keep their "
-            "existing handling."
+            (
+            'Reports the existing cached chat_settings_v2 description and count projection from each '
+            'cache4.db read. The partial TL decoder uses explicit 32-bit ID reads for two verified '
+            'layer132 constructors; other recognized paths and reported fields keep their existing '
+            'handling.'
+        )
         ),
         "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-04",
-        "last_update_date": "2026-10-07",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Telegram",
-        "notes": "The info column is passed to the existing partial TL chat/channel decoder; names are "
-                 "resolved from chats and the output Chat ID remains the SQL uid, not the discarded inner "
-                 "TL id. Two explicit constructors use a signed 32-bit inner ID read: channelFull layer132"
-                 " 0x2f532f3c and chatFull layer132 0x49a0a5d9. Their readParams and serializeToStream "
-                 "declarations at Telegram-Android commit 45ab8f4308496e1f01026a97fcdb0d58a5274474 both "
-                 "use Int32 for that wire field despite inherited Java long storage. The selected channel "
-                 "class reads and writes kicked_count followed by banned_count under the same FLAG_2, with"
-                 " optional participants_count FLAG_0, admins_count FLAG_1 and online_count FLAG_13; the "
-                 "current paired-count projection is retained. The selected basic-chat class reads about "
-                 "then nested participants rather than these scalar counts; the existing early return "
-                 "after about is retained. These are bounded published-source layout observations, not "
-                 "proof of the app version or complete object validity in an acquired database. The other "
-                 "44 recognized constructors keep the existing 64-bit ID read and have not been "
-                 "layout-certified by this correction; possible older no-banned layouts remain unverified."
-                 " Fields after nested photo/notification/participants objects are not decoded, and the "
-                 "existing TL string/truncation/replacement and error behavior remain unchanged. Only the "
-                 "first selected main and existing own-sidecar handling are used; SQL row occurrences and "
-                 "native eight-field projection remain. Historical notes recorded five tested records "
-                 "(Anne1 and Kevin4) on 3 Oct 2026 as channelFull layer225(4) and layer204(1). Those "
-                 "counts/version associations and private samples are historical, not revalidated by these"
-                 " source exceptions. Original contribution credited to Alexis Brignoni; Telegram-Android "
-                 "research retained. Verified source references: "
-                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/tgnet/TLRPC.java#L11713-L11969"
-                 " and "
-                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/tgnet/TLObject.java#L15-L54."
-                 " Historical generated-layout reference retained: "
-                 "https://github.com/DrKLO/Telegram/tree/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj_AppTests/src/androidTest/kotlin/org/telegram/tgnet/model/generated."
-                 " TLObject flag constants match the numeric masks used locally; its external BitwiseUtils"
-                 " implementation was not independently verified. Source/account association, unsupported "
-                 "constructors, partial decoding, count meanings and broader version coverage remain "
-                 "research limits.",
-        "paths": ('*/org.telegram.messenger*/files/cache4.db*',),
+        "notes": (
+            'The info column is passed to the existing partial TL chat/channel decoder; names are '
+            'resolved from chats and the output Chat ID remains the SQL uid, not the discarded inner TL '
+            'id. Two explicit constructors use a signed 32-bit inner ID read: channelFull layer132 '
+            '0x2f532f3c and chatFull layer132 0x49a0a5d9. Their readParams and serializeToStream '
+            'declarations at Telegram-Android commit 45ab8f4308496e1f01026a97fcdb0d58a5274474 both use '
+            'Int32 for that wire field despite inherited Java long storage. The selected channel class '
+            'reads and writes kicked_count followed by banned_count under the same FLAG_2, with optional '
+            'participants_count FLAG_0, admins_count FLAG_1 and online_count FLAG_13; the current '
+            'paired-count projection is retained. The selected basic-chat class reads about then nested '
+            'participants rather than these scalar counts; the existing early return after about is '
+            'retained. These are bounded published-source layout observations, not proof of the app '
+            'version or complete object validity in an acquired database. The other 44 recognized '
+            'constructors keep the existing 64-bit ID read and have not been layout-certified by this '
+            'correction; possible older no-banned layouts remain unverified. Fields after nested '
+            'photo/notification/participants objects are not decoded, and the existing TL '
+            'string/truncation/replacement and error behavior remain unchanged. Each cache4.db matched at'
+            ' files/ or at files/account1 to files/account3 of an org.telegram.messenger package is read,'
+            ' one copy per package, Android user and folder: the same file under data/data, data/user/<n>'
+            ' or data_mirror/data_ce/<volume>/<n> is read once. When more than one database is read, a '
+            "Source File column names the database of each row, and names are resolved inside the row's "
+            'own database. The account folder is a location in the extraction and is not by itself proof '
+            'of which account the rows belong to. Reading more than one database was checked on '
+            'constructed databases only (2026-10-09). Historical notes recorded five tested records '
+            '(Anne1 and Kevin4) on 3 Oct 2026 as channelFull layer225(4) and layer204(1). Those '
+            'counts/version associations and private samples are historical, not revalidated by these '
+            'source exceptions. Original contribution credited to Alexis Brignoni; Telegram-Android '
+            'research retained. Verified source references: '
+            'https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/tgnet/TLRPC.java#L11713-L11969'
+            ' and '
+            'https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/tgnet/TLObject.java#L15-L54.'
+            ' Historical generated-layout reference retained: '
+            'https://github.com/DrKLO/Telegram/tree/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj_AppTests/src/androidTest/kotlin/org/telegram/tgnet/model/generated.'
+            ' TLObject flag constants match the numeric masks used locally; its external BitwiseUtils '
+            'implementation was not independently verified. Source/account association, unsupported '
+            'constructors, partial decoding, count meanings and broader version coverage remain research '
+            'limits.'
+        ),
+        "paths": (
+            '*/org.telegram.messenger*/files/cache4.db*',
+            '*/org.telegram.messenger*/files/account1/cache4.db*',
+            '*/org.telegram.messenger*/files/account2/cache4.db*',
+            '*/org.telegram.messenger*/files/account3/cache4.db*',
+        ),
         "output_types": "standard",
         "artifact_icon": "users-group",
         "sample_data": {
@@ -548,23 +554,33 @@ __artifacts_v2__ = {
         ),
         "author": "Alexis Brignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-05",
-        "last_update_date": "2026-08-05",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Telegram",
-        "notes": "The dialog id, user id and date columns are stored as plain integers and "
-                 "are reported as such. The client sets date to the time it cached the participant "
-                 "list and lowers it by one second for each participant in list order, so it is "
-                 "not the date a member joined. Reference: Telegram-Android, 'MessagesStorage.java "
-                 "(updateChannelUsers)', "
-                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/"
-                 "TMessagesProj/src/main/java/org/telegram/messenger/"
-                 "MessagesStorage.java#L7063-L7084. "
-                 "The data column holds a TL channel participant "
-                 "record; the creator constructor is named where it appears and any other "
-                 "constructor is reported by its id rather than guessed at. The membership "
-                 "cached here is what the client had retrieved, which is not necessarily "
-                 "the full member list of the chat.",
-        "paths": ('*/org.telegram.messenger*/files/cache4.db*',),
+        "notes": (
+            'The dialog id, user id and date columns are stored as plain integers and are reported as '
+            'such. The client sets date to the time it cached the participant list and lowers it by one '
+            'second for each participant in list order, so it is not the date a member joined. Reference:'
+            " Telegram-Android, 'MessagesStorage.java (updateChannelUsers)', "
+            'https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java#L7063-L7084.'
+            ' The data column holds a TL channel participant record; the creator constructor is named '
+            'where it appears and any other constructor is reported by its id rather than guessed at. The'
+            ' membership cached here is what the client had retrieved, which is not necessarily the full '
+            'member list of the chat. Each cache4.db matched at files/ or at files/account1 to '
+            'files/account3 of an org.telegram.messenger package is read, one copy per package, Android '
+            'user and folder: the same file under data/data, data/user/<n> or '
+            'data_mirror/data_ce/<volume>/<n> is read once. When more than one database is read, a Source'
+            " File column names the database of each row, and names are resolved inside the row's own "
+            'database. The account folder is a location in the extraction and is not by itself proof of '
+            'which account the rows belong to. Reading more than one database was checked on constructed '
+            'databases only (2026-10-09).'
+        ),
+        "paths": (
+            '*/org.telegram.messenger*/files/cache4.db*',
+            '*/org.telegram.messenger*/files/account1/cache4.db*',
+            '*/org.telegram.messenger*/files/account2/cache4.db*',
+            '*/org.telegram.messenger*/files/account3/cache4.db*',
+        ),
         "output_types": "standard",
         "artifact_icon": "users-group",
         "sample_data": {
@@ -581,20 +597,32 @@ __artifacts_v2__ = {
         ),
         "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-05",
-        "last_update_date": "2026-10-07",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Telegram",
-        "notes": "The did, rating and date columns are stored as plain values. The type column is reported"
-                 " as stored because its values are not documented in the client source that was checked. "
-                 "The rating value is reported as stored. What it measures and its scale are not "
-                 "established. Artifact naming describes table entries only, not frequent chat events. "
-                 "Existing name lookup, positive-date conversion, first selected main, row occurrences and"
-                 " query ordering are unchanged. Negative/zero/missing dates remain blank under the "
-                 "existing policy; table/schema/version coverage, rating/type meanings, name/peer "
-                 "association and source-state selection remain unresolved. Original contribution credited"
-                 " to Alexis Brignoni; historical client-source and private sample observations are "
-                 "retained but not newly verified.",
-        "paths": ('*/org.telegram.messenger*/files/cache4.db*',),
+        "notes": (
+            'The did, rating and date columns are stored as plain values. The type column is reported as '
+            'stored because its values are not documented in the client source that was checked. The '
+            'rating value is reported as stored. What it measures and its scale are not established. '
+            'Artifact naming describes table entries only, not frequent chat events. Each cache4.db '
+            'matched at files/ or at files/account1 to files/account3 of an org.telegram.messenger '
+            'package is read, one copy per package, Android user and folder: the same file under '
+            'data/data, data/user/<n> or data_mirror/data_ce/<volume>/<n> is read once. When more than '
+            'one database is read, a Source File column names the database of each row, and names are '
+            "resolved inside the row's own database. The account folder is a location in the extraction "
+            'and is not by itself proof of which account the rows belong to. Reading more than one '
+            'database was checked on constructed databases only (2026-10-09). Negative/zero/missing dates'
+            ' remain blank under the existing policy; table/schema/version coverage, rating/type '
+            'meanings, name/peer association and source-state selection remain unresolved. Original '
+            'contribution credited to Alexis Brignoni; historical client-source and private sample '
+            'observations are retained but not newly verified.'
+        ),
+        "paths": (
+            '*/org.telegram.messenger*/files/cache4.db*',
+            '*/org.telegram.messenger*/files/account1/cache4.db*',
+            '*/org.telegram.messenger*/files/account2/cache4.db*',
+            '*/org.telegram.messenger*/files/account3/cache4.db*',
+        ),
         "output_types": "standard",
         "artifact_icon": "star",
         "sample_data": {
@@ -647,23 +675,36 @@ __artifacts_v2__ = {
     "get_telegramAutoDownload": {
         "name": "Telegram - Auto-Download Settings",
         "description": (
-            "Parses the Telegram media auto-download configuration from the mainconfig.xml shared preferences file. Reports the stored mobilePreset, wifiPreset and roamingPreset strings: the enabled flag, the media types set for each category of chat and the size limits. The client applies these strings only while currentMobilePreset, currentWifiPreset or currentRoamingPreset is not 0, 1 or 2 (the default is 3); for 0, 1 or 2 it applies preset0, preset1 or preset2, which are not reported here."
+            (
+            'Parses the Telegram media auto-download configuration from the mainconfig.xml shared '
+            'preferences file. Reports each stored mobilePreset, wifiPreset, roamingPreset, preset0, '
+            'preset1 and preset2 string: the enabled flag, the media types set for each category of chat '
+            'and the size limits. Current Preset Key (as stored) is the stored currentMobilePreset, '
+            'currentWifiPreset or currentRoamingPreset value for that network, blank when the key is '
+            'absent. This report does not decide which string was in effect.'
+        )
         ),
         "author": "Alexis Brignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-03",
-        "last_update_date": "2026-08-15",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Telegram",
-        "notes": "Each preset is an underscore-separated string. The first four values are "
-                 "auto-download masks for contacts, other private chats, groups and channels "
-                 "in that order, and each mask is a bit field of photo 1, audio 2, video 4 "
-                 "and document 8. The next four values are the photo, video, document and "
-                 "audio size limits in bytes, followed by preload video, preload music and "
-                 "the enabled flag. Reference: Telegram-Android, 'DownloadController.java "
-                 "(Preset string layout and AUTODOWNLOAD_TYPE masks)', "
-                 "https://github.com/DrKLO/Telegram/blob/"
-                 "45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/"
-                 "org/telegram/messenger/DownloadController.java",
+        "notes": (
+            'Each preset is an underscore-separated string. The first four values are auto-download masks'
+            ' for contacts, other private chats, groups and channels in that order, and each mask is a '
+            'bit field of photo 1, audio 2, video 4 and document 8. The next four values are the photo, '
+            'video, document and audio size limits in bytes, followed by preload video, preload music and'
+            " the enabled flag. Reference: Telegram-Android, 'DownloadController.java (Preset string "
+            "layout and AUTODOWNLOAD_TYPE masks)', "
+            'https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/messenger/DownloadController.java.'
+            ' Preference Key names the stored key a row was read from. A key that is absent or does not '
+            'hold at least eleven underscore-separated values that read as integers gives no rows. Earlier research on the '
+            'cited DownloadController source read the client as applying preset0, preset1 or preset2 when'
+            " the current preset value for a network is 0, 1 or 2 and the network's own string otherwise,"
+            ' with 3 as the value used when the key is absent; that reading was not rechecked for this '
+            'change, so both the strings and the current preset values are reported as stored. Only the '
+            'first matched mainconfig.xml is read.'
+        ),
         "paths": ('*/org.telegram.messenger*/shared_prefs/mainconfig.xml',),
         "output_types": "standard",
         "artifact_icon": "download",
@@ -1424,6 +1465,71 @@ def _name_lookup(db_file):
 
 # --- artifacts ---------------------------------------------------------------
 
+_ACCOUNT_DIRS = ('account1', 'account2', 'account3')
+
+
+def _android_user(prefix):
+    """The Android user a package folder belongs to, from the folders above it.
+
+    data/data, data/user/<n> and data_mirror/data_ce/<volume>/<n> are views of
+    one user's storage. Any other location is kept apart under its own path.
+    """
+    if prefix[-2:] == ['data', 'data']:
+        return '0'
+    if len(prefix) >= 2 and prefix[-2] == 'user' and prefix[-1].isdigit():
+        return prefix[-1]
+    if len(prefix) >= 3 and prefix[-3] == 'data_ce' and prefix[-1].isdigit():
+        return prefix[-1]
+    return '/'.join(prefix)
+
+
+def _cache4_mains(context):
+    """(staged path, path in the extraction) of each cache4.db to read.
+
+    A database is admitted at <package>/files/ or <package>/files/account1 to
+    account3 of an org.telegram.messenger package, and one copy is kept per
+    package, Android user and folder, in the order the files were found.
+    """
+    relative_of = getattr(context, 'get_relative_path', None)
+    mains = []
+    seen = set()
+    for found in context.get_files_found():
+        path = str(found)
+        relative = relative_of(path) if relative_of else path
+        parts = str(relative).replace('\\', '/').split('/')
+        if parts[-1] != 'cache4.db':
+            continue
+        if len(parts) >= 3 and parts[-2] == 'files':
+            package_at, folder = len(parts) - 3, ''
+        elif len(parts) >= 4 and parts[-2] in _ACCOUNT_DIRS and parts[-3] == 'files':
+            package_at, folder = len(parts) - 4, parts[-2]
+        else:
+            continue
+        package = parts[package_at]
+        if not package.startswith('org.telegram.messenger'):
+            continue
+        key = (_android_user(parts[:package_at]), package, folder)
+        if key in seen:
+            continue
+        seen.add(key)
+        mains.append((path, str(relative)))
+    return mains
+
+
+def _rows_per_main(context, data_headers, rows_of):
+    """Run rows_of(db_file) over each cache4.db; name the database when several are read."""
+    mains = _cache4_mains(context)
+    data_list = []
+    for db_file, relative in mains:
+        rows = rows_of(db_file)
+        if len(mains) > 1:
+            rows = [tuple(row) + (relative,) for row in rows]
+        data_list.extend(rows)
+    if len(mains) > 1:
+        data_headers += ('Source File',)
+    return data_headers, data_list, '\n'.join(db_file for db_file, _ in mains)
+
+
 @artifact_processor
 def get_telegramMessages(context):
     data_headers = (
@@ -1439,82 +1545,81 @@ def get_telegramMessages(context):
         'Read State',
         'Message ID',
     )
-    data_list = []
-    db_file = get_file_path(context.get_files_found(), 'cache4.db')
-    if not db_file:
-        return data_headers, data_list, ''
+    def rows_of(db_file):
+        data_list = []
+        names = _name_lookup(db_file)
 
-    names = _name_lookup(db_file)
+        # Basename index of whatever media directories the extraction carried.
+        media_index = {}
+        for found in context.get_files_found():
+            path = str(found)
+            normalized = path.replace('\\', '/')
+            if '/org.telegram.messenger' not in normalized:
+                continue
+            if '/cache/' not in normalized and '/files/Telegram/' not in normalized:
+                continue
+            if os.path.isfile(path):
+                media_index.setdefault(normalized.rsplit('/', 1)[-1], path)
 
-    # Basename index of whatever media directories the extraction carried.
-    media_index = {}
-    for found in context.get_files_found():
-        path = str(found)
-        normalized = path.replace('\\', '/')
-        if '/org.telegram.messenger' not in normalized:
-            continue
-        if '/cache/' not in normalized and '/files/Telegram/' not in normalized:
-            continue
-        if os.path.isfile(path):
-            media_index.setdefault(normalized.rsplit('/', 1)[-1], path)
+        query = '''SELECT mid, uid, date, out, read_state, data
+                   FROM messages_v2 ORDER BY date'''
+        for mid, uid, date, out, read_state, blob in get_sqlite_db_records(db_file, query) or []:
+            decoded = _decode_message_row(blob, date)
+            text = decoded.get('text') or ''
+            if decoded.get('service'):
+                action = decoded.get('action')
+                text = f'[{action}]' if action else '[Service message]'
+            elif decoded.get('unknown') is not None:
+                text = f"[Unrecognised message constructor {decoded['unknown']:#010x}]"
+            elif decoded.get('empty'):
+                text = '[Empty message record]'
+            elif 'sender' in decoded and not decoded.get('structural') and not text:
+                # The walk stopped before the text and the search after the date
+                # found none. A walked record whose text is empty stays empty.
+                if decoded.get('forwarded'):
+                    text = '[Forwarded message, text not recovered]'
+                elif decoded.get('reply'):
+                    text = '[Reply, text not recovered]'
+                else:
+                    text = '[Message text not recovered]'
+            elif decoded.get('undecoded'):
+                logfunc(f'Telegram - Messages: message {mid} in dialog {uid} could not be '
+                        f"walked ({decoded['undecoded']}); the row is reported from the "
+                        'table columns'
+                        + (', with the text found after its date' if text else ''))
+                if not text:
+                    text = '[Message not decoded]'
+            sender_id = decoded.get('sender')
+            if sender_id is None and not out:
+                # The record gave no from_id. Where the walk read past the from_id
+                # slot the dialog id is used. Where it did not, the dialog id is
+                # used only when it names a user: in a group or channel it names
+                # the chat.
+                if 'sender' in decoded or _is_user_dialog(uid):
+                    sender_id = uid
+            attach = _attach_path(blob)
+            media_ref = ''
+            if attach:
+                local = media_index.get(attach.replace('\\', '/').rsplit('/', 1)[-1])
+                if local:
+                    media_ref = check_in_media(file_path=local)
 
-    query = '''SELECT mid, uid, date, out, read_state, data
-               FROM messages_v2 ORDER BY date'''
-    for mid, uid, date, out, read_state, blob in get_sqlite_db_records(db_file, query) or []:
-        decoded = _decode_message_row(blob, date)
-        text = decoded.get('text') or ''
-        if decoded.get('service'):
-            action = decoded.get('action')
-            text = f'[{action}]' if action else '[Service message]'
-        elif decoded.get('unknown') is not None:
-            text = f"[Unrecognised message constructor {decoded['unknown']:#010x}]"
-        elif decoded.get('empty'):
-            text = '[Empty message record]'
-        elif 'sender' in decoded and not decoded.get('structural') and not text:
-            # The walk stopped before the text and the search after the date
-            # found none. A walked record whose text is empty stays empty.
-            if decoded.get('forwarded'):
-                text = '[Forwarded message, text not recovered]'
-            elif decoded.get('reply'):
-                text = '[Reply, text not recovered]'
-            else:
-                text = '[Message text not recovered]'
-        elif decoded.get('undecoded'):
-            logfunc(f'Telegram - Messages: message {mid} in dialog {uid} could not be '
-                    f"walked ({decoded['undecoded']}); the row is reported from the "
-                    'table columns'
-                    + (', with the text found after its date' if text else ''))
-            if not text:
-                text = '[Message not decoded]'
-        sender_id = decoded.get('sender')
-        if sender_id is None and not out:
-            # The record gave no from_id. Where the walk read past the from_id
-            # slot the dialog id is used. Where it did not, the dialog id is
-            # used only when it names a user: in a group or channel it names
-            # the chat.
-            if 'sender' in decoded or _is_user_dialog(uid):
-                sender_id = uid
-        attach = _attach_path(blob)
-        media_ref = ''
-        if attach:
-            local = media_index.get(attach.replace('\\', '/').rsplit('/', 1)[-1])
-            if local:
-                media_ref = check_in_media(file_path=local)
+            data_list.append((
+                convert_unix_ts_to_utc(date),
+                uid,
+                names.get(uid, ''),
+                'Outgoing' if out else 'Incoming',
+                sender_id if sender_id is not None else '',
+                names.get(sender_id, '') if sender_id is not None else '',
+                text,
+                attach,
+                media_ref,
+                read_state,
+                mid,
+            ))
+        return data_list
 
-        data_list.append((
-            convert_unix_ts_to_utc(date),
-            uid,
-            names.get(uid, ''),
-            'Outgoing' if out else 'Incoming',
-            sender_id if sender_id is not None else '',
-            names.get(sender_id, '') if sender_id is not None else '',
-            text,
-            attach,
-            media_ref,
-            read_state,
-            mid,
-        ))
-    return data_headers, data_list, db_file
+    return _rows_per_main(context, data_headers, rows_of)
 
 
 @artifact_processor
@@ -1579,17 +1684,16 @@ def get_telegramUsers(context):
         'Username',
         'Status Value',
     )
-    data_list = []
-    db_file = get_file_path(context.get_files_found(), 'cache4.db')
-    if not db_file:
-        return data_headers, data_list, ''
+    def rows_of(db_file):
+        data_list = []
+        for uid, name, status in get_sqlite_db_records(
+                db_file, 'SELECT uid, name, status FROM users') or []:
+            display, username = _split_user_name(name)
+            last_seen = convert_unix_ts_to_utc(status) if status and status > 0 else ''
+            data_list.append((last_seen, uid, display, username, status))
+        return data_list
 
-    for uid, name, status in get_sqlite_db_records(
-            db_file, 'SELECT uid, name, status FROM users') or []:
-        display, username = _split_user_name(name)
-        last_seen = convert_unix_ts_to_utc(status) if status and status > 0 else ''
-        data_list.append((last_seen, uid, display, username, status))
-    return data_headers, data_list, db_file
+    return _rows_per_main(context, data_headers, rows_of)
 
 
 @artifact_processor
@@ -1603,30 +1707,29 @@ def get_telegramChats(context):
         'Pinned',
         'Folder',
     )
-    data_list = []
-    db_file = get_file_path(context.get_files_found(), 'cache4.db')
-    if not db_file:
-        return data_headers, data_list, ''
+    def rows_of(db_file):
+        data_list = []
+        names = _name_lookup(db_file)
+        counts = {}
+        for uid, total in get_sqlite_db_records(
+                db_file, 'SELECT uid, count(*) FROM messages_v2 GROUP BY uid') or []:
+            counts[uid] = total
 
-    names = _name_lookup(db_file)
-    counts = {}
-    for uid, total in get_sqlite_db_records(
-            db_file, 'SELECT uid, count(*) FROM messages_v2 GROUP BY uid') or []:
-        counts[uid] = total
+        query = '''SELECT did, date, unread_count, pinned, folder_id
+                   FROM dialogs ORDER BY date DESC'''
+        for did, date, unread, pinned, folder_id in get_sqlite_db_records(db_file, query) or []:
+            data_list.append((
+                convert_unix_ts_to_utc(date),
+                did,
+                names.get(did, ''),
+                counts.get(did, 0),
+                unread,
+                'Yes' if pinned else '',
+                'Archived' if folder_id == 1 else 'Main',
+            ))
+        return data_list
 
-    query = '''SELECT did, date, unread_count, pinned, folder_id
-               FROM dialogs ORDER BY date DESC'''
-    for did, date, unread, pinned, folder_id in get_sqlite_db_records(db_file, query) or []:
-        data_list.append((
-            convert_unix_ts_to_utc(date),
-            did,
-            names.get(did, ''),
-            counts.get(did, 0),
-            unread,
-            'Yes' if pinned else '',
-            'Archived' if folder_id == 1 else 'Main',
-        ))
-    return data_headers, data_list, db_file
+    return _rows_per_main(context, data_headers, rows_of)
 
 
 # TL_user constructors whose prefix is flags, flags2, id, then the optional
@@ -1674,7 +1777,7 @@ def get_telegramAccounts(context):
         'Phone',
         'Passcode',
         'Auto-Lock',
-        'Unlock With Fingerprint',
+        'useFingerprint (as stored)',
         "last_call_phone_number (as stored)",
     )
     data_list = []
@@ -1719,7 +1822,7 @@ def get_telegramAccounts(context):
             user.get('phone', ''),
             passcode,
             f'{auto_lock} seconds' if auto_lock else '',
-            'Yes' if values.get('useFingerprint') == 'true' else '',
+            values.get('useFingerprint', ''),
             values.get('last_call_phone_number', ''),
         ))
         sources.append(path)
@@ -1775,29 +1878,28 @@ def get_telegramPeerDetails(context):
         'Username',
         'Bio',
         'Blocked',
-        "pinned (existing truthiness rendering)",
+        "pinned (as stored)",
     )
-    data_list = []
-    db_file = get_file_path(context.get_files_found(), 'cache4.db')
-    if not db_file:
-        return data_headers, data_list, ''
+    def rows_of(db_file):
+        data_list = []
+        names = {}
+        for uid, name in get_sqlite_db_records(db_file, 'SELECT uid, name FROM users') or []:
+            names[uid] = _split_user_name(name)
 
-    names = {}
-    for uid, name in get_sqlite_db_records(db_file, 'SELECT uid, name FROM users') or []:
-        names[uid] = _split_user_name(name)
+        query = 'SELECT uid, info, pinned FROM user_settings'
+        for uid, blob, pinned in get_sqlite_db_records(db_file, query) or []:
+            decoded = _decode_user_full(blob)
+            if decoded.get('unknown') is not None:
+                bio = f"[Unrecognised record {decoded['unknown']:#010x}]"
+                blocked = ''
+            else:
+                bio = decoded.get('about', '')
+                blocked = 'Yes' if decoded.get('blocked') else 'No' if decoded else ''
+            display, username = names.get(uid, ('', ''))
+            data_list.append((uid, display, username, bio, blocked, pinned))
+        return data_list
 
-    query = 'SELECT uid, info, pinned FROM user_settings'
-    for uid, blob, pinned in get_sqlite_db_records(db_file, query) or []:
-        decoded = _decode_user_full(blob)
-        if decoded.get('unknown') is not None:
-            bio = f"[Unrecognised record {decoded['unknown']:#010x}]"
-            blocked = ''
-        else:
-            bio = decoded.get('about', '')
-            blocked = 'Yes' if decoded.get('blocked') else 'No' if decoded else ''
-        display, username = names.get(uid, ('', ''))
-        data_list.append((uid, display, username, bio, blocked, 'Yes' if pinned else ''))
-    return data_headers, data_list, db_file
+    return _rows_per_main(context, data_headers, rows_of)
 
 
 # TL chat/channel full records, grouped by the shape of the readable prefix.
@@ -1901,37 +2003,36 @@ def get_telegramChatDetails(context):
         'Banned',
         'Online',
     )
-    data_list = []
-    db_file = get_file_path(context.get_files_found(), 'cache4.db')
-    if not db_file:
-        return data_headers, data_list, ''
+    def rows_of(db_file):
+        data_list = []
+        names = {}
+        try:
+            for uid, name in get_sqlite_db_records(
+                    db_file, 'SELECT uid, name FROM chats') or []:
+                names[uid] = name or ''
+        except Exception:      # pylint: disable=broad-except
+            pass
 
-    names = {}
-    try:
-        for uid, name in get_sqlite_db_records(
-                db_file, 'SELECT uid, name FROM chats') or []:
-            names[uid] = name or ''
-    except Exception:      # pylint: disable=broad-except
-        pass
+        query = 'SELECT uid, info FROM chat_settings_v2'
+        for uid, blob in get_sqlite_db_records(db_file, query) or []:
+            record = _decode_chat_full(blob)
+            if record.get('unknown') is not None:
+                description = f"[Unrecognised record {record['unknown']:#010x}]"
+            else:
+                description = record.get('about', '')
+            data_list.append((
+                uid,
+                names.get(uid, ''),
+                description,
+                record.get('participants', ''),
+                record.get('admins', ''),
+                record.get('kicked', ''),
+                record.get('banned', ''),
+                record.get('online', ''),
+            ))
+        return data_list
 
-    query = 'SELECT uid, info FROM chat_settings_v2'
-    for uid, blob in get_sqlite_db_records(db_file, query) or []:
-        record = _decode_chat_full(blob)
-        if record.get('unknown') is not None:
-            description = f"[Unrecognised record {record['unknown']:#010x}]"
-        else:
-            description = record.get('about', '')
-        data_list.append((
-            uid,
-            names.get(uid, ''),
-            description,
-            record.get('participants', ''),
-            record.get('admins', ''),
-            record.get('kicked', ''),
-            record.get('banned', ''),
-            record.get('online', ''),
-        ))
-    return data_headers, data_list, db_file
+    return _rows_per_main(context, data_headers, rows_of)
 
 
 # SaveToGallerySettingsHelper.java: one settings group per category of chat.
@@ -1997,27 +2098,26 @@ def get_telegramChannelMembers(context):
         'User',
         'Role',
     )
-    data_list = []
-    db_file = get_file_path(context.get_files_found(), 'cache4.db')
-    if not db_file:
-        return data_headers, data_list, ''
+    def rows_of(db_file):
+        data_list = []
+        names = _name_lookup(db_file)
+        query = 'SELECT did, uid, date, data FROM channel_users_v2 ORDER BY did, date'
+        for did, uid, date, blob in get_sqlite_db_records(db_file, query) or []:
+            role = ''
+            if isinstance(blob, bytes) and len(blob) >= 4:
+                constructor = struct.unpack('<I', blob[:4])[0]
+                role = _CHANNEL_PARTICIPANTS.get(constructor, f'{constructor:#010x}')
+            data_list.append((
+                convert_unix_ts_to_utc(date) if date else '',
+                did,
+                names.get(did, '') or names.get(abs(did), ''),
+                uid,
+                names.get(uid, ''),
+                role,
+            ))
+        return data_list
 
-    names = _name_lookup(db_file)
-    query = 'SELECT did, uid, date, data FROM channel_users_v2 ORDER BY did, date'
-    for did, uid, date, blob in get_sqlite_db_records(db_file, query) or []:
-        role = ''
-        if isinstance(blob, bytes) and len(blob) >= 4:
-            constructor = struct.unpack('<I', blob[:4])[0]
-            role = _CHANNEL_PARTICIPANTS.get(constructor, f'{constructor:#010x}')
-        data_list.append((
-            convert_unix_ts_to_utc(date) if date else '',
-            did,
-            names.get(did, '') or names.get(abs(did), ''),
-            uid,
-            names.get(uid, ''),
-            role,
-        ))
-    return data_headers, data_list, db_file
+    return _rows_per_main(context, data_headers, rows_of)
 
 
 @artifact_processor
@@ -2029,30 +2129,29 @@ def get_telegramChatHints(context):
         'Rating (as stored)',
         'Type (as stored)',
     )
-    data_list = []
-    db_file = get_file_path(context.get_files_found(), 'cache4.db')
-    if not db_file:
-        return data_headers, data_list, ''
+    def rows_of(db_file):
+        data_list = []
+        names = _name_lookup(db_file)
+        query = 'SELECT did, type, rating, date FROM chat_hints ORDER BY rating DESC'
+        for did, kind, rating, date in get_sqlite_db_records(db_file, query) or []:
+            # chat_hints has been seen holding a negative date, which is not a Unix
+            # timestamp and made the conversion raise, losing every row of the
+            # artifact. What such a value means is not established, so it is left
+            # blank rather than guessed at, and the other columns still report.
+            try:
+                timestamp = convert_unix_ts_to_utc(date) if date and date > 0 else ''
+            except (ValueError, OSError, OverflowError):
+                timestamp = ''
+            data_list.append((
+                timestamp,
+                did,
+                names.get(did, '') or names.get(abs(did), ''),
+                rating,
+                kind,
+            ))
+        return data_list
 
-    names = _name_lookup(db_file)
-    query = 'SELECT did, type, rating, date FROM chat_hints ORDER BY rating DESC'
-    for did, kind, rating, date in get_sqlite_db_records(db_file, query) or []:
-        # chat_hints has been seen holding a negative date, which is not a Unix
-        # timestamp and made the conversion raise, losing every row of the
-        # artifact. What such a value means is not established, so it is left
-        # blank rather than guessed at, and the other columns still report.
-        try:
-            timestamp = convert_unix_ts_to_utc(date) if date and date > 0 else ''
-        except (ValueError, OSError, OverflowError):
-            timestamp = ''
-        data_list.append((
-            timestamp,
-            did,
-            names.get(did, '') or names.get(abs(did), ''),
-            rating,
-            kind,
-        ))
-    return data_headers, data_list, db_file
+    return _rows_per_main(context, data_headers, rows_of)
 
 
 # Telegram writes one WebRTC log per call under cache/voip_logs, named for the
@@ -2138,9 +2237,12 @@ def get_telegramVoipLogs(context):
 _MASK_CATEGORIES = ('Contacts', 'Other private chats', 'Groups', 'Channels')
 _MASK_TYPES = ((1, 'Photos'), (2, 'Audio'), (4, 'Videos'), (8, 'Documents'))
 _PRESET_KEYS = (
-    ('mobilePreset', 'Mobile data'),
-    ('wifiPreset', 'Wi-Fi'),
-    ('roamingPreset', 'Roaming'),
+    ('mobilePreset', 'Mobile data', 'currentMobilePreset'),
+    ('wifiPreset', 'Wi-Fi', 'currentWifiPreset'),
+    ('roamingPreset', 'Roaming', 'currentRoamingPreset'),
+    ('preset0', '', ''),
+    ('preset1', '', ''),
+    ('preset2', '', ''),
 )
 
 
@@ -2152,7 +2254,9 @@ def _describe_mask(mask):
 @artifact_processor
 def get_telegramAutoDownload(context):
     data_headers = (
+        'Preference Key',
         'Network',
+        'Current Preset Key (as stored)',
         'Auto-Download Enabled',
         'Chat Category',
         'Media Auto-Downloaded',
@@ -2174,7 +2278,7 @@ def get_telegramAutoDownload(context):
     values = {element.get('name'): (element.get('value') or element.text or '')
               for element in root}
 
-    for key, network in _PRESET_KEYS:
+    for key, network, current_key in _PRESET_KEYS:
         raw = values.get(key, '')
         parts = raw.split('_')
         if len(parts) < 11:
@@ -2187,7 +2291,9 @@ def get_telegramAutoDownload(context):
             continue
         for index, category in enumerate(_MASK_CATEGORIES):
             data_list.append((
+                key,
                 network,
+                values.get(current_key, '') if current_key else '',
                 'Yes' if enabled else 'No',
                 category,
                 _describe_mask(masks[index]),
