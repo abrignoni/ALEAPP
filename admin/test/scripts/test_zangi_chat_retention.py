@@ -11,6 +11,11 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[3]))
 from scripts.artifacts.ZangiChats import zangichats  # pylint: disable=wrong-import-position
 
 
+def make_context(paths):
+    return SimpleNamespace(get_files_found=lambda: [str(item) for item in paths],
+                           get_relative_path=str)
+
+
 def make_database(path):
     path = pathlib.Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -35,12 +40,13 @@ class ZangiChatRetentionTest(unittest.TestCase):
     def test_empty_null_chat_and_missing_profiles_keep_raw_ids_and_multiplicity(self):
         with tempfile.TemporaryDirectory() as directory:
             path, records = make_database(pathlib.Path(directory) / 'messages.db')
-            context = SimpleNamespace(get_files_found=lambda: [str(path)])
+            context = make_context([path])
             with patch('scripts.artifacts.ZangiChats.check_in_media') as media:
                 headers, rows, source = zangichats.__wrapped__(context)
-            self.assertEqual(len(headers), 11)
+            self.assertEqual(len(headers), 12)
             self.assertEqual(headers[0], ('Timestamp', 'datetime'))
-            self.assertNotIn('Source File', headers)
+            self.assertEqual(headers[11], 'Source File')
+            self.assertTrue(all(row[11] == str(path) for row in rows))
             self.assertEqual(source, str(path))
             self.assertEqual(len(rows), 6)
             self.assertEqual(rows[0], rows[5])
@@ -54,10 +60,27 @@ class ZangiChatRetentionTest(unittest.TestCase):
             self.assertEqual([row[3] for row in rows], ['Chat Name', None, None, None, None, 'Chat Name'])
             media.assert_not_called()
 
+    def test_every_message_database_is_read_and_others_are_skipped(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory) / 'data' / 'data' / 'com.beint.zangi' / 'databases'
+            first, _ = make_database(root / '111.db')
+            second, _ = make_database(root / '222.db')
+            settings, _ = make_database(root / 'settings.db')
+            other = root / 'other.db'
+            connection = sqlite3.connect(other)
+            connection.execute('CREATE TABLE unrelated(x)')
+            connection.commit()
+            connection.close()
+            context = make_context([first, second, settings, other])
+            _, rows, source = zangichats.__wrapped__(context)
+            self.assertEqual(len(rows), 12)
+            self.assertEqual([row[11] for row in rows], [str(first)] * 6 + [str(second)] * 6)
+            self.assertEqual(source, str(first) + '\n' + str(second))
+
     def test_joined_names_and_raw_direction_replace_local_user_derivations(self):
         with tempfile.TemporaryDirectory() as directory:
             path, _ = make_database(pathlib.Path(directory) / 'messages.db')
-            headers, rows, _ = zangichats.__wrapped__(SimpleNamespace(get_files_found=lambda: [str(path)]))
+            headers, rows, _ = zangichats.__wrapped__(make_context([path]))
             self.assertEqual(headers[1:4], ('isIncoming (as stored)', 'From Name (joined)', 'Chat'))
             self.assertEqual(rows[0][1:3], (0, 'Sender'))
             self.assertEqual((rows[0][9], rows[4][1], rows[4][2], rows[4][9]),
@@ -69,9 +92,9 @@ class ZangiChatRetentionTest(unittest.TestCase):
     def test_null_text_numeric_incoming_and_duplicate_joined_profiles(self):
         with tempfile.TemporaryDirectory() as directory:
             path = make_raw_database(pathlib.Path(directory) / 'messages.db')
-            headers, rows, _ = zangichats.__wrapped__(SimpleNamespace(get_files_found=lambda: [str(path)]))
+            headers, rows, _ = zangichats.__wrapped__(make_context([path]))
             self.assertEqual(len(rows), 19)
-            self.assertEqual(len(headers), 11)
+            self.assertEqual(len(headers), 12)
             expected = {6: None, 7: 'Outgoing', 8: '0', 9: 2, 10: 1.0}
             for message_id, incoming in expected.items():
                 matching = [row for row in rows if row[7] == message_id]

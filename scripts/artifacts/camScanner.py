@@ -35,7 +35,7 @@ __artifacts_v2__ = {
         "description": "Individual pages of CamScanner documents, with the page image",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "CamScanner",
         "sample_data": {
@@ -46,11 +46,11 @@ __artifacts_v2__ = {
                  "to through the images.document_id column, which is the link the database itself "
                  "records. Created and Last Modified are Unix milliseconds and are reported as "
                  "UTC. The page image is shown inline. It is resolved from the row's own _data "
-                 "column, which holds the full path the app wrote, so the image is looked up by "
-                 "that recorded path; when only one matched file carries the file name, it is taken "
-                 "by name without the path being compared. That path is written as the device sees "
-                 "it, under /storage/emulated, and is respelled to the data/media form an "
-                 "extraction holds before it is looked up. Three paths are reported per page: "
+                 "column, which holds the full path the app wrote. That path is written as the "
+                 "device sees it, under /storage/emulated, and is respelled to the data/media form "
+                 "an extraction holds. A matched file is shown only when its path in the extraction "
+                 "is that respelled path or the path as recorded, or ends with one of them; a file "
+                 "that only shares the file name is not shown and Page Image is left blank. Three paths are reported per page: "
                  "Processed Path is the _data column and is the path rendered, Original Path is the "
                  "raw_data column and Thumbnail Path is the thumb_data column. On the tested device "
                  "the three pointed under .images, .originals and .afterOCRs. What the app does to "
@@ -98,6 +98,39 @@ def _extraction_path(recorded):
         return text
     user = match.group(1) or '0'
     return f'data/media/{user}/' + text[match.end():]
+
+
+def _page_files(context):
+    """Map each matched page file's path inside the extraction to its staged path."""
+    staged = {}
+    for found in context.get_files_found():
+        found = str(found)
+        if not found.replace('\\', '/').lower().endswith('.jpg'):
+            continue
+        relative = str(context.get_relative_path(found)).replace('\\', '/').lstrip('/')
+        staged.setdefault(relative, found)
+    return staged
+
+
+def _staged_page(staged, recorded):
+    """The staged file whose extraction path is the recorded path, or None.
+
+    The recorded path is compared in its respelled data/media form and as written. A
+    file that shares only the file name is not taken.
+    """
+    wanted = []
+    for text in (_extraction_path(recorded), str(recorded or '').replace('\\', '/')):
+        text = text.lstrip('/')
+        if text and text not in wanted:
+            wanted.append(text)
+    for text in wanted:
+        if text in staged:
+            return staged[text]
+    for text in wanted:
+        for relative, found in staged.items():
+            if relative.endswith('/' + text):
+                return found
+    return None
 
 
 def _db_files(context):
@@ -183,13 +216,14 @@ def camscanner_pages(context):
                ORDER BY i.document_id, i.page_num'''
     data_list = []
     sources = []
+    staged = _page_files(context)
     for db_path in _db_files(context):
         records = get_sqlite_db_records(db_path, query)
         for r in records:
             title = r[2] or ''
             page = r[3]
-            resolved = _extraction_path(r[4])
-            media = check_in_media(resolved, f'{title} page {page}') if resolved else None
+            page_file = _staged_page(staged, r[4])
+            media = check_in_media(page_file, f'{title} page {page}') if page_file else None
             data_list.append((
                 _ms(r[0]), _ms(r[1]), title, page, media or '',
                 r[4] or '', r[5] or '', r[6] or '',

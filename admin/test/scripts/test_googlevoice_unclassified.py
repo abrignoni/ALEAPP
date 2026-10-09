@@ -30,7 +30,7 @@ class GoogleVoiceUnclassifiedTest(unittest.TestCase):
             ctx=context(root,[str(path),str(next(root.rglob('*.png')))])
             _,legacy,source=parser.googlevoice_messages.__wrapped__(ctx)
             self.assertEqual(len(legacy),5);self.assertEqual(source,str(path));self.assertEqual(media.call_count,1)
-            self.assertEqual([r[1] for r in legacy],['Incoming','Outgoing','Incoming','Outgoing',''])
+            self.assertEqual([r[1] for r in legacy],['Incoming','Outgoing','Incoming','Outgoing','Field 13 = 99 (as stored)'])
             self.assertEqual(legacy[0][2:5],('other','MMS image','exported.png'))
             self.assertEqual(legacy[-1][2:5],('','body',''))
             headers,rows,source=parser.googlevoice_unclassified_store_records.__wrapped__(ctx)
@@ -48,7 +48,7 @@ class GoogleVoiceUnclassifiedTest(unittest.TestCase):
             _,legacy,_=parser.googlevoice_messages.__wrapped__(ctx)
             self.assertEqual(len(legacy),3);self.assertEqual(legacy[-1][1],'Outgoing')
             messages=[call.args[0] for call in logger.call_args_list]
-            self.assertEqual(len(messages),4);self.assertTrue(all('when enabled' in m and 'unordered query ordinal ' in m for m in messages))
+            self.assertEqual(len(messages),7);self.assertEqual(sum('neither t nor g' in m for m in messages),3);self.assertTrue(all('when enabled' in m and 'unordered query ordinal ' in m for m in messages))
             _,rows,_=parser.googlevoice_unclassified_store_records.__wrapped__(ctx)
             self.assertEqual(len(rows),8)
             for row in rows:

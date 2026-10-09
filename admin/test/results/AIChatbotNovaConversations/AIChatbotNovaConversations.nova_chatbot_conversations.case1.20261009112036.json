@@ -10,15 +10,15 @@
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/AIChatbotNovaConversations/testdata.AIChatbotNovaConversations.nova_chatbot_conversations.case1.zip",
-    "start_time": "2026-10-05T20:23:05.468485+00:00",
-    "end_time": "2026-10-05T20:23:05.529589+00:00",
-    "run_time_seconds": 0.004415035247802734,
+    "start_time": "2026-10-09T11:20:36.431362+00:00",
+    "end_time": "2026-10-09T11:20:36.500443+00:00",
+    "run_time_seconds": 0.0022430419921875,
     "last_commit": {
-      "hash": "c8ff1f1e064c4653d919a464eb8886135a2ac8ad",
+      "hash": "708fed5c92cf17f7b5aa039f8977b13503443748",
       "author_name": "Brigs",
       "author_email": "abrignoni@gmail.com",
-      "date": "2026-10-04T02:02:01-04:00",
-      "message": "Correct artifact descriptions and notes against the code and sources"
+      "date": "2026-10-05T16:35:22-04:00",
+      "message": "Retain Nova filename candidates and source scope"
     }
   },
   "headers": [
@@ -33,7 +33,7 @@
     "Msg. UUID",
     "Role",
     "Message Text",
-    "Token Count",
+    "Token (as stored)",
     "Reasoning Content",
     "Image Attachment Prompts",
     "Image Media Candidate",
@@ -44,7 +44,7 @@
     "Image Filesystem Candidate Paths",
     "Image Filesystem Candidate Sources",
     "Image Filesystem Match Scope",
-    "Image Cloud URL",
+    "Image URL (as stored)",
     "Document Name",
     "Document Media Candidate",
     "Document Media Candidate Source",
@@ -54,7 +54,7 @@
     "Document Filesystem Candidate Paths",
     "Document Filesystem Candidate Sources",
     "Document Filesystem Match Scope",
-    "Document Cloud URL",
+    "Document URL (as stored)",
     "Link URL(s)",
     "Source File"
   ],

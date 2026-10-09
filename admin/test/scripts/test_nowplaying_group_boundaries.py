@@ -100,7 +100,7 @@ class NowPlayingGroupBoundariesTest(unittest.TestCase):
                 _, rows, source = module.get_googleNowPlaying.__wrapped__(Context(folder, [first_missing, path]))
             self.assertEqual(rows[0][4], '')
             self.assertEqual(len(rows), 3)
-            self.assertEqual(source, str(path))
+            self.assertEqual(source, '\n'.join([str(first_missing), str(path)]))
 
     def test_actual_wal_rows_hashes_and_selection_unchanged(self):
         with tempfile.TemporaryDirectory() as folder:

@@ -4,12 +4,12 @@ __artifacts_v2__ = {
         "description": "Parses application records (package, title, first download and last updated times, install reason and account) from the appstate table of the Play Store localappstate.db.",
         "author": "@abrignoni",
         "creation_date": "2020-03-01",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Installed Apps",
         "notes": "A row records an application known to the appstate table. Auto Update? shows "
-                 "Yes when auto_update is 1 and is blank for 0; any other stored value is not "
-                 "shown. Install Reason is reported as stored and is blank where the table has no "
+                 "Yes when auto_update is 1 and is blank for 0; any other stored value is "
+                 "shown as stored, and a NULL is blank. Install Reason is reported as stored and is blank where the table has no "
                  "install_reason column. Whether the application "
                  "was still installed at the time of extraction is not established by its presence "
                  "here.",
@@ -71,7 +71,7 @@ def get_installedappsVending(context):
         cursor.execute(f'''
             SELECT first_download_ms, package_name, title, {install_reason_query},
                    last_update_timestamp_ms,
-                   CASE auto_update WHEN '0' THEN '' WHEN '1' THEN 'Yes' END AS 'Auto_Updated',
+                   CASE auto_update WHEN '0' THEN '' WHEN '1' THEN 'Yes' ELSE auto_update END AS 'Auto_Updated',
                    account
             FROM appstate
         ''')

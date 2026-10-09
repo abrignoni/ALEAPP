@@ -6,13 +6,15 @@ __artifacts_v2__ = {
                        "file found in the app's image cache",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Slack",
         "notes": "Read from the messages and message_threads tables of the per-workspace store "
-                 "databases/org_<team id>. One store is read per run, the first file found that "
-                 "holds the messages, conversation and users tables, so when the extraction holds "
-                 "more than one workspace store only one is reported. Both tables are reported "
+                 "databases/org_<team id>. Every file found under databases that holds the messages, "
+                 "conversation and users tables is read as a workspace store, the duplicate storage "
+                 "paths of one file being read once; senders, conversations and file records are "
+                 "resolved inside the store a row came from. A Workspace Store column, the store's "
+                 "file path, is added only when more than one store is read. Both tables are reported "
                  "here, distinguished by the Record Source column, so a thread reply appears "
                  "alongside the message it replies to.\n"
                  "The message text is taken from the text field of the message_json (or "
@@ -59,10 +61,15 @@ __artifacts_v2__ = {
                        "with the name, the kind, the membership flags and the last read marker",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Slack",
-        "notes": "Read from the conversation table of databases/org_<team id>. The Kind column is "
+        "notes": "Read from the conversation table of databases/org_<team id>. "
+                 "Every file found under databases that holds the messages, conversation and users "
+                 "tables is read as a workspace store, the duplicate storage paths of one file "
+                 "being read once. A Workspace Store column, the store's file path, is added only "
+                 "when more than one store is read.\n"
+                 "The Kind column is "
                  "the stored type value, observed as PUBLIC and DM in the tested corpus.\n"
                  "Two column meanings come from the developers' own comments in the CREATE TABLE "
                  "text of this database: is_member is documented there as being set to NULL for "
@@ -84,10 +91,15 @@ __artifacts_v2__ = {
                        "time zone and the administrator, owner and bot flags",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Slack",
-        "notes": "Read from the users table of databases/org_<team id>. Slack stores the profile "
+        "notes": "Read from the users table of databases/org_<team id>. "
+                 "Every file found under databases that holds the messages, conversation and users "
+                 "tables is read as a workspace store, the duplicate storage paths of one file "
+                 "being read once. A Workspace Store column, the store's file path, is added only "
+                 "when more than one store is read.\n"
+                 "Slack stores the profile "
                  "flattened into profile_ prefixed columns on this table, so the name, email, "
                  "title and phone are read directly rather than out of a JSON blob.\n"
                  "These are the workspace members the client had cached, which is not necessarily "
@@ -107,10 +119,15 @@ __artifacts_v2__ = {
                        "uploading user and the cached copy where one is present in the extraction",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Slack",
-        "notes": "Read from the files table of databases/org_<team id>. Each row carries the "
+        "notes": "Read from the files table of databases/org_<team id>. "
+                 "Every file found under databases that holds the messages, conversation and users "
+                 "tables is read as a workspace store, the duplicate storage paths of one file "
+                 "being read once. A Workspace Store column, the store's file path, is added only "
+                 "when more than one store is read.\n"
+                 "Each row carries the "
                  "server's file record as JSON in file_blob, and the name, type, size and "
                  "timestamps are read from it.\n"
                  "The cached copy is linked by recorded identity rather than by correlation. The "
@@ -158,6 +175,7 @@ import hashlib
 import json
 import os
 
+from scripts.artifacts.storagePathViews import unique_files
 from scripts.ilapfuncs import (artifact_processor, check_in_media, convert_unix_ts_to_utc,
                                does_table_exist_in_db, get_file_path, get_sqlite_db_records)
 
@@ -166,18 +184,29 @@ from scripts.ilapfuncs import (artifact_processor, check_in_media, convert_unix_
 ORG_DB_TABLES = ('messages', 'conversation', 'users')
 
 
-def _org_db_path(files_found):
-    """databases/org_<team id> carries the workspace. Confirm by its tables rather
-    than by name, because the name contains the team id."""
-    for file_found in files_found:
+def _org_db_paths(context):
+    """databases/org_<team id> carries a workspace. Confirm by its tables rather
+    than by name, because the name contains the team id. Every such store is
+    returned, each once however many storage paths the extraction holds for it."""
+    stores = []
+    for file_found in unique_files(context):
         file_found = str(file_found)
-        if '/databases/' not in file_found.replace(os.sep, '/'):
+        if '/databases/' not in file_found.replace(os.sep, '/') or os.path.isdir(file_found):
             continue
         if os.path.basename(file_found).endswith(('-wal', '-shm', '-journal')):
             continue
         if all(does_table_exist_in_db(file_found, table) for table in ORG_DB_TABLES):
-            return file_found
-    return None
+            stores.append(file_found)
+    return stores
+
+
+def _with_store(context, headers, rows, row_stores, stores):
+    """Add the Workspace Store column when rows can come from more than one store."""
+    if len(stores) > 1:
+        headers = tuple(headers) + ('Workspace Store',)
+        rows = [tuple(row) + (context.get_relative_path(store),)
+                for row, store in zip(rows, row_stores)]
+    return headers, rows, '\n'.join(stores)
 
 
 def _cache_by_key(files_found):
@@ -269,13 +298,23 @@ def _resolve(users, value):
 @artifact_processor
 def slack_messages(context):
     files_found = context.get_files_found()
-    source_path = _org_db_path(files_found)
+    stores = _org_db_paths(context)
     data_list = []
-    if not source_path:
-        return _MESSAGE_HEADERS, data_list, ''
-
-    users, conversations = _lookups(source_path)
+    row_stores = []
     cache = _cache_by_key(files_found)
+    for source_path in stores:
+        _store_messages(source_path, cache, data_list)
+        row_stores.extend([source_path] * (len(data_list) - len(row_stores)))
+
+    order = sorted(range(len(data_list)), key=lambda i: str(data_list[i][0]))
+    data_list = [data_list[i] for i in order]
+    row_stores = [row_stores[i] for i in order]
+    return _with_store(context, _MESSAGE_HEADERS, data_list, row_stores, stores)
+
+
+def _store_messages(source_path, cache, data_list):
+    """Append the message and thread rows of one workspace store to data_list."""
+    users, conversations = _lookups(source_path)
 
     files_by_id = {}
     if does_table_exist_in_db(source_path, 'files'):
@@ -328,9 +367,6 @@ def slack_messages(context):
             emit(record[0], record[1], message.get('user'), record[2], record[3],
                  record[4], 'message_threads')
 
-    data_list.sort(key=lambda row: str(row[0]))
-    return _MESSAGE_HEADERS, data_list, source_path
-
 
 _MESSAGE_HEADERS = (
     ('Timestamp', 'datetime'),
@@ -353,32 +389,32 @@ _MESSAGE_HEADERS = (
 
 @artifact_processor
 def slack_conversations(context):
-    source_path = _org_db_path(context.get_files_found())
+    stores = _org_db_paths(context)
     data_list = []
-    if not source_path:
-        return _CONVERSATION_HEADERS, data_list, ''
-
-    users, _ = _lookups(source_path)
+    row_stores = []
     query = '''
     SELECT lastRead, name_or_user, type, is_member, is_open, is_starred, latest,
            name_normalized_no_delimiter, conversation_id, updated
     FROM conversation
     '''
-    for record in get_sqlite_db_records(source_path, query):
-        data_list.append((
-            _slack_ts(record[0]),
-            _resolve(users, record[1]),
-            record[2],
-            '' if record[3] is None else ('Yes' if record[3] else 'No'),
-            'Yes' if record[4] else 'No',
-            'Yes' if record[5] else 'No',
-            _slack_ts(record[6]),
-            record[7] or '',
-            record[8],
-            convert_unix_ts_to_utc(record[9]) if record[9] else '',
-        ))
+    for source_path in stores:
+        users, _ = _lookups(source_path)
+        for record in get_sqlite_db_records(source_path, query):
+            data_list.append((
+                _slack_ts(record[0]),
+                _resolve(users, record[1]),
+                record[2],
+                '' if record[3] is None else ('Yes' if record[3] else 'No'),
+                'Yes' if record[4] else 'No',
+                'Yes' if record[5] else 'No',
+                _slack_ts(record[6]),
+                record[7] or '',
+                record[8],
+                convert_unix_ts_to_utc(record[9]) if record[9] else '',
+            ))
+            row_stores.append(source_path)
 
-    return _CONVERSATION_HEADERS, data_list, source_path
+    return _with_store(context, _CONVERSATION_HEADERS, data_list, row_stores, stores)
 
 
 _CONVERSATION_HEADERS = (
@@ -397,10 +433,9 @@ _CONVERSATION_HEADERS = (
 
 @artifact_processor
 def slack_users(context):
-    source_path = _org_db_path(context.get_files_found())
+    stores = _org_db_paths(context)
     data_list = []
-    if not source_path:
-        return _USER_HEADERS, data_list, ''
+    row_stores = []
 
     query = '''
     SELECT name, profile_real_name, profile_email, profile_phone, profile_title,
@@ -408,28 +443,30 @@ def slack_users(context):
            deleted, is_suspended, id, team_id, updated
     FROM users
     '''
-    for record in get_sqlite_db_records(source_path, query):
-        data_list.append((
-            record[0] or '',
-            record[1] or '',
-            record[2] or '',
-            record[3] or '',
-            record[4] or '',
-            record[5] or '',
-            record[6] or '',
-            'Yes' if record[7] else 'No',
-            'Yes' if record[8] else 'No',
-            'Yes' if record[9] else 'No',
-            'Yes' if record[10] else 'No',
-            'Yes' if record[11] else 'No',
-            'Yes' if record[12] else 'No',
-            'Yes' if record[13] else 'No',
-            record[14],
-            record[15],
-            convert_unix_ts_to_utc(record[16]) if record[16] else '',
-        ))
+    for source_path in stores:
+        for record in get_sqlite_db_records(source_path, query):
+            data_list.append((
+                record[0] or '',
+                record[1] or '',
+                record[2] or '',
+                record[3] or '',
+                record[4] or '',
+                record[5] or '',
+                record[6] or '',
+                'Yes' if record[7] else 'No',
+                'Yes' if record[8] else 'No',
+                'Yes' if record[9] else 'No',
+                'Yes' if record[10] else 'No',
+                'Yes' if record[11] else 'No',
+                'Yes' if record[12] else 'No',
+                'Yes' if record[13] else 'No',
+                record[14],
+                record[15],
+                convert_unix_ts_to_utc(record[16]) if record[16] else '',
+            ))
+            row_stores.append(source_path)
 
-    return _USER_HEADERS, data_list, source_path
+    return _with_store(context, _USER_HEADERS, data_list, row_stores, stores)
 
 
 _USER_HEADERS = (
@@ -456,34 +493,35 @@ _USER_HEADERS = (
 @artifact_processor
 def slack_files(context):
     files_found = context.get_files_found()
-    source_path = _org_db_path(files_found)
+    stores = _org_db_paths(context)
     data_list = []
-    if not source_path or not does_table_exist_in_db(source_path, 'files'):
-        return _FILE_HEADERS, data_list, source_path or ''
-
-    users, conversations = _lookups(source_path)
+    row_stores = []
     cache = _cache_by_key(files_found)
+    for source_path in stores:
+        if not does_table_exist_in_db(source_path, 'files'):
+            continue
+        users, conversations = _lookups(source_path)
+        query = 'SELECT id, file_blob, user, channels, title, deleted FROM files'
+        for record in get_sqlite_db_records(source_path, query):
+            blob = _json_or_empty(record[1])
+            media, matched_on = _match_cached_file(blob, cache)
+            name, real_name = users.get(record[2], ('', ''))
+            conversation = conversations.get(record[3], ('', ''))[0]
+            data_list.append((
+                convert_unix_ts_to_utc(int(blob['created'])) if str(blob.get('created', '')).isdigit() else '',
+                blob.get('name', ''),
+                media,
+                matched_on,
+                real_name or name or record[2] or '',
+                conversation or record[3] or '',
+                blob.get('mimetype', ''),
+                blob.get('size', ''),
+                'Yes' if record[5] else 'No',
+                record[0],
+            ))
+            row_stores.append(source_path)
 
-    query = 'SELECT id, file_blob, user, channels, title, deleted FROM files'
-    for record in get_sqlite_db_records(source_path, query):
-        blob = _json_or_empty(record[1])
-        media, matched_on = _match_cached_file(blob, cache)
-        name, real_name = users.get(record[2], ('', ''))
-        conversation = conversations.get(record[3], ('', ''))[0]
-        data_list.append((
-            convert_unix_ts_to_utc(int(blob['created'])) if str(blob.get('created', '')).isdigit() else '',
-            blob.get('name', ''),
-            media,
-            matched_on,
-            real_name or name or record[2] or '',
-            conversation or record[3] or '',
-            blob.get('mimetype', ''),
-            blob.get('size', ''),
-            'Yes' if record[5] else 'No',
-            record[0],
-        ))
-
-    return _FILE_HEADERS, data_list, source_path
+    return _with_store(context, _FILE_HEADERS, data_list, row_stores, stores)
 
 
 _FILE_HEADERS = (

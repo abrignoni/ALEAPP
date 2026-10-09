@@ -6,7 +6,7 @@ __artifacts_v2__ = {
                        "not been read.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-01",
-        "last_update_date": "2026-09-01",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Realm",
         "notes": "This artifact reports nothing about the contents of any database. It exists so "
@@ -28,7 +28,9 @@ __artifacts_v2__ = {
                  "assert which cause applies. True "
                  "with a file format the parser does not decode would be an unsupported format, "
                  "which the tested extractions did not contain. Non-Zero Bytes is a count of "
-                 "bytes, not an interpretation of them. A row here means the file should be "
+                 "bytes, not an interpretation of them. A file that could not be opened to count "
+                 "its bytes is reported with Non-Zero Bytes blank and the error logged; no "
+                 "tested file exercised that. A row here means the file should be "
                  "examined with other tooling; it is not evidence that the app held any "
                  "particular data, and an absence of rows means no Realm store over the 1024 "
                  "byte threshold came back with zero decoded classes. It does not mean that no "
@@ -114,7 +116,11 @@ def realmUndecodedStores(context):
             continue
 
         non_zero = _non_zero_bytes(file_found)
-        if non_zero is None or non_zero <= _MIN_NON_ZERO:
+        if non_zero is None:
+            # The file could not be read at all, so it cannot be called empty. Report it
+            # with the count blank rather than leaving it out.
+            non_zero = ''
+        elif non_zero <= _MIN_NON_ZERO:
             continue
 
         try:

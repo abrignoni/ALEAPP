@@ -1,15 +1,18 @@
 __artifacts_v2__ = {
     "claudeAccountInfo": {
         "name": "Claude Account Information",
-        "description": "Parses the account information from the first cache.json found for the Claude app",
+        "description": "Account information from each cache.json matched for the Claude app, one row per file",
         "author": "Brandon Baye",
         "creation_date": "2026-07-23",
-        "last_update_date": "2026-08-09",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Claude",
         "notes": "Timestamps stored as ISO 8601 combined date-time format. "
                  "Display Name is reported as stored. An XML file in the app container also "
-                 "holds the email address; that file is not read by this artifact.",
+                 "holds the email address; that file is not read by this artifact. Every "
+                 "matched cache.json is read and Source File names the file a row came from. "
+                 "The two recorded samples each returned one row; reading more than one file "
+                 "was exercised with constructed input only.",
         "paths": ('*/com.anthropic.claude/cache/app_start/acc_*/org_*/cache.json'),
         "output_types": "standard",
         "artifact_icon": "message-circle",
@@ -24,14 +27,16 @@ __artifacts_v2__ = {
         "description": "Parses Claude Conversations",
         "author": "Brandon Baye, @AlexisBrignoni, Codex",
         "creation_date": "2026-07-22",
-        "last_update_date": "2026-10-06",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Claude",
         "notes": "Each cachedConversations row holds a JSON object. Conversation Start Time is "
                  "its created_at value, is_temporary (existing rendering) reports its is_temporary value and "
                  "Conversation Starred its is_starred value; a value other than 0 or 1 is shown "
                  "as Unknown. What the app does with is_temporary is not established here. "
-                 "Timestamps stored as ISO 8601 combined date-time format and converted for LAVA.",
+                 "Timestamps stored as ISO 8601 combined date-time format and converted for LAVA. "
+                 "Every matched cache database is read and Source File names the database a "
+                 "row came from.",
         "paths": ('*/com.anthropic.claude/databases/acc_*_claude_cache.db*'),
         "output_types": "standard",
         "artifact_icon": "message-circle",
@@ -46,7 +51,7 @@ __artifacts_v2__ = {
         "description": "Parses Claude Messages with some Conversation info",
         "author": "Brandon Baye, @AlexisBrignoni, Codex",
         "creation_date": "2026-07-21",
-        "last_update_date": "2026-10-06",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Claude",
         "notes": "Each message is joined to its conversation on the conversation uuid so the "
@@ -56,7 +61,8 @@ __artifacts_v2__ = {
                  "reported. The module does not look for the file itself, so whether it is in the "
                  "extraction is not established. Message is the text of the content items of type "
                  "text, joined with spaces; json_each is used to read them and no reference URL "
-                 "is reported.",
+                 "is reported. Every matched cache database is read and Source File names the "
+                 "database a row came from.",
         "paths": ('*/com.anthropic.claude/databases/acc_*_claude_cache.db*'),
         "output_types": "standard",
         "artifact_icon": "message-circle",
@@ -82,12 +88,13 @@ __artifacts_v2__ = {
         "description": "Parses the project records held in the Claude app's cache database",
         "author": "Brandon Baye",
         "creation_date": "2026-07-24",
-        "last_update_date": "2026-08-09",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Claude",
         "notes": "Project Creator is the creator.full_name value of the project record, as "
                  "stored. "
-                 "Timestamps are ISO 8601 combined date-time format.",
+                 "Timestamps are ISO 8601 combined date-time format. Every matched cache "
+                 "database is read and Source File names the database a row came from.",
         "paths": ('*/com.anthropic.claude/databases/acc_*_claude_cache.db*'),
         "output_types": "standard",
         "artifact_icon": "message-circle",
@@ -98,61 +105,80 @@ __artifacts_v2__ = {
     }
 }
 
+import os
+
 from scripts.ilapfuncs import (
     artifact_processor,
-    get_file_path,
     get_sqlite_db_records,
     json,
+    logfunc,
     convert_human_ts_to_utc
 )
+from scripts.artifacts.storagePathViews import unique_files
+
+
+def _cache_files(context, wanted):
+    """Every matched file of one kind, with duplicate storage views of a file collapsed."""
+    found = []
+    for file_found in unique_files(context):
+        file_found = str(file_found)
+        if os.path.isdir(file_found):
+            continue
+        name = os.path.basename(file_found)
+        if wanted == 'cache.json' and name == 'cache.json':
+            found.append(file_found)
+        elif wanted == 'db' and name.endswith('_claude_cache.db'):
+            found.append(file_found)
+    return found
 
 @artifact_processor
 def claudeAccountInfo(context):
-    files_found = context.get_files_found()
-    source_path = get_file_path(files_found, 'cache.json')
     data_list = []
-    
-    with open(source_path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
+    source_paths = []
 
-    account = data['response']['account']
-    
-    ts = account['created_at']
-    ts = ts.replace('T', ' ').replace('Z', '')
-    created_at = convert_human_ts_to_utc(ts)
-    
-    ts = account['updated_at']
-    ts = ts.replace('T', ' ').replace('Z', '')
-    updated_at = convert_human_ts_to_utc(ts)
-    
-    full_name = account['full_name']
-    display_name = account['display_name']
-    email = account['email_address']
-    
-        
-    data_list.append((
-        created_at,
-        updated_at,
-        full_name,
-        display_name,
-        email,
-    ))
-        
+    for file_found in _cache_files(context, 'cache.json'):
+        relative = context.get_relative_path(file_found)
+        try:
+            with open(file_found, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            account = data['response']['account']
+        except (OSError, ValueError, KeyError, TypeError) as error:
+            logfunc(f'Claude account cache not read: {relative}: {error}')
+            continue
+        source_paths.append(relative)
+
+        ts = account.get('created_at')
+        created_at = convert_human_ts_to_utc(
+            ts.replace('T', ' ').replace('Z', '')) if ts else None
+
+        ts = account.get('updated_at')
+        updated_at = convert_human_ts_to_utc(
+            ts.replace('T', ' ').replace('Z', '')) if ts else None
+
+        data_list.append((
+            created_at,
+            updated_at,
+            account.get('full_name'),
+            account.get('display_name'),
+            account.get('email_address'),
+            relative,
+        ))
+
     data_headers = (
         ('Account Created Time', 'datetime'),
         ('Account Updated Time', 'datetime'),
         'Full Name',
         'Display Name',
         'Email Address',
+        'Source File',
     )
-    
-    return data_headers, data_list, source_path
+
+    return data_headers, data_list, '\n'.join(source_paths)
     
 @artifact_processor
 def claudeConversations(context):
-    files_found = context.get_files_found()
-    source_path = get_file_path(files_found, '*_claude_cache.db')
     data_list = []
+    source_paths = []
     
     query = '''
     SELECT
@@ -165,7 +191,7 @@ def claudeConversations(context):
             WHEN 0 THEN 'False'
             WHEN 1 THEN 'True'
             ELSE 'Unknown'
-            END AS 'Incognito Conversation',
+            END AS 'is_temporary',
         CASE json_extract(cachedConversations.conversation_json, '$.is_starred')
             WHEN 0 THEN 'False'
             WHEN 1 THEN 'True'
@@ -174,7 +200,12 @@ def claudeConversations(context):
     FROM cachedConversations
     '''
     
-    records = get_sqlite_db_records(source_path, query)
+    records = []
+    for db_path in _cache_files(context, 'db'):
+        relative = context.get_relative_path(db_path)
+        source_paths.append(relative)
+        for db_record in get_sqlite_db_records(db_path, query):
+            records.append((*db_record, relative))
     for record in records:
         created_at = convert_human_ts_to_utc(
             record[0].replace('T', ' ').replace('Z', '')
@@ -191,7 +222,8 @@ def claudeConversations(context):
             record[3],
             record[4],
             record[5],
-            record[6]
+            record[6],
+            record[-1]
         ))
         
     data_headers = (
@@ -201,16 +233,16 @@ def claudeConversations(context):
         'Conversation Name',
         'Model',
         'is_temporary (existing rendering)',
-        'Conversation Starred'
+        'Conversation Starred',
+        'Source File'
     )
     
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
     
 @artifact_processor
 def claudeMessages(context):
-    files_found = context.get_files_found()
-    source_path = get_file_path(files_found, '*_claude_cache.db')
     data_list = []
+    source_paths = []
     
     query = '''
 	SELECT
@@ -220,7 +252,7 @@ def claudeMessages(context):
 			FROM json_each(cachedMessages.message_json, '$.content') je
 			WHERE json_extract(je.value, '$.type') = 'text'
 		) as 'Message',
-        json_extract(CachedMessages.message_json, '$.files[0].file_name') as 'Image File Name',
+        json_extract(CachedMessages.message_json, '$.files[0].file_name') as 'First Stored File Name',
         json_extract(cachedMessages.message_json, '$.sender') as 'Sender',
         json_extract(cachedConversations.conversation_json, '$.name') as 'Conversation Name',
         cachedConversations.uuid AS 'Conversation ID'
@@ -228,7 +260,12 @@ def claudeMessages(context):
 	LEFT JOIN cachedConversations ON cachedConversations.uuid = cachedMessages.conversation_uuid
 	'''
     
-    records = get_sqlite_db_records(source_path, query)
+    records = []
+    for db_path in _cache_files(context, 'db'):
+        relative = context.get_relative_path(db_path)
+        source_paths.append(relative)
+        for db_record in get_sqlite_db_records(db_path, query):
+            records.append((*db_record, relative))
     for record in records:
         created_at = convert_human_ts_to_utc(
             record[0].replace('T', ' ').replace('Z', '')
@@ -241,6 +278,7 @@ def claudeMessages(context):
             record[1],
             record[2],
             record[5],
+            record[-1],
         ))
         
     data_headers = (
@@ -250,15 +288,15 @@ def claudeMessages(context):
         'Message',
         'First Stored File Name',
         'Conversation ID',
+        'Source File',
     )
     
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 @artifact_processor
 def claudeProjects(context):
-    files_found = context.get_files_found()
-    source_path = get_file_path(files_found, '*_claude_cache.db')
     data_list = []
+    source_paths = []
     
     query = '''
     SELECT
@@ -277,7 +315,12 @@ def claudeProjects(context):
     FROM cachedProjects
     '''
     
-    records = get_sqlite_db_records(source_path, query)
+    records = []
+    for db_path in _cache_files(context, 'db'):
+        relative = context.get_relative_path(db_path)
+        source_paths.append(relative)
+        for db_record in get_sqlite_db_records(db_path, query):
+            records.append((*db_record, relative))
     for record in records:
         created_at = convert_human_ts_to_utc(
             record[0].replace('T', ' ').replace('Z', '')
@@ -295,7 +338,8 @@ def claudeProjects(context):
             record[4],
             record[5],
             record[6],
-            record[7]
+            record[7],
+            record[-1]
         ))
         
     data_headers = (
@@ -306,7 +350,8 @@ def claudeProjects(context):
         'Project Creator',
         'Project Starred',
         'Number of Documents',
-        'Number of Files'
+        'Number of Files',
+        'Source File'
     )
     
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)

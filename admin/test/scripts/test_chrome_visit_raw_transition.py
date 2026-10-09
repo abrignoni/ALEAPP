@@ -11,7 +11,7 @@ sys.path.insert(0,str(pathlib.Path(__file__).resolve().parents[3]))
 from scripts.artifacts import chrome
 MASKS=[1<<i for i in range(23,32)]
 VALUES=[None]+list(range(12))+[255,256]+[6|m for m in MASKS]+[6|sum(MASKS),6|0xc0000000,6|0x00100000,6|(1<<40),6|0x80000000,-2147483642,(1<<63)-1,-(1<<63),'0','6','unknown','',0.0,1.0,1.5,-0.5,b'',b'6',b'\x00\xff']
-LABELS=['LINK','TYPED','AUTO_BOOKMARK','AUTO_SUBFRAME','MANUAL_SUBFRAME','GENERATED','START_PAGE','FORM_SUBMIT','RELOAD','KEYWORD','KEYWORD_GENERATED']
+LABELS=['LINK','TYPED','AUTO_BOOKMARK','AUTO_SUBFRAME','MANUAL_SUBFRAME','GENERATED','AUTO_TOPLEVEL','FORM_SUBMIT','RELOAD','KEYWORD','KEYWORD_GENERATED']
 QUALIFIERS=['BLOCKED','FORWARD_BACK','FROM_ADDRESS_BAR','HOME_PAGE','FROM_API','CHAIN_START','CHAIN_END','CLIENT_REDIRECT','SERVER_REDIRECT']
 
 
@@ -49,7 +49,7 @@ class VisitRawTransitionTest(unittest.TestCase):
             for i,affinity in enumerate(['','INTEGER']):
                 path,_=fixture(root/str(i),affinity=affinity);_,rows,_=chrome.get_chromeWebVisits.__wrapped__(context(root,[path]));expected=oracle(path);self.assertEqual(rows,expected);self.assertEqual([[type(v) for v in r] for r in rows],[[type(v) for v in r] for r in expected]);self.assertGreater(len(rows),len(VALUES)+4)
                 raw=[r[4] for r in rows];self.assertIn(None,raw);self.assertIn(b'\x00\xff',raw);self.assertIn(6|(1<<40),raw);self.assertIn(-(1<<63),raw)
-                selected=[r for r in rows if r[4] in [6,6|0x00100000,6|(1<<40)]];self.assertTrue(all(r[5:7]==('START_PAGE','') for r in selected));self.assertGreaterEqual(len(selected),3)
+                selected=[r for r in rows if r[4] in [6,6|0x00100000,6|(1<<40)]];self.assertTrue(all(r[5:7]==('AUTO_TOPLEVEL','') for r in selected));self.assertGreaterEqual(len(selected),3)
                 self.assertTrue(any(r[1] is None for r in rows));self.assertTrue(any(r[7] is None for r in rows))
 
     def test_actual_wal_effective_state(self):

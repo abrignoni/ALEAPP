@@ -5,7 +5,7 @@ __artifacts_v2__ = {
                        "label, handle and subscription number stored for each.",
         "author": "@AlexisBrignoni, Codex, Claude",
         "creation_date": "2026-09-03",
-        "last_update_date": "2026-10-06",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Device Connections",
         "notes": "Read from phone-account-registrar-state.xml in the telecom service's own folder. "
@@ -17,9 +17,10 @@ __artifacts_v2__ = {
                  "its escape; the value is otherwise as stored. Label and Short Description are "
                  "reported as stored.\n"
                  "Capabilities, Highlight Color and Supported Audio Routes are integers the "
-                 "platform defines and are reported as stored. Is Default Outgoing is True for the "
-                 "account the first default_outgoing record in the file names; a second record for "
-                 "another user is not read. The account icon is stored here as well and is not "
+                 "platform defines and are reported as stored. Is Default Outgoing is True for an "
+                 "account whose component, account id and user serial number equal those of any "
+                 "default_outgoing_phone_account_handle record under default_outgoing in the same "
+                 "file, so a record for a second user is read. The account icon is stored here as well and is not "
                  "reported. Enabled is the account's enabled flag as stored; it held both values "
                  "on three of the tested images.\n"
                  "A zero length registrar file is reported as no rows and logged; it was present "

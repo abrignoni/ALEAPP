@@ -19,13 +19,16 @@ class Context:
     def get_files_found(self):
         return self.files
 
+    def get_relative_path(self, path):
+        return str(path)
+
 
 def notification_query():
     tree = ast.parse(Path(module.__file__).read_text(encoding='utf-8'))
     function = next(n for n in tree.body if isinstance(n, ast.FunctionDef)
                     and n.name == 'get_mastodon_notifications')
-    return next(n.args[1].value for n in ast.walk(function)
-                if isinstance(n, ast.Call) and isinstance(n.func, ast.Name) and n.func.id == '_query')
+    return next(n.args[2].value for n in ast.walk(function)
+                if isinstance(n, ast.Call) and isinstance(n.func, ast.Name) and n.func.id == '_query_all')
 
 
 def type_cases():
@@ -63,7 +66,7 @@ class MastodonRawTypeTest(unittest.TestCase):
             db.close()
             headers, rows, source = module.get_mastodon_notifications.__wrapped__(Context([path]))
             expected = [(datetime.fromisoformat(r[0]).astimezone(timezone.utc) if r[0] else '', datetime.fromisoformat(r[6]).astimezone(timezone.utc) if r[6] else '', r[1], r[2], r[8], r[3],
-                         'first & last' if r[4] else r[4], r[5], r[7]) for r in selected]
+                         'first & last' if r[4] else r[4], r[5], r[7], str(path)) for r in selected]
             self.assertEqual(rows, expected)
             self.assertEqual(len(rows), 16)
             self.assertEqual([row[4] for row in rows[:14]], type_cases())
@@ -77,6 +80,7 @@ class MastodonRawTypeTest(unittest.TestCase):
             self.assertEqual(headers[:2], (('Notification Created Timestamp', 'datetime'),
                                           ('Status Created Timestamp', 'datetime')))
             self.assertEqual(headers[3:5], ('Notification Type Interpretation', 'Type (As Stored)'))
+            self.assertEqual(headers[-1], 'Source File')
             self.assertEqual(source, str(path))
 
     def test_target_integer_affinity_schema(self):
@@ -97,7 +101,7 @@ class MastodonRawTypeTest(unittest.TestCase):
             self.assertEqual([type(row[4]) for row in rows], [type(row[0]) for row in expected])
             self.assertEqual(len(rows), len(values))
 
-    def test_actual_wal_first_main_and_protected_bytes(self):
+    def test_actual_wal_every_database_and_protected_bytes(self):
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder)
             path = root / 'writer/account.db'
@@ -119,8 +123,11 @@ class MastodonRawTypeTest(unittest.TestCase):
             hashes = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in target.iterdir()}
             _, rows, source = module.get_mastodon_notifications.__wrapped__(
                 Context([target / 'account.db-wal', target / 'account.db', other]))
-            self.assertEqual(len(rows), 16)
-            self.assertEqual(source, str(target / 'account.db'))
+            # Every database the search returned is read, and each row names its own.
+            self.assertEqual(len(rows), 32)
+            self.assertEqual([row[-1] for row in rows],
+                             [str(target / 'account.db')] * 16 + [str(other)] * 16)
+            self.assertEqual(source, str(target / 'account.db') + '\n' + str(other))
             self.assertEqual(hashes, {p.name: hashlib.sha256(p.read_bytes()).hexdigest()
                                      for p in target.iterdir()})
             writer.close()

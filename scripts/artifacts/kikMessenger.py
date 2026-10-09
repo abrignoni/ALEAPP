@@ -5,15 +5,18 @@ __artifacts_v2__ = {
                        "body, and the attachment metadata held against the message content id",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
-        "last_update_date": "2026-08-06",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Kik",
         "notes": "The code reads a database file whose name ends in kikDatabase.db, so a name "
                  "that carries a prefix before it is read. Direction is taken from the was_me "
-                 "column: 1 is reported as Outgoing and every other value, including a blank "
-                 "one and status or system message rows, as Incoming. No source for that "
-                 "reading is cited here. Sender on an Outgoing row is the user name from "
-                 "kikCoreDatabase; on any other row it is the conversation partner. Read state "
+                 "column: 1 is reported as Outgoing and 0 as Incoming, and no source for that "
+                 "reading is cited here. Direction and Sender are left blank on a row whose "
+                 "was_me is neither 1 nor 0 and on a row that stores a Status Message or a "
+                 "System Message value, because who such a row is from was not established. "
+                 "Was Me (as stored) holds the column value on every row. Sender on an Outgoing "
+                 "row is the user name from the first kikCoreDatabase row that has one, active "
+                 "rows first; on an Incoming row it is the conversation partner. Read state "
                  "is reported as the stored integer.",
         "paths": ('*/kik.android/databases/*kikDatabase.db*',
                   '*/kik.android/databases/kikCoreDatabase.db*',
@@ -62,7 +65,7 @@ __artifacts_v2__ = {
                        "id gives one row with its file name, size, source app and URLs",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
-        "last_update_date": "2026-08-06",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Kik",
         "notes": "KIKContentTable stores one row per property, keyed by content id; this artifact "
@@ -72,7 +75,8 @@ __artifacts_v2__ = {
                  "checked in; files in those locations and in Android/data/kik.android/cache/temp "
                  "whose name is not shaped like a content id are listed as rows of their own, "
                  "except files of zero size or with a name starting with a dot. A file named with "
-                 "a content id that has no row in KIKContentTable is not reported.",
+                 "a content id that has no row in KIKContentTable is listed the same way, with "
+                 "the content id taken from its file name and the table columns blank.",
         "paths": ('*/kik.android/databases/*kikDatabase.db*',
                   '*/kik.android/*/cache/chatPics*/*',
                   '*/[Dd][Cc][Ii][Mm]/Kik/*',
@@ -276,13 +280,20 @@ def kik_messages(context):
     ORDER BY messagesTable.timestamp
     '''
     for record in _query(source_path, 'messagesTable', query):
-        outgoing = record[1] == 1
         partner = record[3] or record[2]
+        # A status or system row carries no established author, and neither does a
+        # was_me value other than 1 or 0.
+        if record[11] or record[12] or isinstance(record[1], bool) or record[1] not in (0, 1):
+            direction, sender = '', ''
+        elif record[1] == 1:
+            direction, sender = 'Outgoing', local_user
+        else:
+            direction, sender = 'Incoming', partner
         properties = attachments.get(record[7], {}) if record[7] else {}
         data_list.append((
             _ms(record[0]),
-            'Outgoing' if outgoing else 'Incoming',
-            local_user if outgoing else partner,
+            direction,
+            sender,
             record[4],
             _check_in(media_by_content_id.get(record[7], [])) if record[7] else '',
             record[2],
@@ -299,6 +310,7 @@ def kik_messages(context):
             record[7],
             record[8],
             record[9],
+            record[1],
         ))
 
     data_headers = (
@@ -321,6 +333,7 @@ def kik_messages(context):
         'Content ID',
         'App ID',
         'Message UID',
+        'Was Me (as stored)',
     )
     return data_headers, data_list, source_path
 
@@ -404,13 +417,19 @@ def kik_attachments(context):
             if media_by_content_id.get(content_id) else '',
         ))
 
-    for path in unmatched_media:
+    # Files named with a content id that KIKContentTable does not hold, then files
+    # whose name is not shaped like a content id.
+    loose_media = [(path, content_id)
+                   for content_id, paths in media_by_content_id.items()
+                   if content_id not in pivot for path in paths]
+    loose_media += [(path, '') for path in unmatched_media]
+    for path, content_id in loose_media:
         name = os.path.basename(path)
         size = os.path.getsize(path)
         if name.startswith('.') or size == 0:
             continue
         data_list.append((
-            _check_in([path]), name, size, '', '', '', '', '', '', '', '', '',
+            _check_in([path]), name, size, '', '', '', '', '', '', '', '', content_id,
             context.get_relative_path(path),
         ))
 

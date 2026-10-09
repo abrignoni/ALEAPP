@@ -5,12 +5,16 @@ __artifacts_v2__ = {
                        "size, MIME type and the four stored time columns (server_modified_millis, modified_millis, local_modified, accessed_millis)",
         "author": "@AlexisBrignoni, Claude; @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-10-06",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Dropbox",
         "notes": "Read from the dropbox table of the account database, whose file name carries a "
                  "prefix before -db.db, so the path allows for it. Whether that prefix is the "
-                 "account id was not established. Only the first database matched is read. This is "
+                 "account id was not established. Every database matched is read, one copy per "
+                 "storage class and Android user where an extraction holds the same file under "
+                 "more than one storage path, and Source File names the database each row came "
+                 "from. Reading more than one database in a run was checked with constructed "
+                 "databases only. This is "
                  "the listing the app had cached, not necessarily the full account contents. "
                  "Shared folder id and is_dir, is_favorite, read_only and is_vault_folder are "
                  "reported as stored, retaining NULL, zero and other values without assigning "
@@ -78,6 +82,7 @@ import json
 import re
 
 from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records
+from scripts.artifacts.storagePathViews import unique_files
 
 # Preference names whose value is an epoch milliseconds timestamp.
 _TIME_PREFS = {
@@ -123,7 +128,8 @@ def _protobuf_strings(value):
 
 @artifact_processor
 def dropbox_files(context):
-    source_path = _db_by_suffix(context.get_files_found(), '-db.db')
+    source_paths = [str(file_found) for file_found in unique_files(context)
+                    if str(file_found).endswith('-db.db')]
     data_list = []
 
     query = '''
@@ -133,23 +139,26 @@ def dropbox_files(context):
     FROM dropbox
     ORDER BY server_modified_millis
     '''
-    for record in get_sqlite_db_records(source_path, query):
-        data_list.append((
-            convert_unix_ts_to_utc(record[0]) if record[0] else '',
-            convert_unix_ts_to_utc(record[1]) if record[1] else '',
-            convert_unix_ts_to_utc(record[2]) if record[2] else '',
-            convert_unix_ts_to_utc(record[3]) if record[3] else '',
-            record[4],
-            record[5],
-            record[6],
-            record[7],
-            record[8],
-            record[9],
-            record[10],
-            record[11],
-            record[12],
-            record[13],
-        ))
+    for source_path in source_paths:
+        relative = context.get_relative_path(source_path)
+        for record in get_sqlite_db_records(source_path, query):
+            data_list.append((
+                convert_unix_ts_to_utc(record[0]) if record[0] else '',
+                convert_unix_ts_to_utc(record[1]) if record[1] else '',
+                convert_unix_ts_to_utc(record[2]) if record[2] else '',
+                convert_unix_ts_to_utc(record[3]) if record[3] else '',
+                record[4],
+                record[5],
+                record[6],
+                record[7],
+                record[8],
+                record[9],
+                record[10],
+                record[11],
+                record[12],
+                record[13],
+                relative,
+            ))
 
     data_headers = (
         ('Server Modified', 'datetime'),
@@ -166,8 +175,9 @@ def dropbox_files(context):
         'read_only (as stored)',
         'is_vault_folder (as stored)',
         'Revision',
+        'Source File',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor

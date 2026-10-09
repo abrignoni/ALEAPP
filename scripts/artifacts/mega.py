@@ -4,18 +4,18 @@ __artifacts_v2__ = {
         "description": "Rows of the history table of MEGA's karere database, with the sender's email where the contacts table has it, the message type and the attachment name",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-01-31",
-        "last_update_date": "2021-01-31",
+        "last_update_date": "2026-10-09",
         "requirements": "None",
         "category": "Mega",
         "notes": ""
                  "Message Type is labelled from the stored history.type using MEGAchat's message "
                  "type constants "
                  "(https://github.com/meganz/MEGAchat/blob/e5168cf8adead1bd7f2c505275d827face02f3d3/src/chatdMsg.h#L588-L609): "
-                 "1 kMsgNormal is shown as Chat Message, 2 kMsgAlterParticipants as Joined the "
-                 "group chat, 6 kMsgCallEnd as Group Call Ended, 7 kMsgCallStarted as Group Call "
-                 "Started and 101 kMsgAttachment as Attachment. The constant for type 2 names a "
-                 "change of participants, not only a join, and the constants for 6 and 7 are not "
-                 "named for group calls. Any other stored type is shown blank.",
+                 "1 kMsgNormal is shown as Chat Message, 2 kMsgAlterParticipants as Participants "
+                 "Changed, 6 kMsgCallEnd as Call Ended, 7 kMsgCallStarted as Call Started and 101 "
+                 "kMsgAttachment as Attachment. Which change of participants a type 2 row records "
+                 "is not decoded. Any other stored type is shown blank in Message Type. Type (As "
+                 "Stored) holds history.type as the database returns it on every row.",
         "paths": ('*/mega.privacy.android.app/karere-*.db*',),
         "output_types": "standard",
         "artifact_icon": "download",
@@ -59,12 +59,13 @@ def get_mega(context):
         contacts.email,
         CASE history.type
             WHEN 1 THEN 'Chat Message'
-            WHEN 2 THEN 'Joined the group chat'
-            WHEN 6 THEN 'Group Call Ended'
-            WHEN 7 THEN 'Group Call Started'
+            WHEN 2 THEN 'Participants Changed'
+            WHEN 6 THEN 'Call Ended'
+            WHEN 7 THEN 'Call Started'
             WHEN 101 THEN 'Attachment'
         END AS Type,
-        history.data
+        history.data,
+        history.type
         FROM history
         LEFT JOIN contacts ON contacts.userid = history.userid
         ORDER BY history.ts ASC
@@ -79,7 +80,7 @@ def get_mega(context):
                 chat_message = chat_contents[0:]
                 chat_message = (str(chat_message)[2:-1])
 
-                data_list.append((convert_human_ts_to_utc(row[0]),row[1],row[2],chat_message,attachment_name))
+                data_list.append((convert_human_ts_to_utc(row[0]),row[1],row[2],chat_message,attachment_name,row[4]))
 
             elif row[2] == 'Attachment':
                 json_contents = row[3]
@@ -90,9 +91,9 @@ def get_mega(context):
 
                 attachment_name = json_export[0]['name']
 
-                data_list.append((convert_human_ts_to_utc(row[0]),row[1],row[2],chat_message,attachment_name))
+                data_list.append((convert_human_ts_to_utc(row[0]),row[1],row[2],chat_message,attachment_name,row[4]))
             else:
-                data_list.append((convert_human_ts_to_utc(row[0]),row[1],row[2],chat_message,attachment_name))
+                data_list.append((convert_human_ts_to_utc(row[0]),row[1],row[2],chat_message,attachment_name,row[4]))
 
         db.close()
 
@@ -102,5 +103,6 @@ def get_mega(context):
         'Message Type',
         'Chat Message',
         'Attachment Name',
+        'Type (As Stored)',
     )
     return data_headers, data_list, '\n'.join(source_paths)

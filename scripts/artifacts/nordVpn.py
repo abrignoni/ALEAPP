@@ -37,7 +37,7 @@ __artifacts_v2__ = {
                        "the app stores.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "NordVPN",
         "notes": "One row per app data directory. Values come from the app's Settings "
@@ -54,7 +54,12 @@ __artifacts_v2__ = {
                  "and, when that is empty, vpn_connected from last_known_state.xml. Threat "
                  "Protection is the shared context's user_preferences value and, when that is "
                  "empty, its current_state value. Meshnet is meshnet_enabled from "
-                 "last_meshnet_state.xml and, when that is empty, the shared context value. The "
+                 "last_meshnet_state.xml and, when that is empty, the shared context value. "
+                 "On VPN Read From, Threat Protection Read From and Meshnet Read From name the "
+                 "stored field each of those three values was read from and are blank when "
+                 "neither field held a value; Source Files lists a preference file when it "
+                 "supplied one of those values. Those three columns were added after the "
+                 "tested devices were examined and were not exercised on them. The "
                  "connection fields were empty on both tested "
                  "devices, where the app recorded that it was not connected and not signed "
                  "in. SIM Country is the plaintext value the app stores beside its location "
@@ -192,6 +197,19 @@ def _prefs(source_path):
             continue
         values[name] = element.get('value') if element.tag != 'string' else (element.text or '')
     return values
+
+
+def _first_stored(candidates):
+    '''(value, origin, path) for the first candidate holding a value, or blanks.
+
+    Each candidate is (value, origin label, source path or None). A blank value is
+    passed over, which is the order the columns have always been filled in; the label
+    says which stored field the reported value was read from.
+    '''
+    for value, origin, path in candidates:
+        if value not in (None, ''):
+            return value, origin, path
+    return '', '', None
 
 
 def _all_prefs(paths):
@@ -384,15 +402,41 @@ def nordvpn_settings(context):
                 account = f'{name}={value}'
                 break
 
+        def _pref_path(name, held=tuple(paths)):
+            return next((path for path in held if os.path.basename(path) == name), None)
+
+        on_vpn, on_vpn_from, on_vpn_path = _first_stored((
+            (state.get('current_state.is_on_vpn', ''),
+             'Moose.db shared_context current_state.is_on_vpn', None),
+            (last_known.get('vpn_connected', ''),
+             'last_known_state.xml vpn_connected',
+             _pref_path('com.nordvpn.android.last_known_state.xml')),
+        ))
+        threat, threat_from, _ = _first_stored((
+            (state.get('user_preferences.threat_protection_lite_enabled', ''),
+             'Moose.db shared_context user_preferences.threat_protection_lite_enabled', None),
+            (state.get('current_state.threat_protection_lite_enabled', ''),
+             'Moose.db shared_context current_state.threat_protection_lite_enabled', None),
+        ))
+        mesh, mesh_from, mesh_path = _first_stored((
+            (meshnet.get('meshnet_enabled', ''),
+             'last_meshnet_state.xml meshnet_enabled',
+             _pref_path('com.nordvpn.android.last_meshnet_state.xml')),
+            (state.get('user_preferences.meshnet_enabled', ''),
+             'Moose.db shared_context user_preferences.meshnet_enabled', None),
+        ))
+
         relative_paths = [context.get_relative_path(path)
-                          for path in (settings_path, moose_path, main_path) if path]
+                          for path in (settings_path, moose_path, main_path,
+                                       on_vpn_path, mesh_path) if path]
         source_files.extend(relative_paths)
         data_list.append((
             _ms(catalogue[0]),
             _seconds(state.get('current_state.last_cache_date')),
             _seconds(state.get('current_state.token_renew_date')),
             state.get('current_state.is_logged_in', ''),
-            state.get('current_state.is_on_vpn', '') or last_known.get('vpn_connected', ''),
+            on_vpn,
+            on_vpn_from,
             state.get('current_state.server_city', ''),
             state.get('current_state.server_country', ''),
             state.get('current_state.server_domain', ''),
@@ -419,11 +463,12 @@ def nordvpn_settings(context):
             state.get('user_preferences.kill_switch_enabled', ''),
             state.get('user_preferences.connection_preference', ''),
             state.get('user_preferences.consent_level', ''),
-            state.get('user_preferences.threat_protection_lite_enabled', '')
-            or state.get('current_state.threat_protection_lite_enabled', ''),
+            threat,
+            threat_from,
             state.get('user_preferences.dark_web_monitor_enabled', ''),
             state.get('user_preferences.post_quantum_enabled', ''),
-            meshnet.get('meshnet_enabled', '') or state.get('user_preferences.meshnet_enabled', ''),
+            mesh,
+            mesh_from,
             str(switches.get('scam_call_protection', '')),
             str(device_location.get('sim_countryCode', '')),
             str(device_location.get('source', '')),
@@ -444,6 +489,7 @@ def nordvpn_settings(context):
         ('Token Renew', 'datetime'),
         'Logged In (as stored)',
         'On VPN (as stored)',
+        'On VPN Read From',
         'Server City',
         'Server Country',
         'Server Domain',
@@ -471,9 +517,11 @@ def nordvpn_settings(context):
         'Connection Preference (as stored)',
         'Consent Level (as stored)',
         'Threat Protection (as stored)',
+        'Threat Protection Read From',
         'Dark Web Monitor (as stored)',
         'Post Quantum (as stored)',
         'Meshnet (as stored)',
+        'Meshnet Read From',
         'Scam Call Protection (as stored)',
         'SIM Country',
         'Location Source (as stored)',

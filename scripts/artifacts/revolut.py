@@ -22,7 +22,7 @@ __artifacts_v2__ = {
                        "and device caches.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-10-04",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Revolut",
         "notes": "One row per app data directory. Every timestamp is Unix milliseconds. The "
@@ -34,9 +34,11 @@ __artifacts_v2__ = {
                  "rows on the tested devices. The largest time_stamp in the rate cache is "
                  "reported as Newest Rate Time Stamp; what the app records in that column "
                  "is not established and no source for it was found. No time is reported for the "
-                 "help or device caches. Help Language is the language recorded on one help "
-                 "row; the module does not check whether the rows hold more than one "
-                 "language. The app's chat "
+                 "help or device caches. Help Languages (rows) lists every distinct value of the "
+                 "help cache's language column, in sorted order, each followed by the number "
+                 "of help rows holding it; a row with no language is listed as (none). What "
+                 "the language value says about the account or the device is not established. "
+                 "The app's chat "
                  "and main data stores were encrypted on the tested samples and no key for "
                  "them was found in those extractions, so no message or transaction content "
                  "is reported by this module. Field mapping was done against three private samples provided by "
@@ -216,7 +218,11 @@ def revolut_app_state(context):
         rate_fetched = _single(rates, 'SELECT MAX(time_stamp) FROM rates_cache') if rates else ''
         rate_rows = _single(rates, 'SELECT COUNT(*) FROM mid_rates_cache') if rates else ''
         help_rows = _single(support, 'SELECT COUNT(*) FROM light_faq') if support else ''
-        help_language = _single(support, 'SELECT language FROM light_faq LIMIT 1') if support else ''
+        help_language = '; '.join(
+            f"{'(none)' if language is None else language} ({count})"
+            for language, count in _rows(support, '''SELECT language, COUNT(*) FROM light_faq
+                                                     GROUP BY language ORDER BY language''')
+        ) if support else ''
         node_rows = _single(support, 'SELECT COUNT(*) FROM pigeon_tree_node') if support else ''
         device_rows = _single(devices, 'SELECT COUNT(*) FROM devices') if devices else ''
 
@@ -231,7 +237,7 @@ def revolut_app_state(context):
             _ms(rate_fetched),
             str(rate_rows if rate_rows != '' else ''),
             str(help_rows if help_rows != '' else ''),
-            str(help_language or ''),
+            help_language,
             str(node_rows if node_rows != '' else ''),
             str(device_rows if device_rows != '' else ''),
             str(configuration.get('file_version', '')),
@@ -246,7 +252,7 @@ def revolut_app_state(context):
         ('Newest Rate Time Stamp', 'datetime'),
         'Cached Rate Rows',
         'Cached Help Articles',
-        'Help Language',
+        'Help Languages (rows)',
         'Cached Help Nodes',
         'Cached Device Catalogue Rows',
         'Configuration File Version',

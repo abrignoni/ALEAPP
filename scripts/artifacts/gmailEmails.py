@@ -4,13 +4,15 @@ __artifacts_v2__ = {
         "description": "Parses emails from Gmail",
         "author": "Alexis Brignoni, Patrick Dalla, @stark4n6; @AlexisBrignoni, Codex",
         "creation_date": "2023-01-04",
-        "last_update_date": "2026-10-06",
+        "last_update_date": "2026-10-09",
         "requirements": "BeautifulSoup",
         "category": "Email",
         "notes": "Recipient and Recipient Name are protobuf fields 1.2 and 1.3, Reply To and "
                  "Reply To Name are 11.17 and 11.15, Subject Line is 5, Mailed By is 11.8, Signed "
                  "by is 11.9 and Timestamp is field 17 read as Unix milliseconds. What Timestamp "
-                 "marks is not established. Protobuf field positions are "
+                 "marks is not established, and whether field 1 holds the recipient or the "
+                 "sender is not established; the Recipient headers are the module's own names. "
+                 "Protobuf field positions are "
                  "not documented and were assigned from the values seen on tested images; Mailed "
                  "By and Signed by reflect stored header values and are not verified against "
                  "Authentication-Results. An absent protobuf field 11 leaves its four header "
@@ -27,7 +29,10 @@ __artifacts_v2__ = {
                  "except copies under a .magisk mirror path, across every Android user of the "
                  "device, with duplicate storage spellings (data/data, data/user/<n>, "
                  "data_mirror) collapsed first and stores read in sorted path order. A message "
-                 "row with no stored protobuf is not reported, and a message with more than one "
+                 "row with no stored protobuf is not reported; a stored protobuf that cannot be "
+                 "decompressed or decoded is logged and not reported, and a decoded record with "
+                 "no usable field 17 keeps its row with a blank Timestamp (neither case was seen "
+                 "on a tested image). A message with more than one "
                  "attachment row appears once per attachment. Account ID is the numeric store id "
                  "as stored. The Account "
                  "column is filled only when the Java String.hashCode of an address recorded in "
@@ -279,10 +284,24 @@ def gmailEmails(context):
             if proto_blob is not None:
                 arreglo = bytearray(proto_blob)
                 arreglo = arreglo[1:]
-                decompressed_data = zlib.decompress(arreglo)
-                message, _typedef = decode_protobuf(decompressed_data)
+                try:
+                    decompressed_data = zlib.decompress(arreglo)
+                    message, _typedef = decode_protobuf(decompressed_data)
+                except Exception as ex:  # pylint: disable=broad-exception-caught
+                    # One undecodable record must not cost the store its other rows
+                    logfunc(f'Unable to decode a Gmail message record in {source_file[:240]!r} '
+                            f'for server id {str(row[1])[:80]!r}: {type(ex).__name__}; '
+                            'record not reported')
+                    continue
+                if not isinstance(message, dict):
+                    logfunc(f'Unrecognized Gmail message record in {source_file[:240]!r} '
+                            f'for server id {str(row[1])[:80]!r}; record not reported')
+                    continue
 
-                timestamp = (datetime.fromtimestamp(message['17'] / 1000, timezone.utc))
+                try:
+                    timestamp = (datetime.fromtimestamp(message['17'] / 1000, timezone.utc))
+                except (KeyError, TypeError, ValueError, OverflowError, OSError):
+                    timestamp = ''
             else:
                 continue
 
@@ -291,6 +310,8 @@ def gmailEmails(context):
             attachhash = row[16]
             attachment = ''
 
+            if not isinstance(message.get('1'), dict):
+                message = {key: value for key, value in message.items() if key != '1'}
             to = (message.get('1', '')).get('2', '') if '1' in message and '2' in message['1'] else '' #receiver
             if isinstance(to, bytes):
                 to = to.decode()

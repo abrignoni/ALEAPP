@@ -25,7 +25,7 @@ __artifacts_v2__ = {
             'folder named Vault in the extraction, matched by folder name only. The module does '
             'not check that the folder belongs to com.antivirus. The scheme follows the module '
             "author's write-up. Reference: theincidentalchewtoy, 'Decrypting the AVG Photo "
-            "Vault', https://theincidentalchewtoy.wordpress.com/2022/02/23/decrypting-the-avg- "
+            "Vault', https://theincidentalchewtoy.wordpress.com/2022/02/23/decrypting-the-avg-"
             'photo-vault/. No registered test image is recorded for this artifact.'
         ),
         "paths": ('*/com.antivirus/shared_prefs/PinSettingsImpl.xml', '*/Vault/*'),
@@ -61,7 +61,7 @@ __artifacts_v2__ = {
             'extraction, matched by folder name only. The module does not check that the folder '
             "belongs to com.antivirus. The key derivation follows the module author's write-up. "
             "Reference: theincidentalchewtoy, 'Decrypting the AVG Photo Vault', "
-            'https://theincidentalchewtoy.wordpress.com/2022/02/23/decrypting-the-avg-photo- '
+            'https://theincidentalchewtoy.wordpress.com/2022/02/23/decrypting-the-avg-photo-'
             'vault/. No registered test image is recorded for this artifact.'
         ),
         "paths": ('*/com.antivirus/shared_prefs/PinSettingsImpl.xml', '*/Vault/*'),

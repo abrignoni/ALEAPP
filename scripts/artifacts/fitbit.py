@@ -282,7 +282,12 @@ __artifacts_v2__ = {'get_fitbit_activity': {'name': 'Fitbit - Activity',
                                  'category': 'Fitbit',
                                  'notes': 'No sample_data is recorded for this artifact; its timestamps '
                                           'are read as Unix milliseconds without a tested sample, and '
-                                          'only the first matching database is read.',
+                                          'only the first matching database is read. Every selected '
+                                          'trackpoint in the table is drawn as one route in time order; '
+                                          'the query reads no session column, so the route is not split '
+                                          'by exercise session and can join points from separate '
+                                          'sessions. Latitude and Longitude are those of the first '
+                                          'selected trackpoint.',
                                  'paths': ('*/com.fitbit.FitbitMobile/databases/passive_stats.db*',),
                                  'output_types': 'standard',
                                  'artifact_icon': 'map'},

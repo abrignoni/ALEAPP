@@ -4,14 +4,15 @@ __artifacts_v2__ = {
         "description": "Parses the signed in Roblox account recorded by the Roblox Android client.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Roblox",
-        "notes": "Read from the LocalStorage appStorage.json key value store, with the user id, username "
-                 "and display name taken from appStorage.json and from shared_prefs prefs.xml only when "
-                 "appStorage.json holds none, so a disagreement between the two stores is not shown for "
-                 "those three fields. The app keeps the second copy in prefs.xml under userid_long, "
-                 "username and displayName. On the one device tested the two stores agreed on all three. "
+        "notes": "Read from the LocalStorage appStorage.json key value store. The user id, username "
+                 "and display name are reported from both stores that hold them, each in its own column: "
+                 "UserId, Username and DisplayName in appStorage.json, and userid_long, username and "
+                 "displayName in shared_prefs prefs.xml. A blank cell means that store held no value, and "
+                 "neither store's value is used to fill the other's column. "
+                 "On the one device tested the two stores agreed on all three. "
                  "Age and account fields come from the "
                  "PlayerHydrationBlob value in the same store. Two timestamp units appear inside that "
                  "one blob: originalAccountCreationTimestampMs is Unix milliseconds and lastPerformed in "
@@ -413,9 +414,12 @@ def roblox_account(context):
             _utc(hydration.get('lastPerformed')) if hydration.get('lastPerformed') else '',
             _utc(store['MobileAdvertisingIdCacheTime']) if store.get('MobileAdvertisingIdCacheTime') else '',
             _utc_ms(contact_ms),
-            store.get('UserId', '') or prefs.get('userid_long', ''),
-            store.get('Username', '') or prefs.get('username', ''),
-            store.get('DisplayName', '') or prefs.get('displayName', ''),
+            store.get('UserId', ''),
+            prefs.get('userid_long', ''),
+            store.get('Username', ''),
+            prefs.get('username', ''),
+            store.get('DisplayName', ''),
+            prefs.get('displayName', ''),
             store.get('IsUnder13', ''),
             prefs.get('under13', ''),
             hydration.get('ageBracket', ''),
@@ -441,7 +445,9 @@ def roblox_account(context):
         ('Hydration Last Performed Timestamp', 'datetime'),
         ('Advertising ID Cached Timestamp', 'datetime'),
         ('Contact Importer Sync Timestamp', 'datetime'),
-        'User ID', 'Username', 'Display Name',
+        'User ID (appStorage)', 'User ID (prefs.xml)',
+        'Username (appStorage)', 'Username (prefs.xml)',
+        'Display Name (appStorage)', 'Display Name (prefs.xml)',
         'Is Under 13 (appStorage)', 'Under 13 (prefs.xml)',
         'Age Bracket (as stored)', 'Gender (as stored)', 'Membership (as stored)',
         'Last Successful Sign In Method (as stored)', 'Credential Value',

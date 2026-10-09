@@ -27,11 +27,13 @@ __artifacts_v2__ = {
         "description": "Rows of the NETSTAT table of the SDHMS thermal_log database: a time window, package name, uid and net_usage as stored. More info: https://bebinary4n6.blogspot.com/2026/01/inside-android-samsung-dhms-extracting.html",
         "author": "Marco Neumann {kalinko@be-binary.de}, @AlexisBrignoni, Codex",
         "creation_date": "2026-01-10",
-        "last_update_date": "2026-10-06",
+        "last_update_date": "2026-10-09",
         "requirements": "",
         "category": "Samsung Device Health Management Service",
         "notes": "The post linked in the description describes net_usage as bytes transferred in the "
-                 "time window. Start Time and End Time are read as Unix milliseconds. Only the "
+                 "time window; that unit was not measured here, so the column is headed Net Usage "
+                 "(as stored). The uid column is reported as UID (as stored), without inferred "
+                 "package identity. Start Time and End Time are read as Unix milliseconds. Only the "
                  "distinct main databases are read. Known aliases collapse only when main/WAL/journal "
                  "bytes agree; conflicting states remain separate. Multi-input rows include their "
                  "evidence-relative Source File.",
@@ -51,7 +53,7 @@ __artifacts_v2__ = {
         "description": "SDHMS temperature log, one row per reading with each sensor column divided by 10. More info: https://bebinary4n6.blogspot.com/2026/01/inside-android-samsung-dhms-extracting.html",
         "author": "Marco Neumann {kalinko@be-binary.de}, @AlexisBrignoni, Codex",
         "creation_date": "2026-01-10",
-        "last_update_date": "2026-10-06",
+        "last_update_date": "2026-10-09",
         "requirements": "",
         "category": "Samsung Device Health Management Service",
         "notes": "Every distinct main database state is read; known canonical aliases collapse only when main/WAL/journal bytes agree. Conflicts remain separate. Combined inputs carry per-row evidence sources. The post linked in the description says the values are stored in degrees Celsius "
@@ -232,8 +234,8 @@ def sdhms_netstat(context):
                         ('End Time', 'datetime'),
                         'Entry ID',
                         'Package Name',
-                        'Package UID',
-                        'Network Usage'
+                        'UID (as stored)',
+                        'Net Usage (as stored)'
                     )
 
     if multiple_sources:
@@ -317,7 +319,7 @@ def sdhms_temperature(context):
     data_headers = (
                         ('Timestamp', 'datetime'),
                         'Chassis Temperature',
-                        'Processor Temperatur',
+                        'Processor Temperature',
                         'Battery Temperature',
                         'USB Temperature',
                         'Charging IC Temperature',

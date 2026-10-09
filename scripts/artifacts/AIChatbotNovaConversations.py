@@ -10,11 +10,11 @@ __artifacts_v2__ = {
         ),
         "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-05-30",
-        "last_update_date": "2026-10-05",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "AI Chatbot - Nova",
         "notes": (
-            "Original parser/research: Guilherme Guilherme. Scope describes the source evidence path, not ownership of a recorded device path. Sources: chat-ai.db and Android MediaStore databases. Case-insensitive filename candidates retain source and Android user/evidence scope; they do not establish attachment identity. Only a unique same-scope filesystem filename candidate with no unknown-scope collision is rendered as Media Candidate, with its physical evidence source shown. The AI Model and Assistant Persona names are mapped from the numeric codes as observed in the app by the author; the mapping is not vendor-documented, so the stored code is shown beside every name and an unmapped code is reported as stored. Role reads type 0 as USER and 1 as AI ASSISTANT, and Conv. Deleted reads DELETED when softDeleted is 1, on the same basis; what softDeleted records about the conversation is not established. Attachment URLs are concatenated by SQLite and split on commas, so a URL containing a comma would split wrong; only the first image attachment is rendered as media. An extraction can carry one copy of each database per Android user and every copy is read, so the located at line lists each database and the row identifiers are per database. The committed test case carries no file under the app's shared media folder and no link record, so Media Candidate and Link URL(s) have no value in the author reference; Image MediaStore Candidate Paths is blank throughout. Developed against the author's own installation; no registered corpus image carries this app."
+            "Original parser/research: Guilherme Guilherme. Scope describes the source evidence path, not ownership of a recorded device path. Sources: chat-ai.db and Android MediaStore databases. Case-insensitive filename candidates retain source and Android user/evidence scope; they do not establish attachment identity. Only a unique same-scope filesystem filename candidate with no unknown-scope collision is rendered as Media Candidate, with its physical evidence source shown. The AI Model and Assistant Persona names are mapped from the numeric codes as observed in the app by the author; the mapping is not vendor-documented, so the stored code is shown beside every name and an unmapped code is reported as stored. Role reads type 0 as USER and 1 as AI ASSISTANT, and Conv. Deleted reads DELETED when softDeleted is 1, on the same basis; what softDeleted records about the conversation is not established. Token (as stored) is the message's token column as stored; what it counts is not established. Image URL (as stored) and Document URL (as stored) are the url columns of the image and document records as stored and do not establish where a file is held. Attachment URLs are concatenated by SQLite and split on commas, so a URL containing a comma would split wrong; only the first image attachment is rendered as media. An extraction can carry one copy of each database per Android user and every copy is read, so the located at line lists each database and the row identifiers are per database. The committed test case carries no file under the app's shared media folder and no link record, so Media Candidate and Link URL(s) have no value in the author reference; Image MediaStore Candidate Paths is blank throughout. Developed against the author's own installation; no registered corpus image carries this app."
         ),
         "paths": (
             "**/com.scaleup.chatai/databases/chat-ai.db",
@@ -231,16 +231,16 @@ def nova_chatbot_conversations(context):
     headers = (
         ("Message Timestamp (UTC)", "datetime"), "Conv. ID", "Conv. UUID", "Conv. Title",
         "AI Model", "Assistant Persona", "Conv. Deleted", "Msg. ID", "Msg. UUID", "Role",
-        "Message Text", "Token Count", "Reasoning Content", "Image Attachment Prompts",
+        "Message Text", "Token (as stored)", "Reasoning Content", "Image Attachment Prompts",
         ("Image Media Candidate", "media"), "Image Media Candidate Source",
         "Image MediaStore Candidate Paths", "Image MediaStore Candidate Sources",
         "Image MediaStore Match Scope", "Image Filesystem Candidate Paths",
-        "Image Filesystem Candidate Sources", "Image Filesystem Match Scope", "Image Cloud URL",
+        "Image Filesystem Candidate Sources", "Image Filesystem Match Scope", "Image URL (as stored)",
         "Document Name", ("Document Media Candidate", "media"), "Document Media Candidate Source",
         "Document MediaStore Candidate Paths", "Document MediaStore Candidate Sources",
         "Document MediaStore Match Scope", "Document Filesystem Candidate Paths",
         "Document Filesystem Candidate Sources", "Document Filesystem Match Scope",
-        "Document Cloud URL", "Link URL(s)", "Source File"
+        "Document URL (as stored)", "Link URL(s)", "Source File"
     )
 
     rows = []

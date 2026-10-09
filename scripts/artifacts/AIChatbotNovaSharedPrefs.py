@@ -27,7 +27,7 @@ __artifacts_v2__ = {
         "description": "Extracts payment profile and installation metadata from AdaptySDKPrefs.xml.",
         "author": "Guilherme Guilherme, @AlexisBrignoni, Codex",
         "creation_date": "2026-05-30",
-        "last_update_date": "2026-10-05",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "AI Chatbot - Nova",
         "notes": (
@@ -35,7 +35,7 @@ __artifacts_v2__ = {
             "LAST_SENT_INSTALLATION_META, and from an entry named "
             "get_purchaser_info_response or PROFILE the is_test_user, total_revenue_usd, "
             "oldAppInstanceId and paywallType values of its JSON. Blank selected-field cells "
-            "mean the attribute was absent from the JSON or null; stored text None is retained. An extraction can "
+            "mean the attribute was absent from the JSON or null, a null installation member is blank as well, and stored text None is retained. An extraction can "
             "carry one copy of this file per Android user, and every copy is read. "
             "Developed against the author's own installation; no registered corpus image "
             "carries this app. The committed test case is the author's own extraction of "
@@ -150,7 +150,7 @@ def get_nova_adapty_prefs(context):
 
             if name == "LAST_SENT_INSTALLATION_META":
                 for k, v in json.loads(value).items():
-                    data_list.append(("Installation Meta", k, str(v)))
+                    data_list.append(("Installation Meta", k, "" if v is None else str(v)))
             elif name in ["get_purchaser_info_response", "PROFILE"]:
                 p_data = json.loads(value)
                 attrs = p_data.get("data", p_data).get("attributes", p_data)
