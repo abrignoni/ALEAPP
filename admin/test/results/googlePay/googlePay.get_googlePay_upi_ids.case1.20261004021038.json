@@ -1,0 +1,62 @@
+{
+  "metadata": {
+    "module_name": "googlePay",
+    "artifact_name": "Google Pay UPI IDs",
+    "function_name": "get_googlePay_upi_ids",
+    "case_number": "case1",
+    "number_of_columns": 10,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 149,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\googlePay\\testdata.googlePay.get_googlePay_upi_ids.case1.zip",
+    "start_time": "2026-10-04T02:10:38.330157+00:00",
+    "end_time": "2026-10-04T02:10:38.418016+00:00",
+    "run_time_seconds": 0.003509044647216797,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-04T07:40:38.405150",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Last Seen",
+    "UPI ID",
+    "Name",
+    "Name at Bank",
+    "Masked Phone",
+    "Kind",
+    "Device Owner",
+    "Cards",
+    "Payments",
+    "First Seen"
+  ],
+  "data": [
+    [
+      1735776000,
+      "alice.test@upi",
+      "Alice Test",
+      "Test Bank",
+      "+91 ******1001",
+      "Person",
+      "Yes",
+      2,
+      2,
+      1735689600
+    ],
+    [
+      1735776000,
+      "bob.test@upi",
+      "Bob Test",
+      "Test Bank",
+      "+91 ******1002",
+      "Person",
+      "",
+      2,
+      2,
+      1735689600
+    ]
+  ]
+}

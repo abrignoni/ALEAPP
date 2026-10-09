@@ -133,7 +133,7 @@ def process_artifact(zip_path, module_name, artifact_name, _artifact_data, targe
     all_files = []
 
     # Create the base temp directory if it doesn't exist
-    base_temp_dir = Path('admin/test/temp')
+    base_temp_dir = Path('admin/test/temp').resolve()
     base_temp_dir.mkdir(parents=True, exist_ok=True)
 
     # Create a unique temporary directory within the base temp directory

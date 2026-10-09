@@ -1,0 +1,47 @@
+{
+  "case1": {
+    "description": "",
+    "maker": "",
+    "make_data": {
+      "input_data_path": "googlepay_test_input.zip",
+      "os": "Windows-10-10.0.26300-SP0",
+      "timestamp": "2026-10-04T07:27:56.626016",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-04T07:27:54.923555",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "get_googlePay_transactions": {
+        "search_patterns": [
+          "*/com.google.android.apps.nbu.paisa.user/files/.mfca/sessions/*/conversation/data.db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_googlePay_upi_ids": {
+        "search_patterns": [
+          "*/com.google.android.apps.nbu.paisa.user/files/.mfca/sessions/*/conversation/data.db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_googlePay_people": {
+        "search_patterns": [
+          "*/com.google.android.apps.nbu.paisa.user/files/accounts/*/PaisaUserDatabase.db*"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      }
+    }
+  }
+}
