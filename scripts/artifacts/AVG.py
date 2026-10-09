@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Reports independently sourced vault candidate key/settings observations",
         "author": "@Theincidentalchewtoy, @AlexisBrignoni, Codex",
         "creation_date": "2022-05-03",
-        "last_update_date": "2026-10-05",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Encrypting Media Apps",
         "notes": (
@@ -26,7 +26,7 @@ __artifacts_v2__ = {
             'not check that the folder belongs to com.antivirus. The scheme follows the module '
             "author's write-up. Reference: theincidentalchewtoy, 'Decrypting the AVG Photo "
             "Vault', https://theincidentalchewtoy.wordpress.com/2022/02/23/decrypting-the-avg-"
-            'photo-vault/. No registered test image is recorded for this artifact.'
+            'photo-vault/. The write-up names the .thumbnail and .mid_picture folders. This module also accepts .mid_pictures and decrypts only files in a folder named pictures; that folder name is not in the write-up. No registered test image is recorded for this artifact.'
         ),
         "paths": ('*/com.antivirus/shared_prefs/PinSettingsImpl.xml', '*/Vault/*'),
         "output_types": "standard",
@@ -37,7 +37,7 @@ __artifacts_v2__ = {
         "description": "Reports root-local media decoded with a unique key candidate, with explicit metadata association status",
         "author": "@Theincidentalchewtoy, @AlexisBrignoni, Codex",
         "creation_date": "2022-05-03",
-        "last_update_date": "2026-10-05",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Encrypting Media Apps",
         "notes": (
@@ -62,7 +62,7 @@ __artifacts_v2__ = {
             "belongs to com.antivirus. The key derivation follows the module author's write-up. "
             "Reference: theincidentalchewtoy, 'Decrypting the AVG Photo Vault', "
             'https://theincidentalchewtoy.wordpress.com/2022/02/23/decrypting-the-avg-photo-'
-            'vault/. No registered test image is recorded for this artifact.'
+            'vault/. The write-up names the .thumbnail and .mid_picture folders. This module also accepts .mid_pictures and decrypts only files in a folder named pictures; that folder name is not in the write-up. No registered test image is recorded for this artifact.'
         ),
         "paths": ('*/com.antivirus/shared_prefs/PinSettingsImpl.xml', '*/Vault/*'),
         "output_types": "standard",
@@ -73,7 +73,7 @@ __artifacts_v2__ = {
         "description": "Lists located vault and settings source candidates, byte-identical storage aliases and unresolved key or metadata ambiguity",
         "author": "@Theincidentalchewtoy, @AlexisBrignoni, Codex",
         "creation_date": "2026-10-05",
-        "last_update_date": "2026-10-05",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Encrypting Media Apps",
         "notes": (
@@ -106,6 +106,10 @@ from scripts.artifacts.storagePathViews import canonical_path
 from scripts.ilapfuncs import artifact_processor, logfunc, check_in_embedded_media
 
 _CACHE = {}
+
+# The cited write-up names .thumbnail and .mid_picture. The pictures and
+# .mid_pictures names are this module's own and are not in the write-up.
+_MEDIA_FOLDERS = ('.mid_picture', '.mid_pictures', '.thumbnail', 'pictures')
 
 
 def interpret_key_file(key_path):
@@ -164,9 +168,7 @@ def _compute_avg(files_found):
             pin_settings_file = file_found
         if dirname(file_found).endswith('.metadata_store'):
             meta_data_file = file_found
-        if (dirname(file_found).endswith('.mid_pictures')
-                or dirname(file_found).endswith('.thumbnail')
-                or dirname(file_found).endswith('pictures')):
+        if basename(dirname(file_found)) in _MEDIA_FOLDERS:
             file_list.append(file_found)
 
     master_iv = first_encrypted = second_encrypted = None
@@ -241,7 +243,7 @@ def _compute_avg(files_found):
     if file_list and master_key is not None:
         for vault_file in file_list:
             # Only the full-size pictures are reported; thumb/mid variants are skipped
-            if not dirname(vault_file).endswith('pictures'):
+            if basename(dirname(vault_file)) != 'pictures':
                 continue
             try:
                 with open(vault_file, 'rb') as current_file:
@@ -301,7 +303,7 @@ def _vault_inputs(context):
         role = ('settings' if basename(source) == 'PinSettingsImpl.xml'
                 else 'key' if folder.endswith('.key_store')
                 else 'metadata' if folder.endswith('.metadata_store')
-                else 'media' if folder.endswith(('.mid_pictures', '.thumbnail', 'pictures'))
+                else 'media' if folder in _MEDIA_FOLDERS
                 else 'other')
         entry.update(source=source, relative=relative, root=root, folder=folder, role=role,
                      aliases=[p[1] for p in paths])

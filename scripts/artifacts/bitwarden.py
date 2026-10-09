@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Parses the account profile stored by the Bitwarden Android password manager.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-30",
-        "last_update_date": "2026-08-30",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Bitwarden",
         "notes": "One row per reported account setting, read from the plain text preferences file "
@@ -39,7 +39,10 @@ __artifacts_v2__ = {
                  "https://bitwarden.com/help/bitwarden-security-white-paper/). At bitwarden/android "
                  "59d0faaf1266a03ccddc2809332cfa9c95393f78 the app writes the keyHash and "
                  "localUserDataKey entries with a plain putString call (AuthDiskSourceImpl.kt lines 522 "
-                 "and 275), so both are present in this preferences file as stored. This artifact does "
+                 "and 275). At the same commit that call writes to the preferences instance "
+                 "AuthDiskModule.kt injects as UnencryptedPreferences (line 29), which "
+                 "PreferenceModule.kt opens as <package name>_preferences in private mode (lines 29 "
+                 "to 35), so both are present in this preferences file as stored. This artifact does "
                  "not output that material, but it can be read directly from the same preferences file: "
                  "the master password hash is the keyHash_<user id> entry, the unlock salt is under "
                  "masterPasswordUnlock.salt in the profile, and a wrapped key is stored in the "
