@@ -1,0 +1,21 @@
+{
+  "report": "DF020_Reports\\dji_txt_final\\ALEAPP_Output_2026-10-05_Monday_151641",
+  "html_row_limit": 60000,
+  "DJI Drone - TXT Flight Log Summary.tsv": 3,
+  "DJI Drone - TXT Flight Records.tsv": 54655,
+  "DJI Drone - TXT Flight Records.kml": 10403,
+  "tl.db": {
+    "data": 54658
+  },
+  "_lava_artifacts.db": {
+    "_artifact_search_patterns": 10,
+    "_file_path_list": 3,
+    "_artifact_pattern_to_file": 6,
+    "_lava_media_items": 0,
+    "_lava_media_references": 0,
+    "djiflightrecordtxtrecords": 54655,
+    "djiflightrecordtxtsummary": 3
+  },
+  "lava_manifest_readable": true,
+  "lava_visual_review": "Pending user check in LAVA application"
+}
