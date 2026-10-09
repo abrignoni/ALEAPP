@@ -1,7 +1,7 @@
 {
   "metadata": {
     "module_name": "Spotify",
-    "artifact_name": "Spotify - Now Playing View",
+    "artifact_name": "Spotify - Cached Color-Lyrics Responses",
     "function_name": "spotify_now_playing_view",
     "case_number": "case1",
     "number_of_columns": 4,
