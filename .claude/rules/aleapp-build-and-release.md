@@ -83,10 +83,10 @@ On Windows, `release.yml` signs with SignPath through its GitHub action, not wit
 which is how it checks the binary was built from this repository on GitHub's runners, so
 nothing on the build machine can sign. Windows releases ship only the single-file
 `dist/aleapp.exe`, so it is the one file sent, in one request, as `aleapp.exe`. The
-artifact configuration SignPath applies, `portable`, is kept in `packaging/signpath/` and
-must be edited there and in SignPath together. Signing appends to the executable and the
-single file finds its archive by reading from its end, so it is smoke-tested again once
-signed. `build.py installer --sign-tool` still works on Windows for a local build;
+artifact configuration SignPath applies, `aleapp-portable`, is kept in
+`packaging/signpath/` and must be edited there and in SignPath together. Signing appends
+to the executable and the single file finds its archive by reading from its end, so it is
+smoke-tested again once signed. `build.py installer --sign-tool` still works on Windows for a local build;
 releases do not use it.
 
 ## What the driver guarantees

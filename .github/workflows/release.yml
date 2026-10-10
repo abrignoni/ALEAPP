@@ -185,7 +185,7 @@ jobs:
         shell: bash
         run: python packaging/build.py smoke --onefile
 
-      # Staged under the name packaging/signpath/portable.xml expects.
+      # Staged under the name packaging/signpath/aleapp-portable.xml expects.
       - name: Windows, stage the executable for signing
         if: runner.os == 'Windows' && env.WINDOWS_SIGN == 'yes'
         shell: bash
@@ -215,7 +215,7 @@ jobs:
           organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
           project-slug: ${{ vars.SIGNPATH_PROJECT_SLUG }}
           signing-policy-slug: ${{ vars.SIGNPATH_SIGNING_POLICY }}
-          artifact-configuration-slug: portable
+          artifact-configuration-slug: aleapp-portable
           github-artifact-id: ${{ steps.unsigned-portable.outputs.artifact-id }}
           wait-for-completion: true
           wait-for-completion-timeout-in-seconds: 1200

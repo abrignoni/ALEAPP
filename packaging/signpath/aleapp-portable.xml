@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  SignPath artifact configuration "portable", pasted into the ALEAPP repository.
+  SignPath artifact configuration for portable version of ALEAPP.
   SignPath uses its own copy, so edit both in case of changes.
 
   release.yml uploads the single-file Windows executable as one GitHub artifact, which
-  GitHub zips, with aleapp.exe at its root. Third-party files packed inside it are not
-  signed on their own.
+  GitHub zips, with aleapp.exe at its root.
 -->
 <artifact-configuration xmlns="http://signpath.io/artifact-configuration/v1">
   <zip-file>
