@@ -13,8 +13,8 @@ or [LEAPPs Releases](https://leapps.org/releases) for the whole LEAPP family.
 
 | Platform | Download |
 | -------- | -------- |
-| Windows (Intel/AMD) | `ALEAPP-*-windows-x64-setup.exe` (installer) or `ALEAPP-*-windows-x64-portable.zip` |
-| Windows (ARM) | `ALEAPP-*-windows-arm64-setup.exe` or `ALEAPP-*-windows-arm64-portable.zip` |
+| Windows (Intel/AMD) | `ALEAPP-*-windows-x64-portable.zip` |
+| Windows (ARM) | `ALEAPP-*-windows-arm64-portable.zip` |
 | macOS (Apple Silicon) | `ALEAPP-*-macos-arm64.dmg` |
 | macOS (Intel) | `ALEAPP-*-macos-x64.dmg` |
 | Linux (Intel/AMD) | `ALEAPP-*-linux-x64.AppImage` |
@@ -22,13 +22,12 @@ or [LEAPPs Releases](https://leapps.org/releases) for the whole LEAPP family.
 
 Each download holds one program, `aleapp`. `SHA256SUMS.txt` in each release lets you check a download.
 
-**GUI**: open ALEAPP the usual way: from the Start menu after installing on Windows, by
-double-clicking `aleapp.exe` in the portable folder, ALEAPP in Applications on macOS, or
-the AppImage on Linux. Started without arguments, it opens the window.
+**GUI**: open ALEAPP the usual way: by double-clicking `aleapp.exe` from the zip on
+Windows, ALEAPP in Applications on macOS, or the AppImage on Linux. Started without
+arguments, it opens the window.
 
 **CLI**: give `aleapp` arguments in a terminal and it runs as a command line instead. The
-output folder must already exist. On Windows, keep `aleapp.exe` in its folder with the
-files beside it.
+output folder must already exist. On Windows, use `aleapp.exe` from the zip.
 
 ```
 aleapp.exe -t zip -i C:\path\to\extraction.zip -o C:\path\to\output\

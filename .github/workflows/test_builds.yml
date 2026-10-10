@@ -1,7 +1,8 @@
 name: Test builds
 
 # Builds ALEAPP with packaging/build.py on every platform and architecture it ships for,
-# runs what came out, builds each platform's installer, and uploads the lot. Nothing here
+# runs what came out, builds what each platform ships (an installer on macOS and Linux,
+# the single-file executable on Windows), and uploads the lot. Nothing here
 # is a release; release.yml runs the same steps when a version tag is pushed. It exists so
 # every platform's build is produced and actually executed, without anyone owning the
 # hardware.
@@ -95,13 +96,18 @@ jobs:
             python packaging/build.py smoke
           fi
 
-      - name: Phase 2, the installer (Windows)
+      # Windows ships only the single-file executable, in its portable zip; see release.yml.
+      # The folder build above is still made and smoke-tested here, and costs no signing.
+      # Nothing here is signed: signing is release.yml's, with SignPath.
+      - name: Phase 1, the single-file executable (Windows)
         if: runner.os == 'Windows'
         shell: bash
-        run: |
-          choco install innosetup --no-progress -y
-          python packaging/build.py installer
-          ls -l dist/ALEAPP-Setup-*.exe
+        run: python packaging/build.py exe --onefile
+
+      - name: Smoke test the single-file executable (Windows)
+        if: runner.os == 'Windows'
+        shell: bash
+        run: python packaging/build.py smoke --onefile
 
       - name: Phase 2, the disk image (macOS)
         if: runner.os == 'macOS'
@@ -118,7 +124,7 @@ jobs:
           python packaging/build.py installer
           ls -l dist/ALEAPP-*.AppImage
 
-      # Windows and Linux ship the one-folder build as well as their installer.
+      # The one-folder build, with Windows' single-file executable and Linux's AppImage.
       - name: Upload the build (Windows, Linux)
         if: runner.os != 'macOS'
         uses: actions/upload-artifact@v7
@@ -126,7 +132,7 @@ jobs:
           name: aleapp-${{ matrix.name }}-test
           path: |
             dist/ALEAPP/
-            dist/ALEAPP-Setup-*.exe
+            dist/aleapp.exe
             dist/ALEAPP-*.AppImage
           retention-days: 14
           if-no-files-found: error
