@@ -78,6 +78,17 @@ phase 2, or the installer ships an unsigned executable inside a signed wrapper. 
 refuses `--sign-tool` for exactly that reason. `verify` is the last step before anything is
 uploaded.
 
+On Windows, `release.yml` signs with SignPath through its GitHub action, not with
+`--sign-tool`: SignPath signs only what a workflow stored as an artifact of its own run,
+which is how it checks the binary was built from this repository on GitHub's runners, so
+nothing on the build machine can sign. Windows releases ship only the single-file
+`dist/aleapp.exe`, so it is the one file sent, in one request, as `aleapp.exe`. The
+artifact configuration SignPath applies, `portable`, is kept in `packaging/signpath/` and
+must be edited there and in SignPath together. Signing appends to the executable and the
+single file finds its archive by reading from its end, so it is smoke-tested again once
+signed. `build.py installer --sign-tool` still works on Windows for a local build;
+releases do not use it.
+
 ## What the driver guarantees
 
 The version is read from `scripts/version_info.py` as text and passed to the spec and to
@@ -110,8 +121,17 @@ executable.
 
 ## What is and is not wired up
 
-Windows (x64 and ARM64): the folder build and an Inno Setup installer, which on ARM64
-installs only on ARM64. macOS (Apple silicon and Intel): `.app` and `.dmg`, laid out by
+Windows (x64 and ARM64): releases ship only a `--onefile` build, zipped alone as the
+portable download so it keeps the name `aleapp.exe` that the docs and calling tools use.
+There is no installer since 2026-10-10: it was a second file to sign, as well as the
+folder build inside it. The cost is that the single file
+unpacks itself to `%TEMP%` on every start, so it is slower to start and blocked where
+AppLocker or WDAC forbid running programs from `%TEMP%`; the footer sends those users to
+the source. Rehearsals dispatched by hand are signed too; `test_builds.yml` signs
+nothing. The portable zip used to hold the folder
+build, whose `_internal` directory confused users. The Inno Setup script and
+`build.py installer` remain for local builds, the installer on ARM64 installing only on
+ARM64. macOS (Apple silicon and Intel): `.app` and `.dmg`, laid out by
 dmgbuild from `packaging/dmg_settings.py` on `packaging/dmg_background.png` (960x540; the
 settings place the icons either side of its arrow). The background of 2026-10-01 moved the
 arrow 44 points right, to a centre at x=479, and the icons with it, from (260, 290) and
@@ -126,16 +146,43 @@ pinned by digest in `build.py`. Linux builds are made on Ubuntu 22.04 for its gl
 requests that touch packaging or the requirements.
 
 `release.yml` runs the same steps when a `v*` tag is pushed, refuses a tag that is not
-`v` + `leapp_version`, names the assets `ALEAPP-<version>-<platform>-<arch>` (setup.exe and
-portable.zip on Windows, .dmg on macOS, .AppImage on Linux; no Linux .tar.gz), gathers them
+`v` + `leapp_version`, names the assets `ALEAPP-<version>-<platform>-<arch>` (portable.zip
+on Windows, .dmg on macOS, .AppImage on Linux; no Linux .tar.gz), gathers them
 in `release-assets/` (never `assets/`, which holds the window's images), adds
 `SHA256SUMS.txt`, and creates a **draft** release. `.github/release-footer.md` is appended
 to the notes. macOS is signed with a Developer ID, smoke-tested again as signed, notarised
 and stapled, using the `MACOS_CERT_P12`, `MACOS_CERT_PASSWORD`, `MACOS_SIGN_IDENTITY`,
 `MACOS_TEAM_ID`, `MACOS_NOTARY_KEY`, `MACOS_NOTARY_KEY_ID` and `MACOS_NOTARY_ISSUER_ID`
 secrets. A tag refuses to publish without them, checked before building; a dispatched
-rehearsal builds unsigned. Windows signing is not wired.
+rehearsal builds unsigned.
+
+Windows is signed by SignPath when the `SIGNPATH_API_TOKEN` repository secret is set. The
+job carries `actions: read` so SignPath can download the uploaded artifact, and the SignPath
+GitHub App (github.com/apps/signpath) must be installed on the repository: SignPath's
+documentation calls it optional, but without it every request fails with "Failed to
+retrieve GitHub App token" (seen on iLEAPP, 2026-10-10). Only the owner of this
+personal-account repository can install it. Repository variables:
+`SIGNPATH_ORGANIZATION_ID`, `SIGNPATH_PROJECT_SLUG`, `SIGNPATH_SIGNING_POLICY`
+(`test-signing` or `release-signing`), `SIGNPATH_CERT_SUBJECT` (optional, passed to
+`verify --subject`) and, under `test-signing`, `SIGNPATH_TEST_CERT_B64`, the root of the
+test certificate's chain as a base64 `.cer`, which only the runner is told to trust so
+`verify` still checks a chain. A test-signed binary is trusted by no Windows, so a tag
+signs only under `release-signing`; under any other policy, or without the token, a tag
+builds unsigned and says so in a warning, as releases did before signing was wired. A
+rehearsal signs under whichever policy is set. When `release-signing` is in place, change
+the footer's "not signed yet" paragraph and the README's code signing policy, and make a
+tag refuse an unsigned Windows build the way macOS does, since the footer will then
+promise a signature.
+
+A repository secret is usable by a workflow on any branch of this repository, though
+never by a pull request from a fork. Before `release-signing`, SignPath should require a
+manual approval of each request, which shows the branch and commit it came from. The
+owner can go further: rulesets requiring a pull request on `main` and restricting who
+creates `v*` tags, and a `release` environment admitting only those refs, holding the
+token, with `environment: release` on the build job. Only the owner can create
+environments and rulesets on this personal-account repository.
 
 These names replaced the per-program downloads (`aleappGUI-v*-Windows_x86_64.zip` and the
 like). Tools that run `aleapp` from a release are told in the footer what changed for them:
-on Windows and macOS the executable needs its folder, and `aleappGUI` is gone.
+the Windows zip holds one file and there is no Windows installer, the macOS executable
+needs its folder, and `aleappGUI` is gone.
