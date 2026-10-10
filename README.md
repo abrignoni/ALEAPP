@@ -317,6 +317,9 @@ repository by GitHub Actions, on GitHub-hosted runners
 what that workflow built. The macOS disk images are signed separately, with an Apple
 Developer ID, and notarised by Apple.
 
+Only files built from this repository are signed under this policy. Third-party files
+bundled in a download are not signed on their own.
+
 ### Team roles
 
 - Committers and reviewers: [@abrignoni](https://github.com/abrignoni),
