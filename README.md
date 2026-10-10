@@ -301,6 +301,42 @@ If your extraction cannot be shared, open the PR anyway and say so. A fixture ca
 cut from a public research image instead, or the real file can be sanitized by hand. The
 review does not stop while we work that out.
 
+## Code signing policy
+
+Free code signing provided by [SignPath.io](https://about.signpath.io/), certificate by
+[SignPath Foundation](https://signpath.org/).
+
+The Windows builds are not signed yet. ALEAPP is applying to SignPath Foundation's free code
+signing program for open source projects, and this policy applies to every Windows release
+signed under it.
+
+The Windows executables and installers attached to
+[GitHub Releases](https://github.com/abrignoni/ALEAPP/releases) are built from this
+repository by GitHub Actions, on GitHub-hosted runners
+([`release.yml`](.github/workflows/release.yml)). Under this policy, SignPath signs only
+what that workflow built. The macOS disk images are signed separately, with an Apple
+Developer ID, and notarised by Apple.
+
+### Team roles
+
+- Committers and reviewers: [@abrignoni](https://github.com/abrignoni),
+  [@JamesHabben](https://github.com/JamesHabben),
+  [@Johann-PLW](https://github.com/Johann-PLW), [@stark4n6](https://github.com/stark4n6)
+- Approvers: [@abrignoni](https://github.com/abrignoni),
+  [@Johann-PLW](https://github.com/Johann-PLW)
+
+Changes proposed by people who are not committers are reviewed by a committer before they
+are merged. Every release signing request is approved by an approver.
+
+### Privacy policy
+
+ALEAPP processes extractions locally, on the machine it runs on. This program will not
+transfer any information to other networked systems unless specifically requested by the
+user or the person installing or operating it.
+
+The same policy covers the other LEAPPs:
+[leapps.org/releases#code-signing-policy](https://leapps.org/releases#code-signing-policy).
+
 ## Acknowledgements
 
 This tool is the result of a collaborative effort of many people in the DFIR community.
