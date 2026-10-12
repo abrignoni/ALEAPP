@@ -17,10 +17,10 @@
     "artifacts": {
       "get_chromeDownloadMediaStore": {
         "search_patterns": [
-          "*/app_chrome/*/History*",
-          "*/app_sbrowser/*/History*",
+          "*/app_chrome/Default/History*",
+          "*/app_sbrowser/Default/History*",
           "*/app_opera/History*",
-          "*/app_webview/*/History*",
+          "*/app_webview/Default/History*",
           "*/com.google.android.providers.media.module/databases/external*.db*",
           "*/com.android.providers.media.module/databases/external*.db*",
           "*/com.android.providers.media/databases/external*.db*"

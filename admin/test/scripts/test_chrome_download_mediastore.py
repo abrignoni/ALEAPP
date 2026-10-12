@@ -148,7 +148,7 @@ class CorrelationTests(unittest.TestCase):
         history(self.root, "History")
         media(self.root)
         row, = self.parse()
-        self.assertEqual(row["Correlation Status"], "Android user scope unavailable")
+        self.assertEqual(row["Correlation Status"], "Android user not determined from the History path")
 
     def test_explicit_uri_user_is_used(self):
         uri = "content://10@media/external/downloads/7001"
@@ -222,7 +222,23 @@ class CorrelationTests(unittest.TestCase):
                       "content://media/external/downloads/999999999999999999999999",
                       "content://downloads/public_downloads/7001"):
             with self.subTest(uri=value):
-                self.assertIsNone(parser._media_uri(value))
+                self.assertIsNone(parser._media_uri(value))  # pylint: disable=protected-access
+
+    def test_download_without_media_uri_is_not_reported(self):
+        path = "/storage/emulated/0/Download/a.jpg"
+        history(self.root, current_path=path, target_path=path)
+        history(self.root, "data/user/0/org.example.other/app_chrome/Default/History",
+                current_path="", target_path="")
+        media(self.root)
+        self.assertEqual(self.parse(), [])
+
+    def test_timestamp_columns_lead(self):
+        history(self.root)
+        media(self.root)
+        row, = self.parse()
+        self.assertEqual(list(row)[:4], ["Start Time", "End Time", "MediaStore Date Added",
+                                         "MediaStore Date Modified"])
+        self.assertEqual(str(row["MediaStore Date Added"]), "2024-09-01 20:37:55+00:00")
 
     def test_input_bytes_are_unchanged(self):
         files = [history(self.root), media(self.root)]
@@ -251,6 +267,10 @@ class CorrelationTests(unittest.TestCase):
         history(self.root)
         media(self.root)
         output = self.root / "output"
+        # OutputParameters stores the log paths on the class, so put them back afterwards
+        # or every later test logs into this test's removed folder.
+        log_paths = (ilapfuncs.OutputParameters.screen_output_file_path,
+                     ilapfuncs.OutputParameters.screen_output_file_path_devinfo)
         params = ilapfuncs.OutputParameters(str(output), "integration")
         Context.set_output_params(params)
         Context.set_data_folder(str(self.root))
@@ -259,7 +279,8 @@ class CorrelationTests(unittest.TestCase):
         files = EvidenceContext(self.root).get_files_found()
         lavafuncs.initialize_lava(str(self.root), params.output_folder_base, "fs")
         try:
-            _, rows, _ = parser.get_chromeDownloadMediaStore(files, str(report), object(), False)
+            _, rows, _ = parser.get_chromeDownloadMediaStore(  # pylint: disable=too-many-function-args
+                files, str(report), object(), False)
             self.assertEqual(len(rows), 1)
             lavafuncs.lava_db.commit()
             tables = lavafuncs.lava_db.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()
@@ -277,7 +298,10 @@ class CorrelationTests(unittest.TestCase):
             lavafuncs.lava_db.close()
             lavafuncs.lava_db = None
             ilapfuncs.close_screen_log()
+            (ilapfuncs.OutputParameters.screen_output_file_path,
+             ilapfuncs.OutputParameters.screen_output_file_path_devinfo) = log_paths
             Context.clear()
+            Context.set_output_params(None)
             Context.set_data_folder(None)
 
 

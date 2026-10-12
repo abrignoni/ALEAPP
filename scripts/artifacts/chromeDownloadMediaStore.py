@@ -4,7 +4,7 @@ __artifacts_v2__ = {
     "get_chromeDownloadMediaStore": {
         "name": "Chromium Downloads - MediaStore Correlation",
         "description": "Links Chromium download records to MediaStore file metadata by content URI and row ID.",
-        "author": "ALEAPP Contributors",
+        "author": "@ForensikITGmbH",
         "creation_date": "2026-10-12",
         "last_update_date": "2026-10-12",
         "requirements": "none",
@@ -18,22 +18,48 @@ __artifacts_v2__ = {
             "File metadata is the MediaStore record at acquisition, not proof of file existence or "
             "unchanged content at download time. Size comparison is not a hash comparison. State "
             "retains the stored Chromium value. Start/End Time are Chromium microseconds since "
-            "1601-01-01 UTC; MediaStore dates are Unix seconds. Direct filesystem paths and "
-            "unresolved records are retained. References: "
+            "1601-01-01 UTC; MediaStore dates are Unix seconds. Only downloads whose target or "
+            "current path is a content://media/<volume>/downloads/<id> URI are reported. A URI "
+            "naming the internal volume is not reported, because the external database cannot "
+            "resolve it. The Downloads artifact reports every row of the downloads table in those "
+            "History files without this filter. A URI with no "
+            "matching MediaStore row is retained with its Correlation Status. "
+            "On the sample_data images 110 rows were reported. 108 had one MediaStore row, with "
+            "File Size equal to Received Bytes and Owner Package equal to Browser Package. Current "
+            "Path, Target Path and MediaStore URI were identical on all 110 rows and every URI "
+            "named the external volume with no user qualifier. The 2 samsungs20_a13 rows were not "
+            "matched: that extraction stores app data under userdata/data/<package> and "
+            "userdata/user/<user>/<package>, a layout this artifact does not read an Android user "
+            "from. User-qualified URIs and multiple candidates were exercised with synthetic "
+            "databases only, as was a named volume, and only where it does not match. The "
+            "external-<volume>.db file name is handled by code that no test or image has exercised. "
+            "References: "
             "https://developer.android.com/reference/android/provider/MediaStore.Downloads; "
-            "https://developer.android.com/reference/android/provider/MediaStore.MediaColumns"
+            "https://developer.android.com/reference/android/provider/MediaStore.MediaColumns; "
+            "AOSP MediaProvider at tag android-14.0.0_r1, "
+            "apex/framework/java/android/provider/MediaStore.java (DATE_ADDED and DATE_MODIFIED "
+            "are annotated as seconds) and src/com/android/providers/media/DatabaseHelper.java "
+            "(the downloads view selects from files where is_download=1)"
         ),
         "paths": (
-            "*/app_chrome/*/History*",
-            "*/app_sbrowser/*/History*",
+            "*/app_chrome/Default/History*",
+            "*/app_sbrowser/Default/History*",
             "*/app_opera/History*",
-            "*/app_webview/*/History*",
+            "*/app_webview/Default/History*",
             "*/com.google.android.providers.media.module/databases/external*.db*",
             "*/com.android.providers.media.module/databases/external*.db*",
             "*/com.android.providers.media/databases/external*.db*",
         ),
         "output_types": "standard",
         "artifact_icon": "download",
+        "sample_data": {
+            "sharon_a14": "Android 14 | com.sec.android.app.sbrowser, com.android.chrome | 105 rows",
+            "pixel7a_a14": "Android 14 | com.microsoft.emmx downloads hold empty paths | 0 rows",
+            "samsungs20_a13": "Android 13 | Android user not determined, no MediaStore match | 2 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.android.chrome | 1 row",
+            "russell_pixel6a_a13": "Android 13 | com.brave.browser, Android user 10 | 1 row",
+            "userb2_a13": "Android 13 | com.android.chrome | 1 row",
+        },
     }
 }
 
@@ -63,12 +89,12 @@ _MEDIA_COLUMNS = (
 )
 _HEADERS = (
     ("Start Time", "datetime"), ("End Time", "datetime"),
+    ("MediaStore Date Added", "datetime"), ("MediaStore Date Modified", "datetime"),
     "Browser Package", "Android User ID", "Download ID", "Download GUID", "Tab URL",
     "Referrer", "Download URL Chain", "Current Path", "Target Path", "URI Field",
     "MediaStore URI", "MediaStore Volume", "MediaStore ID", "MediaStore User ID",
     "Correlation Status", "Candidate Count", "File Name", "File Path", "File Size",
     "Size Comparison", "Owner Package", "MediaStore MIME Type",
-    ("MediaStore Date Added", "datetime"), ("MediaStore Date Modified", "datetime"),
     "State (as stored)", "Received Bytes", "Total Bytes", "Download MIME Type",
     "History DB Path", "MediaStore DB Path", "Notes",
 )
@@ -222,8 +248,8 @@ def _size_comparison(download, record):
 
 
 def _output(download, chain, source, scope, ref, candidates, status):
-    parsed, uri, field = ref if ref else (None, "", "")
-    volume, record_id, explicit_user = parsed if parsed else ("", "", None)
+    parsed, uri, field = ref
+    volume, record_id, explicit_user = parsed
     user = scope[1] if scope else ""
     media_user = explicit_user if explicit_user is not None else user
     record = candidates[0] if len(candidates) == 1 else None
@@ -243,12 +269,13 @@ def _output(download, chain, source, scope, ref, candidates, status):
                 notes.append(f"MediaStore flag: {label}")
     return (
         _time(download["start_time"], True), _time(download["end_time"], True),
+        _time(media.get("date_added")), _time(media.get("date_modified")),
         scope[2] if scope else "", user, download["id"], download["guid"], download["tab_url"],
         download["referrer"], chain, download["current_path"], download["target_path"], field,
-        uri, volume, record_id, media_user if parsed else "", status, len(candidates),
+        uri, volume, record_id, media_user, status, len(candidates),
         media.get("_display_name", ""), media.get("_data", ""), media.get("_size", ""),
         _size_comparison(download, record), media.get("owner_package_name", ""), media.get("mime_type", ""),
-        _time(media.get("date_added")), _time(media.get("date_modified")), download["state"],
+        download["state"],
         download["received_bytes"], download["total_bytes"], download["mime_type"], source,
         "\n".join(sorted({candidate["source"] for candidate in candidates})), "; ".join(notes),
     )
@@ -270,6 +297,9 @@ def get_chromeDownloadMediaStore(context):
             sources.append(str(path))
             for download, chain in _read_history(path, source):
                 refs = _references(download)
+                if not refs:
+                    # No MediaStore URI to resolve; the Downloads artifact reports the row.
+                    continue
                 entries.append((download, chain, source, scope, refs))
                 if scope:
                     for parsed, _, _ in refs:
@@ -295,14 +325,11 @@ def get_chromeDownloadMediaStore(context):
 
     data = []
     for download, chain, source, scope, refs in entries:
-        if not refs:
-            data.append(_output(download, chain, source, scope, None, [], "Not a MediaStore download URI"))
-            continue
         for ref in refs:
             (volume, record_id, explicit_user), _, _ = ref
             candidates = []
             if scope is None:
-                status = "Android user scope unavailable"
+                status = "Android user not determined from the History path"
             else:
                 user = scope[1] if explicit_user is None else explicit_user
                 key = (scope[0], user)
