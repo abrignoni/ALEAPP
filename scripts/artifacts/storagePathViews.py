@@ -12,6 +12,24 @@ than one path. On the tested images:
 An artifact that iterates every file its glob matched then reads the same database or
 preferences file two or three times and reports every row that many times.
 
+An extraction can instead expose the userdata partition itself, in a folder named
+userdata that holds what the layouts above hold under data/. The same directories then
+appear without the leading data/:
+
+    userdata/data/<pkg>/...                     credential encrypted storage, user 0
+    userdata/user/<user>/<pkg>/...              credential encrypted storage
+    userdata/user_de/<user>/<pkg>/...           device encrypted storage
+
+Of the 45 registered Android corpora only samsungs20_a13 has this shape (member listing
+of every corpus, 2026-10-12): 43,280 files under userdata/data, 7,078 under
+userdata/user/150 and 1,184 under userdata/user_de for users 0 and 150. It carries no
+userdata/user/0, so nothing collapses there; the views give those files the same storage
+class and Android user key as the other layouts. They are tried first because 68 files
+on that image sit in a data/user/<n> folder inside an app's own cache directory (50
+under userdata/data, 18 under userdata/user/150), and the enclosing app data directory
+is the one that says whose storage it is. On the other 44 corpora no file's key or kept
+copy changed (same listing, before and after).
+
 Credential encrypted and device encrypted storage are separate directories holding
 different files, so they are never collapsed together: on pixel3_a12
 com.android.providers.telephony/databases/mmssms.db exists in both and the two copies
@@ -36,6 +54,9 @@ import re
 
 # Ordered so the first alternative that matches is also the preferred spelling to keep.
 _VIEWS = (
+    ('ce', re.compile(r'(^|/)userdata/data/')),
+    ('de', re.compile(r'(^|/)userdata/user_de/(\d+)/')),
+    ('ce', re.compile(r'(^|/)userdata/user/(\d+)/')),
     ('ce', re.compile(r'(^|/)data/data/')),
     ('de', re.compile(r'(^|/)data/user_de/(\d+)/')),
     ('ce', re.compile(r'(^|/)data/user/(\d+)/')),

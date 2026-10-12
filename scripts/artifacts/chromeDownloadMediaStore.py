@@ -24,13 +24,14 @@ __artifacts_v2__ = {
             "resolve it. The Downloads artifact reports every row of the downloads table in those "
             "History files without this filter. A URI with no "
             "matching MediaStore row is retained with its Correlation Status. "
-            "On the sample_data images 110 rows were reported. 108 had one MediaStore row, with "
+            "On the sample_data images 110 rows were reported. All 110 had one MediaStore row, with "
             "File Size equal to Received Bytes and Owner Package equal to Browser Package. Current "
             "Path, Target Path and MediaStore URI were identical on all 110 rows and every URI "
-            "named the external volume with no user qualifier. The 2 samsungs20_a13 rows were not "
-            "matched: that extraction stores app data under userdata/data/<package> and "
-            "userdata/user/<user>/<package>, a layout this artifact does not read an Android user "
-            "from. User-qualified URIs and multiple candidates were exercised with synthetic "
+            "named the external volume with no user qualifier. samsungs20_a13 stores app data "
+            "under userdata/data/<package> and userdata/user/<user>/<package>; its 2 rows, one "
+            "under Android user 0 and one under user 150, each had one row in the external.db "
+            "of the same user. No sample_data image produced a Correlation Status other than "
+            "'MediaStore row found'. User-qualified URIs and multiple candidates were exercised with synthetic "
             "databases only, as was a named volume, and only where it does not match. The "
             "external-<volume>.db file name is handled by code that no test or image has exercised. "
             "References: "
@@ -55,7 +56,7 @@ __artifacts_v2__ = {
         "sample_data": {
             "sharon_a14": "Android 14 | com.sec.android.app.sbrowser, com.android.chrome | 105 rows",
             "pixel7a_a14": "Android 14 | com.microsoft.emmx downloads hold empty paths | 0 rows",
-            "samsungs20_a13": "Android 13 | Android user not determined, no MediaStore match | 2 rows",
+            "samsungs20_a13": "Android 13 | com.microsoft.emmx (Android user 0), com.brave.browser (Android user 150) | 2 rows",
             "hc_pixel8pro_a16": "Android 16 | com.android.chrome | 1 row",
             "russell_pixel6a_a13": "Android 13 | com.brave.browser, Android user 10 | 1 row",
             "userb2_a13": "Android 13 | com.android.chrome | 1 row",
