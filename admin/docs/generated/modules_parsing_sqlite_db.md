@@ -237,6 +237,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | chromeCookies |
 | chromeCreditCards |
 | chromeDIPS |
+| chromeDownloadMediaStore |
 | chromeLoginData |
 | chromeMediaHistory |
 | chromeNetworkActionPredictor |
