@@ -182,14 +182,15 @@ __artifacts_v2__ = {
         "description": "Telephony-provider part-file associations, known-layout unreferenced files and unresolved-layout file candidates from app_parts and parts.",
         "author": "@AlexisBrignoni, Codex, Claude",
         "creation_date": "2026-09-02",
-        "last_update_date": "2026-10-09",
+        "last_update_date": "2026-10-12",
         "requirements": "none",
         "category": "SMS & MMS",
         "notes": "One row per part row that records a file path (part._data), joined to its pdu "
                  "row for Date, Direction and From Address, plus known-layout files not matched by a "
                  "returned part row and unresolved-layout file candidates. Association keys are indexed when "
                  "their path in the extraction sits under data/data, data/user/<n>, "
-                 "data/user_de/<n> or the data_mirror/data_ce and data_mirror/data_de equivalents; "
+                 "data/user_de/<n>, the data_mirror/data_ce and data_mirror/data_de equivalents, or "
+                 "userdata/data, userdata/user/<n> and userdata/user_de/<n>; "
                  "files in other layouts are appended as file candidates with unresolved storage identity, "
                  "without an asserted message association. Distinct evidence paths remain distinct "
                  "even if they share bytes or physical storage; repeated identical staged paths are "
@@ -211,7 +212,9 @@ __artifacts_v2__ = {
                  "attachment rows the two agreed on every file that had both. Media is blank for "
                  "zero-byte files and for files not in the extraction; Size is the file's length "
                  "in bytes. On 17 of the 25 tested images the database held one part row with no "
-                 "message row pointing at a zero-byte file, and three images carried between one "
+                 "message row pointing at a zero-byte file (counted before the userdata layout was "
+                 "read; samsungs20_a13 now shows the same pattern and the count was not redone), "
+                 "and three images carried between one "
                  "and ten unreferenced files of real size (JPEG, PNG, GIF, HEIC and MP4-family). "
                  "Date, Direction and From Address are blank on rows with no message row, so on "
                  "an image with few referenced attachments the table can lead with blanks. Why a "
@@ -231,7 +234,7 @@ __artifacts_v2__ = {
             "kevin_pocox7_a15": "Android 15 | com.android.providers.telephony | 45 rows",
             "pixel7a_a14": "Android 14 | com.android.providers.telephony | 29 rows",
             "samsunga53_a14": "Android 14 | com.android.providers.telephony | 3 rows",
-            "samsungs20_a13": "Android 13 | com.android.providers.telephony | 1 rows",
+            "samsungs20_a13": "Android 13 | com.android.providers.telephony | 2 rows",
             "sharon_a14": "Android 14 | com.android.providers.telephony | 17 rows",
             "russell_pixel6a_a13": "Android 13 | com.android.providers.telephony | 3 rows",
             "userb2_a13": "Android 13 | com.android.providers.telephony | 2 rows",
