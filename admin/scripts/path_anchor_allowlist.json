@@ -195,5 +195,7 @@
   "*.exo": "cross-app by design: rows attribute the owning app; matched 12 package(s), measured 2026-09-26 on pixel7a_a14, samsunga53_a14, pixel3_a12",
   "*/cached_content_index.exi*": "cross-app by design: rows attribute the owning app; matched 5 package(s), measured 2026-09-26 on pixel7a_a14, samsunga53_a14, pixel3_a12",
   "*.uid": "cross-app by design: rows attribute the owning app; matched 16 package(s), measured 2026-09-26 on pixel7a_a14, samsunga53_a14, pixel3_a12",
-  "*/exoplayer_internal.db*": "cross-app by design: rows attribute the owning app; matched 9 package(s), measured 2026-09-26 on pixel7a_a14, samsunga53_a14, pixel3_a12"
+  "*/exoplayer_internal.db*": "cross-app by design: rows attribute the owning app; matched 9 package(s), measured 2026-09-26 on pixel7a_a14, samsunga53_a14, pixel3_a12",
+  "*/system_ce/*/shortcut_service/shortcuts.xml*": "Android system-owned shortcut storage outside app containers; legacy XML contains multiple packages, attributed by package name and Android user in output.",
+  "*/system_ce/*/shortcut_service/packages/*.xml*": "Android system-owned per-package shortcut storage outside app containers; package name, Android user and source file are attributed in output."
 }
