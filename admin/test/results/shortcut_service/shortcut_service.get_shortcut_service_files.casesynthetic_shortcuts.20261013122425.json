@@ -5,16 +5,16 @@
     "function_name": "get_shortcut_service_files",
     "case_number": "casesynthetic_shortcuts",
     "number_of_columns": 11,
-    "number_of_rows": 7,
-    "total_data_size_bytes": 1174,
+    "number_of_rows": 9,
+    "total_data_size_bytes": 1515,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/shortcut_service/testdata.shortcut_service.get_shortcut_service_files.casesynthetic_shortcuts.zip",
-    "start_time": "2026-10-13T12:24:25.423892+00:00",
-    "end_time": "2026-10-13T12:24:25.469829+00:00",
-    "run_time_seconds": 0.008101224899291992,
+    "start_time": "2026-10-13T16:01:38.363125+00:00",
+    "end_time": "2026-10-13T16:01:38.379925+00:00",
+    "run_time_seconds": 0.008670806884765625,
     "last_commit": {
-      "hash": ""
+      "hash": "05b3d6d38982c5b7b66d218cf5809064e1da9314"
     }
   },
   "headers": [
@@ -64,8 +64,8 @@
       "[\"com.example.app\"]",
       1,
       1,
-      666,
-      "7f23471e43b7dd0007f729dd25429b1c4433986c838192e669f6394b7aa2bac6",
+      751,
+      "600c4a7d9785a47fb68dce1dfcdeb434b76f181272f77504e4ecd363048c8b84",
       "Parsed",
       "",
       "data/system_ce/0/shortcut_service/packages/com.example.app.xml"
@@ -100,6 +100,32 @@
       "0",
       "XML",
       "user",
+      "[\"com.example.app\"]",
+      1,
+      0,
+      144,
+      "f96c1f7dfcc70500e2b1314537dfb7d0e2fe33f8288daa97da39cff6cc0d159d",
+      "Parsed",
+      "",
+      "data/system_ce/0/shortcut_service/shortcut_dump/backup-1-payload.txt"
+    ],
+    [
+      "0",
+      "XML",
+      "user",
+      "[\"com.example.app\"]",
+      1,
+      1,
+      426,
+      "e81c0b958e4e6ce228786cd17cdfb909281d744da54318f2a6a897491c2a0e3e",
+      "Parsed",
+      "",
+      "data/system_ce/0/shortcut_service/shortcut_dump/restore-1-payload.xml"
+    ],
+    [
+      "0",
+      "XML",
+      "user",
       "[\"com.example.one\",\"com.example.two\"]",
       2,
       2,
@@ -116,8 +142,8 @@
       "[\"com.example.app\"]",
       1,
       1,
-      668,
-      "dfd6072007cdb2c306c2341e1efdf6597406ae8cc6926632c740cfe9a86a3c9f",
+      754,
+      "8f9166863782ff708e2b72e1dba5f8e6d6ab6ad59179f3a6c4c172c61b2cbd5a",
       "Parsed",
       "",
       "data/system_ce/10/shortcut_service/packages/com.example.app.xml"

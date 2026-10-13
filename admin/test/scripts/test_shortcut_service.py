@@ -7,6 +7,7 @@ import json
 import sqlite3
 import sys
 import tempfile
+import types
 import unittest
 import xml.etree.ElementTree as ET
 from contextlib import ExitStack, contextmanager, redirect_stdout
@@ -19,6 +20,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
 from scripts.artifacts import shortcut_service
 from scripts.context import Context
 from scripts import ilapfuncs, lavafuncs
+from scripts.search_files import FileInfo
 
 
 @contextmanager
@@ -98,7 +100,7 @@ class ShortcutServiceTests(unittest.TestCase):
                         and any(isinstance(target, ast.Name) and target.id == '__artifacts_v2__'
                                 for target in node.targets))
         artifacts = ast.literal_eval(metadata)
-        self.assertEqual(len(artifacts), 4)
+        self.assertEqual(len(artifacts), 5)
         for name, info in artifacts.items():
             self.assertTrue(hasattr(getattr(shortcut_service, name), '__wrapped__'))
             self.assertIn('lava', info['output_types'])
@@ -284,6 +286,179 @@ class ShortcutServiceTests(unittest.TestCase):
         for name in shortcut_service.__artifacts_v2__:
             self.rows(name)
         self.assertEqual(path.read_bytes(), before)
+
+    @staticmethod
+    def png():
+        output = io.BytesIO()
+        shortcut_service.Image.new('RGB', (2, 2), 'blue').save(output, format='PNG')
+        return output.getvalue()
+
+    def bitmap(self, stored_path, user='0', package='com.example.app', source_prefix=''):
+        root, shortcut = self.package(package)
+        shortcut.set('bitmap-path', stored_path)
+        self.write(source_prefix + 'packages/' + package + '.xml', root, user=user)
+        return root, shortcut
+
+    def test_bitmap_is_matched_by_full_path_and_preserves_case(self):
+        stored = '/data/system_ce/0/shortcut_service/bitmaps/com.example.app/MiXeD.png'
+        self.bitmap(stored)
+        image = self.write('bitmaps/com.example.app/MiXeD.png', self.png())
+        self.write('bitmaps/com.example.other/MiXeD.png', self.png())
+        with patch.object(shortcut_service, 'check_in_media', return_value='media-reference') as check:
+            row = self.rows('get_shortcut_service')[0]
+        self.assertEqual(row['Bitmap Path (as stored)'], stored)
+        self.assertEqual(row['Bitmap Status'], 'Matched')
+        self.assertEqual(row['Shortcut Image'], 'media-reference')
+        self.assertEqual(row['Bitmap Source File'], Context.get_relative_path(str(image)))
+        self.assertEqual(check.call_args.args[0], str(image))
+
+    def test_missing_bitmap_does_not_fall_back_to_matching_basename(self):
+        self.bitmap('/data/system_ce/0/shortcut_service/bitmaps/com.example.app/shared.png')
+        self.write('bitmaps/com.example.other/shared.png', self.png())
+        with patch.object(shortcut_service, 'check_in_media') as check:
+            row = self.rows('get_shortcut_service')[0]
+        self.assertEqual(row['Bitmap Status'], 'Bitmap file missing')
+        self.assertEqual(row['Shortcut Image'], '')
+        check.assert_not_called()
+
+    def test_bitmap_from_another_extraction_tree_is_not_matched(self):
+        self.bitmap('/data/system_ce/0/shortcut_service/bitmaps/com.example.app/image.png')
+        image = self.write('bitmaps/com.example.app/image.png', self.png())
+        foreign = self.root / 'second-extraction' / image.relative_to(self.root)
+        foreign.parent.mkdir(parents=True)
+        image.rename(foreign)
+        Context.set_files_found([str(foreign) if item == str(image) else item for item in self.files])
+        self.assertEqual(self.rows('get_shortcut_service')[0]['Bitmap Status'], 'Bitmap file missing')
+
+    def test_bitmap_path_case_is_not_normalized(self):
+        self.bitmap('/data/system_ce/0/shortcut_service/bitmaps/com.example.app/MiXeD.png')
+        self.write('bitmaps/com.example.app/mixed.png', self.png())
+        self.assertEqual(self.rows('get_shortcut_service')[0]['Bitmap Status'], 'Bitmap file missing')
+
+    def test_same_bitmap_name_in_two_profiles_is_not_merged(self):
+        for user in ('0', '10'):
+            self.bitmap(f'/data/system_ce/{user}/shortcut_service/bitmaps/com.example.app/shared.png',
+                        user=user)
+            self.write('bitmaps/com.example.app/shared.png', self.png(), user=user)
+        with patch.object(shortcut_service, 'check_in_media', side_effect=lambda path, *_a, **_k: path):
+            rows = self.rows('get_shortcut_service')
+        self.assertEqual({row['Bitmap Status'] for row in rows}, {'Matched'})
+        self.assertNotEqual(rows[0]['Shortcut Image'], rows[1]['Shortcut Image'])
+        for row in rows:
+            self.assertIn('/system_ce/' + row['Android User'] + '/', row['Bitmap Source File'])
+
+    def test_bitmap_reference_to_another_profile_is_not_matched(self):
+        self.bitmap('/data/system_ce/10/shortcut_service/bitmaps/com.example.app/shared.png')
+        self.write('bitmaps/com.example.app/shared.png', self.png(), user='10')
+        self.assertEqual(self.rows('get_shortcut_service')[0]['Bitmap Status'], 'Android user mismatch')
+
+    def test_bitmap_reference_to_another_package_is_not_matched(self):
+        self.bitmap('/data/system_ce/0/shortcut_service/bitmaps/com.example.other/shared.png')
+        self.write('bitmaps/com.example.other/shared.png', self.png())
+        self.assertEqual(self.rows('get_shortcut_service')[0]['Bitmap Status'], 'Package mismatch')
+
+    def test_relative_bitmap_path_is_supported_without_guessing_basenames(self):
+        self.bitmap('bitmaps/com.example.app/image.png')
+        self.write('bitmaps/com.example.app/image.png', self.png())
+        with patch.object(shortcut_service, 'check_in_media', return_value='media-reference'):
+            self.assertEqual(self.rows('get_shortcut_service')[0]['Bitmap Status'], 'Matched')
+
+    def test_bitmap_paths_cannot_traverse_directories(self):
+        self.bitmap('/data/system_ce/0/shortcut_service/bitmaps/com.example.app/../other.png')
+        self.assertEqual(self.rows('get_shortcut_service')[0]['Bitmap Status'], 'Invalid bitmap path')
+
+    def test_corrupt_bitmap_is_not_registered_as_media(self):
+        self.bitmap('/data/system_ce/0/shortcut_service/bitmaps/com.example.app/image.png')
+        self.write('bitmaps/com.example.app/image.png', b'\x89PNG\r\n\x1a\ncorrupt')
+        with patch.object(shortcut_service, 'check_in_media') as check:
+            self.assertEqual(self.rows('get_shortcut_service')[0]['Bitmap Status'],
+                             'Invalid or unreadable image')
+        check.assert_not_called()
+
+    def test_dump_xml_in_txt_is_a_separate_shortcut_observation(self):
+        package, shortcut = self.package()
+        self.write('packages/com.example.app.xml', package)
+        shortcut.set('title', 'StoredBackupLabel')
+        self.write('shortcut_dump/backup-1-payload.txt', package)
+        rows = self.rows('get_shortcut_service')
+        self.assertEqual({row['Short Label'] for row in rows}, {'MiXeD Label', 'StoredBackupLabel'})
+        self.assertEqual({row['Source Kind'] for row in rows}, {'Shortcut XML', 'Dump payload'})
+        self.assertEqual(len(self.rows('get_shortcut_service_files')), 2)
+        self.assertEqual(self.rows('get_shortcut_service_dumps')[0]['File Format'], 'XML')
+
+    def test_dump_bitmap_reference_does_not_establish_profile_or_historical_image(self):
+        package, shortcut = self.package()
+        shortcut.set('bitmap-path', '/data/system_ce/0/shortcut_service/bitmaps/com.example.app/image.png')
+        self.write('shortcut_dump/restore-1-payload.xml', package)
+        self.write('bitmaps/com.example.app/image.png', self.png())
+        with patch.object(shortcut_service, 'check_in_media') as check:
+            self.assertEqual(self.rows('get_shortcut_service')[0]['Bitmap Status'],
+                             'Dump profile not established')
+        check.assert_not_called()
+
+    def test_plain_text_dump_is_preserved_without_inferred_events(self):
+        text = 'Start time: 1700000000123 [2023-11-14 22:13:20]\nStored diagnostic text\n'
+        path = self.write('shortcut_dump/restore-0-start.txt', text.encode())
+        self.assertEqual(self.rows('get_shortcut_service'), [])
+        self.assertEqual(self.rows('get_shortcut_service_files'), [])
+        row = self.rows('get_shortcut_service_dumps')[0]
+        self.assertEqual(row['Content (UTF-8)'], text)
+        self.assertEqual(row['SHA-256'], hashlib.sha256(path.read_bytes()).hexdigest())
+        self.assertEqual(row['Parse Status'], 'Text preserved')
+
+    def test_dump_with_package_metadata_but_no_shortcuts_keeps_its_fields(self):
+        root = ET.Element('user')
+        package = ET.SubElement(root, 'package', name='com.example.app')
+        ET.SubElement(package, 'package-info', version='123', **{'allow-backup':'true'})
+        self.write('shortcut_dump/backup-1-payload.txt', root)
+        self.assertEqual(self.rows('get_shortcut_service'), [])
+        self.assertTrue(any(row['Field'] == '@version' and row['Value'] == '123'
+                            for row in self.rows('get_shortcut_service_fields')))
+        row = self.rows('get_shortcut_service_files')[0]
+        self.assertEqual(row['Package Count'], 1)
+        self.assertEqual(row['Shortcut Count'], 0)
+
+    def test_empty_dump_is_inventoried_without_a_guessed_event(self):
+        self.write('shortcut_dump/empty.txt', b'')
+        row = self.rows('get_shortcut_service_dumps')[0]
+        self.assertEqual(row['Parse Status'], 'Empty file')
+        self.assertEqual(row['SHA-256'], hashlib.sha256(b'').hexdigest())
+        self.assertEqual(row['Content (UTF-8)'], '')
+
+    def test_binary_and_invalid_xml_dumps_are_inventoried(self):
+        self.write('shortcut_dump/binary.dat', b'\xff\xfe\x00')
+        self.write('shortcut_dump/restore-1-payload.xml', b'<broken>')
+        rows = self.rows('get_shortcut_service_dumps')
+        self.assertEqual({row['Parse Status'] for row in rows}, {'Non-UTF-8 content', 'Parse error'})
+        self.assertEqual(next(row['Content (UTF-8)'] for row in rows
+                              if row['File Name'] == 'binary.dat'), '')
+
+    def test_media_outputs_register_exact_evidence_path_and_copy_original_bytes(self):
+        self.bitmap('/data/system_ce/0/shortcut_service/bitmaps/com.example.app/image.png')
+        image = self.write('bitmaps/com.example.app/image.png', self.png())
+        seeker = types.SimpleNamespace(file_infos={
+            path: FileInfo(Context.get_relative_path(path), 0, 0) for path in self.files})
+        params = ilapfuncs.OutputParameters(str(self.root / 'report'), 'media-integration')
+        Context.set_output_params(params)
+        Context.set_data_folder(str(self.root))
+        output = Path(params.output_folder_base)
+        report = output / '_HTML' / 'Shortcut Service'
+        report.mkdir(parents=True)
+        lavafuncs.initialize_lava(str(self.root), str(output), 'fs')
+        processor = vars(shortcut_service)['get_shortcut_service']
+        processor(self.files, str(report), seeker, False)
+        row = lavafuncs.lava_db.execute(
+            'SELECT bitmap_status, shortcut_image FROM get_shortcut_service').fetchone()
+        self.assertEqual(row[0], 'Matched')
+        self.assertTrue(row[1])
+        item = lavafuncs.lava_db.execute(
+            'SELECT source_path, extraction_path FROM _lava_media_items').fetchone()
+        self.assertEqual(item[0], Context.get_relative_path(str(image)))
+        self.assertEqual((output / item[1]).read_bytes(), image.read_bytes())
+        html = next(report.glob('*.temphtml')).read_text(encoding='utf-8')
+        self.assertIn('<img ', html)
+        self.assertIn('max-width:80px;max-height:80px', html)
+        self.assertNotIn(str(self.root), html)
 
     def test_decorated_outputs_preserve_names_and_raw_timestamps(self):
         message = {'timestamp': '2023-10-01T12:00:00.123Z',

@@ -1,0 +1,82 @@
+{
+  "metadata": {
+    "module_name": "shortcut_service",
+    "artifact_name": "Shortcut Service - Dumps",
+    "function_name": "get_shortcut_service_dumps",
+    "case_number": "casesynthetic_shortcuts",
+    "number_of_columns": 8,
+    "number_of_rows": 5,
+    "total_data_size_bytes": 1450,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/shortcut_service/testdata.shortcut_service.get_shortcut_service_dumps.casesynthetic_shortcuts.zip",
+    "start_time": "2026-10-13T16:01:38.380537+00:00",
+    "end_time": "2026-10-13T16:01:38.389841+00:00",
+    "run_time_seconds": 0.0004642009735107422,
+    "last_commit": {
+      "hash": "05b3d6d38982c5b7b66d218cf5809064e1da9314"
+    }
+  },
+  "headers": [
+    "Android User",
+    "File Name",
+    "File Format",
+    "Size (bytes)",
+    "SHA-256",
+    "Parse Status",
+    "Content (UTF-8)",
+    "Source File"
+  ],
+  "data": [
+    [
+      "0",
+      "backup-1-payload.txt",
+      "XML",
+      144,
+      "f96c1f7dfcc70500e2b1314537dfb7d0e2fe33f8288daa97da39cff6cc0d159d",
+      "Parsed",
+      "<?xml version='1.0' encoding='utf-8'?>\n<user><package name=\"com.example.app\"><package-info version=\"123\" allow-backup=\"true\" /></package></user>",
+      "data/system_ce/0/shortcut_service/shortcut_dump/backup-1-payload.txt"
+    ],
+    [
+      "0",
+      "binary.dat",
+      "Binary",
+      3,
+      "ba778c0261008c8f71ae4061ad0162ffcbe63b52c91f89f236738131d1217ec7",
+      "Non-UTF-8 content",
+      "",
+      "data/system_ce/0/shortcut_service/shortcut_dump/binary.dat"
+    ],
+    [
+      "0",
+      "empty.txt",
+      "Text",
+      0,
+      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "Empty file",
+      "",
+      "data/system_ce/0/shortcut_service/shortcut_dump/empty.txt"
+    ],
+    [
+      "0",
+      "restore-0-start.txt",
+      "Text",
+      74,
+      "53f7ac47880cb099c186a295088e07060deff811e29ecb3476db94e914a1f57c",
+      "Text preserved",
+      "Start time: 1696161600123 [2023-10-01 12:00:00]\nSynthetic diagnostic text\n",
+      "data/system_ce/0/shortcut_service/shortcut_dump/restore-0-start.txt"
+    ],
+    [
+      "0",
+      "restore-1-payload.xml",
+      "XML",
+      426,
+      "e81c0b958e4e6ce228786cd17cdfb909281d744da54318f2a6a897491c2a0e3e",
+      "Parsed",
+      "<?xml version='1.0' encoding='utf-8'?>\n<user><package name=\"com.example.app\"><package-info version=\"1\" last-update-time=\"1696118400000\" /><shortcut id=\"shared-shortcut\" timestamp=\"1696161600123\" title=\"StoredDumpLabel\" text=\"Synthetic shortcut\" activity=\"com.example.app/.MainActivity\" rank=\"0\" flags=\"1\" disabled-reason=\"0\" bitmap-path=\"/data/system_ce/0/shortcut_service/bitmaps/com.example.app/icon.png\" /></package></user>",
+      "data/system_ce/0/shortcut_service/shortcut_dump/restore-1-payload.xml"
+    ]
+  ]
+}

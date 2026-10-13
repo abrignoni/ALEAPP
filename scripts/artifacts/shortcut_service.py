@@ -6,13 +6,15 @@ from collections import Counter
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from scripts.ilapfuncs import abxread, artifact_processor, logfunc
+from PIL import Image
+
+from scripts.ilapfuncs import abxread, artifact_processor, check_in_media, logfunc
 
 
 __artifacts_v2__ = {
     'get_shortcut_service': {
         'name': 'Shortcut Service - Shortcuts',
-        'description': 'Application shortcuts, labels, persons, intents and extras.',
+        'description': 'Application shortcuts, labels, persons, intents, extras and stored icon files.',
         'creation_date': '2026-10-09',
         'last_update_date': '2026-10-13',
         'requirements': 'none',
@@ -26,10 +28,23 @@ __artifacts_v2__ = {
                  'File Format was uniform per sample: XML for Android 10 and ABX for Android 12. '
                  'Locus ID was absent and Persons (JSON) uniformly [] in the Android 10 sample; '
                  'other samples populated these fields. Source File separates files and backup '
-                 'copies even when Package and Shortcut ID are the same.',
+                 'copies even when Package and Shortcut ID are the same. '
+                 'Bitmap files are matched by the stored path within the same extraction, Android '
+                 'user and package; basename-only matches are not used. Shortcut Image is the '
+                 'stored shortcut icon, not an independently identified message attachment. '
+                 'Missing, invalid or ambiguous images remain visible in Bitmap Status. '
+                 'Dump payloads remain separate observations. For dumps, Android User identifies '
+                 'the storage directory, not an independently established originating profile; '
+                 'dump image references are retained but not linked to current icons. '
+                 'Source Kind was uniformly Shortcut XML in the three public CTF samples; '
+                 'their two saved backup payloads contained no shortcut entries. '
+                 'All 46 populated bitmap-path attributes resolved to stored icons: 6 in the '
+                 'Android 10 sample and 10 and 30 in the Android 12 samples.',
         'paths': (
             '*/system_ce/*/shortcut_service/shortcuts.xml*',
             '*/system_ce/*/shortcut_service/packages/*.xml*',
+            '*/system_ce/*/shortcut_service/shortcut_dump/*',
+            '*/system_ce/*/shortcut_service/bitmaps/*',
         ),
         'output_types': ['html', 'tsv', 'timeline', 'lava'],
         'artifact_icon': 'link',
@@ -47,10 +62,14 @@ __artifacts_v2__ = {
                  'three public CTF samples; the synthetic fixture covers users 0 and 10. '
                  'File Format was uniform per sample: XML for Android 10 and ABX for Android 12. '
                  'Source File distinguishes separate files and backup copies; Package and '
-                 'Shortcut ID alone do not identify a stored observation.',
+                 'Shortcut ID alone do not identify a stored observation. XML payloads in '
+                 'shortcut_dump, including those with a .txt extension, are separate sources. '
+                 'For dumps, Android User identifies the storage directory, not a verified '
+                 'originating profile.',
         'paths': (
             '*/system_ce/*/shortcut_service/shortcuts.xml*',
             '*/system_ce/*/shortcut_service/packages/*.xml*',
+            '*/system_ce/*/shortcut_service/shortcut_dump/*',
         ),
         'output_types': ['html', 'tsv', 'lava'],
         'artifact_icon': 'list-details',
@@ -73,10 +92,13 @@ __artifacts_v2__ = {
                  'are retained alongside LAVA dates. In the single Discord CTF payload, '
                  'Message Edited (UTC) and Message Edited (as stored) were blank because no '
                  'edit timestamp was stored; Guild ID (extra) and Guild ID (JSON) were absent. '
-                 'Source File distinguishes backup copies of the same Shortcut ID.',
+                 'Source File distinguishes backup copies of the same Shortcut ID. '
+                 'XML dump payloads remain separate observations. For dumps, Android User '
+                 'identifies the storage directory, not a verified originating profile.',
         'paths': (
             '*/system_ce/*/shortcut_service/shortcuts.xml*',
             '*/system_ce/*/shortcut_service/packages/*.xml*',
+            '*/system_ce/*/shortcut_service/shortcut_dump/*',
         ),
         'output_types': ['html', 'tsv', 'timeline', 'lava'],
         'artifact_icon': 'message',
@@ -95,13 +117,35 @@ __artifacts_v2__ = {
                  'Parse Status was uniformly Parsed in the Android 10 sample and the first '
                  'Android 12 sample; the second Android 12 sample also had one Empty ABX document. '
                  'Error was blank in all three samples because no parse failed; the empty '
-                 'ABX document is inventoried without an error.',
+                 'ABX document is inventoried without an error. XML dump payloads are included '
+                 'regardless of filename extension; plain text dumps are inventoried separately. '
+                 'For dumps, Android User identifies the storage directory, not a verified '
+                 'originating profile.',
         'paths': (
             '*/system_ce/*/shortcut_service/shortcuts.xml*',
             '*/system_ce/*/shortcut_service/packages/*.xml*',
+            '*/system_ce/*/shortcut_service/shortcut_dump/*',
         ),
         'output_types': ['html', 'tsv', 'lava'],
         'artifact_icon': 'file',
+    },
+    'get_shortcut_service_dumps': {
+        'name': 'Shortcut Service - Dumps',
+        'description': 'Saved Shortcut Service backup payloads and diagnostic text with source hashes.',
+        'creation_date': '2026-10-13',
+        'last_update_date': '2026-10-13',
+        'requirements': 'none',
+        'category': 'Shortcut Service',
+        'notes': 'One row per saved dump file. UTF-8 text is preserved without inferring event '
+                 'times from filenames or filesystem dates. XML and ABX payloads are also parsed '
+                 'by the shortcut artifacts. Android User identifies the dump storage directory; '
+                 'it does not independently establish the profile represented by a payload. '
+                 'Diagnostic snapshots and backup payloads are not a complete shortcut history. '
+                 'Non-UTF-8 bytes remain represented by size, SHA-256 and status; Content (UTF-8) '
+                 'is blank for them.',
+        'paths': ('*/system_ce/*/shortcut_service/shortcut_dump/*',),
+        'output_types': ['html', 'tsv', 'lava'],
+        'artifact_icon': 'file-text',
     },
 }
 
@@ -145,14 +189,32 @@ def _user(source):
     return match.group(1) if match else ''
 
 
-def _files(context):
-    seen = set()
-    for found in sorted(str(path) for path in context.get_files_found()):
-        if found in seen:
-            continue
-        seen.add(found)
+def _storage(source):
+    normalized = source.replace('\\', '/')
+    match = re.search(r'(?:^|/)system_ce/(\d+)/shortcut_service/(.*)$', normalized)
+    return (normalized[:match.start(2)], match.group(1), match.group(2)) if match else None
+
+
+def _source_kind(source):
+    storage = _storage(source)
+    if storage and storage[2].startswith('shortcut_dump/'):
+        return 'Dump payload'
+    return 'XML backup file' if source.endswith(('.bak', '.reservecopy')) else 'Shortcut XML'
+
+
+def _input_files(context):
+    for found in sorted(set(str(path) for path in context.get_files_found())):
         path = Path(found)
-        if path.is_file() and path.name.endswith(('.xml', '.xml.bak', '.xml.reservecopy')):
+        if path.is_file():
+            yield path
+
+
+def _files(context):
+    for path in _input_files(context):
+        storage = _storage(context.get_relative_path(str(path)))
+        if storage and (storage[2].startswith('shortcut_dump/') or
+                        (not storage[2].startswith('bitmaps/') and
+                         path.name.endswith(('.xml', '.xml.bak', '.xml.reservecopy')))):
             yield path
 
 
@@ -172,7 +234,11 @@ def _documents(context):
         }
         try:
             with path.open('rb') as stream:
-                prefix = stream.read(6)
+                prefix = stream.read(256)
+            if _source_kind(source) == 'Dump payload' and not (
+                    prefix.startswith(b'ABX\x00') or prefix.lstrip(b'\xef\xbb\xbf \t\r\n').startswith(b'<')
+                    or path.name.endswith(('.xml', '.xml.bak', '.xml.reservecopy'))):
+                continue
             document['format'] = 'ABX' if prefix.startswith(b'ABX\x00') else 'XML'
             if not prefix:
                 document['status'] = 'Empty file'
@@ -187,6 +253,62 @@ def _documents(context):
             document['error'] = _error(exc, document)
             logfunc(f'Shortcut Service: {source}: {document["error"]}')
         yield document
+
+
+def _bitmap_index(context):
+    index = {}
+    for path in _input_files(context):
+        source = context.get_relative_path(str(path)).replace('\\', '/')
+        storage = _storage(source)
+        if storage and storage[2].startswith('bitmaps/') and not path.is_symlink():
+            index.setdefault((storage[0], storage[2]), []).append((path, source))
+    return index
+
+
+def _shortcut_image(document, package, stored_path, index):
+    if not stored_path:
+        return '', 'No bitmap path', ''
+    if _source_kind(document['source']) == 'Dump payload':
+        return '', 'Dump profile not established', ''
+    normalized = stored_path.replace('\\', '/')
+    if '..' in normalized.split('/') or '\x00' in normalized:
+        return '', 'Invalid bitmap path', ''
+    storage = _storage(normalized)
+    if storage:
+        if storage[1] != document['user']:
+            return '', 'Android user mismatch', ''
+        relative = storage[2]
+    elif normalized.startswith('bitmaps/'):
+        relative = normalized
+    else:
+        return '', 'Unsupported bitmap path', ''
+    if not package or not relative.startswith(f'bitmaps/{package}/'):
+        return '', 'Package mismatch', ''
+    candidates = index.get((_storage(document['source'])[0], relative), [])
+    if not candidates:
+        return '', 'Bitmap file missing', ''
+    if len(candidates) != 1:
+        return '', 'Ambiguous bitmap path', ''
+    path, source = candidates[0]
+    try:
+        with Image.open(path) as image:
+            image_format = image.format
+            image.verify()
+        image_types = {'PNG': ('image/png', 'png'), 'JPEG': ('image/jpeg', 'jpg'),
+                       'WEBP': ('image/webp', 'webp'), 'GIF': ('image/gif', 'gif'),
+                       'BMP': ('image/bmp', 'bmp')}
+        if image_format not in image_types:
+            return source, 'Unsupported image format', ''
+    except (OSError, ValueError, SyntaxError, Image.DecompressionBombError) as exc:
+        logfunc(f'Shortcut Service: {source}: {type(exc).__name__}')
+        return source, 'Invalid or unreadable image', ''
+    mime, extension = image_types[image_format]
+    try:
+        reference = check_in_media(str(path), path.name, force_type=mime, force_extension=extension)
+    except OSError as exc:
+        logfunc(f'Shortcut Service: {source}: {type(exc).__name__}')
+        return source, 'Media registration unavailable', ''
+    return source, 'Matched' if reference else 'Media registration unavailable', reference or ''
 
 
 def _walk(element, path=None, package='', shortcut_id='', shortcut_index=''):
@@ -286,9 +408,11 @@ def get_shortcut_service(context):
         'Long Label', 'Activity', 'Locus ID', 'Rank (as stored)', 'Flags (as stored)',
         'Disabled Reason (as stored)', 'Persons (JSON)', 'Categories (JSON)',
         'Intents (JSON)', 'Extras (JSON)', 'Attributes (JSON)', 'XML Path',
-        'File Format', 'Source File',
+        'File Format', 'Source Kind', 'Bitmap Path (as stored)', 'Bitmap Source File',
+        'Bitmap Status', ('Shortcut Image', 'media', 'max-width:80px;max-height:80px'), 'Source File',
     )
     rows, sources = [], []
+    bitmaps = _bitmap_index(context)
     for document in _documents(context):
         root = document['root']
         if root is None:
@@ -298,6 +422,9 @@ def get_shortcut_service(context):
             if _tag(element) != 'shortcut':
                 continue
             attrs = element.attrib
+            bitmap_path = attrs.get('bitmap-path', '')
+            bitmap_source, bitmap_status, image = _shortcut_image(
+                document, package, bitmap_path, bitmaps)
             rows.append((
                 _ms(attrs.get('timestamp')), attrs.get('timestamp', ''), document['user'],
                 package, shortcut_id, index, attrs.get('title', ''), attrs.get('text', ''),
@@ -307,7 +434,8 @@ def get_shortcut_service(context):
                 _json([_node(child) for child in _children(element, 'categories')]),
                 _json([_node(child) for child in _children(element, 'intent')]),
                 _json([_node(child) for child in element if _tag(child) in ('extras', 'intent-extras')]),
-                _json(dict(attrs)), path, document['format'], document['source'],
+                _json(dict(attrs)), path, document['format'], _source_kind(document['source']),
+                bitmap_path, bitmap_source, bitmap_status, image, document['source'],
             ))
     return headers, rows, '\n'.join(sources)
 
@@ -444,4 +572,34 @@ def get_shortcut_service_files(context):
             _json(packages), len(packages), shortcuts, size, digest, document['status'],
             document['error'], document['source'],
         ))
+    return headers, rows, '\n'.join(sources)
+
+
+@artifact_processor
+def get_shortcut_service_dumps(context):
+    headers = ('Android User', 'File Name', 'File Format', 'Size (bytes)', 'SHA-256',
+               'Parse Status', 'Content (UTF-8)', 'Source File')
+    documents = {document['source']: document for document in _documents(context)}
+    rows, sources = [], []
+    for path in _input_files(context):
+        source = context.get_relative_path(str(path)).replace('\\', '/')
+        if _source_kind(source) != 'Dump payload':
+            continue
+        content, size, digest, status, file_format = '', '', '', '', 'Text'
+        try:
+            with path.open('rb') as stream:
+                data = stream.read()
+            size, digest = len(data), hashlib.sha256(data).hexdigest()
+            try:
+                content = data.decode('utf-8')
+                status = 'Text preserved' if data else 'Empty file'
+            except UnicodeDecodeError:
+                status, file_format = 'Non-UTF-8 content', 'Binary'
+            document = documents.get(source)
+            if document:
+                file_format, status = document['format'], document['status']
+        except OSError as exc:
+            status = f'Read error: {type(exc).__name__}'
+        sources.append(source)
+        rows.append((_user(source), path.name, file_format, size, digest, status, content, source))
     return headers, rows, '\n'.join(sources)

@@ -10,11 +10,11 @@
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/shortcut_service/testdata.shortcut_service.get_shortcut_service_discord.casesynthetic_shortcuts.zip",
-    "start_time": "2026-10-13T12:24:25.201558+00:00",
-    "end_time": "2026-10-13T12:24:25.246606+00:00",
-    "run_time_seconds": 0.007001161575317383,
+    "start_time": "2026-10-13T16:01:38.390274+00:00",
+    "end_time": "2026-10-13T16:01:38.406295+00:00",
+    "run_time_seconds": 0.003919363021850586,
     "last_commit": {
-      "hash": ""
+      "hash": "05b3d6d38982c5b7b66d218cf5809064e1da9314"
     }
   },
   "headers": [
