@@ -1,13 +1,13 @@
 {
   "casesynthetic_shortcuts": {
-    "description": "Synthetic legacy XML and per-package ABX, Android users 0 and 10, same-named icons in different packages and profiles, separate XML dump payloads, plain text and binary dumps, an empty document and malformed XML. No acquired device data.",
+    "description": "Synthetic XML and ABX for users 0, 10 and 150; identical reserve copies, a differing Discord backup, ABX fallback, declaration-only and empty documents, malformed XML, notification and unknown flags, and dump inventory. No acquired device data.",
     "maker": "",
     "make_data": {
       "input_data_path": "synthetic_shortcuts.zip",
       "os": "Linux-6.18.44-x86_64-with-glibc2.39",
-      "timestamp": "2026-10-13T16:01:25.332534+00:00",
+      "timestamp": "2026-10-14T05:12:18.914670+00:00",
       "last_commit": {
-        "hash": "05b3d6d38982c5b7b66d218cf5809064e1da9314"
+        "hash": "10ec7898c218eb5ad3ccd1fecdb75585ffbff46f"
       }
     },
     "artifacts": {
@@ -15,22 +15,9 @@
         "search_patterns": [
           "*/system_ce/*/shortcut_service/shortcuts.xml*",
           "*/system_ce/*/shortcut_service/packages/*.xml*",
-          "*/system_ce/*/shortcut_service/shortcut_dump/*",
           "*/system_ce/*/shortcut_service/bitmaps/*"
         ],
-        "file_count": 15,
-        "expected_output": {
-          "headers": [],
-          "data": []
-        }
-      },
-      "get_shortcut_service_fields": {
-        "search_patterns": [
-          "*/system_ce/*/shortcut_service/shortcuts.xml*",
-          "*/system_ce/*/shortcut_service/packages/*.xml*",
-          "*/system_ce/*/shortcut_service/shortcut_dump/*"
-        ],
-        "file_count": 12,
+        "file_count": 16,
         "expected_output": {
           "headers": [],
           "data": []
@@ -39,10 +26,9 @@
       "get_shortcut_service_discord": {
         "search_patterns": [
           "*/system_ce/*/shortcut_service/shortcuts.xml*",
-          "*/system_ce/*/shortcut_service/packages/*.xml*",
-          "*/system_ce/*/shortcut_service/shortcut_dump/*"
+          "*/system_ce/*/shortcut_service/packages/*.xml*"
         ],
-        "file_count": 12,
+        "file_count": 13,
         "expected_output": {
           "headers": [],
           "data": []
@@ -54,17 +40,7 @@
           "*/system_ce/*/shortcut_service/packages/*.xml*",
           "*/system_ce/*/shortcut_service/shortcut_dump/*"
         ],
-        "file_count": 12,
-        "expected_output": {
-          "headers": [],
-          "data": []
-        }
-      },
-      "get_shortcut_service_dumps": {
-        "search_patterns": [
-          "*/system_ce/*/shortcut_service/shortcut_dump/*"
-        ],
-        "file_count": 5,
+        "file_count": 17,
         "expected_output": {
           "headers": [],
           "data": []

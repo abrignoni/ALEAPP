@@ -5,6 +5,7 @@ import hashlib
 import io
 import json
 import sqlite3
+import struct
 import sys
 import tempfile
 import types
@@ -100,7 +101,7 @@ class ShortcutServiceTests(unittest.TestCase):
                         and any(isinstance(target, ast.Name) and target.id == '__artifacts_v2__'
                                 for target in node.targets))
         artifacts = ast.literal_eval(metadata)
-        self.assertEqual(len(artifacts), 5)
+        self.assertEqual(set(artifacts), {'get_shortcut_service', 'get_shortcut_service_discord', 'get_shortcut_service_files'})
         for name, info in artifacts.items():
             self.assertTrue(hasattr(getattr(shortcut_service, name), '__wrapped__'))
             self.assertIn('lava', info['output_types'])
@@ -185,36 +186,7 @@ class ShortcutServiceTests(unittest.TestCase):
         self.assertFalse(Path(row['Source File']).is_absolute())
         self.assertEqual(row['Short Label'], 'MiXeD Label')
 
-    def test_intent_scopes_array_indices_case_and_unknown_types(self):
-        package, shortcut = self.package()
-        for value in ('FirstValue', 'SecondValue'):
-            extras = ET.SubElement(ET.SubElement(shortcut, 'intent'), 'extras')
-            ET.SubElement(extras, 'string', name='CaseSensitiveKey').text = value
-        extras = ET.SubElement(shortcut, 'extras')
-        array = ET.SubElement(extras, 'string-array', name='OrderedValues', num='2')
-        ET.SubElement(array, 'item', value='FirstItem')
-        ET.SubElement(array, 'item', value='SecondItem')
-        ET.SubElement(extras, 'future-type', name='UnknownKey', value='Preserved')
-        self.write('packages/com.example.app.xml', package)
-        rows = self.rows('get_shortcut_service_fields')
-        texts = [row for row in rows if row['Field'] == '#text']
-        self.assertEqual([row['Entry Name (as stored)'] for row in texts],
-                         ['CaseSensitiveKey', 'CaseSensitiveKey'])
-        self.assertIn('/intent[1]/', texts[0]['XML Path'])
-        self.assertIn('/intent[2]/', texts[1]['XML Path'])
-        self.assertTrue(any(row['Value'] == 'SecondItem' and '/item[2]' in row['XML Path'] for row in rows))
-        self.assertTrue(any(row['Value'] == 'Preserved' and row['Type'] == 'future-type' for row in rows))
 
-    def test_json_is_additional_and_original_is_unchanged(self):
-        package, shortcut = self.package()
-        payload = '{"a/b":{"~key":[false,null,"MiXeD"]}}'
-        extras = ET.SubElement(shortcut, 'extras')
-        ET.SubElement(extras, 'string', name='Payload').text = payload
-        self.write('packages/com.example.app.xml', package)
-        rows = self.rows('get_shortcut_service_fields')
-        self.assertTrue(any(row['Value'] == payload and row['Representation'] == 'text' for row in rows))
-        self.assertTrue(any(row['JSON Pointer'] == '/a~1b/~0key/2' and row['Value'] == 'MiXeD' for row in rows))
-        self.assertTrue(any(row['Type'] == 'boolean' and row['Value'] == 'false' for row in rows))
 
     def test_discord_keeps_extra_and_author_identities_separate(self):
         message = json.dumps({'id': 'message-json', 'channel_id': 'channel-json',
@@ -261,8 +233,7 @@ class ShortcutServiceTests(unittest.TestCase):
         self.assertIn('Duplicate keys', row['Decode Status'])
         self.assertIn('Odd array length', row['Decode Status'])
         self.assertIn('SecondAlias', row['Payload Pairs (JSON)'])
-        self.assertTrue(any(field['Value'] == 'TrailingItem'
-                            for field in self.rows('get_shortcut_service_fields')))
+        self.assertIn('TrailingItem', self.rows('get_shortcut_service')[0]['Intents (JSON)'])
 
     def test_malformed_message_json_keeps_other_values(self):
         package, _ = self.discord([('user_username', 'StoredExtra'), ('message', '{broken')])
@@ -375,63 +346,11 @@ class ShortcutServiceTests(unittest.TestCase):
                              'Invalid or unreadable image')
         check.assert_not_called()
 
-    def test_dump_xml_in_txt_is_a_separate_shortcut_observation(self):
-        package, shortcut = self.package()
-        self.write('packages/com.example.app.xml', package)
-        shortcut.set('title', 'StoredBackupLabel')
-        self.write('shortcut_dump/backup-1-payload.txt', package)
-        rows = self.rows('get_shortcut_service')
-        self.assertEqual({row['Short Label'] for row in rows}, {'MiXeD Label', 'StoredBackupLabel'})
-        self.assertEqual({row['Source Kind'] for row in rows}, {'Shortcut XML', 'Dump payload'})
-        self.assertEqual(len(self.rows('get_shortcut_service_files')), 2)
-        self.assertEqual(self.rows('get_shortcut_service_dumps')[0]['File Format'], 'XML')
 
-    def test_dump_bitmap_reference_does_not_establish_profile_or_historical_image(self):
-        package, shortcut = self.package()
-        shortcut.set('bitmap-path', '/data/system_ce/0/shortcut_service/bitmaps/com.example.app/image.png')
-        self.write('shortcut_dump/restore-1-payload.xml', package)
-        self.write('bitmaps/com.example.app/image.png', self.png())
-        with patch.object(shortcut_service, 'check_in_media') as check:
-            self.assertEqual(self.rows('get_shortcut_service')[0]['Bitmap Status'],
-                             'Dump profile not established')
-        check.assert_not_called()
 
-    def test_plain_text_dump_is_preserved_without_inferred_events(self):
-        text = 'Start time: 1700000000123 [2023-11-14 22:13:20]\nStored diagnostic text\n'
-        path = self.write('shortcut_dump/restore-0-start.txt', text.encode())
-        self.assertEqual(self.rows('get_shortcut_service'), [])
-        self.assertEqual(self.rows('get_shortcut_service_files'), [])
-        row = self.rows('get_shortcut_service_dumps')[0]
-        self.assertEqual(row['Content (UTF-8)'], text)
-        self.assertEqual(row['SHA-256'], hashlib.sha256(path.read_bytes()).hexdigest())
-        self.assertEqual(row['Parse Status'], 'Text preserved')
 
-    def test_dump_with_package_metadata_but_no_shortcuts_keeps_its_fields(self):
-        root = ET.Element('user')
-        package = ET.SubElement(root, 'package', name='com.example.app')
-        ET.SubElement(package, 'package-info', version='123', **{'allow-backup':'true'})
-        self.write('shortcut_dump/backup-1-payload.txt', root)
-        self.assertEqual(self.rows('get_shortcut_service'), [])
-        self.assertTrue(any(row['Field'] == '@version' and row['Value'] == '123'
-                            for row in self.rows('get_shortcut_service_fields')))
-        row = self.rows('get_shortcut_service_files')[0]
-        self.assertEqual(row['Package Count'], 1)
-        self.assertEqual(row['Shortcut Count'], 0)
 
-    def test_empty_dump_is_inventoried_without_a_guessed_event(self):
-        self.write('shortcut_dump/empty.txt', b'')
-        row = self.rows('get_shortcut_service_dumps')[0]
-        self.assertEqual(row['Parse Status'], 'Empty file')
-        self.assertEqual(row['SHA-256'], hashlib.sha256(b'').hexdigest())
-        self.assertEqual(row['Content (UTF-8)'], '')
 
-    def test_binary_and_invalid_xml_dumps_are_inventoried(self):
-        self.write('shortcut_dump/binary.dat', b'\xff\xfe\x00')
-        self.write('shortcut_dump/restore-1-payload.xml', b'<broken>')
-        rows = self.rows('get_shortcut_service_dumps')
-        self.assertEqual({row['Parse Status'] for row in rows}, {'Non-UTF-8 content', 'Parse error'})
-        self.assertEqual(next(row['Content (UTF-8)'] for row in rows
-                              if row['File Name'] == 'binary.dat'), '')
 
     def test_media_outputs_register_exact_evidence_path_and_copy_original_bytes(self):
         self.bitmap('/data/system_ce/0/shortcut_service/bitmaps/com.example.app/image.png')
@@ -459,6 +378,220 @@ class ShortcutServiceTests(unittest.TestCase):
         self.assertIn('<img ', html)
         self.assertIn('max-width:80px;max-height:80px', html)
         self.assertNotIn(str(self.root), html)
+
+
+    def test_unknown_types_case_and_original_json_remain_in_shortcuts(self):
+        package, shortcut = self.package()
+        raw = '{"MiXeD":[false,null,"StoredValue"]}'
+        for value in ('FirstValue', 'SecondValue'):
+            extras = ET.SubElement(ET.SubElement(shortcut, 'intent'), 'extras')
+            ET.SubElement(extras, 'string', name='CaseSensitiveKey').text = value
+        extras = ET.SubElement(shortcut, 'extras')
+        ET.SubElement(extras, 'future-type', name='UnknownKey', value='Preserved')
+        ET.SubElement(extras, 'string', name='Payload').text = raw
+        self.write('packages/com.example.app.xml', package)
+        row = self.rows('get_shortcut_service')[0]
+        self.assertIn('FirstValue', row['Intents (JSON)'])
+        self.assertIn('SecondValue', row['Intents (JSON)'])
+        self.assertIn('CaseSensitiveKey', row['Intents (JSON)'])
+        nodes = json.loads(row['Extras (JSON)'])[0]['children']
+        self.assertEqual(nodes[0]['attributes']['value'], 'Preserved')
+        self.assertEqual(nodes[1]['text'], raw)
+
+    def test_identical_copies_are_inventoried_without_repeated_shortcuts(self):
+        package, _ = self.package()
+        self.write('packages/com.example.app.xml', package)
+        for suffix in ('.bak', '.backup', '.reservecopy', '.fallback'):
+            self.write('packages/com.example.app.xml' + suffix, package)
+        self.assertEqual(len(self.rows('get_shortcut_service')), 1)
+        files = self.rows('get_shortcut_service_files')
+        copies = [row for row in files if row['Copy Comparison'] == 'Identical to main']
+        self.assertEqual(len(copies), 4)
+        self.assertTrue(all(row['Shortcut Count'] == 1 and row['Reported Shortcut Count'] == 0
+                            for row in copies))
+        self.assertTrue(all(row['Main Source File'].endswith('com.example.app.xml') for row in copies))
+
+    def test_126_identical_reserve_entries_do_not_double_the_rows(self):
+        package = ET.Element('package', name='com.example.app')
+        for index in range(126):
+            ET.SubElement(package, 'shortcut', id=str(index), title=f'Shortcut {index}')
+        self.write('packages/com.example.app.xml', package)
+        self.write('packages/com.example.app.xml.reservecopy', package)
+        self.assertEqual(len(self.rows('get_shortcut_service')), 126)
+        files = self.rows('get_shortcut_service_files')
+        self.assertEqual(sum(row['Reported Shortcut Count'] for row in files), 126)
+        self.assertEqual(sum(row['Shortcut Count'] for row in files), 252)
+
+    @staticmethod
+    def binary_xml(root):
+        data = bytearray(b'ABX\x00\x10')
+        strings = {}
+
+        def string(value, intern=False):
+            if intern and value in strings:
+                data.extend(struct.pack('>h', strings[value]))
+                return
+            if intern:
+                data.extend(b'\xff\xff')
+                strings[value] = len(strings)
+            value = value.encode('utf-8')
+            data.extend(struct.pack('>h', len(value)))
+            data.extend(value)
+
+        def node(element):
+            data.append(0x32)
+            string(element.tag, True)
+            for key, value in element.attrib.items():
+                data.append(0x2f)
+                string(key, True)
+                string(value)
+            for child in element:
+                node(child)
+            data.append(0x33)
+            string(element.tag, True)
+
+        node(root)
+        data.append(0x11)
+        return bytes(data)
+
+    def test_abx_fallback_is_compared_by_content_with_xml_main(self):
+        root = ET.Element('user')
+        package, _ = self.package()
+        root.append(package)
+        self.write('shortcuts.xml', root)
+        self.write('shortcuts.xml.fallback', self.binary_xml(root))
+        self.assertEqual(len(self.rows('get_shortcut_service')), 1)
+        files = self.rows('get_shortcut_service_files')
+        fallback = next(row for row in files if row['Source Kind'] == 'Vendor fallback')
+        self.assertEqual(fallback['File Format'], 'ABX')
+        self.assertEqual(fallback['Copy Comparison'], 'Identical to main')
+
+    def test_different_abx_fallback_retains_its_shortcut(self):
+        root = ET.Element('user')
+        package, shortcut = self.package()
+        root.append(package)
+        self.write('shortcuts.xml', root)
+        shortcut.set('title', 'FallbackLabel')
+        self.write('shortcuts.xml.fallback', self.binary_xml(root))
+        self.assertEqual({row['Short Label'] for row in self.rows('get_shortcut_service')},
+                         {'MiXeD Label', 'FallbackLabel'})
+
+    def test_formatting_only_changes_do_not_repeat_a_backup(self):
+        self.write('packages/com.example.app.xml',
+                   b'<package name="com.example.app"><shortcut id="one" title="Label" /></package>')
+        self.write('packages/com.example.app.xml.backup',
+                   b'<package name="com.example.app">\n  <shortcut title="Label" id="one" />\n</package>')
+        self.assertEqual(len(self.rows('get_shortcut_service')), 1)
+        files = self.rows('get_shortcut_service_files')
+        self.assertNotEqual(files[0]['SHA-256'], files[1]['SHA-256'])
+        self.assertEqual(files[1]['Copy Comparison'], 'Identical to main')
+
+    def test_changed_backup_keeps_its_previous_alias(self):
+        package, shortcut = self.package()
+        self.write('packages/com.example.app.xml', package)
+        shortcut.set('title', 'PreviousAlias')
+        self.write('packages/com.example.app.xml.backup', package)
+        self.assertEqual({row['Short Label'] for row in self.rows('get_shortcut_service')},
+                         {'MiXeD Label', 'PreviousAlias'})
+        self.assertEqual(self.rows('get_shortcut_service_files')[1]['Copy Comparison'],
+                         'Differs from main')
+
+    def test_copies_without_main_files_are_retained(self):
+        for index, suffix in enumerate(('.bak', '.backup', '.reservecopy', '.fallback')):
+            package, _ = self.package('com.example.app' + str(index))
+            self.write('packages/com.example.app' + str(index) + '.xml' + suffix, package)
+        self.assertEqual(len(self.rows('get_shortcut_service')), 4)
+        self.assertEqual({row['Copy Comparison'] for row in self.rows('get_shortcut_service_files')},
+                         {'Main file absent'})
+
+    def test_identical_copies_do_not_repeat_discord_payloads(self):
+        package, _ = self.discord([('user_username', 'StoredExtra'), ('guild_id', 'stored-guild')])
+        self.write('packages/com.discord.xml', package)
+        self.write('packages/com.discord.xml.reservecopy', package)
+        rows = self.rows('get_shortcut_service_discord')
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]['Guild ID (extra)'], 'stored-guild')
+
+    def test_second_user_150_and_its_copies_remain_separate(self):
+        for user in ('0', '150'):
+            package, _ = self.package()
+            self.write('packages/com.example.app.xml', package, user=user)
+            self.write('packages/com.example.app.xml.reservecopy', package, user=user)
+        self.assertEqual([row['Android User'] for row in self.rows('get_shortcut_service')], ['0', '150'])
+        self.assertEqual(len(self.rows('get_shortcut_service_files')), 4)
+
+    def test_xml_declaration_only_is_not_a_parse_error(self):
+        declaration = b"<?xml version='1.0' encoding='utf-8' standalone='yes' ?>\n"
+        self.assertEqual(len(declaration), 57)
+        for index, data in enumerate((declaration, b'\xef\xbb\xbf' + declaration,
+                                     '<?xml version="1.0" encoding="utf-16"?>'.encode('utf-16'))):
+            self.write(f'packages/com.example.empty{index}.xml', data)
+        rows = self.rows('get_shortcut_service_files')
+        self.assertEqual({row['Parse Status'] for row in rows}, {'XML declaration only'})
+        self.assertEqual({row['Error'] for row in rows}, {''})
+        self.assertEqual(self.rows('get_shortcut_service'), [])
+
+    def test_incomplete_declaration_remains_a_parse_error(self):
+        self.write('packages/com.example.bad.xml', b'<?xml version="1.0"')
+        self.assertEqual(self.rows('get_shortcut_service_files')[0]['Parse Status'], 'Parse error')
+
+    def test_combined_flags_and_disabled_reason_are_decoded_beside_raw_values(self):
+        package, shortcut = self.package()
+        shortcut.set('flags', '16387')
+        shortcut.set('disabled-reason', '102')
+        self.write('packages/com.example.app.xml', package)
+        row = self.rows('get_shortcut_service')[0]
+        self.assertEqual(row['Flags (as stored)'], '16387')
+        self.assertEqual(row['Flags (decoded)'], 'dynamic; pinned; cached_notifications')
+        self.assertEqual(row['Disabled Reason (as stored)'], '102')
+        self.assertEqual(row['Disabled Reason (decoded)'], 'signature_mismatch')
+
+    def test_unknown_bits_and_unknown_disabled_reason_are_visible(self):
+        package, shortcut = self.package()
+        shortcut.set('flags', str((1 << 20) | 32))
+        shortcut.set('disabled-reason', '999')
+        self.write('packages/com.example.app.xml', package)
+        row = self.rows('get_shortcut_service')[0]
+        self.assertEqual(row['Flags (decoded)'], 'manifest; unknown_bits(0x100000)')
+        self.assertEqual(row['Disabled Reason (decoded)'], 'unknown(999)')
+
+    def test_invalid_flags_are_visible_and_do_not_hide_the_shortcut(self):
+        package, shortcut = self.package()
+        shortcut.set('flags', 'invalid')
+        self.write('packages/com.example.app.xml', package)
+        self.assertEqual(self.rows('get_shortcut_service')[0]['Flags (decoded)'], 'Unrecognized value')
+
+    def test_signed_flags_preserve_unknown_high_bits(self):
+        package, shortcut = self.package()
+        shortcut.set('flags', '-2147483648')
+        self.write('packages/com.example.app.xml', package)
+        self.assertEqual(self.rows('get_shortcut_service')[0]['Flags (decoded)'],
+                         'unknown_bits(0x80000000)')
+
+    def test_missing_codes_are_not_assigned_default_values(self):
+        package, _ = self.package()
+        self.write('packages/com.example.app.xml', package)
+        row = self.rows('get_shortcut_service')[0]
+        self.assertEqual(row['Flags (decoded)'], '')
+        self.assertEqual(row['Disabled Reason (decoded)'], '')
+
+    def test_dumps_are_inventoried_without_payload_cells_or_shortcut_rows(self):
+        package, _ = self.package()
+        xml = self.write('shortcut_dump/backup-1-payload.txt', package)
+        self.write('shortcut_dump/restore-0-start.txt', b'Start time: 1700000000123\n')
+        self.write('shortcut_dump/binary.dat', b'\xff\xfe\x00')
+        self.write('shortcut_dump/empty.txt', b'')
+        self.write('shortcut_dump/restore-1-payload.xml', b'<broken>')
+        self.assertEqual(self.rows('get_shortcut_service'), [])
+        self.assertEqual(self.rows('get_shortcut_service_discord'), [])
+        rows = self.rows('get_shortcut_service_files')
+        self.assertEqual(len(rows), 5)
+        self.assertEqual({row['Parse Status'] for row in rows},
+                         {'Parsed', 'Text dump', 'Binary dump', 'Empty file', 'Parse error'})
+        self.assertTrue(all(row['Reported Shortcut Count'] == 0 for row in rows))
+        self.assertNotIn('Content (UTF-8)', rows[0])
+        saved = next(row for row in rows if row['Source File'].endswith('backup-1-payload.txt'))
+        self.assertEqual(saved['SHA-256'], hashlib.sha256(xml.read_bytes()).hexdigest())
 
     def test_decorated_outputs_preserve_names_and_raw_timestamps(self):
         message = {'timestamp': '2023-10-01T12:00:00.123Z',

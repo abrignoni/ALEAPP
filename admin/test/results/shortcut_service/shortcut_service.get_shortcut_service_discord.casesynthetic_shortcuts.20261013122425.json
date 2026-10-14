@@ -6,15 +6,15 @@
     "case_number": "casesynthetic_shortcuts",
     "number_of_columns": 33,
     "number_of_rows": 2,
-    "total_data_size_bytes": 2565,
+    "total_data_size_bytes": 2568,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/shortcut_service/testdata.shortcut_service.get_shortcut_service_discord.casesynthetic_shortcuts.zip",
-    "start_time": "2026-10-13T16:01:38.390274+00:00",
-    "end_time": "2026-10-13T16:01:38.406295+00:00",
-    "run_time_seconds": 0.003919363021850586,
+    "start_time": "2026-10-14T05:12:19.361360+00:00",
+    "end_time": "2026-10-14T05:12:19.372896+00:00",
+    "run_time_seconds": 0.0061855316162109375,
     "last_commit": {
-      "hash": "05b3d6d38982c5b7b66d218cf5809064e1da9314"
+      "hash": "Uncommitted"
     }
   },
   "headers": [
@@ -121,7 +121,7 @@
       "{\"id\":\"100000000000000002\",\"channel_id\":\"100000000000000003\",\"content\":\"Synthetic message\",\"timestamp\":\"2023-10-01T12:00:00.123Z\",\"edited_timestamp\":null,\"attachments\":[],\"author\":{\"id\":\"100000000000000001\",\"username\":\"PreviousAuthor\",\"global_name\":null,\"discriminator\":\"0\"}}",
       "Decoded",
       "/package[1]/shortcut[1]/intent[1]/extras[1]/string-array[1]",
-      "data/system_ce/0/shortcut_service/packages/com.discord.xml.bak"
+      "data/system_ce/0/shortcut_service/packages/com.discord.xml.backup"
     ]
   ]
 }
