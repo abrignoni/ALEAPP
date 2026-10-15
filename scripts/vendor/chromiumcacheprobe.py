@@ -1,7 +1,7 @@
 """chromiumcacheprobe: read Chromium Simple Cache entries and rebuild cached H.264 video.
 
 Reads the disk cache that Chrome and other Chromium browsers keep on Android
-(``cache/Cache_Data``): entry keys, the HTTP response metadata in stream 0, the body
+(``cache/Cache`` or ``cache/Cache/Cache_Data``): entry keys, the HTTP response metadata in stream 0, the body
 in stream 1, sparse range files (``_s``) and the cache index. From the MP4 fragments
 found in those bodies it rebuilds playable MP4 files. Sample bytes are copied as
 stored; only the container around them is written. No decoder is run.
@@ -9,13 +9,14 @@ stored; only the container around them is written. No decoder is run.
 Standard library only. Brotli-encoded bodies are decoded when the optional
 ``brotli`` package is installed and reported as undecodable otherwise.
 
-The recovery engine was written by Forensik-IT GmbH (@ForensikITGmbH) and first
+The recovery engine was written by Forensik.IT GmbH (@ForensikITGmbH) and first
 submitted to ALEAPP as abrignoni/ALEAPP#1721.
 
-Format references:
-  Simple Cache entry layout   chromium/src net/disk_cache/simple/simple_entry_format.h
-  Simple Cache index          chromium/src net/disk_cache/simple/simple_index.cc
-  HTTP response metadata      chromium/src net/http/http_response_info.cc
+Format references (Chromium commits as pinned in the README):
+  Simple Cache entry layout   net/disk_cache/simple/simple_entry_format.h
+  Entry and index file names  net/disk_cache/simple/simple_util.cc, simple_index_file.cc
+  Simple Cache index          net/disk_cache/simple/simple_index.cc
+  HTTP response metadata      net/http/http_response_info.cc
   ISO BMFF fragments          W3C MSE byte stream format for ISO BMFF
 
 MIT licence. https://github.com/abrignoni/chromiumcacheprobe

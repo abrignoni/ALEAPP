@@ -36,7 +36,7 @@ MEDIA_URL = "https://v.redd.it/synthetic/DASH_96.mp4"
 POST_URL = "https://www.reddit.com/r/example/comments/test123/media/"
 PAGE_URL = "https://www.reddit.com/r/example/comments/page123/context/"
 PREFIX = "Dump/data/data/com.android.chrome/"
-SOURCE_POST_ID = "Page open when the Reddit listing was fetched (source_post_id)"
+SOURCE_POST_ID = "Post ID in the listing request (source_post_id)"
 
 
 def fragment_bodies():
@@ -192,7 +192,7 @@ class ContextTests(unittest.TestCase):
         self.assertIsInstance(resource["metadata"][0]["headers"]["last-modified"][0], str)
         self.assertEqual(len(resource["posts"]), 1)
         self.assertTrue(resource["posts"][0]["promoted"])
-        self.assertEqual(resource["posts"][0]["role"], "Scrubber preview")
+        self.assertEqual(resource["posts"][0]["media_fields"], ["secure_media.reddit_video.scrubber_media_url"])
         relations = Counter((a["kind"], a["relation"]) for a in resource["activities"])
         self.assertEqual(relations, {
             ("History visit", SOURCE_POST_ID): 1,
@@ -384,7 +384,8 @@ class ContextTests(unittest.TestCase):
                          (60, 96, 64, "No"))
         self.assertEqual(values["Post Titles"], "Synthetic preview")
         self.assertEqual(values["Post URLs"], POST_URL)
-        self.assertEqual(values["Promoted (as stored)"], "Yes")
+        self.assertEqual(values["Promoted"], "Yes")
+        self.assertEqual(values["Media Field"], "secure_media.reddit_video.scrubber_media_url")
         self.assertIn(PAGE_URL, values["Linked Browser URLs"])
         self.assertIn(SOURCE_POST_ID, values["Browser Relationship"])
         self.assertEqual(len(json.loads(values["Source File"])), 4)
@@ -406,8 +407,9 @@ class ContextTests(unittest.TestCase):
         self.assertEqual(diagnostics["media_history_playback_records_read"], 0)
         resource = next(r for r in resources.values() if "4ocgl9m4jbt61" in r["urls"][0])
         self.assertEqual(resource["metadata"][0]["response_time"].isoformat(), "2021-04-17T17:50:30.502880+00:00")
-        self.assertTrue(all(post["role"] == "Scrubber preview" for r in resources.values() for post in r["posts"]))
-        # Every browser link on this image is the page open when the listing was fetched.
+        self.assertTrue(all(any(f.endswith(".scrubber_media_url") for f in post["media_fields"])
+                            for r in resources.values() for post in r["posts"]))
+        # Every browser link on this image came through the listing request's source_post_id.
         self.assertEqual({a["relation"] for r in resources.values() for a in r["activities"]}, {SOURCE_POST_ID})
         self.assertEqual(Counter(a["kind"] for r in resources.values() for a in r["activities"]),
                          {"History visit": 5, "Session navigation": 4})

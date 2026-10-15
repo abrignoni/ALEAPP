@@ -4,15 +4,15 @@ __artifacts_v2__ = {
     "get_chromeCacheVideos": {
         "name": "Chrome Cache - Videos",
         "description": "H.264 video rebuilt from MP4 fragments in the Android Chrome cache, with the "
-                       "HTTP and cache times of each video and the cached Reddit post that references it.",
+                       "HTTP and cache times of each video and, when one is cached, the Reddit post that references it.",
         "author": "@ForensikITGmbH, @AlexisBrignoni, Claude",
         "creation_date": "2026-10-02",
         "last_update_date": "2026-10-15",
         "requirements": "none",
         "category": "Chromium",
         "notes": (
-            "Video is rebuilt by the vendored chromiumcacheprobe from MP4 fragments in the "
-            "cache's _0 and sparse _s files. Sample bytes are copied as stored and only the "
+            "Video is rebuilt by the vendored chromiumcacheprobe from MP4 fragments found in "
+            "the cache's entry files, including the sparse _s files. Sample bytes are copied as stored and only the "
             "container is written; no decoder is run. Recovery Method says whether a clip was "
             "rebuilt or was a complete MP4 copied byte for byte. The file "
             "chromeCacheVideos_provenance.json in the report's Chromium folder lists the source "
@@ -20,13 +20,16 @@ __artifacts_v2__ = {
             "Response Time and Request Time are the HTTP exchange times Chrome stored with the "
             "cache entry, and Last Used is the entry's time in the cache index. They are not "
             "playback times, and cached video does not show it was watched. A time is blank "
-            "when a video's entries disagree; all values are in Cache Metadata. "
-            "A Reddit post is linked only when a cached Reddit JSON response stores the exact "
-            "video URL in a reddit_video field. Promoted (as stored) is that post's promoted "
-            "value. Browser History visits and tab session entries are linked by the exact "
-            "video URL, the exact post permalink, or the post ID Reddit sent as source_post_id "
-            "with the listing request. That last link names the page that was open when the "
-            "listing was fetched, which can be a different post from the video's own; Browser "
+            "when the video's entries disagree or none holds it; the per-entry values are in "
+            "Cache Metadata. A Reddit post is linked only when a cached Reddit JSON response "
+            "stores the video URL (compared without its fragment) in a reddit_video or "
+            "reddit_video_preview field; Media Field names the field. Promoted is Yes or No from "
+            "the post's promoted field, or Not recorded when the field is absent or not a "
+            "boolean; Post Context holds the value as stored. History visits, Media History "
+            "records and tab session entries are linked by the video URL, the post permalink "
+            "(both compared without fragment), or the post ID in the listing request's "
+            "source_post_id parameter. That last link can be a different post from the video's "
+            "own, and what Reddit means by the parameter is not sourced here; Browser "
             "Relationship says which link was used. Browser records are linked only when the "
             "same Android user's storage holds one Chrome profile, because the cache does not "
             "record its profile. No link is made by time. Brotli-compressed responses are read "
@@ -154,7 +157,6 @@ def _reddit_posts(document, request_url, targets):
                             "permalink": "https://www.reddit.com" + link,
                             "media_field": media_name + "." + field_name + "." + field,
                             "media_url": value,
-                            "role": "Scrubber preview" if field == "scrubber_media_url" else "Media reference",
                             "promoted": item.get("promoted", ""),
                             "source_post_ids": [p[3:] for p in source_ids if re.fullmatch(r"t3_[a-z0-9]+", p)],
                             "request_url": request_url}
@@ -411,7 +413,7 @@ def _attach_activities(resources, inputs, diagnostics, profile_inputs):
                     match = re.search(r"/comments/([a-z0-9]+)/", parsed.path + "/")
                     ids = {post_id for post in resource["posts"] for post_id in post["source_post_ids"]}
                     if match and match.group(1) in ids:
-                        relation = "Page open when the Reddit listing was fetched (source_post_id)"
+                        relation = "Post ID in the listing request (source_post_id)"
             if relation:
                 resource["activities"].append(dict(
                     activity, relation=relation,
@@ -486,8 +488,8 @@ def get_chromeCacheVideos(context):
         "Resource URLs",
         "Post Titles",
         "Post URLs",
-        "Media Role",
-        "Promoted (as stored)",
+        "Media Field",
+        "Promoted",
         "Linked Browser URLs",
         "Browser Relationship",
         "Android User ID",
@@ -499,7 +501,7 @@ def get_chromeCacheVideos(context):
         "Width",
         "Height",
         "Audio",
-        "Video Timebase",
+        "Video Timescale",
         "Warnings",
         "Source File",
         "Resource ID",
@@ -540,7 +542,7 @@ def get_chromeCacheVideos(context):
                 _json_text(resource["urls"]),
                 _summary(resource["posts"], "title"),
                 _summary(resource["posts"], "permalink"),
-                _summary(resource["posts"], "role"),
+                "\n".join(sorted({field for post in resource["posts"] for field in post["media_fields"]})),
                 _promotion(resource),
                 _summary(resource["activities"], "url"),
                 _summary(resource["activities"], "relation"),

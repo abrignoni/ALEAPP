@@ -10,15 +10,15 @@
     "media_checkins": 0,
     "media_embedded_checkins": 1,
     "input_zip_path": "admin/test/cases/data/chromeCacheVideos/testdata.chromeCacheVideos.get_chromeCacheVideos.case1.zip",
-    "start_time": "2026-10-15T12:25:55.797303+00:00",
-    "end_time": "2026-10-15T12:25:55.873739+00:00",
-    "run_time_seconds": 0.01793980598449707,
+    "start_time": "2026-10-15T12:40:32.792860+00:00",
+    "end_time": "2026-10-15T12:40:32.828026+00:00",
+    "run_time_seconds": 0.014122962951660156,
     "last_commit": {
-      "hash": "Uncommitted",
-      "author_name": "N/A",
-      "author_email": "N/A",
-      "date": "2026-10-15T08:25:55.852633",
-      "message": "File not yet committed to git"
+      "hash": "d8d71797547279a653deae7239e8906f72eb1ef9",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-10-15T08:26:40-04:00",
+      "message": "Add Chrome Cache - Videos on a vendored chromiumcacheprobe"
     }
   },
   "headers": [
@@ -29,8 +29,8 @@
     "Resource URLs",
     "Post Titles",
     "Post URLs",
-    "Media Role",
-    "Promoted (as stored)",
+    "Media Field",
+    "Promoted",
     "Linked Browser URLs",
     "Browser Relationship",
     "Android User ID",
@@ -42,7 +42,7 @@
     "Width",
     "Height",
     "Audio",
-    "Video Timebase",
+    "Video Timescale",
     "Warnings",
     "Source File",
     "Resource ID",

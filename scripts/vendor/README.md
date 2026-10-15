@@ -67,13 +67,15 @@ re-vendor, or the next sync silently reverts the change.
     cp ../qnxprobe/qnxprobe.py scripts/vendor/qnxprobe.py
     cp ../qnxprobe/ewfprobe.py scripts/vendor/ewfprobe.py
     cp ../exoprobe/exoprobe.py scripts/vendor/exoprobe.py
+    cp ../chromiumcacheprobe/chromiumcacheprobe.py scripts/vendor/chromiumcacheprobe.py
     python3 admin/scripts/check_vendored.py --update
 
 `--update` rewrites the hashes only. The upstream commit and date in
 `vendored.json` are what say which version this is, so set those by hand from
 `git -C ../qnxprobe log -1 --format='%H %cI' main` (ewfprobe's come from
 qnxprobe's own `vendored.json`, since the copy here is the one qnxprobe carries;
-exoprobe's from `git -C ../exoprobe log -1 --format='%H %cI' main`).
+exoprobe's from `git -C ../exoprobe log -1 --format='%H %cI' main`, and
+chromiumcacheprobe's from `git -C ../chromiumcacheprobe log -1 --format='%H %cI' main`).
 Then run the check without `--update`, which fetches the upstream file at the
 commit you recorded and fails if the copy is not that file.
 

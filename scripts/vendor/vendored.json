@@ -45,9 +45,9 @@
       "version": "0.1.0",
       "upstream": "https://github.com/abrignoni/chromiumcacheprobe",
       "upstream_file": "chromiumcacheprobe.py",
-      "commit": "7876d42d2271420a24c5f4f592fe47ff5adc760e",
-      "commit_date": "2026-10-15T08:20:18-04:00",
-      "sha256": "c03e67e8e6dc673249939086c5feec6e8126dce70679b3a9f629ac027f904c44",
+      "commit": "5d33f78f545bf59489ed0ed5ecb02134b10f72c3",
+      "commit_date": "2026-10-15T08:39:54-04:00",
+      "sha256": "9f21f3b6e42f410447609b89c6fba008dfae9a52e3f5a63153f5adc3df056ec0",
       "licence": "MIT",
       "licence_file": "scripts/vendor/LICENSE-chromiumcacheprobe",
       "note": "Copied verbatim. Fix upstream and re-vendor; edits here are reverted by the next sync."

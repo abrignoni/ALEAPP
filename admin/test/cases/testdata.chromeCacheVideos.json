@@ -1,6 +1,6 @@
 {
   "case1": {
-    "description": "Synthetic Chromium Simple Cache v9 with four H.264/AAC fragments; no initialization header supplied. Expected: one video-only row, 60 samples, 96x64, timebase 90000, 2.021333 stored video seconds.",
+    "description": "Synthetic Chromium Simple Cache v9 with four H.264/AAC fragments; no initialization header supplied. Expected: one video-only row, 60 samples, 96x64, timescale 90000, 2.021333 stored video seconds.",
     "maker": "@ForensikITGmbH",
     "make_data": {
       "input_data_path": "testdata.chromeCacheVideos.get_chromeCacheVideos.case1.zip",
@@ -36,7 +36,7 @@
     }
   },
   "case2": {
-    "description": "16 unmodified public DFRWS 2021 Galaxy S10 Chrome files: 12 clips from three scrubber-preview resources, HTTP metadata, v9 index, cached Reddit JSON, History, empty Media History and two SNSS files. Surviving initialization; a subset, not the complete extraction.",
+    "description": "16 unmodified public DFRWS 2021 Galaxy S10 Chrome files: 12 clips from three resources referenced by Reddit scrubber_media_url fields, HTTP metadata, v9 index, cached Reddit JSON, History, empty Media History and two SNSS files. Surviving initialization; a subset, not the complete extraction.",
     "maker": "@ForensikITGmbH",
     "make_data": {
       "input_data_path": "dfrws_context_input.zip",
@@ -69,8 +69,7 @@
     "source": {
       "archive_name": "3_Samsung GSM_SM-G973F_DS Galaxy S10.zip",
       "archive_url": "https://digitalcorpora.s3.amazonaws.com/corpora/dfrws/challenge-2021/3_Samsung%20GSM_SM-G973F_DS%20Galaxy%20S10.zip",
-      "full_archive_hash_verified": false,
-      "source_file_hashes": "data/chromeCacheVideos/dfrws2021_sources.json"
+      "full_archive_hash_verified": false
     },
     "image_info": {
       "os_name": "Android",
