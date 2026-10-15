@@ -234,6 +234,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | chatgpt2 |
 | chrome |
 | chromeAutofill |
+| chromeCacheVideos |
 | chromeCookies |
 | chromeCreditCards |
 | chromeDIPS |
