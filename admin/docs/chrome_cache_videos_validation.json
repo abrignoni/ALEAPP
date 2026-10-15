@@ -1,0 +1,205 @@
+{
+  "package_version": "0.4.0",
+  "date": "2026-10-15",
+  "tested_base_commit": "285fe70b7e3e83f37bdfdb2ede69a4ee62d0670b",
+  "platform": "Linux x86_64",
+  "python": "3.12",
+  "module_unit_tests": 41,
+  "full_unit_tests": 1306,
+  "full_unit_skips": 10,
+  "official_fixture_comparisons_pass": 108,
+  "new_module_fixture_comparisons_pass": 3,
+  "new_module_storage_views": {
+    "pass": 6,
+    "skip": 0
+  },
+  "global_storage_views": {
+    "pass": 130,
+    "skip": 52,
+    "existing_known_failures": 2,
+    "new_failures": 0,
+    "existing_modules": [
+      "calculatorLockVault",
+      "smsmms"
+    ],
+    "registry_changed": false
+  },
+  "pylint_new_warnings": 0,
+  "strict_report_checker_findings": 0,
+  "sample_data_new_warnings": 0,
+  "existing_repository_sample_data_warnings": 59,
+  "sequential_final_checks": [
+    {
+      "check": "context_full_unit_tests",
+      "exit_code": 0
+    },
+    {
+      "check": "context_all_fixtures",
+      "exit_code": 0
+    },
+    {
+      "check": "context_all_storage_views",
+      "exit_code": 0
+    },
+    {
+      "check": "context_report_verification",
+      "exit_code": 0
+    },
+    {
+      "check": "context_report_checker",
+      "exit_code": 0
+    },
+    {
+      "check": "context_lint_changed",
+      "exit_code": 0
+    },
+    {
+      "check": "context_check_claim_language.py",
+      "exit_code": 0
+    },
+    {
+      "check": "context_check_conversation_column_order.py",
+      "exit_code": 0
+    },
+    {
+      "check": "context_check_html_safety.py",
+      "exit_code": 0
+    },
+    {
+      "check": "context_check_report_local_paths.py",
+      "exit_code": 0
+    },
+    {
+      "check": "context_check_artifact_paths.py",
+      "exit_code": 0
+    },
+    {
+      "check": "context_check_source_path.py",
+      "exit_code": 0
+    },
+    {
+      "check": "context_check_source_file_column.py",
+      "exit_code": 0
+    },
+    {
+      "check": "context_check_artifact_returns.py",
+      "exit_code": 0
+    },
+    {
+      "check": "context_check_implicit_concat.py",
+      "exit_code": 0
+    },
+    {
+      "check": "context_check_artifact_descriptions.py",
+      "exit_code": 0
+    },
+    {
+      "check": "context_validate_sample_data.py",
+      "exit_code": 0
+    }
+  ],
+  "zip_reports": [
+    {
+      "run": "single",
+      "zip_members": 875,
+      "selected_storage_users": 1,
+      "tsv_video_rows": 12,
+      "separate_event_table": false,
+      "timeline_rows": 16,
+      "lava_counts": {
+        "get_chromecachevideos": 12,
+        "_lava_media_items": 12,
+        "_lava_media_references": 12
+      },
+      "resources": 3,
+      "event_types": {
+        "History visit": 4,
+        "Session navigation": 3,
+        "Cache last used": 3,
+        "HTTP request time": 3,
+        "HTTP response time": 3
+      },
+      "output_hashes_match_previous_tested_build": true,
+      "context_source_hashes": 14
+    },
+    {
+      "run": "multi",
+      "zip_members": 2625,
+      "selected_storage_users": 2,
+      "tsv_video_rows": 24,
+      "separate_event_table": false,
+      "timeline_rows": 32,
+      "lava_counts": {
+        "get_chromecachevideos": 24,
+        "_lava_media_items": 12,
+        "_lava_media_references": 24
+      },
+      "resources": 6,
+      "event_types": {
+        "History visit": 8,
+        "Session navigation": 6,
+        "Cache last used": 6,
+        "HTTP request time": 6,
+        "HTTP response time": 6
+      },
+      "output_hashes_match_previous_tested_build": true,
+      "context_source_hashes": 28
+    }
+  ],
+  "fresh_source_without_git": {
+    "module_unit_tests_pass": 41,
+    "fixtures_pass": 3,
+    "storage_views_pass": 6,
+    "storage_views_skip": 0,
+    "checks": [
+      {
+        "check": "unit",
+        "exit_code": 0
+      },
+      {
+        "check": "fixtures",
+        "exit_code": 0
+      },
+      {
+        "check": "storage",
+        "exit_code": 0
+      }
+    ]
+  },
+  "selectable_artifacts": [
+    "get_chromeCacheVideos"
+  ],
+  "recovery_passes_per_run": 1,
+  "separate_event_artifact_or_lava_table": false,
+  "timeline_generated_automatically": true,
+  "offline_pr_fixture_coverage_gate": "PASS",
+  "runtime_external_dependencies_added": [],
+  "typed_lava_datetime_precision": "integer seconds, existing framework representation",
+  "full_utc_precision_preserved_in": [
+    "Cache Metadata",
+    "Activity Context",
+    "TSV",
+    "tl.db",
+    "event JSON",
+    "context JSON"
+  ],
+  "prior_gui_and_ALEAPP_0_2_test_confirmed_by_user": true,
+  "current_0_4_unified_build_tested_by_user": false,
+  "public_archive_member_crcs_checked": true,
+  "full_publisher_archive_hash_verified": false,
+  "full_original_ffs_zip_run_here": false,
+  "native_frozen_build_run_here": false,
+  "independently_acquired_second_user_available": false,
+  "controlled_second_user_and_duplicate_view_checked": true,
+  "decoder_evidence": "All twelve output hashes identical to the previously FFmpeg-decoded outputs; runtime does not invoke a decoder.",
+  "python_runtime_matrix_executed": false,
+  "python_3_10_syntax_checked": true,
+  "pr_published": false,
+  "code_sha256": {
+    "scripts/chrome_cache_video.py": "d450f96f12faae4f645f60c65f7aa15d51e425d6b1419de7f78c632a976389d5",
+    "scripts/chrome_cache_context.py": "ca59f80cbf3fc27922d6dca6a7e18fab96b3cf6a606ef7eb2c9928ca68e5a922",
+    "scripts/artifacts/chromeCacheVideos.py": "33199f14b930acc24dc0554370ed97c18c8e46d27cb7bc0f077c379409068eb2",
+    "admin/test/scripts/test_chrome_cache_videos.py": "5b64f3be331b86d4969e35dad488e6a764f1c9d508bcb9a4bc076bc52ecb30fb",
+    "admin/test/scripts/test_chrome_cache_context.py": "f0c70ed2151971a52c3974a28dd83beb13f0d1bd992ce7c7081a5f36833632e5"
+  }
+}

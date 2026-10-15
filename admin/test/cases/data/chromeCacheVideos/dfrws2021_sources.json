@@ -1,0 +1,38 @@
+{
+  "dataset": "DFRWS 2021 Samsung S10 Chrome HTTP cache",
+  "archive_url": "https://digitalcorpora.s3.amazonaws.com/corpora/dfrws/challenge-2021/3_Samsung%20GSM_SM-G973F_DS%20Galaxy%20S10.zip",
+  "full_archive_hash_verified": false,
+  "scope": "16 unmodified public files: five recovery sources, three HTTP metadata siblings, one index, three cached Reddit JSON responses, History, empty Media History and two SNSS files",
+  "source_sha256": {
+    "Dump/data/data/com.android.chrome/cache/Cache/06b0441e4b13e306_s": "b13f2b97631e8f4c8eb666ecf5efcb9470fe406b7aff8be609e2ed4e12d58e04",
+    "Dump/data/data/com.android.chrome/cache/Cache/52bd54ff1a8ed630_s": "6aae5edae80f89e5fc7bc91993aaa1cf4e1aa68d749b479cd7897308791e957c",
+    "Dump/data/data/com.android.chrome/cache/Cache/5c35d641eaad57ef_s": "8795e29b4fd07031f82ad43c38acaf4987717161203b9eb9b3f52ab6637d45f8",
+    "Dump/data/data/com.android.chrome/cache/Cache/6caa372c7d4d2840_s": "9ee276edf19602467cda7eddbfd7d8df54e50dd1c4296f464888ad85e7a6a979",
+    "Dump/data/data/com.android.chrome/cache/Cache/f1bbe0daa4aa7ce5_s": "3a0acc19b8be6e8533635eaae6cb0fa798d7c16e85f5bee5987c792ad29e9cc2",
+    "Dump/data/data/com.android.chrome/app_chrome/Default/History": "5b51d0dd07fdce6bebf8c9753b5ea8afa8ac62426451f6d5f522c0cb7dd17aae",
+    "Dump/data/data/com.android.chrome/app_chrome/Default/Media History": "8d8b09eaf03f6bc48730615dd9c93501edf0e4a69ccabd226e1888e230aaa4fd",
+    "Dump/data/data/com.android.chrome/app_chrome/Default/Sessions/Tabs_13263155433960567": "f4c0b70e9286c80e03ba36a7c89c95012358a1e0af103840f8da437b4dab71f4",
+    "Dump/data/data/com.android.chrome/app_chrome/Default/Sessions/Tabs_13263229065561388": "622e7bfc6078ad3a793da34499fd0d5ece5bf0ff8abbd943d336297e7f904dc0",
+    "Dump/data/data/com.android.chrome/cache/Cache/06b0441e4b13e306_0": "ea0efa2ad21178328ae9c305d41faf1c7dc8810d4c46d3723801fdbbb4982255",
+    "Dump/data/data/com.android.chrome/cache/Cache/150cd3c003b715bc_0": "a953407dc6af9d05cb658ca984e7db01310004735cb58daba9f8c99cfc4cc56c",
+    "Dump/data/data/com.android.chrome/cache/Cache/5c35d641eaad57ef_0": "2f62f636b8beb024b7c9fb596a3ce614b484e9922181aaf06a4a5ab5af42bf31",
+    "Dump/data/data/com.android.chrome/cache/Cache/66f99fa3531eedf8_0": "31d6ff4dcde653d1289e896c7c105e974b33b8ceccef07ce916ec9aa4d1b2799",
+    "Dump/data/data/com.android.chrome/cache/Cache/80226f2462f01af5_0": "330d777299bb6258a3694550e5e07355f3f4022241e57a279036c1ba5bf32443",
+    "Dump/data/data/com.android.chrome/cache/Cache/f1bbe0daa4aa7ce5_0": "18a646f728b73340362d726dccc1779037f9604e6376d030c0a4610c6d261f64",
+    "Dump/data/data/com.android.chrome/cache/Cache/index-dir/the-real-index": "c1539bb8abe0f4bd242bd367ad890575f664c9ab82d26caf73b69195af67f655"
+  },
+  "output_sha256": [
+    "14406c33cd17b5f1c22c2a4819aaa1354086ce29911127ef91068de9f96e4c15",
+    "1c07e7396e25a1d9fb510a82433d5ddd41efdf5c67cb652cc3190234e4bb37e1",
+    "30ee0d70dac4b0f0e63dfe4fe173eeffbe7dc04b388851a89b02ed0ae6b67be2",
+    "3dda971054ed14e5d865095feea6dc6fc3278b9d3db3bb3c028674fa644bddf8",
+    "5e31d31113183de589b95abcb5f910d2fc58eb372d19915f0f399de2bc0f8dd0",
+    "69badd8a463b114cfa9c4f858e59be34509bc989290ae3d9babf3f26535d8d70",
+    "8414cf12e4a0cb3d6845b339c0ab5fd8244507b8a7c8641904ff9ef73eee0300",
+    "8da66421c5d45eadc353e8e8a40cb9e3e73d0372ed79a0f03a29dc17837783d1",
+    "8f9e7c5286beec2dcbb9a05b3f24d0ad57f0673fd343cbb35a1765595fb02e87",
+    "c0eed799015e3bce356530cfe6c6445e1ca2d4d31f832a75c98157f0158250db",
+    "c500d7a7465e02c4bbe51b772676746f94addf6fe7c7f01fb62933489db22431",
+    "ec5d084367c66129a948c378dc37b168ff9e5368730a5f3d18447feda617c858"
+  ]
+}

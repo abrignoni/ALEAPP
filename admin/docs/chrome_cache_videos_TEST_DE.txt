@@ -1,0 +1,80 @@
+ALEAPP Chrome Cache Videos 0.4.0 – Test und PR-Dateien
+
+Dieses Paket enthält die vollständigen repositoryrelativen admin/- und scripts/-
+Pfade. Es ersetzt die Moduldateien aus Version 0.3.0. Die frühere GUI und der
+frühere ALEAPP-Test wurden vom Nutzer erfolgreich bestätigt.
+
+1. Dateien übernehmen
+   Beide obersten Ordner admin und scripts in das Stammverzeichnis einer
+   aktuellen ALEAPP-Quellkopie kopieren; vorhandene Moduldateien ersetzen.
+   Unterordner erhalten. Keine einzelnen Dateien im Repository-Stamm ablegen.
+   Geprüfte Upstream-Basis: 285fe70b7e3e83f37bdfdb2ede69a4ee62d0670b.
+   Das Paket ist ein Quellpatch, kein neu kompiliertes .app/.exe-Paket.
+
+2. Ein Modul auswählen
+   In Chromium nur Chrome Cache - Videos aktivieren.
+   Alternativ admin/docs/chrome_cache_videos.alprofile laden.
+   Die Timeline entsteht automatisch im selben Lauf. Einen zweiten Auswahlpunkt
+   und einen zweiten Rekonstruktionslauf gibt es nicht mehr.
+
+3. Eingabe
+   Den FFS-ZIP wie gewohnt in ALEAPP einlesen. Ein exportierter Cache benötigt
+   weiterhin seinen Pfad unter com.android.chrome/cache. Ohne Browserdateien
+   sind Cache-Metadaten möglich, Browserzuordnungen können dann fehlen.
+   Ein fehlender HTTP-Metadatenpartner verwirft vorhandene Indexzeiten nicht.
+
+4. Erwartung für die hier geprüften DFRWS-Eingaben
+   Der lokale ZIP-Lauf umfasst 871 Cache-Dateien und vier Browserdateien:
+   12 Videoclips aus drei Ressourcen; 16 Ereignisse:
+   3 HTTP request time, 3 HTTP response time, 3 Cache last used,
+   4 History visit und 3 Session navigation.
+   Alle drei Ressourcen sind im gecachten Reddit-JSON als Scrubber-Vorschau
+   referenziert, eine gehört zu einem ausdrücklich beworbenen Beitrag.
+   Der vollständige FFS kann zusätzliche Quellen enthalten; die Zahlen sind
+   Referenzwerte dieses genau dokumentierten Eingangsbestands.
+
+5. Berichte prüfen
+   In LAVA die Tabelle Chrome Cache - Videos öffnen. Cache-Zeiten, Beitrags-Titel,
+   Beitrags-URLs, Media Role, Promoted (as stored), Browser-URLs und Relationship
+   stehen direkt in den vorderen Spalten. Vollständige Nachweise bleiben in
+   Cache Metadata, Post Context und Activity Context sowie den Quelldateien.
+   _Timeline/tl.db enthält die zugehörigen Ereignisse automatisch; im Test sind
+   es 16 Ereignisse zu 12 Clips, keine 12 vermeintlichen Wiedergabehandlungen.
+   chromeCacheVideos_events.json hält zusätzlich die vollständige Ereignisliste.
+   LAVA zeigt typisierte Zeitfelder in Sekunden; Mikrosekunden bleiben in den
+   strukturierten Metadaten, TSV, Timeline und Kontext-JSON erhalten.
+
+6. Aussagegrenzen
+   Abruf/Cache-Nutzung, Quellenbezug und Wiedergabe sind verschieden.
+   Kein Ereignis behauptet automatisch, ein Nutzer habe das Video gesehen.
+   Browserprofile sind Kandidaten, da der App-Cache kein Profil kodiert.
+   Bei mehreren mitgelieferten Profilen wird die Browserverknüpfung ausgesetzt.
+   Leere Media History ist kein Beweis, dass niemals abgespielt wurde.
+   Vorschau-/Werbedaten können ohne gezielten Videoaufruf geladen worden sein.
+
+7. Lokale Regressionstests, jeweils nacheinander aus dem ALEAPP-Stamm
+   Mit derselben Python-Umgebung, in der ALEAPP installiert wurde:
+   python -m unittest discover -s admin/test/scripts -p "test_chrome_cache_*.py"
+   python admin/test/scripts/run_test_cases.py --module chromeCacheVideos --strict
+   python admin/test/scripts/run_test_cases.py --module chromeCacheVideos --storage-views --strict
+
+8. GitHub-Upload
+   Den Beitragsbranch und das Repository-Stammverzeichnis öffnen. Ganze Ordner
+   admin und scripts gemeinsam hineinziehen. Anschließend im tatsächlichen
+   Diff kontrollieren, dass Parser, Helfer, Tests, drei Fixture-ZIPs, Case-JSON
+   und drei Baselines an ihren Unterpfaden stehen. Alle Fixture-ZIPs sind
+   kleiner als 10 MB. Keine privaten Extraktionen hochladen.
+
+Die neutrale englische PR-Vorlage steht in chrome_cache_videos_PR.md.
+Prüfnachweise und Grenzen stehen in chrome_cache_videos_validation.json
+und chrome_cache_videos.md. Keine PR-Veröffentlichung wurde vorgenommen.
+
+
+Bei Übernahme in eine frühere 0.3-Quellkopie werden die alten Event-Fixtures und
+Event-Baselines nicht mehr benötigt. Im PR nur die Dateien dieses Pakets verwenden:
+admin/test/cases/data/chromeCacheVideos/testdata.chromeCacheVideos.get_chromeCacheVideoEvents.case1.zip
+admin/test/cases/data/chromeCacheVideos/testdata.chromeCacheVideos.get_chromeCacheVideoEvents.case2.zip
+admin/test/cases/data/chromeCacheVideos/testdata.chromeCacheVideos.get_chromeCacheVideoEvents.case3.zip
+admin/test/results/chromeCacheVideos/chromeCacheVideos.get_chromeCacheVideoEvents.case1.20261015100945.json
+admin/test/results/chromeCacheVideos/chromeCacheVideos.get_chromeCacheVideoEvents.case2.20261015100945.json
+admin/test/results/chromeCacheVideos/chromeCacheVideos.get_chromeCacheVideoEvents.case3.20261015100945.json
