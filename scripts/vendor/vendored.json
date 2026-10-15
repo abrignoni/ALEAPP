@@ -40,6 +40,19 @@
       "note": "Copied verbatim. Fix upstream and re-vendor; edits here are reverted by the next sync."
     },
     {
+      "path": "scripts/vendor/chromiumcacheprobe.py",
+      "name": "chromiumcacheprobe",
+      "version": "0.1.0",
+      "upstream": "https://github.com/abrignoni/chromiumcacheprobe",
+      "upstream_file": "chromiumcacheprobe.py",
+      "commit": "7876d42d2271420a24c5f4f592fe47ff5adc760e",
+      "commit_date": "2026-10-15T08:20:18-04:00",
+      "sha256": "c03e67e8e6dc673249939086c5feec6e8126dce70679b3a9f629ac027f904c44",
+      "licence": "MIT",
+      "licence_file": "scripts/vendor/LICENSE-chromiumcacheprobe",
+      "note": "Copied verbatim. Fix upstream and re-vendor; edits here are reverted by the next sync."
+    },
+    {
       "path": "scripts/mmkv_parser.py",
       "name": "mmkv-parser",
       "version": "unreleased",

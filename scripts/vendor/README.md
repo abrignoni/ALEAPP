@@ -40,6 +40,19 @@ item's pieces and each DASH stream's segments, and puts a video and its audio in
 one MP4 without re-encoding. `scripts/artifacts/exoplayerCachedMedia.py` imports
 it. Standard library only.
 
+## chromiumcacheprobe.py
+
+| | |
+| --- | --- |
+| upstream | https://github.com/abrignoni/chromiumcacheprobe |
+| licence | MIT, kept beside it as LICENSE-chromiumcacheprobe |
+
+Reads the Chromium Simple Cache that Chrome keeps on Android (entries, sparse
+range files, HTTP response metadata and the cache index) and rebuilds the H.264
+video held in its MP4 fragments, copying the sample bytes as stored.
+`scripts/artifacts/chromeCacheVideos.py` imports it. Standard library only;
+Brotli-compressed bodies are read when the optional brotli package is installed.
+
 The vendored version, upstream commit and sha256 of each file are recorded in
 `vendored.json` in this directory, which `admin/scripts/check_vendored.py`
 enforces in CI: it checks the hashes and fetches each upstream file at its
