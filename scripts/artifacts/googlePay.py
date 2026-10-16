@@ -52,6 +52,7 @@ import shutil
 import sqlite3
 import tempfile
 
+from scripts.artifacts.storagePathViews import unique_files
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
 #: The state codes, each named by what the card shows beside it on the live cases.
@@ -314,7 +315,7 @@ def _row(card_id, blob, created_ms, leg_owners=frozenset()):
 
 @artifact_processor
 def get_googlePay_transactions(context):
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     by_payment = {}
     sources = []
     for file_found in files_found:
@@ -413,7 +414,7 @@ def _owners(blob, leg_owners=frozenset()):
 @artifact_processor
 def get_googlePay_upi_ids(context):
     """One row per UPI ID the conversation cards name, including those no payment names."""
-    files_found = context.get_files_found()
+    files_found = unique_files(context)
     data_list = []
     sources = []
     for file_found in files_found:
