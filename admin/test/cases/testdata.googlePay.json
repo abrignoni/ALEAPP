@@ -34,13 +34,6 @@
           "headers": [],
           "data": []
         }
-      },
-      "get_googlePay_people": {
-        "search_patterns": [
-          "*/com.google.android.apps.nbu.paisa.user/files/accounts/*/PaisaUserDatabase.db*"
-        ],
-        "file_count": 0,
-        "note": "No responsive files found for this artifact"
       }
     }
   }

@@ -3,8 +3,7 @@
 
 The parser reads conversation cards stored in Google Pay's SQLite database and
 decodes protobuf fields used for payment transactions, UPI parties and
-transaction metadata. It also supports the older PaisaUserDatabase.db
-directory used by some Google Pay versions.
+transaction metadata.
 """
 
 __artifacts_v2__ = {
@@ -15,45 +14,32 @@ __artifacts_v2__ = {
                        "device owner's UPI ID and account.",
         "author": "@prcharan592",
         "creation_date": "2026-09-28",
-        "last_update_date": "2026-09-28",
+        "last_update_date": "2026-10-16",
         "requirements": "none",
         "category": "Google Pay",
         "notes": "Owner is the device's Google Pay user: the payer of a sent payment and the payee of a received "
                  "one. Counterparty Name at Bank is the name the UPI ID is registered to, which can differ from "
-                 "the name Google Pay showed.",
+                 "the name Google Pay showed. Status names state codes 10, 9, 6, 14 and 2 by what the app showed "
+                 "beside them on the contributor's devices; any other code is reported as Unknown with the code "
+                 "as stored. The field mapping comes from the contributor's own data and has not been checked "
+                 "against an independent sample.",
         "paths": ('*/com.google.android.apps.nbu.paisa.user/files/.mfca/sessions/*/conversation/data.db*',),
         "output_types": "standard",
         "artifact_icon": "credit-card",
     },
     "get_googlePay_upi_ids": {
         "name": "Google Pay UPI IDs",
-        "description": "Parses every UPI ID Google Pay's conversation cards (data.db) name - the people and "
-                       "merchants the owner paid, was paid by or talked to, and the owner's own - with the name "
+        "description": "Parses the UPI IDs named in Google Pay's conversation cards (data.db): the people and "
+                       "merchants the owner paid, was paid by or talked to, and the owner's own, with the name "
                        "shown, the name at the bank, the masked phone and how many cards and payments name it.",
         "author": "@prcharan592",
         "creation_date": "2026-09-29",
-        "last_update_date": "2026-09-29",
+        "last_update_date": "2026-10-16",
         "requirements": "none",
         "category": "Google Pay",
         "notes": "Device Owner is Yes for a UPI ID the owner paid from or was paid into. First and Last Seen are "
                  "the times of the first and last card that names it, not of a payment.",
         "paths": ('*/com.google.android.apps.nbu.paisa.user/files/.mfca/sessions/*/conversation/data.db*',),
-        "output_types": "standard",
-        "artifact_icon": "users",
-    },
-    "get_googlePay_people": {
-        "name": "Google Pay People",
-        "description": "Parses the people and merchants in an older Google Pay's directory (PaisaUserDatabase.db): "
-                       "name, UPI IDs and the names on their accounts, mobile number, linked bank account, and "
-                       "the last message in the conversation with them.",
-        "author": "@prcharan592",
-        "creation_date": "2026-09-29",
-        "last_update_date": "2026-09-29",
-        "requirements": "none",
-        "category": "Google Pay",
-        "notes": "A person's name is the one on their Google Pay profile, not a name the owner saved. Names at "
-                 "Bank are the names the UPI IDs are registered to.",
-        "paths": ('*/com.google.android.apps.nbu.paisa.user/files/accounts/*/PaisaUserDatabase.db*',),
         "output_types": "standard",
         "artifact_icon": "users",
     },
@@ -66,13 +52,11 @@ import shutil
 import sqlite3
 import tempfile
 
-from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
 #: The state codes, each named by what the card shows beside it on the live cases.
 STATES = {
     10: 'Completed',  # the completed-payment mark
-    # Shown like a completed payment and never with a failure message. 15 on
-    8: 'Completed',
     9: 'Failed',      # the red cross, "Payment failed. Insufficient bank balance.", "Invalid UPI PIN"
     6: 'Failed',
     14: 'Declined',   # a request turned down or left to lapse
@@ -95,7 +79,7 @@ _VPA, _ACCOUNT_NO, _HOLDER, _BANK, _APP = 1, 2, 4, 6, 8
 #: The line the card shows: "To <name>", "From <name>", "Self transfer", "<merchant> requested money from you".
 _HEADLINE = (75, 1, 1, 2)
 #: Who posted the card (2.6) and the conversation's other end (2.81): a person's profile at .8 - name 1,
-#: masked phone 3, UPI instrument 5.1 (UPI ID 1, name at the bank 3) - or a merchant at 2.81.10, its name
+#: masked phone 3, UPI instrument 5.1 (UPI ID 1, name at the bank 3) - or a merchant at 2.81.10.
 #: A request turns both round (_owner_from_poster).
 _SENDER, _PEER = (_CARD, 6, 8), (_CARD, 81, 8)
 _MERCHANT = (_CARD, 81, 10)
@@ -280,9 +264,7 @@ def _other_ends(blob, txn, leg, direction):
 
 
 def _owner_from_poster(blob, txn, leg, direction, leg_owners):
-    """The card poster's UPI ID (2.6.8) when the poster is the device owner, else ''.
-
-    """
+    """The card poster's UPI ID (2.6.8) when the poster is the device owner, else ''."""
     poster = _text(blob, *_SENDER, 5, 1, 1)
     if not poster or poster.lower() in _other_ends(blob, txn, leg, direction):
         return ''
@@ -430,11 +412,8 @@ def _owners(blob, leg_owners=frozenset()):
 
 @artifact_processor
 def get_googlePay_upi_ids(context):
+    """One row per UPI ID the conversation cards name, including those no payment names."""
     files_found = context.get_files_found()
-    """One row per UPI ID the conversation cards name.
-
-    The payments list holds only the UPI IDs a payment names. On copies of four phones' databases the
-    """
     data_list = []
     sources = []
     for file_found in files_found:
@@ -492,127 +471,3 @@ def get_googlePay_upi_ids(context):
         'Cards', 'Payments', ('First Seen', 'datetime'),
     )
     return data_headers, data_list, '\n'.join(sources)
-
-
-def _columns(db, table):
-    return {row[1] for row in db.execute(f'PRAGMA table_info("{table}")')}
-
-
-def _select(db, table, wanted, alias):
-    """``alias.column`` for each wanted column the table has, NULL for one it lacks: an older or newer
-    Google Pay that drops or renames a column loses that column, not the table."""
-    have = _columns(db, table)
-    return ', '.join(f'{alias}.{c}' if c in have else 'NULL' for c in wanted)
-
-
-def _stamp(value, scale):
-    try:
-        return _utc(int(value) * scale) if value else ''
-    except (TypeError, ValueError):
-        return ''
-
-
-def _number(code, national):
-    national = str(national).strip() if national not in (None, '') else ''
-    return f'+{code} {national}' if national and code not in (None, '') else national
-
-
-#: The directory's tables, and the columns read from each.
-_ACTORS = ('actor_id', 'actor_is_blocked')
-_USERS = ('user_actor_id', 'user_name', 'user_masked_phone_number_country_code',
-          'user_masked_phone_number_national_number', 'user_email', 'user_phone_number_country_code',
-          'user_phone_number_national_number', 'user_creation_time_seconds')
-_MERCHANTS = ('merchant_actor_id', 'merchant_name', 'merchant_official_name', 'merchant_website',
-              'merchant_contact_page_url', 'merchant_contact_email_address', 'merchant_phone_number_country_code',
-              'merchant_phone_number_national_number')
-_INSTRUMENTS = ('actor_id', 'vpa', 'name_on_account')
-_BANK_ACCOUNTS = ('account_owner_actor_id', 'ifsc_code', 'masked_account_number', 'bank_name')
-_CONVERSATIONS = ('peer_actor_id', 'last_message_creation_timestamp')
-
-
-def _directory(db):
-    """Builds a normalized directory of people, merchants and payment accounts."""
-    tables = {name for (name,) in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
-
-    def rows(table, wanted):
-        if table not in tables:
-            return []
-        try:
-            return db.execute(f'SELECT {_select(db, table, wanted, "t")} FROM "{table}" t').fetchall()
-        except sqlite3.Error as exc:
-            try:
-                logfunc(f'Google Pay People: {table} not read: {exc}')
-            except OSError:       # the log writes to the last run's report folder: never why the rest is lost
-                print(f'Google Pay People: {table} not read: {exc}')
-            return []
-
-    actors = {}
-
-    def actor(actor_id):
-        return actors.setdefault(actor_id, {
-            'kind': '', 'name': '', 'official': '', 'mobile': '', 'masked': '', 'email': '', 'web': '',
-            'joined': '', 'blocked': None, 'vpas': [], 'bank_names': [], 'bank': '', 'last': 0, 'chats': 0})
-    for actor_id, blocked in rows('ACTOR_TABLE', _ACTORS):
-        actor(actor_id)['blocked'] = blocked
-    for actor_id, name, masked_cc, masked, email, cc, national, joined in rows('USER_TABLE', _USERS):
-        actor(actor_id).update({'kind': 'Person', 'name': _s(name), 'masked': _number(masked_cc, masked),
-                                'mobile': _number(cc, national), 'email': _s(email), 'joined': _stamp(joined, 1000)})
-    for actor_id, name, official, web, page, email, cc, national in rows('MERCHAT_TABLE', _MERCHANTS):
-        actor(actor_id).update({'kind': 'Merchant', 'name': _s(name), 'official': _s(official),
-                                'web': _s(web) or _s(page), 'email': _s(email), 'mobile': _number(cc, national)})
-    for actor_id, vpa, holder in sorted(rows('INSTRUMENT_TABLE', _INSTRUMENTS), key=lambda r: (str(r[0]), str(r[1]))):
-        a = actor(actor_id)
-        for key, value in (('vpas', _s(vpa)), ('bank_names', _s(holder))):
-            if value and value not in a[key]:
-                a[key].append(value)
-    for actor_id, ifsc, number, bank in rows('BANK_ACCOUNT_TABLE', _BANK_ACCOUNTS):
-        actor(actor_id)['bank'] = ' '.join(x for x in (_s(bank), _s(number) and f'...{_s(number)}',
-                                                         _s(ifsc) and f'({_s(ifsc)})') if x)
-    for actor_id, last in rows('CONVERSATION_INFO_TABLE', _CONVERSATIONS):
-        if actor_id:
-            a = actor(actor_id)
-            a['chats'] += 1
-            if isinstance(last, int):
-                a['last'] = max(a['last'], last)
-    actors.pop(None, None)
-    return actors
-
-
-@artifact_processor
-def get_googlePay_people(context):
-    files_found = context.get_files_found()
-    """One row per person or merchant in PaisaUserDatabase.db, the directory an older Google Pay kept.
-
-    """
-    data_list = []
-    sources = []
-    for file_found in files_found:
-        file_found = str(file_found)
-        if os.path.basename(file_found) != 'PaisaUserDatabase.db':
-            continue  # -wal, -shm, -journal
-        db = open_sqlite_db_readonly(file_found)
-        if db is None:
-            continue
-        try:
-            actors = _directory(db)
-        finally:
-            db.close()
-        rows = [(
-            _stamp(a['last'], 1), a['kind'], a['name'], a['official'], ', '.join(a['vpas']),
-            ', '.join(a['bank_names']), a['mobile'], a['masked'], a['bank'], a['email'], a['web'], a['joined'],
-            {0: 'No', 1: 'Yes'}.get(a['blocked'], ''), a['chats'], actor_id,
-        ) for actor_id, a in actors.items()]
-        if rows:
-            sources.append(file_found)
-        data_list.extend(sorted(rows, key=lambda r: str(r[0]), reverse=True))
-
-    data_headers = (
-        ('Last Message', 'datetime'), 'Kind', 'Name', 'Official Name', 'UPI IDs', 'Names at Bank',
-        'Mobile Number', 'Masked Mobile', 'Bank Account', 'Email', 'Website', ('Joined Google Pay', 'datetime'),
-        'Blocked', 'Conversations', 'Actor ID',
-    )
-    return data_headers, data_list, '\n'.join(sources)
-
-
-def _s(value):
-    return str(value).strip() if value not in (None, '') else ''
