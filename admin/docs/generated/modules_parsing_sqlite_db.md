@@ -22,7 +22,6 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | OrnetBrowser |
 | PrivatePhotoVault |
 | ProtonDrive |
-| RandoChat |
 | RomeoDatingApp |
 | SamsungDeviceHealthManagement |
 | SamsungNotes |
@@ -38,7 +37,6 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | androidauto |
 | antennaPod |
 | appLock |
-| appicons |
 | auroraStore |
 | avastCleanup |
 | avesGallery |
@@ -199,6 +197,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | PodcastAddict |
 | PumaActivities |
 | PumaUsers |
+| RandoChat |
 | RunkeeperActivities |
 | SamsungGalleryHiddenAlbum |
 | Todoist |
@@ -214,6 +213,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | adobeReader |
 | airGuard |
 | amazonShopping |
+| appicons |
 | battery_usage_v4 |
 | battery_usage_v9 |
 | blueskymessages |
@@ -234,9 +234,11 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | chatgpt2 |
 | chrome |
 | chromeAutofill |
+| chromeCacheVideos |
 | chromeCookies |
 | chromeCreditCards |
 | chromeDIPS |
+| chromeDownloadMediaStore |
 | chromeLoginData |
 | chromeMediaHistory |
 | chromeNetworkActionPredictor |
@@ -312,6 +314,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | microsoft_onedrive |
 | newpipe |
 | nordVpn |
+| novaMediaCandidates |
 | pSettings |
 | payPal |
 | pikpakCloudlist |

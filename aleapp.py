@@ -163,7 +163,7 @@ def main():
                               "machine disk, .vhd, .vhdx, .vmdk or .qcow2), read in "
                               "place without mounting (logical evidence, an EnCase .L01 or FTK Imager "
                               ".ad1, is read as the files it holds): its "
-                              "NTFS, FAT32, exFAT, ext2/3/4, F2FS, HFS+, APFS, QNX6, QNX4, "
+                              "NTFS, FAT32, FAT16, FAT12, exFAT, ext2/3/4, F2FS, HFS+, APFS, QNX6, QNX4, "
                               "ETFS, EFS, SquashFS, JFFS2, UBI/UBIFS, YAFFS and QNX IFS volumes "
                               "are searched directly."
                               ))
@@ -380,6 +380,7 @@ def main():
         lava_project_path = os.path.join(out_params.output_folder_base, lava_json_name)
         history.record_recent_run(leapp_name.lower(), leapp_version, lava_project_path)
 
+@screen_log_session
 def crunch_artifacts(
         plugins: typing.Sequence[plugin_loader.PluginSpec], extracttype, input_path, out_params, wrap_text,
         loader: plugin_loader.PluginLoader, casedata, profile_filename, image_password=None):

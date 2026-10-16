@@ -130,7 +130,7 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-02",
         "requirements": "none",
         "category": "SMS & MMS",
-        "notes": "The rows of the SMS Messages and MMS Messages artifacts in one table, sorted by Date, so a thread that carries both transports reads in one place. Both tables key on the same thread_id and the provider itself tells the two apart in its unified queries with a transport_type discriminator column. Reference: AOSP, 'Telephony.MmsSms.TYPE_DISCRIMINATOR_COLUMN', https://developer.android.com/reference/android/provider/Telephony.MmsSms#TYPE_DISCRIMINATOR_COLUMN. Message Type is SMS or MMS, and Source Table names the table each row was read from (sms, spam_sms or pdu); both are uniform on an image holding only one transport. Address is sms.address for SMS rows (the other party, per Telephony.TextBasedSmsColumns.ADDRESS) and the From (PduHeaders.FROM, 0x89) addr entry for MMS rows. To Address, Cc and Bcc are filled for MMS rows only; Contact ID, Service Center and Error Code are filled for SMS rows only. MMS rows are one per non-SMIL part, so a multi-part MMS repeats its MSG ID, and MSG ID is sms._id or pdu._id, unique only together with Message Type. Media renders the part file when it is in the extraction, matched on the part's recorded _data path (storage class, Android user, package and file name) rather than on the file name alone, and is blank for SMS rows, for text parts, and for parts whose file is not in the image (the part's stored path is then shown in Body). Direction maps sms.type and pdu.msg_box through the same words from the AOSP constants (Received, Sent, Draft, Outbox, Failed; Queued exists for SMS only), with the LG extended sms.type values handled as in the SMS Messages artifact. References: AOSP, 'Telephony.TextBasedSmsColumns MESSAGE_TYPE constants', https://developer.android.com/reference/android/provider/Telephony.TextBasedSmsColumns; AOSP, 'Telephony.BaseMmsColumns MESSAGE_BOX constants', https://developer.android.com/reference/android/provider/Telephony.BaseMmsColumns. SMS date values are in milliseconds and MMS pdu.date values are in seconds; the provider's own union query multiplies pdu.date by 1000 to line the two up. Reference: AOSP, 'MmsSmsProvider.java, getConversations and buildConversationQuery', https://android.googlesource.com/platform/packages/providers/TelephonyProvider/+/bca387f553a4493c88e24455172225fd1049c91f/src/com/android/providers/telephony/MmsSmsProvider.java",
+        "notes": "The rows of the SMS Messages and MMS Messages artifacts in one table, sorted by Date, so a thread that carries both transports reads in one place. Both tables key on the same thread_id and the provider itself tells the two apart in its unified queries with a transport_type discriminator column. Reference: AOSP, 'Telephony.MmsSms.TYPE_DISCRIMINATOR_COLUMN', https://developer.android.com/reference/android/provider/Telephony.MmsSms#TYPE_DISCRIMINATOR_COLUMN. Message Type is SMS or MMS, and Source Table names the table each row was read from (sms, spam_sms or pdu); both are uniform on an image holding only one transport. Address is sms.address for SMS rows (the other party, per Telephony.TextBasedSmsColumns.ADDRESS) and the From (PduHeaders.FROM, 0x89) addr entry for MMS rows. To Address, Cc and Bcc are filled for MMS rows only; Contact ID, Service Center and Error Code are filled for SMS rows only. MMS rows are one per non-SMIL part, so a multi-part MMS repeats its MSG ID, and MSG ID is sms._id or pdu._id, unique only together with Message Type. Media renders the part file when it is in the extraction, matched on the part's recorded _data path (storage class, Android user, package and file name) rather than on the file name alone, and is blank for SMS rows, for text parts, and for parts whose file is not in the image (the part's stored path is then shown in Body). Direction maps sms.type and pdu.msg_box through the same words from the AOSP constants (Received, Sent, Draft, Outbox, Failed; Queued exists for SMS only), with the LG extended sms.type values handled as in the SMS Messages artifact. A pdu.msg_box of 0 is shown as 'All messages' and any other msg_box value is shown as stored. References: AOSP, 'Telephony.TextBasedSmsColumns MESSAGE_TYPE constants', https://developer.android.com/reference/android/provider/Telephony.TextBasedSmsColumns; AOSP, 'Telephony.BaseMmsColumns MESSAGE_BOX constants', https://developer.android.com/reference/android/provider/Telephony.BaseMmsColumns. SMS date values are in milliseconds and MMS pdu.date values are in seconds; the provider's own union query multiplies pdu.date by 1000 to line the two up. Reference: AOSP, 'MmsSmsProvider.java, getConversations and buildConversationQuery', https://android.googlesource.com/platform/packages/providers/TelephonyProvider/+/bca387f553a4493c88e24455172225fd1049c91f/src/com/android/providers/telephony/MmsSmsProvider.java",
         "paths": ('*/com.android.providers.telephony/databases/mmssms*',
                   '*/com.android.providers.telephony/app_parts/*',
                   '*/com.android.providers.telephony/parts/*'),
@@ -179,29 +179,43 @@ __artifacts_v2__ = {
     },
     "get_sms_mms_attachments": {
         "name": "MMS Attachments",
-        "description": "MMS attachment files from the telephony provider's app_parts and parts folders, with the message a part row links each file to, and the files no part row references.",
-        "author": "@AlexisBrignoni, Claude",
+        "description": "Telephony-provider part-file associations, known-layout unreferenced files and unresolved-layout file candidates from app_parts and parts.",
+        "author": "@AlexisBrignoni, Codex, Claude",
         "creation_date": "2026-09-02",
-        "last_update_date": "2026-09-02",
+        "last_update_date": "2026-10-12",
         "requirements": "none",
         "category": "SMS & MMS",
         "notes": "One row per part row that records a file path (part._data), joined to its pdu "
-                 "row for Date, Direction and From Address, plus one row per file found under "
-                 "app_parts or parts that no part row references. Status says which case a row "
+                 "row for Date, Direction and From Address, plus known-layout files not matched by a "
+                 "returned part row and unresolved-layout file candidates. Association keys are indexed when "
+                 "their path in the extraction sits under data/data, data/user/<n>, "
+                 "data/user_de/<n>, the data_mirror/data_ce and data_mirror/data_de equivalents, or "
+                 "userdata/data, userdata/user/<n> and userdata/user_de/<n>; "
+                 "files in other layouts are appended as file candidates with unresolved storage identity, "
+                 "without an asserted message association. Distinct evidence paths remain distinct "
+                 "even if they share bytes or physical storage; repeated identical staged paths are "
+                 "listed once. Candidate previews export the file itself. Status says which case a row "
                  "is: 'Referenced by message', 'Referenced by a part row with no message row' "
                  "(the part's mid names a pdu row that is not in the table, so Date, Direction, "
-                 "MSG ID and Thread ID are blank), 'Referenced, file not in extraction', or 'Not "
-                 "referenced by any part row'. Files are matched to part rows on the recorded "
-                 "_data path (storage class, Android user, package and file name), never on the "
-                 "file name alone. Content Type is part.ct as stored and Detected Type is sniffed "
+                 "MSG ID and Thread ID are blank), 'Referenced, file not in extraction', "
+                 "'Referenced, no file at the recorded path, same-named file candidate in an "
+                 "unresolved layout' (no file was found at the recorded path while a file with the "
+                 "same folder and file name is listed as an unresolved-layout candidate; the two are "
+                 "not associated here), 'Not "
+                 "referenced by any part row', or 'File candidate, storage identity unresolved' "
+                 "(a file in a layout not listed above). Files are matched to part rows on the recorded "
+                 "_data path (storage class, Android user, package and file name); an unknown stored "
+                 "layout already permits a unique app_parts/parts filename-tail fallback. No new "
+                 "association is inferred for unresolved inventory candidates. Content Type is part.ct as stored and Detected Type is sniffed "
                  "independently from the file's own bytes; an ISO base media file (MP4, M4A, 3GP, "
                  "HEIC, AVIF) is reported by its ftyp brand, because the container does not say "
-                 "whether its tracks are audio or video. On the 26 tested images holding "
-                 "attachment rows the two agreed on every file that had both. Media is blank for "
+                 "whether its tracks are audio or video. On the 25 sample_data images 130 files on "
+                 "13 images had both: 115 were equal and the other 15 were ISO base media files "
+                 "reported by brand. Media is blank for "
                  "zero-byte files and for files not in the extraction; Size is the file's length "
-                 "in bytes. On 17 of the 25 tested images the database held one part row with no "
-                 "message row pointing at a zero-byte file, and three images carried between one "
-                 "and ten unreferenced files of real size (JPEG, PNG, GIF, HEIC and MP4-family). "
+                 "in bytes. On 18 of the 25 sample_data images the database held one part row with "
+                 "no message row pointing at a zero-byte file, and three images carried one, five "
+                 "and nine unreferenced files of real size (JPEG, PNG, GIF and HEIC-brand files). "
                  "Date, Direction and From Address are blank on rows with no message row, so on "
                  "an image with few referenced attachments the table can lead with blanks. Why a "
                  "file is on disk without a part row is not recorded in the database and is not "
@@ -220,7 +234,7 @@ __artifacts_v2__ = {
             "kevin_pocox7_a15": "Android 15 | com.android.providers.telephony | 45 rows",
             "pixel7a_a14": "Android 14 | com.android.providers.telephony | 29 rows",
             "samsunga53_a14": "Android 14 | com.android.providers.telephony | 3 rows",
-            "samsungs20_a13": "Android 13 | com.android.providers.telephony | 1 rows",
+            "samsungs20_a13": "Android 13 | com.android.providers.telephony | 2 rows",
             "sharon_a14": "Android 14 | com.android.providers.telephony | 17 rows",
             "russell_pixel6a_a13": "Android 13 | com.android.providers.telephony | 3 rows",
             "userb2_a13": "Android 13 | com.android.providers.telephony | 2 rows",
@@ -292,6 +306,8 @@ _STATUS_LINKED = 'Referenced by message'
 _STATUS_NO_PDU = 'Referenced by a part row with no message row'
 _STATUS_MISSING = 'Referenced, file not in extraction'
 _STATUS_ORPHAN = 'Not referenced by any part row'
+_STATUS_MISSING_CANDIDATE = ('Referenced, no file at the recorded path, same-named file '
+                             'candidate in an unresolved layout')
 
 
 # Telephony.Mms msg_box values; wording mirrors the SMS type CASE
@@ -374,6 +390,38 @@ def _part_files(context, files_found):
         tail = f'{parent[-2]}/{parent[-1]}'
         by_tail[tail] = None if tail in by_tail else file_found
     return by_key, by_tail
+
+
+def _unresolved_part_files(context, files_found, referenced):
+    """Selected file origins outside known storage layouts, without inferred ownership."""
+    normalized = lambda path: os.path.normpath(str(path)).replace('\\', '/')
+    seen = {normalized(path) for path in referenced}
+    candidates = sorted((str(path) for path in files_found),
+                        key=lambda path: (context.get_relative_path(path), normalized(path)))
+    result = []
+    for path in candidates:
+        physical = normalized(path)
+        parent = physical.rsplit('/', 2)
+        if physical in seen or len(parent) < 3 or parent[-2] not in ('app_parts', 'parts'):
+            continue
+        if os.path.isdir(path) or _storage_key(context.get_relative_path(path)) is not None:
+            continue
+        seen.add(physical)
+        result.append(path)
+    return result
+
+
+def _unresolved_tails(context, files_found):
+    """The 'app_parts/<name>' and 'parts/<name>' tails of files outside known layouts."""
+    tails = set()
+    for file_found in files_found:
+        file_found = str(file_found)
+        parent = file_found.replace('\\', '/').rsplit('/', 2)
+        if len(parent) < 3 or parent[-2] not in ('app_parts', 'parts') or os.path.isdir(file_found):
+            continue
+        if _storage_key(context.get_relative_path(file_found)) is None:
+            tails.add(f'{parent[-2]}/{parent[-1]}')
+    return tails
 
 
 def _find_part_file(data_path, part_files):
@@ -596,6 +644,7 @@ def _sniff(file_found):
 def get_sms_mms_attachments(context):
     files_found = unique_files(context)
     part_files = _part_files(context, files_found)
+    unresolved_tails = _unresolved_tails(context, files_found)
     referenced = set()
     data_list = []
     source_paths = []
@@ -613,6 +662,11 @@ def get_sms_mms_attachments(context):
             else:
                 size, detected, media_ref, file_path = '', '', '', ''
                 status = _STATUS_MISSING
+                # a file of the same name sits under app_parts or parts in a layout whose
+                # storage class and user are not known: say so, and associate nothing
+                recorded = data_path.replace('\\', '/').rsplit('/', 2)
+                if len(recorded) == 3 and f'{recorded[-2]}/{recorded[-1]}' in unresolved_tails:
+                    status = _STATUS_MISSING_CANDIDATE
             data_list.append((
                 _sec_to_utc(r['date']),
                 _MMS_BOX_DIRECTION.get(r['msg_box'], r['msg_box']) if r['mms_id'] is not None else '',
@@ -643,6 +697,17 @@ def get_sms_mms_attachments(context):
             '', '', '', '',
             context.get_relative_path(file_found),
         ))
+
+    for file_found in _unresolved_part_files(context, files_found, referenced):
+        size, detected = _sniff(file_found)
+        media_ref = (check_in_media(file_found, os.path.basename(file_found)) or '') if size else ''
+        data_list.append((
+            '', '', '', os.path.basename(file_found), media_ref, '', detected,
+            'File candidate, storage identity unresolved', size,
+            '', '', '', '', context.get_relative_path(file_found),
+        ))
+        if file_found not in source_paths:
+            source_paths.append(file_found)
 
     data_headers = (
         ('Date', 'datetime'),

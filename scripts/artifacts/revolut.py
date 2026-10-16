@@ -2,13 +2,13 @@ __artifacts_v2__ = {
     "revolut_payment_recipients": {
         "name": "Revolut - Recent Payment Recipients",
         "description": "Parses the recipients listed in the Revolut Android app's recent payment recipients store, with "
-                       "the type of each recipient and the item it links to.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+                       "the type of each recipient and the item identifier stored beside it.",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Revolut",
-        "notes": "One row per recipient the app listed as recently paid. This is a lead sheet, not a transaction history: the payments themselves are not in this store and the app's transaction and chat databases are encrypted with no key recoverable from the extraction, so no amount, currency, direction or payment date is available. What each row does carry is a counterparty and a transaction identifier. Transaction ID is distinct on every row and is the reference an examiner would put to the service to obtain the payment itself. Recipient Type is reported as stored and was BANK, CONTACT_CODE or CRYPTO on the tested device: a contact code row carries a readable handle naming a counterparty, while the others carry an opaque identifier, so of the 17 rows there 3 named a counterparty and 14 did not, and 11 of the 17 were crypto. Unread Counter Last Synced is Unix milliseconds and is the app's sync marker for the counter beside it, not the time of a payment; it was zero on 14 of the 17 rows, and the rows are ordered by recipient rather than by it so that they are not presented as though ordered by when a payment happened. Unread Counter was zero on every row of the tested device, so it is carried but was never exercised there. A row records that the app listed the recipient, which is not the same as a payment having been made. Field mapping was done against three private samples provided by Mattia; only one of the three carried this store, and no sample data is recorded for them.",
+        "notes": "One row per row of the payments_recent_v2 table, the app's recent payment recipients list. This is a lead sheet, not a transaction history: the payments themselves are not in this store and the app's transaction and chat databases were encrypted on the tested samples and no key for them was found in those extractions, so no amount, currency, direction or payment date is available. What each row does carry is a recipient and an item identifier. Item ID is the itemId column as stored; it was distinct on each of the 17 rows of the tested sample. What the identifier refers to is not established beyond the Item Type stored beside it. Recipient Type is reported as stored and was BANK, CONTACT_CODE or CRYPTO on the tested device: a contact code row carries a readable handle naming a counterparty, while the others carry an opaque identifier, so of the 17 rows there 3 named a counterparty and 14 did not, and 11 of the 17 were crypto. Unread Sync Timestamp is the unreadSyncTimestamp column, read as Unix milliseconds and shown in UTC; what it records is not established and no source for it was found, and it is not the time of a payment record in this store. It was zero on 14 of the 17 rows, and the rows are ordered by recipient type and then recipient rather than by it so that they are not presented as though ordered by when a payment happened. Unread Counter was zero on every row of the tested device, so it is carried but was never exercised there. A row records that the app listed the recipient, which is not the same as a payment having been made. Field mapping was done against three private samples provided by Mattia; only one of the three carried this store, and no sample data is recorded for them.",
         "paths": (
             '*/com.revolut.revolut/databases/payments_recent_db*',
         ),
@@ -17,26 +17,31 @@ __artifacts_v2__ = {
     },
     "revolut_app_state": {
         "name": "Revolut - App State",
-        "description": "Parses the times the Revolut Android app last refreshed its "
-                       "configuration and its rate and help caches, with the size of each "
-                       "cache.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "description": "Parses the configuration last modified time and the newest rate cache "
+                       "time stored by the Revolut Android app, with row counts of its rate, help "
+                       "and device caches.",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Revolut",
         "notes": "One row per app data directory. Every timestamp is Unix milliseconds. The "
                  "three caches this row counts hold content the service supplied rather than "
                  "anything the account holder produced, so they are counted rather than "
                  "listed: the rate cache holds exchange rates, the help cache holds the "
-                 "app's help articles in the language the app was using, and the device "
+                 "app's help articles with a language value on each row, and the device "
                  "cache holds a catalogue of device models that ran to tens of thousands of "
-                 "rows on the tested devices. Their fetch times are reported because the "
-                 "time the device last refreshed each one is a dated fact about the device. "
-                 "Help Language is the language recorded on the help rows. The app's chat "
-                 "and main data stores are encrypted with no key recoverable from the "
-                 "extraction, so no message or transaction content is reported by this "
-                 "module. Field mapping was done against three private samples provided by "
+                 "rows on the tested devices. The largest time_stamp in the rate cache is "
+                 "reported as Newest Rate Time Stamp; what the app records in that column "
+                 "is not established and no source for it was found. No time is reported for the "
+                 "help or device caches. Help Languages (rows) lists every distinct value of the "
+                 "help cache's language column, in sorted order, each followed by the number "
+                 "of help rows holding it; a row with no language is listed as (none). What "
+                 "the language value says about the account or the device is not established. "
+                 "The app's chat "
+                 "and main data stores were encrypted on the tested samples and no key for "
+                 "them was found in those extractions, so no message or transaction content "
+                 "is reported by this module. Field mapping was done against three private samples provided by "
                  "Mattia; no sample data is recorded for them.",
         "paths": (
             '*/com.revolut.revolut/databases/rates_database*',
@@ -184,8 +189,8 @@ def revolut_payment_recipients(context):
         'Recipient',
         'Recipient Type (as stored)',
         'Item Type (as stored)',
-        'Transaction ID',
-        ('Unread Counter Last Synced', 'datetime'),
+        'Item ID',
+        ('Unread Sync Timestamp', 'datetime'),
         'Unread Counter',
         'Source File',
     )
@@ -213,7 +218,11 @@ def revolut_app_state(context):
         rate_fetched = _single(rates, 'SELECT MAX(time_stamp) FROM rates_cache') if rates else ''
         rate_rows = _single(rates, 'SELECT COUNT(*) FROM mid_rates_cache') if rates else ''
         help_rows = _single(support, 'SELECT COUNT(*) FROM light_faq') if support else ''
-        help_language = _single(support, 'SELECT language FROM light_faq LIMIT 1') if support else ''
+        help_language = '; '.join(
+            f"{'(none)' if language is None else language} ({count})"
+            for language, count in _rows(support, '''SELECT language, COUNT(*) FROM light_faq
+                                                     GROUP BY language ORDER BY language''')
+        ) if support else ''
         node_rows = _single(support, 'SELECT COUNT(*) FROM pigeon_tree_node') if support else ''
         device_rows = _single(devices, 'SELECT COUNT(*) FROM devices') if devices else ''
 
@@ -228,7 +237,7 @@ def revolut_app_state(context):
             _ms(rate_fetched),
             str(rate_rows if rate_rows != '' else ''),
             str(help_rows if help_rows != '' else ''),
-            str(help_language or ''),
+            help_language,
             str(node_rows if node_rows != '' else ''),
             str(device_rows if device_rows != '' else ''),
             str(configuration.get('file_version', '')),
@@ -240,10 +249,10 @@ def revolut_app_state(context):
 
     data_headers = (
         ('Configuration Last Modified', 'datetime'),
-        ('Rates Last Fetched', 'datetime'),
+        ('Newest Rate Time Stamp', 'datetime'),
         'Cached Rate Rows',
         'Cached Help Articles',
-        'Help Language',
+        'Help Languages (rows)',
         'Cached Help Nodes',
         'Cached Device Catalogue Rows',
         'Configuration File Version',

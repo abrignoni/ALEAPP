@@ -23,14 +23,14 @@
   },
   "headers": [
     "Timestamp",
-    "Code Entered",
+    "wrongly_attempt_code (as stored)",
     "Locking Type",
     "Photo",
     "Photo Path",
     "Latitude",
     "Longitude",
     "Address",
-    "Unread"
+    "is_new (as stored)"
   ],
   "data": []
 }

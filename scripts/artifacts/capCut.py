@@ -2,23 +2,26 @@ __artifacts_v2__ = {
     "capcut_app_sessions": {
         "name": "CapCut - App Sessions",
         "description": "Parses the app sessions the CapCut Android app recorded, with the "
-                       "time each began, its duration and the app version that ran.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+                       "timestamp each session row stores, its duration and the app "
+                       "version that ran.",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "CapCut",
-        "notes": "One row per recorded session. Start is Unix milliseconds and Duration is "
+        "notes": "One row per row of the session table. Session Timestamp is the table's "
+                 "timestamp column, read as Unix milliseconds; what moment of a session it "
+                 "marks was not established. Duration is "
                  "the value the row carries, as stored, because nothing in the extraction "
                  "states its unit. Events counts the entries in the same store that name "
                  "this session, and First Event and Last Event bound them in time; the "
                  "entries are counted rather than listed, and what each records was not "
-                 "established. The store recorded that "
-                 "no account was signed in on every entry it holds. The app's editing "
-                 "projects are not in this artifact and were not present in the tested "
-                 "sample: its project and draft tables held no rows, and CapCut keeps "
-                 "project files in external storage, which an app private extraction does "
-                 "not contain. Field mapping was done against a private sample provided by "
+                 "established. In the one sample this was built on, the entries carried no "
+                 "signed in account; this artifact does not report that field. The app's "
+                 "editing projects are not in this artifact and were not present in the "
+                 "tested sample: its project and draft tables held no rows, and where the "
+                 "app keeps project files was not established. Field mapping was done "
+                 "against a private sample provided by "
                  "Mattia; no sample data is recorded for it.",
         "paths": (
             '*/com.lemon.lvoverseas/databases/ss_app_log.db*',
@@ -28,21 +31,25 @@ __artifacts_v2__ = {
     },
     "capcut_device": {
         "name": "CapCut - Device and Install",
-        "description": "Parses the device, install and advertising identifiers the CapCut "
-                       "Android app records, with the time it recorded its install.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "description": "Parses the device, install and Android ID identifiers the "
+                       "CapCut Android app records, with the monitor_install_time3 "
+                       "value it stores.",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "CapCut",
-        "notes": "One row per app data directory. Install Recorded is Unix milliseconds. "
-                 "The device identifier appears in three of the app's preference files and all "
-                 "three held the same value on the tested "
-                 "device, so the column names one value rather than comparing them. The "
-                 "app stores two candidate device identifiers under the same name in two "
-                 "different preference files and they differed on the tested device, so "
-                 "both are reported rather than one being chosen. No signed in account was "
-                 "recorded: the app's account store held no login rows. Field mapping was "
+        "notes": "One row per app data directory. Monitor Install Time 3 is the "
+                 "monitor_install_time3 "
+                 "value of applog_monitor.xml, read as Unix milliseconds; what the app marks "
+                 "with it was not established. The device identifier appears in three of the "
+                 "app's preference files and all three held the same value on the tested "
+                 "device, so the column names one value rather than comparing them. The app "
+                 "stores two candidate device identifiers under the same name in two different "
+                 "preference files and they differed on the tested device, so both are reported "
+                 "rather than one being chosen. In the one sample this was built on, the app's "
+                 "account store held no login rows; this artifact does not read that store. "
+                 "Field mapping was "
                  "done against a private sample provided by Mattia; no sample data is "
                  "recorded for it.",
         "paths": (
@@ -208,7 +215,7 @@ def capcut_app_sessions(context):
     data_list.sort(key=lambda row: (str(row[0]), str(row[8])), reverse=True)
 
     data_headers = (
-        ('Start', 'datetime'),
+        ('Session Timestamp', 'datetime'),
         ('First Event', 'datetime'),
         ('Last Event', 'datetime'),
         'Duration (as stored)',
@@ -279,7 +286,7 @@ def capcut_device(context):
         ))
 
     data_headers = (
-        ('Install Recorded', 'datetime'),
+        ('Monitor Install Time 3', 'datetime'),
         'Device ID',
         'Install ID',
         'Candidate Device Identifiers',

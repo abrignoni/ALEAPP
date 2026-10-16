@@ -9,10 +9,13 @@ __artifacts_v2__ = {
         "category": "Vaulty",
         "notes": "Column names in media.db do not describe their contents: date_added holds the "
                  "creation timestamp of the file and date_modified holds the timestamp the file "
-                 "was added to the vault, per the research linked above. The headers below are "
-                 "named for the contents, not for the source column. The two values are also "
-                 "decoded with different epochs, date_added as seconds and date_modified as "
-                 "milliseconds, as set by that original research; the divergence has not been "
+                 "was added to the vault, per Kibaffo33, 'Decoding Vaulty', "
+                 "https://kibaffo33.data.blog/2022/03/05/decoding-vaulty/, where it is "
+                 "reported from that author's test data. The headers below are named for the "
+                 "contents, not for the source column. The two values are also decoded with "
+                 "different epochs, date_added as seconds and date_modified as milliseconds, "
+                 "as set in this module's original code by the same author. The linked "
+                 "write-up does not state the units, and the divergence has not been "
                  "re-verified against a test image.",
         "paths": ('*/com.theronrogers.vaultyfree/databases/media.db*',),
         "output_types": ['html', 'tsv', 'lava'],

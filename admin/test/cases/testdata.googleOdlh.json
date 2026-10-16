@@ -1,0 +1,109 @@
+{
+  "anne_a15": {
+    "description": "",
+    "maker": "",
+    "make_data": {
+      "input_data_path": "EXTRACTION_FFS.zip",
+      "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+      "timestamp": "2026-10-16T15:12:37.674918",
+      "last_commit": {
+        "hash": "84e4ed790fb9ca7d4c0873364b47c8c55a5df57e",
+        "author_name": "Brigs",
+        "author_email": "abrignoni@gmail.com",
+        "date": "2026-10-16T10:59:06-04:00",
+        "message": "ODLH: public sample_data for Path Points, shorter notes, segment times second"
+      }
+    },
+    "artifacts": {
+      "gmsOdlhSemanticSegments": {
+        "search_patterns": [
+          "*/com.google.android.gms/databases/odlh-storage.db*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "gmsOdlhEditedSegments": {
+        "search_patterns": [
+          "*/com.google.android.gms/databases/odlh-storage.db*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "gmsOdlhPathPoints": {
+        "search_patterns": [
+          "*/com.google.android.gms/databases/odlh-storage.db*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    },
+    "image_name": "anne_a15",
+    "image_info": {
+      "os_name": "Android",
+      "os_version": "15",
+      "device_model": "Samsung SM-S911U1"
+    }
+  },
+  "userb2_a13": {
+    "description": "",
+    "maker": "",
+    "make_data": {
+      "input_data_path": "UserB2 - Data.tar",
+      "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+      "timestamp": "2026-10-16T15:12:38.658516",
+      "last_commit": {
+        "hash": "84e4ed790fb9ca7d4c0873364b47c8c55a5df57e",
+        "author_name": "Brigs",
+        "author_email": "abrignoni@gmail.com",
+        "date": "2026-10-16T10:59:06-04:00",
+        "message": "ODLH: public sample_data for Path Points, shorter notes, segment times second"
+      }
+    },
+    "artifacts": {
+      "gmsOdlhSemanticSegments": {
+        "search_patterns": [
+          "*/com.google.android.gms/databases/odlh-storage.db*"
+        ],
+        "file_count": 4,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "gmsOdlhEditedSegments": {
+        "search_patterns": [
+          "*/com.google.android.gms/databases/odlh-storage.db*"
+        ],
+        "file_count": 4,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "gmsOdlhPathPoints": {
+        "search_patterns": [
+          "*/com.google.android.gms/databases/odlh-storage.db*"
+        ],
+        "file_count": 4,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    },
+    "image_name": "userb2_a13",
+    "image_info": {
+      "os_name": "Android",
+      "os_version": "13"
+    }
+  }
+}

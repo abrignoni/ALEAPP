@@ -22,7 +22,7 @@ SOFTWARE.
 __artifacts_v2__ = {
     "get_fcm_skype": {
         "name": "FCM - Skype and Teams Messages",
-        "description": "Skype (com.skype.raider) and Teams (com.microsoft.teams) message/call notifications from fcm_queued_messages.ldb",
+        "description": "Skype (com.skype.raider) and Teams (com.microsoft.teams) records from fcm_queued_messages.ldb whose eventType the module maps to a message (200, 201, 302, 305, 306), a call (107) or a missed call (110); the mapping is not sourced here",
         "author": "Alex Caithness (research [at] cclsolutionsgroup.com)",
         "creation_date": "2022-01-01",
         "last_update_date": "2022-01-01",
@@ -47,7 +47,7 @@ __artifacts_v2__ = {
     },
     "get_fcm_skype_notifications": {
         "name": "FCM - Skype and Teams Notifications",
-        "description": "Skype/Teams other (e.g. missed-chat-reminder) notifications from fcm_queued_messages.ldb",
+        "description": "Skype/Teams records with eventType 404 from fcm_queued_messages.ldb, which the module labels Missed chat reminder (not sourced; not exercised on the tested images)",
         "author": "Alex Caithness (research [at] cclsolutionsgroup.com)",
         "creation_date": "2022-01-01",
         "last_update_date": "2022-01-01",
@@ -69,7 +69,24 @@ __artifacts_v2__ = {
             "russell_pixel6a_a13": "Android 13 | com.google.android.gms vc 232316044 | 0 rows",
             "userb2_a13": "Android 13 | com.google.android.gms | 0 rows",
         },
+    },
+    "get_fcm_skype_other_events": {
+        "name": "FCM - Skype and Teams Other Event Records",
+        "description": "Decoded Skype and Teams FCM records with eventType keys listed in OTHER_TYPES or USER_TYPES, retained without assigning those dictionaries' interpretations",
+        "author": "Alex Caithness (research [at] cclsolutionsgroup.com), @AlexisBrignoni, Codex",
+        "creation_date": "2026-10-05",
+        "last_update_date": "2026-10-05",
+        "requirements": "none",
+        "category": "Firebase Cloud Messaging",
+        "notes": "The existing event-type meanings remain unsourced. This output retains the decoded eventType and key/value strings without assigning a message, call, user-status or user-details meaning. FCM Timestamp is the iterator's timestamp, not proof of an app action time. Repeated observations are retained; no deleted or committed-state claim is made.",
+        "paths": ('*/fcm_queued_messages.ldb/*',),
+        "output_types": "standard",
+        "artifact_icon": "table",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.google.android.gms vc 242632038 | 2 rows",
+        },
     }
+
 }
 
 import datetime
@@ -287,3 +304,27 @@ def get_fcm_skype_notifications(context):
     _messages, notifications, source = _load(files_found)
     data_headers = (('Timestamp', 'datetime'), 'App', 'Title', 'Message', 'Recipient', 'Link')
     return data_headers, notifications, source
+
+
+@artifact_processor
+def get_fcm_skype_other_events(context):
+    headers = (('FCM Timestamp', 'datetime'), 'App Package', 'Event Type (as stored)',
+               'FCM Record Key', 'Key Values (JSON)', 'Source File')
+    directories = sorted({pathlib.Path(str(path)).parent for path in unique_files(context)})
+    rows = []
+    sources = []
+    for directory in directories:
+        sources.append(str(directory))
+        try:
+            with FcmIterator(directory) as iterator:
+                for record in iterator:
+                    event_type = record.key_values.get('eventType')
+                    if record.package not in _APP_IDS or event_type not in OTHER_TYPES | USER_TYPES:
+                        continue
+                    rows.append((_to_utc(record.timestamp), record.package, event_type, record.key,
+                                 json.dumps(record.key_values, ensure_ascii=False),
+                                 context.get_relative_path(str(record.originating_file))))
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            logfunc(f'Skype/Teams FCM other events: error reading '
+                    f'{context.get_relative_path(str(directory))}: {exc}')
+    return headers, rows, "\n".join(sources)

@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_garminUP": {
         "name": "Garmin - User Preferences",
-        "description": "Get User information from gcm_user_reference.xml file from Garmin Connect shared preferences",
+        "description": "Reports selected keys from the first matched gcm_user_preferences file in the Garmin Connect shared preferences",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
         "creation_date": "2023-02-24",
         "last_update_date": "2023-02-24",

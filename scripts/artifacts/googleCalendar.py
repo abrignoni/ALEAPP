@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "get_calendar": {
         "name": "Calendar - Events",
         "description": "Parses provider calendar events",
-        "author": "Kevin Pagano (@stark4n6)",
+        "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2023-01-06",
         "last_update_date": "2023-01-06",
         "requirements": "none",
@@ -26,13 +26,31 @@ __artifacts_v2__ = {
     },
     "get_calendar_calendars": {
         "name": "Calendar - Calendars",
-        "description": "Parses provider calendars",
-        "author": "Kevin Pagano (@stark4n6)",
+        "description": "Calendars table of the calendar provider database.",
+        "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2023-01-06",
-        "last_update_date": "2023-01-06",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Calendar",
-        "notes": "",
+        "notes": "The first column, cal_sync8 (Read As Unix Milliseconds), is the cal_sync8 value read "
+                 "as Unix milliseconds and shown in UTC; the last column, cal_sync8 (As Stored), is the "
+                 "same value as stored. Android documents cal_sync8 as a generic column for use by sync "
+                 "adapters, type TEXT "
+                 "(https://android.googlesource.com/platform/frameworks/base/+/"
+                 "299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/core/java/android/provider/"
+                 "CalendarContract.java#326), "
+                 "and the provider's upgrade from version 304 to 305 renamed the Calendars _sync_time "
+                 "column to it "
+                 "(https://android.googlesource.com/platform/packages/providers/CalendarProvider/+/"
+                 "94405b4ad2ca9ddec5fcad85d42cd308229b61f0/src/com/android/providers/calendar/"
+                 "CalendarDatabaseHelper.java#1724). "
+                 "What a sync adapter stores there is the adapter's choice. What the value marks is "
+                 "not established, and the reading as Unix milliseconds rests on the size of the "
+                 "stored values, not on a source. On the ten listed images every Calendars row with "
+                 "account type com.google stored a 13 digit text value and every row with another "
+                 "account type (LOCAL, com.osp.app.signin, com.xiaomi) stored NULL. A stored value "
+                 "that is not a whole number leaves the first column blank and appears only in the "
+                 "last column.",
         "paths": ('*/com.android.providers.calendar/databases/calendar.db*',),
         "output_types": "standard",
         "artifact_icon": "calendar",
@@ -56,12 +74,16 @@ __artifacts_v2__ = {
                        "database: start and end, title, description, the calendar and "
                        "account they belong to and the event web link, decoded from each "
                        "event's protobuf record.",
-        "author": "Kevin Pagano (@stark4n6)",
+        "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",
         "category": "Calendar",
-        "notes": "Created and Updated are protobuf fields 4 and 5 of the event record. The "
+        "notes": "The fields are read from the event protobuf by number: link 3, Created "
+                 "4, Updated 5, title 6, description 7, calendar id and name 10 (or 35), "
+                 "iCal UID 19, start 36.1 and end 37.1. No source for these field numbers "
+                 "is cited. Account is the PlatformAccountName of the Accounts table row "
+                 "the event points to. The "
                  "event type is stored as a raw integer and is reported as-is.",
         "paths": ('*/com.google.android.calendar/databases/cal_v2a*',),
         "output_types": "standard",
@@ -147,12 +169,13 @@ def get_calendar_calendars(context):
         calendar_color, calendar_color_index
         FROM Calendars
     ''')
-    data_list = [(_ms_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8], r[9], r[10], r[11])
+    data_list = [(_ms_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8], r[9], r[10], r[11],
+                  r[0])
                  for r in rows]
     data_headers = (
-        ('Created Timestamp', 'datetime'), 'Calendar Name', 'Calendar Display Name', 'Account Name',
+        ('cal_sync8 (Read As Unix Milliseconds)', 'datetime'), 'Calendar Name', 'Calendar Display Name', 'Account Name',
         'Account Type', 'Visible', 'Calendar Location', 'Timezone', 'Owner Account', 'Is Primary',
-        'Color', 'Color Index')
+        'Color', 'Color Index', 'cal_sync8 (As Stored)')
     return data_headers, data_list, source_path
 
 

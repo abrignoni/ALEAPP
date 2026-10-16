@@ -2,9 +2,9 @@ __artifacts_v2__ = {
     "aves_entries": {
         "name": "Aves Gallery - Catalogued Media",
         "description": "Parses the media catalogue from the Aves Gallery Android app.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-03",
-        "last_update_date": "2026-09-03",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Aves Gallery",
         "sample_data": {
@@ -16,33 +16,56 @@ __artifacts_v2__ = {
                  "so a row records a file the app catalogued rather than anything a person did "
                  "with it. Path, MIME Type, Size, Width and Height describe the file. Date Added "
                  "is Unix seconds and Date Modified and Date Taken are Unix milliseconds, all "
-                 "reported as UTC; where each is taken from was not sourced here. Latitude and "
-                 "Longitude are reported as stored and are blank where the row carries none. "
-                 "Country Code and Country Name are reported as stored; on the tested device two "
+                 "converted from the stored number and shown as UTC. Date Taken is the dateTaken "
+                 "table's dateMillis. Aves 1.14.9 fills it from a date in the file's metadata, "
+                 "and converts a date that carries no time zone with the device's default time "
+                 "zone at the time of cataloguing, so the instant shown is not a reading the "
+                 "file itself records. Reference: Aves, MetadataFetchHandler.kt, "
+                 "https://github.com/deckerst/aves/blob/5592b0f606379ca1f44e8772007c754456e12cab/android/app/src/main/kotlin/deckers/thibault/aves/channel/calls/"
+                 "MetadataFetchHandler.kt#L691-L692 and Helper.kt, "
+                 "https://github.com/deckerst/aves/blob/5592b0f606379ca1f44e8772007c754456e12cab/android/app/src/main/kotlin/deckers/thibault/aves/metadata/"
+                 "metadataextractor/Helper.kt#L234-L239 and "
+                 "https://github.com/deckerst/aves/blob/5592b0f606379ca1f44e8772007c754456e12cab/android/app/src/main/kotlin/deckers/thibault/aves/metadata/"
+                 "metadataextractor/Helper.kt#L309-L311 . On emu_a15_oss_v9, whose stored time "
+                 "zone setting is America/New_York, the 2 rows carrying a Date Taken were both "
+                 "4 hours later than the EXIF DateTimeOriginal in the file, which carries no "
+                 "time zone. Where Date Added and Date Modified are taken from was not sourced "
+                 "here. Latitude and Longitude are reported as stored, a stored 0 included, and "
+                 "are blank where the row carries none. Aves 1.14.9 keeps a coordinate pair "
+                 "unless both values are within 1e-9 of 0, so one value of a stored pair can be "
+                 "0. Reference: Aves, catalog.dart, "
+                 "https://github.com/deckerst/aves/blob/5592b0f606379ca1f44e8772007c754456e12cab/lib/model/metadata/catalog.dart#L46-L57 . On emu_a15_oss_v9 the 4 "
+                 "rows with no coordinates held NULL in both columns and the other 2 held no 0. "
+                 "Country Code and Country Name are reported as stored; on the tested "
+                 "device two "
                  "images carrying known coordinates resolved to IS and US, consistent with the "
                  "app deriving them from the coordinates, and no source for that derivation is "
                  "cited here. The address table also has address line, admin area and locality "
                  "columns which were empty for both tested images, so the geocoding here reached "
-                 "country level only. Date Added leads this table rather than Date Taken because "
-                 "Date Added was filled on every tested entry while Date Taken was filled on 2 "
-                 "of the 6. Title is the entry title the app stores and was empty on all six; "
-                 "what the app writes there was not sourced here. Favorite is the favourites "
+                 "country level only. Date Added leads this table and Date Taken is the second "
+                 "column; a row can carry no Date Taken, because the dateTaken table is joined "
+                 "with a LEFT JOIN. Title is the entry title the app stores and was empty on all "
+                 "six; what the app writes there was not sourced here. Favorite is the favourites "
                  "table flag and was set on one of the six tested entries, on which it had been "
-                 "marked in the app. Rating is the star rating. Resume Position (ms) is the "
-                 "videoPlayback table value for the entry, reported as stored, and is blank "
+                 "marked in the app. Rating is the metadata table's rating value, as stored. "
+                 "Resume Position (ms) is the videoPlayback table value for the entry, reported "
+                 "as stored, and is blank "
                  "where the table has no row for it. "
-                 "KML output is produced from the coordinates. "
-                 "The metadata table's flags column is an undocumented bitmask and is not "
-                 "reported. The covers and dynamicAlbums tables hold album cover choices and "
-                 "saved filter definitions and were empty on the tested device.",
+                 "KML output is produced from the coordinates. Each KML point is labelled with "
+                 "the first filled time column of its row, which is Date Added where the row "
+                 "carries one and not Date Taken. A row whose Latitude or Longitude is 0 gets "
+                 "no KML point, because the KML writer skips a 0 in either column; the row is "
+                 "still in the table. The metadata table's flags column is an "
+                 "undocumented bitmask and is not reported. The covers and dynamicAlbums tables "
+                 "were empty on the tested device and are not read.",
         "paths": ('*/deckers.thibault.aves*/databases/metadata.db*',),
         "output_types": "all",
         "artifact_icon": "image",
     },
     "aves_trash_vaults": {
         "name": "Aves Gallery - Trash and Vaults",
-        "description": "Parses binned items and encrypted vaults from the Aves Gallery Android app.",
-        "author": "@AlexisBrignoni, Claude",
+        "description": "Parses the trash and vaults tables of the Aves Gallery Android app.",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-03",
         "last_update_date": "2026-09-03",
         "requirements": "none",
@@ -50,9 +73,8 @@ __artifacts_v2__ = {
         "sample_data": {
             "emu_a15_oss_v9": "Aves Gallery Libre 1.14.9 | 0 rows, checked: the trash and vaults tables are present and empty",
         },
-        "notes": "Rows from the trash and vaults tables of databases/metadata.db, combined because "
-                 "both describe media the app is deliberately keeping out of the main collection. "
-                 "Kind names which table a row came from. "
+        "notes": "Rows from the trash and vaults tables of databases/metadata.db, combined in one "
+                 "artifact. Kind names which table a row came from. "
                  "A Trash row carries a Path and a Date, as Unix milliseconds reported as UTC. A "
                  "Vault row carries a Name, a Lock Type and an auto-lock flag; the vault's "
                  "contents are not in this table. What the app writes to either table, whether a "
@@ -99,7 +121,7 @@ def _secs(value):
 
 
 def _coord(value):
-    if value in (None, '', 0):
+    if value in (None, ''):
         return ''
     return value
 

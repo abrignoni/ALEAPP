@@ -8,9 +8,11 @@ __artifacts_v2__ = {
         "last_update_date": "2023-02-24",
         "requirements": "none",
         "category": "Garmin",
-        "notes": "Requires data extracted from the Garmin Connect API. Interactive folium map and "
-                 "online reverse-geocoding removed; route shown as an offline image (media) + a "
-                 "downloadable route KML.",
+        "notes": "Requires data extracted from the Garmin Connect API. The route is rendered "
+                 "offline as an image and a KML file; no online lookup is made. Start Time and "
+                 "End Time are the time values of the first and last points of "
+                 "geoPolylineDTO.polyline, read as Unix milliseconds. A file with no coordinates "
+                 "produces no row.",
         "paths": ('*/garmin.api/activity_details*',),
         "output_types": "all",
         "artifact_icon": "activity",

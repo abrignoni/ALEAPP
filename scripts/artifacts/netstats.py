@@ -6,18 +6,25 @@ __artifacts_v2__ = {
                        "type and network identifiers for each interface",
         "author": "Alex Caithness",
         "creation_date": "2026-08-05",
-        "last_update_date": "2026-08-09",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Network Usage",
-        "notes": "The binary format is read per the AOSP sources named in this module "
-                 "(NetworkStatsCollection, NetworkIdentitySet and NetworkStatsHistory in "
-                 "packages/modules/Connectivity). Only the unified collection format "
+        "notes": "The binary format is read per NetworkStatsCollection.java, "
+                 "NetworkIdentitySet.java and NetworkStatsHistory.java under "
+                 "framework-t/src/android/net in AOSP packages/modules/Connectivity. The "
+                 "release the layout was taken from is not recorded in this module. Only the "
+                 "unified collection format "
                  "(version 16) is parsed; older versions are "
                  "rejected rather than guessed at.\n"
                  "UIDs are resolved to package names through packages.xml where it parses. "
                  "One tested image stored packages.xml encrypted; usage is still reported "
-                 "there with bare UIDs. A UID of -1 is UID_ALL ('aggregate/unspecified') in "
-                 "AOSP NetworkStats.java and carries no per-application attribution.\n"
+                 "there with bare UIDs. A UID of -1 is UID_ALL in AOSP NetworkStats.java, "
+                 "documented there as the uid value 'when UID details unavailable' "
+                 "(https://android.googlesource.com/platform/packages/modules/Connectivity/+/"
+                 "bd692130a596b4e9bc1ea6778db72c423bb8ab6f/framework-t/src/android/net/"
+                 "NetworkStats.java#77, "
+                 "the android-14.0.0_r1 tag); where packages.xml parses, this module labels it "
+                 "'[UID_ALL]'. It carries no per-application attribution.\n"
                  "Timeline output is deliberately off: the buckets produce tens of thousands "
                  "of timestamped rows per image.",
         "paths": ("*/netstats/dev*", "*/netstats/uid*", "*/netstats/xt*", "*/system/packages.xml"),
@@ -372,11 +379,11 @@ def map_uids(packages: etree.ElementTree):
             uid_map[int(uid)] = shared_user.get("name")
 
     # Special UIDs per android.net.TrafficStats (UID_TETHERING = -5,
-    # UID_REMOVED = -4) and android.net.NetworkStats (UID_ALL = -1, the
-    # aggregate/unspecified value the device-wide collections use).
+    # UID_REMOVED = -4) and android.net.NetworkStats (UID_ALL = -1,
+    # documented there as the value used when UID details are unavailable).
     uid_map[-5] = "[Tethering]"
     uid_map[-4] = "[Removed Application]"
-    uid_map[-1] = "[All UIDs (aggregate)]"
+    uid_map[-1] = "[UID_ALL]"
 
     return uid_map
 

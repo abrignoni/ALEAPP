@@ -10,7 +10,7 @@ __artifacts_v2__ = {
         "notes": "One row per entry in the media table of databases/gallery.db. This table is the app's own "
                  "index of media files, and it carries a Favorite flag, a recycle bin deletion "
                  "time and a recorded date taken. Each row carries the Filename and Full Path as "
-                 "stored, the Type, the Size in bytes, the Video Duration in seconds, the "
+                 "stored, the Type, the Size in bytes, the Video Duration as stored (unit not established), the "
                  "Favorite flag, and three times. Type is decoded from the app's media-type "
                  "constants, 1 image, 2 video, 4 GIF, 8 raw, 16 SVG, 32 portrait (Constants.kt "
                  "at FossifyOrg/Gallery b28299dc33821eee8d108a9880ce87876cf31443); on the tested "

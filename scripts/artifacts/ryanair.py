@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "ryanair_user_profile": {
         "name": "Ryanair - User Profile",
         "description": "Parses the myRyanair account profile stored by the Ryanair Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
@@ -20,7 +20,7 @@ __artifacts_v2__ = {
     "ryanair_bookings": {
         "name": "Ryanair - Bookings",
         "description": "Parses bookings stored by the Ryanair Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
@@ -38,7 +38,7 @@ __artifacts_v2__ = {
     "ryanair_flights": {
         "name": "Ryanair - Flights",
         "description": "Parses the flights of each booking stored by the Ryanair Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
@@ -58,7 +58,7 @@ __artifacts_v2__ = {
     "ryanair_passengers": {
         "name": "Ryanair - Passengers",
         "description": "Parses the passengers of each booking stored by the Ryanair Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
@@ -75,9 +75,9 @@ __artifacts_v2__ = {
     "ryanair_boarding_passes": {
         "name": "Ryanair - Boarding Passes",
         "description": "Decrypts and parses boarding passes stored by the Ryanair Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-10-04",
         "requirements": "PyCryptodome",
         "category": "Ryanair",
         "notes": "The boardingpass table stores each pass as an encrypted blob. The key is "
@@ -91,7 +91,11 @@ __artifacts_v2__ = {
                  "both tested passes decrypted, so that path was exercised on a constructed "
                  "copy with the key removed rather than on a sample. "
                  "Barcode Data is the string the app encodes into the scannable barcode, "
-                 "reported as stored. Times without a UTC suffix are local. The tested "
+                 "reported as stored. Departure Local and Boarding Time Local are the "
+                 "departureTime and boardingTime members, which carry no UTC suffix, reported "
+                 "as stored text. Download Time is the downloadTime member, also reported as "
+                 "stored text: its name carries no UTC suffix and no source for its time zone "
+                 "was found, so the module does not convert it. The tested "
                  "sample without boarding passes also had no key, so the key is not always "
                  "present. Field mapping was done against private samples provided by "
                  "Mattia; no sample data is recorded for them.",
@@ -105,7 +109,7 @@ __artifacts_v2__ = {
     "ryanair_recent_searches": {
         "name": "Ryanair - Recent Searches",
         "description": "Parses flight searches recorded by the Ryanair Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
@@ -127,15 +131,17 @@ __artifacts_v2__ = {
     "ryanair_recent_locations": {
         "name": "Ryanair - Recent Locations",
         "description": "Parses recently used stations and countries from the Ryanair Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
         "category": "Ryanair",
         "notes": "Covers the recent_stations and recent_countries tables, distinguished by "
                  "the Record Type column. The country type integer is undocumented and is "
-                 "reported as stored. Both tables use Unix milliseconds. recent_stations "
-                 "held no rows in either tested sample. Field mapping was done against "
+                 "reported as stored. recent_countries.last_used held Unix milliseconds on the "
+                 "tested samples. recent_stations held no rows in either tested sample, so "
+                 "reading its last_usage as Unix milliseconds is assumed from the sibling "
+                 "table and is unexercised. Field mapping was done against "
                  "private samples provided by Mattia; no sample data is recorded for them.",
         "paths": ('*/com.ryanair.cheapflights/databases/fr-local-db*',),
         "output_types": ["html", "tsv", "lava"],
@@ -144,14 +150,18 @@ __artifacts_v2__ = {
     "ryanair_day_of_travel": {
         "name": "Ryanair - Day of Travel Content",
         "description": "Parses the day of travel journey content cached by the Ryanair Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
         "category": "Ryanair",
-        "notes": "Rows come from the dot_booking_placeholder and dot_booking_product "
+        "notes": "Modified Date is the modified_date of the dot_booking row with the same "
+                 "booking id and language, read as Unix milliseconds. Availability rows come "
+                 "from the dot_booking_availability table and carry Is Available as stored. "
+                 "The other rows come from the dot_booking_placeholder and dot_booking_product "
                  "tables, which hold the text the app displays for a journey in the "
-                 "language it cached, including the purchased bags and equipment summary. "
+                 "language it cached, which on the tested sample included a bags and "
+                 "equipment summary. "
                  "Text is reported as stored and may contain markup written by the app. "
                  "Placeholder and product identifiers are reported as stored. Field mapping "
                  "was done against private samples provided by Mattia; no sample data is "
@@ -162,19 +172,36 @@ __artifacts_v2__ = {
     },
     "ryanair_sessions": {
         "name": "Ryanair - Sessions",
-        "description": "Parses session and remember me token claims from the Ryanair Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "description": "Decoded claims from selected named Ryanair token preferences, including the aud payload "
+                       "member when present; tokens are not verified.",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "Ryanair",
-        "notes": "The remember me preference holds a JSON Web Token. Its issued at and "
-                 "expiry claims are reported as timestamps and the subject, token id and "
-                 "issuer as identifiers; the signed token string itself is not written to "
-                 "the report. The remaining single letter claims are reported as stored. "
-                 "The token is read, not validated, so no claim here is evidence the token "
-                 "was accepted by the service. Field mapping was done against private "
-                 "samples provided by Mattia; no sample data is recorded for them.",
+        "notes": "The selected preference value is read as a three-component token; only its base64url "
+                 "JSON payload is decoded, without verifying its header, signature, authenticity or "
+                 "acceptance by any service. Issued At and Expires At preserve the existing conversion and"
+                 " blank policy. Subject, Token ID and Issuer retain existing decoded values. aud (decoded"
+                 " JSON) encodes the decoded aud member with Python json.dumps using ensure_ascii=True and"
+                 " compact separators. A missing member is the empty cell; explicit JSON null is the text "
+                 "null and an empty JSON string is the text pair of quotes. The new native cell uses "
+                 "text, preventing arbitrary-size integer SQLite binding and lone-surrogate UTF8 export "
+                 "failures through ASCII-only JSON text. JSON parsing the cell recovers the decoded value,"
+                 " including native containers and arbitrary-size integers, subject to Python JSON "
+                 "semantics. Existing accepted nonfinite constants encode as NaN/Infinity/-Infinity using "
+                 "unchanged stdlib defaults; these are Python JSON extensions, not strict RFC JSON or "
+                 "evidence of vendor meaning. Original token bytes, number spelling, duplicate JSON object"
+                 " keys and pre-decoder occurrences are not retained. Other Claims keeps its existing "
+                 "sorted f-string rendering and excludes aud; it is not a reversible JSON representation. "
+                 "Non-token fallback rows keep their existing message and receive an empty aud cell. The "
+                 "signed token itself remains omitted. Source selection, named-child order, repeated "
+                 "occurrences and existing Source File are unchanged. No decoded claim proves identity, "
+                 "ownership, intended recipient or service acceptance. Original field mapping against "
+                 "private samples is credited to Mattia Epifani (@mattiaepi), @AlexisBrignoni and Claude; "
+                 "those historical samples/counts are not remeasured here. Existing malformed-payload "
+                 "shape, date overflow, storage-view alias and other artifact semantics require separate "
+                 "review.",
         "paths": (
             '*/com.ryanair.cheapflights/shared_prefs/MyRyanair_RememberMeToken.xml',
             '*/com.ryanair.cheapflights/shared_prefs/PreferencesBasketSessionKey.xml',
@@ -606,7 +633,7 @@ def ryanair_boarding_passes(context):
             data_list.append((
                 _iso(payload.get('departureTimeUTC')),
                 _iso(payload.get('arrivalTimeUTC')),
-                _iso(payload.get('downloadTime')),
+                payload.get('downloadTime', ''),
                 payload.get('departureTime', ''),
                 payload.get('boardingTime', ''),
                 f"{payload.get('carrierCode', '')}{payload.get('flightNumber', '')}",
@@ -633,7 +660,7 @@ def ryanair_boarding_passes(context):
     data_headers = (
         ('Departure UTC', 'datetime'),
         ('Arrival UTC', 'datetime'),
-        ('Download Time', 'datetime'),
+        'Download Time (as stored)',
         'Departure Local (as stored)',
         'Boarding Time Local (as stored)',
         'Flight',
@@ -829,7 +856,7 @@ def ryanair_sessions(context):
             claims = _jwt_claims(value)
             if claims is None:
                 data_list.append(('', '', name, '', '', '',
-                                  'value present, not a JSON Web Token', relative_path))
+                                  '', 'value present, not a JSON Web Token', relative_path))
                 sources.append(source_path)
                 continue
             other = '; '.join(f'{key}={claims[key]}' for key in sorted(claims)
@@ -841,6 +868,8 @@ def ryanair_sessions(context):
                 claims.get('sub', ''),
                 claims.get('jti', ''),
                 claims.get('iss', ''),
+                json.dumps(claims['aud'], ensure_ascii=True, separators=(',', ':'))
+                if 'aud' in claims else '',
                 other,
                 relative_path,
             ))
@@ -853,6 +882,7 @@ def ryanair_sessions(context):
         'Subject',
         'Token ID',
         'Issuer',
+        'aud (decoded JSON)',
         'Other Claims (as stored)',
         'Source File',
     )

@@ -7,7 +7,10 @@ __artifacts_v2__ = {
         "last_update_date": "2024-05-11",
         "requirements": "",
         "category": "MS Authenticator",
-        "notes": "Get Account information from MS authenticator app.",
+        "notes": "One row per row of the accounts table of the PhoneFactor database, with the "
+                 "name, username and oath_secret_key columns as stored. Every matched PhoneFactor "
+                 "file that is not a -wal, -shm or -journal sidecar is read. The OATH Secret Key "
+                 "column is reported in full and should be handled as credential material.",
         "paths": ('*/com.azure.authenticator/databases/PhoneFactor*',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "shield",

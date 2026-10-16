@@ -2,9 +2,9 @@ __artifacts_v2__ = {
     "easyvoicerecorder_library": {
         "name": "Easy Voice Recorder Library",
         "description": "Audio files listed in the Easy Voice Recorder library",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Codex, Claude",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Easy Voice Recorder",
         "sample_data": {
@@ -22,20 +22,23 @@ __artifacts_v2__ = {
                  "of -1 is reported as blank; one such row was present on the tested device, "
                  "from a recording the app "
                  "started and did not finish. There is no timestamp in this table, so a row says "
-                 "the file was in the library and not when it was recorded; the file's own times "
-                 "carry that. The row survives the audio file being deleted: one recording was "
-                 "removed from the folder and the app reopened, and its row was still present, so "
-                 "an entry whose path no longer resolves is a record that the file was once in the "
-                 "folder. That was measured on this app rather than assumed, and it does not "
-                 "generalise. MX Player, tested the same way on the same device, dropped its row "
-                 "on the next scan. "
-                 "Pinned is the should_be_stickied column and was No on every row of the tested "
-                 "image, because nothing was pinned to the top of the app's list there. "
-                 "**Validation limit:** the tested device is an emulator with no working "
-                 "microphone, so no recording was made through the app. The rows were produced by "
-                 "placing known audio in the recordings folder and letting the app index it, plus "
-                 "the app's own incomplete-recording row. The parsing is proven against a real "
-                 "store; the recording flow itself is not exercised here, and a sample from a "
+                 "the file was in the library and not when it was recorded. The row survives the "
+                 "audio file being deleted: one recording was removed from the folder and the app "
+                 "reopened, and its row was still present, so an entry whose path no longer "
+                 "resolves is a record that the file was once in the folder. That was measured on "
+                 "this app rather than assumed, and it does not generalise. MX Player, tested the "
+                 "same way on the same device, dropped its row on the next scan. "
+                 "should_be_stickied (as stored) retains the native SQLite value without a "
+                 "Yes/No conversion. What the value means is not established. The earlier parser "
+                 "displayed No on every row of the tested image; that observation does not "
+                 "distinguish zero, NULL or other false-valued stored values. No item was pinned "
+                 "in the app on that device, so the pin interpretation was not exercised. "
+                 "**Validation limit:** "
+                 "the tested device is an emulator with no working microphone, so no recording was "
+                 "made through the app. The rows were produced by placing known audio in the "
+                 "recordings folder and letting the app index it, plus the app's own "
+                 "incomplete-recording row. The parsing was run against one real store of four "
+                 "rows; the recording flow itself is not exercised here, and a sample from a "
                  "device that actually recorded would close that gap.",
         "paths": ('*/com.coffeebeanventures.easyvoicerecorder/databases/evr.db*',),
         "output_types": "standard",
@@ -67,9 +70,10 @@ __artifacts_v2__ = {
                  "following rather than interpreted. install_info_key is "
                  "a JSON value holding the app's first install and last update times in Unix "
                  "milliseconds, and those two are reported as their own rows in UTC. Timestamp is "
-                 "blank on every other row, because the rest of these settings carry no time. The "
-                 "remaining keys in the file are theme, advertising and consent settings and are "
-                 "not reported. Values are shown as stored.",
+                 "blank on every other row, because the rest of these settings carry no time. "
+                 "__v2_encoder_preference_key and wave_sample_rate are also reported as stored. "
+                 "Every other key in the file is left out; on the tested device those were theme, "
+                 "advertising and consent settings. Values are shown as stored.",
         "paths": ('*/com.coffeebeanventures.easyvoicerecorder/shared_prefs/'
                   'com.coffeebeanventures.easyvoicerecorder_preferences.xml',),
         "output_types": "standard",
@@ -147,13 +151,13 @@ def easyvoicerecorder_library(context):
             duration = r[1] if r[1] is not None and r[1] >= 0 else ''
             data_list.append((
                 name, folder, duration,
-                'Yes' if r[2] else 'No', r[0] or '', r[3],
+                r[2], r[0] or '', r[3],
                 context.get_relative_path(db_path)))
         if records and db_path not in sources:
             sources.append(db_path)
 
     data_headers = (
-        'File Name', 'Folder', 'Duration (seconds)', 'Pinned', 'Document URI',
+        'File Name', 'Folder', 'Duration (seconds)', 'should_be_stickied (as stored)', 'Document URI',
         'Row ID', 'Source File')
     return data_headers, data_list, '\n'.join(sources)
 

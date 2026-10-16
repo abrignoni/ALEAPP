@@ -19,7 +19,7 @@ __artifacts_v2__ = {
                  "spacecowboy/Feeder tag 2.22.0, 6764cf5f27581a2337cdc9099e8b7220e342f177). Notify "
                  "is the per-feed notification setting. Articles the app downloads are in the "
                  "Articles artifact. A feed's presence alone is not evidence of a subscription a "
-                 "person chose; the Feed URL distinguishes the app's own release-notes feed.",
+                 "person chose.",
         "paths": ('*/com.nononsenseapps.feeder/databases/rssDatabase*',),
         "output_types": "standard",
         "artifact_icon": "rss",
@@ -36,18 +36,25 @@ __artifacts_v2__ = {
             "emu_a15_oss_v5": "Feeder 2.22.0 | 16 rows",
         },
         "notes": "One row per entry in the feed_items table of databases/rssDatabase, joined to "
-                 "the feed it belongs to. Most rows are articles the app downloaded when it synced "
-                 "a feed, so a row's existence records the fetch and not that anyone opened it; "
-                 "the user-activity signal is in Read Time and Bookmarked. Read Time is when the "
-                 "article was opened and is the app's own definition of read state: FeedItem.kt "
+                 "the feed it belongs to. A row records that the app stored the article when it "
+                 "synced a feed, not that anyone opened it. Read Time and Bookmarked are the app's "
+                 "stored read and bookmark state. Read Time is read_time as stored. The app treats "
+                 "an article as unread while it is null: FeedItem.kt "
                  "computes unread as readTime being null (spacecowboy/Feeder tag 2.22.0, "
-                 "6764cf5f27581a2337cdc9099e8b7220e342f177). The table also carries a stored "
+                 "6764cf5f27581a2337cdc9099e8b7220e342f177). FeedItemDao.kt at the same commit "
+                 "also sets read_time through its mark-all-as-read queries and clears it in "
+                 "markAsUnread, so a Read Time alone does not establish that the article was "
+                 "opened. The table also carries a stored "
                  "unread column, reported here as Unread Flag, and the two can disagree: on the "
                  "tested device an article opened in the app was given a Read Time while its "
-                 "stored flag still read unread, so Read Time is the column to rely on. Bookmarked "
+                 "stored flag still read unread, and FeedItem.kt at the same commit marks the "
+                 "stored unread column as deprecated in favour of readTime, so the app's read "
+                 "state is the Read Time column. Bookmarked "
                  "is the saved-for-later flag. The pinned column is deprecated in the app and is "
-                 "not reported. Published is the article's own publication date as the feed "
-                 "supplied it, an ISO 8601 string reported as stored, and First Synced and Read "
+                 "not reported. Published is pub_date as stored: the date the feed supplied where "
+                 "it parsed; where it did not parse the app keeps a date already set or stores "
+                 "the current time (FeedItem.kt at the same commit, lines 173 to 180). It is an "
+                 "ISO 8601 string. First Synced and Read "
                  "Time are Unix milliseconds reported as UTC. Word Count is the app's count for "
                  "the article body.",
         "paths": ('*/com.nononsenseapps.feeder/databases/rssDatabase*',),

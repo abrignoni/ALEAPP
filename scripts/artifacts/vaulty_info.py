@@ -2,7 +2,13 @@
 __artifacts_v2__ = {
     "get_vaulty_info": {
         "name": "vaulty_info",
-        "description": "Prefs File",
+        "description": "Values from the Vaulty preferences file: the stored password hash (base64 "
+                       "decoded, shown as hex), the security question, the security answer hash, "
+                       "the vault location and the Drive account name. The Password row is not "
+                       "stored: it is the 4 or 6 digit PIN whose MD5 equals the stored hash, "
+                       "found by this parser trying each one, and when none matches the row says "
+                       "so. The stored hash is described as a plain MD5 of the PIN in Kibaffo33, "
+                       "'Decoding Vaulty', https://kibaffo33.data.blog/2022/03/05/decoding-vaulty/",
         "author": "@kibaffo33",
         "creation_date": "2022-02-23",
         "last_update_date": "2022-02-23",

@@ -2,37 +2,45 @@ __artifacts_v2__ = {
     "chrome_session_tabs": {
         "name": "Chromium Session Tabs - Navigation Entries",
         "description": "Pages held in the tab restore file of a Chromium browser, with the "
-                       "address, page title, visit time and HTTP status the browser stored for "
+                       "address, page title, stored timestamp and HTTP status the browser "
+                       "stored for "
                        "each entry, and the tab it belongs to.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-09-04",
-        "last_update_date": "2026-09-04",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Chromium Sessions",
         "notes": "Read from the Sessions/Tabs_<number> files a Chromium browser writes under its "
                  "app_chrome folder, with the vendored snss_parser. The path pattern carries no "
-                 "package name because every Chromium browser uses the same layout, so the "
-                 "Browser column reports the package the file was found under and the same glob "
-                 "covers Chrome, Brave and Edge.\n"
-                 "One row per navigation entry the file holds, taken from the command Chromium "
-                 "calls kCommandUpdateTabNavigation. Timestamp is the entry's stored time, "
-                 "microseconds since 1601, and Tab ID and Index identify the tab and the "
-                 "position of the entry in that tab's back and forward list, so several rows "
-                 "with one Tab ID are one tab's history. Transition Type and Referrer Policy are "
-                 "integers Chromium defines and are reported as stored. Reference: Chromium, "
-                 "components/sessions/core/serialized_navigation_entry.cc, which sets the field "
-                 "order, and components/sessions/core/tab_restore_service_impl.cc, which sets "
-                 "the command ids.\n"
-                 "Has Post Data, Overriding User Agent and HTTP Status hold one value across every row of "
-                 "an image whose entries are all ordinary page loads; they are kept because they "
-                 "separate a form submission or a desktop-mode request from a plain visit. "
+                 "package name and matches any package that keeps an "
+                 "app_chrome/<profile>/Sessions folder, so the Browser column reports the package "
+                 "the file was found under and the same glob covers Chrome, Brave and Edge.\nOne "
+                 "row per navigation entry in each matched file, taken from the command Chromium "
+                 "calls kCommandUpdateTabNavigation. Mirrored storage views with the same canonical "
+                 "identity and exactly equal complete bytes are reported once, using the preferred "
+                 "storage spelling. Different byte states remain separate; Source File names the "
+                 "selected path. Original parser contribution: @AlexisBrignoni, Claude. Timestamp is the "
+                 "entry's stored time, microseconds since 1601, and Tab ID and Index identify the "
+                 "tab and the position of the entry in that tab's back and forward list, so "
+                 "several rows with one Tab ID are one tab's history. Transition Type and "
+                 "Referrer Policy are integers Chromium defines and are reported as stored. "
+                 "Reference: Chromium at commit 5babd82a3403ae4c580afc34df4c677d70779b52: "
+                 "https://github.com/chromium/chromium/blob/5babd82a3403ae4c580afc34df4c677d70779b52/components/sessions/core/serialized_navigation_entry.cc#L116 "
+                 "(WriteToPickle, which sets the field order) and "
+                 "https://github.com/chromium/chromium/blob/5babd82a3403ae4c580afc34df4c677d70779b52/components/sessions/core/tab_restore_service_impl.cc#L116-L119 "
+                 "(the two command ids).\nHas Post Data, Overriding User Agent and HTTP Status "
+                 "hold one value across every row of an image whose entries are all ordinary page "
+                 "loads; they are reported as stored and what sets them is not established here. "
                  "Each entry also carries a page state blob holding form and scroll state; it is "
                  "not decoded and only its size is reported. Every entry decoded on the tested "
                  "images consumed its record exactly, which is what shows the field order is "
-                 "right.\n"
-                 "This is the browser's own restore file, so a row means the page was in a tab "
-                 "the browser was holding, not that it was open when the device was seized, and "
-                 "the file is not a full browsing history. A page here "
+                 "right.\nChromium's components/sessions/core/tab_restore_service.h describes the "
+                 "service whose command ids are used here as maintaining the most recently closed "
+                 "tabs and windows "
+                 "(https://github.com/chromium/chromium/blob/5babd82a3403ae4c580afc34df4c677d70779b52/components/sessions/core/tab_restore_service.h#L37). "
+                 "A row is a navigation entry stored in that file. It does not show that the page "
+                 "was open at acquisition, and the file is not a full browsing history. Which "
+                 "tabs reach the file on Android was not measured. A page here "
                  "need not appear in the browser's History database.",
         "paths": ('*/app_chrome/*/Sessions/Tabs_*',),
         "output_types": "standard",
@@ -67,9 +75,9 @@ __artifacts_v2__ = {
         "name": "Chromium Session Tabs - Tab State",
         "description": "The entry each tab was sitting on in the tab restore file, with the "
                        "timestamp the browser stored against it.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-09-04",
-        "last_update_date": "2026-09-04",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Chromium Sessions",
         "notes": "Read from the same Tabs_<number> files, from the command Chromium calls "
@@ -77,7 +85,10 @@ __artifacts_v2__ = {
                  "not a pickle but a fixed structure of a tab id, the selected navigation index "
                  "and a timestamp, microseconds since 1601. The event at which Chromium records "
                  "that timestamp was not sourced here, so it is reported as stored. One row per "
-                 "record.\n"
+                 "record in each selected file. Mirrored storage views with the same canonical identity "
+                 "and exactly equal complete bytes are reported once using the preferred spelling; "
+                 "different byte states remain separate. Original parser contribution: "
+                 "@AlexisBrignoni, Claude.\n"
                  "Selected Index refers to the Index column of the navigation entries artifact "
                  "for the same Tab ID, so the two join on Tab ID to show which page the tab was "
                  "on. Browser reports the package the file was found under.",
@@ -113,11 +124,13 @@ __artifacts_v2__ = {
 }
 
 import datetime
+import hashlib
 import os
 import re
 
 from scripts.ilapfuncs import artifact_processor, logfunc
 from scripts.snss_parser import SNSSError, read_navigation_entries, read_selected_navigations
+from scripts.artifacts.storagePathViews import canonical_path
 
 _CHROMIUM_EPOCH = datetime.datetime(1601, 1, 1, tzinfo=datetime.timezone.utc)
 _PACKAGE = re.compile(r'/([^/]+)/app_chrome/', re.I)
@@ -139,14 +152,54 @@ def _browser(path):
     return match.group(1) if match else ''
 
 
+def _file_fingerprint(path):
+    """Index possible aliases without holding file contents in memory."""
+    digest = hashlib.sha256()
+    size = 0
+    with open(path, 'rb') as handle:
+        while chunk := handle.read(65536):
+            size += len(chunk)
+            digest.update(chunk)
+    return size, digest.digest()
+
+
+def _same_file_bytes(left, right):
+    """A digest match is only a candidate; compare every byte before collapsing."""
+    with open(left, 'rb') as left_file, open(right, 'rb') as right_file:
+        while True:
+            left_chunk = left_file.read(65536)
+            right_chunk = right_file.read(65536)
+            if left_chunk != right_chunk:
+                return False
+            if not left_chunk:
+                return True
+
+
 def _tab_files(context):
+    states = {}
+    independent = []
     for file_found in sorted(context.get_files_found()):
         file_found = str(file_found)
         if os.path.isdir(file_found):
             continue
         if not os.path.basename(file_found).startswith('Tabs_'):
             continue
-        yield file_found
+        key, rank = canonical_path(context.get_relative_path(file_found))
+        try:
+            size, digest = _file_fingerprint(file_found)
+            candidates = states.setdefault((key, size, digest), [])
+            for index, (prior_rank, prior_path) in enumerate(candidates):
+                if _same_file_bytes(file_found, prior_path):
+                    if (rank, file_found) < (prior_rank, prior_path):
+                        candidates[index] = (rank, file_found)
+                    break
+            else:
+                candidates.append((rank, file_found))
+        except OSError:
+            # Let the unchanged decoder and wrapper log/handle this path.
+            independent.append(file_found)
+    retained = independent + [path for candidates in states.values() for _, path in candidates]
+    yield from sorted(retained)
 
 
 @artifact_processor

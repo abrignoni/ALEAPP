@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "accuweather_location": {
         "name": "AccuWeather Location",
-        "description": "The position AccuWeather stored for the device and the location it was set to use",
+        "description": "The position AccuWeather stored for the device and the location key and default location values stored beside it",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-06",
@@ -12,27 +12,27 @@ __artifacts_v2__ = {
         },
         "notes": "One row per location record in the DataStore preferences file "
                  "com.accuweather.android/files/datastore/SETTINGS_LOCATION_PREFERENCES."
-                 "preferences_pb. The app's own SQLite database holds only home screen widget "
-                 "tables and was empty on the tested image, so this file is where the position "
-                 "lives. "
-                 "Latitude, Longitude and Fix Time are read from the GPS_LOCATION_COORDINATES "
-                 "value, which the app stores as a JSON object with latitude, longitude and "
-                 "lastKnownLocationFix members. Fix Time is Unix milliseconds and is reported as "
-                 "UTC. "
-                 "**The stored coordinates are rounded to three decimal places**, which is "
-                 "roughly 110 metres, so they are not the fix the platform handed the app. "
-                 "Measured by moving the device position and reading the file back three "
-                 "times: 38.897683 was stored as 38.898, 64.146600 as 64.147 and 51.507350 as "
-                 "51.507. An examiner should treat the value as a neighbourhood, not a point. "
-                 "Location Key is the app's own numeric key for the place it was showing, and "
-                 "**it can lag the coordinates**: across those same three moves it changed once "
-                 "and then stayed on the previous place's key while the coordinates moved on, "
-                 "so the key can name somewhere the device has already left. Why it lags was not "
-                 "established here. Default Location is which source the app was set to use, "
-                 "'gps_location' on the tested image. **The coordinates on the tested image are "
-                 "the Android emulator's default fix**, 38.898, -77.037, which is not a place "
-                 "anyone travelled to; they are reported because the field is the artifact, and "
-                 "an examiner reading a real device gets a real position in the same field. A "
+                 "preferences_pb. The app's own SQLite database held only home screen widget "
+                 "tables, all empty, on the tested image, so this file is where the position "
+                 "lives. Latitude, Longitude and Fix Time are read from the "
+                 "GPS_LOCATION_COORDINATES value, which the app stores as a JSON object with "
+                 "latitude, longitude and lastKnownLocationFix members. Fix Time is Unix "
+                 "milliseconds and is reported as UTC. **The stored coordinates are rounded to "
+                 "three decimal places**, which is roughly 110 metres, so they are not the fix "
+                 "the platform handed the app. Measured by moving the device position and "
+                 "reading the file back three times: 38.897683 was stored as 38.898, 64.146600 "
+                 "as 64.147 and 51.507350 as 51.507. An examiner should treat the value as a "
+                 "neighbourhood, not a point. Location Key is the app's own numeric key for the "
+                 "place it was showing, and **it can lag the coordinates**: across those same "
+                 "three moves it changed once and then stayed on the previous place's key while "
+                 "the coordinates moved on, so the key can name somewhere the device has already "
+                 "left. Why it lags was not established here. Default Location is the "
+                 "DEFAULT_LOCATION_KEY_SETTING_SHARED_KEY value as stored, 'gps_location' on the "
+                 "tested image. What the app does with that value was not established. **The "
+                 "coordinates on the tested image are the Android emulator's default fix**, "
+                 "38.898, -77.037, which is not a place anyone travelled to; they are reported "
+                 "because the field is the artifact, and the field was not tested on a physical "
+                 "device. A "
                  "row records the position the app last held, not a track. That the file keeps "
                  "one coordinate pair and overwrites it was measured rather than assumed: moving "
                  "the device twice replaced the pair both times and the file shrank from 285 to "

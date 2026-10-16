@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "The signed-in Threema account's own Threema ID, display "
                        "nickname, and any mobile number linked to it, read from the "
                        "app's main preferences file.",
-        "author": "@Gear-I & Claude",
+        "author": "@Gear-I & Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-17",
         "last_update_date": "2026-08-17",
         "requirements": "none",
@@ -21,25 +21,35 @@ __artifacts_v2__ = {
     },
     "threema_contacts": {
         "name": "Threema - Contacts",
-        "description": "Contacts recorded in Threema's local, SQLCipher-encrypted "
-                       "database, with each one's verification level as Threema's own "
-                       "client displays it and when the contact was first added.",
-        "author": "@Gear-I & Claude",
+        "description": "Contacts recorded in Threema's local, SQLCipher-encrypted database, with each one's stored verification level and the date the contact record was created locally.",
+        "author": "@Gear-I & Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-17",
-        "last_update_date": "2026-08-17",
+        "last_update_date": "2026-10-04",
         "requirements": "sqlcipher3", 
         "category": "Threema",
         "notes": "Threema encrypts its main database (threema4.db) at rest with "
                  "SQLCipher; this module decrypts it in memory before reading it, "
-                 "using the same key.dat unwrapping algorithm documented publicly at "
-                 "github.com/wilzbach/threema-decrypt (a fixed 32-byte XOR mask "
-                 "followed by a SHA-1 checksum verification), reverse engineered and "
-                 "verified against this device's real key.dat and threema4.db - the "
-                 "checksum embedded in key.dat matched the derived key exactly, and "
-                 "the resulting decryption produced real, readable contact and "
-                 "message content that matches this device's documented action "
-                 "sheet. This only covers the common case where no local app "
-                 "passphrase/PIN was set to further protect key.dat (key.dat's own "
+                 "using the version 1 key.dat format in Threema's published source (a fixed "
+                 "32-byte XOR mask followed by a SHA-1 checksum verification). Reference: Threema "
+                 "for Android, 'Version1MasterKeyFileManager.kt', "
+                 "https://github.com/threema-ch/threema-android/blob/"
+                 "d44a2b53b2ea2c0bf1065bdaa96987570e5b4e6d/app/src/main/java/ch/threema/"
+                 "localcrypto/Version1MasterKeyFileManager.kt#L18-L43; "
+                 "the format is also described at github.com/wilzbach/threema-decrypt. On "
+                 "pixel7a_a14 the checksum embedded in key.dat matched the derived key, and the "
+                 "decrypted database opened and returned the contact and message rows recorded in "
+                 "sample_data. This covers only a version 1 key.dat with no passphrase protection. "
+                 "The client's current source also defines version 2 master key files, "
+                 "master_key.dat and enc_master_key_v2.dat, which this module does not read; an "
+                 "install that has no key.dat produces no rows, and its threema4.db is listed "
+                 "as a source file and left undecrypted. "
+                 "Reference: Threema for Android, 'MasterKeyFileProvider.kt', "
+                 "https://github.com/threema-ch/threema-android/blob/"
+                 "d44a2b53b2ea2c0bf1065bdaa96987570e5b4e6d/app/src/main/java/ch/threema/"
+                 "localcrypto/MasterKeyFileProvider.kt#L8-L20. "
+                 "The no-key.dat case was exercised on a copy of the pixel7a_a14 files with "
+                 "key.dat removed, not on an install that carries a version 2 file. "
+                 "A passphrase-protected key.dat is also left undecrypted (key.dat's own "
                  "first byte, read directly rather than assumed, records this; on a "
                  "device where it indicates passphrase protection this module leaves "
                  "the database undecrypted rather than guess at a passphrase-derived "
@@ -50,18 +60,38 @@ __artifacts_v2__ = {
                  "against, the main file alone was several weeks stale and missing "
                  "real, later content that only existed in the log. 'Verification "
                  "Level' maps the stored verificationLevel value as 0=Unverified, "
-                 "1=Server-verified, 2=Fully verified; the source of that mapping is not named "
-                 "here; on the device this was validated against, the "
+                 "1=Server-verified, 2=Fully verified; the names are those of the client's "
+                 "VerificationLevel list (Reference: Threema for Android, "
+                 "'VerificationLevel.java', "
+                 "https://github.com/threema-ch/threema-android/blob/"
+                 "d44a2b53b2ea2c0bf1065bdaa96987570e5b4e6d/domain/src/main/java/ch/threema/domain/"
+                 "models/VerificationLevel.java#L10-L12). "
+                 "How a contact reached a level is not stored in this column and is not "
+                 "reported. On the device this was validated against, the "
                  "one contact recorded at level 2 corresponds exactly to a 'via QR "
                  "scan' verification event documented for that same contact. "
                  "'Group-Only / Removed' reflects Threema's own AcquaintanceLevel "
-                 "field on the contact record; Threema's own Android source "
-                 "documents this as a combined state meaning either that the "
-                 "contact is only known through a shared group and was never "
-                 "directly added, or that the user directly removed a formerly "
-                 "direct contact - the two cases cannot be told apart from this "
-                 "field alone, so both are reported together rather than guessing "
-                 "which applies.",
+                 "field on the contact record; the column shows Yes when the stored "
+                 "acquaintanceLevel is set and not 0. Threema's Android source defines an "
+                 "acquaintance level named GROUP_OR_DELETED as covering three cases: a contact who "
+                 "is in a group with the "
+                 "user, was not explicitly added and has no 1:1 conversation; a contact who was in "
+                 "a group with the user before, where either of them has since been removed from "
+                 "all common groups; and "
+                 "a contact the user explicitly removed (Reference: Threema for Android, "
+                 "'Contact.kt (AcquaintanceLevel)', "
+                 "https://github.com/threema-ch/threema-android/blob/"
+                 "d44a2b53b2ea2c0bf1065bdaa96987570e5b4e6d/domain/src/main/java/ch/threema/domain/"
+                 "models/Contact.kt#L213-L231) "
+                 "- the three cases cannot be told apart from this "
+                 "field alone, so they are reported together rather than guessing "
+                 "which applies. 'Date Created' is the stored dateCreated value, read as Unix "
+                 "milliseconds; the client's source describes that column as the date when "
+                 "the contact was created locally (Reference: Threema for Android, "
+                 "'ContactModel.java', "
+                 "https://github.com/threema-ch/threema-android/blob/"
+                 "d44a2b53b2ea2c0bf1065bdaa96987570e5b4e6d/app/src/main/java/ch/threema/storage/"
+                 "models/ContactModel.java#L57).",
         "paths": (
             '*/ch.threema.app/files/key.dat',
             '*/ch.threema.app/databases/threema4.db*',
@@ -74,13 +104,10 @@ __artifacts_v2__ = {
     },
     "threema_messages": {
         "name": "Threema - Messages",
-        "description": "One-to-one messages recorded in Threema's local, "
-                       "SQLCipher-encrypted database: text, image, static location, "
-                       "and voice/video call events, with direction, delivery/read "
-                       "status, and any quote-reply relationship between messages.",
-        "author": "@Gear-I & Claude",
+        "description": "One-to-one messages recorded in Threema's local, SQLCipher-encrypted database: text, file (type 8), static location, and call events, with direction, delivery/read status, and any quote-reply relationship between messages.",
+        "author": "@Gear-I & Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-17",
-        "last_update_date": "2026-08-17",
+        "last_update_date": "2026-10-06",
         "requirements": "sqlcipher3",
         "category": "Threema",
         "notes": "Decrypted the same way as Threema - Contacts, including reading "
@@ -91,13 +118,19 @@ __artifacts_v2__ = {
                  "conversation existed only in the write-ahead log and would have "
                  "been missed entirely by reading the main database file alone. "
                  "Only the four message-type combinations confirmed on this device "
-                 "are decoded: plain text; an image (filename, MIME type and file "
+                 "are decoded: plain text; a file message, type 8 (FILE) in the client's "
+                 "MessageType list (threema-android MessageType.kt at commit d44a2b53, "
+                 "https://github.com/threema-ch/threema-android/blob/"
+                 "d44a2b53b2ea2c0bf1065bdaa96987570e5b4e6d/app/src/main/java/ch/threema/storage/"
+                 "models/MessageType.kt#L23-L28), "
+                 "reported as File; read the MIME Type "
+                 "column to see what kind of file a row holds (filename, MIME type and file "
                  "size are read from the message's own structured content, matched "
                  "by value rather than by trusting a fixed field position, since "
                  "that content is a positional JSON array with no field names of "
                  "its own); a static location (latitude, longitude, accuracy in "
                  "metres and a resolved address, read by fixed field position, "
-                 "since this content's structure - unlike the image case - showed "
+                 "since this content's structure - unlike the file case - showed "
                  "the same fixed [latitude, longitude, accuracy, address] shape on "
                  "every location message observed); and a call event (status/call "
                  "ID/duration are read by name, since that part of the structure is "
@@ -105,20 +138,17 @@ __artifacts_v2__ = {
                  "numeric call-type marker regardless of whether it was really an "
                  "audio or a video call, so this module does not report an "
                  "audio/video distinction rather than guess at one; duration and "
-                 "direction are still reported and, on this device, matched a "
-                 "documented audio and video call exactly by duration. 'Quoted "
+                 "direction are still reported. 'Quoted "
                  "Message' is resolved via the replying message's own "
-                 "quotedMessageId against the original message's apiMessageId (a "
-                 "server-assigned protocol ID distinct from the database's own row "
+                 "quotedMessageId against the original message's apiMessageId (the message's "
+                 "protocol id, which is distinct from the database's own row "
                  "id), not by row order. Group messages, distribution lists and "
                  "polls are out of scope for this release: every corresponding "
                  "table was empty on the device this was validated against, so "
                  "their column mapping could not be confirmed against real "
                  "content. A message can be missing from this table with a gap in "
-                 "the numbering between its neighbours; on the device this was "
-                 "validated against, exactly one such gap exists at the point in "
-                 "the conversation where the action sheet documents a message "
-                 "being deleted, but this module does not assert deletion from the "
+                 "the numbering between its neighbours; this module does not assert deletion from "
+                 "a "
                  "gap alone since a gap has other possible causes (e.g. a message "
                  "never finishing sync before extraction), and the database's own "
                  "deletedAtUtc/editedAtUtc columns, which would confirm a deletion "
@@ -299,8 +329,9 @@ def _decrypted_connections(files_found):
     An extraction can carry a container per Android user, each with its own
     key.dat and threema4.db. The pairing stays inside one container: a
     database only opens with the key file next to it, never another user's.
-    A container whose key does not derive still reports its db path, so the
-    report cites the store that could not be opened.
+    A container whose key does not derive, or that has no key.dat at all,
+    still reports its db path, so the report cites the store that could not
+    be opened.
     """
     if not _SQLCIPHER_AVAILABLE:
         return []
@@ -312,6 +343,10 @@ def _decrypted_connections(files_found):
                           if f.endswith('databases/threema4.db')):
         key_dat_path = keys_by_root.get(db_path[:-len('databases/threema4.db')])
         if not key_dat_path:
+            logfunc("Threema: no key.dat beside threema4.db; version 2 master "
+                    "key files are not read, so the database is cited and "
+                    "left undecrypted.")
+            pairs.append((None, db_path))
             continue
         key = _derive_sqlcipher_key(key_dat_path)
         con = _open_decrypted_db(db_path, key) if key is not None else None
@@ -322,7 +357,7 @@ def _decrypted_connections(files_found):
 _VERIFICATION_LEVELS = {
     0: "Unverified",
     1: "Server-verified",
-    2: "Fully verified (e.g. QR/NFC scan)",
+    2: "Fully verified",
 }
 
 
@@ -355,7 +390,7 @@ def threema_account(context):
 def threema_contacts(context):
     data_headers = (
         "Threema ID", "Display Name", "Verification Level",
-        ("Date Added", "datetime"), "Group-Only / Removed", "Archived",
+        ("Date Created", "datetime"), "Group-Only / Removed", "Archived",
     )
 
     files_found = unique_files(context)
@@ -459,11 +494,12 @@ def _extract_call_info(body_json):
 @artifact_processor
 def threema_messages(context):
     data_headers = (
-        ("Created", "datetime"), "Contact", "Direction", "Content Type",
+        ("Created", "datetime"), ("Delivered", "datetime"), ("Read At", "datetime"),
+        "Contact", "Direction", "Content Type",
         "Text / Filename / Address", "MIME Type", "Size (bytes)",
         "Latitude", "Longitude", "Location Accuracy (m)",
         "Call Status", "Call ID", "Call Duration (s)", "State", "Read",
-        "Quoted Message", ("Delivered", "datetime"), ("Read At", "datetime"),
+        "Quoted Message",
     )
 
     files_found = unique_files(context)
@@ -507,7 +543,7 @@ def threema_messages(context):
                     content_type = "Text"
                     text = body or ''
                 elif mtype == 8:
-                    content_type = "Image"
+                    content_type = "File"
                     filename, mime_type, size = _extract_media_info(body)
                 elif mtype == 4:
                     content_type = "Location"
@@ -523,6 +559,8 @@ def threema_messages(context):
 
                 data_list.append((
                     _epoch_ms_to_utc(created),
+                    _epoch_ms_to_utc(delivered),
+                    _epoch_ms_to_utc(read_at),
                     contact_name,
                     direction,
                     content_type,
@@ -538,8 +576,6 @@ def threema_messages(context):
                     state or '',
                     "Yes" if is_read else "",
                     quoted_text,
-                    _epoch_ms_to_utc(delivered),
-                    _epoch_ms_to_utc(read_at),
                 ))
         finally:
             con.close()

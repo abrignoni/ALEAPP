@@ -1,0 +1,51 @@
+{
+  "metadata": {
+    "module_name": "Spotify",
+    "artifact_name": "Spotify - Cached Artist Responses",
+    "function_name": "spotify_artist_profile_views",
+    "case_number": "case1",
+    "number_of_columns": 3,
+    "number_of_rows": 4,
+    "total_data_size_bytes": 228,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/Spotify/testdata.Spotify.spotify_artist_profile_views.case1.zip",
+    "start_time": "2026-10-06T12:19:31.900919+00:00",
+    "end_time": "2026-10-06T12:19:31.926128+00:00",
+    "run_time_seconds": 0.000640869140625,
+    "last_commit": {
+      "hash": "ce21ff8c947aafdcde092b1b54b0e2ae9873466f",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-10-06T07:52:57-04:00",
+      "message": "Name Spotify Crashlytics identifier from its stored field"
+    }
+  },
+  "headers": [
+    "Response Received Time",
+    "Artist Name",
+    "Artist URI"
+  ],
+  "data": [
+    [
+      1722112269,
+      "Descendents",
+      "spotify:artist:1FGH4Bh7g9W6V4fUcKZWp5"
+    ],
+    [
+      1722112305,
+      "LMFAO",
+      "spotify:artist:3sgFRtyBnxXD5ESfmbK4dl"
+    ],
+    [
+      1722112579,
+      "The Clash",
+      "spotify:artist:3RGLhK1IP9jnYFH4BRFJBS"
+    ],
+    [
+      1722113089,
+      "Vampire Weekend",
+      "spotify:artist:5BvJzeQpmsdsFp4HGUYUEx"
+    ]
+  ]
+}

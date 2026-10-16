@@ -1,26 +1,26 @@
 """Samsung IMS service logs (com.sec.imsservice).
 
 Samsung's IMS stack writes plain-text logs under com.sec.imsservice/files and a small
-shared_prefs snapshot. Every log line is 'MM/DD/YYYY HH:MM:SS.mmm   <message>' in the
-device's local wall clock, with no time zone recorded.
+shared_prefs snapshot. Every log line is 'MM/DD/YYYY HH:MM:SS.mmm   <message>', with no
+time zone recorded, so the times are reported as text and not as datetimes.
 """
 
 __artifacts_v2__ = {
     "samsungImsSubscriber": {
         "name": "Samsung IMS Subscriber Identity",
-        "description": "Parses the IMS public user identity Samsung stores in com.sec.imsservice, mapping each SIM's IMSI to the SIP or TEL identity it registered.",
-        "author": "@AlexisBrignoni, Claude",
+        "description": "Parses the IMS public user identity Samsung stores in com.sec.imsservice, one row per saved entry, with the key (an IMSI on the tested images) and the SIP or TEL URI stored against it.",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
         "requirements": "none",
         "category": "Samsung IMS Service",
-        "notes": "Read from com.sec.imsservice/shared_prefs/saved_impu.xml, which maps a SIM's IMSI to the IMS "
-                 "public user identity the device registered. IMSI (as stored) is the map key, IMPU (as stored) is "
+        "notes": "Read from com.sec.imsservice/shared_prefs/saved_impu.xml, which holds saved entries, each "
+                 "a key and an IMS public user identity. IMSI (as stored) is the map key, IMPU (as stored) is "
                  "the SIP or TEL URI, IMPU User Part is the URI's user portion (a phone number on the tested "
                  "images) and IMPU Domain is the host. IMPU Domain is blank for a tel: URI, which one tested image "
                  "stored with no host. On the 13 tested Android extractions 9 held this file, 10 identities in "
-                 "all, one image carrying two. This file records no time. The identity is the one the SIM "
-                 "presented to the carrier's IMS network as stored.",
+                 "all, one image carrying two. This file records no time. What Samsung uses the saved "
+                 "value for was not sourced; it is reported as stored.",
         "paths": ('*/com.sec.imsservice/shared_prefs/saved_impu.xml',),
         "output_types": "standard",
         "artifact_icon": "user",
@@ -43,15 +43,18 @@ __artifacts_v2__ = {
     "samsungImsRegistration": {
         "name": "Samsung IMS Registration Events",
         "description": "Parses the IMS registration log Samsung writes in com.sec.imsservice, one row per RegiMgr line, with the SIM slot, carrier profile and registration state where a line carries them, as stored.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Samsung IMS Service",
         "notes": "Read from com.sec.imsservice/files/RegiMgr.log, Samsung's IMS registration log. Each line is "
-                 "'MM/DD/YYYY HH:MM:SS.mmm   message' in the device's local wall clock with no time zone recorded, "
-                 "so Timestamp holds that local time stored verbatim and must not be read as UTC, and Time (as "
-                 "stored) keeps the original text. One row per line. SIM Slot, Profile (as stored) and State (as "
+                 "'MM/DD/YYYY HH:MM:SS.mmm   message' with no time zone recorded. That the clock is device local time is not "
+                 "measured or sourced in this field. Log Time (no zone recorded) is the stored reading rewritten "
+                 "as YYYY-MM-DD HH:MM:SS.mmm, the same digits in an order that sorts by time; it is text, is "
+                 "not typed as a datetime and no time zone is attached to it. Time (as stored) keeps the "
+                 "original text. One row per line that begins with a date and time; a line "
+                 "with no leading timestamp is not reported. SIM Slot, Profile (as stored) and State (as "
                  "stored) come from the slot[N] and [Profile|State] tokens where a line carries them and are blank "
                  "otherwise; on one image whose log held only 22 early lines all three were blank. On the 13 "
                  "tested extractions 9 held this log, 15,049 rows, with SIM Slot on 14,705 and Profile on 13,999. "
@@ -81,19 +84,19 @@ __artifacts_v2__ = {
     "samsungImsPdn": {
         "name": "Samsung IMS PDN Network Events",
         "description": "Parses the IMS packet data network log Samsung writes in com.sec.imsservice, with the interface, link addresses and P-CSCF addresses where a line carries them, as stored.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Samsung IMS Service",
         "notes": "Read from com.sec.imsservice/files/PdnController.log, Samsung's IMS packet data network log, "
-                 "with the same local no-time-zone timestamps as the registration log. Interface (as stored) is "
+                 "with the same no-time-zone timestamps as the registration log, reported as text. Interface (as stored) is "
                  "the rmnet name from an onPdnConnected or onLinkPropertiesChanged line; Link Addresses (as "
                  "stored) and P-CSCF Addresses (as stored) are the addresses from a full onLinkPropertiesChanged "
                  "block, which some images do not log, leaving those columns blank; SIM Slot comes from slot[N] "
                  "where present. On the 13 tested extractions 9 held this log, 1,574 rows, with Interface on 892 "
-                 "and Link Addresses and P-CSCF Addresses on 786. Link Addresses are the device's own IMS "
-                 "addresses and P-CSCF Addresses the carrier's SIP proxies, both as the carrier assigned them.",
+                 "and Link Addresses and P-CSCF Addresses on 786. Link Addresses and P-CSCF Addresses are the "
+                 "lists logged after LinkAddresses: and PcscfAddresses:, as stored.",
         "paths": ('*/com.sec.imsservice/files/PdnController.log',),
         "output_types": "standard",
         "artifact_icon": "wifi",
@@ -116,19 +119,18 @@ __artifacts_v2__ = {
     "samsungImsSimCarrier": {
         "name": "Samsung IMS SIM and Carrier State",
         "description": "Parses the IMS SIM manager log Samsung writes in com.sec.imsservice, with the SIM slot and the carrier MNO and MVNO names as stored.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Samsung IMS Service",
         "notes": "Read from com.sec.imsservice/files/SimManager_slot*.log, Samsung's IMS SIM manager log, with the "
-                 "same local no-time-zone timestamps. MNO Name (as stored) and MVNO Name (as stored) are the "
-                 "operator and virtual-operator names Samsung logged; MVNO Name is blank unless the SIM is an "
-                 "MVNO, so it is empty on most rows, present on 37 of 3,248. SIM Slot comes from slot[N]. The IMSI "
+                 "same no-time-zone timestamps as the registration log, reported as text. MNO Name (as stored) and MVNO Name (as stored) are the "
+                 "operator and virtual-operator names Samsung logged. MVNO Name is the text after mvnoname= "
+                 "where a line carries one; it was present on 37 of 3,248 rows. SIM Slot comes from slot[N]. The IMSI "
                  "in this log is masked with asterisks, so it is not surfaced here; the SIM's real IMSI is in the "
                  "Samsung IMS Subscriber Identity artifact. On the 13 tested extractions 8 held this log, 3,248 "
-                 "rows; MNO Name values included TMobile_US, TPG_SG, Telefonica_GB, ATT_US and VZW_US, and a SIM "
-                 "change shows as MNO Name changing between rows.",
+                 "rows; MNO Name values included TMobile_US, TPG_SG, Telefonica_GB, ATT_US and VZW_US.",
         "paths": ('*/com.sec.imsservice/files/SimManager_slot*.log',),
         "output_types": "standard",
         "artifact_icon": "smartphone",
@@ -151,26 +153,36 @@ __artifacts_v2__ = {
     "samsungImsServiceStarts": {
         "name": "Samsung IMS Service Starts",
         "description": "Collects the process-start lines the Samsung IMS service writes at the head of its logs in com.sec.imsservice, with the process id and firmware build as stored.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Samsung IMS Service",
         "notes": "Collects the '> Created (pid: N, binary: <firmware>)' line Samsung writes at the head of each "
-                 "com.sec.imsservice log, deduplicated to one row per process id (the earliest time that pid was "
-                 "seen), with the same local no-time-zone timestamp. Service Start Time is when the IMS service "
-                 "process started and Firmware Build (as stored) is the build string it recorded. Firmware Build "
-                 "is one value on a device that took no update in the log window and several on a device that did, "
-                 "so this doubles as a firmware update timeline; one tested image recorded ten builds. On the 13 "
-                 "tested extractions 9 held these lines, 251 process starts in all.",
+                 "com.sec.imsservice log, with the same no-time-zone timestamp as the registration log, reported as text. "
+                 "One row per Android user, process id and firmware build string. Created Line Time (no zone recorded) "
+                 "is the time on the earliest '> Created' line of that group, Last Created Line Time (no zone recorded) "
+                 "is the time on the latest, and Created Lines is how many such lines the group holds across the logs "
+                 "read. Firmware Build (as stored) is the text after binary:. The lines carry nothing that tells one "
+                 "start from a later start that was given the same process id under the same build, so those still "
+                 "share a row; the row then spans both. On three of the tested images the lines of one process id "
+                 "were mostly within seconds of each other (median spread 1.9 to 4.9 seconds) while some process ids "
+                 "spanned days, so a wide gap between the two times is consistent with a reused process id; what "
+                 "gap separates one start from two is not established. The Android user is taken from the file's "
+                 "path; every tested image held these logs for one user only, so the split by user is not exercised "
+                 "on real data. The rows of one device can carry one build string or several, so a change of build "
+                 "string between rows is consistent with a firmware change in that window; this was not checked "
+                 "against an update record. On the 13 tested extractions 9 held these lines, 257 rows in all, 6 more "
+                 "than one row per process id would give: on four images a process id appeared under more than one "
+                 "build string.",
         "paths": ('*/com.sec.imsservice/files/*.log',),
         "output_types": "standard",
         "artifact_icon": "refresh-cw",
         "sample_data": {
             "adams_ss135dl_a13": "Android 13 | 24 rows",
-            "anne_a15": "Android 15 | 47 rows",
+            "anne_a15": "Android 15 | 48 rows",
             "cookbook_a11": "Android 11 | 16 rows",
-            "falken_a326u_a13": "Android 326 | 26 rows",
+            "falken_a326u_a13": "Android 326 | 27 rows",
             "galaxys10_a10": "Android 10 | no com.sec.imsservice logs | 0 rows",
             "hc_pixel8pro_a17": "Android 17 | no com.sec.imsservice logs | 0 rows",
             "kevin_pocox7_a15": "Android 15 | no com.sec.imsservice logs | 0 rows",
@@ -178,14 +190,13 @@ __artifacts_v2__ = {
             "s20fe_a13": "Android 13 | 23 rows",
             "samsunga53_a14": "Android 14 | 9 rows",
             "samsungs20_a13": "Android 13 | 19 rows",
-            "sharon_a13": "Android 13 | 20 rows",
-            "sharon_a14": "Android 14 | 67 rows",
+            "sharon_a13": "Android 13 | 21 rows",
+            "sharon_a14": "Android 14 | 70 rows",
         },
     },
 }
 
 import re
-from datetime import datetime, timezone
 
 from scripts.ilapfuncs import artifact_processor
 
@@ -203,10 +214,13 @@ _PCSCF = re.compile(r'PcscfAddresses:\s*\[([^\]]*)\]')
 
 
 def _when(mo):
-    """Local wall-clock datetime for a matched line, stored verbatim (no zone conversion)."""
-    y, mon, d = int(mo.group(3)), int(mo.group(1)), int(mo.group(2))
-    h, mi, s, ms = int(mo.group(4)), int(mo.group(5)), int(mo.group(6)), int(mo.group(7))
-    return datetime(y, mon, d, h, mi, s, ms * 1000, tzinfo=timezone.utc)
+    """The line's stored time as sortable text (YYYY-MM-DD HH:MM:SS.mmm).
+
+    The log records no time zone, so the reading is not turned into a datetime and no
+    zone is attached to it. Text in this form sorts in the same order as the readings.
+    """
+    return (f"{mo.group(3)}-{mo.group(1)}-{mo.group(2)} "
+            f"{mo.group(4)}:{mo.group(5)}:{mo.group(6)}.{mo.group(7)}")
 
 
 def _stored(mo):
@@ -294,7 +308,7 @@ def samsungImsRegistration(context):
                 msg,
                 context.get_relative_path(source_path)))
 
-    data_headers = (('Timestamp', 'datetime'), 'Time (as stored)', 'SIM Slot',
+    data_headers = ('Log Time (no zone recorded)', 'Time (as stored)', 'SIM Slot',
                     'Profile (as stored)', 'State (as stored)', 'Message (as stored)', 'Source File')
     return data_headers, data_list, '\n'.join(sorted(source_paths))
 
@@ -328,7 +342,7 @@ def samsungImsPdn(context):
                 msg,
                 context.get_relative_path(source_path)))
 
-    data_headers = (('Timestamp', 'datetime'), 'Time (as stored)', 'SIM Slot',
+    data_headers = ('Log Time (no zone recorded)', 'Time (as stored)', 'SIM Slot',
                     'Interface (as stored)', 'Link Addresses (as stored)',
                     'P-CSCF Addresses (as stored)', 'Message (as stored)', 'Source File')
     return data_headers, data_list, '\n'.join(sorted(source_paths))
@@ -361,7 +375,7 @@ def samsungImsSimCarrier(context):
                 msg,
                 context.get_relative_path(source_path)))
 
-    data_headers = (('Timestamp', 'datetime'), 'Time (as stored)', 'SIM Slot',
+    data_headers = ('Log Time (no zone recorded)', 'Time (as stored)', 'SIM Slot',
                     'MNO Name (as stored)', 'MVNO Name (as stored)', 'Message (as stored)', 'Source File')
     return data_headers, data_list, '\n'.join(sorted(source_paths))
 
@@ -377,6 +391,7 @@ def samsungImsServiceStarts(context):
         except OSError:
             continue
         source_paths.add(str(source_path))
+        android_user = _android_user('/' + str(context.get_relative_path(source_path)).replace('\\', '/'))
         for line in lines:
             mo = _LINE.match(line.rstrip('\n'))
             if not mo:
@@ -384,13 +399,24 @@ def samsungImsServiceStarts(context):
             cr = _CREATED.match(mo.group(8))
             if not cr:
                 continue
-            pid, firmware = cr.group(1), cr.group(2)
+            # A process id is reused over time, so it does not identify one start on
+            # its own. The Android user and the build string are the only other things a
+            # '> Created' line and its file carry, so the key uses all three.
+            key = (android_user, cr.group(1), cr.group(2))
             when = _when(mo)
-            rec = instances.get(pid)
-            if rec is None or when < rec[0]:
-                instances[pid] = [when, _stored(mo), firmware]
+            rec = instances.get(key)
+            if rec is None:
+                instances[key] = [when, _stored(mo), when, 1]
+                continue
+            rec[3] += 1
+            if when < rec[0]:
+                rec[0], rec[1] = when, _stored(mo)
+            if when > rec[2]:
+                rec[2] = when
 
-    data_list = [(rec[0], rec[1], pid, rec[2]) for pid, rec in instances.items()]
-    data_headers = (('Service Start Time', 'datetime'), 'Time (as stored)',
-                    'Process PID (as stored)', 'Firmware Build (as stored)')
+    data_list = [(rec[0], rec[1], rec[2], rec[3], key[1], key[2], key[0])
+                 for key, rec in instances.items()]
+    data_headers = ('Created Line Time (no zone recorded)', 'Time (as stored)',
+                    'Last Created Line Time (no zone recorded)', 'Created Lines',
+                    'Process PID (as stored)', 'Firmware Build (as stored)', 'Android User')
     return data_headers, data_list, '\n'.join(sorted(source_paths))

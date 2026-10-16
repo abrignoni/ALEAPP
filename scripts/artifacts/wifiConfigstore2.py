@@ -2,12 +2,18 @@ __artifacts_v2__ = {
     "get_wifiConfigstore": {
         "name": "WiFi Config Store",
         "description": "Saved Wi-Fi network configuration details from WifiConfigStore.xml",
-        "author": "@abrignoni",
+        "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2023-05-11",
-        "last_update_date": "2023-05-11",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "WiFi Profiles",
-        "notes": "",
+        "notes": "ConnectChoiceTimeStamp is read as Unix milliseconds and reported as UTC; that "
+                 "unit follows Android 10 WifiConfiguration's setConnectChoiceTimestamp contract "
+                 "(https://android.googlesource.com/platform/frameworks/base/+/android-10.0.0_r1/"
+                 "wifi/java/android/net/wifi/WifiConfiguration.java), which specifies "
+                 "System.currentTimeMillis. The stored field is read by XmlUtil as that timestamp. It is "
+                 "blank when the stored value is not all digits or is 1 or less. CreationTime is "
+                 "reported as the text the file stores.",
         "paths": ('*/misc/wifi/WifiConfigStore.xml', '*/misc**/apexdata/com.android.wifi/WifiConfigStore.xml'),
         "output_types": "standard",
         "artifact_icon": "wifi",
@@ -103,10 +109,11 @@ def get_wifiConfigstore(context):
                     fields['ProxySettings'] = f'{text} - {value}' if value else text
 
             if any(fields.values()):
-                data_list.append(tuple(fields[c] for c in COLUMNS))
+                data_list.append(tuple(fields[c] for c in ('ConnectChoiceTimeStamp', 'CreationTime') +
+                                       tuple(c for c in COLUMNS if c not in ('ConnectChoiceTimeStamp', 'CreationTime'))))
 
     data_headers = (
+        ('ConnectChoiceTimeStamp', 'datetime'), 'CreationTime',
         'ConfigKey', 'SSID', 'BSSID', 'PreSharedKey', 'WEPKeys', 'HiddenSSID', 'RandomizedMacAddress',
-        'CreatorName', 'CreationTime', 'ConnectChoice', ('ConnectChoiceTimeStamp', 'datetime'),
-        'HasEverConnected', 'IpAssignment', 'ProxySettings')
+        'CreatorName', 'ConnectChoice', 'HasEverConnected', 'IpAssignment', 'ProxySettings')
     return data_headers, data_list, ', '.join(source_paths)

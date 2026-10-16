@@ -2,26 +2,39 @@ __artifacts_v2__ = {
     "gmailEmails": {
         "name": "Gmail - App Emails",
         "description": "Parses emails from Gmail",
-        "author": "Alexis Brignoni, Patrick Dalla, @stark4n6",
+        "author": "Alexis Brignoni, Patrick Dalla, @stark4n6; @AlexisBrignoni, Codex",
         "creation_date": "2023-01-04",
-        "last_update_date": "2026-08-24",
+        "last_update_date": "2026-10-09",
         "requirements": "BeautifulSoup",
         "category": "Email",
-        "notes": "Recipient, Reply To, Mailed By, Signed by and Subject Line are read from "
-                 "numbered fields of the zipped message protobuf. Protobuf field positions are "
+        "notes": "Recipient and Recipient Name are protobuf fields 1.2 and 1.3, Reply To and "
+                 "Reply To Name are 11.17 and 11.15, Subject Line is 5, Mailed By is 11.8, Signed "
+                 "by is 11.9 and Timestamp is field 17 read as Unix milliseconds. What Timestamp "
+                 "marks is not established, and whether field 1 holds the recipient or the "
+                 "sender is not established; the Recipient headers are the module's own names. "
+                 "Protobuf field positions are "
                  "not documented and were assigned from the values seen on tested images; Mailed "
                  "By and Signed by reflect stored header values and are not verified against "
-                 "Authentication-Results. Message is the readable text extracted from the stored "
+                 "Authentication-Results. An absent protobuf field 11 leaves its four header "
+                 "columns blank; an unrecognized field 11 type is logged and those columns "
+                 "are blank while the otherwise decoded row is retained. The original protobuf "
+                 "stays in the source database. Message is the readable text extracted from the stored "
                  "HTML body (tags, styling and repeated whitespace removed). Each link's place in "
                  "the text is marked [n], and Links lists the link targets by those numbers, as "
                  "stored; a repeated target keeps its first number. A link with no words of its "
                  "own, such as a linked image, still gets a marker, so the words just before a "
                  "marker are not always the link's text. The "
                  "unmodified body stays in the source database. The app keeps one "
-                 "bigTopDataDB.<id> store per signed-in account; every matched store is read, "
-                 "across every Android user of the device, with duplicate storage spellings "
-                 "(data/data, data/user/<n>, data_mirror) collapsed first and stores read in "
-                 "sorted path order. Account ID is the numeric store id as stored. The Account "
+                 "bigTopDataDB.<id> store per signed-in account; every matched store is read "
+                 "except copies under a .magisk mirror path, across every Android user of the "
+                 "device, with duplicate storage spellings (data/data, data/user/<n>, "
+                 "data_mirror) collapsed first and stores read in sorted path order. A message "
+                 "row with no stored protobuf is not reported; a stored protobuf that cannot be "
+                 "decompressed or decoded is logged and not reported, and a decoded record with "
+                 "no usable field 17 keeps its row with a blank Timestamp (neither case was seen "
+                 "on a tested image). A message with more than one "
+                 "attachment row appears once per attachment. Account ID is the numeric store id "
+                 "as stored. The Account "
                  "column is filled only when the Java String.hashCode of an address recorded in "
                  "the same app instance's Gmail.xml equals the store id, which held for every "
                  "store in the tested images; a store with no matching recorded address keeps a "
@@ -61,7 +74,12 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-24",
         "requirements": "none",
         "category": "Email",
-        "notes": "One row per label per account store. Every matched bigTopDataDB.<id> store is read, across every Android user of the device, with duplicate storage spellings collapsed first and stores read in sorted path order. Account ID is the numeric store id as stored; the Account column is resolved from the same app instance's Gmail.xml as described in Gmail - App Emails. "
+        "notes": "One row per label per account store. Every matched bigTopDataDB.<id> store is "
+                 "read except copies under a .magisk mirror path, across every Android user of the "
+                 "device, with duplicate storage spellings collapsed first and stores read in "
+                 "sorted path order. Account ID is the numeric store id as stored; the Account "
+                 "column is resolved from the same app instance's Gmail.xml as described in Gmail "
+                 "- App Emails. "
                  "Label values are reported as stored. Because the store id followed the address "
                  "and not the Android user on every tested store, Account and Account ID would not"
                  " separate two Android users' stores for one account, so Source File names the "
@@ -266,10 +284,24 @@ def gmailEmails(context):
             if proto_blob is not None:
                 arreglo = bytearray(proto_blob)
                 arreglo = arreglo[1:]
-                decompressed_data = zlib.decompress(arreglo)
-                message, _typedef = decode_protobuf(decompressed_data)
+                try:
+                    decompressed_data = zlib.decompress(arreglo)
+                    message, _typedef = decode_protobuf(decompressed_data)
+                except Exception as ex:  # pylint: disable=broad-exception-caught
+                    # One undecodable record must not cost the store its other rows
+                    logfunc(f'Unable to decode a Gmail message record in {source_file[:240]!r} '
+                            f'for server id {str(row[1])[:80]!r}: {type(ex).__name__}; '
+                            'record not reported')
+                    continue
+                if not isinstance(message, dict):
+                    logfunc(f'Unrecognized Gmail message record in {source_file[:240]!r} '
+                            f'for server id {str(row[1])[:80]!r}; record not reported')
+                    continue
 
-                timestamp = (datetime.fromtimestamp(message['17'] / 1000, timezone.utc))
+                try:
+                    timestamp = (datetime.fromtimestamp(message['17'] / 1000, timezone.utc))
+                except (KeyError, TypeError, ValueError, OverflowError, OSError):
+                    timestamp = ''
             else:
                 continue
 
@@ -278,6 +310,8 @@ def gmailEmails(context):
             attachhash = row[16]
             attachment = ''
 
+            if not isinstance(message.get('1'), dict):
+                message = {key: value for key, value in message.items() if key != '1'}
             to = (message.get('1', '')).get('2', '') if '1' in message and '2' in message['1'] else '' #receiver
             if isinstance(to, bytes):
                 to = to.decode()
@@ -286,15 +320,22 @@ def gmailEmails(context):
             if isinstance(toname, bytes):
                 toname = toname.decode()
 
-            replyto = (message['11'].get('17', '')) if '11' in message and '17' in message['11'] else '' #reply email
+            header = message.get('11', {})
+            if not isinstance(header, dict):
+                logfunc(f'Unrecognized Gmail field 11 type {type(header).__name__} '
+                        f'in {source_file[:240]!r} for server id {str(serverid)[:80]!r}; '
+                        'header columns omitted')
+                header = {}
+
+            replyto = header.get('17', '') if '17' in header else '' #reply email
             if isinstance(replyto, bytes):
                 replyto = replyto.decode()
 
-            replytoname = (message['11'].get('15', b'')) #reply name
-            if '11' in message and '15' in message['11'] and isinstance(message['11'].get('15', b''), bytes):
+            replytoname = header.get('15', b'') #reply name
+            if '15' in header and isinstance(header.get('15', b''), bytes):
                 replytoname = replytoname.decode()
             else:
-                replytoname = (message['11'].get('15', ''))
+                replytoname = header.get('15', '')
 
             subjectline = (message.get('5', '')) #Subject line
             if subjectline != '':
@@ -318,14 +359,14 @@ def gmailEmails(context):
                         # The body node nesting varies between app versions
                         logfunc(f'Unrecognized Gmail message body structure for server id {serverid}; body omitted')
 
-            mailedby = (message.get('11', {}).get('8', b'')) #mailed by
-            if isinstance(message.get('11', {}).get('8', ''), bytes):
+            mailedby = (header.get('8', b'')) #mailed by
+            if isinstance(header.get('8', ''), bytes):
                 mailedby = mailedby.decode()
             else:
                 mailedby = ''
 
-            signedby = (message.get('11', {}).get('9', b'')) #signed by
-            if isinstance(message.get('11', {}).get('9', ''), bytes):
+            signedby = (header.get('9', b'')) #signed by
+            if isinstance(header.get('9', ''), bytes):
                 signedby = signedby.decode()
             else:
                 signedby = ''

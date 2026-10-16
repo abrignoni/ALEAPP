@@ -2,8 +2,7 @@
 __artifacts_v2__ = {
     "get_textnow_call_logs": {
         "name": "Text Now - Call Logs",
-        "description": "Parses TextNow call logs (start time, a computed end time, participant IDs and direction) from "
-                       "the TextNow textnow_data.db.",
+        "description": "Parses rows of message_type 100 and 102 in the messages table of the TextNow textnow_data.db, which this artifact treats as call records (that mapping is not sourced): start time, a computed end time, participant IDs and direction.",
         "author": "@markmckinnon",
         "creation_date": "2021-03-15",
         "last_update_date": "2026-08-01",
@@ -28,10 +27,16 @@ __artifacts_v2__ = {
         "description": "Parses TextNow messages (timestamp, sender and recipient IDs, direction, message, read state and attachments) from the TextNow textnow_data.db.",
         "author": "@markmckinnon",
         "creation_date": "2021-03-15",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Text Now",
-        "notes": ("Direction is decoded from the messages table 'message_direction' column, the same "
+        "notes": ("Each messages table row whose message_type is not 100 or 102 is reported "
+                  "once, whether or not its contact_value is present in the contacts table. "
+                  "Thread ID and the member list shown in To ID are filled only when the "
+                  "message's contact_value matches a groups row that has group_members rows; "
+                  "no tested image held a group. On pixel3_a11 the store held 25 such messages "
+                  "and 25 rows are reported; on pixel3_a12 the messages table was empty. "
+                  "Direction is decoded from the messages table 'message_direction' column, the same "
                   "column and mapping used by Text Now - Call Logs. Values 1 and 2 are labelled "
                   "Incoming and Outgoing; that mapping is not vendor-documented and no source or "
                   "measurement for it is given here, so the labels are unverified. Unrecognized "
@@ -42,7 +47,7 @@ __artifacts_v2__ = {
     },
     "get_textnow_contacts": {
         "name": "Text Now - Contacts",
-        "description": "Parses TextNow contacts (number and name) from the TextNow textnow_data.db.",
+        "description": "Parses TextNow contacts (number and name; where no name is stored the name column repeats the number) from the TextNow textnow_data.db.",
         "author": "@markmckinnon",
         "creation_date": "2021-03-15",
         "last_update_date": "2021-03-15",
@@ -141,19 +146,14 @@ def get_textnow_messages(context):
                            messages.DATE/1000,
                            messages.attach,
                            thread_id
-                    FROM   (SELECT GM.contact_value,
-                                   Group_concat(GM.member_contact_value) AS to_addresses,
-                                   G.contact_value                       AS thread_id
-                            FROM   group_members AS GM
-                                   join GROUPS AS G
-                                     ON G.contact_value = GM.contact_value
-                            GROUP  BY GM.contact_value
-                            UNION
-                            SELECT contact_value,
-                                   NULL,
-                                   NULL
-                            FROM   contacts) AS contact_book_w_groups
-                           join messages
+                    FROM   messages
+                           left join (SELECT GM.contact_value,
+                                             Group_concat(GM.member_contact_value) AS to_addresses,
+                                             G.contact_value                       AS thread_id
+                                      FROM   group_members AS GM
+                                             join GROUPS AS G
+                                               ON G.contact_value = GM.contact_value
+                                      GROUP  BY GM.contact_value) AS contact_book_w_groups
                              ON messages.contact_value = contact_book_w_groups.contact_value
                     WHERE  message_type NOT IN ( 102, 100 )
                 ''')

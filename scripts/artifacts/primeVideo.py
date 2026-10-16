@@ -4,16 +4,20 @@ __artifacts_v2__ = {
         "description": "Parses the playback history stored by the Amazon Prime Video Android app.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Prime Video",
         "notes": "Read from the playbackHistory table of the app's dbplaybackhistory "
-                 "database. lastAccessed is Unix milliseconds; watched_position, runtime "
+                 "database. lastAccessed is converted as Unix milliseconds; "
+                 "watched_position, runtime "
                  "and credits_start_time_millis are milliseconds of media time, not "
                  "timestamps, and are reported as stored. On one tested sample a row's "
                  "watched_position matched the timecode the bookmark database held for the "
                  "same title exactly, which is what establishes that column as a media "
-                 "offset. contenttype and video_material_type are reported as stored. "
+                 "offset. contenttype and video_material_type are reported as stored. The "
+                 "five flag columns are shown as YES or NO; a cell is blank where the "
+                 "value is NULL or empty or where this version of the table does not "
+                 "have the column. "
                  "Field mapping was done against private samples provided by Mattia; no "
                  "sample data is recorded for them.",
         "paths": ('*/com.amazon.avod.thirdpartyclient/files/databases/dbplaybackhistory*',),
@@ -29,8 +33,10 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Prime Video",
         "notes": "Read from the bookmark_cache table of the app's bookmark database. "
-                 "last_update is Unix milliseconds and timecode is milliseconds of media "
-                 "time. The table declares UNIQUE (user_id, asin, timecode_type, "
+                 "last_update is converted as Unix milliseconds. timecode is milliseconds "
+                 "of media time; on one tested sample it equalled the playback history "
+                 "watched_position for the same title. The table declares UNIQUE (user_id, "
+                 "asin, timecode_type, "
                  "profile_id) ON CONFLICT REPLACE, so each new position for a title "
                  "replaces the previous row under a new row id. The database is read twice, "
                  "immutable=1 to ignore the write-ahead log and mode=ro to apply it, and the "
@@ -50,7 +56,7 @@ __artifacts_v2__ = {
         "description": "Parses the saved Continue Watching collection of the Amazon Prime Video Android app.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Prime Video",
         "notes": "continueWatchingSaveFile holds a Java serialised "
@@ -59,7 +65,9 @@ __artifacts_v2__ = {
                  "named by the file itself rather than inferred. Each tile is a "
                  "TitleCardModel giving the title id, title, content type, season and "
                  "episode numbers and mRemainingTimeInSeconds. The collection's own "
-                 "mIsWatchList flag is reported as stored, so a saved watchlist collection "
+                 "mIsWatchList flag is reported as YES or NO, and is blank where the "
+                 "stream does not carry the field, as are the three tile flags; a saved "
+                 "watchlist collection "
                  "in the same format is reported alongside a Continue Watching one. On the "
                  "one tested sample that carried this file the flag was false and the "
                  "single tile named a title the playback history table did not hold. Field "
@@ -74,13 +82,18 @@ __artifacts_v2__ = {
         "description": "Parses the search queries stored by the Amazon Prime Video Android app.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Prime Video",
         "notes": "Read from the LocalSearchQuery table of search_query.db. queryTimeMillis "
                  "is Unix milliseconds. The table's primary key is the query text together "
-                 "with the account and profile, so a repeated query carries only its most "
-                 "recent time. On the one tested sample holding this database the table "
+                 "with the account and profile, so a query has one row per account and "
+                 "profile. Which time a repeated query keeps was not measured. The "
+                 "database is read twice, immutable=1 and mode=ro; a query text present "
+                 "only in the first read is reported with a Source View of "
+                 "Pre-checkpoint. That comparison is on the table's own key: query text, "
+                 "account and profile together. On the one "
+                 "tested sample holding this database the table "
                  "existed only in the write-ahead log and the main file carried no schema "
                  "at all, so the log has to travel with the database. Field mapping was "
                  "done against private samples provided by Mattia; no sample data is "
@@ -94,7 +107,7 @@ __artifacts_v2__ = {
         "description": "Parses the household profiles stored by the Amazon Prime Video Android app.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Prime Video",
         "notes": "The aiv.UserManagerConfig:householdInfo key of InternalPreferences.xml "
@@ -102,7 +115,17 @@ __artifacts_v2__ = {
                  "The stream carries its own class descriptors, field names and enum "
                  "constant names, so the profile age group, the account role and the "
                  "profiles status are read as the literal names the file stores rather "
-                 "than mapped from an integer. Two tested samples serialised different "
+                 "than mapped from an integer. Account ID and Account Role list every "
+                 "registered user the record holds, in stored order and separated by a "
+                 "semicolon, and are repeated on every profile row; the record does not "
+                 "say which registered user a profile belongs to. Current "
+                 "Directed ID comes from the IdentityPreferences.xml in the same "
+                 "shared_prefs folder as the row's InternalPreferences.xml and is blank "
+                 "when that folder has none. Current Profile is blank where the record "
+                 "names no current profile. No tested sample held more than one "
+                 "registered user or more than one Android user, so those two cases "
+                 "are not exercised on real data. Two tested samples "
+                 "serialised different "
                  "class shapes and both are read from their own descriptors. The parsed "
                  "profile ids were confirmed against two independent stores in the same "
                  "extraction: every one also appeared in the map_data_storage token and "
@@ -121,12 +144,15 @@ __artifacts_v2__ = {
         "description": "Parses the Amazon account store of the Amazon Prime Video Android app.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Prime Video",
         "notes": "map_data_storage.db is the Amazon account store, holding the accounts, "
                  "userdata, tokens and device_data tables. Every row is reported with its "
-                 "own timestamp in Unix milliseconds. On the tested sample that held a "
+                 "own timestamp column, converted as Unix milliseconds; what the "
+                 "timestamp marks is not established. Deleted and Dirty are shown as YES "
+                 "or NO from each table's own deleted and dirty columns and are blank "
+                 "for a NULL value. On the tested sample that held a "
                  "registered account, every value across those four tables began with the "
                  "literal characters AES-GCM followed by base64, the display name "
                  "included, so values are reported as stored and no decryption is "
@@ -145,7 +171,7 @@ __artifacts_v2__ = {
         "description": "Parses downloaded titles recorded by the Amazon Prime Video Android app.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Prime Video",
         "notes": "Read from the download table of the app's downloads database, joined to "
@@ -154,7 +180,11 @@ __artifacts_v2__ = {
                  "the time columns could not be established from data and every one of "
                  "them, including expiry_ms and the drm expiry, is reported as stored "
                  "rather than converted. Download state, download type, error code and "
-                 "media quality are reported as stored. Because no sample exercised it, "
+                 "media quality are reported as stored. Ready To Watch, Fully Watched "
+                 "and Auto Download are shown as YES or NO from is_ready_to_watch, "
+                 "is_fully_watched and is_auto_download; a cell is blank for a NULL or "
+                 "empty value or a schema without that column, and what sets these flags "
+                 "is not established. Because no sample exercised it, "
                  "the query was run against two databases built to the two download "
                  "schemas the samples themselves carry, which differ by three columns, "
                  "with rows authored for the purpose; both returned every value under its "
@@ -175,8 +205,8 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-18",
         "requirements": "none",
         "category": "Prime Video",
-        "notes": "Read from the cached_content_table of the dbcachedcontent database, which "
-                 "records a playback request per title. accessed_time_seconds is Unix "
+        "notes": "Read from the cached_content_table of the dbcachedcontent database. "
+                 "accessed_time_seconds is Unix "
                  "seconds. request_submission_time_ms is not: on the tested sample it held "
                  "a value that decodes to 1970 as a millisecond epoch while the row's own "
                  "accessed time was current, so it is reported as stored. Status, source, "
@@ -196,13 +226,18 @@ __artifacts_v2__ = {
         "description": "Inventories the per title streaming caches of the Amazon Prime Video Android app.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Prime Video",
         "notes": "The app keeps two caches whose directory names are title ids: "
                  "files/streaming-plugins holds trickplay images, subtitles and X-Ray data, "
                  "and files/global/global_video_cache holds streaming manifests and media "
-                 "fragments. One row is reported per title id with what each cache holds. "
+                 "fragments. One row is reported per directory name and app data folder, "
+                 "with what both caches of that app data folder hold under that name "
+                 "added together. A second Android user's caches are a separate app data "
+                 "folder and get their own rows. Source Folder lists each cache folder "
+                 "that contributed to the row. No tested sample held a second Android "
+                 "user, so that separation is not exercised on real data. "
                  "On the tested samples these directories named far more titles than the "
                  "playback history table did, and most of them held no files, so a row with "
                  "no counted files means the directory carried the title id and nothing "
@@ -228,7 +263,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-18",
         "requirements": "none",
         "category": "Prime Video",
-        "notes": "Images cached under files/streaming-plugins are checked in and rendered. "
+        "notes": "Images under the trickplay and xray folders of files/streaming-plugins "
+                 "are checked in and rendered. A file in any other folder there, or one "
+                 "whose leading bytes are not JPEG, PNG, GIF or WEBP, is not reported. "
                  "The title id is the directory the app named after it, which is the "
                  "recorded link between an image and a title; no correlation is used. For a "
                  "trickplay frame the file name is the media offset in milliseconds. The "
@@ -256,7 +293,8 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-18",
         "requirements": "none",
         "category": "Prime Video",
-        "notes": "Read from the events table of the app's event database. Timestamp is Unix "
+        "notes": "Read from the events table of the app's event database. Timestamp is "
+                 "converted as Unix "
                  "milliseconds. Type, Name, Priority and Processed are reported as stored. "
                  "Event Type and Event Subtype are read from the row's own JSON body where "
                  "it holds them. The body itself is not reported: it is large and on the tested "
@@ -280,12 +318,14 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-18",
         "requirements": "none",
         "category": "Prime Video",
-        "notes": "Reports the app's own preference files together with the install referrer "
-                 "records in AppEventsJsonFile. Keys whose name ends in Millis, Time, "
+        "notes": "Reports the app's own preference files together with the JSON lines of "
+                 "AppEventsJsonFile. Keys whose name ends in Millis, Time, "
                  "TimeMs or Timestamp and whose value is a 13 digit number are rendered as "
                  "Unix milliseconds in a separate column beside the stored value; keys "
                  "ending in Epoch held a 10 digit value on the tested samples and are "
-                 "rendered as Unix seconds. Every other value is reported as stored. "
+                 "rendered as Unix seconds. Every other preference value is reported as "
+                 "stored. Each line of AppEventsJsonFile is reported one key per row, "
+                 "with the line's own ts value converted as Unix milliseconds beside it. "
                  "Rendering is decided per key rather than per file because the same file "
                  "carried both units. The base64 serialised household blob is not repeated "
                  "here; it is parsed by the Profiles and Household artifact. Field mapping "
@@ -381,12 +421,18 @@ def _rows_pre_wal(source_path, sql):
 def _superseded(source_path, sql, key_index):
     '''Pre-checkpoint rows whose key the committed read no longer holds.
 
-    Keyed on the row's own primary key rather than on a row count. A table that replaces
+    Keyed on the row's own primary key (one column index, or a tuple of them for a
+    composite key) rather than on a row count. A table that replaces
     a row keeps the same count while holding different rows, which a count comparison
     cannot see.
     '''
-    committed = {row[key_index] for row in _rows(source_path, sql)}
-    return [row for row in _rows_pre_wal(source_path, sql) if row[key_index] not in committed]
+    indexes = key_index if isinstance(key_index, tuple) else (key_index,)
+
+    def key(row):
+        return tuple(row[index] for index in indexes)
+
+    committed = {key(row) for row in _rows(source_path, sql)}
+    return [row for row in _rows_pre_wal(source_path, sql) if key(row) not in committed]
 
 
 def _table_columns(source_path, table):
@@ -449,6 +495,9 @@ def _seconds(value):
 
 
 def _yes_no(value):
+    # NULL, an absent column and an absent field are not a stored false.
+    if value is None or value == '':
+        return ''
     return 'YES' if value else 'NO'
 
 
@@ -828,7 +877,7 @@ def prime_video_continue_watching(context):
         except (OSError, ValueError, IndexError, struct.error) as ex:
             logfunc(f'Could not read {os.path.basename(file_found)}: {ex}')
             continue
-        is_watchlist = _yes_no(_field(collection, 'mIsWatchList', False))
+        is_watchlist = _yes_no(_field(collection, 'mIsWatchList', None))
         header = _field(collection, 'mHeaderText')
         for entry in _elements(collection.fields.get('mTileData')
                                if isinstance(collection, _JavaObject) else None):
@@ -846,9 +895,9 @@ def prime_video_continue_watching(context):
                 _ms(_field(model, 'mReleaseDateEpochMillis', 0)),
                 _field(model, 'mRentalExpiresInMillis'),
                 _field(model, 'mAmazonMaturityRating'),
-                _yes_no(_field(model, 'mIsAdultContent', False)),
-                _yes_no(_field(model, 'mHasSubtitles', False)),
-                _yes_no(_field(model, 'mIsPlayable', False)),
+                _yes_no(_field(model, 'mIsAdultContent', None)),
+                _yes_no(_field(model, 'mHasSubtitles', None)),
+                _yes_no(_field(model, 'mIsPlayable', None)),
                 _field(model, 'mSeasonTitleId'), _enum_name(entry.fields.get('mType')
                                                             if isinstance(entry, _JavaObject)
                                                             else None),
@@ -876,7 +925,7 @@ def prime_video_search_history(context):
         source_path = source_path or file_found
         source_file = _relative(context, file_found)
         for view, rows in (('Committed', _rows(file_found, _SEARCH_SQL)),
-                           ('Pre-checkpoint', _superseded(file_found, _SEARCH_SQL, 1))):
+                           ('Pre-checkpoint', _superseded(file_found, _SEARCH_SQL, (1, 2, 3)))):
             for row in rows:
                 data_list.append((_ms(row[0]), row[1], row[2], row[3], view, source_file))
 
@@ -889,14 +938,16 @@ def prime_video_search_history(context):
 def prime_video_profiles(context):
     data_list = []
     source_path = ''
-    identity = {}
+    identities = {}
     for file_found in _named(context, 'IdentityPreferences.xml'):
-        identity = _prefs(file_found)
+        identities[os.path.dirname(str(file_found))] = _prefs(file_found)
         source_path = source_path or file_found
 
     for file_found in _named(context, 'InternalPreferences.xml'):
         source_path = source_path or file_found
         source_file = _relative(context, file_found)
+        # The identity file beside this one, never another Android user's.
+        identity = identities.get(os.path.dirname(str(file_found)), {})
         raw = _prefs(file_found).get(_HOUSEHOLD_KEY)
         if not raw:
             continue
@@ -926,7 +977,8 @@ def prime_video_profiles(context):
             if isinstance(user, _JavaObject):
                 accounts.append((_field(user, 'mAccountId'),
                                  _enum_name(user.fields.get('mRole'))))
-        account_id, account_role = accounts[0] if accounts else ('', '')
+        account_id = '; '.join(str(item[0]) for item in accounts)
+        account_role = '; '.join(str(item[1]) for item in accounts)
 
         for profile in _elements(profiles.fields.get('mProfiles')
                                  if isinstance(profiles, _JavaObject) else None):
@@ -939,8 +991,8 @@ def prime_video_profiles(context):
             data_list.append((
                 _field(profile, 'mName'), profile_id,
                 _enum_name(profile.fields.get('mProfileAgeGroup')),
-                _yes_no(_field(profile, 'mIsDefaultProfile', False)),
-                _yes_no(profile_id and profile_id == current_id),
+                _yes_no(_field(profile, 'mIsDefaultProfile', None)),
+                _yes_no(profile_id == current_id) if profile_id and current_id else '',
                 _field(profile, 'mProgramId'),
                 _field(avatar, 'mAvatarId') if isinstance(avatar, _JavaObject) else '',
                 _field(urls, 'mRound') if isinstance(urls, _JavaObject) else '',
@@ -950,7 +1002,7 @@ def prime_video_profiles(context):
 
         if not data_list and (account_id or status):
             data_list.append((
-                '', '', '', 'NO', 'NO', '', '', '', '', account_id, account_role,
+                '', '', '', '', '', '', '', '', '', account_id, account_role,
                 marketplace, country, country_of_record, status,
                 identity.get('current_directed_id', ''), source_file))
 
@@ -1147,11 +1199,18 @@ def prime_video_cached_titles(context):
     for cache, title_id, remainder, path in _cached_title_entries(context):
         source_path = source_path or path
         relative = str(_relative(context, path)).replace('\\', '/')
-        record = titles.setdefault(title_id, {
+        folder = relative[:relative.index(f'/{cache}/') + len(cache) + 2]
+        # The app data folder, so one Android user's caches never add into another's.
+        marker = f'/{_PACKAGE}/'
+        container = (relative[:relative.index(marker) + len(marker)]
+                     if marker in relative else folder)
+        record = titles.setdefault((container, title_id), {
             'plugins': set(), 'locales': set(), 'files': 0, 'bytes': 0,
             'trickplay': 0, 'xray': 0, 'subtitles': 0, 'manifests': 0, 'fragments': 0,
-            'source': relative[:relative.index(f'/{cache}/') + len(cache) + 2],
+            'sources': [],
         })
+        if folder not in record['sources']:
+            record['sources'].append(folder)
         if not remainder:
             continue
         parts = remainder.split('/')
@@ -1180,12 +1239,12 @@ def prime_video_cached_titles(context):
             record['fragments'] += 1
 
     data_list = []
-    for title_id, record in sorted(titles.items()):
+    for (_container, title_id), record in sorted(titles.items()):
         data_list.append((
             title_id, ', '.join(sorted(record['plugins'])),
             ', '.join(sorted(record['locales'])), record['files'], record['bytes'],
             record['trickplay'], record['xray'], record['subtitles'],
-            record['manifests'], record['fragments'], record['source']))
+            record['manifests'], record['fragments'], '\n'.join(record['sources'])))
 
     data_headers = (
         'Title ID', 'Streaming Plugin Data', 'Video Cache Locales', 'Files On Disk',

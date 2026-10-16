@@ -131,14 +131,14 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-11",
         "requirements": "none",
         "category": "Blink",
-        "notes": "Rows come from the network table of the app's Room database. Blink groups a sync "
-                 "module and its cameras into a network, which the app presents as one system; "
-                 "camera.network_id and syncmodule.network_id name the network a device belongs to and "
-                 "both artifacts report that id. Time Zone is an IANA zone name stored on the network "
-                 "row. It is not needed to read any timestamp in this database: every stored timestamp "
-                 "measured across the tested file carried its own UTC offset or was a Unix epoch value, "
-                 "so none of them is ambiguous. What sets the zone, and what the app uses it for, were "
-                 "not established. Network Name is the label stored for the system; whether a person "
+        "notes": "Rows come from the network table of the app's Room database. On the tested file the "
+                 "sync module row and both camera rows carried this network row's id in their network_id "
+                 "column, and both artifacts report that id. Time Zone is an IANA zone name stored on "
+                 "the network row. It is not needed to read any timestamp in this database: every stored "
+                 "timestamp measured across the tested file carried its own UTC offset or was a Unix "
+                 "epoch value, so none of them is ambiguous. What sets the zone, and what the app uses "
+                 "it for, were not established. Network Name is the name stored on the network row; "
+                 "whether a person "
                  "chose it or the app supplied a default was not established. Daylight Saving, Armed and "
                  "Save All Live Views are integer columns reported as stored and the full set of values "
                  "each can take is not established. Created Timestamp and Updated Timestamp are stored "
@@ -213,14 +213,14 @@ __artifacts_v2__ = {
     },
     "blink_app_messages": {
         "name": "Blink App Messages",
-        "description": "Notices the Blink app raised in its own interface, with the network they belong to",
+        "description": "Rows of the message table in the Blink app database, with the network they belong to",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-11",
         "last_update_date": "2026-09-11",
         "requirements": "none",
         "category": "Blink",
-        "notes": "Rows come from the message table of the app's Room database, which holds notices the "
-                 "app raised in its own interface. The table has no sender or recipient column, so "
+        "notes": "Rows come from the message table of the app's Room database. The table has no sender "
+                 "or recipient column, so "
                  "nothing in it records a message a person sent or received. Created Timestamp is stored "
                  "as a Unix value in milliseconds and is converted here rather than passed to a helper "
                  "that infers the unit: read as seconds, the single value on the tested file gives a "

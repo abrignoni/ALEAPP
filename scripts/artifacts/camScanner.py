@@ -13,18 +13,18 @@ __artifacts_v2__ = {
         "notes": "One row per row of the documents table in "
                  "com.intsig.camscanner/databases/documents.db. Created, Modified and Last "
                  "Accessed are Unix milliseconds and are reported as UTC. Previous Titles is read "
-                 "from the row's own history_titles column, a JSON array the app appends to when a "
-                 "document is renamed, so it shows what the document used to be called; the "
-                 "current title is also in that array and is listed there as the app stores it. On "
-                 "the tested device a document was created and then renamed, and both names are "
+                 "from the row's own history_titles column, a JSON array of titles; the current "
+                 "title is also in that array and is listed there as the app stores it. On the "
+                 "tested device a document was created and then renamed, and both names are "
                  "present. Created From is the doc_create_from column, reported as stored; the "
                  "tested document, which was made by importing images, reads import_pic_cs_home, "
-                 "and the value a camera scan writes was not observed. Tags is the latent_tag "
-                 "column, a JSON array reported as stored; what produces its labels was not "
-                 "established. "
-                 "Password Set and PDF Password Set report only whether those columns hold a "
-                 "value; no password is printed. Neither was set here. Author is the app's own "
-                 "create_author string and carries the writing app and its version. A row is "
+                 "and the value a camera scan writes was not observed. Tags lists the title value "
+                 "of each element of the latent_tag column, a JSON array. The other keys of each "
+                 "element are not reported, and what produces its labels was not established. "
+                 "Password "
+                 "Set and PDF Password Set report only whether those columns hold a value; no "
+                 "password is printed. Neither was set here. Author is the create_author column as "
+                 "stored; on the tested row it named the app and its version. A row is "
                  "evidence the document existed in the app, not that anyone opened or sent it.",
         "paths": ('*/com.intsig.camscanner/databases/documents.db*',),
         "output_types": "standard",
@@ -35,7 +35,7 @@ __artifacts_v2__ = {
         "description": "Individual pages of CamScanner documents, with the page image",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "CamScanner",
         "sample_data": {
@@ -46,26 +46,23 @@ __artifacts_v2__ = {
                  "to through the images.document_id column, which is the link the database itself "
                  "records. Created and Last Modified are Unix milliseconds and are reported as "
                  "UTC. The page image is shown inline. It is resolved from the row's own _data "
-                 "column, which holds the full path the app wrote, so the image is matched by a "
-                 "recorded path and not by correlating a name, a size or a time. That path is "
-                 "written as the device sees it, under /storage/emulated, and is respelled to the "
-                 "data/media form an extraction holds before it is looked up. The respelling is "
-                 "what makes the match exact: the app keeps the processed page, the original and "
-                 "the thumbnail under one file name in three directories, so the name alone is "
-                 "ambiguous three ways. The app keeps up "
-                 "to three copies of a page and all three paths are reported: _data is the "
-                 "processed page and is the one rendered, Original Path is the untouched import or "
-                 "capture under .originals, and Thumbnail Path is the smaller copy under "
-                 ".afterOCRs. The processed page is the app's edited copy and Original Path "
-                 "names the file as imported or captured, so the two can differ. OCR Text, OCR "
-                 "Paragraphs and Note were empty on every row of the tested "
-                 "image, since no OCR was run there and no note typed; they are the columns that "
-                 "carry recognised text and a per-page comment when either has been produced. "
-                 "Document Title and Document ID each held one value across the table, because "
-                 "the tested device had a single document of thirteen pages; both vary as soon as "
-                 "a second document exists and are what group the pages. "
-                 "Enhance Mode and Image Border are reported as stored, being undocumented in "
-                 "anything published. A row is evidence the page was in the document, not that "
+                 "column, which holds the full path the app wrote. That path is written as the "
+                 "device sees it, under /storage/emulated, and is respelled to the data/media form "
+                 "an extraction holds. A matched file is shown only when its path in the extraction "
+                 "is that respelled path or the path as recorded, or ends with one of them; a file "
+                 "that only shares the file name is not shown and Page Image is left blank. Three paths are reported per page: "
+                 "Processed Path is the _data column and is the path rendered, Original Path is the "
+                 "raw_data column and Thumbnail Path is the thumb_data column. On the tested device "
+                 "the three pointed under .images, .originals and .afterOCRs. What the app does to "
+                 "produce each file was not established, and the three header names are this "
+                 "parser's reading of the column and folder names. OCR Text, OCR Paragraphs and "
+                 "Note were empty on every row of the tested image, since no OCR was run there and "
+                 "no note typed; they are the ocr_string, ocr_paragraph and note columns, and what "
+                 "they hold when filled was not observed. Document Title and Document ID each held "
+                 "one value across the table, because the tested device had a single document of "
+                 "thirteen pages; a device with more than one document was not tested. Enhance Mode "
+                 "and Image Border are reported as stored, because no source for their values was "
+                 "found. A row is evidence the page was in the document, not that "
                  "anyone read it.",
         "paths": ('*/com.intsig.camscanner/databases/documents.db*',
                   '*/com.intsig.camscanner/files/CamScanner/.images/*.jpg'),
@@ -101,6 +98,39 @@ def _extraction_path(recorded):
         return text
     user = match.group(1) or '0'
     return f'data/media/{user}/' + text[match.end():]
+
+
+def _page_files(context):
+    """Map each matched page file's path inside the extraction to its staged path."""
+    staged = {}
+    for found in context.get_files_found():
+        found = str(found)
+        if not found.replace('\\', '/').lower().endswith('.jpg'):
+            continue
+        relative = str(context.get_relative_path(found)).replace('\\', '/').lstrip('/')
+        staged.setdefault(relative, found)
+    return staged
+
+
+def _staged_page(staged, recorded):
+    """The staged file whose extraction path is the recorded path, or None.
+
+    The recorded path is compared in its respelled data/media form and as written. A
+    file that shares only the file name is not taken.
+    """
+    wanted = []
+    for text in (_extraction_path(recorded), str(recorded or '').replace('\\', '/')):
+        text = text.lstrip('/')
+        if text and text not in wanted:
+            wanted.append(text)
+    for text in wanted:
+        if text in staged:
+            return staged[text]
+    for text in wanted:
+        for relative, found in staged.items():
+            if relative.endswith('/' + text):
+                return found
+    return None
 
 
 def _db_files(context):
@@ -186,13 +216,14 @@ def camscanner_pages(context):
                ORDER BY i.document_id, i.page_num'''
     data_list = []
     sources = []
+    staged = _page_files(context)
     for db_path in _db_files(context):
         records = get_sqlite_db_records(db_path, query)
         for r in records:
             title = r[2] or ''
             page = r[3]
-            resolved = _extraction_path(r[4])
-            media = check_in_media(resolved, f'{title} page {page}') if resolved else None
+            page_file = _staged_page(staged, r[4])
+            media = check_in_media(page_file, f'{title} page {page}') if page_file else None
             data_list.append((
                 _ms(r[0]), _ms(r[1]), title, page, media or '',
                 r[4] or '', r[5] or '', r[6] or '',

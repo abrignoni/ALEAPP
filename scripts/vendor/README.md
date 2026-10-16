@@ -40,6 +40,19 @@ item's pieces and each DASH stream's segments, and puts a video and its audio in
 one MP4 without re-encoding. `scripts/artifacts/exoplayerCachedMedia.py` imports
 it. Standard library only.
 
+## chromiumcacheprobe.py
+
+| | |
+| --- | --- |
+| upstream | https://github.com/abrignoni/chromiumcacheprobe |
+| licence | MIT, kept beside it as LICENSE-chromiumcacheprobe |
+
+Reads the Chromium Simple Cache that Chrome keeps on Android (entries, sparse
+range files, HTTP response metadata and the cache index) and rebuilds the H.264
+video held in its MP4 fragments, copying the sample bytes as stored.
+`scripts/artifacts/chromeCacheVideos.py` imports it. Standard library only;
+Brotli-compressed bodies are read when the optional brotli package is installed.
+
 The vendored version, upstream commit and sha256 of each file are recorded in
 `vendored.json` in this directory, which `admin/scripts/check_vendored.py`
 enforces in CI: it checks the hashes and fetches each upstream file at its
@@ -54,13 +67,15 @@ re-vendor, or the next sync silently reverts the change.
     cp ../qnxprobe/qnxprobe.py scripts/vendor/qnxprobe.py
     cp ../qnxprobe/ewfprobe.py scripts/vendor/ewfprobe.py
     cp ../exoprobe/exoprobe.py scripts/vendor/exoprobe.py
+    cp ../chromiumcacheprobe/chromiumcacheprobe.py scripts/vendor/chromiumcacheprobe.py
     python3 admin/scripts/check_vendored.py --update
 
 `--update` rewrites the hashes only. The upstream commit and date in
 `vendored.json` are what say which version this is, so set those by hand from
 `git -C ../qnxprobe log -1 --format='%H %cI' main` (ewfprobe's come from
 qnxprobe's own `vendored.json`, since the copy here is the one qnxprobe carries;
-exoprobe's from `git -C ../exoprobe log -1 --format='%H %cI' main`).
+exoprobe's from `git -C ../exoprobe log -1 --format='%H %cI' main`, and
+chromiumcacheprobe's from `git -C ../chromiumcacheprobe log -1 --format='%H %cI' main`).
 Then run the check without `--update`, which fetches the upstream file at the
 commit you recorded and fails if the copy is not that file.
 

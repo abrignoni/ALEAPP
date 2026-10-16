@@ -3,21 +3,26 @@ __artifacts_v2__ = {
         "name": "Netflix Playback Events",
         "description": "Rows of the playEvent table in the Netflix appHistory database, with the "
                        "event time, the playable identifier and the playback session identifier",
-        "author": "@AlexisBrignoni",
+        "author": "@AlexisBrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-08-16",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Netflix",
         "notes": "eventType, network and offline are stored as integers. The enum constant names "
-                 "are stripped by R8 in the app binary checked, so the integers are reported as "
+                 "are not present in the app binary checked, whose version is not recorded here, "
+                 "so the integers are reported as "
                  "stored and are not mapped to labels. Only one value of eventType was present in "
-                 "the data tested, so the column is unexercised beyond that value. The duration "
-                 "value was identical across every repeat in the data tested (9 playable ids with "
-                 "more than one event, none with a differing duration); what it describes is not "
-                 "established. Titles are filled in from the "
+                 "the data tested, so the column is unexercised beyond that value. On the "
+                 "populated extraction the row producing path was exercised against, the duration "
+                 "value did not differ between repeated events of one playable id. What it "
+                 "describes and its unit are not established: the table definition declares the "
+                 "column as an integer and names no unit (read on anne_a15, sharon_a13 and "
+                 "sharon_a14), so the number is reported under the header duration (as stored) "
+                 "and is not converted. Titles are filled in from the "
                  "offlineFalkorPlayable table and the Apollo cache when the same video id appears "
                  "there, and are left blank otherwise; those two stores hold whatever the app had "
-                 "cached, so most rows have no title available. Artwork is shown when a file named "
+                 "cached, so a row has no title when neither store carries its playable id. "
+                 "Artwork is shown when a file named "
                  "after the playable id exists under files/img/of/videos. The database uses WAL, "
                  "so the -wal and -shm sidecars are matched with it."
                  " In the corpora listed below the app was installed and the "
@@ -41,16 +46,17 @@ __artifacts_v2__ = {
     "netflix_streaming_sessions": {
         "name": "Netflix Streaming Sessions",
         "description": "Rows of the sessionNetworkStatistics table in the Netflix appHistory "
-                       "database, with the timestamp, byte count, server address and network type "
-                       "recorded for each stream",
-        "author": "@AlexisBrignoni",
+                       "database, with the timestamp, byte count, IP address as stored and "
+                       "network type recorded in each row",
+        "author": "@AlexisBrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
         "category": "Netflix",
         "notes": "streamId values overlap the playableId values in the playEvent table, so the "
-                 "same title lookup is applied here. The overlap is not total: in the data tested "
-                 "37 of 43 stream ids also appeared as a playable id, 6 appeared only here, and 3 "
+                 "same title lookup is applied here. The overlap was not total on the populated "
+                 "extraction the row producing path was exercised against: some stream ids "
+                 "appeared only here and some "
                  "playable ids had no row in this table. The ip and locationID values are reported "
                  "as stored; the schema does not document whether the address belongs to the "
                  "device or to the serving node, so no reading is asserted here. The database uses "
@@ -77,7 +83,7 @@ __artifacts_v2__ = {
         "description": "Rows of the bookmarkStore table in the Netflix OfflineDb database, holding "
                        "a stored playback position per playable per profile with the time the "
                        "position was last updated",
-        "author": "@AlexisBrignoni",
+        "author": "@AlexisBrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
@@ -107,19 +113,25 @@ __artifacts_v2__ = {
     "netflix_offline_titles": {
         "name": "Netflix Offline Title Metadata",
         "description": "Rows of the offlineFalkorPlayable table in the Netflix OfflineDb database, "
-                       "carrying the title, season and episode numbering, runtime and artwork URLs "
+                       "carrying the title, season and episode numbering, duration value and artwork URLs "
                        "the app stored for a playable",
-        "author": "@AlexisBrignoni",
+        "author": "@AlexisBrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-08-16",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Netflix",
         "notes": "The table carries many columns; the ones reported here are the descriptive "
                  "fields. videoType, maturityLevel and the boolean-looking integers are reported "
-                 "as stored because the app's constant names are stripped by R8 in the app binary "
-                 "checked. Artwork is shown when a file named after the video id exists under "
-                 "files/img/of/videos. The table holds the playables the app had stored for "
-                 "offline use, which is not the same set as the titles played. The database uses "
+                 "as stored because the app's constant names are not present in the app binary "
+                 "checked, whose version is not recorded here. Artwork is shown when a file named "
+                 "after the video id exists under "
+                 "files/img/of/videos. What places a row in the offlineFalkorPlayable table was "
+                 "not established here. A row is not by itself a record that the title was "
+                 "played. The duration and expTime columns are declared as integers in the table "
+                 "definition, which names no unit or epoch for either (read on anne_a15, "
+                 "sharon_a13 and sharon_a14), and no source for them was found; both numbers are "
+                 "reported as stored under the column names and expTime is not converted to a "
+                 "date. The database uses "
                  "WAL and the sidecars are matched with it."
                  " In the corpora listed below the app was installed and the "
                  "database was present with this table empty, checked directly "
@@ -142,7 +154,7 @@ __artifacts_v2__ = {
         "description": "Rows of the offlineFalkorProfile table in the Netflix OfflineDb database, "
                        "with the profile identifier, the profile name and the avatar URL, plus the "
                        "cached avatar image where one is on disk",
-        "author": "@AlexisBrignoni",
+        "author": "@AlexisBrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
@@ -172,17 +184,18 @@ __artifacts_v2__ = {
         "name": "Netflix Browse Cache",
         "description": "Video entries held in the Netflix Apollo GraphQL cache, listing the title, "
                        "the entry kind and the runtime and category tags stored alongside it",
-        "author": "@AlexisBrignoni",
+        "author": "@AlexisBrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
         "category": "Netflix",
         "notes": "The cache file name carries the profile identifier, which is reported per row. "
                  "The records table holds normalised GraphQL objects keyed as Video.<video id>; "
-                 "this artifact reads those keys and the tag and artwork records that reference "
+                 "this artifact reads those keys and the Video.<video id>.tags.<n> records that "
+                 "belong to "
                  "them. The cache holds entries the app had fetched, which is not the same set as "
-                 "the titles played on the device, and the two did not overlap in the data "
-                 "tested (0 of 40 playable ids and 0 of 15 bookmarked ids resolved here)."
+                 "the titles played on the device, and no playable id or bookmarked id resolved "
+                 "here on the populated extraction the row producing path was exercised against."
                  " This store was not present in any of the corpora listed below, so "
                  "those entries record a checked absence; the row producing path was "
                  "exercised against a separate populated extraction.",
@@ -202,7 +215,7 @@ __artifacts_v2__ = {
         "description": "Images cached by Netflix under files/img/of, with the video or profile "
                        "identifier taken from the file name and the title resolved where the "
                        "databases carry it",
-        "author": "@AlexisBrignoni",
+        "author": "@AlexisBrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
@@ -210,8 +223,10 @@ __artifacts_v2__ = {
         "notes": "The files carry an .img extension whatever the format; content is identified by "
                  "signature, and WebP and PNG were both observed. The file name is the video id "
                  "for images under videos and the profile id for images under profiles, sometimes "
-                 "with a suffix naming the artwork field. Every image on disk gets a row, "
-                 "including ones no database record points at."
+                 "with a suffix naming the artwork field. Every file under files/img/of whose "
+                 "first bytes match a JPEG, PNG, GIF or WebP signature gets a row, including ones "
+                 "no database record points at. A file with any other signature, or one that "
+                 "cannot be opened, gets no row."
                  " This store was not present in any of the corpora listed below, so "
                  "those entries record a checked absence; the row producing path was "
                  "exercised against a separate populated extraction.",
@@ -231,17 +246,35 @@ __artifacts_v2__ = {
     "netflix_account": {
         "name": "Netflix Account and Device",
         "description": "Device and account values read from the Netflix nfxpref preferences file "
-                       "and the CurrentCountryCode file, including the ESN, the Widevine "
-                       "identifiers, the stored country and language and the app install time",
-        "author": "@AlexisBrignoni",
+                       "and the CurrentCountryCode file beside it, including the ESN, the DRM "
+                       "identifier values (nf_drm_system_id, nf_drm_crypto_provider and the "
+                       "deviceId in nf_drm_migration_identity), the stored country and language "
+                       "and the playAppInstallTime value",
+        "author": "@AlexisBrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-08-16",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Netflix",
-        "notes": "One row per preferences file that carries at least one of the reported values. "
-                 "A file that carries none of them produces no row here; its "
-                 "contents still appear in the Netflix Preferences artifact. "
-                 "The ESN and the Widevine device id are identifiers "
+        "notes": "One row per nfxpref.xml file when that file, or the CurrentCountryCode.xml in "
+                 "the same shared_prefs folder, carries at least one of the reported values. "
+                 "Current Country Code is the code value of the CurrentCountryCode.xml in the "
+                 "same app data directory and Android user as the row's nfxpref.xml, and is "
+                 "blank when that folder holds no such file; another Android user's file is not "
+                 "used. The five listed corpora each hold one Netflix data directory, so the "
+                 "pairing across two Android users was checked on a constructed two user tree "
+                 "and not on a corpus. An nfxpref.xml file with none of the reported values "
+                 "and no country code beside it produces no row; its contents still appear in "
+                 "the Netflix Preferences artifact. The columns playAppInstallTime, "
+                 "nf_drm_migration_identity deviceId, nf_drm_crypto_provider and "
+                 "nf_drm_system_id are headed with the stored key names because no source for "
+                 "what the app records in them was found. On anne_a15, sharon_a13 and "
+                 "sharon_a14 the nf_drm_migration_identity value is a colon separated list "
+                 "whose parts are named isWidevine, systemId, deviceId and wveaVersion; the "
+                 "deviceId part is the one reported. playAppInstallTime is shown as a date and "
+                 "time on the reading that the stored number is a Unix time: it is a 10 digit "
+                 "number on sharon_a13 and sharon_a14, read as seconds, and on anne_a15 it is "
+                 "0, which is left blank. What event it marks is not established. "
+                 "The ESN and the deviceId value are identifiers "
                  "the app stores for itself; they are reported as stored. Credential bearing keys "
                  "are deliberately not reported: the Netflix ID and Secure Netflix ID cookies, the "
                  "MSL and secure stores, the NGP device id store, the Widevine key request sample "
@@ -263,15 +296,16 @@ __artifacts_v2__ = {
     "netflix_preferences": {
         "name": "Netflix Preferences",
         "description": "Key and value pairs from the Netflix nfxpref preferences file, excluding "
-                       "the numbered feature flag entries and the credential bearing keys",
-        "author": "@AlexisBrignoni",
+                       "the keys that start with persistent_ and the credential bearing keys",
+        "author": "@AlexisBrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
         "category": "Netflix",
-        "notes": "The file also holds several hundred persistent_<number> entries which are not "
-                 "reported here. The same credential bearing keys excluded from the account "
-                 "artifact are excluded here. Values are reported as stored, including the JSON "
+        "notes": "The file also holds persistent_<number> entries, which are not reported here; "
+                 "every key that starts with persistent_ is left out. The credential bearing "
+                 "keys named in the account artifact's notes and the signInConfigData key are "
+                 "excluded here. Values are reported as stored, including the JSON "
                  "ones, which are left unparsed.",
         "paths": ('*/com.netflix.mediaclient/shared_prefs/nfxpref.xml',),
         "output_types": "standard",
@@ -286,19 +320,23 @@ __artifacts_v2__ = {
     },
     "netflix_logblobs": {
         "name": "Netflix Log Blobs",
-        "description": "Entries from the JSON log blobs Netflix queues under files/logblobs, with "
+        "description": "Entries from the JSON files Netflix keeps under files/logblobs, with "
                        "the client timestamp and the device and session values carried in each "
                        "entry",
-        "author": "@AlexisBrignoni",
+        "author": "@AlexisBrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-08-16",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Netflix",
-        "notes": "Each file holds a JSON array of entries that were queued for delivery. Entries "
+        "notes": "Each file is parsed as JSON. A top level array is read as a list of entries and "
+                 "a single JSON object is read as one entry; a file that holds anything else is "
+                 "skipped. What the app does with these files is not established here. Entries "
                  "carry differing fields depending on the blob type, so the columns here are the "
                  "ones observed across the files tested and are left blank when an entry does not "
-                 "carry them. The rooted value is the app's own recorded value and is reported as "
-                 "stored rather than treated as a finding about the device.",
+                 "carry them. The system_id column is headed with the entry's own key name because no "
+                 "source for what the app records in it was found. The rooted value is the app's "
+                 "own recorded value and is reported as stored rather than treated as a finding "
+                 "about the device.",
         "paths": ('*/com.netflix.mediaclient/files/logblobs/*',),
         "output_types": "standard",
         "artifact_icon": "file-analytics",
@@ -324,7 +362,7 @@ from scripts.ilapfuncs import (
     get_sqlite_db_records,
     logfunc,
 )
-from scripts.artifacts.storagePathViews import unique_files
+from scripts.artifacts.storagePathViews import canonical_path, unique_files
 
 # Preference keys that carry an authentication token, a key store or a push token. They are
 # read from the same file as everything else and are deliberately not reported.
@@ -498,6 +536,12 @@ def _read_prefs(path):
     return values
 
 
+def _prefs_folder_key(context, path):
+    """Key naming the app data directory and Android user a shared_prefs file belongs to."""
+    key = canonical_path(context.get_relative_path(path))[0]
+    return key.rsplit('/', 1)[0]
+
+
 def _json_field(raw, *keys):
     """Return a nested value from a JSON preference, or an empty string."""
     try:
@@ -545,7 +589,6 @@ def netflix_playback(context):
                 network,
                 offline,
                 duration,
-                _ms_to_hms(duration),
                 row_id,
             ))
 
@@ -558,8 +601,7 @@ def netflix_playback(context):
         'Event Type (as stored)',
         'Network (as stored)',
         'Offline (as stored)',
-        'Duration (ms)',
-        'Duration (hh:mm:ss)',
+        'duration (as stored)',
         'Row ID',
     )
     return data_headers, data_list, '\n'.join(source_paths)
@@ -682,7 +724,7 @@ def netflix_offline_titles(context):
                 genres,
                 actors,
                 synopsis,
-                convert_unix_ts_to_utc(expiry) if expiry else '',
+                expiry,
                 profile_id,
                 boxshot_url,
                 horizontal_url,
@@ -698,7 +740,7 @@ def netflix_offline_titles(context):
         'Season Label',
         'Season Number',
         'Episode Number',
-        'Duration (seconds)',
+        'duration (as stored)',
         'Year',
         'Maturity Level (as stored)',
         'Certification',
@@ -706,7 +748,7 @@ def netflix_offline_titles(context):
         'Genres',
         'Actors',
         'Synopsis',
-        ('Expiry Time', 'datetime'),
+        'expTime (as stored)',
         'Profile ID',
         'Boxshot URL',
         'Horizontal Artwork URL',
@@ -889,14 +931,20 @@ def netflix_account(context):
     data_list = []
     source_paths = []
 
-    country_files = _paths_matching(files_found, '/shared_prefs/CurrentCountryCode.xml')
-    country_code = ''
-    for path in country_files:
-        country_code = _read_prefs(path).get('code', '') or country_code
+    # The country code file is paired with the nfxpref.xml of the same app data directory
+    # and Android user, so one user's stored country is never shown on another user's row.
+    country_files = {}
+    for path in _paths_matching(files_found, '/shared_prefs/CurrentCountryCode.xml'):
+        country_files[_prefs_folder_key(context, path)] = path
 
     for path in _paths_matching(files_found, '/shared_prefs/nfxpref.xml'):
         source_paths.append(path)
         prefs = _read_prefs(path)
+        country_code = ''
+        country_file = country_files.get(_prefs_folder_key(context, path))
+        if country_file:
+            source_paths.append(country_file)
+            country_code = _read_prefs(country_file).get('code', '')
         row = (
             _timestamp_value(prefs.get('playAppInstallTime')),
             _json_timestamp(prefs.get('device_history'), 'osInfo', 'firstSeenTime'),
@@ -926,16 +974,16 @@ def netflix_account(context):
             data_list.append(row + (context.get_relative_path(path),))
 
     data_headers = (
-        ('App Install Time', 'datetime'),
+        ('playAppInstallTime', 'datetime'),
         ('OS First Seen Time', 'datetime'),
         ('Last Contact With Netflix', 'datetime'),
         ('Netflix Server Time', 'datetime'),
         ('Netflix Device Time', 'datetime'),
         'ESN',
         'DRM Proxy ESN',
-        'Widevine Device ID',
-        'Widevine Crypto Provider',
-        'Widevine System ID',
+        'nf_drm_migration_identity deviceId',
+        'nf_drm_crypto_provider',
+        'nf_drm_system_id',
         'Offline Profile GUID',
         'Current Country Code',
         'Device Config Country Code',
@@ -1027,7 +1075,7 @@ def netflix_logblobs(context):
         'Installer Name',
         'Installation Source',
         'Device Category',
-        'Widevine System ID',
+        'system_id (as stored)',
         'App ID',
         'Session ID',
         'Unique Log ID',

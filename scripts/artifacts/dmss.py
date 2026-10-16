@@ -14,39 +14,50 @@ __artifacts_v2__ = {
     },
     "get_dmss_info": {
         "name": "Dahua CCTV - Info",
-        "description": "Information about the connected CCTV system from the Dahua DMSS app",
+        "description": "Device records (name, channel count, UID, IP, port, username and password values as stored) from the devices table of the Dahua DMSS app",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2023-04-13",
-        "last_update_date": "2023-04-13",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Dahua Technology (DMSS)",
-        "notes": "",
+        "notes": "IP, Port, Username and Password are reported as stored. Their encrypted, "
+                 "encoded or plaintext nature is not established here. A devices row does not by "
+                 "itself establish that the app connected to the device.",
         "paths": ('*/com.mm.android.DMSS/databases/devicechannel.db*',),
         "output_types": "standard",
         "artifact_icon": "video",
     },
     "get_dmss_sensors": {
         "name": "Dahua IoT - Registered Sensors",
-        "description": "IoT registered sensors connected with the Dahua DMSS app (per account)",
+        "description": "Rows from the AlarmPartEntity table of the Dahua DMSS app databases, labelled with the database they came from",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2023-04-13",
         "last_update_date": "2023-04-13",
         "requirements": "none",
         "category": "Dahua Technology (DMSS)",
-        "notes": "",
+        "notes": "Account is the database file name without its .db ending, or 'Without Account' "
+                 "for the file named .db. Only the file named .db and database files whose name "
+                 "starts with ez or is longer than 25 characters are read. Alarm State and Full "
+                 "Day Alarm show a stored 0 as Off and a stored 1 as On, and Sensitivity shows "
+                 "stored 1, 2 and 3 as Low, Medium and High. Those labels are this parser's "
+                 "rendering, and no source for those meanings is recorded here.",
         "paths": ('*/com.mm.android.DMSS/databases/*',),
         "output_types": "standard",
         "artifact_icon": "shield",
     },
     "get_dmss_cloud": {
         "name": "Dahua IoT - Registered Cloud Devices",
-        "description": "IoT registered cloud devices connected with the Dahua DMSS app (per account)",
+        "description": "Rows from the CloudDevices table of the Dahua DMSS app databases, labelled with the database they came from",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2023-04-13",
         "last_update_date": "2023-04-13",
         "requirements": "none",
         "category": "Dahua Technology (DMSS)",
-        "notes": "",
+        "notes": "Account is the database file name without its .db ending, or 'Without Account' "
+                 "for the file named .db. Only the file named .db and database files whose name "
+                 "starts with ez or is longer than 25 characters are read. Shared Enabled shows a "
+                 "stored 0 as Off and a stored 1 as On, which is this parser's rendering of the "
+                 "stored shareEnable value; no source for that meaning is recorded here.",
         "paths": ('*/com.mm.android.DMSS/databases/*',),
         "output_types": "standard",
         "artifact_icon": "cloud",
@@ -64,7 +75,12 @@ __artifacts_v2__ = {
                  "token-to-label meanings are not documented in the data, and no source or "
                  "measurement supporting them is recorded here. Any token without a mapping is "
                  "reported as stored. "
-                 "Reference: E. Dragonas, C. Lambrinoudakis, M. Kotsis, 'IoT Forensics: "
+                 "Timestamp is alarmTime read as Unix milliseconds and shown in UTC; Device "
+                 "Reported Time is alarmTimeStr as stored. Checked shows the stored checked "
+                 "value as Yes for 1 and No for 0; what it records is not established here. "
+                 "Account is the name of the database file the row came from without its .db "
+                 "ending, or 'Without Account' for the file named .db. Research on this app: "
+                 "E. Dragonas, C. Lambrinoudakis, M. Kotsis, 'IoT Forensics: "
                  "Investigating the Mobile App of Dahua Technology', IEEE CSR 2023, "
                  "https://ieeexplore.ieee.org/document/10224982",
         "paths": ('*/com.mm.android.DMSS/databases/*',),
@@ -73,13 +89,17 @@ __artifacts_v2__ = {
     },
     "get_dmss_media": {
         "name": "Dahua CCTV - Media",
-        "description": "Media files recorded under the DMSS snapshot directory",
+        "description": "JPG, MP4 and DAV candidate files found under the DMSS snapshot directory, with media previews where supported",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2023-04-13",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Dahua Technology (DMSS)",
-        "notes": "",
+        "notes": "Files with lowercase .jpg, .mp4 or .dav suffixes are reported unless their "
+                 "staged path contains .thumb. A video substring in a directory or filename does "
+                 "not establish a thumbnail relationship and is not used to exclude JPG candidates. "
+                 "Reported file paths and media identify the retained evidence files; no "
+                 "parent-video association is inferred.",
         "paths": ('*/Android/data/com.mm.android.DMSS/files/Download/snapshot/*',),
         "output_types": "standard",
         "artifact_icon": "video",
@@ -191,8 +211,8 @@ def get_dmss_info(context):
     rows = _run(source_path, '''
         SELECT devicename, channelcount, uid, ip, port, username, password FROM devices
     ''')
-    data_headers = ('Name/IP', 'Channels', 'UID', 'IP (Enc.)', 'Port (Enc.)',
-                    'Username (Enc.)', 'Password (Enc.)')
+    data_headers = ('Name/IP', 'Channels', 'UID', 'IP (As Stored)', 'Port (As Stored)',
+                    'Username (As Stored)', 'Password (As Stored)')
     return data_headers, [tuple(r) for r in rows], context.get_relative_path(source_path)
 
 
@@ -251,9 +271,6 @@ def get_dmss_media(context):
         if not file_name.endswith(('.jpg', '.mp4', '.dav')):
             continue
         if '.thumb' in file_found:
-            continue
-        # Intentionally skip jpg thumbnails of videos to reduce duplicate media
-        if file_name.endswith('.jpg') and 'video' in file_found:
             continue
         source_path = os.path.dirname(file_found)
         media = check_in_media(file_found, file_name)

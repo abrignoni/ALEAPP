@@ -23,8 +23,9 @@ __artifacts_v2__ = {
     "samsungLauncherIcons": {
         "name": "Samsung Launcher Icons",
         "description": "App icon cache of the Samsung One UI launcher (Icon.db, icon "
-                       "table): the component name, displayed label, Android user profile "
-                       "and when the entry was last updated.",
+                       "table): the component name, label, profile_id and last_updated "
+                       "values as stored (last_updated is rendered as a UTC time; what it "
+                       "marks is not established).",
         "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",

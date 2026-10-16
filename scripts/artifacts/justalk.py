@@ -1,20 +1,28 @@
 __artifacts_v2__ = {
     "justalk_messages": {
         "name": "JusTalk - Messages",
-        "description": "Chat messages from the JusTalk Realm store, with the message body, the "
+        "description": "Chat messages from the JusTalk Realm store, with the message body (on "
+                       "photo, video, voice and location rows that have a file record the "
+                       "Message column shows the message type in brackets in place of the stored "
+                       "content), the "
                        "direction, the sender, the media type and the cached media file where it "
                        "is present in the extraction",
-        "author": "@AlexisBrignoni, @Newhope81, Claude",
+        "author": "@AlexisBrignoni, @Newhope81, Claude; @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "JusTalk",
         "notes": "Messages are read from the class_CallLog table of the per-account Realm store "
-                 "(files/<account uid>.realm), not from class_MessageChat, which was present in "
+                 "(files/<account uid>.realm). default.realm, .realm and the .backup. copies are "
+                 "not read, and a store whose message, file, friend, member and moment tables are "
+                 "all empty is passed over. Messages are not read from class_MessageChat, which "
+                 "was present in "
                  "the schema but empty in the sample this artifact was built from. class_CallLog "
                  "holds chat messages and call records in the same table; rows whose type is "
                  "AudioCall or VideoCall are reported by the JusTalk - Call Logs artifact instead.\n"
-                 "Direction is taken from the boolean 'incoming' column. The separate 'state' "
+                 "Direction is taken from the boolean 'incoming' column: a true value is reported "
+                 "as Incoming and a false value as Outgoing; a missing or null value leaves Direction blank. The "
+                 "separate 'state' "
                  "column is reported as stored: nothing in the extraction documents its values.\n"
                  "Media is linked without guessing. The message's 'fileUrl' column is a row index "
                  "into the class_ROFileUrl table, and that row's 'md5' column is base64 of the MD5 "
@@ -33,7 +41,12 @@ __artifacts_v2__ = {
                  "class_ROKids* tables were all empty in it, so group chats and JusTalk Kids parental controls are not "
                  "covered. The reply, reaction, sticker, poll and link columns of class_CallLog "
                  "were unpopulated and are not reported. A sample exercising any of those would "
-                 "be welcome.",
+                 "be welcome."
+                 " Sources include only Realms contributing rows to this artifact, in first-row "
+                 "encounter order. Source File is appended only when more than one distinct Realm "
+                 "contributes; it identifies the row-supplying Realm, not media or account ownership. "
+                 "Zero-row inputs are excluded from the source union. Repeated occurrences remain. "
+                 "Other artifact source selection, direction and cache ownership remain unchanged.",
         "paths": ('*/com.juphoon.justalk/files/*.realm',
                   '*/com.juphoon.justalk/files/imfilecache/*',
                   '*/com.juphoon.justalk/files/image_manager_disk_cache/*',
@@ -58,13 +71,15 @@ __artifacts_v2__ = {
         "name": "JusTalk - Call Logs",
         "description": "Audio and video calls from the JusTalk Realm store, with the direction, "
                        "the duration and the server call identifier",
-        "author": "@AlexisBrignoni, @Newhope81, Claude",
+        "author": "@AlexisBrignoni, @Newhope81, Claude; @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "JusTalk",
         "notes": "Read from the rows of class_CallLog whose type is AudioCall or VideoCall. "
-                 "Direction is taken from the boolean 'incoming' column.\n"
+                 "Direction is taken from the boolean 'incoming' column: a true value is reported "
+                 "as Incoming and a false value as Outgoing; a missing or null value leaves Direction blank. Duration "
+                 "(seconds) is blank when the stored duration is 0.\n"
                  "Duration on these rows is reported both as stored and converted from "
                  "milliseconds. Milliseconds is an inference: in the sample, three calls were "
                  "followed by a further message 15.4, 31.6 and 24.0 seconds after the call record, "
@@ -74,7 +89,12 @@ __artifacts_v2__ = {
                  "its own column so the conversion can be checked.\n"
                  "The 'state' and 'reason' columns are reported as stored; nothing in the "
                  "extraction documents their values. A duration of zero is not by itself evidence "
-                 "that a call was not answered.",
+                 "that a call was not answered."
+                 " Sources include only Realms contributing rows to this artifact, in first-row "
+                 "encounter order. Source File is appended only when more than one distinct Realm "
+                 "contributes; it identifies the row-supplying Realm, not media or account ownership. "
+                 "Zero-row inputs are excluded from the source union. Repeated occurrences remain. "
+                 "Other artifact source selection, direction and cache ownership remain unchanged.",
         "paths": ('*/com.juphoon.justalk/files/*.realm',),
         "output_types": "standard",
         "artifact_icon": "phone",
@@ -86,7 +106,7 @@ __artifacts_v2__ = {
                        "the extraction, plus any cached files the store does not account for",
         "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "JusTalk",
         "notes": "Each row is one class_ROFileUrl record. The record's 'md5' column is base64 of "
@@ -100,8 +120,8 @@ __artifacts_v2__ = {
                  "stored with no extension or a '.0' extension and were still "
                  "images, so the extension is reported as found and the content is checked in on "
                  "its own sniffed type.\n"
-                 "The class_ROFileUrl table also carries sticker pack assets, which have a "
-                 "filePath but no encryptedUrl and are not messages. 'localPath' and "
+                 "In the sample the class_ROFileUrl table also carried sticker pack assets, which "
+                 "had a filePath and no encryptedUrl. 'localPath' and "
                  "'thumbnailLocalPath' are the paths the app recorded; in the sample they pointed "
                  "into the app's own cache, not to a user-initiated export to shared storage. They "
                  "are reported as stored and are not resolved against the extraction.",
@@ -121,12 +141,12 @@ __artifacts_v2__ = {
                        "online time",
         "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "JusTalk",
-        "notes": "Read from the class_ServerFriend table. The class_Contact table, which holds "
-                 "device address book matches, was empty in the sample this artifact was built "
-                 "from and is not covered here.\n"
+        "notes": "Read from the class_ServerFriend table. The class_Contact table was empty in "
+                 "the sample this artifact was built from; what it holds was not established, "
+                 "and it is not covered here.\n"
                  "The 'version' column is reported as stored; in the sample it held a value "
                  "beginning 'ios.'. 'loginCountry' is "
                  "reported as stored; in the sample it held a value matching a telephone country "
@@ -142,7 +162,7 @@ __artifacts_v2__ = {
         "description": "Rows from the class_ServerMember table of the JusTalk Realm store",
         "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-10",
-        "last_update_date": "2026-08-10",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "JusTalk",
         "notes": "Read from the class_ServerMember table.",
@@ -156,7 +176,7 @@ __artifacts_v2__ = {
         "description": "Rows from the class_Moment table of the JusTalk Realm store",
         "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-10",
-        "last_update_date": "2026-08-10",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "JusTalk",
         "notes": "Read from the class_Moment table.",
@@ -171,7 +191,7 @@ __artifacts_v2__ = {
                        "name, the app's provisioning file and the Realm schema version",
         "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "JusTalk",
         "notes": "The per-account Realm store is named after the local account's own user id, so "
@@ -179,7 +199,7 @@ __artifacts_v2__ = {
                  "the senderUid on outgoing message rows, which carries the same value.\n"
                  "The cur_prof_user attribute of files/JusTalk/profiles/provisions.xml holds a "
                  "scheme token joined to the account's JusTalk id, for example "
-                 "'username)lola6593'. It is reported both as stored and split, because the "
+                 "'username)<id>'. It is reported both as stored and split, because the "
                  "scheme token is not part of the id. The split is derived from the same "
                  "extraction: class_CallLog writes the peer form of that value as a URI reading "
                  "'[username:<id>@justalk.com]' on a row whose class_ServerFriend justalkId "
@@ -196,13 +216,15 @@ __artifacts_v2__ = {
                  "JSON document under a single key. Field names there are the app's own: "
                  "Basic.NickName, Ue.Email, Basic.Birthday, Phone.Country, loginCountry, "
                  "signUpDate, lastLoginTimeMillis, uuid and loginToken. Birthday is reported as "
-                 "the app stored it, a plain date string with no time or zone. signUpDate is in "
-                 "seconds and lastLoginTimeMillis in milliseconds, as their names state.\n"
+                 "the app stored it, a plain date string with no time or zone. "
+                 "lastLoginTimeMillis is named as milliseconds. The name signUpDate states no "
+                 "unit. Both are converted by a shared helper that takes the unit from the size "
+                 "of the number, so the unit of signUpDate is not asserted here.\n"
                  "Ue.Facebook, Ue.Google and Ue.Huawei are linked-account slots. They were all "
                  "empty in the sample, so an empty value here means the slot carries no value, "
                  "not that a linked account was removed.\n"
-                 "loginToken is a bearer credential for the account, reported in full at the "
-                 "examiner's request. It is a JSON Web Token (RFC 7519), so its payload segment "
+                 "loginToken is a bearer credential for the account, reported in full. It is a "
+                 "JSON Web Token (RFC 7519), so its payload segment "
                  "is base64url and carries the standard 'exp' expiry claim; Token Expiry is that "
                  "claim decoded, and Token Subject is the payload's uid claim as stored. The "
                  "signature is not verified and the token is not tested against any server, so "
@@ -229,9 +251,8 @@ __artifacts_v2__ = {
     },
     "justalk_app_state": {
         "name": "JusTalk - App State",
-        "description": "Key and value pairs from the app's default MMKV store, covering the "
-                       "device identifier, the signed-in account id, the push token and the "
-                       "install channel, including values that later writes superseded",
+        "description": "Key and value pairs from the app's default MMKV store, reported as "
+                       "stored, including values that later writes superseded",
         "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
@@ -240,8 +261,12 @@ __artifacts_v2__ = {
         "notes": "Read from files/mmkv/mmkv.default with the shared mmkv_parser. Keys and values "
                  "are reported as the app wrote them and are not renamed or interpreted.\n"
                  "A key can appear more than once in the file. Every entry is reported in file "
-                 "order. The Current Value column marks the last entry for a key, which is the "
-                 "one the app reads; rows marked otherwise are earlier values still present in "
+                 "order. The Current Value column marks the last entry for a key. MMKV loads a "
+                 "store in file order, so a later entry for a key replaces an earlier one, and "
+                 "it writes a removal as an entry with an empty value (Tencent/MMKV v2.2.2, "
+                 "Core/MiniPBCoder.cpp decodeOneMap and Core/MMKV_IO.cpp removeDataForKey; which "
+                 "MMKV release the app bundles was not established). Rows marked otherwise are "
+                 "earlier values still present in "
                  "the store. In the sample this preserved one superseded value, an empty "
                  "VersionCheckerNewVersion written before the current one.\nA repeated entry is "
                  "not by itself evidence the value changed; in the sample most repeated entries "
@@ -260,18 +285,24 @@ __artifacts_v2__ = {
     },
     "justalk_kids_messages": {
         "name": "JusTalk Kids - Messages",
-        "description": 'Chat messages from the JusTalk Kids Realm store, with the message body, the direction, the sender, the media type and the cached media file where it is present in the extraction',
-        "author": "@AlexisBrignoni, @Newhope81, Claude",
+        "description": 'Chat messages from the JusTalk Kids Realm store, with the message body (on photo, video, voice and location rows that have a file record the Message column shows the message type in brackets in place of the stored content), the direction, the sender, the media type and the cached media file where it is present in the extraction',
+        "author": "@AlexisBrignoni, @Newhope81, Claude; @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "JusTalk Kids",
         "notes": "Messages are read from the class_CallLog table of the per-account Realm store "
-                 "(files/<account uid>.realm), not from class_MessageChat, which was present in "
+                 "(files/<account uid>.realm). default.realm, .realm and the .backup. copies are "
+                 "not read, and a store whose message, file, friend, member and moment tables are "
+                 "all empty is passed over. Messages are not read from class_MessageChat, which "
+                 "was present in "
                  "the schema but empty in the sample this artifact was built from. class_CallLog "
                  "holds chat messages and call records in the same table; rows whose type is "
-                 "AudioCall or VideoCall are reported by the JusTalk - Call Logs artifact instead.\n"
-                 "Direction is taken from the boolean 'incoming' column. The separate 'state' "
+                 "AudioCall or VideoCall are reported by the JusTalk Kids - Call Logs artifact "
+                 "instead.\n"
+                 "Direction is taken from the boolean 'incoming' column: a true value is reported "
+                 "as Incoming and a false value as Outgoing; a missing or null value leaves Direction blank. The "
+                 "separate 'state' "
                  "column is reported as stored: nothing in the extraction documents its values.\n"
                  "Media is linked without guessing. The message's 'fileUrl' column is a row index "
                  "into the class_ROFileUrl table, and that row's 'md5' column is base64 of the MD5 "
@@ -290,7 +321,12 @@ __artifacts_v2__ = {
                  "class_ROKids* tables were all empty in it, so group chats and JusTalk Kids parental controls are not "
                  "covered. The reply, reaction, sticker, poll and link columns of class_CallLog "
                  "were unpopulated and are not reported. A sample exercising any of those would "
-                 "be welcome.",
+                 "be welcome."
+                 " Sources include only Realms contributing rows to this artifact, in first-row "
+                 "encounter order. Source File is appended only when more than one distinct Realm "
+                 "contributes; it identifies the row-supplying Realm, not media or account ownership. "
+                 "Zero-row inputs are excluded from the source union. Repeated occurrences remain. "
+                 "Other artifact source selection, direction and cache ownership remain unchanged.",
         "paths": ('*/com.justalk.kids.android/files/*.realm',
                   '*/com.justalk.kids.android/files/imfilecache/*',
                   '*/com.justalk.kids.android/files/image_manager_disk_cache/*',
@@ -314,13 +350,19 @@ __artifacts_v2__ = {
     "justalk_kids_calls": {
         "name": "JusTalk Kids - Call Logs",
         "description": 'Audio and video calls from the JusTalk Kids Realm store, with the direction, the duration and the server call identifier',
-        "author": "@AlexisBrignoni, @Newhope81, Claude",
+        "author": "@AlexisBrignoni, @Newhope81, Claude; @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "JusTalk Kids",
         "notes": "Read from the rows of class_CallLog whose type is AudioCall or VideoCall. "
-                 "Direction is taken from the boolean 'incoming' column.\n"
+                 "Direction is taken from the boolean 'incoming' column: a true value is reported "
+                 "as Incoming and a false value as Outgoing; a missing or null value leaves Direction blank. Duration "
+                 "(seconds) is blank when the stored duration is 0.\n"
+                 "This artifact reuses the JusTalk reader with the JusTalk Kids paths. This module "
+                 "does not record whether the sample was taken from JusTalk or from JusTalk Kids, "
+                 "so the statements here about the sample may describe the JusTalk app, and the "
+                 "JusTalk Kids paths are not shown to have been exercised.\n"
                  "Duration on these rows is reported both as stored and converted from "
                  "milliseconds. Milliseconds is an inference: in the sample, three calls were "
                  "followed by a further message 15.4, 31.6 and 24.0 seconds after the call record, "
@@ -330,7 +372,12 @@ __artifacts_v2__ = {
                  "its own column so the conversion can be checked.\n"
                  "The 'state' and 'reason' columns are reported as stored; nothing in the "
                  "extraction documents their values. A duration of zero is not by itself evidence "
-                 "that a call was not answered.",
+                 "that a call was not answered."
+                 " Sources include only Realms contributing rows to this artifact, in first-row "
+                 "encounter order. Source File is appended only when more than one distinct Realm "
+                 "contributes; it identifies the row-supplying Realm, not media or account ownership. "
+                 "Zero-row inputs are excluded from the source union. Repeated occurrences remain. "
+                 "Other artifact source selection, direction and cache ownership remain unchanged.",
         "paths": ('*/com.justalk.kids.android/files/*.realm',),
         "output_types": "standard",
         "artifact_icon": "phone",
@@ -341,7 +388,7 @@ __artifacts_v2__ = {
         "description": 'File records from the JusTalk Kids Realm store with the cached copies found in the extraction, plus any cached files the store does not account for',
         "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "JusTalk Kids",
         "notes": "Each row is one class_ROFileUrl record. The record's 'md5' column is base64 of "
@@ -355,8 +402,8 @@ __artifacts_v2__ = {
                  "stored with no extension or a '.0' extension and were still "
                  "images, so the extension is reported as found and the content is checked in on "
                  "its own sniffed type.\n"
-                 "The class_ROFileUrl table also carries sticker pack assets, which have a "
-                 "filePath but no encryptedUrl and are not messages. 'localPath' and "
+                 "In the sample the class_ROFileUrl table also carried sticker pack assets, which "
+                 "had a filePath and no encryptedUrl. 'localPath' and "
                  "'thumbnailLocalPath' are the paths the app recorded; in the sample they pointed "
                  "into the app's own cache, not to a user-initiated export to shared storage. They "
                  "are reported as stored and are not resolved against the extraction.",
@@ -374,12 +421,12 @@ __artifacts_v2__ = {
         "description": 'Contacts from the JusTalk Kids Realm store, with the JusTalk ID, the display and nickname, the client version reported for that account and the last online time',
         "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "JusTalk Kids",
-        "notes": "Read from the class_ServerFriend table. The class_Contact table, which holds "
-                 "device address book matches, was empty in the sample this artifact was built "
-                 "from and is not covered here.\n"
+        "notes": "Read from the class_ServerFriend table. The class_Contact table was empty in "
+                 "the sample this artifact was built from; what it holds was not established, "
+                 "and it is not covered here.\n"
                  "The 'version' column is reported as stored; in the sample it held a value "
                  "beginning 'ios.'. 'loginCountry' is "
                  "reported as stored; in the sample it held a value matching a telephone country "
@@ -395,7 +442,7 @@ __artifacts_v2__ = {
         "description": "Rows from the class_ServerMember table of the JusTalk Kids Realm store",
         "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-10",
-        "last_update_date": "2026-08-10",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "JusTalk Kids",
         "notes": "Read from the class_ServerMember table.",
@@ -409,7 +456,7 @@ __artifacts_v2__ = {
         "description": "Rows from the class_Moment table of the JusTalk Kids Realm store",
         "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-10",
-        "last_update_date": "2026-08-10",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "JusTalk Kids",
         "notes": "Read from the class_Moment table.",
@@ -423,7 +470,7 @@ __artifacts_v2__ = {
         "description": "The local JusTalk Kids account identifiers taken from the Realm store file name, the app's provisioning file and the Realm schema version",
         "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "JusTalk Kids",
         "notes": "The per-account Realm store is named after the local account's own user id, so "
@@ -431,7 +478,7 @@ __artifacts_v2__ = {
                  "the senderUid on outgoing message rows, which carries the same value.\n"
                  "The cur_prof_user attribute of files/JusTalk/profiles/provisions.xml holds a "
                  "scheme token joined to the account's JusTalk id, for example "
-                 "'username)lola6593'. It is reported both as stored and split, because the "
+                 "'username)<id>'. It is reported both as stored and split, because the "
                  "scheme token is not part of the id. The split is derived from the same "
                  "extraction: class_CallLog writes the peer form of that value as a URI reading "
                  "'[username:<id>@justalk.com]' on a row whose class_ServerFriend justalkId "
@@ -448,13 +495,15 @@ __artifacts_v2__ = {
                  "JSON document under a single key. Field names there are the app's own: "
                  "Basic.NickName, Ue.Email, Basic.Birthday, Phone.Country, loginCountry, "
                  "signUpDate, lastLoginTimeMillis, uuid and loginToken. Birthday is reported as "
-                 "the app stored it, a plain date string with no time or zone. signUpDate is in "
-                 "seconds and lastLoginTimeMillis in milliseconds, as their names state.\n"
+                 "the app stored it, a plain date string with no time or zone. lastLoginTimeMillis "
+                 "is named as milliseconds. The name signUpDate states no unit. Both are converted "
+                 "by a shared helper that takes the unit from the size of the number, so the unit "
+                 "of signUpDate is not asserted here.\n"
                  "Ue.Facebook, Ue.Google and Ue.Huawei are linked-account slots. They were all "
                  "empty in the sample, so an empty value here means the slot carries no value, "
                  "not that a linked account was removed.\n"
-                 "loginToken is a bearer credential for the account, reported in full at the "
-                 "examiner's request. It is a JSON Web Token (RFC 7519), so its payload segment "
+                 "loginToken is a bearer credential for the account, reported in full. It is a "
+                 "JSON Web Token (RFC 7519), so its payload segment "
                  "is base64url and carries the standard 'exp' expiry claim; Token Expiry is that "
                  "claim decoded, and Token Subject is the payload's uid claim as stored. The "
                  "signature is not verified and the token is not tested against any server, so "
@@ -464,8 +513,11 @@ __artifacts_v2__ = {
                  "counts compared; "
                  "where they differ, content is present in one view and not the other. In the "
                  "sample they matched exactly.\n"
-                 "shared_prefs/com.justalk.kids.android_preferences.xml was checked and carries only "
-                 "advertising consent framework keys, no account identity, so it is not parsed.\n"
+                 "shared_prefs/com.justalk.kids.android_preferences.xml is not parsed.\n"
+                 "This artifact reuses the JusTalk reader with the JusTalk Kids paths. This module "
+                 "does not record whether the sample was taken from JusTalk or from JusTalk Kids, "
+                 "so the statements here about the sample may describe the JusTalk app, and the "
+                 "JusTalk Kids paths are not shown to have been exercised.\n"
                  "Validation boundary. Built from a single private sample holding one signed-in "
                  "account, so every field here was seen populated exactly once, and the "
                  "linked-account and family fields were never seen populated at all. An MMKV "
@@ -481,7 +533,7 @@ __artifacts_v2__ = {
     },
     "justalk_kids_app_state": {
         "name": "JusTalk Kids - App State",
-        "description": "Key and value pairs from JusTalk Kids' default MMKV store, covering the device identifier, the signed-in account id, the push token and the install channel, including values that later writes superseded",
+        "description": "Key and value pairs from JusTalk Kids' default MMKV store, reported as stored, including values that later writes superseded",
         "author": "@AlexisBrignoni, @Newhope81, Claude",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
@@ -490,8 +542,12 @@ __artifacts_v2__ = {
         "notes": "Read from files/mmkv/mmkv.default with the shared mmkv_parser. Keys and values "
                  "are reported as the app wrote them and are not renamed or interpreted.\n"
                  "A key can appear more than once in the file. Every entry is reported in file "
-                 "order. The Current Value column marks the last entry for a key, which is the "
-                 "one the app reads; rows marked otherwise are earlier values still present in "
+                 "order. The Current Value column marks the last entry for a key. MMKV loads a "
+                 "store in file order, so a later entry for a key replaces an earlier one, and "
+                 "it writes a removal as an entry with an empty value (Tencent/MMKV v2.2.2, "
+                 "Core/MiniPBCoder.cpp decodeOneMap and Core/MMKV_IO.cpp removeDataForKey; which "
+                 "MMKV release the app bundles was not established). Rows marked otherwise are "
+                 "earlier values still present in "
                  "the store. In the sample this preserved one superseded value, an empty "
                  "VersionCheckerNewVersion written before the current one.\nA repeated entry is "
                  "not by itself evidence the value changed; in the sample most repeated entries "
@@ -649,6 +705,14 @@ def _file_record(file_records, link):
         return {}
 
 
+def _direction(value):
+    """Direction from the stored 'incoming' value. A missing or null value is left blank
+    rather than reported as either direction."""
+    if value is None:
+        return ''
+    return 'Incoming' if value else 'Outgoing'
+
+
 def _int_or_blank(value):
     try:
         return int(value)
@@ -680,15 +744,17 @@ def justalk_messages(context):
     files_found = context.get_files_found()
     source_paths = _account_realms(files_found)
     data_list = []
+    contributors = []
+    row_sources = []
 
     hash_index = _hash_index(files_found)
 
     for source_path in source_paths:
+        first_row = len(data_list)
         file_records = _rows(source_path, 'class_ROFileUrl')
         for row in sorted(_rows(source_path, 'class_CallLog'), key=lambda r: r.get('timestamp') or 0):
             if row.get('type') in CALL_TYPES:
                 continue
-            outgoing = not row.get('incoming')
             media = _file_record(file_records, row.get('fileUrl'))
             matches = hash_index.get(_md5_hex(media.get('md5')), []) if media else []
             
@@ -699,7 +765,7 @@ def justalk_messages(context):
                 
             data_list.append((
                 convert_unix_ts_to_utc(row.get('timestamp')),
-                'Outgoing' if outgoing else 'Incoming',
+                _direction(row.get('incoming')),
                 row.get('senderName'),
                 msg_content,
                 _check_in(matches),
@@ -719,6 +785,11 @@ def justalk_messages(context):
                 row.get('state'),
                 row.get('readState'),
             ))
+
+        if len(data_list) > first_row:
+            row_sources.extend([context.get_relative_path(source_path)] * (len(data_list) - first_row))
+            if source_path not in contributors:
+                contributors.append(source_path)
 
     data_headers = (
         ('Timestamp', 'datetime'),
@@ -742,21 +813,27 @@ def justalk_messages(context):
         'State (as stored)',
         'Read State (as stored)',
     )
-    return data_headers, data_list, source_paths[0] if source_paths else ''
+    if len(contributors) > 1:
+        data_headers += ('Source File',)
+        data_list = [row + (origin,) for row, origin in zip(data_list, row_sources)]
+    return data_headers, data_list, '\n'.join(contributors)
 
 
 @artifact_processor
 def justalk_calls(context):
     source_paths = _account_realms(context.get_files_found())
     data_list = []
+    contributors = []
+    row_sources = []
 
     for source_path in source_paths:
+        first_row = len(data_list)
         for row in sorted(_rows(source_path, 'class_CallLog'), key=lambda r: r.get('timestamp') or 0):
             if row.get('type') not in CALL_TYPES:
                 continue
             data_list.append((
                 convert_unix_ts_to_utc(row.get('timestamp')),
-                'Outgoing' if not row.get('incoming') else 'Incoming',
+                _direction(row.get('incoming')),
                 row.get('type'),
                 row.get('name'),
                 _seconds_from_ms(row.get('duration')),
@@ -767,6 +844,11 @@ def justalk_calls(context):
                 row.get('state'),
                 row.get('reason'),
             ))
+
+        if len(data_list) > first_row:
+            row_sources.extend([context.get_relative_path(source_path)] * (len(data_list) - first_row))
+            if source_path not in contributors:
+                contributors.append(source_path)
 
     data_headers = (
         ('Timestamp', 'datetime'),
@@ -781,7 +863,10 @@ def justalk_calls(context):
         'State (as stored)',
         'Reason (as stored)',
     )
-    return data_headers, data_list, source_paths[0] if source_paths else ''
+    if len(contributors) > 1:
+        data_headers += ('Source File',)
+        data_list = [row + (origin,) for row, origin in zip(data_list, row_sources)]
+    return data_headers, data_list, '\n'.join(contributors)
 
 
 @artifact_processor
@@ -860,7 +945,7 @@ def justalk_media(context):
         'Message Log ID',
         'Cached File Names',
     )
-    return data_headers, data_list, source_paths[0] if source_paths else ''
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
@@ -911,7 +996,7 @@ def justalk_contacts(context):
         'Muted',
         'Pinned',
     )
-    return data_headers, data_list, source_paths[0] if source_paths else ''
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 def _profile_user(files_found):
@@ -990,10 +1075,10 @@ def _jwt_claims(token):
 
 
 def _justalk_id(profile_user):
-    """cur_prof_user is a scheme token joined to the account's JusTalk id, as in
-    'username)lola6593'. The same store writes the peer form of that value as a URI,
-    '[username:johnlucas90@justalk.com]', against a class_ServerFriend row whose justalkId
-    column reads 'johnlucas90', so the token before the separator is the scheme and the
+    """cur_prof_user is a scheme token joined to the account's JusTalk id, as in this explicitly synthetic example:
+    'username)synthetic_local_id'. The same store writes the peer form of that value as a URI,
+    '[username:synthetic_peer_id@justalk.com]', against a class_ServerFriend row whose justalkId
+    column reads 'synthetic_peer_id', so the token before the separator is the scheme and the
     part after it is the id. The separator differs because the value is also used as a
     directory name under files/JusTalk/profiles/. Anything not in that shape is returned
     unchanged rather than guessed at."""
@@ -1067,7 +1152,7 @@ def justalk_account(context):
             context.get_relative_path(mmkv_profile_path) if mmkv_profile_path else '',
         ))
 
-    return _account_headers(), data_list, source_paths[0] if source_paths else profile_path
+    return _account_headers(), data_list, '\n'.join(source_paths) if source_paths else profile_path
 
 
 def _account_headers():
@@ -1174,7 +1259,7 @@ def justalk_members(context):
         'Relation Type (as stored)',
         'Server Friend (as stored)',
     )
-    return data_headers, data_list, source_paths[0] if source_paths else ''
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
@@ -1219,7 +1304,7 @@ def justalk_moments(context):
         'Link',
         'Is Liked (as stored)',
     )
-    return data_headers, data_list, source_paths[0] if source_paths else ''
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor

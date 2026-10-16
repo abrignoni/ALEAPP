@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_presisted": {
         "name": "Garmin - Persistent",
-        "description": "Get Information stored in the Garmin Persistent json file",
+        "description": "Reports the Fid, AuthToken, RefreshToken, TokenCreationEpochInSecs and ExpiresInSecs keys of the first matched PersistedInstallation JSON file in the Garmin Connect files folder. The dates in brackets are computed in UTC; the one beside ExpiresInSecs is the creation time plus that value.",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
         "creation_date": "2023-02-24",
         "last_update_date": "2023-02-24",

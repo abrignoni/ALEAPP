@@ -1,27 +1,28 @@
 __artifacts_v2__ = {
     "telecom_phone_accounts": {
         "name": "Telecom Phone Accounts",
-        "description": "The calling accounts registered with the Android telecom service, "
-                       "covering the SIM subscriptions and the apps that registered themselves to "
-                       "place or receive calls, with the number and carrier label stored for each.",
-        "author": "@AlexisBrignoni, Claude",
+        "description": "The calling accounts registered with the Android telecom service, with the "
+                       "label, handle and subscription number stored for each.",
+        "author": "@AlexisBrignoni, Codex, Claude",
         "creation_date": "2026-09-03",
-        "last_update_date": "2026-09-04",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Device Connections",
-        "notes": "Read from phone-account-registrar-state.xml in the telecom service's own "
-                 "folder, ABX binary XML on modern releases and plain XML on older ones. One row "
-                 "per phone_account element.\n"
+        "notes": "Read from phone-account-registrar-state.xml in the telecom service's own folder. "
+                 "The file is read as ABX binary XML or as plain XML; the reader decides per file. "
+                 "One row per phone_account element.\n"
                  "Component is the account_handle's component name as stored, and Account ID is "
                  "that handle's id as stored. Handle and Subscription Number are stored as tel "
-                 "URIs and are percent-decoded for display, so a leading plus is shown rather "
-                 "than its escape; the value is otherwise as stored. Label and Short Description "
-                 "are reported as stored.\n"
+                 "URIs and are percent-decoded for display, so a leading plus is shown rather than "
+                 "its escape; the value is otherwise as stored. Label and Short Description are "
+                 "reported as stored.\n"
                  "Capabilities, Highlight Color and Supported Audio Routes are integers the "
-                 "platform defines and are reported as stored. Is Default Outgoing is True for "
-                 "the account the default_outgoing record names for that user. The account icon "
-                 "is stored here as well and is not reported. Enabled is the account's enabled "
-                 "flag as stored; it held both values on three of the tested images.\n"
+                 "platform defines and are reported as stored. Is Default Outgoing is True for an "
+                 "account whose component, account id and user serial number equal those of any "
+                 "default_outgoing_phone_account_handle record under default_outgoing in the same "
+                 "file, so a record for a second user is read. The account icon is stored here as well and is not "
+                 "reported. Enabled is the account's enabled flag as stored; it held both values "
+                 "on three of the tested images.\n"
                  "A zero length registrar file is reported as no rows and logged; it was present "
                  "and empty on one tested image. A row records that an account was registered on "
                  "the device. It does not establish that a call was placed or received on it.",
@@ -126,13 +127,14 @@ def telecom_phone_accounts(context):
             logfunc(f'Telecom Phone Accounts: could not read {os.path.basename(file_found)}: {error}')
             continue
 
-        default_handle = root.find('default_outgoing/default_outgoing_phone_account_handle')
-        default_key = ('', '', '')
-        if default_handle is not None:
+        default_keys = []
+        for default_handle in root.findall('default_outgoing/default_outgoing_phone_account_handle'):
+            default_key = ('', '', '')
             inner = default_handle.find('account_handle/phone_account_handle')
             if inner is not None:
                 default_key = (_text(inner, 'component_name'), _text(inner, 'id'),
                                _text(default_handle, 'user_serial_number'))
+            default_keys.append(default_key)
 
         rows = 0
         for account in root.iter('phone_account'):
@@ -148,7 +150,7 @@ def telecom_phone_accounts(context):
                 account_id,
                 user_serial,
                 _text(account, 'enabled'),
-                (component, account_id, user_serial) == default_key and any(default_key),
+                (component, account_id, user_serial) in default_keys and any((component, account_id, user_serial)),
                 ', '.join(s for s in schemes if s),
                 _text(account, 'capabilities'),
                 _text(account, 'highlight_color'),

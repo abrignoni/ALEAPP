@@ -8,7 +8,9 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Libre Torrent",
         "notes": "The two FastResume columns are read by position over 'SELECT * from FastResume'; the "
-                 "mapping was established against the app version this parser was written for and may "
+                 "first column is reported as the info hash and the second is decoded as bencoded "
+                 "data. The app version and data this order was taken from are not recorded, and "
+                 "it may "
                  "not hold on other versions. Total Downloaded and Total Uploaded are the bencoded "
                  "total_downloaded and total_uploaded values reported as stored; the unit is not "
                  "recorded in the file.",

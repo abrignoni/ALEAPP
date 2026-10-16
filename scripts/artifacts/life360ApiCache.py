@@ -5,7 +5,7 @@ __artifacts_v2__ = {
                        "app's members/<member id>/history API calls that its OkHttp response cache holds. "
                        "One row per distinct record; a record returned by several cached responses is "
                        "reported once with the number of copies.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
         "requirements": "none",
@@ -15,9 +15,11 @@ __artifacts_v2__ = {
                  "Each cache entry is a pair of files named by the MD5 of the URL: <hash>.0 holds the URL, the "
                  "status line and the response headers, <hash>.1 the body, gzip-compressed when the "
                  "Content-Encoding header says so (OkHttp Cache.kt Entry.writeTo at release "
-                 "parent-5.5.0). The URL names the circle and the member; the body is a "
+                 "parent-5.5.0; which OkHttp release the tested app versions bundle was not "
+                 "established). The URL names the circle and the member; the body is a "
                  "locations list whose timestamp, startTimestamp and endTimestamp values are "
-                 "Unix seconds and are rendered in UTC (a since value equalled startTimestamp on "
+                 "read as Unix seconds and rendered in UTC, with no source or measurement for that "
+                 "unit recorded here (a since value equalled startTimestamp on "
                  "every record of both images and is not reported separately). Latitude, "
                  "longitude, accuracy, speed, battery, and the charge, inTransit, isDriving, "
                  "wifiState, userActivity, driveSDKStatus and algorithm values are reported as "
@@ -27,9 +29,8 @@ __artifacts_v2__ = {
                  "on every record, and every record belonged to one Circle ID. Member Name is resolved from the "
                  "circles/<id>/members and users/me responses in the same cache and is blank when no cached "
                  "response names the member; every record on both images resolved. The app fetches the history "
-                 "repeatedly with a moving time parameter and the same record comes back in many responses (1,109 "
-                 "of the 1,559 cached history responses held no locations, and the 22,334 location entries in the "
-                 "rest are 2,148 distinct records), so rows are de-duplicated on member, timestamp, coordinates "
+                 "repeatedly with a moving time parameter and the same record comes back in many "
+                 "responses, so rows are de-duplicated on member, timestamp, coordinates "
                  "and the start and end timestamps. The values shown are those of the earliest cached response "
                  "holding the record (First Cached is its OkHttp-Received-Millis); later copies differed in Trip "
                  "ID on 13 records per image and in speed, battery or another value on one to three records, and "
@@ -54,14 +55,20 @@ __artifacts_v2__ = {
         "name": "Life360 - Emergency Contacts (API cache)",
         "description": "Emergency contacts of a circle, read from the JSON responses to the app's "
                        "circles/<circle id>/emergencyContacts API calls held in its OkHttp response cache.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Life360",
         "notes": "Read from the same OkHttp response caches as the Member Location History artifact. One row per "
-                 "distinct contact id per circle; the Cached time is the OkHttp-Received-Millis header of the "
-                 "response that held it. Phone Numbers joins each phone with its type in parentheses where the "
+                 "distinct contact id per circle. When several cached responses hold the same contact, the row's "
+                 "values and its Cached time (the OkHttp-Received-Millis header, Unix milliseconds rendered "
+                 "in UTC) come from the response received last, and Cached Copies counts the responses that "
+                 "held it. On hc_pixel8pro_a16 and hc_pixel8pro_a17 one response held the contact, so Cached "
+                 "Copies is 1 on both and the choice between responses was exercised only on a constructed "
+                 "cache of three responses. Each of those two images also held an earlier contacts response "
+                 "whose list was empty. Phone Numbers joins each phone with its "
+                 "type in parentheses where the "
                  "type is stored. Accepted is reported as stored. Two of the four tested images with the app held "
                  "a contact, one contact on each (the same one, with a name and a phone number and with Emails and "
                  "Avatar URL blank); pixel7a_a14 held contacts responses whose list was empty and sharon_a14 held "
@@ -84,7 +91,7 @@ __artifacts_v2__ = {
         "description": "Index of the exchanges held in the Life360 app's OkHttp response caches: the URL "
                        "requested, when it was sent and received, the status, the content type and size, "
                        "and the cached image where the body is one.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
         "requirements": "none",
@@ -443,11 +450,11 @@ def life360CacheEmergencyContacts(context):
         'Circle ID',
         'Avatar URL',
         'URL (as stored)',
+        'Cached Copies',
         'Source File',
     )
-    data_list = []
+    rows = {}
     sources = []
-    seen = set()
     for exchange in _exchanges(context):
         match = _CONTACTS.search(exchange['url'].split('?')[0])
         if not match:
@@ -460,9 +467,21 @@ def life360CacheEmergencyContacts(context):
             if not isinstance(contact, dict):
                 continue
             ident = (match.group(1), _text(contact.get('id')))
-            if ident in seen:
-                continue
-            seen.add(ident)
+            received = exchange['received_raw']
+            kept = rows.get(ident)
+            copies = 1
+            if kept is not None:
+                # A contact held by several cached responses is reported from the one
+                # received last; the others are counted.
+                kept['copies'] += 1
+                try:
+                    newer = bool(received) and (not kept['received']
+                                                or int(received) > int(kept['received']))
+                except ValueError:
+                    newer = False
+                if not newer:
+                    continue
+                copies = kept['copies']
             phones = []
             for phone in contact.get('phoneNumbers') or []:
                 if isinstance(phone, dict):
@@ -477,7 +496,7 @@ def life360CacheEmergencyContacts(context):
                     emails.append(_text(email.get('email') or json.dumps(email)))
                 else:
                     emails.append(_text(email))
-            data_list.append((
+            rows[ident] = {'received': received, 'copies': copies, 'row': (
                 exchange['received'],
                 _text(contact.get('firstName')),
                 _text(contact.get('lastName')),
@@ -489,8 +508,8 @@ def life360CacheEmergencyContacts(context):
                 match.group(1),
                 _text(contact.get('avatar')),
                 _text(contact.get('url')),
-                context.get_relative_path(exchange['files']['0']),
-            ))
+            ), 'source': context.get_relative_path(exchange['files']['0'])}
+    data_list = [kept['row'] + (kept['copies'], kept['source']) for kept in rows.values()]
     return data_headers, data_list, '\n'.join(context.get_relative_path(p) for p in sources)
 
 

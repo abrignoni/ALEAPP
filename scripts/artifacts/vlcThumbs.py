@@ -10,11 +10,11 @@ __artifacts_v2__ = {
         "sample_data": {
             "emu_a15_oss_v4": "VLC 3.7.1 | 1 rows",
         },
-        "notes": "One row per thumbnail JPEG VLC generated for a media-library entry. On the "
-                 "tested device (VLC 3.7.1) the thumbnails were stored in the app's external "
-                 "files directory at Android/data/org.videolan.vlc/files/medialib and were named "
-                 "for the media id (id_media.jpg). The VLC Thumbnail Data artifact "
-                 "joins these images to the media-library rows they belong to.",
+        "notes": "One row per .jpg file under org.videolan.vlc/files/medialib. On the tested "
+                 "device (VLC 3.7.1) the thumbnails were stored in the app's external files "
+                 "directory at Android/data/org.videolan.vlc/files/medialib and were named for the "
+                 "media id (id_media.jpg). The VLC Thumbnail Data artifact joins these images to "
+                 "the media-library rows they belong to.",
         "paths": ('*/org.videolan.vlc/files/medialib/*.jpg',),
         "output_types": "standard",
         "artifact_icon": "photo",
@@ -24,26 +24,38 @@ __artifacts_v2__ = {
         "description": "VLC media library entries with their generated thumbnails",
         "author": "@abrignoni, Claude",
         "creation_date": "2021-03-01",
-        "last_update_date": "2026-08-31",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "VLC",
         "sample_data": {
             "emu_a15_oss_v4": "VLC 3.7.1 | 2 rows",
         },
         "notes": "One row per entry in the Media table of app_db/vlc_media.db, with the thumbnail "
-                 "image VLC generated for it shown inline. Each media the app has seen carries a "
-                 "Filename, a Type (0 Unknown, 1 Video, 2 Audio, from IMedia.h in "
-                 "videolan/medialibrary), a Play Count and an Is Favorite flag. Last Played and "
-                 "Insertion Date are Unix seconds and are reported as UTC. The thumbnail link is "
-                 "read from the medialibrary's own tables rather than guessed: ThumbnailLinking "
-                 "ties a media id to a Thumbnail row, and the Thumbnail row records the image "
-                 "path in its mrl. The image file lives in the app's external files directory at "
+                 "image VLC generated for it shown inline. Each row reports a Filename, a Type (0 "
+                 "Unknown, 1 Video, 2 Audio, from enum class Type in "
+                 "include/medialibrary/IMedia.h, videolan/medialibrary at code.videolan.org), a "
+                 "Play Count and an Is Favorite flag. Last Played and Insertion Date are Unix "
+                 "seconds and are reported as UTC. The thumbnail link is read from the "
+                 "medialibrary's own tables: ThumbnailLinking ties an entity id and an entity type "
+                 "(media, album, artist or genre) to a Thumbnail row; its primary key is "
+                 "entity_id, entity_type and size_type. The Thumbnail row records the image path "
+                 "in its mrl. Only links whose entity_type is 0 are used; 0 is Media, the first "
+                 "member of enum class EntityType in src/Thumbnail.h (Media, Album, Artist, "
+                 "Genre), "
+                 "https://code.videolan.org/videolan/medialibrary/-/blob/5fb68613724239670ef6481981c2328684e50493/src/Thumbnail.h#L93-99 "
+                 "; releases other than that commit were not compared. Where a media row has "
+                 "more than one such link, the one with the lowest size_type is used. On "
+                 "emu_a15_oss_v4 the table holds 1 row, of entity_type 0, for one of the 2 "
+                 "media rows. The image file lives in the app's external files directory at "
                  "Android/data/org.videolan.vlc/files/medialib and on the tested device (VLC "
-                 "3.7.1) was named for the media id; where the recorded path is missing the "
-                 "id_media.jpg name is used as a fallback. On the tested device a video produced a "
-                 "512x288 thumbnail that renders in this artifact, and an audio entry had no "
-                 "thumbnail. A thumbnail is evidence the media was present in VLC's library, not "
-                 "that it was played.",
+                 "3.7.1) was named for the media id. Where no link is recorded, a file named "
+                 "<id_media>.jpg in that folder is shown instead; that pairing rests on the "
+                 "file name alone. Thumbnail Matched By says which route a row used: "
+                 "'ThumbnailLinking record', 'File name <id_media>.jpg', or blank when no "
+                 "image file was found. On the tested device a video produced a 512x288 "
+                 "thumbnail that renders in this artifact, and an audio entry had no "
+                 "thumbnail. A thumbnail is evidence the media was present in VLC's library, "
+                 "not that it was played.",
         "paths": ('*/org.videolan.vlc/files/medialib/*.jpg', '*/org.videolan.vlc/app_db/vlc_media.db*'),
         "output_types": "standard",
         "artifact_icon": "photo",
@@ -116,7 +128,9 @@ def get_vlcThumbs_data(context):
                    m.play_count, m.is_favorite,
                    (SELECT t.mrl FROM ThumbnailLinking tl
                     JOIN Thumbnail t ON t.id_thumbnail = tl.thumbnail_id
-                    WHERE tl.entity_id = m.id_media AND t.mrl LIKE '%.jpg'
+                    WHERE tl.entity_id = m.id_media AND tl.entity_type = 0
+                      AND t.mrl LIKE '%.jpg'
+                    ORDER BY tl.size_type
                     LIMIT 1) AS thumb_mrl
             FROM Media m
             ORDER BY m.id_media
@@ -125,11 +139,18 @@ def get_vlcThumbs_data(context):
             thumb_name = os.path.basename(row[7]) if row[7] else f'{row[2]}.jpg'
             jpg = jpg_by_name.get(thumb_name)
             thumb = check_in_media(jpg, thumb_name) if jpg else ''
+            if not jpg:
+                matched_by = ''
+            elif row[7]:
+                matched_by = 'ThumbnailLinking record'
+            else:
+                matched_by = 'File name <id_media>.jpg'
             data_list.append((_sec_to_utc(row[0]), _sec_to_utc(row[1]), row[2], row[3],
-                              _media_type(row[4]), row[5], row[6], thumb))
+                              _media_type(row[4]), row[5], row[6], thumb, matched_by))
         db.close()
 
     data_headers = (
         ('Last Played', 'datetime'), ('Insertion Date', 'datetime'), 'ID Media', 'Filename',
-        'Type', 'Play Count', 'Is Favorite', ('Thumbnail', 'media'))
+        'Type', 'Play Count', 'Is Favorite', ('Thumbnail', 'media'),
+        'Thumbnail Matched By')
     return data_headers, data_list, '\n'.join(source_paths)

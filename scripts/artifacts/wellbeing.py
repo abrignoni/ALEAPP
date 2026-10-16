@@ -9,11 +9,17 @@ __artifacts_v2__ = {
         "category": "Digital Wellbeing",
         "notes": (
             "Event Type shows the UsageEvents.Event constant whose value matches the stored "
-            "numeric 'type' field; a value with no matching constant is shown as stored. "
-            "Constant names are reported as defined by AOSP; a keyguard or screen-state "
-            "constant does not by itself establish a user action. "
-            "Reference: Google, 'UsageEvents.Event constants', "
-            "https://developer.android.com/reference/android/app/usage/UsageEvents.Event"
+            "numeric 'type' field; the names shown are those for values 1, 2, 12, 18, 19, 20, 23, "
+            "26 and 27; any other value is shown as stored, whether or not a constant exists for "
+            "it. Constant names are reported as defined by Android; a keyguard or screen-state "
+            "constant does not by itself establish a user action. Reference: Google, "
+            "'UsageEvents.Event', "
+            "https://developer.android.com/reference/android/app/usage/UsageEvents.Event, for all "
+            "names except NOTIFICATION_INTERRUPTION (12), which is a hidden constant defined in "
+            "AOSP UsageEvents.java, "
+            "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-14.0.0_r1/core/java/android/app/usage/UsageEvents.java#200. "
+            "That the Wellbeing events table stores these values is not documented in either "
+            "source."
         ),
         "paths": ('*/com.google.android.apps.wellbeing/databases/app_usage*',),
         "output_types": "standard",
@@ -35,13 +41,15 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Digital Wellbeing",
         "notes": (
-            "Component Name is the components.component_name value stored for the event. "
-            "Event Type shows the UsageEvents.Event constant whose value matches the stored "
-            "numeric 'type' field; a value with no matching constant is shown as stored. "
-            "Constant names are reported as defined by AOSP; a keyguard or screen-state "
-            "constant does not by itself establish a user action. "
-            "Reference: Google, 'UsageEvents.Event constants', "
-            "https://developer.android.com/reference/android/app/usage/UsageEvents.Event"
+            "Component Name is the components.component_name value stored for the event. Event "
+            "shows ACTIVITY_RESUMED for a stored type of 1 and ACTIVITY_PAUSED for 2, the "
+            "UsageEvents.Event constants with those values; any other value is shown as stored. "
+            "None of the listed images produced rows, so this artifact is not exercised by the "
+            "listed data. Constant names are reported as defined by Android. Reference: Google, "
+            "'UsageEvents.Event', "
+            "https://developer.android.com/reference/android/app/usage/UsageEvents.Event. That "
+            "the Wellbeing component_events table stores these values is not documented in that "
+            "source."
         ),
         "paths": ('*/com.google.android.apps.wellbeing/databases/app_usage*',),
         "output_types": "standard",

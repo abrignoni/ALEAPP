@@ -20,7 +20,8 @@ __artifacts_v2__ = {
                  "data_migration_executor) are not reported; on the two tested corpora they held "
                  "advertising configuration, interface state, telemetry and migration flags "
                  "respectively. The app's DataStore files were "
-                 "present on 2 of the registered Android corpora swept for them and both carry rows, "
+                 "found on 2 registered Android corpora (adams_ss135dl_a13 and falken_a326u_a13) "
+                 "and both carry rows, "
                  "so the counts recorded here come from two independent extractions.",
         "paths": ('*/com.cnn.mobile.android.phone/files/datastore/search.preferences_pb',),
         "output_types": ["html", "tsv", "lava"],
@@ -31,12 +32,13 @@ __artifacts_v2__ = {
         },
     },
     "cnnAndroidArticles": {
-        "name": "CNN - Article Views",
-        "description": "CNN articles the app recorded as viewed, with the article identifier "
+        "name": "CNN - Stored Article Identifiers",
+        "description": "Article identifiers held under the CNN app's article_meter_set and "
+                       "current_article keys, "
                        "decoded from the form the app stores.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-09-01",
-        "last_update_date": "2026-09-01",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "CNN",
         "notes": "Read from files/datastore/article_meter.preferences_pb and "
@@ -54,7 +56,13 @@ __artifacts_v2__ = {
                  "/_pages/<id> path value; the store holds no "
                  "headline or URL, so none is reported. The app's DataStore files were present on 2 of "
                  "the registered Android corpora swept for them and both carry rows, so the counts "
-                 "recorded here come from two independent extractions.",
+                 "recorded here come from two independent extractions. "
+                 "The report lists stored identifiers and does not establish article views, who "
+                 "accessed an article, or a complete reading history. Meter Reset Date is "
+                 "document-level context from the same preferences file, repeated beside its "
+                 "identifiers; it is not a per-article event time. The stored reset value is "
+                 "retained without date parsing or validation. Original parser and research "
+                 "credit: @AlexisBrignoni, Claude.",
         "paths": ('*/com.cnn.mobile.android.phone/files/datastore/article_meter.preferences_pb',
                   '*/com.cnn.mobile.android.phone/files/datastore/article_shown.preferences_pb'),
         "output_types": ["html", "tsv", "lava"],

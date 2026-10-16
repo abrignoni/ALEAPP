@@ -2,9 +2,9 @@ __artifacts_v2__ = {
     "snapseed_images": {
         "name": "Snapseed Images",
         "description": "Images opened in Snapseed, with the edit state the app recorded for each",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Snapseed",
         "sample_data": {
@@ -17,70 +17,72 @@ __artifacts_v2__ = {
                  "load bearing: on the tested device the database file read without its log held "
                  "nothing at all in the four data tables, only the two bookkeeping ones, while the "
                  "same file read with its log held every image, so the -wal sidecar is matched by "
-                 "the path pattern and must be carried with the database. "
-                 "Import Time, Last Activity Time, Edit Saved Time and Capture Time are Unix "
-                 "milliseconds and are reported as UTC. Import Time and Capture Time are the "
-                 "columns of those names, reported as stored; their meaning was not separately "
-                 "measured. Capture Time is blank where the app stored zero. A row is written "
-                 "when an image is opened in the editor, before any adjustment is made. On the "
-                 "tested device opening an image and leaving without editing produced a row with "
-                 "an empty edit list, so a row is evidence the image was opened in Snapseed, not "
-                 "that it was altered. Width and Height are the dimensions of the current edit "
-                 "state rather than of the source file, so they are where a crop shows: the "
-                 "tested device carried two rows for one 640x480 source photograph, the unedited "
-                 "row reading 640x480 and the row holding a square crop reading 480x480. "
-                 "Original URI and MediaStore ID name the image the row currently stands for, "
-                 "and Latest Edited URI names the MediaStore item the app wrote when an edit was "
-                 "saved or exported. Read those three alongside Edited Promoted To Original, "
-                 "because the app rewrites them, and the rewrite was exercised on the device "
-                 "rather than inferred. A throwaway photograph was opened, adjusted, saved, and "
-                 "its source file then deleted from shared storage and dropped from MediaStore. "
-                 "Reopening the app left both the row and the app's own copy of the picture in "
-                 "place, and changed the row: Original URI and MediaStore ID moved off the "
-                 "deleted source and onto the app's own saved output, Edited Promoted To "
-                 "Original went from 0 to 1, Latest Edited URI was cleared, and the stored edit "
-                 "list was emptied, so Edit Steps fell from 1 to 0. Three things follow. A row "
-                 "whose Edited Promoted To Original reads 1 names the app's own output in "
-                 "Original URI, not the photograph the edit was made on. A blank Latest Edited "
-                 "URI is not evidence that nothing was ever saved. And a zero in Edit Steps is "
-                 "not evidence that no edit was ever made, because the list is discarded when "
-                 "that promotion happens. SHA-1 Hash is a content hash the store can carry for "
-                 "an image. Measured on the tested device, the stored value equalled the SHA-1 "
-                 "of the bytes of the file it names, so an examiner can match a file to this "
-                 "record by hashing it. It was populated on one row, the row the app created for "
-                 "a file it had itself exported and then read back. Edit Steps counts the "
-                 "repeated top level entries of the editListData protobuf. On the tested device "
-                 "one adjustment produced one entry and one crop produced one more, while "
-                 "applying a bundled Look added two, because that Look's own asset inside the "
-                 "application package is itself a two entry stack. A single action can therefore "
-                 "contribute more than one step, so the number bounds the work done on an image "
-                 "rather than counting the taps that produced it. It is blank where the image "
-                 "has no image_edits row at all. The individual steps are not decoded: the field "
-                 "numbers that identify each tool carry no names in the store, so reporting them "
-                 "as tool names would be guesswork. Camera Capture, Trashed, Favorite and Raw "
-                 "are the app's own flags, named here after the columns they come from; what "
-                 "sets each was not exercised. Each read the same value on every row of the "
-                 "tested device; they are reported because each one separates images on a device "
-                 "where they vary. Unreachable Since is reported as stored. It had no value on "
-                 "any row, the row whose source file was deleted in the test above included, so "
-                 "whatever does set it, a source becoming unreachable through deletion did not. "
-                 "The store holds six tables and the other four are not reported. collages and "
-                 "collage_images would carry a collage and the images combined into it, and are "
-                 "the ones worth having; both were empty here and could not be filled, because "
-                 "the tested build surfaces no way to reach the feature. Its strings and its "
-                 "table definitions are in the application package, the gallery filter offers "
-                 "only All, Camera and Edits, and the selection menu offers only copy style, "
-                 "paste style, remove and share, so nothing here is exercised against them and "
-                 "no code is shipped for them. A device whose Snapseed does expose collages "
-                 "would be the sample that closes that gap. android_metadata and "
+                 "the path pattern and must be carried with the database. Import Time, Last "
+                 "Activity Time, Edit Saved Time and Capture Time are Unix milliseconds and are "
+                 "reported as UTC. Import Time and Capture Time are the columns of those names, "
+                 "reported as stored; their meaning was not separately measured. Capture Time is "
+                 "blank where the app stored zero. A row is written when an image is opened in the "
+                 "editor, before any adjustment is made. On the tested device opening an image and "
+                 "leaving without editing produced a row with an empty edit list, so a row is "
+                 "evidence the image was opened in Snapseed, not that it was altered. Width and "
+                 "Height are the dimensions of the current edit state rather than of the source "
+                 "file, so they are where a crop shows: the tested device carried two rows for one "
+                 "640x480 source photograph, the unedited row reading 640x480 and the row holding "
+                 "a square crop reading 480x480. Original URI and MediaStore ID name the image the "
+                 "row currently stands for, and Latest Edited URI names the MediaStore item the "
+                 "app wrote when an edit was saved or exported. Read those three alongside Edited "
+                 "Promoted To Original, because the app rewrites them, and the rewrite was "
+                 "exercised on the device rather than inferred. A throwaway photograph was opened, "
+                 "adjusted, saved, and its source file then deleted from shared storage and "
+                 "dropped from MediaStore. Reopening the app left both the row and the app's own "
+                 "copy of the picture in place, and changed the row: Original URI and MediaStore "
+                 "ID moved off the deleted source and onto the app's own saved output, Edited "
+                 "Promoted To Original went from 0 to 1 as stored, which the column shows as No "
+                 "and Yes, Latest Edited URI was cleared, and the stored edit list was emptied, so "
+                 "Edit Steps fell from 1 to 0. Three things follow. A row whose Edited Promoted To "
+                 "Original reads Yes (stored as 1) names the app's own output in Original URI, not "
+                 "the photograph the edit was made on. A blank Latest Edited URI is not evidence "
+                 "that nothing was ever saved. And a zero in Edit Steps is not evidence that no "
+                 "edit was ever made, because the list is discarded when that promotion happens. "
+                 "SHA-1 Hash is a content hash the store can carry for an image. Measured on the "
+                 "tested device, the stored value equalled the SHA-1 of the bytes of the file it "
+                 "names, so an examiner can match a file to this record by hashing it. It was "
+                 "populated on one row, the row the app created for a file it had itself exported "
+                 "and then read back. Edit Steps counts the repeated top level entries of the "
+                 "editListData protobuf. On the tested device one adjustment produced one entry "
+                 "and one crop produced one more, while applying a bundled Look added two, because "
+                 "that Look's own asset inside the application package is itself a two entry "
+                 "stack. A single action can therefore contribute more than one step, so the "
+                 "number bounds the work done on an image rather than counting the taps that "
+                 "produced it. It is blank where the image has no image_edits row at all. The "
+                 "individual steps are not decoded: the field numbers that identify each tool "
+                 "carry no names in the store, so reporting them as tool names would be guesswork. "
+                 "Camera Capture, Trashed, Favorite and Raw are the app's own flags, named here "
+                 "after the columns they come from; what sets each was not exercised. Each read "
+                 "the same value on every row of the tested device; they are reported because each "
+                 "one separates images on a device where they vary. Unreachable Since (as stored) is "
+                 "the unreachableSince column as the database holds it, with no conversion. The "
+                 "table declares it INTEGER and allows it to be empty. Its unit and what sets it "
+                 "are not established: it was empty on all 6 rows of emu_a15_oss_v13, so no value "
+                 "was available to read. The row whose source file was deleted in the test above "
+                 "was empty too, so a source becoming unreachable through deletion did not fill "
+                 "it on that device. The store holds six tables and the other "
+                 "four are not reported. collages and collage_images are named for a collage "
+                 "feature; what they hold is not established. Both were empty here and could not "
+                 "be filled, because the tested build surfaces no way to reach the feature. Its "
+                 "strings and its table definitions are in the application package, the gallery "
+                 "filter offers only All, Camera and Edits, and the selection menu offers only "
+                 "copy style, paste style, remove and share, so nothing here is exercised against "
+                 "them and no code is shipped for them. A device whose Snapseed does expose "
+                 "collages would be the sample that closes that gap. android_metadata and "
                  "room_master_table are SQLite and Room bookkeeping and carry no user data. "
-                 "Location metadata is worth reading with care here. Snapseed's manifest "
-                 "requests ACCESS_MEDIA_LOCATION and the permission was not granted on the "
-                 "tested device. The source photograph on shared storage still carried its "
-                 "coordinates while the app's own copy and the file it exported both carried "
-                 "zeroed GPS EXIF tags of the same length; the platform mechanism behind that is "
-                 "not sourced here. Absence of coordinates in a Snapseed copy or "
-                 "export is therefore not evidence that the photograph had none.",
+                 "Location metadata is worth reading with care here. Snapseed's manifest requests "
+                 "ACCESS_MEDIA_LOCATION and the permission was not granted on the tested device. "
+                 "The source photograph on shared storage still carried its coordinates while the "
+                 "app's own copy and the file it exported both carried zeroed GPS EXIF tags of the "
+                 "same length; the platform mechanism behind that is not sourced here. Absence of "
+                 "coordinates in a Snapseed copy or export is therefore not evidence that the "
+                 "photograph had none.",
         "paths": ('*/com.niksoftware.snapseed/databases/image_edit_local_db*',),
         "output_types": "standard",
         "artifact_icon": "image",
@@ -88,7 +90,7 @@ __artifacts_v2__ = {
     "snapseed_cached_images": {
         "name": "Snapseed Cached Images",
         "description": "Image files Snapseed keeps in its own storage, shown inline",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
         "requirements": "none",
@@ -98,33 +100,32 @@ __artifacts_v2__ = {
         },
         "notes": "One row per file in com.niksoftware.snapseed/files/imported_images and "
                  "com.niksoftware.snapseed/cache/edits_cache. Stored In says which of the two a "
-                 "file came from. The imported_images copy is made when an image is opened in the "
-                 "editor and holds the picture as the app received it; the edits_cache files are "
-                 "image files found under the app's cache folder, and what each one represents "
-                 "is not established. Both are inside the app's private storage. That they "
-                 "outlive the picture they were made from was tested rather than assumed: a "
-                 "throwaway photograph was opened in the editor, its source file was then "
-                 "deleted from shared storage and dropped from MediaStore, and after the app was "
-                 "reopened its copy was still in imported_images. The image is shown inline. "
-                 "Format is read from the file's own leading bytes rather than from its name, "
-                 "which matters because the edits_cache files carry no extension; every file on "
-                 "the tested device was a JPEG, and Width and Height are read from that file's "
-                 "own header. No link from these files to a row of the Snapseed Images artifact "
-                 "is reported, because the store records none. An imported_images file is named "
-                 "after the image's display name with a numeric suffix added when that name is "
-                 "already taken, and an edits_cache name is a number and a thirty two character "
-                 "hexadecimal string that appears nowhere in the database, which was checked "
-                 "against every text and blob value the database holds. On the tested device six "
-                 "image_metadata rows stood against five imported_images files, so even the "
-                 "counts do not line up and matching on a name would be a guess. The dimensions "
-                 "and the picture itself are what tie a file to a row, and that is left to the "
-                 "examiner. The edit cache is also not a complete history: across two pulls of "
-                 "the tested device it went from four files to three, two of the first four "
-                 "having gone and a new one appeared, so it does not hold every file the app has "
-                 "written there. "
-                 "As noted on the Snapseed Images artifact, the copy the app holds can carry GPS "
-                 "EXIF tags overwritten with zeroes where Android redacted them on handover, so "
-                 "the copy is not always byte for byte the source file.",
+                 "file came from. On the tested device a file appeared in imported_images when an "
+                 "image was opened in the editor; the edits_cache files are image files found "
+                 "under the app's cache folder, and what each one represents is not established. "
+                 "Both are inside the app's private storage. That they outlive the picture they "
+                 "were made from was tested rather than assumed: a throwaway photograph was opened "
+                 "in the editor, its source file was then deleted from shared storage and dropped "
+                 "from MediaStore, and after the app was reopened its copy was still in "
+                 "imported_images. The image is shown inline. Format is read from the file's own "
+                 "leading bytes rather than from its name, which matters because the edits_cache "
+                 "files carry no extension; every file on the tested device was a JPEG, and Width "
+                 "and Height are read from that file's own header. No link from these files to a "
+                 "row of the Snapseed Images artifact is reported, because the store records none. "
+                 "An imported_images file is named after the image's display name with a numeric "
+                 "suffix added when that name is already taken, and an edits_cache name is a "
+                 "number and a thirty two character hexadecimal string that appears nowhere in the "
+                 "database, which was checked against every text and blob value the database "
+                 "holds. On the tested device six image_metadata rows stood against five "
+                 "imported_images files, so even the counts do not line up and matching on a name "
+                 "would be a guess. The dimensions and the picture itself are what tie a file to a "
+                 "row, and that is left to the examiner. The edit cache is also not a complete "
+                 "history: across two pulls of the tested device it went from four files to three, "
+                 "two of the first four having gone and a new one appeared, so it does not hold "
+                 "every file the app has written there. As noted on the Snapseed Images artifact, "
+                 "the copy the app holds can carry GPS EXIF tags overwritten with zeroes where the "
+                 "source file on shared storage still carried coordinates; what zeroed them is not "
+                 "sourced here. So the copy is not always byte for byte the source file.",
         "paths": ('*/com.niksoftware.snapseed/files/imported_images/*',
                   '*/com.niksoftware.snapseed/cache/edits_cache/*'),
         "output_types": "standard",
@@ -132,44 +133,46 @@ __artifacts_v2__ = {
     },
     "snapseed_settings": {
         "name": "Snapseed Settings",
-        "description": "Snapseed preferences, including when the app was first opened",
-        "author": "@AlexisBrignoni, Claude",
+        "description": "Snapseed preferences, including the first_app_open_date value the app stores",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Snapseed",
         "sample_data": {
             "emu_a15_oss_v13": "Snapseed 4.1.6.975983225 | 22 rows",
         },
         "notes": "One row per key in the XML preference files under "
-                 "com.niksoftware.snapseed/shared_prefs. Value is the string the file holds. "
-                 "Time (UTC) is filled only for the keys whose value is Unix milliseconds, which "
-                 "are first_app_open_date and lastExitTimestamp, and is blank on every other row. "
+                 "com.niksoftware.snapseed/shared_prefs. Value is the string the file holds. Time "
+                 "(UTC) is filled only for the keys whose value is Unix milliseconds, which are "
+                 "first_app_open_date and lastExitTimestamp, and is blank on every other row. "
                  "first_app_open_date and lastExitTimestamp are reported under the app's own key "
-                 "names; their meaning is taken from those names and was not separately "
-                 "measured. gallery_total_items and gallery_edited_items are counters the app "
-                 "keeps outside the database. On the tested device they read 6 and 2, against 6 "
-                 "rows in image_metadata and the 2 of those rows carrying a Latest Edited URI, "
-                 "so the two stores agree by way of different code paths. The keys beginning "
-                 "ui_interaction_ carry a per control tally and tool_edit_count a tally of "
-                 "edits. On the tested device, where the Tune Image tool was opened three times "
-                 "and the Crop tool and the Looks tab once each, ui_interaction_TUNE_BUTTON read "
-                 "3 and ui_interaction_CROP_BUTTON and ui_interaction_LOOKS_BUTTON read 1, and "
+                 "names; their meaning is taken from those names and was not separately measured. "
+                 "gallery_total_items and gallery_edited_items are counters the app keeps outside "
+                 "the database. On the tested device they read 6 and 2, against 6 rows in "
+                 "image_metadata and the 2 of those rows carrying a Latest Edited URI, so the two "
+                 "stores agree by way of different code paths. The keys beginning ui_interaction_ "
+                 "carry a per control tally and tool_edit_count a tally of edits. On the tested "
+                 "device, where the Tune Image tool was opened three times and the Crop tool and "
+                 "the Looks tab once each, ui_interaction_TUNE_BUTTON read 3 and "
+                 "ui_interaction_CROP_BUTTON and ui_interaction_LOOKS_BUTTON read 1, and "
                  "tool_edit_count read 4, matching the four adjustments confirmed from the Tools "
                  "tab and not counting the Look that was also applied. Both tallies moved by one "
-                 "when one further Tune Image edit was made, which is the second observation "
-                 "each reading rests on. These tallies sit outside the image database, so they "
-                 "can still show that a tool was used after the row for the image it was used on "
-                 "has gone. crop_last_aspect_ratio is the aspect ratio last chosen in the Crop "
-                 "tool and is reported as stored, no mapping for it being published; on the "
-                 "tested device, where the square preset was the one chosen, it read 2. "
-                 "last_save_intent is reported as stored. Keys beginning primes. are not "
-                 "reported, except lastExitProcessName and lastExitTimestamp. The primes. prefix "
-                 "is attributed to Google's Primes performance library by its name; that "
-                 "attribution is not sourced here. The keys excluded on the tested device were "
-                 "primes.battery.snapshot, a "
-                 "base64 telemetry payload, and primes.packageMetric.lastSendTime, whose value is "
-                 "not a Unix time.",
+                 "when one further Tune Image edit was made, which is the second observation each "
+                 "reading rests on. These tallies sit outside the image database. Whether they "
+                 "keep their values after an image row is removed was not tested. "
+                 "crop_last_aspect_ratio is the aspect ratio last chosen in the Crop tool and is "
+                 "reported as stored, no mapping for it being published; on the tested device, "
+                 "where the square preset was the one chosen, it read 2. last_save_intent is "
+                 "reported as stored. Keys beginning primes. are not reported. On emu_a15_oss_v13 "
+                 "the file primes.xml held four keys: two spelled with the prefix, which are not "
+                 "reported, and lastExitProcessName and lastExitTimestamp, spelled with no "
+                 "prefix, which are reported like any other key, with Time (UTC) filled for "
+                 "lastExitTimestamp. "
+                 "The primes. prefix is attributed to Google's Primes performance library by its "
+                 "name; that attribution is not sourced here. The keys excluded on the tested "
+                 "device were primes.battery.snapshot, a base64 telemetry payload, and "
+                 "primes.packageMetric.lastSendTime, whose value is not a Unix time.",
         "paths": ('*/com.niksoftware.snapseed/shared_prefs/*.xml',),
         "output_types": "standard",
         "artifact_icon": "settings",
@@ -188,11 +191,10 @@ DB_SUFFIX = 'databases/image_edit_local_db'
 IMPORTED = '/files/imported_images/'
 EDIT_CACHE = '/cache/edits_cache/'
 
-# Keys whose value is Unix milliseconds. lastExitTimestamp is written by Google's Primes
-# library and times this app's own process exit, so it is kept while the rest of that
-# library's keys are not.
+# Keys whose value is Unix milliseconds. Both are spelled as the preference files store
+# them: lastExitTimestamp sits in primes.xml with no primes. prefix, so the prefix test
+# in snapseed_settings does not exclude it.
 MS_KEYS = ('first_app_open_date', 'lastExitTimestamp')
-PRIMES_KEPT = ('lastExitTimestamp', 'lastExitProcessName')
 
 
 def _paths(context):
@@ -342,7 +344,8 @@ def snapseed_images(context):
                 r[4] or '', r[5], r[6], r[7] or '', r[8],
                 r[9] or '', r[10] or '', _edit_steps(r[11]),
                 _yes_no(r[12]), _yes_no(r[13]), _yes_no(r[14]),
-                _yes_no(r[15]), _yes_no(r[16]), _ms(r[17]), r[18],
+                _yes_no(r[15]), _yes_no(r[16]),
+                '' if r[17] is None else r[17], r[18],
                 context.get_relative_path(db_path)))
         if records and db_path not in sources:
             sources.append(db_path)
@@ -353,7 +356,7 @@ def snapseed_images(context):
         'Display Name', 'Width', 'Height', 'Original URI', 'MediaStore ID',
         'Latest Edited URI', 'SHA-1 Hash', 'Edit Steps',
         'Camera Capture', 'Edited Promoted To Original', 'Trashed', 'Favorite', 'Raw',
-        ('Unreachable Since', 'datetime'), 'Image ID', 'Source File')
+        'Unreachable Since (as stored)', 'Image ID', 'Source File')
     return data_headers, data_list, '\n'.join(sources)
 
 
@@ -405,7 +408,7 @@ def snapseed_settings(context):
             key = entry.get('name')
             if not key:
                 continue
-            if key.startswith('primes.') and key not in PRIMES_KEPT:
+            if key.startswith('primes.'):
                 continue
             value = entry.get('value')
             if value is None:

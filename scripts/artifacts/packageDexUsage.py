@@ -3,17 +3,17 @@ __artifacts_v2__ = {
         "name": "Dex Usage - App Code Loads",
         "description": "Primary dex files a package loaded from its own installation, with the time of the most "
          "recent load ART Service recorded.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude; @AlexisBrignoni, Codex",
         "creation_date": "2026-09-06",
-        "last_update_date": "2026-09-06",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Android System",
         "notes": "Read from the ART Service dex use store at /data/system/package-dex-usage.pb. Reference: "
          "Android Open Source Project, art/libartservice/service/proto/dex_use.proto for the "
          "schema and libartservice/service/java/com/android/server/art/DexUseManagerLocal.java for "
          "the writer, which names that path in its own FILENAME constant. The field numbers taken "
-         "here are identical at android-14.0.0_r1, the first release to ship ART Service, at "
-         "android-15.0.0_r1 and at main: DexUseProto package_dex_use 1; PackageDexUseProto "
+         "here are identical at android-14.0.0_r1, the first release to ship ART Service, and at "
+         "android-15.0.0_r1: DexUseProto package_dex_use 1; PackageDexUseProto "
          "owning_package_name 1, primary_dex_use 2, secondary_dex_use 3; PrimaryDexUseProto "
          "dex_file 1, record 2; PrimaryDexUseRecordProto loading_package_name 1, isolated_process "
          "2, last_used_at_ms 3; SecondaryDexUseProto dex_file 1, user_id 2, record 3; "
@@ -60,8 +60,13 @@ __artifacts_v2__ = {
          "extraction. The path pattern is not anchored on a data/ prefix, so a raw userdata "
          "partition image that carries system/ at its root is matched as well. The three Dex Usage "
          "artifacts partition the store's records without overlap: this one, Cross-Package Code "
-         "Loads, and Secondary Dex Loads. Every field of every message in the schema is reported "
-         "across them, so nothing in the store is left unread.",
+         "Loads, and Secondary Dex Loads. Every field of every message in the schema at the releases named "
+         "above is reported across them. Supported unknown field numbers are skipped and summarized "
+         "per store and artifact traversal, with schema scope, field number, wire type and count. "
+         "At most 32 distinct diagnostic keys are retained; further unlisted occurrences are "
+         "counted separately. Primary artifacts traverse the same primary messages and may repeat "
+         "these summaries with different artifact keys. Payload values and future field meanings "
+         "are not decoded; a summary is not a complete-schema or malformed-message recovery claim.",
         "paths": ('*/system/package-dex-usage.pb',),
         "output_types": "standard",
         "artifact_icon": "package",
@@ -111,17 +116,17 @@ __artifacts_v2__ = {
         "name": "Dex Usage - Cross-Package Code Loads",
         "description": "Primary dex files one package loaded from a different package's installation, with the "
          "time of the most recent load.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude; @AlexisBrignoni, Codex",
         "creation_date": "2026-09-06",
-        "last_update_date": "2026-09-06",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Android System",
         "notes": "Read from the ART Service dex use store at /data/system/package-dex-usage.pb. Reference: "
          "Android Open Source Project, art/libartservice/service/proto/dex_use.proto for the "
          "schema and libartservice/service/java/com/android/server/art/DexUseManagerLocal.java for "
          "the writer, which names that path in its own FILENAME constant. The field numbers taken "
-         "here are identical at android-14.0.0_r1, the first release to ship ART Service, at "
-         "android-15.0.0_r1 and at main: DexUseProto package_dex_use 1; PackageDexUseProto "
+         "here are identical at android-14.0.0_r1, the first release to ship ART Service, and at "
+         "android-15.0.0_r1: DexUseProto package_dex_use 1; PackageDexUseProto "
          "owning_package_name 1, primary_dex_use 2, secondary_dex_use 3; PrimaryDexUseProto "
          "dex_file 1, record 2; PrimaryDexUseRecordProto loading_package_name 1, isolated_process "
          "2, last_used_at_ms 3; SecondaryDexUseProto dex_file 1, user_id 2, record 3; "
@@ -141,10 +146,9 @@ __artifacts_v2__ = {
          "time: that happened on 23 pairings across 6 of the tested images and is not duplication. "
          "The platform writes the file through a debouncer with a 15 second minimum interval and "
          "also on the shutdown broadcast, so a load in the last seconds before acquisition can be "
-         "absent. One package loading another's code is ordinary platform behaviour far more often "
-         "than not: of the 2232 rows across the tested images, 1159 name Google Play services as "
-         "the owning package and 458 the Android System WebView, which apps load to render web "
-         "content, so the row worth attention is an unexpected pairing rather than the presence of "
+         "absent. Of the 2232 rows across the tested images, 1159 name Google Play services as the owning "
+         "package and 458 the Android System WebView, so the row worth attention is an unexpected pairing "
+         "rather than the presence of "
          "pairings. 1549 of the rows load a file under /data/app and 683 a platform path under "
          "/system, /apex, /product, /vendor or /system_ext. Isolated Process is the record's "
          "isolated_process flag, set for a load into an isolated process; it was true on 3 of "
@@ -170,7 +174,13 @@ __artifacts_v2__ = {
          "data/ prefix, so a raw userdata partition image that carries system/ at its root is "
          "matched as well. The three Dex Usage artifacts partition the store's records without "
          "overlap: App Code Loads, this one, and Secondary Dex Loads. Every field of every message "
-         "in the schema is reported across them, so nothing in the store is left unread.",
+         "in the schema at the releases named above is reported across them. A field added by a later "
+         "release is skipped with a bounded per-store, per-artifact summary of supported unknown "
+         "field numbers, schema scopes, wire types and counts. At most 32 distinct diagnostic "
+         "keys are retained, with unlisted occurrences counted separately. Both primary artifacts "
+         "traverse the same primary messages and can repeat summaries with different artifact "
+         "keys. Unknown payloads and meanings are not decoded; no full-schema or malformed-message "
+         "recovery is claimed.",
         "paths": ('*/system/package-dex-usage.pb',),
         "output_types": "standard",
         "artifact_icon": "share-2",
@@ -218,19 +228,20 @@ __artifacts_v2__ = {
     },
     "package_dex_usage_secondary": {
         "name": "Dex Usage - Secondary Dex Loads",
-        "description": "Dex, APK and JAR files an app loaded from its own data directory rather than from its "
-         "installation, with the time of the most recent load.",
-        "author": "@AlexisBrignoni, Claude",
+        "description": "Secondary dex files (APK or JAR files in a package's data directory, as opposed to "
+         "its installation) recorded as loaded, by loading and owning package, with the time of the most "
+         "recent load.",
+        "author": "@AlexisBrignoni, Claude; @AlexisBrignoni, Codex",
         "creation_date": "2026-09-06",
-        "last_update_date": "2026-09-06",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Android System",
         "notes": "Read from the ART Service dex use store at /data/system/package-dex-usage.pb. Reference: "
          "Android Open Source Project, art/libartservice/service/proto/dex_use.proto for the "
          "schema and libartservice/service/java/com/android/server/art/DexUseManagerLocal.java for "
          "the writer, which names that path in its own FILENAME constant. The field numbers taken "
-         "here are identical at android-14.0.0_r1, the first release to ship ART Service, at "
-         "android-15.0.0_r1 and at main: DexUseProto package_dex_use 1; PackageDexUseProto "
+         "here are identical at android-14.0.0_r1, the first release to ship ART Service, and at "
+         "android-15.0.0_r1: DexUseProto package_dex_use 1; PackageDexUseProto "
          "owning_package_name 1, primary_dex_use 2, secondary_dex_use 3; PrimaryDexUseProto "
          "dex_file 1, record 2; PrimaryDexUseRecordProto loading_package_name 1, isolated_process "
          "2, last_used_at_ms 3; SecondaryDexUseProto dex_file 1, user_id 2, record 3; "
@@ -257,8 +268,10 @@ __artifacts_v2__ = {
          "additionally 10, a second Android user, on 18 of them. Class Loader Context is the "
          "record's class_loader_context, the dependency chain the loader was given, as stored; it "
          "carried a value on all 1568 rows of the tested images. ABI is the record's abi_name; it "
-         "was arm64-v8a on all 1568 rows of the tested images, and a load for another ABI would be "
-         "recorded here. Isolated Process was false on all 1568 of these rows across the tested "
+         "was arm64-v8a on all 1568 rows of the tested images, and DexUseManagerLocal fills it with the "
+         "loading package's primary ABI (android-15.0.0_r1, lines 424 to 427), so a package with another "
+         "primary ABI would show that ABI here. Isolated Process was false on all 1568 of these rows "
+         "across the tested "
          "images. An entry outlives the package it names until the platform's cleanup pass runs: "
          "DexUseManagerLocal.cleanup() drops entries whose owning or loading package is no longer "
          "installed, and ArtManagerLocal.cleanup() invokes it as part of the platform's routine "
@@ -280,8 +293,12 @@ __artifacts_v2__ = {
          "extraction. The path pattern is not anchored on a data/ prefix, so a raw userdata "
          "partition image that carries system/ at its root is matched as well. The three Dex Usage "
          "artifacts partition the store's records without overlap: App Code Loads, Cross-Package "
-         "Code Loads, and this one. Every field of every message in the schema is reported across "
-         "them, so nothing in the store is left unread.",
+         "Code Loads, and this one. Every field of every message in the schema at the releases named above "
+         "is reported across them. Supported unknown field numbers are skipped with a bounded "
+         "per-store, per-artifact summary of schema scopes, field numbers, wire types and counts, "
+         "including the Int32Value wrapper. At most 32 distinct diagnostic keys are retained; "
+         "unlisted occurrences are counted separately. Unknown payloads and meanings are not "
+         "decoded; no full-schema or malformed-message recovery is claimed.",
         "paths": ('*/system/package-dex-usage.pb',),
         "output_types": "standard",
         "artifact_icon": "terminal",
@@ -358,6 +375,43 @@ _SECONDARY_RECORD_FIELDS = {1, 2, 3, 4, 5}
 _INT32_VALUE_FIELDS = {1}
 
 
+_UNKNOWN_FIELD_LIMIT = 32
+_UNKNOWN_LOG_LIMIT = 8192
+
+
+class _UnknownFields:
+    """Bounded aggregate of visited unknown fields, without retaining payloads."""
+    def __init__(self):
+        self.counts = {}
+        self.unlisted_occurrences = 0
+
+    def add(self, scope, field, wire):
+        key = (scope, field, wire)
+        if key in self.counts:
+            self.counts[key] += 1
+        elif len(self.counts) < _UNKNOWN_FIELD_LIMIT:
+            self.counts[key] = 1
+        else:
+            self.unlisted_occurrences += 1
+
+    def emit(self, source, artifact_key):
+        if not self.counts and not self.unlisted_occurrences:
+            return
+        entries = []
+        for (scope, field, wire), count in self.counts.items():
+            field_text = str(field) if field.bit_length() <= 29 else (
+                f'oversized(bits={field.bit_length()})')
+            entries.append(f'{scope}:field={field_text}/wire={wire}/count={count}')
+        message = (f'Dex usage unknown fields: source={ascii(source[:240])}; '
+                   f'artifact={ascii(artifact_key[:80])}; entries=[' + ','.join(entries) + ']')
+        if self.unlisted_occurrences:
+            message += f'; unlisted_occurrences={self.unlisted_occurrences}'
+        if len(message) > _UNKNOWN_LOG_LIMIT:
+            suffix = '; summary_text_truncated=true'
+            message = message[:_UNKNOWN_LOG_LIMIT - len(suffix)] + suffix
+        logfunc(message)
+
+
 def _varint(data, pos):
     result = shift = 0
     while True:
@@ -369,7 +423,7 @@ def _varint(data, pos):
             return result, pos
 
 
-def _wire_fields(data, want):
+def _wire_fields(data, want, unknown=None, scope=""):
     """Top-level fields of one protobuf message: {str(field number): value}, repeated as a list.
 
     Reads the wire format directly (varint 0, 64-bit 1, length-delimited 2, 32-bit 5) and skips
@@ -392,6 +446,8 @@ def _wire_fields(data, want):
         else:
             raise ValueError(f'unsupported wire type {wire} at offset {pos}')
         if field not in want:
+            if unknown is not None:
+                unknown.add(scope, field, wire)
             continue
         key = str(field)
         if key in out:
@@ -432,7 +488,7 @@ def _flag(value):
     return bool(value)
 
 
-def _user_id(record):
+def _user_id(record, unknown=None):
     """The Android user from the Int32Value wrapper, or '' when the wrapper is absent.
 
     proto3 leaves a zero scalar off the wire, so the wrapper for user 0 is an empty message.
@@ -440,10 +496,10 @@ def _user_id(record):
     row belonging to the first user."""
     if '2' not in record:
         return ''
-    return _wire_fields(record['2'], _INT32_VALUE_FIELDS).get('1', 0)
+    return _wire_fields(record['2'], _INT32_VALUE_FIELDS, unknown, 'Int32Value').get('1', 0)
 
 
-def _stores(context):
+def _stores(context, unknown_by_path=None):
     """(path, parsed top-level message) for each dex-use store, skips logged."""
     out = []
     for file_found in unique_files(context):
@@ -460,26 +516,31 @@ def _stores(context):
             logfunc(f'Dex usage store is empty: {file_found}')
             continue
         try:
-            out.append((file_found, _wire_fields(data, _TOP_FIELDS)))
+            unknown = _UnknownFields() if unknown_by_path is not None else None
+            if unknown_by_path is not None:
+                unknown_by_path[file_found] = unknown
+            out.append((file_found, _wire_fields(data, _TOP_FIELDS, unknown, 'DexUseProto')))
         except (IndexError, ValueError) as error:
             logfunc(f'Could not read the dex usage store {file_found}: {error}')
     return out
 
 
-def _primary_rows(context):
+def _primary_rows(context, artifact_key=None):
     """(own-package rows, cross-package rows, source paths) from every primary dex record."""
     own, cross, sources = [], [], []
-    for path, top in _stores(context):
+    unknown_by_path = {} if artifact_key is not None else None
+    for path, top in _stores(context, unknown_by_path):
+        unknown = unknown_by_path[path] if unknown_by_path is not None else None
         sources.append(path)
         relative = context.get_relative_path(path)
         for package_raw in _repeated(top.get('1')):
-            package = _wire_fields(package_raw, _PACKAGE_FIELDS)
+            package = _wire_fields(package_raw, _PACKAGE_FIELDS, unknown, 'PackageDexUseProto')
             owner = _text(package.get('1'))
             for primary_raw in _repeated(package.get('2')):
-                primary = _wire_fields(primary_raw, _PRIMARY_FIELDS)
+                primary = _wire_fields(primary_raw, _PRIMARY_FIELDS, unknown, 'PrimaryDexUseProto')
                 dex_file = _text(primary.get('1'))
                 for record_raw in _repeated(primary.get('2')):
-                    record = _wire_fields(record_raw, _PRIMARY_RECORD_FIELDS)
+                    record = _wire_fields(record_raw, _PRIMARY_RECORD_FIELDS, unknown, 'PrimaryDexUseRecordProto')
                     loader = _text(record.get('1'))
                     isolated = _flag(record.get('2'))
                     stamp = _ms(record.get('3'))
@@ -487,6 +548,8 @@ def _primary_rows(context):
                         own.append((stamp, owner, dex_file, isolated, relative))
                     else:
                         cross.append((stamp, loader, owner, dex_file, isolated, relative))
+        if unknown is not None:
+            unknown.emit(relative, artifact_key)
     return own, cross, sources
 
 
@@ -499,7 +562,7 @@ def package_dex_usage_app_code(context):
         'Isolated Process',
         'Source File',
     )
-    own, _cross, sources = _primary_rows(context)
+    own, _cross, sources = _primary_rows(context, 'package_dex_usage_app_code')
     own.sort(key=_by_time, reverse=True)
     return data_headers, own, '\n'.join(sources)
 
@@ -514,7 +577,7 @@ def package_dex_usage_cross_package(context):
         'Isolated Process',
         'Source File',
     )
-    _own, cross, sources = _primary_rows(context)
+    _own, cross, sources = _primary_rows(context, 'package_dex_usage_cross_package')
     cross.sort(key=_by_time, reverse=True)
     return data_headers, cross, '\n'.join(sources)
 
@@ -534,18 +597,20 @@ def package_dex_usage_secondary(context):
     )
     data_list = []
     sources = []
-    for path, top in _stores(context):
+    unknown_by_path = {}
+    for path, top in _stores(context, unknown_by_path):
+        unknown = unknown_by_path[path]
         sources.append(path)
         relative = context.get_relative_path(path)
         for package_raw in _repeated(top.get('1')):
-            package = _wire_fields(package_raw, _PACKAGE_FIELDS)
+            package = _wire_fields(package_raw, _PACKAGE_FIELDS, unknown, 'PackageDexUseProto')
             owner = _text(package.get('1'))
             for secondary_raw in _repeated(package.get('3')):
-                secondary = _wire_fields(secondary_raw, _SECONDARY_FIELDS)
+                secondary = _wire_fields(secondary_raw, _SECONDARY_FIELDS, unknown, 'SecondaryDexUseProto')
                 dex_file = _text(secondary.get('1'))
-                user = _user_id(secondary)
+                user = _user_id(secondary, unknown)
                 for record_raw in _repeated(secondary.get('3')):
-                    record = _wire_fields(record_raw, _SECONDARY_RECORD_FIELDS)
+                    record = _wire_fields(record_raw, _SECONDARY_RECORD_FIELDS, unknown, 'SecondaryDexUseRecordProto')
                     data_list.append((
                         _ms(record.get('5')),
                         _text(record.get('1')),
@@ -557,5 +622,6 @@ def package_dex_usage_secondary(context):
                         _flag(record.get('2')),
                         relative,
                     ))
+        unknown.emit(relative, 'package_dex_usage_secondary')
     data_list.sort(key=_by_time, reverse=True)
     return data_headers, data_list, '\n'.join(sources)

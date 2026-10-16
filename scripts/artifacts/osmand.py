@@ -8,15 +8,22 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "OsmAnd",
         "notes": "One row per entry in the history_recents table of databases/search_history. OsmAnd is an "
-                 "offline maps and navigation app, and this table records the places it kept in its "
-                 "recent list, each with a Latitude and Longitude, so the rows are coordinates the app "
-                 "held rather than positions the device was measured at. Time is Unix milliseconds and "
+                 "offline maps and navigation app, and this table records the entries the app kept "
+                 "in its history. Place entries carry a Latitude and Longitude the app held, which "
+                 "are not positions the device was measured at. The app also stores POI type and "
+                 "POI filter entries with 0 and 0 as coordinates (SearchHistoryHelper.java lines "
+                 "103 to 108 at the commit cited below), so a 0, 0 row is not a location. Time is "
+                 "Unix milliseconds, is set again each time the app adds an entry that already "
+                 "exists (SearchHistoryHelper.java addNewItemToHistory at the commit cited below), "
+                 "and "
                  "was UTC on the tested device (18:20 UTC matched the device's 2:20 PM local clock), so "
-                 "it is reported as UTC. The stored name is serialised by the app as type#name, and "
-                 "where a subtype is present as type.subtype#name (serializeToString in "
-                 "PointDescription.java at osmandapp/OsmAnd b0dadd38e37023cd58a62ff031f9ac3ff1942ae9), "
-                 "so it is split here into a Point Type column and a Name column, with the type reported "
-                 "as stored. Types the app defines include favorite, poi, address, marker, destination, "
+                 "it is reported as UTC. The stored name is serialised by the app as type#name, as "
+                 "type.subtype#name where a subtype is present, and with a further #iconName "
+                 "appended where an icon name is set (serializeToString in PointDescription.java "
+                 "at osmandapp/OsmAnd b0dadd38e37023cd58a62ff031f9ac3ff1942ae9). It is split here "
+                 "at the first # into a Point Type column and a Name column, with the type "
+                 "reported as stored, so an icon name stays in the Name column. Types the app "
+                 "defines include favorite, poi, address, marker, destination, "
                  "gpx, wpt, route, location, my_location and world_region; the tested row was a "
                  "favorite. Source is the HistorySource value as stored, either SEARCH or NAVIGATION "
                  "(HistorySource.java in the same tree). The freq_intervals and freq_values "
@@ -39,15 +46,16 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-30",
         "requirements": "none",
         "category": "OsmAnd",
-        "notes": "One row per entry in the app_events table of databases/analytics. Each row records that "
-                 "a named event occurred in the app at a given time, giving a usage timeline for the app "
-                 "itself. Date is Unix milliseconds and is reported as UTC. Event is the app's own event "
+        "notes": "One row per entry in the app_events table of databases/analytics. Each row is an "
+                 "event name and a time as stored. What causes the app to write a row was not "
+                 "sourced here. Date is Unix milliseconds and is reported as UTC. Event is the "
+                 "app's own event "
                  "name as stored; the values seen on the tested device were search_open and "
                  "open_context_menu, and the set is not enumerated in this artifact, so any other value "
                  "is carried through unchanged. Event Type is the accompanying integer as stored, which "
                  "was 1 on every tested row. The table does not record what was searched for or which "
-                 "place a menu was opened on, so it establishes app activity and its timing rather than "
-                 "its content; the Search History artifact covers the places. The database uses a "
+                 "place a menu was opened on, so it carries event names and times and no content; "
+                 "the Search History artifact covers the places. The database uses a "
                  "rollback journal rather than WAL, and the -journal sidecar is in the paths.",
         "paths": ('*/net.osmand*/databases/analytics*',),
         "output_types": "standard",

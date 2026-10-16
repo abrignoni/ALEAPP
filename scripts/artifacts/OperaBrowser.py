@@ -2,12 +2,14 @@ __artifacts_v2__ = {
     "opera_tabs": {
         "name": "Opera Browser - Tabs",
         "description": "Browser tabs recorded in Opera's session_db tab-state store, "
-                       "open or closed, with each tab's position in the tab bar and "
-                       "the page it was showing. session_db is a separate store from the "
+                       "each marked Closed when it has a recently_closed_tab row and "
+                       "Open otherwise, with its tab_order index and the navigation "
+                       "entry the tab record names as current. session_db is a separate "
+                       "store from the "
                        "Chromium History database.",
-        "author": "@Gear-I, Claude", 
+        "author": "@Gear-I, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-08-16",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Opera",
         "notes": "Opera's regular browsing history, search terms, bookmarks, "
@@ -25,8 +27,8 @@ __artifacts_v2__ = {
                  "the current page's URL, exactly, against Opera's own History database's "
                  "urls.last_visit_time, and is left blank when no exact match exists (this "
                  "happens for Opera's internal 'operaui://startpage' and, on the device this was "
-                 "validated against, for two address-bar searches whose visit did not leave a "
-                 "matching literal URL in History either). Because it is the URL's *last* visit "
+                 "validated against, for two opera-internal://search entries whose URL had no "
+                 "exact match in History). Because it is the URL's *last* visit "
                  "and not necessarily the visit this specific tab made, a URL revisited after "
                  "this tab session would show a later time than when this tab actually had it "
                  "open. Two other Opera-only stores were inspected and left out of this release: "
@@ -36,10 +38,12 @@ __artifacts_v2__ = {
                  "built-in search engines on the device this was validated against. The "
                  "databases-off-the-record folder was empty on the device this was validated "
                  "against, "
-                 "so no parser for it is included here. If an extraction contains more "
-                 "than one Opera profile, only the first session_db/History pair found "
-                 "is used; a device with multiple profiles is a known, untested edge "
-                 "case rather than one confirmed to work.",
+                 "so no parser for it is included here. Every session_db found is read and its "
+                 "URLs are matched only against the History file in the same app_opera folder. "
+                 "Session Source File identifies the session database for each row. History Lookup Source "
+                 "File identifies the paired timestamp lookup database, whether or not this URL "
+                 "matched; blank means no paired History file. Open/Closed and current-page "
+                 "flags describe parser readings of stored relationships, not live device state.",
         "paths": ('*/app_opera/session_db*', '*/app_opera/History*'),
         "output_types": "standard",
         "artifact_icon": "layout",
@@ -51,13 +55,14 @@ __artifacts_v2__ = {
         "name": "Opera Browser - Tab Navigation History",
         "description": "The back/forward navigation stack recorded inside each Opera "
                        "tab, from session_db's navigation_entry table: the pages the "
-                       "tab moved to, in order, with the page currently on screen "
-                       "flagged. Address-bar searches are decoded from the "
-                       "'opera-internal://search' URL scheme into the search text the URL "
+                       "tab moved to, in order, with the entry the tab record names as "
+                       "current flagged. For entries whose virtual_url begins with "
+                       "'opera-internal://search', Search Query is the display_string "
+                       "parameter the URL "
                        "carries.",
-        "author": "@Gear-I, Claude", 
+        "author": "@Gear-I, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-08-16",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Opera",
         "notes": "This is the tab's navigation stack as stored, not a full visit log; a page "
@@ -72,15 +77,20 @@ __artifacts_v2__ = {
                  "exactly, against Opera's own History database's urls.last_visit_time, "
                  "and is left blank when no exact match exists, which happens for the "
                  "internal 'operaui://startpage' entry tab starts from and, on "
-                 "the device this was validated against, for two address-bar searches "
-                 "whose visit did not leave a matching literal URL in History either. "
+                 "the device this was validated against, for two opera-internal://search entries "
+                 "whose URL had no exact match in History. "
                  "Because it is the URL's *last* visit rather than necessarily the "
                  "visit this entry represents, a URL revisited later than this "
-                 "navigation would show that later time instead. If an extraction "
-                 "contains more than one Opera profile, only the first "
-                 "session_db/History pair found is used; a device with multiple "
-                 "profiles is a known, untested edge case rather than one confirmed "
-                 "to work.",
+                 "navigation would show that later time instead. Every session_db found is read "
+                 "and its URLs are matched only against the History file in the same app_opera "
+                 "folder. Session Source File identifies each row's session database. History Lookup Source File "
+                 "identifies the paired timestamp lookup database, whether or not the URL matched; "
+                 "blank means no paired History file. Current-page flags describe stored index "
+                 "comparisons, not live device state. Current Entry Lookup Equals Entry Index "
+                 "reports Yes exactly when current_entry_by_tab.get(tab_id) == ix, and otherwise "
+                 "reports an empty value. An absent tab lookup defaults to None; an absent lookup "
+                 "or a stored NULL current_entry compares equal to a NULL entry index. No tab "
+                 "presence or live current-page state is established by this equality.",
         "paths": ('*/app_opera/session_db*', '*/app_opera/History*'),
           "output_types": "standard",
         "artifact_icon": "compass",
@@ -173,9 +183,10 @@ def _stores_by_container(files_found):
 @artifact_processor
 def opera_tabs(context):
     data_headers = (
-        "Status", "Tab Position", "Current Page Title", "Current Page URL",
         ("Current Page Last Visit Time (History Match)", "datetime"),
+        "Status", "Tab Position", "Current Page Title", "Current Page URL",
         "Navigation Entry Count", "Restored", "Internal Tab ID",
+        "Session Source File", "History Lookup Source File",
     )
 
     stores = _stores_by_container(unique_files(context))
@@ -215,18 +226,22 @@ def opera_tabs(context):
                 entry_counts.get(tab_id, 0),
                 "Yes" if closed.get(tab_id) else ("" if is_closed else "N/A"),
                 tab_id,
+                context.get_relative_path(db_path),
+                context.get_relative_path(history_db_path) if history_db_path else "",
             ))
 
     data_list.sort(key=lambda row: (row[0] != "Open", row[1] if row[1] != "" else 999))
+    data_list = [(row[4], *row[:4], *row[5:]) for row in data_list]
     logfunc(f"Opera Browser Tabs: {len(data_list)} tab(s) recovered from session_db.")
-    return data_headers, data_list, '\n'.join(db for db, _ in stores)
+    return data_headers, data_list, '\n'.join(sorted({path for pair in stores for path in pair if path}))
 
 
 @artifact_processor
 def opera_tab_navigation(context):
     data_headers = (
-        "Internal Tab ID", "Entry Index", "Is Current Page", "Title", "URL",
-        "Search Query", ("Last Visit Time (History Match)", "datetime"),
+        ("Last Visit Time (History Match)", "datetime"),
+        "Internal Tab ID", "Entry Index", "Current Entry Lookup Equals Entry Index", "Title", "URL",
+        "Search Query", "Session Source File", "History Lookup Source File",
     )
 
     stores = _stores_by_container(unique_files(context))
@@ -254,8 +269,11 @@ def opera_tab_navigation(context):
                 url,
                 _search_query(virtual_url),
                 history_times.get(url),
+                context.get_relative_path(db_path),
+                context.get_relative_path(history_db_path) if history_db_path else "",
             ))
 
+    data_list = [(row[6], *row[:6], *row[7:]) for row in data_list]
     logfunc(f"Opera Browser Tab Navigation History: {len(data_list)} navigation "
             f"entr{'y' if len(data_list) == 1 else 'ies'} recovered.")
-    return data_headers, data_list, '\n'.join(db for db, _ in stores)
+    return data_headers, data_list, '\n'.join(sorted({path for pair in stores for path in pair if path}))

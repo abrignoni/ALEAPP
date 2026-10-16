@@ -1,14 +1,19 @@
 __artifacts_v2__ = {
     "get_nike_activMoments": {
         "name": "Nike - Activity Moments",
-        "description": "Per-activity moments (pauses, resumes, splits, GPS signal events) from the Nike Run app database (com.nike.nrc.room)",
-        "author": "Fabian Nunes {fabiannunes12@gmail.com}",
+        "description": "Rows of the activity_moment table in the Nike Run Club app database "
+                       "(com.nike.nrc.room), with the stored moment type and value",
+        "author": "Fabian Nunes {fabiannunes12@gmail.com}, @AlexisBrignoni, Codex",
         "creation_date": "2023-03-18",
-        "last_update_date": "2023-03-18",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Nike-Run",
-        "notes": "Interactive JS timeline replaced with a structured table (one row per activity moment); "
-                 "run start/end and summary metrics are covered by the 'Nike - Activities' artifact.",
+        "notes": "One row per activity_moment row, ordered by activity and stored timestamp. "
+                 "Moment Type and Value are as stored; their app meanings and units are "
+                 "unverified, so no derived action or distance label is added. Timestamp "
+                 "retains the existing Unix-millisecond conversion. The registered samples "
+                 "recorded zero rows; positive genuine coverage remains unavailable. Only "
+                 "the first database found is read. Run summaries are in Nike - Activities.",
         "paths": ('*/com.nike.plusgps/databases/com.nike.nrc.room*',),
         "output_types": "standard",
         "artifact_icon": "activity",
@@ -50,24 +55,6 @@ def _q(cursor, sql, params=()):
         return []
 
 
-def _moment_desc(mtype, mvalue):
-    if mtype == 'halt':
-        if mvalue in ('auto_pause', 'pause'):
-            return 'Run paused'
-        if mvalue in ('auto_resume', 'resume'):
-            return 'Run resumed'
-    elif mtype in ('split_km', 'lap'):
-        return f'Split KM - {mvalue}'
-    elif mtype == 'split_mile':
-        return f'Split Mile - {mvalue}'
-    elif mtype == 'gps_signal':
-        if mvalue == 'lost':
-            return 'GPS signal lost'
-        if mvalue == 'found':
-            return 'GPS signal found'
-    return ''
-
-
 @artifact_processor
 def get_nike_activMoments(context):
     files_found = context.get_files_found()
@@ -79,8 +66,8 @@ def get_nike_activMoments(context):
         moments = _q(cursor, '''SELECT as2_m_activity_id, as2_m_timestamp_utc_ms, as2_m_type, as2_m_value
             FROM activity_moment ORDER BY as2_m_activity_id, as2_m_timestamp_utc_ms''')
         for row in moments:
-            data_list.append((row[0], _ms_to_utc(row[1]), row[2], row[3], _moment_desc(row[2], row[3])))
+            data_list.append((_ms_to_utc(row[1]), row[0], row[2], row[3]))
         db.close()
 
-    data_headers = ('Activity ID', ('Timestamp', 'datetime'), 'Moment Type', 'Value', 'Description')
+    data_headers = (('Timestamp', 'datetime'), 'Activity ID', 'Moment Type', 'Value')
     return data_headers, data_list, source_path

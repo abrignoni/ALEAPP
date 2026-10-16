@@ -3,12 +3,13 @@ __artifacts_v2__ = {
     "ornetbrowser_bookmarks": {
         "name": "Ornet Browser - Bookmarks",
         "description": "Parses Ornet Browser Bookmarks",
-        "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
+        "author": "Damien Attoe {damien.attoe@spyderforensics.com}, @AlexisBrignoni, Codex",
         "creation_date": "2025-11-13",
         "last_update_date": "2025-11-13",
         "requirements": "none",
         "category": "Ornet Browser",
-        "notes": "Tested on version 1.9.26 (Oct, 22nd 2025)",
+        "notes": "Tested by the author on version 1.9.26 (Oct, 22nd 2025). "
+                 "The test data and row counts are not recorded here.",
         "paths": ('*/com.ornet.torbrowser/databases/appDatabase'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "bookmark"
@@ -16,13 +17,14 @@ __artifacts_v2__ = {
     "ornetbrowser_suggestions": {
         "name": "Ornet Browser - Suggestions",
         "description": "Parses the Ornet Browser suggestions table",
-        "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
+        "author": "Damien Attoe {damien.attoe@spyderforensics.com}, @AlexisBrignoni, Codex",
         "creation_date": "2025-11-13",
         "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Ornet Browser",
         "notes": (
-            "Tested on version 1.9.26 (Oct, 22nd 2025). Rows are read from the suggestions "
+            "Tested by the author on version 1.9.26 (Oct, 22nd 2025). The test data and row "
+            "counts are not recorded here. Rows are read from the suggestions "
             "table of appDatabase. What the app stores in that table is not established, so "
             "the entries are reported as stored."
         ),
@@ -33,15 +35,17 @@ __artifacts_v2__ = {
     "ornetbrowser_history": {
         "name": "Ornet Browser - Web Browser History",
         "description": "Parses Ornetbrowser Web Browsing History",
-        "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
+        "author": "Damien Attoe {damien.attoe@spyderforensics.com}, @AlexisBrignoni, Codex",
         "creation_date": "2025-11-13",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Ornet Browser",
         "notes": (
-            "Tested on version 1.9.26 (Oct, 22nd 2025). Visit Date joins the stored "
-            "history.date and history.time strings and reproduces them as recorded; the "
-            "file carries no time zone for them."
+            "Tested by the author on version 1.9.26 (Oct, 22nd 2025). The test data and "
+            "row counts are not recorded here. Visit Date joins the stored "
+            "history.date and history.time strings as recorded and is reported as "
+            "text. The file carries no time zone for them, so the zone of the value "
+            "is not established and it is not converted."
         ),
         "paths": ('*/com.ornet.torbrowser/databases/appDatabase'),
         "output_types": ["html", "tsv", "lava"],
@@ -49,14 +53,15 @@ __artifacts_v2__ = {
     },
     "ornetbrowser_opentabs": {
         "name": "Ornet Browser - Open Tabs",
-        "description": "Parses Ornet Browser Open Tab Information",
-        "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
+        "description": "Parses the tabs table of the Ornet Browser appDatabase",
+        "author": "Damien Attoe {damien.attoe@spyderforensics.com}, @AlexisBrignoni, Codex",
         "creation_date": "2025-11-13",
         "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Ornet Browser",
         "notes": (
-            "Tested on version 1.9.26 (Oct, 22nd 2025). Tab Preview File Name Time is "
+            "Tested by the author on version 1.9.26 (Oct, 22nd 2025). The test data and "
+            "row counts are not recorded here. Tab Preview File Name Time is "
             "decoded from the tab preview file name, which is a number read as a Unix time "
             "in milliseconds; that reading is not documented and the file name "
             "is its only basis. It is rendered in UTC."
@@ -70,13 +75,14 @@ __artifacts_v2__ = {
     "ornetbrowser_frequents": {
         "name": "Ornet Browser - Frequents",
         "description": "Parses the Ornet Browser frequents table",
-        "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
+        "author": "Damien Attoe {damien.attoe@spyderforensics.com}, @AlexisBrignoni, Codex",
         "creation_date": "2025-11-13",
         "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Ornet Browser",
         "notes": (
-            "Tested on version 1.9.26 (Oct, 22nd 2025). Rows are read from the frequents "
+            "Tested by the author on version 1.9.26 (Oct, 22nd 2025). The test data and "
+            "row counts are not recorded here. Rows are read from the frequents "
             "table of appDatabase. Count is the stored count value; what increments it is "
             "not established, so it is reported as stored."
         ),
@@ -87,13 +93,14 @@ __artifacts_v2__ = {
     "ornetbrowser_downloads": {
         "name": "Ornet Browser - Downloads",
         "description": "Parses Ornet Browser Downloads",
-        "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
+        "author": "Damien Attoe {damien.attoe@spyderforensics.com}, @AlexisBrignoni, Codex",
         "creation_date": "2025-11-14",
         "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Ornet Browser",
         "notes": (
-            "Tested on version 1.9.26 (Oct, 22nd 2025). Last Modified is the stored "
+            "Tested by the author on version 1.9.26 (Oct, 22nd 2025). The test data "
+            "and row counts are not recorded here. Last Modified is the stored "
             "downloads.last_modified_at value rendered in UTC; the column name is the "
             "field's own name and what the app updates it for is not established."
         ),
@@ -104,13 +111,14 @@ __artifacts_v2__ = {
     "ornetbrowser_thumbnails": {
         "name": "Ornet Browser - Tab Thumbnails",
         "description": "Parses Ornet Browser Tab thumbnail Information",
-        "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
+        "author": "Damien Attoe {damien.attoe@spyderforensics.com}, @AlexisBrignoni, Codex",
         "creation_date": "2025-11-13",
         "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "Ornet Browser",
         "notes": (
-            "Tested on version 1.9.26 (Oct, 22nd 2025). Timestamp is decoded from the "
+            "Tested by the author on version 1.9.26 (Oct, 22nd 2025). The test data and "
+            "row counts are not recorded here. Timestamp is decoded from the "
             "thumbnail file name, which is a number read as a Unix time in milliseconds; "
             "that reading is not documented and the file name is its only "
             "basis. It is rendered in UTC."
@@ -124,38 +132,64 @@ __artifacts_v2__ = {
     "ornetbrowser_searchhistory": {
         "name": "Ornet Browser - Search History",
         "description": "Parses Ornet Browser Search History",
-        "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
+        "author": "Damien Attoe {damien.attoe@spyderforensics.com}, @AlexisBrignoni, Codex",
         "creation_date": "2025-11-13",
         "last_update_date": "2025-11-13",
         "requirements": "none",
         "category": "Ornet Browser",
-        "notes": "Tested on version 1.9.26 (Oct, 22nd 2025)",
+        "notes": "Tested by the author on version 1.9.26 (Oct, 22nd 2025). "
+                 "The test data and row counts are not recorded here.",
         "paths": ('*/com.ornet.torbrowser/databases/appDatabase'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "search"
     },
     "ornetbrowser_cookies": {
         "name": "Ornet Browser - Cookies",
-        "description": "Parses Ornet Browser Cookies",
-        "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
+        "description": "Parses the moz_cookies table of Ornet Browser's cookies.sqlite",
+        "author": "Damien Attoe {damien.attoe@spyderforensics.com}, @AlexisBrignoni, Codex",
         "creation_date": "2025-11-14",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Ornet Browser",
-        "notes": "Tested on version 1.9.26 (Oct, 22nd 2025)",
+        "notes": "Tested by the author on version 1.9.26 (Oct, 22nd 2025). "
+                 "The test data and row counts are not recorded here. No "
+                 "registered corpus holds this app, so the time handling "
+                 "follows the Firefox cookie store source and was run only "
+                 "on constructed files. lastAccessed and creationTime are "
+                 "read as Unix microseconds and shown in UTC; Firefox binds "
+                 "them in microseconds "
+                 "(https://github.com/mozilla-firefox/firefox/blob/3f73c528a1ae5784ea5e1ee2c5ad3762507395f2/netwerk/cookie/CookiePersistentStorage.cpp#L138-L143). "
+                 "Firefox writes expiry in milliseconds at cookie schema "
+                 "version 16 and later, and the upgrade from version 15 "
+                 "multiplies the stored seconds by 1000 "
+                 "(https://github.com/mozilla-firefox/firefox/blob/3f73c528a1ae5784ea5e1ee2c5ad3762507395f2/netwerk/cookie/CookiePersistentStorage.cpp#L135 "
+                 "and #L1593-L1596). Expiry is therefore read as Unix "
+                 "milliseconds when the file's user_version is 16 or more "
+                 "and as Unix seconds below that, shown in UTC. Cookie "
+                 "Schema Version is the file's user_version. Which Firefox "
+                 "engine version the app embeds is not established.",
         "paths": ('*/com.ornet.torbrowser/files/mozilla/*/cookies.sqlite*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "globe"
     },
     "ornetbrowser_usageinfo": {
         "name": "Ornet Browser - Usage Info",
-        "description": "Parses Ornet Browser Usage Information",
-        "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
+        "description": "Reports the currentTab, privateCurrentTab, "
+                       "last_app_close_time and selectedSearchEngine values "
+                       "of the Ornet Browser preferences file",
+        "author": "Damien Attoe {damien.attoe@spyderforensics.com}, @AlexisBrignoni, Codex",
         "creation_date": "2025-11-14",
-        "last_update_date": "2025-11-14",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Ornet Browser",
-        "notes": "Tested on version 1.9.26 (Oct, 22nd 2025)",
+        "notes": "Tested by the author on version 1.9.26 (Oct, 22nd 2025). "
+                 "The test data and row counts are not recorded here. "
+                 "Value is the stored value of each of the four keys. "
+                 "Value Read As Unix Milliseconds (UTC) is filled only for "
+                 "last_app_close_time and reads its stored number as Unix "
+                 "milliseconds in UTC; no source for that unit was found, "
+                 "so that reading is not established. No other key of the "
+                 "file is reported.",
         "paths": ('*/com.ornet.torbrowser/shared_prefs/com.ornet.torbrowser_preferences.xml'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "info-circle"
@@ -301,7 +335,7 @@ def ornetbrowser_history(context):
         FROM history;
         '''
 
-    data_headers = ('ID', 'URL', 'Title', ('Visit Date', 'datetime'))
+    data_headers = ('ID', 'URL', 'Title', 'Visit Date')
     data_list = list(get_sqlite_db_records(source_path, query))
 
     return data_headers, data_list, context.get_relative_path(source_path)
@@ -546,14 +580,21 @@ def ornetbrowser_cookies(context):
         if source_path.endswith('.sqlite'):
             break
 
-    query = '''
+    # Firefox stores expiry in milliseconds from cookie schema version 16 and
+    # in seconds before it (CookiePersistentStorage.cpp, upgrade case 15).
+    schema_version = 0
+    for row in get_sqlite_db_records(source_path, 'PRAGMA user_version'):
+        schema_version = row[0] or 0
+    expiry_divisor = 1000 if schema_version >= 16 else 1
+
+    query = f'''
         SELECT
             DATETIME(moz_cookies.lastAccessed/1000000,'unixepoch'),
             DATETIME(moz_cookies.creationTime/1000000,'unixepoch'),
             moz_cookies.host,
             moz_cookies.name,
             moz_cookies.value,
-            DATETIME(moz_cookies.expiry,'unixepoch'),
+            DATETIME(moz_cookies.expiry/{expiry_divisor},'unixepoch'),
             moz_cookies.path
         from moz_cookies
         '''
@@ -568,11 +609,11 @@ def ornetbrowser_cookies(context):
         expiry = row[5]
         path = row[6]
 
-        data_list.append((lastaccessed, creationtime, host, name, value, expiry, path))
+        data_list.append((lastaccessed, creationtime, host, name, value, expiry, path, schema_version))
 
     data_headers = (
         ('Last Accessed', 'datetime'), ('Creation Time', 'datetime'), 'Host', 'Name', 'Value',
-        ('Expiry', 'datetime'), 'Path')
+        ('Expiry', 'datetime'), 'Path', 'Cookie Schema Version')
 
     return data_headers, data_list, context.get_relative_path(source_path)
 
@@ -610,17 +651,17 @@ def ornetbrowser_usageinfo(context):
 
             value_raw = elem.text.strip() if elem.text else elem.get("value", "").strip()
 
-            value_out = value_raw
+            value_read = ''
             if key_name == "last_app_close_time":
                 try:
                     ts = int(value_raw)
                     dt = datetime.datetime.fromtimestamp(ts / 1000.0, datetime.timezone.utc)
-                    value_out = dt.strftime("%Y-%m-%d %H:%M:%S")
+                    value_read = dt.strftime("%Y-%m-%d %H:%M:%S")
                 except Exception:
                     pass
 
-            data_list.append((key_name, value_out, filename, context.get_relative_path(path)))
+            data_list.append((key_name, value_raw, value_read, filename, context.get_relative_path(path)))
 
-    data_headers = ("Key", "Value", "File Name", "Path")
+    data_headers = ("Key", "Value", "Value Read As Unix Milliseconds (UTC)", "File Name", "Path")
 
     return data_headers, data_list, context.get_relative_path(source_path)

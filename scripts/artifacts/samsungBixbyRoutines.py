@@ -18,7 +18,7 @@ __artifacts_v2__ = {
         "notes": (
             (
             (
-            "The `routine` table carries a unique per-row name and the "
+            "The `routine` table carries a name on each row and the "
             "presentation fields an automation is configured with; the "
             "sibling `condition` and `action` tables are the app-shipped "
             "catalog of available trigger and action building blocks, "
@@ -45,7 +45,8 @@ __artifacts_v2__ = {
             "sqlite_sequence are SQLite and Android bookkeeping. A zero-row "
             "result means no routine was present in this table at "
             "acquisition; it is not a finding that Bixby Routines was never "
-            "configured, since a deleted routine would not appear here."
+            "configured, and whether the row of a deleted routine stays in this "
+            "table was not tested."
         )
         )
         ),
@@ -127,8 +128,8 @@ __artifacts_v2__ = {
             "when the join finds nothing. intent_param, label_params and "
             "bundle_data hold app-defined parameter text and are reported as "
             "stored rather than decoded, since their structure varies by "
-            "condition tag. is_negative marks a condition the app stores in "
-            "its inverted form; valid_state is an undocumented integer "
+            "condition tag. is_negative is reported as stored and its meaning "
+            "is not established; valid_state is an undocumented integer "
             "reported as stored. Six of the eight tested extractions held "
             "rows here, one or two each, and each row joined to a routine."
         )
@@ -264,8 +265,7 @@ __artifacts_v2__ = {
             "the autoincrement counter ahead of the live row count in all "
             "eight, so older rows are trimmed and the window the artifact "
             "covers is set by how much the service has written since, not by "
-            "the acquisition period. That window ran from 0.9 to 21.2 days "
-            "across the eight. The module reads the database with its "
+            "the acquisition period. The module reads the database with its "
             "write-ahead log applied, which is the state at acquisition; in "
             "one extraction the main database file read without its log held "
             "6 rows since trimmed and lacked the 3 most recent, so a copy of "
@@ -291,9 +291,8 @@ __artifacts_v2__ = {
         "name": "Samsung Bixby Routines - App Preferences",
         "description": (
             "Parses the key/value preference table of com.samsung.android."
-            "app.routines/databases/routine.db, which holds app-level "
-            "settings and state such as first-run and metadata-loading times "
-            "and recommendation counters."
+            "app.routines/databases/routine.db, which holds app-level key and "
+            "value pairs, some of them millisecond time values."
         ),
         "author": "@Gear-I, @AlexisBrignoni, Claude",
         "creation_date": "2026-08-18",
@@ -317,10 +316,9 @@ __artifacts_v2__ = {
             "since one observation does not establish what it records. "
             "init_time is the earliest time recorded in this table and was "
             "not cross-checked against a package-manager install record, so "
-            "it is indicative of install era rather than a confirmed install "
-            "time. In one extraction update_noti_time fell 359 ms after the "
-            "newest routine_history row, two values written by different code "
-            "paths agreeing on when the service last ran. This table is app "
+            "what it records is not established. In one extraction "
+            "update_noti_time fell 359 ms after the newest routine_history "
+            "row; what either value marks is not established. This table is app "
             "configuration rather than user content: it does not carry what "
             "routines existed."
         )

@@ -4,21 +4,29 @@ __artifacts_v2__ = {
         "description": "Parses Life360 chat messages (messaging.db)",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2024-01-17",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Life360",
         "notes": "A message with a photo has a message_media row whose photo_key is the photo's "
                  "URL. The cache/picasso-cache directory is read as an OkHttp DiskLruCache, in "
                  "which the <hash>.0 file starts with the URL requested and the <hash>.1 file is "
-                 "the body, so the Photo column renders the cached copy whose stored URL equals "
+                 "the body (OkHttp Cache.kt, Entry.writeTo, release parent-5.5.0; which OkHttp "
+                 "release the tested app versions bundle was not established), so the Photo column "
+                 "renders the cached copy whose stored URL equals "
                  "photo_key exactly, when the bytes are a JPEG, PNG, GIF or WebP image; Photo "
                  "URL is photo_key as stored. A photo message whose URL matches no cache entry "
                  "is reported with the URL and no picture. pixel7a_a14 was the only tested image "
                  "with messages: "
-                 "all 20 belong to one Thread ID, both of its photo messages resolved to a cached image, Location "
+                 "all 20 belong to one Thread ID, both of its photo messages resolved to a cached "
+                 "image, Location "
                  "Timestamp, Has Location, Latitude, Longitude, Location Name and Message Dismissed were blank on "
                  "all 20 messages, Message Sent and Message Read were Yes on all 20, and Message Deleted was Yes "
-                 "on 1. Each Android user's messaging.db is read separately and its photos are resolved from that "
+                 "on 1. Sender Name is the thread_participant name stored for the message's sender id "
+                 "in the message's own thread; the table is declared UNIQUE(thread_id, "
+                 "participant_id), so a message is reported once. Because all 20 belong to one "
+                 "thread, a sender present in more than one thread was exercised only on a "
+                 "constructed copy of that database, not on a tested image. Each Android user's messaging.db is read "
+                 "separately and its photos are resolved from that "
                  "user's own cache.",
         "paths": ('*/com.life360.android.safetymapd/databases/messaging.db*',
                   '*/com.life360.android.safetymapd/cache/picasso-cache/*'),
@@ -61,7 +69,7 @@ __artifacts_v2__ = {
     },
     "get_Life360_locations": {
         "name": "Life360 - Locations",
-        "description": "Parses Life360 device geolocation events (L360EventStore.db)",
+        "description": "Parses location values from the L360EventStore.db event rows whose eventVersion is 5 and whose tag is BLE; other rows are not read by this artifact",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2024-01-17",
         "last_update_date": "2026-08-01",
@@ -79,13 +87,13 @@ __artifacts_v2__ = {
     },
     "get_Life360_device_battery": {
         "name": "Life360 - Device Battery",
-        "description": "Parses Life360 device battery events (L360EventStore.db)",
-        "author": "Kevin Pagano (@stark4n6)",
+        "description": "Parses the metaData battery and chargingState values, as stored, from the L360EventStore.db event rows whose eventVersion is 5 and whose tag is BLE; the unit of the battery value is not recorded in the JSON",
+        "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2024-01-17",
-        "last_update_date": "2024-01-17",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Life360",
-        "notes": "",
+        "notes": "Battery (as stored) preserves metaData.battery without assigning a unit or meaning; percentage is not established by these JSON records.",
         "paths": ('*/com.life360.android.safetymapd/databases/L360EventStore.db*',),
         "output_types": "standard",
         "artifact_icon": "battery",
@@ -277,6 +285,7 @@ def get_Life360_chat_messages(context):
             {photo_select}
         FROM message
         LEFT JOIN thread_participant ON message.sender_id = thread_participant.participant_id
+            AND message.thread_id = thread_participant.thread_id
         {photo_join}
         ''')
         for row in rows:
@@ -367,5 +376,5 @@ def get_Life360_device_battery(context):
         for e in _ble_events(source):
             data_list.append((e['time'], e['battery'], e['charging'], Context.get_relative_path(source)))
 
-    data_headers = (('Timestamp', 'datetime'), 'Device Battery (%)', 'Charging', 'Source File')
+    data_headers = (('Timestamp', 'datetime'), 'Battery (as stored)', 'Charging', 'Source File')
     return data_headers, data_list, '\n'.join(Context.get_relative_path(s) for s in sources)

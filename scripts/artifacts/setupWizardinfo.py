@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_setupWizardinfo": {
         "name": "setupWizardinfo",
-        "description": "Parses device setup wizard events (timestamp and name) from the setup_wizard_info.xml preferences.",
+        "description": "Reports the suw_finished_time_ms value, as a UTC time, with its key name from the setup_wizard_info.xml preferences.",
         "author": "@abrignoni",
         "creation_date": "2021-08-15",
         "last_update_date": "2021-08-15",

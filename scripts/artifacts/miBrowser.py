@@ -14,10 +14,10 @@ __artifacts_v2__ = {
                  "user_entered column, reported here under that name, held 0 on every row of the "
                  "corpus below, so it separates nothing there; it is kept because another value "
                  "would. The same database holds a historysync table with more rows, 342 against "
-                 "247 here, but it is a sync mirror rather than a separate record: its deleted "
-                 "column was 0 on every row and both tables held the same 214 distinct addresses "
-                 "with none present in only one of them, so reporting it as well would repeat "
-                 "this artifact's rows and it is not read. The bookmarks and bookmarks2 tables "
+                 "247 here, and it is not read: its deleted column was 0 on every row and both "
+                 "tables held the same 214 distinct addresses with none present in only one of "
+                 "them. What the 95 additional historysync rows record was not established. The "
+                 "bookmarks and bookmarks2 tables "
                  "each held a single row, the root folder, with no saved bookmark, and "
                  "preload_website_list held 249 addresses on the corpus below; what populates it "
                  "was not established, and neither is reported.",
@@ -30,19 +30,17 @@ __artifacts_v2__ = {
     },
     "mibrowser_searches": {
         "name": "Mi Browser - Searches and Top Sites",
-        "description": "Rows from the mostvisited table of browser2.db, each carrying a title "
-                       "and an address with a recorded date, the titles being search terms where "
-                       "the row's type says search",
+        "description": "Rows from the mostvisited table of browser2.db, each carrying a title and an address with a recorded date and the row's type as stored",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
         "category": "Mi Browser",
         "notes": "The table is named mostvisited but its type column distinguishes the rows: on "
-                 "the corpus below 39 of 40 rows had type search and one had type website. On "
-                 "the search rows the Title column holds the term that was searched for and the "
-                 "address is the corresponding search engine request, so those rows record what "
-                 "was searched rather than a page that was visited repeatedly. Type (as stored) "
+                 "the corpus below 39 of 40 rows had type search and one had type website. "
+                 "Title and URL are reported as stored. That a search row's Title is the "
+                 "searched term and its URL the search engine request was not measured for "
+                 "these notes. Type (as stored) "
                  "carries the value so the two kinds stay distinguishable. date is Unix "
                  "milliseconds; which event it records, whether first or most recent, is not "
                  "established, so the column is named for the field. Sub Title, Doc Type and Ads "
@@ -59,18 +57,15 @@ __artifacts_v2__ = {
     },
     "mibrowser_downloads": {
         "name": "Mi Browser - Downloads",
-        "description": "Rows from the downloadmanagement table of browser2.db, each a file the "
-                       "browser downloaded with the address it came from, the page that referred "
-                       "it and where it was written",
+        "description": "Rows from the downloadmanagement table of browser2.db, each a download record with the stored address, referer, local URI, sizes and status",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
         "category": "Mi Browser",
-        "notes": "createtime, update_time and ordertime are Unix milliseconds. Local URI is the "
-                 "path the file was written to on the device, so it can be looked for there, and "
-                 "Referer is the page the download was started from, which the history table "
-                 "does not record. Status and the two size columns are reported as stored; no "
+        "notes": "createtime, update_time and ordertime are Unix milliseconds. Local URI and "
+                 "Referer are the localuri and referer columns as stored. Status and the two "
+                 "size columns are reported as stored; no "
                  "source for the status code list was located, and on the corpus below the one "
                  "row had a status of 3 with the downloaded size equal to the total size. "
                  "Current Download Size (as stored) holds the per-part progress string the "

@@ -8,7 +8,11 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-01",
         "requirements": "none",
         "category": "GEO Location",
-        "notes": "Updated 2023-12-12 by @segumarc",
+        "notes": "A row is a directions URL (/dir/...) found inside a gmm_storage_table record; "
+                 "records with none are not reported. Latitude and Longitude are the first "
+                 "coordinate pair after /dir/ and To Latitude and To Longitude are taken from the "
+                 "last !1d and !2d values of the URL. Whether the route was followed is not "
+                 "established by this record.",
         "paths": ('*/com.google.android.apps.maps/databases/gmm_storage.db*',),
         "output_types": "standard",
         "artifact_icon": "map-pin",
@@ -30,16 +34,18 @@ __artifacts_v2__ = {
         "description": "Parse Google Maps GMM labeled places (gmm_myplaces.db)",
         "author": "@AlexisBrignoni",
         "creation_date": "2022-12-30",
-        "last_update_date": "2026-08-10",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "GEO Location",
-        "notes": ("Updated 2023-12-12 by @segumarc\n"
-                  "Label is read from the sync_item key_string. The keys '0:0' and '1:0' are "
-                  "rendered as 'Home' and 'Work'; that key-to-label mapping is not documented in "
-                  "the data and is not sourced here. A stored label does not establish "
+        "notes": ("Key (as stored) is the sync_item key_string column, reported as stored; what its "
+                  "values mean is not established and no label is assigned from it. Label is the "
+                  "text held in the row's protobuf and is blank where the protobuf holds none. "
+                  "Timestamp is "
+                  "the sync_item timestamp column read as Unix milliseconds; what it marks is not "
+                  "established. A row whose protobuf cannot be decoded is not reported. A stored "
+                  "label does not establish "
                   "that the address is the person's residence or workplace, only that the entry "
-                  "carries that label. Any other key is reported with the label held in the "
-                  "protobuf.\n"
+                  "carries that label.\n"
                   "Latitude and Longitude are the stored values multiplied by 0.000001 and rounded "
                   "to six decimal places, that is read as E6-scaled integers."),
         "paths": ('*/com.google.android.apps.maps/databases/gmm_myplaces.db*',),
@@ -157,17 +163,13 @@ def get_googleMapsGmm_places(context):
         for row in rows:
             try:
                 pb = decode_protobuf(row[4], 'None')
-                if row[1] == '0:0':
-                    label = 'Home'
-                elif row[1] == '1:0':
-                    label = 'Work'
-                else:
-                    label = pb[0].get('6', {}).get('7', b'').decode('utf-8')
+                label = pb[0].get('6', {}).get('7', b'').decode('utf-8')
                 address = pb[0].get('6', {}).get('2', b'').decode('utf-8')
                 url = pb[0].get('6', {}).get('6', b'').decode('utf-8')
             except Exception:
                 continue
-            data_list.append((_ms_to_utc(row[5]), label, row[2], row[3], address, url))
+            data_list.append((_ms_to_utc(row[5]), row[1], label, row[2], row[3], address, url))
 
-    data_headers = (('Timestamp', 'datetime'), 'Label', 'Latitude', 'Longitude', 'Address', 'URL')
+    data_headers = (('Timestamp', 'datetime'), 'Key (as stored)', 'Label', 'Latitude', 'Longitude',
+                    'Address', 'URL')
     return data_headers, data_list, '\n'.join(source_paths)

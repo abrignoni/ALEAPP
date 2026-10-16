@@ -4,25 +4,30 @@ __artifacts_v2__ = {
         "description": "Position fixes recorded in the AllTrails trackpoints table, with the "
                        "coordinates, elevation, accuracy, speed and bearing for each point of a "
                        "recorded track",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "AllTrails",
         "notes": "Read from the trackpoints table of databases/alltrails.\n"
-                 "lat and lng are stored as integers. Dividing them by 1,000,000 produces a "
-                 "coordinate pair that falls in the same state as the place names recorded in "
-                 "the database's locations table, so that is the scaling used; the scale is not "
-                 "documented.\nTwo timestamps are stored per point and both are reported: time "
-                 "and systemtime, each Unix epoch milliseconds. They differ by a fraction of a "
-                 "second on the tested corpus and nothing in the extraction documents which "
-                 "clock each comes from, so neither is presented as authoritative over the "
-                 "other.\nElevation, accuracy, speed and bearing are reported as stored. The "
-                 "units are not stated in the database; for speed, metres per second is "
-                 "consistent with the recorded track (see the AllTrails - Recorded Activities "
-                 "notes), but the column is reported unlabelled rather than converted.\nTrack ID "
-                 "groups the points of one recording and matches the line the AllTrails - "
-                 "Recorded Activities artifact reports.\nThe -wal and -shm sidecars are included "
+                 "lat and lng are stored as integers. On the tested image, dividing them by "
+                 "1,000,000 produces a coordinate pair that falls in the same state as the place "
+                 "names recorded in the database's locations table, so that is the scaling used; "
+                 "the scale is not documented.\nTwo timestamps are stored per point and both are "
+                 "reported: time and systemtime, each a 13 digit integer on all 809 rows of "
+                 "pixel7a_a14 and read as Unix epoch milliseconds. The milliseconds are kept in "
+                 "the HTML and TSV reports; the LAVA database stores a datetime column to the "
+                 "whole second. On pixel7a_a14 systemtime is 0.434 to 3.205 seconds later than "
+                 "time, and nothing in the extraction "
+                 "documents which clock each comes from, so neither is presented as "
+                 "authoritative over the other.\nElevation, accuracy, speed and bearing are "
+                 "reported as stored. The units are not stated in the database; for speed, "
+                 "metres per second is consistent with the recorded track (see the AllTrails - "
+                 "Recorded Activities notes), but the column is reported unlabelled rather than "
+                 "converted.\nTrack ID is the track_id column as stored. The AllTrails - "
+                 "Recorded Activities artifact reports lines._id under the same header; no count "
+                 "of how the two columns correspond is recorded here.\nThe -wal and -shm "
+                 "sidecars are included "
                  "in the paths above and must travel with the database, because rows can sit in "
                  "the write ahead log.",
         "paths": ('*/com.alltrails.alltrails/databases/alltrails*',),
@@ -34,27 +39,31 @@ __artifacts_v2__ = {
     },
     "alltrails_recorded_activities": {
         "name": "AllTrails - Recorded Activities",
-        "description": "Activities recorded on the device, with the name, the start and end "
+        "description": "Activity records held in the AllTrails maps table, with the name, "
+                       "the start and end "
                        "times, the total distance, the elevation change and the moving time",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "AllTrails",
-        "notes": "Read from the maps table of databases/alltrails, joined to lines and "
-                 "line_geo_stats through map_id, and to users through user_id.\n"
-                 "Units are derived from the data rather than documented. On the tested corpus "
-                 "speed_average multiplied by time_moving equals distance_total to within a "
-                 "metre (1.5784 x 2216 = 3498, against a stored 3497.75), which is consistent "
-                 "with distance in metres, speed in metres per second and the two time columns "
-                 "in seconds. The column headers say the unit is derived rather than presenting "
-                 "it as documented, and they spell metres per second out in full, because an "
-                 "abbreviated m/s sanitizes to a column name ending in _ms that reads as "
-                 "milliseconds.\n"
-                 "time_start and time_end are Unix epoch milliseconds. They are not identical to "
-                 "the first and last trackpoint of the matching track: on the tested corpus "
-                 "time_start is 0.9 seconds before the first point and time_end 2.6 seconds after "
-                 "the last, so the stats bracket the track rather than matching it exactly. That "
+        "notes": "Read from the maps table of databases/alltrails, joined to lines through map_id "
+                 "and to line_geo_stats through the line's line_geo_stats_id, and to users "
+                 "through user_id.\nUnits are derived from the data rather than documented. On "
+                 "the tested corpus speed_average multiplied by time_moving equals distance_total "
+                 "to within a metre (1.5784 x 2216 = 3498, against a stored 3497.75), which is "
+                 "consistent with distance in metres, speed in metres per second and the two time "
+                 "columns in seconds. The column headers say the unit is derived rather than "
+                 "presenting it as documented, and they spell metres per second out in full, "
+                 "because an abbreviated m/s sanitizes to a column name ending in _ms that reads "
+                 "as milliseconds.\ntime_start and time_end are Unix epoch milliseconds. They are "
+                 "not identical to the first and last trackpoint of the matching track: on the "
+                 "tested corpus the stored time_start is 0.9 seconds before the first point's "
+                 "stored time and time_end 2.6 seconds after the last (0.888 and 2.575 seconds "
+                 "on the stored millisecond values of pixel7a_a14), so the stats bracket the "
+                 "track rather than matching it exactly. The milliseconds are kept in the HTML "
+                 "and TSV reports; the LAVA database stores a datetime column to the whole "
+                 "second. That "
                  "still cross-checks the epoch and the scale of both readings.\n"
                  "Activity ID and Privacy Level are reported as stored: the database carries no "
                  "table mapping the activity id to an activity name, and the privacy level is a "
@@ -73,18 +82,29 @@ __artifacts_v2__ = {
         "description": "Photos attached to AllTrails maps and trails, with the recorded local "
                        "path, any coordinates stored against the photo, the owning activity and "
                        "the picture itself where it is present in the extraction",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "AllTrails",
         "notes": "Read from the map_photos and trail_photos tables of databases/alltrails, "
                  "distinguished by the Record Source column.\n"
-                 "The picture is linked by the path the app recorded for it, not by correlation. "
-                 "map_photos.local_path holds an absolute on-device path; the file name from that "
-                 "path is matched against the extracted files and the match is checked in as "
-                 "media. On the tested corpus the recorded path resolved to a file present in the "
-                 "extraction under the app's external storage directory.\n"
+                 "The picture is found by the path the app recorded. On pixel7a_a14 "
+                 "map_photos.local_path holds an absolute on-device path of the form "
+                 "/storage/emulated/<Android user>/Android/data/com.alltrails.alltrails/files/"
+                 "Pictures/<file>. The extracted file shown is the one whose path below the "
+                 "app's Pictures folder equals the recorded one and whose own path names the "
+                 "same Android user (media/<user> or emulated/<user>); it is checked in as "
+                 "media. A file that only shares the name, in another subfolder or under "
+                 "another Android user, is not used. A recorded path outside that Pictures "
+                 "folder, or one with no extracted copy under the same Android user, is "
+                 "reported without a picture; File Name and Recorded Local Path are still "
+                 "filled. Where one file is extracted under more than one storage path of the "
+                 "same user, the first by path order is shown. On pixel7a_a14 the one recorded "
+                 "path resolved to a file present in the "
+                 "extraction under data/media/0. The handling of a second Android user was "
+                 "exercised on constructed paths only; pixel7a_a14 holds this app under "
+                 "user 0 alone.\n"
                  "trail_photos rows carried no local_path in the tested corpus, so those rows are "
                  "reported without a picture. That is the absence of a locally stored copy, not "
                  "evidence the photo never existed.\n"
@@ -104,17 +124,18 @@ __artifacts_v2__ = {
     },
     "alltrails_user": {
         "name": "AllTrails - User",
-        "description": "The AllTrails account held on the device, with the user name, the display "
+        "description": "Rows of the AllTrails users table, with the user name, the display "
                        "name, the account identifier and the recorded home location",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
         "requirements": "none",
         "category": "AllTrails",
         "notes": "Read from the users table of databases/alltrails, joined to locations through "
                  "location_id for the recorded place names.\n"
-                 "Remote ID is the remote_id value as stored, and is the value the userlists "
-                 "table references as its user_id. The referral link contains the account's own "
+                 "Remote ID is the remote_id value as stored, and on the tested image equalled "
+                 "the user_id stored in the userlists table, which this module does not read; "
+                 "no count is recorded. The referral link contains the account's own "
                  "referral code and is reported as stored.\nThe counts on this row (reviews, "
                  "followers, tracks, photos) are reported as stored.",
         "paths": ('*/com.alltrails.alltrails/databases/alltrails*',),
@@ -127,12 +148,16 @@ __artifacts_v2__ = {
 }
 
 import os
+import re
+from datetime import datetime, timedelta, timezone
 
-from scripts.ilapfuncs import (artifact_processor, check_in_media, convert_unix_ts_to_utc,
+from scripts.ilapfuncs import (artifact_processor, check_in_media,
                                does_table_exist_in_db, get_sqlite_db_records)
 
 # lat and lng are stored as integers; see the artifact notes for the derivation.
 COORD_SCALE = 1000000.0
+
+_EPOCH_UTC = datetime(1970, 1, 1, tzinfo=timezone.utc)
 
 
 def _db_path(files_found):
@@ -143,15 +168,53 @@ def _db_path(files_found):
     return None
 
 
+# A path inside the app's external Pictures folder, on the device or in the extraction:
+# the Android user number where the path carries one, then the path below Pictures.
+_PICTURE_PATH = re.compile(
+    r'(?:(?:^|/)(?:media|emulated)/(\d+))?/Android/data/com\.alltrails\.alltrails'
+    r'/files/Pictures/(.+)$')
+
+
+def _picture_key(path):
+    """Return (Android user or None, path below the Pictures folder), or None when the
+    path is not inside the app's external Pictures folder."""
+    match = _PICTURE_PATH.search(str(path).replace('\\', '/'))
+    if not match:
+        return None
+    return match.group(1), match.group(2)
+
+
 def _pictures(files_found):
-    """Index the extracted picture files by name so a recorded local_path can be
-    resolved to the file it names."""
+    """Index the extracted picture files by their path below the Pictures folder, keeping
+    every extracted copy and the Android user its path names, so a recorded local_path
+    is resolved to the file at that path and not to any file sharing its name."""
     pictures = {}
     for file_found in files_found:
         file_found = str(file_found)
-        if '/Pictures/' in file_found.replace(os.sep, '/'):
-            pictures[os.path.basename(file_found)] = file_found
+        if os.path.isdir(file_found):
+            continue
+        key = _picture_key(file_found)
+        if key:
+            pictures.setdefault(key[1], []).append((key[0], file_found))
     return pictures
+
+
+def _resolve_picture(pictures, local_path):
+    """Return the extracted file the recorded path names, or None. A copy under another
+    Android user is never used; when the recorded path names no user and the copies sit
+    under more than one, none is used."""
+    key = _picture_key(local_path)
+    if not key:
+        return None
+    user, tail = key
+    copies = pictures.get(tail, [])
+    if user is not None:
+        copies = [copy for copy in copies if copy[0] == user]
+    elif len({copy[0] for copy in copies}) > 1:
+        return None
+    if not copies:
+        return None
+    return sorted(copy[1] for copy in copies)[0]
 
 
 def _coord(value):
@@ -167,8 +230,8 @@ def _ms(value):
     if not value:
         return ''
     try:
-        return convert_unix_ts_to_utc(int(value) / 1000)
-    except (TypeError, ValueError):
+        return _EPOCH_UTC + timedelta(milliseconds=int(value))
+    except (TypeError, ValueError, OverflowError):
         return ''
 
 
@@ -310,7 +373,7 @@ def alltrails_photos(context):
         if not local_path:
             return '', ''
         name = os.path.basename(str(local_path).replace('\\', '/'))
-        path = pictures.get(name)
+        path = _resolve_picture(pictures, local_path)
         if not path:
             return '', name
         return check_in_media(path, name) or '', name

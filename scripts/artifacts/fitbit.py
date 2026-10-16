@@ -1,67 +1,385 @@
 # pylint: disable=W0718
-_PATHS_PHONE_ACT = ('*/com.fitbit.FitbitMobile/databases/activity_db*',)
-_PATHS_PHONE_DEV = ('*/com.fitbit.FitbitMobile/databases/device_database*',)
-_PATHS_PHONE_EX = ('*/com.fitbit.FitbitMobile/databases/exercise_db*',)
-_PATHS_PHONE_HR = ('*/com.fitbit.FitbitMobile/databases/heart_rate_db*',)
-_PATHS_PHONE_SLEEP = ('*/com.fitbit.FitbitMobile/databases/sleep*',)
-_PATHS_PHONE_SOCIAL = ('*/com.fitbit.FitbitMobile/databases/social_db*',)
-_PATHS_PHONE_MOBILE = ('*/com.fitbit.FitbitMobile/databases/mobile_track_db*',)
-_PATHS_USER = ('*/com.fitbit.FitbitMobile/databases/user.db*',)
-_PATHS_PASSIVE = ('*/com.fitbit.FitbitMobile/databases/passive_stats.db*',)
-
-
-def _art(name, desc, paths, icon='activity', outtypes='standard', notes='', updated='2026-01-12'):
-    return {"name": name, "description": desc, "author": "@AlexisBrignoni / @segumarc / Ganeshbs17",
-            "creation_date": "2021-04-23", "last_update_date": updated, "requirements": "none",
-            "category": "Fitbit", "notes": notes, "paths": paths, "output_types": outtypes,
-            "artifact_icon": icon}
-
-
-__artifacts_v2__ = {
-    "get_fitbit_activity": _art("Fitbit - Activity", "Activity log (phone)", _PATHS_PHONE_ACT,
-        notes="ACTIVITY_LOG_ENTRY.DURATION is reported as stored and again divided by 60. The sleep "
-              "summary in this same module divides its own DURATION column by 60000, so the unit of "
-              "the activity DURATION column is not established and the divided column is labelled "
-              "'Duration / 60' rather than as minutes.", updated="2026-08-01"),
-    "get_fitbit_device": _art("Fitbit - Device Info", "Paired device info (phone)", _PATHS_PHONE_DEV, "device-watch"),
-    "get_fitbit_exercise": _art("Fitbit - Exercise GPS", "Exercise GPS trackpoints (phone)", _PATHS_PHONE_EX, "map-pin", "all"),
-    "get_fitbit_routes": _art("Fitbit - Exercise Routes", "Per-session exercise route map (phone)", _PATHS_PHONE_EX, "map"),
-    "get_fitbit_heart": _art("Fitbit - Heart Rate Summary", "Daily heart-rate summary (phone)", _PATHS_PHONE_HR, "heart"),
-    "get_fitbit_sleep_detail": _art("Fitbit - Sleep Detail", "Sleep level data (phone)", _PATHS_PHONE_SLEEP, "moon"),
-    "get_fitbit_sleep_summary": _art("Fitbit - Sleep Summary", "Sleep log summary (phone)", _PATHS_PHONE_SLEEP, "moon",
-        notes="SLEEP_LOG.DURATION is reported as stored and again divided by 60000. The divisor "
-              "assumes the column holds milliseconds; the activity log in this same module divides "
-              "its own DURATION column by 60, and the two have not been reconciled against a sample "
-              "database.", updated="2026-08-01"),
-    "get_fitbit_friends": _art("Fitbit - Friends", "Friends (phone)", _PATHS_PHONE_SOCIAL, "users"),
-    "get_fitbit_user": _art("Fitbit - User Profile", "User profile (phone)", _PATHS_PHONE_SOCIAL, "user"),
-    "get_fitbit_steps": _art("Fitbit - Steps", "Pedometer minute data (phone)", _PATHS_PHONE_MOBILE, "activity"),
-    "get_fitbit_wearos_profile": _art("Fitbit - User Profile (Wear OS)", "User profile (Wear OS)", _PATHS_USER, "user"),
-    "get_fitbit_wearos_activity": _art("Fitbit - Activity History (Wear OS)", "Activity/workout history (Wear OS)", _PATHS_USER),
-    "get_fitbit_wearos_daily": _art("Fitbit - Daily Activity (Wear OS)", "Daily sedentary summary (Wear OS)", _PATHS_USER,
-        notes="SedentaryDataEntity.longestDuration is reported as stored; the database does not record "
-              "its unit, so it is no longer labelled as minutes. The two totalMinutes* columns are "
-              "named as minutes by the columns themselves.", updated="2026-08-01"),
-    "get_fitbit_wearos_hourly": _art("Fitbit - Hourly Steps (Wear OS)", "Hourly steps from JSON (Wear OS)", _PATHS_USER),
-    "get_fitbit_wearos_sleep_logs": _art("Fitbit - Sleep Logs (Wear OS)", "Sleep session logs (Wear OS)", _PATHS_USER, "moon"),
-    "get_fitbit_wearos_workouts": _art("Fitbit - Workouts (Wear OS)", "Workout summaries (Wear OS)", _PATHS_PASSIVE),
-    "get_fitbit_wearos_gps": _art("Fitbit - GPS Trackpoints (Wear OS)", "GPS trackpoints (Wear OS)", _PATHS_PASSIVE, "map-pin", "all"),
-    "get_fitbit_wearos_gps_route": _art("Fitbit - GPS Route (Wear OS)", "Offline GPS route map (Wear OS)", _PATHS_PASSIVE, "map"),
-    "get_fitbit_wearos_hr": _art("Fitbit - Heart Rate Stats (Wear OS)", "Heart-rate stats (Wear OS)", _PATHS_PASSIVE, "heart",
-        notes="HeartRateStatEntity.value is reported as stored under the header 'Value'; the database "
-              "does not record its unit, so it is not published as BPM.", updated="2026-08-01"),
-    "get_fitbit_wearos_pace": _art("Fitbit - Live Pace (Wear OS)", "Live pace during workouts (Wear OS)", _PATHS_PASSIVE,
-        notes="LivePaceEntity.timeSeconds is decoded as a Unix epoch in seconds, following the column "
-              "name; earlier versions of this parser decoded it as milliseconds. The change has not "
-              "been checked against a sample database. LivePaceEntity.value is reported as stored; the "
-              "database does not record its unit.", updated="2026-08-01"),
-    "get_fitbit_wearos_sleep": _art("Fitbit - Sleep (Wear OS)", "Local sleep periods (Wear OS)", _PATHS_PASSIVE, "moon"),
-    "get_fitbit_wearos_azm": _art("Fitbit - Active Zones (Wear OS)", "Active zone minutes (Wear OS)", _PATHS_PASSIVE, "heart",
-        notes="PassiveAzmEntity.value is reported as stored under the header 'Value'; the database "
-              "does not record what it counts, so it is not published as points.", updated="2026-08-01"),
-    "get_fitbit_wearos_splits": _art("Fitbit - Workout Splits (Wear OS)", "Workout split metrics (Wear OS)", _PATHS_PASSIVE),
-    "get_fitbit_wearos_opaque_hr": _art("Fitbit - Opaque HR (Wear OS)", "Raw heart-rate readings (Wear OS)", _PATHS_PASSIVE, "heart"),
-}
+__artifacts_v2__ = {'get_fitbit_activity': {'name': 'Fitbit - Activity',
+                         'description': 'Activity log (phone)',
+                         'author': '@AlexisBrignoni / @segumarc / Ganeshbs17, @AlexisBrignoni, Codex',
+                         'creation_date': '2021-04-23',
+                         'last_update_date': '2026-08-01',
+                         'requirements': 'none',
+                         'category': 'Fitbit',
+                         'notes': 'ACTIVITY_LOG_ENTRY.DURATION is reported as stored and again divided '
+                                  'by 60. The sleep summary in this same module divides its own '
+                                  'DURATION column by 60000, so the unit of the activity DURATION '
+                                  'column is not established and the divided column is labelled '
+                                  "'Duration / 60' rather than as minutes. No sample_data is recorded "
+                                  'for this artifact; its timestamps are read as Unix milliseconds '
+                                  'without a tested sample, and only the first matching database is '
+                                  'read.',
+                         'paths': ('*/com.fitbit.FitbitMobile/databases/activity_db*',),
+                         'output_types': 'standard',
+                         'artifact_icon': 'activity'},
+ 'get_fitbit_device': {'name': 'Fitbit - Device Info',
+                       'description': 'Device records from the core_device table (phone)',
+                       'author': '@AlexisBrignoni / @segumarc / Ganeshbs17, @AlexisBrignoni, Codex',
+                       'creation_date': '2021-04-23',
+                       'last_update_date': '2026-01-12',
+                       'requirements': 'none',
+                       'category': 'Fitbit',
+                       'notes': 'No sample_data is recorded for this artifact; its timestamps are read '
+                                'as Unix milliseconds without a tested sample, and only the first '
+                                'matching database is read.',
+                       'paths': ('*/com.fitbit.FitbitMobile/databases/device_database*',),
+                       'output_types': 'standard',
+                       'artifact_icon': 'device-watch'},
+ 'get_fitbit_exercise': {'name': 'Fitbit - Exercise GPS',
+                         'description': 'Exercise GPS trackpoints (phone)',
+                         'author': '@AlexisBrignoni / @segumarc / Ganeshbs17, @AlexisBrignoni, Codex',
+                         'creation_date': '2021-04-23',
+                         'last_update_date': '2026-01-12',
+                         'requirements': 'none',
+                         'category': 'Fitbit',
+                         'notes': 'No sample_data is recorded for this artifact; its timestamps are '
+                                  'read as Unix milliseconds without a tested sample, and only the '
+                                  'first matching database is read.',
+                         'paths': ('*/com.fitbit.FitbitMobile/databases/exercise_db*',),
+                         'output_types': 'all',
+                         'artifact_icon': 'map-pin'},
+ 'get_fitbit_routes': {'name': 'Fitbit - Exercise Routes',
+                       'description': 'Per-session exercise route map (phone)',
+                       'author': '@AlexisBrignoni / @segumarc / Ganeshbs17, @AlexisBrignoni, Codex',
+                       'creation_date': '2021-04-23',
+                       'last_update_date': '2026-01-12',
+                       'requirements': 'none',
+                       'category': 'Fitbit',
+                       'notes': 'No sample_data is recorded for this artifact; its timestamps are read '
+                                'as Unix milliseconds without a tested sample, and only the first '
+                                'matching database is read.',
+                       'paths': ('*/com.fitbit.FitbitMobile/databases/exercise_db*',),
+                       'output_types': 'standard',
+                       'artifact_icon': 'map'},
+ 'get_fitbit_heart': {'name': 'Fitbit - Heart Rate Summary',
+                      'description': 'Daily heart-rate summary (phone)',
+                      'author': '@AlexisBrignoni / @segumarc / Ganeshbs17, @AlexisBrignoni, Codex',
+                      'creation_date': '2021-04-23',
+                      'last_update_date': '2026-01-12',
+                      'requirements': 'none',
+                      'category': 'Fitbit',
+                      'notes': 'No sample_data is recorded for this artifact; its timestamps are read '
+                               'as Unix milliseconds without a tested sample, and only the first '
+                               'matching database is read.',
+                      'paths': ('*/com.fitbit.FitbitMobile/databases/heart_rate_db*',),
+                      'output_types': 'standard',
+                      'artifact_icon': 'heart'},
+ 'get_fitbit_sleep_detail': {'name': 'Fitbit - Sleep Detail',
+                             'description': 'Sleep level data (phone)',
+                             'author': '@AlexisBrignoni / @segumarc / Ganeshbs17, @AlexisBrignoni, '
+                                       'Codex',
+                             'creation_date': '2021-04-23',
+                             'last_update_date': '2026-01-12',
+                             'requirements': 'none',
+                             'category': 'Fitbit',
+                             'notes': 'No sample_data is recorded for this artifact; its timestamps are '
+                                      'read as Unix milliseconds without a tested sample, and only the '
+                                      'first matching database is read.',
+                             'paths': ('*/com.fitbit.FitbitMobile/databases/sleep*',),
+                             'output_types': 'standard',
+                             'artifact_icon': 'moon'},
+ 'get_fitbit_sleep_summary': {'name': 'Fitbit - Sleep Summary',
+                              'description': 'Sleep log summary (phone)',
+                              'author': '@AlexisBrignoni / @segumarc / Ganeshbs17, @AlexisBrignoni, '
+                                        'Codex',
+                              'creation_date': '2021-04-23',
+                              'last_update_date': '2026-08-01',
+                              'requirements': 'none',
+                              'category': 'Fitbit',
+                              'notes': 'SLEEP_LOG.DURATION is reported as stored and again divided by '
+                                       '60000. The divisor assumes the column holds milliseconds; the '
+                                       'activity log in this same module divides its own DURATION '
+                                       'column by 60, and the two have not been reconciled against a '
+                                       'sample database. No sample_data is recorded for this artifact; '
+                                       'its timestamps are read as Unix milliseconds without a tested '
+                                       'sample, and only the first matching database is read.',
+                              'paths': ('*/com.fitbit.FitbitMobile/databases/sleep*',),
+                              'output_types': 'standard',
+                              'artifact_icon': 'moon'},
+ 'get_fitbit_friends': {'name': 'Fitbit - Friends',
+                        'description': 'Rows of the FRIEND table (phone)',
+                        'author': '@AlexisBrignoni / @segumarc / Ganeshbs17, @AlexisBrignoni, Codex',
+                        'creation_date': '2021-04-23',
+                        'last_update_date': '2026-01-12',
+                        'requirements': 'none',
+                        'category': 'Fitbit',
+                        'notes': "The table's own FRIEND column is shown in the Friend column as "
+                                 'stored, so a row is not by itself a friend. No sample_data is '
+                                 'recorded for this artifact, and only the first matching database is '
+                                 'read.',
+                        'paths': ('*/com.fitbit.FitbitMobile/databases/social_db*',),
+                        'output_types': 'standard',
+                        'artifact_icon': 'users'},
+ 'get_fitbit_user': {'name': 'Fitbit - User Profile',
+                     'description': 'User profile (phone)',
+                     'author': '@AlexisBrignoni / @segumarc / Ganeshbs17, @AlexisBrignoni, Codex',
+                     'creation_date': '2021-04-23',
+                     'last_update_date': '2026-10-04',
+                     'requirements': 'none',
+                     'category': 'Fitbit',
+                     'notes': 'Joined Date (UTC) and Date of Birth (UTC) show USER_PROFILE.JOINED_DATE '
+                              'and DATE_OF_BIRTH read as Unix milliseconds and written out in UTC as '
+                              'plain text. The two columns are not typed as date-times, so a report '
+                              "viewer does not shift them to another time zone. Fitbit's Web API "
+                              'documents the matching profile fields, memberSince and dateOfBirth, as '
+                              'dates (https://dev.fitbit.com/build/reference/web-api/user/get-profile/, '
+                              'read 2026-10-04). On the three registered images whose USER_PROFILE '
+                              'table held a row (kevin_pocox7_a15, russell_pixel6a_a13 and russell_a14, '
+                              'one row each, read from copies of social_db) both values fell on a whole '
+                              'hour that was not midnight in UTC (05:00 on one image, 04:00 on the '
+                              'other two), and TIMEZONE and TIMEZONE_OFFSET were empty. That is '
+                              'consistent with a calendar date stored at midnight in a zone the row '
+                              'does not record; which zone is not established. Under that reading the '
+                              'time of day shown is not a time of an event, and for a zone ahead of UTC '
+                              'the UTC rendering would fall on the previous calendar day; no tested row '
+                              'showed that. The Timezone and Timezone Offset columns show TIMEZONE and '
+                              'TIMEZONE_OFFSET as stored; the unit of TIMEZONE_OFFSET is not '
+                              'established. Last Updated was not on a whole hour on the three rows. '
+                              'Five more registered images hold the table with no row (pixel7a_a14, '
+                              'hc_pixel8pro_a16, hc_pixel8pro_a17, samsunga53_a14, pixel3_a12), and two '
+                              'more that carry the file were not read (userb2_a13, pixel3_a11). No '
+                              'sample_data is recorded for this artifact, and only the first matching '
+                              'database is read.',
+                     'paths': ('*/com.fitbit.FitbitMobile/databases/social_db*',),
+                     'output_types': 'standard',
+                     'artifact_icon': 'user'},
+ 'get_fitbit_steps': {'name': 'Fitbit - Steps',
+                      'description': 'Pedometer minute data (phone)',
+                      'author': '@AlexisBrignoni / @segumarc / Ganeshbs17, @AlexisBrignoni, Codex',
+                      'creation_date': '2021-04-23',
+                      'last_update_date': '2026-01-12',
+                      'requirements': 'none',
+                      'category': 'Fitbit',
+                      'notes': 'No sample_data is recorded for this artifact; its timestamps are read '
+                               'as Unix milliseconds without a tested sample, and only the first '
+                               'matching database is read.',
+                      'paths': ('*/com.fitbit.FitbitMobile/databases/mobile_track_db*',),
+                      'output_types': 'standard',
+                      'artifact_icon': 'activity'},
+ 'get_fitbit_wearos_profile': {'name': 'Fitbit - User Profile (Wear OS)',
+                               'description': 'User profile (Wear OS)',
+                               'author': '@AlexisBrignoni / @segumarc / Ganeshbs17, @AlexisBrignoni, '
+                                         'Codex',
+                               'creation_date': '2021-04-23',
+                               'last_update_date': '2026-01-12',
+                               'requirements': 'none',
+                               'category': 'Fitbit',
+                               'notes': 'No sample_data is recorded for this artifact; its values are '
+                                        'reported as stored, and only the first matching database is '
+                                        'read.',
+                               'paths': ('*/com.fitbit.FitbitMobile/databases/user.db*',),
+                               'output_types': 'standard',
+                               'artifact_icon': 'user'},
+ 'get_fitbit_wearos_activity': {'name': 'Fitbit - Activity History (Wear OS)',
+                                'description': 'Activity/workout history (Wear OS)',
+                                'author': '@AlexisBrignoni / @segumarc / Ganeshbs17, @AlexisBrignoni, '
+                                          'Codex',
+                                'creation_date': '2021-04-23',
+                                'last_update_date': '2026-10-04',
+                                'requirements': 'none',
+                                'category': 'Fitbit',
+                                'notes': 'ActivityExerciseEntity.duration is reported as stored under '
+                                         "'Duration (as stored)' and again divided by 60000 under "
+                                         "'Duration / 60000', with any remainder dropped. The divisor "
+                                         'gives minutes only if the column holds milliseconds; the unit '
+                                         'is not established, so the divided column is not labelled as '
+                                         'minutes. No registered image was found to hold this database '
+                                         '(20 zip images and 2 phone tar images listed on 2026-10-04). '
+                                         'No sample_data is recorded for this artifact; its timestamps '
+                                         'are read as Unix milliseconds without a tested sample, and '
+                                         'only the first matching database is read.',
+                                'paths': ('*/com.fitbit.FitbitMobile/databases/user.db*',),
+                                'output_types': 'standard',
+                                'artifact_icon': 'activity'},
+ 'get_fitbit_wearos_daily': {'name': 'Fitbit - Daily Activity (Wear OS)',
+                             'description': 'Daily sedentary summary (Wear OS)',
+                             'author': '@AlexisBrignoni / @segumarc / Ganeshbs17, @AlexisBrignoni, '
+                                       'Codex',
+                             'creation_date': '2021-04-23',
+                             'last_update_date': '2026-08-01',
+                             'requirements': 'none',
+                             'category': 'Fitbit',
+                             'notes': 'SedentaryDataEntity.longestDuration is reported as stored; the '
+                                      'database does not record its unit, so it is not labelled as '
+                                      'minutes. The two totalMinutes* columns are named as minutes by '
+                                      'the columns themselves. No sample_data is recorded for this '
+                                      'artifact; its values are reported as stored, and only the first '
+                                      'matching database is read.',
+                             'paths': ('*/com.fitbit.FitbitMobile/databases/user.db*',),
+                             'output_types': 'standard',
+                             'artifact_icon': 'activity'},
+ 'get_fitbit_wearos_hourly': {'name': 'Fitbit - Hourly Steps (Wear OS)',
+                              'description': 'Hourly steps from JSON (Wear OS)',
+                              'author': '@AlexisBrignoni / @segumarc / Ganeshbs17, @AlexisBrignoni, '
+                                        'Codex',
+                              'creation_date': '2021-04-23',
+                              'last_update_date': '2026-01-12',
+                              'requirements': 'none',
+                              'category': 'Fitbit',
+                              'notes': 'No sample_data is recorded for this artifact; its values are '
+                                       'reported as stored, and only the first matching database is '
+                                       'read.',
+                              'paths': ('*/com.fitbit.FitbitMobile/databases/user.db*',),
+                              'output_types': 'standard',
+                              'artifact_icon': 'activity'},
+ 'get_fitbit_wearos_sleep_logs': {'name': 'Fitbit - Sleep Logs (Wear OS)',
+                                  'description': 'Sleep session logs (Wear OS)',
+                                  'author': '@AlexisBrignoni / @segumarc / Ganeshbs17, @AlexisBrignoni, '
+                                            'Codex',
+                                  'creation_date': '2021-04-23',
+                                  'last_update_date': '2026-01-12',
+                                  'requirements': 'none',
+                                  'category': 'Fitbit',
+                                  'notes': 'No sample_data is recorded for this artifact; its '
+                                           'timestamps are read as Unix milliseconds without a tested '
+                                           'sample, and only the first matching database is read.',
+                                  'paths': ('*/com.fitbit.FitbitMobile/databases/user.db*',),
+                                  'output_types': 'standard',
+                                  'artifact_icon': 'moon'},
+ 'get_fitbit_wearos_workouts': {'name': 'Fitbit - Workouts (Wear OS)',
+                                'description': 'Workout summaries (Wear OS)',
+                                'author': '@AlexisBrignoni / @segumarc / Ganeshbs17, @AlexisBrignoni, '
+                                          'Codex',
+                                'creation_date': '2021-04-23',
+                                'last_update_date': '2026-10-04',
+                                'requirements': 'none',
+                                'category': 'Fitbit',
+                                'notes': 'The column headed Time is ExerciseSummaryEntity.time; what '
+                                         'that time marks is not established. No registered image was '
+                                         'found to hold this database (20 zip images and 2 phone tar '
+                                         'images listed on 2026-10-04). No sample_data is recorded for '
+                                         'this artifact; its timestamps are read as Unix milliseconds '
+                                         'without a tested sample, and only the first matching database '
+                                         'is read.',
+                                'paths': ('*/com.fitbit.FitbitMobile/databases/passive_stats.db*',),
+                                'output_types': 'standard',
+                                'artifact_icon': 'activity'},
+ 'get_fitbit_wearos_gps': {'name': 'Fitbit - GPS Trackpoints (Wear OS)',
+                           'description': 'GPS trackpoints (Wear OS)',
+                           'author': '@AlexisBrignoni / @segumarc / Ganeshbs17, @AlexisBrignoni, Codex',
+                           'creation_date': '2021-04-23',
+                           'last_update_date': '2026-01-12',
+                           'requirements': 'none',
+                           'category': 'Fitbit',
+                           'notes': 'No sample_data is recorded for this artifact; its timestamps are '
+                                    'read as Unix milliseconds without a tested sample, and only the '
+                                    'first matching database is read.',
+                           'paths': ('*/com.fitbit.FitbitMobile/databases/passive_stats.db*',),
+                           'output_types': 'all',
+                           'artifact_icon': 'map-pin'},
+ 'get_fitbit_wearos_gps_route': {'name': 'Fitbit - GPS Route (Wear OS)',
+                                 'description': 'A route drawn through ExerciseGpsEntity trackpoints with nonzero latitude and longitude, as selected by the parser.',
+                                 'author': '@AlexisBrignoni / @segumarc / Ganeshbs17, @AlexisBrignoni, '
+                                           'Codex',
+                                 'creation_date': '2021-04-23',
+                                 'last_update_date': '2026-01-12',
+                                 'requirements': 'none',
+                                 'category': 'Fitbit',
+                                 'notes': 'No sample_data is recorded for this artifact; its timestamps '
+                                          'are read as Unix milliseconds without a tested sample, and '
+                                          'only the first matching database is read. Every selected '
+                                          'trackpoint in the table is drawn as one route in time order; '
+                                          'the query reads no session column, so the route is not split '
+                                          'by exercise session and can join points from separate '
+                                          'sessions. Latitude and Longitude are those of the first '
+                                          'selected trackpoint.',
+                                 'paths': ('*/com.fitbit.FitbitMobile/databases/passive_stats.db*',),
+                                 'output_types': 'standard',
+                                 'artifact_icon': 'map'},
+ 'get_fitbit_wearos_hr': {'name': 'Fitbit - Heart Rate Stats (Wear OS)',
+                          'description': 'Heart-rate stats (Wear OS)',
+                          'author': '@AlexisBrignoni / @segumarc / Ganeshbs17, @AlexisBrignoni, Codex',
+                          'creation_date': '2021-04-23',
+                          'last_update_date': '2026-08-01',
+                          'requirements': 'none',
+                          'category': 'Fitbit',
+                          'notes': 'HeartRateStatEntity.value is reported as stored under the header '
+                                   "'Value'; the database does not record its unit, so it is not "
+                                   'published as BPM. No sample_data is recorded for this artifact; its '
+                                   'timestamps are read as Unix milliseconds without a tested sample, '
+                                   'and only the first matching database is read.',
+                          'paths': ('*/com.fitbit.FitbitMobile/databases/passive_stats.db*',),
+                          'output_types': 'standard',
+                          'artifact_icon': 'heart'},
+ 'get_fitbit_wearos_pace': {'name': 'Fitbit - Live Pace (Wear OS)',
+                            'description': 'LivePaceEntity rows (Wear OS)',
+                            'author': '@AlexisBrignoni / @segumarc / Ganeshbs17, @AlexisBrignoni, Codex',
+                            'creation_date': '2021-04-23',
+                            'last_update_date': '2026-08-01',
+                            'requirements': 'none',
+                            'category': 'Fitbit',
+                            'notes': 'LivePaceEntity.timeSeconds is decoded as a Unix epoch in seconds, '
+                                     'following the column name; this decoding has not been checked '
+                                     'against a sample database. LivePaceEntity.value is reported as '
+                                     'stored; the database does not record its unit. No sample_data is '
+                                     'recorded for this artifact, and only the first matching database '
+                                     'is read.',
+                            'paths': ('*/com.fitbit.FitbitMobile/databases/passive_stats.db*',),
+                            'output_types': 'standard',
+                            'artifact_icon': 'activity'},
+ 'get_fitbit_wearos_sleep': {'name': 'Fitbit - Sleep (Wear OS)',
+                             'description': 'Local sleep periods (Wear OS)',
+                             'author': '@AlexisBrignoni / @segumarc / Ganeshbs17, @AlexisBrignoni, '
+                                       'Codex',
+                             'creation_date': '2021-04-23',
+                             'last_update_date': '2026-01-12',
+                             'requirements': 'none',
+                             'category': 'Fitbit',
+                             'notes': 'No sample_data is recorded for this artifact; its timestamps are '
+                                      'read as Unix milliseconds without a tested sample, and only the '
+                                      'first matching database is read.',
+                             'paths': ('*/com.fitbit.FitbitMobile/databases/passive_stats.db*',),
+                             'output_types': 'standard',
+                             'artifact_icon': 'moon'},
+ 'get_fitbit_wearos_azm': {'name': 'Fitbit - Active Zones (Wear OS)',
+                           'description': 'PassiveAzmEntity rows (Wear OS)',
+                           'author': '@AlexisBrignoni / @segumarc / Ganeshbs17, @AlexisBrignoni, Codex',
+                           'creation_date': '2021-04-23',
+                           'last_update_date': '2026-08-01',
+                           'requirements': 'none',
+                           'category': 'Fitbit',
+                           'notes': 'PassiveAzmEntity.value is reported as stored under the header '
+                                    "'Value'; the database does not record what it counts, so it is not "
+                                    'published as points. No sample_data is recorded for this artifact; '
+                                    'its timestamps are read as Unix milliseconds without a tested '
+                                    'sample, and only the first matching database is read.',
+                           'paths': ('*/com.fitbit.FitbitMobile/databases/passive_stats.db*',),
+                           'output_types': 'standard',
+                           'artifact_icon': 'heart'},
+ 'get_fitbit_wearos_splits': {'name': 'Fitbit - Workout Splits (Wear OS)',
+                              'description': 'Workout split metrics (Wear OS)',
+                              'author': '@AlexisBrignoni / @segumarc / Ganeshbs17, @AlexisBrignoni, '
+                                        'Codex',
+                              'creation_date': '2021-04-23',
+                              'last_update_date': '2026-01-12',
+                              'requirements': 'none',
+                              'category': 'Fitbit',
+                              'notes': 'No sample_data is recorded for this artifact; its timestamps '
+                                       'are read as Unix milliseconds without a tested sample, and only '
+                                       'the first matching database is read.',
+                              'paths': ('*/com.fitbit.FitbitMobile/databases/passive_stats.db*',),
+                              'output_types': 'standard',
+                              'artifact_icon': 'activity'},
+ 'get_fitbit_wearos_opaque_hr': {'name': 'Fitbit - Opaque HR (Wear OS)',
+                                 'description': 'OpaqueHeartRateEntity rows: baseHeartRate and '
+                                                'confidence as stored (Wear OS)',
+                                 'author': '@AlexisBrignoni / @segumarc / Ganeshbs17, @AlexisBrignoni, '
+                                           'Codex',
+                                 'creation_date': '2021-04-23',
+                                 'last_update_date': '2026-01-12',
+                                 'requirements': 'none',
+                                 'category': 'Fitbit',
+                                 'notes': 'No sample_data is recorded for this artifact; its timestamps '
+                                          'are read as Unix milliseconds without a tested sample, and '
+                                          'only the first matching database is read.',
+                                 'paths': ('*/com.fitbit.FitbitMobile/databases/passive_stats.db*',),
+                                 'output_types': 'standard',
+                                 'artifact_icon': 'heart'}}
 
 import datetime
 import json
@@ -78,6 +396,12 @@ def _ms_to_utc(value):
         return datetime.datetime.fromtimestamp(int(value) / 1000, datetime.timezone.utc)
     except (ValueError, OverflowError, OSError, TypeError):
         return ''
+
+
+def _ms_to_utc_text(value):
+    # A stored date read as Unix milliseconds, shown as plain text and not typed as a date-time.
+    moment = _ms_to_utc(value)
+    return moment.strftime('%Y-%m-%d %H:%M:%S') if moment else ''
 
 
 def _sec_to_utc(value):
@@ -254,14 +578,22 @@ def get_fitbit_user(context):
     files_found = context.get_files_found()
     src = _find(files_found, 'social_db')
     rows = _run(src, '''SELECT LAST_UPDATED, DISPLAY_NAME, FULL_NAME, ABOUT_ME, AVATAR_URL,
-        COVER_PHOTO_URL, CITY, STATE, COUNTRY, JOINED_DATE, DATE_OF_BIRTH, HEIGHT, WEIGHT, GENDER, COACH
+        COVER_PHOTO_URL, CITY, STATE, COUNTRY, JOINED_DATE, DATE_OF_BIRTH, HEIGHT, WEIGHT, GENDER, COACH,
+        TIMEZONE, TIMEZONE_OFFSET
         FROM USER_PROFILE''')
+    if not rows:
+        # A table without the two time zone columns: read it without them.
+        rows = _run(src, '''SELECT LAST_UPDATED, DISPLAY_NAME, FULL_NAME, ABOUT_ME, AVATAR_URL,
+            COVER_PHOTO_URL, CITY, STATE, COUNTRY, JOINED_DATE, DATE_OF_BIRTH, HEIGHT, WEIGHT, GENDER,
+            COACH, NULL, NULL
+            FROM USER_PROFILE''')
     rel = context.get_relative_path(src)
-    data_list = [(_ms_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8], _ms_to_utc(r[9]),
-                  _ms_to_utc(r[10]), r[11], r[12], r[13], r[14], rel) for r in rows]
+    data_list = [(_ms_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8], _ms_to_utc_text(r[9]),
+                  _ms_to_utc_text(r[10]), r[15], r[16], r[11], r[12], r[13], r[14], rel) for r in rows]
     data_headers = (('Last Updated', 'datetime'), 'Display Name', 'Full Name', 'About Me', 'Avatar URL',
-                    'Cover Photo URL', 'City', 'State', 'Country', ('Joined Date', 'datetime'),
-                    ('Date of Birth', 'datetime'), 'Height', 'Weight', 'Gender', 'Coach', 'Source File')
+                    'Cover Photo URL', 'City', 'State', 'Country', 'Joined Date (UTC)',
+                    'Date of Birth (UTC)', 'Timezone', 'Timezone Offset', 'Height', 'Weight',
+                    'Gender', 'Coach', 'Source File')
     return data_headers, data_list, src
 
 
@@ -294,11 +626,12 @@ def get_fitbit_wearos_profile(context):
 def get_fitbit_wearos_activity(context):
     files_found = context.get_files_found()
     src = _find(files_found, 'user.db')
-    rows = _run(src, '''SELECT startTime, name, duration/1000/60, distance, distanceUnit, steps,
+    rows = _run(src, '''SELECT startTime, name, duration, duration/60000, distance, distanceUnit, steps,
         calories, averageHeartRate, elevationGain, activeZoneMinutes, logId FROM ActivityExerciseEntity
         ORDER BY startTime DESC''')
     data_list = [(_ms_to_utc(r[0]),) + tuple(r[1:]) for r in rows]
-    data_headers = (('Start Time', 'datetime'), 'Activity Name', 'Duration (min)', 'Distance', 'Unit',
+    data_headers = (('Start Time', 'datetime'), 'Activity Name', 'Duration (as stored)', 'Duration / 60000',
+                    'Distance', 'Unit',
                     'Steps', 'Calories', 'Avg HR', 'Elevation', 'AZM', 'Log ID')
     return data_headers, data_list, src
 
@@ -355,7 +688,7 @@ def get_fitbit_wearos_workouts(context):
     rows = _run(src, '''SELECT time, sessionId, exerciseTypeId, totalDistanceMm/1000000.0, steps,
         caloriesBurned, avgHeartRate, elevationGainFt FROM ExerciseSummaryEntity ORDER BY time DESC''')
     data_list = [(_ms_to_utc(r[0]),) + tuple(r[1:]) for r in rows]
-    data_headers = (('Start Time', 'datetime'), 'Session ID', 'Activity Type ID', 'Distance (km)',
+    data_headers = (('Time', 'datetime'), 'Session ID', 'Activity Type ID', 'Distance (km)',
                     'Steps', 'Calories', 'Avg HR', 'Elevation (ft)')
     return data_headers, data_list, src
 

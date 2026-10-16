@@ -2,17 +2,23 @@ __artifacts_v2__ = {
     "dropbox_files": {
         "name": "Dropbox - Files",
         "description": "Cloud files and folders listed in the Dropbox app database, with the path, "
-                       "size, MIME type and the modification times the service recorded",
-        "author": "@AlexisBrignoni, Claude",
+                       "size, MIME type and the four stored time columns (server_modified_millis, modified_millis, local_modified, accessed_millis)",
+        "author": "@AlexisBrignoni, Claude; @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Dropbox",
-        "notes": "Read from the dropbox table of the account database, which the app names with the "
-                 "account id, for example <account id>-db.db, so the path allows for the prefix. "
-                 "This is the listing the app had cached, not necessarily the full account "
-                 "contents. Shared folder id and the vault and read-only flags are reported as the "
-                 "app stored them.",
+        "notes": "Read from the dropbox table of the account database, whose file name carries a "
+                 "prefix before -db.db, so the path allows for it. Whether that prefix is the "
+                 "account id was not established. Every database matched is read, one copy per "
+                 "storage class and Android user where an extraction holds the same file under "
+                 "more than one storage path, and Source File names the database each row came "
+                 "from. Reading more than one database in a run was checked with constructed "
+                 "databases only. This is "
+                 "the listing the app had cached, not necessarily the full account contents. "
+                 "Shared folder id and is_dir, is_favorite, read_only and is_vault_folder are "
+                 "reported as stored, retaining NULL, zero and other values without assigning "
+                 "boolean meanings.",
         "paths": ('*/com.dropbox.android/databases/*-db.db*',),
         "output_types": "standard",
         "artifact_icon": "cloud",
@@ -22,18 +28,26 @@ __artifacts_v2__ = {
     },
     "dropbox_account": {
         "name": "Dropbox - Account",
-        "description": "The signed-in Dropbox account, with the email, display name, account id and "
-                       "plan read from the account preference values",
-        "author": "@AlexisBrignoni, Claude",
+        "description": "Text candidates and selected preferences from the Dropbox account preferences database",
+        "author": "@AlexisBrignoni, Claude; @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-08-07",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Dropbox",
-        "notes": "Read from the DropboxAccountPrefs table of the account preferences database. The "
-                 "ACCOUNT_INFO, FULL_ACCOUNT_INFO_V2 and PLAN_INFO_V2 values are base64 wrapped "
-                 "protobuf; the readable strings are extracted from them rather than decoded field "
-                 "by field, so each is reported as the value it was matched from. Timestamp "
-                 "preferences are reported as epoch milliseconds converted to UTC.",
+        "notes": "Read from the DropboxAccountPrefs table of the first matched preferences database. "
+                 "ACCOUNT_INFO, FULL_ACCOUNT_INFO_V2 and PLAN_INFO_V2 are base64 wrapped protobuf; "
+                 "printable ASCII runs are extracted without binding them to protobuf fields. "
+                 "The first email-shaped and dbid:-prefixed regex matches and each cleaned run "
+                 "starting with 'Dropbox ' produce text candidates, not verified identity or plan "
+                 "values. Value / Derived Display keeps the existing display, including stripped "
+                 "wrapping characters for Dropbox-prefixed candidates. Raw Matched Candidate Text "
+                 "(JSON) lists each accepted match and its source preference in encounter order: "
+                 "exact regex substrings for email/dbid candidates, full pre-clean printable runs "
+                 "for Dropbox-prefixed candidates. Equal display candidates remain aggregated; "
+                 "repeats are retained in the raw list. This is not a lossless protobuf decoder. "
+                 "Repeated preference names keep the last row read. Source Preference names the "
+                 "preferences used. Timestamp preferences retain the existing Unix milliseconds "
+                 "conversion to UTC; direct preferences have no raw candidate cell.",
         "paths": ('*/com.dropbox.android/databases/*-prefs.db*',),
         "output_types": "standard",
         "artifact_icon": "user",
@@ -43,16 +57,16 @@ __artifacts_v2__ = {
     },
     "dropbox_thumbnails": {
         "name": "Dropbox - Thumbnails",
-        "description": "Thumbnails the Dropbox app cached, with the cloud path they belong to and "
-                       "the size and format that was cached",
+        "description": "Rows of the thumbnail_info table of the Dropbox app database, with the cloud path, size and format each names",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
         "requirements": "none",
         "category": "Dropbox",
-        "notes": "Read from the thumbnail_info table of the account database. A row shows a "
-                 "thumbnail was cached for that path; the image bytes are held elsewhere in the "
-                 "app cache.",
+        "notes": "Read from the thumbnail_info table of the account database. A row is a "
+                 "thumbnail_info record naming a cloud path, a size and a format. This artifact "
+                 "does not locate or show any image file, and whether a cached image exists for "
+                 "a row was not checked.",
         "paths": ('*/com.dropbox.android/databases/*-db.db*',),
         "output_types": "standard",
         "artifact_icon": "image",
@@ -64,9 +78,11 @@ __artifacts_v2__ = {
 
 import base64
 import binascii
+import json
 import re
 
 from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records
+from scripts.artifacts.storagePathViews import unique_files
 
 # Preference names whose value is an epoch milliseconds timestamp.
 _TIME_PREFS = {
@@ -112,7 +128,8 @@ def _protobuf_strings(value):
 
 @artifact_processor
 def dropbox_files(context):
-    source_path = _db_by_suffix(context.get_files_found(), '-db.db')
+    source_paths = [str(file_found) for file_found in unique_files(context)
+                    if str(file_found).endswith('-db.db')]
     data_list = []
 
     query = '''
@@ -122,23 +139,26 @@ def dropbox_files(context):
     FROM dropbox
     ORDER BY server_modified_millis
     '''
-    for record in get_sqlite_db_records(source_path, query):
-        data_list.append((
-            convert_unix_ts_to_utc(record[0]) if record[0] else '',
-            convert_unix_ts_to_utc(record[1]) if record[1] else '',
-            convert_unix_ts_to_utc(record[2]) if record[2] else '',
-            convert_unix_ts_to_utc(record[3]) if record[3] else '',
-            record[4],
-            record[5],
-            record[6],
-            record[7],
-            'Yes' if record[8] else 'No',
-            'Yes' if record[9] else 'No',
-            record[10],
-            'Yes' if record[11] else 'No',
-            'Yes' if record[12] else 'No',
-            record[13],
-        ))
+    for source_path in source_paths:
+        relative = context.get_relative_path(source_path)
+        for record in get_sqlite_db_records(source_path, query):
+            data_list.append((
+                convert_unix_ts_to_utc(record[0]) if record[0] else '',
+                convert_unix_ts_to_utc(record[1]) if record[1] else '',
+                convert_unix_ts_to_utc(record[2]) if record[2] else '',
+                convert_unix_ts_to_utc(record[3]) if record[3] else '',
+                record[4],
+                record[5],
+                record[6],
+                record[7],
+                record[8],
+                record[9],
+                record[10],
+                record[11],
+                record[12],
+                record[13],
+                relative,
+            ))
 
     data_headers = (
         ('Server Modified', 'datetime'),
@@ -149,14 +169,15 @@ def dropbox_files(context):
         'Path',
         'Size (bytes)',
         'MIME Type',
-        'Is Directory',
-        'Favourite',
+        'is_dir (as stored)',
+        'is_favorite (as stored)',
         'Shared Folder ID',
-        'Read Only',
-        'Vault Folder',
+        'read_only (as stored)',
+        'is_vault_folder (as stored)',
         'Revision',
+        'Source File',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
@@ -173,11 +194,14 @@ def dropbox_account(context):
     # one preference, so each (property, value) pair is reported once with every preference it
     # was matched from, rather than repeated per preference.
     matched = {}
+    raw_matches = {}
 
-    def _record(prop, value, pref_name):
+    def _record(prop, value, pref_name, raw_text):
         if not value:
             return
         matched.setdefault((prop, value), []).append(pref_name)
+        raw_matches.setdefault((prop, value), []).append({
+            'source_preference': pref_name, 'matched_text': raw_text})
 
     for pref_name in ('ACCOUNT_INFO', 'FULL_ACCOUNT_INFO_V2', 'PLAN_INFO_V2'):
         strings = _protobuf_strings(prefs.get(pref_name))
@@ -187,33 +211,41 @@ def dropbox_account(context):
         email = _EMAIL_RE.search(joined)
         dbid = _DBID_RE.search(joined)
         if email:
-            _record('Email', email.group(0), pref_name)
+            _record('Email', email.group(0), pref_name, email.group(0))
         if dbid:
-            _record('Dropbox ID', dbid.group(0), pref_name)
+            _record('Dropbox ID', dbid.group(0), pref_name, dbid.group(0))
         for value in strings:
             cleaned = value.strip('"*() ')
             if cleaned and cleaned.startswith('Dropbox '):
-                _record('Plan', cleaned, pref_name)
+                _record('Plan', cleaned, pref_name, value)
 
+    candidate_labels = {
+        'Email': 'Email-shaped Text Candidate',
+        'Dropbox ID': 'dbid:-prefixed Text Candidate',
+        'Plan': 'Dropbox-prefixed Text Candidate',
+    }
     for (prop, value), pref_names in matched.items():
-        data_list.append((prop, value, ', '.join(pref_names)))
+        raw_text = json.dumps(raw_matches[(prop, value)], ensure_ascii=False,
+                              separators=(',', ':'))
+        data_list.append((candidate_labels[prop], value, raw_text, ', '.join(pref_names)))
 
     for pref_name, label in _TEXT_PREFS.items():
         if prefs.get(pref_name):
-            data_list.append((label, prefs[pref_name], pref_name))
+            data_list.append((label, prefs[pref_name], '', pref_name))
 
     for pref_name, label in _TIME_PREFS.items():
         value = prefs.get(pref_name)
         if not value:
             continue
         try:
-            data_list.append((label, convert_unix_ts_to_utc(int(value)), pref_name))
+            data_list.append((label, convert_unix_ts_to_utc(int(value)), '', pref_name))
         except (TypeError, ValueError):
-            data_list.append((label, value, pref_name))
+            data_list.append((label, value, '', pref_name))
 
     data_headers = (
-        'Property',
-        'Value',
+        'Property / Candidate',
+        'Value / Derived Display',
+        'Raw Matched Candidate Text (JSON)',
         'Source Preference',
     )
     return data_headers, data_list, source_path

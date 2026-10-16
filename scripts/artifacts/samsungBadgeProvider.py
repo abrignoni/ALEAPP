@@ -3,7 +3,7 @@ __artifacts_v2__ = {
         "name": "Samsung Badge Provider",
         "description": "App icon badge counts recorded by the Samsung badge provider "
                        "(badge.db, apps table): the package and activity each badge belongs "
-                       "to, its count and whether it is hidden.",
+                       "to, its count, and the hidden and extraData columns as stored.",
         "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",

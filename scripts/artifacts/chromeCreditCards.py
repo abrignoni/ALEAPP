@@ -23,17 +23,18 @@ __artifacts_v2__ = {
                  "empty in every tested image and it stores its number encrypted. Card Network is "
                  "reported as stored. Card Issuer, Virtual Card Enrollment State and Card Creation "
                  "Source are integers decoded through Chromium's own enum definitions, which state "
-                 "the numbering is persistent in the database; a value outside the defined set is "
-                 "reported as the bare integer. Only Card Issuer and Virtual Card Enrollment State "
-                 "were exercised by a real row in the tested images, so the Card Creation Source "
-                 "decode is source-verified and not corpus-verified. Rows are driven from "
-                 "masked_credit_cards, so a metadata row whose card has been removed is not "
-                 "reported. An extraction can hold the same Web Data file under more than one path "
-                 "(/data/data, /data/user/0, data_mirror); each file is read once, from the "
-                 "/data/data copy where present. A Web Data file left with a hot rollback journal "
-                 "cannot be recovered through a read-only handle; such a file is logged and skipped "
-                 "so it does not end the run before the other browsers on the device are read. One "
-                 "such file was found across the tested images, and it sits at a duplicate path "
+                 "that each enum must stay in sync with the proto enum in autofill_specifics.proto; "
+                 "a value outside the defined set is reported as the bare integer. Only Card Issuer "
+                 "and Virtual Card Enrollment State were exercised by a real row in the tested "
+                 "images, so the Card Creation Source decode is source-verified and not "
+                 "corpus-verified. Rows are driven from masked_credit_cards, so a metadata row "
+                 "whose card has been removed is not reported. An extraction can hold the same Web "
+                 "Data file under more than one path (/data/data, /data/user/0, data_mirror); each "
+                 "file is read once, from the /data/data copy where present. A Web Data file left "
+                 "with a hot rollback journal cannot be recovered through a read-only handle; such "
+                 "a file is logged and skipped so it does not end the run before the other browsers "
+                 "on the device are read. One Web Data file that could not be opened read-only was "
+                 "found across the tested images. It sits at a duplicate path "
                  "that deduplication drops, so no tested image reaches that guard. It was exercised "
                  "instead by staging that same file at an ordinary /data/data path, which logged "
                  "the skip and still reported the card another browser held in the same run. "
@@ -83,10 +84,10 @@ from scripts.ilapfuncs import logfunc, artifact_processor, open_sqlite_db_readon
 from scripts.artifacts.chrome import get_browser_name
 from scripts.artifacts.storagePathViews import unique_files
 
-# Integer codes decoded through Chromium's own enum definitions. The file states
-# the numbering is persistent in the database and kept in sync with the sync
-# proto, so the values are not expected to shift between releases the way a
-# build-assigned entity code would.
+# Integer codes follow the three enum definitions at the pinned source below.
+# Each requires synchronization with its proto enum in autofill_specifics.proto.
+# That file's database-persistence warning is scoped to BenefitCategory.
+# It does not establish cross-release stability for these three mappings.
 # Reference: Chromium, 'enum_types.mojom',
 # https://github.com/chromium/chromium/blob/8f4baaae073181e7e0fea1807f8db6ad720dbcb7/components/autofill/core/browser/data_model/payments/enum_types.mojom
 CARD_ISSUER = {

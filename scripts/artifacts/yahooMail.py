@@ -2,11 +2,11 @@ __artifacts_v2__ = {
     "yahoo_mail_messages": {
         "name": "Yahoo Mail - Messages",
         "description": "Parses messages cached by the Yahoo Mail Android app, including "
-                       "sender and recipient addresses, subject, snippet, folder, read "
+                       "sender and recipient addresses, subject, snippet, folder name as stored, read "
                        "and flagged state and the message body where the app cached it.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Yahoo Mail",
         "notes": "One row per cached message. The app stores its state in flux_database.db, "
@@ -22,17 +22,22 @@ __artifacts_v2__ = {
                  "consistent with a length cap, so a snippet ending mid word should not be read "
                  "as the end of the message. Decorations and Category are reported as stored: "
                  "the extraction carries no app binary, so no mapping for those codes could be "
-                 "sourced. Folder names the folder the cached record carries, resolved through "
-                 "the Folders table of the same account. Message Body is the HTML the app "
-                 "cached, as stored; on the tested device 1 of 6 messages carried one, so an "
-                 "empty column means no body was cached rather than that the message was empty. "
-                 "No message on the tested device carried an attachment: every attachmentIds "
-                 "list was empty and the Attachments table held no rows, so nothing could be "
-                 "linked to cached bytes and no media column is offered. No user-entered search "
-                 "terms were found here: on the tested device RecentSearches held no rows and "
-                 "the eight SavedSearches rows carried empty userQueries, so they are not "
-                 "reported as searches the user ran. Field mapping was done against a "
-                 "private sample provided by Mattia; no sample data is recorded for it.",
+                 "sourced. Folder Name (as stored) is the folderName of the folder the cached record "
+                 "carries, resolved through the Folders table of the same account. Folder Name "
+                 "(base64 decoded) is filled only where that stored name decodes from base64 to "
+                 "printable text; whether the app encodes folder names that way is not "
+                 "established. Message Body is the HTML the "
+                 "app cached, as stored; on the tested device 1 of 6 messages carried one, so "
+                 "an empty column means no body was cached rather than that the message was "
+                 "empty. No message on the tested device carried an attachment: every "
+                 "attachmentIds list was empty and the Attachments table held no rows, so "
+                 "nothing could be linked to cached bytes and no media column is offered. No "
+                 "user-entered search terms were found here: on the tested device "
+                 "RecentSearches held no rows and the eight SavedSearches rows carried empty "
+                 "userQueries, so they are not reported as searches the user ran. Field mapped "
+                 "from a private sample provided by Mattia; no sample data is recorded for it, "
+                 "and the counts in these notes rest on that sample and cannot be re-derived "
+                 "from the registered corpora.",
         "paths": (
             '*/com.yahoo.mobile.client.android.mail/databases/flux_database.db*',
         ),
@@ -48,20 +53,23 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-29",
         "requirements": "none",
         "category": "Yahoo Mail",
-        "notes": "One row per folder record. Total Messages and Unread Messages are the "
-                 "counts the folder record carries, while Cached Messages counts the messages "
-                 "this database holds against that "
-                 "folder. The two answer different questions and can disagree: on the tested "
-                 "device five cached messages carried the Trash folder id while that folder's "
-                 "own record reported a total of zero. Why they disagree is not established "
-                 "here, because a server side removal, a later re-sync and a local eviction "
-                 "all leave the same result. Folder Name is reported as stored. Where the "
-                 "stored name decodes from base64 to printable text the decode is offered in "
-                 "its own column, which on the tested device filled for one folder and "
-                 "stayed empty for the rest; no source establishes which names the "
-                 "app encodes, so the stored value is the one to rely on. Folder Types is "
-                 "reported as stored. Field mapping was done against a private sample "
-                 "provided by Mattia; no sample data is recorded for it.",
+        "notes": "One row per folder record. Record Timestamp is the timestamp column of the "
+                 "Folders row, read as Unix milliseconds; what event it marks is not "
+                 "established. Total Messages and Unread Messages are the counts the folder "
+                 "record carries, while Cached Messages counts the messages this database "
+                 "holds against that folder. The two answer different questions and can "
+                 "disagree: on the tested device five cached messages carried the Trash "
+                 "folder id while that folder's own record reported a total of zero. Why "
+                 "they disagree is not established here, because a server side removal, a "
+                 "later re-sync and a local eviction all leave the same result. Folder Name "
+                 "is reported as stored. Where the stored name decodes from base64 to "
+                 "printable text the decode is offered in its own column, which on the "
+                 "tested device filled for one folder and stayed empty for the rest; no "
+                 "source establishes which names the app encodes, so the stored value is the "
+                 "one to rely on. Folder Types is reported as stored. Field mapped from a "
+                 "private sample provided by Mattia; no sample data is recorded for it, and "
+                 "the counts in these notes rest on that sample and cannot be re-derived "
+                 "from the registered corpora.",
         "paths": (
             '*/com.yahoo.mobile.client.android.mail/databases/flux_database.db*',
         ),
@@ -70,7 +78,8 @@ __artifacts_v2__ = {
     },
     "yahoo_mail_accounts": {
         "name": "Yahoo Mail - Accounts and Device",
-        "description": "Parses the signed in Yahoo Mail account together with the device "
+        "description": "Parses the accounts listed in the Yahoo Mail app's Mailboxes record "
+                       "together with the device "
                        "and installation identifiers the Android app records.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
@@ -83,11 +92,12 @@ __artifacts_v2__ = {
                  "preference files, which are read only from the same app data directory as "
                  "the database. Mailbox Setup is Unix milliseconds. Region, GDPR and EECC are "
                  "the values the mailbox configuration record carries, as stored. Session "
-                 "count is reported by two records written by different parts of the app, the "
-                 "mailbox configuration and the app configuration; the column names the "
-                 "mailbox value and both held the same number on the tested device. Field "
-                 "mapping was done against a private sample provided by Mattia; no sample "
-                 "data is recorded for it.",
+                 "count is reported by two records, the mailbox configuration and the app "
+                 "configuration; the column names the mailbox value and both held the same "
+                 "number on the tested device. Field mapped from a private sample provided "
+                 "by Mattia; no sample data is recorded for it, and the counts in these "
+                 "notes rest on that sample and cannot be re-derived from the registered "
+                 "corpora.",
         "paths": (
             '*/com.yahoo.mobile.client.android.mail/databases/flux_database.db*',
             '*/com.yahoo.mobile.client.android.mail/shared_prefs/phoenix_preferences.xml',
@@ -99,21 +109,27 @@ __artifacts_v2__ = {
     "yahoo_mail_app_usage": {
         "name": "Yahoo Mail - App Usage",
         "description": "Parses the install, update and session record the Yahoo Mail "
-                       "Android app keeps for itself, with its message open and delete "
-                       "counters.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+                       "Android app keeps for itself, with the MILESTONE_MESSAGE_OPEN_COUNT "
+                       "and EMAILS_DELETED values it stores.",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "Yahoo Mail",
-        "notes": "One row per app configuration record, which is one per account on the "
-                 "tested device. Every timestamp is Unix milliseconds. The counters are the "
-                 "values the app stores, reported as stored; whether they cover the whole life "
-                 "of the install is not established, and Emails Deleted is the app's own "
-                 "counter rather than a count of recoverable deleted messages. First Install "
-                 "is the app's record of its own first run and matched the mailbox setup "
-                 "timestamp exactly on the tested device. Field mapping was done against a "
-                 "private sample provided by Mattia; no sample data is recorded for it.",
+        "notes": "One row per account that has records in the AppConfig table, built from "
+                 "that account's settings. Every timestamp is Unix milliseconds. The counters "
+                 "are the values the app stores, reported as stored; whether they cover the "
+                 "whole life of the install is not established, and Emails Deleted is the "
+                 "app's own counter rather than a count of recoverable deleted messages. "
+                 "First Install is the FIRST_INSTALL_TIMESTAMP value, whose meaning beyond "
+                 "its name is not established here; it matched the mailbox setup timestamp "
+                 "exactly on the tested device. Field mapped from a private sample provided "
+                 "by Mattia; no sample data is recorded for it, and the counts in these notes "
+                 "rest on that sample and cannot be re-derived from the registered corpora."
+                 " MILESTONE_MESSAGE_OPEN_COUNT names the AppConfig key. The parser displays its "
+                 "existing string conversion; the key's event meaning and counting period are "
+                 "not established. Original artifact and field research: @mattiaepi (Mattia "
+                 "Epifani), Claude.",
         "paths": (
             '*/com.yahoo.mobile.client.android.mail/databases/flux_database.db*',
         ),
@@ -122,23 +138,25 @@ __artifacts_v2__ = {
     },
     "yahoo_mail_contacts": {
         "name": "Yahoo Mail - Contacts",
-        "description": "Parses the contact records the Yahoo Mail Android app holds for "
-                       "addresses seen in the mailbox.",
+        "description": "Parses the contact records the Yahoo Mail Android app holds in its "
+                       "ContactInfo table.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
         "category": "Yahoo Mail",
-        "notes": "One row per contact record. On the tested device every record carried "
-                 "isUserCurated false and each one corresponded to a sender of a cached message, "
-                 "which is consistent with records the app built from addresses seen rather than "
+        "notes": "One row per contact record. Record Timestamp is the timestamp column of the "
+                 "ContactInfo row, read as Unix milliseconds; what event it marks is not "
+                 "established. On the tested device every record carried isUserCurated false "
+                 "and each one corresponded to a sender of a cached message, which is "
+                 "consistent with records the app built from addresses seen rather than "
                  "contacts entered by the user. User Curated and Known Entity are reported as "
                  "stored so that distinction stays visible. Attributes is the record's own "
                  "attribute list, as stored. On the tested device one of the three records "
-                 "carried five attributes including the app's machine generated marker, and "
-                 "the other two carried none. Field mapping was "
-                 "done against a private sample provided by Mattia; no sample data is "
-                 "recorded for it.",
+                 "carried five attributes including the app's machine generated marker, and the "
+                 "other two carried none. Field mapped from a private sample provided by "
+                 "Mattia; no sample data is recorded for it, and the counts in these notes rest "
+                 "on that sample and cannot be re-derived from the registered corpora.",
         "paths": (
             '*/com.yahoo.mobile.client.android.mail/databases/flux_database.db*',
         ),
@@ -386,11 +404,12 @@ def yahoo_mail_messages(context):
 
                 folder_id = folder_ids.get((mailbox, message_id))
                 folder_name = ''
+                folder_decoded = ''
                 if folder_id is not None:
                     folder = folders.get((mailbox, str(folder_id)))
                     if folder:
                         folder_name = folder.get('folderName') or ''
-                        folder_name = _decoded_name(folder_name) or folder_name
+                        folder_decoded = _decoded_name(folder_name)
 
                 attachment_ids = attachment.get('attachmentIds')
                 source_files.append(relative)
@@ -398,6 +417,7 @@ def yahoo_mail_messages(context):
                     _ms(document.get('date')),
                     _ms(document.get('serverSyncTimestamp')),
                     folder_name,
+                    folder_decoded,
                     str(folder_id) if folder_id is not None else '',
                     subject,
                     snippet,
@@ -422,12 +442,13 @@ def yahoo_mail_messages(context):
 
     # Most recent message first, with the message id breaking ties so the order is the
     # same on every run rather than depending on the order the rows were read.
-    data_list.sort(key=lambda row: (str(row[0]), row[19]), reverse=True)
+    data_list.sort(key=lambda row: (str(row[0]), row[20]), reverse=True)
 
     data_headers = (
         ('Date', 'datetime'),
         ('Server Sync Time', 'datetime'),
-        'Folder',
+        'Folder Name (as stored)',
+        'Folder Name (base64 decoded)',
         'Folder ID',
         'Subject',
         'Snippet',
@@ -635,7 +656,7 @@ def yahoo_mail_app_usage(context):
         'App Session Count',
         'User Session Count',
         'Mailbox Session Count',
-        'Messages Opened Count',
+        'MILESTONE_MESSAGE_OPEN_COUNT',
         'Emails Deleted Count',
         'First Delete Event',
         'First Install Version Code',

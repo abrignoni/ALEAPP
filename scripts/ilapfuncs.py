@@ -1,6 +1,7 @@
 # common standard imports
 import codecs
 import csv
+import atexit
 import hashlib
 import inspect
 import json
@@ -34,6 +35,7 @@ from leapp_functions.app.output import (  # pylint: disable=unused-import
     validate_output_folder_available,
 )
 from leapp_functions.app.artifact_result import ArtifactResult
+from leapp_functions.app.screen_log import ScreenLogWriter
 
 _console_write = sys.stdout.write
 
@@ -48,7 +50,8 @@ from scripts.html_safe import esc, safe_local_path
 from scripts.lavafuncs import lava_process_artifact, lava_insert_sqlite_data, lava_iter_artifact_rows, lava_update_record_count, \
     lava_get_media_item, \
     lava_insert_sqlite_media_item, lava_insert_sqlite_media_references, lava_get_media_references, \
-    lava_get_full_media_info, bind_dates_as_text, _python_text
+    lava_get_full_media_info, bind_dates_as_text, _python_text, \
+    lava_blank_invalid_media_refs
 
 os.path.basename = lru_cache(maxsize=None)(os.path.basename)
 
@@ -140,6 +143,26 @@ class MediaReferences():
         self.name = media_ref_info[4]
 
 
+_screen_log = ScreenLogWriter()
+
+
+def close_screen_log():
+    """Flush pending run messages and release the HTML log handle."""
+    _screen_log.close()
+
+
+atexit.register(close_screen_log)
+
+
+def screen_log_session(func):
+    """Keep the HTML log open during processing and close it on every exit."""
+    @wraps(func)
+    def wrapped(*args, **kwargs):
+        with _screen_log.session(OutputParameters.screen_output_file_path):
+            return func(*args, **kwargs)
+    return wrapped
+
+
 def logfunc(message=""):
     def redirect_logs(string):
         _console_write(string)
@@ -160,8 +183,10 @@ def logfunc(message=""):
         sys.stdout.write = redirect_logs
 
     if OutputParameters.screen_output_file_path:
-        with open(OutputParameters.screen_output_file_path, 'a', encoding='utf8') as a:
-            a.write(message + '<br>' + OutputParameters.nl)
+        _screen_log.write(OutputParameters.screen_output_file_path,
+                          message + '<br>' + OutputParameters.nl)
+    else:
+        _screen_log.write('', '')
     print(message)
 
 
@@ -370,12 +395,19 @@ def check_in_media(file_path, name="", converted_file_path=False, force_type=Non
     Returns:
         The media reference ID or None.
     '''
-    extraction_path = Context.get_source_file_path(file_path)
-    if not extraction_path:
-        logfunc(f'No matching file found for "{file_path}"')
-        return None
-
-    file_info = Context.get_seeker().file_infos.get(extraction_path)
+    # A file the seeker staged is checked in as itself, whether or not the current artifact's
+    # files_found lists it. An artifact that stages a file with its own seeker search would
+    # otherwise get no media, or, when files_found holds another file of the same name, have
+    # the media identified by that other file's evidence path.
+    seeker = Context.get_seeker()
+    extraction_path = os.fspath(file_path)
+    file_info = seeker.file_infos.get(extraction_path)
+    if not file_info:
+        extraction_path = Context.get_source_file_path(file_path)
+        if not extraction_path:
+            logfunc(f'No matching file found for "{file_path}"')
+            return None
+        file_info = seeker.file_infos.get(extraction_path)
     if file_info:
         media_id = hashlib.sha1(f"{file_info.source_path}".encode()).hexdigest()
         # Only the type sniffer reads media_data for a file on disk, and it looks at no more
@@ -690,6 +722,12 @@ def artifact_processor(func):
 
                 # Check if headers contains a 'media' type
                 media_header_info = get_media_header_info(data_headers)
+                if media_header_info and not is_artifact_result:
+                    # Streamed rows are checked as they are written to LAVA
+                    checked_list = list(lava_blank_invalid_media_refs(data_list, media_header_info, artifact_name))
+                    if html_data_list is data_list:
+                        html_data_list = checked_list
+                    data_list = txt_data_list = checked_list
                 needs_text_or_html_data = any(
                     check_output_types(output_type, output_types)
                     for output_type in ('html', 'tsv', 'timeline', 'kml')
@@ -727,6 +765,7 @@ def artifact_processor(func):
                         column_map,
                         async_write=getattr(data_list, 'async_write', False),
                         queue_size=getattr(data_list, 'queue_size', 5000),
+                        label=artifact_name,
                     )
                     if is_artifact_result:
                         data_list.set_row_count(inserted_count)
@@ -947,23 +986,77 @@ def attach_sqlite_db_readonly(path, db_name):
     path = get_sqlite_db_path(path)
     return  f'''ATTACH DATABASE "file:{path}?mode=ro" AS {db_name}'''
 
-def get_sqlite_db_records(path, query, attach_query=None):
-    db = open_sqlite_db_readonly(path)
-    if db:
+class SqliteRecords:
+    """The rows of one query, read as the caller iterates.
+
+    Closes its cursor and connection when the rows run out, when a read fails,
+    on close(), and when the object is dropped. `description` is the cursor's.
+    """
+    def __init__(self, db, cursor):
+        self._db = db
+        self._cursor = cursor
+        self.description = cursor.description
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self._cursor is None:
+            raise StopIteration
         try:
-            cursor = db.cursor()
-            if attach_query:
-                cursor.execute(attach_query)
-            cursor.execute(query)
-            # NOTE: we return the cursor directly, to be iterated by the caller
-            #   to keep it as a generator
-            return cursor
-        except sqlite3.OperationalError as e:
-            logfunc(f"Error with {path}:")
-            logfunc(f" - {str(e)}")
-        except sqlite3.ProgrammingError as e:
-            logfunc(f"Error with {path}:")
-            logfunc(f" - {str(e)}")
+            return next(self._cursor)
+        except BaseException:
+            # StopIteration ends the rows; a read error still reaches the caller.
+            self.close()
+            raise
+
+    def close(self):
+        """Release the cursor and the connection. Safe to call more than once."""
+        cursor, db = self._cursor, self._db
+        self._cursor = self._db = None
+        try:
+            if cursor is not None:
+                cursor.close()
+        finally:
+            if db is not None:
+                db.close()
+
+    def __del__(self):
+        try:
+            self.close()
+        except sqlite3.Error:
+            pass
+
+
+def get_sqlite_db_records(path, query, attach_query=None):
+    """Run a query and return its rows as a SqliteRecords, or [] when it fails.
+
+    The query runs here, not on first iteration. The connection is closed once
+    the rows are exhausted; a caller that keeps the result and stops early
+    should call close() or use contextlib.closing.
+    """
+    db = open_sqlite_db_readonly(path)
+    if db is None:
+        return []
+    cursor = None
+    try:
+        cursor = db.cursor()
+        if attach_query:
+            cursor.execute(attach_query)
+        cursor.execute(query)
+        records = SqliteRecords(db, cursor)
+        db = cursor = None
+        return records
+    except (sqlite3.OperationalError, sqlite3.ProgrammingError) as e:
+        logfunc(f"Error with {path}:")
+        logfunc(f" - {str(e)}")
+    finally:
+        try:
+            if cursor is not None:
+                cursor.close()
+        finally:
+            if db is not None:
+                db.close()
     return []
 
 def get_results_with_extra_sourcepath_if_needed(path_list, query, data_headers):
@@ -1154,7 +1247,8 @@ def timeline(report_folder, tlactivity, data_list, data_headers):
         db.commit()
     
     for entry in data_list:
-        entry = [str(field) for field in entry]
+        # None is written blank, as the HTML and TSV show it, not as the text 'None'.
+        entry = ['' if field is None else str(field) for field in entry]
         
         data_dict = dict(zip(data_headers, entry))
 

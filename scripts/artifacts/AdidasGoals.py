@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_adidas_goals": {
         "name": "AdidasGoals",
-        "description": "Get Information related to user defined goals from the Adidas Running app stored in goals",
+        "description": "Parses the rows of the goalV2 table in the Adidas Running app's goals database.",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
         "creation_date": "2023-04-21",
         "last_update_date": "2026-08-01",

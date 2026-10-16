@@ -7,7 +7,10 @@ __artifacts_v2__ = {
         "last_update_date": "2023-02-24",
         "requirements": "none",
         "category": "Garmin",
-        "notes": "Parses on-device cached data only; the original's live Facebook Graph API lookup was removed.",
+        "notes": "Parses the cached values in the com.facebook shared_prefs XML only. No online "
+                 "lookup is made. The last_refresh, data_access_expiration_time and expires_at "
+                 "values are converted to UTC, read as milliseconds when 13 digits long and as "
+                 "seconds otherwise.",
         "paths": ('*/com.garmin.android.apps.connectmobile/shared_prefs/com.facebook*',),
         "output_types": "standard",
         "artifact_icon": "activity",

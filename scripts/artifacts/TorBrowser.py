@@ -2,13 +2,16 @@
 __artifacts_v2__ = {
     "torbrowser_thumbnails": {
         "name": "Tor Browser Tab Thumnails",
-        "description": "Parses Tor Browser Tab thumbnail Information",
-        "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
+        "description": "Tor Browser tab thumbnails with the file system modification time of the extracted copy.",
+        "author": "Damien Attoe {damien.attoe@spyderforensics.com}, @AlexisBrignoni, Codex",
         "creation_date": "2025-11-14",
-        "last_update_date": "2025-11-14",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Tor Browser",
-        "notes": "Tested on version 15.0 (140.4.0esr (Oct 28th, 2025)",
+        "notes": "Extracted Copy Modification Time is the file system modification time of the "
+                 "extracted copy of the thumbnail file, which depends on how the extraction and this tool preserved "
+                 "file times; it is not read from the file's content. No sample data is recorded "
+                 "for this artifact.",
         "paths": ('*/org.torproject.torbrowser/cache/mozac_browser_thumbnails/private_thumbnails/*.0'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "photo"
@@ -21,7 +24,8 @@ __artifacts_v2__ = {
         "last_update_date": "2025-11-14",
         "requirements": "none",
         "category": "Tor Browser",
-        "notes": "Tested on version 15.0 (140.4.0esr (Oct 28th, 2025)",
+        "notes": "Run on hc_pixel8pro_a16 (version code 2016164570, 1 row) and "
+                 "russell_pixel6a_a13 (version code 2015960779, 0 rows).",
         "paths": ('*/org.torproject.torbrowser/files/places.sqlite*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "bookmark",
@@ -38,7 +42,13 @@ __artifacts_v2__ = {
         "last_update_date": "2025-11-14",
         "requirements": "none",
         "category": "Tor Browser",
-        "notes": "Tested on version 15.0 (140.4.0esr (Oct 28th, 2025)",
+        "notes": "Reports three keys of fenix_preferences.xml: "
+                 "pref_key_last_browse_activity_time, pref_key_times_app_opened and "
+                 "pref_key_open_private_tabs_count. The first is read as Unix milliseconds and "
+                 "shown in UTC, or as stored where it does not convert; no source for that unit "
+                 "is cited here. The other two are reported as stored. Run on hc_pixel8pro_a16 "
+                 "(version code 2016164570, 3 rows) and russell_pixel6a_a13 (version code "
+                 "2015960779, 1 row).",
         "paths": ('*/org.torproject.torbrowser/shared_prefs/fenix_preferences.xml'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "info-circle",
@@ -102,7 +112,7 @@ def torbrowser_thumbnails(context):
         if media_item:
             data_list.append((modifiedtime, media_item, filename, location))
 
-    data_headers = (('ModifiedTime', 'datetime'), ('Thumbnail', 'media'), 'File Name', 'Location')
+    data_headers = (('Extracted Copy Modification Time', 'datetime'), ('Thumbnail', 'media'), 'File Name', 'Location')
 
     return data_headers, data_list, '\n'.join(sorted(source_paths))
 

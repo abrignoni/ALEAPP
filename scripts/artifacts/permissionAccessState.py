@@ -3,7 +3,7 @@ __artifacts_v2__ = {
         "name": "App Op Modes (Permission Store)",
         "description": "App op modes the permission subsystem stored in access.abx, with the op, the mode, and "
                        "the app id or package name the mode is stored against.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-07",
         "requirements": "none",
@@ -90,7 +90,8 @@ __artifacts_v2__ = {
                  "value was 0 on 4,161 rows, 10 on 1,646 rows.\n"
                  "Package Name is resolved from system/packages.xml, not stored in this file. That lookup uses "
                  "identity the file records: the userId attribute of a package element, or the name of the "
-                 "shared-user element when several packages share the app id, in which case the name is a shared "
+                 "shared-user element whenever one declares the app id, whether or not more than one "
+                 "package uses it, in which case the name is a shared "
                  "user id such as android.uid.system rather than a package. A uid is reduced to an app id first, "
                  "https://android.googlesource.com/platform/frameworks/base/+/1cdfff555f4a21f71ccc978290e2e212e2f8b168/core/java/android/os/UserHandle.java#47. "
                  "Package Name is blank on 0 of 5,807 rows.\n"
@@ -101,7 +102,7 @@ __artifacts_v2__ = {
                  "every Android 15 emulator carries a data_mirror copy of each user file, and all 36 of those 36 "
                  "pairs were byte-identical to the file they mirror. The reserve copy AtomicFile writes beside "
                  "each file, access.abx.reservecopy, "
-                 "https://android.googlesource.com/platform/frameworks/base/+/1cdfff555f4a21f71ccc978290e2e212e2f8b168/services/permission/java/com/android/server/permission/access/AccessPersistence.kt#167, "
+                 "https://android.googlesource.com/platform/frameworks/base/+/1cdfff555f4a21f71ccc978290e2e212e2f8b168/services/permission/java/com/android/server/permission/access/AccessPersistence.kt#166, "
                  "is not read, and neither is the copy under apexrollback that one image carries: both are "
                  "snapshots from another point in time and reading them would mix two states into one table with "
                  "no column saying which. The pattern also matches the system copy of the store, the one AOSP "
@@ -115,9 +116,13 @@ __artifacts_v2__ = {
                  "is read by Permission Grants, the sibling artifact in this module. package-versions is not "
                  "reported: it is the permission state version the subsystem last wrote for each package, and it "
                  "held one value per file on every one of the 76 user files read, so it says nothing about an "
-                 "individual package. default-permission-grant is not reported: it is a single build fingerprint "
-                 "per file, recording the build at which the platform last applied its default grants, so it "
-                 "identifies a build rather than anything an app or a person did. The system file's permissions "
+                 "individual package. default-permission-grant is not reported: it is a single fingerprint "
+                 "attribute per file, which AccessPolicy.kt writes from the user state's "
+                 "defaultPermissionGrantFingerprint, "
+                 "https://android.googlesource.com/platform/frameworks/base/+/1cdfff555f4a21f71ccc978290e2e212e2f8b168/services/permission/java/com/android/server/permission/access/AccessPolicy.kt#414; "
+                 "what the fingerprint records and when the platform sets it were not read here. It is one "
+                 "value per file, so it says nothing about an individual package. The system file's "
+                 "permissions "
                  "and permission-trees sections are not reported either: they are the permission declarations the "
                  "platform and the installed apps make in their manifests, 1,431 to 3,060 per image from 357 "
                  "declaring packages on the image with the most, which exist whether or not anyone used anything. "
@@ -197,9 +202,9 @@ __artifacts_v2__ = {
         "name": "Permission Grants (Permission Store)",
         "description": "Permission state the permission subsystem stored in access.abx, one row per permission "
                        "held against an app id, with the grant state and the flags it was derived from.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-06",
-        "last_update_date": "2026-09-07",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Permissions",
         "notes": "A row is a permission element in the app-id-permissions section of the permission subsystem's "
@@ -247,12 +252,22 @@ __artifacts_v2__ = {
                  "SYSTEM_FIXED on 7,143 rows, ROLE on 4,750 rows, SYSTEM_EXEMPT on 4,661 rows, INSTALLER_EXEMPT on "
                  "2,503 rows, IMPLICIT on 1,298 rows, USER_SET on 1,054 rows, IMPLICIT_GRANTED on 85 rows, "
                  "USER_SELECTED on 69 rows, ONE_TIME on 27 rows, HIBERNATION on 6 rows, USER_FIXED on 3 rows.\n"
-                 "Granted is AOSP's own determination from those flags, a port of "
+                 "Granted is computed from the stored flags with a port of "
                  "PermissionFlags.isPermissionGranted, "
                  "https://android.googlesource.com/platform/frameworks/base/+/1cdfff555f4a21f71ccc978290e2e212e2f8b168/services/permission/java/com/android/server/permission/access/permission/PermissionFlags.kt#330. "
-                 "It was Yes on 161,798 rows and No on 32,486. AOSP carries a second, stricter function, "
+                 "The stored flags are not always the flags the platform held: the writer removes "
+                 "RUNTIME_GRANTED from a permission carrying ONE_TIME before writing it, "
+                 "https://android.googlesource.com/platform/frameworks/base/+/1cdfff555f4a21f71ccc978290e2e212e2f8b168/services/permission/java/com/android/server/permission/access/permission/AppIdPermissionPersistence.kt#221, "
+                 "so a row carrying ONE_TIME does not show whether that one-time grant was in effect. For that "
+                 "reason Granted departs from the port in one case: a row that carries ONE_TIME, and whose "
+                 "answer would rest on RUNTIME_GRANTED alone, reads Not recorded (ONE_TIME) and not No. "
+                 "Granted was Yes on 161,798 rows, No on 32,459 and Not recorded (ONE_TIME) on 27, which is "
+                 "every row carrying ONE_TIME on the tested images; all 27 are on hc_pixel8pro_a16 and "
+                 "hc_pixel8pro_a17. AOSP carries a second, stricter "
+                 "function, "
                  "isAppOpGranted, which additionally treats a restricted or app-op-revoked permission as not "
-                 "granted; the two were computed side by side over every row here and gave the same answer on all "
+                 "granted; the two were computed side by side on the stored flags of every row here and gave "
+                 "the same answer on all "
                  "of them, so only one column is reported.\n"
                  "Not every row records a choice made on the device. AOSP documents INSTALL_GRANTED, "
                  "INSTALL_REVOKED and PROTECTION_GRANTED as the state the platform derives from an app's manifest "
@@ -269,7 +284,8 @@ __artifacts_v2__ = {
                  "value was 0 on 117,199 rows, 10 on 77,085 rows.\n"
                  "Package Name is resolved from system/packages.xml, not stored in this file. That lookup uses "
                  "identity the file records: the userId attribute of a package element, or the name of the "
-                 "shared-user element when several packages share the app id, in which case the name is a shared "
+                 "shared-user element whenever one declares the app id, whether or not more than one "
+                 "package uses it, in which case the name is a shared "
                  "user id such as android.uid.system rather than a package. A uid is reduced to an app id first, "
                  "https://android.googlesource.com/platform/frameworks/base/+/1cdfff555f4a21f71ccc978290e2e212e2f8b168/core/java/android/os/UserHandle.java#47. "
                  "Package Name is blank on 0 of 194,284 rows.\n"
@@ -280,7 +296,7 @@ __artifacts_v2__ = {
                  "every Android 15 emulator carries a data_mirror copy of each user file, and all 36 of those 36 "
                  "pairs were byte-identical to the file they mirror. The reserve copy AtomicFile writes beside "
                  "each file, access.abx.reservecopy, "
-                 "https://android.googlesource.com/platform/frameworks/base/+/1cdfff555f4a21f71ccc978290e2e212e2f8b168/services/permission/java/com/android/server/permission/access/AccessPersistence.kt#167, "
+                 "https://android.googlesource.com/platform/frameworks/base/+/1cdfff555f4a21f71ccc978290e2e212e2f8b168/services/permission/java/com/android/server/permission/access/AccessPersistence.kt#166, "
                  "is not read, and neither is the copy under apexrollback that one image carries: both are "
                  "snapshots from another point in time and reading them would mix two states into one table with "
                  "no column saying which. The pattern also matches the system copy of the store, the one AOSP "
@@ -481,6 +497,10 @@ RUNTIME_GRANTED = 1 << 4
 LEGACY_GRANTED = 1 << 10
 IMPLICIT_GRANTED = 1 << 11
 RESTRICTION_REVOKED = 1 << 18
+ONE_TIME = 1 << 21
+# What Granted reads when the stored flags cannot say: the writer clears RUNTIME_GRANTED on a
+# permission carrying ONE_TIME, so its absence on such a row is not a recorded denial.
+GRANT_NOT_RECORDED = 'Not recorded (ONE_TIME)'
 
 
 def _root(path):
@@ -608,7 +628,11 @@ def _is_granted(value):
     """AOSP's own determination of whether a permission is granted, from its flags.
 
     A port of PermissionFlags.isPermissionGranted. Returned as stored when the value is not an
-    integer, so a value this cannot decide is visible rather than reported as not granted.
+    integer, so a value this cannot decide is visible rather than reported as not granted. The
+    one departure from the port is a row that carries ONE_TIME and whose answer would rest on
+    RUNTIME_GRANTED alone: AppIdPermissionPersistence.serializeAppIdPermission removes
+    RUNTIME_GRANTED from every ONE_TIME permission before writing it, so the stored flags do not
+    say whether the one-time grant was in effect, and that is what the row reports.
     """
     try:
         flags = int(value)
@@ -624,7 +648,11 @@ def _is_granted(value):
         return 'Yes'
     if flags & RESTRICTION_REVOKED:
         return 'No'
-    return 'Yes' if flags & RUNTIME_GRANTED else 'No'
+    if flags & RUNTIME_GRANTED:
+        return 'Yes'
+    if flags & ONE_TIME:
+        return GRANT_NOT_RECORDED
+    return 'No'
 
 
 def _collect(context, section_reader):

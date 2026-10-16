@@ -8,8 +8,11 @@ __artifacts_v2__ = {
         "last_update_date": "2023-02-24",
         "requirements": "polyline",
         "category": "Garmin",
-        "notes": "Interactive folium map and online reverse-geocoding removed; route shown as an "
-                 "offline image (media) + a downloadable route KML; start point exported via KML.",
+        "notes": "The route is decoded from activity_polyline.encodedSamples and rendered offline "
+                 "as an image and a KML file; no online lookup is made. Only activities with a "
+                 "polyline row are reported. Latitude and Longitude are the first decoded point "
+                 "and End Latitude and End Longitude the last. Duration (min) is the stored "
+                 "duration divided by 60 and rounded. No tested image held a row.",
         "paths": ('*/com.garmin.android.apps.connectmobile/databases/cache-database*',),
         "output_types": "all",
         "artifact_icon": "activity",

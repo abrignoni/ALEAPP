@@ -21,8 +21,8 @@ __artifacts_v2__ = {
                  "content id, and is left empty otherwise; on the one tested sample that "
                  "resolved one row of fifteen, so an empty title means the cache did not "
                  "carry that content id rather than that the title is unknown to the service. "
-                 "The database carries no write-ahead log and its rollback journal is zero "
-                 "length, so the committed state is the only state. Field mapping was done "
+                 "On the one tested sample the database had no write-ahead log and its "
+                 "rollback journal was zero length. Field mapping was done "
                  "against one private sample from a single device; no sample data is recorded "
                  "for it.",
         "paths": ('*/com.disney.disneyplus/databases/db_offline_bookmarks*',
@@ -31,19 +31,21 @@ __artifacts_v2__ = {
         "artifact_icon": "player-play"
     },
     "disneyplus_last_played": {
-        "name": "Disney+ - Last Played Item",
-        "description": "Parses the last played item recorded by the Disney+ Android app.",
+        "name": "Disney+ - Bookmarks Handshake Values",
+        "description": "Parses the bookmarksHandshake preference values of the Disney+ Android app.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Disney+",
         "notes": "Read from the bookmarksHandshake keys of the app's default shared "
                  "preferences file. Each value is a JSON object naming a media id, a content "
                  "id, a series id, a content identifier type and a timestamp in Unix "
-                 "milliseconds. One key records the last item played overall and a further "
-                 "key is written per series, with the series identifier carried in the key "
-                 "name itself. On the one tested sample the content id of the overall key was "
+                 "milliseconds. On the one tested sample there was one bookmarksHandshake "
+                 "key without a series identifier and one whose name carried a series "
+                 "identifier; what event writes each is not established, so a row is not shown "
+                 "to be the last item played. On the one tested "
+                 "sample the content id of the key without a series identifier was "
                  "also present in the resume points table, which is a recorded link rather "
                  "than a correlation, and the two keys held identical values. "
                  "contentIdentifierType is "
@@ -77,17 +79,19 @@ __artifacts_v2__ = {
     "disneyplus_session": {
         "name": "Disney+ - Session State",
         "description": "Parses the streaming SDK session state of the Disney+ Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Disney+",
         "notes": "Read from the BAM_SDK_STORAGE shared preferences file. The session state "
                  "value records when the access context was generated, when it expires, the "
-                 "service region, the token type, a refresh attempt count and the time of the "
-                 "last refresh failure, all as ISO 8601 strings carrying their own offset. "
-                 "The access and refresh tokens in the same object are five part JWE, so "
-                 "their claims are encrypted and are not recoverable from the container; the "
+                 "service region, the token type, an attempts value and a lastFailure time "
+                 "(shown as Attempts (stored attempts) and Last Failure (stored lastFailure); their meaning is "
+                 "not established), all as ISO 8601 strings carrying their own offset. On "
+                 "the one tested sample the access and refresh tokens were five part compact "
+                 "serialisations, the form JWE uses, so their claims are encrypted and are "
+                 "not read here; the "
                  "tokens themselves are present in the source file and are not reproduced "
                  "here, so only their form is reported. The app's own preference files were "
                  "searched for key material and hold no standalone key value; the only key "
@@ -97,7 +101,7 @@ __artifacts_v2__ = {
                  "was the same profile id the resume points table and the recent search store "
                  "carry. The device grant records only its grant type. Field mapping was done "
                  "against one private sample from a single device; no sample data is recorded "
-                 "for it.",
+                 "for it. Original contribution: @mattiaepi (Mattia Epifani), Claude.",
         "paths": ('*/com.disney.disneyplus/shared_prefs/BAM_SDK_STORAGE.xml',),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "key"
@@ -111,15 +115,16 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Disney+",
         "notes": "Key and value pairs from the app's own shared preferences files: the "
-                 "default file, BAMPLAYER, AnalyticsSharedPrefs and Conviva. These carry the "
-                 "playback preferences, the install referrer, the first run flag and the time "
-                 "the app was last backgrounded. Values are reported as stored. A value is "
+                 "default file, BAMPLAYER, AnalyticsSharedPrefs and Conviva. On the one "
+                 "tested sample these carried playback preferences, an install referrer, a "
+                 "first run flag and an app backgrounded time. Values are reported as "
+                 "stored. A value is "
                  "additionally rendered as a UTC timestamp only where the key names a time "
                  "and the value is a thirteen digit integer; on the one tested sample the app "
                  "backgrounded key resolved to within a second of the most recent resume "
                  "point write, which is what supports reading it as milliseconds. The "
-                 "bookmarksHandshake keys of the same file are reported by the Last Played "
-                 "Item artifact instead of here. Third party software development kit "
+                 "bookmarksHandshake keys of the same file are reported by the Bookmarks "
+                 "Handshake Values artifact instead of here. Third party software development kit "
                  "preference files that sit in the same directory are not read by this "
                  "artifact. Field mapping was done against one private sample from a single "
                  "device; no sample data is recorded for it.",
@@ -135,18 +140,21 @@ __artifacts_v2__ = {
         "description": "Summarises the cached streaming requests of the Disney+ Android app.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Disney+",
         "notes": "One row per media identifier, summarising the request URLs recorded in the "
                  "app's sdk-cache entries for the media delivery hosts. The individual "
                  "manifest fetches are counted rather than listed, because an examiner cannot "
-                 "act on each one; the URL path of "
-                 "every one of them carries the same media, device and account identifiers, "
-                 "which are reported here, and the cache directory still holds each entry. "
-                 "The expiry values are Unix seconds naming when a delivery token ceases to "
-                 "be valid, so the earliest and latest are reported as a bound on when the "
-                 "requests were made rather than as event times. A cached request records "
+                 "act on each one. On the one tested sample every one of them carried the "
+                 "same media identifier and the same ~did, ~aid and ~kid values. The first "
+                 "value of each is reported under ~did (as stored), ~aid (as stored) and ~kid "
+                 "(as stored), headers that carry the parameter names; what each "
+                 "identifies is not established. The cache "
+                 "directory still holds each entry. The exp= values are read as Unix "
+                 "seconds. What they mark is not sourced; the earliest and latest are "
+                 "reported as stored values and are not event times. A cached request "
+                 "records "
                  "that the app asked for the manifest, not how much of the media was played. "
                  "Field mapping was done against one private sample from a single device; no "
                  "sample data is recorded for it.",
@@ -162,8 +170,7 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-19",
         "requirements": "none",
         "category": "Disney+",
-        "notes": "One row per cached trickplay index, which is the only stored content that "
-                 "shows what a cached title looks like. The sdk-cache entries whose content "
+        "notes": "One row per cached trickplay index. The sdk-cache entries whose content "
                  "type is application/bif hold a Base Index Frames file: an eight byte "
                  "signature, a declared image count, a declared timestamp multiplier and an "
                  "index of frame number and byte offset pairs, each pointing at a JPEG, "
@@ -195,13 +202,14 @@ __artifacts_v2__ = {
         "category": "Disney+",
         "notes": "One row per cached content service response, giving the endpoint, the "
                  "availability region the response was served for and the number of titles it "
-                 "carries. The titles themselves are deliberately not enumerated: these "
-                 "responses are the catalogue the service composed for the profile, covering "
-                 "curated, trending, recommendation, because you watched and up next sets, so "
-                 "listing them beside an account reads as things the user chose when the "
-                 "container does not establish that. The title text is still used internally "
-                 "to name a content id in the Playback Resume Points artifact, which does "
-                 "record user activity. The response bodies remain in the sdk-cache directory "
+                 "carries. The titles themselves are deliberately not enumerated: on the one "
+                 "tested sample these responses were sets the service returned, with "
+                 "endpoint names for curated, trending, recommendation, because you watched "
+                 "and up next sets, so listing them beside an account reads as things the "
+                 "user chose when the container does not establish that. The title text is "
+                 "still used internally to name a content id in the Playback Resume Points "
+                 "artifact, which reports the app's bookmarks table. The response bodies "
+                 "remain in the sdk-cache directory "
                  "named in the Source File column and carry the full title list for an "
                  "examiner who needs it. Bodies are gzip encoded and are decompressed before "
                  "reading. Two further stores in the same container are server supplied and "
@@ -233,8 +241,9 @@ __artifacts_v2__ = {
                  "examiner cannot act on. Each row gives the file count, how many are "
                  "distinct by content hash, how many can be tied to a source URL and on what "
                  "basis, and the directory holding them. An http-cache entry records its own "
-                 "request URL. A file under files/offline_images is named with a numeric "
-                 "identifier that appears nowhere else in the container, and a glide-cache-v2 "
+                 "request URL. On the one tested sample a file under files/offline_images was "
+                 "named with a numeric identifier found nowhere else in the container, and a "
+                 "glide-cache-v2 "
                  "file name is not derived from the URL either: both were tested against the "
                  "MD5, SHA-1 and SHA-256 of the URLs of images holding identical bytes and "
                  "matched none, so a URL is attributed to those stores only where the bytes "
@@ -260,8 +269,8 @@ __artifacts_v2__ = {
         "category": "Disney+",
         "notes": "Each file under files/dustv2 is one queued telemetry event in CloudEvents "
                  "form. The event time and the invocation start time are ISO 8601 strings "
-                 "carrying their own offset and are reported with that offset preserved, so "
-                 "the queue places the app in time. The event records the service operation "
+                 "carrying their own offset and are reported with that offset preserved. The "
+                 "event records the service operation "
                  "invoked, the host, path and method requested, the response status where one "
                  "was received, the serving region and the session id the event was raised "
                  "under. Transport detail that identifies nothing, such as the edge node and "
@@ -719,7 +728,7 @@ def disneyplus_session(context):
 
     data_headers = (
         ('Generated On', 'datetime'), ('Expiration', 'datetime'),
-        ('Last Refresh Failure', 'datetime'), 'Refresh Attempts', 'Token Type', 'Region',
+        ('Last Failure (stored lastFailure)', 'datetime'), 'Attempts (stored attempts)', 'Token Type', 'Region',
         'Session State Type', 'Offline Fallback Profile ID', 'Device Grant Type',
         'Configuration Version', 'Access Token Form', 'Refresh Token Form', 'Source File')
     return data_headers, data_list, source_path
@@ -893,7 +902,7 @@ def disneyplus_playback_requests(context):
     data_headers = (
         ('Earliest Token Expiry', 'datetime'), ('Latest Token Expiry', 'datetime'),
         'Media ID', 'Manifest Requests', 'Trickplay Index Requests', 'Other Requests',
-        'Device ID', 'Account ID', 'Key ID', 'Request Form', 'Delivery Hosts',
+        '~did (as stored)', '~aid (as stored)', '~kid (as stored)', 'Request Form', 'Delivery Hosts',
         'Source File')
     return data_headers, data_list, source_path
 

@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     'Life360_Drives': {
         'name': 'Life360 Drives',
-        'description': 'Parses Life360 Drives',
+        'description': 'Parses Life360 Drives from DriveBladeDB. Start Time, End Time and Updated At are read as Unix milliseconds; no source for that unit is recorded here. Distance and Duration are reported as stored.',
         'author': 'Heather Charpentier',
         'creation_date': '2026-06-10',
         'last_update_date': '2026-08-01',

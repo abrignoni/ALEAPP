@@ -11,10 +11,10 @@ __artifacts_v2__ = {
             "emu_a15_oss_v7": "Breezy Weather 6.2.2 | 1 rows",
         },
         "notes": "One row per entry in the locations table of databases/breezyweather.db, joined to "
-                 "the weathers table for the times the app last fetched for that place. Breezy "
+                 "the weathers table for its refresh_time and main_update_time values. Breezy "
                  "Weather is an open source weather app, and a row here is an entry in its "
-                 "locations table. Each row carries the Latitude and Longitude, the Timezone the "
-                 "app resolved for the place, and the geographic hierarchy the source returned: "
+                 "locations table. Each row carries the Latitude and Longitude, the stored "
+                 "timezone, and the stored place names: "
                  "City, District, Country and Country Code, plus the Admin 1 and Admin 2 "
                  "divisions. Custom Name is reported as stored and was empty on the tested "
                  "device. Current Position is the app's flag as stored. On the tested device the "
@@ -52,8 +52,8 @@ __artifacts_v2__ = {
                  "from Unix milliseconds, and a Source. These are described from the schema, "
                  "since the table held no rows on the tested device, and a row is not an action "
                  "anyone took. "
-                 "The alerts table was present and empty on the tested device, where the one "
-                 "saved location had no active warnings, so this is a checked absence there and "
+                 "The alerts table was present and empty on the tested device, so this is a "
+                 "checked absence there and "
                  "the columns are described from the schema.",
         "paths": ('*/org.breezyweather/databases/breezyweather.db*',),
         "output_types": "standard",

@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_act_api": {
         "name": "GarminActAPI",
-        "description": "Get Information related to activities from the Garmin API using the JSON file extracted",
+        "description": "Parses activity summaries from JSON files in a garmin.api folder. The module's source says these files are produced with the Garmin Connect API Extractor (https://github.com/labcif/Garmin-Connect-API-Extractor); they are not read from the app's own data folder. No tested input is recorded for this artifact.",
         "author": "Fabian Nunes {fabiannunes12@gmail.com}",
         "creation_date": "2023-02-24",
         "last_update_date": "2023-02-24",

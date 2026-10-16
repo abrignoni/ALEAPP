@@ -1,10 +1,10 @@
 __artifacts_v2__ = {
     "get_galleryTrash": {
         "name": "Gallery Trash",
-        "description": "Deleted media held in the Samsung Gallery trash (local.db trash table)",
-        "author": "@abrignoni",
+        "description": "Rows of the trash table in Samsung Gallery's local.db. Date Taken is the __dateTaken key of the row's __restoreExtra JSON and Date Deleted is the __deleteTime column, both read as Unix milliseconds. No tested image held a row in the trash table, so the unit of both values and the rest of the output are not verified on real data.",
+        "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2023-04-25",
-        "last_update_date": "2023-04-25",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Gallery Trash",
         "notes": "",
@@ -76,6 +76,6 @@ def get_galleryTrash(context):
         db.close()
 
     data_headers = (
-        ('Timestamp', 'datetime'), ('Date Deleted', 'datetime'), ('Deleted Media', 'media'),
+        ('Date Taken', 'datetime'), ('Date Deleted', 'datetime'), ('Deleted Media', 'media'),
         'Trash Title', 'Original Title', 'Trash Path', 'Original Path', 'Extra Data', 'Latitude', 'Longitude')
     return data_headers, data_list, source_path

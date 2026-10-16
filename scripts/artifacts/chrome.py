@@ -29,17 +29,24 @@ __artifacts_v2__ = {
     "get_chromeWebVisits": {
         "name": "Web Visits",
         "description": "Parses Web Visits from Chromium based browsers",
-        "author": "@abrignoni",
+        "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2020-03-19",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Chromium",
-        "notes": "Transition Type decodes the core type held in the low byte of the visits.transition "
-                 "value and Qualifier(s) decodes the qualifier bits set in its high byte. The "
-                 "0xC0000000 IS_REDIRECT_MASK is a mask covering the CLIENT_REDIRECT and "
-                 "SERVER_REDIRECT bits rather than a qualifier of its own, so it is not reported as a "
-                 "separate qualifier. Reference: Chromium, 'page_transition_types.h', "
-                 "https://chromium.googlesource.com/chromium/src",
+        "notes": "Transition (As Stored) retains the full visits.transition SQLite value without conversion. "
+                 "Core Transition Interpretation names the low byte of that value, 0 through 10, with the "
+                 "names Chromium's page_transition_types.h gives them at the commit cited below, without "
+                 "the PAGE_TRANSITION_ prefix (0 is PAGE_TRANSITION_LINK there and 6 is "
+                 "PAGE_TRANSITION_AUTO_TOPLEVEL). A low byte above 10 is left blank in that column and "
+                 "its number can be read from Transition (As Stored). The names are those of the cited "
+                 "commit; whether the browser version that wrote a row used the same names was not "
+                 "checked. Qualifier(s) decodes nine qualifier bits above the low byte, "
+                 "0x00800000 BLOCKED through 0x80000000 SERVER_REDIRECT. The 0xC0000000 "
+                 "IS_REDIRECT_MASK is a mask covering the CLIENT_REDIRECT and SERVER_REDIRECT bits "
+                 "rather than a qualifier of its own, so it is not reported as a separate "
+                 "qualifier. Reference: Chromium, 'ui/base/page_transition_types.h', "
+                 "https://github.com/chromium/chromium/blob/8f4baaae073181e7e0fea1807f8db6ad720dbcb7/ui/base/page_transition_types.h#L30-L161",
         "paths": ('*/app_chrome/Default/History*', '*/app_sbrowser/Default/History*', '*/app_opera/History*', '*/app_webview/Default/History*'),
         "output_types": "standard",
         "artifact_icon": "globe",
@@ -59,13 +66,19 @@ __artifacts_v2__ = {
     },
     "get_chromeSearchTerms": {
         "name": "Search Terms",
-        "description": "Parses Search Terms from Chromium based browsers",
-        "author": "@abrignoni",
+        "description": "Extracts text after the first ASCII case-insensitive search?q= marker in selected Chromium History URLs and decodes it once with unquote_plus. Search URLs of other forms are not reported; the keyword_search_terms table is reported by Keyword Search Terms.",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2020-03-19",
-        "last_update_date": "2020-03-19",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Chromium",
-        "notes": "",
+        "notes": "The existing SQLite LIKE substring selection is retained. The selected text "
+                 "ends at a second literal search?q= marker or the first ampersand, and is "
+                 "decoded once with unquote_plus: literal plus becomes space and %2B becomes "
+                 "plus. The raw URL is retained. A fragment is retained if it occurs in the "
+                 "selected text before an ampersand; the marker may occur outside a query "
+                 "parameter. A row does not establish a typed search or provider ownership. "
+                 "Other URL forms remain omitted. Original parser credit: @abrignoni.",
         "paths": ('*/app_chrome/Default/History*', '*/app_sbrowser/Default/History*', '*/app_opera/History*', '*/app_webview/Default/History*'),
         "output_types": "standard",
         "artifact_icon": "search",
@@ -85,16 +98,23 @@ __artifacts_v2__ = {
     "get_chromeDownloads": {
         "name": "Downloads",
         "description": "Parses Downloads from Chromium based browsers",
-        "author": "@abrignoni",
+        "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2020-03-19",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Chromium",
         "notes": "Tab URL is the downloads.tab_url column, the page the download was started from. The "
                  "source URL of the downloaded file is held in the downloads_url_chains table, which "
-                 "this artifact does not parse. Danger Type and Interrupt Reason decode the stored "
-                 "Chromium enum values. Reference: Chromium, 'download_danger_type.h, "
-                 "download_interrupt_reason_values.h', https://chromium.googlesource.com/chromium/src",
+                 "this artifact does not parse. State, Danger Type and Interrupt Reason retain the "
+                 "stored downloads.state, danger_type and interrupt_reason values without enum "
+                 "interpretation. They do not establish completion, safety or user intent. "
+                 "Historical mapping research references (not verified across browser versions): Chromium, "
+                 "'components/history/core/browser/download_constants.h', "
+                 "https://github.com/chromium/chromium/blob/8f4baaae073181e7e0fea1807f8db6ad720dbcb7/components/history/core/browser/download_constants.h; "
+                 "'download_interrupt_reason_values.h', "
+                 "https://github.com/chromium/chromium/blob/8f4baaae073181e7e0fea1807f8db6ad720dbcb7/components/download/public/common/download_interrupt_reason_values.h"
+                 "; 'download_row.h', "
+                 "https://github.com/chromium/chromium/blob/8f4baaae073181e7e0fea1807f8db6ad720dbcb7/components/history/core/browser/download_row.h#L58-L60",
         "paths": ('*/app_chrome/Default/History*', '*/app_sbrowser/Default/History*', '*/app_opera/History*', '*/app_webview/Default/History*'),
         "output_types": "standard",
         "artifact_icon": "download",
@@ -256,7 +276,7 @@ def get_chrome(context):
 def get_chromeWebVisits(context):
     files_found = unique_files(context)
     all_data = []
-    data_headers = ['Visit Timestamp', 'URL', 'Title', 'Duration', 'Transition Type', 'Qualifier(s)', 'From Visit URL']
+    data_headers = ['Visit Timestamp', 'URL', 'Title', 'Duration', 'Transition (As Stored)', 'Core Transition Interpretation', 'Qualifier(s)', 'From Visit URL']
     lava_data_headers = data_headers.copy()
     lava_data_headers[0] = (lava_data_headers[0], 'datetime')
     all_data_headers = lava_data_headers + ['Browser Name']
@@ -279,7 +299,7 @@ def get_chromeWebVisits(context):
             WHEN 3 THEN 'AUTO_SUBFRAME'
             WHEN 4 THEN 'MANUAL_SUBFRAME'
             WHEN 5 THEN 'GENERATED'
-            WHEN 6 THEN 'START_PAGE'
+            WHEN 6 THEN 'AUTO_TOPLEVEL'
             WHEN 7 THEN 'FORM_SUBMIT'
             WHEN 8 THEN 'RELOAD'
             WHEN 9 THEN 'KEYWORD'
@@ -296,7 +316,8 @@ def get_chromeWebVisits(context):
         CASE WHEN visits.transition & 0x40000000 THEN 'CLIENT_REDIRECT, ' ELSE '' END ||
         CASE WHEN visits.transition & 0x80000000 THEN 'SERVER_REDIRECT, ' ELSE '' END),', ')
         AS Qualifiers,
-        Query2.url AS FromURL
+        Query2.url AS FromURL,
+        visits.transition AS RawTransition
         FROM visits
         LEFT JOIN urls ON visits.url = urls.id
         LEFT JOIN (SELECT urls.url,urls.title,visits.visit_time,visits.id FROM visits LEFT JOIN urls ON visits.url = urls.id) Query2 ON visits.from_visit = Query2.id
@@ -305,7 +326,7 @@ def get_chromeWebVisits(context):
             continue
         report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
 
-        data_list = [(_webkit_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6]) for r in rows]
+        data_list = [(_webkit_to_utc(r[0]), r[1], r[2], r[3], r[7], r[4], r[5], r[6]) for r in rows]
         if data_list:
             all_data.extend([row + (browser_name,) for row in data_list])
         else:
@@ -336,8 +357,8 @@ def get_chromeSearchTerms(context):
 
         data_list = []
         for r in rows:
-            search = r[0].split('search?q=')[1].split('&')[0]
-            search = urllib.parse.unquote(search).replace('+', ' ')
+            search = re.split(r'search\?q=', r[0], flags=re.IGNORECASE | re.ASCII)[1].split('&')[0]
+            search = urllib.parse.unquote_plus(search)
             data_list.append((_webkit_to_utc(r[3]), search, r[0], r[1], r[2]))
 
         if data_list:
@@ -352,8 +373,8 @@ def get_chromeSearchTerms(context):
 def get_chromeDownloads(context):
     files_found = unique_files(context)
     all_data = []
-    data_headers = ['Start Time', 'End Time', 'Last Access Time', 'Tab URL', 'Target Path', 'State',
-                    'Danger Type', 'Interrupt Reason', 'Opened?', 'Received Bytes', 'Total Bytes']
+    data_headers = ['Start Time', 'End Time', 'Last Access Time', 'Tab URL', 'Target Path', 'State (as stored)',
+                    'Danger Type (as stored)', 'Interrupt Reason (as stored)', 'Opened?', 'Received Bytes', 'Total Bytes']
     lava_data_headers = data_headers.copy()
     for i in (0, 1, 2):
         lava_data_headers[i] = (lava_data_headers[i], 'datetime')
@@ -372,71 +393,9 @@ def get_chromeDownloads(context):
         {last_access_sel},
         {tab_url_sel},
         target_path,
-        CASE state
-            WHEN "0" THEN "In Progress"
-            WHEN "1" THEN "Complete"
-            WHEN "2" THEN "Canceled"
-            WHEN "3" THEN "Interrupted"
-            WHEN "4" THEN "Interrupted"
-        END,
-        CASE danger_type
-            WHEN "0" THEN ""
-            WHEN "1" THEN "Dangerous"
-            WHEN "2" THEN "Dangerous URL"
-            WHEN "3" THEN "Dangerous Content"
-            WHEN "4" THEN "Content May Be Malicious"
-            WHEN "5" THEN "Uncommon Content"
-            WHEN "6" THEN "Dangerous But User Validated"
-            WHEN "7" THEN "Dangerous Host"
-            WHEN "8" THEN "Potentially Unwanted"
-            WHEN "9" THEN "Allowlisted by Policy"
-            WHEN "10" THEN "Pending Scan"
-            WHEN "11" THEN "Blocked - Password Protected"
-            WHEN "12" THEN "Blocked - Too Large"
-            WHEN "13" THEN "Warning - Sensitive Content"
-            WHEN "14" THEN "Blocked - Sensitive Content"
-            WHEN "15" THEN "Safe - Deep Scanned"
-            WHEN "16" THEN "Dangerous, But User Opened"
-            WHEN "17" THEN "Prompt For Scanning"
-            WHEN "18" THEN "Blocked - Unsupported Type"
-            WHEN "19" THEN "Dangerous - Account Compromise"
-            WHEN "20" THEN "Deep Scan Failed"
-            WHEN "21" THEN "Encrypted - Prompt User for Password for Local Scanning"
-            WHEN "22" THEN "Encrypted - Pending Detailed Verdict after Local Scanning"
-            WHEN "23" THEN "Blocked - Scan Failed"
-        END,
-        CASE interrupt_reason
-            WHEN "0" THEN ""
-            WHEN "1" THEN "File Error"
-            WHEN "2" THEN "Access Denied"
-            WHEN "3" THEN "Disk Full"
-            WHEN "5" THEN "Path Too Long"
-            WHEN "6" THEN "File Too Large"
-            WHEN "7" THEN "Virus"
-            WHEN "10" THEN "Temporary Problem"
-            WHEN "11" THEN "Blocked"
-            WHEN "12" THEN "Security Check Failed"
-            WHEN "13" THEN "Resume Error"
-            WHEN "14" THEN "File Hash Mismatch"
-            WHEN "15" THEN "File Same as Source"
-            WHEN "20" THEN "Network Error"
-            WHEN "21" THEN "Operation Timed Out"
-            WHEN "22" THEN "Connection Lost"
-            WHEN "23" THEN "Server Down"
-            WHEN "30" THEN "Server Error"
-            WHEN "31" THEN "Range Request Error"
-            WHEN "32" THEN "Server Precondition Error"
-            WHEN "33" THEN "Unable To Get File"
-            WHEN "34" THEN "Server Unauthorized"
-            WHEN "35" THEN "Server Certificate Problem"
-            WHEN "36" THEN "Server Access Forbidden"
-            WHEN "37" THEN "Server Unreachable"
-            WHEN "38" THEN "Content Lenght Mismatch"
-            WHEN "39" THEN "Cross Origin Redirect"
-            WHEN "40" THEN "Canceled"
-            WHEN "41" THEN "Browser Shutdown"
-            WHEN "50" THEN "Browser Crashed"
-        END,
+        state,
+        danger_type,
+        interrupt_reason,
         CASE opened WHEN 0 THEN '' WHEN 1 THEN 'Yes' END,
         received_bytes,
         total_bytes

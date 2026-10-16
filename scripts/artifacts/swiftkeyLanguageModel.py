@@ -17,27 +17,29 @@ __artifacts_v2__ = {
         'requirements': 'none',
         'category': 'SwiftKey Keyboard',
         'notes': "One row per language model file found. Reads the Samsung Keyboard's "
-                 'app_SwiftKey/user/dynamic.lm, its backup/dynamic.lm copy and the files under user/specific, and '
-                 "the SwiftKey app's files/language_models/user/dynamic.lm. A file is read only when it begins "
-                 'with the flue signature; a file that does not follow the layout is named in the run log and gets '
-                 'no row. File Written is field 3 of the file header, read as Unix seconds in UTC: it equalled the '
-                 'modification time the extraction zip records for the file on 9 of the 9 dynamic.lm files whose '
-                 'zip records one in UTC. First Trained and Last Trained are fields 2 and 3 of the sequence chunk '
-                 'header. The names are those of the SwiftKey app (version 9.10.36.21 on sharon_a14), whose '
-                 'ModelData class holds mFirstTrainedTime and mLastTrainedTime; on a synthetic model the engine '
-                 'returned the value stored in those two fields for both times, and field 2 was not later than '
-                 'field 3 on the 68 tested files that carry them. The 2 tested files with no terms carry neither '
-                 'field and those cells are blank. What event sets either time is not established. Terms is the '
-                 'number of terms stored, Term Sequences the number of stored sequences of two or more terms, and '
-                 'Longest Sequence the number of terms in the longest one, 4 at most on the tested files. App Term '
-                 'Lists is the number of app package names under which the file keeps separate term counts. App '
-                 'Term Lists held one value, 0, on every row of 9 of the 10 tested images; only the two dynamic.lm '
-                 'copies on samsunga53_a14 hold lists, 14 each. Backup Same As Live File is Yes when a file in a '
-                 'backup folder holds the same bytes as the file of the same name one folder up, No when it does '
-                 'not, and blank for a file that is not in a backup folder; 29 of the 35 backup copies on the '
-                 'tested images were the same. Tested on 70 files from 10 Samsung images. No tested image holds a '
-                 'file at the SwiftKey app path, so that path has only been read on a synthetic model made with '
-                 'the SwiftKey 9.10.49.20 engine and supplied by @crox4n6.',
+                 "app_SwiftKey/user/dynamic.lm, its backup/dynamic.lm copy and the files under "
+                 "user/specific, and the SwiftKey app's files/language_models/user/dynamic.lm. A file is "
+                 "read only when it begins with the flue signature; a file that does not follow the layout "
+                 "is named in the run log and gets no row. File Written is field 3 of the file header, read "
+                 "as Unix seconds in UTC: it equalled the modification time the extraction zip records for "
+                 "the file on 9 of the 9 dynamic.lm files whose zip records one in UTC. First Trained and "
+                 "Last Trained are fields 2 and 3 of the sequence chunk header. The names are those of the "
+                 "SwiftKey app (version 9.10.36.21 on sharon_a14), whose ModelData class holds "
+                 "mFirstTrainedTime and mLastTrainedTime; on a synthetic model the engine returned the value "
+                 "stored in those two fields for both times, and field 2 was not later than field 3 on the "
+                 "68 tested files that carry them. The 2 tested files with no terms carry neither field and "
+                 "those cells are blank. What event sets either time is not established. Terms is the number "
+                 "of terms stored, Term Sequences the number of stored sequences of two or more terms, and "
+                 "Longest Sequence the number of terms in the longest one, 4 at most on the tested files. "
+                 "App Term Lists is the number of app package names under which the file keeps separate term "
+                 "counts. App Term Lists held one value, 0, on every row of 9 of the 10 tested images; only "
+                 "the two dynamic.lm copies on samsunga53_a14 hold lists, 14 each. Backup Same As Live File "
+                 "is Yes when a file in a backup folder holds the same bytes as the file of the same name "
+                 "one folder up, No when it does not or when no such file was found, and blank for a file "
+                 "that is not in a backup folder; 29 of the 35 backup copies on the tested images were the "
+                 "same. Tested on 70 files from 10 Samsung images. No tested image holds a file at the "
+                 "SwiftKey app path, so that path has only been read on a synthetic model made with the "
+                 "SwiftKey 9.10.49.20 engine and supplied by @crox4n6.",
         'paths': ('*/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm',
                   '*/com.samsung.android.honeyboard/app_SwiftKey/user/backup/dynamic.lm',
                   '*/com.samsung.android.honeyboard/app_SwiftKey/user/specific/*',
@@ -67,24 +69,26 @@ __artifacts_v2__ = {
         'last_update_date': '2026-10-01',
         'requirements': 'none',
         'category': 'SwiftKey Keyboard',
-        'notes': 'One row per term per model file. The term text is stored masked. The rule was read from '
-                 'libfluency-java.so (version string 5.0.6.138) inside the Samsung Keyboard package on '
-                 "samsunga53_a14, and the same routine is in the SwiftKey app's libfluency-java-internal.so "
-                 "(5.1.0.127) on sharon_a14: each stored byte is the term's byte XORed with the low byte of "
-                 "(position * index * 0xAD) XOR ((index XOR 0xFF) + length), index being the term's place in the "
-                 'vocabulary. Checked against the engine: a synthetic model built by the SwiftKey 9.10.49.20 '
-                 "engine from a known word list, supplied by @crox4n6, reads back as the engine's own export of "
-                 'it, 17 terms and 37 counted entries, and each count there equals the number of times the term or '
-                 'sequence occurs in the word list. Count is the number the model stores for the term. On a '
-                 'device, what adds to it is not established, so a row shows the keyboard stored the term and does '
-                 "not show who entered it or in which app. Term Index is the term's place in the model's "
-                 'vocabulary. On the 12 live dynamic.lm files of the tested images the first 74 terms are the '
-                 'same, and 3 of those files hold only those 74, so a Term Index of 74 or less in a dynamic.lm '
-                 'does not show the term was entered on the device. None of the 23 live files under user/specific '
-                 'on anne_a15 holds any of those 74 terms. Those files are separate models in folders whose names '
-                 'read as an app package name with underscores in place of its dots, or as a number; their rows '
-                 'appear here with the folder in Source File. A backup file holding the same bytes as its live '
-                 'file is not repeated; where the two differ both are reported and Source File tells them apart.',
+        'notes': 'One row per term that has a count of its own in the model file. The term text is stored '
+                 'masked. The rule was read from libfluency-java.so (version string 5.0.6.138) inside the '
+                 "Samsung Keyboard package on samsunga53_a14, and the same routine is in the SwiftKey app's "
+                 "libfluency-java-internal.so (5.1.0.127) on sharon_a14: each stored byte is the term's byte "
+                 'XORed with the low byte of (position * index * 0xAD) XOR ((index XOR 0xFF) + length), '
+                 "index being the term's place in the vocabulary. Checked against the engine: a synthetic "
+                 'model built by the SwiftKey 9.10.49.20 engine from a known word list, supplied by '
+                 "@crox4n6, reads back as the engine's own export of it, 17 terms and 37 counted entries, "
+                 'and each count there equals the number of times the term or sequence occurs in the word '
+                 'list. Count is the number the model stores for the term. On a device, what adds to it is '
+                 'not established, so a row shows the keyboard stored the term and does not show who entered '
+                 "it or in which app. Term Index is the term's place in the model's vocabulary. On the 12 "
+                 'live dynamic.lm files of the tested images the first 74 terms are the same, and 3 of those '
+                 'files hold only those 74, so a Term Index of 74 or less in a dynamic.lm does not show the '
+                 'term was entered on the device. None of the 23 live files under user/specific on anne_a15 '
+                 'holds any of those 74 terms. Those files are separate models in folders whose names read '
+                 'as an app package name with underscores in place of its dots, or as a number; their rows '
+                 'appear here with the folder in Source File. A backup file holding the same bytes as its '
+                 'live file is not repeated; where the two differ both are reported and Source File tells '
+                 'them apart.',
         'paths': ('*/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm',
                   '*/com.samsung.android.honeyboard/app_SwiftKey/user/backup/dynamic.lm',
                   '*/com.samsung.android.honeyboard/app_SwiftKey/user/specific/*',
@@ -107,7 +111,7 @@ __artifacts_v2__ = {
     },
     'swiftkey_lm_sequences': {
         'name': 'SwiftKey Language Model - Term Sequences',
-        'description': 'Sequences of two to four terms stored in SwiftKey engine language model '
+        'description': 'Sequences of two or more terms stored in SwiftKey engine language model '
                        'files, with the count each model keeps for the sequence.',
         'author': '@AlexisBrignoni, Claude, @crox4n6',
         'creation_date': '2026-10-01',
@@ -155,17 +159,19 @@ __artifacts_v2__ = {
         'last_update_date': '2026-10-01',
         'requirements': 'none',
         'category': 'SwiftKey Keyboard',
-        'notes': 'One row per term under each app package name a model file keeps separate term counts for. After '
-                 'its sequence tree a dynamic.lm can hold a list of package names, each followed by its own term '
-                 'counts. On the tested images only the dynamic.lm on samsunga53_a14 holds such lists: 14 package '
-                 'names and 227 rows, each row a single term. App Package is the name as stored. Each list also '
-                 'carries two numbers this artifact does not report: one was 1 on every list, and the meaning of '
-                 'neither is established. What makes the keyboard file a term under a package name is not '
-                 'established; a row shows the model holds that count under that name. The separate model files '
-                 'under user/specific, 23 live files on anne_a15, sit in folders whose names read as an app '
-                 'package name and are reported by the Terms and Term Sequences artifacts. A backup file holding '
-                 'the same bytes as its live file is not repeated; where the two differ both are reported and '
-                 'Source File tells them apart.',
+        'notes': 'One row per entry under each app package name a model file keeps separate term counts for. '
+                 'An entry of more than one term would show its terms joined with a space in Term; on the '
+                 'tested images each row was a single term. After its sequence tree a dynamic.lm can hold a '
+                 'list of package names, each followed by its own term counts. On the tested images only the '
+                 'dynamic.lm on samsunga53_a14 holds such lists: 14 package names and 227 rows, each row a '
+                 'single term. App Package is the name as stored. Each list also carries two numbers this '
+                 'artifact does not report: one was 1 on every list, and the meaning of neither is '
+                 'established. What makes the keyboard file a term under a package name is not established; '
+                 'a row shows the model holds that count under that name. The separate model files under '
+                 'user/specific, 23 live files on anne_a15, sit in folders whose names read as an app '
+                 'package name and are reported by the Terms and Term Sequences artifacts. A backup file '
+                 'holding the same bytes as its live file is not repeated; where the two differ both are '
+                 'reported and Source File tells them apart.',
         'paths': ('*/com.samsung.android.honeyboard/app_SwiftKey/user/dynamic.lm',
                   '*/com.samsung.android.honeyboard/app_SwiftKey/user/backup/dynamic.lm',
                   '*/com.samsung.android.honeyboard/app_SwiftKey/user/specific/*',

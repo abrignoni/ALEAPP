@@ -6,18 +6,22 @@ __artifacts_v2__ = {
                        "for media messages",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-08-16",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Instagram",
-        "notes": "Each messages row holds a JSON copy of the message; the text, sender, item "
-                 "type and media fields are read from it. Its thread_key and timestamp fields "
-                 "agreed with the table's own thread_id and timestamp columns on every tested "
-                 "row. Timestamps are stored as epoch microseconds.\n"
-                 "Direction is derived: the session table of the same database holds the "
-                 "signed-in account's user id, and a message whose JSON user_id equals it is "
-                 "reported as Outgoing, otherwise Incoming. Sender Username resolves the JSON "
-                 "user_id against the participant list in the thread's thread_info JSON, and "
-                 "for the signed-in account against the preferences file named in the paths; "
+        "notes": "Each messages row holds a JSON copy of the message; the sender, content type "
+                 "and media fields are read from it. Message and Item Type are the table's own "
+                 "text and message_type columns. Its thread_key and timestamp fields agreed with "
+                 "the table's own thread_id and timestamp columns on every row of the tested "
+                 "images that held messages. Timestamps are stored as epoch microseconds.\n"
+                 "Direction is derived: the session table of the same database holds a user_id, "
+                 "which this artifact takes as the account's own id; no "
+                 "source for that reading is cited. A message whose JSON user_id equals it is "
+                 "reported as Outgoing, otherwise Incoming. Where the session table holds no "
+                 "user_id, or more than one distinct user_id, Direction is left blank. Sender Username resolves the JSON "
+                 "user_id against the participant list in the thread's thread_info JSON, and for "
+                 "the account the session table names against the preferences file named in the "
+                 "paths; "
                  "it is blank when neither source carries the id.\n"
                  "Item Type is reported as stored. Rows typed video_call_event are reported by "
                  "the Instagram - Direct Call Events artifact, not here. Rows typed media "
@@ -64,12 +68,13 @@ __artifacts_v2__ = {
                        "direct.db, with the stored action, description and joined flag",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-08-16",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Instagram",
         "notes": "Rows of the messages table whose type is video_call_event. Action, "
                  "Description and Did Join are the stored values of the event JSON; the "
-                 "description is the app's own wording (for example 'You started a video "
+                 "description is the text stored in the event JSON (for example 'You "
+                 "started a video "
                  "chat'). Timestamps are epoch microseconds. Direction follows the same "
                  "session-table derivation as the Instagram - Direct Messages artifact. An "
                  "event row is not a call log; start and end appear as separate rows where "
@@ -100,12 +105,14 @@ __artifacts_v2__ = {
                        "time",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-08-16",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Instagram",
         "notes": "One row per threads table entry. Participants and the inviter are read from "
-                 "the thread_info JSON as username (full name) pairs; on the tested images the "
-                 "signed-in account was not listed among the participants. Last Activity Time is "
+                 "the thread_info JSON as username (full name) pairs. Participants is the stored "
+                 "recipients (or users) list, each id once; the inviter appears there only "
+                 "where that list holds it, and is also shown in Inviter Username. Last "
+                 "Activity Time is "
                  "the table's own column, stored as epoch microseconds. Thread Title is the "
                  "stored title, reported as stored.",
         "paths": ('*/com.instagram.android/databases/direct.db*',),
@@ -128,7 +135,8 @@ __artifacts_v2__ = {
     },
     "instagramAccounts": {
         "name": "Instagram - Accounts",
-        "description": "Signed-in account profiles from the Instagram shared preferences file "
+        "description": "Account profiles from the 'current' and 'user_access_map' keys of "
+                       "the Instagram shared preferences file "
                        "com.instagram.android_preferences.xml, with the username, user id and "
                        "profile fields",
         "author": "@AlexisBrignoni, Claude",
@@ -179,9 +187,9 @@ __artifacts_v2__ = {
                  "under their own names. The integer columns contact_type, "
                  "blocked_by_viewer_status and gender are reported as stored; nothing in the "
                  "extraction maps their values. Blocked Since converts "
-                 "blocked_since_timestamp_ms where present. The WAL sidecar is load-bearing "
-                 "for this database: in one tested image five contacts existed only in the "
-                 "WAL, so the sidecars must travel with the database.\n"
+                 "blocked_since_timestamp_ms where present. In one tested image five "
+                 "contacts were present only in the write-ahead log, so the database must "
+                 "be read with its -wal file beside it.\n"
                  "A contact row is an entry in the app's local contact store. Its presence "
                  "does not establish that the account holder communicated with, followed or "
                  "knew the listed account.",
@@ -205,7 +213,7 @@ __artifacts_v2__ = {
     },
     "instagramTimeInApp": {
         "name": "Instagram - Time In App",
-        "description": "App usage intervals from the intervals table of the Instagram database "
+        "description": "Rows from the intervals table of the Instagram database "
                        "time_in_app_<user id>.db, with the start and end times and the stored "
                        "event codes",
         "author": "@AlexisBrignoni, Claude",
@@ -351,8 +359,11 @@ def _account_username_map(context):
 
 
 def _session_user_id(source_path):
-    rows = _rows(source_path, 'SELECT user_id FROM session')
-    return str(rows[0][0]) if rows else ''
+    '''The one user_id the session table holds, or blank when it holds none or
+    more than one distinct value, so that no row is picked by return order.'''
+    rows = _rows(source_path,
+                 'SELECT DISTINCT user_id FROM session WHERE user_id IS NOT NULL')
+    return str(rows[0][0]) if len(rows) == 1 else ''
 
 
 def _participants(info):
@@ -544,11 +555,15 @@ def instagramDirectThreads(context):
             participants = []
             inviter = info.get('inviter')
             inviter = inviter if isinstance(inviter, dict) else {}
-            inviter_id = _participant_id(inviter)
             seen = set()
-            for user in _participants(info):
+            stored = []
+            for key in ('recipients', 'users'):
+                value = info.get(key)
+                if isinstance(value, list):
+                    stored.extend(user for user in value if isinstance(user, dict))
+            for user in stored:
                 pk = _participant_id(user)
-                if pk and (pk in seen or pk == inviter_id):
+                if pk and pk in seen:
                     continue
                 seen.add(pk)
                 username = user.get('username', '')

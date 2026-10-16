@@ -1,8 +1,9 @@
 __artifacts_v2__ = {
     "get_usageapps": {
         "name": "usageapps",
-        "description": "App usage events from the Device Personalization Services "
-                       "reflection_gel_events database, with rows whose id carries a deleted_app "
+        "description": "Rows of the reflection_event table of the reflection_gel_events "
+                       "database of com.google.android.as, with the package string decoded from "
+                       "the proto column, with rows whose id carries a deleted_app "
                        "marker flagged",
         "author": "@abrignoni",
         "creation_date": "2020-04-11",

@@ -1,0 +1,58 @@
+{
+  "metadata": {
+    "module_name": "Threema",
+    "artifact_name": "Threema - Contacts",
+    "function_name": "threema_contacts",
+    "case_number": "pixel7a_a14",
+    "number_of_columns": 6,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 118,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/Threema/testdata.Threema.threema_contacts.pixel7a_a14.zip",
+    "start_time": "2026-10-04T19:56:28.152345+00:00",
+    "end_time": "2026-10-04T19:56:28.181603+00:00",
+    "run_time_seconds": 0.001428842544555664,
+    "last_commit": {
+      "hash": "1ec9b7c22e14aa96e25717842aab5186d9dc82ee",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-10-04T08:49:26-04:00",
+      "message": "WIP: time handling fixes from the notes audit, not validated"
+    }
+  },
+  "headers": [
+    "Threema ID",
+    "Display Name",
+    "Verification Level",
+    "Date Created",
+    "Group-Only / Removed",
+    "Archived"
+  ],
+  "data": [
+    [
+      "ECHOECHO",
+      "Echo Test",
+      "Unverified",
+      1714662546,
+      "",
+      ""
+    ],
+    [
+      "83XD7K4F",
+      "ThisIs DFIR",
+      "Fully verified",
+      1714662779,
+      "",
+      ""
+    ],
+    [
+      "DX8X8X4S",
+      "Hubbs",
+      "Server-verified",
+      1718802775,
+      "",
+      ""
+    ]
+  ]
+}

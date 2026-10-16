@@ -1,17 +1,20 @@
 __artifacts_v2__ = {
     "android_users": {
         "name": "Android Users and Profiles",
-        "description": "The Android users and profiles that exist on the device, with each one's name, type and creation "
-                       "time, and the lastLoggedIn and lastEnteredForeground times the platform stored, as stored.",
-        "author": "@AlexisBrignoni, Claude",
+        "description": "Android user/profile records and index-only observations under the system users folder, "
+                       "with each one's name, type and creation time, and the lastLoggedIn and "
+                       "lastEnteredForeground times the platform stored, as stored.",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-03",
-        "last_update_date": "2026-09-04",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Device Users",
         "notes": "Read from the user records the platform keeps under the system users folder: "
-                 "the userlist.xml index and one <id>.xml file per user, both ABX binary XML on "
-                 "modern releases and plain XML on older ones. One row per user file. The glob "
-                 "reaches every .xml under that folder because a pattern segment also crosses "
+                 "the userlist.xml index and one <id>.xml file per user, each read as ABX binary "
+                 "XML or plain XML according to the file's own header. User records are reported "
+                 "first, followed by each index entry without a returned matching user record. "
+                 "The glob reaches every .xml under that folder because a pattern segment also "
+                 "crosses "
                  "path separators, so a file is used only when its name is a number and its root "
                  "element is a user record; anything else, including the per-user "
                  "package-restrictions.xml and settings_ssaid.xml, is skipped. The pattern is not "
@@ -23,10 +26,14 @@ __artifacts_v2__ = {
                  "usage: the platform sets it from setLastEnteredForegroundTimeToNow, called for "
                  "the user being switched to in onUserSwitching and for the system user in "
                  "onUserStarting. Reference: Android Open Source Project, "
-                 "UserManagerService.java, "
-                 "frameworks/base/services/core/java/com/android/server/pm. What sets Last Logged "
-                 "In was not established, so it is reported as stored. A creation value of 0 is "
-                 "reported as blank rather than as 1970. User Type and Flags are reported as "
+                 "UserManagerService.java at android-14.0.0_r1, lines 699 to 733; the attribute "
+                 "is not in that file at android-13.0.0_r1, and the column is blank where a "
+                 "record carries no such attribute. In the same file onUserLoggedIn (lines 6268 "
+                 "to 6281) sets lastLoggedIn to the current clock time, when that is past a "
+                 "platform minimum, together with lastLoggedInFingerprint; which events call it "
+                 "was not traced here, so Last Logged In is reported as stored. A value of 0 or "
+                 "less in Created, Last Logged In or Last Entered Foreground is reported as "
+                 "blank rather than as 1970. User Type and Flags are reported as "
                  "stored; the type string is the platform's own, such as a full secondary user "
                  "or a managed profile. User Name is blank where the record carries no name "
                  "element. User ID and Serial Number were identical on every tested image and "
@@ -34,12 +41,18 @@ __artifacts_v2__ = {
                  "takes the lowest id not in use, so a removed user's id can come back, while "
                  "the serial is taken from a counter the platform only increments and persists "
                  "as nextSerialNumber in userlist.xml. Reference: Android Open Source Project, "
-                 "UserManagerService.java, "
-                 "frameworks/base/services/core/java/com/android/server/pm, "
-                 "scanNextAvailableIdLocked, mNextSerialNumber and writeUserListLP. In Userlist "
-                 "is True when the userlist index also names the user, and a user file present "
-                 "without an index entry, or the reverse, is reported as it was found.\nA user id "
-                 "other than 0 is an additional Android user or profile; an extraction can carry "
+                 "UserManagerService.java at android-14.0.0_r1, scanNextAvailableIdLocked (line "
+                 "6315), mNextSerialNumber (lines 4341 and 4875), "
+                 "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/"
+                 "android-14.0.0_r1/services/core/java/com/android/server/pm/"
+                 "UserManagerService.java (read at that tag only). In Userlist is True when the "
+                 "userlist index in the same physical and evidence-relative users folder names "
+                 "the user, and a user file present "
+                 "without an index entry is reported with In Userlist False. An id that "
+                 "userlist.xml names without a returned matching user record has an index-only row, "
+                 "with blank attributes and its index source. Duplicate index entries are retained. "
+                 "Record Status distinguishes these observations without claiming deletion or a person.\nA returned "
+                 "user record with an id other than 0 describes an additional Android user or profile; an extraction can carry "
                  "that user's app storage under data/user/<id>, and the presence of the record "
                  "does not "
                  "establish who used it.",
@@ -105,6 +118,12 @@ def _child_text(element, tag):
     return (found.text or '').strip()
 
 
+def _scope(context, path):
+    """Ownership requires both staged parent and uncanonicalized evidence parent."""
+    return (os.path.dirname(os.path.abspath(path)),
+            os.path.dirname(str(context.get_relative_path(path)).replace('\\', '/')))
+
+
 @artifact_processor
 def android_users(context):
     data_headers = (
@@ -119,17 +138,22 @@ def android_users(context):
         'Profile Badge (as stored)',
         'In Userlist',
         'Last Logged In Fingerprint',
+        'Record Status',
         'Source File',
     )
     data_list = []
     sources = []
-    listed = set()
+    listed = {}
+    index_entries = []
+    returned = {}
+    issues = {}
     user_files = []
 
     for file_found in context.get_files_found():
         file_found = str(file_found)
         if os.path.isdir(file_found):
             continue
+        scope = _scope(context, file_found)
         name = os.path.basename(file_found)
         parent = os.path.basename(os.path.dirname(file_found))
         if parent != 'users':
@@ -143,18 +167,27 @@ def android_users(context):
             if root.tag == 'users':
                 for entry in root.findall('user'):
                     if entry.get('id'):
-                        listed.add(str(entry.get('id')))
+                        user_id = str(entry.get('id'))
+                        listed.setdefault(scope, set()).add(user_id)
+                        index_entries.append((scope, file_found, user_id))
                 sources.append(file_found)
+            else:
+                logfunc(f'Android Users: non-users index root in {context.get_relative_path(file_found)}')
         elif name[:-4].isdigit() and name.endswith('.xml'):
             user_files.append(file_found)
 
     for file_found in sorted(user_files):
+        scope = _scope(context, file_found)
+        filename_id = os.path.basename(file_found)[:-4]
         try:
             root = _root(file_found)
         except Exception as error:  # pylint: disable=broad-except
-            logfunc(f'Android Users: could not read {os.path.basename(file_found)}: {error}')
+            issues[(scope, filename_id)] = 'unreadable matched user file'
+            logfunc(f'Android Users: could not read {context.get_relative_path(file_found)}: {error}')
             continue
         if root.tag != 'user':
+            issues[(scope, filename_id)] = 'matched XML root is not user'
+            logfunc(f'Android Users: non-user record root in {context.get_relative_path(file_found)}')
             continue
         user_id = str(root.get('id', os.path.basename(file_found)[:-4]))
         data_list.append((
@@ -167,10 +200,23 @@ def android_users(context):
             root.get('serialNumber', ''),
             root.get('flags', ''),
             root.get('profileBadge', ''),
-            user_id in listed,
+            user_id in listed.get(scope, set()),
             root.get('lastLoggedInFingerprint', ''),
+            'User record',
             context.get_relative_path(file_found),
         ))
         sources.append(file_found)
+        returned.setdefault(scope, set()).add(user_id)
+        if user_id != filename_id:
+            issues[(scope, filename_id)] = 'matched user record returned a different ID'
+
+    for scope, index_path, user_id in index_entries:
+        if user_id in returned.get(scope, set()):
+            continue
+        reason = issues.get((scope, user_id), 'no matched user file')
+        status = f'Index entry without returned user record ({reason})'
+        data_list.append(('', '', '', user_id, '', '', '', '', '', True, '',
+                          status, context.get_relative_path(index_path)))
+        logfunc(f'Android Users: index ID {user_id!r} in {context.get_relative_path(index_path)}: {reason}')
 
     return data_headers, data_list, '\n'.join(sources)

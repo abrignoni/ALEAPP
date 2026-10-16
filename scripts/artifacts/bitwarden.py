@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Parses the account profile stored by the Bitwarden Android password manager.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-30",
-        "last_update_date": "2026-08-30",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Bitwarden",
         "notes": "One row per reported account setting, read from the plain text preferences file "
@@ -29,18 +29,27 @@ __artifacts_v2__ = {
                  "each, so rows are keyed by User ID and the Active Account column marks the one the app "
                  "was last using; with a single account signed in that column is uniformly Yes, as it "
                  "was on the tested device. For an examiner with lawful authority to attempt offline "
-                 "recovery of the vault: the vault key is derived from the master password with "
-                 "PBKDF2-SHA256, using the account email as the salt and the KDF Iterations reported "
-                 "here (default 600,000), and the stored master password hash is a further PBKDF2-SHA256 "
-                 "pass over that derived key (Bitwarden Security Whitepaper, "
-                 "https://bitwarden.com/help/bitwarden-security-white-paper/). The key therefore comes "
-                 "from the master password rather than from an Android Keystore key, so the material an "
-                 "offline attempt uses can be recovered from the extraction. This artifact does not "
-                 "output that material, but it can be read directly from the same preferences file: the "
-                 "master password hash is the keyHash_<user id> entry, the unlock salt is under "
-                 "masterPasswordUnlock.salt in the profile, and the encrypted user key is the "
-                 "localUserDataKey_<user id> entry, with the encrypted items in databases/vault_database "
-                 "and the account Email reported above serving as the KDF salt. Those values, assembled "
+                 "recovery of the vault: where KDF Type is PBKDF2 SHA256, the Master Key is derived from "
+                 "the master password with PBKDF2-SHA256, using the account email as the salt and the "
+                 "KDF Iterations reported here (the white paper gives 600,000 as the default); that key "
+                 "is stretched with HKDF and used to encrypt a randomly generated symmetric key, which "
+                 "the white paper calls the main key associated with the user, so that key is wrapped "
+                 "by, not derived from, the master password. The stored master password hash is a "
+                 "further PBKDF2-SHA256 pass over the Master Key (Bitwarden Security Whitepaper, "
+                 "https://bitwarden.com/help/bitwarden-security-white-paper/). At bitwarden/android "
+                 "59d0faaf1266a03ccddc2809332cfa9c95393f78 the app writes the keyHash and "
+                 "localUserDataKey entries with a plain putString call (AuthDiskSourceImpl.kt lines 522 "
+                 "and 275). At the same commit that call writes to the preferences instance "
+                 "AuthDiskModule.kt injects as UnencryptedPreferences (line 29), which "
+                 "PreferenceModule.kt opens as <package name>_preferences in private mode (lines 29 "
+                 "to 35), so both are present in this preferences file as stored. This artifact does "
+                 "not output that material, but it can be read directly from the same preferences file: "
+                 "the master password hash is the keyHash_<user id> entry, the unlock salt is under "
+                 "masterPasswordUnlock.salt in the profile, and a wrapped key is stored in the "
+                 "localUserDataKey_<user id> entry. The app source names it the local user data key, and "
+                 "what it wraps was not established here. The encrypted items are in "
+                 "databases/vault_database, and the account Email reported above serves as the KDF salt. "
+                 "Those values, assembled "
                  "into the input format expected by password-recovery tooling such as John the Ripper "
                  "(bitwarden2john), are what such a tool consumes; recovering plaintext still requires "
                  "the master password or a successful attack against that material.",
@@ -54,31 +63,39 @@ __artifacts_v2__ = {
     "bitwarden_vault_items": {
         "name": "Bitwarden - Vault Items",
         "description": "Parses the vault item records stored by the Bitwarden Android password manager.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, Codex",
         "creation_date": "2026-08-30",
-        "last_update_date": "2026-08-30",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Bitwarden",
         "notes": "One row per entry in the ciphers table of databases/vault_database. Bitwarden is end "
                  "to end encrypted and the contents of a vault item are not recovered here: within each "
                  "row's stored JSON the name, username, password and item key are Bitwarden EncString "
-                 "values, which carry an encryption type prefix followed by the initialisation vector, "
-                 "ciphertext and MAC, and the key that opens them is derived from the master password, "
-                 "which is not in the extraction. Confirmed on the tested device by saving an item with "
-                 "a known name and then searching the whole app directory for it, which returned "
-                 "nothing. What the same JSON does hold in plain text, and what is reported here, is the "
-                 "item's metadata: the Item ID, the owning User ID, the Type, the Created and Last "
-                 "Revised dates, whether it is a Favorite, whether the item requires a master password "
-                 "reprompt to view, and the Organization ID where the item belongs to an organisation "
-                 "rather than the personal vault. That gives an examiner how many items a vault held, of "
-                 "what kinds, and when each was created and last changed, without their contents. Type "
-                 "is decoded from the app's own enum, 1 login, 2 secure note, 3 card, 4 identity, 5 SSH "
-                 "key, 6 bank account, 7 drivers licence, 8 passport (CipherTypeJson.kt at "
-                 "bitwarden/android 59d0faaf1266a03ccddc2809332cfa9c95393f78); any other value is "
-                 "reported as stored. Dates are ISO 8601 with a Z suffix and are reported as UTC. Three "
-                 "sibling tables in the same database are not parsed here and were empty on the tested "
-                 "device: folders and collections hold encrypted names only, and sends holds encrypted "
-                 "Bitwarden Send records. The database runs in WAL mode and held its rows in the -wal "
+                 "values, whose layout is not sourced here, and the key that opens them is a randomly "
+                 "generated key that is itself encrypted under a key derived from the master password "
+                 "(Bitwarden Security Whitepaper, "
+                 "https://bitwarden.com/help/bitwarden-security-white-paper/); this artifact does not "
+                 "recover the master password. On the tested device an item was saved with a known name "
+                 "and the whole app directory was then searched for that name, which returned nothing. "
+                 "What the same JSON does hold in plain text, and what is reported here, is the item's "
+                 "metadata: the Item ID, the owning User ID, the Type, the Created and Last Revised "
+                 "dates, the favorite and reprompt fields as compact status documents with their parsed "
+                 "values encoded as JSON text, and the Organization ID where the item belongs to an organisation rather than "
+                 "the personal vault. That gives an examiner how many items a vault held, of what kinds, "
+                 "and when each was created and last changed, without their contents. Type is decoded "
+                 "from the app's own enum, 1 login, 2 secure note, 3 card, 4 identity, 5 SSH key, 6 bank "
+                 "account, 7 drivers licence, 8 passport (CipherTypeJson.kt at bitwarden/android "
+                 "59d0faaf1266a03ccddc2809332cfa9c95393f78); any other value is reported as stored. "
+                 "Dates are ISO 8601 with a Z suffix and are reported as UTC. Field documents distinguish "
+                 "missing keys, explicit null, false, zero, invalid input and non-object roots; non-object "
+                 "documents contain only the root kind. Inner JSON text follows Python JSON semantics, "
+                 "including NaN and Infinity extensions. It preserves parsed values rather than original "
+                 "bytes, number spelling or duplicate object keys. No favorite or reprompt enum meaning is "
+                 "assigned. Truthy non-object roots remain unsupported by the existing row projection. "
+                 "Three sibling tables in "
+                 "the same database are not parsed here and were empty on the tested device: folders, "
+                 "collections and sends; what they hold was not measured. The database runs in WAL mode "
+                 "and held its rows in the -wal "
                  "sidecar on the tested device, so the sidecar is in the paths and is required.",
         "paths": ('*/com.x8bit.bitwarden/databases/vault_database*',),
         "output_types": "standard",
@@ -213,6 +230,33 @@ def bitwarden_account(context):
     return data_headers, data_list, '\n'.join(sources)
 
 
+def _field_document(raw, field):
+    """Report one parsed JSON field without conflating absence with false."""
+    if raw is None:
+        document = {'status': 'sql_null_input'}
+    elif not isinstance(raw, (str, bytes, bytearray)):
+        document = {'status': 'unsupported_json_input_type'}
+    elif len(raw) == 0:
+        document = {'status': 'empty_input'}
+    else:
+        try:
+            root = json.loads(raw)
+        except (TypeError, ValueError):
+            document = {'status': 'invalid_json'}
+        else:
+            if isinstance(root, dict):
+                if field in root:
+                    document = {'status': 'present', 'json': json.dumps(
+                        root[field], ensure_ascii=True, separators=(',', ':'))}
+                else:
+                    document = {'status': 'missing_key'}
+            else:
+                kinds = {type(None): 'null', bool: 'boolean', int: 'integer',
+                         float: 'float', str: 'string', list: 'array'}
+                document = {'status': 'decoded_non_object', 'root_kind': kinds[type(root)]}
+    return json.dumps(document, ensure_ascii=True, separators=(',', ':'), allow_nan=False)
+
+
 @artifact_processor
 def bitwarden_vault_items(context):
     query = '''SELECT id, user_id, cipher_type, cipher_json, organization_id
@@ -226,12 +270,11 @@ def bitwarden_vault_items(context):
         for record in records:
             counted = True
             payload = _json(record[3]) or {}
-            reprompt = payload.get('reprompt')
             data_list.append((
                 _iso(payload.get('creationDate')), _iso(payload.get('revisionDate')),
                 record[0] or '', _lookup(CIPHER_TYPES, record[2]),
-                'Yes' if payload.get('favorite') else 'No',
-                'Yes' if reprompt else 'No',
+                _field_document(record[3], 'favorite'),
+                _field_document(record[3], 'reprompt'),
                 record[4] or '', record[1] or '', rel,
             ))
         if counted and db_path not in sources:
@@ -239,6 +282,6 @@ def bitwarden_vault_items(context):
 
     data_headers = (
         ('Created', 'datetime'), ('Last Revised', 'datetime'), 'Item ID', 'Type',
-        'Favorite', 'Master Password Reprompt', 'Organization ID', 'User ID', 'Source File',
+        'favorite (typed JSON)', 'reprompt (typed JSON)', 'Organization ID', 'User ID', 'Source File',
     )
     return data_headers, data_list, '\n'.join(sources)

@@ -2,8 +2,9 @@ __artifacts_v2__ = {
     "private_photo_vault_account": {
         "name": "Private Photo Vault - Account Usage",
         "description": "Install date and the key event count and last key event date the Private Photo Vault app keeps "
-                       "in its main preferences file, reported as stored.",
-        "author": "@Gear-I & Claude",
+                       "in its main preferences file, with the two dates converted as Unix "
+                       "milliseconds and the counts as stored.",
+        "author": "@Gear-I & Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-17",
         "last_update_date": "2026-08-17",
         "requirements": "none",
@@ -15,8 +16,8 @@ __artifacts_v2__ = {
                  "so this module reports the raw value rather than asserting what triggers it. "
                  "On the device this was validated against, its one recorded event's timestamp "
                  "lands within a second of every imported media file's own creation timestamp, "
-                 "consistent with (but not proof of) the single PIN-setup/import session "
-                 "documented for this app on this device. 'Uses Encrypted Preferences' is the "
+                 "which does not establish what the event is. 'Uses Encrypted Preferences' is "
+                 "the "
                  "app's own usesEncryptedPreferencesV2 flag, reported as stored; what the app "
                  "does when it is set is not established here, and no PIN value was recovered "
                  "from this file.",
@@ -31,9 +32,9 @@ __artifacts_v2__ = {
         "name": "Private Photo Vault - Albums",
         "description": "Albums recorded in Private Photo Vault's local database, "
                        "each with its own bucket identifier and creation time.",
-        "author": "@Gear-I & Claude",
+        "author": "@Gear-I & Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-17",
-        "last_update_date": "2026-08-17",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Private Photo Vault",
         "notes": "Read from the app's own ppv.db, opened read-only alongside "
@@ -44,7 +45,11 @@ __artifacts_v2__ = {
                  "holding the device's three imported pictures, and one, "
                  "created one millisecond later, with bucket_id 'albums_decoy' and no media in "
                  "it. This module reports the bucket_id exactly as stored rather than asserting "
-                 "what feature it belongs to.",
+                 "what feature it belongs to. Creation Date (As Stored) is the creation_date "
+                 "text. Created is that text converted to UTC, and is filled only when the "
+                 "text carries a Z or a UTC offset; a value with neither is left blank in "
+                 "Created because no zone is recorded for it. Both stored values on "
+                 "pixel7a_a14 carry a UTC offset.",
         "paths": ('*/com.enchantedcloud.photovault/databases/ppv.db*',),
         "output_types": ["standard"],
         "artifact_icon": "album",
@@ -55,25 +60,32 @@ __artifacts_v2__ = {
     "private_photo_vault_media": {
         "name": "Private Photo Vault - Media",
         "description": "Imported media files recorded in Private Photo Vault's "
-                       "local database, with each file's original dimensions, "
-                       "import time, and favourite/deleted/view-count state.",
-        "author": "@Gear-I & Claude",
+                       "local database, with each row's stored creation date, "
+                       "image width and height, and the favourite, deleted "
+                       "and view count columns as stored.",
+        "author": "@Gear-I & Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-17",
-        "last_update_date": "2026-08-17",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Private Photo Vault",
         "notes": "Read the same way as Private Photo Vault - Albums, including "
-                 "the write-ahead log. The image/video content behind each row "
-                 "is not recoverable from this extraction: on the device this was validated "
+                 "the write-ahead log. The image and video content behind each row was not "
+                 "recovered: on the device this was validated "
                  "against the files at File Path and Thumbnail Path do not begin with any "
                  "recognizable image file signature, and while the database does store a "
                  "per-file 'Encryption Key' and IV for each row, that stored value decodes from "
                  "base64 to 48 bytes, which is not the length of a bare 32-byte AES key, and no "
-                 "key that decrypts the files was recovered from the extraction. The wrapped key "
-                 "and IV are still reported here exactly as stored, in case a future extraction "
-                 "method recovers the missing unwrapping key, but this module makes no attempt "
+                 "key that decrypts the files was recovered from the extraction. The "
+                 "encryption_key and local_iv values are reported exactly as stored. How the 48 "
+                 "byte value relates to the key that encrypts the file is not established, and "
+                 "this module makes no attempt "
                  "to decrypt the media itself. 'View Count', 'Favourite' and 'Deleted' are "
-                 "reported as stored; what updates them is not established.",
+                 "reported as stored; what updates them is not established. Creation Date (As "
+                 "Stored) is the creation_date text. Created is that text converted to UTC, "
+                 "and is filled only when the text carries a Z or a UTC offset; a value with "
+                 "neither is left blank in Created because no zone is recorded for it. All "
+                 "three stored values on pixel7a_a14 carry a UTC offset, two of them with a "
+                 "two digit fraction of a second.",
         "paths": ('*/com.enchantedcloud.photovault/databases/ppv.db*',),
         "output_types": ["standard", "timeline"],
         "artifact_icon": "photo",
@@ -83,6 +95,7 @@ __artifacts_v2__ = {
     },
 }
 
+import re
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 
@@ -113,13 +126,27 @@ def _epoch_ms_to_utc(value):
         return None
 
 
+_ISO_FRACTION = re.compile(r'\.(\d+)')
+
+
 def _iso_to_utc(value):
-    if not value:
+    """The stored ISO 8601 text as a UTC datetime, or None when the text
+    carries no Z or UTC offset (no instant can be stated for it) or cannot be
+    parsed. The fraction is padded to six digits first: before Python 3.11,
+    fromisoformat accepts only three or six."""
+    if not value or not isinstance(value, str):
         return None
+    text = _ISO_FRACTION.sub(
+        lambda m: '.' + m.group(1)[:6].ljust(6, '0'), value.strip(), count=1)
+    if text.endswith(('Z', 'z')):
+        text = text[:-1] + '+00:00'
     try:
-        return datetime.fromisoformat(value.replace('Z', '+00:00'))
+        parsed = datetime.fromisoformat(text)
     except ValueError:
         return None
+    if parsed.tzinfo is None:
+        return None
+    return parsed.astimezone(timezone.utc)
 
 
 @artifact_processor
@@ -162,8 +189,8 @@ def private_photo_vault_account(context):
 @artifact_processor
 def private_photo_vault_albums(context):
     data_headers = (
-        "Album Name", "Bucket ID", ("Created", "datetime"), "Order Number",
-        "Deleted",
+        ("Created", "datetime"), "Creation Date (As Stored)",
+        "Album Name", "Bucket ID", "Order Number", "Deleted",
     )
 
     files_found = unique_files(context)
@@ -179,9 +206,10 @@ def private_photo_vault_albums(context):
                 "SELECT name, bucket_id, creation_date, order_number, is_deleted "
                 "FROM Album;")):
         data_list.append((
+            _iso_to_utc(created),
+            created,
             name,
             bucket_id,
-            _iso_to_utc(created),
             order_number,
             "Yes" if is_deleted else "",
         ))
@@ -193,9 +221,10 @@ def private_photo_vault_albums(context):
 @artifact_processor
 def private_photo_vault_media(context):
     data_headers = (
-        ("Created", "datetime"), "Album Bucket ID", "File Path",
+        ("Created", "datetime"), "Creation Date (As Stored)",
+        "Album Bucket ID", "File Path",
         "Thumbnail Path", "MIME Type", "Image Width", "Image Height",
-        "Favourite", "Deleted", "View Count", "Encryption Key (Wrapped)", "IV",
+        "Favourite", "Deleted", "View Count", "Encryption Key", "IV",
     )
 
     files_found = unique_files(context)
@@ -216,6 +245,7 @@ def private_photo_vault_media(context):
                 "ORDER BY creation_date;")):
         data_list.append((
             _iso_to_utc(created),
+            created,
             bucket_id,
             file_path,
             thumbnail_path,

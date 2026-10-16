@@ -2,31 +2,36 @@ __artifacts_v2__ = {
     "adb_authorizations": {
         "name": "ADB Authorizations",
         "description": "Public keys the device accepted for Android Debug Bridge access, with the "
-                       "host name written beside each key where the host supplied one and the "
+                       "comment stored beside each key where one was written and the "
                        "time each key last connected.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-03",
-        "last_update_date": "2026-09-04",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Device Connections",
-        "notes": "Read from the adb_temp_keys.xml the platform keeps in its adb folder, ABX "
-                 "binary XML on modern releases and plain XML on older ones. One row per adbKey "
-                 "element. Last Connection is the lastConnection attribute in Unix milliseconds.\n"
-                 "The key attribute holds the host's public key followed, where the host's adb "
-                 "wrote one, by whitespace and a user@hostname comment. The platform itself "
-                 "splits the value on whitespace and shows the second token as the name of the "
-                 "paired computer, and Host reports that token as stored; it was present on 20 of "
-                 "the 23 keys on the tested images, two of them with an empty user part. ADB "
-                 "Public Key is the first token. A row means the device stored an authorization "
-                 "for the host holding the matching private key; the key "
-                 "identifies the key pair that computer's adb used. The platform's own comment on "
-                 "this file says adbd reads only adb_keys for authorization and keeps "
-                 "adb_temp_keys.xml to remove unused keys and to manage authorized wireless "
-                 "debugging access points, so a device may also carry data/misc/adb/adb_keys, a "
-                 "plain text list without timestamps, which this artifact does not read. "
-                 "Reference: Android Open Source Project, AdbDebuggingManager.java, "
-                 "frameworks/base/services/core/java/com/android/server/adb, class comment and "
-                 "getPairedDevices. The path pattern is not anchored on a data/ prefix, because a "
+        "notes": "Read from the adb_temp_keys.xml the platform keeps in its adb folder, which may "
+                 "be ABX binary XML or plain XML; the format is detected per file. One row per "
+                 "adbKey element. Last Connection is the lastConnection attribute in Unix "
+                 "milliseconds.\nThe key attribute holds the host's public key followed, where "
+                 "the host's adb wrote one, by whitespace and a user@hostname comment. The "
+                 "platform itself splits the value on whitespace and shows only the second token "
+                 "as the name of the paired computer. Key Comment reports everything stored after "
+                 "the first token, as stored, so a comment of more than one token is shown whole "
+                 "where the platform would show its first token. On the 15 keys of the images "
+                 "listed in sample_data, 12 carried a comment, each a single token, two of them "
+                 "with an empty user part; a comment of more than one token was not present on "
+                 "any of them. ADB Public Key is the first "
+                 "token. A row means the device stored an authorization for the host holding the "
+                 "matching private key; the key identifies the key pair that computer's adb used. "
+                 "The platform's own comment on this file says adbd reads only adb_keys for "
+                 "authorization and keeps adb_temp_keys.xml to remove unused keys and to manage "
+                 "authorized wireless debugging access points, so a device may also carry "
+                 "data/misc/adb/adb_keys, a plain text list without timestamps, which this "
+                 "artifact does not read. Reference: Android Open Source Project, "
+                 "AdbDebuggingManager.java at tag android-14.0.0_r1, "
+                 "frameworks/base/services/core/java/com/android/server/adb, class comment (lines "
+                 "113 to 126) and AdbKeyStore.getPairedDevices (lines 1879 to 1895). The path "
+                 "pattern is not anchored on a data/ prefix, because a "
                  "raw userdata partition image carries the same folder without one.",
         "paths": ('*/misc/adb/adb_temp_keys.xml',),
         "output_types": "standard",
@@ -85,7 +90,7 @@ def _ms(value):
 def adb_authorizations(context):
     data_headers = (
         ('Last Connection', 'datetime'),
-        'Host',
+        'Key Comment',
         'ADB Public Key',
         'Source File',
     )
@@ -104,11 +109,12 @@ def adb_authorizations(context):
         rows = 0
         for key in root.iter('adbKey'):
             # The attribute is the public key followed, where the host wrote one, by a
-            # user@hostname comment. AOSP AdbDebuggingManager.getPairedDevices splits it the same way.
-            parts = (key.get('key') or '').split()
+            # user@hostname comment. AOSP AdbDebuggingManager.getPairedDevices splits on whitespace
+            # and shows only the second token; the comment is reported here whole, as stored.
+            parts = (key.get('key') or '').split(None, 1)
             data_list.append((
                 _ms(key.get('lastConnection')),
-                ' '.join(parts[1:]),
+                parts[1].rstrip() if len(parts) > 1 else '',
                 parts[0] if parts else '',
                 context.get_relative_path(file_found),
             ))

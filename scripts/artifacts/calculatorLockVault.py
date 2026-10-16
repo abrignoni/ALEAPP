@@ -4,9 +4,9 @@ __artifacts_v2__ = {
         "description": "Rows from the Hide table of note_contact.db, each pairing a file name "
                        "with a path string, matched where possible to a file of that name under "
                        "the app's storage folder",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-09-28",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Calculator Lock",
         "notes": "com.calculator.lock.hide.photo.video shows a working calculator, and in a "
@@ -34,7 +34,10 @@ __artifacts_v2__ = {
                  "(bytes) and Storage Path are then blank. pixel7a_a14, the only registered "
                  "corpus found to carry the app, holds its data for one Android user only, so "
                  "reading a second user's database and storage folder was checked on a "
-                 "constructed extraction. A move within one volume can preserve a file's "
+                 "constructed extraction. File Modified Time is the modification time the "
+                 "extraction records for the file, and is blank when the extraction reader holds "
+                 "no record for the file; the reader held one for each of the 3 files matched on "
+                 "pixel7a_a14. A move within one volume can preserve a file's "
                  "modification time, so File Modified Time does not establish when the file "
                  "reached the storage folder.",
         "paths": (
@@ -52,9 +55,9 @@ __artifacts_v2__ = {
         "description": "Files present under the .Calculator_Lock folder on external storage, with "
                        "the format detected from each file's own bytes, including files the Hide "
                        "table does not name",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-09-28",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Calculator Lock",
         "notes": "Every file found under a .Calculator_Lock folder gets one row, whether or not "
@@ -77,7 +80,10 @@ __artifacts_v2__ = {
                  "and is blank otherwise, as on the corpus below. pixel7a_a14, the only "
                  "registered corpus found to carry the app, holds its data for one Android user "
                  "only, so reading a second user's storage folder and database was checked on a "
-                 "constructed extraction. A move within one volume can "
+                 "constructed extraction. File Modified Time is the modification time the "
+                 "extraction records for the file, and is blank when the extraction reader holds "
+                 "no record for the file; the reader held one for each of the 3 files matched on "
+                 "pixel7a_a14. A move within one volume can "
                  "preserve a file's modification time, so File Modified Time does not establish "
                  "when the file reached the storage folder.",
         "paths": (
@@ -94,7 +100,7 @@ __artifacts_v2__ = {
         "name": "Calculator Lock - Notes",
         "description": "Rows from the Note table of note_contact.db, holding a title, a body and "
                        "a date string",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-09-28",
         "requirements": "none",
@@ -111,7 +117,7 @@ __artifacts_v2__ = {
                  "APK's dex files hold 16 strings containing yyyy. dd-MM-yyyy and dd/MM/yyyy are "
                  "the only two with a numeric day and month and the year last, and both are day "
                  "first; the other 14 name the month or start with the year. MM-dd-yyyy and "
-                 "MM/dd/yyyy occur in none of the APK's 900 files, read as ASCII or UTF-16. On the "
+                 "MM/dd/yyyy occur in none of the APK's files, read as ASCII or UTF-16. On the "
                  "corpus below the one row stores 04-02-2024, and Joshua Hickman's creation "
                  "document for that image records a note created in the app on 2024-02-04 and "
                  "lists no later action on it, which agrees with the day-first reading. "
@@ -138,7 +144,7 @@ __artifacts_v2__ = {
         "name": "Calculator Lock - Contacts",
         "description": "Rows from the Contact table of note_contact.db, holding a name and a "
                        "number string",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-09-28",
         "requirements": "none",
@@ -164,7 +170,7 @@ __artifacts_v2__ = {
         "name": "Calculator Lock - Files",
         "description": "Rows from the File table of note_contact.db, holding a title, two path "
                        "strings, a MIME type and a date string",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-09-28",
         "requirements": "none",
@@ -199,7 +205,7 @@ __artifacts_v2__ = {
         "name": "Calculator Lock - Deleted Data",
         "description": "Rows from the Delete_Data table of note_contact.db, pairing a name with a "
                        "date string",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-09-28",
         "requirements": "none",
@@ -229,7 +235,7 @@ __artifacts_v2__ = {
         "name": "Calculator Lock - Browser History",
         "description": "Rows from the History table of note_contact.db, whose columns are named "
                        "for a name, a URL, an image and a date",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-09-28",
         "requirements": "none",
@@ -265,7 +271,7 @@ __artifacts_v2__ = {
         "name": "Calculator Lock - Preferences",
         "description": "Preference names and values from the app's shared_prefs file, including "
                        "the PASSWORD entry, which the tested version stores in plain text",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-09-28",
         "requirements": "none",
@@ -286,6 +292,8 @@ __artifacts_v2__ = {
                  "plain text value in the corpus below, which is a finding about how the app "
                  "stores that value on that version, not about any other version. Entries "
                  "beginning IABTCF_ follow the IAB Transparency and Consent Framework key naming "
+                 "(Reference: IAB Tech Lab, 'Consent Management Platform API', TCF v2, "
+                 "https://github.com/InteractiveAdvertisingBureau/GDPR-Transparency-and-Consent-Framework/blob/e8db2af0d3eb13723496282c382bb4421cd1f44e/TCFv2/IAB%20Tech%20Lab%20-%20CMP%20API%20v2.md) "
                  "and are not part of the app's own storage feature: of the three in the corpus "
                  "below, base.apk names only IABTCF_gdprApplies, and only in classes under "
                  "com.google.android.gms.",
@@ -301,7 +309,7 @@ __artifacts_v2__ = {
         "name": "Calculator Lock - Calculator History",
         "description": "Rows from the history table of HISTORY.DB, each a calculator entry and the "
                        "result the app computed for it",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-28",
         "last_update_date": "2026-09-28",
         "requirements": "none",
@@ -337,7 +345,8 @@ __artifacts_v2__ = {
                  "User names the user whose app folder holds the file when files from more than "
                  "one user are read, and is blank otherwise, as in the test; reading a second "
                  "user's file was checked on a constructed extraction. Of the 42 "
-                 "registered Android corpora that could be searched, only pixel7a_a14 carries "
+                 "registered Android corpora that could be searched when this was written, only "
+                 "pixel7a_a14 carries "
                  "the app, and it holds no HISTORY.DB.",
         "paths": ('*/com.calculator.lock.hide.photo.video/databases/HISTORY.DB*',),
         "output_types": "standard",
@@ -489,15 +498,16 @@ def _storage_folder(path):
 
 
 def _file_times(seeker, path):
-    """Return the extraction's recorded (creation, modification) times for a file."""
+    """Return the extraction's recorded (creation, modification) times for a file.
+
+    Both are blank when the seeker holds no record for the file: the time of the copy
+    staged for the report is the examiner machine's, not the extraction's.
+    """
     info = seeker.file_infos.get(path) if seeker else None
     if info:
         return convert_unix_ts_to_utc(info.creation_date) or '', \
             convert_unix_ts_to_utc(info.modification_date) or ''
-    try:
-        return '', convert_unix_ts_to_utc(int(os.path.getmtime(path)))
-    except OSError:
-        return '', ''
+    return '', ''
 
 
 def _user_order(user):

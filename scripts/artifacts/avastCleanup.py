@@ -2,9 +2,9 @@ __artifacts_v2__ = {
     "avast_cleanup_app_storage": {
         "name": "Avast Cleanup App Storage and Data Usage",
         "description": "Per-app storage size and data usage recorded by an Avast Cleanup scan",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-11",
-        "last_update_date": "2026-09-11",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Avast Cleanup",
         "sample_data": {
@@ -14,31 +14,31 @@ __artifacts_v2__ = {
                  "joining AppDataUsageItem to AppGrowingSizeItem on packageName. On the tested "
                  "image each table held 23 rows over 23 distinct packages with no package repeated "
                  "in either, and the two package sets were identical, so the join returned 23 rows "
-                 "and dropped nothing.\n"
-                 "**The two tables are not joined on their date columns.** Each row carries its own "
-                 "write time, and on the tested image the two times differed on every one of the 23 "
+                 "and dropped nothing.\nThe two tables are not joined on their date columns. Each "
+                 "row carries its own write time, and on the tested image the two times differed "
+                 "on every one of the 23 "
                  "packages, by between 3,413,949 and 3,414,360 milliseconds, so the two tables were "
                  "written in separate passes about 57 minutes apart and a join on date would have "
-                 "matched nothing.\n"
-                 "Data Usage (bytes) and App Size (bytes) are reported as stored and the app's unit "
-                 "for them was not sourced. App Name is looked up from the CachedApp table in the "
-                 "separate databases/cleaner store of the same container, so a second Android "
+                 "matched nothing.\nData Usage (as stored) and App Size (as stored) are reported as "
+                 "stored; their units were not sourced or measured here. "
+                 "App Name is looked up from the CachedApp table in the separate "
+                 "databases/cleaner store of the same container, so a second Android "
                  "user's copy of that cache cannot name this user's packages. It held 6 "
                  "packages covering 5 of the 23, so "
                  "the column is blank on the other 18.\n"
                  "Recorded and Size Recorded are Unix milliseconds reported as UTC. A row is "
                  "evidence the scan measured that package at that moment, not evidence of activity "
-                 "by a person.\n"
-                 "**Avast Cleanup and CCleaner ship databases with identical file names**, so every "
-                 "path pattern here is anchored on the com.avast.android.cleaner directory and the "
+                 "by a person.\nAvast Cleanup and CCleaner ship databases with identical file "
+                 "names, so every path pattern here is anchored on the com.avast.android.cleaner "
+                 "directory and the "
                  "code checks for that segment again before reading. The two apps' schemas "
                  "differ, which is why this is a separate module rather than a widening of the "
                  "CCleaner one: the photo table alone differs in four column names (dateTaken, "
                  "cvScore, classifiedAsBad and similarityAnalysisDone here against date, score, "
                  "isBad and wasAnalyzedForDuplicates there), and the duplicate-photo tables have "
-                 "different names and different designs.\n"
-                 "**Most of this app's content exists only in the write-ahead log**, so every path "
-                 "pattern here ends in * to take the -wal sidecar along with the database. Measured "
+                 "different names and different designs.\nMost of this app's content exists only "
+                 "in the write-ahead log, so every path pattern here ends in * to take the -wal "
+                 "sidecar along with the database. Measured "
                  "on this image by reading each store with and without its log: without it the "
                  "cleaner, PhotoAnalyzerDb.db and VideoOptimizerDb.db files report no tables at "
                  "all, and AppDb.db reports its tables but one AppDataUsageItem row short, 22 "
@@ -51,9 +51,9 @@ __artifacts_v2__ = {
     "avast_cleanup_photo_analysis": {
         "name": "Avast Cleanup Photo Analysis",
         "description": "Images on the device that Avast Cleanup's photo analyzer indexed and scored",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-11",
-        "last_update_date": "2026-09-11",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Avast Cleanup",
         "sample_data": {
@@ -62,15 +62,17 @@ __artifacts_v2__ = {
         "notes": "One row per row of MediaDbItem in "
                  "com.avast.android.cleaner/databases/PhotoAnalyzerDb.db, which is the analyzer's "
                  "own index of images it found on shared storage. Path is the app's recorded "
-                 "absolute path on the device and Media Store Id is Android's own media "
-                 "identifier for the same file. On the tested image all 15 rows carried a distinct "
-                 "path and a distinct media id.\n"
+                 "absolute path on the device and Media Store Id is the mediaStoreId column as "
+                 "stored; it was not compared with the device's media store here. On the tested "
+                 "image all 15 rows carried a distinct path and a distinct media id.\n"
                  "Photo Taken is the dateTaken column, Unix milliseconds reported as UTC. The "
                  "column stores -1 where the app recorded no date and that is reported as blank, "
-                 "which was the case on 9 of the 15 rows.\n"
-                 "Dark Score, Blurry Score, Colour Score and Quality Score are the app's own "
-                 "scores, reported as stored with no scale sourced. Marked Bad is the app's "
-                 "classifiedAsBad flag and was set on 1 of the 15 rows. Faces Detected is the "
+                 "which was the case on 9 of the 15 rows.\nDark Score, Blurry Score, Colour Score "
+                 "and CV Score are the dark, blurry, color and cvScore columns, reported as "
+                 "stored with no scale sourced. What cvScore measures was not sourced, so the "
+                 "header repeats the column's name; on the tested image it held 15 distinct "
+                 "values from 0.0 to 0.458 on the 15 rows. Marked Bad is the app's classifiedAsBad flag and "
+                 "was set on 1 of the 15 rows. Faces Detected is the "
                  "app's own facesCount and read 0 on every row, so the column is populated and its "
                  "non-zero behaviour was not exercised here. Orientation, Is HDR and Invalid read 0 "
                  "on every row too, for the same reason.\n"
@@ -86,9 +88,9 @@ __artifacts_v2__ = {
     "avast_cleanup_duplicate_photos": {
         "name": "Avast Cleanup Duplicate Photo Sets",
         "description": "Images Avast Cleanup grouped together as duplicates of one another",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-11",
-        "last_update_date": "2026-09-11",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Avast Cleanup",
         "sample_data": {
@@ -96,18 +98,21 @@ __artifacts_v2__ = {
         },
         "notes": "One row per image per set, from the DuplicatesSetMember table in "
                  "com.avast.android.cleaner/databases/PhotoAnalyzerDb.db. Set is the app's setId "
-                 "and every image sharing one is a member of that set.\n"
-                 "**The link to the photo analysis artifact is one the store declares**: the "
-                 "table's own primary key is the path and it carries a foreign key on that path to "
+                 "and every image sharing one is a member of that set.\nThe link to the photo "
+                 "analysis artifact is one the store declares: the table's own primary key is the "
+                 "path and it carries a foreign key on that path to "
                  "MediaDbItem, so a member row names the analyzed image rather than being matched "
                  "to it on size or time. That is read from the table's own CREATE statement in the "
-                 "tested image.\n"
-                 "**The table held no rows on the tested image**, so this artifact is present and "
-                 "unexercised there. Its columns come from the schema, not from observed values.\n"
+                 "tested image.\nThe table held no rows on the tested image, so this artifact is "
+                 "present and unexercised there. Its columns come from the schema, not from "
+                 "observed values.\n"
                  "Grouping is the app's own judgement and the basis for it was not sourced, so a "
                  "row records that Avast Cleanup considered the images duplicates, not that they "
-                 "are byte-identical. Detected is Unix milliseconds reported as UTC.\n"
-                 "This table is not the one CCleaner uses. CCleaner keeps a DuplicatesSet table "
+                 "are byte-identical. Time (as stored) is the table's time column, an integer, "
+                 "reported as the number stored. No tested row exercised it, so its unit and "
+                 "what the time marks are not established and no date is derived from it.\n"
+                 "This table is not the one CCleaner uses. CCleaner keeps "
+                 "a DuplicatesSet table "
                  "whose members are a JSON map, so the two apps are read by separate code.",
         "paths": ('*/com.avast.android.cleaner/databases/PhotoAnalyzerDb.db*',),
         "output_types": "standard",
@@ -116,7 +121,7 @@ __artifacts_v2__ = {
     "avast_cleanup_video_analysis": {
         "name": "Avast Cleanup Video Analysis",
         "description": "Videos on the device that Avast Cleanup's optimizer inspected, with codec detail",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-11",
         "last_update_date": "2026-09-11",
         "requirements": "none",
@@ -129,21 +134,21 @@ __artifacts_v2__ = {
                  "recorded absolute path; the table's own primary key is that path, and the tested "
                  "image held 4 rows over 4 distinct paths.\n"
                  "Last Modified and Analyzed are Unix milliseconds reported as UTC. Last Modified "
-                 "is the file's own time as the app read it and Analyzed is when the app inspected "
-                 "it.\n"
+                 "is the lastModifiedTime column and Analyzed is the analyzedAt column; neither "
+                 "was compared with the files' own times or with the time of the scan here.\n"
                  "Duration, dimensions, rotation, frame rate, codecs and bitrates are reported as "
                  "stored. The three clips placed on this device deliberately were compared against "
                  "the files themselves with ffprobe: the recorded duration (6,000, 15,000 and "
                  "30,000 ms), dimensions (640 by 360 on all three), frame rate (15, 25 and 25) and "
                  "size matched exactly, and the one clip carrying no audio track is the one whose "
-                 "Audio Codec is blank.\n"
-                 "**Video Bitrate (kbps) is the whole file's rate, not the video stream's.** On "
-                 "all four rows of this image it equals the file size in bits divided by the "
+                 "Audio Codec is blank.\nOn the tested image Video Bitrate (kbps) matched the "
+                 "whole file's rate, not the video stream's. On all four rows of this image it "
+                 "equals the file size in bits divided by the "
                  "duration, to the kilobit: 43, 82, 839 and 332.\n"
                  "Is HDR, Has DRM and Invalid read 0 on every row, and Video Codec read video/avc on "
-                 "every row, so none of those four is exercised on more than one value here.\n"
-                 "**The scan reaches files another app wrote.** The fourth row of the tested image "
-                 "is a video saved out of a different app into the device camera folder, which is "
+                 "every row, so none of those four is exercised on more than one value here.\nThe "
+                 "scan reaches files another app wrote. The fourth row of the tested image is a "
+                 "video saved out of a different app into the device camera folder, which is "
                  "worth knowing because it means this table can record a file whose own app keeps "
                  "no record of it.\n"
                  "A row is evidence the optimizer inspected the file, not evidence a person played "
@@ -155,7 +160,7 @@ __artifacts_v2__ = {
     "avast_cleanup_cleaning_history": {
         "name": "Avast Cleanup Cleaning History",
         "description": "Cleaning operations Avast Cleanup recorded, with the bytes each reported removing",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-11",
         "last_update_date": "2026-09-11",
         "requirements": "none",
@@ -164,21 +169,20 @@ __artifacts_v2__ = {
             "emu_a15_oss2_v3": "Avast Cleanup 26.16.1 | 1 rows",
         },
         "notes": "One row per row of the CleanedItem table in "
-                 "com.avast.android.cleaner/databases/cleaner.\n"
-                 "**Cleaned is written when the cleaning finishes, not when it is asked for.** "
-                 "Measured once on the tested device by starting a Quick Clean and reading the "
-                 "table afterwards: the recorded time was 20.5 seconds after the tap that "
-                 "started the clean. One observation, so the gap on a larger clean was not "
-                 "established.\n"
+                 "com.avast.android.cleaner/databases/cleaner.\nOn the one clean measured, Cleaned "
+                 "was 20.5 seconds after the tap that started it. That was measured on the tested "
+                 "device by starting a Quick Clean and reading the table afterwards. One "
+                 "observation, so when in a clean the row is written, and the gap on a larger "
+                 "clean, were not established.\n"
                  "Cleaned is Unix milliseconds reported as UTC. Cleaning Type, Category Id and "
                  "Group Item are reported as stored; no lookup table for the numeric category was "
                  "found in the store, so the integer would be printed rather than named. The "
                  "tested image held 1 row, of type QUICK_CLEAN, with Category Id and Group Item "
-                 "both empty, so a row is not necessarily categorised.\n"
-                 "Bytes Cleaned is the app's own cleanedValueInBytes. **A row records that the app "
-                 "reported removing that many bytes; it does not identify which files were "
-                 "removed, and the store retains no list of them.**\n"
-                 "The store's IgnoredItem, TransferredItem and cloudqueue tables held no rows on "
+                 "both empty, so a row is not necessarily categorised.\nBytes Cleaned is the app's "
+                 "own cleanedValueInBytes. A row records that the app reported removing that many "
+                 "bytes; it does not identify which files were removed, and no table of the store "
+                 "on the tested image listed them.\nThe store's IgnoredItem, TransferredItem and "
+                 "cloudqueue tables held no rows on "
                  "the tested image and are a checked absence, as are AppNotificationItem in AppDb.db "
                  "and every table of BatteryAnalysisDb.db and purchase_database.\n"
                  "The app's directory-scanner.db is not parsed. Its AloneDir, AppLeftOver, JunkDir, "
@@ -281,7 +285,7 @@ def avast_cleanup_app_storage(context):
 
     data_headers = (
         ('Recorded', 'datetime'), ('Size Recorded', 'datetime'), 'Package', 'App Name',
-        'Data Usage (bytes)', 'App Size (bytes)', 'Source File')
+        'Data Usage (as stored)', 'App Size (as stored)', 'Source File')
     return data_headers, data_list, '\n'.join(sources)
 
 
@@ -305,7 +309,7 @@ def avast_cleanup_photo_analysis(context):
     data_headers = (
         ('Photo Taken', 'datetime'), 'Path', 'Media Store Id', 'Scanned Size (bytes)',
         'Width', 'Height', 'Orientation', 'Faces Detected', 'Dark Score', 'Blurry Score',
-        'Colour Score', 'Quality Score', 'Marked Bad', 'Is HDR', 'Invalid', 'Source File')
+        'Colour Score', 'CV Score', 'Marked Bad', 'Is HDR', 'Invalid', 'Source File')
     return data_headers, data_list, '\n'.join(sources)
 
 
@@ -317,12 +321,12 @@ def avast_cleanup_duplicate_photos(context):
     for db_path in _files(context, PHOTO_DB):
         records = get_sqlite_db_records(db_path, query)
         for when, set_id, path in records:
-            data_list.append((_ms(when), set_id, path or '',
+            data_list.append((when, set_id, path or '',
                               context.get_relative_path(db_path)))
         if records and db_path not in sources:
             sources.append(db_path)
 
-    data_headers = (('Detected', 'datetime'), 'Set', 'Path', 'Source File')
+    data_headers = ('Time (as stored)', 'Set', 'Path', 'Source File')
     return data_headers, data_list, '\n'.join(sources)
 
 

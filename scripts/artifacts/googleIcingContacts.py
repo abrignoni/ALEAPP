@@ -1,8 +1,8 @@
 __artifacts_v2__ = {
     "gmsIcingContacts": {
         "name": "Icing Contacts",
-        "description": "Snapshot of device contacts kept by Google Play services "
-                       "(icing_contacts.db, contacts table). Kept separately from the Contacts "
+        "description": "Rows of the contacts table in Google Play services' icing_contacts.db. "
+                       "Kept separately from the Contacts "
                        "database.",
         "author": "@abrignoni",
         "creation_date": "2026-07-30",

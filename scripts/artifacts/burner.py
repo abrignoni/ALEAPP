@@ -14,7 +14,7 @@ __artifacts_v2__ = {
     },
     "get_burner_communications": {
         "name": "Burner - Communications",
-        "description": "Burner calls and text messages",
+        "description": "Rows of the messages table of burners.db (calls and text messages) that have a matching row in the contacts table. A message whose number has no contacts row is not reported. Direction and type codes are labelled 1 Incoming / 2 Outgoing and 1 Call / 2 Text Message, and any other value is shown as stored; the source of those labels and of the duration unit is not stated.",
         "author": "Josh Hickman (josh@thebinaryhick.blog)",
         "creation_date": "2021-02-05",
         "last_update_date": "2026-07-03",

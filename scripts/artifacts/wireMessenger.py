@@ -7,13 +7,17 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-15",
         "requirements": "None",
         "category": "Wire Messenger",
-        "notes": "Tested on: Android 13 Wire v.3.81.35. Only the first registered client (clients[0]) "
-                 "is reported; any further clients registered to the account are not listed.\n"
-                 "Applies to the legacy app generation that keeps a plain-SQLite database named by "
-                 "the account id next to com.wire.preferences.xml. Newer app versions store user "
-                 "data in databases/user-db-<account id>-wirecom, whose content is not plain SQLite "
-                 "(the app's own log records a database keying operation, and the app's published "
-                 "core wireapp/kalium carries SqlCipherKey.kt in data/persistence), and their "
+        "notes": "The module records a test on Android 13 with Wire 3.81.35; the image used is "
+                 "not recorded. Rows were produced on pixel3_a11 and pixel3_a12 (see "
+                 "sample_data). Only the first client in the stored clients list (clients[0]) is "
+                 "reported; the order of that list is not established, and any further clients in "
+                 "it are not listed.\nApplies to the legacy app generation that keeps a "
+                 "plain-SQLite database named by the account id next to com.wire.preferences.xml. "
+                 "Newer app versions store user data in databases/user-db-<account id>-wirecom, "
+                 "whose content is not plain SQLite (the app's own log records a database keying "
+                 "operation, and the app's published core wireapp/kalium carries "
+                 "data/persistence/src/androidMain/kotlin/com/wire/kalium/persistence/db/support/SqlCipherKey.kt "
+                 "at commit e9ac68451ad88f9e67dd41216df926ba47b3a581), and their "
                  "shared preferences are encrypted, so nothing is reported for those versions.",
         "paths": ('*/com.wire/**',),
         "output_types": "standard",
@@ -34,12 +38,15 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-15",
         "requirements": "None",
         "category": "Wire Messenger",
-        "notes": "Tested on: Android 13 Wire v.3.81.35.\n"
-                 "Applies to the legacy app generation that keeps a plain-SQLite database named by "
-                 "the account id next to com.wire.preferences.xml. Newer app versions store user "
-                 "data in databases/user-db-<account id>-wirecom, whose content is not plain SQLite "
-                 "(the app's own log records a database keying operation, and the app's published "
-                 "core wireapp/kalium carries SqlCipherKey.kt in data/persistence), and their "
+        "notes": "The module records a test on Android 13 with Wire 3.81.35; the image used is "
+                 "not recorded. Rows were produced on pixel3_a11 and pixel3_a12 (see "
+                 "sample_data).\nApplies to the legacy app generation that keeps a plain-SQLite "
+                 "database named by the account id next to com.wire.preferences.xml. Newer app "
+                 "versions store user data in databases/user-db-<account id>-wirecom, whose "
+                 "content is not plain SQLite (the app's own log records a database keying "
+                 "operation, and the app's published core wireapp/kalium carries "
+                 "data/persistence/src/androidMain/kotlin/com/wire/kalium/persistence/db/support/SqlCipherKey.kt "
+                 "at commit e9ac68451ad88f9e67dd41216df926ba47b3a581), and their "
                  "shared preferences are encrypted, so nothing is reported for those versions.",
         "paths": ('*/com.wire/**',),
         "output_types": "standard",
@@ -55,20 +62,49 @@ __artifacts_v2__ = {
     "get_wire_messages": {
         "name": "Wire Messages",
         "description": "Parses messages and call history for Wire Messenger",
-        "author": "@cf-eglendye",
+        "author": "@cf-eglendye, @AlexisBrignoni, Codex",
         "creation_date": "2024-04-24",
-        "last_update_date": "2026-08-15",
+        "last_update_date": "2026-10-04",
         "requirements": "None",
         "category": "Wire Messenger",
-        "notes": "Tested on: Android 13 Wire v.3.81.35. Rows taken from the MsgDeletion table carry "
-                 "their timestamp in the Date / Time Deleted column and have no sent time. The call "
-                 "duration column is rendered by dividing the stored duration by 1000, which assumes "
-                 "the value is milliseconds; that unit has not been independently verified.\n"
-                 "Applies to the legacy app generation that keeps a plain-SQLite database named by "
-                 "the account id next to com.wire.preferences.xml. Newer app versions store user "
-                 "data in databases/user-db-<account id>-wirecom, whose content is not plain SQLite "
-                 "(the app's own log records a database keying operation, and the app's published "
-                 "core wireapp/kalium carries SqlCipherKey.kt in data/persistence), and their "
+        "notes": "The module records a test on Android 13 with Wire 3.81.35; the image used is "
+                 "not recorded. Rows were produced on pixel3_a11 and pixel3_a12 (see "
+                 "sample_data). Rows taken from the MsgDeletion table are given the Message Type "
+                 "Deleted by this parser and carry the table's timestamp column in Date / Time "
+                 "Deleted. These rows have no sent time. On pixel3_a12 the table held 2 rows and "
+                 "neither message id was present in Messages; on pixel3_a11 it held none. In a "
+                 "public copy of the legacy Wire sync engine source dated 2018 (not the vendor's "
+                 "own repository; the app versions on the tested images are not recorded) the "
+                 "insert into MsgDeletion found there stores the device clock time at which the app removed "
+                 "the message, and it is called for a deletion made by the user, a deletion "
+                 "received from another device and an expired timed message "
+                 "(https://github.com/wireappru/wire-android-sync-engine/blob/d42492b5713255f618165ad24da0bde4704b84f7/zmessaging/src/main/scala/com/waz/service/messages/MessagesContentUpdater.scala#L55-L60, "
+                 "https://github.com/wireappru/wire-android-sync-engine/blob/d42492b5713255f618165ad24da0bde4704b84f7/zmessaging/src/main/scala/com/waz/service/GenericMessageService.scala#L59-L73, "
+                 "https://github.com/wireappru/wire-android-sync-engine/blob/d42492b5713255f618165ad24da0bde4704b84f7/zmessaging/src/main/scala/com/waz/service/messages/EphemeralMessagesService.scala#L86-L88); "
+                 "the same copy removes MsgDeletion rows older than 14 days at app start "
+                 "(https://github.com/wireappru/wire-android-sync-engine/blob/d42492b5713255f618165ad24da0bde4704b84f7/zmessaging/src/main/scala/com/waz/content/MsgDeletionStorage.scala#L33-L50). "
+                 "Whether the app versions on the tested images behave the same way is not "
+                 "established. Reaction reads Liked where Likings.action is 1 and Unliked where "
+                 "it is 0, the two values that copy of the source defines as Like and Unlike "
+                 "(https://github.com/wireappru/wire-android-sync-engine/blob/d42492b5713255f618165ad24da0bde4704b84f7/zmessaging/src/main/scala/com/waz/model/Liking.scala#L42-L47); "
+                 "any other value is shown as stored. Likings has one row per message and "
+                 "reacting user (its primary key is message_id, user_id), so a message with "
+                 "rows from more than one user appears once per user, each row naming that user "
+                 "in Reacted By. Date / Time Reacted is blank where Likings.timestamp is 0: the "
+                 "column defaults to 0 and that copy of the source stores the epoch for a "
+                 "reaction made on the device until the server time replaces it "
+                 "(https://github.com/wireappru/wire-android-sync-engine/blob/d42492b5713255f618165ad24da0bde4704b84f7/zmessaging/src/main/scala/com/waz/service/messages/ReactionsService.scala#L40-L52). "
+                 "Likings held no rows on pixel3_a11 or pixel3_a12, so the Reaction columns were "
+                 "exercised only on a constructed database. The call duration column is rendered by "
+                 "dividing the stored duration by 1000, which assumes the value is milliseconds; "
+                 "that unit has not been independently verified.\nApplies to the legacy app "
+                 "generation that keeps a plain-SQLite database named by the account id next to "
+                 "com.wire.preferences.xml. Newer app versions store user data in "
+                 "databases/user-db-<account id>-wirecom, whose content is not plain SQLite (the "
+                 "app's own log records a database keying operation, and the app's published core "
+                 "wireapp/kalium carries "
+                 "data/persistence/src/androidMain/kotlin/com/wire/kalium/persistence/db/support/SqlCipherKey.kt "
+                 "at commit e9ac68451ad88f9e67dd41216df926ba47b3a581), and their "
                  "shared preferences are encrypted, so nothing is reported for those versions.",
         "paths": ('*/com.wire/**',),
         "output_types": "standard",
@@ -83,20 +119,32 @@ __artifacts_v2__ = {
     },
     "get_wire_cached_files": {
         "name": "Wire Cached Files",
-        "description": "Files the Wire app stores on disk per account, shown as media where the "
-                       "content is an image",
-        "author": "@AlexisBrignoni, Claude",
+        "description": "Reports selected Wire cached files and existing media references. PNG/JPEG prefixes "
+                       "retain their existing export suffixes; the ftyp-only branch uses a generic bin suffix "
+                       "without inferring a specific container or codec.",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-15",
-        "last_update_date": "2026-08-15",
+        "last_update_date": "2026-10-07",
         "requirements": "None",
         "category": "Wire Messenger",
-        "notes": "One row per file under files/wire.com/<account id>/ and cache/wire.com/"
-                 "<account id>/ inside the app sandbox. On tested images these directories hold "
-                 "PNG and JPEG content, some of it in files without an extension; the type is "
-                 "read from the file content (PNG, JPEG and MP4 observed). These files sit "
-                 "outside the databases newer app versions encrypt, so they remain readable "
-                 "when the message store is not. What each file was used for by the app is not "
-                 "asserted.",
+        "notes": "One row per file under files/wire.com/<account id>/ and cache/wire.com/<account id>/ "
+                 "inside the app sandbox. On tested images these directories hold PNG and JPEG content, "
+                 "some of it in files without an extension; the type is read from the first bytes of the "
+                 "file: a PNG signature, a JPEG signature, or ftyp at bytes 4 to 8, whose surviving branch"
+                 " requests the generic bin export suffix. That marker alone does not establish a specific"
+                 " container or codec. These files sit outside the databases newer app versions encrypt, "
+                 "so they remain readable when the message store is not. What each file was used for by "
+                 "the app is not asserted. Only the ftyp branch export-suffix request changed; PNG/JPEG "
+                 "prefix precedence, all four native fields, selected row occurrences/order, existing "
+                 "canonical alias selection and source aggregation are unchanged. Native File contains a "
+                 "media reference ID, not a type label. Shared media MIME sniffing is independent of this "
+                 "suffix and is not changed or certified here. Existing media reference or item reuse can "
+                 "retain an earlier registered extension; this change does not rename existing media items"
+                 " or force a new registration. Newly registered surviving ftyp candidates request bin "
+                 "even if independent MIME sniffing recognizes a format. Prefix tests do not verify "
+                 "complete media integrity, and no file bytes are transcoded. Historical app/database "
+                 "encryption/private sample counts and account-path meanings are not newly verified. "
+                 "Original contribution credited to @AlexisBrignoni and Claude.",
         "paths": ('*/com.wire/files/wire.com/*/*',
                   '*/com.wire/cache/wire.com/*/*'),
         "output_types": "standard",
@@ -126,7 +174,8 @@ __artifacts_v2__ = {
                  "<value>@<domain> (CryptoSessionId in core/cryptography/src/commonMain/kotlin/"
                  "com/wire/kalium/cryptography/ProteusClient.kt and CryptoQualifiedID in the "
                  "IDs.kt beside it, wireapp/kalium commit e9ac68451ad88f9e67dd41216df926ba47b3a581). "
-                 "Legacy session names predate qualified user ids and carry no domain, which is "
+                 "Session names in the legacy store carried no domain on the tested images "
+                 "(pixel3_a11, pixel3_a12), which is "
                  "reported empty rather than assumed.\n"
                  "These files sit outside the databases current app versions encrypt, so they "
                  "remain readable when the message store is not. A session file records that a "
@@ -168,8 +217,10 @@ UUID_RE = re.compile(r'[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{
 MESSAGES_SQL = '''
     SELECT datetime(Messages.time/1000,'unixepoch'), Messages._id, Users.name, Messages.msg_type,
     json_extract(Messages.content, '$[0].content'),
-    CASE Likings."action" WHEN 1 THEN 'Liked' END,
-    datetime(Likings."timestamp"/1000,'unixepoch'), Users1.name,
+    CASE Likings."action" WHEN 1 THEN 'Liked' WHEN 0 THEN 'Unliked'
+    ELSE CAST(Likings."action" AS TEXT) END,
+    CASE WHEN Likings."timestamp" > 0 THEN datetime(Likings."timestamp"/1000,'unixepoch') END,
+    Users1.name,
     time(Messages.duration/1000,'unixepoch'), {asset_name}
     FROM Messages
     LEFT JOIN Users ON Users._id = Messages.user_id
@@ -330,17 +381,17 @@ def get_wire_messages(context):
     data_list = []
     asset_name, asset_join = _asset_source(source_path) if source_path else ("''", '')
     for r in _run(source_path, MESSAGES_SQL.format(asset_name=asset_name, asset_join=asset_join)):
-        data_list.append((_str_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], _str_to_utc(r[6]), r[7], r[8], r[9],
-                          ''))
+        data_list.append((_str_to_utc(r[0]), _str_to_utc(r[6]), '', r[1], r[2], r[3], r[4], r[5], r[7], r[8], r[9]))
 
     # Surface deleted messages from MsgDeletion read-only (the original modified the source DB to do this).
-    # MsgDeletion.timestamp is a deletion time, not a sent time, so it gets its own column.
+    # MsgDeletion.timestamp is not a sent time, so it gets its own column (see the notes for what
+    # the legacy source stores in it).
     for d in _run(source_path, 'SELECT message_id, timestamp FROM MsgDeletion'):
-        data_list.append(('', d[0], '', 'Deleted', '', '', '', '', '', '', _ms_to_utc(d[1])))
+        data_list.append(('', '', _ms_to_utc(d[1]), d[0], '', 'Deleted', '', '', '', '', ''))
 
-    data_headers = (('Date / Time Sent', 'datetime'), 'Message ID', 'User Name', 'Message Type',
-                    'Message Content', 'Reaction', ('Date / Time Reacted', 'datetime'), 'Reacted By',
-                    'Call Duration (assumes ms)', 'Asset Name', ('Date / Time Deleted', 'datetime'))
+    data_headers = (('Date / Time Sent', 'datetime'), ('Date / Time Reacted', 'datetime'),
+                    ('MsgDeletion.timestamp', 'datetime'), 'Message ID', 'User Name', 'Message Type',
+                    'Message Content', 'Reaction', 'Reacted By', 'Call Duration (assumes ms)', 'Asset Name')
     return data_headers, data_list, source_path
 
 
@@ -371,7 +422,7 @@ def get_wire_cached_files(context):
         elif magic.startswith(b'\xff\xd8'):
             extension = 'jpg'
         elif magic[4:8] == b'ftyp':
-            extension = 'mp4'
+            extension = 'bin'
         media_ref = ''
         if extension:
             media_ref = check_in_media(file_found, basename(file_found),

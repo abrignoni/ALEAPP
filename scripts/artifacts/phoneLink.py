@@ -14,8 +14,10 @@ __artifacts_v2__ = {
                  "is reported as Username.\n"
                  "The DataStore layout is Android's PreferencesProto: field 1 repeats an entry of "
                  "a key at 1 and a value at 2, and the value's field number gives its type, with "
-                 "5 for a string. Reference: Android Jetpack, "
-                 "datastore/datastore-preferences-core/src/main/proto/preferences.proto.\n"
+                 "5 for a string. Reference: Android Jetpack (androidx), "
+                 "datastore/datastore-preferences-proto/src/main/proto/preferences.proto, "
+                 "https://github.com/androidx/androidx/blob/88f6829b8e444cc83280547803309dfb7741b214/datastore/datastore-preferences-proto/src/main/proto/preferences.proto#L9-L19."
+                 "\n"
                  "A sibling ACCOUNT_DATA_NAME file holds one or more opaque encoded blobs per "
                  "account, keyed by the account key with an attribute name appended. The values "
                  "are encoded envelopes rather than plain text, and some attribute names "
@@ -24,8 +26,9 @@ __artifacts_v2__ = {
                  "reported. The attribute names are reported as Stored Attributes, with their "
                  "count, so an examiner knows what the app held for each account.\n"
                  "Phone Link pairs the phone with a Windows computer through the Microsoft "
-                 "account signed in on both, so a row names an account the app held for that "
-                 "pairing; Account Type is the type string as stored. It does not establish that "
+                 "account signed in on both, so a row names an account the app stored. Whether "
+                 "that account was used for a pairing is not established by this file. Account "
+                 "Type is the type string as stored. A row does not establish that "
                  "a computer is still linked, and the file carries no timestamp. Reference: "
                  "Microsoft Support, 'Phone Link requirements and setup', "
                  "https://support.microsoft.com/en-us/topic/phone-link-requirements-and-setup-cd2a1ee7-75a7-66a6-9d4e-bf22e735f9e3",
@@ -98,18 +101,19 @@ __artifacts_v2__ = {
     },
     "phonelink_phone_apps": {
         "name": "Phone Link - Linked Phone Apps",
-        "description": "Rows from the phoneAppsTable of PhoneAppsDatabase, an inventory of "
-                       "installed applications the Phone Link app keeps, with each one's "
+        "description": "Rows from the phoneAppsTable of PhoneAppsDatabase, a list of "
+                       "applications the Phone Link app keeps, with each one's "
                        "package name and version",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
         "category": "Phone Link",
-        "notes": "PhoneAppsDatabase is a list of installed applications kept by the Phone Link "
-                 "app; how the app uses it is not sourced here. It is a record of what was "
-                 "installed built by a different subsystem than the package manager and can be "
-                 "compared against it. Last Updated is Unix milliseconds and held the same value "
+        "notes": "phoneAppsTable holds one row per application the Phone Link app listed, with a "
+                 "name, package name and version; how the app builds or uses the list is not "
+                 "sourced here. Whether every row names an application installed on the phone "
+                 "was not measured here; the rows can be compared against packages.xml. Last "
+                 "Updated is Unix milliseconds and held the same value "
                  "on all 75 rows of the corpus below, so on that corpus it dates the inventory "
                  "as a whole rather than each application; what event it marks is not "
                  "established. Favorite Rank was 0 on every row there and is reported as stored; "

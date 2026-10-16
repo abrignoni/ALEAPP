@@ -1,13 +1,32 @@
 __artifacts_v2__ = {
     "get_cmh": {
         "name": "cmh",
-        "description": "Parses the Samsung CMH media store (image dates, title, bucket, latitude, longitude, address and path) from cmh.db.",
+        "description": "Parses the Samsung CMH media store (image dates, title, bucket, latitude, longitude, address (from location_view, joined on the file's _id), URI and path) from cmh.db.",
         "author": "@abrignoni",
         "creation_date": "2020-03-05",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Samsung_CMH",
-        "notes": "Queries the files table directly (media_type 1 = images). In the samples examined, older CMH versions defined an images view over the files table with the same filter and newer CMH versions did not carry that view. Reference: AOSP, 'MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE; DATE_ADDED/DATE_MODIFIED in seconds, DATE_TAKEN in milliseconds', https://developer.android.com/reference/android/provider/MediaStore.MediaColumns",
+        "notes": "Queries the files table directly (media_type 1 = images). In the samples "
+                 "examined, older CMH versions defined an images view over the files table with "
+                 "the same filter and newer CMH versions did not carry that view. The files table "
+                 "uses column names that Android's MediaStore also uses. The units applied here "
+                 "(datetaken in milliseconds, date_added and date_modified in seconds) and "
+                 "media_type 1 for images are MediaStore's documented conventions "
+                 "(https://developer.android.com/reference/android/provider/MediaStore.MediaColumns "
+                 "and "
+                 "https://developer.android.com/reference/android/provider/MediaStore.Files.FileColumns); "
+                 "that the CMH files table follows them was not sourced. Address is address_text "
+                 "from the database's own location_view, joined on location_view._id = files._id. "
+                 "The view's CREATE VIEW text selects _id from files inner joined to the location "
+                 "table on equal latitude and longitude and to android_metadata on equal locale; "
+                 "the location and android_metadata tables have no _id column, so the view's _id "
+                 "is the files row's _id. The CREATE VIEW text was the same on galaxys10_a10, "
+                 "samsunga53_a14, samsungs20_a13, sharon_a14 and anne_a15, and on each of them "
+                 "the view held one row per _id. Address is therefore the location table's text "
+                 "for a row holding the same coordinates as the file, and it is blank when the "
+                 "location table holds no such row for the database's locale. URI is the files "
+                 "row's uri column, as stored.",
         "paths": ('*/cmh.db*',),
         "output_types": "all",
         "artifact_icon": "file",
@@ -77,7 +96,7 @@ def get_cmh(context):
                 SELECT
                 files.datetaken, files.date_added, files.date_modified, files.title,
                 files.bucket_display_name, files.latitude, files.longitude,
-                location_view.address_text, location_view.uri, files._data, files.isprivate
+                location_view.address_text, files.uri, files._data, files.isprivate
                 FROM files
                 left join location_view on location_view._id = files._id
                 WHERE files.media_type = 1

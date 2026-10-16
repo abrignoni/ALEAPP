@@ -6,14 +6,29 @@
 __artifacts_v2__ = {
     'romeo_dating_messages': {
         'name': 'Romeo Dating App Messages',
-        'description': 'Parses Romeo Dating App Messages',
+        'description': 'Messages from the MessageEntity table of the Romeo Android app database, with the contact name from ChatPartnerEntity where a row for the chat partner exists.',
         'author': 'Marco Neumann {kalinko@be-binary.de}',
         'version': '0.0.1',
         'creation_date': '2026-02-25',
-        'last_update_date': '2026-02-25',
+        'last_update_date': '2026-10-04',
         'requirements': '',
         'category': 'Chats',
-        'notes': '',
+        'notes': 'A message is reported whether or not ChatPartnerEntity holds a row for its chat '
+                 'partner, and is not repeated for each image attached to it. Whether profileId is '
+                 'unique in ChatPartnerEntity is not established; if it is not, a message appears once '
+                 'per matching row. Contact Username is ChatPartnerEntity.name '
+                 'for the row whose profileId equals the message chatPartnerId, and is blank when '
+                 'no such row exists. Image Contained? is Yes when at least one ImageAttachmentEntity '
+                 'row names the message in parentMessageId, and No otherwise; the number of images '
+                 'is not reported. Timestamp is the MessageEntity date column as stored, with no '
+                 'conversion; its stored format and time zone are not established, so the column '
+                 'is reported as text and not as a date and time. Status is transmissionStatus as '
+                 'stored. No direction column is reported; a separate Romeo parser by this '
+                 "module's author treats a transmissionStatus that reads sent, in any letter case, "
+                 'as outgoing and one that reads received as incoming (https://github.com/kalink0/bubbly/blob/'
+                 '8770cbdb03ec13cfa83906d1126b01d638a22deb/parsers/romeo_android_db.py#L193-L198). '
+                 'No registered test image holds this database, so none of the above was measured '
+                 'on real data; the row handling was exercised on a constructed database only.',
         'paths': (
             '*/com.planetromeo.android.app/databases/planetromeo-room.db.*' 
             ),
@@ -22,14 +37,20 @@ __artifacts_v2__ = {
     },
     'romeo_dating_contacts': {
         'name': 'Romeo Dating App Contacts',
-        'description': 'Parses Romeo Dating App Contacts',
+        'description': 'Parses contacts from the ContactEntity table of the Romeo Android app database, joined to ChatPartnerEntity.',
         'author': 'Marco Neumann {kalinko@be-binary.de}',
         'version': '0.0.1',
         'creation_date': '2026-02-25',
-        'last_update_date': '2026-02-25',
+        'last_update_date': '2026-10-04',
         'requirements': '',
         'category': 'Contacts',
-        'notes': '',
+        'notes': 'Last Fetched and Deleted are fetchDate and deletionDate read as Unix milliseconds, an '
+                 'assumed unit: no source for the unit was found and no registered test image holds '
+                 'this database. A stored value that is NULL or 0 is reported blank, so a blank '
+                 'Deleted cell means no deletion date is stored on that row. A stored value that is '
+                 'not a number is reported as stored. '
+                 'A contact with no ChatPartnerEntity row is not reported. The blank handling was '
+                 'exercised on a constructed database only.',
         'paths': (
             '*/com.planetromeo.android.app/databases/planetromeo-room.db.*'
             ),
@@ -42,10 +63,13 @@ __artifacts_v2__ = {
         'author': 'Marco Neumann {kalinko@be-binary.de}',
         'version': '0.0.1',
         'creation_date': '2026-02-25',
-        'last_update_date': '2026-02-25',
+        'last_update_date': '2026-10-04',
         'requirements': '',
         'category': 'Accounts',
-        'notes': '',
+        'notes': 'Creation Date and Last Login Date are the creation_date and last_login values of '
+                 'the profile JSON as stored, with no conversion. Their stored format and time zone '
+                 'are not established, so both columns are reported as text and not as a date and '
+                 'time. No registered test image holds this database.',
         'paths': (
             '*/com.planetromeo.android.app/databases/accounts.db*'
             ),
@@ -56,6 +80,19 @@ __artifacts_v2__ = {
 
 
 from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records
+
+
+def _ms_to_utc(value):
+    # A NULL or zero stored value is no date: report it blank rather than as the epoch.
+    if value is None:
+        return ''
+    try:
+        millis = int(value)
+    except (TypeError, ValueError):
+        return value
+    if millis == 0:
+        return ''
+    return convert_unix_ts_to_utc(millis / 1000)
 
 @artifact_processor
 def romeo_dating_messages(context):
@@ -76,18 +113,20 @@ def romeo_dating_messages(context):
             me.saved [Saved?],
             me.unread [Unread?],
             me.messageId [Message ID],
-            CASE WHEN iae.imageId IS NOT NULL
+            CASE WHEN EXISTS (
+                SELECT 1 FROM ImageAttachmentEntity iae
+                WHERE iae.parentMessageId = me.messageId
+            )
             THEN
                 "Yes"
             ELSE
                 "No"
             END [Image Contained?]
             FROM MessageEntity me
-            INNER JOIN ChatPartnerEntity cpe ON cpe.profileId = me.chatPartnerId
-            LEFT JOIN ImageAttachmentEntity iae ON me.messageId = iae.parentMessageId
+            LEFT JOIN ChatPartnerEntity cpe ON cpe.profileId = me.chatPartnerId
             '''
 
-    data_headers = (    ('Timestamp', 'datetime'),
+    data_headers = (    'Timestamp',
                         'Contact ID',
                         'Contact Username',
                         'Text', 
@@ -151,18 +190,8 @@ def romeo_dating_contacts(context):
 
     query = '''
             SELECT 
-            CASE WHEN cpe.fetchDate IS NOT NULL
-                THEN
-                cpe.fetchDate
-                ELSE
-                0
-            END [Last Fetched Date],
-            CASE WHEN cpe.deletionDate IS NOT NULL
-                THEN
-                cpe.deletionDate
-                ELSE
-                0
-            END [Deletion Date],
+            cpe.fetchDate [Last Fetched Date],
+            cpe.deletionDate [Deletion Date],
             ce.userId [UserID],
             cpe.name [Name],
             cpe.headline [Headline],
@@ -188,8 +217,8 @@ def romeo_dating_contacts(context):
         db_records = get_sqlite_db_records(main_db, query)
 
         for row in db_records:
-            fetch_timestamp = convert_unix_ts_to_utc(int(row[0]) / 1000)
-            delete_timestamp = convert_unix_ts_to_utc(int(row[1]) / 1000)
+            fetch_timestamp = _ms_to_utc(row[0])
+            delete_timestamp = _ms_to_utc(row[1])
             contact_id = row[2]
             contact_name = row[3]
             headline = row[4]
@@ -313,8 +342,8 @@ def romeo_dating_accounts(context):
                         'Longitude',
                         'Headline',
                         'Profile Text',
-                        ('Creation Date', 'datetime'),
-                        ('Last Login Date', 'datetime'),
+                        'Creation Date',
+                        'Last Login Date',
                         'Age',
                         'Birthdate'
                     )

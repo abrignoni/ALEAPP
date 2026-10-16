@@ -36,7 +36,7 @@ sys.path.insert(0, str(REPO_ROOT))
 import scripts.raw_image as raw_image  # pylint: disable=wrong-import-position
 from scripts.raw_image import (  # pylint: disable=wrong-import-position
     RAW_IMAGE_FILESYSTEMS, RAW_IMAGE_SUFFIXES, FileSeekerRaw, names_a_stream,
-    names_an_image_folder, split_image_sibling)
+    names_an_image_folder, names_deleted, names_free_space, split_image_sibling)
 from scripts.vendor import ewfprobe, qnxprobe  # pylint: disable=wrong-import-position
 
 FIXTURES = REPO_ROOT / 'admin' / 'test' / 'data' / 'raw_images'
@@ -627,6 +627,55 @@ class RawImageSeekerTest(unittest.TestCase):
         self.assertEqual(differ, [])
         self.assertEqual(len(seeker.stream_list), 28)
 
+    # ---- NTFS directory indexes --------------------------------------------------
+    #
+    # A directory whose file name index has grown into an $INDEX_ALLOCATION attribute
+    # gives it as ``<directory>:$I30``. It is not a stream: only a pattern that ends
+    # ``:$I30`` reaches it, so ``*:*`` above still stages exactly the 28 streams.
+
+    def test_directory_indexes_are_staged_only_for_a_pattern_that_ends_in_their_name(self):
+        seeker = self._seeker(self.ntfs)
+        self.assertEqual(len(seeker.index_list), 5)
+        self.assertTrue(all(name.endswith(':$I30') for name in seeker.index_list))
+        self.assertIn('lba0/:$I30', seeker.index_list)
+        self.assertIn('lba0/many:$I30', seeker.index_list)
+        self.assertTrue(set(seeker.index_list).isdisjoint(seeker.name_list))
+        self.assertTrue(set(seeker.index_list).isdisjoint(seeker.stream_list))
+        for pattern in ('*', '*:*', '*/many*', '*:$I3*'):
+            sources = [seeker.file_infos[path].source_path for path in seeker.search(pattern)]
+            self.assertEqual([s for s in sources if s.endswith(':$I30')], [], pattern)
+        staged = seeker.search('*:$I30')
+        self.assertEqual(sorted(seeker.file_infos[path].source_path for path in staged),
+                         sorted(seeker.index_list))
+        for path in staged:
+            self.assertNotIn(':', os.path.basename(path))
+            with open(path, 'rb') as handle:
+                data = handle.read()
+            self.assertTrue(data and len(data) % 4096 == 0, path)
+            self.assertEqual({data[offset:offset + 4] for offset in range(0, len(data), 4096)}, {b'INDX'})
+        one = seeker.search('*/many:$I30')
+        self.assertEqual([seeker.file_infos[path].source_path for path in one], ['lba0/many:$I30'])
+        self.assertEqual(os.path.getsize(one[0]), 94208)
+        self.assertIn('5 directories can give their index, to a pattern that asks for it (*:$I30)',
+                      self.log.text())
+
+    def test_a_stream_named_like_an_index_is_still_reached(self):
+        # A pattern that ends ':$I30' is handed the indexes besides the streams it names.
+        seeker = self._seeker(self.streams)
+        self.assertEqual(seeker.index_list, ['lba0/:$I30'])
+        real = next(name for name in seeker.stream_list if name.endswith(':rootstream'))
+        seeker.stream_list.append('lba0/odd:$I30')
+        seeker._entries['lba0/odd:$I30'] = seeker._entries[real]      # pylint: disable=protected-access
+        found = sorted(seeker.file_infos[path].source_path for path in seeker.search('*:$I30'))
+        self.assertEqual(found, ['lba0/:$I30', 'lba0/odd:$I30'])
+
+    def test_a_reader_without_directory_indexes_lists_none(self):
+        with mock.patch.object(raw_image.qnxprobe.NtfsWalker, 'directory_index', None):
+            seeker = self._seeker(self.ntfs)
+        self.assertEqual(seeker.index_list, [])
+        self.assertEqual(seeker.search('*:$I30'), [])
+        self.assertNotIn('can give their index', self.log.text())
+
     def test_a_pattern_that_names_no_stream_is_never_handed_one(self):
         seeker = self._seeker(self.streams)
         everything = seeker.search('*')
@@ -714,6 +763,149 @@ class RawImageSeekerTest(unittest.TestCase):
         self.assertEqual(len(found), 1)
         with open(found[0], 'rb') as handle:
             self.assertEqual(handle.read(), b'the hidden stream\n')
+
+    # A volume's free space is a member only a pattern that asks for it can reach.
+    # The expected bytes are read from the image file directly, at the offsets the
+    # staged map gives, and the expected total is the fixture's free cluster count.
+
+    def _free_space(self, image):
+        seeker = self._seeker(image)
+        listed = list(seeker.name_list)
+        staged = seeker.search('*.unallocated.bin')
+        return seeker, listed, staged
+
+    def test_free_space_is_staged_for_a_pattern_that_asks_for_it(self):
+        for image in (self.ntfs, self.fat32, self.exfat, self.apfs):
+            with self.subTest(image=os.path.basename(image)):
+                seeker, listed, staged = self._free_space(image)
+                self.assertEqual(len(staged), 1)
+                self.assertEqual(seeker.name_list, listed)
+                name = os.path.basename(image)
+                self.assertEqual(
+                    seeker.file_infos[staged[0]].source_path,
+                    f'lba0/$Unallocated/{name}.lba0.unallocated.bin')
+                with open(image, 'rb') as handle:
+                    disk = handle.read()
+                with open(staged[0], 'rb') as handle:
+                    free = handle.read()
+                with open(staged[0][:-4] + '.tsv', encoding='utf-8') as handle:
+                    rows = [line.split('\t') for line in handle.read().splitlines()[1:]]
+                self.assertTrue(rows)
+                covered = 0
+                for in_file, in_image, length in ((int(a), int(b), int(c))
+                                                  for a, b, c in rows):
+                    self.assertEqual(in_file, covered)
+                    self.assertEqual(free[in_file:in_file + length],
+                                     disk[in_image:in_image + length])
+                    covered += length
+                self.assertEqual(covered, len(free))
+
+    def test_fat32_free_space_is_the_fixture_s_free_clusters(self):
+        # fat32-deleted.img: 512-byte sectors, one sector per cluster, and the FAT
+        # read here by hand, not through the reader under test
+        with open(self.fat32, 'rb') as handle:
+            disk = handle.read()
+        sector, per_cluster, reserved = struct.unpack_from('<HBH', disk, 11)
+        fats = disk[16]
+        fat_sectors = struct.unpack_from('<I', disk, 36)[0]
+        total = struct.unpack_from('<I', disk, 32)[0]
+        clusters = (total - reserved - fats * fat_sectors) // per_cluster
+        fat = disk[reserved * sector:(reserved + fat_sectors) * sector]
+        free = sum(1 for n in range(2, clusters + 2)
+                   if struct.unpack_from('<I', fat, 4 * n)[0] & 0x0FFFFFFF == 0)
+        _seeker, _listed, staged = self._free_space(self.fat32)
+        self.assertEqual(os.path.getsize(staged[0]), free * per_cluster * sector)
+
+    def test_a_pattern_that_does_not_ask_is_never_handed_free_space(self):
+        seeker = self._seeker(self.fat32)
+        for pattern in ('*', '*.bin', '*/$Unallocated/*', '*unallocated*'):
+            with self.subTest(pattern=pattern):
+                self.assertFalse(
+                    [path for path in seeker.search(pattern) if 'unallocated' in path])
+        self.assertFalse(os.path.isdir(os.path.join(seeker.data_folder, 'lba0',
+                                                    '$Unallocated')))
+
+    def test_free_space_is_staged_once(self):
+        seeker = self._seeker(self.fat32)
+        first = seeker.search('*.unallocated.bin')
+        stamp = os.path.getmtime(first[0])
+        self.assertEqual(seeker.search('*.unallocated.bin', force=True), first)
+        self.assertEqual(os.path.getmtime(first[0]), stamp)
+
+    def test_what_names_free_space(self):
+        self.assertTrue(names_free_space('*.unallocated.bin'))
+        self.assertTrue(names_free_space('*/$Unallocated/*.UNALLOCATED.BIN'))
+        self.assertFalse(names_free_space('*'))
+        self.assertFalse(names_free_space('*.bin'))
+        self.assertFalse(names_free_space('*/x.unallocated.bin/*'))
+
+    def test_the_run_log_says_free_space_can_be_asked_for(self):
+        log = _Recorder()
+        with mock.patch.object(raw_image, 'logfunc', log):
+            seeker = FileSeekerRaw(self.fat32, tempfile.mkdtemp(dir=self.work))
+            self.addCleanup(seeker.cleanup)
+        self.assertTrue(any('free space' in line for line in log.lines))
+
+    # ---- deleted files a reader can recover ----------------------------------------
+
+    def _with_deleted(self, entries):
+        """A seeker over the FAT32 fixture with one more volume, whose reader
+        recovers `entries`. No fixture here is a flash filesystem, so the reader
+        is a stand-in with the two methods the seeker asks for."""
+        seeker = FileSeekerRaw(self.fat32, tempfile.mkdtemp(dir=self.work))
+        self.addCleanup(seeker.cleanup)
+        seeker.volumes.append({'name': 'flash0', 'walker': _FakeFlashWalker(entries)})
+        return seeker
+
+    def test_deleted_files_are_staged_for_a_pattern_that_names_the_folder(self):
+        entries = [
+            _FakeDeleted('gps.dat', 'var/sysinfo', b'first version', mtime=1700000000),
+            _FakeDeleted('gps.dat', None, b'second version'),
+            _FakeDeleted('', None, b'no name'),
+            _FakeDeleted('lost.dat', 'var', b'', recoverable=False),
+            _FakeDeleted('raises.dat', 'var', None),
+        ]
+        log = _Recorder()
+        with mock.patch.object(raw_image, 'logfunc', log):
+            seeker = self._with_deleted(entries)
+            staged = seeker.search('*/$Deleted/*')
+        by_member = {seeker.file_infos[path].source_path: path for path in staged}
+        self.assertEqual(sorted(by_member), [
+            'flash0/$Deleted/$NoFolder/$NoName.deleted-000002',
+            'flash0/$Deleted/$NoFolder/gps.dat.deleted-000001',
+            'flash0/$Deleted/var/sysinfo/gps.dat.deleted-000000'])
+        first = by_member['flash0/$Deleted/var/sysinfo/gps.dat.deleted-000000']
+        with open(first, 'rb') as handle:
+            self.assertEqual(handle.read(), b'first version')
+        self.assertEqual(seeker.file_infos[first].modification_date, 1700000000)
+        with open(by_member['flash0/$Deleted/$NoFolder/gps.dat.deleted-000001'], 'rb') as handle:
+            self.assertEqual(handle.read(), b'second version')
+        # the one the reader calls unreadable is counted, the one it fails on is named
+        self.assertTrue(any('4 files outside the live tree can be read, 1 are named and cannot' in line
+                            for line in log.lines), log.lines)
+        self.assertTrue(any('Not staged' in line and 'raises.dat' in line
+                            for line in log.lines), log.lines)
+        self.assertFalse(any(name.startswith('raises.dat')
+                             for _root, _dirs, names in os.walk(seeker.data_folder)
+                             for name in names))
+
+    def test_a_pattern_that_does_not_name_the_folder_never_reaches_a_deleted_file(self):
+        seeker = self._with_deleted([_FakeDeleted('gps.dat', 'var', b'x')])
+        for pattern in ('*', '*gps.dat*', '*/var/*', '*.deleted-*'):
+            for path in seeker.search(pattern):
+                self.assertNotIn('$Deleted', seeker.file_infos[path].source_path, pattern)
+        # and the reader was never asked
+        self.assertIsNone(seeker.deleted_list)
+        self.assertEqual(seeker.volumes[-1]['walker'].asked, 0)
+        self.assertEqual(len(seeker.search('*/$Deleted/*gps.dat*')), 1)
+        seeker.search('*/$Deleted/*')
+        self.assertEqual(seeker.volumes[-1]['walker'].asked, 1)
+
+    def test_what_names_deleted(self):
+        for pattern in ('*/$Deleted/*', '*/$Deleted/*/gps.dat*', '$Deleted/x', '*\\$Deleted\\*'):
+            self.assertTrue(names_deleted(pattern), pattern)
+        for pattern in ('*', '*Deleted*', '*/x$Deleted/*', '*/$Deleted.bak/*', '*.deleted-*'):
+            self.assertFalse(names_deleted(pattern), pattern)
 
     def test_what_names_a_stream(self):
         for pattern in ('*:Zone.Identifier', '*/$Extend/$UsnJrnl:$J', '*/:rootstream', '*:*',
@@ -1106,6 +1298,52 @@ class RawImageSeekerTest(unittest.TestCase):
         self.assertIn('Not staged', self.log.text())
         self.assertIn('the image ends before the file does', self.log.text())
 
+    def test_a_file_whose_cluster_chain_ends_early_is_named_and_not_staged(self):
+        # a.bin is two clusters stored as one run (NoFatChain). Clearing that
+        # flag hands its allocation to the FAT, and one FAT entry marking the
+        # end of the chain leaves it one cluster where its size needs two.
+        # c.bin is untouched and is the control: it must still stage whole.
+        with open(self.exfat, 'rb') as handle:
+            volume = bytearray(handle.read())
+        boot = struct.unpack_from('<IIIII', volume, 80)
+        fat_offset, _fat_length, heap_offset, _clusters, root = boot
+        sector = 1 << volume[108]
+        cluster = sector << volume[109]
+        at = heap_offset * sector + (root - 2) * cluster
+        streams = [at + i for i in range(0, cluster, 32)
+                   if volume[at + i] == 0xC0
+                   and struct.unpack_from('<I', volume, at + i + 20)[0] == 13
+                   and struct.unpack_from('<Q', volume, at + i + 24)[0] == 8192]
+        self.assertEqual(len(streams), 1)
+        stream = streams[0]
+        self.assertEqual(volume[stream + 1], 0x03)
+        volume[stream + 1] = 0x01
+        struct.pack_into('<I', volume, fat_offset * sector + 13 * 4, 0xFFFFFFFF)
+        # the set's checksum covers the flag, so it is written again
+        first = stream - 32
+        self.assertEqual(volume[first], 0x85)
+        entries = volume[first:first + 32 * (volume[first + 1] + 1)]
+        checksum = 0
+        for index, byte in enumerate(entries):
+            if index not in (2, 3):
+                checksum = (((checksum << 15) | (checksum >> 1)) + byte) & 0xFFFF
+        struct.pack_into('<H', volume, first + 2, checksum)
+        folder = tempfile.mkdtemp(prefix='raw_image_chain_', dir=self.work)
+        image = os.path.join(folder, 'exfat-cut-chain.img')
+        with open(image, 'wb') as out:
+            out.write(volume)
+        seeker = self._seeker(image)
+        seeker.search('*')
+        staged = self._staged_by_source(seeker, 'lba0')
+        self.assertNotIn('a.bin', staged)
+        self.assertEqual(_sha256(staged['c.bin']), self.exfat_hashes['c.bin'])
+        text = self.log.text()
+        self.assertIn('Not staged, lba0/a.bin: the volume records 8,192 bytes for it and a '
+                      'cluster chain that ends after 1 of the 2 clusters that size needs '
+                      '(4,096 bytes read)', text)
+        self.assertNotIn('the reader returned', text)
+        self.assertEqual(text.count('Not staged'), 1)
+
     # ---- edges -------------------------------------------------------------------
 
     def test_an_image_the_reader_cannot_place_has_no_members(self):
@@ -1171,7 +1409,8 @@ class RawImageSeekerTest(unittest.TestCase):
         walkers = {'QNX6': qnxprobe.Qnx6Walker, 'QNX4': qnxprobe.Qnx4Walker,
                    'ETFS': qnxprobe.EtfsWalker, 'EFS': qnxprobe.EfsWalker,
                    'ext2/3/4': qnxprobe.ExtWalker, 'F2FS': qnxprobe.F2fsWalker,
-                   'FAT32': qnxprobe.Fat32Walker,
+                   'FAT32': qnxprobe.Fat32Walker, 'FAT16': qnxprobe.Fat16Walker,
+                   'FAT12': qnxprobe.Fat12Walker,
                    'exFAT': qnxprobe.ExfatWalker, 'NTFS': qnxprobe.NtfsWalker,
                    'HFS+': qnxprobe.HfsPlusWalker, 'APFS': qnxprobe.ApfsWalker,
                    'SquashFS': qnxprobe.SquashfsWalker, 'JFFS2': qnxprobe.Jffs2Walker,
@@ -1249,12 +1488,38 @@ BITLOCKER_RECOVERY = '111111-222222-333333-444444-555555-666666-000011-000022'
 # values made for it.
 APFS_PASSWORD = 'qnxprobe-apfs-convert'
 APFS_HINT = 'the qnxprobe conversion test'
+LUKS_PASSPHRASE = 'correct horse battery staple'     # the test value tools/make_luks_fixtures.sh in qnxprobe gives
 
 try:
     import tkinter  # noqa: F401  pylint: disable=unused-import
     _HAS_TK = True
 except ImportError:
     _HAS_TK = False
+
+
+class _FakeDeleted:
+    """What a flash reader's recover_deleted() yields, as far as the seeker reads it."""
+
+    def __init__(self, name, parent_path, data, mtime=None, recoverable=True):
+        self.name, self.parent_path, self.data = name, parent_path, data
+        self.mtime, self.recoverable = mtime, recoverable
+
+
+class _FakeFlashWalker:
+    """A reader with the two methods the seeker asks a flash filesystem for."""
+
+    def __init__(self, entries):
+        self.entries, self.asked = entries, 0
+
+    def recover_deleted(self):
+        self.asked += 1
+        yield from self.entries
+
+    @staticmethod
+    def read_deleted(entry):
+        if entry.data is None:
+            raise ValueError('the extent chain no longer resolves')
+        yield entry.data
 
 
 class _FakeLogicalEntry:
@@ -1589,6 +1854,95 @@ class KeysAndLogicalEvidenceTest(unittest.TestCase):
         with mock.patch.object(simpledialog, 'askstring', lambda *a, **kw: None):
             keys = raw_image.ask_image_keys(None, self.apfs)
         self.assertEqual(keys.apfs_secrets, [])
+
+    def _luks_members(self, keys):
+        data = tempfile.mkdtemp(prefix='raw_image_data_')     # one folder per seeker
+        self.addCleanup(shutil.rmtree, data, True)
+        image = os.path.join(self.work, 'luks1-cbc.img')
+        if not os.path.exists(image):
+            with gzip.open(FIXTURES / 'luks1-cbc.img.gz', 'rb') as src, open(image, 'wb') as dst:
+                shutil.copyfileobj(src, dst)
+        seeker = FileSeekerRaw(image, data, password=keys)
+        self.addCleanup(seeker.cleanup)
+        return seeker, image, [m for m in seeker.name_list if not m.endswith('/')]
+
+    def test_a_luks_container_opens_with_its_passphrase(self):
+        """A LUKS1 container cryptsetup wrote (qnxprobe's tests/fixtures): with its
+        passphrase, as the image's password or as a LUKS one, every file of the ext4
+        inside stages with the hash sha256sum recorded over the tree; without it, or
+        with a wrong one, the container is named locked and holds no members."""
+        hashes = _hash_list(FIXTURES / 'luks-fixture.sha256')
+        _seeker, _image, files = self._luks_members(None)
+        self.assertEqual(files, [])
+        self.assertIn('LUKS-encrypted and not read: give its passphrase', self.log.text())
+        for keys in (raw_image.ImageKeys(password=LUKS_PASSPHRASE),
+                     raw_image.ImageKeys(luks_secrets=[LUKS_PASSPHRASE])):
+            seeker, _image, files = self._luks_members(keys)
+            for rel, digest in hashes.items():
+                staged = seeker.search(f'*/{rel}')
+                self.assertEqual(len(staged), 1, rel)
+                self.assertEqual(_sha256(staged[0]), digest, rel)
+        _seeker, _image, files = self._luks_members(raw_image.ImageKeys(password='not it'))
+        self.assertEqual(files, [])
+
+    def test_the_command_line_takes_a_luks_passphrase_and_says_what_stays_locked(self):
+        _seeker, image, _files = self._luks_members(None)
+        with mock.patch.object(raw_image.sys, 'stdin', None), \
+                contextlib.redirect_stderr(__import__('io').StringIO()) as err:
+            keys = raw_image.cli_image_keys(image)
+        self.assertIn('stays locked and its files are not searched', err.getvalue())
+        self.assertIn('Give its passphrase with --image_password_file', err.getvalue())
+
+        class Terminal:
+            @staticmethod
+            def isatty():
+                return True
+        answers = iter(['not it', LUKS_PASSPHRASE])
+        prompts = []
+
+        def getpass(prompt):
+            prompts.append(prompt)
+            return next(answers)
+        with mock.patch.object(raw_image.sys, 'stdin', Terminal()), \
+                mock.patch.object(raw_image.getpass, 'getpass', getpass), \
+                contextlib.redirect_stderr(__import__('io').StringIO()) as err:
+            keys = raw_image.cli_image_keys(image)
+        self.assertEqual(keys.luks_secrets, [LUKS_PASSPHRASE])
+        self.assertIn('That does not open it.', err.getvalue())
+        self.assertIn('is a LUKS container', prompts[0])
+
+    @unittest.skipUnless(_HAS_TK, 'the GUI prompts need tkinter')
+    def test_the_gui_asks_for_a_luks_passphrase(self):
+        from tkinter import simpledialog  # pylint: disable=import-outside-toplevel
+        _seeker, image, _files = self._luks_members(None)
+        answers = iter(['not it', LUKS_PASSPHRASE])
+        prompts = []
+
+        def askstring(_title, prompt, **_kw):
+            prompts.append(prompt)
+            return next(answers)
+        with mock.patch.object(simpledialog, 'askstring', askstring):
+            keys = raw_image.ask_image_keys(None, image)
+        self.assertEqual(keys.luks_secrets, [LUKS_PASSPHRASE])
+        self.assertTrue(prompts[1].startswith('That does not open it.'))
+
+    def test_an_lvm_physical_volume_offers_its_unallocated_extents(self):
+        """A disk lvm2 made one whole physical volume (qnxprobe's tests/fixtures), whose
+        extents start 3 MiB in, 1 MiB each, the one logical volume holding the first 8 of
+        its 13: the other 5 are its free space, and staged they are those bytes of the
+        disk."""
+        image = os.path.join(self.work, 'lvm-wholedisk.img')
+        with gzip.open(FIXTURES / 'lvm-wholedisk.img.gz', 'rb') as src, open(image, 'wb') as dst:
+            shutil.copyfileobj(src, dst)
+        seeker = self._seeker(image)
+        self.assertEqual(seeker.free_list,
+                         ['lba0/$Unallocated/lvm-wholedisk.img.lba0.unallocated.bin'])
+        staged = seeker.search('*.unallocated.bin')
+        self.assertEqual(len(staged), 1)
+        mib = 1 << 20
+        with open(image, 'rb') as disk, open(staged[0], 'rb') as got:
+            disk.seek(11 * mib)
+            self.assertEqual(got.read(), disk.read(5 * mib))
 
     @unittest.skipUnless(_HAS_TK, 'the GUI prompts need tkinter')
     def test_the_gui_asks_for_a_private_key_and_a_bitlocker_startup_key(self):

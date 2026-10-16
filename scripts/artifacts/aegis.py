@@ -2,9 +2,9 @@ __artifacts_v2__ = {
     "aegis_vault": {
         "name": "Aegis - Vault",
         "description": "Reports the state of the Aegis Android 2FA vault, including whether it is encrypted.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude; @AlexisBrignoni, Codex",
         "creation_date": "2026-08-30",
-        "last_update_date": "2026-08-30",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Aegis",
         "notes": "One row per aegis.json vault file in the app's files directory. The vault can "
@@ -14,8 +14,10 @@ __artifacts_v2__ = {
                  "it is plaintext the entries are readable and are listed by the Entries "
                  "artifact. An encrypted vault therefore yields no issuers or account names "
                  "here, which is not evidence that no two factor entries exist. The Encryption "
-                 "column reports whether slots are present and how "
-                 "many, as stored.",
+                 "column reads Encrypted, with the recorded slots-list length or an unknown slot "
+                 "count when slots are absent, null or not a list. An explicit empty list records "
+                 "zero slots. Encryption is reported when the db "
+                 "field is a string or the header lists slots, and None (plaintext) otherwise.",
         "paths": ('*/com.beemdevelopment.aegis/files/aegis.json',),
         "output_types": "standard",
         "artifact_icon": "shield-lock",
@@ -32,9 +34,11 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Aegis",
         "notes": "One row per two factor entry in a plaintext aegis.json vault, with the issuer "
-                 "and account name recorded for each entry. Issuer is the service, Name is the "
-                 "account at that service, and the remaining columns are the OTP parameters: "
-                 "Type, Algorithm, Digits and Period. Type is one of the values defined by the "
+                 "and account name recorded for each entry. Issuer is the service the token is "
+                 "for and Name is the account name (docs/vault.md at beemdevelopment/Aegis "
+                 "17a87a4e), and the remaining columns are the OTP parameters: Type, Algorithm, "
+                 "Digits and Period or Counter, which holds the period where the entry has one "
+                 "and the counter otherwise. Type is one of the values defined by the "
                  "app, totp, hotp, steam, motp or yandex "
                  "(app/src/main/java/com/beemdevelopment/aegis/otp at beemdevelopment/Aegis "
                  "17a87a4e); any other value is reported as stored. Favorite, Note and Groups "
@@ -81,11 +85,11 @@ def _vault_files(context):
 
 def _is_encrypted(vault):
     """(encrypted, slot_count). The db is a base64 string and slots are set when encrypted."""
-    header = vault.get('header') or {}
-    slots = header.get('slots')
+    header = vault.get('header')
+    slots = header.get('slots') if isinstance(header, dict) else None
     db = vault.get('db')
     encrypted = isinstance(db, str) or bool(slots)
-    slot_count = len(slots) if isinstance(slots, list) else 0
+    slot_count = len(slots) if isinstance(slots, list) else None
     return encrypted, slot_count
 
 
@@ -97,7 +101,11 @@ def aegis_vault(context):
         encrypted, slot_count = _is_encrypted(vault)
         db = vault.get('db')
         entry_count = len(db.get('entries', [])) if isinstance(db, dict) else 'Unknown (encrypted)'
-        encryption = f'Encrypted ({slot_count} slots)' if encrypted else 'None (plaintext)'
+        if encrypted:
+            encryption = (f'Encrypted ({slot_count} slots)' if slot_count is not None
+                          else 'Encrypted (slot count unknown)')
+        else:
+            encryption = 'None (plaintext)'
         data_list.append((
             vault.get('version', ''),
             db.get('version', '') if isinstance(db, dict) else '',

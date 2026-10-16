@@ -2,19 +2,19 @@ __artifacts_v2__ = {
     "samsung_wallet_cards": {
         "name": "Samsung Wallet - Enrolled Cards",
         "description": "Cards enrolled in Samsung Wallet (formerly Samsung Pay), with each "
-                       "card's issuer, enrollment/reference identifiers, when its state was "
-                       "last updated, whether it is locked, and identity-verification "
-                       "attempt counters.",
-        "author": "@Gear-I, Claude",
+                       "card's issuer, enrollment/reference identifiers, the cardStateTimestamp "
+                       "value as a UTC time, and the isLocked, payReadyFlag, transitSupport and "
+                       "idv* counter values as stored.",
+        "author": "@Gear-I, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-26",
-        "last_update_date": "2026-08-28",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Samsung Wallet",
         "notes": "Source is spay.db's card table. The database file itself was 4 KB on each "
                  "tested extraction and its contents sat in the spay.db-wal write-ahead log, "
                  "so the path pattern takes the sidecars and the file is read with the log "
-                 "applied. Samsung Wallet encrypts several of the fields an examiner would "
-                 "want: on the tested extraction cardLastFour, cardName, tokenLastFour, "
+                 "applied. Several of the fields an examiner would want did not hold readable "
+                 "values: on the tested extraction cardLastFour, cardName, tokenLastFour, "
                  "cardBrand, issuerCountryCode, cardTrType, comboCardType and "
                  "tokenReferenceID held base64-encoded ciphertext. No key for them was "
                  "located in the extraction and this artifact does not attempt to decode "
@@ -23,8 +23,9 @@ __artifacts_v2__ = {
                  "enrollment, token and reference identifiers (reported as stored), the issuer's "
                  "name, contact number and URL, the card state timestamp "
                  "(cardStateTimestamp, a millisecond epoch stored as text), the locked "
-                 "flag, the transit-capable flag, and the identity-verification attempt and "
-                 "retry counters. ID Verification Max Retries held -1 on the tested "
+                 "flag, the transit-capable flag, and the stored idv* request and "
+                 "retry counters whose meanings are not established here. idvMaxRetry held "
+                 "-1 on the tested "
                  "extraction and every counter column is reported as stored. UI-only fields "
                  "with no forensic content (reorder position, display colors, "
                  "negated-timestamp sort keys) are left out. Other tables in spay.db: "
@@ -48,9 +49,9 @@ __artifacts_v2__ = {
         "name": "Samsung Wallet - Receipts",
         "description": "Receipt records Samsung Wallet has stored for card transactions, "
                        "linked back to the enrolled card that made them.",
-        "author": "@Gear-I, Claude",
+        "author": "@Gear-I, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-26",
-        "last_update_date": "2026-08-28",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Samsung Wallet",
         "notes": "Source is spay.db's receipt table, the same database as Samsung Wallet - "
@@ -66,18 +67,21 @@ __artifacts_v2__ = {
                  "currencyCode, transactionStatus, tokenNumber, transactionID, "
                  "industryCatgCode, industryCode, stamp, paymentMethod and cardBrand held "
                  "base64-encoded ciphertext with no key located in the extraction, so none "
-                 "of them are decoded here. Rewards Redeemed and Watch Transaction are "
-                 "plain integer flags. Merchant Country Code, Merchant Town, Booking Date, "
-                 "Value Date, Sender IBAN and Receiver IBAN exist in the schema but were "
-                 "NULL on the single receipt tested, so whether they are ever stored in "
-                 "plain text on a populated row is unconfirmed. They are read here and left "
-                 "blank rather than assumed either way. This artifact records that a "
-                 "transaction happened and which card it belongs to, not its detail. The "
-                 "receipt table's columns vary between Samsung Wallet releases: the "
-                 "Android 13 extraction tested carries no isWatchTransaction column, "
-                 "which failed the whole read. Each query is compiled against the "
-                 "database it will run on, so a column a release does not carry is "
-                 "reported empty and the remaining columns are still returned.",
+                 "of them are decoded here. pwpredeemflag (as stored) is the pwpredeemflag column and "
+                 "Watch Transaction is isWatchTransaction; both are integers reported as stored, "
+                 "and what pwpredeemflag records is not established. Merchant Country Code, "
+                 "Merchant Town, Booking Date, Value Date, Sender IBAN and Receiver IBAN exist in "
+                 "the schema but were NULL on the single receipt tested, so whether they are ever "
+                 "stored in plain text on a populated row is unconfirmed. They are read here and "
+                 "left blank rather than assumed either way. Booking Date and Value Date are "
+                 "raw text, placed first without inferring chronology; rows retain receipt-ID "
+                 "order. This artifact reports that a receipt "
+                 "row exists and which card row it is linked to. It does not report the "
+                 "transaction's status, type, amount or time. The receipt table's columns vary "
+                 "between Samsung Wallet releases: the Android 13 extraction tested carries no "
+                 "isWatchTransaction column, so that column is reported empty for it. Each query "
+                 "is compiled against the database it will run on, so a column a release does not "
+                 "carry is reported empty and the remaining columns are still returned.",
         "paths": ('*/com.samsung.android.spay/databases/spay.db*',),
         "output_types": ["standard"],
         "artifact_icon": "receipt",
@@ -182,8 +186,8 @@ def samsung_wallet_cards(context):
         ("Card State Updated", "datetime"), "Enrollment ID", "Token ID",
         "Card Reference ID", "Issuer Name", "Issuer Contact Number", "Issuer URL",
         "Payment Ready", "Card Locked", "Transit Support",
-        "ID Verification Max Requests", "ID Verification Request Count",
-        "ID Verification Max Retries", "ID Verification Retry Count",
+        "idvMaxRequest (as stored)", "idvRequestCount (as stored)",
+        "idvMaxRetry (as stored)", "idvRetryCount (as stored)",
     )
 
     db_paths = _spay_databases(unique_files(context))
@@ -221,8 +225,9 @@ def samsung_wallet_cards(context):
 @artifact_processor
 def samsung_wallet_receipts(context):
     data_headers = (
-        "Receipt ID", "Card Enrollment ID", "Rewards Redeemed", "Watch Transaction",
-        "Merchant Country Code", "Merchant Town", "Booking Date", "Value Date",
+        "Booking Date", "Value Date", "Receipt ID", "Card Enrollment ID",
+        "pwpredeemflag (as stored)", "Watch Transaction",
+        "Merchant Country Code", "Merchant Town",
         "Sender IBAN", "Receiver IBAN",
     )
 
@@ -251,6 +256,7 @@ def samsung_wallet_receipts(context):
             source_paths.append(db_path)
 
     data_list.sort(key=lambda row: row[0] if row[0] is not None else -1)
+    data_list = [row[6:8] + row[:6] + row[8:] for row in data_list]
     return data_headers, data_list, '\n'.join(source_paths)
 
 

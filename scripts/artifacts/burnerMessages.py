@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_burnerMessages": {
         "name": "Burner - Messages",
-        "description": "Parses Burner Messages",
+        "description": "Parses the MessageEntity rows of burnerDatabase.db: dateCreated read as Unix milliseconds, contact number, message text, direction and read value. Direction is labelled 1 Incoming and 2 Outgoing and any other value Unknown; the source of those labels is not stated in this module.",
         "author": "Heather Charpentier (With Tons of Help from Alexis Brignoni!)",
         "version": "0.0.1",
         "creation_date": "2024-02-15",

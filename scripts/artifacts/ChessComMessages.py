@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_ChessComMessages": {
         "name": "ChessComMessages",
-        "description": "Chess database",
+        "description": "Rows of the messages table of the Chess.com app database: created_at read as Unix seconds, conversation ID, sender username and content",
         "author": "@kibaffo33",
         "creation_date": "2022-02-23",
         "last_update_date": "2022-02-23",

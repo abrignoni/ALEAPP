@@ -2,9 +2,9 @@ __artifacts_v2__ = {
     "booking_reservations": {
         "name": "Booking - Reservations",
         "description": "Parses accommodation reservations cached by the Booking.com Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Booking.com",
         "notes": "Read from the records table of post_booking_reservation_cache, which holds a "
@@ -20,7 +20,12 @@ __artifacts_v2__ = {
                  "hotelTimezone, so the calendar date at the property is carried in its own column "
                  "and the datetime columns hold the UTC reading of the stored value. The "
                  "accommodationDetails shape instead stores ISO 8601 strings carrying an offset, and "
-                 "those are converted from that offset. Status, travel purpose and accommodation "
+                 "those are converted from that offset. A string with no offset is not converted, "
+                 "because it records no zone: its Check In or Check Out cell is blank and the "
+                 "date column holds the date the string names. The startDateTime (as stored) and "
+                 "endDateTime (as stored) columns hold both strings as written; whether any tested "
+                 "sample held a string with no offset was not measured. "
+                 "Status, travel purpose and accommodation "
                  "type values are reported as stored. Field mapping was done against private samples "
                  "provided by Mattia; no sample data is recorded for them.",
         "paths": ('*/com.booking/databases/post_booking_reservation_cache*',),
@@ -30,7 +35,7 @@ __artifacts_v2__ = {
     "booking_reservation_rooms": {
         "name": "Booking - Reservation Rooms",
         "description": "Parses the rooms of each cached Booking.com Android reservation.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
@@ -53,7 +58,7 @@ __artifacts_v2__ = {
     "booking_account_profile": {
         "name": "Booking - Account Profile",
         "description": "Parses the account profile cached by the Booking.com Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
@@ -73,7 +78,7 @@ __artifacts_v2__ = {
     "booking_profile_preferences": {
         "name": "Booking - Profile Preferences",
         "description": "Parses the account profile written to the Booking.com Android preferences.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
@@ -82,8 +87,9 @@ __artifacts_v2__ = {
                  "the same pref3 prefixed profile keys. On the tested samples remote_profile.xml "
                  "held a subset of the keys in mybooking.xml, and the Source File column says which "
                  "file each row came from. Title, gender, smoking preference and travel purpose are "
-                 "reported as stored. The google state value is the app's own JSON record of a "
-                 "linked Google account and its identifier member is reported as stored. Field "
+                 "reported as stored. The pref3googlestate value is JSON; what it records is not "
+                 "established here, and its id and hasBookingPassword members are reported as "
+                 "stored. Field "
                  "mapping was done against private samples provided by Mattia; no sample data is "
                  "recorded for them.",
         "paths": (
@@ -95,21 +101,27 @@ __artifacts_v2__ = {
     },
     "booking_cached_profile": {
         "name": "Booking - Cached Profile Response",
-        "description": "Parses cached account profile responses from the Booking.com Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "description": "Parses cached profile responses and reports the number of decoded cc_details list "
+                       "entries from the Booking.com Android app.",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "Booking.com",
-        "notes": "Read from the app's OkHttp response cache, where each entry is a pair of files "
-                 "sharing a name: the .0 file holds the request URL and the response headers and "
-                 "the .1 file holds the body. Bodies for this endpoint were gzip compressed on the "
-                 "tested samples and are decompressed before parsing. The request time comes from "
-                 "the OkHttp-Sent-Millis header OkHttp writes into the cached entry, in Unix "
-                 "milliseconds. The response carries a cc_details list for stored payment cards; it "
-                 "was empty on both tested samples, so no card data is reported from them. Field "
-                 "mapping was done against private samples provided by Mattia; no sample data is "
-                 "recorded for them.",
+        "notes": "Read from the app's OkHttp response cache, where each entry is a pair of files sharing a"
+                 " name: the .0 file holds the request URL and the response headers and the .1 file holds "
+                 "the body. Bodies for this endpoint were gzip compressed on the tested samples and are "
+                 "decompressed before parsing. The request time comes from the OkHttp-Sent-Millis header "
+                 "OkHttp writes into the cached entry, in Unix milliseconds. The response carries a "
+                 "cc_details list, whose length is reported under cc_details Entry Count; it was empty on "
+                 "both tested samples, so what its entries hold was not measured. Field mapping was done "
+                 "against private samples provided by Mattia; no sample data is recorded for them. The "
+                 "count is the decoded cc_details list length, including every member regardless of shape;"
+                 " an empty list is integer 0, while absent, JSON null and non-list values are blank "
+                 "through the unchanged projection. The entries are not verified payment-card records and "
+                 "their contents/ownership are not established. Original contribution credited to "
+                 "@mattiaepi (Mattia Epifani) and Claude. Historical private-sample observations above are"
+                 " not remeasured by this header correction.",
         "paths": ('*/com.booking/cache/okhttp/*',),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "id"
@@ -117,7 +129,7 @@ __artifacts_v2__ = {
     "booking_search_query": {
         "name": "Booking - Search Query",
         "description": "Parses the stored search query of the Booking.com Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
@@ -137,7 +149,7 @@ __artifacts_v2__ = {
     "booking_destination_searches": {
         "name": "Booking - Destination Searches",
         "description": "Parses cached destination autocomplete responses from the Booking.com Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
@@ -157,7 +169,7 @@ __artifacts_v2__ = {
     "booking_destination_info": {
         "name": "Booking - Destination Info",
         "description": "Parses cached destination lookups from the Booking.com Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
@@ -176,21 +188,34 @@ __artifacts_v2__ = {
     },
     "booking_deep_links": {
         "name": "Booking - Deep Links",
-        "description": "Parses deep links stored and resolved by the Booking.com Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "description": "Reports selected cached mobile.decodeUniversalLink response fields and "
+                       "original_link_storage.xml preference entries from the Booking.com Android app.",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "Booking.com",
-        "notes": "Two sources are reported and the Record Type column says which each row came "
-                 "from. Resolved links come from cached mobile.decodeUniversalLink responses in the "
-                 "app's OkHttp response cache, where the url request parameter holds the link "
-                 "submitted and the body holds what it resolved to; those rows carry the request "
-                 "time from the OkHttp-Sent-Millis header in Unix milliseconds. Stored links come "
-                 "from original_link_storage.xml, whose keys are named for the screen each link was "
-                 "kept against and which records no timestamp. Link actions and destination types "
-                 "are reported as stored. Field mapping was done against private samples provided "
-                 "by Mattia; no sample data is recorded for them.",
+        "notes": "Two sources are reported and the Record Type column says which each row came from. "
+                 "Resolved links come from cached mobile.decodeUniversalLink responses in the app's OkHttp"
+                 " response cache, where the url request parameter holds the link submitted and the body "
+                 "holds what it resolved to; those rows carry the request time from the OkHttp-Sent-Millis"
+                 " header in Unix milliseconds. Stored links come from original_link_storage.xml, whose "
+                 "keys begin original_link- followed by a name that is reported as stored; what that name "
+                 "refers to is not established here. That file records no timestamp. For Resolved link "
+                 "rows, dest_type / original_link- key suffix holds the response dest_type member through "
+                 "the existing _text rendering, and label / link_action holds the response label member "
+                 "through that rendering. For Stored link rows, the first holds the exact preference-key "
+                 "suffix after original_link-, including an empty suffix as an empty string, and the "
+                 "second holds the link_action preference value. The stored suffix is not established as a"
+                 " destination or screen type, and link_action is not established as a response label. "
+                 "_text retains native scalar values except None becomes empty and booleans become text; "
+                 "dictionaries and lists are JSON rendered. These report cells do not preserve complete "
+                 "original source bytes. Field mapping was done against private samples provided by "
+                 "Mattia; no sample data is recorded for them. Original contribution credited to "
+                 "@AlexisBrignoni, @mattiaepi (Mattia Epifani) and Claude. Historical private-sample "
+                 "mappings and observations above are not remeasured by this correction. Preference "
+                 "duplicate-key replacement, query-parameter decoding, cache-body decoding, source-alias "
+                 "selection and source association retain their existing behavior and limitations.",
         "paths": (
             '*/com.booking/cache/okhttp/*',
             '*/com.booking/shared_prefs/original_link_storage.xml',
@@ -201,7 +226,7 @@ __artifacts_v2__ = {
     "booking_notifications": {
         "name": "Booking - Notifications",
         "description": "Parses notifications stored by the Booking.com Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
@@ -220,16 +245,18 @@ __artifacts_v2__ = {
     "booking_app_state": {
         "name": "Booking - App State",
         "description": "Parses install, session and attribution state of the Booking.com Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Booking.com",
-        "notes": "Read from com.booking_preferences.xml and startup_data.xml. first_use and the "
-                 "deep link attribution expiry are Unix milliseconds. The used key is a counter "
-                 "rather than a time and is reported as stored. The client IP address and client "
-                 "user agent are the values the app recorded for itself, so they describe what the "
-                 "service was told and are reported as stored. PRICE_ALERT_SCREEN_LAST_SEEN is an "
+        "notes": "Read from com.booking_preferences.xml and startup_data.xml. The first_use, "
+                 "deeplinking_aid_exp_time and used keys are reported as stored under their own "
+                 "key names. The unit of the first two and what each of the three records are not "
+                 "established here, so none is converted to a time. "
+                 "The client_ip_address and client_user_agent values are reported as stored; "
+                 "whether the app or the service supplied them, and when, is not established here. "
+                 "PRICE_ALERT_SCREEN_LAST_SEEN is an "
                  "ISO 8601 string and held the same value on all four tested samples, which is a "
                  "date preceding the app versions they carry, so it is reported as stored rather "
                  "than read as a time the screen was opened. Field mapping was done against private "
@@ -244,14 +271,17 @@ __artifacts_v2__ = {
     "booking_cached_requests": {
         "name": "Booking - Cached Requests",
         "description": "Inventories the cached HTTP responses held by the Booking.com Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
         "category": "Booking.com",
         "notes": "One row for each entry in the app's two OkHttp response caches, okhttp and "
                  "saba-http-cache. The request and response times come from the OkHttp-Sent-Millis "
-                 "and OkHttp-Received-Millis headers OkHttp writes into the cached entry, in Unix "
+                 "and OkHttp-Received-Millis headers OkHttp writes into the cached entry "
+                 "(square/okhttp parent-4.12.0, okhttp3/Cache.kt, Entry.writeTo lines 582 to 589, "
+                 "header names at lines 665 to 668; the OkHttp version inside the app is not "
+                 "established), in Unix "
                  "milliseconds, and the served date is the response's own date header reported as "
                  "stored. The device identifier, app version and language are read from the request "
                  "URL's own parameters. This artifact reports the entries and their metadata; the "
@@ -335,7 +365,11 @@ def _seconds(value):
 
 
 def _iso(value):
-    '''An ISO 8601 timestamp string as a UTC datetime, or '' when it will not parse.'''
+    '''An ISO 8601 timestamp string as a UTC datetime, or '' when it cannot be placed.
+
+    A string that carries no offset names a wall clock reading with no recorded zone, so
+    it is not converted; the caller reports the stored string in its own column.
+    '''
     if not value or not isinstance(value, str):
         return ''
     try:
@@ -343,7 +377,7 @@ def _iso(value):
     except ValueError:
         return ''
     if parsed.tzinfo is None:
-        parsed = parsed.replace(tzinfo=timezone.utc)
+        return ''
     return parsed.astimezone(timezone.utc)
 
 
@@ -600,6 +634,8 @@ def _reservation_from_accommodation(records, key):
         'check_out': end,
         'check_in_local': _offset_date(record.get('startDateTime')),
         'check_out_local': _offset_date(record.get('endDateTime')),
+        'start_stored': _text(record.get('startDateTime')),
+        'end_stored': _text(record.get('endDateTime')),
         'reservation_status': _text(record.get('reservationStatus')),
         'property_name': _text(prop.get('name')),
         'shape': 'accommodationDetailsQueries',
@@ -666,6 +702,8 @@ def booking_reservations(context):
                 reservation.get('check_out', ''),
                 reservation.get('check_in_local', ''),
                 reservation.get('check_out_local', ''),
+                reservation.get('start_stored', ''),
+                reservation.get('end_stored', ''),
                 reservation.get('booking_number', ''),
                 reservation.get('pin_code', ''),
                 reservation.get('reservation_status', ''),
@@ -699,6 +737,8 @@ def booking_reservations(context):
         ('Check Out', 'datetime'),
         'Check In Date At Property',
         'Check Out Date At Property',
+        'startDateTime (as stored)',
+        'endDateTime (as stored)',
         'Booking Number',
         'PIN Code',
         'Reservation Status (as stored)',
@@ -1041,7 +1081,7 @@ def booking_cached_profile(context):
         'Has Email (as stored)',
         'Has Confirmed Phone (as stored)',
         'Avatar Available (as stored)',
-        'Stored Card Count',
+        'cc_details Entry Count',
         'Direct Partner Chat Available (as stored)',
         'Device ID',
         'App Version',
@@ -1272,7 +1312,7 @@ def booking_deep_links(context):
                 'Stored link',
                 value,
                 '',
-                name[len('original_link-'):] or '(no screen)',
+                name[len('original_link-'):],
                 '',
                 '',
                 action,
@@ -1286,10 +1326,10 @@ def booking_deep_links(context):
         'Record Type',
         'Link',
         'Resolved Booking URL',
-        'Destination Type (as stored)',
+        'dest_type / original_link- key suffix',
         'Destination ID',
         'Affiliate ID',
-        'Label (as stored)',
+        'label / link_action',
         'Landing Page Subheader',
         'Source File',
     )
@@ -1360,8 +1400,8 @@ def booking_app_state(context):
         startup = _prefs(startup_path) if startup_path else {}
         reported = main_path or startup_path
         data_list.append((
-            _ms(main.get('first_use')),
-            _ms(startup.get('deeplinking_aid_exp_time')),
+            main.get('first_use', ''),
+            startup.get('deeplinking_aid_exp_time', ''),
             main.get('used', ''),
             main.get('app_version', ''),
             main.get('locale', ''),
@@ -1389,9 +1429,9 @@ def booking_app_state(context):
         sources.extend(path for path in (main_path, startup_path) if path)
 
     data_headers = (
-        ('First Use', 'datetime'),
-        ('Deep Link Attribution Expiry', 'datetime'),
-        'Times Used (as stored)',
+        'first_use (as stored)',
+        'deeplinking_aid_exp_time (as stored)',
+        'used (as stored)',
         'App Version',
         'Locale',
         'Currency (as stored)',

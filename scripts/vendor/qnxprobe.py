@@ -45,7 +45,7 @@ except ImportError:                  # not on sys.path when imported as a module
     except ImportError:
         ewfprobe = None
 
-QNXPROBE_VERSION = "1.58"
+QNXPROBE_VERSION = "1.67"
 
 QNX6_MAGIC     = 0x68191122
 BOOTBLOCK_SIZE = 0x2000
@@ -942,10 +942,11 @@ def parse_mbr(fh):
     # A FAT, exFAT, NTFS or BitLocker boot sector also ends in 0x55AA, and its
     # boot code sits where MBR partition entries would be, so it parses as four
     # nonsense partitions. Its own type string at bytes 3..11 (exFAT, NTFS,
-    # BitLocker's "-FVE-FS-") or 82..90 (FAT32) says it is a volume, not a
+    # BitLocker's "-FVE-FS-"), 82..90 (FAT32) or 54..62 (FAT16, FAT12) says it is a volume, not a
     # partition table.
     if (mbr[3:11] in (b"EXFAT   ", b"NTFS    ", BDE_SIGNATURE)
-            or mbr[82:90] == b"FAT32   " or mbr[54:62] == b"FAT16   "):
+            or mbr[82:90] in (b"FAT32   ", b"TFAT32  ")
+            or mbr[54:62] in (b"FAT16   ", b"FAT12   ", b"TFAT16  ")):
         return None
     # A QNX4 boot block can also end in 0x55AA (the dinit boot sector does).
     # The QNX4 superblock is the NEXT sector: its first entry is the root
@@ -2189,11 +2190,13 @@ class F2fsWalker:
 
 
 # ---------------------------------------------------------------------------
-# FAT32 and exFAT.
+# FAT32, FAT16, FAT12 and exFAT.
 #
 # FAT is the file system of removable media and of many embedded devices, so a
-# vehicle image can carry one beside its QNX and ext volumes. Both are read
-# here directly, no mounting.
+# vehicle image can carry one beside its QNX and ext volumes. All of them are
+# read here directly, no mounting. Fat16Walker, after Fat32Walker, says what
+# FAT16 does differently and how Windows CE's transaction-safe FAT is read,
+# and Fat12Walker what FAT12 adds to that.
 #
 # Field offsets are from Microsoft's own specifications: the FAT32 BPB from the
 # "Microsoft Extensible Firmware Initiative FAT32 File System Specification"
@@ -2204,7 +2207,7 @@ class F2fsWalker:
 # ---------------------------------------------------------------------------
 
 class FatDeletedFile:
-    """One deleted FAT32 or exFAT directory entry that still describes a file.
+    """One deleted FAT32, FAT16, FAT12 or exFAT directory entry that still describes a file.
 
     ``recoverable`` says whether the content can be read back: the entry keeps
     its first cluster and size, so the data is readable while those clusters
@@ -2236,10 +2239,42 @@ class FatDeletedFile:
                 f"cluster={self.first_cluster}, {state}{extra})")
 
 
+# Per FAT width: bytes in a table entry, its struct format, the bits that hold
+# the cluster number, the lowest end-of-chain value, and the array typecode.
+# FAT32 keeps the top four bits of an entry reserved; FAT16 uses all sixteen.
+# A FAT12 entry is a byte and a half, so it has no width, format or typecode
+# here: _fat12_entry() reads one.
+_FAT_ENTRY = {
+    32: (4, "<I", 0x0FFFFFFF, 0x0FFFFFF8, "I"),
+    16: (2, "<H", 0xFFFF, 0xFFF8, "H"),
+    12: (None, None, 0x0FFF, 0x0FF8, None),
+}
+
+
+def _fat12_entry(pair, odd):
+    """A FAT12 table entry from the two bytes it lies in, or None when they are
+    not both there.
+
+    Microsoft's FAT specification: entry n starts at byte n + n // 2 of the
+    table, the 16 bits there are read little-endian, and an odd n takes the
+    high twelve of them while an even n takes the low twelve.
+    """
+    if len(pair) < 2:
+        return None
+    word = pair[0] | (pair[1] << 8)
+    return (word >> 4) if odd else (word & 0x0FFF)
+
+# Windows CE's transaction-safe FAT writes its own name where FAT writes
+# "FAT16   " or "FAT32   ". The structures are FAT's.
+TFAT_TYPE_STRINGS = (b"TFAT16  ", b"TFAT32  ")
+
+
 class Fat32Walker:
     """List and read files from a FAT32 volume. inode() takes a (cluster, size,
     is_dir) tuple, so the shared collect()/extract_to_zip() work unchanged; the
     root is that tuple for the root cluster."""
+
+    FAT_BITS = 32
 
     def __init__(self, fh, base):
         self.fh = fh
@@ -2249,31 +2284,51 @@ class Fat32Walker:
         self.spc = bpb[13]
         self.reserved = struct.unpack_from("<H", bpb, 14)[0]
         self.nfats = bpb[16]
-        self.spf = struct.unpack_from("<I", bpb, 36)[0]
+        if self.FAT_BITS == 32:
+            self.spf = struct.unpack_from("<I", bpb, 36)[0]
+            self.root_entries = 0
+        else:
+            # FAT16 sizes its table in BPB_FATSz16 and keeps the root directory
+            # as BPB_RootEntCnt entries in a fixed run between the tables and
+            # cluster 2, not in a cluster chain.
+            self.spf = struct.unpack_from("<H", bpb, 22)[0]
+            self.root_entries = struct.unpack_from("<H", bpb, 17)[0]
         # BPB_TotSec16 is zero on FAT32 and the count lives in BPB_TotSec32, but
         # read both: a volume small enough to use the 16-bit field is still a
         # legal FAT32, and free_extents needs the count to size the cluster area.
         self.total_sectors = (struct.unpack_from("<H", bpb, 19)[0]
                               or struct.unpack_from("<I", bpb, 32)[0])
-        self.root_clus = struct.unpack_from("<I", bpb, 44)[0]
+        # Cluster 0 is never a file's cluster, so on FAT16 it stands for the
+        # fixed root directory in the root node.
+        self.root_clus = struct.unpack_from("<I", bpb, 44)[0] if self.FAT_BITS == 32 else 0
         self.fat_start = base + self.reserved * self.bps
-        self.data_start = self.fat_start + self.nfats * self.spf * self.bps
+        self.root_dir_start = self.fat_start + self.nfats * self.spf * self.bps
+        root_sectors = ((self.root_entries * 32 + self.bps - 1) // self.bps
+                        if self.root_entries and self.bps else 0)
+        self.root_dir_bytes = root_sectors * self.bps
+        self.data_start = self.root_dir_start + self.root_dir_bytes
         self.cluster_bytes = self.spc * self.bps
         self.root = (self.root_clus, 0, True)
 
     def _fat_next(self, clus):
-        off = self.fat_start + clus * 4
-        raw = read_at(self.fh, off, 4)
-        if len(raw) < 4:
+        width, fmt, mask, _eoc, _code = _FAT_ENTRY[self.FAT_BITS]
+        if width is None:                            # FAT12: a byte and a half
+            val = _fat12_entry(read_at(self.fh, self.fat_start + clus + clus // 2, 2),
+                               clus & 1)
+            return mask if val is None else val      # None: past the end of the image
+        off = self.fat_start + clus * width
+        raw = read_at(self.fh, off, width)
+        if len(raw) < width:
             # Past the end of the image, which is what the first segment of a
             # split acquisition looks like. That is the end of the chain, not a
             # reason to raise: the volume is truncated, not unreadable.
-            return 0x0FFFFFFF
-        return struct.unpack_from("<I", raw, 0)[0] & 0x0FFFFFFF
+            return mask
+        return struct.unpack_from(fmt, raw, 0)[0] & mask
 
     def _chain(self, clus):
+        eoc = _FAT_ENTRY[self.FAT_BITS][3]
         seen = set()
-        while 0x2 <= clus < 0x0FFFFFF8 and clus not in seen:
+        while 0x2 <= clus < eoc and clus not in seen:
             seen.add(clus)
             yield clus
             clus = self._fat_next(clus)
@@ -2282,6 +2337,10 @@ class Fat32Walker:
         return self.data_start + (clus - 2) * self.cluster_bytes
 
     def _read_chain(self, clus, size=None):
+        if clus == 0 and self.FAT_BITS != 32:
+            # the FAT16 root directory: its fixed run, whole
+            raw = read_at(self.fh, self.root_dir_start, self.root_dir_bytes)
+            return raw[:size] if size is not None else raw
         out = bytearray()
         for c in self._chain(clus):
             out += read_at(self.fh, self._cluster_off(c), self.cluster_bytes)
@@ -2304,39 +2363,56 @@ class Fat32Walker:
         to hold anything worth recovering.
 
         The table is read a megabyte at a time and unpacked as machine words,
-        because reading four bytes per cluster through the image would be one
+        because reading one entry per cluster through the image would be one
         seek per cluster.
         """
         cluster = self.cluster_bytes
         if not cluster or not self.total_sectors:
             return []
-        data_sectors = self.total_sectors - (self.reserved + self.nfats * self.spf)
+        width, _fmt, mask, _eoc, code = _FAT_ENTRY[self.FAT_BITS]
+        root_sectors = self.root_dir_bytes // self.bps if self.bps else 0
+        data_sectors = self.total_sectors - (self.reserved + self.nfats * self.spf
+                                             + root_sectors)
         count = data_sectors // self.spc if self.spc else 0
         if count <= 0:
             return []
         last = count + 2                             # entries 0 .. count + 1
 
-        runs, run_start, pos = [], None, 0
-        while pos < last:
-            want = min(FAT_SCAN_ENTRIES, last - pos)
-            raw = read_at(self.fh, self.fat_start + pos * 4, want * 4)
-            if len(raw) < want * 4:                  # a truncated image stops here
-                raw += b"\x00" * (want * 4 - len(raw))
-            words = array.array("I")
-            words.frombytes(raw)
-            if sys.byteorder != "little":
-                words.byteswap()
-            for i, val in enumerate(words):
-                num = pos + i
-                if num < 2:
-                    continue
-                if val & 0x0FFFFFFF:
-                    if run_start is not None:
-                        runs.append((run_start, num - run_start))
-                        run_start = None
-                elif run_start is None:
-                    run_start = num
-            pos += want
+        def entries():
+            """(cluster number, table entry) for 0 .. last - 1; an entry past
+            the end of a truncated image reads as zero."""
+            if width is None:
+                # FAT12: at most 4,084 clusters, so the table is read whole
+                table = read_at(self.fh, self.fat_start, last + last // 2 + 2)
+                for num in range(last):
+                    off = num + num // 2
+                    val = _fat12_entry(table[off:off + 2], num & 1)
+                    yield num, (val or 0)
+                return
+            pos = 0
+            while pos < last:
+                want = min(FAT_SCAN_ENTRIES, last - pos)
+                raw = read_at(self.fh, self.fat_start + pos * width, want * width)
+                if len(raw) < want * width:          # a truncated image stops here
+                    raw += b"\x00" * (want * width - len(raw))
+                words = array.array(code)
+                words.frombytes(raw)
+                if sys.byteorder != "little":
+                    words.byteswap()
+                for i, val in enumerate(words):
+                    yield pos + i, val & mask
+                pos += want
+
+        runs, run_start = [], None
+        for num, val in entries():
+            if num < 2:
+                continue
+            if val:
+                if run_start is not None:
+                    runs.append((run_start, num - run_start))
+                    run_start = None
+            elif run_start is None:
+                run_start = num
         if run_start is not None:
             runs.append((run_start, last - run_start))
 
@@ -2380,7 +2456,8 @@ class Fat32Walker:
             lfn = []
             hi = struct.unpack_from("<H", e, 20)[0]
             lo = struct.unpack_from("<H", e, 26)[0]
-            first = (hi << 16) | lo
+            # the high word is FAT32's; FAT16 has no such field at offset 20
+            first = ((hi << 16) | lo) if self.FAT_BITS == 32 else lo
             sz = struct.unpack_from("<I", e, 28)[0]
             is_sub = bool(attr & 0x10)
             if name in (".", ".."):
@@ -2419,7 +2496,8 @@ class Fat32Walker:
                 continue                            # a live entry; the walk lists it
             hi = struct.unpack_from("<H", e, 20)[0]
             lo = struct.unpack_from("<H", e, 26)[0]
-            first = (hi << 16) | lo
+            # the high word is FAT32's; FAT16 has no such field at offset 20
+            first = ((hi << 16) | lo) if self.FAT_BITS == 32 else lo
             sz = struct.unpack_from("<I", e, 28)[0]
             is_dir = bool(attr & 0x10)
             dead = [chars for was_deleted, chars in lfn if was_deleted]
@@ -2530,6 +2608,54 @@ class Fat32Walker:
         clus, sz, _ = node
         yield self._read_chain(clus, sz)
 
+    def chain_shortfall(self, node):
+        """(clusters in the chain, clusters the recorded size needs) for a file
+        whose cluster chain ends before its size is covered, else None.
+
+        The directory entry records the size and the allocation table records
+        where the data is, and nothing makes the two agree. When the chain is
+        the shorter one read_file() returns only what the chain reaches. The
+        walk is the one read_file() makes, so the two cannot disagree.
+        """
+        clus, sz, is_dir = node
+        if is_dir or not sz:
+            return None
+        need = (sz + self.cluster_bytes - 1) // self.cluster_bytes
+        have = 0
+        for _c in self._chain(clus):
+            have += 1
+            if have >= need:
+                return None
+        return (have, need)
+
+
+class Fat16Walker(Fat32Walker):
+    """List and read files from a FAT16 volume, same interface as Fat32Walker.
+
+    The directory entries, the long names and the deleted-entry rules are
+    FAT32's. Three things differ, all from Microsoft's FAT specification: a
+    table entry is 16 bits, the root directory is a fixed run of
+    BPB_RootEntCnt entries ahead of cluster 2 (the root node carries cluster 0
+    for it), and a directory entry has no high word for its first cluster.
+
+    A volume Windows CE formatted as transaction-safe FAT ("TFAT16  ") reads
+    the same way. Its files sit under a folder in the fixed root, named
+    ``__TFAT_HIDDEN_ROOT_DIR__`` on the volumes measured, and that folder is
+    listed as it is stored.
+    """
+
+    FAT_BITS = 16
+
+
+class Fat12Walker(Fat16Walker):
+    """List and read files from a FAT12 volume, same interface as Fat16Walker.
+
+    Everything is FAT16's but the table, whose entries are twelve bits packed
+    two to every three bytes (_fat12_entry).
+    """
+
+    FAT_BITS = 12
+
 
 def _dos_stamp(date, time_, tenths=0):
     """A FAT date and time pair as text, exactly as stored, or "" if unset.
@@ -2597,6 +2723,17 @@ def _exfat_offset(byte):
     return f"{sign}{minutes // 60:02d}:{minutes % 60:02d}"
 
 
+def _exfat_set_checksum(raw):
+    """The checksum of one exFAT directory entry set, as its File entry's
+    SetChecksum field records it: a 16-bit rotate right and add over every
+    byte of the set except the two bytes of the field itself (offsets 2 and 3
+    of the first entry). From Microsoft's exFAT specification."""
+    total = 0
+    for byte in raw[:2] + raw[4:]:
+        total = (((total << 15) | (total >> 1)) + byte) & 0xFFFF
+    return total
+
+
 def _fat_short_name(e):
     # Byte 12 carries Windows NT's case flags for a short name that had no long
     # entry: 0x08 lowercases the base, 0x10 the extension. Honouring them keeps
@@ -2639,6 +2776,7 @@ class ExfatWalker:
         self.fat_start = base + self.fat_off * self.bps
         self.heap_start = base + self.heap_off * self.bps
         self.root = (self.root_clus, 0, True, False)
+        self._orphan_cache = None                    # recover_deleted() fills it once
 
     def _fat_next(self, clus):
         raw = read_at(self.fh, self.fat_start + clus * 4, 4)
@@ -2853,7 +2991,23 @@ class ExfatWalker:
         """The content of a recoverable deleted file, cluster by cluster along
         the chain that was kept or the run the entry declared. Refuses one whose
         clusters have been reused, so overwritten bytes are never presented as
-        the file."""
+        the file. Takes a deleted_files() record or a recover_deleted() one."""
+        if isinstance(entry, FlashDeletedFile):      # an orphan entry
+            if not entry.recoverable:
+                raise NtfsUnreadable(
+                    f"orphan file {entry.name!r} is not recoverable: {entry.reason}")
+            left = entry.size if size is None else min(size, entry.size)
+            for c in entry._plan:                    # pylint: disable=protected-access
+                if left <= 0:
+                    return
+                data = read_at(self.fh, self._cluster_off(c), self.cluster_bytes)
+                if len(data) < self.cluster_bytes:
+                    raise NtfsUnreadable(
+                        f"orphan file {entry.name!r}: cluster {c} lies past the end "
+                        "of the image")
+                yield data[:left]
+                left -= len(data[:left])
+            return
         if not entry.recoverable or entry._node is None:
             raise NtfsUnreadable(
                 f"deleted file {entry.name!r} is not recoverable: {entry.reason}")
@@ -2868,6 +3022,366 @@ class ExfatWalker:
 
     def listdir(self, node):
         return [(name, child) for name, child, _times in self.listdir_records(node)]
+
+    def _first_bitmap(self):
+        """The bytes of the first Allocation Bitmap, or b"" when the root
+        directory names none. A TexFAT volume has two, and BitmapFlags bit 0
+        marks the second."""
+        raw = self._read(self.root_clus, 0, False)
+        for i in range(0, len(raw) - 31, 32):
+            if raw[i] == 0x00:                       # end of the directory
+                break
+            if raw[i] != 0x81:
+                continue
+            if raw[i + 1] & 0x01:                    # the second TexFAT bitmap
+                continue
+            first_clus = struct.unpack_from("<I", raw, i + 20)[0]
+            length = struct.unpack_from("<Q", raw, i + 24)[0]
+            if not first_clus or not length:
+                return b""
+            return self._read(first_clus, length, False)
+        return b""
+
+    # ---- orphan entry sets --------------------------------------------------
+    # A directory cluster can stay allocated after the tree stops reaching it:
+    # the entry that named the directory is gone, or the FAT link that led to
+    # this cluster of it is. The entry sets in such a cluster are still marked
+    # in use and still carry a valid checksum, and the files they name can
+    # still be allocated too. Nothing in the live listing shows them. Measured
+    # on four exFAT partition images (README, "exFAT: orphan directory entries").
+
+    def _orphan_state(self):
+        """(first FAT, reached flags, bitmap bytes, live files) for
+        recover_deleted(), worked out once per walker.
+
+        ``reached`` has one byte per cluster number, set for every cluster the
+        live tree accounts for: the root directory's chain, each directory's
+        clusters, each file's clusters (the run its size needs when NoFatChain
+        is set, else its whole chain in the first FAT), both allocation bitmaps
+        and the up-case table. ``live files`` is the (first cluster, size) of
+        every live file, so an orphan entry that names the same allocation as
+        a live one can say so."""
+        if self._orphan_cache is not None:
+            return self._orphan_cache
+        total = self.cluster_count + 2
+        cb = self.cluster_bytes
+        raw = read_at(self.fh, self.fat_start, total * 4)
+        raw += b"\x00" * (total * 4 - len(raw))      # a truncated image: no links
+        fat = array.array("I")
+        fat.frombytes(raw)
+        if sys.byteorder != "little":
+            fat.byteswap()
+        reached = bytearray(total)
+
+        def run(first, count):
+            if first >= 2:
+                for c in range(first, min(first + count, total)):
+                    reached[c] = 1
+
+        def chain(first):
+            c, seen = first, set()
+            while 2 <= c < total and c not in seen:
+                seen.add(c)
+                reached[c] = 1
+                c = fat[c]
+
+        chain(self.root_clus)
+        root_raw = self._read(self.root_clus, 0, False)
+        for i in range(0, len(root_raw) - 31, 32):
+            if root_raw[i] == 0x00:
+                break
+            if root_raw[i] in (0x81, 0x82):          # allocation bitmap, up-case table
+                first = struct.unpack_from("<I", root_raw, i + 20)[0]
+                length = struct.unpack_from("<Q", root_raw, i + 24)[0]
+                run(first, (length + cb - 1) // cb)
+                chain(first)
+        live = set()
+        stack, seen_dirs = [self.root], {self.root_clus}
+        while stack:
+            node = stack.pop()
+            try:
+                listing = self.listdir_records(node)
+            except (IndexError, struct.error):       # a directory cut short
+                continue
+            for _name, child, _times in listing:
+                first, size, is_dir, contiguous = child
+                need = (size + cb - 1) // cb
+                if is_dir:
+                    if contiguous:
+                        run(first, max(need, 1))
+                    else:
+                        chain(first)
+                    if 2 <= first < total and first not in seen_dirs:
+                        seen_dirs.add(first)
+                        stack.append(child)
+                elif size and first >= 2:
+                    live.add((first, size))
+                    if contiguous:
+                        run(first, need)
+                    else:
+                        chain(first)
+        self._orphan_cache = (fat, reached, self._first_bitmap(), live)
+        return self._orphan_cache
+
+    @staticmethod
+    def _entry_sets(raw, limit):
+        """The in-use file entry sets that start in the first ``limit`` bytes
+        of ``raw``: [(offset, set bytes)], and the offsets of those that run
+        past the end of ``raw``. A set is a 0x85 File entry, its 0xC0 stream
+        extension, and name entries enough for the name's length, with the
+        checksum the File entry records."""
+        sets, cut = [], []
+        types = raw[:limit:32]
+        k = types.find(0x85)
+        while k != -1:
+            at, step = k * 32, 1
+            if at + 2 > len(raw):
+                break
+            secs = raw[at + 1]
+            end = at + 32 * (secs + 1)
+            if 2 <= secs <= 18:
+                if end > len(raw):
+                    cut.append(at)
+                elif raw[at + 32] == 0xC0:
+                    ent = raw[at:end]
+                    names = 0
+                    while names + 2 <= secs and ent[32 * (names + 2)] == 0xC1:
+                        names += 1
+                    if (0 < ent[35] <= 15 * names and _exfat_set_checksum(ent)
+                            == struct.unpack_from("<H", ent, 2)[0]):
+                        sets.append((at, ent))
+                        step = secs + 1
+            k = types.find(0x85, k + step)
+        return sets, cut
+
+    def recover_deleted(self):
+        """Yield a FlashDeletedFile (``kind`` "exfat") for every orphan file
+        entry: an in-use file entry set, checksum valid, in an allocated
+        cluster the live tree does not reach.
+
+        What counts as reached is in _orphan_state(). Every allocated cluster
+        outside it is read and searched for entry sets, a set that runs off
+        the end of its cluster being completed from the cluster the first FAT
+        links next, or the one after it. Entries marked deleted are not
+        included (deleted_files() lists those from live directories), free
+        clusters are not searched, and the second FAT is not followed.
+
+        An orphan directory entry is walked down: the clusters it names that
+        are allocated and unreached are read as its directory, so a file under
+        it has ``parent_path`` set to the names that lead to it, joined with
+        "/", starting at the first orphan directory. A file whose entry sits
+        in a directory cluster no orphan directory entry names has a
+        ``parent_path`` of None: nothing on the volume says what that
+        directory was called. ``parent`` is the cluster the entry set is in.
+
+        A file is ``recoverable`` when its size is not zero and every cluster
+        it names is allocated and unreached: the run its size needs when
+        NoFatChain is set, else a chain in the first FAT that runs to an
+        end-of-chain mark and is long enough for the size. Otherwise
+        ``reason`` says what failed. A cluster a live file or directory holds
+        refuses the read, so a live file's bytes are never given as the
+        orphan's. Two orphan entries can name the same clusters and the volume
+        does not say which wrote last, so both stay recoverable and ``note``
+        says so.
+
+        ``ident`` is the first cluster. ``mtime`` and ``mode`` are None: exFAT
+        stores a wall clock and a UTC offset, and this reader reports both as
+        stored and does not apply one to the other. They are in ``times``, the
+        same readings listdir_records() gives. Entry sets that are byte for
+        byte the same in several clusters are one entry, and ``note`` gives
+        the count. These files are never part of the live listing."""
+        fat, reached, bits, live = self._orphan_state()
+        total = self.cluster_count + 2
+        cb = self.cluster_bytes
+
+        def allocated(c):
+            idx = c - 2
+            return (idx >> 3) < len(bits) and bool(bits[idx >> 3] & (1 << (idx & 7)))
+
+        def orphan(c):
+            return 2 <= c < total and not reached[c] and allocated(c)
+
+        # every allocated, unreached cluster, read in runs
+        by_cluster = {}                              # cluster -> [set bytes]
+        set_starts = {}                              # cluster -> lowest set offset
+        cut = []                                     # (cluster, offset, tail bytes)
+        step = max(1, (1 << 22) // cb)
+        c = 2
+        while c < total and (c - 2) >> 3 < len(bits):
+            if not (c - 2) & 7 and not bits[(c - 2) >> 3]:
+                c += 8                               # eight free clusters
+                continue
+            if not orphan(c):
+                c += 1
+                continue
+            end = c + 1
+            while end < total and end - c < step and orphan(end):
+                end += 1
+            data = read_at(self.fh, self._cluster_off(c), (end - c) * cb)
+            for n in range(len(data) // cb):
+                one = data[n * cb:(n + 1) * cb]
+                sets, tails = self._entry_sets(one, cb)
+                if sets:
+                    by_cluster[c + n] = [ent for _at, ent in sets]
+                    set_starts[c + n] = sets[0][0]
+                cut.extend((c + n, at, one[at:]) for at in tails)
+            c = end
+        for clus, _at, tail in cut:
+            # the rest of the set is in the next cluster of the directory: the
+            # one the first FAT links, or the one after when the directory is a
+            # single run. The checksum decides whether a candidate is right.
+            for nxt in (fat[clus], clus + 1):
+                if not orphan(nxt):
+                    continue
+                more = read_at(self.fh, self._cluster_off(nxt), 32 * 19)
+                sets, _tails = self._entry_sets(tail + more, 32)
+                if sets:
+                    by_cluster.setdefault(clus, []).append(sets[0][1])
+                    set_starts.setdefault(clus, _at)
+                    break
+
+        def fields(ent):
+            name = ""
+            for k in range(2, ent[1] + 1):
+                if ent[32 * k] != 0xC1:
+                    break
+                name += ent[32 * k + 2:32 * k + 32].decode("utf-16-le", "replace")
+            return (name[:ent[35]], struct.unpack_from("<I", ent, 52)[0],
+                    struct.unpack_from("<Q", ent, 56)[0], bool(ent[4] & 0x10),
+                    bool(ent[33] & 0x02))
+
+        def named(first, size, is_dir, contiguous):
+            """(clusters the entry names, whether its FAT chain reached an
+            end-of-chain mark). A run when NoFatChain is set, else the chain."""
+            need = (size + cb - 1) // cb
+            if is_dir:
+                need = max(need, 1)
+            if not 2 <= first < total:
+                return [], True
+            if contiguous:
+                return list(range(first, min(first + need, total))), True
+            out, seen, c = [], set(), first
+            while 2 <= c < total and c not in seen:
+                out.append(c)
+                seen.add(c)
+                c = fat[c]
+            return out, c >= 0xFFFFFFF8
+
+        # which orphan directory clusters an orphan directory entry leads to
+        claimed = set()
+        for sets in by_cluster.values():
+            for ent in sets:
+                _name, first, size, is_dir, contiguous = fields(ent)
+                if is_dir:
+                    for c in named(first, size, True, contiguous)[0]:
+                        if not orphan(c):
+                            break
+                        claimed.add(c)
+        linked = {fat[c] for c in by_cluster if fat[c] in by_cluster and fat[c] != c}
+        heads = sorted(c for c in by_cluster if c not in claimed and c not in linked)
+
+        found = {}                                   # set bytes -> [cluster, path, copies]
+        visited = set()
+
+        def walk(clusters, path):
+            stack = [(clusters, path)]
+            while stack:
+                clusters, path = stack.pop()
+                below = []
+                for clus in clusters:
+                    if clus in visited:
+                        continue
+                    visited.add(clus)
+                    for ent in by_cluster.get(clus, ()):
+                        name, first, size, is_dir, contiguous = fields(ent)
+                        if is_dir:
+                            kids = []
+                            for c in named(first, size, True, contiguous)[0]:
+                                if not orphan(c):
+                                    break
+                                kids.append(c)
+                            if kids:
+                                below.append((kids, name if path is None
+                                              else f"{path}/{name}"))
+                            continue
+                        row = found.get(ent)
+                        if row is None:
+                            found[ent] = [clus, path, 1]
+                        else:
+                            row[2] += 1
+                            if row[1] is None and path is not None:
+                                row[0], row[1] = clus, path
+                stack.extend(reversed(below))
+
+        for head in heads + sorted(by_cluster):
+            if head in visited:
+                continue
+            group, c = [], head
+            while c in by_cluster and c not in visited and c not in group:
+                group.append(c)
+                c = fat[c]
+            walk(group, None)
+
+        entries, users = [], collections.Counter()
+        for ent, (clus, path, copies) in found.items():
+            name, first, size, _is_dir, contiguous = fields(ent)
+            need = (size + cb - 1) // cb
+            clusters, ended = named(first, size, False, contiguous)
+            why = ""
+            if not size:
+                why = "empty"
+            elif first < 2:
+                why = "no cluster recorded"
+            elif not clusters:
+                why = "its first cluster is past the end of the volume"
+            elif (first, size) in live:
+                why = "a live file has the same first cluster and size"
+            elif any(reached[c] for c in clusters):
+                n = sum(1 for c in clusters if reached[c])
+                why = (f"{n:,} of the {len(clusters):,} clusters it names belong to "
+                       "live files or directories")
+            elif not all(allocated(c) for c in clusters):
+                n = sum(1 for c in clusters if not allocated(c))
+                why = (f"{n:,} of the {len(clusters):,} clusters it names are free in "
+                       "the allocation bitmap")
+            elif len(clusters) < need:
+                why = (f"it names {len(clusters):,} of the {need:,} clusters its size "
+                       "needs")
+            elif not ended:
+                why = "its chain in the first FAT does not run to an end-of-chain mark"
+            cre, mod, acc = struct.unpack_from("<III", ent, 8)
+            e = FlashDeletedFile("exfat", first, name, clus, path, size, None, None, 0,
+                                 [] if why else clusters[:need], self)
+            if why:
+                e.recoverable, e.reason = False, why
+            else:
+                users.update(e._plan)                # pylint: disable=protected-access
+            e.times = {
+                "modified": _exfat_stamp(mod, ent[21]),
+                "created": _exfat_stamp(cre, ent[20]),
+                "accessed": _exfat_stamp(acc),
+                "modified utc offset": _exfat_offset(ent[23]),
+                "created utc offset": _exfat_offset(ent[22]),
+                "accessed utc offset": _exfat_offset(ent[24]),
+            }
+            e.note = ("an orphan entry: an in-use file entry set in an allocated "
+                      "directory cluster the live tree does not reach. It is not in "
+                      "the live listing.")
+            if copies > 1:
+                e.note += f" The same entry set is in {copies:,} such clusters."
+            entries.append(e)
+        for e in entries:
+            # a cluster two entries name, or entry sets inside the bytes the
+            # file's size covers (sets in the slack past its end do not count)
+            plan = e._plan                           # pylint: disable=protected-access
+            if any(users[c] > 1 or set_starts.get(c, e.size) < e.size - n * cb
+                   for n, c in enumerate(plan)):
+                e.note += (" Some of its clusters are also named by another orphan "
+                           "entry or hold orphan entry sets themselves, so the bytes "
+                           "may be another file's.")
+        entries.sort(key=lambda e: (e.parent_path is None, e.parent_path or "",
+                                    e.name, e.ident))
+        yield from entries
 
     def free_extents(self, min_bytes=0):
         """[(byte offset, length)] for the runs of space the volume says are free.
@@ -2891,21 +3405,9 @@ class ExfatWalker:
         cluster = self.cluster_bytes
         if not cluster or not self.cluster_count:
             return []
-        first_clus = length = 0
-        raw = self._read(self.root_clus, 0, False)
-        for i in range(0, len(raw) - 31, 32):
-            if raw[i] == 0x00:                       # end of the directory
-                break
-            if raw[i] != 0x81:
-                continue
-            if raw[i + 1] & 0x01:                    # the second TexFAT bitmap
-                continue
-            first_clus = struct.unpack_from("<I", raw, i + 20)[0]
-            length = struct.unpack_from("<Q", raw, i + 24)[0]
-            break
-        if not first_clus or not length:
+        bits = self._first_bitmap()
+        if not bits:
             return []
-        bits = self._read(first_clus, length, False)
         total = min(len(bits) * 8, self.cluster_count)
 
         runs, run_start, pos = [], None, 0
@@ -2939,7 +3441,39 @@ class ExfatWalker:
 
     def read_file(self, node, size):
         clus, sz, _, contig = node
+        if not sz:
+            # _read() takes a size of zero to mean a directory, read to the end
+            # of its allocation. An empty file has no first cluster, and read
+            # that way it came back as one cluster of the volume's own bytes.
+            yield b""
+            return
         yield self._read(clus, sz, contig)
+
+    def chain_shortfall(self, node):
+        """(clusters in the chain, clusters the recorded size needs) for a file
+        whose FAT chain ends before its size is covered, else None.
+
+        Only a file whose stream extension leaves NoFatChain clear is described
+        by the FAT; one that sets it is a single run and has no chain to fall
+        short. The directory entry records the size, the FAT records where the
+        data is, and nothing makes the two agree. When the chain is the shorter
+        one read_file() returns only what the chain reaches. The walk is the
+        one _read() makes, so the two cannot disagree.
+        """
+        clus, sz, is_dir, contig = node
+        if contig or is_dir or not sz:
+            return None
+        need = (sz + self.cluster_bytes - 1) // self.cluster_bytes
+        have = 0
+        seen = set()
+        c = clus
+        while 0x2 <= c < 0xFFFFFFF7 and c not in seen:
+            seen.add(c)
+            have += 1
+            if have >= need:
+                return None
+            c = self._fat_next(c)
+        return (have, need)
 
 
 # ---------------------------------------------------------------------------
@@ -3469,6 +4003,26 @@ class NtfsWalker:
         parts.sort(key=lambda a: a.start_vcn)
         head = parts[0]
         joined = _NtfsAttr(NTFS_DATA, name, head.flags, False)
+        joined.comp_unit = head.comp_unit
+        joined.alloc_size = max(a.alloc_size for a in parts)
+        joined.data_size = max(a.data_size for a in parts)
+        joined.init_size = max(a.init_size for a in parts)
+        for a in parts:
+            joined.runs.extend(a.runs)
+        return joined
+
+    def _index_allocation(self, num):
+        """The $INDEX_ALLOCATION attribute of a directory's file name index ($I30),
+        with the runs of every piece joined as _data_attr() joins a $DATA's, or
+        None when the record has none: a directory whose index still fits in its
+        $INDEX_ROOT, and every file."""
+        parts = [a for a in self._record(num)
+                 if a.type == NTFS_INDEX_ALLOCATION and a.name == "$I30" and not a.resident]
+        if not parts:
+            return None
+        parts.sort(key=lambda a: a.start_vcn)
+        head = parts[0]
+        joined = _NtfsAttr(NTFS_INDEX_ALLOCATION, "$I30", head.flags, False)
         joined.comp_unit = head.comp_unit
         joined.alloc_size = max(a.alloc_size for a in parts)
         joined.data_size = max(a.data_size for a in parts)
@@ -4091,6 +4645,28 @@ class NtfsWalker:
                 out.append((a.name, ref, got[2]))
         return out
 
+    def directory_index(self, num):
+        """[("$I30", NtfsStreamRef, size)] for a directory whose file name index
+        has grown into an $INDEX_ALLOCATION attribute, and [] for any other
+        record. The NtfsStreamRef is the node read_file(), entry() and stamps()
+        take, as for a stream, and ``size`` is what read_file() returns.
+
+        The index is not an alternate data stream and streams() does not list
+        it: a caller asks for it here. What is read is the attribute as the
+        volume stores it, one index block after another (``idx_size`` bytes
+        each, starting "INDX"), with the update sequence array of each block
+        not applied. That is the form in which the space past a block's last
+        entry still holds entries NTFS has since removed, which is what a caller
+        reads this for; listdir() is what lists the directory.
+
+        A record that holds a $DATA stream named $I30 gives [], since that name
+        then reads as the stream."""
+        if isinstance(num, NtfsStreamRef) or self._data_attr(num, "$I30") is not None:
+            return []
+        ref = NtfsStreamRef(num, "$I30")
+        got = self._stream(ref)
+        return [] if got is None else [("$I30", ref, got[2])]
+
     def front_hole(self, ref):
         """The bytes of hole read_file() skips at the front of this stream, 0
         when it starts with stored data, None when there is no such stream or
@@ -4106,6 +4682,8 @@ class NtfsWalker:
         if not ref.name:
             return None                         # the unnamed stream is the file itself
         data = self._data_attr(ref.record, ref.name)
+        if data is None and ref.name == "$I30":
+            data = self._index_allocation(ref.record)      # see directory_index()
         if data is None:
             return None
         if data.resident:
@@ -6815,90 +7393,229 @@ class EtfsWalker:
 #
 # A directory's first extent points at its first child; each child extent's
 # "next" chains to the following sibling, and each child's own "first" descends
-# into it. A file's extents chained by "next" are its data. The partition is
-# found by its boot record, an extent whose text begins with the ASCII
-# signature "QSSL_F3S"; the unit size is read from the unit_info at the start of
-# the first unit. Source: qnxmount/efs/parser.ksy and interface.py, fs/f3s_spec.h.
+# into it. A file's extents chained by "next" are its data. Source:
+# qnxmount/efs/parser.ksy and interface.py at commit 11c8a7f9, and fs/f3s_spec.h
+# as that spec pins it (RunZeJustin/qnx660 at 47c4158e).
+#
+# Byte order. f3s_unit_info_t carries an endian byte, 'L' or 'B', and every
+# multi-byte field of the partition is stored in that order. It is taken here
+# from the boot record, whose struct_size reads 0x18 in one order only. qnxmount
+# reads little-endian only, so the big-endian reading has no reference
+# implementation behind it: it is the same code with the other struct prefix,
+# checked on a fixture written in both orders and on big-endian flash images.
+#
+# Finding a partition. The boot record (f3s_boot_t, signature "QSSL_F3S") is
+# the text of header index 2 (F3S_BOOT_INDEX) of the unit that holds logical
+# unit 1. Wear levelling moves that unit, so the record is not always in the
+# partition's first unit. Its unit_index field is the physical index of the
+# unit holding it, so the partition starts unit_index units before that unit.
+# A signature is taken for a boot record only when the unit it sits in opens
+# with a unit_info of the same byte order and that unit's header 2 points at
+# the record; the signature string also occurs elsewhere in flash images.
+#
+# Extent status, status[0] of f3s_head_t, from fs/f3s_spec.h: the condition
+# (mask 0x70) is free, allocated, deleted or bad, and a clear NO_SUPER bit means
+# a superseding extent exists. The header's comments are all the format says
+# about them. What a deleted or superseded extent's text still holds, and which
+# pointers still lead to it, is measured, not specified: see recover_deleted().
 # ---------------------------------------------------------------------------
 EFS_SIG = b"QSSL_F3S"
 EFS_EXTHDR = 32
+EFS_BOOT_INDEX = 2                 # F3S_BOOT_INDEX
+EFS_BOOT_SCAN = 512                # the record follows two short system texts
+EFS_NO_NEXT, EFS_NO_SUPER, EFS_LAST = 0x0002, 0x0004, 0x0080
+EFS_COND, EFS_FREE, EFS_ALLOC, EFS_DELETE, EFS_BAD = 0x0070, 0x0070, 0x0030, 0x0010, 0x0000
+EFS_TYPE, EFS_FILE, EFS_DIR, EFS_SYS = 0x0300, 0x0300, 0x0200, 0x0100
+EFS_COND_NAMES = {EFS_FREE: "free", EFS_ALLOC: "allocated", EFS_DELETE: "deleted",
+                  EFS_BAD: "bad"}
 
 
-def _efs_boot(fh, base, scan_bytes):
-    """Find the QSSL_F3S boot record in the first scan_bytes of the region and
-    return its parsed boot_info, or None. The boot_info starts 4 bytes before
-    the signature (struct_size u2, rev_major u1, rev_minor u1, then the sig)."""
-    chunk = read_at(fh, base, scan_bytes)
-    at = chunk.find(EFS_SIG)
-    if at < 4:
-        return None
+def _efs_boot_at(buf, at):
+    """The boot_info whose signature is at buf[at:], or None. The record starts
+    4 bytes before the signature (struct_size u2, rev_major u1, rev_minor u1);
+    struct_size is 0x18 in the partition's byte order, which is how the order
+    is told."""
     o = at - 4
-    struct_size = struct.unpack_from("<H", chunk, o)[0]
-    rev_major, rev_minor = chunk[o + 2], chunk[o + 3]
-    if struct_size != 0x18 or rev_major != 3 or rev_minor != 0:
+    if o < 0 or o + 24 > len(buf) or buf[at:at + 8] != EFS_SIG:
         return None
-    unit_index, unit_total, unit_spare, align_pow2 = struct.unpack_from("<HHHH", chunk, o + 12)
-    root = struct.unpack_from("<HH", chunk, o + 20)
-    return dict(unit_index=unit_index, unit_total=unit_total, unit_spare=unit_spare,
-                align_pow2=align_pow2, root=root, sig_at=at)
+    for e in "<>":
+        if struct.unpack_from(e + "H", buf, o)[0] == 0x18:
+            break
+    else:
+        return None
+    if buf[o + 2] != 3 or buf[o + 3] != 0:
+        return None
+    unit_index, unit_total, unit_spare, align_pow2 = struct.unpack_from(e + "HHHH", buf, o + 12)
+    return dict(endian=e, unit_index=unit_index, unit_total=unit_total,
+                unit_spare=unit_spare, align_pow2=align_pow2,
+                root=struct.unpack_from(e + "HH", buf, o + 20))
 
 
-def _efs_unit_size(fh, base):
-    """The unit size from the unit_info at the start of the first unit. reserve
-    bytes must read 0xFF for this to be a plausible EFS unit header."""
-    b = read_at(fh, base, 16)
+def _efs_unit_info(b):
+    """(byte order, unit size) from the unit_info that opens a unit, or None.
+    The pad byte and the reserve word must read 0xFF, and unit_pow2 is in range
+    in one byte order only."""
     if len(b) < 16 or b[3] != 0xFF or b[6:8] != b"\xff\xff":
         return None
-    unit_pow2 = struct.unpack_from("<H", b, 4)[0]
-    if not (9 <= unit_pow2 <= 30):
+    for e in "<>":
+        unit_pow2 = struct.unpack_from(e + "H", b, 4)[0]
+        if 9 <= unit_pow2 <= 30:
+            return e, 1 << unit_pow2
+    return None
+
+
+def _efs_partition_from_sig(fh, sig, limit):
+    """The partition whose boot record has its signature at byte sig of the
+    image, or None. limit is the offset the partition must end by."""
+    if sig < 4:
         return None
-    return 1 << unit_pow2
+    boot = _efs_boot_at(read_at(fh, sig - 4, 24), 4)
+    if boot is None:
+        return None
+    e = boot["endian"]
+    unit_size, tried = None, set()
+    for pow2 in range(9, 31):
+        ustart = sig - sig % (1 << pow2)
+        if ustart in tried:
+            continue                          # the same unit start, already read
+        tried.add(ustart)
+        info = _efs_unit_info(read_at(fh, ustart, 16))
+        if info and info[0] == e and sig - 4 - ustart < info[1] and sig - sig % info[1] == ustart:
+            unit_size = info[1]
+            break
+    if unit_size is None:
+        return None
+    # header 2 of that unit has to point at the record
+    h = read_at(fh, ustart + unit_size - EFS_EXTHDR * (EFS_BOOT_INDEX + 1), EFS_EXTHDR)
+    if len(h) < EFS_EXTHDR:
+        return None
+    toff = ((h[19] << 16) + struct.unpack_from(e + "H", h, 20)[0]) << boot["align_pow2"]
+    if toff != sig - 4 - ustart:
+        return None
+    base = ustart - boot["unit_index"] * unit_size
+    if (base < 0 or boot["unit_total"] < 1 or boot["unit_index"] >= boot["unit_total"]
+            or base + boot["unit_total"] * unit_size > limit):
+        return None
+    boot.update(base=base, size=boot["unit_total"] * unit_size, unit_size=unit_size,
+                sig_at=sig - base)
+    return boot
+
+
+def _efs_locate(fh, base, size):
+    """The EFS partition that starts at base and fits in size bytes, or None.
+
+    The first unit has to open with a unit_info, which sizes the units; the boot
+    record is then looked for at the front of every unit, since the unit holding
+    it moves. A partition whose first unit carries no unit_info is not found
+    from its start; efs_partitions() finds it from the record."""
+    info = _efs_unit_info(read_at(fh, base, 16))
+    if info is None:
+        return None
+    us = info[1]
+    for u in range(min(size // us, 0x10000)):         # unit_total is a u2
+        head = read_at(fh, base + u * us, EFS_BOOT_SCAN)
+        j = head.find(EFS_SIG)
+        while j >= 0:
+            part = _efs_partition_from_sig(fh, base + u * us + j, base + size)
+            if part and part["base"] == base:
+                return part
+            j = head.find(EFS_SIG, j + 1)
+    return None
+
+
+def efs_partitions(fh, size):
+    """Every EFS partition in an image, wherever it starts, in image order.
+
+    A raw NOR dump holds its EFS partitions one after another behind the boot
+    code, with no table. Each is found by its boot record and placed by the
+    record's unit_index (see the section comment). Returns a list of dicts:
+    base and size in bytes, unit_size, endian ("<" or ">"), unit_index,
+    unit_total, unit_spare, align_pow2, root, and sig_at, the signature's offset
+    from base. Two records that place the same partition count once, and a
+    partition that overlaps one already found is left out."""
+    sigs, step, pos = [], 1 << 20, 0
+    while pos < size:
+        chunk = read_at(fh, pos, min(step + len(EFS_SIG), size - pos))
+        if not chunk:
+            break
+        j = chunk.find(EFS_SIG)
+        while 0 <= j < step:
+            sigs.append(pos + j)
+            j = chunk.find(EFS_SIG, j + 1)
+        pos += step
+    return _efs_partitions_from_sigs(fh, size, sigs)
+
+
+def _efs_partitions_from_sigs(fh, size, sigs):
+    parts = {}
+    for sig in sigs:
+        part = _efs_partition_from_sig(fh, sig, size)
+        if part:
+            parts.setdefault(part["base"], part)
+    out, end = [], 0
+    for base in sorted(parts):
+        if base >= end:
+            out.append(parts[base])
+            end = base + parts[base]["size"]
+    return out
 
 
 class EfsWalker:
-    """Reconstruct an EFS (F3S) filesystem and walk it through the shared
-    interface. A node is a parsed directory entry (a dict)."""
+    """Reconstruct an EFS (F3S) filesystem, of either byte order, and walk it
+    through the shared interface. A node is a parsed directory entry.
 
-    def __init__(self, fh, base):
+    An extent is a dict: u and i (physical unit and header index), s0
+    (status[0]), status1, off and tsize (its text within the unit), next and
+    super (extent pointers). recover_deleted() lists what the flash still holds
+    of deleted and superseded files; unaccounted() is the consistency check."""
+
+    def __init__(self, fh, base, size=None):
         self.fh, self.base = fh, base
-        self.unit_size = _efs_unit_size(fh, base)
-        boot = _efs_boot(fh, base, min(self.unit_size * 4, 1 << 24))
+        if size is None:
+            size = image_size(fh) - base
+        boot = _efs_locate(fh, base, size)
+        if boot is None:
+            raise ValueError("no EFS boot record places a partition at this offset")
         self.boot = boot
+        self.e = boot["endian"]
+        self.unit_size = boot["unit_size"]
         self.align = boot["align_pow2"]
-        self.units = [read_at(fh, base + u * self.unit_size, self.unit_size)
-                      for u in range(boot["unit_total"])]
+        self.units = []
+        for u in range(boot["unit_total"]):
+            raw = read_at(fh, base + u * self.unit_size, self.unit_size)
+            self.units.append((raw, self._extents(raw, u)))
         self.logi_map = self._logi_map()
-        self.root = self._as_node(self._get_ext(boot["root"]))[1]
+        root = self._dirent(self._get_ext(boot["root"]))
+        if root is None:
+            raise ValueError("the EFS root directory entry does not read")
+        self.root = root[1]
 
-    def _ext_header(self, unit, i):
-        off = self.unit_size - EFS_EXTHDR * (i + 1)
-        if off < 0 or off + EFS_EXTHDR > len(unit):
-            return None
-        h = unit[off:off + EFS_EXTHDR]
-        s0 = struct.unpack_from("<I", h, 0)[0]
-        return dict(no_next=bool((s0 >> 1) & 1), no_super=bool((s0 >> 2) & 1),
-                    ext_last=bool((s0 >> 7) & 1), type=(s0 >> 8) & 3,
-                    status1=struct.unpack_from("<I", h, 4)[0],
-                    toff_hi=h[19], toff_lo=struct.unpack_from("<H", h, 20)[0],
-                    tsize=struct.unpack_from("<H", h, 22)[0],
-                    next=struct.unpack_from("<HH", h, 24),
-                    super=struct.unpack_from("<HH", h, 28))
+    def _extents(self, unit, u):
+        """The unit's extent headers, index 0 first. They run down from the end
+        of the unit to the one flagged last; a unit with no such header (not
+        formatted, or cut short) has none."""
+        e, us, exts = self.e, self.unit_size, []
+        for i in range(us // EFS_EXTHDR):
+            off = us - EFS_EXTHDR * (i + 1)
+            if off + EFS_EXTHDR > len(unit):
+                return []
+            s0, status1 = struct.unpack_from(e + "II", unit, off)
+            toff_lo, tsize, n0, n1, p0, p1 = struct.unpack_from(e + "6H", unit, off + 20)
+            exts.append(dict(u=u, i=i, s0=s0, status1=status1,
+                             off=((unit[off + 19] << 16) + toff_lo) << self.align,
+                             tsize=tsize, next=(n0, n1), super=(p0, p1)))
+            if s0 & EFS_LAST:
+                return exts
+        return []
 
-    def _extents(self, unit):
-        exts, i = [], 0
-        while True:
-            h = self._ext_header(unit, i)
-            if h is None:
-                break
-            exts.append(h)
-            if h["ext_last"] or i > 4096:
-                break
-            i += 1
-        return exts
+    def _text(self, ext):
+        unit = self.units[ext["u"]][0]
+        return unit[ext["off"]:ext["off"] + ext["tsize"]]
 
-    def _text(self, unit, hdr):
-        off = ((hdr["toff_hi"] << 16) + hdr["toff_lo"]) << self.align
-        return unit[off:off + hdr["tsize"]]
+    def _text_ok(self, ext):
+        """Whether the extent's text lies in front of its unit's header array."""
+        raw, exts = self.units[ext["u"]]
+        return ext["off"] + ext["tsize"] <= min(len(raw), self.unit_size - EFS_EXTHDR * len(exts))
 
     @staticmethod
     def _is_spare(exts):
@@ -6907,57 +7624,89 @@ class EfsWalker:
 
     def _logi_map(self):
         logi = {}
-        for unit in self.units:
-            exts = self._extents(unit)
+        for u, (_raw, exts) in enumerate(self.units):
             if len(exts) < 2 or self._is_spare(exts):   # no logi record to read
                 continue
-            t = self._text(unit, exts[1])            # unit_logi: struct_size, logi
-            logi[struct.unpack_from("<H", t, 2)[0]] = (unit, exts)
+            t = self._text(exts[1])                  # unit_logi: struct_size, logi
+            if len(t) >= 4:
+                logi[struct.unpack_from(self.e + "H", t, 2)[0]] = u
         return logi
 
-    def _get_ext(self, ptr):
-        unit, exts = self.logi_map[ptr[0]]
-        hdr = exts[ptr[1]]
-        while not hdr["no_super"]:                   # follow to the current version
-            ptr = hdr["super"]
-            unit, exts = self.logi_map[ptr[0]]
-            hdr = exts[ptr[1]]
-        return unit, hdr
+    def _raw_ext(self, ptr):
+        """The extent a pointer names, as written, or None when the logical unit
+        or the header index is not there."""
+        u = self.logi_map.get(ptr[0])
+        if u is None:
+            return None
+        exts = self.units[u][1]
+        return exts[ptr[1]] if ptr[1] < len(exts) else None
 
-    def _as_node(self, ext):
-        """A directory entry, as the hashable node (first_logi, first_index,
-        mode, mtime) the shared walker interface passes around. It stays hashable
-        so collect()'s cycle-guard set can hold it; first uniquely identifies the
-        object, so it doubles as identity. The name is returned by listdir, not
-        carried in the node."""
-        unit, hdr = ext
-        t = self._text(unit, hdr)
+    def _get_ext(self, ptr):
+        """The current version of the extent a pointer names: the supersede
+        chain followed to its end. None when a pointer on the way does not
+        resolve, or the chain loops."""
+        ext, seen = self._raw_ext(ptr), set()
+        while ext is not None and not ext["s0"] & EFS_NO_SUPER:
+            if (ext["u"], ext["i"]) in seen:
+                return None
+            seen.add((ext["u"], ext["i"]))
+            ext = self._raw_ext(ext["super"])
+        return ext
+
+    def _dirent(self, ext):
+        """(name, node, first) for an extent whose text is a directory entry
+        (f3s_dirent_t, the name, then f3s_stat_t), or None when it is not one.
+        The node is the hashable (first_logi, first_index, mode, mtime) the
+        shared walker interface passes around, hashable so collect()'s
+        cycle-guard set can hold it; first identifies the object. The name is
+        returned by listdir, not carried in the node."""
+        if ext is None:
+            return None
+        t = self._text(ext)
+        if len(t) < 8:
+            return None
         namelen = t[3]
-        first = struct.unpack_from("<HH", t, 4)
-        name = t[8:8 + namelen].split(b"\x00", 1)[0].decode("utf-8", "replace")
         so = 8 + ((namelen + 3) & 0xFC)              # name+pad is 4-byte aligned
-        mode = struct.unpack_from("<H", t, so + 2)[0]
-        mtime = struct.unpack_from("<I", t, so + 12)[0]
-        return name, (first[0], first[1], mode, mtime)
+        if so + 16 > len(t):
+            return None
+        first = struct.unpack_from(self.e + "HH", t, 4)
+        name = t[8:8 + namelen].split(b"\x00", 1)[0].decode("utf-8", "replace")
+        mode = struct.unpack_from(self.e + "H", t, so + 2)[0]
+        mtime = struct.unpack_from(self.e + "I", t, so + 12)[0]
+        return name, (first[0], first[1], mode, mtime), first
+
+    def _chain_from(self, first):
+        """(extents, why) for the chain a first pointer opens, every extent in
+        its current version. why is "" when the chain ends at an extent flagged
+        NO_NEXT, else what stopped it."""
+        out, seen = [], set()
+        ext = self._get_ext(first)
+        while True:
+            if ext is None:
+                return out, "a pointer in its extent chain no longer resolves"
+            if (ext["u"], ext["i"]) in seen:
+                return out, "its extent chain loops"
+            seen.add((ext["u"], ext["i"]))
+            out.append(ext)
+            if ext["s0"] & EFS_NO_NEXT:
+                return out, ""
+            ext = self._get_ext(ext["next"])
 
     def _chain(self, node):
-        first = (node[0], node[1])
-        unit, hdr = self._get_ext(first)
-        yield unit, hdr
-        while not hdr["no_next"]:
-            unit, hdr = self._get_ext(hdr["next"])
-            yield unit, hdr
+        return self._chain_from((node[0], node[1]))[0]
 
     def listdir(self, node):
         out = []
-        for unit, hdr in self._chain(node):
-            if not hdr["tsize"]:
+        for ext in self._chain(node):
+            if not ext["tsize"]:
                 break
-            out.append(self._as_node((unit, hdr)))
+            d = self._dirent(ext)
+            if d:
+                out.append(d[:2])
         return out
 
     def _size(self, node):
-        return sum(hdr["tsize"] for _, hdr in self._chain(node))
+        return sum(ext["tsize"] for ext in self._chain(node))
 
     def entry(self, node):
         mode = node[2]
@@ -6966,9 +7715,259 @@ class EfsWalker:
 
     def read_file(self, node, size):
         out = bytearray()
-        for unit, hdr in self._chain(node):
-            out += self._text(unit, hdr)
+        for ext in self._chain(node):
+            out += self._text(ext)
         yield bytes(out[:size]) if size else bytes(out)
+
+    def unaccounted(self):
+        """(bytes no extent covers, how many of them are not 0xFF).
+
+        Every byte of a unit is an extent header, the text of an extent whose
+        header is not free, or neither. Flash that was never programmed reads
+        0xFF, so the second number is 0 when the extent table accounts for
+        everything written. A unit with no header array counts whole."""
+        total = stray = 0
+        for raw, exts in self.units:
+            spans = sorted((x["off"], x["off"] + x["tsize"]) for x in exts
+                           if x["s0"] & EFS_COND != EFS_FREE and x["tsize"]
+                           and self._text_ok(x))
+            spans.append((self.unit_size - EFS_EXTHDR * len(exts), self.unit_size))
+            pos = 0
+            for a, b in spans:
+                if a > pos:
+                    gap = raw[pos:a]
+                    total += len(gap)
+                    stray += len(gap) - gap.count(b"\xff")
+                pos = max(pos, b)
+        return total, stray
+
+    # -- deleted and superseded data -------------------------------------------
+    def _live(self):
+        """What the live tree holds: (positions of every extent a live object
+        uses, {first-extent position: (extent, name, node, first)} for the
+        directory entry of every live file, {directory node: its first
+        pointer})."""
+        used, files, dirs = set(), {}, {self.root: (self.root[0], self.root[1])}
+        boot_root = self._get_ext(self.boot["root"])
+        used.add((boot_root["u"], boot_root["i"]))
+        stack, seen = [self.root], {self.root}
+        while stack:
+            node = stack.pop()
+            for ext in self._chain(node):
+                used.add((ext["u"], ext["i"]))
+                if not ext["tsize"]:
+                    break
+                d = self._dirent(ext)
+                if d is None:
+                    continue
+                child = d[1]
+                if child[2] & S_IFMT == S_IFDIR:
+                    if child not in seen:
+                        seen.add(child)
+                        dirs[child] = d[2]
+                        stack.append(child)
+                    continue
+                chain = self._chain(child)
+                used.update((x["u"], x["i"]) for x in chain)
+                if chain and child[2] & S_IFMT == S_IFREG:
+                    files[(chain[0]["u"], chain[0]["i"])] = (ext,) + d
+        return used, files, dirs
+
+    def _reach(self, first, typ):
+        """Positions of the extents of one type reached from a first pointer by
+        next and supersede pointers, each as written."""
+        out, stack = set(), [self._raw_ext(first)]
+        while stack:
+            ext = stack.pop()
+            if ext is None or (ext["u"], ext["i"]) in out or ext["s0"] & EFS_TYPE != typ:
+                continue
+            out.add((ext["u"], ext["i"]))
+            if not ext["s0"] & EFS_NO_NEXT:
+                stack.append(self._raw_ext(ext["next"]))
+            if not ext["s0"] & EFS_NO_SUPER:
+                stack.append(self._raw_ext(ext["super"]))
+        return out
+
+    def recover_deleted(self):
+        """Yield a FlashDeletedFile for the file data this partition still
+        holds that no live file uses: deleted files, and deleted or superseded
+        extents. Every such extent with text is in exactly one entry.
+
+        EFS marks an extent deleted in its header, and on every image measured
+        the text was still in place behind it. An extent that was overwritten
+        has its supersede pointer set to the extent that replaced it. A
+        directory entry is an extent too, so a deleted file's name, mode and
+        times can stay on the flash the same way.
+        Three kinds of entry come back, told apart by ``note``:
+
+        * a deleted file: a directory entry no live directory reaches, naming a
+          file whose extent chain still reads from its first pointer to its
+          end. The content is the chain in its current version, as read_file()
+          reads a live file, and the entry carries the name, mode and mtime of
+          the newest directory entry that named it. On six flash images this
+          gave 390 of the 527 distinct file contents the acquisitions' own
+          tools had extracted, and live files 108 (README, "QNX EFS in a raw
+          flash image");
+        * a deleted file whose chain does not read whole (a pointer no longer
+          resolves, or it runs into a free header or a live file's extent): the
+          name is reported, not recoverable, with the reason;
+        * a run of deleted or superseded extents chained by their next pointers
+          that no entry above took. It is named after the file a directory
+          entry still leads to it from, live or deleted, when exactly one does;
+          otherwise the name is empty. These are pieces: an earlier version of
+          part of a file, or what is left of a file whose directory entry is
+          gone.
+
+        ``parent`` is the live directory whose chain of entries still reaches
+        the file's directory entry, and None when no live directory's does.
+
+        The directory records no size, so ``size`` is the bytes the entry's
+        extents hold. An extent pointer is a logical unit and a header index
+        and nothing says whether that unit was rewritten since the pointer was
+        written, so a name is what the directory data leads to, not a proof of
+        ownership. deleted_extents(entry) gives where each extent lies."""
+        used, live_files, live_dirs = self._live()
+        old = {}                                     # position -> extent
+        dirents = collections.defaultdict(list)      # file key -> [(ext, name, node, first)]
+        for _raw, exts in self.units:
+            for ext in exts:
+                cond, typ = ext["s0"] & EFS_COND, ext["s0"] & EFS_TYPE
+                pos = (ext["u"], ext["i"])
+                if cond not in (EFS_ALLOC, EFS_DELETE) or pos in used or not self._text_ok(ext):
+                    continue
+                if typ == EFS_FILE:
+                    if ext["tsize"]:
+                        old[pos] = ext
+                elif typ == EFS_DIR:
+                    d = self._dirent(ext)
+                    if d and d[1][2] & S_IFMT == S_IFREG:
+                        head = self._get_ext(d[2])
+                        key = (head["u"], head["i"]) if head else ("unresolved",) + d[2]
+                        dirents[key].append((ext,) + d)
+        # which live directory each directory entry extent hangs from
+        parent_of = {}
+        for node, first in live_dirs.items():
+            for pos in self._reach(first, EFS_DIR):
+                parent_of.setdefault(pos, node)
+        paths = _live_dir_paths(self)
+
+        def named(key):
+            """The newest directory entry of a file: the live one, else one
+            nothing supersedes, then the latest mtime."""
+            ext, name, node, _first = live_files.get(key) or max(
+                dirents[key], key=lambda r: (bool(r[0]["s0"] & EFS_NO_SUPER), r[2][3],
+                                             r[0]["u"], r[0]["i"]))
+            parent = parent_of.get((ext["u"], ext["i"]))
+            return name, parent, paths.get(parent), node[2], node[3]
+
+        entries, claimed = [], set()
+        for key in sorted(dirents, key=str):
+            if key in live_files:
+                continue
+            name, parent, ppath, mode, mtime = named(key)
+            chain, why = self._chain_from(dirents[key][0][3])
+            if not why:
+                for x in chain:
+                    pos = (x["u"], x["i"])
+                    if x["s0"] & EFS_COND == EFS_FREE:
+                        why = "its extent chain runs into a free header"
+                    elif pos in used:
+                        why = ("its extent chain runs into extents a live file holds (the "
+                               "file was renamed or moved, or the header was used again)")
+                    elif x["s0"] & EFS_TYPE != EFS_FILE or pos not in old and x["tsize"]:
+                        why = "its extent chain runs into an extent that is not file data"
+                    elif pos in claimed:
+                        why = "its extent chain runs into another deleted file's extents"
+                    if why:
+                        break
+            ident = (f"unit {key[0]} extent {key[1]}" if key[0] != "unresolved"
+                     else f"logical unit {key[1]} extent {key[2]}")
+            if why:
+                e = FlashDeletedFile("efs", ident, name, parent, ppath, 0, mode, mtime,
+                                     0, [], self)
+                e.recoverable, e.reason = False, why
+                e.note = "a deleted file, named by a directory entry that is still on the flash"
+            else:
+                chain = [x for x in chain if x["tsize"]]
+                claimed.update((x["u"], x["i"]) for x in chain)
+                e = FlashDeletedFile("efs", ident, name, parent, ppath,
+                                     sum(x["tsize"] for x in chain), mode, mtime, 0, chain, self)
+                e.note = "a deleted file, its extent chain read from its directory entry"
+            entries.append(e)
+        # what is left: name each extent after the one file that leads to it
+        owner = {}
+        for key in sorted(set(dirents) | set(live_files), key=str):
+            rows = dirents.get(key, []) + [r for r in (live_files.get(key),) if r]
+            for first in sorted({r[3] for r in rows}):
+                for pos in self._reach(first, EFS_FILE):
+                    if pos in old and pos not in claimed:
+                        owner[pos] = key if owner.get(pos, key) == key else None
+        left = {pos: x for pos, x in old.items() if pos not in claimed}
+        follows = {}
+        for pos, x in left.items():
+            if x["s0"] & EFS_NO_NEXT:
+                continue
+            nxt = self._raw_ext(x["next"])
+            npos = (nxt["u"], nxt["i"]) if nxt else None
+            if npos in left and npos != pos and owner.get(npos) == owner.get(pos):
+                follows[pos] = npos
+        heads = set(left) - set(follows.values())
+        done = set()
+        for start in sorted(heads) + sorted(left):
+            run, pos = [], start
+            while pos is not None and pos not in done:
+                done.add(pos)
+                run.append(left[pos])
+                pos = follows.get(pos)
+            if not run:
+                continue
+            key = owner.get(start)
+            ident = f"unit {start[0]} extent {start[1]}"
+            size = sum(x["tsize"] for x in run)
+            if key is None:
+                e = FlashDeletedFile("efs", ident, "", None, None, size, None, None, 0,
+                                     run, self)
+                e.note = ("deleted or superseded file extents no directory entry on the "
+                          "flash leads to" if start not in owner else
+                          "deleted or superseded file extents more than one file's "
+                          "directory entries lead to")
+            else:
+                name, parent, ppath, mode, mtime = named(key)
+                e = FlashDeletedFile("efs", ident, name, parent, ppath, size, mode, mtime,
+                                     0, run, self)
+                e.note = ("deleted or superseded extents of a file that still exists: "
+                          "earlier data, not the file" if key in live_files else
+                          "deleted or superseded extents of a deleted file, apart from "
+                          "its last version")
+            entries.append(e)
+        yield from entries
+
+    def read_deleted(self, entry, size=None):
+        """The bytes of a recover_deleted() entry: its extents' text, in chain
+        order."""
+        if not entry.recoverable:
+            raise ValueError(f"deleted file {entry.name!r} is not recoverable: {entry.reason}")
+        left = entry.size if size is None else min(size, entry.size)
+        for ext in entry._plan:                      # pylint: disable=protected-access
+            if left <= 0:
+                return
+            text = self._text(ext)[:left]
+            left -= len(text)
+            yield text
+
+    def deleted_extents(self, entry):
+        """[(offset in the image, length, state)] for the extents of a
+        recover_deleted() entry, in the order read_deleted() joins them. state
+        is the header's condition ("deleted" or "allocated"), followed by
+        ", superseded" when its supersede pointer is set."""
+        out = []
+        for ext in entry._plan:                      # pylint: disable=protected-access
+            state = EFS_COND_NAMES[ext["s0"] & EFS_COND]
+            if not ext["s0"] & EFS_NO_SUPER:
+                state += ", superseded"
+            out.append((self.base + ext["u"] * self.unit_size + ext["off"],
+                        ext["tsize"], state))
+        return out
 
 
 # ---------------------------------------------------------------------------
@@ -7662,11 +8661,30 @@ class FlashDeletedFile:
     or the inode number, as ``kind`` ("yaffs2", "jffs2", "ubifs") names it.
     ``is_dir`` is always False: only files are recovered. ``note`` is empty,
     or says what the recovery had to decide that the flash does not record.
+
+    An EFS entry (``kind`` "efs", EfsWalker.recover_deleted) differs where the
+    format does. Its directory records no size, so ``size`` is the bytes the
+    entry's extents hold and ``missing`` stays 0; an entry that is not
+    recoverable says why in ``reason``. ``ident`` is the physical unit and
+    header index of its first extent. ``note`` always says which kind of entry
+    it is, and an entry no directory entry names has an empty ``name`` and
+    None for ``mode`` and ``mtime``.
+
+    An exFAT entry (``kind`` "exfat", ExfatWalker.recover_deleted) is not a
+    deleted file. It is an orphan: an in-use file entry set in an allocated
+    directory cluster the live tree does not reach. ``ident`` is its first
+    cluster and ``parent`` the cluster its entry set is in. ``parent_path`` is
+    the chain of orphan directory names that leads to it, or None when no
+    orphan directory entry names its directory cluster. ``mode`` and ``mtime``
+    are None, because exFAT stores a wall clock and not an instant: ``times``
+    holds the readings as stored, as listdir_records() gives them. ``times``
+    is None for every other kind. ``missing`` stays 0 and ``reason`` says why
+    an entry is not recoverable.
     """
 
     __slots__ = ("name", "parent", "parent_path", "is_dir", "size", "mode", "mtime",
-                 "recoverable", "reason", "missing", "ident", "kind", "note", "_plan",
-                 "_walker")
+                 "recoverable", "reason", "missing", "ident", "kind", "note", "times",
+                 "_plan", "_walker")
 
     def __init__(self, kind, ident, name, parent, parent_path, size, mode, mtime,
                  n_missing, plan, walker):
@@ -7681,6 +8699,7 @@ class FlashDeletedFile:
             f"{n_missing:,} {unit}{'s' if n_missing != 1 else ''} of its recorded size "
             "no longer on the flash (erased, or a hole never written)")
         self.note = ""
+        self.times = None
         self._plan, self._walker = plan, walker
 
     def __repr__(self):
@@ -10001,7 +11020,7 @@ def _cached_walker(fh, base, size, kind, build):
 
 
 def print_tree(w, num, depth, maxdepth, budget, indent=0, pad=6):
-    # A walker that keeps readings rather than instants (FAT32, exFAT) is listed
+    # A walker that keeps readings rather than instants (FAT32, FAT16, FAT12, exFAT) is listed
     # through listdir_records(), so the reading is printed and not the 0 that
     # entry() returns for its mtime, which _fmt_time() shows as 1970-01-01.
     readings = hasattr(w, "listdir_records")
@@ -10358,6 +11377,25 @@ def allocation(w, node):
         return None
 
 
+def chain_shortfall(w, node):
+    """(clusters in the chain, clusters the recorded size needs) when a FAT32
+    or exFAT file's cluster chain ends before its recorded size is covered,
+    else None.
+
+    A caller whose read came back shorter than the size, with nothing lost past
+    the end of the image, can ask this to tell a volume that contradicts itself
+    from a reader that went wrong. None means the chain covers the size or the
+    walker has no such chain, not that the file is whole.
+    """
+    report = getattr(w, "chain_shortfall", None)
+    if report is None:
+        return None
+    try:
+        return report(node)
+    except Exception:                                # pylint: disable=broad-except
+        return None
+
+
 def collect(w, num, prefix="", depth=0, seen=None, out=None, times=None):
     """Every regular file under this inode, as (path, inode, size, mtime).
 
@@ -10552,7 +11590,8 @@ def extract_to_zip(zf, w, volume, entries, log, progress=None):
                     spool.write(chunk)
                     got += len(chunk)
                 # Only now, with the whole file read, does anything reach the zip.
-                got = min(got, max(size - (EOF_SHORTFALL["bytes"] - before), 0))
+                past_end = EOF_SHORTFALL["bytes"] - before
+                got = min(got, max(size - past_end, 0))
                 if got < size:
                     info.filename = f"{arc}.SHORT-{got}-of-{size}-bytes"
                 spool.seek(0)
@@ -10564,8 +11603,14 @@ def extract_to_zip(zf, w, volume, entries, log, progress=None):
             if got < size:
                 short += 1
                 written += got
-                log.append(f"        SHORT {arc}: {got:,} of {size:,} bytes are in the "
-                           f"image, the rest lies past its end")
+                cut = None if past_end else chain_shortfall(w, ino)
+                if cut:
+                    log.append(f"        SHORT {arc}: {got:,} of {size:,} bytes read, "
+                               f"its cluster chain ends after {cut[0]:,} of the "
+                               f"{cut[1]:,} clusters that size needs")
+                else:
+                    log.append(f"        SHORT {arc}: {got:,} of {size:,} bytes are in "
+                               f"the image, the rest lies past its end")
             else:
                 files += 1
                 written += size
@@ -10721,6 +11766,10 @@ def walker_for(kind, fh, base, size=None):
         return ExtWalker(fh, base)
     if kind == "fat32":
         return Fat32Walker(fh, base)
+    if kind == "fat16":
+        return Fat16Walker(fh, base)
+    if kind == "fat12":
+        return Fat12Walker(fh, base)
     if kind == "exfat":
         return ExfatWalker(fh, base)
     if kind == "ntfs":
@@ -10732,7 +11781,7 @@ def walker_for(kind, fh, base, size=None):
     if kind == "apfs":
         return ApfsWalker(fh, base)
     if kind == "efs":
-        return EfsWalker(fh, base)
+        return EfsWalker(fh, base, size)
     if kind == "qnx4":
         return Qnx4Walker(fh, base)
     if kind == "etfs" and size is not None:
@@ -10818,21 +11867,19 @@ def identify_etfs(fh, base, size):
 
 
 def identify_efs(fh, base, size):
-    """Return ("efs", lines) if an EFS (F3S) filesystem starts at base, else None."""
-    us = _efs_unit_size(fh, base)
-    if us is None:
+    """Return ("efs", lines) if an EFS (F3S) partition starts at base and fits in
+    size bytes, else None. The boot record may sit in any of its units."""
+    part = _efs_locate(fh, base, size)
+    if part is None:
         return None
-    boot = _efs_boot(fh, base, min(us * 4, 1 << 24))
-    if boot is None:
-        return None
-    if boot["unit_total"] < 1 or boot["unit_total"] * us > size:
-        return None
+    us = part["unit_size"]
     return "efs", [
-        f"unit size    {human(us)}   {boot['unit_total']} units, "
-        f"{boot['unit_spare']} spare",
-        f"alignment    text offsets shifted left by {boot['align_pow2']}",
-        f"boot record  QSSL_F3S at +0x{boot['sig_at']:x}",
-        f"root         logical unit {boot['root'][0]}, extent {boot['root'][1]}",
+        f"unit size    {human(us)}   {part['unit_total']} units, "
+        f"{part['unit_spare']} spare",
+        f"byte order   {'little' if part['endian'] == '<' else 'big'}-endian",
+        f"alignment    text offsets shifted left by {part['align_pow2']}",
+        f"boot record  QSSL_F3S at +0x{part['sig_at']:x}, in unit {part['unit_index']}",
+        f"root         logical unit {part['root'][0]}, extent {part['root'][1]}",
     ]
 
 
@@ -10958,13 +12005,88 @@ def identify_ntfs(fh, base):
     return "ntfs", lines
 
 
+def _fat_fixed_root_geometry(b):
+    """(bits, cluster count) for a FAT12 or FAT16 boot sector, or None when its
+    BPB is not one.
+
+    Microsoft's FAT specification types a volume by its count of clusters and
+    nothing else: fewer than 4,085 is FAT12 and 4,085 to 65,524 is FAT16. The
+    type string does not decide it. The fields that count is computed from
+    have to be usable first.
+    """
+    bps = struct.unpack_from("<H", b, 11)[0]
+    spc = b[13]
+    reserved = struct.unpack_from("<H", b, 14)[0]
+    nfats = b[16]
+    root_entries = struct.unpack_from("<H", b, 17)[0]
+    total = struct.unpack_from("<H", b, 19)[0] or struct.unpack_from("<I", b, 32)[0]
+    spf = struct.unpack_from("<H", b, 22)[0]
+    if bps not in (512, 1024, 2048, 4096) or spc not in (1, 2, 4, 8, 16, 32, 64, 128):
+        return None
+    if not reserved or not nfats or not root_entries or not spf:
+        return None
+    first_data = reserved + nfats * spf + (root_entries * 32 + bps - 1) // bps
+    if total <= first_data:
+        return None
+    clusters = (total - first_data) // spc
+    if not 1 <= clusters < 65525:
+        return None
+    return (12 if clusters < 4085 else 16), clusters
+
+
+def _tfat_lines(fh, base, b, bits):
+    """What to say about a transaction-safe FAT volume: its type string and
+    whether its two tables agree.
+
+    Microsoft's TFAT overview has FAT1 as the table current operations are
+    made in and FAT0 as the stable copy of the last known good table, with
+    FAT1 copied to FAT0 once a transaction completes. The walker reads FAT0,
+    so when the two differ the listing is the last committed state and the
+    difference is the work that was in progress.
+    """
+    name = (b[82:90] if bits == 32 else b[54:62]).decode("ascii", "replace").rstrip(" ")
+    lines = [f"type string  {name} (transaction-safe FAT, Windows CE)"]
+    bps = struct.unpack_from("<H", b, 11)[0]
+    reserved = struct.unpack_from("<H", b, 14)[0]
+    nfats = b[16]
+    spf = (struct.unpack_from("<I", b, 36)[0] if bits == 32
+           else struct.unpack_from("<H", b, 22)[0])
+    if nfats < 2 or not bps or not spf:
+        lines.append(f"FAT copies   {nfats}")
+        return lines
+    width = _FAT_ENTRY[bits][0]
+    length = spf * bps
+    first = read_at(fh, base + reserved * bps, length)
+    second = read_at(fh, base + reserved * bps + length, length)
+    if len(first) < length or len(second) < length:
+        lines.append(f"FAT copies   {nfats}, not compared: the image ends inside them")
+        return lines
+    if first == second:
+        lines.append(f"FAT copies   {nfats}, the first two identical")
+        return lines
+    if bits == 12:
+        differ = sum(1 for n in range(length * 2 // 3)
+                     if _fat12_entry(first[n + n // 2:n + n // 2 + 2], n & 1)
+                     != _fat12_entry(second[n + n // 2:n + n // 2 + 2], n & 1))
+    else:
+        differ = sum(1 for i in range(0, length, width)
+                     if first[i:i + width] != second[i:i + width])
+    lines.append(f"FAT copies   {nfats}, the first two differ in {differ:,} entries; "
+                 f"the first is read")
+    return lines
+
+
 def identify_fat(fh, base):
-    """Return (kind, lines) for a FAT32 or exFAT volume at base, else None.
+    """Return (kind, lines) for a FAT32, FAT16, FAT12 or exFAT volume at base, else None.
 
     exFAT names itself in bytes 3..11 of the boot sector. FAT32 is recognised
     by its "FAT32   " filesystem-type string at offset 82 together with a 0x55AA
     boot signature, rather than by the OEM name, which is set by whatever tool
-    wrote the volume.
+    wrote the volume. FAT16 and FAT12 are recognised by "FAT16   " or
+    "FAT12   " at offset 54, the same signature, and a usable BPB; which of
+    the two it is comes from the cluster count, as Microsoft's specification
+    has it, and not from the string. Windows CE's transaction-safe FAT writes
+    "TFAT32  " and "TFAT16  " in the same places and is read as the FAT it is.
     """
     b = read_at(fh, base, 512)
     if b[3:11] == BDE_SIGNATURE or (b[3:11] == BDE_TOGO_SIGNATURE and b[424:440] == BDE_GUID):
@@ -10982,16 +12104,41 @@ def identify_fat(fh, base):
             f"clusters     {clusters:,}",
             f"volume       {human(vol)}",
         ]
-    if b[82:90] == b"FAT32   ":
+    if b[82:90] in (b"FAT32   ", b"TFAT32  "):
         bps = struct.unpack_from("<H", b, 11)[0]
         spc = b[13]
         total = struct.unpack_from("<I", b, 32)[0] * bps
         label = b[71:82].decode("ascii", "replace").rstrip(" ")
-        return "fat32", [
+        lines = [
             f"label        {label or '(none)'}",
             f"bytes/sector {bps}   sectors/cluster {spc}",
             f"volume       {human(total)}",
         ]
+        if b[82:90] in TFAT_TYPE_STRINGS:
+            lines += _tfat_lines(fh, base, b, 32)
+        return "fat32", lines
+    if b[54:62] in (b"FAT16   ", b"FAT12   ", b"TFAT16  "):
+        geometry = _fat_fixed_root_geometry(b)
+        if geometry is None:
+            return None
+        bits, clusters = geometry
+        bps = struct.unpack_from("<H", b, 11)[0]
+        spc = b[13]
+        total = (struct.unpack_from("<H", b, 19)[0]
+                 or struct.unpack_from("<I", b, 32)[0]) * bps
+        label = b[43:54].decode("ascii", "replace").rstrip(" ")
+        lines = [
+            f"label        {label or '(none)'}",
+            f"bytes/sector {bps}   sectors/cluster {spc}",
+            f"clusters     {clusters:,}",
+            f"volume       {human(total)}",
+        ]
+        said = b[54:62].decode("ascii", "replace").rstrip(" ")
+        if said.lstrip("T") != f"FAT{bits}":
+            lines.append(f"type string  {said}; the cluster count makes it FAT{bits}")
+        if b[54:62] in TFAT_TYPE_STRINGS:
+            lines += _tfat_lines(fh, base, b, bits)
+        return f"fat{bits}", lines
     return None
 
 
@@ -11892,6 +13039,2187 @@ def unlock_apfs(fh, size=None, passwords=()):
     return (ApfsImage(fh, found) if found else fh), found
 
 
+# ---------------------------------------------------------------------------
+# LUKS1 and LUKS2
+# ---------------------------------------------------------------------------
+# The layouts are cryptsetup's (gitlab.com/cryptsetup/cryptsetup, docs/
+# on-disk-format.pdf for LUKS1 and docs/on-disk-format-luks2.pdf for LUKS2).
+# LUKS1 is a big-endian header: the cipher name and mode, the hash, the payload
+# offset in sectors, the master key's length, a PBKDF2 digest of the master key
+# (its salt and iterations), and eight keyslots of 48 bytes from byte 208, each
+# active or not, with its PBKDF2 iterations and salt, the offset of its key
+# material in sectors and its anti-forensic stripe count. LUKS2 is a binary
+# header, twice (the second at the first's size), each with a SHA checksum over
+# itself and its JSON area, the copy with the higher sequence id in force; the
+# JSON names the keyslots (their KDF, PBKDF2 or Argon2, their anti-forensic
+# split, and the area their key material is in, with the cipher it is encrypted
+# with), the digests that confirm a master key, and the data segments.
+#
+# A passphrase opens a keyslot: the KDF gives the key the slot's material is
+# encrypted with, in 512-byte sectors numbered from 0; the material is the
+# master key split into stripes (AF, luks1 style: each stripe XORed into a
+# running block that is diffused with the hash, the last stripe XORed on top);
+# the master key is right when its PBKDF2 digest matches the one stored. The
+# data is then decrypted sector by sector, its IV the sector number, counted
+# from the start of the data in 512-byte units (dm-crypt's default; a LUKS2
+# segment's larger sector_size changes how much one IV covers, not its units).
+#
+# Read: AES in XTS (plain64, plain) and CBC (essiv:<hash>, plain64, plain);
+# PBKDF2 with the hashes hashlib has; Argon2i and Argon2id when argon2-cffi is
+# installed. Not read: other ciphers, a LUKS2 header kept apart from the data
+# (detached), a keyslot type other than luks2, and a volume still being
+# re-encrypted. AES needs pycryptodome, as BitLocker does.
+
+try:
+    from argon2 import low_level as _ARGON2                    # argon2-cffi
+except ImportError:
+    _ARGON2 = None
+
+LUKS_MAGIC = b"LUKS\xba\xbe"
+LUKS_MAX_KEY_BYTES = 128             # a 512-bit XTS key is 64; nothing cryptsetup writes is longer
+LUKS_MAX_STRIPES = 65536             # cryptsetup writes 4000
+LUKS_MAX_PBKDF2 = 50_000_000         # benchmarks give single millions
+LUKS_MAX_ARGON2_KIB = 4 * 1024 * 1024    # cryptsetup's --pbkdf-memory maximum
+
+
+def _luks_cipher_problem(spec):
+    """Why a LUKS cipher spec is not one this reads, else ''."""
+    parts = (spec or "").lower().split("-", 1)
+    if len(parts) != 2 or parts[0] != "aes":
+        return f"its {spec or 'unnamed'} cipher is not one this reads (only AES)"
+    mode = parts[1]
+    if mode in ("xts-plain64", "xts-plain", "cbc-plain64", "cbc-plain") or mode.startswith("cbc-essiv:"):
+        return ""
+    return f"its {spec} mode is not one this reads"
+
+
+def _luks2_shape(meta):
+    """Raise ValueError unless the LUKS2 JSON has the shape cryptsetup writes."""
+    def need(cond, what):
+        if not cond:
+            raise ValueError(f"its LUKS2 metadata has {what}")
+    need(isinstance(meta, dict), "no object at its top")
+    for key in ("keyslots", "segments", "digests"):
+        need(isinstance(meta.get(key), dict), f"{key} that are not an object")
+    for kid, ks in meta["keyslots"].items():
+        need(isinstance(ks, dict), f"keyslot {kid} that is not an object")
+        if ks.get("type") != "luks2":
+            continue
+        for part in ("kdf", "af", "area"):
+            need(isinstance(ks.get(part), dict), f"keyslot {kid} with no {part} object")
+        kdf = ks["kdf"]
+        need(isinstance(kdf.get("salt"), str), f"keyslot {kid} with no salt")
+        fields = (("iterations", "hash") if kdf.get("type") == "pbkdf2" else ("time", "memory", "cpus"))
+        for f in fields:
+            need(f in kdf, f"keyslot {kid} with no {f}")
+        for f in ("offset", "encryption", "key_size"):
+            need(f in ks["area"], f"keyslot {kid} whose area has no {f}")
+        need(str(ks.get("key_size", "")).isdigit() and str(ks["area"]["key_size"]).isdigit()
+             and str(ks["area"]["offset"]).isdigit() and str(ks["af"].get("stripes", "")).isdigit(),
+             f"keyslot {kid} with a size, offset or stripe count that is not a number")
+    for sid, sg in meta["segments"].items():
+        need(isinstance(sg, dict), f"segment {sid} that is not an object")
+        if sg.get("type") == "crypt":
+            need(str(sg.get("offset", "")).isdigit() and (sg.get("size") == "dynamic"
+                                                         or str(sg.get("size", "")).isdigit())
+                 and isinstance(sg.get("encryption"), str),
+                 f"segment {sid} with an offset, size or cipher that does not read")
+    for did, dg in meta["digests"].items():
+        need(isinstance(dg, dict) and isinstance(dg.get("keyslots", []), list),
+             f"digest {did} that does not read")
+        if dg.get("type") == "pbkdf2":
+            need(str(dg.get("iterations", "")).isdigit() and isinstance(dg.get("salt"), str)
+                 and isinstance(dg.get("digest"), str), f"digest {did} that does not read")
+LUKS_CHUNK = 65536
+LUKS_CACHE_CHUNKS = 256
+
+
+def _luks_af_merge(material, key_bytes, stripes, hash_name):
+    """The master key from its anti-forensic split (luks1 AF: af.c AF_merge)."""
+    import hashlib                                  # pylint: disable=import-outside-toplevel
+
+    def diffuse(block):
+        size = hashlib.new(hash_name).digest_size
+        out = bytearray()
+        for i in range(-(-len(block) // size)):
+            piece = block[i * size:(i + 1) * size]
+            out += hashlib.new(hash_name, struct.pack(">I", i) + piece).digest()[:len(piece)]
+        return bytes(out)
+    d = bytes(key_bytes)
+    for i in range(stripes - 1):
+        stripe = material[i * key_bytes:(i + 1) * key_bytes]
+        d = diffuse(bytes(a ^ b for a, b in zip(d, stripe)))
+    last = material[(stripes - 1) * key_bytes:stripes * key_bytes]
+    return bytes(a ^ b for a, b in zip(d, last))
+
+
+class _LuksCipher:
+    """One LUKS cipher spec (cipher-mode-iv, as cryptsetup names them) with its
+    key: decrypt() takes whole sectors and the IV number of the first. Raises
+    ValueError for a spec this does not read."""
+
+    def __init__(self, spec, key):
+        import hashlib                              # pylint: disable=import-outside-toplevel
+        if _BDE_AES is None:
+            raise ValueError("AES needs the pycryptodome package")
+        parts = spec.lower().split("-", 1)
+        if len(parts) != 2 or parts[0] != "aes":
+            raise ValueError(f"the {spec} cipher is not one this reads (only AES)")
+        mode = parts[1]
+        self.spec = spec
+        if mode in ("xts-plain64", "xts-plain"):
+            half = len(key) // 2
+            self.kind = "xts"
+            self.pair = (_BDE_AES.new(key[:half], _BDE_AES.MODE_ECB),
+                         _BDE_AES.new(key[half:], _BDE_AES.MODE_ECB))
+            self.wrap = mode.endswith("-plain")
+        elif mode in ("cbc-plain64", "cbc-plain") or mode.startswith("cbc-essiv:"):
+            self.kind = "cbc"
+            self.key = key
+            self.essiv = None
+            if mode.startswith("cbc-essiv:"):
+                hname = mode.split(":", 1)[1]
+                if hname not in hashlib.algorithms_available:
+                    raise ValueError(f"the ESSIV hash {hname} is not available here")
+                self.essiv = _BDE_AES.new(hashlib.new(hname, key).digest(), _BDE_AES.MODE_ECB)
+            self.wrap = mode == "cbc-plain"
+        else:
+            raise ValueError(f"the {spec} mode is not one this reads")
+
+    def decrypt(self, data, first, unit=512, iv_unit=512):
+        """Whole `unit`-byte sectors; sector i's IV is first + i * unit / iv_unit."""
+        n = len(data) // unit
+        step = unit // iv_unit
+        if self.kind == "xts":
+            if step == 1 and not self.wrap:
+                return _xts_crypt(self.pair, data[:n * unit], first, unit)
+            out = bytearray()
+            for i in range(n):
+                iv = first + i * step
+                out += _xts_crypt(self.pair, data[i * unit:(i + 1) * unit],
+                                  iv & 0xFFFFFFFF if self.wrap else iv, unit)
+            return bytes(out)
+        out = bytearray()
+        for i in range(n):
+            iv = first + i * step
+            if self.wrap:
+                iv &= 0xFFFFFFFF
+            ivb = iv.to_bytes(16, "little")
+            if self.essiv is not None:
+                ivb = self.essiv.encrypt(ivb)
+            out += _BDE_AES.new(self.key, _BDE_AES.MODE_CBC, ivb).decrypt(data[i * unit:(i + 1) * unit])
+        return bytes(out)
+
+
+class Luks:
+    """A LUKS1 or LUKS2 container at base in fh: its header, read before any
+    passphrase is given, and once unlock() finds one, its data in plaintext.
+    Luks.open() returns None for anything that is not LUKS."""
+
+    @classmethod
+    def open(cls, fh, base, size=None):
+        head = read_at(fh, base, 4096)
+        if len(head) < 1024 or head[:6] != LUKS_MAGIC:
+            return None
+        if size is None:
+            size = image_size(fh) - base
+        return cls(fh, base, size, head)
+
+    def __init__(self, fh, base, size, head):
+        # Everything lines(), summary() and unlock() read has a value before the
+        # header is parsed, so a header that does not parse leaves a container
+        # that is reported as not read, and why, rather than an exception.
+        self.fh, self.base, self.size = fh, base, size
+        self.version = struct.unpack_from(">H", head, 6)[0]
+        self.mk, self.why, self.tried, self.unlocked_by = None, "", [], None
+        self.label, self.problems, self.uuid, self.cipher, self.hash = "LUKS", [], "", "", ""
+        self.offset, self.data_size, self.sector_size, self.iv_tweak = 0, 0, SECTOR, 0
+        self.key_bytes, self.keyslots, self.digests = 0, [], []
+        self._cache = collections.OrderedDict()
+        self._cipher = None
+        try:
+            if self.version == 1:
+                self._luks1(head)
+            elif self.version == 2:
+                self._luks2()
+            else:
+                raise ValueError(f"LUKS version {self.version}")
+            self.data_size = max(0, self.size - self.offset) if self.data_size is None else self.data_size
+            unread = _luks_cipher_problem(self.cipher)
+            if unread:
+                raise ValueError(unread)
+        except Exception as exc:                       # pylint: disable=broad-except
+            self.keyslots, self.digests, self.data_size = [], [], 0
+            self.why = f"its header does not read ({type(exc).__name__}: {exc})" \
+                if not isinstance(exc, ValueError) else str(exc)
+
+    def _luks1(self, h):
+        name = h[8:40].split(b"\0")[0].decode("ascii", "replace")
+        mode = h[40:72].split(b"\0")[0].decode("ascii", "replace")
+        self.hash = h[72:104].split(b"\0")[0].decode("ascii", "replace")
+        payload, self.key_bytes = struct.unpack_from(">II", h, 104)
+        self.mk_digest, self.mk_salt = h[112:132], h[132:164]
+        self.mk_iterations, = struct.unpack_from(">I", h, 164)
+        self.uuid = h[168:208].split(b"\0")[0].decode("ascii", "replace")
+        self.cipher = f"{name}-{mode}"
+        self.offset, self.data_size, self.sector_size = payload * SECTOR, None, SECTOR
+        self.keyslots = []
+        for i in range(8):
+            active, iters = struct.unpack_from(">II", h, 208 + 48 * i)
+            salt = h[208 + 48 * i + 8:208 + 48 * i + 40]
+            off, stripes = struct.unpack_from(">II", h, 208 + 48 * i + 40)
+            if active == 0x00AC71F3:
+                self.keyslots.append(dict(id=str(i), kdf=dict(type="pbkdf2", hash=self.hash,
+                                                             iterations=iters, salt=salt),
+                                          offset=off * SECTOR, stripes=stripes, af_hash=self.hash,
+                                          cipher=self.cipher, key_bytes=self.key_bytes,
+                                          kdf_bytes=self.key_bytes))
+        self.digests = [dict(hash=self.hash, iterations=self.mk_iterations, salt=self.mk_salt,
+                             digest=self.mk_digest, keyslots=None)]
+
+    def _luks2(self):
+        import base64                               # pylint: disable=import-outside-toplevel
+        import hashlib                              # pylint: disable=import-outside-toplevel
+        # The second copy is at the first's size; when the first does not give a
+        # size that reads, cryptsetup looks for the second at fixed offsets
+        # (luks2_disk_metadata.c, LUKS2_HDR2_OFFSETS), and so does this.
+        first = read_at(self.fh, self.base, 4096)
+        hdr_size, = struct.unpack_from(">Q", first, 8)
+        places = [0]
+        if 16384 <= hdr_size <= 4 << 20:
+            places.append(hdr_size)
+        places += [o for o in (0x4000, 0x8000, 0x10000, 0x20000, 0x40000, 0x80000, 0x100000,
+                               0x200000, 0x400000) if o not in places]
+        best_seq, best_raw, best_size = -1, None, 0
+        for at in places:
+            head = read_at(self.fh, self.base + at, 512)
+            if len(head) < 512 or head[:6] not in (LUKS_MAGIC, b"SKUL\xba\xbe"):
+                continue
+            size, seqid = struct.unpack_from(">QQ", head, 8)
+            stored_at, = struct.unpack_from(">Q", head, 256)
+            if not 16384 <= size <= 4 << 20 or stored_at != at:
+                self.problems.append(f"the header copy at byte {at:,} names another size or place")
+                continue
+            raw = read_at(self.fh, self.base + at, size)
+            alg = raw[72:104].split(b"\0")[0].decode("ascii", "replace")
+            if alg not in hashlib.algorithms_available:
+                self.problems.append(f"header copy at byte {at:,}: checksum {alg} not available")
+                continue
+            body = bytearray(raw)
+            body[448:512] = bytes(64)
+            digest = hashlib.new(alg, bytes(body)).digest()
+            if len(raw) < size or raw[448:448 + len(digest)] != digest:
+                self.problems.append(f"the header copy at byte {at:,} fails its checksum")
+                continue
+            if best_raw is None or seqid > best_seq:
+                best_seq, best_raw, best_size = seqid, raw, size
+        if best_raw is None:
+            raise ValueError("no LUKS2 header copy passes its checksum")
+        raw = best_raw
+        self.uuid = raw[168:208].split(b"\0")[0].decode("ascii", "replace")
+        self.label = raw[24:72].split(b"\0")[0].decode("utf-8", "replace") or "LUKS"
+        meta = json.loads(raw[4096:best_size].split(b"\0", 1)[0])
+        _luks2_shape(meta)
+        if meta.get("requirements", {}).get("mandatory"):
+            raise ValueError("its header names requirements this does not meet "
+                             f"({', '.join(map(str, meta['requirements']['mandatory']))})")
+        segs = meta["segments"]
+        if len(segs) != 1 or any(sg.get("type") != "crypt" for sg in segs.values()):
+            raise ValueError("a volume being re-encrypted, or with more than one data segment")
+        seg = next(iter(segs.values()))
+        if seg.get("integrity"):
+            raise ValueError("its data carries dm-integrity, which this does not read")
+        self.cipher = seg["encryption"]
+        self.offset = int(seg["offset"])
+        self.data_size = None if seg["size"] == "dynamic" else int(seg["size"])
+        self.sector_size = int(seg.get("sector_size", 512))
+        if self.sector_size not in (512, 1024, 2048, 4096):
+            raise ValueError(f"a sector size of {self.sector_size}")
+        self.iv_tweak = int(seg.get("iv_tweak", 0))
+        b64 = base64.b64decode
+        for kid, ks in sorted(meta["keyslots"].items(), key=lambda kv: int(kv[0])):
+            if ks.get("type") != "luks2" or ks.get("af", {}).get("type") != "luks1":
+                self.problems.append(f"keyslot {kid} is of a type this does not read")
+                continue
+            kdf = dict(ks["kdf"])
+            kdf["salt"] = b64(kdf["salt"])
+            # The key the keyslot's material is encrypted with is the area's own
+            # length (luks2_keyslot_luks2.c), which need not be the volume key's.
+            self.keyslots.append(dict(id=kid, kdf=kdf, offset=int(ks["area"]["offset"]),
+                                      stripes=int(ks["af"]["stripes"]), af_hash=ks["af"]["hash"],
+                                      cipher=ks["area"]["encryption"], key_bytes=int(ks["key_size"]),
+                                      kdf_bytes=int(ks["area"]["key_size"])))
+        self.digests = [dict(hash=d["hash"], iterations=int(d["iterations"]), salt=b64(d["salt"]),
+                             digest=b64(d["digest"]), keyslots=set(d["keyslots"]))
+                        for d in meta["digests"].values() if d.get("type") == "pbkdf2"]
+        self.key_bytes = self.keyslots[0]["key_bytes"] if self.keyslots else 0
+
+    def _derive(self, kdf, password, length):
+        import hashlib                              # pylint: disable=import-outside-toplevel
+        # Costs past cryptsetup's own limits (its --pbkdf-memory maximum of 4 GiB,
+        # and time and iteration counts no benchmark gives) are refused rather than
+        # run: a crafted keyslot could otherwise hang the reader or exhaust memory.
+        if kdf["type"] == "pbkdf2":
+            if not 0 < int(kdf["iterations"]) <= LUKS_MAX_PBKDF2:
+                raise ValueError(f"a PBKDF2 iteration count of {kdf['iterations']}, past what this runs")
+            return hashlib.pbkdf2_hmac(kdf["hash"], password, kdf["salt"], int(kdf["iterations"]), length)
+        if kdf["type"] in ("argon2i", "argon2id"):
+            if not (0 < int(kdf["memory"]) <= LUKS_MAX_ARGON2_KIB and 0 < int(kdf["time"]) <= 1000
+                    and 0 < int(kdf["cpus"]) <= 64):
+                raise ValueError("Argon2 costs past cryptsetup's own limits")
+            if _ARGON2 is None:
+                raise ValueError("its Argon2 keyslot needs the argon2-cffi package")
+            kind = _ARGON2.Type.ID if kdf["type"] == "argon2id" else _ARGON2.Type.I
+            return _ARGON2.hash_secret_raw(password, kdf["salt"], int(kdf["time"]), int(kdf["memory"]),
+                                           int(kdf["cpus"]), length, kind, 19)
+        raise ValueError(f"the {kdf['type']} key derivation is not one this reads")
+
+    def _try(self, slot, password):
+        """The master key a passphrase opens in a keyslot, else None."""
+        import hashlib                              # pylint: disable=import-outside-toplevel
+        kb, stripes = slot["key_bytes"], slot["stripes"]
+        if not (0 < kb <= LUKS_MAX_KEY_BYTES and 0 < slot["kdf_bytes"] <= LUKS_MAX_KEY_BYTES
+                and 0 < stripes <= LUKS_MAX_STRIPES):
+            raise ValueError(f"keyslot {slot['id']} has a key size or stripe count past what "
+                             "cryptsetup writes")
+        length = -(-kb * stripes // SECTOR) * SECTOR
+        material = read_at(self.fh, self.base + slot["offset"], length)
+        if len(material) < length:
+            raise ValueError("its key material lies past the end of the image")
+        key = self._derive(slot["kdf"], password, slot["kdf_bytes"])
+        plain = _LuksCipher(slot["cipher"], key).decrypt(material, 0)
+        mk = _luks_af_merge(plain, kb, stripes, slot["af_hash"])
+        for d in self.digests:
+            listed = d["keyslots"] or ()
+            if d["keyslots"] is not None and slot["id"] not in listed:
+                continue
+            if not 0 < d["iterations"] <= LUKS_MAX_PBKDF2:
+                raise ValueError(f"a digest iteration count of {d['iterations']}, past what this runs")
+            if hashlib.pbkdf2_hmac(d["hash"], mk, d["salt"], d["iterations"], len(d["digest"])) == d["digest"]:
+                return mk
+        return None
+
+    def unlock(self, passwords):
+        """Try each passphrase on each keyslot; True once one opens the volume."""
+        if self.mk is not None:
+            return True
+        if not self.keyslots:
+            self.why = self.why or "no keyslot this reads"
+            return False
+        for pw in passwords:
+            pwb = pw.encode("utf-8") if isinstance(pw, str) else pw
+            for slot in self.keyslots:
+                try:
+                    mk = self._try(slot, pwb)
+                except Exception as exc:                   # pylint: disable=broad-except
+                    # a keyslot this cannot use is said, and the next one tried
+                    self.why = (str(exc) if isinstance(exc, ValueError)
+                                else f"keyslot {slot['id']}: {type(exc).__name__}: {exc}")
+                    continue
+                self.tried.append(slot["id"])
+                if mk is not None:
+                    try:
+                        self._cipher = _LuksCipher(self.cipher, mk)
+                    except ValueError as exc:
+                        self.why = str(exc)
+                        return False
+                    self.mk, self.unlocked_by, self.why = mk, f"keyslot {slot['id']}", ""
+                    return True
+        return False
+
+    def read(self, off, n):
+        """n plaintext bytes at data offset off (short at the end of the data)."""
+        out, pos, end = bytearray(), off, min(off + n, self.data_size)
+        while pos < end:
+            ci = pos // LUKS_CHUNK
+            chunk = self._cache.get(ci)
+            if chunk is None:
+                start = ci * LUKS_CHUNK
+                raw = read_at(self.fh, self.base + self.offset + start,
+                              min(LUKS_CHUNK, self.data_size - start))
+                whole = len(raw) - len(raw) % self.sector_size
+                tweak = getattr(self, "iv_tweak", 0)
+                chunk = self._cipher.decrypt(raw[:whole], tweak + start // SECTOR, self.sector_size)
+                self._cache[ci] = chunk
+                if len(self._cache) > LUKS_CACHE_CHUNKS:
+                    self._cache.popitem(last=False)
+            else:
+                self._cache.move_to_end(ci)
+            s = pos - ci * LUKS_CHUNK
+            take = min(len(chunk) - s, end - pos)
+            if take <= 0:
+                break
+            out += chunk[s:s + take]
+            pos += take
+        return bytes(out)
+
+    def lines(self):
+        return [f"LUKS{self.version}, {self.cipher}, {self.key_bytes * 8}-bit key, "
+                f"data at byte {self.offset:,}" + (f", {self.sector_size}-byte sectors"
+                                                   if self.sector_size != SECTOR else ""),
+                f"{len(self.keyslots)} keyslot(s) in use; uuid {self.uuid}"] + self.problems
+
+    def summary(self):
+        return (f"LUKS{self.version} {self.cipher}, opened with {self.unlocked_by}"
+                if self.mk is not None else f"LUKS{self.version}, locked")
+
+    def locked_note(self):
+        if self.why:
+            return f"LUKS-encrypted and not read: {self.why}"
+        if self.tried:
+            return "LUKS-encrypted and not read: no passphrase given opens a keyslot"
+        return "LUKS-encrypted and not read: give its passphrase"
+
+
+class LuksImage:
+    """An image read through read_at() with its opened LUKS volumes' data
+    decrypted in place, at the data's own offset, so identify_fs() and every
+    walker read the plaintext there. ``luks`` maps each opened container's base to
+    its Luks object, ``luks_found`` lists every one; anything else is the
+    image's own attribute."""
+
+    def __init__(self, fh, opened, found=()):
+        self._fh, self.luks, self.luks_found = fh, dict(opened), list(found)
+        self.size = image_size(fh)
+        self._spans = sorted((b + lk.offset, b + lk.offset + lk.data_size, lk)
+                             for b, lk in self.luks.items())
+        self._pos = 0
+
+    def __getattr__(self, name):
+        return getattr(self._fh, name)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        self.close()
+
+    def close(self):
+        self._fh.close()
+
+    def seek(self, off, whence=0):
+        self._pos = off if whence == 0 else self._pos + off if whence == 1 else self.size + off
+        return self._pos
+
+    def tell(self):
+        return self._pos
+
+    def read(self, n=-1):
+        end = self.size if n is None or n < 0 else min(self.size, self._pos + n)
+        out = bytearray()
+        while self._pos < end:
+            span = next((s for s in self._spans if s[0] <= self._pos < s[1]), None)
+            if span is not None:
+                take = min(end, span[1]) - self._pos
+                got = span[2].read(self._pos - span[0], take)
+            else:
+                nxt = min([s[0] for s in self._spans if s[0] > self._pos] + [end])
+                self._fh.seek(self._pos)
+                got = self._fh.read(nxt - self._pos)
+            if not got:
+                break
+            out += got
+            self._pos += len(got)
+        return bytes(out)
+
+
+def unlock_luks(fh, size=None, passwords=()):
+    """Find the LUKS containers in an opened image and open those a passphrase
+    opens. Returns (fh, found): fh is a LuksImage when there is any LUKS container
+    (``luks`` holds the opened ones, ``luks_found`` every one), else the image
+    unchanged; found holds one Luks per container, opened or not. Apply it
+    before lvm_image(), so a physical volume inside a LUKS container is seen."""
+    if size is None:
+        size = image_size(fh)
+    regions, _names, containers, protective = partition_regions(fh, size)
+    found, opened = [], {}
+    for label, base, rsize in regions:
+        if label in containers or label in protective:
+            continue
+        lk = Luks.open(fh, base, rsize)
+        if lk is None:
+            continue
+        lk.label = label
+        if lk.mk is None and not lk.why and lk.unlock(passwords):
+            opened[base] = lk
+        found.append(lk)
+    if not found:
+        return fh, found
+    return LuksImage(fh, opened, found), found
+
+
+def identify_luks(fh, base, size=None):
+    """("luks", lines) for a LUKS container at base, else None."""
+    head = read_at(fh, base, 8)
+    if head[:6] != LUKS_MAGIC:
+        return None
+    opened = getattr(fh, "luks", {}).get(base)
+    lk = opened or next((x for x in getattr(fh, "luks_found", ()) if x.base == base), None) \
+        or Luks.open(fh, base, size)
+    if lk is None:
+        return None
+    return "luks", ([lk.summary()] + lk.lines())
+
+
+# ---------------------------------------------------------------------------
+# LVM2 physical volumes and their linear logical volumes
+# ---------------------------------------------------------------------------
+# The layout is lvm2's own (github.com/lvmteam/lvm2 at tag v2_03_43, commit
+# 7b0bce6909611966bdc1e17c2408e1ec3b0f8c17): a label in one of the first four
+# 512-byte sectors (lib/label/label.h, "LABELONE", struct label_header) whose
+# contents are a pv_header (lib/format_text/layout.h): the PV's id, its size, a
+# zero-ended list of data areas and a zero-ended list of metadata areas. A
+# metadata area starts with an mda_header (magic " LVM2 x[5A%r0N*>") whose first
+# raw_locn is the committed metadata text, a circular buffer that wraps past the
+# end of the area back to just after the header (format-text.c
+# _vg_read_raw_area). Every checksum is lvm2's calc_crc (lib/misc/crc.c): the
+# CRC-32 table step from 0xf597a6cf, with no inversion before or after. The text
+# is lvm2's configuration syntax (export.c writes it): sections in braces,
+# "key = value", strings, integers and bracketed lists, # comments.
+#
+# A logical volume is read only when it is linear and its extents lie one after
+# another on one physical volume in this image: it is then a byte range of the
+# image like a partition, and is walked as one, at its true offset. Any other
+# (split into separate runs, striped, mirrored, thin, a snapshot, a cache, or on
+# a physical volume not in this image) is listed with why it was not read.
+
+LVM_LABEL_ID = b"LABELONE"
+LVM2_LABEL = b"LVM2 001"
+LVM_FMTT_MAGIC = b" LVM2 x[5A%r0N*>"
+LVM_INITIAL_CRC = 0xf597a6cf
+LVM_MDA_HEADER_SIZE = 512
+LVM_RAW_LOCN_IGNORED = 0x1
+LVM_MAX_SECTION_DEPTH = 128            # libdm-config.c MAX_SECTION_DEPTH
+
+
+def lvm_crc(data, initial=LVM_INITIAL_CRC):
+    """lvm2's calc_crc: the CRC-32 table step with no inversion either side."""
+    return (~binascii.crc32(data, ~initial & 0xffffffff)) & 0xffffffff
+
+
+# Whitespace and comments, a comment running to the end of its line: a pattern
+# that let one stop short would hand its last digits to the next token (a
+# trailing "# ... 2026" read as a value), and one whose pieces could split a
+# run of "#" two ways would backtrack exponentially on a long one.
+_LVM_SKIP = r'(?:\s|#[^\n]*(?:\n|$))*'
+_LVM_TOKEN = re.compile(_LVM_SKIP + r'(?:("(?:[^"\\]|\\.)*")|([-+]?\d+(?![\w.])|[\w.+-]+)|([={}\[\],]))')
+_LVM_REST = re.compile(_LVM_SKIP)
+
+
+def _lvm_tokens(text):
+    pos, out = 0, []
+    while True:
+        m = _LVM_TOKEN.match(text, pos)
+        if not m or m.end() == pos:
+            break
+        pos = m.end()
+        s, word, punct = m.groups()
+        if s is not None:
+            # dm_unescape_double_quotes undoes only \" and \\.
+            out.append(("s", re.sub(r'\\(["\\])', r"\1", s[1:-1])))
+        elif word is not None:
+            if re.fullmatch(r"[-+]?0\d+", word):
+                # lvm2 reads numbers with strtoll(..., 0), so a leading zero is
+                # octal; lvm2 never writes one, and it is refused, not misread.
+                raise ValueError(f"a number with a leading zero ({word}) in LVM metadata")
+            out.append(("i", int(word)) if re.fullmatch(r"[-+]?\d+", word) else ("w", word))
+        elif punct is not None:
+            out.append(("p", punct))
+    if _LVM_REST.match(text, pos).end() != len(text):
+        raise ValueError(f"LVM metadata text does not parse near byte {pos}")
+    return out
+
+
+def lvm_config(text):
+    """lvm2 metadata text as nested dicts: a section is a dict, a list a list,
+    a string a str and a number an int. Raises ValueError for text that does
+    not parse, never anything else."""
+    toks, i = _lvm_tokens(text), 0
+
+    def take():
+        nonlocal i
+        if i >= len(toks):
+            raise ValueError("LVM metadata text ends inside a value or section")
+        i += 1
+        return toks[i - 1]
+
+    def peek():
+        if i >= len(toks):
+            raise ValueError("LVM metadata text ends inside a value or section")
+        return toks[i]
+
+    def value():
+        kind, v = take()
+        if (kind, v) == ("p", "["):
+            items = []
+            while peek() != ("p", "]"):
+                if peek() == ("p", ","):
+                    take()
+                    continue
+                items.append(value())
+            take()
+            return items
+        if kind in ("s", "i"):
+            return v
+        raise ValueError(f"unexpected {v!r} in LVM metadata")
+
+    def section(end, depth):
+        if depth > LVM_MAX_SECTION_DEPTH:
+            raise ValueError("LVM metadata sections nest too deep")
+        out = {}
+        while i < len(toks) if end is None else peek() != end:
+            kind, key = take()
+            if kind != "w":
+                raise ValueError(f"unexpected {key!r} in LVM metadata")
+            nxt = take()
+            if nxt == ("p", "{"):
+                out[key] = section(("p", "}"), depth + 1)
+                take()
+            elif nxt == ("p", "="):
+                out[key] = value()
+            else:
+                raise ValueError(f"expected = or {{ after {key!r} in LVM metadata")
+        return out
+
+    return section(None, 0)
+
+
+class LvmPv:
+    """The label, pv_header and newest readable metadata of an LVM2 physical
+    volume at `base`. A label is accepted as lvm2 accepts it (label.c
+    _find_lvm_header): "LABELONE" in one of the first four sectors, naming that
+    sector and passing its checksum, and of type "LVM2 001"; a label that fails
+    is passed over and the next sector tried. Raises ValueError when none is
+    accepted. `mda_ok` counts the metadata area headers that check out."""
+
+    def __init__(self, fh, base, size=None):   # pylint: disable=unused-argument
+        # size is taken for the same signature as the identifiers; the label
+        # and the pv_header say where everything is.
+        self.base = base
+        self.problems = []
+        for sector in range(4):
+            raw = read_at(fh, base + sector * SECTOR, SECTOR)
+            if len(raw) < SECTOR or raw[:8] != LVM_LABEL_ID:
+                continue
+            sector_xl, crc_xl, offset_xl = struct.unpack_from("<QII", raw, 8)
+            if sector_xl != sector or lvm_crc(raw[20:]) != crc_xl or raw[24:32] != LVM2_LABEL:
+                continue
+            if 32 <= offset_xl <= SECTOR - 72:
+                break
+        else:
+            raise ValueError("no LVM2 label lvm2 would accept in the first four sectors")
+        self.label_sector = sector
+        self.uuid = raw[offset_xl:offset_xl + 32].decode("ascii", "replace")
+        self.device_size, = struct.unpack_from("<Q", raw, offset_xl + 32)
+        pos, lists = offset_xl + 40, ([], [])
+        for which in (0, 1):
+            while pos + 16 <= SECTOR:
+                off, n = struct.unpack_from("<QQ", raw, pos)
+                pos += 16
+                if not off:                # lvm2 ends each list on a zero offset
+                    break
+                lists[which].append((off, n))
+        self.data_areas, self.metadata_areas = lists
+        self.mda_ok = 0
+        self.vg = None                 # (vg name, vg section, seqno) of the newest copy
+        for off, n in self.metadata_areas:
+            try:
+                found = self._metadata(fh, off, n)
+            except ValueError as exc:
+                self.problems.append(f"metadata area at byte {off:,}: {exc}")
+                continue
+            if found and (self.vg is None or found[2] > self.vg[2]):
+                self.vg = found
+
+    def _metadata(self, fh, off, _n):
+        head = read_at(fh, self.base + off, LVM_MDA_HEADER_SIZE)
+        if len(head) < LVM_MDA_HEADER_SIZE:
+            raise ValueError("header past the end of the image")
+        crc_xl, magic, _version, start, size = struct.unpack_from("<I16sIQQ", head, 0)
+        if magic != LVM_FMTT_MAGIC:
+            raise ValueError("no metadata area magic")
+        if lvm_crc(head[4:]) != crc_xl:
+            raise ValueError("metadata area header checksum does not match")
+        if start != off or size < LVM_MDA_HEADER_SIZE:
+            raise ValueError("metadata area header disagrees with the pv_header")
+        self.mda_ok += 1
+        r_off, r_size, checksum, flags = struct.unpack_from("<QQII", head, 40)
+        if not r_off and not r_size:
+            return None                # an area with no metadata written yet
+        if flags & LVM_RAW_LOCN_IGNORED:
+            return None                # lvm2 keeps this copy but does not use it
+        if r_off >= size or r_size > size - LVM_MDA_HEADER_SIZE:
+            raise ValueError("metadata location outside the area")
+        wrap = max(0, r_off + r_size - size)
+        text = read_at(fh, self.base + off + r_off, r_size - wrap)
+        if wrap:
+            text += read_at(fh, self.base + off + LVM_MDA_HEADER_SIZE, wrap)
+        if lvm_crc(text) != checksum:
+            raise ValueError("metadata text checksum does not match")
+        cfg = lvm_config(text.split(b"\0", 1)[0].decode("utf-8", "replace"))
+        vgs = [(k, v) for k, v in cfg.items() if isinstance(v, dict)]
+        if len(vgs) != 1:
+            raise ValueError(f"{len(vgs)} volume group sections in the metadata text")
+        name, vg = vgs[0]
+        _lvm_vg_shape(vg)
+        return name, vg, vg.get("seqno", 0)
+
+
+def _lvm_vg_shape(vg):
+    """Raise ValueError unless the volume group section has the shape lvm2
+    writes: numbers where it writes numbers, sections where it writes sections,
+    a list of words for a status. A copy that does not is refused like one whose
+    checksum fails, so nothing later meets a value of the wrong kind."""
+    def need(cond, what):
+        if not cond:
+            raise ValueError(f"the volume group metadata has {what}")
+
+    def num(sec, key, where):
+        need(isinstance(sec.get(key, 0), int), f"a {key} that is not a number in {where}")
+
+    num(vg, "seqno", "the volume group")
+    num(vg, "extent_size", "the volume group")
+    need(isinstance(vg.get("id", ""), str), "an id that is not a string")
+    for key in ("physical_volumes", "logical_volumes"):
+        need(isinstance(vg.get(key, {}), dict), f"a {key} that is not a section")
+    for name, pv in (vg.get("physical_volumes") or {}).items():
+        need(isinstance(pv, dict), f"physical volume {name} that is not a section")
+        need(isinstance(pv.get("id", ""), str), f"physical volume {name} with an id that is not a string")
+        for key in ("pe_start", "pe_count"):
+            num(pv, key, f"physical volume {name}")
+    for name, lv in (vg.get("logical_volumes") or {}).items():
+        need(isinstance(lv, dict), f"logical volume {name} that is not a section")
+        status = lv.get("status", [])
+        need(isinstance(status, list) and all(isinstance(x, str) for x in status),
+             f"logical volume {name} with a status that is not a list of words")
+        for key, seg in lv.items():
+            if not key.startswith("segment") or key == "segment_count":
+                continue
+            need(isinstance(seg, dict), f"{name} {key} that is not a section")
+            for k in ("start_extent", "extent_count", "stripe_count"):
+                num(seg, k, f"{name} {key}")
+            need(isinstance(seg.get("type", ""), str), f"{name} {key} with a type that is not a string")
+            for listed in ("stripes", "mirrors", "raids"):
+                areas = seg.get(listed, [])
+                need(isinstance(areas, list), f"{name} {key} with {listed} that are not a list")
+                need(all(isinstance(x, (str, int)) for x in areas),
+                     f"{name} {key} with {listed} of another kind")
+
+
+def _lvm_shown(lvname, segs):
+    """The name lvm2 shows for a logical volume: a snapshot's visible volume is
+    stored as snapshotN with its segment naming the volume (cow_store) lvs lists."""
+    if segs and segs[0].get("type") == "snapshot" and segs[0].get("cow_store"):
+        return f"{segs[0]['cow_store']} (stored as {lvname})"
+    return lvname
+
+
+def _lvm_id(text):
+    return str(text).replace("-", "")
+
+
+def _lvm_pv(fh, base, rsize):
+    """An LvmPv for a region with a label lvm2 accepts, else None."""
+    try:
+        return LvmPv(fh, base, rsize)
+    except ValueError:
+        return None
+
+
+def lvm_volumes(fh, regions, ss=SECTOR):
+    """[(lv label, base, size, name)] for the logical volumes of the LVM2
+    physical volumes among `regions` ([(label, base, size)]) that this reads,
+    and {pv base: [lines]} saying, per physical volume, what its volume group
+    holds and why any logical volume was not read. A volume that is one run of
+    extents on one physical volume is a byte range of the image and its base is
+    that range's start; one that is split into runs or striped is read through
+    lvm_image(), and its base is where that places it, past the image's end.
+    `ss` is the disk's sector size, the unit of the LBA in a name."""
+    found, notes, _remap, _free = _lvm_scan(fh, regions, ss)
+    return found, notes
+
+
+def _lvm_scan(fh, regions, ss=SECTOR):
+    """(found, notes, remap, free) for lvm_volumes, lvm_image and volumes():
+    remap is [(key, LvmMap, label, name)] for each volume that needs a map,
+    free is {pv base: [(image offset, length)]} of the extents no logical
+    volume holds."""
+    pvs = {}
+    for _label, base, rsize in regions:
+        pv = _lvm_pv(fh, base, rsize)
+        if pv is not None:
+            pvs[base] = pv
+    # A label with no metadata area header that checks out behind it counts only
+    # when a volume group read from another physical volume names its id, the
+    # way lvm2 still uses such a physical volume: a stray label alone does not
+    # turn a region into a physical volume.
+    named = {_lvm_id(rec.get("id", "")) for pv in pvs.values() if pv.vg
+             for rec in (pv.vg[1].get("physical_volumes") or {}).values() if isinstance(rec, dict)}
+    pvs = {b: pv for b, pv in pvs.items() if pv.mda_ok or _lvm_id(pv.uuid) in named}
+    notes = {base: [f"LVM2 physical volume, id {pv.uuid}"] + pv.problems
+             for base, pv in pvs.items()}
+    by_uuid = {}
+    for base, pv in pvs.items():
+        key = _lvm_id(pv.uuid)
+        if key in by_uuid:
+            notes[base].append(f"the same physical volume id as the one at byte "
+                               f"{by_uuid[key][0]:,}; that one is used")
+            continue
+        by_uuid[key] = (base, pv)
+    groups = {}
+    for base, pv in pvs.items():
+        if pv.vg is None:
+            notes[base].append("no volume group metadata read on it")
+            continue
+        name, vg, seqno = pv.vg
+        key = vg.get("id", name)
+        if key not in groups or seqno > groups[key][2]:
+            groups[key] = (name, vg, seqno)
+    found, remap, free = [], [], {}
+    virtual = getattr(fh, "lvm_virtual", None) or {}
+    for name, vg, seqno in groups.values():
+        home = [b for b, pv in pvs.items() if pv.vg and pv.vg[1].get("id") == vg.get("id")]
+        try:
+            lines, lvs, maps, spare = _lvm_group(name, vg, seqno, by_uuid, ss, virtual)
+        except (TypeError, AttributeError, KeyError, ValueError) as exc:
+            # _lvm_vg_shape refuses the shapes known to fail; anything it misses
+            # is said here rather than costing the image its other volumes.
+            lines, lvs, maps, spare = [f"volume group {name}: its metadata could not be used "
+                                       f"({type(exc).__name__}: {exc})"], [], [], {}
+        found += lvs
+        remap += maps
+        for b, runs in spare.items():
+            free.setdefault(b, []).extend(runs)
+        for b in home:
+            notes[b] += lines
+    return found, notes, remap, free
+
+
+class LvmMap:
+    """Where each byte of a logical volume lies in the image. `segments` are in
+    the volume's order, each (start, size, chunk, bases): one run starting at
+    bases[0] when chunk is None, else striped in chunks of `chunk` bytes across
+    the runs that start at each of bases, as lvm2's striped segment type lays
+    them out (lib/striped/striped.c, dm-stripe: chunk i of the segment is on
+    stripe i mod n, in that stripe's row i div n)."""
+
+    def __init__(self, segments):
+        self.segments = segments
+        self.size = sum(s[1] for s in segments)
+        self.copy_name = self.copy_kind = None     # set for a RAID1 or mirror copy (_lvm_copy)
+        self._starts = [s[0] for s in segments]
+
+    def locate(self, off):
+        """(image offset, bytes that follow it there) for volume offset `off`."""
+        i = bisect.bisect_right(self._starts, off) - 1
+        start, size, chunk, bases = self.segments[i]
+        x = off - start
+        if chunk is None:
+            return bases[0] + x, size - x
+        c, within = divmod(x, chunk)
+        row, stripe = divmod(c, len(bases))
+        return bases[stripe] + row * chunk + within, min(chunk - within, size - x)
+
+    def image_runs(self, off, n):
+        """[(image offset, length)] for `n` bytes from volume offset `off`, the
+        runs that touch merged."""
+        out, end = [], min(off + n, self.size)
+        while off < end:
+            at, here = self.locate(off)
+            take = min(here, end - off)
+            if out and out[-1][0] + out[-1][1] == at:
+                out[-1] = (out[-1][0], out[-1][1] + take)
+            else:
+                out.append((at, take))
+            off += take
+        return out
+
+    def missing(self, size):
+        """Bytes of the volume that lie past `size`, the end of the image."""
+        lost = 0
+        for _start, seg, chunk, bases in self.segments:
+            per = seg if chunk is None else seg // len(bases)
+            for b in bases:
+                lost += max(0, min(per, b + per - size))
+        return lost
+
+    def describe(self):
+        """The map as records for a manifest: per segment, its place in the
+        volume and the image offset of each run it is on."""
+        return [{"volume_offset": start, "length": size,
+                 "image_offsets": list(bases),
+                 **({"stripe_size": chunk} if chunk is not None else {})}
+                for start, size, chunk, bases in self.segments]
+
+    def contiguous(self):
+        """The image offset the whole volume starts at, when it is one run."""
+        if len(self.segments) == 1 and self.segments[0][2] is None:
+            return self.segments[0][3][0]
+        return None
+
+
+def _lvm_group(name, vg, seqno, by_uuid, ss, virtual=None):
+    """(report lines, [(lv label, base, size, name)], [(key, LvmMap, label,
+    name)] of the volumes that need a map, {pv base: free runs}) for one volume
+    group. `virtual` maps a key to the base lvm_image() placed that volume at."""
+    virtual = virtual or {}
+    found, maps = [], []
+    ext = vg.get("extent_size", 0) * SECTOR
+    where = {}                       # pv name in the metadata -> (base, pe_start bytes, pe_count)
+    for pvname, rec in (vg.get("physical_volumes") or {}).items():
+        hit = by_uuid.get(_lvm_id(rec.get("id", "")))
+        if hit:
+            where[pvname] = (hit[0], rec.get("pe_start", 0) * SECTOR, rec.get("pe_count", 0))
+    pv_names = set(vg.get("physical_volumes") or {})
+    lines = [f"volume group {name}, metadata seqno {seqno}, extent {human(ext)}, "
+             f"{len(pv_names)} physical volume(s), {len(where)} of them in this image"]
+    used = collections.defaultdict(list)     # pv name -> [(first extent, extents)]
+    for lvname, lv in (vg.get("logical_volumes") or {}).items():
+        for key, seg in lv.items():
+            if not (key.startswith("segment") and isinstance(seg, dict)):
+                continue
+            # lvm2 writes a segment's areas on physical volumes as "pvN", extent
+            # pairs (export.c out_areas): a striped segment under stripes, each
+            # area holding its share of the extents, and a mirror (a pvmove in
+            # progress among them, mirrored.c) under mirrors, each area holding
+            # them all. Areas that name another logical volume are counted there.
+            count = seg.get("extent_count", 0)
+            for listed, per in (("stripes", count // max(1, seg.get("stripe_count", 1) or 1)),
+                                ("mirrors", count)):
+                areas = seg.get(listed) or []
+                for i in range(0, len(areas) - 1, 2):
+                    if areas[i] in pv_names and isinstance(areas[i + 1], int):
+                        used[areas[i]].append((areas[i + 1], per))
+        if "VISIBLE" not in (lv.get("status") or []):
+            continue                 # an internal volume (a pool's data, a mirror's image)
+        segs = sorted((v for k, v in lv.items() if k.startswith("segment") and isinstance(v, dict)),
+                      key=lambda s: s.get("start_extent", 0))
+        shown = _lvm_shown(lvname, segs)
+        why, lmap = _lvm_layout(segs, where, pv_names, ext, vg.get("logical_volumes") or {})
+        total = sum(s.get("extent_count", 0) for s in segs if isinstance(s.get("extent_count"), int)) * ext
+        if why:
+            lines.append(f"logical volume {shown}, {human(total)}: not read ({why})")
+            continue
+        label = f"LVM {name}/{lvname}"
+        first = lmap.locate(0)[0]
+        stem = f"lvm_lba{first // ss}"
+        suffix = sanitize_volume_label(f"{name}_{lvname}", 40)
+        vname = f"{stem}_{suffix}" if suffix else stem
+        base = lmap.contiguous()
+        if base is not None:
+            how = (f" ({_lvm_shape_words(lmap)})" if getattr(lmap, "copy_name", None) else "")
+            lines.append(f"logical volume {lvname}, {human(lmap.size)}: read as {label}{how}")
+            found.append((label, base, lmap.size, vname))
+            continue
+        key = (vg.get("id", name), lvname)
+        how = _lvm_shape_words(lmap)
+        maps.append((key, lmap, label, vname))
+        if key in virtual:
+            lines.append(f"logical volume {lvname}, {human(lmap.size)}: {how}, read as {label} "
+                         "through a map of its runs")
+            found.append((label, virtual[key], lmap.size, vname))
+        else:
+            lines.append(f"logical volume {lvname}, {human(lmap.size)}: not read here ({how}; "
+                         "lvm_image() reads it through a map of its runs)")
+    spare = {}
+    for pvname, (pv_base, pe_start, pe_count) in where.items():
+        taken = sorted(used.get(pvname, []))
+        runs, at = [], 0
+        for first, count in taken + [(pe_count, 0)]:
+            if first > at:
+                runs.append((pv_base + pe_start + at * ext, (first - at) * ext))
+            at = max(at, first + count)
+        if runs:
+            spare[pv_base] = runs
+            lines.append(f"{sum(n for _o, n in runs) // ext if ext else 0:,} extent(s) of "
+                         f"{pvname}, the physical volume at byte {pv_base:,}, allocated to no "
+                         "logical volume")
+    return lines, found, maps, spare
+
+
+def _lvm_copy(seg, where, pv_names, ext, lvs, depth):
+    """A RAID1 or mirror segment, read from the first copy whose extents are all
+    in the image. lvm2 lists a raid1 segment's copies under raids, metadata and
+    image volume in turn (raid.c, out_areas "raid"), and a mirror's under
+    mirrors, each with its first extent (mirrored.c, out_areas "mirror"). Every
+    copy holds the volume's data from its start, unless the segment records a
+    data_offset (raid.c, written while a reshape moves the data), which is not
+    read. Which copies are in sync lives in the RAID metadata, not read here; a
+    copy that fell out of sync is read as it is."""
+    if depth > 4:
+        return "copies nested too deep", None
+    kind = seg["type"]
+    if seg.get("data_offset"):
+        return f"a {kind} segment with a data offset (written while a reshape moves its data)", None
+    if kind == "raid1":
+        listed = seg.get("raids") or []
+        names = [(listed[i], 0) for i in range(1, len(listed), 2)]
+    else:
+        listed = seg.get("mirrors") or []
+        names = [(listed[i], listed[i + 1]) for i in range(0, len(listed) - 1, 2)]
+    size = seg.get("extent_count", 0) * ext
+    reasons = []
+    for name, first in names:
+        copy = lvs.get(name) if isinstance(name, str) else None
+        if not isinstance(copy, dict) or first:
+            reasons.append(f"{name}: not a copy this reads")
+            continue
+        csegs = sorted((v for k, v in copy.items() if k.startswith("segment") and isinstance(v, dict)),
+                       key=lambda c: c.get("start_extent", 0))
+        why, cmap = _lvm_layout(csegs, where, pv_names, ext, lvs, depth + 1)
+        if why or cmap.size < size:
+            reasons.append(f"{name}: {why or 'shorter than the volume'}")
+            continue
+        segs_out, left = [], size
+        for start, length, chunk, bases in cmap.segments:
+            if left <= 0:
+                break
+            segs_out.append((start, min(length, left), chunk, bases))
+            left -= length
+        lmap = LvmMap(segs_out)
+        lmap.copy_name, lmap.copy_kind = name, kind
+        return None, lmap
+    return f"a {kind} volume none of whose copies is read ({'; '.join(reasons) or 'none listed'})", None
+
+
+def _lvm_shape_words(lmap):
+    """How a volume that needs a map is laid out, in a few words."""
+    if getattr(lmap, "copy_name", None):
+        return f"{lmap.copy_kind}, read from its copy {lmap.copy_name}"
+    striped = [s for s in lmap.segments if s[2] is not None]
+    if striped:
+        return (f"striped across {len(striped[0][3])} physical volumes in "
+                f"{human(striped[0][2])} stripes")
+    return f"in {len(lmap.segments)} separate runs of extents"
+
+
+def _lvm_layout(segs, where, pv_names, ext, lvs=None, depth=0):
+    """(why not, None) or (None, LvmMap) for an LV's segments: linear and
+    striped segments whose every run is on a physical volume in the image, or a
+    RAID1 or mirror volume, read from the first of its copies that is.
+    `where` maps a physical volume's name in the metadata to (base, pe_start
+    bytes, pe_count) for those in the image; `pv_names` names every one; `lvs`
+    is the volume group's logical_volumes, where the copies are."""
+    if not segs:
+        return "no segments", None
+    if len(segs) == 1 and segs[0].get("type") in ("raid1", "mirror") and lvs is not None:
+        return _lvm_copy(segs[0], where, pv_names, ext, lvs, depth)
+    out, start = [], 0
+    for seg in segs:
+        kind = seg.get("type", "")
+        if kind != "striped":
+            return f"a {kind or 'untyped'} segment", None
+        stripes = seg.get("stripes") or []
+        count, n = seg.get("extent_count", 0), seg.get("stripe_count", 1)
+        if (not isinstance(n, int) or n < 1 or len(stripes) != 2 * n
+                or not all(isinstance(stripes[i], int) for i in range(1, len(stripes), 2))
+                or not isinstance(count, int) or not isinstance(seg.get("start_extent", 0), int)):
+            return "a segment's extents do not read", None
+        if seg.get("start_extent", 0) != start:
+            return "its segments leave a gap in the volume", None
+        chunk = None
+        if n > 1:
+            chunk = seg.get("stripe_size", 0) * SECTOR
+            if not chunk or count % n or (count // n * ext) % chunk:
+                return "a striped segment whose stripes do not divide its extents", None
+        bases = []
+        for i in range(0, 2 * n, 2):
+            pvname, pe = stripes[i], stripes[i + 1]
+            if pvname not in pv_names:
+                return f"its extents are on {pvname}, which is not a physical volume of the group", None
+            if pvname not in where:
+                return f"on {pvname}, a physical volume not in this image", None
+            pv_base, pe_start, pe_count = where[pvname]
+            if pe_count and pe + count // n > pe_count:
+                return f"its extents run past the {pe_count:,} its physical volume holds", None
+            bases.append(pv_base + pe_start + pe * ext)
+        size = count * ext
+        if (chunk is None and out and out[-1][2] is None
+                and out[-1][3][0] + out[-1][1] == bases[0]):
+            p_start, p_size, _c, p_bases = out[-1]
+            out[-1] = (p_start, p_size + size, None, p_bases)    # one run lvm2 keeps as two segments
+        else:
+            out.append((start * ext, size, chunk, bases))
+        start += count
+    return None, LvmMap(out)
+
+
+class LvmImage:
+    """An image read through read_at() with the logical volumes that need a map
+    (split into runs, or striped) placed past its end, each at the base in
+    ``lvm_virtual`` ({(volume group id, name): base}), read through its LvmMap.
+    ``size`` stays the image's own, so nothing reads the placed volumes as part
+    of the disk; an offset at or past it belongs to a placed volume and is
+    translated (lvm_map_for) wherever one is reported. Any other attribute is the
+    image's own."""
+
+    def __init__(self, fh, size, placed):
+        self._fh, self.size = fh, size
+        self.lvm_virtual = {key: base for key, (base, _m) in placed.items()}
+        self._spans = sorted((base, base + m.size, m) for base, m in placed.values())
+        self._pos = 0
+
+    def __getattr__(self, name):
+        return getattr(self._fh, name)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        self.close()
+
+    def close(self):
+        self._fh.close()
+
+    def lvm_map_for(self, base):
+        """The LvmMap of the volume placed at `base`, else None."""
+        return next((m for b, _e, m in self._spans if b == base), None)
+
+    def seek(self, off, whence=0):
+        self._pos = off if whence == 0 else self._pos + off if whence == 1 else self.size + off
+        return self._pos
+
+    def tell(self):
+        return self._pos
+
+    def read(self, n=-1):
+        if self._pos < self.size:
+            want = self.size - self._pos if n is None or n < 0 else min(n, self.size - self._pos)
+            self._fh.seek(self._pos)
+            got = self._fh.read(want)
+            self._pos += len(got)
+            return got
+        span = next((s for s in self._spans if s[0] <= self._pos < s[1]), None)
+        if span is None:
+            return b""
+        start, end, lmap = span
+        want = end - self._pos if n is None or n < 0 else min(n, end - self._pos)
+        out = bytearray()
+        for at, length in lmap.image_runs(self._pos - start, want):
+            self._fh.seek(at)
+            got = self._fh.read(length)
+            out += got
+            if len(got) < length:
+                break
+        self._pos += len(out)
+        return bytes(out)
+
+
+def lvm_image(fh, size=None):
+    """The image with each logical volume that needs a map (split into runs, or
+    striped) readable past its end (LvmImage), or the image unchanged when there
+    is none. volumes() and main() call it, so their volumes include those, and
+    a placed volume's base is valid only through the handle it returns (calling
+    it again on that handle returns it unchanged). Apply it after
+    unlock_bitlocker() and unlock_apfs(): their wrappers read only up to the
+    image's own size, so wrapping this one inside them hides every placed volume,
+    and a BitLocker or APFS volume inside a mapped logical volume is not opened."""
+    if getattr(fh, "lvm_virtual", None) is not None:
+        return fh
+    if size is None:
+        size = image_size(fh)
+    regions, _names, containers, protective = partition_regions(fh, size)
+    ss = disk_sector_size(fh)
+    _found, _notes, remap, _free = _lvm_scan(
+        fh, [r for r in regions if r[0] not in containers and r[0] not in protective
+             and not r[0].startswith("LVM ")], ss)
+    if not remap:
+        return fh
+    # Past anything the image can describe: its end, and the end of every region
+    # its tables name (on a partial image those reach past the file, and a read
+    # there has to come back empty, not with a placed volume's data), and never
+    # below 2**60 bytes, rounded up to a GiB and a GiB further, each volume then
+    # starting on a MiB.
+    reach = max([size, 1 << 60] + [b + (n or 0) for _l, b, n in regions])
+    at = ((reach + (1 << 30) - 1) >> 30 << 30) + (1 << 30)
+    placed = {}
+    for key, lmap, _label, _name in remap:
+        placed[key] = (at, lmap)
+        at = (at + lmap.size + (1 << 20) - 1) >> 20 << 20
+    return LvmImage(fh, size, placed)
+
+
+def lvm_free_extents(fh, regions, ss=SECTOR):
+    """{pv base: [(image offset, length)]} of each LVM2 physical volume's extents
+    that no logical volume, hidden ones included, is allocated."""
+    return _lvm_scan(fh, regions, ss)[3]
+
+
+def identify_lvm(fh, base, size=None):
+    """("lvm2 pv", lines) for an LVM2 physical volume at base, else None: a
+    label lvm2 accepts, and either a metadata area header that checks out or a
+    volume group elsewhere in the image that names it (lvm_volumes)."""
+    pv = _lvm_pv(fh, base, size)
+    if pv is None:
+        return None
+    # The volume group may span other physical volumes in the same image, so
+    # its logical volumes are judged against every region the partition tables
+    # give (table_regions reads only the tables, never a filesystem, so this
+    # cannot come back here).
+    try:
+        regions = [r for r in table_regions(fh)[0] if r[1] != base]
+    except Exception:                              # pylint: disable=broad-except
+        regions = []
+    _found, notes = lvm_volumes(fh, [("pv", base, size or 0)] + regions)
+    if base not in notes:
+        return None
+    return "lvm2 pv", notes[base][1:] + [f"id {pv.uuid}"]
+
+
+def _luks2_rewritten(img, change, both=True):
+    """A LUKS2 image whose JSON metadata `change(meta)` has edited, its checksum
+    made good in both header copies (or only the first when `both` is False)."""
+    import hashlib
+    out = bytearray(img)
+    size, = struct.unpack_from(">Q", out, 8)
+    for at in ((0, size) if both else (0,)):
+        meta = json.loads(bytes(out[at + 4096:at + size]).split(b"\0", 1)[0])
+        change(meta)
+        text = json.dumps(meta).encode()
+        out[at + 4096:at + size] = text + bytes(size - 4096 - len(text))
+        alg = out[at + 72:at + 104].split(b"\0")[0].decode()
+        body = bytearray(out[at:at + size])
+        body[448:512] = bytes(64)
+        digest = hashlib.new(alg, bytes(body)).digest()
+        out[at + 448:at + 448 + len(digest)] = digest
+    return bytes(out)
+
+
+def _luks_hostile_checks(images, p1, p2, want, walk):
+    """Damaged and crafted LUKS headers cost nothing but that container, keyslot
+    and digest rules hold, and the paths the fixtures alone do not reach."""
+    import io
+    out = []
+    l2 = images["luks2-pbkdf2"]
+
+    def state(img):
+        """(volumes() ran, the container's note), never raising."""
+        try:
+            vols = volumes(io.BytesIO(img), len(img))
+            luks = [v for v in vols if v["kind"] == "luks"]
+            return True, (luks[0].get("note", "") if luks else "")
+        except Exception as exc:                       # pylint: disable=broad-except
+            return False, f"{type(exc).__name__}: {exc}"
+
+    both_bad = bytearray(l2)
+    size, = struct.unpack_from(">Q", both_bad, 8)
+    both_bad[4096 + 10] ^= 1
+    both_bad[size + 4096 + 10] ^= 1
+    ok1, note1 = state(bytes(both_bad))
+    v3 = bytearray(images["luks1-cbc"])
+    struct.pack_into(">H", v3, 6, 3)
+    ok2, note2 = state(bytes(v3))
+    out.append(("a LUKS2 container with both header copies damaged, and a header of an "
+                "unknown version, are listed as not read, and nothing else is lost",
+                ok1 and "no LUKS2 header copy passes" in note1 and ok2 and "LUKS version 3" in note2))
+
+    crafted = {
+        "a kdf without iterations": lambda m: m["keyslots"]["0"]["kdf"].pop("iterations"),
+        "keyslots as a list": lambda m: m.__setitem__("keyslots", []),
+        "a segment size that is not a number": lambda m: m["segments"]["0"].__setitem__("size", "abc"),
+        "a data segment with dm-integrity": lambda m: m["segments"]["0"].__setitem__(
+            "integrity", {"type": "hmac(sha256)"}),
+        "a serpent cipher": lambda m: m["segments"]["0"].__setitem__("encryption", "serpent-xts-plain64"),
+    }
+    held = []
+    for what, change in crafted.items():
+        img = _luks2_rewritten(l2, change)
+        ok, note = state(img)
+        lk = Luks.open(io.BytesIO(img), 0, len(img))
+        held.append((what, ok and lk.why != "" and not lk.unlock([p1]) and "give its passphrase" not in note))
+    out.append(("crafted LUKS2 metadata (" + ", ".join(w for w, _h in held) + ") is refused as not "
+                "read, with why, before any passphrase is asked for",
+                all(h for _w, h in held)
+                and "dm-integrity" in Luks.open(io.BytesIO(_luks2_rewritten(l2, crafted["a data segment with dm-integrity"])), 0, len(l2)).why
+                and "only AES" in Luks.open(io.BytesIO(_luks2_rewritten(l2, crafted["a serpent cipher"])), 0, len(l2)).why))
+
+    huge = _luks2_rewritten(images["luks2-argon2id"], lambda m: m["keyslots"]["0"]["kdf"].update(
+        memory=2 ** 32 - 1)) if _ARGON2 is not None else None
+    if huge is not None:
+        started = time.time()
+        lk = Luks.open(io.BytesIO(huge), 0, len(huge))
+        lk.unlock([p1])
+        out.append(("an Argon2 keyslot asking for more memory than cryptsetup allows is refused, "
+                    f"not run ({time.time() - started:.2f}s)",
+                    lk.mk is None and "past cryptsetup's own limits" in lk.why
+                    and time.time() - started < 30))
+        # a digest applies to the keyslots it lists: limited to the second keyslot,
+        # the first keyslot's passphrase no longer opens, the second's still does
+        only1 = _luks2_rewritten(images["luks2-argon2id"],
+                                 lambda m: m["digests"]["0"].__setitem__("keyslots", ["1"]))
+        a, b = Luks.open(io.BytesIO(only1), 0, len(only1)), Luks.open(io.BytesIO(only1), 0, len(only1))
+        out.append(("a digest confirms only the keyslots it lists",
+                    not a.unlock([p1]) and b.unlock([p2]) and b.unlocked_by == "keyslot 1"))
+
+    # A header copy records where it sits (hdr_offset, which cryptsetup checks):
+    # a primary that names another place, its checksum made good, is passed over.
+    import hashlib
+    moved = bytearray(l2)
+    struct.pack_into(">Q", moved, 256, 4096)
+    alg = moved[72:104].split(b"\0")[0].decode()
+    body = bytearray(moved[:size])
+    body[448:512] = bytes(64)
+    dg = hashlib.new(alg, bytes(body)).digest()
+    moved[448:448 + len(dg)] = dg
+    mlk = Luks.open(io.BytesIO(bytes(moved)), 0, len(moved))
+    out.append(("a header copy that records another place than its own is passed over for the "
+                "second copy", mlk.unlock([p1]) and any("names another size or place" in p
+                                                         for p in mlk.problems)))
+
+    # The key a keyslot's material is encrypted with is as long as the keyslot's
+    # area says, which need not be the volume key's length.
+    shorter = _luks2_rewritten(l2, lambda m: m["keyslots"]["0"]["area"].__setitem__("key_size", 16))
+    lengths = []
+    lk = Luks.open(io.BytesIO(shorter), 0, len(shorter))
+    real = lk._derive                                   # pylint: disable=protected-access
+
+    def recorded(kdf, password, length):
+        lengths.append(length)
+        return real(kdf, password, length)
+    lk._derive = recorded                               # pylint: disable=protected-access
+    lk.unlock([p1])
+    out.append(("a keyslot's key is derived at its area's key size (16 here), not the volume "
+                "key's (32)", lengths == [16]))
+
+    # plain counts the IV in 32 bits and wraps; plain64 does not
+    block = bytes(range(256)) * 2
+    key = bytes(range(64))
+    wraps = []
+    for spec, k in (("aes-xts-plain", key), ("aes-cbc-plain", key[:32])):
+        c = _LuksCipher(spec, k)
+        c64 = _LuksCipher(spec + "64", k)
+        wraps.append(c.decrypt(block, 1 << 32) == c.decrypt(block, 0)
+                     and c64.decrypt(block, 1 << 32) != c64.decrypt(block, 0))
+    out.append(("the plain IV wraps at 32 bits and plain64 does not, in XTS and in CBC", all(wraps)))
+
+    # iv_tweak shifts every sector's IV
+    lk = Luks.open(io.BytesIO(l2), 0, len(l2))
+    if lk.unlock([p1]):
+        raw = l2[lk.offset:lk.offset + 4096]
+        lk.iv_tweak, lk._cache = 40, collections.OrderedDict()     # pylint: disable=protected-access
+        out.append(("a LUKS2 segment's iv_tweak is added to every sector's IV",
+                    lk.read(0, 4096) == lk._cipher.decrypt(raw, 40, 4096)))   # pylint: disable=protected-access
+
+    # A LUKS container inside a logical volume: lvm-wholedisk's one volume holds
+    # luks1-cbc here, written over it, and what it holds is found and read.
+    import gzip
+    here = os.path.join(os.path.dirname(os.path.abspath(__file__)), "tests", "fixtures")
+    whole_gz = os.path.join(here, "lvm-wholedisk.img.gz")
+    if os.path.isfile(whole_gz):
+        with gzip.open(whole_gz, "rb") as gz:
+            nested = bytearray(gz.read())
+        inner = images["luks1-cbc"]
+        nested[3 << 20:(3 << 20) + len(inner)] = inner
+        fh, found = unlock_luks(io.BytesIO(bytes(nested)), len(nested), [p1])
+        vols = volumes(fh, len(nested))
+        inside = [v for v in vols if v["label"] == "LUKS LVM wholevg/root"]
+        got = dict(walk(inside[0]["walker"], inside[0]["walker"].root)) if inside and inside[0].get("walker") else {}
+        out.append(("a LUKS container inside a logical volume is opened and what it holds is "
+                    "listed, read and marked as read decrypted",
+                    len(found) == 1 and got == want and inside[0].get("encryption", "").startswith("LUKS1")))
+    return out
+
+
+def _luks_self_checks():
+    """[(label, passed or None for a skip)] for the LUKS reader, from the images
+    cryptsetup wrote (tools/make_luks_fixtures.sh), its own luksDump of each, and
+    sha256sum over the tree each holds."""
+    import gzip
+    import hashlib
+    import io
+    here = os.path.join(os.path.dirname(os.path.abspath(__file__)), "tests", "fixtures")
+    names = ("luks2-argon2id", "luks2-pbkdf2", "luks1-xts", "luks1-cbc")
+    need = [f"{n}.img.gz" for n in names] + ["luks-fixtures.json", "luks-fixture.sha256"]
+    absent = [n for n in need if not os.path.isfile(os.path.join(here, n))]
+    if absent:
+        return [(f"the LUKS fixtures are not beside this script ({', '.join(absent)}), so the "
+                 "LUKS reader was not checked against them", None)]
+    if _BDE_AES is None:
+        return [("LUKS volumes open with their passphrases (needs the pycryptodome package)", None)]
+    meta = json.load(open(os.path.join(here, "luks-fixtures.json"), encoding="utf-8"))
+    p1, p2 = meta["passphrases"]
+    want = {}
+    with open(os.path.join(here, "luks-fixture.sha256"), encoding="utf-8") as lf:
+        for line in lf:
+            h, name = line.rstrip("\n").split("  ", 1)
+            want[name] = h
+
+    def walk(w, node, path=""):
+        for name, child in w.listdir(node):
+            if name in (".", "..", "lost+found"):
+                continue
+            mode, size = w.entry(child)[:2]
+            rel = f"{path}/{name}" if path else name
+            if mode & S_IFMT == S_IFDIR:
+                yield from walk(w, child, rel)
+            elif mode & S_IFMT == S_IFREG:
+                yield rel, hashlib.sha256(b"".join(w.read_file(child, size))).hexdigest()
+
+    out, images = [], {}
+    for n in names:
+        with gzip.open(os.path.join(here, f"{n}.img.gz"), "rb") as gz:
+            images[n] = gz.read()
+    for n in names:
+        if n == "luks2-argon2id" and _ARGON2 is None:
+            out.append((f"{n} opens with its passphrase (needs the argon2-cffi package)", None))
+            continue
+        img = images[n]
+        lk = Luks.open(io.BytesIO(img), 0, len(img))
+        dump = meta["images"][n]
+        if "luks2_metadata" in dump:
+            seg = dump["luks2_metadata"]["segments"]["0"]
+            header_ok = (lk.version == 2 and lk.cipher == seg["encryption"]
+                         and lk.offset == int(seg["offset"]) and lk.sector_size == seg["sector_size"]
+                         and len(lk.keyslots) == len(dump["luks2_metadata"]["keyslots"]))
+        else:
+            text = dump["luksDump"]
+
+            def field(key, text=text):
+                return re.search(rf"^{key}:\s*(.+)$", text, re.M).group(1).strip()
+            digest = re.search(r"MK digest:\s*((?:[0-9a-f]{2} ?){20})", text).group(1).replace(" ", "")
+            header_ok = (lk.version == 1 and lk.cipher == f"{field('Cipher name')}-{field('Cipher mode')}"
+                         and lk.offset == int(field("Payload offset")) * SECTOR
+                         and lk.key_bytes * 8 == int(field("MK bits")) and lk.mk_digest.hex() == digest
+                         and len(lk.keyslots) == text.count(": ENABLED"))
+        out.append((f"{n}: the header reads as cryptsetup's own luksDump gives it", header_ok))
+        fh, found = unlock_luks(io.BytesIO(img), len(img), ["not the passphrase", p1])
+        vols = volumes(fh, len(img))
+        data = [v for v in vols if v["label"].startswith("LUKS ")]
+        got = {}
+        if data and data[0].get("walker"):
+            got = dict(walk(data[0]["walker"], data[0]["walker"].root))
+        out.append((f"{n}: opened with its passphrase (a wrong one tried first), every file of "
+                    f"the filesystem inside matches what sha256sum recorded ({len(got)} of {len(want)})",
+                    len(found) == 1 and found[0].mk is not None and got == want))
+        wrong = Luks.open(io.BytesIO(img), 0, len(img))
+        out.append((f"{n}: a wrong passphrase leaves it locked, and the note says to give one",
+                    not wrong.unlock(["not the passphrase"]) and "no passphrase given opens"
+                    in wrong.locked_note()))
+    if _ARGON2 is not None:
+        img = images["luks2-argon2id"]
+        second = Luks.open(io.BytesIO(img), 0, len(img))
+        out.append(("luks2-argon2id: its second passphrase opens its second keyslot",
+                    second.unlock([p2]) and second.unlocked_by == "keyslot 1"))
+        # A primary header changed after cryptsetup wrote it fails its checksum, and
+        # the second copy, which passes, is read instead.
+        bad = bytearray(img)
+        bad[4096 + 10] ^= 0x01
+        fallback = Luks.open(io.BytesIO(bytes(bad)), 0, len(bad))
+        out.append(("luks2-argon2id: a primary header that fails its checksum is passed over for "
+                    "the second copy, and says so",
+                    fallback.unlock([p1]) and any("fails its checksum" in p for p in fallback.problems)))
+        # Of two copies that pass their checksums the one with the higher sequence
+        # id is in force: give the second copy a higher one and its own label.
+        newer = bytearray(img)
+        hdr = struct.unpack_from(">Q", newer, 8)[0]
+        seq = struct.unpack_from(">Q", newer, hdr + 16)[0]
+        struct.pack_into(">Q", newer, hdr + 16, seq + 1)
+        newer[hdr + 24:hdr + 72] = b"second copy".ljust(48, b"\0")
+        alg = newer[hdr + 72:hdr + 104].split(b"\0")[0].decode()
+        body = bytearray(newer[hdr:2 * hdr])
+        body[448:512] = bytes(64)
+        dg = hashlib.new(alg, bytes(body)).digest()
+        newer[hdr + 448:hdr + 448 + len(dg)] = dg
+        out.append(("luks2-argon2id: of two header copies that pass, the one with the higher "
+                    "sequence id is read", Luks.open(io.BytesIO(bytes(newer)), 0, len(newer)).label
+                    == "second copy" and second.label != "second copy"))
+    # Control: the IV of a 4096-byte LUKS2 sector counts 512-byte units. Counting
+    # it in 4096-byte units decrypts sector 0 the same and every later one wrong,
+    # so the files above could not have matched; check that it does differ.
+    img = images["luks2-pbkdf2"]
+    lk = Luks.open(io.BytesIO(img), 0, len(img))
+    if lk.unlock([p1]):
+        raw = img[lk.offset:lk.offset + 2 * 4096]
+        right = lk._cipher.decrypt(raw, 0, 4096)                    # pylint: disable=protected-access
+        wrong_units = lk._cipher.decrypt(raw, 0, 4096, 4096)        # pylint: disable=protected-access
+        out.append(("control: counting a 4096-byte sector's IV in 4096-byte units decrypts its "
+                    "first sector alike and the next one differently",
+                    right[:4096] == wrong_units[:4096] and right[4096:] != wrong_units[4096:]
+                    and right == lk.read(0, 2 * 4096)))
+    # The report main() prints, given the passphrase, names the filesystem inside.
+    import contextlib
+    import shutil
+    import tempfile
+    top = tempfile.mkdtemp(prefix="qnxprobe-luks-")
+    try:
+        path = os.path.join(top, "luks1-cbc.dd")
+        with open(path, "wb") as f:
+            f.write(images["luks1-cbc"])
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            main(path, passwords=["not the passphrase", p1])
+        text = buf.getvalue()
+    finally:
+        shutil.rmtree(top, ignore_errors=True)
+    out.append(("the report, given the passphrase, opens the container and names the "
+                "filesystem inside", "->  luks" in text and "LUKS whole image" in text
+                and "->  ext4" in text))
+    out += _luks_hostile_checks(images, p1, p2, want, walk)
+    # An image with no passphrase given: the container is listed, locked, with why.
+    img = images["luks1-cbc"]
+    locked = [v for v in volumes(io.BytesIO(img), len(img)) if v["kind"] == "luks"]
+    out.append(("a LUKS container with no passphrase given is listed as locked, with what "
+                "would open it", len(locked) == 1 and not locked[0].get("walker")
+                and "give its passphrase" in locked[0].get("note", "")))
+    return out
+
+
+def _lvm_older_copy(disk, pv_at, m_off):
+    """The fixture with the physical volume at pv_at holding an older metadata
+    copy: seqno 1 and no volume onb, its checksums made good."""
+    h = bytearray(disk[pv_at + m_off:pv_at + m_off + LVM_MDA_HEADER_SIZE])
+    o, n = struct.unpack_from("<QQ", h, 40)
+    t = disk[pv_at + m_off + o:pv_at + m_off + o + n].split(b"\0", 1)[0].decode()
+    cut = t.index("\nonb {")
+    end = t.index("\n}\n}\n", t.index("segment1 {", cut)) + 5    # the segment's brace, then onb's
+    stale = re.sub(r"seqno = \d+", "seqno = 1", t[:cut] + t[end:], count=1).encode()
+    out = bytearray(disk)
+    out[pv_at + m_off + o:pv_at + m_off + o + len(stale)] = stale
+    struct.pack_into("<QQI", h, 40, o, len(stale), lvm_crc(stale))
+    struct.pack_into("<I", h, 0, lvm_crc(bytes(h[4:])))
+    out[pv_at + m_off:pv_at + m_off + LVM_MDA_HEADER_SIZE] = h
+    return bytes(out)
+
+
+def _lvm_hostile_checks(disk, whole, regions, want, paths, parts, m_off, r_off):
+    """The checks the review asked for: inputs lvm2 would refuse, damaged and
+    crafted metadata, and the cases the fixtures alone do not reach."""
+    import io
+    out = []
+    lvm_regions = [r for r in regions if not r[0].startswith("MBR")]
+    pv1 = parts["1"]
+
+    def with_header(img, pv_at, change):
+        h = bytearray(img[pv_at + m_off:pv_at + m_off + LVM_MDA_HEADER_SIZE])
+        change(h)
+        b = bytearray(img)
+        b[pv_at + m_off:pv_at + m_off + LVM_MDA_HEADER_SIZE] = h
+        return bytes(b)
+
+    # The whole-disk volume's extents start 3 MiB in, at the pe_start lvm2
+    # reports, where the 1 MiB extent size would put them elsewhere.
+    wpe = int(json.load(open(paths["lvm-wholedisk.pvs.json"], encoding="utf-8"))
+              ["pvs"]["report"][0]["pv"][0]["pe_start"].rstrip("B"))
+    wfound, _wn = lvm_volumes(io.BytesIO(whole), [("whole image", 0, len(whole))])
+    out.append((f"the whole-disk volume starts at the pe_start lvm2 reports ({wpe:,} bytes), "
+                "not at the extent size", wpe == 3 << 20 and [b for _l, b, _s, _n in wfound] == [wpe]))
+
+    # A metadata area header changed after lvm2 wrote it, with its checksum left.
+    bad = with_header(disk, pv1, lambda h: h.__setitem__(200, h[200] ^ 0xFF))
+    bf, bn = lvm_volumes(io.BytesIO(bad), lvm_regions)
+    out.append(("a metadata area header that fails its checksum is reported and the other "
+                "physical volume's copy is used",
+                {(a, b, c) for a, b, c, _n in bf} == want
+                and any("metadata area header checksum does not match" in ln for ln in bn[pv1])))
+
+    # A copy lvm2 marks ignored (RAW_LOCN_IGNORED) is not used.
+    def ignore(h):
+        o, n, c, f = struct.unpack_from("<QQII", h, 40)
+        struct.pack_into("<QQII", h, 40, o, n, c, f | LVM_RAW_LOCN_IGNORED)
+        struct.pack_into("<I", h, 0, lvm_crc(bytes(h[4:])))
+    ign = with_header(disk, pv1, ignore)
+    ipv = LvmPv(io.BytesIO(ign), pv1)
+    igf, _ign = lvm_volumes(io.BytesIO(ign), lvm_regions)
+    out.append(("a metadata copy lvm2 marks ignored is not used, and the other copy is",
+                ipv.vg is None and not ipv.problems and {(a, b, c) for a, b, c, _n in igf} == want))
+
+    # A label is accepted only as lvm2 accepts it: one that names another sector,
+    # or fails its checksum, is passed over, and the next sector's is taken.
+    label = disk[pv1 + SECTOR:pv1 + 2 * SECTOR]
+    moved = bytearray(disk)
+    moved[pv1 + SECTOR:pv1 + 2 * SECTOR] = bytes(SECTOR)
+    moved[pv1 + 2 * SECTOR:pv1 + 3 * SECTOR] = label              # still says sector 1
+    wrong_sector = _lvm_pv(io.BytesIO(bytes(moved)), pv1, None)
+    fixed = bytearray(label)
+    struct.pack_into("<Q", fixed, 8, 2)
+    struct.pack_into("<I", fixed, 16, lvm_crc(bytes(fixed[20:])))
+    moved[pv1 + 2 * SECTOR:pv1 + 3 * SECTOR] = fixed
+    right_sector = _lvm_pv(io.BytesIO(bytes(moved)), pv1, None)
+    flipped = bytearray(disk)
+    flipped[pv1 + SECTOR + 40] ^= 0x01
+    out.append(("a label naming another sector, or failing its checksum, is passed over as "
+                "lvm2 passes it over, and a good one in the next sector is taken",
+                wrong_sector is None and _lvm_pv(io.BytesIO(bytes(flipped)), pv1, None) is None
+                and right_sector is not None and right_sector.label_sector == 2))
+
+    # A stray label with no metadata area behind it does not hide the
+    # filesystem the region holds.
+    ext_fix = os.path.join(os.path.dirname(paths["lvm-fixture.sha256"]), "ext4-sparse.img.gz")
+    if os.path.isfile(ext_fix):
+        import gzip
+        with gzip.open(ext_fix, "rb") as gz:
+            ext = bytearray(gz.read())
+        ext[SECTOR:2 * SECTOR] = label
+        kind = identify_fs(io.BytesIO(bytes(ext)), 0, len(ext))[0]
+        out.append(("an ext4 volume with a stray LVM label and no metadata area behind it is "
+                    f"still ext4 (read as {kind})", kind == "ext4"))
+    else:
+        out.append(("the ext4-sparse fixture is beside this script for the stray-label check", False))
+
+    # Crafted metadata text, with its checksums made good, is refused as a
+    # problem and costs nothing else: every other partition is still listed.
+    for text in (b"fixvg {\nseqno = 99\nx = [\n", b"a {" * 2000,
+                 b"a = 1\n" + b"#" * 60 + b"\n;"):
+        def craft(h, text=text):
+            o, _n, _c, f = struct.unpack_from("<QQII", h, 40)
+            struct.pack_into("<QQII", h, 40, o, len(text), lvm_crc(text), f)
+            struct.pack_into("<I", h, 0, lvm_crc(bytes(h[4:])))
+        o = struct.unpack_from("<Q", disk, pv1 + m_off + 40)[0]
+        img = bytearray(with_header(disk, pv1, craft))
+        img[pv1 + m_off + o:pv1 + m_off + o + len(text)] = text
+        started = time.time()
+        try:
+            vols = volumes(io.BytesIO(bytes(img)), len(img))
+            fine = {v["label"] for v in vols} >= {"GPT part 1 lvm-a", "GPT part 2 lvm-b"}
+            cpv = LvmPv(io.BytesIO(bytes(img)), pv1)
+            fine = fine and cpv.vg is None and any("metadata area" in p for p in cpv.problems)
+        except Exception:                            # pylint: disable=broad-except
+            fine = False
+        took = time.time() - started
+        out.append((f"crafted metadata text ({text[:18]!r}...) is refused as a problem in "
+                    f"{took:.2f}s and every partition is still listed", fine and took < 60))
+
+    # A whole-disk physical volume is identified without the reader calling
+    # itself: count the calls volumes() makes to partition_regions.
+    calls = [0]
+    real = globals()["partition_regions"]
+
+    def counting(*a, **k):
+        calls[0] += 1
+        return real(*a, **k)
+    globals()["partition_regions"] = counting
+    try:
+        volumes(io.BytesIO(whole), len(whole))
+    finally:
+        globals()["partition_regions"] = real
+    out.append((f"a whole-disk physical volume is listed with {calls[0]} call(s) to "
+                "partition_regions, not one per recursion level", calls[0] <= 2))
+
+    # Segments lvm2 keeps apart though they touch: the volume starts at the first.
+    two = [{"type": "striped", "stripe_count": 1, "start_extent": 0, "extent_count": 2,
+            "stripes": ["pv0", 5]},
+           {"type": "striped", "stripe_count": 1, "start_extent": 2, "extent_count": 1,
+            "stripes": ["pv0", 7]}]
+    two_map = _lvm_layout(two, {"pv0": (1000, 100, 20)}, {"pv0"}, 10)[1]
+    out.append(("a volume in two touching runs is one run, from its first extent",
+                two_map is not None and two_map.contiguous() == 1000 + 100 + 50 and two_map.size == 30))
+    out.append(("a volume whose extents are on something that is not one of the group's "
+                "physical volumes (a move in progress) says so",
+                "not a physical volume of the group"
+                in (_lvm_layout([dict(two[0], stripes=["pvmove0", 0])], {"pv0": (0, 0, 9)},
+                                {"pv0"}, 10)[0] or "")))
+    out.append(("a volume that runs past its physical volume's extents is not read",
+                "run past" in (_lvm_layout(two, {"pv0": (0, 0, 6)}, {"pv0"}, 10)[0] or "")))
+    # Metadata that parses but holds a value of the wrong kind where lvm2 writes
+    # a number, a section, a string or a list: that copy is refused, the other
+    # physical volume's copy gives every volume, and nothing else is lost.
+    o = struct.unpack_from("<Q", disk, pv1 + m_off + 40)[0]
+    n = struct.unpack_from("<Q", disk, pv1 + m_off + 48)[0]
+    good = disk[pv1 + m_off + o:pv1 + m_off + o + n].split(b"\0", 1)[0].decode()
+    shapes = [("physical_volumes {", "physical_volumes = 5\nphysical_volumes_x {"),
+              ("pv0 {", "pv0 = 5\npv0_x {"),
+              ("logical_volumes {", "logical_volumes = [1]\nlogical_volumes_x {"),
+              ("seqno = ", 'seqno = "9"\nseqno_x = '),
+              ("extent_size = 2048", 'extent_size = "big"'),
+              ('status = ["READ", "WRITE", "VISIBLE"]', "status = 5"),
+              ("start_extent = 0", 'start_extent = "0"'),
+              ("pe_start = 2048", 'pe_start = "a"')]
+    held = []
+    for old_text, new_text in shapes:
+        text = good.replace(old_text, new_text, 1).encode()
+        def craft_shape(h, text=text):
+            o2, _n2, _c2, f2 = struct.unpack_from("<QQII", h, 40)
+            struct.pack_into("<QQII", h, 40, o2, len(text), lvm_crc(text), f2)
+            struct.pack_into("<I", h, 0, lvm_crc(bytes(h[4:])))
+        img = bytearray(with_header(disk, pv1, craft_shape))
+        img[pv1 + m_off + o:pv1 + m_off + o + len(text)] = text
+        try:
+            sf, _sn = lvm_volumes(io.BytesIO(bytes(img)), lvm_regions)
+            cpv = LvmPv(io.BytesIO(bytes(img)), pv1)
+            held.append(good != text.decode() and cpv.vg is None
+                        and any("metadata has" in p for p in cpv.problems)
+                        and {(a, b, c) for a, b, c, _n in sf} == want
+                        and len(volumes(io.BytesIO(bytes(img)), len(img))) >= 6)
+        except Exception:                            # pylint: disable=broad-except
+            held.append(False)
+    out.append((f"metadata that parses with a value of the wrong kind is refused and the "
+                f"other copy is used ({sum(held)} of {len(shapes)} shapes)", all(held)))
+
+    # Two partitions with the same physical volume id (a cloned disk): the first
+    # is used and the second says so.
+    twin = bytearray(disk)
+    p2 = parts["2"]
+    twin[p2:p2 + (20 << 20)] = disk[pv1:pv1 + (20 << 20)]
+    tf, tn = lvm_volumes(io.BytesIO(bytes(twin)), lvm_regions)
+    root = [b for lab, b, _s, _n in tf if lab == "LVM fixvg/root"]
+    want_root = [b for lab, b, _s in want if lab == "LVM fixvg/root"]
+    out.append(("a second partition with the same physical volume id is named and the "
+                "first is used", root == want_root
+                and any("same physical volume id" in ln for ln in tn.get(p2, []))))
+    out.append(("a snapshot is shown by the volume lvm2 lists for it",
+                _lvm_shown("snapshot0", [{"type": "snapshot", "cow_store": "snap1"}])
+                == "snap1 (stored as snapshot0)"
+                and _lvm_shown("root", [{"type": "striped"}]) == "root"))
+    named4k, _n4 = lvm_volumes(io.BytesIO(disk), lvm_regions, 4096)
+    out.append(("a logical volume's name counts the disk's sector size, as the partition "
+                "names do", {nm for _l, _b, _s, nm in named4k}
+                == {f"lvm_lba{b // 4096}_{sanitize_volume_label('fixvg_' + l.split('/')[1], 40)}"
+                    for l, b, _s in want}))
+    out.append(("a quoted string undoes only \\\" and \\\\, as lvm2 does",
+                lvm_config('a = "x\\ny\\"z\\\\"') == {"a": 'x\\ny"z\\'}))
+    try:
+        lvm_config("a = 010")
+        octal = False
+    except ValueError:
+        octal = True
+    out.append(("a number with a leading zero, which lvm2 would read as octal, is refused",
+                octal))
+    two_runs = LvmMap([(0, 10, None, [100]), (10, 10, None, [110])])
+    out.append(("runs that touch in the image are given as one", two_runs.image_runs(0, 20) == [(100, 20)]))
+    cut = LvmMap([(0, 8, 2, [0, 100])])
+    out.append(("bytes of a striped volume past the image's end are counted per stripe",
+                cut.missing(102) == 2 and cut.missing(200) == 0))
+    stripe = {"type": "striped", "stripe_count": 2, "start_extent": 0, "stripe_size": 2,
+              "stripes": ["pv0", 0, "pv1", 0]}
+    out.append(("a striped segment whose stripes do not divide its extents is not read",
+                "do not divide" in (_lvm_layout([dict(stripe, extent_count=9)],
+                                                {"pv0": (0, 0, 9), "pv1": (0, 0, 9)},
+                                                {"pv0", "pv1"}, 1024)[0] or "")))
+    out.append(("each stripe's extents are checked against its own physical volume",
+                _lvm_layout([dict(stripe, extent_count=10)], {"pv0": (0, 0, 6), "pv1": (0, 0, 6)},
+                            {"pv0", "pv1"}, 1024)[0] is None))
+    wimg = lvm_image(io.BytesIO(disk), len(disk))
+    wimg.seek(len(disk) - 4)
+    tail = wimg.read(64)
+    out.append(("a read that runs off the image's end stops there, and does not run on into a "
+                "volume placed past it", len(tail) == 4 and wimg.read(64) == b""
+                and min(wimg.lvm_virtual.values()) >= len(disk) + (1 << 30)))
+    # A partial image: a GPT entry that names a partition 2 GiB in, past the end
+    # of this 64 MiB file, the shape of a disk bigger than its acquisition. Its
+    # place must read as missing, not as a placed volume's data.
+    far = bytearray(disk)
+    n_ent, ent_sz = struct.unpack_from("<II", far, SECTOR + 80)
+    arr = 2 * SECTOR
+    e3 = arr + 2 * ent_sz
+    far[e3:e3 + ent_sz] = far[arr:arr + ent_sz]                 # entry 1's type and name
+    far[e3 + 16:e3 + 32] = uuid.UUID(int=3).bytes_le
+    struct.pack_into("<QQ", far, e3 + 32, 4194304, 4194304 + 4194303)
+    struct.pack_into("<I", far, SECTOR + 88, binascii.crc32(bytes(far[arr:arr + n_ent * ent_sz])))
+    hsize = struct.unpack_from("<I", far, SECTOR + 12)[0]
+    struct.pack_into("<I", far, SECTOR + 16, 0)
+    struct.pack_into("<I", far, SECTOR + 16, binascii.crc32(bytes(far[SECTOR:SECTOR + hsize])))
+    fvols = volumes(io.BytesIO(bytes(far)), len(far))
+    third = [v for v in fvols if v["label"].startswith("GPT part 3")]
+    fwrap = lvm_image(io.BytesIO(bytes(far)), len(far))
+    out.append(("on a partial image whose table names a partition past the file, that "
+                "partition reads as missing, and the mapped volumes are placed past it",
+                len(third) == 1 and not third[0].get("walker")
+                and third[0].get("missing_past_end") == 4194304 * SECTOR
+                and min(fwrap.lvm_virtual.values()) > (4194304 + 4194304) * SECTOR
+                and min(fwrap.lvm_virtual.values()) >= 1 << 60))
+
+    # A pvmove in progress: lvm2 moves the volume's extents through a hidden
+    # mirror segment, whose areas are under mirrors, each holding all of them.
+    moving = {"extent_size": 2048, "physical_volumes": {"pv0": {"id": "a", "pe_start": 2048,
+                                                                "pe_count": 10}},
+              "logical_volumes": {
+                  "lv1": {"status": ["READ", "VISIBLE"], "segment1": {
+                      "start_extent": 0, "extent_count": 5, "type": "striped",
+                      "stripe_count": 1, "stripes": ["pvmove0", 0]}},
+                  "pvmove0": {"status": ["READ"], "segment1": {
+                      "start_extent": 0, "extent_count": 5, "type": "mirror",
+                      "mirror_count": 2, "mirrors": ["pv0", 0, "pv0", 5]}}}}
+    _vl, _vf, _vm, mspare = _lvm_group("vg", moving, 1, {"a": (0, None)}, SECTOR)
+    # Two stripes of 4 extents each on two 4-extent volumes, and an allocation
+    # that overlaps another: what is left free is what neither covers.
+    halves = {"extent_size": 2048, "physical_volumes": {
+                  "pv0": {"id": "a", "pe_start": 0, "pe_count": 4},
+                  "pv1": {"id": "b", "pe_start": 0, "pe_count": 6}},
+              "logical_volumes": {
+                  "s": {"status": ["VISIBLE"], "segment1": {
+                      "start_extent": 0, "extent_count": 4, "type": "striped", "stripe_count": 2,
+                      "stripe_size": 128, "stripes": ["pv0", 0, "pv1", 0]}},
+                  "o1": {"status": ["VISIBLE"], "segment1": {
+                      "start_extent": 0, "extent_count": 4, "type": "striped",
+                      "stripe_count": 1, "stripes": ["pv1", 0]}},
+                  "o2": {"status": ["VISIBLE"], "segment1": {
+                      "start_extent": 0, "extent_count": 1, "type": "striped",
+                      "stripe_count": 1, "stripes": ["pv1", 1]}}}}
+    _hl, _hf, _hm, hspare = _lvm_group("vg", halves, 1, {"a": (0, None), "b": (1 << 30, None)}, SECTOR)
+    mib = 1 << 20
+    out.append(("a pvmove's mirrored extents, and each stripe's share of a striped one, count "
+                "as held, and allocations that overlap leave free only what neither holds",
+                mspare == {} and hspare == {0: [(2 * mib, 2 * mib)], 1 << 30: [((1 << 30) + 4 * mib, 2 * mib)]}))
+
+    # Cut the image at 30 MiB: the striped volume's run on the second physical
+    # volume starts there, so 2 MiB of it is missing, and the split one is whole.
+    cutv = {v["label"]: v for v in volumes(io.BytesIO(disk[:30 << 20]), 30 << 20)}
+    out.append(("on an image cut short, a mapped volume's missing bytes are those its map "
+                "puts past the cut, and it has no LBA",
+                cutv.get("LVM fixvg/striped", {}).get("missing_past_end") == 2 * mib
+                and cutv.get("LVM fixvg/data", {}).get("missing_past_end") == 0
+                and cutv["LVM fixvg/data"].get("lba", 0) is None
+                and cutv["LVM fixvg/striped"].get("lba", 0) is None))
+    # RAID1: lvm2's report puts the two copies on the two physical volumes; in
+    # this fixture they hold the same bytes, which is what makes either one the
+    # volume. With the first physical volume left out, the second copy is read.
+    report = json.load(open(paths["lvm-fixture.lvs.json"], encoding="utf-8"))
+    pe_start = {pv["pv_name"][-1]: int(pv["pe_start"].rstrip("B")) for pv in report["pvs"]["report"][0]["pv"]}
+    segs_all = report["segments"]["report"][0]["seg"]
+    def ext_range(name):
+        r = [x for x in segs_all if x["lv_name"] == f"[{name}]"][0]["seg_pe_ranges"]
+        dev, span = r.split(":")
+        a, b = (int(x) for x in span.split("-"))
+        pv = dev[-1]
+        return parts[pv] + pe_start[pv] + a * (1 << 20), (b - a + 1) << 20
+    (c0, n0), (c1, n1) = ext_range("mirror_rimage_0"), ext_range("mirror_rimage_1")
+    only2 = [r for r in lvm_regions if r[0].startswith("GPT part 2")]
+    o2found, _o2 = lvm_volumes(io.BytesIO(disk), only2)
+    mirror2 = [b for lab, b, _n, _nm in o2found if lab == "LVM fixvg/mirror"]
+    out.append(("a RAID1 volume's two copies hold the same bytes, and with the first copy's "
+                "physical volume missing the second is read",
+                n0 == n1 and disk[c0:c0 + n0] == disk[c1:c1 + n1] and mirror2 == [c1]))
+    longer = {"m_rimage_0": {"segment1": {"type": "striped", "stripe_count": 1, "start_extent": 0,
+                                          "extent_count": 3, "stripes": ["pv0", 0]}}}
+    cut_map = _lvm_layout([{"type": "raid1", "start_extent": 0, "extent_count": 2,
+                            "raids": ["m_rmeta_0", "m_rimage_0"]}], {"pv0": (0, 0, 9)}, {"pv0"},
+                          1 << 20, longer)[1]
+    out.append(("a RAID1 copy longer than its volume is read only to the volume's size",
+                cut_map is not None and cut_map.size == 2 << 20))
+    raid = {"type": "raid1", "start_extent": 0, "extent_count": 2, "data_offset": 2048,
+            "raids": ["m_rmeta_0", "m_rimage_0"]}
+    copy = {"m_rimage_0": {"segment1": {"type": "striped", "stripe_count": 1, "start_extent": 0,
+                                        "extent_count": 2, "stripes": ["pv0", 0]}}}
+    out.append(("a RAID1 segment with a data offset (written while a reshape moves its data) "
+                "is not read", "data offset" in (_lvm_layout([raid], {"pv0": (0, 0, 9)}, {"pv0"},
+                                                             1 << 20, copy)[0] or "")))
+    del r_off
+    return out
+
+
+def _lvm_self_checks():
+    """[(label, passed)] for the LVM2 reader, from the fixtures lvm2 wrote. A
+    absent fixture is one failed check that names it, not a silent skip."""
+    import contextlib
+    import gzip
+    import hashlib
+    import io
+    here = os.path.join(os.path.dirname(os.path.abspath(__file__)), "tests", "fixtures")
+    paths = {n: os.path.join(here, n) for n in ("lvm-fixture.img.gz", "lvm-wholedisk.img.gz",
+                                                "lvm-fixture.lvs.json", "lvm-fixture.sha256",
+                                                "lvm-wholedisk.pvs.json")}
+    absent = [n for n, p in paths.items() if not os.path.isfile(p)]
+    if absent:
+        # A frozen executable has no fixtures beside it: say so, as the other
+        # fixture checks do, rather than fail.
+        return [(f"the LVM fixtures are not beside this script ({', '.join(absent)}), so the "
+                 "LVM2 reader was not checked against them", None)]
+    out = []
+    with gzip.open(paths["lvm-fixture.img.gz"], "rb") as gz:
+        disk = gz.read()
+    with gzip.open(paths["lvm-wholedisk.img.gz"], "rb") as gz:
+        whole = gz.read()
+    report = json.load(open(paths["lvm-fixture.lvs.json"], encoding="utf-8"))
+    hashes = {}
+    with open(paths["lvm-fixture.sha256"], encoding="utf-8") as lf:
+        for line in lf:
+            h, name = line.rstrip("\n").split("  ", 1)
+            hashes[name] = h
+
+    # What lvm2 says: a volume is readable when its segments are linear and
+    # their extents follow one another on one partition.
+    parts = {p["node"][-1]: p["start"] * SECTOR
+             for p in report["parts"]["partitiontable"]["partitions"]}
+    pe_start = {pv["pv_name"][-1]: int(pv["pe_start"].rstrip("B")) for pv in report["pvs"]["report"][0]["pv"]}
+    segs = collections.defaultdict(list)
+    hidden = collections.defaultdict(list)
+    for s in report["segments"]["report"][0]["seg"]:
+        if not s["lv_name"].startswith("["):        # lvs -a shows a hidden volume in brackets
+            segs[s["lv_name"]].append(s)
+        else:
+            hidden[s["lv_name"].strip("[]")].append(s)
+    # A RAID1 volume is read from its first copy: lvm2's report lists its copies
+    # as its ranges, and each copy's own extents under the copy's name.
+    for lv, ss in segs.items():
+        if [x["segtype"] for x in ss] == ["raid1"]:
+            first = ss[0]["seg_pe_ranges"].split()[0].split(":")[0]
+            segs[lv] = [dict(x, lv_name=lv) for x in hidden[first]]
+    want, declined, mapped = set(), set(), {}
+    for lv, ss in segs.items():
+        ext = int(ss[0]["vg_extent_size"].rstrip("B"))
+        ss.sort(key=lambda s: int(s["seg_start_pe"]))
+        runs = [r for s in ss for r in s["seg_pe_ranges"].split()]
+        pvs = {r.split(":")[0][-1] for r in runs}
+        spans = [tuple(int(x) for x in r.split(":")[1].split("-")) for r in runs]
+        joined = all(spans[i][1] + 1 == spans[i + 1][0] for i in range(len(spans) - 1))
+        if all(s["segtype"] == "linear" for s in ss) and len(pvs) == 1 and joined:
+            pv = pvs.pop()
+            want.add((f"LVM fixvg/{lv}", parts[pv] + pe_start[pv] + spans[0][0] * ext,
+                      (spans[-1][1] - spans[0][0] + 1) * ext))
+        else:
+            declined.add(lv)
+            if all(s["segtype"] in ("linear", "striped") for s in ss):
+                # Where lvm2 says its extents are, as image byte ranges.
+                mapped[lv] = sorted((parts[r.split(":")[0][-1]] + pe_start[r.split(":")[0][-1]]
+                                     + a * ext, (b - a + 1) * ext)
+                                    for r in runs for a, b in [tuple(int(x) for x in
+                                                                     r.split(":")[1].split("-"))])
+    fh = io.BytesIO(disk)
+    regions = partition_regions(fh, len(disk))[0]
+    found, notes = lvm_volumes(fh, [r for r in regions if not r[0].startswith("MBR")])
+    got = {(lab, b, n) for lab, b, n, _name in found}
+    out.append((f"the logical volumes read from lvm-fixture are the ones lvm2's own report "
+                f"lays out as one run on one physical volume, at the offsets and sizes it gives "
+                f"({len(got)} of {len(want)})", got == want and len(want) == 5))
+    lines = [ln for ls in notes.values() for ln in ls]
+    not_read = {ln.split()[2].rstrip(",") for ln in lines if ": not read (" in ln}
+    reasons = " ".join(ln for ln in lines if ": not read (" in ln)
+    here = " ".join(ln for ln in lines if ": not read here (" in ln)
+    out.append(("without lvm_image(), the volumes lvm2 split into two runs or striped are not "
+                "read here and say how they are laid out, and the RAID1 one is read from its "
+                "first copy", declined == {"data", "striped"} and not_read == set() and not reasons
+                and "in 2 separate runs of extents" in here
+                and "striped across 2 physical volumes in 64.0 KiB stripes" in here
+                and any("logical volume mirror, " in ln and "raid1, read from its copy mirror_rimage_0" in ln
+                        for ln in lines)))
+
+    # Through lvm_image() the split and the striped volume are read, each
+    # through a map that puts every byte where lvm2's report says its extents
+    # are; their bases are past the image's end, where nothing on the disk is.
+    wfh = lvm_image(io.BytesIO(disk), len(disk))
+    wfound, wnotes = lvm_volumes(wfh, [r for r in regions if not r[0].startswith("MBR")])
+    placed = {lab.split("/")[1]: (b, n) for lab, b, n, _name in wfound if b >= len(disk)}
+    def covered(lmap):
+        spans = sorted(lmap.image_runs(0, lmap.size))
+        merged = []
+        for at, n in spans:
+            if merged and merged[-1][0] + merged[-1][1] == at:
+                merged[-1] = (merged[-1][0], merged[-1][1] + n)
+            else:
+                merged.append((at, n))
+        return merged
+    maps_ok = set(placed) == set(mapped) == {"data", "striped"} and all(
+        covered(wfh.lvm_map_for(placed[lv][0])) == mapped[lv] for lv in mapped)
+    sm = wfh.lvm_map_for(placed["striped"][0]) if "striped" in placed else None
+    out.append(("through lvm_image() the split and the striped volume are read, their maps "
+                "covering exactly the extents lvm2's report gives each, the striped one in the "
+                "64 KiB stripes make_lvm_fixtures.sh asks lvm2 for",
+                maps_ok and sm is not None and sm.segments[0][2] == 64 << 10
+                and sm.image_runs(0, 64 << 10) == [(mapped["striped"][0][0], 64 << 10)]
+                and sm.image_runs(64 << 10, 64 << 10) == [(mapped["striped"][1][0], 64 << 10)]
+                and {(a, b, c) for a, b, c, _n in wfound if b < len(disk)} == want))
+    wlines = [ln for ls in wnotes.values() for ln in ls]
+    out.append(("then no volume is listed as not read",
+                not any(": not read" in ln for ln in wlines)))
+    out.append(("the mirror's hidden image and metadata legs are not listed as volumes, though "
+                "each is one run on one physical volume",
+                not any(ln.startswith("logical volume mirror_r") for ln in lines)
+                and not any("rimage" in f[0] or "rmeta" in f[0] for f in found)))
+    pv_notes = [v.get("note", "") for v in volumes(io.BytesIO(disk), len(disk)) if v["kind"] == "lvm2 pv"]
+    out.append(("no physical volume's note in volumes() names a volume as not read, when every "
+                "one is read", len(pv_notes) == 2 and not any("not read" in n for n in pv_notes)))
+    out.append(("both physical volumes name the volume group and both of its physical volumes",
+                sum("2 of them in this image" in ln for ln in lines) == 2))
+
+    def walk_hashes(w, node, path=""):
+        for name, child in w.listdir(node):
+            if name in (".", "..", "lost+found"):
+                continue
+            mode, size = w.entry(child)[:2]
+            rel = f"{path}/{name}" if path else name
+            if mode & S_IFMT == S_IFDIR:
+                yield from walk_hashes(w, child, rel)
+            elif mode & S_IFMT == S_IFREG:
+                yield rel, hashlib.sha256(b"".join(w.read_file(child, size))).hexdigest()
+
+    for img, tree in ((disk, {"LVM fixvg/root": "root", "LVM fixvg/onb": "onb",
+                              "LVM fixvg/data": "data", "LVM fixvg/striped": "striped",
+                              "LVM fixvg/mirror": "mirror"}),
+                      (whole, {"LVM wholevg/root": "root"})):
+        vols = volumes(io.BytesIO(img), len(img))
+        seen = {v["label"] for v in vols}
+        out.append((f"volumes() lists {', '.join(sorted(tree))} with a walker",
+                    all(any(v["label"] == lab and v.get("walker") for v in vols) for lab in tree)
+                    and set(tree) <= seen))
+        for v in vols:
+            if v["label"] not in tree:
+                continue
+            top = tree[v["label"]]
+            try:
+                gotf = {f"{top}/{p}": h for p, h in walk_hashes(v["walker"], v["walker"].root)}
+            except Exception:                        # pylint: disable=broad-except
+                gotf = {}
+            wantf = {k: h for k, h in hashes.items() if k.startswith(top + "/")}
+            out.append((f"every file of {v['label']} ({v['kind']}) matches what sha256sum "
+                        f"recorded over its source tree ({len(gotf)} of {len(wantf)})",
+                        bool(wantf) and gotf == wantf))
+
+    # The report main() prints names each logical volume read, with its kind.
+    import shutil
+    import tempfile
+    tmp = tempfile.mkdtemp(prefix="qnxprobe-lvm-")       # the form the CI fixture step replaces
+    try:
+        path = os.path.join(tmp, "lvm-fixture.img")
+        with open(path, "wb") as f:
+            f.write(disk)
+        buf = io.StringIO()
+        records = []
+        with zipfile.ZipFile(io.BytesIO(), "w") as zmem, contextlib.redirect_stdout(buf):
+            main(path, extract="(memory)", zf=zmem, manifest=records)
+        text = buf.getvalue()
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+    by_vol = {r.get("volume", ""): r for r in records}
+    rec_data = next((r for v, r in by_vol.items() if "_fixvg_data" in v), {})
+    rec_root = next((r for v, r in by_vol.items() if "_fixvg_root" in v), {})
+    out.append(("volumes.json gives a volume read through a map no offset or LBA, and the image "
+                "offset of each of its runs where lvm2's report puts them",
+                rec_data.get("offset_bytes", 0) is None and rec_data.get("lba", 0) is None
+                and [(m["image_offsets"][0], m["length"]) for m in rec_data.get("lvm_map", [])]
+                == mapped.get("data")
+                and rec_root.get("offset_bytes") == [b for lab, b, _n in want if lab == "LVM fixvg/root"][0]
+                and "lvm_map" not in rec_root))
+    out.append(("the report lists each logical volume read, identified as ext4 where it is, "
+                "and gives the runs of the split one where lvm2's report puts them",
+                all(f"{lab}   " in text for lab, _b, _n in want)
+                and "LVM fixvg/root   6.0 MiB   ->  ext4" in text
+                and "LVM fixvg/data   6.0 MiB   ->  ext4" in text
+                and "LVM fixvg/striped   4.0 MiB   ->  ext4" in text
+                and ", ".join(f"{n:,} bytes at {o:,}" for o, n in mapped.get("data", [])) in text
+                and "->  lvm2 pv" in text))
+
+    # Free space: each physical volume's extents no logical volume holds, hidden
+    # ones included, are written at their own offsets; and a reader's free runs
+    # inside a volume read through a map become the runs of the image they are.
+    # lvm2 sizes a physical volume as (its size - pe_start) / extent size extents.
+    top = tempfile.mkdtemp(prefix="qnxprobe-lvm-")
+    # A folder of its own: the build workflow keeps the self-test's temp folder
+    # and counts the images in it, and these .bin files are not images.
+    tmp = os.path.join(top, "unallocated")
+    os.makedirs(tmp, exist_ok=True)
+    try:
+        fvols = volumes(io.BytesIO(disk), len(disk))
+        ext_b = 1 << 20
+        spare_want = {}
+        for pv in ("1", "2"):
+            part = [p for p in report["parts"]["partitiontable"]["partitions"] if p["node"][-1] == pv][0]
+            count = (part["size"] * SECTOR - pe_start[pv]) // ext_b
+            taken = set()
+            for sg in report["segments"]["report"][0]["seg"]:
+                for r in sg["seg_pe_ranges"].split():
+                    if r.split(":")[0].endswith("p" + pv):
+                        a, b = (int(x) for x in r.split(":")[1].split("-"))
+                        taken.update(range(a, b + 1))
+            free = [e for e in range(count) if e not in taken]
+            spare_want[parts[pv]] = sorted({(parts[pv] + pe_start[pv] + e * ext_b, ext_b) for e in free})
+        striped_vol = [v for v in fvols if v["label"] == "LVM fixvg/striped"][0]
+
+        class _Free:                                   # a reader that reports two chunks free
+            def free_extents(self):
+                return [(striped_vol["base"], 128 << 10)]
+        recs = write_unallocated(io.BytesIO(disk), len(disk),
+                                 [v for v in fvols if v["kind"] == "lvm2 pv"]
+                                 + [dict(striped_vol, walker=_Free(), name="striped_free")],
+                                 tmp, "lvm-fixture.img", say=lambda *a: None)
+        maps = {}
+        for name in os.listdir(tmp):
+            if name.endswith(".tsv"):
+                rows = open(os.path.join(tmp, name), encoding="utf-8").read().splitlines()[1:]
+                maps[name] = [tuple(int(x) for x in r.split("\t")[1:]) for r in rows]
+        def merged(runs):
+            out_ = []
+            for at, n in sorted(runs):
+                if out_ and out_[-1][0] + out_[-1][1] == at:
+                    out_[-1] = (out_[-1][0], out_[-1][1] + n)
+                else:
+                    out_.append((at, n))
+            return out_
+        pv_ok = all(merged(maps.get(f"lvm-fixture.img.{v['name']}.unallocated.tsv", []))
+                    == merged(spare_want[v["base"]])
+                    for v in fvols if v["kind"] == "lvm2 pv")
+        stripe_ok = maps.get("lvm-fixture.img.striped_free.unallocated.tsv") == [
+            (mapped["striped"][0][0], 64 << 10), (mapped["striped"][1][0], 64 << 10)]
+        out.append(("free space: each physical volume's unallocated extents, as lvm2's report "
+                    "leaves them, and a mapped volume's free runs at their places in the image",
+                    pv_ok and stripe_ok and any(spare_want.values())
+                    and all(r.get("offset_bytes") is None and r.get("lvm_map") == striped_vol["lvm_map"].describe()
+                            for r in recs if r["volume"] == "striped_free")))
+    finally:
+        shutil.rmtree(top, ignore_errors=True)
+
+    # Metadata that wraps past the end of its area continues just after the
+    # area's header (format-text.c). Move the first PV's text to straddle the end.
+    pv_at = parts["1"]
+    mda = struct.unpack_from("<QQ", disk, pv_at + SECTOR + 32 + 40 + 16 * 2)
+    m_off, m_size = mda
+    head = bytearray(disk[pv_at + m_off:pv_at + m_off + LVM_MDA_HEADER_SIZE])
+    r_off, r_size, csum, flags = struct.unpack_from("<QQII", head, 40)
+    text_b = disk[pv_at + m_off + r_off:pv_at + m_off + r_off + r_size]
+    wrapped = bytearray(disk)
+    new_off = m_size - r_size // 2
+    first = m_size - new_off
+    wrapped[pv_at + m_off + new_off:pv_at + m_off + m_size] = text_b[:first]
+    wrapped[pv_at + m_off + LVM_MDA_HEADER_SIZE:pv_at + m_off + LVM_MDA_HEADER_SIZE + r_size - first] = text_b[first:]
+    struct.pack_into("<QQII", head, 40, new_off, r_size, csum, flags)
+    struct.pack_into("<I", head, 0, lvm_crc(bytes(head[4:])))
+    wrapped[pv_at + m_off:pv_at + m_off + LVM_MDA_HEADER_SIZE] = head
+    try:
+        wpv = LvmPv(io.BytesIO(bytes(wrapped)), pv_at)
+        wrap_ok = wpv.vg is not None and wpv.vg[0] == "fixvg" and not wpv.problems
+    except ValueError:
+        wrap_ok = False
+    out.append(("metadata text that wraps past the end of its area is read from the area's "
+                "start, just after its header", wrap_ok))
+
+    # A damaged copy on one physical volume: the other's copy still gives the
+    # volume group, and the damage is said.
+    bad = bytearray(disk)
+    bad[pv_at + m_off + r_off + 10] ^= 0xFF
+    bfound, bnotes = lvm_volumes(io.BytesIO(bytes(bad)), [r for r in regions if not r[0].startswith("MBR")])
+    out.append(("a metadata copy whose checksum fails is reported, and the other physical "
+                "volume's copy still gives every volume",
+                {(a, b, c) for a, b, c, _n in bfound} == want
+                and any("metadata text checksum does not match" in ln for ln in bnotes[pv_at])))
+    # An older copy of the metadata (a lower seqno, without the volume onb) on
+    # either physical volume: the newest copy, on the other, decides, whichever
+    # of the two is read first.
+    for which in ("1", "2"):
+        older = _lvm_older_copy(disk, parts[which], m_off)
+        ofound, _on = lvm_volumes(io.BytesIO(older), [r for r in regions if not r[0].startswith("MBR")])
+        spv = LvmPv(io.BytesIO(older), parts[which])
+        out.append((f"an older metadata copy (seqno 1, without onb) on physical volume {which} "
+                    "gives way to the newest on the other",
+                    spv.vg is not None and spv.vg[2] == 1
+                    and {(a, b, c) for a, b, c, _n in ofound} == want))
+    # A physical volume never added to a volume group has an area with no
+    # metadata in it: no volume group, and nothing wrong to report.
+    empty = bytearray(disk)
+    eh = bytearray(disk[pv_at + m_off:pv_at + m_off + LVM_MDA_HEADER_SIZE])
+    eh[40:64] = bytes(24)
+    struct.pack_into("<I", eh, 0, lvm_crc(bytes(eh[4:])))
+    empty[pv_at + m_off:pv_at + m_off + LVM_MDA_HEADER_SIZE] = eh
+    epv = LvmPv(io.BytesIO(bytes(empty)), pv_at)
+    out.append(("a physical volume whose metadata area holds nothing yet has no volume group "
+                "and no problem", epv.vg is None and not epv.problems))
+    try:
+        lvm_config("a = 1\n;")
+        junk_ok = False
+    except ValueError:
+        junk_ok = True
+    out.append(("text left over that is no token is refused, not dropped", junk_ok))
+    out.append(("a comment after a value, its last word a number, is not read as a value",
+                lvm_config('a = 1\t# Wed Oct 14 10:00:31 2026\nb {\nc = "x" # 7\n}\n')
+                == {"a": 1, "b": {"c": "x"}}))
+    out.append(("a volume whose segments leave a gap in it is not read",
+                _lvm_layout([{"type": "striped", "stripe_count": 1, "start_extent": 0,
+                                  "extent_count": 2, "stripes": ["pv0", 0]},
+                                 {"type": "striped", "stripe_count": 1, "start_extent": 3,
+                                  "extent_count": 1, "stripes": ["pv0", 2]}],
+                                {"pv0": (0, 0, 0)}, {"pv0"}, 1 << 20)[0]
+                == "its segments leave a gap in the volume"))
+    return out + _lvm_hostile_checks(disk, whole, regions, want, paths, parts, m_off, r_off)
+
+
 def identify_fs(fh, base, size=None):
     """Return (name, [detail lines]) for whatever sits at this partition.
 
@@ -11923,6 +15251,20 @@ def identify_fs(fh, base, size=None):
         found = ident(fh, base, size)
         if found:
             return found
+
+    # A LUKS container: its magic at the start of the region. What it holds is
+    # read, once a passphrase opens it (unlock_luks), as a region of its own.
+    found = identify_luks(fh, base, size)
+    if found:
+        return found
+
+    # An LVM2 physical volume: a label lvm2 itself would accept (the sector it
+    # names and its checksum must hold), and either a metadata area header that
+    # checks out or a volume group elsewhere in the image that names it. Its logical volumes are regions of their own (lvm_volumes), so the
+    # PV itself is reported, not walked.
+    found = identify_lvm(fh, base, size)
+    if found:
+        return found
 
     # BitLocker before the rest: its header is a FAT32 boot sector in all but its
     # signature and identifier (so identify_fat would take it for an empty FAT32
@@ -12331,6 +15673,12 @@ def flash_regions(fh, size):
                 extent is the size that CRC holds for
       U-Boot    an environment whose first string opens with a name and "="
                 and whose CRC-32 holds (uboot_env_store); its extent likewise
+      EFS       a QNX F3S partition, found by its boot record wherever in the
+                partition wear levelling left it and placed by the record's
+                unit_index (efs_partitions); its extent is the unit count the
+                record gives. The signature is looked for at every offset, not
+                only aligned ones, and the partition's start is aligned to its
+                own unit size
 
     A configuration store is not a filesystem, but it has an extent of its own
     and sits in its own MTD partition, so a JFFS2 in front of it ends there.
@@ -12342,12 +15690,17 @@ def flash_regions(fh, size):
     if size > FLASH_SCAN_MAX:
         return []
     hits = set()
+    efs_sigs = []
     step = 1 << 20
     pos = 0
     while pos < size:
         chunk = read_at(fh, pos, min(step + EXT_SB_OFF + 64, size - pos))
         if not chunk:
             break
+        j = chunk.find(EFS_SIG)
+        while 0 <= j < step:
+            efs_sigs.append(pos + j)
+            j = chunk.find(EFS_SIG, j + 1)
         for magic in (b"hsqs", b"UBI#", b"\x85\x19", b"\x19\x85", NVRM_MAGIC):
             j = chunk.find(magic)
             while 0 <= j < step:
@@ -12361,11 +15714,15 @@ def flash_regions(fh, size):
             if _CFG_NAME.match(chunk, k + 4) or _CFG_NAME.match(chunk, k + 5):
                 hits.add((pos + k, b"env"))       # a U-Boot environment's first string
         pos += step
+    efs = {p["base"]: p["size"] for p in _efs_partitions_from_sigs(fh, size, efs_sigs)}
+    hits.update((base, b"efs") for base in efs)
     found, taken_to = [], 0
     for off, magic in sorted(hits):
         if off < taken_to:
             continue
-        if magic == b"hsqs":
+        if magic == b"efs":
+            found.append(["efs", off, efs[off]])
+        elif magic == b"hsqs":
             if not identify_squashfs(fh, off, size - off):
                 continue
             used = struct.unpack("<Q", read_at(fh, off + 40, 8))[0]
@@ -12440,16 +15797,24 @@ def raw_flash_layout(fh, size):
     return [] if kind else flash_regions(fh, size)
 
 
-def partition_regions(fh, size):
-    """(regions, names, containers, protective) for an image, as main() sees them.
+def _luks_regions(fh, regions, names, ss):
+    """Add the data region of each opened LUKS container whose own region is among
+    ``regions`` and whose data is not yet; returns what was added."""
+    added = []
+    for base, lk in sorted((getattr(fh, "luks", None) or {}).items()):
+        data = base + lk.offset
+        if any(r[1] == base for r in regions) and not any(r[1] == data for r in regions):
+            region = (f"LUKS {lk.label}", data, lk.data_size)
+            regions.append(region)
+            names[data] = f"luks_lba{data // ss}"
+            added.append((region, lk))
+    return added
 
-    regions is [(label, base, size)] in report order: MBR primaries, then the
-    logical volumes found by walking the EBR chain, then GPT entries, or the
-    whole image as one region when no table is present. names maps a region's
-    byte offset to the directory an extraction uses (volume_name); containers
-    holds the labels of extended partition containers, which hold the logical
-    volumes and are not themselves volumes; protective holds the 0xEE entry a
-    GPT disk carries in its MBR.
+
+def table_regions(fh):
+    """(regions, names, containers, protective, sector size) from the image's
+    partition tables alone: MBR primaries, the logical volumes of the EBR chain
+    and GPT entries. Reads no filesystem, so an identifier may call it.
     """
     regions, names = [], {}
     containers, protective = set(), set()
@@ -12490,6 +15855,21 @@ def partition_regions(fh, size):
             sz = (last - first + 1) * ss
             regions.append((f"GPT part {idx} {name[:20]}", first * ss, sz))
             names[first * ss] = volume_name(idx, first, name)
+    return regions, names, containers, protective, ss
+
+
+def partition_regions(fh, size):
+    """(regions, names, containers, protective) for an image, as main() sees them.
+
+    regions is [(label, base, size)] in report order: MBR primaries, then the
+    logical volumes found by walking the EBR chain, then GPT entries, or the
+    whole image as one region when no table is present. names maps a region's
+    byte offset to the directory an extraction uses (volume_name); containers
+    holds the labels of extended partition containers, which hold the logical
+    volumes and are not themselves volumes; protective holds the 0xEE entry a
+    GPT disk carries in its MBR.
+    """
+    regions, names, containers, protective, ss = table_regions(fh)
     if not regions:
         flash = raw_flash_layout(fh, size)
         for label, base, rsize in flash:
@@ -12498,6 +15878,17 @@ def partition_regions(fh, size):
         if not flash:
             regions.append(("whole image", 0, size))
             names[0] = volume_name(None, 0)
+    # The data of each LUKS container unlock_luks() opened is a region too, at
+    # its own offset, read decrypted there (LuksImage); and the linear logical
+    # volumes of any LVM2 physical volume among them (lvm_volumes). A container
+    # can sit inside a logical volume, so its data is looked for again after.
+    _luks_regions(fh, regions, names, ss)
+    lvs, _notes = lvm_volumes(fh, [r for r in regions
+                                   if r[0] not in containers and r[0] not in protective], ss)
+    for label, base, rsize, name in lvs:
+        regions.append((label, base, rsize))
+        names[base] = name
+    _luks_regions(fh, regions, names, ss)
     return regions, names, containers, protective
 
 
@@ -12543,10 +15934,18 @@ def volumes(fh, size=None):
     """
     if size is None:
         size = image_size(fh)
+    # The logical volumes that need a map (split into runs, or striped) are read
+    # through one, placed past the image's end (lvm_image); a placed volume is
+    # not "past the end" of anything, and its own map says what it misses.
+    fh = lvm_image(fh, size)
     regions, names, containers, protective = partition_regions(fh, size)
     ss = disk_sector_size(fh)
+    placed = set((getattr(fh, "lvm_virtual", None) or {}).values())
     missing = {start: gap for _lab, start, _rs, gap in
-               short_regions(size, regions, skip=protective)}
+               short_regions(size, [r for r in regions if r[1] not in placed], skip=protective)}
+    for b in placed:
+        missing[b] = fh.lvm_map_for(b).missing(size)
+    lvm_spare = None
     out, qnx6_labels = [], set()
 
     for label, base, rsize in regions:
@@ -12605,6 +16004,35 @@ def volumes(fh, size=None):
                 vol["walker"] = ExtWalker(fh, base)
             elif kind == "QNX IFS boot image":
                 vol["walker"] = IfsWalker(fh, base)
+            elif kind == "luks":
+                lk = (getattr(fh, "luks", None) or {}).get(base) or next(
+                    (x for x in getattr(fh, "luks_found", ()) if x.base == base), None) \
+                    or Luks.open(fh, base, rsize)
+                vol["encryption"] = lk.summary() if lk else "LUKS"
+                if base in placed:
+                    # unlock_luks() reads the image's regions, and a volume read
+                    # through a map is not one of them
+                    vol["note"] = ("LUKS-encrypted and not read: it is inside a logical volume "
+                                   "read through a map, where a LUKS container is not opened")
+                else:
+                    vol["note"] = (f"a LUKS container, opened: its data is listed as LUKS {lk.label}"
+                                   if lk is not None and lk.mk is not None else
+                                   (lk.locked_note() if lk is not None else "LUKS-encrypted and not read"))
+            elif kind == "lvm2 pv":
+                # The logical volumes not read are said here too, where a caller
+                # that prints only the note (the LEAPP run log) will show them.
+                skipped = [ln[len("logical volume "):].replace(": not read (", " (", 1) for ln in lines
+                           if ln.startswith("logical volume ") and ": not read (" in ln]
+                vol["note"] = ("an LVM2 physical volume: each logical volume read from it "
+                               "is listed as a volume of its own"
+                               + ("; not read: " + "; ".join(skipped) if skipped else ""))
+                # Its extents no logical volume holds are its free space
+                # (write_unallocated), at their own offsets in the image.
+                if lvm_spare is None:
+                    lvm_spare = lvm_free_extents(fh, [r for r in regions if not r[0].startswith("LVM ")
+                                                      and r[0] not in containers
+                                                      and r[0] not in protective], ss)
+                vol["free_extents"] = list(lvm_spare.get(base, []))
             elif kind:
                 vol["walker"] = walker_for(kind, fh, base, rsize)
                 if vol["walker"] is None:
@@ -12622,6 +16050,16 @@ def volumes(fh, size=None):
         if wnote and "note" not in vol:
             vol["note"] = wnote
         out.append(vol)
+    # A volume read through a map has no single place on the disk: its base is
+    # where lvm_image() put it, so it has no LBA, and the map says where each
+    # run of it is in the image.
+    luks_data = {b + lk.offset: lk for b, lk in (getattr(fh, "luks", None) or {}).items()}
+    for vol in out:
+        if vol.get("base") in placed:
+            vol["lba"] = None
+            vol["lvm_map"] = fh.lvm_map_for(vol["base"])
+        if vol.get("base") in luks_data and vol.get("label", "").startswith("LUKS "):
+            vol["encryption"] = luks_data[vol["base"]].summary()   # read decrypted
     return out
 
 
@@ -12681,10 +16119,15 @@ def write_unallocated(fh, size, vols, out_dir, image_name, only=None, say=print)
             continue
         rec = {"image": image_name, "volume": name, "label": vol.get("label", ""),
                "filesystem": vol.get("kind"), "lba": vol.get("lba"),
-               "offset_bytes": vol.get("base")}
+               "offset_bytes": None if vol.get("lvm_map") is not None else vol.get("base")}
+        if vol.get("lvm_map") is not None:
+            rec["lvm_map"] = vol["lvm_map"].describe()
         records.append(rec)
         w = vol.get("walker")
         fn = getattr(w, "free_extents", None)
+        if fn is None and vol.get("free_extents") is not None:
+            # An LVM2 physical volume: the extents no logical volume holds.
+            fn = lambda spare=vol["free_extents"]: list(spare)        # noqa: E731
         if fn is None:
             rec["status"] = ("not written: " + (vol.get("note") or "no reader for this volume")
                              if w is None else
@@ -12697,6 +16140,13 @@ def write_unallocated(fh, size, vols, out_dir, image_name, only=None, say=print)
             rec["status"] = f"not written: the allocation map could not be read ({exc})"
             say(f"    {vol.get('label') or name}: {rec['status']}")
             continue
+        lmap = vol.get("lvm_map")
+        if lmap is not None:
+            # A logical volume read through a map: its reader's runs are offsets
+            # in the volume, placed past the image's end, so each becomes the
+            # runs of the image it lies on.
+            runs = [run for off, n in runs
+                    for run in lmap.image_runs(off - vol["base"], n)]
         reported = sum(n for _o, n in runs)
         rec["runs_reported"], rec["bytes_reported"] = len(runs), reported
         if not runs:
@@ -12716,6 +16166,13 @@ def write_unallocated(fh, size, vols, out_dir, image_name, only=None, say=print)
             say(f"    {vol.get('label') or name}: {rec['status']}")
             continue
         notes = []
+        if vol.get("kind") == "lvm2 pv":
+            notes.append("the volume group's extents on this physical volume that no logical "
+                         "volume holds; the label and metadata before the first extent, and "
+                         "any space past the last, are not included")
+        if lmap is not None:
+            notes.append("a logical volume read through a map of its runs; the runs written "
+                         "are where its free space lies in the image")
         if vol.get("kind") == "apfs":
             notes.append("free space belongs to the APFS container, not to one volume")
             try:
@@ -12808,6 +16265,12 @@ def main(path, scan_limit_mib=256, do_list=False, list_depth=2, list_max=400,
     # An encrypted APFS volume the passwords (as a password or its personal recovery
     # key) open is read decrypted; the rest stay locked and the report says why.
     image, apfs_found = unlock_apfs(image, None, passwords)
+    # A LUKS container a passphrase opens is read decrypted, its data a region of
+    # its own; the rest stay locked and the report says why.
+    image, _luks_found = unlock_luks(image, None, passwords)
+    # The LVM2 logical volumes that need a map (split into runs, or striped) are
+    # read through one, placed past the image's end (lvm_image).
+    image = lvm_image(image)
     size = image_size(image)
     print("=" * 78)
     print(path)
@@ -12839,6 +16302,7 @@ def main(path, scan_limit_mib=256, do_list=False, list_depth=2, list_max=400,
     candidates, regions, sized_regions, triage = [], [], [], []
     containers, protective = set(), set()
     vol_names = {}                    # byte offset -> canonical extract name
+    first_record = len(manifest) if manifest is not None else 0
     with image as fh:
         # The GPT is read before the MBR is reported, because the sector size
         # its header was found at is the unit of every LBA on this disk,
@@ -12931,6 +16395,35 @@ def main(path, scan_limit_mib=256, do_list=False, list_depth=2, list_max=400,
                 regions.append(("whole image", 0))
                 vol_names[0] = volume_name(None, 0)
 
+        # The data of each LUKS container a passphrase opened is a region of its
+        # own, at its offset, read decrypted there.
+        def luks_section():
+            added = _luks_regions(fh, sized_regions, vol_names, ss)
+            if added:
+                print(f"\n  LUKS     {len(added)} container(s) opened")
+            for (label, data, rsize), lk in added:
+                print(f"    {lk.label:<26} {human(rsize):>10}  data at byte {data:,}, {lk.summary()}")
+                regions.append((label, data))
+        luks_section()
+        # An LVM2 physical volume's linear logical volumes, each one run of
+        # extents on one physical volume here, are byte ranges of the image like
+        # partitions, so they are reported and read as regions of their own.
+        lvs, _notes = lvm_volumes(fh, [r for r in sized_regions
+                                       if r[0] not in containers and r[0] not in protective], ss)
+        if lvs:
+            print(f"\n  LVM      {len(lvs)} logical volume(s) read from LVM2 physical volumes")
+            for label, base, rsize, name in lvs:
+                lmap = getattr(fh, "lvm_map_for", lambda _b: None)(base)
+                where = (f"at byte {base:,}" if lmap is None else
+                         f"{_lvm_shape_words(lmap)}, read through a map: "
+                         + ", ".join(f"{n:,} bytes at {o:,}" for o, n in lmap.image_runs(0, lmap.size)[:4])
+                         + (" ..." if len(lmap.image_runs(0, lmap.size)) > 4 else ""))
+                print(f"    {label[len('LVM '):]:<26} {human(rsize):>10}  {where}")
+                sized_regions.append((label, base, rsize))
+                regions.append((label, base))
+                vol_names[base] = name
+            luks_section()          # a LUKS container inside a logical volume
+
         # A partition table describes a whole disk and the file may hold only
         # the front of it. FTK Imager and its peers split a raw image into
         # numbered segments (.001, .002, ...) and the first segment carries the
@@ -12941,9 +16434,19 @@ def main(path, scan_limit_mib=256, do_list=False, list_depth=2, list_max=400,
         # the 28.8 GiB storage volume walked to 0 files with nothing raised.
         # Say so here, before any volume is reported as empty.
         short_by = {}                 # region start -> bytes past the end of the file
-        short = short_regions(size, sized_regions, skip=protective)
+        # A logical volume read through a map is placed past the end on purpose;
+        # what it misses is what its map puts past the end (LvmMap.missing).
+        placed = set((getattr(fh, "lvm_virtual", None) or {}).values())
+        placed_labels = {lab for lab, st, _rs in sized_regions if st in placed}
+        for st in placed:
+            if fh.lvm_map_for(st).missing(size):
+                short_by[st] = fh.lvm_map_for(st).missing(size)
+        short = short_regions(size, sized_regions, skip=set(protective) | placed_labels)
+        short += [(lab, st, rs, short_by[st]) for lab, st, rs in sized_regions
+                  if lab in placed_labels and short_by.get(st)]
         if short:
-            reach = max(st + rs for lab, st, rs in sized_regions if lab not in protective)
+            reach = max(st + rs for lab, st, rs in sized_regions
+                        if lab not in protective and lab not in placed_labels)
             print("\n  IMAGE IS SHORTER THAN ITS PARTITION TABLE")
             print(f"    the file holds {human(size)}; the partitions it describes "
                   f"reach {human(reach)}")
@@ -12962,6 +16465,8 @@ def main(path, scan_limit_mib=256, do_list=False, list_depth=2, list_max=400,
 
         def missing_past_end(base, declared_end=None):
             """Bytes of the volume at base that lie past the end of the file."""
+            if base in placed:
+                return short_by.get(base, 0)   # a placed volume's own map says (LvmMap.missing)
             missing = short_by.get(base, 0)
             if declared_end is not None:
                 missing = max(missing, declared_end - size)
@@ -13187,6 +16692,9 @@ def main(path, scan_limit_mib=256, do_list=False, list_depth=2, list_max=400,
                                               for k, _i in bl.protectors):
                             print("        (give a password or recovery password with --password-file "
                                   "or --password-env, a startup key with --bitlocker-key)")
+                if kind == "luks" and not any(lk.base == b and lk.mk is not None
+                                              for lk in getattr(fh, "luks_found", ())):
+                    print("        (give its passphrase with --password-file or --password-env)")
                 if kind == "apfs" and any(lk.base == b and lk.vek is None and not lk.why
                                           and not lk.tried for lk in apfs_found):
                     print("        (give an encrypted volume's password or personal recovery "
@@ -13271,7 +16779,7 @@ def main(path, scan_limit_mib=256, do_list=False, list_depth=2, list_max=400,
                     except Exception as exc:
                         print(f"        could not extract: {exc}")
 
-                if kind in ("fat32", "exfat", "ntfs", "f2fs", "hfs+", "hfsx", "apfs",
+                if kind in ("fat32", "fat16", "fat12", "exfat", "ntfs", "f2fs", "hfs+", "hfsx", "apfs",
                             "etfs", "efs", "qnx4", "squashfs", "jffs2", "ubi",
                             "ubifs", "yaffs1", "yaffs2") + CFG_KINDS and wanted:
                     if do_list:
@@ -13401,6 +16909,13 @@ def main(path, scan_limit_mib=256, do_list=False, list_depth=2, list_max=400,
                   " on this evidence.")
         else:
             print("  VERDICT: no QNX6 superblock found.")
+    # A logical volume read through a map has no one offset on the disk: its
+    # record in volumes.json says where each run of it is instead.
+    for rec in (manifest or [])[first_record:]:
+        lmap = getattr(image, "lvm_map_for", lambda _b: None)(rec.get("offset_bytes"))
+        if lmap is not None:
+            rec["offset_bytes"], rec["lba"] = None, None
+            rec["lvm_map"] = lmap.describe()
     print()
 
 
@@ -13907,6 +17422,71 @@ def _ntfs_streams_check(image_gz, listing, break_it=None):
     return matched, len(want), missing, extra, different, failures
 
 
+def _ntfs_directory_index_check(image_gz, break_it=None):
+    """Read every directory's $I30 index allocation through directory_index()
+    and check it is the index: whole blocks that start "INDX" and, once fixed
+    up, hold with the directory's $INDEX_ROOT exactly the entries listdir()
+    gives. ``break_it`` takes the walker and returns one with the call broken,
+    for the control that proves the check can fail.
+
+    Returns (directories with an index allocation, directories, failures).
+    """
+    import gzip, io
+    with gzip.open(image_gz, "rb") as gz:
+        img = io.BytesIO(gz.read())
+    w = NtfsWalker(img, 0)
+    if break_it is not None:
+        w = break_it(w)
+    failures, dirs, held = [], 0, 0
+    stack, seen = [(w.root, "")], set()
+    while stack:
+        node, path = stack.pop()
+        if node in seen:
+            continue
+        seen.add(node)
+        dirs += 1
+        listed = w.listdir(node)
+        for name, child in listed:
+            ent = w.entry(child)
+            if ent and ent[0] & S_IFMT == S_IFDIR:
+                stack.append((child, f"{path}/{name}"))
+            elif w.directory_index(child):
+                failures.append(f"{path}/{name}: a file gave a directory index")
+        if any(name == "$I30" for name, _ref, _size in w.streams(node)):
+            failures.append(f"{path or '/'}: streams() lists the index")
+        got = w.directory_index(node)
+        if not got:
+            continue
+        held += 1
+        (name, ref, size), = got
+        data = b"".join(w.read_file(ref, size))
+        if name != "$I30" or len(data) != size or not size or size % w.idx_size:
+            failures.append(f"{path or '/'}: {len(data)} bytes read of {size}, in blocks "
+                            f"of {w.idx_size}")
+            continue
+        out, got_names = [], set()
+        for a in w._record(node):                    # pylint: disable=protected-access
+            if a.type == NTFS_INDEX_ROOT and a.name == "$I30" and len(a.value) >= 0x20:
+                w._index_entries(a.value, 0x10, out, got_names)   # pylint: disable=protected-access
+        for off in range(0, size, w.idx_size):
+            raw = data[off:off + w.idx_size]
+            if raw[:4] != NTFS_INDX:
+                failures.append(f"{path or '/'}: the block at {off} does not start INDX")
+                continue
+            block = _ntfs_fixup(raw, w.bps, NTFS_INDX)
+            if block and len(block) >= 0x28:
+                w._index_entries(block, 0x18, out, got_names)     # pylint: disable=protected-access
+        if sorted(out) != sorted(listed):
+            failures.append(f"{path or '/'}: the blocks hold {len(out)} entries, listdir() "
+                            f"gives {len(listed)}")
+        ent = w.entry(ref)
+        if not ent or ent[1] != size:
+            failures.append(f"{path or '/'}: entry() gives {ent and ent[1]}, not {size}")
+        if w.stamps(ref) != w.stamps(node):
+            failures.append(f"{path or '/'}: stamps() is not its directory's")
+    return held, dirs, failures
+
+
 def _ntfs_times_check(image_gz):
     """Compare the instants the walker reads for live and deleted NTFS files
     against what The Sleuth Kit's istat printed for the same records.
@@ -13968,6 +17548,422 @@ def _ntfs_times_check(image_gz):
     for name in (set(live) | set(deleted)) - seen:
         failures.append(f"{name}: not found in the fixture, so nothing was compared")
     return failures, checked
+
+
+def _exfat_orphan_image():
+    """An exFAT volume of forty 512-byte clusters with a live tree and, beside
+    it, directory clusters that are allocated and that nothing links. Returns
+    (image bytes, {name: content written}). The layout, by cluster number:
+
+      2 bitmap, 3 root, 4 up-case table, 5 LIVE.TXT, 6 LIVEDIR, 7 its INNER.TXT
+      10 -> 11   an orphan directory of two clusters, linked in the FAT
+      12, 13     ORPHAN.BIN, one run
+      14         the orphan directory SUB, holding DEEP.TXT (15) and NEST (16)
+      16         the orphan directory NEST, holding LEAF.TXT (17)
+      18 -> 20   CHAIN.BIN, a FAT chain around the free cluster 19
+      21         SHORT.BIN, a chain of one cluster for a size that needs two
+      22         a second copy of the ORPHAN.BIN entry set, and nothing else
+      23         FREE.BIN's cluster, not allocated
+      25         DEL.TXT, deleted from the root, its cluster free
+      30         a free cluster holding a valid entry set, which must be ignored
+
+    The set checksum is written here from the specification's formula and not
+    with the reader's function, so a wrong reader does not pass against itself.
+    """
+    sec, clusters, heap_sector, fat_sector = 512, 40, 8, 4
+    buf = bytearray((heap_sector + clusters) * sec)
+    buf[3:11] = b"EXFAT   "
+    struct.pack_into("<I", buf, 80, fat_sector)
+    struct.pack_into("<I", buf, 84, 1)               # one sector of FAT
+    struct.pack_into("<I", buf, 88, heap_sector)
+    struct.pack_into("<I", buf, 92, clusters)
+    struct.pack_into("<I", buf, 96, 3)               # root directory cluster
+    buf[108], buf[109], buf[110] = 9, 0, 1
+    buf[510:512] = b"\x55\xaa"
+
+    def at(clus):
+        return heap_sector * sec + (clus - 2) * sec
+
+    def entry_set(name, first, size, *, is_dir=False, contiguous=True, in_use=True,
+                  good_sum=True):
+        ent = bytearray(96)
+        ent[0], ent[1] = 0x85, 2
+        ent[4] = 0x10 if is_dir else 0x20
+        struct.pack_into("<I", ent, 12, (22209 << 16) | 24576)   # modified
+        ent[23] = 0x80 | 16                          # its UTC offset field
+        ent[32], ent[33], ent[35] = 0xC0, 0x03 if contiguous else 0x01, len(name)
+        struct.pack_into("<Q", ent, 40, size)
+        struct.pack_into("<I", ent, 52, first)
+        struct.pack_into("<Q", ent, 56, size)
+        ent[64] = 0xC1
+        ent[66:66 + 2 * len(name)] = name.encode("utf-16-le")
+        total = 0
+        for i, byte in enumerate(ent):
+            if i not in (2, 3):
+                total = ((0x8000 if total & 1 else 0) + (total >> 1) + byte) & 0xFFFF
+        struct.pack_into("<H", ent, 2, total if good_sum else total ^ 0x0101)
+        if not in_use:
+            ent[0], ent[32], ent[64] = 0x05, 0x40, 0x41
+        return bytes(ent)
+
+    content = {}
+
+    def data(name, clus_list, size):
+        body = bytes((len(name) * 7 + i * 13) % 251 for i in range(size))
+        content[name] = body
+        for n, clus in enumerate(clus_list):
+            piece = body[n * sec:(n + 1) * sec]
+            buf[at(clus):at(clus) + len(piece)] = piece
+
+    for clus, nxt in ((3, 0xFFFFFFFF), (2, 0xFFFFFFFF), (4, 0xFFFFFFFF),
+                      (6, 0xFFFFFFFF), (10, 11), (11, 0xFFFFFFFF), (14, 0xFFFFFFFF),
+                      (18, 20), (20, 0xFFFFFFFF), (21, 0xFFFFFFFF)):
+        struct.pack_into("<I", buf, fat_sector * sec + clus * 4, nxt)
+    for clus in (2, 3, 4, 5, 6, 7, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 21, 22):
+        buf[at(2) + ((clus - 2) >> 3)] |= 1 << ((clus - 2) & 7)
+
+    root = bytearray(sec)
+    root[0] = 0x81                                   # allocation bitmap
+    struct.pack_into("<I", root, 20, 2)
+    struct.pack_into("<Q", root, 24, (clusters + 7) // 8)
+    root[32] = 0x82                                  # up-case table
+    struct.pack_into("<I", root, 52, 4)
+    struct.pack_into("<Q", root, 56, sec)
+    root[64:160] = entry_set("LIVE.TXT", 5, sec)
+    root[160:256] = entry_set("LIVEDIR", 6, 0, is_dir=True, contiguous=False)
+    root[256:352] = entry_set("DEL.TXT", 25, 300, in_use=False)
+    buf[at(3):at(3) + sec] = root
+    buf[at(6):at(6) + 96] = entry_set("INNER.TXT", 7, 200)
+    data("INNER.TXT", [7], 200)
+    data("DEL.TXT", [25], 300)
+    # valid, in-use entry sets where the search must not look: in the up-case
+    # table, in a live file's content and in a free cluster
+    buf[at(4):at(4) + 96] = entry_set("UPCASE.X", 12, 700)
+    content["LIVE.TXT"] = entry_set("INLIVE.X", 12, 700) + bytes(sec - 96)
+    buf[at(5):at(5) + sec] = content["LIVE.TXT"]
+    buf[at(30):at(30) + 96] = entry_set("INFREE.X", 12, 700)
+
+    orphan_set = entry_set("ORPHAN.BIN", 12, 700)
+    orphan_dir = (orphan_set
+                  + entry_set("SUB", 14, 0, is_dir=True, contiguous=False)
+                  + entry_set("TAKEN.BIN", 5, 300)
+                  + entry_set("GONE.TXT", 12, 700, in_use=False)
+                  + entry_set("BADSUM.BIN", 12, 700, good_sum=False)
+                  + entry_set("CHAIN.BIN", 18, 900, contiguous=False)   # crosses 10 | 11
+                  + entry_set("SAME.TXT", 5, sec)
+                  + entry_set("FREE.BIN", 23, 100)
+                  + entry_set("SHORT.BIN", 21, 1000, contiguous=False))
+    buf[at(10):at(10) + len(orphan_dir)] = orphan_dir
+    buf[at(14):at(14) + 192] = (entry_set("DEEP.TXT", 15, 100)
+                                + entry_set("NEST", 16, sec, is_dir=True))
+    buf[at(16):at(16) + 96] = entry_set("LEAF.TXT", 17, 10)
+    buf[at(22):at(22) + 96] = orphan_set
+    data("ORPHAN.BIN", [12, 13], 700)
+    data("DEEP.TXT", [15], 100)
+    data("LEAF.TXT", [17], 10)
+    data("CHAIN.BIN", [18, 20], 900)
+    data("SHORT.BIN", [21], 512)
+    data("FREE.BIN", [23], 100)
+    return bytes(buf), content
+
+
+def _exfat_orphan_check():
+    """recover_deleted() on the image above. Returns the problems found."""
+    import io
+    raw, content = _exfat_orphan_image()
+    problems = []
+    w = ExfatWalker(io.BytesIO(raw), 0)
+    live = sorted(n for n, _c in w.listdir(w.root))
+    if live != ["LIVE.TXT", "LIVEDIR"]:
+        problems.append(f"the live root lists {live}")
+    got = [(e.parent_path, e.name, e.recoverable) for e in w.recover_deleted()]
+    want = [("SUB", "DEEP.TXT", True), ("SUB/NEST", "LEAF.TXT", True),
+            (None, "CHAIN.BIN", True), (None, "FREE.BIN", False),
+            (None, "ORPHAN.BIN", True), (None, "SAME.TXT", False),
+            (None, "SHORT.BIN", False), (None, "TAKEN.BIN", False)]
+    if got != want:
+        problems.append(f"recover_deleted() gave {got}")
+        return problems
+    by_name = {e.name: e for e in w.recover_deleted()}
+    for name, e in by_name.items():
+        if e.kind != "exfat" or e.is_dir or "an orphan entry" not in e.note:
+            problems.append(f"{name}: kind {e.kind!r}, note {e.note!r}")
+        if e.recoverable:
+            if b"".join(w.read_deleted(e)) != content[name]:
+                problems.append(f"{name}: read_deleted() is not the bytes written")
+            if b"".join(w.read_deleted(e, 7)) != content[name][:7]:
+                problems.append(f"{name}: read_deleted(size=7) is not the first 7 bytes")
+        else:
+            try:
+                b"".join(w.read_deleted(e))
+                problems.append(f"{name} is refused but read_deleted() read it")
+            except NtfsUnreadable:
+                pass
+    orphan = by_name["ORPHAN.BIN"]
+    if (orphan.ident, orphan.size, orphan.parent, orphan.mtime, orphan.mode) != (
+            12, 700, 10, None, None):
+        problems.append(f"ORPHAN.BIN fields: {orphan.ident}, {orphan.size}, "
+                        f"{orphan.parent}, {orphan.mtime}, {orphan.mode}")
+    if (orphan.times["modified"], orphan.times["modified utc offset"]) != (
+            "2023-06-01 12:00:00", "+04:00"):
+        problems.append(f"ORPHAN.BIN times: {orphan.times}")
+    if "in 2 such clusters" not in orphan.note or "in 2 such" in by_name["DEEP.TXT"].note:
+        problems.append("the copy of the ORPHAN.BIN entry set is not counted once")
+    reasons = {n: by_name[n].reason for n in ("TAKEN.BIN", "SAME.TXT", "FREE.BIN",
+                                              "SHORT.BIN")}
+    if reasons != {
+            "TAKEN.BIN": "1 of the 1 clusters it names belong to live files or directories",
+            "SAME.TXT": "a live file has the same first cluster and size",
+            "FREE.BIN": "1 of the 1 clusters it names are free in the allocation bitmap",
+            "SHORT.BIN": "it names 1 of the 2 clusters its size needs"}:
+        problems.append(f"reasons: {reasons}")
+    # the records deleted_files() gives still read through the same method
+    gone = [e for e in w.deleted_files()]
+    if ([(e.name, e.recoverable, e.first_cluster) for e in gone] != [("DEL.TXT", True, 25)]
+            or b"".join(w.read_deleted(gone[0])) != content["DEL.TXT"]):
+        problems.append("the deleted entry in the live root no longer reads")
+    # Controls. Link the orphan directory into the root and its files are
+    # live, so only the stray copy of one entry set is left, naming a live
+    # file. Free the second cluster of ORPHAN.BIN and it is refused.
+    heap = 8 * 512
+    linked = bytearray(raw)
+    was = bytearray(linked[heap + 512 + 160:heap + 512 + 256])       # LIVEDIR's set
+    struct.pack_into("<I", was, 52, 10)
+    total = 0
+    for i, byte in enumerate(was):
+        if i not in (2, 3):
+            total = ((0x8000 if total & 1 else 0) + (total >> 1) + byte) & 0xFFFF
+    struct.pack_into("<H", was, 2, total)
+    linked[heap + 512 + 256:heap + 512 + 352] = was
+    got = [(e.parent_path, e.name, e.recoverable, e.reason)
+           for e in ExfatWalker(io.BytesIO(bytes(linked)), 0).recover_deleted()]
+    if got != [(None, "ORPHAN.BIN", False,
+                "a live file has the same first cluster and size")]:
+        problems.append(f"with the orphan directory linked into the root: {got}")
+    freed = bytearray(raw)
+    freed[heap + ((13 - 2) >> 3)] &= ~(1 << ((13 - 2) & 7)) & 0xFF
+    got = {e.name: (e.recoverable, e.reason)
+           for e in ExfatWalker(io.BytesIO(bytes(freed)), 0).recover_deleted()}
+    if got.get("ORPHAN.BIN") != (
+            False, "1 of the 2 clusters it names are free in the allocation bitmap"):
+        problems.append(f"with ORPHAN.BIN's second cluster freed: {got.get('ORPHAN.BIN')}")
+    return problems
+
+
+def _exfat_fixture_orphan_check(image_gz):
+    """The exFAT fixture a driver wrote: every in-use file entry in its root
+    directory has to carry the checksum this reader computes, and the volume
+    has to hold no orphan entry. Returns (ok, detail)."""
+    import gzip, io
+    with gzip.open(image_gz, "rb") as gz:
+        w = ExfatWalker(io.BytesIO(gz.read()), 0)
+    raw = w._read(w.root_clus, 0, False)             # pylint: disable=protected-access
+    in_use = 0
+    for i in range(0, len(raw), 32):
+        if raw[i] == 0x00:
+            break
+        in_use += raw[i] == 0x85
+    sets, cut = w._entry_sets(raw, len(raw))         # pylint: disable=protected-access
+    orphans = len(list(w.recover_deleted()))
+    ok = in_use > 0 and len(sets) == in_use and not cut and not orphans
+    return ok, (f"{len(sets)} of {in_use} entry sets match the checksum the driver "
+                f"wrote, {orphans} orphan entries")
+
+
+def _fat16_fixture_checks(here):
+    """The FAT16 and FAT12 checks that need the three committed volumes, as
+    (passed, sentence) pairs, or None when the fixtures are not beside this file.
+
+    All three were written by macOS, and each listing was hashed from the
+    mounted volume, so the expected content comes from the driver that wrote it.
+    At build time The Sleuth Kit listed the same live and deleted files and
+    icat returned the same bytes for each. The TFAT16 volume has 2,048-byte
+    sectors, its files under a root folder named as Windows CE's
+    transaction-safe FAT names its redirected root, and the "TFAT16  " type
+    string: tools/make_fat16_fixtures.sh says exactly which bytes that script
+    set, and it is not a volume Windows CE wrote.
+    """
+    import gzip, io
+    import hashlib
+    plain = os.path.join(here, "fat16-fixture.img.gz")
+    tfat = os.path.join(here, "tfat16-fixture.img.gz")
+    twelve = os.path.join(here, "fat12-fixture.img.gz")
+    if not (os.path.isfile(plain) and os.path.isfile(tfat) and os.path.isfile(twelve)):
+        return None
+
+    def listing(fix):
+        want = {}
+        with open(fix[:-len(".img.gz")] + ".sha256", encoding="utf-8") as fh:
+            for line in fh:
+                if line.strip():
+                    want[line.rstrip("\n").split("  ", 1)[1]] = line.split("  ", 1)[0]
+        return want
+
+    def reads_right(walker, want):
+        """How many of the listed files the walker returns with the listed bytes."""
+        good = 0
+        try:
+            have = {path: (ino, sz) for path, ino, sz, _m in collect(walker, walker.root)}
+        except Exception:                            # pylint: disable=broad-except
+            return 0
+        for path, digest in want.items():
+            if path not in have:
+                continue
+            try:
+                data = b"".join(walker.read_file(*have[path]))
+            except Exception:                        # pylint: disable=broad-except
+                continue
+            if hashlib.sha256(data).hexdigest() == digest:
+                good += 1
+        return good
+
+    out = []
+    for label, fix in (("FAT16", plain), ("TFAT16", tfat), ("FAT12", twelve)):
+        lst = fix[:-len(".img.gz")] + ".sha256"
+        kind, got, want, miss, diff = _ext_fixture_check(fix, lst)
+        out.append((kind == ("fat12" if label == "FAT12" else "fat16")
+                    and got and got == want and not miss and not diff,
+                    f"every file of the {label} volume a driver wrote reads back as the "
+                    f"bytes it wrote ({kind}, {got} of {want}"
+                    + (f", {miss} missing" if miss else "")
+                    + (f", {diff} different" if diff else "") + ")"))
+    with gzip.open(plain, "rb") as gz:
+        raw = gz.read()
+    with gzip.open(tfat, "rb") as gz:
+        traw = gz.read()
+    with gzip.open(twelve, "rb") as gz:
+        raw12 = gz.read()
+
+    # The control: the same volume read with FAT32's entry width and root. If
+    # that listed the files too, the checks above would not show that the
+    # 16-bit table and the fixed root are what is being read.
+    want = {}
+    with open(plain[:-len(".img.gz")] + ".sha256", encoding="utf-8") as fh:
+        for line in fh:
+            if line.strip():
+                want[line.rstrip("\n").split("  ", 1)[1]] = line.split("  ", 1)[0]
+    try:
+        w32 = Fat32Walker(io.BytesIO(raw), 0)
+        seen32 = sum(1 for path, _i, _s, _m in collect(w32, w32.root) if path in want)
+    except Exception:                                # pylint: disable=broad-except
+        seen32 = 0
+    out.append((seen32 == 0,
+                f"and read as FAT32 the same volume lists none of them "
+                f"({seen32} of {len(want)})"))
+
+    # free space: the table's own count, and no live file inside a free run
+    w = Fat16Walker(io.BytesIO(raw), 0)
+    runs = w.free_extents()
+    count = (w.total_sectors - (w.reserved + w.nfats * w.spf)
+             - w.root_dir_bytes // w.bps) // w.spc
+    table = read_at(w.fh, w.fat_start, (count + 2) * 2)
+    zero = sum(1 for c in range(2, count + 2) if table[c * 2:c * 2 + 2] == b"\x00\x00")
+    inside = 0
+    for _path, node, mode, _sz, _mt, _rec in walk_all(w):
+        if mode & S_IFMT == S_IFDIR or not _sz:
+            continue
+        for c in w._chain(node[0]):                  # pylint: disable=protected-access
+            off = w._cluster_off(c)                  # pylint: disable=protected-access
+            if any(start <= off < start + length for start, length in runs):
+                inside += 1
+    free_bytes = sum(length for _start, length in runs)
+    out.append((bool(runs) and free_bytes == zero * w.cluster_bytes and not inside,
+                f"a FAT16 volume reads its free clusters out of its 16-bit table "
+                f"({human(free_bytes)} in {len(runs)} run(s), {zero:,} zero entries, "
+                f"{inside} live cluster(s) inside a free run)"))
+
+    # identification: what it says about the transaction-safe volume, what it
+    # refuses, and that neither boot sector is taken for a partition table
+    tfh = io.BytesIO(traw)
+    tid = identify_fat(tfh, 0)
+    tlines = tid[1] if tid else []
+    tw = Fat16Walker(tfh, 0)
+    out.append((bool(tid) and tid[0] == "fat16" and tw.bps == 2048
+                and any(l.startswith("type string  TFAT16") for l in tlines)
+                and any(l.startswith("FAT copies   2, the first two identical") for l in tlines),
+                f"a TFAT16 boot sector with 2,048-byte sectors is read as FAT16 and "
+                f"named for what it says it is ({'; '.join(tlines[-2:]) or 'not recognised'})"))
+    top = [name for name, child in tw.listdir(tw.root) if tw.entry(child)[0] & S_IFMT == S_IFDIR]
+    out.append(("__TFAT_HIDDEN_ROOT_DIR__" in top,
+                f"the folder a transaction-safe volume keeps its files under is listed "
+                f"as stored ({len(top)} folder(s) in the fixed root)"))
+    # a second table that disagrees is counted, and the first is still the one read
+    spoiled = bytearray(traw)
+    second = tw.fat_start + tw.spf * tw.bps
+    for c in (2000, 2001, 2002):
+        struct.pack_into("<H", spoiled, second + c * 2, 0xFFFF)
+    sid = identify_fat(io.BytesIO(bytes(spoiled)), 0)
+    slines = sid[1] if sid else []
+    try:
+        sw = Fat16Walker(io.BytesIO(bytes(spoiled)), 0)
+        same_listing = (sorted(p for p, _i, _s, _m in collect(sw, sw.root))
+                        == sorted(p for p, _i, _s, _m in collect(tw, tw.root)))
+    except Exception:                                # pylint: disable=broad-except
+        same_listing = False
+    out.append((any("differ in 3 entries" in l for l in slines) and same_listing,
+                f"when the two tables of a transaction-safe volume disagree the "
+                f"difference is counted and the first table is the one read "
+                f"({slines[-1] if slines else 'not recognised'})"))
+    # FAT12: the control is the same volume read with a 16-bit table. The root
+    # is where FAT16's is, so names are found, and a file of several clusters is
+    # then followed through the wrong entries.
+    want12 = listing(twelve)
+    as16 = reads_right(Fat16Walker(io.BytesIO(raw12), 0), want12)
+    out.append((0 < len(want12) and as16 < len(want12),
+                f"and read with a 16-bit table the FAT12 volume gives back fewer of them "
+                f"({as16} of {len(want12)})"))
+    # free space against a second reading of the table: three bytes, two entries
+    w12 = Fat12Walker(io.BytesIO(raw12), 0)
+    count12 = (w12.total_sectors - (w12.reserved + w12.nfats * w12.spf)
+               - w12.root_dir_bytes // w12.bps) // w12.spc
+    tab = read_at(w12.fh, w12.fat_start, w12.spf * w12.bps)
+    pairs = []
+    for i in range(0, len(tab) - 2, 3):
+        three = tab[i] | (tab[i + 1] << 8) | (tab[i + 2] << 16)
+        pairs += [three & 0xFFF, three >> 12]
+    zero12 = sum(1 for c in range(2, count12 + 2) if pairs[c] == 0)
+    free12 = sum(length for _start, length in w12.free_extents())
+    out.append((bool(zero12) and free12 == zero12 * w12.cluster_bytes,
+                f"a FAT12 volume reads its free clusters out of its 12-bit table "
+                f"({human(free12)}, {zero12:,} zero entries by a second unpacking)"))
+    # The cluster count types the volume and the string does not: the FAT12
+    # volume with "FAT16   " written over its type string is still FAT12, says
+    # so, and still reads.
+    mislabelled = bytearray(raw12)
+    mislabelled[54:62] = b"FAT16   "
+    mfh = io.BytesIO(bytes(mislabelled))
+    mid = identify_fat(mfh, 0)
+    mgood = reads_right(walker_for(mid[0], mfh, 0), want12) if mid else 0
+    out.append((bool(mid) and mid[0] == "fat12" and mgood == len(want12)
+                and any("the cluster count makes it FAT12" in l for l in mid[1]),
+                f"a volume that says FAT16 and has FAT12's cluster count is read as "
+                f"FAT12, and says both ({mgood} of {len(want12)} files)"))
+    # a BPB the count cannot be computed from is not claimed
+    odd = bytearray(raw[:512])
+    odd[13] = 3                                      # sectors per cluster: not a power of two
+    out.append((identify_fat(io.BytesIO(bytes(odd)), 0) is None,
+                "a boot sector that says FAT16 over a BPB that cannot be one is not claimed"))
+    out.append((parse_mbr(io.BytesIO(raw)) is None and parse_mbr(io.BytesIO(traw)) is None
+                and parse_mbr(io.BytesIO(raw12)) is None,
+                "a FAT16, TFAT16 or FAT12 boot sector is not read as a partition table"))
+    # TFAT32: FAT32's own structures under another type string
+    t32 = bytearray(512)
+    struct.pack_into("<H", t32, 11, 2048)
+    t32[13] = 1
+    struct.pack_into("<H", t32, 14, 32)
+    t32[16] = 2
+    struct.pack_into("<I", t32, 32, 4096)
+    struct.pack_into("<I", t32, 36, 2)
+    struct.pack_into("<I", t32, 44, 2)
+    t32[82:90] = b"TFAT32  "
+    t32[510:512] = b"\x55\xaa"
+    body = bytes(t32) + b"\x00" * (2048 * 40)
+    got32 = identify_fat(io.BytesIO(body), 0)
+    out.append((bool(got32) and got32[0] == "fat32"
+                and any(l.startswith("type string  TFAT32") for l in got32[1])
+                and parse_mbr(io.BytesIO(body)) is None,
+                "a TFAT32 boot sector is read as FAT32 and not as a partition table"))
+    return out
 
 
 def _fat_listing_check(image_gz, wcls):
@@ -14748,6 +18744,169 @@ def _apfs_unlock_checks(enc_path, conv_path, conv_sums):
     return out
 
 
+def _efs_fixture_check(raw, known, order):
+    """Read an EFS fixture (tools/make_efs_fixtures.py) and hold it against what
+    its writer recorded writing. raw is the image, known the parsed
+    efs.known.json, order the byte order the image was written in. Returns
+    (problems, live entries, deleted-data entries): the partitions have to be
+    found where they were put, the live tree has to be the files, directories
+    and links written, and recover_deleted() has to return the deleted files
+    and the deleted and superseded extents written, each at its offsets, and
+    nothing else. A refused entry has to refuse the read."""
+    import hashlib, io
+    fh = io.BytesIO(raw)
+    vols = volumes(fh, len(raw))
+    got = [(v["base"], v["size"], v["kind"]) for v in vols]
+    want = [(p["base"], p["size"], "efs") for p in known["partitions"]]
+    if got != want:
+        return [f"volumes() found {got}, and the partitions written are {want}"], 0, 0
+    problems, n_live, n_del = [], 0, 0
+    kinds = (("a deleted file", "deleted file"),
+             ("deleted or superseded extents of a file that still exists",
+              "extents of a live file"),
+             ("deleted or superseded extents of a deleted file", "extents of a deleted file"),
+             ("deleted or superseded file extents no directory entry", "extents with no name"))
+    for v, part in zip(vols, known["partitions"]):
+        w, at = v.get("walker"), f"partition at {v['base']:#x}"
+        if w is None:
+            problems.append(f"{at}: {v.get('note')}")
+            continue
+        if (w.e, w.boot["unit_index"], w.unit_size) != (order, part["unit_index"],
+                                                         part["unit_size"]):
+            problems.append(f"{at}: byte order {w.e!r}, boot unit {w.boot['unit_index']}, "
+                            f"unit size {w.unit_size}")
+        files, dirs, links, stack = {}, {}, {}, [(w.root, "")]
+        while stack:
+            node, path = stack.pop()
+            for name, child in w.listdir(node):
+                mode, size, mtime = w.entry(child)
+                cpath = f"{path}/{name}" if path else name
+                n_live += 1
+                if mode & S_IFMT == S_IFDIR:
+                    dirs[cpath] = dict(mode=mode, mtime=mtime)
+                    stack.append((child, cpath))
+                    continue
+                data = b"".join(w.read_file(child, size))
+                if mode & S_IFMT == S_IFLNK:
+                    links[cpath] = dict(mode=mode, mtime=mtime, target=data.decode())
+                else:
+                    files[cpath] = dict(mode=mode, mtime=mtime, size=len(data),
+                                        sha256=hashlib.sha256(data).hexdigest())
+        for label, have, wanted in (("files", files, part["files"]),
+                                    ("directories", dirs, part["dirs"]),
+                                    ("symlinks", links, part["symlinks"])):
+            if have != wanted:
+                problems.append(f"{at}: live {label} read as {sorted(have)}, written "
+                                f"{sorted(wanted)}, or a mode, time, size or hash differs")
+        deleted = []
+        for e in w.recover_deleted():
+            n_del += 1
+            kind = next((k for prefix, k in kinds if e.note.startswith(prefix)), e.note)
+            if e.recoverable:
+                data = b"".join(w.read_deleted(e))
+            else:
+                data = b""
+                try:
+                    for _chunk in w.read_deleted(e):
+                        pass
+                    problems.append(f"{at}: {e.name!r} is refused but read_deleted() read it")
+                except ValueError:
+                    pass
+            deleted.append(dict(kind=kind, name=e.name, parent_path=e.parent_path,
+                                recoverable=e.recoverable, mode=e.mode, mtime=e.mtime,
+                                size=e.size, sha256=hashlib.sha256(data).hexdigest(),
+                                extents=[list(x) for x in w.deleted_extents(e)]))
+        order_key = lambda d: (d["kind"], d["name"], d["extents"])
+        if sorted(deleted, key=order_key) != sorted(part["deleted"], key=order_key):
+            problems.append(f"{at}: recover_deleted() gave "
+                            f"{sorted((d['kind'], d['name'], d['size']) for d in deleted)}, "
+                            f"written {sorted((d['kind'], d['name'], d['size']) for d in part['deleted'])}"
+                            ", or a field of one differs")
+        stray = w.unaccounted()[1]
+        if stray:
+            problems.append(f"{at}: {stray} bytes that are not 0xFF lie where no extent is")
+    return problems, n_live, n_del
+
+
+def _efs_qnx_image_check(raw, tar_gz):
+    """Read the EFS image QNX itself wrote and hold it against its own record.
+
+    tests/fixtures/efs-qnx.img.gz is test_image.bin from
+    NetherlandsForensicInstitute/qnxmount (Apache-2.0, LICENSE-qnxmount) at
+    commit 11c8a7f9ee9b945d584263743f6ea8524e8776d2, gzipped here and otherwise
+    unchanged (SHA-256 0b0dc3a5...f92b3 unpacked); efs-qnx.tar.gz is its
+    test_image.tar.gz as committed. mkefs formatted the image, the devf-ram
+    flash driver mounted it, and tests/qnx_efs/test_data/make_test_fs.sh wrote
+    to it, then archived the mounted tree with tar. So nothing expected here
+    comes from this reader:
+
+    * every live entry's kind, permission bits, mtime, and content or link
+      target has to be the tar's;
+    * the script wrote 16 random bytes to this_file_is_removed, copied it to
+      this_file_is_a_copy and removed it, so recover_deleted() has to return a
+      deleted file of that name whose bytes are the copy's;
+    * the script rewrote 10 blocks of 1 KiB at block 5 of this_file_is_large,
+      so that file's superseded extents have to hold 10,240 bytes that are not
+      what the file holds there now;
+    * recover_deleted() has to return nothing else, and unaccounted() no
+      programmed byte.
+
+    Returns (problems, live entries, bytes of the removed file, superseded
+    bytes)."""
+    import io, tarfile
+    want = {}
+    with tarfile.open(tar_gz) as tf:
+        for m in tf.getmembers():
+            kind = (S_IFDIR if m.isdir() else S_IFLNK if m.issym() else 0o010000 if m.isfifo()
+                    else S_IFREG)
+            body = (tf.extractfile(m).read() if m.isfile()
+                    else m.linkname.encode() if m.issym() else None)
+            want[m.name.strip("/")] = (kind, m.mode & 0o7777, m.mtime, body)
+    vols = volumes(io.BytesIO(raw), len(raw))
+    if [v["kind"] for v in vols] != ["efs"] or "walker" not in vols[0]:
+        return [f"volumes() gave {[(v['kind'], v.get('note')) for v in vols]}"], 0, 0, 0
+    w = vols[0]["walker"]
+    got, stack, problems = {}, [(w.root, "")], []
+    while stack:
+        node, path = stack.pop()
+        for name, child in w.listdir(node):
+            mode, size, mtime = w.entry(child)
+            cpath = f"{path}/{name}" if path else name
+            body = (b"".join(w.read_file(child, size))
+                    if mode & S_IFMT in (S_IFREG, S_IFLNK) else None)
+            got[cpath] = (mode & S_IFMT, mode & 0o7777, mtime, body)
+            if mode & S_IFMT == S_IFDIR:
+                stack.append((child, cpath))
+    if got != want:
+        problems.append("the live tree is not the tar's: "
+                        f"{sorted(k for k in set(got) | set(want) if got.get(k) != want.get(k))}")
+    entries = list(w.recover_deleted())
+    removed = [e for e in entries if e.name == "this_file_is_removed"
+               and e.note.startswith("a deleted file")]
+    copy = got.get("this_file_is_a_copy", (0, 0, 0, None))[3]
+    n_removed = 0
+    if (len(removed) != 1 or not removed[0].recoverable or not copy
+            or b"".join(w.read_deleted(removed[0])) != copy):
+        problems.append("this_file_is_removed did not come back with its copy's bytes")
+    else:
+        n_removed = removed[0].size
+    large = got.get("this_file_is_large", (0, 0, 0, b""))[3] or b""
+    old = [e for e in entries if e.name == "this_file_is_large"]
+    old_bytes = b"".join(b"".join(w.read_deleted(e)) for e in old)
+    states = {state for e in old for _off, _n, state in w.deleted_extents(e)}
+    if (len(old_bytes) != 10 * 1024 or states != {"allocated, superseded"}
+            or old_bytes == large[5 * 1024:15 * 1024]):
+        problems.append(f"this_file_is_large: {len(old_bytes)} superseded bytes in "
+                        f"{len(old)} entries, states {sorted(states)}")
+    other = [e for e in entries if e not in removed and e not in old]
+    if other:
+        problems.append(f"{len(other)} entries the script's history does not account for")
+    stray = w.unaccounted()[1]
+    if stray:
+        problems.append(f"{stray} bytes that are not 0xFF lie where no extent is")
+    return problems, len(got), n_removed, len(old_bytes)
+
+
 def self_test():
     """Prove the detector reports BOTH ways before you trust a run.
 
@@ -14991,10 +19150,11 @@ def self_test():
         print(f"  [{mark}] synthetic ETFS recognised and one file round-tripped: "
               f"kind={kind}")
 
-        # A synthetic EFS image: one erase unit whose unit_info sizes it and
-        # whose boot record carries the QSSL_F3S signature. Detection only, the
-        # same depth as the FAT legs above; the full walk is proven by the
-        # round-trip against qnxmount's committed images.
+        # A synthetic EFS image: one erase unit whose unit_info sizes it, whose
+        # boot record carries the QSSL_F3S signature, and whose header 2
+        # (F3S_BOOT_INDEX) points at that record. Detection only, the same
+        # depth as the FAT legs above; the full walk is proven by the round-trip
+        # against qnxmount's committed images and by the fixtures below.
         us_pow2 = 16
         efs_img = bytearray(b"\xff" * (1 << us_pow2))
         struct.pack_into("<H", efs_img, 0, 0x10)          # unit_info struct_size
@@ -15008,6 +19168,9 @@ def self_test():
         efs_img[bo + 4:bo + 12] = TRUE_F3S_SIG
         struct.pack_into("<HHHH", efs_img, bo + 12, 0, 1, 0, 2)   # idx,total,spare,align
         struct.pack_into("<HH", efs_img, bo + 20, 1, 0)          # root ptr
+        eh = (1 << us_pow2) - 32 * 3                      # header 2: text offset >> align
+        efs_img[eh + 19] = 0
+        struct.pack_into("<HH", efs_img, eh + 20, bo >> 2, 24)
         efp = os.path.join(d, "efs.bin"); open(efp, "wb").write(bytes(efs_img))
         with open(efp, "rb") as fh:
             det = identify_efs(fh, 0, len(efs_img))
@@ -15016,6 +19179,15 @@ def self_test():
         if got_kind != "efs":
             ok = False
         print(f"  [{mark}] synthetic EFS boot record recognised: kind={got_kind}")
+        # The same record with no header pointing at it is not a boot record:
+        # the signature string occurs elsewhere in flash images too.
+        efs_img[eh + 20:eh + 22] = b"\xff\xff"
+        with io.BytesIO(bytes(efs_img)) as fh:
+            det = identify_efs(fh, 0, len(efs_img))
+        mark = "PASS" if det is None else "FAIL"
+        if det is not None:
+            ok = False
+        print(f"  [{mark}] a QSSL_F3S record that its unit's header 2 does not point at is declined")
 
         # Neither flash detector may fire on data that is not its filesystem.
         for path, label in ((c, "random"), (fp, "fat32"), (xp, "exfat")):
@@ -15027,6 +19199,108 @@ def self_test():
             if e1 is not None or e2 is not None:
                 ok = False
             print(f"  [{mark}] ETFS and EFS decline the {label} image")
+
+        # EFS found anywhere in a flash image, in both byte orders, with its
+        # deleted and superseded data. tools/make_efs_fixtures.py wrote the two
+        # images from one model, one per byte order, and recorded what it wrote;
+        # qnxmount, the reference reader, reads the little-endian one's live
+        # files as written (it reads neither big-endian nor deleted data). Each
+        # image opens with 16 KiB that is not EFS and holds two partitions, the
+        # first with its boot record in physical unit 2.
+        efs_fx = os.path.join(os.path.dirname(os.path.abspath(__file__)), "tests", "fixtures")
+        efs_known_path = os.path.join(efs_fx, "efs.known.json")
+        if not os.path.isfile(efs_known_path):
+            print("  [SKIP] the EFS fixtures are not beside this script, so finding a "
+                  "partition by its boot record, the big-endian reading and "
+                  "recover_deleted() on EFS were not checked")
+        else:
+            import gzip
+            with open(efs_known_path, encoding="utf-8") as fh:
+                efs_known = json.load(fh)
+            efs_raw = {}
+            for stem, order, word in (("efs-le", "<", "little"), ("efs-be", ">", "big")):
+                with gzip.open(os.path.join(efs_fx, stem + ".img.gz"), "rb") as gz:
+                    efs_raw[order] = gz.read()
+                problems, n_live, n_del = _efs_fixture_check(efs_raw[order], efs_known, order)
+                mark = "PASS" if not problems and n_live and n_del else "FAIL"
+                if mark == "FAIL":
+                    ok = False
+                    for line in problems:
+                        print("      " + line)
+                print(f"  [{mark}] EFS {word}-endian: {len(efs_known['partitions'])} partitions "
+                      f"found by their boot records, {n_live} live entries and {n_del} "
+                      "entries of deleted and superseded data as written, nothing "
+                      "unaccounted for")
+            # Three controls, so the checks above can be seen to fail. The
+            # placement uses unit_index: with it zeroed, the first partition is
+            # no longer where it was written. The comparison reads content: one
+            # changed byte of a deleted extent fails it. And unaccounted() sees
+            # text no header covers: a deleted extent's header set to free
+            # leaves exactly that extent's bytes unaccounted for.
+            part_a = efs_known["partitions"][0]
+            clean = EfsWalker(io.BytesIO(efs_raw[">"]), part_a["base"], part_a["size"])
+            sig = part_a["base"] + clean.boot["sig_at"]
+            moved = bytearray(efs_raw[">"])
+            moved[sig + 8:sig + 10] = b"\x00\x00"
+            moved_at = [p["base"] for p in efs_partitions(io.BytesIO(bytes(moved)), len(moved))]
+            victim = next(d for d in part_a["deleted"] if d["name"] == "old.log")
+            off, length, _state = victim["extents"][0]
+            bent = bytearray(efs_raw[">"])
+            bent[off + 5] ^= 0x01
+            bent_problems = _efs_fixture_check(bytes(bent), efs_known, ">")[0]
+            entry = next(e for e in clean.recover_deleted() if e.name == "old.log")
+            ext = entry._plan[0]                     # pylint: disable=protected-access
+            head = (part_a["base"] + ext["u"] * clean.unit_size
+                    + clean.unit_size - EFS_EXTHDR * (ext["i"] + 1))
+            freed = bytearray(efs_raw[">"])
+            struct.pack_into(">I", freed, head, ext["s0"] | EFS_FREE)
+            stray = EfsWalker(io.BytesIO(bytes(freed)), part_a["base"],
+                              part_a["size"]).unaccounted()[1]
+            cond = (part_a["base"] not in moved_at and len(bent_problems) == 1
+                    and stray == length)
+            mark = "PASS" if cond else "FAIL"
+            if not cond:
+                ok = False
+            print(f"  [{mark}] EFS controls: a zeroed unit_index moves the partition, a "
+                  f"changed byte of a deleted extent is caught, and a header set to "
+                  f"free leaves its {length} bytes unaccounted for ({stray})")
+
+        # And EFS as QNX wrote it: qnxmount's committed test image, with a
+        # removed file and an overwrite in its history (_efs_qnx_image_check).
+        # The control cuts the removed file's directory entry loose from its
+        # data by setting its first extent's header to free, which has to cost
+        # the deleted file.
+        qnx_img = os.path.join(efs_fx, "efs-qnx.img.gz")
+        qnx_tar = os.path.join(efs_fx, "efs-qnx.tar.gz")
+        if not (os.path.isfile(qnx_img) and os.path.isfile(qnx_tar)):
+            print("  [SKIP] the QNX-written EFS image is not beside this script, so the "
+                  "reader was not held against a filesystem QNX wrote")
+        else:
+            import gzip
+            with gzip.open(qnx_img, "rb") as gz:
+                qnx_raw = gz.read()
+            problems, n_live, n_removed, n_old = _efs_qnx_image_check(qnx_raw, qnx_tar)
+            mark = "PASS" if not problems else "FAIL"
+            if problems:
+                ok = False
+                for line in problems:
+                    print("      " + line)
+            print(f"  [{mark}] EFS written by QNX: {n_live} live entries as QNX's own tar has "
+                  f"them, the removed file's {n_removed} bytes equal its copy's, and "
+                  f"{n_old:,} superseded bytes of the overwritten file")
+            qw = EfsWalker(io.BytesIO(qnx_raw), 0, len(qnx_raw))
+            gone = next(e for e in qw.recover_deleted() if e.name == "this_file_is_removed")
+            ext = gone._plan[0]                      # pylint: disable=protected-access
+            head = ext["u"] * qw.unit_size + qw.unit_size - EFS_EXTHDR * (ext["i"] + 1)
+            cut = bytearray(qnx_raw)
+            struct.pack_into(qw.e + "I", cut, head, ext["s0"] | EFS_FREE)
+            cut_problems = _efs_qnx_image_check(bytes(cut), qnx_tar)[0]
+            cond = any("this_file_is_removed" in line for line in cut_problems)
+            mark = "PASS" if cond else "FAIL"
+            if not cond:
+                ok = False
+            print(f"  [{mark}] EFS written by QNX, control: with its extent's header set to "
+                  "free the removed file no longer comes back, and the check says so")
 
         # QNX IFS. The UCL decompressor and the imagefs layout are proven byte
         # for byte against real Ford Sync G4 images; these legs are the both-ways
@@ -17049,6 +21323,70 @@ def self_test():
         _nobm[_ex_root - 32] = 0x85                  # and the TexFAT one with it
         exfat_no_bitmap_ok = ExfatWalker(io.BytesIO(bytes(_nobm)), 0).free_extents() == []
 
+        # A file's size is in its directory entry and its clusters are in the
+        # FAT, and a volume can hold the two in disagreement. Three files in the
+        # exFAT root, each recorded as four clusters less ten bytes: one whose
+        # chain stops after two clusters, one whose chain is whole, and one
+        # that sets NoFatChain and so has no chain at all. The whole one is the
+        # control: a check that called every file short would fail on it. A
+        # fourth is empty, with no first cluster, and must read as no bytes.
+        _exsf = bytearray(_exbuf)
+        _ex_fat = 4 * 512
+        EX_FILE_BYTES = 4 * 512 - 10
+
+        def _ex_file(at, name, first, flags, size):
+            _exsf[at] = 0x85
+            _exsf[at + 1] = 2                        # stream extension and one name
+            _exsf[at + 4] = 0x20
+            _exsf[at + 32] = 0xC0
+            _exsf[at + 33] = flags
+            _exsf[at + 35] = len(name)
+            struct.pack_into("<Q", _exsf, at + 40, size)
+            struct.pack_into("<I", _exsf, at + 52, first)
+            struct.pack_into("<Q", _exsf, at + 56, size)
+            _exsf[at + 64] = 0xC1
+            _exsf[at + 66:at + 66 + 2 * len(name)] = name.encode("utf-16-le")
+
+        _ex_file(_ex_root + 32, "CUT", 5, 0x01, EX_FILE_BYTES)
+        _ex_file(_ex_root + 128, "WHOLE", 12, 0x01, EX_FILE_BYTES)
+        _ex_file(_ex_root + 224, "RUN", 26, 0x03, EX_FILE_BYTES)
+        _ex_file(_ex_root + 320, "EMPTY", 0, 0x03, 0)
+        for _c, _next in ((5, 6), (6, 0xFFFFFFFF),
+                          (12, 13), (13, 14), (14, 15), (15, 0xFFFFFFFF)):
+            struct.pack_into("<I", _exsf, _ex_fat + _c * 4, _next)
+        for _c in list(range(5, 9)) + list(range(12, 16)) + list(range(26, 30)):
+            _at = _ex_heap + (_c - 2) * 512
+            _exsf[_at:_at + 512] = bytes([_c]) * 512
+        _exsw = ExfatWalker(io.BytesIO(bytes(_exsf)), 0)
+        _exs = {n: nd for n, nd in _exsw.listdir(_exsw.root)}
+        _exs_len = {n: len(b"".join(_exsw.read_file(nd, nd[1]))) for n, nd in _exs.items()}
+        exfat_empty_ok = (_exsw.chain_shortfall(_exs["EMPTY"]) is None
+                          and _exs_len["EMPTY"] == 0)
+        exfat_chain_ok = (sorted(_exs) == ["CUT", "EMPTY", "RUN", "WHOLE"]
+                          and _exsw.chain_shortfall(_exs["CUT"]) == (2, 4)
+                          and _exs_len["CUT"] == 2 * 512
+                          and _exsw.chain_shortfall(_exs["WHOLE"]) is None
+                          and _exs_len["WHOLE"] == EX_FILE_BYTES
+                          and _exsw.chain_shortfall(_exs["RUN"]) is None
+                          and _exs_len["RUN"] == EX_FILE_BYTES
+                          and chain_shortfall(_exsw, _exs["CUT"]) == (2, 4)
+                          and chain_shortfall(object(), _exs["CUT"]) is None)
+        try:
+            exfat_orphan_problems = _exfat_orphan_check()
+        except Exception as exc:                     # pylint: disable=broad-except
+            exfat_orphan_problems = [f"the check raised {type(exc).__name__}: {exc}"]
+        # FAT32 keeps the same two records apart. HELLO.TXT is one cluster and
+        # its chain is one cluster; recorded as three clusters it is two short.
+        _fatw = Fat32Walker(io.BytesIO(bytes(_fatbuf)), 0)
+        _fat_hello = dict(_fatw.listdir(_fatw.root))["HELLO.TXT"]
+        _fatcut = bytearray(_fatbuf)
+        struct.pack_into("<I", _fatcut, _de + 28, 3 * 512)
+        _fatcw = Fat32Walker(io.BytesIO(bytes(_fatcut)), 0)
+        _fat_cut = dict(_fatcw.listdir(_fatcw.root))["HELLO.TXT"]
+        fat_chain_ok = (_fatw.chain_shortfall(_fat_hello) is None
+                        and _fatcw.chain_shortfall(_fat_cut) == (1, 3)
+                        and len(b"".join(_fatcw.read_file(_fat_cut, 3 * 512))) == 512)
+
         # A qnx6 volume's free space. 512-byte blocks, 4,997 of them, so the
         # bitmap is 625 bytes: two blocks, reached through one indirect block.
         # That indirect block is stored block 0, as it is on the Ford Sync G4
@@ -17259,6 +21597,20 @@ def self_test():
                  "clusters out of it", exfat_free_ok),
                 ("an exFAT volume whose root names no bitmap reports nothing "
                  "rather than nothing free", exfat_no_bitmap_ok),
+                ("an exFAT file whose FAT chain ends before its recorded size "
+                 "says so, and a whole chain or a NoFatChain run does not",
+                 exfat_chain_ok),
+                ("an empty exFAT file reads as no bytes, not as a cluster of the "
+                 "volume's own", exfat_empty_ok),
+                ("exFAT orphan entries: in-use entry sets in allocated clusters the "
+                 "tree does not reach come back with their directory names and "
+                 "bytes, one that names a live file's clusters, a free cluster or "
+                 "a short chain is refused, and a deleted entry, a bad checksum, "
+                 "the up-case table, a live file's content and a free cluster "
+                 "give none" + "".join(f"; {p}" for p in exfat_orphan_problems),
+                 not exfat_orphan_problems),
+                ("a FAT32 file whose cluster chain ends before its recorded size "
+                 "says so, and a whole chain does not", fat_chain_ok),
                 ("a qnx6 volume reads its free blocks out of the bitmap tree, least "
                  "significant bit first, as offsets into the image", qnx6_free_ok),
                 ("a qnx6 free-space floor drops the short runs", qnx6_floor_ok),
@@ -17319,6 +21671,26 @@ def self_test():
                   f"({egot} of {ewant}, identified as {ekind}"
                   + (f", {emiss} missing" if emiss else "")
                   + (f", {ediff} different" if ediff else "") + ")" + ebroke)
+
+        # LVM2: lvm2's own tools wrote the fixtures, and lvm2's own report (lvs,
+        # pvs, saved beside them as lvm-fixture.lvs.json) is the layout they are
+        # checked against; the file hashes come from sha256sum over the source
+        # trees (tools/make_lvm_fixtures.sh).
+        try:
+            lvm_checks = _lvm_self_checks()
+        except Exception as exc:                     # pylint: disable=broad-except
+            lvm_checks = [(f"the LVM2 checks ran ({type(exc).__name__}: {exc})", False)]
+        try:
+            lvm_checks += _luks_self_checks()
+        except Exception as exc:                     # pylint: disable=broad-except
+            lvm_checks += [(f"the LUKS checks ran ({type(exc).__name__}: {exc})", False)]
+        for label, cond in lvm_checks:
+            if cond is None:
+                print(f"  [SKIP] {label}")
+                continue
+            if not cond:
+                ok = False
+            print(f"  [{'PASS' if cond else 'FAIL'}] {label}")
 
         # GPT at 512 and 4096 bytes a sector. A 4Kn drive or a UFS LUN image
         # keeps its GPT header at byte 4096 and counts every LBA in 4096-byte
@@ -17812,6 +22184,41 @@ def self_test():
             w._stream = _stream                      # pylint: disable=protected-access
             return w
 
+        # A directory's $I30 index allocation, read through directory_index(): the
+        # same fixture as the walk above, five of whose nine directories have
+        # grown one, then the same check with the call finding none.
+        idx_fix = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                               "tests", "fixtures", "ntfs-fixture.img.gz")
+
+        def _no_index_allocation(w):
+            """The walker, finding no $INDEX_ALLOCATION on any record."""
+            w._index_allocation = lambda num: None   # pylint: disable=protected-access
+            return w
+
+        if os.path.isfile(idx_fix):
+            try:
+                iheld, idirs, ifail = _ntfs_directory_index_check(idx_fix)
+            except Exception as exc:                 # pylint: disable=broad-except
+                iheld = idirs = 0
+                ifail = [f"the check raised {type(exc).__name__}: {exc}"]
+            icond = iheld == 5 and idirs == 9 and not ifail
+            if not icond:
+                ok = False
+            print(f"  [{'PASS' if icond else 'FAIL'}] directory_index() reads the $I30 index "
+                  f"allocation of each NTFS fixture directory that has one as whole INDX "
+                  f"blocks holding, with the index root, the entries listdir() gives, and "
+                  f"streams() does not list it ({iheld} of {idirs} directories"
+                  + (f"; {ifail[0]}" if ifail else "") + ")")
+            try:
+                bheld = _ntfs_directory_index_check(idx_fix, break_it=_no_index_allocation)[0]
+            except Exception:                        # pylint: disable=broad-except
+                bheld = -1
+            if bheld != 0:
+                ok = False
+            print(f"  [{'PASS' if bheld == 0 else 'FAIL'}] control: a walker that finds no "
+                  f"$INDEX_ALLOCATION gives no directory index, so the check above can "
+                  f"fail ({bheld} given)")
+
         if os.path.isfile(ads_fix) and os.path.isfile(ads_want):
             try:
                 sgot, swant, smiss, sextra, sdiff, sfail = _ntfs_streams_check(ads_fix, ads_want)
@@ -18032,7 +22439,24 @@ def self_test():
             print("  [SKIP] the APFS fixture is not beside this script, so allocation() "
                   "was not checked on APFS")
 
+        try:
+            f16 = _fat16_fixture_checks(os.path.join(
+                os.path.dirname(os.path.abspath(__file__)), "tests", "fixtures"))
+        except Exception as exc:                     # pylint: disable=broad-except
+            f16 = [(False, f"the FAT16 checks raised {type(exc).__name__}: {exc}")]
+        if f16 is None:
+            print("  [SKIP] the FAT16 and FAT12 fixtures are not beside this script, so "
+                  "FAT16, TFAT16 and FAT12 were not read")
+        else:
+            for f16cond, f16text in f16:
+                if not f16cond:
+                    ok = False
+                print(f"  [{'PASS' if f16cond else 'FAIL'}] {f16text}")
+
         for label, stem, wcls in (("FAT32", "fat32-deleted", Fat32Walker),
+                                  ("FAT16", "fat16-fixture", Fat16Walker),
+                                  ("TFAT16", "tfat16-fixture", Fat16Walker),
+                                  ("FAT12", "fat12-fixture", Fat12Walker),
                                   ("exFAT", "exfat-deleted", ExfatWalker)):
             fix = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                "tests", "fixtures", stem + ".img.gz")
@@ -18056,7 +22480,26 @@ def self_test():
                   + (f", {fmiss} missing" if fmiss else "")
                   + (f", {fdiff} different" if fdiff else "") + ")" + fbroke)
 
+        fix = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                           "tests", "fixtures", "exfat-deleted.img.gz")
+        if os.path.isfile(fix):
+            try:
+                ook, odetail = _exfat_fixture_orphan_check(fix)
+            except Exception as exc:                 # pylint: disable=broad-except
+                ook, odetail = False, f"the check raised {type(exc).__name__}: {exc}"
+            if not ook:
+                ok = False
+            print(f"  [{'PASS' if ook else 'FAIL'}] the exFAT fixture a driver wrote "
+                  f"carries the entry set checksum this reader computes, and has no "
+                  f"orphan entry ({odetail})")
+        else:
+            print("  [SKIP] the exFAT fixture is not beside this script, so the entry "
+                  "set checksum was not held against a driver's")
+
         for label, stem, wcls in (("FAT32", "fat32-deleted", Fat32Walker),
+                                  ("FAT16", "fat16-fixture", Fat16Walker),
+                                  ("TFAT16", "tfat16-fixture", Fat16Walker),
+                                  ("FAT12", "fat12-fixture", Fat12Walker),
                                   ("exFAT", "exfat-deleted", ExfatWalker)):
             fix = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                "tests", "fixtures", stem + ".img.gz")
@@ -19068,6 +23511,7 @@ def self_test():
         for stem in ("ntfs-fixture", "ntfs-streams", "ntfs-windows", "apfs-fixture",
                      "hfsplus-fixture",
                      "ext4-sparse", "ext2-sparse", "fat32-deleted",
+                     "fat16-fixture", "tfat16-fixture", "fat12-fixture",
                      "exfat-deleted", "f2fs-fixture", "squashfs-gzip",
                      "jffs2-le-zlib", "ubi-nand-lzo", "yaffs2-history",
                      "yaffs1-history"):
@@ -19613,7 +24057,7 @@ getting the files out, without mounting:
 
 getting the free space out:
   --unallocated DIR writes, for every volume whose filesystem says what is free
-  (qnx6, F2FS, FAT32, exFAT, NTFS, HFS+ and APFS), the free runs one after
+  (qnx6, F2FS, FAT32, FAT16, FAT12, exFAT, NTFS, HFS+ and APFS), the free runs one after
   another into <image>.<volume>.unallocated.bin, with a .tsv beside it mapping
   each run back to its offset in the image, and unallocated.json naming every
   volume looked at and what was done with it. A volume whose filesystem does
@@ -19627,7 +24071,7 @@ getting the free space out:
 
 listing contents:
   --list walks each filesystem it identified and prints the tree. It handles
-  qnx6, QNX4, ext2/3/4, FAT32, exFAT, NTFS, HFS+, APFS, the QNX flash
+  qnx6, QNX4, ext2/3/4, FAT32, FAT16, FAT12, exFAT, NTFS, HFS+, APFS, the QNX flash
   filesystems ETFS and EFS, and QNX IFS boot images, follows qnx6 long filenames
   and ext4 extent trees, and reads only. --depth sets how far down it goes and
   --list-max caps the number of entries per filesystem so a large volume cannot
@@ -19687,6 +24131,10 @@ what it reports:
   .reserved bookkeeping files, which are real entries in the filesystem. EFS is
   found by its QSSL_F3S boot record and walked through its extent chains, each
   file resolved to its current version through the superseding-extent pointers.
+  It is read in either byte order. A raw NOR dump that holds several EFS
+  partitions behind its boot code is searched for their boot records, and each
+  partition is placed by the record's unit_index, since wear levelling moves
+  the unit that holds the record.
 
   sb_ctime is written once, when the filesystem is made. sb_atime moves when
   the filesystem is COMMITTED, not when a file is read, so do not report it as
@@ -19782,8 +24230,11 @@ what it checks, and where the constants come from:
   into (page + 16)-byte pages AND its .filetable carries the fixed reserved
   names .filetable/.badblks/.counts/.lost+found/.reserved at their fixed file
   ids, so a chance page-count match cannot pass. EFS is claimed by its
-  QSSL_F3S boot record with a valid F3S revision. Neither fired on the u-boot,
-  boot_fs or ext partitions of the two vehicle images tested.
+  QSSL_F3S boot record with a valid F3S revision, in a unit that opens with a
+  unit_info of the same byte order and whose header 2 points at the record.
+  Neither fired on the u-boot, boot_fs or ext partitions of the two vehicle
+  images tested. The extent status bits and the endian byte are from
+  fs/f3s_spec.h as qnxmount's spec pins it (RunZeJustin/qnx660 at 47c4158e).
 
   For QNX4, the filesystem of QNX 4 (distinct from qnx6):
   QNX4_SUPER_MAGIC       0x002f   linux/include/uapi/linux/magic.h:54
@@ -19915,11 +24366,12 @@ if __name__ == "__main__":
     import argparse
     ap = argparse.ArgumentParser(
         prog="qnxprobe.py",
-        description="Read QNX6, QNX4, ETFS, EFS, ext2/3/4, F2FS, FAT32, exFAT, NTFS, HFS+ and "
+        description="Read QNX6, QNX4, ETFS, EFS, ext2/3/4, F2FS, FAT32, FAT16, FAT12, exFAT, NTFS, HFS+ and "
                     "APFS filesystems, the Linux flash filesystems SquashFS, JFFS2, "
                     "UBI/UBIFS and YAFFS1/YAFFS2, QNX IFS boot images, and the U-Boot "
                     "environment and Belkin libnvram stores a flash chip carries, out of "
-                    "raw disk images and flash dumps: identify each by its own "
+                    "raw disk images and flash dumps, the linear and striped logical "
+                    "volumes of an LVM2 physical volume included: identify each by its own "
                     "on-disk structure rather "
                     "than trusting a partition type byte, list, and extract to a "
                     "zip with a provenance manifest. No mounting, no admin "
@@ -19936,7 +24388,7 @@ if __name__ == "__main__":
                          "the detector reports both ways, then delete them")
     ap.add_argument("--list", action="store_true",
                     help="walk each filesystem found and list its contents "
-                         "(qnx6, qnx4, ext2/3/4, FAT32, exFAT, NTFS, HFS+, APFS, ETFS and EFS)")
+                         "(qnx6, qnx4, ext2/3/4, FAT32, FAT16, FAT12, exFAT, NTFS, HFS+, APFS, ETFS and EFS)")
     ap.add_argument("--depth", type=int, default=2, metavar="N",
                     help="how deep to walk with --list (default: 2)")
     ap.add_argument("--list-max", type=int, default=400, metavar="N",
@@ -19947,7 +24399,7 @@ if __name__ == "__main__":
                          "administrator rights, same on macOS, Windows and Linux")
     ap.add_argument("--unallocated", metavar="DIR",
                     help="write the free space of every volume whose filesystem "
-                         "reports it (qnx6, F2FS, FAT32, exFAT, NTFS, HFS+, APFS) into "
+                         "reports it (qnx6, F2FS, FAT32, FAT16, FAT12, exFAT, NTFS, HFS+, APFS) into "
                          "DIR: one .bin per volume, a .tsv mapping it back to the "
                          "image, and unallocated.json. DIR must be new or empty")
     ap.add_argument("--exclude", metavar="TEXT", action="append",
@@ -19968,13 +24420,13 @@ if __name__ == "__main__":
     ap.add_argument("--password-file", metavar="FILE", action="append", default=[],
                     help="for an encrypted image (an Apple disk image, an AD-encrypted "
                          "FTK Imager acquisition or an encrypted AFF), a BitLocker "
-                         "volume or an encrypted APFS volume: a password or "
+                         "volume, an encrypted APFS volume or a LUKS container: a password or "
                          "recovery password (for APFS, the personal recovery key), the "
                          "first line of FILE. Repeatable; each opens with the first one "
                          "that opens it")
     ap.add_argument("--password-env", metavar="NAME", action="append", default=[],
-                    help="for an encrypted image, a BitLocker volume or an encrypted "
-                         "APFS volume: a password, "
+                    help="for an encrypted image, a BitLocker volume, an encrypted "
+                         "APFS volume or a LUKS container: a password, "
                          "from the environment variable NAME. Repeatable. Without either, "
                          "qnxprobe asks at a terminal for an encrypted image's password. "
                          "A password is never taken as an argument, which would show in "

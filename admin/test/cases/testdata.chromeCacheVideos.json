@@ -1,0 +1,115 @@
+{
+  "case1": {
+    "description": "Synthetic Chromium Simple Cache v9 with four H.264/AAC fragments; no initialization header supplied. Expected: one video-only row, 60 samples, 96x64, timescale 90000, 2.021333 stored video seconds.",
+    "maker": "@ForensikITGmbH",
+    "make_data": {
+      "input_data_path": "testdata.chromeCacheVideos.get_chromeCacheVideos.case1.zip",
+      "os": "Linux-6.18.44-x86_64-with-glibc2.39",
+      "timestamp": "2026-10-15T03:08:47.020742",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-15T03:08:47.018435",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "get_chromeCacheVideos": {
+        "search_patterns": [
+          "*/com.android.chrome/cache/[Cc]ache/*",
+          "*/com.android.chrome/cache/[Cc]ache_[Dd]ata/*",
+          "*/com.android.chrome/app_chrome/*/History*",
+          "*/com.android.chrome/app_chrome/*/Media History*",
+          "*/com.android.chrome/app_chrome/*/Sessions/Tabs_*"
+        ],
+        "file_count": 4,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    },
+    "image_info": {
+      "os_name": "Synthetic",
+      "os_version": ""
+    }
+  },
+  "case2": {
+    "description": "16 unmodified public DFRWS 2021 Galaxy S10 Chrome files: 12 clips from three resources referenced by Reddit scrubber_media_url fields, HTTP metadata, v9 index, cached Reddit JSON, History, empty Media History and two SNSS files. Surviving initialization; a subset, not the complete extraction.",
+    "maker": "@ForensikITGmbH",
+    "make_data": {
+      "input_data_path": "dfrws_context_input.zip",
+      "os": "Linux-6.18.44-x86_64-with-glibc2.39",
+      "timestamp": "2026-10-15T04:59:56.597128",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-15T04:59:56.595462",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "get_chromeCacheVideos": {
+        "search_patterns": [
+          "*/com.android.chrome/cache/[Cc]ache/*",
+          "*/com.android.chrome/cache/[Cc]ache_[Dd]ata/*",
+          "*/com.android.chrome/app_chrome/*/History*",
+          "*/com.android.chrome/app_chrome/*/Media History*",
+          "*/com.android.chrome/app_chrome/*/Sessions/Tabs_*"
+        ],
+        "file_count": 16,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    },
+    "source": {
+      "archive_name": "3_Samsung GSM_SM-G973F_DS Galaxy S10.zip",
+      "archive_url": "https://digitalcorpora.s3.amazonaws.com/corpora/dfrws/challenge-2021/3_Samsung%20GSM_SM-G973F_DS%20Galaxy%20S10.zip",
+      "full_archive_hash_verified": false
+    },
+    "image_info": {
+      "os_name": "Android",
+      "os_version": "10"
+    }
+  },
+  "case3": {
+    "description": "Entirely synthetic known H.264 content and a gzip Reddit listing with promoted and scrubber fields, four HTTP metadata entries, v9 index, History, Media History playback and session, and SNSS. Expected one video row.",
+    "maker": "@ForensikITGmbH",
+    "make_data": {
+      "input_data_path": "synthetic_context_input.zip",
+      "os": "Linux-6.18.44-x86_64-with-glibc2.39",
+      "timestamp": "2026-10-15T04:59:56.734462",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-15T04:59:56.732874",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "get_chromeCacheVideos": {
+        "search_patterns": [
+          "*/com.android.chrome/cache/[Cc]ache/*",
+          "*/com.android.chrome/cache/[Cc]ache_[Dd]ata/*",
+          "*/com.android.chrome/app_chrome/*/History*",
+          "*/com.android.chrome/app_chrome/*/Media History*",
+          "*/com.android.chrome/app_chrome/*/Sessions/Tabs_*"
+        ],
+        "file_count": 9,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    },
+    "image_info": {
+      "os_name": "Synthetic",
+      "os_version": ""
+    }
+  }
+}

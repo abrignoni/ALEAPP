@@ -1,7 +1,8 @@
 __artifacts_v2__ = {
     "xodo_recent_documents": {
         "name": "Xodo PDF Recent Documents",
-        "description": "Documents Xodo recorded having open, with the page it was left on",
+        "description": "Documents Xodo recorded having open, with the lastPage value stored for "
+                       "each",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-06",
@@ -13,19 +14,19 @@ __artifacts_v2__ = {
         "notes": "One row per entry of the prefs_pdfviewctrl_tab_manager value in "
                  "com.xodo.pdf.reader/shared_prefs/com.xodo.pdf.reader_preferences.xml, which "
                  "the app writes as a JSON object keyed by the document's full path. The app's "
-                 "four SQLite databases were all empty on the tested image, so the preferences "
-                 "file is where this lives. "
-                 "Last Viewed is the entry's tabLastViewedTimestamp and is stored as a local "
-                 "time string with no zone, so it is reported exactly as stored rather than "
-                 "converted; on the tested device 02:25:17.144 was 06:25 UTC, four hours ahead, "
-                 "and treating it as UTC would move the reading by that offset. "
-                 "Last Page is the page the document was left on and is the app's own value, "
-                 "which was 1 on the tested image for a one page document. Zoom and Page "
-                 "Presentation Mode are reported as stored. Document Path is the key of the "
-                 "entry, so it is the path as the app recorded it rather than a path resolved in "
-                 "the extraction; the file may no longer be present. "
-                 "A row is evidence the app had the document open, not that anyone read it. The "
-                 "app keeps no count of openings, which was measured rather than assumed: "
+                 "four SQLite databases were all empty on emu_a15_oss_v16, so the preferences "
+                 "file is where this lives. Last Viewed is the entry's tabLastViewedTimestamp "
+                 "and is stored as a local time string with no zone, so it is reported exactly "
+                 "as stored rather than converted; on the tested device 02:25:17.144 was 06:25 "
+                 "UTC, four hours ahead, and treating it as UTC would move the reading by that "
+                 "offset. Last Page is the entry's lastPage value, reported as stored; what it "
+                 "tracks is not established. It was 1 on the tested image for a one page "
+                 "document. Zoom and Page Presentation Mode are reported as stored. Document "
+                 "Path is the key of the entry, so it is the path as the app recorded it rather "
+                 "than a path resolved in the extraction; the file may no longer be present. A "
+                 "row is evidence the app had the document open, not that anyone read it. The "
+                 "tab manager entry held no count of openings on the tested version (Xodo PDF "
+                 "11.0.1), which was measured rather than assumed: "
                  "opening the same document a second time moved Last Viewed from 02:51:21.703 "
                  "to 09:59:14.308 and added no field, the entry carrying fourteen members and "
                  "none of them a counter. So a row dates the last view and says nothing about "

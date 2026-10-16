@@ -1,17 +1,26 @@
 __artifacts_v2__ = {
     "termux_apt_history": {
         "name": "Termux - Package Install History",
-        "description": "Parses the apt package install and removal history recorded by the Termux Android client.",
-        "author": "@AlexisBrignoni, Claude",
+        "description": "Parses the package install and removal history that apt records in the Termux Android environment.",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-30",
-        "last_update_date": "2026-08-30",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Termux",
         "notes": "One row per apt transaction from files/usr/var/log/apt/history.log, which "
                  "records apt transactions; on the tested image the shipped bootstrap packages "
                  "did not appear in it, only transactions made after setup. Each block carries a "
-                 "Start-Date, the exact Commandline that was run, the Install, Upgrade or Remove "
-                 "line naming the packages and versions, and an End-Date. The Requested By "
+                 "Start-Date, the Commandline, one or more action lines (Install, Reinstall, "
+                 "Upgrade, Downgrade, Remove, Purge) naming the packages and versions, and an "
+                 "End-Date. When a block holds more than one action line, Action lists each one "
+                 "present, in that order, separated by a semicolon, and Packages holds one line "
+                 "per action, each starting with the action's name; with a single action line "
+                 "Packages holds that line's value alone. The tested image held one block with "
+                 "one action line, so the multiple-action case was checked on a constructed "
+                 "log only. The action names and the two-space date form are those apt writes "
+                 "(https://github.com/Debian/apt/blob/6b128124271e94bdb0f4e7850d9286170d712b04/apt-pkg/deb/dpkgpm.cc#L1092-L1097 "
+                 "and https://github.com/Debian/apt/blob/6b128124271e94bdb0f4e7850d9286170d712b04/apt-pkg/deb/dpkgpm.cc#L1018). The "
+                 "Requested By "
                  "column is reported as stored and was blank on the tested image. The timestamps "
                  "are written by apt in the device's local time with no zone stored: on the "
                  "tested emulator image the device time zone was America/New_York and a "
@@ -19,6 +28,8 @@ __artifacts_v2__ = {
                  "09:25:55 at offset -0400, so the value is reported as stored and labelled "
                  "local rather than converted to UTC, because converting a zone-less local time "
                  "as though it were UTC would move every install by the local offset. "
+                 "The two columns are plain text in every output, so no output treats the "
+                 "value as UTC. "
                  "history.log.1 and the numbered or gzipped rotations are read as well where "
                  "present, "
                  "and a gzipped rotation is decompressed in memory. The full set of packages present on the "
@@ -33,9 +44,9 @@ __artifacts_v2__ = {
     "termux_installed_packages": {
         "name": "Termux - Installed Packages",
         "description": "Parses the packages currently installed in the Termux Android client's environment.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-30",
-        "last_update_date": "2026-08-30",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Termux",
         "notes": "One row per package from the dpkg status database at files/usr/var/lib/dpkg/status. This is "
@@ -43,8 +54,12 @@ __artifacts_v2__ = {
                  "anything installed later, and the file carries no install date, so it cannot on its own "
                  "separate the two. The Package Install History artifact is what records which packages were "
                  "installed and when. Package name, version, architecture, the install status, the maintainer "
-                 "and the homepage are reported as stored, along with the one line short description. The "
-                 "Essential flag is reported because the core bootstrap packages carry it. Only entries whose "
+                 "and the homepage are reported as stored. Description is the first line of the "
+                 "package's Description field as stored, which the Debian control file format "
+                 "defines as the synopsis (Debian Policy Manual, section 5.6.13); the continuation "
+                 "lines holding the long description are not reported. The "
+                 "Essential column shows Yes where a package's Essential field is yes and is blank "
+                 "otherwise. Only entries whose "
                  "Status line reports the package as installed are included.",
         "paths": ('*/com.termux/files/usr/var/lib/dpkg/status',),
         "output_types": "standard",
@@ -56,7 +71,7 @@ __artifacts_v2__ = {
     "termux_configuration": {
         "name": "Termux - Configuration",
         "description": "Parses the Termux Android client's app preferences and terminal properties.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
@@ -69,8 +84,9 @@ __artifacts_v2__ = {
                  "Values are reported as stored. Every container in the extraction is read, so a "
                  "second Android user's configuration is reported rather than replacing the "
                  "first. A "
-                 "secondary user's container can hold the installed app with an empty files directory "
-                 "and no configuration, which is reported as such.",
+                 "container that holds the preferences file and no termux.properties is reported "
+                 "with Terminal Properties Set blank. A container that holds neither file produces "
+                 "no row.",
         "paths": ('*/com.termux/shared_prefs/com.termux_preferences.xml',
                   '*/com.termux/files/home/.termux/termux.properties'),
         "output_types": "standard",
@@ -142,14 +158,14 @@ def termux_apt_history(context):
                 fields[key.strip()] = value.strip()
             if 'Start-Date' not in fields:
                 continue
-            # The package action is whichever of these the block carries.
-            action = ''
-            packages = ''
-            for name in ('Install', 'Reinstall', 'Upgrade', 'Downgrade', 'Remove', 'Purge'):
-                if name in fields:
-                    action = name
-                    packages = fields[name]
-                    break
+            # A block can carry more than one of these action lines; report each.
+            present = [name for name in ('Install', 'Reinstall', 'Upgrade', 'Downgrade',
+                                         'Remove', 'Purge') if name in fields]
+            action = '; '.join(present)
+            if len(present) == 1:
+                packages = fields[present[0]]
+            else:
+                packages = '\n'.join(f'{name}: {fields[name]}' for name in present)
             data_list.append((
                 fields.get('Start-Date', ''),
                 fields.get('End-Date', ''),
@@ -164,8 +180,8 @@ def termux_apt_history(context):
             sources.append(file_found)
 
     data_headers = (
-        ('Start Date (local, as stored)', 'datetime'),
-        ('End Date (local, as stored)', 'datetime'),
+        'Start Date (local, as stored)',
+        'End Date (local, as stored)',
         'Command Line', 'Action', 'Packages', 'Requested By', 'Source File',
     )
     return data_headers, data_list, '\n'.join(sources)
@@ -190,6 +206,7 @@ def termux_installed_packages(context):
             if not block:
                 continue
             fields = {}
+            first_lines = {}
             key = None
             for line in block.splitlines():
                 if line[:1] in (' ', '\t') and key:
@@ -201,13 +218,15 @@ def termux_installed_packages(context):
                 key, _, value = line.partition(':')
                 key = key.strip()
                 fields[key] = value.strip()
+                first_lines[key] = value.strip()
             if 'Package' not in fields:
                 continue
             status = fields.get('Status', '')
             # dpkg records desired/error/state; only report packages actually installed.
             if 'installed' not in status.split():
                 continue
-            description = fields.get('Description', '')
+            # The first line of Description is the synopsis; the rest is the long text.
+            description = first_lines.get('Description', '')
             data_list.append((
                 fields.get('Package', ''),
                 fields.get('Version', ''),
@@ -216,7 +235,7 @@ def termux_installed_packages(context):
                 'Yes' if fields.get('Essential', '').lower() == 'yes' else '',
                 fields.get('Maintainer', ''),
                 fields.get('Homepage', ''),
-                description.split('. ')[0] if description else '',
+                description,
                 context.get_relative_path(file_found),
             ))
             read_any = True

@@ -6,30 +6,36 @@ __artifacts_v2__ = {
                        "not been read.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-01",
-        "last_update_date": "2026-09-01",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Realm",
         "notes": "This artifact reports nothing about the contents of any database. It exists so "
                  "that a store the bundled parser cannot read is visible as unread rather than "
                  "indistinguishable from an empty one. The parser reads the Cluster table layout "
                  "Realm introduced in file format 10 and the pre-Cluster layout used before it, "
-                 "so a store in either layout is decoded and is not reported here. On the tested "
+                 "so a store in either layout that the parser decodes is not reported here. On "
+                 "the tested "
                  "Android corpora every Realm store found decoded, so this artifact reports no "
-                 "rows on any of them. That is a checked absence rather than an unexercised path: "
-                 "seven of the registered corpora hold a Realm store and all seven decoded, "
-                 "including the format 9 store that this artifact used to report. A row is "
+                 "rows on any of them. That is a checked absence rather than an unexercised path, "
+                 "and it includes the format 9 store that this artifact used to report. A row is "
                  "emitted only when the file holds more than 1024 non-zero bytes, which excludes "
                  "uninitialised stores; an uninitialised store was measured at 204 non-zero "
-                 "bytes. Header Read separates two conditions. False means the file does not "
-                 "begin with the Realm mnemonic, so no header could be read and File Format "
-                 "Version (as stored) is empty; Realm supports whole-file encryption, which "
-                 "presents this way, and the artifact does not assert which cause applies. True "
+                 "bytes. Header Read separates two conditions. False means the parser returned "
+                 "no header: the T-DB mnemonic was not at bytes 16 to 20, the file was shorter "
+                 "than a header, or the parser raised an error on the file, which is logged. "
+                 "File Format Version (as stored) is then empty. An encrypted Realm file is one "
+                 "possible cause, which no tested file exercised, and the artifact does not "
+                 "assert which cause applies. True "
                  "with a file format the parser does not decode would be an unsupported format, "
                  "which the tested extractions did not contain. Non-Zero Bytes is a count of "
-                 "bytes, not an interpretation of them. A row here means the file should be "
+                 "bytes, not an interpretation of them. A file that could not be opened to count "
+                 "its bytes is reported with Non-Zero Bytes blank and the error logged; no "
+                 "tested file exercised that. A row here means the file should be "
                  "examined with other tooling; it is not evidence that the app held any "
-                 "particular data, and an absence of rows means every Realm store found was "
-                 "decoded, not that none exists. The path pattern is a deliberate cross-app "
+                 "particular data, and an absence of rows means no Realm store over the 1024 "
+                 "byte threshold came back with zero decoded classes. It does not mean that no "
+                 "Realm store exists, that smaller stores were decoded, or that every class of a "
+                 "decoded store was read. The path pattern is a deliberate cross-app "
                  "sweep: every row names the file it came from, so the owning app is identified "
                  "by its source path.",
         "paths": ('*.realm',),
@@ -110,7 +116,11 @@ def realmUndecodedStores(context):
             continue
 
         non_zero = _non_zero_bytes(file_found)
-        if non_zero is None or non_zero <= _MIN_NON_ZERO:
+        if non_zero is None:
+            # The file could not be read at all, so it cannot be called empty. Report it
+            # with the count blank rather than leaving it out.
+            non_zero = ''
+        elif non_zero <= _MIN_NON_ZERO:
             continue
 
         try:

@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_garmin_gcm_cache_activities": {
         "name": "Garmin - GCM Cache Activities",
-        "description": "Parses parsed activity details from the Garmin Connect Mobile gcm_cache.db",
+        "description": "Parses activity details (json_activities rows of type ACTIVITY_DETAILS) from the Garmin Connect Mobile gcm_cache.db. The end time is computed from the start time and duration.",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2023-01-18",
         "last_update_date": "2023-01-18",
@@ -17,7 +17,7 @@ __artifacts_v2__ = {
     },
     "get_garmin_devices": {
         "name": "Garmin - Devices",
-        "description": "Parses paired devices from the Garmin Connect Mobile gcm_cache.db",
+        "description": "Parses the devices table from the Garmin Connect Mobile gcm_cache.db",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2023-01-18",
         "last_update_date": "2023-01-18",

@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_Xender": {
         "name": "Xender - Connected Devices",
-        "description": "Devices recorded in the Xender profile table, with how many times each connected and when it last did",
+        "description": "Devices recorded in the Xender profile table, with the connect count and last connect time the table stores for each",
         "author": "@markmckinnon",
         "creation_date": "2020-12-24",
         "last_update_date": "2026-08-01",
@@ -12,25 +12,23 @@ __artifacts_v2__ = {
                   "The table is the app's record of the remote devices it has connected to: "
                   "device_id, the nickname that device advertised, its device type, how many "
                   "times it has connected, and when it last did. "
-                  "**This artifact previously filtered on connect_times = 0 and could therefore "
-                  "never return a row.** The filter was removed. In the app's own code there is "
-                  "exactly one place that builds a profile row, saveRemoteDeviceInfo in "
-                  "cn/xender/core/provider/a.java, and it sets connect_times to 1 the first time "
-                  "a device is seen and to the previous value plus one afterwards, alongside "
-                  "last_connect_date from System.currentTimeMillis(). The column is declared "
-                  "INTEGER NOT NULL with no default and the data access object's only insert "
-                  "binds that value, so a row written by that path carries at least 1 and "
-                  "the old query matched nothing. That mapping was read from a **decompiled "
-                  "build** of version 18.8.0.prime, not from published source, and is cited as "
-                  "such; 332 of 14,054 classes did not decompile, so it is a thorough reading "
-                  "rather than an exhaustive one. "
-                  "Last Connected is last_connect_date, Unix milliseconds, reported as UTC. "
-                  "Connect Times is the count as stored. Device Type and Deleted are reported as "
-                  "stored because no source for their code lists was found. "
-                  "What a row supports is bounded: it records that the app holds a profile for "
-                  "that device, with the count and time the app itself wrote. It does not say "
-                  "what was transferred, which is the separate Messages artifact. "
-                  "No registered corpus carries Xender, so this could not be re-derived from "
+                  "In the app's own code there is exactly one place that builds a profile row, "
+                  "saveRemoteDeviceInfo in cn/xender/core/provider/a.java, and it sets "
+                  "connect_times to 1 the first time a device is seen and to the previous value "
+                  "plus one afterwards, alongside last_connect_date from "
+                  "System.currentTimeMillis(). The column is declared INTEGER NOT NULL with no "
+                  "default and the data access object's only insert binds that value, so a row "
+                  "written by that path carries at least 1. That mapping was read from a "
+                  "decompiled build of version 18.8.0.prime, not from published source, and is "
+                  "cited as such; 332 of 14,054 classes did not decompile, so it is a thorough "
+                  "reading rather than an exhaustive one. Last Connected is last_connect_date, "
+                  "Unix milliseconds, reported as UTC. Connect Times is the count as stored. "
+                  "Device Type and Deleted are reported as stored because no source for their "
+                  "code lists was found. What a row supports is bounded: it records that the "
+                  "app holds a profile for that device, with the count and time the app itself "
+                  "wrote. It does not say what was transferred, which is the separate Messages "
+                  "artifact. No registered corpus was found to carry Xender when this was "
+                  "written, so this could not be re-derived from "
                   "case data. On an emulator with the app installed and opened, the profile "
                   "table was present and empty, so the device's own profile was not written "
                   "there on that emulator. A populated table needs a second device to connect "
@@ -43,16 +41,15 @@ __artifacts_v2__ = {
     },
     "get_Xender_messages": {
         "name": "Xender - Messages",
-        "description": "Parses Xender file transfer history (file path, name, size, timestamp, direction and sender and recipient details) from the Xender trans-history database.",
-        "author": "@markmckinnon",
+        "description": "Parses Xender file transfer history (file path, name, size, timestamp, stored direction and sender and recipient details) from the Xender trans-history database.",
+        "author": "@markmckinnon, @AlexisBrignoni, Codex",
         "creation_date": "2020-12-24",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "File Transfer",
-        "notes": ("Direction is decoded from the new_history 'c_direction' column. Direction/status "
-                  "value mappings are not vendor-documented and the evidence for them is not "
-                  "recorded here; unrecognized values are "
-                  "reported as stored.\n"
+        "notes": ("Direction (as stored) is the new_history 'c_direction' value without "
+                  "a direction lookup. No source or measurement for its meaning is recorded "
+                  "here; a value of 1 is not labelled as an outgoing transfer.\n"
                   "to_id and from_id carry the recipient and sender device IDs recorded on the same "
                   "row (r_device_id and s_device_id) and are left blank when the database does not "
                   "hold them. The sender and recipient name columns are names, not identifiers."),
@@ -140,15 +137,14 @@ def get_Xender_messages(context):
         db.close()
 
         for row in all_rows:
-            # Only c_direction = 1 is identified; any other value is reported as stored.
-            direction = {1: 'Outgoing'}.get(row[4], '' if row[4] is None else row[4])
+            direction = row[4]  # Preserve the stored value without inferring direction.
             # The parties come from the row's own device ID columns rather than being
             # inferred from the direction value; s_name/r_name are names, not IDs.
             from_id = row[7] if row[7] else ''
             to_id = row[9] if row[9] else ''
             createtime = datetime.datetime.fromtimestamp(int(row[3]) / 1000, datetime.timezone.utc) if row[3] else ''
-            data_list.append((row[0], row[1], row[2], createtime, direction, to_id, from_id, row[5], row[6], row[7], row[8], row[9]))
+            data_list.append((createtime, row[0], row[1], row[2], direction, to_id, from_id, row[5], row[6], row[7], row[8], row[9]))
 
-    data_headers = ('file_path', 'file_display_name', 'file_size', ('timestamp', 'datetime'), 'direction', 'to_id',
+    data_headers = (('timestamp', 'datetime'), 'file_path', 'file_display_name', 'file_size', 'Direction (as stored)', 'to_id',
                     'from_id', 'session_id', 'sender_name', 'sender_device_id', 'recipient_name', 'recipient_device_id')
     return data_headers, data_list, source_path

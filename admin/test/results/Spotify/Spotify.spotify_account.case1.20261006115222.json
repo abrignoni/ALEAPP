@@ -1,0 +1,42 @@
+{
+  "metadata": {
+    "module_name": "Spotify",
+    "artifact_name": "Spotify - Account",
+    "function_name": "spotify_account",
+    "case_number": "case1",
+    "number_of_columns": 6,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 102,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/Spotify/testdata.Spotify.spotify_account.case1.zip",
+    "start_time": "2026-10-06T11:52:22.760879+00:00",
+    "end_time": "2026-10-06T11:52:22.787366+00:00",
+    "run_time_seconds": 0.0002620220184326172,
+    "last_commit": {
+      "hash": "c8ff1f1e064c4653d919a464eb8886135a2ac8ad",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-10-04T02:02:01-04:00",
+      "message": "Correct artifact descriptions and notes against the code and sources"
+    }
+  },
+  "headers": [
+    "App First Launch Time",
+    "Crashlytics User ID",
+    "Event Owner ID",
+    "Auth Source",
+    "Language",
+    "Installation ID"
+  ],
+  "data": [
+    [
+      1706365952,
+      "31inn2ztcydtrsqh2bu6q33ta5hq",
+      "31inn2ztcydtrsqh2bu6q33ta5hq",
+      "EMAIL",
+      "en-US",
+      "hnam7vot1t3am4a87lodml1ilv"
+    ]
+  ]
+}

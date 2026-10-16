@@ -2,7 +2,13 @@ __artifacts_v2__ = {
     "googleDialerAnnotatedCallLog": {
         "name": "Google Dialer Annotated Call Log",
         "description": "Call log kept by the Google Phone app (annotated_call_log.db). "
-                       "Call types follow the Android CallLog.Calls constants.",
+                       "Call Type and Presentation are labelled with the Android "
+                       "CallLog.Calls constants, which the AOSP Dialer source says "
+                       "these columns copy (Reference: AOSP Dialer, "
+                       "AnnotatedCallLogContract.java, "
+                       "https://android.googlesource.com/platform/packages/apps/Dialer/+/544da8ba78258e430b16f08dfd5a95133f66dfb1/java/com/android/dialer/calllog/database/contract/AnnotatedCallLogContract.java). "
+                       "The Google build of the app is not open source, so this "
+                       "mapping is taken from the AOSP code.",
         "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
@@ -25,13 +31,16 @@ __artifacts_v2__ = {
         "description": "Caller-id information cached per phone number by the Google Phone "
                        "app (phone_lookup_history.db). The contact name, label and lookup "
                        "URI come from the device contacts (Cp2Info) and the CNAP name from "
-                       "the carrier, per the app's phone_lookup_info protobuf.",
-        "author": "@abrignoni",
+                       "the carrier, per the AOSP Dialer phone_lookup_info.proto "
+                       "(https://android.googlesource.com/platform/packages/apps/Dialer/+/544da8ba78258e430b16f08dfd5a95133f66dfb1/java/com/android/dialer/phonelookup/phone_lookup_info.proto). "
+                       "Field 13.1 (existing text projection) shows the current decoded text "
+                       "projection of numbered field 13.1; its meaning is not established here.",
+        "author": '@AlexisBrignoni, Codex',
         "creation_date": "2026-07-30",
-        "last_update_date": "2026-07-30",
+        "last_update_date": '2026-10-07',
         "requirements": "none",
         "category": "Google Dialer",
-        "notes": "",
+        "notes": 'Field 13.1 is a numbered-field label; its meaning is not established here. The existing decoder and text helper are unchanged: the helper selects the first item of a repeated value along the selected path, decodes bytes as UTF-8 with replacement, keeps strings, and returns an empty string for missing, numeric or unsupported values. A decode failure retains the row with empty lookup fields. The protobuf blob is not retained in the seven-column output, and the text projection does not preserve all bytes or repeated values. The preceding AOSP reference and other-field descriptions are retained research context, not newly verified by this label correction. Original artifact contribution: @abrignoni.',
         "paths": ('*/com.google.android.dialer/databases/phone_lookup_history.db*',
                   '*/com.google.android.apps.messaging/databases/phone_lookup_history.db*'),
         "output_types": "standard",
@@ -65,8 +74,8 @@ __artifacts_v2__ = {
     },
     "googleDialerCachedNumberContacts": {
         "name": "Google Dialer Cached Number Contacts",
-        "description": "Caller-id lookups cached per phone number by the Google Phone app "
-                       "(dialer.db, cached_number_contacts).",
+        "description": "Rows of the cached_number_contacts table in the Google Phone "
+                       "app's dialer.db. No tested image held a row.",
         "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
@@ -229,7 +238,7 @@ def googleDialerPhoneLookupHistory(context):
         'Contact Name',
         'Number Label',
         'CNAP Name',
-        'Location Info',
+        'Field 13.1 (existing text projection)',
         'Contact Lookup URI',
     )
     return data_headers, data_list, source_path

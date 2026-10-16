@@ -1,27 +1,26 @@
 __artifacts_v2__ = {
     "etsy_account": {
         "name": "Etsy - Account and Device",
-        "description": "Parses the signed in account and the app and device identifiers "
+        "description": "Parses the account fields and the app and device identifiers "
                        "stored by the Etsy Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
         "category": "Etsy",
         "notes": "One row per app data directory. The account fields come from the app's "
-                 "own EtsyUserPrefs preferences file. The install identifier is written by three "
-                 "different code paths, the app's EtsyInstallPrefs file, the crash "
-                 "reporter's cached user record and the device_id field of the app's own "
-                 "log envelope, and the account id by two, the app's preferences file and "
-                 "the same crash reporter record. Each is read from the app's own store "
-                 "and falls back to the others only when that store is absent, so the "
-                 "column names one value rather than comparing them; on the tested device "
-                 "all three copies of the install identifier and both copies of the "
-                 "account id held the same value. First and last app start are Unix "
-                 "milliseconds. SecureEtsyUserPrefs holds "
-                 "further preferences under AndroidX EncryptedSharedPreferences; the "
-                 "count of entries is reported but their names and values are not "
-                 "recoverable from a file system extraction, because both Tink keysets in "
+                 "own EtsyUserPrefs preferences file. The install identifier is held in three "
+                 "places, the app's EtsyInstallPrefs file, the crash reporter's cached user "
+                 "record and the device_id field of the app's own log envelope, and the account "
+                 "id in two, the app's preferences file and the same crash reporter record. Each "
+                 "is read from the app's own store and falls back to the others only when that "
+                 "store is absent, so the column names one value rather than comparing them; on "
+                 "the tested device all three copies of the install identifier and both copies "
+                 "of the account id held the same value. First and last app start are Unix "
+                 "milliseconds. SecureEtsyUserPrefs holds further preferences under AndroidX "
+                 "EncryptedSharedPreferences; the count of entries is reported but their names "
+                 "and values were not recovered from the tested file system extraction, because "
+                 "both Tink keysets in "
                  "that file are EncryptedKeyset structures whose key material is wrapped "
                  "by an Android Keystore key that the extraction does not contain. Only "
                  "the algorithm names are readable, AES-SIV for the entry names and "
@@ -48,31 +47,37 @@ __artifacts_v2__ = {
         "name": "Etsy - Recently Viewed Listings",
         "description": "Parses listings the Etsy Android app recorded as recently viewed, "
                        "including views recovered from the write-ahead log.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Etsy",
-        "notes": "One row per recorded view. The table keeps one row per listing, so a "
-                 "listing viewed more than once owns one row per view time recovered. "
-                 "timestamp is Unix milliseconds. The store is read three ways and each "
-                 "row carries the view it came from. Live is the committed state with the "
-                 "write-ahead log applied, Pre-checkpoint is the main file read with "
-                 "immutable=1 so the log is ignored, and Recovered is a row read out of an "
-                 "individual write-ahead log frame that neither of the other two returns. "
-                 "Every declared length is checked against the bytes present and a "
-                 "candidate is kept only when it carries nine values, an image URL on the "
-                 "app's own image host and a timestamp inside the range the column uses, "
-                 "so a page image belonging to another table is rejected rather than "
-                 "reported. Why a row is not in the committed state is not established "
-                 "here: app eviction, a re-sync and a user action all produce the same "
-                 "result. Cached images are matched by hashing the stored image URL and a "
-                 "list of Etsy size variants with SHA-256 and looking the digest up as a "
-                 "cache entry name, which is how the app's image cache names its entries. "
-                 "Matching is done inside one app data directory so a second directory "
-                 "cannot supply another's image. On the tested device the variants that "
-                 "matched were il_794xN, il_680x540, il_570xN and il_fullxfull. The "
-                 "largest matched file is the one rendered. The visible column was 1 on "
+        "notes": "One row per listing id and timestamp pair read. The live table keeps one "
+                 "row per listing, so a listing owns more than one row here when earlier "
+                 "timestamp values for it are recovered. The Timestamp column is the "
+                 "table's timestamp column, read as Unix milliseconds; what event sets it "
+                 "was not established. The store is read three "
+                 "ways and each row carries the view it came from. Live is the committed "
+                 "state with the write-ahead log applied, Pre-checkpoint is the main file "
+                 "read with immutable=1 so the log is ignored, and Recovered is a row read "
+                 "out of a page of the main file or of an individual write-ahead log frame "
+                 "that neither of the other two returns. Every declared length is checked "
+                 "against the bytes present and a candidate is kept only when it carries "
+                 "nine values, an image URL on the app's own image host and a timestamp "
+                 "inside the range the column uses, so a page image belonging to another "
+                 "table is rejected rather than reported. Why a row is not in the "
+                 "committed state is not established here: app eviction, a re-sync and a "
+                 "user action all produce the same result. Cached images are matched by "
+                 "hashing the stored image URL and a list of Etsy size variants with "
+                 "SHA-256 and looking the digest up as a cache entry name, which is how "
+                 "the app's image cache names its entries. Matching is done inside one app "
+                 "data directory so a second directory cannot supply another's image. On "
+                 "the tested device the variants that matched were il_794xN, il_680x540, "
+                 "il_570xN and il_fullxfull. The matched file rendered is the largest one "
+                 "identified as JPEG, PNG, GIF or validated WebP. Gzip transfer encoding is "
+                 "decoded before rendering, with the source cache path retained. Other types "
+                 "are not rendered. Cached Renditions gives the number of "
+                 "matched files. The visible column was 1 on "
                  "every row on the tested device and is reported as stored rather than "
                  "dropped, because a differing value would be a property of the row worth "
                  "seeing. Field mapping was done against a private sample provided by "
@@ -86,11 +91,11 @@ __artifacts_v2__ = {
     },
     "etsy_listing_interactions": {
         "name": "Etsy - Listing Interactions",
-        "description": "Parses listing impressions and taps recorded by the Etsy Android "
+        "description": "Parses the listingInteractions records of the Etsy Android "
                        "app, including rows recovered from the write-ahead log.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Etsy",
         "notes": "timestamp is Unix milliseconds. Interaction type, listing source and "
@@ -99,13 +104,15 @@ __artifacts_v2__ = {
                  "read three ways and each row carries the view it came from, as described "
                  "on Etsy - Recently Viewed Listings. The encoded_data column, where "
                  "populated, begins with a number and a ten digit value before a base64 "
-                 "section; both are reported as stored. On the tested device that leading "
-                 "number matched a listing id in the recently viewed store on 4 of the 22 "
+                 "section. Both are reported as stored, the ten digit value under Encoded "
+                 "Data Second Value; what either holds is not sourced. On the tested "
+                 "device the leading number matched a listing id in the recently viewed store on 4 of the 22 "
                  "rows that carry it, and in each of those four the interaction preceded "
                  "the recorded view by between 6 and 89 seconds. That is an observation "
-                 "about one device, not a definition of the field. The ten digit value ran "
-                 "between 97 and 129 seconds earlier than the row's own timestamp on every "
-                 "row that carried it. The base64 section is not reproduced; it is in the "
+                 "about one device, not a definition of the field. Read as Unix seconds, "
+                 "the ten digit value ran between 97 and 129 seconds earlier than the "
+                 "row's own timestamp on every row that carried it on that device; it is "
+                 "not converted here because that reading is not sourced. The base64 section is not reproduced; it is in the "
                  "encoded_data column of the source table. Field mapping was done against "
                  "a private sample provided by Mattia; no sample data is recorded for it.",
         "paths": ('*/com.etsy.android/databases/ListingInteractions*',),
@@ -114,9 +121,8 @@ __artifacts_v2__ = {
     },
     "etsy_ad_impressions": {
         "name": "Etsy - Ad Impressions and Clicks",
-        "description": "Parses advertising impressions and clicks recorded by the Etsy "
-                       "Android app.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "description": "Parses the adImpressions and adClicks tables of the Etsy Android app's AdImpressions database. No row was present on the tested device.",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
@@ -140,14 +146,14 @@ __artifacts_v2__ = {
     },
     "etsy_app_logs": {
         "name": "Etsy - Application Logs",
-        "description": "Parses the app's own queued log records, including records "
+        "description": "Parses the records of the logs table of the Etsy Android app's etsy-logs database, including records "
                        "recovered from the write-ahead log.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
         "category": "Etsy",
-        "notes": "Each row holds one JSON record the app queued for upload. "
+        "notes": "Each row holds one JSON record from the logs table of etsy-logs. "
                  "log_created_time is Unix seconds with a fractional part. The app version "
                  "is carried on every record, so the rows place a sequence of app versions "
                  "on the device over the period they span. The store is read three ways "
@@ -158,8 +164,9 @@ __artifacts_v2__ = {
                  "same file that also hold two columns. Log namespace and data type are "
                  "reported as stored. The separate analytics_logs.db in the same directory "
                  "held no rows, no write-ahead log and no recoverable record text on the "
-                 "tested device, while its sequence counter recorded 1971 rows written "
-                 "over the life of the store, so that content is gone rather than missed. "
+                 "tested device, while its sqlite_sequence entry stood at 1971, the "
+                 "largest row id the table had assigned, so rows were written to it and "
+                 "are no longer in the file. "
                  "Field mapping was done against a private sample provided by Mattia; no "
                  "sample data is recorded for it.",
         "paths": ('*/com.etsy.android/databases/etsy-logs*',),
@@ -169,10 +176,10 @@ __artifacts_v2__ = {
     "etsy_network_breadcrumbs": {
         "name": "Etsy - Network Breadcrumbs",
         "description": "Parses the cached request breadcrumbs the Etsy Android app's crash "
-                       "reporter kept for its most recent session.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+                       "reporter held when the file was last written.",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Etsy",
         "notes": "The breadcrumb cache is written by the Sentry SDK the app embeds and is "
@@ -181,11 +188,13 @@ __artifacts_v2__ = {
                  "history. The file is a "
                  "fixed size buffer, so JSON objects are located within it rather than the "
                  "file being parsed as a whole document. Start and end times are Unix "
-                 "milliseconds and the duration is their difference. Each breadcrumb also "
-                 "carries the full URL and, on some rows, the request's query string; "
-                 "neither is reproduced here because the host and path columns already "
-                 "carry the request and the query string held feature flags rather than "
-                 "anything the user supplied. Both remain in the source file. Field "
+                 "milliseconds and the duration is their difference. Request Time is the start "
+                 "time and is blank when a breadcrumb carries none. Breadcrumb Timestamp is the "
+                 "breadcrumb's own timestamp value as stored, as text; it is not converted. A JSON object with no data map is not reported. Each breadcrumb "
+                 "also carries the full URL and, on some rows, the request's query string; "
+                 "neither is reproduced here because the host and path columns already carry the "
+                 "request and on the tested device the query string held feature flags. Both "
+                 "remain in the source file. Field "
                  "mapping was done against a private sample provided by Mattia; no sample "
                  "data is recorded for it.",
         "paths": ('*/com.etsy.android/cache/sentry/*/.scope-cache/breadcrumbs.json',),
@@ -194,25 +203,37 @@ __artifacts_v2__ = {
     },
     "etsy_image_caches": {
         "name": "Etsy - Image Cache Summary",
-        "description": "Summarises the image caches the Etsy Android app keeps on disk.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "description": "Summarises selected Etsy cache directories with entry counts, on-disk file sizes, image "
+                       "classifications and extrema of staged file modification times.",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "Etsy",
-        "notes": "One row per cache directory per app data directory. The caches are "
-                 "summarised rather than listed: an entry name is a digest, so an entry "
-                 "that cannot be matched back to a URL carries nothing an examiner can act "
-                 "on by itself. The entries that do match a recently viewed listing are "
-                 "reported and rendered on Etsy - Recently Viewed Listings instead. Type "
-                 "counts are taken from each file's leading bytes after any transfer "
-                 "encoding is decoded; on the tested device no entry was stored compressed. "
-                 "The image_manager_disk_cache directory is written by the Glide image "
-                 "library and the appboy directory by the Braze SDK, both embedded in the "
-                 "app, and both are scoped here to the app's own data directory. The files "
-                 "themselves remain in the extraction at the reported path. Field mapping "
-                 "was done against a private sample provided by Mattia; no sample data is "
-                 "recorded for it.",
+        "notes": "One row per cache directory per app data directory. Latest Staged File mtime and "
+                 "Earliest Staged File mtime are the newest and oldest file modification times of the "
+                 "entries as this tool staged them. They are file system times, not values the app stored,"
+                 " and they match the evidence only where the extraction and the staging kept the file "
+                 "times. The caches are summarised rather than listed: an entry name is a digest, so "
+                 "entries are counted by type and not listed one by one here. The entries that do match a "
+                 "recently viewed listing are reported and rendered on Etsy - Recently Viewed Listings "
+                 "instead. Type counts are taken from each file's leading bytes after any transfer "
+                 "encoding is decoded; WebP additionally checks its RIFF length and image decoder "
+                 "acceptance. On the tested device no entry was stored compressed. "
+                 "image_manager_disk_cache is the default disk cache folder name of the Glide image "
+                 "library (bumptech/glide v4.16.0, DiskCache.java, DEFAULT_DISK_CACHE_DIR); no source for "
+                 "the appboy directory name was checked here. Both directories are scoped here to the "
+                 "app's own data directory. The files themselves remain in the extraction at the reported "
+                 "path. Field mapping was done against a private sample provided by Mattia; no sample data"
+                 " is recorded for it. The timestamp headers identify os.path.getmtime values of the "
+                 "supplied staged paths; the existing UTC epoch-plus-seconds conversion and zero-to-blank "
+                 "policy are unchanged. They are not app event or acquisition timestamps. This header "
+                 "correction does not establish whether any particular extraction/staging preserved or "
+                 "changed evidence mtime. Original contribution credited to @AlexisBrignoni, @mattiaepi "
+                 "(Mattia Epifani) and Claude. Historical private-sample image, compression and "
+                 "directory-library observations above are not remeasured by this correction. Existing "
+                 "cache classification, aliases, count/stat failure behavior and source-path aggregation "
+                 "are unchanged.",
         "paths": (
             '*/com.etsy.android/cache/image_manager_disk_cache/*',
             '*/com.etsy.android/cache/appboy.imageloader.lru.cache/*',
@@ -223,6 +244,8 @@ __artifacts_v2__ = {
 }
 
 import gzip
+import io
+import zlib
 import hashlib
 import json
 import os
@@ -231,11 +254,13 @@ import sqlite3
 import struct
 import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta, timezone
+from PIL import Image
 
 from scripts.artifacts.storagePathViews import canonical_path, unique_files
 from scripts.ilapfuncs import (
     artifact_processor,
     check_in_media,
+    check_in_embedded_media,
     get_sqlite_db_path,
     logfunc,
     open_sqlite_db_readonly,
@@ -252,7 +277,7 @@ _IMAGE_MAGIC = (
     (b'GIF87a', 'GIF', 'image/gif', 'gif'),
     (b'GIF89a', 'GIF', 'image/gif', 'gif'),
 )
-_RENDERABLE = {'JPEG', 'PNG', 'GIF'}
+_RENDERABLE = {'JPEG', 'PNG', 'GIF', 'WEBP'}
 
 # Size variants of one Etsy image URL. The app requests a rendition rather than the URL
 # the listing row stores, so the stored URL alone finds a cache entry only when those
@@ -589,13 +614,43 @@ def _first(paths, name):
 
 def _sniff_image(head):
     '''(label, mime, extension) from a file's leading bytes.'''
+    if (len(head) >= 20 and head[:4] == b'RIFF' and head[8:12] == b'WEBP'
+            and head[12:16] in (b'VP8 ', b'VP8L', b'VP8X')):
+        size = int.from_bytes(head[4:8], 'little')
+        chunk_size = int.from_bytes(head[16:20], 'little')
+        if size >= 12 and size % 2 == 0 and chunk_size + (chunk_size % 2) <= size - 12:
+            return 'WEBP', 'image/webp', 'webp'
     for magic, label, mime, extension in _IMAGE_MAGIC:
         if head.startswith(magic):
             return label, mime, extension
     return 'Unrecognised', '', ''
 
 
-def _read_head(source_path, count=16):
+
+def _cache_image(source_path):
+    """Identify an image body; retain decoded gzip bytes for export under its source."""
+    try:
+        with open(source_path, 'rb') as handle:
+            data = handle.read()
+        compressed = data.startswith(b'\x1f\x8b')
+        if compressed:
+            data = gzip.decompress(data)
+        label, mime, extension = _sniff_image(data)
+        if label == 'WEBP':
+            # RIFF offsets/lengths come from Google's WebP container specification:
+            # https://developers.google.com/speed/webp/docs/riff_container
+            if len(data) != int.from_bytes(data[4:8], 'little') + 8:
+                return 'Unrecognised', '', '', None
+            with Image.open(io.BytesIO(data)) as image:
+                if image.format != 'WEBP':
+                    return 'Unrecognised', '', '', None
+                image.verify()
+        return label, mime, extension, data if compressed else None
+    except (OSError, EOFError, ValueError, SyntaxError, zlib.error):
+        return 'Unrecognised', '', '', None
+
+
+def _read_head(source_path, count=32):
     '''The leading bytes of a file, decompressed first when it is stored gzipped.
 
     A cache body can be stored under a transfer encoding, in which case the bytes on disk
@@ -816,11 +871,17 @@ def etsy_recently_viewed(context):
             for key, values, view in _merge(live, pre, recovered):
                 cached = _cached_renditions(index, container, values[2])
                 media = ''
-                if cached:
-                    label, mime, extension = _sniff_image(_read_head(cached[0]))
+                for candidate in cached:
+                    label, mime, extension, decoded = _cache_image(candidate)
                     if label in _RENDERABLE:
-                        media = check_in_media(cached[0], os.path.basename(cached[0]),
-                                               force_type=mime, force_extension=extension)
+                        if decoded is None:
+                            media = check_in_media(candidate, os.path.basename(candidate),
+                                                   force_type=mime, force_extension=extension)
+                        else:
+                            media = check_in_embedded_media(
+                                candidate, decoded, os.path.basename(candidate),
+                                force_type=mime, force_extension=extension)
+                        break
                 data_list.append((
                     _ms(values[8]),
                     values[0],
@@ -838,7 +899,7 @@ def etsy_recently_viewed(context):
                 ))
 
     data_headers = (
-        ('View Time', 'datetime'),
+        ('Timestamp', 'datetime'),
         'Listing ID',
         'Title',
         'Original Price',
@@ -902,7 +963,7 @@ def etsy_listing_interactions(context):
                     values[2] or '',
                     values[3] if values[3] is not None else '',
                     match.group(1) if match else '',
-                    _seconds(match.group(2)) if match else '',
+                    match.group(2) if match else '',
                     values[1] or '',
                     view,
                     relative,
@@ -915,7 +976,7 @@ def etsy_listing_interactions(context):
         'Display Location (as stored)',
         'Position (as stored)',
         'Encoded Data Leading Value (as stored)',
-        ('Encoded Data Time (as stored)', 'datetime'),
+        'Encoded Data Second Value (as stored)',
         'Logging Key',
         'Source View',
         'Source File',
@@ -1121,11 +1182,13 @@ def etsy_network_breadcrumbs(context):
                     continue
                 start = payload.get('http.start_timestamp')
                 end = payload.get('http.end_timestamp')
+                stamp = document.get('timestamp')
                 duration = ''
                 if isinstance(start, int) and isinstance(end, int):
                     duration = end - start
                 data_list.append((
-                    _ms(start) or document.get('timestamp', ''),
+                    _ms(start),
+                    str(stamp) if stamp is not None else '',
                     payload.get('method', ''),
                     payload.get('host', ''),
                     payload.get('path', ''),
@@ -1137,6 +1200,7 @@ def etsy_network_breadcrumbs(context):
 
     data_headers = (
         ('Request Time', 'datetime'),
+        'Breadcrumb Timestamp (as stored)',
         'Method',
         'Host',
         'Path',
@@ -1174,7 +1238,7 @@ def etsy_image_caches(context):
             modified = os.path.getmtime(file_found)
         except OSError:
             continue
-        label = _sniff_image(_read_head(file_found))[0]
+        label = _cache_image(file_found)[0]
         entry['types'][label] = entry['types'].get(label, 0) + 1
         if entry['earliest'] is None or modified < entry['earliest']:
             entry['earliest'] = modified
@@ -1197,8 +1261,8 @@ def etsy_image_caches(context):
         ))
 
     data_headers = (
-        ('Latest Entry Modified', 'datetime'),
-        ('Earliest Entry Modified', 'datetime'),
+        ('Latest Staged File mtime', 'datetime'),
+        ('Earliest Staged File mtime', 'datetime'),
         'Cache Directory',
         'Entries',
         'Bytes On Disk',

@@ -8,8 +8,11 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "AI Chatbot - Nova",
         "notes": (
-            "Values are reported as stored in the preference files; JWT payloads are "
-            "base64-decoded for display without signature verification. An extraction can "
+            "Values are reported as stored except that keys beginning KEY_DID_ or KEY_IS_ "
+            "are shown as Yes when the stored value is true and No for any other value, "
+            "key names are reformatted for display, and the Firebase ID token is shown as "
+            "the email, name, user id and sign in provider from its payload; JWT payloads "
+            "are base64-decoded for display without signature verification. An extraction can "
             "carry one copy of this file per Android user, and every copy is read. "
             "Developed against the author's own installation; no registered corpus image "
             "carries this app. The committed test case is the author's own extraction of "
@@ -22,14 +25,17 @@ __artifacts_v2__ = {
     "get_nova_adapty_prefs": {
         "name": "Shared Preferences - Adapty Payment",
         "description": "Extracts payment profile and installation metadata from AdaptySDKPrefs.xml.",
-        "author": "Guilherme Guilherme",
+        "author": "Guilherme Guilherme, @AlexisBrignoni, Codex",
         "creation_date": "2026-05-30",
-        "last_update_date": "2026-09-19",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "AI Chatbot - Nova",
         "notes": (
-            "Values are reported as stored in the preference files; JWT payloads are "
-            "base64-decoded for display without signature verification. An extraction can "
+            "Only these preference entries are read: the members of "
+            "LAST_SENT_INSTALLATION_META, and from an entry named "
+            "get_purchaser_info_response or PROFILE the is_test_user, total_revenue_usd, "
+            "oldAppInstanceId and paywallType values of its JSON. Blank selected-field cells "
+            "mean the attribute was absent from the JSON or null, a null installation member is blank as well, and stored text None is retained. An extraction can "
             "carry one copy of this file per Android user, and every copy is read. "
             "Developed against the author's own installation; no registered corpus image "
             "carries this app. The committed test case is the author's own extraction of "
@@ -144,7 +150,7 @@ def get_nova_adapty_prefs(context):
 
             if name == "LAST_SENT_INSTALLATION_META":
                 for k, v in json.loads(value).items():
-                    data_list.append(("Installation Meta", k, str(v)))
+                    data_list.append(("Installation Meta", k, "" if v is None else str(v)))
             elif name in ["get_purchaser_info_response", "PROFILE"]:
                 p_data = json.loads(value)
                 attrs = p_data.get("data", p_data).get("attributes", p_data)
@@ -155,7 +161,7 @@ def get_nova_adapty_prefs(context):
                     ("Total Revenue", attrs.get("total_revenue_usd")),
                     ("Paywall", custom.get("paywallType")),
                 ]:
-                    data_list.append(("Payment Profile", k, str(v)))
+                    data_list.append(("Payment Profile", k, "" if v is None else str(v)))
 
         sources.append(file_path)
 

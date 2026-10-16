@@ -14,21 +14,33 @@ __artifacts_v2__ = {
     },
     "healthmate_trackings": {
         "name": "Health Mate - Trackings",
-        "description": "Health Mate Trackings",
-        "author": "Marco Neumann {kalinko@be-binary.de}",
+        "description": "Tracking records with stored activity category IDs and names from a paired local lookup.",
+        "author": "Marco Neumann {kalinko@be-binary.de}, @AlexisBrignoni, Codex",
         "creation_date": "2024-04-20",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Withings Health Mate",
         "notes": "Based on https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-2.html "
                  "Columns of the Track table are read by position; the mapping was written "
                  "against app versions 5.1.4 (Android 6) and 6.3.1 (Android 13), the versions "
                  "recorded in the module's comment header, and may not hold on other versions. "
-                 "Two activity category names are supplied by this parser and are not read from "
-                 "the activityCategory table: 37 ('Sleeping') and 272 ('Activity Tracking "
-                 "started manually'). Both names are this parser's own and are not read from the "
-                 "app or its documentation; the meaning of categories 37 and 272 is not "
-                 "established.",
+                 "Stored Activity Category Name is read without interpretation from id and name "
+                 "in activityCategory of the unique Withings-WiScale main in the same physical "
+                 "and evidence-relative app databases folder as each room-healthmate main. "
+                 "Distinct room and paired lookup main/WAL/journal states are read; identical "
+                 "known storage aliases are collapsed together only when both states match. "
+                 "Source File is appended only when returned rows combine room states. "
+                 "Malformed tracking rows are diagnosed and omitted without invented dates. "
+                 "Missing, conflicting or unreadable "
+                 "lookups retain the tracking row and Activity Category ID, with Category Lookup "
+                 "Status explaining why no stored name is supplied. The artifact source indicator "
+                 "includes the lookup only when its table was successfully consulted. NULL and "
+                 "empty stored names have separate statuses. IDs and names are matched by stored "
+                 "type and value; conflicting names for an ID are not selected. "
+                 "The cited post proposes 37 = Sleeping and 272 = Activity started on watch "
+                 "without explaining their derivation. The prior parser labelled 272 Activity "
+                 "Tracking started manually. These remain unverified research interpretations, "
+                 "not stored lookup names, and never override activityCategory values.",
         "paths": ('*/com.withings.wiscale2/databases/room-healthmate*',
                   '*/com.withings.wiscale2/databases/Withings-WiScale*'),
         "output_types": "standard",
@@ -60,7 +72,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Withings Health Mate",
         "notes": "Based on https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-1-users.html "
-                 "Columns of the chat table are read by position; the mapping was written "
+                 "Columns of the chat table are read by position (the cited post, written against "
+                 "app 5.1.4, names the table chats); the mapping was written "
                  "against app versions 5.1.4 (Android 6) and 6.3.1 (Android 13), the versions "
                  "recorded in the module's comment header, and may not hold on other versions.",
         "paths": ('*/com.withings.wiscale2/databases/Withings-WiScale*'),
@@ -76,7 +89,9 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Withings Health Mate",
         "notes": "Based on https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-1-users.html "
-                 "Columns of the leaderboard table are read by position; the mapping was written "
+                 "Columns of the leaderboard table of the room-healthmate database are read by "
+                 "position (the cited post, written against app 5.1.4, found the table in "
+                 "Withings-WiScale); the mapping was written "
                  "against app versions 5.1.4 (Android 6) and 6.3.1 (Android 13), the versions "
                  "recorded in the module's comment header, and may not hold on other "
                  "versions.",
@@ -87,12 +102,17 @@ __artifacts_v2__ = {
     "healthmate_measurements": {
         "name": "Health Mate - Measurements",
         "description": "Health Mate Measurements",
-        "author": "Marco Neumann {kalinko@be-binary.de}",
+        "author": "Marco Neumann {kalinko@be-binary.de}, @AlexisBrignoni, Codex",
         "creation_date": "2024-04-21",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Withings Health Mate",
-        "notes": "Based on https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-3-heart.html "
+        "notes": "Based on "
+                 "https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-3-heart.html "
+                 "The Category names for -16 (Heart Rate) and 16 (Steps) come from that post; the "
+                 "meanings of -19 and -22 are not established, so these values receive no "
+                 "mapped name and use the Unknown Category ID label. Category ID is retained "
+                 "as stored. "
                  "Columns of the vasistas table, including the values reported as SPO2 and Core "
                  "Temperature, are read by position; the mapping was written against app "
                  "versions 5.1.4 (Android 6) and 6.3.1 (Android 13), the versions recorded in "
@@ -130,7 +150,13 @@ __artifacts_v2__ = {
 # 2024-04-20: Android 13, App: 6.3.1
 
 # Requirements:  none
-from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records
+import hashlib
+import sqlite3
+from pathlib import Path, PurePosixPath
+from scripts.artifacts.storagePathViews import canonical_path
+
+from scripts.ilapfuncs import (artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records,
+                              get_sqlite_db_path, logfunc)
 
 
 @artifact_processor
@@ -213,67 +239,185 @@ def healthmate_accounts(context):
     return data_headers, data_list, file_found
 
 
-@artifact_processor
-def healthmate_trackings(context):
-    files_found = context.get_files_found()
-    files_found = [x for x in files_found if not x.endswith('wal') and not x.endswith('shm')
-                   and not x.endswith('journal')]
+def _tracking_mains(context, basename):
+    """Exact supplied mains, retaining their physical and evidence namespace."""
+    mains = []
+    seen = set()
+    for candidate in context.get_files_found():
+        path = str(candidate)
+        if (path in seen or not Path(path).is_file() or Path(path).is_symlink()
+                or Path(path).name != basename):
+            continue
+        relative = PurePosixPath(context.get_relative_path(path).replace('\\', '/'))
+        if (relative.name != basename or relative.parent.name != 'databases'
+                or relative.parent.parent.name != 'com.withings.wiscale2'):
+            continue
+        seen.add(path)
+        mains.append((path, relative))
+    return mains
 
-    room_db = next((str(f) for f in files_found if 'room-healthmate' in str(f).lower()), None)
-    wiscale_db = next((str(f) for f in files_found if 'withings-scale' in str(f).lower()), None)
 
-    wiscale_query = '''
+def _tracking_pair(context, room_db, room_relative):
+    """Resolve the original namespace before any storage-alias comparison."""
+    candidates = [item for item in _tracking_mains(context, 'Withings-WiScale')
+                  if item[1].parent == room_relative.parent]
+    if not candidates:
+        return 'missing-lookup', None
+    if len(candidates) != 1 or Path(candidates[0][0]).parent != Path(room_db).parent:
+        return 'ambiguous-lookup', None
+    return 'paired', candidates[0]
+
+
+def _tracking_state(path):
+    """Missing sidecars differ from empty ones; failed reads prove no equality."""
+    state = []
+    for suffix in ('', '-wal', '-journal'):
+        item = Path(str(path) + suffix)
+        try:
+            item.lstat()
+        except FileNotFoundError:
+            if not suffix:
+                raise
+            state.append(None)
+            continue
+        if item.is_symlink():
+            raise OSError('symlink database state')
+        digest = hashlib.sha256()
+        with item.open('rb') as stream:
+            chunk = stream.read(1024 * 1024)
+            while chunk:
+                digest.update(chunk)
+                chunk = stream.read(1024 * 1024)
+        state.append(digest.digest())
+    return tuple(state)
+
+
+def _tracking_sources(context):
+    seen = set()
+    for room_db, relative in _tracking_mains(context, 'room-healthmate'):
+        status, lookup = _tracking_pair(context, room_db, relative)
+        try:
+            identity = (canonical_path(relative)[0], _tracking_state(room_db), status)
+            if lookup:
+                identity += (canonical_path(lookup[1])[0], _tracking_state(lookup[0]))
+            elif status == 'ambiguous-lookup':
+                identity += (room_db, str(relative))
+        except OSError:
+            logfunc(f'Withings Trackings: unreadable state fingerprint in {relative}')
+            identity = (room_db, str(relative))
+        if identity not in seen:
+            seen.add(identity)
+            yield room_db, relative
+
+
+def _tracking_categories(context, room_db, room_relative):
+    """An optional exact sibling lookup; failures cannot discard tracking rows."""
+    status, lookup = _tracking_pair(context, room_db, room_relative)
+    if status == 'missing-lookup':
+        logfunc(f'Withings Trackings: missing lookup for {room_relative}')
+        return {}, status, ''
+    if status == 'ambiguous-lookup':
+        logfunc(f'Withings Trackings: ambiguous lookup namespace for {room_relative}')
+        return {}, status, ''
+    wiscale_db, relative = lookup
+    db = None
+    try:
+        db = sqlite3.connect(f'file:{get_sqlite_db_path(wiscale_db)}?mode=ro', uri=True)
+        wiscale_query = '''
         SELECT id, name
         FROM activityCategory
     '''
 
-    db_records_wiscale_db = get_sqlite_db_records(wiscale_db, wiscale_query)
+        categories = {}
+        for category_id, name in db.execute(wiscale_query):
+            if category_id is not None:
+                categories.setdefault((type(category_id), category_id), set()).add((type(name), name))
+        return categories, 'ready', wiscale_db
+    except sqlite3.Error as error:
+        status = ('unsupported-lookup-schema' if 'no such table' in str(error)
+                  or 'no such column' in str(error) else 'unreadable-lookup')
+        logfunc(f'Withings Trackings: {status} in {relative}')
+        return {}, status, ''
+    finally:
+        if db is not None:
+            db.close()
 
-    activity_categories = {}
-    for category in db_records_wiscale_db:
-        activity_categories[category[0]] = category[1]
-        # add activity categories that are not part of the listing but were recognizable by manual analysis
-    activity_categories[37] = 'Sleeping'
-    activity_categories[272] = 'Activity Tracking started manually'
 
-    # get activities from database room-healthmate*
+def _tracking_category_name(category_id, categories, lookup_status):
+    """Keep NULL, empty and conflicting stored names distinct from absence."""
+    if category_id is None:
+        return '', 'missing-category-ID'
+    if lookup_status != 'ready':
+        return '', lookup_status
+    names = categories.get((type(category_id), category_id))
+    if not names:
+        return '', 'category-not-listed'
+    if len(names) != 1:
+        return '', 'ambiguous-category'
+    name = next(iter(names))[1]
+    return name, ('matched-NULL-name' if name is None else 'matched-empty-name' if name == ''
+                  else 'matched-name')
+
+
+@artifact_processor
+def healthmate_trackings(context):
     room_query = ('''
         SELECT *
         FROM Track;
     ''')
-
-    db_records_room_db = get_sqlite_db_records(room_db, room_query)
-
     data_list = []
-
-    for row in db_records_room_db:
-        entry_id = row[0]
-        wsid = row[1]
-        userid = row[2]
-        starttime = convert_unix_ts_to_utc(row[3]/1000)
-        endtime = convert_unix_ts_to_utc(row[4]/1000)
-        modifiedtime = convert_unix_ts_to_utc(row[7]/1000)
-        device_id = row[9]
-        device_modell = row[10]
-        category_id = row[12]
+    source_paths = []
+    contributing = []
+    labels = set()
+    for room_db, relative in _tracking_sources(context):
+        db = None
         try:
-            category_name = activity_categories[category_id]
-        except KeyError:
-            category_name = "Not listed - Unknown"
-        datajson = row[13]
-
-        data_list.append((
-            starttime,
-            endtime,
-            modifiedtime,
-            entry_id,
-            wsid,
-            userid,
-            device_id,
-            device_modell,
-            category_id,
-            category_name,
-            datajson))
+            db = sqlite3.connect(f'file:{get_sqlite_db_path(room_db)}?mode=ro', uri=True)
+            records = db.execute(room_query)
+            if len(records.description) < 14:
+                logfunc(f'Withings Trackings: unsupported-room-schema in {relative}')
+                continue
+            categories, lookup_status, lookup_db = _tracking_categories(context, room_db, relative)
+            if lookup_db and lookup_db not in source_paths:
+                source_paths.append(lookup_db)
+            logged = set()
+            count = 0
+            invalid = 0
+            for ordinal, row in enumerate(records.fetchall(), 1):
+                try:
+                    dates = tuple(convert_unix_ts_to_utc(row[i]/1000) for i in (3, 4, 7))
+                    name, status = _tracking_category_name(row[12], categories, lookup_status)
+                    result = (*dates, row[0], row[1], row[2], row[9], row[10], row[12],
+                              name, row[13], status, str(relative))
+                except (TypeError, ValueError, OverflowError, IndexError):
+                    invalid += 1
+                    if invalid <= 20:
+                        logfunc(f'Withings Trackings: invalid-tracking-row {ordinal} in {relative}')
+                    continue
+                if status == 'ambiguous-category' and (type(row[12]), row[12]) not in logged:
+                    logfunc(f'Withings Trackings: ambiguous category {repr(row[12])[:80]} in '
+                            f'{context.get_relative_path(lookup_db)}')
+                    logged.add((type(row[12]), row[12]))
+                data_list.append(result)
+                count += 1
+            if invalid > 20:
+                logfunc(f'Withings Trackings: {invalid} invalid tracking rows omitted in {relative}; '
+                        'only the first 20 are individually diagnosed')
+            if count:
+                contributing.append(room_db)
+                if str(relative) in labels:
+                    logfunc(f'Withings Trackings: source-label collision in {relative}')
+                labels.add(str(relative))
+                if room_db not in source_paths:
+                    # Place the contributing room before its consulted sibling.
+                    position = source_paths.index(lookup_db) if lookup_db in source_paths else len(source_paths)
+                    source_paths.insert(position, room_db)
+        except sqlite3.Error as error:
+            status = 'unsupported-room-schema' if 'no such table' in str(error) else 'unreadable-room'
+            logfunc(f'Withings Trackings: {status} in {relative}')
+        finally:
+            if db is not None:
+                db.close()
 
     data_headers = (
         ('Start Time', 'datetime'),
@@ -285,11 +429,16 @@ def healthmate_trackings(context):
         'Device ID',
         'Device Model',
         'Activity Category ID',
-        'Activity Category Name',
-        'Tracking Data'
+        'Stored Activity Category Name',
+        'Tracking Data',
+        'Category Lookup Status'
     )
 
-    return data_headers, data_list, room_db
+    if len(contributing) > 1:
+        data_headers += ('Source File',)
+    else:
+        data_list = [row[:-1] for row in data_list]
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
@@ -451,10 +600,6 @@ def healthmate_measurements(context):
         row_id = row[0]
         category_id = row[24]
         match category_id:
-            case -22:
-                category = 'Core Temperature'
-            case -19:
-                category = 'SPO2'
             case -16:
                 category = 'Heart Rate'
             case 16:

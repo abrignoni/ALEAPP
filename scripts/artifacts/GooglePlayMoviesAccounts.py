@@ -11,8 +11,8 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-29",
         "requirements": "blackboxprotobuf",
         "category": "Google Play Movies & TV",
-        "notes": "Source is purchase_store.db. On 9 of the 18 database copies tested the database "
-                 "file itself holds no tables at all and every row is in the write ahead log, so "
+        "notes": "Source is purchase_store.db. On some of the database copies tested the database "
+                 "file itself held no tables at all and every row was in the write ahead log, so "
                  "the path pattern collects the sidecars and they must be carried alongside the "
                  "database. user_data holds one row per Google account keyed on user_account and "
                  "carries no timestamp, so it records which accounts are present in the store and "
@@ -49,20 +49,21 @@ __artifacts_v2__ = {
                  "17 were empty on all 18 copies tested, including purchased_assets, "
                  "search_history, wishlist, watch_next_feed, user_assets, user_sentiments, "
                  "assets, bundles, cached_items, posters, screenshots, show_banners and "
-                 "show_posters, so no purchase, rental, search or watch history was recoverable "
-                 "from any tested image. The only other populated tables were android_metadata, "
+                 "show_posters, so those tables held no purchase, rental, search or watch rows on "
+                 "any tested image. The only other populated tables were android_metadata, "
                  "video_formats (device decoder capabilities), guide_settings (a small "
-                 "per-account blob, 1 row on 7 copies) and ExoPlayerVersions, none of which "
-                 "carries user activity. Two schema generations were seen, 21 and 23 tables, "
+                 "per-account blob, 1 row on 7 copies) and ExoPlayerVersions, none of which this "
+                 "artifact reads. What the guide_settings blob holds is not stated here. Two "
+                 "schema generations were seen, 21 and 23 tables, "
                  "differing only by ExoPlayerDownloads and ExoPlayerVersions; user_data and "
                  "user_configuration are present in both. user_data.sync_snapshot_token was NULL "
                  "and user_configuration.account_links was 0 for every account tested, so neither "
                  "is reported and what a populated value looks like is unconfirmed. "
                  "user_data.wishlist_snapshot_token was populated and held the identical value on "
                  "every account across every tested image, so it is not reported; where that "
-                 "value comes from is not established. The rest of config_proto holds Google "
-                 "reference configuration, meaning content rating systems, Play API endpoints and "
-                 "feature flags, rather than account activity.",
+                 "value comes from is not established. On the tested copies the rest of "
+                 "config_proto held content rating systems, Play API endpoints and "
+                 "feature flags. This artifact reads only field 1.",
         "paths": ('*/com.google.android.videos/databases/purchase_store.db*',),
         "output_types": ["standard"],
         "artifact_icon": "film",

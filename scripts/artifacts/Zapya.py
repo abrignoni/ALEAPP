@@ -1,18 +1,16 @@
 __artifacts_v2__ = {
     "get_Zapya": {
         "name": "Zapya",
-        "description": "Parses Zapya file transfer records (device, name, direction, timestamp, path and title) from the transfer20.db database.",
-        "author": "@markmckinnon",
+        "description": "Reports Zapya transfer records with the stored direction and recorded device, name, timestamp, path and title from transfer20.db.",
+        "author": "@markmckinnon, @AlexisBrignoni, Codex",
         "creation_date": "2020-03-21",
-        "last_update_date": "2026-08-29",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "File Transfer",
-        "notes": ("direction is decoded from the transfer table 'direction' column. "
-                  "Direction/status value mappings are not vendor-documented and the evidence "
-                  "for them is not recorded here; unrecognized "
-                  "values are reported as stored.\n"
-                  "fromid and toid are populated only when the direction value is recognized; the "
-                  "other device recorded on the row is reported in the Device column regardless."),
+        "notes": ("Direction (as stored) preserves the transfer table direction value without "
+                  "assigning a transfer direction. Recorded Device is the stored device field; "
+                  "its sender or recipient role is not established. No source or measurement "
+                  "for direction or device-role meanings is recorded here."),
         "paths": ('*/com.dewmobile.kuaiya.play/databases/transfer20.db*',),
         "output_types": "standard",
         "artifact_icon": "download",
@@ -39,16 +37,9 @@ def get_Zapya(context):
 
     data_list = []
     for row in all_rows:
-        from_id = ''
-        to_id = ''
-        # Only direction = 1 is identified; any other value is reported as stored and
-        # neither party is claimed.
-        direction = {1: 'Outgoing'}.get(row[2], '' if row[2] is None else row[2])
-        if direction == 'Outgoing':
-            to_id = row[0]
-
         createtime = datetime.datetime.fromtimestamp(int(row[3]), datetime.timezone.utc) if row[3] else ''
-        data_list.append((row[0], row[1], direction, from_id, to_id, createtime, row[4], row[5]))
+        data_list.append((createtime, row[0], row[1], row[2], row[4], row[5]))
 
-    data_headers = ('Device', 'Name', 'direction', 'fromid', 'toid', ('createtime', 'datetime'), 'path', 'title')
+    data_headers = (('createtime', 'datetime'), 'Recorded Device', 'Name',
+                    'Direction (as stored)', 'path', 'title')
     return data_headers, data_list, source_path

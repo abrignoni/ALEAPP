@@ -17,17 +17,20 @@ __artifacts_v2__ = {
     "protonmailDbMailMessages": {
         "name": "ProtonMail - MailX Messages",
         "description": "Messages from the Proton Mail Android db-mail (MailX) Room store, including subject, sender, recipients and conversation id",
-        "author": "@AlexisBrignoni",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-14",
-        "last_update_date": "2026-08-14",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "ProtonMail",
-        "notes": "Reads the db-mail Room store, a Proton Mail for Android store separate from "
-                 "the *-MessagesDatabase.db store and the "
-                 "uniffi Inbox cache. In the tested image the subject, sender and recipient values "
-                 "are stored in clear text; the message body is kept PGP-encrypted in "
-                 "MessageBodyEntity and is not shown. A cached row reflects what the app had synced "
-                 "locally, not necessarily the full mailbox.",
+        "notes": "Reads the db-mail Room store, a Proton Mail for Android store separate from the "
+                 "*-MessagesDatabase.db store and the uniffi Inbox cache. In the tested image the "
+                 "subject, sender and recipient values are stored in clear text, and the message body in "
+                 "MessageBodyEntity was PGP armoured text; this artifact does not read the body. unread "
+                 "(as stored) reports the MessageEntity.unread value exactly as returned by SQLite, "
+                 "including NULL, zero and unknown values, without Boolean conversion or inversion. The "
+                 "value does not by itself establish that a person read or did not read the message. "
+                 "Replied and Forwarded are the isReplied and isForwarded flags. A cached row reflects "
+                 "what the app had synced locally, not necessarily the full mailbox.",
         "paths": ('*/ch.protonmail.android/databases/db-mail*',),
         "output_types": "standard",
         "artifact_icon": "mail",
@@ -38,14 +41,17 @@ __artifacts_v2__ = {
     "protonmailDbMailAttachments": {
         "name": "ProtonMail - MailX Attachments",
         "description": "Attachment metadata from the Proton Mail Android db-mail (MailX) Room store",
-        "author": "@AlexisBrignoni",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-14",
-        "last_update_date": "2026-08-14",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "ProtonMail",
-        "notes": "Attachment metadata from the db-mail Room store. Rows are metadata only; this "
-                 "artifact reads no attachment files. MessageAttachmentMetadataEntity carries a "
-                 "destination content URI column, reported as stored.",
+        "notes": "Attachment metadata from the db-mail Room store. Rows are metadata only; this artifact "
+                 "reads no attachment files. MessageAttachmentMetadataEntity.uri is reported under uri (as "
+                 "stored). What the app does with that value, and whether a file was written there, is not "
+                 "established. The current optional metadata lookup retains its last encountered duplicate "
+                 "value per messageId/attachmentId pair; absent lookup entries render an empty string, while "
+                 "a stored NULL remains NULL. Original contribution: @AlexisBrignoni.",
         "paths": ('*/ch.protonmail.android/databases/db-mail*',),
         "output_types": "standard",
         "artifact_icon": "paperclip",
@@ -71,7 +77,7 @@ __artifacts_v2__ = {
     },
     "protonmailDbMailAccount": {
         "name": "ProtonMail - MailX Account",
-        "description": "Signed-in Proton account details from the Proton Mail Android db-mail (MailX) Room store",
+        "description": "Proton account and user rows from the Proton Mail Android db-mail (MailX) Room store",
         "author": "@AlexisBrignoni",
         "creation_date": "2026-08-14",
         "last_update_date": "2026-08-14",
@@ -133,7 +139,7 @@ def protonmailDbMailMessages(context):
         'To',
         'CC',
         'BCC',
-        'Read',
+        'unread (as stored)',
         'Replied',
         'Forwarded',
         'Attachments',
@@ -164,7 +170,7 @@ def protonmailDbMailMessages(context):
                 _format_addresses(row[4]),
                 _format_addresses(row[5]),
                 _format_addresses(row[6]),
-                'No' if row[7] else 'Yes',   # unread inverted to Read
+                row[7],   # unread as stored
                 'Yes' if row[8] else 'No',
                 'Yes' if row[9] else 'No',
                 row[10],
@@ -186,7 +192,7 @@ def protonmailDbMailAttachments(context):
         'Size',
         'MIME Type',
         'Disposition',
-        'Saved To (URI)',
+        'uri (as stored)',
         'Message ID',
         'Source File')
     data_list = []

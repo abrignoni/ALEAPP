@@ -1,8 +1,8 @@
 __artifacts_v2__ = {
     "aurora_store_accounts": {
         "name": "Aurora Store - Accounts",
-        "description": "Parses the signed-in account from the Aurora Store Android app.",
-        "author": "@AlexisBrignoni, Claude",
+        "description": "Parses the account table of the Aurora Store Android app.",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-01",
         "last_update_date": "2026-09-01",
         "requirements": "none",
@@ -26,8 +26,8 @@ __artifacts_v2__ = {
     },
     "aurora_store_downloads": {
         "name": "Aurora Store - Downloads",
-        "description": "Parses the app download history from the Aurora Store Android app.",
-        "author": "@AlexisBrignoni, Claude",
+        "description": "Parses the download table of the Aurora Store Android app.",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-01",
         "last_update_date": "2026-09-01",
         "requirements": "none",
@@ -39,8 +39,9 @@ __artifacts_v2__ = {
                  "is an app Aurora Store was asked to download, with its Package, Display Name, "
                  "Version Code, Size in bytes, the Download Status as the app records it, how "
                  "many of the expected files arrived, the Target SDK, whether the app Requires "
-                 "GMS, and Downloaded At as Unix milliseconds reported as UTC. Installed is the "
-                 "app's installed flag, reported as stored. The download table was present and "
+                 "GMS, and Downloaded At, read here as Unix milliseconds and reported as UTC, a "
+                 "unit no tested row exercised. Installed is the app's installed flag, reported "
+                 "as stored. The download table was present and "
                  "empty on the tested device because no app was downloaded through Aurora Store "
                  "there, so the columns are described from the schema rather than from decoded "
                  "rows, and the meaning of the flags is not exercised here; a sample carrying a "
@@ -54,7 +55,7 @@ __artifacts_v2__ = {
     "aurora_store_favourites": {
         "name": "Aurora Store - Favourites",
         "description": "Parses favourited apps from the Aurora Store Android app.",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-01",
         "last_update_date": "2026-09-01",
         "requirements": "none",
@@ -66,10 +67,12 @@ __artifacts_v2__ = {
                  "favourite is an entry in the app's favourite table; on the tested device the "
                  "one entry was created by marking an app from its page, and whether the app "
                  "writes entries here on its own was not established. Each row carries the "
-                 "Package, the Display Name, Added as Unix milliseconds reported as UTC, and Mode "
-                 "which is the app's own value for how the entry was created and is reported as "
-                 "stored; the tested device recorded MANUAL for an entry added from an app's page. "
-                 "On the tested device one app was favourited and never downloaded, which is the "
+                 "Package, the Display Name, Added as Unix milliseconds reported as UTC, and "
+                 "Mode, reported as stored, which Aurora Store 4.8.4 declares as an enum of "
+                 "MANUAL and IMPORT (Favourite.kt at tag 4.8.4, "
+                 "ad3d349edce82e119ba239f3a07b3afe028abd19); the tested device recorded MANUAL "
+                 "for an entry added from an app's page. On the tested device one app was "
+                 "favourited and never downloaded, which is the "
                  "distinction this artifact exists to show against the Downloads artifact.",
         "paths": ('*/com.aurora.store/databases/aurora_database*',),
         "output_types": "standard",
@@ -77,10 +80,10 @@ __artifacts_v2__ = {
     },
     "aurora_store_updates": {
         "name": "Aurora Store - Updates and Reviews",
-        "description": "Parses pending updates and written reviews from the Aurora Store Android app.",
-        "author": "@AlexisBrignoni, Claude",
+        "description": "Parses the update and review tables of the Aurora Store Android app.",
+        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-01",
-        "last_update_date": "2026-09-01",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Aurora Store",
         "sample_data": {
@@ -88,10 +91,20 @@ __artifacts_v2__ = {
         },
         "notes": "Rows from the update and review tables of databases/aurora_database, combined "
                  "because both key on a package and both were empty on the tested device. An "
-                 "update row carries a Package, Version Name and Code, Developer, Size and an "
-                 "Updated On date. A review row carries a Title, Comment, Rating and an account "
-                 "Email. Both are described from the schema, since neither table held a row on "
-                 "the tested device, and what the app writes to them was not exercised. Kind "
+                 "update row carries a Package, Display Name, Version Name and Code, Developer "
+                 "and Size, with the changelog in Text. Aurora Store 4.8.4 declares the update "
+                 "table's updatedOn as a String (Update.kt line 31 at tag 4.8.4, "
+                 "ad3d349edce82e119ba239f3a07b3afe028abd19), and the table's own CREATE "
+                 "statement declares the column TEXT. The form of that text is not "
+                 "established, because no tested image held an update row, so it is shown "
+                 "unconverted in Updated On (as stored) and the Timestamp of an update row "
+                 "is left blank. Timestamp is filled for review rows only, from the review "
+                 "table's timeStamp, an INTEGER column read here as Unix milliseconds and "
+                 "reported as UTC, a unit no tested row exercised. A review row carries the Title and Comment "
+                 "joined in Text, the Rating and the account Email; its Display Name column "
+                 "holds the review's userName and Version its appVersion. Both are described "
+                 "from the schema, since neither table held a row on the tested device, and "
+                 "what the app writes to them was not exercised. Kind "
                  "names which table a row came from. Both tables were present and empty on the "
                  "tested device, where no app was installed through Aurora Store and no review "
                  "was written, so this artifact is a checked absence there; the columns come "
@@ -213,18 +226,20 @@ def aurora_store_updates(context):
         seen = False
         for r in get_sqlite_db_records(db_path, update_query):
             seen = True
-            data_list.append(('Update', _ms(r[0]), r[1] or '', r[2] or '', r[3] or '',
+            data_list.append(('Update', '', r[0] if r[0] is not None else '',
+                              r[1] or '', r[2] or '', r[3] or '',
                               r[4], r[5] or '', r[6], '', '', r[7] or '',
                               context.get_relative_path(db_path)))
         for r in get_sqlite_db_records(db_path, review_query):
             seen = True
-            data_list.append(('Review', _ms(r[0]), r[6] or '', r[1] or '', r[7] or '',
+            data_list.append(('Review', _ms(r[0]), '', r[6] or '', r[1] or '', r[7] or '',
                               '', '', '', r[4], r[5] or '', f'{r[2] or ""} {r[3] or ""}'.strip(),
                               context.get_relative_path(db_path)))
         if seen and db_path not in sources:
             sources.append(db_path)
 
-    data_headers = ('Kind', ('Timestamp', 'datetime'), 'Display Name', 'Package',
+    data_headers = ('Kind', ('Timestamp', 'datetime'), 'Updated On (as stored)',
+                    'Display Name', 'Package',
                     'Version', 'Version Code', 'Developer', 'Size (bytes)', 'Rating',
                     'Account Email', 'Text', 'Source File')
     return data_headers, data_list, '\n'.join(sources)

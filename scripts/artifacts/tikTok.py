@@ -4,9 +4,9 @@ __artifacts_v2__ = {
         "description": "Parses TikTok direct messages (timestamp, user, nickname, message, "
                        "links, read state and conversation) from the TikTok IM databases, "
                        "covering each <uid>_im.db file found.",
-        "author": "@abrignoni",
+        "author": "@abrignoni; @AlexisBrignoni, Codex",
         "creation_date": "2021-03-02",
-        "last_update_date": "2026-09-12",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "TikTok",
         "notes": "Every database named <uid>_im.db is parsed, including those named "
@@ -21,7 +21,9 @@ __artifacts_v2__ = {
                  "Link GIF Name and Link GIF URL columns are filled only when the row's "
                  "content field holds JSON; rows whose content is not JSON report the SQL "
                  "columns alone, with Message Type and Deleted as stored since no source "
-                 "for those integers was verified.\n"
+                 "for those integers was verified. read_status (as stored) carries the selected "
+                 "database value without a read or unread interpretation; its meaning has not "
+                 "been established. No derived Local Info label is reported.\n"
                  "Sender names are resolved against SIMPLE_USER in db_im_xx and "
                  "IM_USER_BASE_INFO in the db_im_contact databases, where present. A sender "
                  "in neither store shows a bare UID.\n"
@@ -196,8 +198,12 @@ __artifacts_v2__ = {
         "category": "TikTok",
         "notes": "Event rows carry the app's own tag strings and an ext_json payload "
                  "reported as stored; what an individual event means is not established "
-                 "here. Session rows carry a session UUID, app version and duration. The "
-                 "user_id column joins events to the logged-in account uid. "
+                 "here. Session rows carry the session table's value column (shown as Session "
+                 "UUID), and the app version and duration as stored in Session Info; the unit of "
+                 "duration is not established. Session ID is the event table's session_id on event "
+                 "rows and the session table's _id on session rows; whether they match is not "
+                 "established. The user_id column is reported as stored; this artifact does not "
+                 "join it to an account. "
                  "Reference: Xiao Hu and Umit Karabiyik, 'Shopping while Watching: An "
                  "Updated Forensic Analysis of TikTok on Android and iOS', ISNCC 2024, "
                  "https://doi.org/10.1109/ISNCC62547.2024.10759027",
@@ -233,8 +239,9 @@ __artifacts_v2__ = {
                  "(<uid>_account_user_info, <uid>_aweme_user_info, "
                  "<uid>_significant_user_info) alongside user_info_raw. String, number "
                  "and boolean fields of those documents are reported one per row, empty "
-                 "values skipped, nested objects not descended beyond the top level and "
-                 "the data sub-document. Plain entries (current_foreground_uid, "
+                 "values skipped; nested objects are not descended. Where a document holds a data "
+                 "object, the fields of that object are reported and the document's other "
+                 "top-level fields are not. Plain entries (current_foreground_uid, "
                  "logged_in_uid_list, mandatory_2sv) are reported as rows too. On the "
                  "tested image the documents carried the account uid, sec_uid, name, "
                  "avatar URLs, country code and registration values.",
@@ -368,12 +375,6 @@ def get_tikTok(context):
                        conversation_id
                 FROM msg ORDER BY created_time'''):
             unique_id, nickname = names.get(sender, ('', ''))
-            if read_status == 0:
-                local_info = 'Not read'
-            elif read_status == 1:
-                local_info = 'Read'
-            else:
-                local_info = read_status
             if sender is not None and account_uid:
                 direction = 'Outgoing' if str(sender) == account_uid else 'Incoming'
             else:
@@ -390,7 +391,6 @@ def get_tikTok(context):
                 message_type,
                 deleted,
                 read_status,
-                local_info,
                 conversation_id,
                 account_uid,
                 source_file,
@@ -407,8 +407,7 @@ def get_tikTok(context):
         'Link GIF URL',
         'Message Type (as stored)',
         'Deleted (as stored)',
-        'Read?',
-        'Local Info',
+        'read_status (as stored)',
         'Conversation ID',
         'Account ID',
         'Source File',

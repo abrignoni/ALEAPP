@@ -8,23 +8,34 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-30",
         "requirements": "none",
         "category": "Magisk",
-        "notes": "com.topjohnwu.magisk is a root management app; the presence of this database is "
-                 "itself a record that it was installed. Each row names the package and app label "
+        "notes": "com.topjohnwu.magisk is a root management app; this database sits in that "
+                 "package's data directory. Each row names the package and app label "
                  "that asked for superuser rights, the command string recorded for the request, "
-                 "and the requesting and target user ids. On two of the three corpora below every "
-                 "row carried the same App Name, Shell, the same Package Name, com.android.shell, "
-                 "the same From UID, 2000, and To UID, 0, so those four columns are uniform "
-                 "there; the third corpus carried two requesting apps with two package names and "
-                 "two From UIDs, which is exactly what those columns separate. The commands "
+                 "and the requesting and target user ids. App Name, Package Name, From UID and To "
+                 "UID are reported as stored. The commands "
                  "recorded were shell commands. time is Unix milliseconds. Action (as stored) is "
-                 "an integer and the app's own SuLog entity declares it as a plain Int with no "
-                 "constant list beside it, so it is reported as stored and not expanded into "
-                 "allowed or denied; it held 1 on all 8 rows below, so the column is uniform "
+                 "reported as stored and not expanded into allowed or denied, because its "
+                 "meaning depends on the Magisk version that wrote the row. In the SuLog entity "
+                 "at tags v23.0 and v25.2, which has no target, context or gids fields, like the "
+                 "tested database, action is a Boolean "
+                 "(https://github.com/topjohnwu/Magisk/blob/97c1e181c5a96217021d96bcdc4d4e31fbfce2ac/app/src/main/java/com/topjohnwu/magisk/core/model/su/SuLog.kt#L19 "
+                 "and "
+                 "https://github.com/topjohnwu/Magisk/blob/6066b5cf86703512451a021cf1aaf1a877530af7/app/src/main/java/com/topjohnwu/magisk/core/model/su/SuLog.kt#L17), "
+                 "and at v25.2 it is set from policy == SuPolicy.ALLOW (line 38 of the same "
+                 "file). At tags v26.4 and v27.0 it is an Int set from the policy value "
+                 "(https://github.com/topjohnwu/Magisk/blob/6c807d35b241c6a22b35534af8b6fe447a66f073/app/src/main/java/com/topjohnwu/magisk/core/model/su/SuLog.kt#L17 "
+                 "and "
+                 "https://github.com/topjohnwu/Magisk/blob/2c6adbc69ba0e5dce09cd13c6d9aca5de30efe76/app/src/main/java/com/topjohnwu/magisk/core/model/su/SuLog.kt#L17), "
+                 "and SuPolicy.kt at both tags declares INTERACTIVE 0, DENY 1 and ALLOW 2 "
+                 "(https://github.com/topjohnwu/Magisk/blob/2c6adbc69ba0e5dce09cd13c6d9aca5de30efe76/app/src/main/java/com/topjohnwu/magisk/core/model/su/SuPolicy.kt#L5-L7). "
+                 "Which version wrote the tested rows was not established; Action (as stored) "
+                 "held 1 on all 8 "
+                 "rows below, so the column is uniform "
                  "there. The entity in current Magisk carries target, context and gids columns "
                  "that the tested database does not have, so those are selected only where the "
                  "table actually declares them and are blank otherwise; they were absent on the "
-                 "corpus below and those three columns are empty there. sulogs.db lives in "
-                 "device-encrypted storage, under data/user_de rather than data/data.",
+                 "corpus below and those three columns are empty there. On the tested image "
+                 "sulogs.db was under data/user_de (device-encrypted storage), not data/data.",
         "paths": ('*/com.topjohnwu.magisk/databases/sulogs.db*',),
         "output_types": "standard",
         "artifact_icon": "terminal",
@@ -34,8 +45,7 @@ __artifacts_v2__ = {
     },
     "magisk_configuration": {
         "name": "Magisk - Configuration",
-        "description": "Entries from the app's preference files, holding its root access and "
-                       "hiding settings and any per-package superuser timeout recorded",
+        "description": "Entries of the app's preferences file and su_timeout.xml, by name and value as stored",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
@@ -45,9 +55,10 @@ __artifacts_v2__ = {
                  "both files is reported so settings added by later versions still appear. The "
                  "values are as stored: the numeric settings, including root_access, "
                  "multiuser_mode and mnt_ns, are integers whose meaning was not traced to a "
-                 "source, so they are not expanded into labels. su_timeout.xml holds one entry "
-                 "per package name, which records that a superuser timeout value exists for "
-                 "that package rather than that a request was granted; the Superuser Log "
+                 "source, so they are not expanded into labels. On the tested image "
+                 "su_timeout.xml held entries named for packages. What the app writes them for "
+                 "was not traced to a source, so an entry is not read as a request or a grant; "
+                 "the Superuser Log "
                  "artifact is where the requests themselves are. Store names which of the two "
                  "files each row came from.",
         "paths": ('*/com.topjohnwu.magisk/shared_prefs/com.topjohnwu.magisk_preferences.xml',

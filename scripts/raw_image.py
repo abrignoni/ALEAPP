@@ -62,6 +62,17 @@ Windows leaves in front of them, and a stream that stores nothing
 (``$BadClus:$Bad``) is not listed at all. Streams need qnxprobe 1.37 or later;
 with an older vendored copy there are simply none.
 
+A directory's file name index that has grown into an ``$INDEX_ALLOCATION``
+attribute is a member as well, named ``<directory>:$I30`` and ``:$I30`` on the
+root directory, unless the record also holds a ``$DATA`` stream of that name,
+which then reads as the stream. It is not an alternate data stream and is kept apart from them, in
+``index_list``: it is matched only by a pattern whose last segment ends ``:$I30``,
+which is handed the indexes besides what it was handed before, so a pattern that
+does not end that way, ``*:*`` included, is handed exactly what it was.
+What is staged is the attribute as the volume stores it, one index block after
+another with their update sequence arrays not applied. Directory indexes need
+qnxprobe 1.63 or later; with an older vendored copy there are none.
+
 This file is shared by iLEAPP, ALEAPP, RLEAPP, VLEAPP and DLEAPP and is kept
 byte-identical across them. It names nothing specific to a platform; the
 platform is in the artifacts.
@@ -112,8 +123,8 @@ RAW_IMAGE_FILE_PATTERNS = ('*.img *.bin *.dd *.raw *.001 *.E01 *.s01 *.Ex01 *.af
 # What the vendored reader walks, for the file dialog and the -t help. A test
 # asserts each entry here has a walker in the vendored copy, so the two cannot
 # drift apart quietly.
-RAW_IMAGE_FILESYSTEMS = ('QNX6, QNX4, ETFS, EFS, ext2/3/4, F2FS, FAT32, exFAT, NTFS, '
-                         'HFS+, APFS, SquashFS, JFFS2, UBI, UBIFS, YAFFS, QNX IFS, '
+RAW_IMAGE_FILESYSTEMS = ('QNX6, QNX4, ETFS, EFS, ext2/3/4, F2FS, FAT32, FAT16, FAT12, exFAT, '
+                         'NTFS, HFS+, APFS, SquashFS, JFFS2, UBI, UBIFS, YAFFS, QNX IFS, '
                          'U-Boot environment, Belkin NVRM')
 RAW_IMAGE_LABEL = f'Raw disk image or acquisition ({RAW_IMAGE_FILESYSTEMS})'
 
@@ -160,19 +171,21 @@ class ImageKeys:
     sealed to a certificate; ``bitlocker_secrets`` are further passwords or recovery
     passwords and ``bitlocker_keys`` the paths of startup key (.BEK) files, for
     BitLocker; ``apfs_secrets`` are further passwords or personal recovery keys, for
-    APFS. Nothing here is written anywhere; it lasts as long as the run.
+    APFS; ``luks_secrets`` are further passphrases, for LUKS. Nothing here is written
+    anywhere; it lasts as long as the run.
     """
 
     __slots__ = ('password', 'private_key', 'bitlocker_secrets', 'bitlocker_keys',
-                 'apfs_secrets')
+                 'apfs_secrets', 'luks_secrets')
 
     def __init__(self, password=None, private_key=None, bitlocker_secrets=(),
-                 bitlocker_keys=(), apfs_secrets=()):
+                 bitlocker_keys=(), apfs_secrets=(), luks_secrets=()):
         self.password = password
         self.private_key = private_key
         self.bitlocker_secrets = list(bitlocker_secrets)
         self.bitlocker_keys = list(bitlocker_keys)
         self.apfs_secrets = list(apfs_secrets)
+        self.luks_secrets = list(luks_secrets)
 
     def bitlocker_passwords(self):
         """Every secret to try on a BitLocker volume, the image's password first."""
@@ -181,6 +194,10 @@ class ImageKeys:
     def apfs_passwords(self):
         """Every secret to try on an encrypted APFS volume, the image's password first."""
         return ([self.password] if self.password else []) + self.apfs_secrets
+
+    def luks_passwords(self):
+        """Every passphrase to try on a LUKS container, the image's password first."""
+        return ([self.password] if self.password else []) + self.luks_secrets
 
 
 def needs_password(path):
@@ -326,6 +343,35 @@ def _unlock_apfs(path, keys, ask):
     return left
 
 
+def _unlock_luks(path, keys, ask):
+    """Try ``keys`` on each LUKS container in the image at ``path`` and offer every
+    container they leave locked to ``ask(luks, wrong)`` until it opens: ``ask`` returns a
+    passphrase, or None to leave it locked. What opens a container is added to ``keys``.
+    Returns the containers still locked that a passphrase could have opened, as
+    (label, locked note) pairs. Logical evidence holds no volumes."""
+    logical = open_logical(path, keys)
+    if logical is not None:
+        logical.close()
+        return []
+    left = []
+    with qnxprobe.open_image(path, password=keys.password,
+                             private_key=keys.private_key) as image:
+        _fh, found = qnxprobe.unlock_luks(image, qnxprobe.image_size(image),
+                                          keys.luks_passwords())
+        for luks in found:
+            wrong = False
+            while luks.mk is None and not luks.why:
+                answer = ask(luks, wrong)
+                if not answer:
+                    break
+                if luks.unlock([answer]):
+                    keys.luks_secrets.append(answer)
+                wrong = luks.mk is None
+            if luks.mk is None and not luks.why:
+                left.append((luks.label, luks.locked_note()))
+    return left
+
+
 def _apfs_prompt(lock, name, wrong):
     """What an encrypted APFS volume's prompt says, the hint it stores included."""
     return (('That does not open it. ' if wrong else '')
@@ -441,6 +487,23 @@ def cli_image_keys(path, password_file=None, password_env=None, private_key=None
             print(f'{label} of {name} stays locked and its files are not searched ({note}). '
                   f'Give its password or personal recovery key with --image_password_file '
                   f'or --image_password_env.', file=sys.stderr)
+        luks_tries = {}
+
+        def ask_luks(luks, wrong):
+            if not at_terminal:
+                return None
+            if wrong:
+                print('That does not open it.', file=sys.stderr)
+            luks_tries[luks.base] = luks_tries.get(luks.base, 0) + 1
+            if luks_tries[luks.base] > 3:
+                return None
+            return getpass.getpass(f'{luks.label} of {name} is a LUKS container. Its '
+                                   f'passphrase (empty leaves it locked): ') or None
+
+        for label, note in _unlock_luks(path, keys, ask_luks):
+            print(f'{label} of {name} stays locked and its files are not searched ({note}). '
+                  f'Give its passphrase with --image_password_file or --image_password_env.',
+                  file=sys.stderr)
     except _open_errors() as exc:
         raise ValueError(f'{name} could not be opened: {exc}') from None
     return keys
@@ -510,6 +573,14 @@ def ask_image_keys(parent, path):
                                           show='*', parent=parent)
 
         _unlock_apfs(path, keys, ask_apfs)
+
+        def ask_luks(luks, wrong):
+            return simpledialog.askstring(
+                'LUKS container', ('That does not open it. ' if wrong else '')
+                + f'{luks.label} of {name} is a LUKS container. Its passphrase:',
+                show='*', parent=parent)
+
+        _unlock_luks(path, keys, ask_luks)
     except _open_errors() as exc:
         messagebox.showerror('Error', f'{name} could not be opened:\n{exc}', parent=parent)
         return None
@@ -521,6 +592,40 @@ def names_a_stream(filepattern):
     asks for an NTFS alternate data stream (``*:Zone.Identifier``,
     ``*/$Extend/$UsnJrnl:$J``). Only such a pattern is matched against streams."""
     return ':' in filepattern.replace('\\', '/').rpartition('/')[2]
+
+
+def names_a_directory_index(filepattern):
+    """True when a pattern's last segment ends ``:$I30``, which is how a pattern asks
+    for a directory's index allocation (``*:$I30``). Only such a pattern is matched
+    against directory indexes."""
+    return filepattern.replace('\\', '/').rpartition('/')[2].endswith(':$I30')
+
+
+FREE_SPACE_FOLDER = '$Unallocated'
+FREE_SPACE_SUFFIX = '.unallocated.bin'
+
+
+DELETED_FOLDER = '$Deleted'
+
+
+def names_deleted(filepattern):
+    """True when a pattern asks for the deleted files a reader can recover.
+
+    They are members of a ``$Deleted`` folder in their volume, and only a pattern
+    with that folder name as one of its segments is matched against them. A broad
+    pattern such as ``*`` or ``*/gps.dat*`` never reaches a deleted file, so an
+    artifact gets one only by naming the folder.
+    """
+    return DELETED_FOLDER in filepattern.replace('\\', '/').split('/')
+
+
+def names_free_space(filepattern):
+    """True when a pattern's last segment ends in ``.unallocated.bin``, which is how a
+    pattern asks for a volume's free space (``*.unallocated.bin``). Only such a
+    pattern is matched against the free space members: a volume's free space can
+    run to many gigabytes, and a broad pattern must never stage it by accident."""
+    last = filepattern.replace('\\', '/').rpartition('/')[2]
+    return last.lower().endswith(FREE_SPACE_SUFFIX)
 
 
 def split_image_sibling(image_path):
@@ -623,6 +728,18 @@ class FileSeekerRaw(FileSeekerBase):
     matched only by a pattern that names a stream (see ``names_a_stream``).
     ``name_list`` is exactly what it was without them, order included.
 
+    A volume's free space is a member too, kept apart in ``free_list`` and matched
+    only by a pattern that asks for it (see ``names_free_space``). It is named
+    ``<volume>/$Unallocated/<image>.<volume>.unallocated.bin``, the name the
+    reader's own free space writer gives the file, and nothing is read for it until
+    a pattern matches. Staging it writes the free runs one after another, with a
+    ``.tsv`` beside the copy that maps each run back to its offset in the image.
+
+    The files a reader recovers outside the live tree (a flash filesystem's deleted
+    files, exFAT's orphan entries) are members of a
+    ``$Deleted`` folder in their volume, listed and matched only for a pattern that
+    names that folder (see ``names_deleted``).
+
     ``password`` is what opens the image and the encrypted volumes in it: ImageKeys,
     or a bare password, as earlier callers passed.
     """
@@ -636,7 +753,14 @@ class FileSeekerRaw(FileSeekerBase):
         self.file_infos = {}
         self.name_list = []
         self.stream_list = []
+        self.index_list = []
+        self.free_list = []
         self.volumes = []
+        self._free = {}
+        # deleted files a reader can recover, listed on the first pattern that asks
+        self.deleted_list = None
+        self._deleted = {}
+        self._size = 0
         self._entries = {}
         self._image = None
         try:
@@ -677,6 +801,7 @@ class FileSeekerRaw(FileSeekerBase):
         self._image = qnxprobe.open_image(self.image_path, segments, password=keys.password,
                                           private_key=keys.private_key)
         size = qnxprobe.image_size(self._image)
+        self._size = size
         if segments:
             logfunc(f'  {len(segments):,} segments joined in order, '
                     f'{os.path.basename(segments[0])} .. '
@@ -693,6 +818,10 @@ class FileSeekerRaw(FileSeekerBase):
             self._image, size, keys.bitlocker_passwords(), keys.bitlocker_keys)
         self._image, _apfs_found = qnxprobe.unlock_apfs(self._image, size,
                                                          keys.apfs_passwords())
+        # A LUKS container a passphrase opens reads as what it holds, a region of
+        # its own; one none opens is listed with the reason.
+        self._image, _luks_found = qnxprobe.unlock_luks(self._image, size,
+                                                        keys.luks_passwords())
         self.volumes = qnxprobe.volumes(self._image, size)
         if not self.volumes:
             logfunc('  no partition table and no filesystem the reader knows: '
@@ -735,6 +864,23 @@ class FileSeekerRaw(FileSeekerBase):
             if streams:
                 logfunc(f'    and {streams:,} alternate data streams, matched only by a '
                         f'pattern that names one')
+        image_name = os.path.basename(self.image_path)
+        for vol in self.volumes:
+            # a filesystem that reports its free space, or an LVM2 physical volume,
+            # whose extents no logical volume holds are its free space
+            if (getattr(vol.get('walker'), 'free_extents', None) is None
+                    and vol.get('free_extents') is None):
+                continue
+            member = (f"{vol['name']}/{FREE_SPACE_FOLDER}/"
+                      f"{image_name}.{vol['name']}{FREE_SPACE_SUFFIX}")
+            self.free_list.append(member)
+            self._free[member] = vol
+        if self.free_list:
+            logfunc(f'  {len(self.free_list):,} volumes can give their free space, to a '
+                    f'pattern that asks for it (*{FREE_SPACE_SUFFIX})')
+        if self.index_list:
+            logfunc(f'  {len(self.index_list):,} directories can give their index, to a '
+                    f'pattern that asks for it (*:$I30)')
         logfunc(f'File listing complete - {len(self.name_list):,} members'
                 + (f' and {len(self.stream_list):,} streams' if self.stream_list else ''))
 
@@ -920,6 +1066,17 @@ class FileSeekerRaw(FileSeekerBase):
             name = f'{member}:{name}'
             self.stream_list.append(name)
             self._entries[name] = _Entry(walker, stream_node, size or 0, mtime or 0, reading)
+        # A directory's $I30 index allocation, where the reader offers it (qnxprobe 1.63
+        # or later): a member of its own kind, counted apart from the streams.
+        index_of = getattr(walker, 'directory_index', None)
+        if index_of is not None:
+            try:
+                for name, index_node, size in index_of(node):
+                    name = f'{member}:{name}'
+                    self.index_list.append(name)
+                    self._entries[name] = _Entry(walker, index_node, size or 0, mtime or 0, reading)
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                logfunc(f'Could not list the directory index of {member}: {exc}')
         return len(found)
 
     @staticmethod
@@ -978,6 +1135,14 @@ class FileSeekerRaw(FileSeekerBase):
         members = self.name_list
         if self.stream_list and names_a_stream(filepattern):
             members = self.name_list + self.stream_list
+        if self.index_list and names_a_directory_index(filepattern):
+            members = members + self.index_list
+        if self.free_list and names_free_space(filepattern):
+            members = members + self.free_list
+        if names_deleted(filepattern):
+            if self.deleted_list is None:
+                self._list_deleted()
+            members = members + self.deleted_list
         for member in members:
             if pat(root + normcase(member)) is None:
                 continue
@@ -1011,11 +1176,16 @@ class FileSeekerRaw(FileSeekerBase):
         """Copy one member out of the image. Returns the staged path, or None.
 
         None means the member is listed but could not be handed to an artifact:
-        the reader refused it (an encrypted NTFS file), it raised part way, or
-        the image ends before the file does. Each case is logged by name; a
+        the reader refused it (an encrypted NTFS file), it raised part way, the
+        image ends before the file does, or the volume records fewer clusters
+        for the file than its size needs. Each case is logged by name; a
         partial or empty copy is never left where a pattern could find it,
         because a truncated database parses as a smaller one, not as an error.
         """
+        if member in self._free:
+            return self._stage_free_space(member)
+        if member in self._deleted:
+            return self._stage_deleted(member)
         intended = self._intended_path(member)
         if member.endswith('/'):
             # Case-variant directories fold into one on a case-insensitive
@@ -1068,11 +1238,21 @@ class FileSeekerRaw(FileSeekerBase):
                     f'the image (the image ends before the file does)')
             return None
         if got != entry.size:
-            # The image holds the whole file and the reader still returned a
-            # different length: that is the reader's, and a copy of the wrong
-            # length must not reach an artifact, because a database cut short
-            # parses as a smaller one rather than as an error.
+            # A copy of the wrong length must not reach an artifact, because a
+            # database cut short parses as a smaller one rather than as an error.
             self._discard(dest_path)
+            # A FAT32 or exFAT volume records a file's size in its directory
+            # entry and its clusters in the allocation table, and can hold the
+            # two in disagreement. A read that stops where the chain does is
+            # then what the volume describes, not something the reader lost.
+            cut = qnxprobe.chain_shortfall(entry.walker, entry.node)
+            if cut and got < entry.size:
+                logfunc(f'Not staged, {member}: the volume records {entry.size:,} bytes '
+                        f'for it and a cluster chain that ends after {cut[0]:,} of the '
+                        f'{cut[1]:,} clusters that size needs ({got:,} bytes read)')
+                return None
+            # The image holds the whole file, the volume does not account for
+            # the difference, and the reader still returned another length.
             logfunc(f'Not staged, {member}: the reader returned {got:,} bytes for a '
                     f'{entry.size:,} byte file')
             return None
@@ -1090,6 +1270,108 @@ class FileSeekerRaw(FileSeekerBase):
                 created = 0
         self.file_infos[dest_path] = FileInfo(member, created, modified)
         return dest_path
+
+    def _list_deleted(self):
+        """List the deleted files each volume's reader can recover, once.
+
+        A reader that offers both ``recover_deleted()`` and ``read_deleted()`` is
+        asked (the flash filesystems EFS, JFFS2, UBIFS and YAFFS, and exFAT for its
+        orphan entries). Each entry it
+        calls recoverable becomes one member:
+
+            <volume>/$Deleted/<folder>/<name>.deleted-<n>
+
+        <folder> is the entry's folder when the reader could place it and
+        ``$NoFolder`` when not; an entry with no name is ``$NoName``; <n> counts
+        the volume's entries in the order the reader gave them, so two versions of
+        one file stay apart. An entry the reader cannot read whole is counted and
+        not listed.
+        """
+        self.deleted_list = []
+        for vol in self.volumes:
+            walker = vol.get('walker')
+            if getattr(walker, 'recover_deleted', None) is None \
+                    or getattr(walker, 'read_deleted', None) is None:
+                continue
+            listed = refused = 0
+            try:
+                for number, entry in enumerate(walker.recover_deleted()):
+                    if not entry.recoverable:
+                        refused += 1
+                        continue
+                    folder = entry.parent_path
+                    folder = '$NoFolder' if folder is None else folder.strip('/')
+                    name = entry.name or '$NoName'
+                    parts = [vol['name'], DELETED_FOLDER, folder, f'{name}.deleted-{number:06d}']
+                    member = '/'.join(part for part in parts if part)
+                    self._deleted[member] = (walker, entry)
+                    self.deleted_list.append(member)
+                    listed += 1
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                # One volume the reader cannot finish must not end the run.
+                logfunc(f"  deleted files of {vol['name']}: the reader raised "
+                        f'{type(exc).__name__}: {exc}')
+            if listed or refused:
+                logfunc(f"  {vol['name']}: {listed:,} files outside the live tree can be read, "
+                        f'{refused:,} are named and cannot')
+
+    def _stage_deleted(self, member):
+        """Copy one recovered deleted file out of the image. Returns the staged
+        path, or None when the reader could not give it."""
+        walker, entry = self._deleted[member]
+        dest_path = self._intended_path(member)
+        os.makedirs(os.path.dirname(dest_path), exist_ok=True)
+        try:
+            content = walker.read_deleted(entry)
+            with open(dest_path, 'wb') as fout:
+                if isinstance(content, (bytes, bytearray)):
+                    fout.write(content)
+                else:
+                    for chunk in content:
+                        fout.write(chunk)
+        except OSError:
+            self._discard(dest_path)
+            raise
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            self._discard(dest_path)
+            logfunc(f'Not staged, {member}: the reader raised {type(exc).__name__}: {exc}')
+            return None
+        modified = entry.mtime or 0
+        if modified:
+            try:
+                os.utime(dest_path, (modified, modified))
+            except (OSError, OverflowError, ValueError):
+                pass
+        self.file_infos[dest_path] = FileInfo(member, 0, modified)
+        return dest_path
+
+    def _stage_free_space(self, member):
+        """Write one volume's free space under the data folder. Returns the staged
+        path, or None when the volume gave none.
+
+        The reader's own writer does the work, so what an examiner gets here is
+        what ``qnxprobe --unallocated`` writes: the free runs in order, a ``.tsv``
+        beside them mapping each run to its offset in the image, a run past the
+        end of a partial image cut there, and nothing written when the volume's
+        allocation map could not be read or reports nothing free.
+        """
+        vol = self._free[member]
+        intended = self._intended_path(member)
+        out_dir = os.path.dirname(intended)
+        os.makedirs(out_dir, exist_ok=True)
+        if os.path.isfile(intended):
+            # a forced second search: the writer never overwrites, and the copy is there
+            return intended
+        records = qnxprobe.write_unallocated(
+            self._image, self._size, [vol], out_dir, os.path.basename(self.image_path),
+            say=logfunc)
+        record = records[0] if records else {}
+        if record.get('status') != 'written':
+            logfunc(f"Not staged, {member}: {record.get('status', 'no free space reported')}")
+            return None
+        staged = os.path.join(out_dir, record['file'])
+        self.file_infos[staged] = FileInfo(member, 0, 0)
+        return staged
 
     @staticmethod
     def _discard(path):

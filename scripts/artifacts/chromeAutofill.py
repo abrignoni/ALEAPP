@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "last_update_date": "2026-09-12",
         "requirements": "none",
         "category": "Chromium",
-        "notes": "A 'Web Data' database that cannot be read is logged and skipped, and the remaining browsers on the device are still reported. A database whose journal SQLite treats as hot cannot be opened through a read-only handle, because replaying that journal has to write. A non-empty journal is not by itself hot: four non-empty sidecars beside Chromium databases in the registered Android corpora were tested by opening the database read-only, and three of the four opened normally. The one that did not is on the pixel3_a12 image, the Gmail WebView copy of 'Web Data' under data_mirror, whose 16-byte sidecar holds the LevelDB text 'MANIFEST-000001' rather than a rollback journal. The storage-view dedupe selects the data/data spelling of that same database, so the unreadable copy is not opened during a normal run on this image; read with its journal ignored it holds no autofill rows.",
+        "notes": "A 'Web Data' database that cannot be read is logged and skipped, and the remaining browsers on the device are still reported. A database whose journal SQLite treats as hot cannot be opened through a read-only handle, because replaying that journal has to write. A non-empty journal is not by itself hot: four non-empty sidecars beside Chromium databases in the registered Android corpora were tested by opening the database read-only, and three of the four opened normally (Reference for the read-only limit: SQLite, 'Result and Error Codes', SQLITE_READONLY_ROLLBACK, https://www.sqlite.org/rescode.html#readonly_rollback). The one that did not is on the pixel3_a12 image, the Gmail WebView copy of 'Web Data' under data_mirror, whose 16-byte sidecar holds the LevelDB text 'MANIFEST-000001' rather than a rollback journal. The storage-view dedupe selects the data/data spelling of that same database, so the unreadable copy is not opened during a normal run on this image; read with its journal ignored it holds no autofill rows.",
         "paths": ('*/app_chrome/Default/Web Data*', '*/app_sbrowser/Default/Web Data*', '*/data/*/app_opera/Web Data*', '*/app_webview/Default/Web Data*'),
         "output_types": "standard",
         "artifact_icon": "globe",
@@ -37,10 +37,10 @@ __artifacts_v2__ = {
         "description": "Parses Chrome autofill profiles",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2020-03-19",
-        "last_update_date": "2026-09-12",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Chromium",
-        "notes": "Chrome stores autofill address profiles in two layouts and both are read. Older releases use autofill_profiles joined to autofill_profile_names, _emails and _phones. Current releases use a single addresses table whose field values live in address_type_tokens, keyed by Chromium's FieldType enum; the values read are 3 NAME_FIRST, 4 NAME_MIDDLE, 5 NAME_LAST, 9 EMAIL_ADDRESS, 14 PHONE_HOME_WHOLE_NUMBER, 33 ADDRESS_HOME_CITY, 34 ADDRESS_HOME_STATE, 35 ADDRESS_HOME_ZIP, 60 COMPANY_NAME and 77 ADDRESS_HOME_STREET_ADDRESS. Field types outside that set are not reported rather than labelled, so a later Chrome field cannot reach the report under a guessed column; ADDRESS_HOME_COUNTRY and NAME_FULL are present in tested samples and are among those not reported. A third spelling, local_addresses, was seen empty on two tested images and is not read. Reference: Chromium, 'components/autofill/core/browser/field_types.h', https://github.com/chromium/chromium/blob/e90fec8693b4bd68806f3a5addec6722c0bc3939/components/autofill/core/browser/field_types.h",
+        "notes": "Chrome stores autofill address profiles in two layouts, and each layout a database holds is read. Older releases use autofill_profiles, with the name, email and phone held in autofill_profile_names, _emails and _phones under the profile's guid. One row is reported per autofill_profiles row. A profile with no row in one of those three tables is reported with those columns blank, and where a table holds more than one row for a guid the stored values are joined with '; ' in rowid order. Chrome 100 reads a profile the same way, from autofill_profiles first and then one email and one phone row by guid (Reference: Chromium 100.0.4896.60, 'autofill_table.cc', https://github.com/chromium/chromium/blob/394e257d1ceb66d284d2a873e888d3a325ad78c1/components/autofill/core/browser/webdata/autofill_table.cc#L485-L520 and, for the order of the reads, https://github.com/chromium/chromium/blob/394e257d1ceb66d284d2a873e888d3a325ad78c1/components/autofill/core/browser/webdata/autofill_table.cc#L1193-L1204). Measured on 1,516 readable 'Web Data' copies from 39 registered Android corpora on 2026-10-04: the 6 copies holding legacy profiles (on pixel3_a11, pixel3_a12, sharon_a13) each had one name, one email and one phone row per profile, and no copy held both autofill_profiles and addresses, so the blank, joined and both-layout cases were exercised on a constructed database only. Current releases use a single addresses table whose field values live in address_type_tokens, keyed by Chromium's FieldType enum; the values read are 3 NAME_FIRST, 4 NAME_MIDDLE, 5 NAME_LAST, 9 EMAIL_ADDRESS, 14 PHONE_HOME_WHOLE_NUMBER, 33 ADDRESS_HOME_CITY, 34 ADDRESS_HOME_STATE, 35 ADDRESS_HOME_ZIP, 60 COMPANY_NAME and 77 ADDRESS_HOME_STREET_ADDRESS. Field types outside that set are not reported rather than labelled, so a later Chrome field cannot reach the report under a guessed column; ADDRESS_HOME_COUNTRY and NAME_FULL are present in tested samples and are among those not reported. A third table, local_addresses, is not read; it held no rows in any of the 1,056 copies that carry it, on 26 of those corpora. Reference: Chromium, 'components/autofill/core/browser/field_types.h', https://github.com/chromium/chromium/blob/e90fec8693b4bd68806f3a5addec6722c0bc3939/components/autofill/core/browser/field_types.h",
         "paths": ('*/app_chrome/Default/Web Data*', '*/app_sbrowser/Default/Web Data*', '*/data/*/app_opera/Web Data*', '*/app_webview/Default/Web Data*'),
         "output_types": "standard",
         "artifact_icon": "globe",
@@ -202,6 +202,47 @@ def _modern_autofill_profiles(cursor):
     return rows
 
 
+def _legacy_autofill_profiles(cursor):
+    """Read the autofill_profiles layout, one row per profile.
+
+    Chrome reads a profile from autofill_profiles and then looks up its name,
+    email and phone by guid, so a profile with no row in one of those tables is
+    still a profile, and a second row for the same guid is not a second profile.
+    Every stored value is reported: more than one for a guid is joined with
+    '; ' in rowid order.
+    Reference: Chromium 100.0.4896.60, 'autofill_table.cc',
+    https://github.com/chromium/chromium/blob/394e257d1ceb66d284d2a873e888d3a325ad78c1/components/autofill/core/browser/webdata/autofill_table.cc#L485-L520
+    """
+    def values_by_guid(table, columns):
+        found = {}
+        if not _table_exists(cursor, table):
+            return found
+        cursor.execute(f'SELECT guid, {", ".join(columns)} FROM {table} ORDER BY rowid')
+        for record in cursor.fetchall():
+            per_column = found.setdefault(record[0], [[] for _ in columns])
+            for position, value in enumerate(record[1:]):
+                if value not in (None, ''):
+                    per_column[position].append(str(value))
+        return found
+
+    names = values_by_guid('autofill_profile_names', ('first_name', 'middle_name', 'last_name'))
+    emails = values_by_guid('autofill_profile_emails', ('email',))
+    phones = values_by_guid('autofill_profile_phones', ('number',))
+
+    cursor.execute('''
+        SELECT date_modified, guid, company_name, street_address, city, state, zipcode,
+               use_date, use_count
+        FROM autofill_profiles
+    ''')
+    rows = []
+    for (date_modified, guid, company, street, city, state, zipcode,
+         use_date, use_count) in cursor.fetchall():
+        linked = names.get(guid, [[], [], []]) + emails.get(guid, [[]]) + phones.get(guid, [[]])
+        rows.append((date_modified, guid) + tuple('; '.join(values) for values in linked)
+                    + (company, street, city, state, zipcode, use_date, use_count))
+    return rows
+
+
 @artifact_processor
 def get_chromeAutofillProfiles(context):
     files_found = unique_files(context)
@@ -231,34 +272,11 @@ def get_chromeAutofillProfiles(context):
 
         try:
             cursor = db.cursor()
+            rows = []
             if _table_exists(cursor, 'autofill_profiles'):
-                cursor.execute('''
-                    select
-                        date_modified,
-                        autofill_profiles.guid,
-                        autofill_profile_names.first_name,
-                        autofill_profile_names.middle_name,
-                        autofill_profile_names.last_name,
-                        autofill_profile_emails.email,
-                        autofill_profile_phones.number,
-                        autofill_profiles.company_name,
-                        autofill_profiles.street_address,
-                        autofill_profiles.city,
-                        autofill_profiles.state,
-                        autofill_profiles.zipcode,
-                        use_date,
-                        autofill_profiles.use_count
-                    from autofill_profiles
-                    inner join autofill_profile_emails ON autofill_profile_emails.guid = autofill_profiles.guid
-                    inner join autofill_profile_phones ON autofill_profiles.guid = autofill_profile_phones.guid
-                    inner join autofill_profile_names ON autofill_profile_phones.guid = autofill_profile_names.guid
-                ''')
-                rows = cursor.fetchall()
-            elif _table_exists(cursor, 'addresses'):
-                # Chrome release without the legacy tables
-                rows = _modern_autofill_profiles(cursor)
-            else:
-                rows = []
+                rows.extend(_legacy_autofill_profiles(cursor))
+            if _table_exists(cursor, 'addresses'):
+                rows.extend(_modern_autofill_profiles(cursor))
         except Exception as e:
             logfunc(str(e))
             continue

@@ -5,13 +5,19 @@ __artifacts_v2__ = {
                        "body, and the attachment metadata held against the message content id",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
-        "last_update_date": "2026-08-06",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Kik",
-        "notes": "Recent versions name the databases with the account core id, for example "
-                 "<core id>.kikDatabase.db, so the paths allow for a prefix. Direction is taken "
-                 "from the was_me column, which published Kik research describes as marking the "
-                 "party that sent the message. Read state is reported as the stored integer.",
+        "notes": "The code reads a database file whose name ends in kikDatabase.db, so a name "
+                 "that carries a prefix before it is read. Direction is taken from the was_me "
+                 "column: 1 is reported as Outgoing and 0 as Incoming, and no source for that "
+                 "reading is cited here. Direction and Sender are left blank on a row whose "
+                 "was_me is neither 1 nor 0 and on a row that stores a Status Message or a "
+                 "System Message value, because who such a row is from was not established. "
+                 "Was Me (as stored) holds the column value on every row. Sender on an Outgoing "
+                 "row is the user name from the first kikCoreDatabase row that has one, active "
+                 "rows first; on an Incoming row it is the conversation partner. Read state "
+                 "is reported as the stored integer.",
         "paths": ('*/kik.android/databases/*kikDatabase.db*',
                   '*/kik.android/databases/kikCoreDatabase.db*',
                   '*/kik.android/*/cache/chatPics*/*',
@@ -41,10 +47,10 @@ __artifacts_v2__ = {
                        "with their display name, user name and roster flags",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
-        "last_update_date": "2026-08-06",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Kik",
-        "notes": "",
+        "notes": "A column the store version does not have is reported empty.",
         "paths": ('*/kik.android/databases/*kikDatabase.db*',),
         "output_types": "standard",
         "artifact_icon": "users",
@@ -59,15 +65,18 @@ __artifacts_v2__ = {
                        "id gives one row with its file name, size, source app and URLs",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
-        "last_update_date": "2026-08-06",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Kik",
         "notes": "KIKContentTable stores one row per property, keyed by content id; this artifact "
                  "pivots those rows and adds the platform URIs from KIKContentURITable. Property "
                  "names are reported as the app wrote them. Files kept on the device under "
                  "DCIM/Kik or the chatPics caches are matched to a content id by file name and "
-                 "checked in; files in those locations with no matching content id are listed as "
-                 "rows of their own so they are not lost.",
+                 "checked in; files in those locations and in Android/data/kik.android/cache/temp "
+                 "whose name is not shaped like a content id are listed as rows of their own, "
+                 "except files of zero size or with a name starting with a dot. A file named with "
+                 "a content id that has no row in KIKContentTable is listed the same way, with "
+                 "the content id taken from its file name and the table columns blank.",
         "paths": ('*/kik.android/databases/*kikDatabase.db*',
                   '*/kik.android/*/cache/chatPics*/*',
                   '*/[Dd][Cc][Ii][Mm]/Kik/*',
@@ -82,7 +91,7 @@ __artifacts_v2__ = {
     "kik_chat_metadata": {
         "name": "Kik Chat Metadata",
         "description": "Rows from chatMetaInfTable, including the chat end time and the "
-                       "anonymous-chat flag columns as stored",
+                       "anonymous-chat flag columns shown as Yes or No",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
@@ -95,12 +104,13 @@ __artifacts_v2__ = {
         "sample_data": {
             "pixel7a_a14": "Android 14 | kik.android | 1 row",
             "hc_pixel8pro_a17": "Android 17 | kik.android | 0 rows",
+            "pixel3_a12": "Android 12 | kik.android | 67 rows",
         },
     },
     "kik_local_account": {
         "name": "Kik Local Account",
-        "description": "Account rows from kikCoreDatabase, giving the core id used to name the "
-                       "other databases and the user name held against it",
+        "description": "Account rows from kikCoreDatabase, giving the core id and the user "
+                       "name held against it",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
@@ -119,14 +129,19 @@ __artifacts_v2__ = {
         "name": "Kik Roster and Contact Profiles",
         "description": "Bare JIDs held in the user roster and contact profile databases, with the "
                        "profile update time where the app records one",
-        "author": "@AlexisBrignoni, Claude",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-06",
-        "last_update_date": "2026-08-06",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "Kik",
-        "notes": "Both tables keep the profile itself in a protobuf blob that this artifact does "
-                 "not decode; the JIDs are reported so roster membership can be compared against "
-                 "the Kik Users artifact. These databases are also named with the account core id.",
+        "notes": "Original contribution credited to Claude. This artifact reads bare_jid from both "
+                 "tables and last_update_timestamp from "
+                 "ContactProfileEntries; the other columns of the two tables are not read and what "
+                 "they hold was not established here. The JIDs are reported so roster membership "
+                 "can be compared against the Kik Users artifact. Database File Name Prefix is the "
+                 "text of "
+                 "the database file name before its first dot; it is not compared with the core id "
+                 "held in kikCoreDatabase.",
         "paths": ('*/kik.android/databases/*userRosterEntries.db*',
                   '*/kik.android/databases/*contactProfileEntries.db*'),
         "output_types": "standard",
@@ -145,6 +160,7 @@ from scripts.ilapfuncs import (
     check_in_media,
     convert_unix_ts_to_utc,
     get_sqlite_db_records,
+    null_absent_columns,
 )
 from scripts.artifacts.storagePathViews import unique_files
 
@@ -266,13 +282,20 @@ def kik_messages(context):
     ORDER BY messagesTable.timestamp
     '''
     for record in _query(source_path, 'messagesTable', query):
-        outgoing = record[1] == 1
         partner = record[3] or record[2]
+        # A status or system row carries no established author, and neither does a
+        # was_me value other than 1 or 0.
+        if record[11] or record[12] or isinstance(record[1], bool) or record[1] not in (0, 1):
+            direction, sender = '', ''
+        elif record[1] == 1:
+            direction, sender = 'Outgoing', local_user
+        else:
+            direction, sender = 'Incoming', partner
         properties = attachments.get(record[7], {}) if record[7] else {}
         data_list.append((
             _ms(record[0]),
-            'Outgoing' if outgoing else 'Incoming',
-            local_user if outgoing else partner,
+            direction,
+            sender,
             record[4],
             _check_in(media_by_content_id.get(record[7], [])) if record[7] else '',
             record[2],
@@ -289,6 +312,7 @@ def kik_messages(context):
             record[7],
             record[8],
             record[9],
+            record[1],
         ))
 
     data_headers = (
@@ -311,6 +335,7 @@ def kik_messages(context):
         'Content ID',
         'App ID',
         'Message UID',
+        'Was Me (as stored)',
     )
     return data_headers, data_list, source_path
 
@@ -327,6 +352,9 @@ def kik_users(context):
     FROM KIKcontactsTable
     ORDER BY display_name
     '''
+    # Older stores lack some of these columns (user_type on the version 20 schema).
+    if source_path:
+        query = null_absent_columns(source_path, query)
     for record in _query(source_path, 'KIKcontactsTable', query):
         data_list.append((
             record[0], record[1], record[2], record[3], 'Yes' if record[4] else 'No', record[5],
@@ -394,13 +422,19 @@ def kik_attachments(context):
             if media_by_content_id.get(content_id) else '',
         ))
 
-    for path in unmatched_media:
+    # Files named with a content id that KIKContentTable does not hold, then files
+    # whose name is not shaped like a content id.
+    loose_media = [(path, content_id)
+                   for content_id, paths in media_by_content_id.items()
+                   if content_id not in pivot for path in paths]
+    loose_media += [(path, '') for path in unmatched_media]
+    for path, content_id in loose_media:
         name = os.path.basename(path)
         size = os.path.getsize(path)
         if name.startswith('.') or size == 0:
             continue
         data_list.append((
-            _check_in([path]), name, size, '', '', '', '', '', '', '', '', '',
+            _check_in([path]), name, size, '', '', '', '', '', '', '', '', content_id,
             context.get_relative_path(path),
         ))
 
@@ -494,6 +528,6 @@ def kik_roster(context):
         ('Profile Update Time', 'datetime'),
         'Bare JID',
         'Held In',
-        'Account Core ID',
+        'Database File Name Prefix',
     )
     return data_headers, data_list, '\n'.join(sources)

@@ -4,27 +4,32 @@ __artifacts_v2__ = {
         "description": "Parses the signed in Roblox account recorded by the Roblox Android client.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Roblox",
-        "notes": "Read from the LocalStorage appStorage.json key value store, with the user id, username "
-                 "and display name cross-checked against shared_prefs prefs.xml, where the app keeps a "
-                 "second copy under userid_long, username and displayName. On the one device tested the "
-                 "two stores agreed on all three. Age and account fields come from the "
+        "notes": "Read from the LocalStorage appStorage.json key value store. The user id, username "
+                 "and display name are reported from both stores that hold them, each in its own column: "
+                 "UserId, Username and DisplayName in appStorage.json, and userid_long, username and "
+                 "displayName in shared_prefs prefs.xml. A blank cell means that store held no value, and "
+                 "neither store's value is used to fill the other's column. "
+                 "On the one device tested the two stores agreed on all three. "
+                 "Age and account fields come from the "
                  "PlayerHydrationBlob value in the same store. Two timestamp units appear inside that "
                  "one blob: originalAccountCreationTimestampMs is Unix milliseconds and lastPerformed in "
                  "the same object is Unix seconds, so each is converted on its own. "
-                 "MobileAdvertisingIdCacheTime, WebViewUserAgentCacheTime and "
-                 "PushUpsellSysPromptShownTimestamp are Unix seconds. ContactImporterSyncTimestamp is "
+                 "MobileAdvertisingIdCacheTime is read as Unix seconds. WebViewUserAgentCacheTime and "
+                 "PushUpsellSysPromptShownTimestamp are not reported by this artifact. "
+                 "ContactImporterSyncTimestamp is "
                  "stored as a colon followed by Unix milliseconds, so the value is split on the colon "
                  "before conversion. Membership, gender and age bracket are reported as stored. No "
                  "mapping for the membership integer was recoverable, because the tested extraction is "
                  "app data only and carries no APK to source one from. The under 13 flag is reported "
                  "from both stores it appears in so a disagreement stays visible. Field mapping was done "
                  "against a single private sample; no sample data is recorded for it. A blank contact "
-                 "importer opted in list is reported rather than dropped, because an empty list beside a "
-                 "populated sync timestamp is itself the finding. An extraction can carry the app's data "
-                 "for more than one Android user, and each holds a different account, so every container "
+                 "importer opted in list is reported rather than dropped, so that an empty list beside a "
+                 "populated sync timestamp stays visible; what either value records was not sourced. An "
+                 "extraction can carry the app's data "
+                 "for more than one Android user, and each can hold its own account, so every container "
                  "is reported rather than the first one found, and each store is paired with the "
                  "prefs.xml from its own container. That was exercised against a constructed tree "
                  "holding the same container under /data/data and /data/user/0, a second user under "
@@ -46,11 +51,11 @@ __artifacts_v2__ = {
         "category": "Roblox",
         "notes": "Read from the PreviousAccountsList value of appStorage.json, which the app keys by "
                  "user id. signOutTimestamp is Unix seconds, unlike the millisecond account creation "
-                 "value in the same file. An entry records an account the client held credentials for "
-                 "and does not by itself establish who used it. The display name stored in this list is "
-                 "the one held when the entry was written, so it can differ from the current display "
-                 "name: on the one device tested the two differed, which is what a display name change "
-                 "looks like here. Field mapping was done against a single private sample; no sample "
+                 "value in the same file. An entry records an account in the client's "
+                 "PreviousAccountsList; what puts an account on that list was not sourced, and an entry "
+                 "does not by itself establish who used it. On the one device tested the display name "
+                 "in this list differed from the DisplayName value in the same file. Why they differed "
+                 "was not established. Field mapping was done against a single private sample; no sample "
                  "data is recorded for it. Every container in the extraction is read, so a second "
                  "Android user's list is reported alongside the first rather than being replaced by it.",
         "paths": ('*/com.roblox.client/files/appData/LocalStorage/appStorage.json',),
@@ -65,15 +70,18 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-19",
         "requirements": "none",
         "category": "Roblox",
-        "notes": "One row per Player log file in files/appData/logs. The client names each file with the "
+        "notes": "One row per log file in files/appData/logs whose name has the form the client uses "
+                 "(version, UTC timestamp, log type, identifier); a file named any other way is "
+                 "skipped. The client names each file with the "
                  "client version, a UTC timestamp, the log type, and a short identifier, and the "
                  "timestamp is read from that name. The first log line carries its own timestamp and is "
                  "reported beside it so the two can be compared. That one file equals one launch is data "
                  "proven on the one device tested rather than assumed: the rate_me_maybe launch counter "
                  "read 83, and exactly 83 log files were dated at or after that file's absolute first "
-                 "launch value, the earliest of them one second after it. Most files hold only start up "
-                 "lines. A log file records that the client started, not that a person opened it, since "
-                 "a background start also writes one. Field mapping was done against a single private "
+                 "launch value, the earliest of them one second after it. On the sample tested most files "
+                 "held only start up lines. A log file records that the client started, not that a "
+                 "person opened it, and whether a start with no person present also writes one was not "
+                 "tested. Field mapping was done against a single private "
                  "sample; no sample data is recorded for it. Log type held one value on every row of the "
                  "sample tested and is kept because a client that wrote another kind of log would change "
                  "it. The file name suffix and the short identifier are not reported as their own "
@@ -88,18 +96,28 @@ __artifacts_v2__ = {
         "description": "Parses experience joins and game server connections from the Roblox Android client logs.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Roblox",
         "notes": "Read from the client logs in files/appData/logs. A join is assembled from the join "
-                 "line, which carries the game job id, the place id and the server address, the "
-                 "game_join_loadtime report line, which carries the play session id, the user id, the "
-                 "universe id, the place id and a referral page, and the analytics session id line. The "
+                 "line, which carries the game job id, the place id and the server address, and the "
+                 "game_join_loadtime report line for the same place id in file order, which carries the "
+                 "play session id, the user id, the universe id and a referral page. Analytics Session "
+                 "ID is the value last logged at or before the join line. UDMUX Address and RCC Server "
+                 "Address come from the first UDMUX line logged after the join line and before the next "
+                 "join line, and are blank when there is none. Play Session ID is the sid value of the "
+                 "report line and is blank when no report line was paired. That line order (analytics "
+                 "session id, join, report, UDMUX) was read from the one join in the Roblox iOS client "
+                 "log on hexordia_ios1651, which uses the same line formats; no registered Android "
+                 "corpus holds a Roblox client log. The "
                  "two lines that both carry a place id agreed on the one join present in the sample "
                  "tested, and the play session id from the report line equalled the analytics session "
-                 "id. Roblox's own vocabulary is kept: a place id identifies a place, a universe id "
-                 "identifies the experience that contains it, and a game job id identifies the running "
-                 "server instance. Line timestamps are ISO 8601 UTC as written by the client; clienttime "
+                 "id. Roblox's own field names are kept as headers. Roblox's engine reference describes "
+                 "PlaceId as the ID of the place running on the server and JobId as a unique identifier "
+                 "for the running game server instance (DataModel.yaml in Roblox/creator-docs at "
+                 "9d486bbd4f8134d03bb9905d13cdb1add3b1ed3f). The same reference describes GameId as the "
+                 "ID of the experience the place belongs to; that the universeid logged here is that "
+                 "value was not checked. Line timestamps are ISO 8601 UTC as written by the client; clienttime "
                  "on the report line is Unix seconds and is reported separately so the two can be "
                  "compared. The referral page value is reported as stored. Server addresses are reported "
                  "as logged and are the addresses the client connected to, not the user's own address. "
@@ -160,10 +178,10 @@ __artifacts_v2__ = {
         "notes": "Read from the AXMarketplaceRecentSearches value of appStorage.json, which holds a user "
                  "id and a list of terms. The value carries no timestamp, so no date is reported and the "
                  "order of the list is preserved as stored rather than being described as most recent "
-                 "first. The store holds terms the client recorded as recent searches and is not a "
-                 "download of server suggestions: it carries no ranking or score column and no cache "
-                 "version or fetch time preference names it, unlike the app settings and experiment "
-                 "values in the same file. Field mapping was done against a single private sample; no "
+                 "first. The value sits under a key named for recent searches and carries no ranking, "
+                 "score, cache version or fetch time. The store shows the client held these terms; it "
+                 "does not by itself establish who entered them. Field mapping was done against a single "
+                 "private sample; no "
                  "sample data is recorded for it. Every container in the extraction is read, so a second "
                  "Android user's terms are reported alongside the first rather than being replaced by "
                  "it.",
@@ -396,9 +414,12 @@ def roblox_account(context):
             _utc(hydration.get('lastPerformed')) if hydration.get('lastPerformed') else '',
             _utc(store['MobileAdvertisingIdCacheTime']) if store.get('MobileAdvertisingIdCacheTime') else '',
             _utc_ms(contact_ms),
-            store.get('UserId', '') or prefs.get('userid_long', ''),
-            store.get('Username', '') or prefs.get('username', ''),
-            store.get('DisplayName', '') or prefs.get('displayName', ''),
+            store.get('UserId', ''),
+            prefs.get('userid_long', ''),
+            store.get('Username', ''),
+            prefs.get('username', ''),
+            store.get('DisplayName', ''),
+            prefs.get('displayName', ''),
             store.get('IsUnder13', ''),
             prefs.get('under13', ''),
             hydration.get('ageBracket', ''),
@@ -424,7 +445,9 @@ def roblox_account(context):
         ('Hydration Last Performed Timestamp', 'datetime'),
         ('Advertising ID Cached Timestamp', 'datetime'),
         ('Contact Importer Sync Timestamp', 'datetime'),
-        'User ID', 'Username', 'Display Name',
+        'User ID (appStorage)', 'User ID (prefs.xml)',
+        'Username (appStorage)', 'Username (prefs.xml)',
+        'Display Name (appStorage)', 'Display Name (prefs.xml)',
         'Is Under 13 (appStorage)', 'Under 13 (prefs.xml)',
         'Age Bracket (as stored)', 'Gender (as stored)', 'Membership (as stored)',
         'Last Successful Sign In Method (as stored)', 'Credential Value',
@@ -532,7 +555,7 @@ def _activity_row(stamp, report, place_id, job_id, server, context_fields):
         place_id,
         report.get('universeid', ''),
         job_id,
-        report.get('sid', '') or context_fields['session_id'],
+        report.get('sid', ''),
         context_fields['session_id'],
         report.get('userid', ''),
         report.get('referral_page', ''),
@@ -542,6 +565,25 @@ def _activity_row(stamp, report, place_id, job_id, server, context_fields):
         context_fields['rcc'],
         context_fields['log_name'],
     )
+
+
+def _line_fields(line_no, positions, log_name):
+    """Values logged for the join at this line: the analytics session id last logged at or
+    before it, and the first UDMUX line after it and before the next join line."""
+    session_ids, udmux_lines, join_line_numbers, line_count = positions
+    session_id = ''
+    for number, value in session_ids:
+        if number > line_no:
+            break
+        session_id = value
+    next_join = min((number for number in join_line_numbers if number > line_no),
+                    default=line_count)
+    udmux = rcc = ''
+    for number, udmux_value, rcc_value in udmux_lines:
+        if line_no < number < next_join:
+            udmux, rcc = udmux_value, rcc_value
+            break
+    return {'session_id': session_id, 'log_name': log_name, 'udmux': udmux, 'rcc': rcc}
 
 
 @artifact_processor
@@ -563,12 +605,13 @@ def roblox_game_activity(context):
             logfunc(f'Roblox: could not read {file_found}: {error}')
             continue
 
-        session_id = ''
-        udmux = udmux_port = rcc = rcc_port = ''
+        # (line number, value) in file order, so each row takes the values logged for it.
+        session_ids = []
+        udmux_lines = []
         joins = []
         reports = {}
 
-        for line in lines:
+        for line_no, line in enumerate(lines):
             stamp = ''
             found_time = LOG_LINE_TIME.match(line)
             if found_time:
@@ -576,18 +619,17 @@ def roblox_game_activity(context):
 
             found = SESSION_LINE.search(line)
             if found:
-                session_id = found.group('sid')
+                session_ids.append((line_no, found.group('sid')))
 
             found = UDMUX_LINE.search(line)
             if found:
-                udmux = found.group('udmux').strip()
-                udmux_port = found.group('udmux_port')
-                rcc = found.group('rcc').strip()
-                rcc_port = found.group('rcc_port')
+                udmux_lines.append((line_no,
+                                    f"{found.group('udmux').strip()}:{found.group('udmux_port')}",
+                                    f"{found.group('rcc').strip()}:{found.group('rcc_port')}"))
 
             found = JOIN_LINE.search(line)
             if found:
-                joins.append({'stamp': stamp, 'jobid': found.group('jobid'),
+                joins.append({'line_no': line_no, 'stamp': stamp, 'jobid': found.group('jobid'),
                               'placeid': found.group('placeid'), 'server': found.group('server')})
 
             found = LOADTIME_LINE.search(line)
@@ -600,19 +642,23 @@ def roblox_game_activity(context):
                     fields[key.strip()] = value.strip()
                 if fields.get('placeid'):
                     fields['stamp'] = stamp
+                    fields['line_no'] = line_no
                     # A log can hold more than one join to the same place, so keep them
                     # in order rather than letting a later report replace an earlier one.
                     reports.setdefault(fields['placeid'], []).append(fields)
 
-        servers = {'session_id': session_id, 'log_name': name,
-                   'udmux': f'{udmux}:{udmux_port}' if udmux else '',
-                   'rcc': f'{rcc}:{rcc_port}' if rcc else ''}
+        join_line_numbers = [join['line_no'] for join in joins]
+
+        def _fields(line_no, positions=(session_ids, udmux_lines, join_line_numbers,
+                                        len(lines)), log_name=name):
+            return _line_fields(line_no, positions, log_name)
 
         for join in joins:
             pending = reports.get(join['placeid']) or []
             report = pending.pop(0) if pending else {}
             data_list.append(_activity_row(join['stamp'], report, join['placeid'],
-                                           join['jobid'], join['server'], servers))
+                                           join['jobid'], join['server'],
+                                           _fields(join['line_no'])))
 
         # A report line no join line covered still evidences a join, so it gets its own
         # row, timed by the log line that carried it rather than by a repeated value.
@@ -621,7 +667,8 @@ def roblox_game_activity(context):
             for report in pending:
                 leftover += 1
                 data_list.append(_activity_row(report.get('stamp', ''), report,
-                                               place_id, '', '', servers))
+                                               place_id, '', '',
+                                               _fields(report['line_no'])))
         if leftover:
             logfunc(f'Roblox: {leftover} game join report line(s) in {name} had no matching '
                     f'join line and are reported on their own row')

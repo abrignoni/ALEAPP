@@ -55,11 +55,11 @@ class TestNQVaultPathSecurity(unittest.TestCase):
             report_folder.mkdir()
 
             # Encrypted media file: NQ Vault XORs the first 128 bytes.
-            # password_id hash '1477632' -> PIN 0 -> XOR key 0x30.
+            # Stored hash '1477632' matches digit string '0000': low byte 0x00.
             image_dir = base / 'payload' / '.image'
             image_dir.mkdir(parents=True)
             plaintext = b'A' * 200
-            encrypted = bytes((b ^ 0x30) if i < 128 else b for i, b in enumerate(plaintext))
+            encrypted = bytes((b ^ 0x00) if i < 128 else b for i, b in enumerate(plaintext))
             encrypted_file = image_dir / '1700000000.bin'
             encrypted_file.write_bytes(encrypted)
 

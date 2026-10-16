@@ -2,9 +2,9 @@ __artifacts_v2__ = {
     "samsungStoryServiceInfo": {
         "name": "Samsung Story Service - Media Info",
         "description": "Media entries indexed by the Samsung story service (dme.db, info "
-                       "table): taken/added times, file path, coordinates with the "
-                       "resolved place names, detected scene names, face count and the "
-                       "moment each entry belongs to.",
+                       "table): taken/added times, file path, coordinates (blank when NULL or "
+                       "0,0), the stored place name, scene name and face count columns, the "
+                       "is_delete value and the moment_id each entry carries.",
         "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",

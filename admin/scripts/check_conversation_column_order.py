@@ -46,8 +46,8 @@ DATE_TYPES = ('datetime', 'date')
 
 STANDARD_NOTE = (
     'Order a conversation artifact\'s columns as: the declared timeColumn, then any other\n'
-    'datetime/date columns, then direction, sender, conversation label, message text and\n'
-    'media, then everything else unchanged. Reorder the row tuple in the same edit, or\n'
+    'datetime/date columns and their raw companions, then direction, sender, conversation label,\n'
+    'message text and media, then everything else unchanged. Reorder the row tuple, or\n'
     'every value lands under the wrong header.')
 
 
@@ -125,8 +125,14 @@ def expected(names, types, view):
         i = names.index(tc)
         order.append(i)
         used.add(i)
+    date_names = {name for name, kind in zip(names, types) if kind in DATE_TYPES}
     for i, t in enumerate(types):
-        if i not in used and t in DATE_TYPES:
+        # A raw companion must stay text: typing an offset-free stored string
+        # as datetime would let the report assign UTC to it. Keep it beside
+        # its converted date without changing how the value is interpreted.
+        stored_date = (names[i].endswith(' (as stored)')
+                       and names[i][:-len(' (as stored)')] in date_names)
+        if i not in used and (t in DATE_TYPES or stored_date):
             order.append(i)
             used.add(i)
     for role in ROLE_SEQUENCE:

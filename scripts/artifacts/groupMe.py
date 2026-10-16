@@ -4,13 +4,18 @@ __artifacts_v2__ = {
         "description": "GroupMe group information",
         "author": "Josh Hickman (josh@thebinaryhick.blog)",
         "creation_date": "2021-02-01",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-10-04",
         "requirements": "None",
         "category": "GroupMe",
         "notes": "Message Count (stored) and Attachment Count (stored) are the counter values held in "
                  "the groups table; they are not counts of the messages and attachments recovered by "
                  "this artifact. Group Creator and Creator Role are read from the creator's own "
-                 "membership row for that group; the members table holds one row per group and user.",
+                 "membership row for that group (the members row matching both the group's "
+                 "creator_user_id and its group_id; the members table has a unique index on user_id "
+                 "and group_id, so a group is reported once). A group whose creator has no row in "
+                 "the members table is reported with both cells empty; no tested image held such a "
+                 "group, and this was exercised on a constructed copy of the pixel7a_a14 database "
+                 "with the creator's members row removed.",
         "paths": ('*/com.groupme.android/databases/groupme.db*',),
         "output_types": "standard",
         "artifact_icon": "users",
@@ -24,9 +29,9 @@ __artifacts_v2__ = {
     "get_groupMe_chat": {
         "name": "GroupMe - Chat Information",
         "description": "GroupMe chat information",
-        "author": "Josh Hickman (josh@thebinaryhick.blog)",
+        "author": "Josh Hickman (josh@thebinaryhick.blog), @AlexisBrignoni, Codex",
         "creation_date": "2021-02-01",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-10-06",
         "requirements": "None",
         "category": "GroupMe",
         "notes": "Message Deletion Time and Message Deletion Actor (as stored) are the messages table's "
@@ -38,11 +43,13 @@ __artifacts_v2__ = {
                  "and 'admin' in the method that handles these two columns "
                  "(com.groupme.android.message.MessageUtils.getAffectedItems, base.apk of "
                  "com.groupme.android vc 240460204). On the one deleted row in the tested images the "
-                 "stored message_text reads the literal 'This message was deleted'. Message Hidden "
+                 "stored message_text reads the literal 'This message was deleted'. read (as stored) "
+                 "is the messages.read value returned by SQLite without a value mapping; what sets it "
+                 "and the meanings of its values are not established. Message Hidden "
                  "(as stored) is the stored integer rather than Yes/No, because the column takes values "
                  "beyond 0 and 1: the only non-zero value seen is 2, on a system row reading 'A message "
-                 "was deleted.' The app's own migration adds deleted_at and deletion_actor to an existing "
-                 "messages table, so a store written before that release lacks them; absent columns are "
+                 "was deleted.' A store whose messages table lacks deleted_at and deletion_actor "
+                 "has them "
                  "read as NULL, which was exercised on a constructed copy with the two columns dropped "
                  "and not on any tested image.",
         "paths": ('*/com.groupme.android/databases/groupme.db*',),
@@ -86,7 +93,7 @@ def get_groupMe(context):
         groups.last_message_created_at,
         groups.updated_at
         FROM groups
-        JOIN members ON members.user_id=groups.creator_user_id
+        LEFT JOIN members ON members.user_id=groups.creator_user_id
         AND members.group_id=groups.group_id
         ORDER BY groups.created_at ASC
     ''')
@@ -119,7 +126,7 @@ def get_groupMe_chat(context):
         messages.sender_type,
         CASE WHEN messages.is_system=0 THEN "No" WHEN messages.is_system=1 THEN "Yes" END,
         messages.hidden,
-        CASE WHEN messages.read=0 THEN "No" WHEN messages.read=1 THEN "Yes" END,
+        messages.read,
         messages.deletion_actor,
         messages.message_text,
         messages.photo_url,
@@ -146,7 +153,7 @@ def get_groupMe_chat(context):
 
     data_headers = (('Message Time', 'datetime'), ('Message Deletion Time', 'datetime'),
                     'Group Name', 'Message Sender', 'Message Sender Type',
-                    'Is System Message', 'Message Hidden (as stored)', 'Message Is Read',
+                    'Is System Message', 'Message Hidden (as stored)', 'read (as stored)',
                     'Message Deletion Actor (as stored)', 'Message', 'Picture URL',
                     'Picture URI', 'Picture Width', 'Picture Height', 'Picture Is GIF',
                     'Video URL', 'Message Latitude', 'Message Longitude', 'Location Name')

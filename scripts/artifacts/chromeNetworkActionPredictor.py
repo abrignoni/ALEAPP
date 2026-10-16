@@ -2,26 +2,34 @@ __artifacts_v2__ = {
     "get_chromeNetworkActionPredictor": {
         "name": 'Network Action Predictor',
         "description": 'Parses the Network Action Predictor from Chromium Based Browsers',
-        "author": 'Kevin Pagano (@stark4n6)',
+        "author": 'Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex',
         "creation_date": '2020-03-19',
-        "last_update_date": '2026-09-11',
+        "last_update_date": '2026-10-06',
         "requirements": 'none',
         "category": 'Chromium',
         "notes": 'Reads the network_action_predictor table from the Chromium profiles the declared paths match, one '
                   'storage view per file, and reports user_text, url, number_of_hits and number_of_misses as stored. '
-                  'A Magisk mirror copy is skipped as a duplicate; 1 registered corpus carries a Magisk mirror path '
-                  'and it holds no copy of this file, so that branch is unexercised. Measured over all 42 registered '
-                  'Android corpora on 2026-09-11: 34 carry a file named Network Action Predictor and every copy sits '
-                  'under app_chrome/Default or app_sbrowser/Default. No copy sits under app_opera or app_webview on '
-                  'any of them, although 3 carry an app_opera directory and 39 carry an app_webview directory, so '
-                  'both of those declared patterns are unexercised. Row counts come from profile-driven runs over the '
-                  '20 registered zip corpora, cross-checked against a direct read of the same databases; the two '
-                  'agree on all 20. Nine of them reported rows, 1,172 rows from com.android.chrome and 2,029 from '
-                  'com.microsoft.emmx. The com.brave.browser copy held the table and no rows on all 7 run corpora '
-                  'carrying it, and of the 9 Samsung Browser copies read 6 hold no network_action_predictor table and '
-                  '3 hold it empty, so no Brave or Samsung Browser row was observed. An absent browser here is not '
-                  'evidence that browser was unused. Where a device carries more than one Android user each profile '
-                  'is reported separately: on russell_pixel6a_a13 the Android user 0 Chrome profile holds 273 rows '
+                  'Selected Magisk mirror inputs are read consistently for every browser; no equality of their '
+                  'contents or state is assumed. Repeated observations across inputs are not distinct-event claims. '
+                  'The existing canonical path-only helper still collapses known storage aliases without checking '
+                  'main/WAL/journal state; conflicting alias selection remains unresolved. In the historical inventory, '
+                  '1 registered corpus carries a Magisk mirror path and holds no copy of this file, so genuine '
+                  'positive mirror coverage is unavailable. Measured over all 42 registered Android corpora on 2026-09-11: '
+                  '34 carry a file named Network Action Predictor and every copy sits under '
+                  'app_chrome/Default or app_sbrowser/Default. No copy sits under app_opera or '
+                  'app_webview on any of them, although 3 carry an app_opera directory and 39 carry '
+                  'an app_webview directory, so both of those declared patterns are unexercised. '
+                  'Row counts come from profile-driven runs over the 20 registered zip corpora, '
+                  'cross-checked against a direct read of the same databases; the two agree on all '
+                  '20. Rows were reported from com.android.chrome and com.microsoft.emmx copies; '
+                  'the per-corpus counts recorded for this artifact are in sample_data. The '
+                  'com.brave.browser copy held the table and no rows on all 7 run corpora carrying '
+                  'it, and of the 9 Samsung Browser copies read 6 hold no network_action_predictor '
+                  'table and 3 hold it empty, so no Brave or Samsung Browser row was observed. An '
+                  'absent browser here is not evidence that browser was unused. Where a device '
+                  'carries more than one Android user each profile is read, but the rows share one '
+                  'table with Source File only when multiple selected databases contribute rows; it does not assert user ownership. On russell_pixel6a_a13 '
+                  'the Android user 0 Chrome profile holds 273 rows '
                   'and the user 10 profile holds none.',
         "paths": ('*/app_chrome/Default/Network Action Predictor*', '*/app_sbrowser/Default/Network Action Predictor*', '*/app_opera/Network Action Predictor*', '*/app_webview/Default/Network Action Predictor*'),
         "output_types": ['html', 'tsv', 'lava'],
@@ -56,7 +64,8 @@ def get_chromeNetworkActionPredictor(context):
     lava_data_headers = data_headers.copy()
     all_data_headers = lava_data_headers + ['Browser Name']
 
-    report_file = 'Unknown'
+    source_paths = []
+    row_sources = []
 
     for file_found in files_found:
         file_found = str(file_found)
@@ -66,8 +75,6 @@ def get_chromeNetworkActionPredictor(context):
         browser_name = get_browser_name(file_found)
         if file_found.find('app_sbrowser') >= 0:
             browser_name = 'Browser'
-        elif file_found.find('.magisk') >= 0 and file_found.find('mirror') >= 0:
-            continue  # Skip sbin/.magisk/mirror/data/.. , it should be duplicate data
 
         db = open_sqlite_db_readonly(file_found)
         if db is None:
@@ -101,7 +108,8 @@ def get_chromeNetworkActionPredictor(context):
             db.close()
 
         if len(all_rows) > 0:
-            report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
+            if file_found not in source_paths:
+                source_paths.append(file_found)
 
             data_list = []
             for row in all_rows:
@@ -109,7 +117,11 @@ def get_chromeNetworkActionPredictor(context):
 
             data_list = [row + (browser_name,) for row in data_list]
             all_data.extend(data_list)
+            row_sources.extend([context.get_relative_path(file_found)] * len(data_list))
         else:
             logfunc(f'No {browser_name} - Network Action Predictor data available')
 
-    return all_data_headers, all_data, report_file
+    if len(source_paths) > 1:
+        all_data_headers += ['Source File']
+        all_data = [row + (source,) for row, source in zip(all_data, row_sources)]
+    return all_data_headers, all_data, '\n'.join(source_paths)

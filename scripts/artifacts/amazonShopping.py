@@ -17,7 +17,8 @@ __artifacts_v2__ = {
                  "names for username, first name, account id and device name, and the "
                  "tokens table carried cookies and OAuth tokens; values are reported as "
                  "stored and their meaning beyond the key name is not asserted. Timestamps "
-                 "are Unix milliseconds. The Account column resolves the row's account id "
+                 "are read as Unix milliseconds; the unit has no cited source and no "
+                 "recorded measurement. The Account column resolves the row's account id "
                  "to the accounts table's display name where present.\n"
                  "Reference: Gokila Dorai, Shinelle Hutchinson, Beatriz Rodriguez and Umit "
                  "Karabiyik, 'Mobile Commerce - Analysis and Investigation of the Online "
@@ -71,9 +72,10 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-16",
         "requirements": "none",
         "category": "Amazon Shopping",
-        "notes": "A registry of image files the app cached, keyed by the URL they were "
-                 "fetched from; what a cached image was shown for is not established "
-                 "here. Timestamps are Unix milliseconds.",
+        "notes": "Reads the FileCacheRegistry table as stored. No tested image carried "
+                 "this database, so the artifact is code present and unexercised: the "
+                 "table's role, the millisecond unit assumed for the three time "
+                 "columns and the byte unit assumed for size are not established.",
         "paths": ('*/com.amazon.mShop.android.shopping/databases/ssnapImageCacheRegistry.db*',),
         "output_types": "standard",
         "artifact_icon": "photo",
@@ -85,26 +87,29 @@ __artifacts_v2__ = {
     "get_amazon_webview_state": {
         "name": "Amazon Shopping - Web View State",
         "description": "Saved web view fragment states from app_mashWebViewState: the "
-                       "URLs held in each state file, with the millisecond timestamp from "
+                       "URL-looking regex matches in each state file, with the millisecond timestamp from "
                        "the file's own name.",
-        "author": "@AlexisBrignoni",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-08-16",
+        "last_update_date": "2026-10-06",
         "requirements": "none",
         "category": "Amazon Shopping",
         "notes": "Each file in app_mashWebViewState is named <unix ms>MASHWebFragment<n> "
-                 "and holds a base64 wrapped, gzip compressed Android saved-state parcel "
-                 "for a web view fragment. The parcel format is not parsed; URLs are "
-                 "extracted from the decompressed bytes as found, one row per URL, with "
-                 "their order preserved, so a row states that the URL was present in that "
-                 "fragment's saved state and nothing more. On a tested sample the states "
-                 "included storefront, product and order confirmation page URLs.",
+                 "and holds a base64 wrapped, gzip compressed Android saved-state parcel. "
+                 "The parcel format is not parsed. One row per existing regex match includes "
+                 "repeated matches, exact ASCII Matched Text and its zero-based byte offset "
+                 "in the decompressed payload. Match Occurrence resets per file. The regex "
+                 "takes http:// or https:// followed by 4 to 500 printable ASCII bytes; it can include "
+                 "several printable tokens and does not establish URL boundaries or visits. "
+                 "Display URL is derived by removing trailing double quotes; the raw Matched "
+                 "Text retains them. On a tested sample the states included storefront, product "
+                 "and order confirmation URL-looking text.",
         "paths": ('*/com.amazon.mShop.android.shopping/app_mashWebViewState/*',),
         "output_types": "standard",
         "artifact_icon": "globe",
         "sample_data": {
-            "anne_a15": "Android 15 | 2 rows",
-            "samsungs20_a13": "Android 13 | 3 rows",
+            "anne_a15": "Android 15 | 3 rows",
+            "samsungs20_a13": "Android 13 | 5 rows",
         },
     },
 }
@@ -283,15 +288,14 @@ def get_amazon_webview_state(context):
                 data = gzip.decompress(base64.b64decode(handle.read()))
         except (OSError, ValueError, gzip.BadGzipFile):
             continue
-        urls = []
-        for raw_url in _URL_RE.findall(data):
-            url = raw_url.decode('ascii', 'replace').rstrip('"')
-            if url not in urls:
-                urls.append(url)
-        for position, url in enumerate(urls, 1):
+        for position, found in enumerate(_URL_RE.finditer(data), 1):
+            matched_text = found.group(0).decode('ascii')
+            display_url = matched_text.rstrip('"')
             data_list.append((
-                _ms_to_utc(match.group(1)), name, position, url, source_file))
+                _ms_to_utc(match.group(1)), name, position, found.start(),
+                matched_text, display_url, source_file))
 
-    data_headers = (('State Timestamp', 'datetime'), 'State File', 'URL Order', 'URL',
-                    'Source File')
+    data_headers = (('State Timestamp', 'datetime'), 'State File', 'Match Occurrence',
+                    'Decompressed Byte Offset', 'Matched Text (as stored)',
+                    'Display URL (derived)', 'Source File')
     return data_headers, data_list, source_path

@@ -1,25 +1,27 @@
 __artifacts_v2__ = {
     "nordvpn_app_events": {
         "name": "NordVPN - App Events",
-        "description": "Parses the events the NordVPN Android app queued for its own "
-                       "reporting, with the local time each was recorded and the network "
-                       "the device was on.",
+        "description": "Parses the event records in the queue_elements table of the "
+                       "NordVPN Android app's Moose.db, with the local time each records "
+                       "and the ISP and network type values each carries, as stored.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
         "category": "NordVPN",
-        "notes": "One row per queued event. Timestamp is the event's own Unix second value "
+        "notes": "One row per event record in the queue_elements table. Timestamp is the event's "
+                 "own Unix second value "
                  "rendered in UTC, and Local Time is the value the event separately records "
                  "with the device's UTC offset, kept as stored so the offset stays readable. "
-                 "These are events the app had not yet delivered, so the set present is what "
-                 "remained in the queue rather than a complete history of app use. Event "
+                 "What the app does with a row after it is written was not established, so the "
+                 "set present is not shown to be a complete history of app use. Event "
                  "names, network type and interface are the app's own labels, as stored. ISP "
                  "and ISP ASN are the values each event carries, reported as stored; whether "
                  "they describe the device's own network was not established. On VPN is the flag "
                  "each event carries; on the tested devices every "
                  "event that carried it recorded false, and no event carried a server "
-                 "address, city or country, so these samples evidence no VPN connection. "
+                 "address, city or country, so these samples hold no record of a VPN connection, "
+                 "which is not evidence that none took place. "
                  "Field mapping was done against two private samples provided by Mattia; no "
                  "sample data is recorded for them.",
         "paths": (
@@ -35,26 +37,37 @@ __artifacts_v2__ = {
                        "the app stores.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "NordVPN",
         "notes": "One row per app data directory. Values come from the app's Settings "
                  "database, from the shared context its reporting library keeps, and from "
                  "its own preference files, all read from the same directory. Server "
-                 "Catalogue Updated is the time the app last refreshed its server list, in "
-                 "Unix milliseconds; the catalogue itself is a server supplied list of servers, "
+                 "Catalogue Updated is the ServerUpdateTime value of the LastUpdateEntity table "
+                 "in Main.db, read as Unix milliseconds; what the app updates it for was not "
+                 "established. The server catalogue itself is a server supplied list of "
+                 "servers, "
                  "tens of thousands of rows on the tested devices, and is "
                  "not reported because it records what the service offers rather than "
                  "anything the device did. Last Cache Date and Token Renew are Unix seconds. "
-                 "Connection fields are reported as stored and were empty on both tested "
+                 "Connection fields are reported as stored. On VPN is the shared context value "
+                 "and, when that is empty, vpn_connected from last_known_state.xml. Threat "
+                 "Protection is the shared context's user_preferences value and, when that is "
+                 "empty, its current_state value. Meshnet is meshnet_enabled from "
+                 "last_meshnet_state.xml and, when that is empty, the shared context value. "
+                 "On VPN Read From, Threat Protection Read From and Meshnet Read From name the "
+                 "stored field each of those three values was read from and are blank when "
+                 "neither field held a value; Source Files lists a preference file when it "
+                 "supplied one of those values. Those three columns were added after the "
+                 "tested devices were examined and were not exercised on them. The "
+                 "connection fields were empty on both tested "
                  "devices, where the app recorded that it was not connected and not signed "
                  "in. SIM Country is the plaintext value the app stores beside its location "
                  "record. The location record's own country, latitude, longitude and update "
-                 "time are held as AES-GCM values with a twelve byte nonce, whose lengths "
-                 "match a two character country code, two short coordinate strings and a "
-                 "thirteen digit millisecond timestamp; the key could not be recovered, "
-                 "because the extraction carries no app binary and no derivation from the "
-                 "seed the app stores reproduced it, so those four values are not reported. "
+                 "time are stored in a form this module does not read; the key could not be "
+                 "recovered, because the extraction carries no app binary and no derivation "
+                 "from the seed the app stores reproduced it, so the cipher and the plaintext "
+                 "were not established and those four values are not reported. "
                  "Field mapping was done against two private samples provided by Mattia; no "
                  "sample data is recorded for them.",
         "paths": (
@@ -184,6 +197,19 @@ def _prefs(source_path):
             continue
         values[name] = element.get('value') if element.tag != 'string' else (element.text or '')
     return values
+
+
+def _first_stored(candidates):
+    '''(value, origin, path) for the first candidate holding a value, or blanks.
+
+    Each candidate is (value, origin label, source path or None). A blank value is
+    passed over, which is the order the columns have always been filled in; the label
+    says which stored field the reported value was read from.
+    '''
+    for value, origin, path in candidates:
+        if value not in (None, ''):
+            return value, origin, path
+    return '', '', None
 
 
 def _all_prefs(paths):
@@ -376,15 +402,41 @@ def nordvpn_settings(context):
                 account = f'{name}={value}'
                 break
 
+        def _pref_path(name, held=tuple(paths)):
+            return next((path for path in held if os.path.basename(path) == name), None)
+
+        on_vpn, on_vpn_from, on_vpn_path = _first_stored((
+            (state.get('current_state.is_on_vpn', ''),
+             'Moose.db shared_context current_state.is_on_vpn', None),
+            (last_known.get('vpn_connected', ''),
+             'last_known_state.xml vpn_connected',
+             _pref_path('com.nordvpn.android.last_known_state.xml')),
+        ))
+        threat, threat_from, _ = _first_stored((
+            (state.get('user_preferences.threat_protection_lite_enabled', ''),
+             'Moose.db shared_context user_preferences.threat_protection_lite_enabled', None),
+            (state.get('current_state.threat_protection_lite_enabled', ''),
+             'Moose.db shared_context current_state.threat_protection_lite_enabled', None),
+        ))
+        mesh, mesh_from, mesh_path = _first_stored((
+            (meshnet.get('meshnet_enabled', ''),
+             'last_meshnet_state.xml meshnet_enabled',
+             _pref_path('com.nordvpn.android.last_meshnet_state.xml')),
+            (state.get('user_preferences.meshnet_enabled', ''),
+             'Moose.db shared_context user_preferences.meshnet_enabled', None),
+        ))
+
         relative_paths = [context.get_relative_path(path)
-                          for path in (settings_path, moose_path, main_path) if path]
+                          for path in (settings_path, moose_path, main_path,
+                                       on_vpn_path, mesh_path) if path]
         source_files.extend(relative_paths)
         data_list.append((
             _ms(catalogue[0]),
             _seconds(state.get('current_state.last_cache_date')),
             _seconds(state.get('current_state.token_renew_date')),
             state.get('current_state.is_logged_in', ''),
-            state.get('current_state.is_on_vpn', '') or last_known.get('vpn_connected', ''),
+            on_vpn,
+            on_vpn_from,
             state.get('current_state.server_city', ''),
             state.get('current_state.server_country', ''),
             state.get('current_state.server_domain', ''),
@@ -411,11 +463,12 @@ def nordvpn_settings(context):
             state.get('user_preferences.kill_switch_enabled', ''),
             state.get('user_preferences.connection_preference', ''),
             state.get('user_preferences.consent_level', ''),
-            state.get('user_preferences.threat_protection_lite_enabled', '')
-            or state.get('current_state.threat_protection_lite_enabled', ''),
+            threat,
+            threat_from,
             state.get('user_preferences.dark_web_monitor_enabled', ''),
             state.get('user_preferences.post_quantum_enabled', ''),
-            meshnet.get('meshnet_enabled', '') or state.get('user_preferences.meshnet_enabled', ''),
+            mesh,
+            mesh_from,
             str(switches.get('scam_call_protection', '')),
             str(device_location.get('sim_countryCode', '')),
             str(device_location.get('source', '')),
@@ -436,6 +489,7 @@ def nordvpn_settings(context):
         ('Token Renew', 'datetime'),
         'Logged In (as stored)',
         'On VPN (as stored)',
+        'On VPN Read From',
         'Server City',
         'Server Country',
         'Server Domain',
@@ -463,9 +517,11 @@ def nordvpn_settings(context):
         'Connection Preference (as stored)',
         'Consent Level (as stored)',
         'Threat Protection (as stored)',
+        'Threat Protection Read From',
         'Dark Web Monitor (as stored)',
         'Post Quantum (as stored)',
         'Meshnet (as stored)',
+        'Meshnet Read From',
         'Scam Call Protection (as stored)',
         'SIM Country',
         'Location Source (as stored)',

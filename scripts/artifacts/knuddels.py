@@ -2,10 +2,10 @@
 __artifacts_v2__ = {
     "knuddels_chats": {
         "name": "Knuddels - Chat Messages",
-        "description": "Extracts Knuddels chats (text, images/snaps and GIFs) from database files",
+        "description": "Extracts Knuddels chats (text, images/snaps and GIFs) from database files.",
         "author": "@annkirpv",
         "creation_date": "2025-05-04",
-        "last_update_date": "2026-08-29",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Chats",
         "notes": ("From Me is derived from the database file name: the owner's nickname is taken to "
@@ -14,6 +14,11 @@ __artifacts_v2__ = {
                   "the file name does not follow that convention the owner cannot be established "
                   "and the column is left blank for every row of that database rather than "
                   "reporting the messages as received.\n"
+                  "User Name and Users Table UID come from the users row whose id equals the "
+                  "message's sender value (Thread Table UID). A message whose sender has no row in "
+                  "the users table is still reported, with User Name, Users Table UID and From Me "
+                  "left blank. That case was exercised on a constructed database only; no "
+                  "registered corpus holds this app's database.\n"
                   "In the conversation view only rows with From Me set to 1 are attributed to "
                   "the device owner; a blank value is not attributed to the owner.\n"
                   "Message Type is derived from markers found in the message text. A message that "
@@ -45,7 +50,7 @@ __artifacts_v2__ = {
     },
     "knuddels_contacts": {
         "name": "Knuddels - Known Users",
-        "description": "Extracts known Knuddels users (chat partners) from the users table",
+        "description": "Extracts known Knuddels users from the users table",
         "author": "@annkirpv",
         "creation_date": "2026-06-30",
         "last_update_date": "2026-08-01",
@@ -64,7 +69,7 @@ __artifacts_v2__ = {
         "description": "Extracts the local Knuddels account and app-usage info from shared_prefs XML",
         "author": "@annkirpv",
         "creation_date": "2026-06-30",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-09",
         "requirements": "none",
         "category": "Accounts",
         "notes": ("passwordU (as stored) is the raw value of the shared_prefs key 'passwordU'. "
@@ -74,9 +79,14 @@ __artifacts_v2__ = {
                   "not been verified against a known password.\n"
                   "session_timestamp, sites_visited_weekly_time and origins_visited_date are "
                   "reported under their shared_prefs key names because what event each one records "
-                  "is not established.\n"
-                  "Active Account is Yes only where a User.xml carrying the same nickname was "
-                  "collected alongside the database. Where no such file was collected the cell is "
+                  "is not established. The first two, and the app_first_installed value, are "
+                  "converted as Unix milliseconds, which is an assumption. gender (as stored) is "
+                  "the User.xml gender value with no mapping applied; what its values mean is not "
+                  "established.\n"
+                  "User.xml Collected is Yes where a User.xml naming the nickname was collected, "
+                  "with or without a database for that nickname. It records that the shared_prefs "
+                  "file is present for that nickname and nothing more. Where a database has no "
+                  "User.xml naming its nickname the cell is "
                   "left blank, which does not establish that the account is inactive."),
         "paths": (
             "*/com.knuddels.android/shared_prefs/User.xml",
@@ -226,7 +236,7 @@ def knuddels_chats(context):
         END, -- 1 = expired, 0 = not expired
         conversations.participants
         FROM thread
-        JOIN users ON users.id = thread.sender
+        LEFT JOIN users ON users.id = thread.sender
         LEFT JOIN conversations ON conversations.id = thread.cid
         '''
         db_records = get_sqlite_db_records(file_found, query)
@@ -252,7 +262,9 @@ def knuddels_chats(context):
 
             db_name = file_found.split("databases")[1].split("knuddels")[1]
             conversation_key = "chat_" + str(cid) + "_" + db_name
-            from_me = '' if owner_nick is None else (1 if nickname == owner_nick else 0)
+            # A sender with no users row has no nickname to compare with the owner's, so
+            # From Me is left blank instead of reading as received.
+            from_me = '' if owner_nick is None or nickname is None else (1 if nickname == owner_nick else 0)
 
             data_list.append((
                 timestamp,
@@ -394,7 +406,7 @@ def knuddels_account(context):
             "nickname": user.get("nickname", ""),
             "alias": alias,
             "age": user.get("age", ""),
-            "gender": {"1": "Male", "2": "Female"}.get(str(user.get("gender", "")), user.get("gender", "")),
+            "gender": user.get("gender", ""),
             "uuid": user.get("uuid", ""),
             "autologin": user.get("autologin", ""),
             "isloggedin": user.get("isLoggedIn", ""),
@@ -439,8 +451,8 @@ def knuddels_account(context):
             data_list.append(active_row(nickname, info, last_msg, [db]))
             matched_instances.add(instance)
         else:
-            # No User.xml carrying this nickname was collected, so whether the account is
-            # active cannot be established; the cell is left blank rather than reading 'No'.
+            # No User.xml carrying this nickname was collected; the cell is left blank
+            # rather than reading 'No'.
             data_list.append((
                 nickname, "", "", "", "", "", "", "", "", "",
                 "", "", "", "", last_msg, Context.get_relative_path(db),
@@ -452,10 +464,10 @@ def knuddels_account(context):
 
     data_headers = (
         'Nickname',
-        'Active Account',
+        'User.xml Collected',
         'Alias Nicks',
         'Age',
-        'Gender',
+        'gender (as stored)',
         'UUID',
         'Auto Login',
         'Is Logged In',

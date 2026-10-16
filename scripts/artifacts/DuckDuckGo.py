@@ -3,12 +3,12 @@ __artifacts_v2__ = {
     "duckduckgo_bookmarks": {
         "name": "DuckDuckGo - Bookmarks",
         "description": "Parses DuckDuckGo Bookmarks",
-        "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
+        "author": "Damien Attoe {damien.attoe@spyderforensics.com}, @AlexisBrignoni, Codex",
         "creation_date": "2025-05-21",
         "last_update_date": "2025-06-08",
         "requirements": "none",
         "category": "DuckDuckGo",
-        "notes": "Tested on version 5.237.0 (June, 3rd 2025)",
+        "notes": "Tested by the module author on app version 5.237.0 (3 June 2025). The two images listed in sample_data produced no rows, so the query is not exercised on registered data.",
         "paths": ('*/com.duckduckgo.mobile.android/databases/app.db*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "bookmark",
@@ -20,12 +20,12 @@ __artifacts_v2__ = {
     "duckduckgo_favorites": {
         "name": "DuckDuckGo - Favorited Sites",
         "description": "Parses DuckDuckGo favorite Sites",
-        "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
+        "author": "Damien Attoe {damien.attoe@spyderforensics.com}, @AlexisBrignoni, Codex",
         "creation_date": "2025-05-30",
         "last_update_date": "2025-06-08",
         "requirements": "none",
         "category": "DuckDuckGo",
-        "notes": "Tested on version 5.237.0 (June, 3rd 2025)",
+        "notes": "Tested by the module author on app version 5.237.0 (3 June 2025). The two images listed in sample_data produced no rows, so the query is not exercised on registered data.",
         "paths": ('*/com.duckduckgo.mobile.android/databases/app.db*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "star",
@@ -37,15 +37,33 @@ __artifacts_v2__ = {
     "duckduckgo_history": {
         "name": "DuckDuckGo - Web Browser History",
         "description": "Parses DuckDuckGo Web Browsing History",
-        "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
+        "author": "Damien Attoe {damien.attoe@spyderforensics.com}, @AlexisBrignoni, Codex",
         "creation_date": "2025-05-21",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "DuckDuckGo",
         "notes": (
-            "Tested on version 5.237.0 (June, 3rd 2025). Visit Date is the stored "
-            "visits_list.timestamp string reproduced as recorded, with the ISO 'T' "
-            "separator replaced by a space; the file carries no time zone for it."
+            "Tested by the module author on app version 5.237.0 (3 June 2025). Visit Date "
+            "is the stored visits_list.timestamp string as recorded, reported as text "
+            "and not as a UTC date and time, because the store records no time zone "
+            "for it. "
+            "DuckDuckGo's DatabaseDateFormatter.timestamp formats a LocalDateTime with "
+            "the pattern yyyy-MM-dd'T'HH:mm:ss and takes LocalDateTime.now() when no "
+            "value is passed, so the string is a wall clock reading with no zone "
+            "written beside it ("
+            "https://github.com/duckduckgo/Android/blob/b523dd8fd563ecc7248a14a8dfa9245371343055/common/common-utils/src/main/java/com/duckduckgo/common/utils/formatters/time/DatabaseDateFormatter.kt#L30-L42"
+            "). "
+            "The history writer passes LocalDateTime.now() ("
+            "https://github.com/duckduckgo/Android/blob/b523dd8fd563ecc7248a14a8dfa9245371343055/history/history-impl/src/main/java/com/duckduckgo/history/impl/HistoryRepository.kt#L76-L83"
+            "; "
+            "https://github.com/duckduckgo/Android/blob/b523dd8fd563ecc7248a14a8dfa9245371343055/history/history-impl/src/main/java/com/duckduckgo/history/impl/store/HistoryDao.kt#L43-L61"
+            "). That source was read at one commit of the develop branch, which is "
+            "newer than the app versions on the two images in sample_data. All 12 "
+            "stored values on each of those images have the shape "
+            "YYYY-MM-DDTHH:MM:SS. Which zone the device was set to when a value was "
+            "written is not recorded in this table. "
+            "History Type shows the stored isSerp flag as 'DuckDuckGo Search' for "
+            "1 and 'Web Page Visit' for 0."
         ),
         "paths": ('*/com.duckduckgo.mobile.android/databases/history.db*'),
         "output_types": ["html", "tsv", "lava"],
@@ -58,19 +76,40 @@ __artifacts_v2__ = {
     "duckduckgo_opentabs": {
         "name": "DuckDuckGo - Open Tabs",
         "description": "Parses DuckDuckGo Open Tab Information",
-        "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
+        "author": "Damien Attoe {damien.attoe@spyderforensics.com}, @AlexisBrignoni, Codex",
         "creation_date": "2025-05-21",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "DuckDuckGo",
         "notes": (
-            "Tested on version 5.255.0 (Oct, 31st 2025). Cached Tab Preview Time is decoded "
-            "from the tab preview file name, which is a number read as a Unix time in "
-            "milliseconds; that reading is not documented and the file name is "
-            "its only basis. It is rendered in UTC. Tab Last Accessed is the stored "
-            "tabs.lastAccessTime string reproduced as recorded, with the ISO 'T' separator "
-            "replaced by a space; the file carries no time zone for it, and it is reported as "
-            "'Unavailable' on versions whose tabs table has no lastAccessTime column."
+            "Tested on version 5.255.0 (Oct, 31st 2025). Cached Tab Preview Time (UTC) is "
+            "decoded from the tab preview file name, which is a number read as a Unix time in "
+            "milliseconds; that reading is not documented and the file name is its only "
+            "basis. It is rendered in UTC. Tab Last Accessed is the stored "
+            "tabs.lastAccessTime string as recorded, reported as text and not as a UTC "
+            "date and time, because the store records no time zone for it. "
+            "DuckDuckGo's DatabaseDateFormatter.timestamp formats a LocalDateTime with "
+            "the pattern yyyy-MM-dd'T'HH:mm:ss and takes LocalDateTime.now() when no "
+            "value is passed, so the string is a wall clock reading with no zone "
+            "written beside it ("
+            "https://github.com/duckduckgo/Android/blob/b523dd8fd563ecc7248a14a8dfa9245371343055/common/common-utils/src/main/java/com/duckduckgo/common/utils/formatters/time/DatabaseDateFormatter.kt#L30-L42"
+            "). "
+            "The tab writer passes LocalDateTime.now() through a converter that calls "
+            "that function ("
+            "https://github.com/duckduckgo/Android/blob/b523dd8fd563ecc7248a14a8dfa9245371343055/common/common-utils/src/main/java/com/duckduckgo/common/utils/CurrentTimeProvider.kt#L39"
+            "; "
+            "https://github.com/duckduckgo/Android/blob/b523dd8fd563ecc7248a14a8dfa9245371343055/app/src/main/java/com/duckduckgo/app/tabs/model/TabDataRepository.kt#L331-L333"
+            "; "
+            "https://github.com/duckduckgo/Android/blob/b523dd8fd563ecc7248a14a8dfa9245371343055/browser-api/src/main/java/com/duckduckgo/app/tabs/model/TabEntitiy.kt#L65-L67"
+            "). That source was read at one commit of the develop branch, which is "
+            "newer than the app versions on the two images in sample_data. On "
+            "hc_pixel8pro_a16 both tabs store a Tab Last Accessed value 4 hours "
+            "behind that tab's Cached Tab Preview Time (UTC), to within 2 seconds, so "
+            "on that image the stored value is not a UTC reading. Which zone the "
+            "device was set to when a value was written is not recorded in this "
+            "table. Tab Last Accessed is reported as 'Unavailable' on versions "
+            "whose tabs table has no lastAccessTime column, which is the case on "
+            "pixel7a_a14."
         ),
         "paths": (
             '*/com.duckduckgo.mobile.android/databases/app.db*',
@@ -85,12 +124,12 @@ __artifacts_v2__ = {
     "duckduckgo_fireproof": {
         "name": "DuckDuckGo - FireProof Sites",
         "description": "Parses DuckDuckGo FireProof Sites",
-        "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
+        "author": "Damien Attoe {damien.attoe@spyderforensics.com}, @AlexisBrignoni, Codex",
         "creation_date": "2025-11-13",
         "last_update_date": "2025-11-13",
         "requirements": "none",
         "category": "DuckDuckGo",
-        "notes": "Tested on version 5.255.0 (Oct, 31st 2025)",
+        "notes": "Tested by the module author on app version 5.255.0 (31 October 2025). The two images listed in sample_data produced no rows, so the query is not exercised on registered data.",
         "paths": ('*/com.duckduckgo.mobile.android/databases/app.db*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "globe",
@@ -102,12 +141,12 @@ __artifacts_v2__ = {
     "duckduckgo_downloads": {
         "name": "DuckDuckGo - Downloads",
         "description": "Parses DuckDuckGo Downloads",
-        "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
+        "author": "Damien Attoe {damien.attoe@spyderforensics.com}, @AlexisBrignoni, Codex",
         "creation_date": "2025-11-13",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "DuckDuckGo",
-        "notes": "Tested on version 5.255.0 (Oct, 31st 2025). Reference: DuckDuckGo Android, 'DownloadStatus (STARTED=0, FINISHED=1)', https://github.com/duckduckgo/Android/blob/develop/downloads/downloads-store/src/main/java/com/duckduckgo/downloads/store/DownloadStatus.kt",
+        "notes": "Tested by the module author on app version 5.255.0 (31 October 2025). The two images listed in sample_data produced no rows, so the query is not exercised on registered data. Reference: DuckDuckGo Android, 'DownloadStatus (STARTED=0, FINISHED=1)', https://github.com/duckduckgo/Android/blob/ce9fb1ffde1f76cea97f78bbc97fab05e5e74ea9/downloads/downloads-store/src/main/java/com/duckduckgo/downloads/store/DownloadStatus.kt#L20-L21. Download Date is the stored downloads.createdAt string as recorded, reported as text and not as a UTC date and time, because the store records no time zone for it. The app's DownloadEntity gives createdAt the default DatabaseDateFormatter.timestamp() (https://github.com/duckduckgo/Android/blob/b523dd8fd563ecc7248a14a8dfa9245371343055/downloads/downloads-store/src/main/java/com/duckduckgo/downloads/store/DownloadEntity.kt#L32), which formats LocalDateTime.now() with the pattern yyyy-MM-dd'T'HH:mm:ss, a wall clock reading with no zone written beside it (https://github.com/duckduckgo/Android/blob/b523dd8fd563ecc7248a14a8dfa9245371343055/common/common-utils/src/main/java/com/duckduckgo/common/utils/formatters/time/DatabaseDateFormatter.kt#L30-L42). That source was read at one commit of the develop branch. Neither image in sample_data holds a downloads row, so the stored shape was not observed.",
         "paths": ('*/com.duckduckgo.mobile.android/databases/downloads.db*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "download",
@@ -119,17 +158,18 @@ __artifacts_v2__ = {
     "duckduckgo_thumbnails": {
         "name": "DuckDuckGo - Tab Thumbnails",
         "description": "Parses DuckDuckGo Tab thumbnail Information",
-        "author": "@abrignoni & @stark4n6",
+        "author": "@abrignoni & @stark4n6, @AlexisBrignoni, Codex",
         "creation_date": "2022-05-28",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-05",
         "requirements": "none",
         "category": "DuckDuckGo",
         "notes": (
-            "Timestamp is decoded from the thumbnail file name, which is a number read as a "
-            "Unix time in milliseconds; that reading is not documented and the "
+            "Timestamp (UTC) is decoded from the thumbnail file name, which is a number read "
+            "as a Unix time in milliseconds; that reading is not documented and the "
             "file name is its only basis. It is rendered in UTC. Referenced In Tabs Table "
             "records whether the file name appears in the tabs table of app.db; it describes "
-            "that reference only and does not establish whether a tab is open or closed."
+            "that reference only and does not establish whether a tab is open or closed. "
+            "A nonnumeric or out-of-range file name is retained with a blank timestamp and logged."
         ),
         "paths": (
             '*/com.duckduckgo.mobile.android/cache/tabPreviews/*/*.jpg',
@@ -143,13 +183,13 @@ __artifacts_v2__ = {
     },
     "duckduckgo_duckai": {
         "name": "DuckDuckGo - Duck AI",
-        "description": "Parses Duck AI Coversations",
-        "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
+        "description": "Parses Duck AI conversations stored in the WebView Local Storage LevelDB",
+        "author": "Damien Attoe {damien.attoe@spyderforensics.com}, @AlexisBrignoni, Codex",
         "creation_date": "2025-11-13",
         "last_update_date": "2025-11-13",
         "requirements": "none",
         "category": "DuckDuckGo",
-        "notes": "Tested on version 5.255.0 (Oct, 31st 2025)",
+        "notes": "Tested by the module author on app version 5.255.0 (31 October 2025). The two images listed in sample_data produced no rows, so the reader is not exercised on registered data.",
         "paths": ('*com.duckduckgo.mobile.android/app_webview/Default/Local Storage/leveldb/*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "message",
@@ -161,15 +201,20 @@ __artifacts_v2__ = {
     "duckduckgo_cookies": {
         "name": "DuckDuckGo - Cookies",
         "description": "Parses DuckDuckGo Cookies",
-        "author": "Damien Attoe {damien.attoe@spyderforensics.com}",
+        "author": "Damien Attoe {damien.attoe@spyderforensics.com}, @AlexisBrignoni, Codex",
         "creation_date": "2025-11-14",
-        "last_update_date": "2025-11-14",
+        "last_update_date": "2026-10-05",
         "requirements": "none",
         "category": "DuckDuckGo",
-        "notes": "Tested on version 5.255.0 (Oct, 31st 2025)",
-        "paths": ('*/com.duckduckgo.mobile.android/app_webview/Default/cookies'),
+        "notes": "Tested by the module author on app version 5.255.0 (31 October 2025). Reads main Cookies or cookies files, excluding sidecars; Source File identifies each row.",
+        "paths": ('*/com.duckduckgo.mobile.android/app_webview/Default/cookies',
+                  '*/com.duckduckgo.mobile.android/app_webview/Default/Cookies'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "globe"
+        "artifact_icon": "globe",
+        "sample_data": {
+            "hc_pixel8pro_a16": "Android 16 | com.duckduckgo.mobile.android vc 52831000 | 116 rows",
+            "pixel7a_a14": "Android 14 | com.duckduckgo.mobile.android vc 52072000 | 73 rows",
+        }
     },
 }
 
@@ -178,7 +223,7 @@ import datetime
 import pathlib
 from pathlib import Path
 from scripts.ilapfuncs import (
-    artifact_processor, check_in_media, does_column_exist_in_db, get_sqlite_db_records, get_file_path)
+    artifact_processor, check_in_media, does_column_exist_in_db, get_sqlite_db_records, get_file_path, logfunc)
 from scripts.ccl import ccl_leveldb
 
 
@@ -309,7 +354,7 @@ def duckduckgo_history(context):
             visits_list.rowid,
             history_entries.url,
             history_entries.title,
-            REPLACE(visits_list.timestamp, 'T', ' ') AS 'Visit Date',
+            visits_list.timestamp AS 'Visit Date',
             CASE history_entries.isSerp
                 WHEN 1 THEN 'DuckDuckGo Search'
                 WHEN 0 THEN 'Web Page Visit'
@@ -319,7 +364,7 @@ def duckduckgo_history(context):
         LEFT JOIN history_entries ON visits_list.historyEntryId = history_entries.id;
         '''
 
-    data_headers = ('Visit ID', 'URL', 'Title', ('Visit Date', 'datetime'), 'History Type', 'Search Query')
+    data_headers = ('Visit ID', 'URL', 'Title', 'Visit Date', 'History Type', 'Search Query')
     data_list = list(get_sqlite_db_records(source_path, query))
 
     return data_headers, data_list, context.get_relative_path(source_path)
@@ -349,7 +394,7 @@ def duckduckgo_opentabs(context):
                 tabs.tabPreviewFile,
                 DATETIME(RTRIM(tabs.tabPreviewFile, '.jpg') / 1000, 'unixepoch')
                  AS 'Cached Tab Preview Time (UTC)',
-                REPLACE(tabs.lastAccessTime, 'T', ' ') AS 'Tab Last Accessed'
+                tabs.lastAccessTime AS 'Tab Last Accessed'
             FROM tabs
             LEFT JOIN tab_selection ON tabs.tabid = tab_selection.tabid;
         '''
@@ -400,7 +445,7 @@ def duckduckgo_opentabs(context):
         'Current Tab',
         'Title',
         'URL',
-        ('Tab Last Accessed', 'datetime'),
+        'Tab Last Accessed',
         'Cached Tab Filename',
         ('Cached Tab Preview Time (UTC)', 'datetime'),
         ('Cached Tab Preview', 'media')
@@ -466,7 +511,7 @@ def duckduckgo_downloads(context):
             downloads.fileName AS "File Name",
             downloads.contentLength,
             downloads.filePath AS "Download Path",
-            DATETIME(downloads.createdat) AS "Download Date"
+            downloads.createdAt AS "Download Date"
         FROM downloads;
         '''
 
@@ -482,7 +527,7 @@ def duckduckgo_downloads(context):
         data_list.append((download_id, download_status, file_name, size_bytes, download_path, download_date))
 
     data_headers = ('Download ID', 'Download Status', 'File Name', 'Size (Bytes)', 'Download Path',
-                    ('Download Date', 'datetime'))
+                    'Download Date')
 
     return data_headers, data_list, context.get_relative_path(source_path)
 
@@ -494,10 +539,7 @@ def duckduckgo_thumbnails(context):
 
     source_paths = set()
 
-    for source_path in files_found:
-        source_path = str(source_path)
-        if source_path.endswith('.db'):
-            break
+    source_path = next((str(p) for p in files_found if Path(p).name == 'app.db'), '')
     open_preview_files = set()
     if source_path:
         source_paths.add(source_path)
@@ -517,20 +559,25 @@ def duckduckgo_thumbnails(context):
             continue
         source_paths.add(str(file_found))
         filename = (media_path.name)
-        utctime = int(media_path.stem)
-
-        timestamp = (datetime.datetime.fromtimestamp(utctime/1000, datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S'))
+        timestamp = None
+        try:
+            utctime = int(media_path.stem)
+            timestamp = datetime.datetime.fromtimestamp(
+                utctime/1000, datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
+        except (ValueError, OverflowError, OSError):
+            logfunc(f'DuckDuckGo thumbnail: timestamp unavailable for '
+                    f'{context.get_relative_path(str(file_found))}')
         media_item = check_in_media(file_found, filename)
 
         if media_item:
             referenced_in_tabs = 'Yes' if filename in open_preview_files else 'No'
 
             data_list.append(
-                (referenced_in_tabs, timestamp, media_item, filename,
+                (timestamp, referenced_in_tabs, media_item, filename,
                  context.get_relative_path(str(file_found))))
 
     data_headers = (
-        'Referenced In Tabs Table', ('Timestamp (UTC)', 'datetime'), ('Thumbnail', 'media'),
+        ('Timestamp (UTC)', 'datetime'), 'Referenced In Tabs Table', ('Thumbnail', 'media'),
         'File Name', 'Location')
 
     return data_headers, data_list, '\n'.join(sorted(source_paths))
@@ -671,10 +718,7 @@ def duckduckgo_duckai(context):
 def duckduckgo_cookies(context):
     files_found = context.get_files_found()
     data_list = []
-    for source_path in files_found:
-        source_path = str(source_path)
-        if source_path.endswith('.sqlite'):
-            break
+    source_paths = []
 
     query = '''
         SELECT
@@ -697,19 +741,16 @@ def duckduckgo_cookies(context):
         FROM cookies
         '''
 
-    db_records = get_sqlite_db_records(source_path, query)
-    for row in db_records:
-        lastaccessed = row[0]
-        host = row[1]
-        name = row[2]
-        value = row[3]
-        creationtime = row[4]
-        expiry = row[5]
-        path = row[6]
+    for file_found in dict.fromkeys(str(p) for p in files_found):
+        if Path(file_found).name not in ('Cookies', 'cookies'):
+            continue
+        source_paths.append(file_found)
+        db_records = get_sqlite_db_records(file_found, query)
+        for row in db_records:
+            data_list.append((row[0], row[4], row[5], row[1], row[2], row[3], row[6],
+                              context.get_relative_path(file_found)))
 
-        data_list.append((lastaccessed, host, name, value, creationtime, expiry, path))
+    data_headers = (('Last Accessed', 'datetime'), ('Creation Time', 'datetime'),
+                    ('Expiry', 'datetime'), 'Host', 'Name', 'Value', 'Path', 'Source File')
 
-    data_headers = (('Last Accessed', 'datetime'), 'Host', 'Name', 'Value', ('Creation Time', 'datetime'),
-                    ('Expiry', 'datetime'), 'Path')
-
-    return data_headers, data_list, context.get_relative_path(source_path)
+    return data_headers, data_list, '\n'.join(context.get_relative_path(p) for p in source_paths)

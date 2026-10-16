@@ -12,7 +12,7 @@ from scripts.html_safe import safe_source
 __artifacts_v2__ = {
     "deepseek_chat_messages": {
         "name": "Deepseek Chat Messages",
-        "description": "Deepseek chat message history extracted from chat session tables",
+        "description": "Deepseek chat messages from the chat_session_messages tables: role, inserted_at (read as Unix seconds) and the text of the REQUEST and RESPONSE fragments; other fragment types are not reported",
         "author": "RicardoBentoSantos",
         "creation_date": "2026-05-24",
         "last_update_date": "2026-05-24",

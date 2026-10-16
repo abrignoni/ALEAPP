@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_googleMessages": {
         "name": "GoogleMessages",
-        "description": "Google Messages",
+        "description": "Message parts from the Google Messages bugle_db: one row per part (text or attachment) with its message's sender and conversation.",
         "author": "Josh Hickman (josh@thebinaryhick.blog)",
         "creation_date": "2021-01-30",
         "last_update_date": "2026-08-10",
@@ -15,7 +15,9 @@ __artifacts_v2__ = {
                   "Incoming.\n"
                   "Reference: AOSP Messaging, 'ParticipantData (OTHER_THAN_SELF_SUB_ID = -2, "
                   "isSelf())', https://android.googlesource.com/platform/packages/apps/Messaging/"
-                  "+/refs/heads/main/src/com/android/messaging/datamodel/data/ParticipantData.java"),
+                  "+/de315b762312dd1a5d2bbd16e62ef2bd123f61e5/src/com/android/messaging/datamodel/data/ParticipantData.java#54 "
+                  "(the rule is taken from the AOSP Messaging source; the Google Messages build is "
+                  "not open source)"),
         "paths": ('*/com.google.android.apps.messaging/databases/bugle_db*',),
         "output_types": "standard",
         "artifact_icon": "message",

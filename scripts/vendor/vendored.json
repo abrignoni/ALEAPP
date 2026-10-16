@@ -3,12 +3,12 @@
     {
       "path": "scripts/vendor/qnxprobe.py",
       "name": "qnxprobe",
-      "version": "1.58",
+      "version": "1.67",
       "upstream": "https://github.com/abrignoni/qnxprobe",
       "upstream_file": "qnxprobe.py",
-      "commit": "5ba94d70e5428c25656f019b5abb700e086afe31",
-      "commit_date": "2026-10-02T13:33:40-04:00",
-      "sha256": "8b909ca4383adf4ce305b25dd7b45c6900353ccb91df0fcd5b5b4d460828fa51",
+      "commit": "00bcb2f45ca94d3cd29ffc4a438410ec43449701",
+      "commit_date": "2026-10-14T15:51:22-04:00",
+      "sha256": "38afcd97caa0e85b4eba5d1c32786f3161b97a08582fd69d5852039fc3298ef6",
       "licence": "MIT",
       "licence_file": "scripts/vendor/LICENSE-qnxprobe",
       "note": "Copied verbatim. Fix upstream and re-vendor; edits here are reverted by the next sync."
@@ -37,6 +37,19 @@
       "sha256": "19d14119d516a13569045bf9faf247903a8525d7f3efd4948db2583ecc33d3bd",
       "licence": "MIT",
       "licence_file": "scripts/vendor/LICENSE-exoprobe",
+      "note": "Copied verbatim. Fix upstream and re-vendor; edits here are reverted by the next sync."
+    },
+    {
+      "path": "scripts/vendor/chromiumcacheprobe.py",
+      "name": "chromiumcacheprobe",
+      "version": "0.1.0",
+      "upstream": "https://github.com/abrignoni/chromiumcacheprobe",
+      "upstream_file": "chromiumcacheprobe.py",
+      "commit": "5d33f78f545bf59489ed0ed5ecb02134b10f72c3",
+      "commit_date": "2026-10-15T08:39:54-04:00",
+      "sha256": "9f21f3b6e42f410447609b89c6fba008dfae9a52e3f5a63153f5adc3df056ec0",
+      "licence": "MIT",
+      "licence_file": "scripts/vendor/LICENSE-chromiumcacheprobe",
       "note": "Copied verbatim. Fix upstream and re-vendor; edits here are reverted by the next sync."
     },
     {

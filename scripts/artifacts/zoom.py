@@ -1,29 +1,24 @@
 __artifacts_v2__ = {
     "zoom_meeting_folders": {
         "name": "Zoom - Meeting Folders",
-        "description": "Parses the per meeting folders the Zoom Android app created, whose "
-                       "names carry the date, the time and the meeting title.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "description": "Parses the folders under the Zoom app's data/Zoom directory, whose "
+                       "names begin with a date and a time followed by a title.",
+        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-04",
         "requirements": "none",
         "category": "Zoom",
-        "notes": "One row per meeting folder. The evidence here is the folder name, not its "
-                 "contents: on the tested device all 21 folders were empty, and the app's own "
-                 "databases are encrypted, so the names are the only record of these "
-                 "meetings the extraction carries. A name is the date, the time and the "
-                 "meeting title, and the date and time are reported separately from the "
-                 "title. Meeting Date is reported as a date and Meeting Time as stored, "
-                 "because the name records no time zone and nothing in the extraction "
-                 "establishes which one the app used, so the values are not converted and "
-                 "are not offered as a UTC datetime. Files In Folder counts the entries the "
-                 "extraction holds inside the folder, which was zero on the tested device; a "
-                 "folder can be present without a recording. A folder records that the app "
-                 "created it for a meeting, which is not by itself proof that a recording "
-                 "was made or that the account holder attended. Names that do not begin with "
-                 "a date and a time are reported with the whole name in the title column "
-                 "rather than being dropped. Field mapping was done against three private "
-                 "samples provided by Mattia; no sample data is recorded for them.",
+        "notes": "One row per distinct folder name under data/Zoom in an app container. "
+                 "A leading date-shaped segment, time-shaped segment and remaining suffix are "
+                 "reported as text under Folder Date Text, Folder Time Text and Folder Suffix. "
+                 "Their event meaning and time zone are not established by the folder name. "
+                 "Names that do not match the pattern are preserved in Folder Suffix. Files In "
+                 "Folder counts matched entries below the folder. The private sample described "
+                 "by the original contributor held 21 empty folders; no registered sample is "
+                 "recorded for that observation. A folder is not by itself proof that a meeting "
+                 "took place, that a recording was made or that the account holder attended. "
+                 "Field mapping was done against three private samples provided by Mattia; "
+                 "no sample data is recorded for them.",
         "paths": (
             '*/us.zoom.videomeetings/data/Zoom/*',
         ),
@@ -32,29 +27,47 @@ __artifacts_v2__ = {
     },
     "zoom_account": {
         "name": "Zoom - Account and Encrypted Stores",
-        "description": "Parses the Zoom account identifier the Android app records in its "
-                       "own file and folder names, and counts the encrypted stores it holds.",
-        "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
+        "description": "Reports matching xmpp.zoom.us substrings from selected Zoom paths and the existing "
+                       "store-marker counts per app data directory.",
+        "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-08-19",
+        "last_update_date": "2026-10-07",
         "requirements": "none",
         "category": "Zoom",
-        "notes": "One row per app data directory. The account identifier is read from the "
-                 "names the app gives its own per account folder and preference files, "
-                 "because the stores themselves are encrypted; where no such name is present "
-                 "the column is empty and the counts still report what the directory holds. "
-                 "Encrypted Databases counts files whose name marks them as encrypted and "
-                 "which do not begin with the SQLite magic, and Encrypted Preference Files "
-                 "counts the preference files the app names with its encrypted prefix. "
-                 "Neither was recoverable from the tested extractions. The preference files "
-                 "carry the layout of AndroidX EncryptedSharedPreferences, in which entry names "
-                 "and values are both encrypted under a keyset wrapped by an Android Keystore "
-                 "key that a file system extraction does not contain; no source for that layout "
-                 "is cited here, and the module reads none of the key material. The counts are "
-                 "reported so an "
-                 "examiner can see how much is present and unreadable rather than being left "
-                 "to infer it from an empty report. Field mapping was done against three "
-                 "private samples provided by Mattia; no sample data is recorded for them.",
+        "notes": "One row per app data directory that holds an account name or at least one counted store."
+                 " The First xmpp.zoom.us Path Match column preserves the existing first matching "
+                 "substring from the selected paths. That substring alone does not establish an account "
+                 "identity. The xmpp.zoom.us Path Matches (JSON) column retains the existing pattern's "
+                 "non-overlapping finditer matches from every retained path, each paired with that "
+                 "normalized evidence-relative path, in retained path encounter order and then "
+                 "left-to-right match order. It is read from names because the stores themselves are "
+                 "encrypted; where no such name is present the column is empty and the counts still report"
+                 " what the directory holds. Encrypted Databases counts files whose name marks them as "
+                 "encrypted and which do not begin with the SQLite magic, and Encrypted Preference Files "
+                 "counts the preference files the app names with its encrypted prefix. Neither was "
+                 "recoverable from the tested extractions. The preference files are named with an enc_ "
+                 "prefix and were not readable on the tested extractions. Whether they follow AndroidX "
+                 "EncryptedSharedPreferences, which the AndroidX reference describes as an implementation "
+                 "of SharedPreferences that encrypts keys and values "
+                 "(https://developer.android.com/reference/androidx/security/crypto/EncryptedSharedPreferences),"
+                 " was not established here, and the module reads none of the key material. The counts are"
+                 " reported so an examiner can see how much is present and unreadable rather than being "
+                 "left to infer it from an empty report. Field mapping was done against three private "
+                 "samples provided by Mattia; no sample data is recorded for them. The appended field is "
+                 "compact JSON text containing an ordered list of objects with match and path string "
+                 "members; repetitions within and across retained paths remain. An emitted "
+                 "counted-store-only row with no matching name holds [] in this field. Existing canonical "
+                 "alias selection can remove paths before matching; this field does not recover excluded "
+                 "aliases or original path bytes. All four prior native values, row grain, marker/magic "
+                 "counts, first-five sorted display and first-fifty encounter-order source cap are "
+                 "unchanged. Account-only rows can still have empty Source Files and artifact source; "
+                 "candidate paths in the JSON field provide their own scoped path association, without "
+                 "changing that source policy. enc_ XML names and nonempty non-SQLite prefixes are the "
+                 "existing count tests and do not independently prove encryption, unreadability or "
+                 "completeness. Private-sample, AndroidX, library and name-derived identity assertions "
+                 "above remain historical and unverified by this correction. Original contribution "
+                 "credited to @AlexisBrignoni, @mattiaepi (Mattia Epifani) and Claude. No key material is "
+                 "read or decrypted.",
         "paths": (
             '*/us.zoom.videomeetings/data/*',
             '*/us.zoom.videomeetings/shared_prefs/*.xml',
@@ -65,14 +78,14 @@ __artifacts_v2__ = {
 }
 
 import os
+import json
 import re
 
 from scripts.artifacts.storagePathViews import canonical_path, unique_files
 from scripts.ilapfuncs import artifact_processor
 
 _PACKAGE = 'us.zoom.videomeetings'
-# A folder name begins with the date and the time the app recorded for the meeting, then
-# the title. The separators the app uses between the time parts are read from the name
+# Split a date-shaped prefix, time-shaped prefix and suffix without asserting their event meaning. The separators the app uses between the time parts are read from the name
 # rather than assumed, because they are not the ones used in the date.
 _FOLDER_NAME = re.compile(r'^(\d{4}-\d{2}-\d{2})[ T](\d{2}[.:]\d{2}[.:]\d{2})\s*(.*)$')
 _ACCOUNT = re.compile(r'([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]*xmpp\.zoom\.us)')
@@ -153,9 +166,9 @@ def zoom_meeting_folders(context):
     data_list.sort(key=lambda row: (str(row[0]), str(row[1]), str(row[4])), reverse=True)
 
     data_headers = (
-        ('Meeting Date', 'date'),
-        'Meeting Time (as stored)',
-        'Meeting Title',
+        'Folder Date Text (as stored)',
+        'Folder Time Text (as stored)',
+        'Folder Suffix (as stored)',
         'Files In Folder',
         'Folder Name',
         'Source Path',
@@ -170,6 +183,7 @@ def zoom_account(context):
 
     for entries in _by_container(context).values():
         account = ''
+        path_matches = []
         encrypted_databases = 0
         encrypted_preferences = 0
         seen_databases = set()
@@ -177,6 +191,8 @@ def zoom_account(context):
 
         for relative, path in entries:
             name = os.path.basename(relative)
+            for candidate_match in _ACCOUNT.finditer(relative):
+                path_matches.append({'match': candidate_match.group(1), 'path': relative})
             if not account:
                 match = _ACCOUNT.search(relative)
                 if match:
@@ -206,12 +222,14 @@ def zoom_account(context):
             encrypted_databases,
             encrypted_preferences,
             '; '.join(sorted(relative_paths)[:5]),
+            json.dumps(path_matches, ensure_ascii=True, separators=(',', ':')),
         ))
 
     data_headers = (
-        'Account Identifier',
+        'First xmpp.zoom.us Path Match',
         'Encrypted Databases',
         'Encrypted Preference Files',
         'Source Files',
+        'xmpp.zoom.us Path Matches (JSON)',
     )
     return data_headers, data_list, '; '.join(sorted(set(source_files)))
