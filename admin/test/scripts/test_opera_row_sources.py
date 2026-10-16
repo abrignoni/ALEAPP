@@ -76,5 +76,5 @@ class TestOperaRowSources(unittest.TestCase):
         # folder from exactly that spelling. Normalized copies would keep it.
         base='C:\\case\\data\\Dump\\data\\data\\com.opera.browser\\app_opera\\'
         other='C:\\case\\data\\Dump\\data\\user\\10\\com.opera.browser\\app_opera\\'
-        stores=opera._stores_by_container([base+'History',other+'session_db',base+'session_db',base+'session_db-journal'])
+        stores=opera._stores_by_container([base+'History',other+'session_db',base+'session_db',base+'session_db-journal'])  # pylint: disable=protected-access
         self.assertEqual(stores,[(base+'session_db',base+'History'),(other+'session_db',None)])
