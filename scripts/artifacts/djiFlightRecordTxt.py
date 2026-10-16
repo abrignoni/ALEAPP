@@ -5,7 +5,7 @@ __artifacts_v2__ = {
                        'give one row per record of a defined type; version 13 and later give no '
                        'record rows (see the Summary artifact).',
         'author': 'Neal (@Blackwater1224), @AlexisBrignoni, Claude',
-        'version': '0.3',
+        'version': '0.4',
         'creation_date': '2026-10-01',
         'last_update_date': '2026-10-16',
         'requirements': 'none',
@@ -36,11 +36,14 @@ __artifacts_v2__ = {
                  'RC GPS Date and Time is shown as stored; the record holds no zone. In DF020 it ran '
                  '1 to 3 seconds behind the row\'s Timestamp (the preceding Custom record) on all '
                  '320 RC GPS rows. '
-                 'The Firmware record is decoded as one 6-byte entry, as both references define it, '
-                 'and Firmware Version is the first three of its four version bytes. In DF020 '
-                 'the payload held 3 to 20 such entries; only the first is shown in Component, '
-                 'Firmware Sub Sender and Firmware Version, and on all 18 rows that first entry '
-                 'was Camera (1) with Sub Sender 0. The remaining entries stay in Decoded Payload Hex. '
+                 'Both references define the Firmware record as one 6-byte entry: sender, sub '
+                 'sender and four version bytes, of which they show the first three. In all 18 '
+                 'DF020 Firmware records the payload was a whole number of such entries (3, 10 or '
+                 '20), so Firmware Entries lists every entry as sender (number) / sub sender: '
+                 'version, in stored order, with the version read as the references read it. '
+                 'Senders outside the references\' list show as Unknown with the number; DF020 '
+                 'held 12 distinct such numbers. Bytes past the last whole entry are noted in '
+                 'Decode Status; none occurred in DF020. '
                  'OSD Battery has no documented unit; Battery Percent is the Smart Battery percent. '
                  'Payloads are kept as hex on every record row; Embedded JPEG rows carry none. '
                  'In DF020: RC Return Button, RC Shutter Button and RC Record Button are identical, '
@@ -453,8 +456,14 @@ def parse_txt(data):
             elif kind == 15:
                 if len(payload) < 6:
                     raise ValueError('Short Firmware payload')
-                row.update(component=_enum(_SENDERS, payload[0]), component_sub=payload[1],
-                           firmware='.'.join(str(byte) for byte in payload[2:5]))
+                # The references read one 6-byte entry; DF020 payloads hold several.
+                whole = len(payload) - len(payload) % 6
+                row['firmware'] = '; '.join(
+                    f'{_enum(_SENDERS, payload[k])} / {payload[k + 1]}: '
+                    + '.'.join(str(byte) for byte in payload[k + 2:k + 5])
+                    for k in range(0, whole, 6))
+                if whole < len(payload):
+                    row['status'] = f'Decoded; {len(payload) - whole} trailing bytes are not a whole entry'
             elif kind in (9, 10, 24):
                 row['message'] = payload.decode('utf-8', errors='replace').rstrip('\0')
             else:
@@ -498,7 +507,7 @@ def djiFlightRecordTxtRecords(context):
               'home_latitude', 'home_longitude', 'home_altitude', 'home_recorded', 'return_height',
               'app_latitude', 'app_longitude',
               'rc_gps_time', 'rc_latitude', 'rc_longitude', 'rc_satellites', 'rc_accuracy', 'rc_valid',
-              'component', 'component_sub', 'serial', 'firmware',
+              'component', 'serial', 'firmware',
               'rc_aileron', 'rc_elevator', 'rc_throttle', 'rc_rudder', 'rc_gimbal',
               'rc_return', 'rc_shutter', 'rc_record', 'battery_percent', 'battery_voltage', 'battery_time',
               'camera_photo', 'camera_recording', 'camera_sd', 'camera_mode', 'camera_record_time',
@@ -513,7 +522,7 @@ def djiFlightRecordTxtRecords(context):
                'App GPS Latitude', 'App GPS Longitude',
                'RC GPS Date and Time (as stored)', 'RC GPS Latitude', 'RC GPS Longitude',
                'RC GPS Satellites', 'RC GPS Accuracy (m)', 'RC GPS Valid Data (as stored)',
-               'Component', 'Firmware Sub Sender (as stored)', 'Serial Number', 'Firmware Version',
+               'Component', 'Serial Number', 'Firmware Entries',
                'RC Aileron (raw)', 'RC Elevator (raw)', 'RC Throttle (raw)', 'RC Rudder (raw)', 'RC Gimbal (raw)',
                'RC Return Button', 'RC Shutter Button', 'RC Record Button',
                'Battery Percent', 'Battery Voltage (stored / 1000)', 'Battery Useful Time (as stored)',
