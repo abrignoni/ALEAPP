@@ -5,13 +5,14 @@ __artifacts_v2__ = {
                        "History (odlh-storage.db, semantic_segment_table). For segments "
                        "whose semantic_segment protobuf embeds a coordinate pair the "
                        "latitude and longitude are decoded; for activity segments the start "
-                       "and end coordinates, distance, activity type and probabilities are "
-                       "decoded, and for path segments the number of path points is given "
+                       "and end coordinates, the activity type and three undocumented values "
+                       "read as a distance and two probabilities (see notes) are decoded, "
+                       "and for path segments the number of path points is given "
                        "(the points are in ODLH Path Points). The segment type is stored "
                        "as a raw integer and is reported as-is.",
         "author": "@abrignoni, Heather Charpentier, Claude",
         "creation_date": "2026-07-30",
-        "last_update_date": "2026-10-14",
+        "last_update_date": "2026-10-16",
         "requirements": "none",
         "category": "GEO Location",
         "notes": "Coordinates are read as E7 fixed-point integers inside the protobuf. "
@@ -20,33 +21,32 @@ __artifacts_v2__ = {
                  "represents is not established here; it is reported as decoded. "
                  "Activity columns are read only where the protobuf has path 3.2: start "
                  "coordinates from 3.2.1 and end coordinates from 3.2.2 (E7, fields 1 "
-                 "and 2, wrapped as above), distance from 3.2.3, activity probability "
-                 "from 3.2.4, activity type from 3.2.6.1 and its probability from "
-                 "3.2.6.2. Start and end are not documented; on hc_pixel8pro_a16 they "
-                 "were checked against the device's other location records. For the 19 "
-                 "of 28 activities that had a raw location (app_semanticlocation_rawsignal_db) "
-                 "within 1,200 seconds of both segment times, the 3.2.1 pair was within "
-                 "336 m of the raw location nearest the segment start in all 19 (the same "
-                 "coordinates in 17), and the 3.2.2 pair was within 150 m of the raw "
-                 "location nearest the segment end in 18; the other's nearest raw location "
-                 "was 854 seconds away. The other 9 activities predate the raw locations. "
-                 "Against visits, the 3.2.1 pair was within 600 m of the preceding visit in "
-                 "26 of 28 and the 3.2.2 pair within 600 m of the following visit in 27 of "
-                 "28. Distance and the probabilities are fixed32 values read as "
-                 "32-bit floats. Activity and path fields are read from the protobuf wire "
-                 "format rather than with the type-guessing protobuf decoder, which on "
-                 "hc_pixel8pro_a16 read the packed fields of 21 of the 536 path segments "
-                 "as nested messages. The activity type is Google's number, reported as stored; its "
-                 "meaning is not established here. The distance unit is not documented: "
-                 "on hc_pixel8pro_a16 all 28 activity distances were at or above the "
-                 "straight-line distance in meters between the start and end "
-                 "coordinates (1.0x to 1.84x), which is consistent with meters along the "
-                 "route, so the column is labelled as stored. Path Point Count is the "
-                 "number of coordinate pairs stored at 3.3.4 and 3.3.5; the points are "
-                 "reported in ODLH Path Points. On hc_pixel8pro_a16 segment types 1, 2 "
-                 "and 3 were the only ones holding paths 3.1, 3.2 and 3.3 respectively "
-                 "(41, 28 and 536 rows), and the decoded values matched an independent "
-                 "reader (MLEAPP) of the same file. "
+                 "and 2), distance from 3.2.3, activity probability from 3.2.4, activity "
+                 "type from 3.2.6.1 and its probability from 3.2.6.2. Distance and the "
+                 "probabilities are fixed32 values read as 32-bit floats. No "
+                 "documentation for these fields was found, so \"distance\" and "
+                 "\"probability\" are working labels taken from the value ranges, not "
+                 "from a source. The activity type is Google's number, reported "
+                 "as stored; its meaning is not established here. On the six tested "
+                 "images holding ODLH data (anne_a15, hc_pixel8pro_a16, kevin_pocox7_a15, "
+                 "pixel7a_a14, russell_pixel6a_a13, userb2_a13; 1,035 activities), the "
+                 "start pair was within 600 m of the preceding visit for 941 of the 1,033 "
+                 "activities that had one, and the end pair within 600 m of the following "
+                 "visit for 933 of 1,035. With the mean Earth radius (6,371,008.8 m) no "
+                 "distance was below the straight-line distance in meters between the "
+                 "start and end pairs, and 148 of 1,035 were within 0.1 percent of it, so "
+                 "the comparison depends on the radius used; the 3 activities whose pairs "
+                 "were identical stored 0. This is consistent with meters, but the unit "
+                 "is not established, so the column is labelled as stored. Both "
+                 "probability values ranged from 0.0 to 0.9998 on those images. Path Point Count is the number of coordinate pairs stored at "
+                 "3.3.4 and 3.3.5; the points are reported in ODLH Path Points. Activity "
+                 "and path fields are read from the protobuf wire format, because the "
+                 "type-guessing decoder used for visits read the packed path fields of "
+                 "403 of the 4,757 path segments on those images as nested messages. On "
+                 "the same images segment types 1, 2 and 3 were the only ones holding "
+                 "paths 3.1, 3.2 and 3.3 respectively, Shown In Timeline and Is "
+                 "Finalized held no value (NULL) on every row, and Obfuscated GAIA ID "
+                 "held one value per image. "
                  "Reference: Cellebrite, 'Location Booklet 2025'; no URL or page is "
                  "recorded here for it.",
         "paths": ('*/com.google.android.gms/databases/odlh-storage.db*',),
@@ -95,30 +95,41 @@ __artifacts_v2__ = {
         "description": "Coordinate points of the path segments stored by Google's On Device "
                        "Location History (odlh-storage.db, semantic_segment_table), one row "
                        "per point, with a time derived from the segment start and the "
-                       "point's stored minute offset.",
+                       "point's stored offset, read as minutes (see notes).",
         "author": "Heather Charpentier, Claude",
         "creation_date": "2026-10-14",
-        "last_update_date": "2026-10-14",
+        "last_update_date": "2026-10-16",
         "requirements": "none",
         "category": "GEO Location",
         "notes": "Read from segments whose semantic_segment protobuf has path 3.3. Field "
                  "3.3.4 holds packed little-endian 32-bit latitudes and 3.3.5 the matching "
-                 "longitudes, both E7 fixed-point; field 3.3.6 holds packed varint minute "
-                 "offsets. Point Time is not stored: it is the segment's "
-                 "start_timestamp_seconds plus the minute offset times 60, so it has "
-                 "whole-minute resolution from the segment start. Where a point has no "
-                 "offset, Point Time is empty. The points are what the segment stores; "
-                 "whether they are every fix Google recorded or a reduced route is not "
-                 "established here. On hc_pixel8pro_a16, 536 path segments held 8,056 "
-                 "points; every segment's protobuf start second equalled its "
-                 "start_timestamp_seconds column, no offset placed a point after the "
-                 "segment end, and the points matched an independent reader (MLEAPP) of "
-                 "the same file.",
+                 "longitudes, both E7 fixed-point; field 3.3.6 holds packed varint "
+                 "offsets, reported in Minute Offset (as stored). Point Time is not "
+                 "stored: it is the segment's start_timestamp_seconds plus the offset "
+                 "times 60, so it has whole-minute resolution from the segment start. "
+                 "Where a point has no offset, Point Time is empty (not seen on the "
+                 "tested images). No documentation of the offset unit was found. On the six tested images holding ODLH data (4,757 path "
+                 "segments, 42,285 points) every segment stored one offset per point, the "
+                 "offsets never decreased within a segment, none placed a point after the "
+                 "segment end, and the median last offset fell between 0.62 and 0.96 of "
+                 "the segment duration per image, which fits minutes and not seconds. "
+                 "The protobuf's own start second (field 1.1) equalled "
+                 "start_timestamp_seconds on every path segment. Obfuscated GAIA ID held one value per image. The points "
+                 "are what the segment stores; whether they are every fix Google "
+                 "recorded or a reduced route is not established here.",
         "paths": ('*/com.google.android.gms/databases/odlh-storage.db*',),
         "output_types": "all",
         "artifact_icon": "route",
         "sample_data": {
+            "anne_a15": "Android 15 | com.google.android.gms | 3919 rows",
             "hc_pixel8pro_a16": "Android 16 | com.google.android.gms vc 253830035 | 8056 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.gms | 15036 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.gms vc 242632038 | 14207 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.gms vc 232316044 | 904 rows",
+            "samsunga53_a14": "Android 14 | com.google.android.gms | 0 rows",
+            "samsungs20_a13": "Android 13 | com.google.android.gms | 0 rows",
+            "sharon_a14": "Android 14 | com.google.android.gms vc 242835039 | 0 rows",
+            "userb2_a13": "Android 13 | com.google.android.gms | 163 rows",
         },
     },
 }
@@ -418,26 +429,26 @@ def gmsOdlhPathPoints(context):
                     if start is not None and offset is not None else ''
                 data_list.append((
                     point_time,
+                    convert_unix_ts_to_utc(row[0]),
+                    convert_unix_ts_to_utc(row[1]),
                     latitude,
                     longitude,
                     offset if offset is not None else '',
                     number,
                     len(points),
-                    convert_unix_ts_to_utc(row[0]),
-                    convert_unix_ts_to_utc(row[1]),
                     row[3],
                     row[4],
                 ))
 
     data_headers = (
         ('Point Time', 'datetime'),
+        ('Segment Start Time', 'datetime'),
+        ('Segment End Time', 'datetime'),
         'Latitude',
         'Longitude',
         'Minute Offset (as stored)',
         'Point Number',
         'Points In Segment',
-        ('Segment Start Time', 'datetime'),
-        ('Segment End Time', 'datetime'),
         'Segment ID',
         'Obfuscated GAIA ID',
     )

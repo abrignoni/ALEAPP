@@ -145,16 +145,16 @@ class OdlhActivitiesPathsTest(unittest.TestCase):
         _, rows, _ = module.gmsOdlhPathPoints.__wrapped__(self.context)
         tricky = [row for row in rows if row[8] == 'tricky']
         self.assertEqual(len(tricky), 1)
-        self.assertAlmostEqual(tricky[0][1], struct.unpack('<i', bytes([0x0A, 0x02, 0x08, 0x01]))[0] / 1e7)
-        self.assertAlmostEqual(tricky[0][2], -73.75)
-        self.assertEqual(tricky[0][3], 1)
+        self.assertAlmostEqual(tricky[0][3], struct.unpack('<i', bytes([0x0A, 0x02, 0x08, 0x01]))[0] / 1e7)
+        self.assertAlmostEqual(tricky[0][4], -73.75)
+        self.assertEqual(tricky[0][5], 1)
 
     def test_point_without_offset_has_no_time(self):
         _, rows, _ = module.gmsOdlhPathPoints.__wrapped__(self.context)
         no_offsets = [row for row in rows if row[8] == 'no-offsets']
         self.assertEqual(len(no_offsets), 1)
         self.assertEqual(no_offsets[0][0], '')
-        self.assertEqual(no_offsets[0][3], '')
+        self.assertEqual(no_offsets[0][5], '')
 
 
 if __name__ == '__main__':
