@@ -17,12 +17,14 @@ __artifacts_v2__ = {
         "last_update_date": "2026-10-16",
         "requirements": "none",
         "category": "Google Pay",
-        "notes": "Owner is the device's Google Pay user: the payer of a sent payment and the payee of a received "
-                 "one. Counterparty Name at Bank is the name the UPI ID is registered to, which can differ from "
-                 "the name Google Pay showed. Status names state codes 10, 9, 6, 14 and 2 by what the app showed "
-                 "beside them on the contributor's devices; any other code is reported as Unknown with the code "
-                 "as stored. The field mapping comes from the contributor's own data and has not been checked "
-                 "against an independent sample.",
+        "notes": "Owner is the Google Pay account the database belongs to: the payer of a sent payment and the "
+                 "payee of a received one. Transaction Date is the transaction's own time; when the card carries "
+                 "none it is the card's creation time. Counterparty Name at Bank is a second name the card stores "
+                 "with the UPI ID, read by the contributor as the name the UPI ID is registered to; it can differ "
+                 "from the name Google Pay showed. Status names state codes 10, 9, 6, 14 and 2 by what the app "
+                 "showed beside them in the data the contributor worked from; any other code is reported as "
+                 "Unknown with the code as stored. The field mapping comes from that data and has not been "
+                 "checked against an independent sample. The test fixture is synthetic.",
         "paths": ('*/com.google.android.apps.nbu.paisa.user/files/.mfca/sessions/*/conversation/data.db*',),
         "output_types": "standard",
         "artifact_icon": "credit-card",
@@ -31,14 +33,18 @@ __artifacts_v2__ = {
         "name": "Google Pay UPI IDs",
         "description": "Parses the UPI IDs named in Google Pay's conversation cards (data.db): the people and "
                        "merchants the owner paid, was paid by or talked to, and the owner's own, with the name "
-                       "shown, the name at the bank, the masked phone and how many cards and payments name it.",
+                       "most often shown, the name at the bank, the masked phone, how many cards name it and how "
+                       "many distinct payments those cards hold.",
         "author": "@prcharan592",
         "creation_date": "2026-09-29",
         "last_update_date": "2026-10-16",
         "requirements": "none",
         "category": "Google Pay",
-        "notes": "Device Owner is Yes for a UPI ID the owner paid from or was paid into. First and Last Seen are "
-                 "the times of the first and last card that names it, not of a payment.",
+        "notes": "Device Owner is Yes for a UPI ID the owner paid from or was paid into, or that posted a payment "
+                 "card as the owner's side. Name at Bank is a second name the card stores with the UPI ID, read "
+                 "by the contributor as the name it is registered to. First and Last Seen are the times of the "
+                 "first and last card that names it, not of a payment. The field mapping has not been checked "
+                 "against an independent sample.",
         "paths": ('*/com.google.android.apps.nbu.paisa.user/files/.mfca/sessions/*/conversation/data.db*',),
         "output_types": "standard",
         "artifact_icon": "users",
@@ -194,8 +200,7 @@ def _committed_rows(path, query):
 
     A read-only connection cannot roll back a hot journal - one left by a write
     the app was part-way through when the phone was imaged - and then refuses
-    to read at all ("attempt to write a readonly database"). One phone's
-    data.db came with a 251,464-byte data.db-journal. The database and its
+    to read at all ("attempt to write a readonly database"). The database and its
     journal are copied aside and opened there, which rolls the unfinished write
     back: the state the app itself would read on its next start.
     """
@@ -459,16 +464,16 @@ def get_googlePay_upi_ids(context):
         def most(counts):
             return max(counts.items(), key=lambda kv: (kv[1], kv[0]))[0] if counts else ''
         rows = [(
-            _utc(e['last']), e['vpa'], most(e['names']), most(e['bank_names']), most(e['phones']),
-            'Merchant' if 'Merchant' in e['kinds'] else 'Person' if e['kinds'] else '',
-            'Yes' if key in owners else '', len(e['cards']), len(e['payments']), _utc(e['first']),
+            _utc(e['last']), _utc(e['first']), e['vpa'], most(e['names']), most(e['bank_names']),
+            most(e['phones']), 'Merchant' if 'Merchant' in e['kinds'] else 'Person' if e['kinds'] else '',
+            'Yes' if key in owners else '', len(e['cards']), len(e['payments']),
         ) for key, e in seen.items()]
         if rows:
             sources.append(file_found)
         data_list.extend(sorted(rows, key=lambda r: str(r[0]), reverse=True))
 
     data_headers = (
-        ('Last Seen', 'datetime'), 'UPI ID', 'Name', 'Name at Bank', 'Masked Phone', 'Kind', 'Device Owner',
-        'Cards', 'Payments', ('First Seen', 'datetime'),
+        ('Last Seen', 'datetime'), ('First Seen', 'datetime'), 'UPI ID', 'Name', 'Name at Bank', 'Masked Phone',
+        'Kind', 'Device Owner', 'Cards', 'Payments',
     )
     return data_headers, data_list, '\n'.join(sources)
