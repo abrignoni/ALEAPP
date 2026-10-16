@@ -84,3 +84,8 @@ jobs:
 
       - name: Recover HTML run logging and close its handle
         run: python admin/test/scripts/test_screen_log_recovery.py
+
+      # The core reports paths with backslashes here, and the test-case runner has to
+      # compare those against baselines recorded with forward slashes.
+      - name: Compare test-case output with Windows separators
+        run: python admin/test/scripts/test_run_test_cases.py
