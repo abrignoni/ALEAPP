@@ -14,11 +14,21 @@ from scripts.artifacts import djiFlightRecordTxt as module
 TIME_MS = 1530000000123
 
 
-def details():
+def details(old_layout=False):
     result = bytearray(436)
     result[40:48] = b'TestCity'
-    struct.pack_into('<qddfifff', result, 91, TIME_MS, -105.0, 40.0,
-                     100.0, 20000, 10.0, 5.0, 2.0)
+    struct.pack_into('<qddfifffiq', result, 91, TIME_MS, -105.0, 40.0,
+                     100.0, 20000, 10.0, 5.0, 2.0, 7, 95)
+    if old_layout:
+        struct.pack_into('<f', result, 352, 12.5)
+        result[277], result[348], result[349:352] = 13, 1, bytes((3, 1, 11))
+        result[278:283], result[267:271] = b'Plane', b'A123'
+        result[318:322], result[328:332], result[338:342] = b'C123', b'R123', b'B123'
+    else:
+        struct.pack_into('<f', result, 267, 12.5)
+        result[271], result[376], result[377:380] = 13, 2, bytes((4, 2, 16))
+        result[280:285], result[312:316] = b'Plane', b'A123'
+        result[328:332], result[344:348], result[360:364] = b'C123', b'R123', b'B123'
     return bytes(result)
 
 
@@ -36,7 +46,8 @@ def log(version, records=b''):
     prefix = bytearray(prefix_size)
     detail_offset = prefix_size + len(records) if version < 12 else 100
     struct.pack_into('<QHB', prefix, 0, detail_offset, 436, version)
-    return bytes(prefix) + (records + details() if version < 12 else details() + records)
+    block = details(old_layout=version <= 5)
+    return bytes(prefix) + (records + block if version < 12 else block + records)
 
 
 def osd(lat=40, lon=-105):
@@ -75,8 +86,8 @@ class ParserTests(unittest.TestCase):
         for version in (7, 8, 9, 10, 11, 12):
             raw = b'\0\0' + struct.pack('<ffq', 5, 2, TIME_MS)
             _, rows = module.parse_txt(log(version, record(5, raw, version)))
-            self.assertEqual(rows[0]['speed'], 5)
-            self.assertEqual(rows[0]['distance'], 2)
+            self.assertEqual(rows[0]['custom_speed'], 5)
+            self.assertEqual(rows[0]['custom_distance'], 2)
             self.assertIsNotNone(rows[0]['timestamp'])
 
     def test_timestamp_attribution(self):
@@ -125,7 +136,7 @@ class ParserTests(unittest.TestCase):
         struct.pack_into('<H', payload, 24, 15200)
         payload[26] = 87
         _, rows = module.parse_txt(log(6, record(8, payload, 6)))
-        self.assertEqual((rows[0]['battery_voltage'], rows[0]['battery_time'], rows[0]['battery']), (15.2, 340, 87))
+        self.assertEqual((rows[0]['battery_voltage'], rows[0]['battery_time'], rows[0]['battery_percent']), (15.2, 340, 87))
 
     def test_camera_photo_state_is_not_any_nonzero_enum(self):
         for state in range(8):
@@ -146,23 +157,44 @@ class ParserTests(unittest.TestCase):
             self.assertTrue(rows[0]['status'].startswith('Short'))
             self.assertEqual(rows[0]['payload_hex'], '01')
 
-    def test_unknown_preserved(self):
-        _, rows = module.parse_txt(log(6, record(99, b'abcd', 6)))
-        self.assertEqual(rows[0]['payload_hex'], '61626364')
+    def test_defined_undecoded_type_keeps_payload(self):
+        _, rows = module.parse_txt(log(6, record(19, b'abcd', 6)))
+        self.assertEqual((rows[0]['name'], rows[0]['payload_hex']), ('MC Parameters', '61626364'))
+
+    def test_undefined_type_counted_not_reported(self):
+        gimbal = record(3, struct.pack('<3h', -450, 10, 900), 6)
+        summary, rows = module.parse_txt(log(6, record(99, b'abcd', 6) + record(99, b'ef', 6) + gimbal))
+        self.assertEqual([row['type'] for row in rows], [3])
+        self.assertEqual(summary['not_reported'], 'type 99: 2')
 
     def test_bad_record_stops_without_resync(self):
         valid = record(3, struct.pack('<3h', -450, 10, 900), 6)
         summary, rows = module.parse_txt(log(6, valid + b'\x01\xfe\0' + valid))
         self.assertEqual(len(rows), 1)
-        self.assertEqual(summary['status'], 'Partial parse; see warnings')
+        self.assertEqual(summary['warnings'], ['Record at offset 109 declares 257 bytes; 12 remain before the end of the record area'])
+        self.assertTrue(summary['status'].startswith('Parsing stopped 12 bytes before the end'))
+
+    def test_missing_terminator_stops(self):
+        valid = record(3, struct.pack('<3h', -450, 10, 900), 6)
+        summary, rows = module.parse_txt(log(6, valid + valid[:-1] + b'\0' + valid))
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(summary['warnings'], ['Record at offset 109 lacks its 0xFF terminator'])
+        self.assertTrue(summary['status'].startswith('Parsing stopped 18 bytes before the end'))
+
+    def test_incomplete_last_record_reports_remaining_bytes(self):
+        valid = record(3, struct.pack('<3h', -450, 10, 900), 6)
+        summary, rows = module.parse_txt(log(6, valid + b'\x39\x30\0\0'))
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(summary['warnings'], ['Record at offset 109 declares 51 bytes; 4 remain before the end of the record area'])
+        self.assertTrue(summary['status'].startswith('Parsing stopped 4 bytes before the end'))
 
     def test_short_payload_keeps_record(self):
         _, rows = module.parse_txt(log(6, record(1, b'abc', 6)))
         self.assertEqual(rows[0]['status'], 'Short OSD payload')
 
     def test_jpeg_framing(self):
-        _, rows = module.parse_txt(log(6, b'\xff\xd8test\xff\xd9' + record(99, b'abc', 6)))
-        self.assertEqual([row['type'] for row in rows], [255, 99])
+        _, rows = module.parse_txt(log(6, b'\xff\xd8test\xff\xd9' + record(19, b'abc', 6)))
+        self.assertEqual([(row['type'], row['name']) for row in rows], [(None, 'Embedded JPEG'), (19, 'MC Parameters')])
 
     def test_reject_truncation(self):
         for value in (b'', b'csv,not,evidence', log(6)[:120]):
@@ -199,6 +231,52 @@ class ParserTests(unittest.TestCase):
         struct.pack_into('<H', prefix, 101, 436)
         with self.assertRaisesRegex(ValueError, 'encrypted'):
             module.parse_txt(bytes(prefix))
+
+    def test_details_identifiers_both_layouts(self):
+        for version, platform, app_version in ((5, 'IOS (1)', '3.1.11'), (6, 'Android (2)', '4.2.16'), (12, 'Android (2)', '4.2.16')):
+            summary, _ = module.parse_txt(log(version))
+            self.assertEqual((summary['aircraft_name'], summary['product_type'], summary['aircraft_sn']),
+                             ('Plane', 'MavicPro (13)', 'A123'))
+            self.assertEqual((summary['camera_sn'], summary['rc_sn'], summary['battery_sn']), ('C123', 'R123', 'B123'))
+            self.assertEqual((summary['app_platform'], summary['app_version']), (platform, app_version))
+            self.assertEqual((summary['takeoff_altitude'], summary['photo_count'], summary['video_time_s']), (12.5, 7, 95))
+
+    def test_unknown_enum_value_kept(self):
+        block = bytearray(details())
+        block[271], block[376] = 250, 99
+        prefix = bytearray(100)
+        struct.pack_into('<QHB', prefix, 0, 100, 436, 12)
+        summary, _ = module.parse_txt(bytes(prefix) + bytes(block))
+        self.assertEqual((summary['product_type'], summary['app_platform']), ('Unknown (250)', 'Unknown (99)'))
+
+    def test_app_gps_latitude_first(self):
+        _, rows = module.parse_txt(log(6, record(14, struct.pack('<dd', 39.96, -106.21) + b'\0' * 4, 6)))
+        self.assertEqual((rows[0]['app_latitude'], rows[0]['app_longitude']), (39.96, -106.21))
+
+    def test_rc_gps(self):
+        payload = struct.pack('<3BH2B4iBfH', 10, 2, 22, 2017, 10, 9, 399612576, -1062161792, 0, 0, 9, 1.5, 1)
+        _, rows = module.parse_txt(log(6, record(11, payload, 6)))
+        row = rows[0]
+        self.assertEqual(row['rc_gps_time'], '2017-10-09 10:02:22')
+        self.assertAlmostEqual(row['rc_latitude'], 39.9612576)
+        self.assertAlmostEqual(row['rc_longitude'], -106.2161792)
+        self.assertEqual((row['rc_satellites'], row['rc_accuracy'], row['rc_valid']), (9, 1.5, 1))
+
+    def test_rc_gps_zero_position_not_plotted(self):
+        payload = struct.pack('<3BH2B4iBfH', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0, 0)
+        _, rows = module.parse_txt(log(6, record(11, payload, 6)))
+        self.assertIsNone(rows[0]['rc_latitude'])
+
+    def test_component_serial_and_firmware(self):
+        serial = struct.pack('<HB', 2, 6) + b'SN0001'
+        firmware = bytes((1, 0, 2, 8, 56, 0))
+        _, rows = module.parse_txt(log(6, record(40, serial, 6) + record(15, firmware, 6)))
+        self.assertEqual((rows[0]['component'], rows[0]['serial']), ('Aircraft (2)', 'SN0001'))
+        self.assertEqual((rows[1]['component'], rows[1]['component_sub'], rows[1]['firmware']), ('Camera (1)', 0, '2.8.56'))
+
+    def test_short_component_serial(self):
+        _, rows = module.parse_txt(log(6, record(40, struct.pack('<HB', 2, 9) + b'SN', 6)))
+        self.assertEqual(rows[0]['status'], 'Short Component Serial payload')
 
 
 if __name__ == '__main__':

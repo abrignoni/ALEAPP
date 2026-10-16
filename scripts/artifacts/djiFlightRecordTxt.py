@@ -1,23 +1,55 @@
 __artifacts_v2__ = {
     'djiFlightRecordTxtRecords': {
         'name': 'DJI Drone - TXT Flight Records',
-        'description': 'Reads original DJI GO/Fly TXT flight records offline; one row per binary record.',
-        'author': 'Neal (@Blackwater1224)',
-        'version': '0.2',
+        'description': 'Reads DJI GO, DJI GO 4 and DJI Fly TXT flight records offline. Versions 1 to 12 '
+                       'give one row per record of a defined type; version 13 and later give no '
+                       'record rows (see the Summary artifact).',
+        'author': 'Neal (@Blackwater1224), @AlexisBrignoni, Claude',
+        'version': '0.3',
         'creation_date': '2026-10-01',
-        'last_update_date': '2026-10-05',
+        'last_update_date': '2026-10-16',
         'requirements': 'none',
         'category': 'DJI Drone',
-        'notes': 'Versions 1-6 are plain and 7-12 use local XOR decoding. Version 13+ '
-                 'telemetry is encrypted and is not decrypted. See TXT Flight Log Summary. '
+        'notes': 'Versions 1-6 are read as stored and 7-12 use local XOR decoding. Version 13+ '
+                 'telemetry is encrypted and is not decrypted; see TXT Flight Log Summary. '
+                 'Record types, layouts, units and enum names follow dji-log-parser v0.5.7 '
+                 '(https://github.com/lvauvillier/dji-log-parser, MIT). A record of a type it does '
+                 'not define is not listed; each log\'s count of those is in the summary\'s Records '
+                 'Not Reported column. A header without a unit, or marked as stored or raw, has no unit '
+                 'documented there. Camera Mode is shown as the stored number; dji-log-parser '
+                 'defines names for it that are not applied. Horizontal Speed is derived from Speed X and Speed Y. '
                  'Timestamp comes from Custom records in UTC. Other records use the preceding '
-                 'Custom timestamp, explicitly labeled; records before it have no timestamp. '
-                 'Telemetry is not carried between rows. Height is recorded relative height, '
-                 'not terrain clearance or MSL. Unknown payloads are retained as hex. '
-                 'Layout: https://github.com/lvauvillier/dji-log-parser (MIT), v0.5.7. '
-                 'In DF020, RC Return Button, RC Shutter Button and RC Record Button '
-                 'are identical: false on decoded RC records and absent on other record types. '
-                 'They remain separate fields because each reads a different stored bit.',
+                 'Custom timestamp, labeled in Timestamp Basis; records before it have no timestamp. '
+                 'Telemetry is not carried between rows. Relative Height is the OSD altitude field. '
+                 'dji-log-parser adds the Home altitude to it to get absolute altitude and '
+                 'pydjirecord describes it as height above the take-off point. It is not '
+                 'altitude above sea level. '
+                 'Latitude and Longitude are the aircraft (OSD) position and are the only '
+                 'coordinates in the KML; Home, App GPS (the mobile device) and RC GPS (the remote '
+                 'controller) keep their own columns. '
+                 'App GPS is read latitude first. dji-log-parser and pydjirecord name the first '
+                 'value longitude, but in all three DF020 logs the first value is the latitude of '
+                 'the site the OSD and Home positions in the same log place the flight (and RC GPS, '
+                 'in the version 9 log that has it). '
+                 'RC GPS coordinates are the stored integers divided by 1e7 and RC GPS Accuracy is '
+                 'in metres, per pydjirecord (https://github.com/rembish/pydjirecord, MIT). '
+                 'RC GPS Date and Time is shown as stored; the record holds no zone. In DF020 it ran '
+                 '1 to 3 seconds behind the row\'s Timestamp (the preceding Custom record) on all '
+                 '320 RC GPS rows. '
+                 'The Firmware record is decoded as one 6-byte entry, as both references define it, '
+                 'and Firmware Version is the first three of its four version bytes. In DF020 '
+                 'the payload held 3 to 20 such entries; only the first is shown in Component, '
+                 'Firmware Sub Sender and Firmware Version, and on all 18 rows that first entry '
+                 'was Camera (1) with Sub Sender 0. The remaining entries stay in Decoded Payload Hex. '
+                 'OSD Battery has no documented unit; Battery Percent is the Smart Battery percent. '
+                 'Payloads are kept as hex on every record row; Embedded JPEG rows carry none. '
+                 'In DF020: RC Return Button, RC Shutter Button and RC Record Button are identical, '
+                 'false on all 3207 RC rows and blank on other record types; Home Recorded held true on all 693 Home rows; Camera Single '
+                 'Photo held false, Camera SD Present held true and Camera Mode held 1 on all 1037 '
+                 'Camera rows; RC GPS Valid Data held 1 on all 320 RC GPS rows. They remain separate '
+                 'fields because each reads a different stored value. Real logs: DF020 versions 9 '
+                 'and 11 decode records; the public pydjirecord version 14 example yields none. '
+                 'Other versions and embedded JPEG framing are covered by synthetic tests only.',
         'paths': ('*/DJI/dji.*/FlightRecord/DJIFlightRecord*.txt',
                   '*/Android/data/dji.go.v4/files/FlightRecord/DJIFlightRecord*.txt',
                   '*/Android/data/dji.pilot/files/FlightRecord/DJIFlightRecord*.txt',
@@ -26,25 +58,45 @@ __artifacts_v2__ = {
         'artifact_icon': 'map-pin',
         'sample_data': {
             'df020_mavic_pro_android': 'VTO/NIST DF020 Android logical | DJI GO 4 4.2.16 '
-                'and DJI GO 3.1.11 | 54655 rows from three TXT logs (v11, v11, v9); '
-                '7196 June-flight positions within publisher GPS boundary; two record-trailer warnings',
+                'and DJI GO 3.1.11 | 36815 rows from three TXT logs (v11, v11, v9): '
+                '10403 OSD positions, 362 App GPS, 320 RC GPS, 6 Component Serial, 18 Firmware; '
+                '17840 records of undefined types counted in the summary, not listed',
         },
     },
     'djiFlightRecordTxtSummary': {
         'name': 'DJI Drone - TXT Flight Log Summary',
-        'description': 'Reports unencrypted flight metadata, encryption and parsing status.',
-        'author': 'Neal (@Blackwater1224)',
-        'version': '0.2',
+        'description': 'Reports unencrypted flight metadata, aircraft and component identifiers, '
+                       'encryption and parsing status.',
+        'author': 'Neal (@Blackwater1224), @AlexisBrignoni, Claude',
+        'version': '0.3',
         'creation_date': '2026-10-01',
-        'last_update_date': '2026-10-05',
+        'last_update_date': '2026-10-16',
         'requirements': 'none',
         'category': 'DJI Drone',
         'notes': 'Metadata is from Details, locally XOR-decoded from Auxiliary Info on version 13+. '
                  'No network requests, API keys, external executable or CSV import. '
+                 'Offsets, units and enum names follow dji-log-parser v0.5.7 layout/details.rs '
+                 '(https://github.com/lvauvillier/dji-log-parser, MIT). Product Type and App '
+                 'Platform show its enum name with the stored number, or Unknown with the number. '
+                 'Version 5 and earlier use different identifier offsets, covered by synthetic '
+                 'tests only. Takeoff Altitude has no documented unit and is shown as stored. '
+                 'Latitude and Longitude are the Details position; the reference does not say '
+                 'when in the flight it is taken. In DF020 it equalled the first OSD position '
+                 'with a fix in all three logs. Video Time is documented in seconds by '
+                 'dji-log-parser; pydjirecord reports no consistent unit. In DF020 it matched '
+                 'the Camera Record Time within 1 second in both version 11 logs and was 0 in '
+                 'the version 9 log, whose camera recorded 311 seconds. '
+                 'Records Not Reported counts records of types dji-log-parser does not define. '
+                 'When parsing stops early, Status gives how many bytes of the record area were '
+                 'left unread and Warnings says why. '
                  'DF020 validation includes two June 2018 logs and one older October 2017 log. '
-                 'In these three DF020 logs, Sub Street and City are uniform: Map Loading. '
+                 'Both version 11 logs stop 4 bytes before the end of the record area, where a '
+                 'record declares more bytes than remain; the version 9 log parses to the end. '
+                 'In DF020, App Platform held Android (2) and Photos Taken held 0 on all 3 rows. '
+                 'Sub Street and City held the same single string on all 3 rows. '
                  'Street and Area are empty in these three logs. '
-                 'These columns retain the source Details location strings when present.',
+                 'Camera Serial Number and RC Serial Number were each present in one of the three logs. '
+                 'Location columns retain the source Details strings when present.',
         'paths': ('*/DJI/dji.*/FlightRecord/DJIFlightRecord*.txt',
                   '*/Android/data/dji.go.v4/files/FlightRecord/DJIFlightRecord*.txt',
                   '*/Android/data/dji.pilot/files/FlightRecord/DJIFlightRecord*.txt',
@@ -53,8 +105,9 @@ __artifacts_v2__ = {
         'artifact_icon': 'file-text',
         'sample_data': {
             'df020_mavic_pro_android': 'VTO/NIST DF020 Android logical | DJI GO 4 4.2.16 '
-                'and DJI GO 3.1.11 | 3 rows; two v11 logs with record-trailer warnings '
-                'and one v9 log parsed offline',
+                'and DJI GO 3.1.11 | 3 rows; aircraft and battery serial numbers in all three, '
+                'camera and RC serial numbers in one each; both v11 logs stop 4 bytes before '
+                'the end of the record area',
         },
     },
 }
@@ -79,14 +132,60 @@ __artifacts_v2__ = {
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+# RC GPS coordinate scale and accuracy unit from pydjirecord, commit
+# cabbce1bb8c24bb00bd861af80aac7601c03e5f6, Copyright (c) 2025 pydjirecord
+# contributors (MIT); no code is copied from it.
 
 import datetime
 import math
 import os
 import struct
+from collections import Counter
 from functools import lru_cache
 
 from scripts.ilapfuncs import artifact_processor, logfunc
+
+# Record type numbers and names from dji-log-parser v0.5.7 record/mod.rs.
+# A type outside this table is not defined there and is counted, not reported.
+_RECORD_NAMES = {1: 'OSD', 2: 'Home', 3: 'Gimbal', 4: 'RC', 5: 'Custom', 6: 'Deform',
+                 7: 'Center Battery', 8: 'Smart Battery', 9: 'App Tip', 10: 'App Warning',
+                 11: 'RC GPS', 13: 'Recover', 14: 'App GPS', 15: 'Firmware',
+                 19: 'MC Parameters', 22: 'Smart Battery Group', 24: 'App Serious Warning',
+                 25: 'Camera', 33: 'Virtual Stick', 40: 'Component Serial', 49: 'OFDM',
+                 50: 'Key Storage Recover', 56: 'Key Storage', 62: 'RC Display'}
+
+# Enum names exactly as dji-log-parser v0.5.7 spells them:
+# ProductType and Platform in layout/details.rs, ComponentType in
+# record/component_serial.rs, SenderType in record/firmware.rs.
+_PRODUCT_TYPES = {
+    0: 'None', 1: 'Inspire1', 2: 'Phantom3Standard', 3: 'Phantom3Advanced', 4: 'Phantom3Pro',
+    5: 'OSMO', 6: 'Matrice100', 7: 'Phantom4', 8: 'LB2', 9: 'Inspire1Pro', 10: 'A3',
+    11: 'Matrice600', 12: 'Phantom34K', 13: 'MavicPro', 14: 'ZenmuseXT', 15: 'Inspire1RAW',
+    16: 'A2', 17: 'Inspire2', 18: 'OSMOPro', 19: 'OSMORaw', 20: 'OSMOPlus', 21: 'Mavic',
+    22: 'OSMOMobile', 23: 'OrangeCV600', 24: 'Phantom4Pro', 25: 'N3FC', 26: 'Spark',
+    27: 'Matrice600Pro', 28: 'Phantom4Advanced', 29: 'Phantom3SE', 30: 'AG405',
+    31: 'Matrice200', 33: 'Matrice210', 34: 'Matrice210RTK', 38: 'MavicAir', 42: 'Mavic2',
+    44: 'Phantom4ProV2', 46: 'Phantom4RTK', 57: 'Phantom4Multispectral',
+    58: 'Mavic2Enterprise', 59: 'MavicMini', 60: 'Matrice200V2', 61: 'Matrice210V2',
+    62: 'Matrice210RTKV2', 67: 'MavicAir2', 70: 'Matrice300RTK', 73: 'FPV', 75: 'MavicAir2S',
+    76: 'Mini2', 77: 'Mavic3', 96: 'MiniSE', 103: 'Mini3Pro', 111: 'Mavic3Pro',
+    113: 'Mini2SE', 116: 'Matrice30', 118: 'Mavic3Enterprise', 121: 'Avata',
+    126: 'Mini4Pro', 152: 'Avata2', 170: 'Matrice350RTK'}
+_PLATFORMS = {1: 'IOS', 2: 'Android', 6: 'DJIFly', 10: 'Windows', 11: 'Mac', 12: 'Linux'}
+_COMPONENTS = {1: 'Camera', 2: 'Aircraft', 3: 'RC', 4: 'Battery'}
+_SENDERS = {0: 'None', 1: 'Camera', 3: 'MC', 4: 'Gimbal', 6: 'RC', 11: 'Battery'}
+
+# Details offsets after the four location strings, from layout/details.rs.
+# Version 6 and later read these fields in sequence; version 5 and earlier
+# seek to fixed offsets. Values are (offset, size).
+_DETAIL_IDS = {
+    True: {'takeoff_altitude': (267, 4), 'product_type': (271, 1), 'aircraft_name': (280, 32),
+           'aircraft_sn': (312, 16), 'camera_sn': (328, 16), 'rc_sn': (344, 16),
+           'battery_sn': (360, 16), 'app_platform': (376, 1), 'app_version': (377, 3)},
+    False: {'takeoff_altitude': (352, 4), 'product_type': (277, 1), 'aircraft_name': (278, 24),
+            'aircraft_sn': (267, 10), 'camera_sn': (318, 10), 'rc_sn': (328, 10),
+            'battery_sn': (338, 10), 'app_platform': (348, 1), 'app_version': (349, 3)},
+}
 
 
 def _utc(milliseconds):
@@ -129,6 +228,42 @@ def _decode(record_type, payload, version):
 
 def _number(value):
     return value if math.isfinite(value) else None
+
+
+def _position(lat, lon):
+    """Return (lat, lon) when plottable, else (None, None)."""
+    if (math.isfinite(lat) and math.isfinite(lon) and abs(lat) <= 90 and abs(lon) <= 180
+            and (lat != 0 or lon != 0)):
+        return lat, lon
+    return None, None
+
+
+def _text(data, offset, size):
+    return data[offset:offset + size].split(b'\0')[0].decode('utf-8', errors='replace')
+
+
+def _enum(table, value):
+    return f'{table[value]} ({value})' if value in table else f'Unknown ({value})'
+
+
+def _detail_ids(detail_data, version):
+    """Identifiers stored after the flight totals; blank when the block is too short."""
+    layout = _DETAIL_IDS[version >= 6]
+    values = {}
+    for name, (offset, size) in layout.items():
+        if offset + size > len(detail_data):
+            values[name] = None
+        elif name == 'takeoff_altitude':
+            values[name] = _number(struct.unpack_from('<f', detail_data, offset)[0])
+        elif name == 'product_type':
+            values[name] = _enum(_PRODUCT_TYPES, detail_data[offset])
+        elif name == 'app_platform':
+            values[name] = _enum(_PLATFORMS, detail_data[offset])
+        elif name == 'app_version':
+            values[name] = '.'.join(str(byte) for byte in detail_data[offset:offset + size])
+        else:
+            values[name] = _text(detail_data, offset, size)
+    return values
 
 
 def parse_txt(data):
@@ -178,47 +313,57 @@ def parse_txt(data):
     summary = {'version': version, 'detail_length': detail_length,
                'timestamp': _utc(struct.unpack_from('<q', detail_data, 91)[0]),
                'status': 'Encrypted records; DJI keychain required; telemetry not decoded' if version >= 13 else 'Parsed offline',
-               'record_count': 0, 'timestamped_count': 0, 'warnings': []}
+               'record_count': 0, 'timestamped_count': 0, 'warnings': [], 'not_reported': ''}
     for name, offset in (('sub_street', 0), ('street', 20), ('city', 40), ('area', 60)):
-        summary[name] = detail_data[offset:offset + 20].split(b'\0')[0].decode('utf-8', errors='replace')
-    lon, lat, distance, duration, height, hs, vs = struct.unpack_from('<ddfifff', detail_data, 99)
+        summary[name] = _text(detail_data, offset, 20)
+    lon, lat, distance, duration, height, hs, vs, photos = struct.unpack_from('<ddfifffi', detail_data, 99)
     summary.update(latitude=_number(lat) if abs(lat) <= 90 else None,
                    longitude=_number(lon) if abs(lon) <= 180 else None,
                    distance_m=_number(distance), duration_s=duration / 1000,
                    max_height_m=_number(height), max_horizontal_speed_ms=_number(hs),
-                   max_vertical_speed_ms=_number(vs))
+                   max_vertical_speed_ms=_number(vs), photo_count=photos,
+                   video_time_s=struct.unpack_from('<q', detail_data, 139)[0] if len(detail_data) >= 147 else None)
+    summary.update(_detail_ids(detail_data, version))
     if summary['timestamp'] is None:
         summary['warnings'].append('Invalid Details start timestamp')
     rows = []
     if version >= 13:
         return summary, rows
-    pos, timestamp = start, None
-    names = {1: 'OSD', 2: 'Home', 3: 'Gimbal', 4: 'RC', 5: 'Custom',
-             7: 'Center Battery', 8: 'Smart Battery', 9: 'App Tip', 10: 'App Warning',
-             11: 'RC GPS', 13: 'Recover', 14: 'App GPS', 15: 'Firmware',
-             19: 'MC Parameters', 22: 'Smart Battery Group', 24: 'App Serious Warning',
-             25: 'Camera', 40: 'Component Serial', 49: 'OFDM', 62: 'RC Display'}
+    pos, timestamp, stopped = start, None, None
+    not_reported = Counter()
     while pos < end:
         # Embedded JPEGs have separate framing, not the binary record length.
         if data[pos:pos + 2] == b'\xff\xd8':
             jpeg_end = data.find(b'\xff\xd9', pos + 2, end)
             if jpeg_end < 0:
-                summary['warnings'].append(f'Truncated JPEG at offset {pos}')
+                summary['warnings'].append(f'JPEG at offset {pos} has no end marker before the end of the record area')
+                stopped = pos
                 break
-            rows.append({'offset': pos, 'type': 255, 'name': 'Embedded JPEG',
+            rows.append({'offset': pos, 'type': None, 'name': 'Embedded JPEG',
                          'timestamp': timestamp, 'timestamp_basis': 'Preceding Custom record' if timestamp else 'Unavailable',
                          'status': 'Image retained in source; not extracted'})
             pos = jpeg_end + 2
             continue
         if pos + 3 > end:
-            summary['warnings'].append(f'Truncated record header at offset {pos}')
+            summary['warnings'].append(f'{end - pos} bytes at offset {pos} are too few for a record header')
+            stopped = pos
             break
         kind, length = data[pos:pos + 2]
         next_pos = pos + 3 + length
-        if next_pos > end or data[next_pos - 1] != 255:
-            summary['warnings'].append(f'Invalid record length or terminator at offset {pos}; stopped')
+        if next_pos > end:
+            summary['warnings'].append(f'Record at offset {pos} declares {3 + length} bytes; '
+                                       f'{end - pos} remain before the end of the record area')
+            stopped = pos
             break
-        row = {'offset': pos, 'type': kind, 'name': names.get(kind, 'Unknown'),
+        if data[next_pos - 1] != 255:
+            summary['warnings'].append(f'Record at offset {pos} lacks its 0xFF terminator')
+            stopped = pos
+            break
+        if kind not in _RECORD_NAMES:
+            not_reported[kind] += 1
+            pos = next_pos
+            continue
+        row = {'offset': pos, 'type': kind, 'name': _RECORD_NAMES[kind],
                'timestamp': timestamp, 'timestamp_basis': 'Preceding Custom record' if timestamp else 'Unavailable',
                'status': 'Decoded', 'payload_hex': ''}
         try:
@@ -228,14 +373,13 @@ def parse_txt(data):
                 if len(payload) < 50:
                     raise ValueError('Short OSD payload')
                 lon, lat, altitude, sx, sy, sz, pitch, roll, yaw = struct.unpack_from('<dd7h', payload)
-                lon, lat = math.degrees(lon), math.degrees(lat)
-                valid = math.isfinite(lat) and math.isfinite(lon) and abs(lat) <= 90 and abs(lon) <= 180 and (lat != 0 or lon != 0)
-                row.update(latitude=lat if valid else None, longitude=lon if valid else None,
+                lat, lon = _position(math.degrees(lat), math.degrees(lon))
+                row.update(latitude=lat, longitude=lon,
                            altitude=altitude / 10, speed=math.hypot(sx, sy) / 10,
                            speed_x=sx / 10, speed_y=sy / 10, speed_z=sz / 10,
                            pitch=pitch / 10, roll=roll / 10, heading=yaw / 10,
                            satellites=payload[36], battery=payload[40], flight_time=struct.unpack_from('<H', payload, 42)[0] / 10)
-                if not valid:
+                if lat is None:
                     row['status'] = 'Decoded; position unavailable or invalid'
             elif kind == 3:
                 if len(payload) < 6:
@@ -246,9 +390,8 @@ def parse_txt(data):
                 if len(payload) < 24:
                     raise ValueError('Short Home payload')
                 lon, lat, altitude = struct.unpack_from('<ddf', payload)
-                lon, lat = math.degrees(lon), math.degrees(lat)
-                valid = math.isfinite(lat) and math.isfinite(lon) and abs(lat) <= 90 and abs(lon) <= 180 and (lat != 0 or lon != 0)
-                row.update(home_latitude=lat if valid else None, home_longitude=lon if valid else None,
+                lat, lon = _position(math.degrees(lat), math.degrees(lon))
+                row.update(home_latitude=lat, home_longitude=lon,
                            home_altitude=_number(altitude / 10), home_recorded=bool(payload[20] & 1),
                            return_height=struct.unpack_from('<H', payload, 22)[0])
             elif kind == 4:
@@ -263,7 +406,7 @@ def parse_txt(data):
                     raise ValueError('Short Smart Battery payload')
                 row.update(battery_time=struct.unpack_from('<H', payload)[0],
                            battery_voltage=struct.unpack_from('<H', payload, 24)[0] / 1000,
-                           battery=payload[26])
+                           battery_percent=payload[26])
             elif kind == 25:
                 if len(payload) < 2:
                     raise ValueError('Short Camera payload')
@@ -278,9 +421,40 @@ def parse_txt(data):
                 hs, distance, ms = struct.unpack_from('<ffq', payload, 2)
                 timestamp = _utc(ms)
                 row.update(timestamp=timestamp, timestamp_basis='Custom record UTC' if timestamp else 'Invalid Custom timestamp',
-                           speed=_number(hs), distance=_number(distance))
+                           custom_speed=_number(hs), custom_distance=_number(distance))
                 if timestamp is None:
                     row['status'] = 'Invalid Custom timestamp'
+            elif kind == 14:
+                if len(payload) < 16:
+                    raise ValueError('Short App GPS payload')
+                # dji-log-parser and pydjirecord name the first double longitude, and
+                # neither frame builder reads it. In all three DF020 logs the first
+                # double is the latitude of the same site as OSD, Home and RC GPS.
+                lat, lon = _position(*struct.unpack_from('<dd', payload))
+                row.update(app_latitude=lat, app_longitude=lon)
+                if lat is None:
+                    row['status'] = 'Decoded; position unavailable or invalid'
+            elif kind == 11:
+                if len(payload) < 30:
+                    raise ValueError('Short RC GPS payload')
+                hour, minute, second, year, month, day, lat, lon = struct.unpack_from('<3BH2B2i', payload)
+                lat, lon = _position(lat / 1e7, lon / 1e7)
+                row.update(rc_gps_time=f'{year:04d}-{month:02d}-{day:02d} {hour:02d}:{minute:02d}:{second:02d}',
+                           rc_latitude=lat, rc_longitude=lon, rc_satellites=payload[23],
+                           rc_accuracy=_number(struct.unpack_from('<f', payload, 24)[0]),
+                           rc_valid=struct.unpack_from('<H', payload, 28)[0])
+                if lat is None:
+                    row['status'] = 'Decoded; position unavailable or invalid'
+            elif kind == 40:
+                if len(payload) < 3 or len(payload) < 3 + payload[2]:
+                    raise ValueError('Short Component Serial payload')
+                row.update(component=_enum(_COMPONENTS, struct.unpack_from('<H', payload)[0] & 255),
+                           serial=_text(payload, 3, payload[2]))
+            elif kind == 15:
+                if len(payload) < 6:
+                    raise ValueError('Short Firmware payload')
+                row.update(component=_enum(_SENDERS, payload[0]), component_sub=payload[1],
+                           firmware='.'.join(str(byte) for byte in payload[2:5]))
             elif kind in (9, 10, 24):
                 row['message'] = payload.decode('utf-8', errors='replace').rstrip('\0')
             else:
@@ -294,14 +468,17 @@ def parse_txt(data):
         pos = next_pos
     summary['record_count'] = len(rows)
     summary['timestamped_count'] = sum(row.get('timestamp') is not None for row in rows)
-    if summary['warnings']:
-        summary['status'] = 'Partial parse; see warnings'
+    summary['not_reported'] = '; '.join(f'type {kind}: {count}' for kind, count in sorted(not_reported.items()))
+    if stopped is not None:
+        summary['status'] = f'Parsing stopped {end - stopped} bytes before the end of the record area; see Warnings'
     return summary, rows
 
 
 def _files(context):
     for path in dict.fromkeys(str(p) for p in context.get_files_found()):
         if not os.path.basename(path).startswith('DJIFlightRecord') or not path.lower().endswith('.txt'):
+            continue
+        if os.path.isdir(path):
             continue
         relative = str(context.get_relative_path(path)).replace('\\', '/')
         try:
@@ -317,21 +494,31 @@ def _files(context):
 def djiFlightRecordTxtRecords(context):
     fields = ('timestamp', 'latitude', 'longitude', 'altitude', 'speed', 'heading',
               'gimbal_pitch', 'gimbal_roll', 'gimbal_yaw', 'speed_x', 'speed_y', 'speed_z',
-              'pitch', 'roll', 'satellites', 'battery', 'flight_time', 'distance',
+              'pitch', 'roll', 'satellites', 'battery', 'flight_time',
               'home_latitude', 'home_longitude', 'home_altitude', 'home_recorded', 'return_height',
+              'app_latitude', 'app_longitude',
+              'rc_gps_time', 'rc_latitude', 'rc_longitude', 'rc_satellites', 'rc_accuracy', 'rc_valid',
+              'component', 'component_sub', 'serial', 'firmware',
               'rc_aileron', 'rc_elevator', 'rc_throttle', 'rc_rudder', 'rc_gimbal',
-              'rc_return', 'rc_shutter', 'rc_record', 'battery_voltage', 'battery_time',
+              'rc_return', 'rc_shutter', 'rc_record', 'battery_percent', 'battery_voltage', 'battery_time',
               'camera_photo', 'camera_recording', 'camera_sd', 'camera_mode', 'camera_record_time',
+              'custom_speed', 'custom_distance',
               'type', 'name', 'offset', 'timestamp_basis', 'status', 'message', 'payload_hex')
     headers = (('Timestamp', 'datetime'), 'Latitude', 'Longitude', 'Relative Height (m)',
-               'Horizontal Speed (m/s)', 'Heading (degrees)', 'Gimbal Pitch (degrees)',
+               'Horizontal Speed (m/s, derived)', 'Yaw (degrees)', 'Gimbal Pitch (degrees)',
                'Gimbal Roll (degrees)', 'Gimbal Yaw (degrees)', 'Speed X (m/s)', 'Speed Y (m/s)',
                'Speed Z (m/s)', 'Pitch (degrees)', 'Roll (degrees)', 'GPS Satellites',
-               'Battery (%)', 'Flight Time (s)', 'Distance (m)',
-               'Home Latitude', 'Home Longitude', 'Home Altitude (m, recorded)', 'Home Recorded', 'Return Height (m)',
+               'OSD Battery (as stored)', 'Flight Time (s)',
+               'Home Latitude', 'Home Longitude', 'Home Altitude (m)', 'Home Recorded', 'Return Height (m)',
+               'App GPS Latitude', 'App GPS Longitude',
+               'RC GPS Date and Time (as stored)', 'RC GPS Latitude', 'RC GPS Longitude',
+               'RC GPS Satellites', 'RC GPS Accuracy (m)', 'RC GPS Valid Data (as stored)',
+               'Component', 'Firmware Sub Sender (as stored)', 'Serial Number', 'Firmware Version',
                'RC Aileron (raw)', 'RC Elevator (raw)', 'RC Throttle (raw)', 'RC Rudder (raw)', 'RC Gimbal (raw)',
-               'RC Return Button', 'RC Shutter Button', 'RC Record Button', 'Battery Voltage (V)', 'Battery Useful Time (s)',
+               'RC Return Button', 'RC Shutter Button', 'RC Record Button',
+               'Battery Percent', 'Battery Voltage (stored / 1000)', 'Battery Useful Time (as stored)',
                'Camera Single Photo', 'Camera Recording', 'Camera SD Present', 'Camera Mode (raw)', 'Camera Record Time (s)',
+               'Custom Horizontal Speed (as stored)', 'Custom Distance (as stored)',
                'Record Type', 'Record Name',
                'Record Offset', 'Timestamp Basis', 'Decode Status', 'Message', 'Decoded Payload Hex',
                'Log Version', 'Source File')
@@ -345,13 +532,21 @@ def djiFlightRecordTxtRecords(context):
 
 @artifact_processor
 def djiFlightRecordTxtSummary(context):
-    fields = ('timestamp', 'version', 'status', 'record_count', 'timestamped_count',
+    fields = ('timestamp', 'version', 'status', 'aircraft_name', 'product_type', 'aircraft_sn',
+              'camera_sn', 'rc_sn', 'battery_sn', 'app_platform', 'app_version',
+              'record_count', 'timestamped_count',
               'latitude', 'longitude', 'distance_m', 'duration_s', 'max_height_m',
-              'max_horizontal_speed_ms', 'max_vertical_speed_ms', 'sub_street', 'street', 'city', 'area')
-    headers = (('Timestamp', 'datetime'), 'Log Version', 'Status', 'Record Count', 'Timestamped Records',
-               'Start Latitude', 'Start Longitude', 'Total Distance (m)', 'Total Time (s)',
-               'Maximum Relative Height (m)', 'Maximum Horizontal Speed (m/s)',
-               'Maximum Vertical Speed (m/s)', 'Sub Street', 'Street', 'City', 'Area', 'Warnings', 'Source File')
+              'max_horizontal_speed_ms', 'max_vertical_speed_ms', 'photo_count', 'video_time_s',
+              'takeoff_altitude', 'sub_street', 'street', 'city', 'area', 'not_reported')
+    headers = (('Timestamp', 'datetime'), 'Log Version', 'Status', 'Aircraft Name', 'Product Type',
+               'Aircraft Serial Number', 'Camera Serial Number', 'RC Serial Number',
+               'Battery Serial Number', 'App Platform', 'App Version',
+               'Record Count', 'Timestamped Records',
+               'Latitude', 'Longitude', 'Total Distance (m)', 'Total Time (s)',
+               'Maximum Height (m)', 'Maximum Horizontal Speed (m/s)',
+               'Maximum Vertical Speed (m/s)', 'Photos Taken', 'Video Time (s, as stored)',
+               'Takeoff Altitude (as stored)', 'Sub Street', 'Street', 'City', 'Area',
+               'Records Not Reported', 'Warnings', 'Source File')
     output, sources = [], []
     for path, relative, summary, _ in _files(context):
         sources.append(path)

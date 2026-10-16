@@ -96,7 +96,7 @@
     }
   },
   "case3": {
-    "description": "VTO/NIST DF020 Android logical: two DJI GO 4 version 11 logs from June 19 2018 and one older DJI GO version 9 log from October 10 2017. June OSD positions and dates verified against publisher ground truth; all implemented field decodes and payloads independently compared.",
+    "description": "VTO/NIST DF020 Android logical (publisher MD5 6bc5cdc147e813f8744c04814a89e18a). Summary: the three original logs, unchanged (two DJI GO 4 version 11 logs from 19 June 2018 and one DJI GO version 9 log from 10 October 2017). Records: shortened copies of two of them, built as described in data/djiFlightRecordTxt/PROVENANCE.md, so the baseline stays small.",
     "maker": "Neal (@Blackwater1224)",
     "make_data": {
       "input_data_path": "Android_Logical.zip",
@@ -118,7 +118,7 @@
           "*/Android/data/dji.pilot/files/FlightRecord/DJIFlightRecord*.txt",
           "*/Android/data/dji.go.v5/files/FlightRecord/DJIFlightRecord*.txt"
         ],
-        "file_count": 3,
+        "file_count": 2,
         "expected_output": {
           "headers": [],
           "data": []
