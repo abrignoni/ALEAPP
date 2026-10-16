@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "samsung_wellbeing": {
         "name": "Samsung Digital Wellbeing",
         "description": "Parses Samsung Digital Wellbeing app usage events (timestamp, event ID, package and event type) from dwbCommon.db.",
-        "author": "@abrignoni",
+        "author": "@abrignoni, @Adam-Hachem",
         "creation_date": "2020-05-21",
         "last_update_date": "2026-10-15",
         "requirements": "none",
@@ -17,7 +17,7 @@ __artifacts_v2__ = {
             "those constants, so the labels are unverified. An event type with no matching label "
             "is shown as stored. Package Name is read from the pkgName column of usageEvents where "
             "the database has one, and otherwise joined from foundPackages on pkgId. The pkgName "
-            "column was described in a report from thumbknuckle (Discord) of a Samsung Android 16 "
+            "column was described in a report from @Adam-Hachem of a Samsung Android 16 "
             "extraction that is not in the corpus; no database with it has been examined here. No registered image has "
             "it, so that path was run only against a copy of the anne_a15 (Android 15) database "
             "with pkgId renamed to pkgName and filled with the package names from foundPackages. "
