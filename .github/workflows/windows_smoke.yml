@@ -48,6 +48,11 @@ jobs:
       - name: Convert pre-1970 Unix timestamps
         run: python admin/test/scripts/test_unix_timestamp_conversion.py
 
+      # The seeker's paths carry backslashes here; Opera's source columns must keep them
+      # so the core can strip the data folder.
+      - name: Keep the seeker's paths in Opera's source columns
+        run: python -m unittest admin.test.scripts.test_opera_row_sources
+
       # The entry points hand a directory input to the seeker with the extended-length
       # prefix on Windows, so the recorded evidence path and the staged path are
       # checked here with that prefix as well as without it.

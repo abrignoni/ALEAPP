@@ -9,7 +9,7 @@ __artifacts_v2__ = {
                        "Chromium History database.",
         "author": "@Gear-I, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-10-06",
+        "last_update_date": "2026-10-16",
         "requirements": "none",
         "category": "Opera",
         "notes": "Opera's regular browsing history, search terms, bookmarks, "
@@ -20,24 +20,24 @@ __artifacts_v2__ = {
                  "Chromium schema. This module covers only what is unique to Opera "
                  "and not already collected there: its own session/tab-state store. "
                  "'Restored' is Yes when the recently_closed_tab.restored value for a closed tab "
-                 "is set; what sets that value is not established here. No timestamp column was "
-                 "found in session_db on the device this was validated against, and none was "
+                 "is set; what sets that value is not established here. It is N/A for an open tab "
+                 "and blank for a closed tab whose restored value is not set. No timestamp "
+                 "column was found in session_db on the pixel7a_a14 sample, and none was "
                  "found in the binary page_state or JSON user_data blobs. 'Current Page Last "
                  "Visit Time' is therefore not native to this store: it is recovered by matching "
                  "the current page's URL, exactly, against Opera's own History database's "
-                 "urls.last_visit_time, and is left blank when no exact match exists (this "
-                 "happens for Opera's internal 'operaui://startpage' and, on the device this was "
-                 "validated against, for two opera-internal://search entries whose URL had no "
-                 "exact match in History). Because it is the URL's *last* visit "
+                 "urls.last_visit_time, and is left blank when no exact match exists. On the "
+                 "pixel7a_a14 sample one of three tabs had no match; its current page was a "
+                 "search result whose virtual_url carried the opera-internal://search scheme. "
+                 "Because it is the URL's *last* visit "
                  "and not necessarily the visit this specific tab made, a URL revisited after "
                  "this tab session would show a later time than when this tab actually had it "
                  "open. Two other Opera-only stores were inspected and left out of this release: "
                  "reading.db (the Reading List/'save for later' feature) had zero rows on the "
-                 "device this was validated against, so its column mapping could not be "
+                 "pixel7a_a14 sample, so its column mapping could not be "
                  "confirmed against real content; and searchengines.db held only a list of "
-                 "built-in search engines on the device this was validated against. The "
-                 "databases-off-the-record folder was empty on the device this was validated "
-                 "against, "
+                 "built-in search engines on that sample. The "
+                 "databases-off-the-record folder was empty on that sample, "
                  "so no parser for it is included here. Every session_db found is read and its "
                  "URLs are matched only against the History file in the same app_opera folder. "
                  "Session Source File identifies the session database for each row. History Lookup Source "
@@ -62,7 +62,7 @@ __artifacts_v2__ = {
                        "carries.",
         "author": "@Gear-I, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-10-09",
+        "last_update_date": "2026-10-16",
         "requirements": "none",
         "category": "Opera",
         "notes": "This is the tab's navigation stack as stored, not a full visit log; a page "
@@ -70,15 +70,15 @@ __artifacts_v2__ = {
                  "(chrome.py) reads the History database separately, so the two should be read "
                  "together. Search Query is decoded from URLs carrying the "
                  "'opera-internal://search' scheme; for entries without that scheme the column "
-                 "is left blank. No timestamp column was found in navigation_entry on the device "
-                 "this was validated against, and none was found in the binary page_state or "
+                 "is left blank. No timestamp column was found in navigation_entry on the "
+                 "pixel7a_a14 sample, and none was found in the binary page_state or "
                  "JSON user_data "
                  "blobs. 'Last Visit Time' is recovered by matching this entry's URL, "
                  "exactly, against Opera's own History database's urls.last_visit_time, "
                  "and is left blank when no exact match exists, which happens for the "
-                 "internal 'operaui://startpage' entry tab starts from and, on "
-                 "the device this was validated against, for two opera-internal://search entries "
-                 "whose URL had no exact match in History. "
+                 "'operaui://startpage' entry (on the pixel7a_a14 sample, the first entry of "
+                 "each of three tabs) and for the two entries whose virtual_url carries "
+                 "opera-internal://search, whose url had no exact match in History. "
                  "Because it is the URL's *last* visit rather than necessarily the "
                  "visit this entry represents, a URL revisited later than this "
                  "navigation would show that later time instead. Every session_db found is read "
@@ -172,12 +172,14 @@ def _stores_by_container(files_found):
     tab's URL is dated against the same user's History, never another's.
     Both files sit directly under app_opera/, so the shared parent directory
     is the container key. The exact-suffix test never matches a sidecar.
+    Separators are normalized for the key only: the paths returned are the
+    seeker's own, so the core can still strip the data folder from them.
     """
-    normalized = [str(f).replace('\\', '/') for f in files_found]
-    history_by_root = {f[:-len('History')]: f for f in normalized
-                       if f.endswith('History')}
-    return [(f, history_by_root.get(f[:-len('session_db')]))
-            for f in sorted(normalized) if f.endswith('session_db')]
+    by_key = sorted((str(f).replace('\\', '/'), str(f)) for f in files_found)
+    history_by_root = {key[:-len('History')]: path for key, path in by_key
+                       if key.endswith('History')}
+    return [(path, history_by_root.get(key[:-len('session_db')]))
+            for key, path in by_key if key.endswith('session_db')]
 
 
 @artifact_processor
