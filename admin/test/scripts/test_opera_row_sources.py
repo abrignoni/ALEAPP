@@ -50,7 +50,7 @@ class TestOperaRowSources(unittest.TestCase):
                     known={}
                     for row in rows:
                         source=row['Session Source File'];self.assertTrue((Path(root)/source).is_file())
-                        if source.startswith('OTHER/'):
+                        if Path(source).parts[0]=='OTHER':
                             self.assertEqual(row['History Lookup Source File'],'')
                             self.assertIsNone(row[names[0]])
                         else:
@@ -70,3 +70,11 @@ class TestOperaRowSources(unittest.TestCase):
             for function in FUNCTIONS:
                 self.assertEqual(function.__wrapped__(Context(root,files))[1],function.__wrapped__(Context(staged,staged_files))[1])
                 self.assertEqual(function.__wrapped__(Context(root,[]))[1],[])
+
+    def test_stores_keep_the_seekers_own_paths(self):
+        # A Windows seeker yields backslash paths, and the core strips the data
+        # folder from exactly that spelling. Normalized copies would keep it.
+        base='C:\\case\\data\\Dump\\data\\data\\com.opera.browser\\app_opera\\'
+        other='C:\\case\\data\\Dump\\data\\user\\10\\com.opera.browser\\app_opera\\'
+        stores=opera._stores_by_container([base+'History',other+'session_db',base+'session_db',base+'session_db-journal'])
+        self.assertEqual(stores,[(base+'session_db',base+'History'),(other+'session_db',None)])

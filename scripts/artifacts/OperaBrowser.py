@@ -172,12 +172,14 @@ def _stores_by_container(files_found):
     tab's URL is dated against the same user's History, never another's.
     Both files sit directly under app_opera/, so the shared parent directory
     is the container key. The exact-suffix test never matches a sidecar.
+    Separators are normalized for the key only: the paths returned are the
+    seeker's own, so the core can still strip the data folder from them.
     """
-    normalized = [str(f).replace('\\', '/') for f in files_found]
-    history_by_root = {f[:-len('History')]: f for f in normalized
-                       if f.endswith('History')}
-    return [(f, history_by_root.get(f[:-len('session_db')]))
-            for f in sorted(normalized) if f.endswith('session_db')]
+    by_key = sorted((str(f).replace('\\', '/'), str(f)) for f in files_found)
+    history_by_root = {key[:-len('History')]: path for key, path in by_key
+                       if key.endswith('History')}
+    return [(path, history_by_root.get(key[:-len('session_db')]))
+            for key, path in by_key if key.endswith('session_db')]
 
 
 @artifact_processor

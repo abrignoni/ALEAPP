@@ -84,3 +84,8 @@ jobs:
 
       - name: Recover HTML run logging and close its handle
         run: python admin/test/scripts/test_screen_log_recovery.py
+
+      # The seeker's paths carry backslashes here; Opera's source columns must keep them
+      # so the core can strip the data folder.
+      - name: Keep the seeker's paths in Opera's source columns
+        run: python -m unittest admin.test.scripts.test_opera_row_sources
