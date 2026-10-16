@@ -1,0 +1,35 @@
+{
+  "metadata": {
+    "module_name": "googleOdlh",
+    "artifact_name": "ODLH Edited Segments",
+    "function_name": "gmsOdlhEditedSegments",
+    "case_number": "userb2_a13",
+    "number_of_columns": 8,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/googleOdlh/testdata.googleOdlh.gmsOdlhEditedSegments.userb2_a13.zip",
+    "start_time": "2026-10-16T15:13:02.793985+00:00",
+    "end_time": "2026-10-16T15:13:02.812332+00:00",
+    "run_time_seconds": 0.00037789344787597656,
+    "last_commit": {
+      "hash": "84e4ed790fb9ca7d4c0873364b47c8c55a5df57e",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-10-16T10:59:06-04:00",
+      "message": "ODLH: public sample_data for Path Points, shorter notes, segment times second"
+    }
+  },
+  "headers": [
+    "Start Time",
+    "End Time",
+    "Block Start Time",
+    "Block End Time",
+    "Segment Type",
+    "Is Edit Uploaded",
+    "Segment ID",
+    "Obfuscated GAIA ID"
+  ],
+  "data": []
+}
