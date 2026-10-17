@@ -1,397 +1,557 @@
 __artifacts_v2__ = {
     "chrome_sync_sessions": {
         "name": "Chrome Sync - Synced Tabs",
-        "description": "Pages held in the tabs Chrome synced for the signed-in account, with the "
-                       "address, page title, the time the entry stores for when the navigation "
-                       "last occurred (the syncing client's clock) and the name of the device "
-                       "the tab "
-                       "belongs to.",
+        "description": "Pages in the tabs Chromium-based browsers synced, from this browser and from other sync clients on the account, with the address, title, navigation time and the name of the device the tab belongs to.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-04",
-        "last_update_date": "2026-09-04",
+        "last_update_date": "2026-10-17",
         "requirements": "none",
         "category": "Chrome Sync",
-        "notes": "Read from the Chrome sync LevelDB store app_chrome/<profile>/Sync Data/LevelDB "
-                 "with the vendored ccl_leveldb, decoding each value with blackboxprotobuf. Only "
-                 "live records whose key begins sessions-dt- are read; records in a deleted "
-                 "state, the sessions-md- keys and values that do not decode are not reported. "
-                 "The mirrored Android storage views of one store are collapsed before it is "
-                 "opened so a record is not reported once per view.\nField numbers are "
-                 "Chromium's. SessionSpecifics: session_tag 1, header 2, tab 3, tab_node_id 4. "
-                 "SessionHeader: window 2, client_name 3, device_type 4. SessionTab: tab_id 1, "
-                 "window_id 2, current_navigation_index 4, pinned 5, navigation 7. "
-                 "TabNavigation: virtual_url 2, referrer 3, title 4, page_transition 6, "
-                 "unique_id 8, timestamp_msec 9, favicon_url 17, http_status_code 20. "
-                 "References: Chromium at commit 5babd82a3403ae4c580afc34df4c677d70779b52: "
-                 "https://github.com/chromium/chromium/blob/5babd82a3403ae4c580afc34df4c677d70779b52/components/sync/protocol/session_specifics.proto "
-                 "and "
-                 "https://github.com/chromium/chromium/blob/5babd82a3403ae4c580afc34df4c677d70779b52/components/sync/protocol/tab_navigation.proto.\nOne "
-                 "row per navigation entry in a tab. Timestamp is timestamp_msec, Unix "
-                 "milliseconds. Device Name is the client_name from the header record carrying "
-                 "the same session tag, so a tab is attributed to the device that synced it and "
-                 "is blank when no header for that tag is in the store. Browser is the package "
-                 "the store sits under, because the pattern carries no package name and is "
-                 "anchored on the app_chrome layout rather than on a package. Browser does not "
-                 "separate two stores of one browser, a second Android user's or a second "
-                 "profile folder's under app_chrome, so Source File names the store each row "
-                 "came from. Navigation Index is the entry's position in the tab's list and "
-                 "Current Navigation Index is the entry the tab was on, so the two together show "
-                 "which page was showing. Page Transition is an integer Chromium defines and is "
-                 "reported as stored. Favicon URL is carried by a minority of entries, 35 of "
-                 "2551 across the tested images, and is blank on the rest.\nA tab record carries "
-                 "the session tag of the client that wrote it, and the store can hold records "
-                 "from clients other than this device (see the Session Devices artifact), so a "
-                 "row is not necessarily a page opened on this device; read Device "
-                 "Name before attributing it. The LevelDB store can hold superseded copies of a "
-                 "key; Superseded is True for every copy but the newest of that key, and an "
-                 "earlier copy can hold "
-                 "pages the newest one no longer lists. A navigation entry that repeats "
-                 "unchanged across those copies is reported once, so the superseded rows that "
-                 "remain are the ones that differ.",
-        "paths": ('*/app_chrome/*/Sync Data/LevelDB/*',),
+        "notes": "Reads the Sync Data/LevelDB folder of Chromium-based browsers: app_chrome/<profile>/Sync Data/LevelDB, and app_opera/Sync Data/LevelDB for Opera, read only when the directory directly above app_chrome or app_opera is shaped like a package name. Read with the vendored ccl_leveldb through scripts/chromium_sync_data.py, ported from DLEAPP (https://github.com/abrignoni/DLEAPP/blob/6ea23d789a10fc2ffcd09eb374c76423705de9b1/scripts/chromium/sync_data.py). Browser is that package and Source File names the folder a row came from; Browser does not separate a second Android user's store of the same browser, which Source File does. The storage views one Android extraction can hold for an app data directory (data/data, data/user/0, data_mirror) are collapsed so a store is read once; a second Android user's store is read as its own store, as on russell_a14, russell_pixel6a_a13, samsungs20_a13, emu_a15_oss_v4 to emu_a15_oss_v17, emu_a15_oss2_v2 and emu_a15_oss2_v3. Chromium keeps each sync data type's records under the keys <type>-dt-<storage key>, with A- in front for account storage, and the type's sync state under <type>-GlobalMetadata (https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/model/blocking_data_type_store_impl.cc#L26-L63 and https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/model/blocking_data_type_store_impl.cc#L172-L183); no tested store held an account storage data record, and 5 held only an account storage sync state record, for reading_list. LevelDB numbers each write and orders the versions of a key by decreasing sequence number, the newest first (https://github.com/google/leveldb/blob/bb74ef739973a70ca9f0d90788a1da89b788c0ad/db/dbformat.cc#L47-L63). Only the newest version of each key is read, and a key whose newest version is a deletion is not reported; earlier versions are not reported by any artifact, and the run log counts them for each folder. Across the 85 stores on the tested images that left 1,333 of 63,174 records as the newest version of a key, 190 of them deletions. Earlier releases of these artifacts reported older versions of tab records, so their Synced Tabs counts were larger. Values are decoded with the field numbers and types of the messages Chromium publishes under components/sync/protocol at commit 5926523bcfedb77ba2533ace1dd93b477673f72a, transcribed into scripts/chromium_sync_data.py, not by guessing at field types; a record that does not decode is not reported and the run log names its store and data type; none failed to decode on the tested images. Not read: the -md- metadata records and the data types other than device_info, sessions and send_tab_to_self. Of those, the tested stores held preferences, priority_preferences and account_setting data records; reading_list, saved_tab_group, history_delete_directives and the others held no live data record, only their sync state. No tested image held a Sync Data folder under app_webview or app_sbrowser, and those are not read. One row per navigation entry in each live sessions record that holds a SessionTab (https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/protocol/session_specifics.proto#L69-L91), whose entries are TabNavigation messages (https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/protocol/tab_navigation.proto#L19-L51). URL is virtual_url, the URL as displayed to the user (https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/protocol/tab_navigation.proto#L20-L24); Title and Referrer are title and referrer decoded as UTF-8 and HTTP Status is http_status_code as stored; Transition is page_transition, the core transition type, named with sync_enums.proto (https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/protocol/sync_enums.proto#L63-L74); From Address Bar is navigation_from_address_bar (https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/protocol/tab_navigation.proto#L40-L41). Navigation Time is timestamp_msec, described as when the navigation last occurred, in client time, and as able to refresh when the user goes back or forward (https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/protocol/tab_navigation.proto#L35-L37), written with TimeToProtoTime (https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync_sessions/synced_session.cc#L136), milliseconds since 1970-01-01 UTC (https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/base/time.cc#L14-L16). Of the 377 tested rows with This Device Yes, 200 were within 1 second of a visit to the same address in the same browser's History, 13 within 60 seconds and 7 further; of the other 157, 30 were chrome: or chrome-native: pages, 122 were older than the oldest visit left in that History and 5 had no visit to the address within it. Navigation Index is the entry's position in the tab and Current Entry is Yes on the entry at current_navigation_index (https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/protocol/session_specifics.proto#L77-L79). Tab Last Active is last_active_time_unix_epoch_millis (https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/protocol/session_specifics.proto#L89-L91), blank on 303 of the 431 tested rows; Pinned is pinned shown as Yes or No, and Pinned held No on all 431 tested rows; Tab ID and Window ID are tab_id and window_id as stored. Device Name is the client_name of the session header with the same session tag, or of the device with that Cache GUID when no header is stored; it held a value on every tested row. Session Tag is the record's session_tag, which the proto describes as sync's cache GUID since M89 (https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/protocol/session_specifics.proto#L21-L24). This Device is Yes when the session tag equals the cache_guid in the sessions sync state, the GUID of the sync client that wrote the store (https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/protocol/data_type_state.proto#L58-L64), No when it equals the Cache GUID of another device the store lists, and blank when the store records no cache_guid or the tag matches no listed GUID. On cookbook_a11 and pixel3_a11 every session tag began with session_sync and matched no Cache GUID, so This Device is blank on their 48 rows. A row whose This Device is No came from another sync client on the account; it is not a page opened in this browser. The 6 No rows, all on samsungs20_a13, came from another client whose device_info lists it as OS_TYPE_WINDOWS (1). Browser held one value on the rows of every image but pixel7a_a14.",
+        "paths": ('*/app_chrome/*/Sync Data/LevelDB/*', '*/app_opera/Sync Data/LevelDB/*'),
         "output_types": "standard",
         "artifact_icon": "cloud-computing",
         "sample_data": {
-            "adams_ss134dl_a03s_logical": "0 rows",
-            "adams_ss135dl_a13": "Android 13 | 0 rows",
-            "anne_a15": "Android 15 | 364 rows",
-            "cookbook_a11": "Android 11 | 382 rows",
-            "df020_mavic_pro_android": "0 rows",
-            "emu_a15_oss_v1": "Android 15 | 0 rows",
-            "falken_a326u_a13": "Android 13 | 0 rows",
-            "galaxys10_a10": "Android 10 | 0 rows",
-            "hc_pixel8pro_a16": "Android 16 | 34 rows",
-            "hc_pixel8pro_a17": "Android 17 | 37 rows",
-            "hc_pixel8pro_a17_ail": "Android 17 | 0 rows",
-            "kevin_pocox7_a15": "Android 15 | 406 rows",
-            "pixel3_a11": "Android 11 | 35 rows",
-            "pixel3_a12": "Android 12 | 300 rows",
-            "pixel7a_a14": "Android 14 | 45 rows",
-            "russell_a14": "Android 14 | 120 rows",
-            "russell_pixel6a_a13": "Android 13 | 198 rows",
-            "s20fe_a13": "Android 13 | 0 rows",
-            "samsunga53_a14": "Android 14 | 0 rows",
-            "samsungs20_a13": "Android 13 | 32 rows",
-            "sharon_a13": "Android 13 | 162 rows",
-            "sharon_a14": "Android 14 | 436 rows",
-            "userb2_a13": "Android 13 | 0 rows",
+            "adams_ss134dl_a03s_logical": "0 rows (no Sync Data folder matched)",
+            "adams_ss135dl_a13": "Android 13 | 0 rows (no live tab record in the Sync Data folders)",
+            "anne_a15": "Android 15 | 1 row",
+            "cookbook_a11": "Android 11 | 41 rows",
+            "df020_mavic_pro_android": "0 rows (no Sync Data folder matched)",
+            "dfrws2011_case1_a855": "0 rows (no Sync Data folder matched)",
+            "dfrws2011_case2_droid_a201": "Android 2.0.1 | 0 rows (no Sync Data folder matched)",
+            "emu_a15_oss2_v1": "Android 15 | 0 rows (no Sync Data folder matched)",
+            "emu_a15_oss2_v2": "Android 15 | 0 rows (no live tab record in the Sync Data folders)",
+            "emu_a15_oss2_v3": "Android 15 | 0 rows (no live tab record in the Sync Data folders)",
+            "emu_a15_oss_v1": "Android 15 | 0 rows (no live tab record in the Sync Data folders)",
+            "emu_a15_oss_v10": "Android 15 | 0 rows (no live tab record in the Sync Data folders)",
+            "emu_a15_oss_v11": "Android 15 | 0 rows (no live tab record in the Sync Data folders)",
+            "emu_a15_oss_v12": "Android 15 | 0 rows (no live tab record in the Sync Data folders)",
+            "emu_a15_oss_v13": "Android 15 | 0 rows (no live tab record in the Sync Data folders)",
+            "emu_a15_oss_v14": "Android 15 | 0 rows (no live tab record in the Sync Data folders)",
+            "emu_a15_oss_v15": "Android 15 | 0 rows (no live tab record in the Sync Data folders)",
+            "emu_a15_oss_v16": "Android 15 | 0 rows (no live tab record in the Sync Data folders)",
+            "emu_a15_oss_v17": "Android 15 | 0 rows (no live tab record in the Sync Data folders)",
+            "emu_a15_oss_v2": "Android 15 | 0 rows (no live tab record in the Sync Data folders)",
+            "emu_a15_oss_v3": "Android 15 | 0 rows (no live tab record in the Sync Data folders)",
+            "emu_a15_oss_v4": "Android 15 | 0 rows (no live tab record in the Sync Data folders)",
+            "emu_a15_oss_v5": "Android 15 | 0 rows (no live tab record in the Sync Data folders)",
+            "emu_a15_oss_v6": "Android 15 | 0 rows (no live tab record in the Sync Data folders)",
+            "emu_a15_oss_v7": "Android 15 | 0 rows (no live tab record in the Sync Data folders)",
+            "emu_a15_oss_v8": "Android 15 | 0 rows (no live tab record in the Sync Data folders)",
+            "emu_a15_oss_v9": "Android 15 | 0 rows (no live tab record in the Sync Data folders)",
+            "falken_a326u_a13": "Android 13 | 0 rows (no live tab record in the Sync Data folders)",
+            "galaxys10_a10": "Android 10 | 0 rows (no live tab record in the Sync Data folders)",
+            "hc_pixel8pro_a16": "Android 16 | 6 rows",
+            "hc_pixel8pro_a17": "Android 17 | 0 rows (no live tab record in the Sync Data folders)",
+            "hc_pixel8pro_a17_ail": "Android 17 | 0 rows (no Sync Data folder matched)",
+            "hickman_a13": "Android 13 | 12 rows",
+            "kevin_pocox7_a15": "Android 15 | 0 rows (no live tab record in the Sync Data folders)",
+            "pixel3_a11": "Android 11 | 7 rows",
+            "pixel3_a12": "Android 12 | 20 rows",
+            "pixel7a_a14": "Android 14 | 18 rows",
+            "russell_a14": "Android 14 | 48 rows",
+            "russell_pixel6a_a13": "Android 13 | 27 rows",
+            "s20fe_a13": "Android 13 | 0 rows (no live tab record in the Sync Data folders)",
+            "samsunga53_a14": "Android 14 | 0 rows (no live tab record in the Sync Data folders)",
+            "samsungs20_a13": "Android 13 | 20 rows",
+            "sharon_a13": "Android 13 | 83 rows",
+            "sharon_a14": "Android 14 | 148 rows",
+            "userb2_a13": "Android 13 | 0 rows (no live tab record in the Sync Data folders)",
         },
     },
     "chrome_sync_devices": {
         "name": "Chrome Sync - Session Devices",
-        "description": "The devices that synced browsing sessions to this Chrome profile, with "
-                       "the device name each one reported and the number of tab ids each of "
-                       "its windows listed.",
+        "description": "The session header each device synced to Chromium-based browsers: the device name and form factor and how many windows and tabs it listed.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-04",
-        "last_update_date": "2026-10-09",
+        "last_update_date": "2026-10-17",
         "requirements": "none",
         "category": "Chrome Sync",
-        "notes": "Read from the same Chrome sync LevelDB store, from the session records that "
-                 "carry a header rather than a tab. One row per window in a header record; a "
-                 "header record that lists no window is reported as one row with Window ID, Tabs "
-                 "In Window and Browser Type blank, so it is distinguishable from a listed "
-                 "window that holds 0 tab ids.\nField numbers are Chromium's, from "
-                 "components/sync/protocol/session_specifics.proto at commit "
-                 "5babd82a3403ae4c580afc34df4c677d70779b52 "
-                 "(https://github.com/chromium/chromium/blob/5babd82a3403ae4c580afc34df4c677d70779b52/components/sync/protocol/session_specifics.proto): "
-                 "SessionSpecifics.session_tag 1 and header 2; SessionHeader.window 2, "
-                 "client_name 3 and device_type 4; SessionWindow.window_id 1, selected_tab_index "
-                 "2, browser_type 3 and tab 4. At that commit device_type is marked "
-                 "deprecated.\nDevice Name is the client_name the device reported, which was a "
-                 "phone model name or a computer host name on the tested images. Session Tag is "
-                 "the identifier the sync store files that device under, and it is the value "
-                 "that joins these rows to the synced tabs. Browser is the package the store "
-                 "sits under. Browser does not separate two stores of one browser, a second "
-                 "Android user's or a second profile folder's under app_chrome, so Source File "
-                 "names the store each row came from. Tabs In Window is the count of tab ids the "
-                 "window listed. Device Type and Browser Type are integers reported as stored. "
-                 "The window record also carries a selected tab index, whose default in the "
-                 "proto is -1; it is not reported.\nA device appears here because it synced a "
-                 "session to this account, not because it was used at the device this extraction "
-                 "came from. The store can hold superseded copies of each header; only the "
-                 "newest copy of each is reported here, and older copies of a header are not "
-                 "reported by either artifact; the synced tabs artifact reports superseded "
-                 "copies of tab records only.",
-        "paths": ('*/app_chrome/*/Sync Data/LevelDB/*',),
+        "notes": "Reads the Sync Data/LevelDB folder of Chromium-based browsers: app_chrome/<profile>/Sync Data/LevelDB, and app_opera/Sync Data/LevelDB for Opera, read only when the directory directly above app_chrome or app_opera is shaped like a package name. Read with the vendored ccl_leveldb through scripts/chromium_sync_data.py, ported from DLEAPP (https://github.com/abrignoni/DLEAPP/blob/6ea23d789a10fc2ffcd09eb374c76423705de9b1/scripts/chromium/sync_data.py). Browser is that package and Source File names the folder a row came from; Browser does not separate a second Android user's store of the same browser, which Source File does. The storage views one Android extraction can hold for an app data directory (data/data, data/user/0, data_mirror) are collapsed so a store is read once; a second Android user's store is read as its own store, as on russell_a14, russell_pixel6a_a13, samsungs20_a13, emu_a15_oss_v4 to emu_a15_oss_v17, emu_a15_oss2_v2 and emu_a15_oss2_v3. Chromium keeps each sync data type's records under the keys <type>-dt-<storage key>, with A- in front for account storage, and the type's sync state under <type>-GlobalMetadata (https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/model/blocking_data_type_store_impl.cc#L26-L63 and https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/model/blocking_data_type_store_impl.cc#L172-L183); no tested store held an account storage data record, and 5 held only an account storage sync state record, for reading_list. LevelDB numbers each write and orders the versions of a key by decreasing sequence number, the newest first (https://github.com/google/leveldb/blob/bb74ef739973a70ca9f0d90788a1da89b788c0ad/db/dbformat.cc#L47-L63). Only the newest version of each key is read, and a key whose newest version is a deletion is not reported; earlier versions are not reported by any artifact, and the run log counts them for each folder. Across the 85 stores on the tested images that left 1,333 of 63,174 records as the newest version of a key, 190 of them deletions. Earlier releases of these artifacts reported older versions of tab records, so their Synced Tabs counts were larger. Values are decoded with the field numbers and types of the messages Chromium publishes under components/sync/protocol at commit 5926523bcfedb77ba2533ace1dd93b477673f72a, transcribed into scripts/chromium_sync_data.py, not by guessing at field types; a record that does not decode is not reported and the run log names its store and data type; none failed to decode on the tested images. Not read: the -md- metadata records and the data types other than device_info, sessions and send_tab_to_self. Of those, the tested stores held preferences, priority_preferences and account_setting data records; reading_list, saved_tab_group, history_delete_directives and the others held no live data record, only their sync state. No tested image held a Sync Data folder under app_webview or app_sbrowser, and those are not read. One row per live sessions record that holds a SessionHeader (https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/protocol/session_specifics.proto#L21-L36 and https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/protocol/session_specifics.proto#L40-L56). Earlier releases gave one row per window. Device Name is the header's client_name, Form Factor its device_form_factor and Device Type its deprecated device_type, named with sync_enums.proto (https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/protocol/sync_enums.proto#L143-L177). Windows is the number of SessionWindow entries, Tabs Listed the number of tab ids they list, and Window Types the browser_type names of the windows (https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/protocol/session_specifics.proto#L58-L66, https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/protocol/sync_enums.proto#L180-L186); a header that lists no window has Windows 0 and Window Types blank, as on 2 of the 16 tested rows. Session Start is session_start_time_unix_epoch_millis, which the proto says was introduced in M130 and is not populated for sessions started before it (https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/protocol/session_specifics.proto#L41-L44); it was blank on 11 of the 16 tested rows, and Form Factor on 4. Session Tag is session_tag, sync's cache GUID since M89 (https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/protocol/session_specifics.proto#L21-L24). This Device is Yes when the session tag equals the cache_guid in the sessions sync state (https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/protocol/data_type_state.proto#L58-L64), No when it equals the Cache GUID of another device the store lists, and blank when the store records no cache_guid or the tag matches no listed GUID; on the tested rows it was Yes on 13, No on 1 and blank on 2, the headers of cookbook_a11 and pixel3_a11 whose tags began with session_sync. A device appears here because it synced a session to this account, not because it was used at the device this extraction came from.",
+        "paths": ('*/app_chrome/*/Sync Data/LevelDB/*', '*/app_opera/Sync Data/LevelDB/*'),
         "output_types": "standard",
         "artifact_icon": "devices",
         "sample_data": {
-            "adams_ss134dl_a03s_logical": "0 rows",
-            "adams_ss135dl_a13": "Android 13 | 0 rows",
+            "adams_ss134dl_a03s_logical": "0 rows (no Sync Data folder matched)",
+            "adams_ss135dl_a13": "Android 13 | 0 rows (no live session header record in the Sync Data folders)",
             "anne_a15": "Android 15 | 1 row",
             "cookbook_a11": "Android 11 | 1 row",
-            "df020_mavic_pro_android": "0 rows",
-            "emu_a15_oss_v1": "Android 15 | 0 rows",
-            "falken_a326u_a13": "Android 13 | 0 rows",
-            "galaxys10_a10": "Android 10 | 0 rows",
+            "df020_mavic_pro_android": "0 rows (no Sync Data folder matched)",
+            "dfrws2011_case1_a855": "0 rows (no Sync Data folder matched)",
+            "dfrws2011_case2_droid_a201": "Android 2.0.1 | 0 rows (no Sync Data folder matched)",
+            "emu_a15_oss2_v1": "Android 15 | 0 rows (no Sync Data folder matched)",
+            "emu_a15_oss2_v2": "Android 15 | 0 rows (no live session header record in the Sync Data folders)",
+            "emu_a15_oss2_v3": "Android 15 | 0 rows (no live session header record in the Sync Data folders)",
+            "emu_a15_oss_v1": "Android 15 | 0 rows (no live session header record in the Sync Data folders)",
+            "emu_a15_oss_v10": "Android 15 | 0 rows (no live session header record in the Sync Data folders)",
+            "emu_a15_oss_v11": "Android 15 | 0 rows (no live session header record in the Sync Data folders)",
+            "emu_a15_oss_v12": "Android 15 | 0 rows (no live session header record in the Sync Data folders)",
+            "emu_a15_oss_v13": "Android 15 | 0 rows (no live session header record in the Sync Data folders)",
+            "emu_a15_oss_v14": "Android 15 | 0 rows (no live session header record in the Sync Data folders)",
+            "emu_a15_oss_v15": "Android 15 | 0 rows (no live session header record in the Sync Data folders)",
+            "emu_a15_oss_v16": "Android 15 | 0 rows (no live session header record in the Sync Data folders)",
+            "emu_a15_oss_v17": "Android 15 | 0 rows (no live session header record in the Sync Data folders)",
+            "emu_a15_oss_v2": "Android 15 | 0 rows (no live session header record in the Sync Data folders)",
+            "emu_a15_oss_v3": "Android 15 | 0 rows (no live session header record in the Sync Data folders)",
+            "emu_a15_oss_v4": "Android 15 | 0 rows (no live session header record in the Sync Data folders)",
+            "emu_a15_oss_v5": "Android 15 | 0 rows (no live session header record in the Sync Data folders)",
+            "emu_a15_oss_v6": "Android 15 | 0 rows (no live session header record in the Sync Data folders)",
+            "emu_a15_oss_v7": "Android 15 | 0 rows (no live session header record in the Sync Data folders)",
+            "emu_a15_oss_v8": "Android 15 | 0 rows (no live session header record in the Sync Data folders)",
+            "emu_a15_oss_v9": "Android 15 | 0 rows (no live session header record in the Sync Data folders)",
+            "falken_a326u_a13": "Android 13 | 0 rows (no live session header record in the Sync Data folders)",
+            "galaxys10_a10": "Android 10 | 0 rows (no live session header record in the Sync Data folders)",
             "hc_pixel8pro_a16": "Android 16 | 1 row",
             "hc_pixel8pro_a17": "Android 17 | 1 row",
-            "hc_pixel8pro_a17_ail": "Android 17 | 0 rows",
-            "kevin_pocox7_a15": "Android 15 | 2 rows",
-            "pixel3_a11": "Android 11 | 4 rows",
-            "pixel3_a12": "Android 12 | 2 rows",
-            "pixel7a_a14": "Android 14 | 4 rows",
+            "hc_pixel8pro_a17_ail": "Android 17 | 0 rows (no Sync Data folder matched)",
+            "hickman_a13": "Android 13 | 1 row",
+            "kevin_pocox7_a15": "Android 15 | 1 row",
+            "pixel3_a11": "Android 11 | 1 row",
+            "pixel3_a12": "Android 12 | 1 row",
+            "pixel7a_a14": "Android 14 | 2 rows",
             "russell_a14": "Android 14 | 1 row",
-            "russell_pixel6a_a13": "Android 13 | 2 rows",
-            "s20fe_a13": "Android 13 | 0 rows",
-            "samsunga53_a14": "Android 14 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | 1 row",
+            "s20fe_a13": "Android 13 | 0 rows (no live session header record in the Sync Data folders)",
+            "samsunga53_a14": "Android 14 | 0 rows (no live session header record in the Sync Data folders)",
             "samsungs20_a13": "Android 13 | 2 rows",
-            "sharon_a13": "Android 13 | 6 rows",
+            "sharon_a13": "Android 13 | 1 row",
             "sharon_a14": "Android 14 | 1 row",
-            "userb2_a13": "Android 13 | 0 rows",
+            "userb2_a13": "Android 13 | 0 rows (no live session header record in the Sync Data folders)",
+        },
+    },
+    "chrome_sync_device_info": {
+        "name": "Chrome Sync - Device Info",
+        "description": "Devices listed in the sync device information of Chromium-based browsers, with the name, operating system, model, browser version and last update time each device recorded.",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-10-17",
+        "last_update_date": "2026-10-17",
+        "requirements": "none",
+        "category": "Chrome Sync",
+        "notes": "Reads the Sync Data/LevelDB folder of Chromium-based browsers: app_chrome/<profile>/Sync Data/LevelDB, and app_opera/Sync Data/LevelDB for Opera, read only when the directory directly above app_chrome or app_opera is shaped like a package name. Read with the vendored ccl_leveldb through scripts/chromium_sync_data.py, ported from DLEAPP (https://github.com/abrignoni/DLEAPP/blob/6ea23d789a10fc2ffcd09eb374c76423705de9b1/scripts/chromium/sync_data.py). Browser is that package and Source File names the folder a row came from; Browser does not separate a second Android user's store of the same browser, which Source File does. The storage views one Android extraction can hold for an app data directory (data/data, data/user/0, data_mirror) are collapsed so a store is read once; a second Android user's store is read as its own store, as on russell_a14, russell_pixel6a_a13, samsungs20_a13, emu_a15_oss_v4 to emu_a15_oss_v17, emu_a15_oss2_v2 and emu_a15_oss2_v3. Chromium keeps each sync data type's records under the keys <type>-dt-<storage key>, with A- in front for account storage, and the type's sync state under <type>-GlobalMetadata (https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/model/blocking_data_type_store_impl.cc#L26-L63 and https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/model/blocking_data_type_store_impl.cc#L172-L183); no tested store held an account storage data record, and 5 held only an account storage sync state record, for reading_list. LevelDB numbers each write and orders the versions of a key by decreasing sequence number, the newest first (https://github.com/google/leveldb/blob/bb74ef739973a70ca9f0d90788a1da89b788c0ad/db/dbformat.cc#L47-L63). Only the newest version of each key is read, and a key whose newest version is a deletion is not reported; earlier versions are not reported by any artifact, and the run log counts them for each folder. Across the 85 stores on the tested images that left 1,333 of 63,174 records as the newest version of a key, 190 of them deletions. Earlier releases of these artifacts reported older versions of tab records, so their Synced Tabs counts were larger. Values are decoded with the field numbers and types of the messages Chromium publishes under components/sync/protocol at commit 5926523bcfedb77ba2533ace1dd93b477673f72a, transcribed into scripts/chromium_sync_data.py, not by guessing at field types; a record that does not decode is not reported and the run log names its store and data type; none failed to decode on the tested images. Not read: the -md- metadata records and the data types other than device_info, sessions and send_tab_to_self. Of those, the tested stores held preferences, priority_preferences and account_setting data records; reading_list, saved_tab_group, history_delete_directives and the others held no live data record, only their sync state. No tested image held a Sync Data folder under app_webview or app_sbrowser, and those are not read. One row per live device_info record, a DeviceInfoSpecifics message (https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/protocol/device_info_specifics.proto#L24-L110). Last Updated is last_updated_timestamp, which the proto describes as updated to the current time periodically and whenever another field changes (https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/protocol/device_info_specifics.proto#L53-L57); the client sets it with TimeToProtoTime from its own clock (https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync_device_info/device_info_sync_bridge.cc#L322-L325), milliseconds since 1970-01-01 UTC (https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/base/time.cc#L14-L16). Device Name is client_name, a non-unique human readable name (https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/protocol/device_info_specifics.proto#L28-L29), and equalled Model on 38 of the 41 tested rows; Cache GUID is cache_guid, which identifies a sync client (https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/protocol/device_info_specifics.proto#L25-L26). This Device is Yes when the row's cache GUID equals the cache_guid in the type's sync state record, the GUID of the sync client that wrote the store (https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/protocol/data_type_state.proto#L58-L64), No when it differs, and blank when the store records none; each of the 20 tested stores with device rows had one Yes row. OS Type, Form Factor and Device Type are os_type and device_form_factor (https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/protocol/device_info_specifics.proto#L96-L100) and the deprecated device_type (https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/protocol/device_info_specifics.proto#L31-L34), named with sync_enums.proto (https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/protocol/sync_enums.proto#L143-L177); OS Type and Form Factor were blank on 8 of the 41 tested rows. Chrome Version is chrome_version_info.version_number (https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/protocol/device_info_specifics.proto#L91-L92, https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/protocol/device_info_specifics.proto#L263-L266), or the deprecated chrome_version when that is absent (https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/protocol/device_info_specifics.proto#L40-L42); it was blank on 10 rows, as were Sync User Agent and Signin Scoped Device ID. Manufacturer, Model, Sync User Agent and Signin Scoped Device ID are manufacturer, model, sync_user_agent and signin_scoped_device_id (https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/protocol/device_info_specifics.proto#L67-L71, https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/protocol/device_info_specifics.proto#L36-L38, https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/protocol/device_info_specifics.proto#L49-L51). A row records that a device was listed in the browser's sync data; it does not establish who used the device.",
+        "paths": ('*/app_chrome/*/Sync Data/LevelDB/*', '*/app_opera/Sync Data/LevelDB/*'),
+        "output_types": "standard",
+        "artifact_icon": "smartphone",
+        "sample_data": {
+            "adams_ss134dl_a03s_logical": "0 rows (no Sync Data folder matched)",
+            "adams_ss135dl_a13": "Android 13 | 8 rows",
+            "anne_a15": "Android 15 | 2 rows",
+            "cookbook_a11": "Android 11 | 1 row",
+            "df020_mavic_pro_android": "0 rows (no Sync Data folder matched)",
+            "dfrws2011_case1_a855": "0 rows (no Sync Data folder matched)",
+            "dfrws2011_case2_droid_a201": "Android 2.0.1 | 0 rows (no Sync Data folder matched)",
+            "emu_a15_oss2_v1": "Android 15 | 0 rows (no Sync Data folder matched)",
+            "emu_a15_oss2_v2": "Android 15 | 0 rows (no live device_info record in the Sync Data folders)",
+            "emu_a15_oss2_v3": "Android 15 | 0 rows (no live device_info record in the Sync Data folders)",
+            "emu_a15_oss_v1": "Android 15 | 0 rows (no live device_info record in the Sync Data folders)",
+            "emu_a15_oss_v10": "Android 15 | 0 rows (no live device_info record in the Sync Data folders)",
+            "emu_a15_oss_v11": "Android 15 | 0 rows (no live device_info record in the Sync Data folders)",
+            "emu_a15_oss_v12": "Android 15 | 0 rows (no live device_info record in the Sync Data folders)",
+            "emu_a15_oss_v13": "Android 15 | 0 rows (no live device_info record in the Sync Data folders)",
+            "emu_a15_oss_v14": "Android 15 | 0 rows (no live device_info record in the Sync Data folders)",
+            "emu_a15_oss_v15": "Android 15 | 0 rows (no live device_info record in the Sync Data folders)",
+            "emu_a15_oss_v16": "Android 15 | 0 rows (no live device_info record in the Sync Data folders)",
+            "emu_a15_oss_v17": "Android 15 | 0 rows (no live device_info record in the Sync Data folders)",
+            "emu_a15_oss_v2": "Android 15 | 0 rows (no live device_info record in the Sync Data folders)",
+            "emu_a15_oss_v3": "Android 15 | 0 rows (no live device_info record in the Sync Data folders)",
+            "emu_a15_oss_v4": "Android 15 | 0 rows (no live device_info record in the Sync Data folders)",
+            "emu_a15_oss_v5": "Android 15 | 0 rows (no live device_info record in the Sync Data folders)",
+            "emu_a15_oss_v6": "Android 15 | 0 rows (no live device_info record in the Sync Data folders)",
+            "emu_a15_oss_v7": "Android 15 | 0 rows (no live device_info record in the Sync Data folders)",
+            "emu_a15_oss_v8": "Android 15 | 0 rows (no live device_info record in the Sync Data folders)",
+            "emu_a15_oss_v9": "Android 15 | 0 rows (no live device_info record in the Sync Data folders)",
+            "falken_a326u_a13": "Android 13 | 0 rows (no live device_info record in the Sync Data folders)",
+            "galaxys10_a10": "Android 10 | 0 rows (no live device_info record in the Sync Data folders)",
+            "hc_pixel8pro_a16": "Android 16 | 2 rows",
+            "hc_pixel8pro_a17": "Android 17 | 2 rows",
+            "hc_pixel8pro_a17_ail": "Android 17 | 0 rows (no Sync Data folder matched)",
+            "hickman_a13": "Android 13 | 1 row",
+            "kevin_pocox7_a15": "Android 15 | 3 rows",
+            "pixel3_a11": "Android 11 | 6 rows",
+            "pixel3_a12": "Android 12 | 1 row",
+            "pixel7a_a14": "Android 14 | 2 rows",
+            "russell_a14": "Android 14 | 2 rows",
+            "russell_pixel6a_a13": "Android 13 | 2 rows",
+            "s20fe_a13": "Android 13 | 0 rows (no live device_info record in the Sync Data folders)",
+            "samsunga53_a14": "Android 14 | 3 rows",
+            "samsungs20_a13": "Android 13 | 4 rows",
+            "sharon_a13": "Android 13 | 1 row",
+            "sharon_a14": "Android 14 | 1 row",
+            "userb2_a13": "Android 13 | 0 rows (no live device_info record in the Sync Data folders)",
+        },
+    },
+    "chrome_sync_send_tab_to_self": {
+        "name": "Chrome Sync - Send Tab To Self",
+        "description": "Pages sent between devices with send tab to self, from the sync data of Chromium-based browsers: the title and address, when it was shared, the sending device's name and the target device.",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-10-17",
+        "last_update_date": "2026-10-17",
+        "requirements": "none",
+        "category": "Chrome Sync",
+        "notes": "Reads the Sync Data/LevelDB folder of Chromium-based browsers: app_chrome/<profile>/Sync Data/LevelDB, and app_opera/Sync Data/LevelDB for Opera, read only when the directory directly above app_chrome or app_opera is shaped like a package name. Read with the vendored ccl_leveldb through scripts/chromium_sync_data.py, ported from DLEAPP (https://github.com/abrignoni/DLEAPP/blob/6ea23d789a10fc2ffcd09eb374c76423705de9b1/scripts/chromium/sync_data.py). Browser is that package and Source File names the folder a row came from; Browser does not separate a second Android user's store of the same browser, which Source File does. The storage views one Android extraction can hold for an app data directory (data/data, data/user/0, data_mirror) are collapsed so a store is read once; a second Android user's store is read as its own store, as on russell_a14, russell_pixel6a_a13, samsungs20_a13, emu_a15_oss_v4 to emu_a15_oss_v17, emu_a15_oss2_v2 and emu_a15_oss2_v3. Chromium keeps each sync data type's records under the keys <type>-dt-<storage key>, with A- in front for account storage, and the type's sync state under <type>-GlobalMetadata (https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/model/blocking_data_type_store_impl.cc#L26-L63 and https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/model/blocking_data_type_store_impl.cc#L172-L183); no tested store held an account storage data record, and 5 held only an account storage sync state record, for reading_list. LevelDB numbers each write and orders the versions of a key by decreasing sequence number, the newest first (https://github.com/google/leveldb/blob/bb74ef739973a70ca9f0d90788a1da89b788c0ad/db/dbformat.cc#L47-L63). Only the newest version of each key is read, and a key whose newest version is a deletion is not reported; earlier versions are not reported by any artifact, and the run log counts them for each folder. Across the 85 stores on the tested images that left 1,333 of 63,174 records as the newest version of a key, 190 of them deletions. Earlier releases of these artifacts reported older versions of tab records, so their Synced Tabs counts were larger. Values are decoded with the field numbers and types of the messages Chromium publishes under components/sync/protocol at commit 5926523bcfedb77ba2533ace1dd93b477673f72a, transcribed into scripts/chromium_sync_data.py, not by guessing at field types; a record that does not decode is not reported and the run log names its store and data type; none failed to decode on the tested images. Not read: the -md- metadata records and the data types other than device_info, sessions and send_tab_to_self. Of those, the tested stores held preferences, priority_preferences and account_setting data records; reading_list, saved_tab_group, history_delete_directives and the others held no live data record, only their sync state. No tested image held a Sync Data folder under app_webview or app_sbrowser, and those are not read. One row per live send_tab_to_self record, a SendTabToSelfLocal message whose field 1 is the SendTabToSelfSpecifics (https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/send_tab_to_self/proto/send_tab_to_self.proto#L17-L19, https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/protocol/send_tab_to_self_specifics.proto#L23-L43). Shared Time is shared_time_usec, the time the tab was shared as measured by the client, in microseconds since 1601-01-01 (https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/protocol/send_tab_to_self_specifics.proto#L32-L34). Received Time, Opened Time and Activated Time are the received, opened and activated times in the same unit, which the proto says the receiving device sets (https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/sync/protocol/send_tab_to_self_specifics.proto#L70-L85). Title, URL, Sending Device Name and Target Cache GUID are title, url, device_name and target_device_sync_cache_guid decoded as UTF-8; Opened and Notification Dismissed are opened and notification_dismissed shown as Yes or No, blank when not stored; Target Device Name is the name of the device in the store's device_info records with that Cache GUID, blank when the store lists none. No tested store held a send_tab_to_self data record; 19 held only the type's sync state. The field layout comes from Chromium's published proto and is exercised only by synthetic test data; no tested image exercises it.",
+        "paths": ('*/app_chrome/*/Sync Data/LevelDB/*', '*/app_opera/Sync Data/LevelDB/*'),
+        "output_types": "standard",
+        "artifact_icon": "send",
+        "sample_data": {
+            "adams_ss134dl_a03s_logical": "0 rows (no Sync Data folder matched)",
+            "adams_ss135dl_a13": "Android 13 | 0 rows (no live send_tab_to_self record in the Sync Data folders)",
+            "anne_a15": "Android 15 | 0 rows (no live send_tab_to_self record in the Sync Data folders)",
+            "cookbook_a11": "Android 11 | 0 rows (no live send_tab_to_self record in the Sync Data folders)",
+            "df020_mavic_pro_android": "0 rows (no Sync Data folder matched)",
+            "dfrws2011_case1_a855": "0 rows (no Sync Data folder matched)",
+            "dfrws2011_case2_droid_a201": "Android 2.0.1 | 0 rows (no Sync Data folder matched)",
+            "emu_a15_oss2_v1": "Android 15 | 0 rows (no Sync Data folder matched)",
+            "emu_a15_oss2_v2": "Android 15 | 0 rows (no live send_tab_to_self record in the Sync Data folders)",
+            "emu_a15_oss2_v3": "Android 15 | 0 rows (no live send_tab_to_self record in the Sync Data folders)",
+            "emu_a15_oss_v1": "Android 15 | 0 rows (no live send_tab_to_self record in the Sync Data folders)",
+            "emu_a15_oss_v10": "Android 15 | 0 rows (no live send_tab_to_self record in the Sync Data folders)",
+            "emu_a15_oss_v11": "Android 15 | 0 rows (no live send_tab_to_self record in the Sync Data folders)",
+            "emu_a15_oss_v12": "Android 15 | 0 rows (no live send_tab_to_self record in the Sync Data folders)",
+            "emu_a15_oss_v13": "Android 15 | 0 rows (no live send_tab_to_self record in the Sync Data folders)",
+            "emu_a15_oss_v14": "Android 15 | 0 rows (no live send_tab_to_self record in the Sync Data folders)",
+            "emu_a15_oss_v15": "Android 15 | 0 rows (no live send_tab_to_self record in the Sync Data folders)",
+            "emu_a15_oss_v16": "Android 15 | 0 rows (no live send_tab_to_self record in the Sync Data folders)",
+            "emu_a15_oss_v17": "Android 15 | 0 rows (no live send_tab_to_self record in the Sync Data folders)",
+            "emu_a15_oss_v2": "Android 15 | 0 rows (no live send_tab_to_self record in the Sync Data folders)",
+            "emu_a15_oss_v3": "Android 15 | 0 rows (no live send_tab_to_self record in the Sync Data folders)",
+            "emu_a15_oss_v4": "Android 15 | 0 rows (no live send_tab_to_self record in the Sync Data folders)",
+            "emu_a15_oss_v5": "Android 15 | 0 rows (no live send_tab_to_self record in the Sync Data folders)",
+            "emu_a15_oss_v6": "Android 15 | 0 rows (no live send_tab_to_self record in the Sync Data folders)",
+            "emu_a15_oss_v7": "Android 15 | 0 rows (no live send_tab_to_self record in the Sync Data folders)",
+            "emu_a15_oss_v8": "Android 15 | 0 rows (no live send_tab_to_self record in the Sync Data folders)",
+            "emu_a15_oss_v9": "Android 15 | 0 rows (no live send_tab_to_self record in the Sync Data folders)",
+            "falken_a326u_a13": "Android 13 | 0 rows (no live send_tab_to_self record in the Sync Data folders)",
+            "galaxys10_a10": "Android 10 | 0 rows (no live send_tab_to_self record in the Sync Data folders)",
+            "hc_pixel8pro_a16": "Android 16 | 0 rows (no live send_tab_to_self record in the Sync Data folders)",
+            "hc_pixel8pro_a17": "Android 17 | 0 rows (no live send_tab_to_self record in the Sync Data folders)",
+            "hc_pixel8pro_a17_ail": "Android 17 | 0 rows (no Sync Data folder matched)",
+            "hickman_a13": "Android 13 | 0 rows (no live send_tab_to_self record in the Sync Data folders)",
+            "kevin_pocox7_a15": "Android 15 | 0 rows (no live send_tab_to_self record in the Sync Data folders)",
+            "pixel3_a11": "Android 11 | 0 rows (no live send_tab_to_self record in the Sync Data folders)",
+            "pixel3_a12": "Android 12 | 0 rows (no live send_tab_to_self record in the Sync Data folders)",
+            "pixel7a_a14": "Android 14 | 0 rows (no live send_tab_to_self record in the Sync Data folders)",
+            "russell_a14": "Android 14 | 0 rows (no live send_tab_to_self record in the Sync Data folders)",
+            "russell_pixel6a_a13": "Android 13 | 0 rows (no live send_tab_to_self record in the Sync Data folders)",
+            "s20fe_a13": "Android 13 | 0 rows (no live send_tab_to_self record in the Sync Data folders)",
+            "samsunga53_a14": "Android 14 | 0 rows (no live send_tab_to_self record in the Sync Data folders)",
+            "samsungs20_a13": "Android 13 | 0 rows (no live send_tab_to_self record in the Sync Data folders)",
+            "sharon_a13": "Android 13 | 0 rows (no live send_tab_to_self record in the Sync Data folders)",
+            "sharon_a14": "Android 14 | 0 rows (no live send_tab_to_self record in the Sync Data folders)",
+            "userb2_a13": "Android 13 | 0 rows (no live send_tab_to_self record in the Sync Data folders)",
         },
     },
 }
 
 import datetime
 import os
-import pathlib
 import re
 
-from scripts.artifacts.storagePathViews import unique_files
-from scripts.ccl import ccl_leveldb
-from scripts import blackboxprotobuf
+from scripts.artifacts.storagePathViews import canonical_path
+from scripts.chromium_sync_data import (BROWSER_TYPES, DEVICE_TYPES, FORM_FACTORS, OS_TYPES,
+                                        PAGE_TRANSITIONS, ProtoError, SyncStore, decode,
+                                        enum_label, webkit_time)
 from scripts.ilapfuncs import artifact_processor, logfunc
 
-# Chromium field numbers: components/sync/protocol/session_specifics.proto and tab_navigation.proto
-_SESSION_TAG, _HEADER, _TAB = '1', '2', '3'
-_HDR_WINDOW, _HDR_CLIENT_NAME, _HDR_DEVICE_TYPE = '2', '3', '4'
-_WIN_ID, _WIN_SELECTED, _WIN_BROWSER_TYPE, _WIN_TABS = '1', '2', '3', '4'
-_TAB_ID, _TAB_WINDOW, _TAB_CURRENT_INDEX, _TAB_PINNED, _TAB_NAV = '1', '2', '4', '5', '7'
-_NAV_URL, _NAV_REFERRER, _NAV_TITLE = '2', '3', '4'
-_NAV_TRANSITION, _NAV_UNIQUE_ID, _NAV_TIMESTAMP = '6', '8', '9'
-_NAV_FAVICON, _NAV_HTTP_STATUS = '17', '20'
-
-# blackboxprotobuf names a repeated field 7, then 7-1, 7-2 as its shapes differ.
-_REPEAT = re.compile(r'^(\d+)(?:-\d+)?$')
-# Every Chromium browser uses the app_chrome layout, so the package names the browser.
-_PACKAGE = re.compile(r'/([^/]+)/app_chrome/', re.I)
+# Chromium builds keep a profile's Sync Data under app_chrome/<profile>; Opera keeps it
+# directly under app_opera. The app package directory above it is the only part of the
+# path that names the browser, so it must sit directly above app_chrome or app_opera and
+# be shaped like a package name, as in chrome.py's _package_from_path.
+_STORE = re.compile(r'(?:^|/)([A-Za-z][A-Za-z0-9_]*(?:\.[A-Za-z0-9_]+)+)/'
+                    r'(?:app_chrome/[^/]+|app_opera)/Sync Data/LevelDB$')
 
 
-def _text(value):
-    """A stored string. An absent submessage decodes to an empty container, which must read as
-    blank rather than as its Python repr."""
-    if isinstance(value, (bytes, bytearray)):
-        return bytes(value).decode('utf-8', 'replace')
-    if value is None or isinstance(value, (dict, list, tuple)):
-        return ''
-    return value
-
-
-def _ms(value):
+def _ms_time(value):
+    """Milliseconds since 1970-01-01 UTC as a datetime; '' for missing, zero or out of range."""
     try:
-        number = int(value)
+        milliseconds = int(value)
     except (TypeError, ValueError):
         return ''
-    if number <= 0:
+    if milliseconds <= 0:
         return ''
     try:
-        return datetime.datetime.fromtimestamp(number / 1000, tz=datetime.timezone.utc)
+        return datetime.datetime.fromtimestamp(milliseconds / 1000, tz=datetime.timezone.utc)
     except (OverflowError, OSError, ValueError):
         return ''
 
 
-def _first(value):
-    """blackboxprotobuf gives a repeated message as a dict or a list of dicts."""
-    if isinstance(value, list):
-        return value[0] if value else None
-    return value
+def _yes_no(value):
+    if value is None:
+        return ''
+    return 'Yes' if value else 'No'
 
 
-def _repeated(message, number):
-    """Every value of a repeated field, across the suffixed names the decoder gives it."""
-    out = []
-    for key, value in message.items():
-        match = _REPEAT.match(key)
-        if not match or match.group(1) != number:
-            continue
-        if isinstance(value, list):
-            out.extend(v for v in value if isinstance(v, dict))
-        elif isinstance(value, dict):
-            out.append(value)
-    return out
-
-
-def _browser(path):
-    """The package the store sits under, so one cross-browser pattern still attributes a row."""
-    match = _PACKAGE.search(str(path).replace('\\', '/'))
+def _browser(relative):
+    """The package a Sync Data/LevelDB folder belongs to, or '' when the folder is not a
+    browser profile's store."""
+    match = _STORE.search(relative)
     return match.group(1) if match else ''
 
 
-def _stores(context):
-    directories = set()
-    for file_found in unique_files(context):
-        file_found = str(file_found)
-        if '/Sync Data/LevelDB/' not in file_found.replace('\\', '/'):
+def _folders(context):
+    """(staged folder, evidence relative folder) for each Sync Data/LevelDB store.
+
+    Files are grouped by the folder that holds them, so a store is read once however
+    many of its files matched. The storage views an Android extraction can carry for one
+    app data directory (data/data, data/user/0, data_mirror and the rest, see
+    storagePathViews) are collapsed at the folder, keeping the preferred spelling, so a
+    store is not read once per view and a file missing from one view cannot split it.
+    A second Android user's store keeps its own key and is read as its own store.
+    """
+    best = {}
+    for found in context.get_files_found():
+        path = str(found)
+        if not os.path.isfile(path):
             continue
-        directories.add(pathlib.Path(file_found).parent)
-    return sorted(directories)
+        folder = os.path.dirname(path)
+        relative = str(context.get_relative_path(folder)).replace('\\', '/')
+        if not _browser(relative):
+            continue
+        key, rank = canonical_path(relative + '/')
+        held = best.get(key)
+        if held is None or rank < held[0]:
+            best[key] = (rank, folder, relative)
+    return sorted(((folder, relative) for _rank, folder, relative in best.values()),
+                  key=lambda item: item[1])
 
 
-def _session_records(directory):
-    """Live sessions-dt- records, newest first per key, each flagged as superseded or not."""
-    try:
-        database = ccl_leveldb.RawLevelDb(str(directory))
-        records = [r for r in database.iterate_records_raw()
-                   if r.state == ccl_leveldb.KeyState.Live and r.value
-                   and r.user_key.startswith(b'sessions-dt-')]
-    except Exception as error:  # pylint: disable=broad-except
-        logfunc(f'Chrome Sync: could not read {os.path.basename(str(directory))}: {error}')
-        return []
-    records.sort(key=lambda r: r.seq, reverse=True)
-    seen = set()
+def _stores(context, label):
+    """(folder, relative folder, SyncStore) for each store that could be read."""
     out = []
-    for record in records:
+    for folder, relative in _folders(context):
         try:
-            message, _ = blackboxprotobuf.decode_message(record.value)
-        except Exception:  # pylint: disable=broad-except
+            sync = SyncStore(folder)
+        except (OSError, ValueError, EOFError) as ex:
+            logfunc(f'{label}: could not read {relative}: {ex}')
             continue
-        if not isinstance(message, dict):
-            continue
-        key = bytes(record.user_key)
-        out.append((message, key in seen))
-        seen.add(key)
+        logfunc(f'{label}: {relative}: {sync.records} records, {sync.superseded} older '
+                f'versions of a key not read, {sync.deleted} keys whose newest version is a '
+                f'deletion')
+        out.append((folder, relative, sync))
     return out
 
 
-def _device_names(records):
-    """session tag -> the client name of the header record carrying that tag."""
-    names = {}
-    for message, superseded in records:
-        if superseded:
-            continue
-        header = _first(message.get(_HEADER))
-        if not isinstance(header, dict):
-            continue
-        tag = _text(message.get(_SESSION_TAG))
-        name = _text(header.get(_HDR_CLIENT_NAME))
-        if tag and name:
-            names.setdefault(tag, name)
-    return names
+def _decoded(sync, root_tag, message, label, relative):
+    """(storage key, decoded message) for each live data record of one type that decodes."""
+    out = []
+    for _account, storage_key, value in sync.records_of(root_tag):
+        try:
+            out.append((storage_key, decode(value, message)))
+        except ProtoError as ex:
+            logfunc(f'{label}: {relative}: a {root_tag} record did not decode as '
+                    f'{message} and is not reported: {ex}')
+    return out
+
+
+def _devices(sync, label, relative):
+    """{cache GUID: DeviceInfoSpecifics} from the live device_info records."""
+    devices = {}
+    for _key, device in _decoded(sync, 'device_info', 'DeviceInfoSpecifics', label, relative):
+        devices.setdefault(device.get('cache_guid', ''), device)
+    return devices
+
+
+def _local_guid(sync, root_tag, label, relative):
+    try:
+        return sync.local_cache_guid(root_tag)
+    except ProtoError as ex:
+        logfunc(f'{label}: {relative}: the {root_tag} sync state did not decode, so '
+                f'This Device is blank: {ex}')
+        return ''
+
+
+def _this_device(guid, local_guid):
+    if not local_guid:
+        return ''
+    return 'Yes' if guid == local_guid else 'No'
+
+
+def _session_this_device(tag, local_guid, devices):
+    """Yes when a session tag is this client's cache GUID, No when it is the cache GUID of
+    another device the store lists, blank otherwise. A session tag has been the cache GUID
+    only since M89, so a tag that matches no listed GUID establishes nothing about whose
+    session it is."""
+    if not local_guid or not tag:
+        return ''
+    if tag == local_guid:
+        return 'Yes'
+    return 'No' if tag in devices else ''
+
+
+def _sessions(sync, label, relative):
+    """(headers {session tag: SessionHeader}, tabs [(session tag, SessionTab)])."""
+    headers, tabs = {}, []
+    for _key, session in _decoded(sync, 'sessions', 'SessionSpecifics', label, relative):
+        tag = session.get('session_tag', '')
+        if 'header' in session:
+            headers[tag] = session['header']
+        elif 'tab' in session:
+            tabs.append((tag, session['tab']))
+    return headers, tabs
+
+
+def _device_name(tag, headers, devices):
+    name = headers.get(tag, {}).get('client_name')
+    if name is None:
+        name = devices.get(tag, {}).get('client_name', '')
+    return name
 
 
 @artifact_processor
 def chrome_sync_sessions(context):
-    data_headers = (
-        ('Timestamp', 'datetime'),
-        'Device Name',
-        'Browser',
-        'URL',
-        'Title',
-        'Referrer',
-        'HTTP Status',
-        'Navigation Index',
-        'Current Navigation Index',
-        'Tab ID',
-        'Window ID',
-        'Session Tag',
-        'Page Transition (as stored)',
-        'Favicon URL',
-        'Superseded',
-        'Source File',
-    )
+    label = 'Chrome Sync - Synced Tabs'
     data_list = []
     sources = []
-
-    for directory in _stores(context):
-        records = _session_records(directory)
-        names = _device_names(records)
-        relative = context.get_relative_path(str(directory))
-        browser = _browser(directory)
-        reported = set()
+    for folder, relative, sync in _stores(context, label):
+        local_guid = _local_guid(sync, 'sessions', label, relative)
+        devices = _devices(sync, label, relative)
+        headers, tabs = _sessions(sync, label, relative)
+        browser = _browser(relative)
         rows = 0
-        for message, superseded in records:
-            tab = _first(message.get(_TAB))
-            if not isinstance(tab, dict):
-                continue
-            tag = _text(message.get(_SESSION_TAG))
-            navigations = _repeated(tab, _TAB_NAV)
-            for index, navigation in enumerate(navigations):
-                url = _text(navigation.get(_NAV_URL))
-                stamp = navigation.get(_NAV_TIMESTAMP)
-                fingerprint = (tag, tab.get(_TAB_ID, ''), index, url, stamp)
-                if fingerprint in reported:
-                    continue
-                reported.add(fingerprint)
+        for tag, tab in sorted(tabs, key=lambda item: (item[0], item[1].get('window_id', 0),
+                                                        item[1].get('tab_id', 0))):
+            current = tab.get('current_navigation_index')
+            for index, navigation in enumerate(tab.get('navigation', [])):
                 data_list.append((
-                    _ms(stamp),
-                    names.get(tag, ''),
-                    browser,
-                    url,
-                    _text(navigation.get(_NAV_TITLE)),
-                    _text(navigation.get(_NAV_REFERRER)),
-                    navigation.get(_NAV_HTTP_STATUS, ''),
+                    _ms_time(navigation.get('timestamp_msec')),
+                    _ms_time(tab.get('last_active_time_unix_epoch_millis')),
+                    _device_name(tag, headers, devices),
+                    _session_this_device(tag, local_guid, devices),
+                    navigation.get('virtual_url', ''),
+                    navigation.get('title', ''),
+                    navigation.get('referrer', ''),
+                    navigation.get('http_status_code', ''),
+                    enum_label(PAGE_TRANSITIONS, navigation.get('page_transition')),
+                    _yes_no(navigation.get('navigation_from_address_bar')),
                     index,
-                    tab.get(_TAB_CURRENT_INDEX, ''),
-                    tab.get(_TAB_ID, ''),
-                    tab.get(_TAB_WINDOW, ''),
+                    '' if current is None else ('Yes' if index == current else 'No'),
+                    _yes_no(tab.get('pinned')),
+                    tab.get('tab_id', ''),
+                    tab.get('window_id', ''),
                     tag,
-                    navigation.get(_NAV_TRANSITION, ''),
-                    _text(navigation.get(_NAV_FAVICON)),
-                    superseded,
+                    browser,
                     relative,
                 ))
                 rows += 1
         if rows:
-            sources.append(str(directory))
-
+            sources.append(folder)
+    data_headers = (('Navigation Time', 'datetime'), ('Tab Last Active', 'datetime'),
+                    'Device Name', 'This Device', 'URL', 'Title', 'Referrer', 'HTTP Status',
+                    'Transition', 'From Address Bar', 'Navigation Index', 'Current Entry',
+                    'Pinned', 'Tab ID', 'Window ID', 'Session Tag', 'Browser', 'Source File')
     return data_headers, data_list, '\n'.join(sources)
 
 
 @artifact_processor
 def chrome_sync_devices(context):
-    data_headers = (
-        'Device Name',
-        'Browser',
-        'Session Tag',
-        'Window ID',
-        'Tabs In Window',
-        'Device Type (as stored)',
-        'Browser Type (as stored)',
-        'Source File',
-    )
+    label = 'Chrome Sync - Session Devices'
     data_list = []
     sources = []
-
-    for directory in _stores(context):
-        relative = context.get_relative_path(str(directory))
-        browser = _browser(directory)
+    for folder, relative, sync in _stores(context, label):
+        local_guid = _local_guid(sync, 'sessions', label, relative)
+        devices = _devices(sync, label, relative)
+        headers, _tabs = _sessions(sync, label, relative)
+        browser = _browser(relative)
         rows = 0
-        for message, superseded in _session_records(directory):
-            if superseded:
-                continue
-            header = _first(message.get(_HEADER))
-            if not isinstance(header, dict):
-                continue
-            tag = _text(message.get(_SESSION_TAG))
-            name = _text(header.get(_HDR_CLIENT_NAME))
-            device_type = header.get(_HDR_DEVICE_TYPE, '')
-            listed = _repeated(header, _HDR_WINDOW)
-            # A header that lists no window still yields one row; its window cells stay blank.
-            windows = listed or [{}]
-            for window in windows:
-                tabs = window.get(_WIN_TABS)
-                if not listed:
-                    tab_count = ''
-                elif isinstance(tabs, list):
-                    tab_count = len(tabs)
-                elif tabs in (None, ''):
-                    tab_count = 0
-                else:
-                    tab_count = 1
-                data_list.append((
-                    name,
-                    browser,
-                    tag,
-                    window.get(_WIN_ID, ''),
-                    tab_count,
-                    device_type,
-                    window.get(_WIN_BROWSER_TYPE, ''),
-                    relative,
-                ))
-                rows += 1
+        for tag, header in sorted(headers.items()):
+            windows = header.get('window', [])
+            browser_types = sorted({enum_label(BROWSER_TYPES, window.get('browser_type'))
+                                    for window in windows if 'browser_type' in window})
+            data_list.append((
+                _ms_time(header.get('session_start_time_unix_epoch_millis')),
+                header.get('client_name', ''),
+                _session_this_device(tag, local_guid, devices),
+                enum_label(FORM_FACTORS, header.get('device_form_factor')),
+                enum_label(DEVICE_TYPES, header.get('device_type')),
+                len(windows),
+                sum(len(window.get('tab', [])) for window in windows),
+                ', '.join(browser_types),
+                tag,
+                browser,
+                relative,
+            ))
+            rows += 1
         if rows:
-            sources.append(str(directory))
+            sources.append(folder)
+    data_headers = (('Session Start', 'datetime'), 'Device Name', 'This Device', 'Form Factor',
+                    'Device Type', 'Windows', 'Tabs Listed', 'Window Types', 'Session Tag',
+                    'Browser', 'Source File')
+    return data_headers, data_list, '\n'.join(sources)
 
+
+@artifact_processor
+def chrome_sync_device_info(context):
+    label = 'Chrome Sync - Device Info'
+    data_list = []
+    sources = []
+    for folder, relative, sync in _stores(context, label):
+        local_guid = _local_guid(sync, 'device_info', label, relative)
+        browser = _browser(relative)
+        rows = 0
+        for _key, device in _decoded(sync, 'device_info', 'DeviceInfoSpecifics', label,
+                                     relative):
+            guid = device.get('cache_guid', '')
+            version = (device.get('chrome_version_info') or {}).get('version_number')
+            if version is None:
+                version = device.get('chrome_version', '')
+            data_list.append((
+                _ms_time(device.get('last_updated_timestamp')),
+                device.get('client_name', ''),
+                _this_device(guid, local_guid),
+                device.get('manufacturer', ''),
+                device.get('model', ''),
+                enum_label(OS_TYPES, device.get('os_type')),
+                enum_label(FORM_FACTORS, device.get('device_form_factor')),
+                enum_label(DEVICE_TYPES, device.get('device_type')),
+                version,
+                device.get('sync_user_agent', ''),
+                guid,
+                device.get('signin_scoped_device_id', ''),
+                browser,
+                relative,
+            ))
+            rows += 1
+        if rows:
+            sources.append(folder)
+    data_headers = (('Last Updated', 'datetime'), 'Device Name', 'This Device', 'Manufacturer',
+                    'Model', 'OS Type', 'Form Factor', 'Device Type', 'Chrome Version',
+                    'Sync User Agent', 'Cache GUID', 'Signin Scoped Device ID', 'Browser',
+                    'Source File')
+    return data_headers, data_list, '\n'.join(sources)
+
+
+@artifact_processor
+def chrome_sync_send_tab_to_self(context):
+    label = 'Chrome Sync - Send Tab To Self'
+    data_list = []
+    sources = []
+    for folder, relative, sync in _stores(context, label):
+        devices = _devices(sync, label, relative)
+        browser = _browser(relative)
+        rows = 0
+        for _key, local in _decoded(sync, 'send_tab_to_self', 'SendTabToSelfLocal', label,
+                                    relative):
+            entry = local.get('specifics', {})
+            target = entry.get('target_device_sync_cache_guid', '')
+            data_list.append((
+                webkit_time(entry.get('shared_time_usec')),
+                webkit_time(entry.get('received_time_windows_epoch_micros')),
+                webkit_time(entry.get('opened_time_windows_epoch_micros')),
+                webkit_time(entry.get('activated_time_windows_epoch_micros')),
+                entry.get('title', ''),
+                entry.get('url', ''),
+                entry.get('device_name', ''),
+                devices.get(target, {}).get('client_name', '') if target else '',
+                target,
+                _yes_no(entry.get('opened')),
+                _yes_no(entry.get('notification_dismissed')),
+                entry.get('guid', ''),
+                browser,
+                relative,
+            ))
+            rows += 1
+        if rows:
+            sources.append(folder)
+    data_headers = (('Shared Time', 'datetime'), ('Received Time', 'datetime'),
+                    ('Opened Time', 'datetime'), ('Activated Time', 'datetime'), 'Title', 'URL',
+                    'Sending Device Name', 'Target Device Name', 'Target Cache GUID', 'Opened',
+                    'Notification Dismissed', 'GUID', 'Browser', 'Source File')
     return data_headers, data_list, '\n'.join(sources)
