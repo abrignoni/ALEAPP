@@ -29,12 +29,12 @@
     {
       "path": "scripts/vendor/exoprobe.py",
       "name": "exoprobe",
-      "version": "0.1.3",
+      "version": "0.2.1",
       "upstream": "https://github.com/abrignoni/exoprobe",
       "upstream_file": "exoprobe.py",
-      "commit": "35c7c4729fb1529c33285f1c8a9db3a62f1135f4",
-      "commit_date": "2026-09-26T22:27:46-04:00",
-      "sha256": "19d14119d516a13569045bf9faf247903a8525d7f3efd4948db2583ecc33d3bd",
+      "commit": "81fd75cb9434ba1ab8b7e5b25d44bcb79a78bdfb",
+      "commit_date": "2026-10-17T17:56:34-04:00",
+      "sha256": "1e07771cdc2edfd165ea5c9dee26a926961a55c801435cab5237ec8c17f77c41",
       "licence": "MIT",
       "licence_file": "scripts/vendor/LICENSE-exoprobe",
       "note": "Copied verbatim. Fix upstream and re-vendor; edits here are reverted by the next sync."

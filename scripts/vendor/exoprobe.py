@@ -67,9 +67,9 @@ import tempfile
 import xml.etree.ElementTree as ET
 from pathlib import Path, PurePosixPath
 from typing import Callable, Iterable, NamedTuple
-from urllib.parse import urljoin
+from urllib.parse import quote, urljoin
 
-__version__ = "0.1.3"
+__version__ = "0.2.1"
 
 # ---- names ------------------------------------------------------------------
 
@@ -236,12 +236,24 @@ def parse_index_file(data: bytes) -> dict:
     return {"state": state, "entries": entries}
 
 
+def _read_only_uri(db_path) -> str:
+    """A read-only SQLite URI for ``db_path`` with every character a URI gives meaning
+    to percent-quoted, so a ``#`` or ``?`` in a folder name stays part of the path
+    instead of ending it. ``Path.as_uri()`` is not used: on Windows it puts a UNC
+    server in the authority, which SQLite refuses."""
+    p = str(Path(db_path).resolve())
+    if os.sep == "\\":
+        p = p.replace("\\", "/")             # C:/x, or //server/share/x for UNC
+    q = quote(p, safe="/:")
+    return f"file://{q if q.startswith('/') else '/' + q}?mode=ro"
+
+
 def read_index_tables(db_path) -> dict[str, dict]:
     """``{uid: {id: {"key", ...}}}`` for every ``ExoPlayerCacheIndex<uid>`` table in a
     database. Opens ``db_path`` read-only, which still rewrites a ``-shm`` beside it,
     so pass a copy, never the evidence (:func:`read_index_database` makes one)."""
     out: dict[str, dict] = {}
-    con = sqlite3.connect(f"file:{Path(db_path).as_posix()}?mode=ro", uri=True)
+    con = sqlite3.connect(_read_only_uri(db_path), uri=True)
     try:
         names = [r[0] for r in con.execute(
             "SELECT name FROM sqlite_master WHERE type = 'table' AND name LIKE ?",
