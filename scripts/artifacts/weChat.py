@@ -179,6 +179,7 @@ from scripts.ilapfuncs import (
     artifact_processor,
     check_in_media,
     convert_unix_ts_to_utc,
+    get_sqlite_db_path,
     logfunc,
 )
 
@@ -241,7 +242,7 @@ def _open_database(db_path, uin, imeis):
         connection = None
         try:
             connection = sqlcipher.connect(  # pylint: disable=no-member
-                f'file:{db_path}?mode=ro', uri=True)
+                f'file:{get_sqlite_db_path(db_path)}?mode=ro', uri=True)
             cursor = connection.cursor()
             cursor.execute(f"PRAGMA key = '{_db_key(imei, uin)}';")
             for pragma in _CIPHER_PRAGMAS:
