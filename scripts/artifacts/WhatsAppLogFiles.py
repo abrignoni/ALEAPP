@@ -6,7 +6,7 @@ __artifacts_v2__ = {
                        "token",
         "author": "Mateus Polastro, @AlexisBrignoni, Codex",
         "creation_date": "2025-05-13",
-        "last_update_date": "2026-10-04",
+        "last_update_date": "2026-10-17",
         "requirements": "none",
         "category": "WhatsApp",
         "notes": "Each row is a log line containing one of eight tokens; a line containing two "
@@ -32,12 +32,19 @@ __artifacts_v2__ = {
                  "carries a tz=+/-HHMM offset, and timestamps are converted to UTC using the "
                  "most recent offset declared in the same file. A line seen before any header "
                  "in its file has no declared offset: its Timestamp is left blank and the "
-                 "reading as written stays at the start of Full Line. On the five tested images "
+                 "reading as written stays at the start of Full Line. On five tested images "
                  "with rows (anne_a15, kevin_pocox7_a15, pixel7a_a14, russell_pixel6a_a13, "
-                 "samsungs20_a13) every log file began with a header and no row was blank.",
+                 "samsungs20_a13) every log file began with a header and no row was blank.\n"
+                 "wa.db is read together with its -wal write-ahead log when the extraction "
+                 "holds one, so Possible Full Numbers comes from the JID tables as last "
+                 "committed. On anne_a15, kevin_pocox7_a15, pixel7a_a14, russell_a14, "
+                 "russell_pixel6a_a13, samsungs20_a13 and sharon_a13 the rows this artifact "
+                 "reports were the same with and without the log. The log changes wa_contacts "
+                 "rows on all of them except samsungs20_a13; on sharon_a13 it also adds two "
+                 "rows and removes one.",
         "paths": (
             "*/com.whatsapp/files/Logs/*",
-            "*/com.whatsapp/databases/wa.db",
+            "*/com.whatsapp/databases/wa.db*",
         ),
         "output_types": "standard",
         "artifact_icon": "message-square",
