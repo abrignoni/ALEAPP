@@ -176,7 +176,7 @@ from datetime import datetime
 
 from scripts.artifacts.storagePathViews import unique_files
 from scripts.sqlcipher_decrypt import decrypt_sqlcipher_db
-from scripts.ilapfuncs import artifact_processor, logfunc
+from scripts.ilapfuncs import artifact_processor, get_sqlite_db_path, logfunc
 
 _PACKAGE = 'chat.simplex.app'
 _DATABASE = 'files_chat.db'
@@ -270,7 +270,7 @@ def _open_decrypted(database_path, passphrase):
         logfunc(f'SimpleX Chat: {pages - verified} of {pages} pages did not verify their '
                 f'HMAC in {os.path.basename(database_path)}')
     try:
-        return sqlite3.connect(f'file:{output}?mode=ro', uri=True)
+        return sqlite3.connect(f'file:{get_sqlite_db_path(output)}?mode=ro', uri=True)
     except sqlite3.Error as error:
         logfunc(f'SimpleX Chat: could not open the decrypted database: {error}')
         return None
