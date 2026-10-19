@@ -74,6 +74,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | googleIcingContacts |
 | googleOdlh |
 | googlePlaySearches |
+| groupMe |
 | honorMediaLibrary |
 | jitsiMeet |
 | joplin |
@@ -288,7 +289,6 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | googleTasks |
 | googleVoice |
 | googlemaplocation |
-| groupMe |
 | hikvision |
 | hinge |
 | imo |
