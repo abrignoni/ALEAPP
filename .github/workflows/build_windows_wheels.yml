@@ -1,0 +1,371 @@
+name: Build Windows wheels
+
+# Builds the Windows wheels kept in whl_files/ for the Python versions and
+# machines PyPI carries no wheel for, so a Windows install needs no compiler.
+# Each package is built from its PyPI sdist, checked against the pinned
+# sha256, then installed into a clean venv and exercised before upload.
+# Download the artifacts and commit the wheels by hand, with a requirements.txt
+# line for each. Same workflow as iLEAPP's, with this core's packages.
+#
+# Gaps covered, measured against PyPI on 2026-10-19:
+#   sqlcipher3 0.6.2: no cp315 wheel, x64 or ARM64.
+#   lz4 4.3.3, zstd 1.5.7.2 and Brotli 1.2.0, pinned by the ccl readers that
+#   mister_skinnylegs installs from git: lz4 has x64 wheels only to 3.12, zstd
+#   only to 3.13, Brotli only to 3.14, and none of the three has ARM64 wheels.
+#   lz4 4.3.3's lz4.frame does not import from Python 3.14; the reader uses
+#   lz4.block, which does, so that is what the check exercises.
+# setup-python offers Windows ARM64 builds of Python from 3.11 only.
+
+on:
+  # A change to this file rebuilds and checks every wheel.
+  pull_request:
+    paths:
+      - '.github/workflows/build_windows_wheels.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: build ${{ matrix.name }} ${{ matrix.arch }} ${{ matrix.python }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: sqlcipher3
+            version: 0.6.2
+            runner: windows-latest
+            arch: x64
+            python: '3.15'
+            sdist: https://files.pythonhosted.org/packages/ae/c1/414003d77549c444bafd636149ab3ace6f4e2cb4666c9955d54ad62096cb/sqlcipher3-0.6.2.tar.gz
+            sha256: a2b675289ba8889f389625a21f3a01f1ff159a551b5b88fba8fd92da0e02380a
+            check: |
+              import os, tempfile
+              from sqlcipher3 import dbapi2 as sqlcipher
+              path = os.path.join(tempfile.mkdtemp(), 'check.db')
+              db = sqlcipher.connect(path)
+              db.execute("PRAGMA key = 'right'")
+              db.execute('CREATE TABLE t (x TEXT)')
+              db.execute("INSERT INTO t VALUES ('hello')")
+              db.commit()
+              db.close()
+              with open(path, 'rb') as f:
+                  assert f.read(16) != b'SQLite format 3\x00', 'database is not encrypted'
+              db = sqlcipher.connect(path)
+              db.execute("PRAGMA key = 'right'")
+              assert db.execute('SELECT x FROM t').fetchone()[0] == 'hello'
+              print('cipher_version', db.execute('PRAGMA cipher_version').fetchone()[0])
+              db.close()
+              db = sqlcipher.connect(path)
+              db.execute("PRAGMA key = 'wrong'")
+              try:
+                  db.execute('SELECT x FROM t').fetchone()
+                  raise SystemExit('a wrong key read the database')
+              except sqlcipher.DatabaseError:
+                  pass
+          - name: sqlcipher3
+            version: 0.6.2
+            runner: windows-11-arm
+            arch: arm64
+            python: '3.15'
+            sdist: https://files.pythonhosted.org/packages/ae/c1/414003d77549c444bafd636149ab3ace6f4e2cb4666c9955d54ad62096cb/sqlcipher3-0.6.2.tar.gz
+            sha256: a2b675289ba8889f389625a21f3a01f1ff159a551b5b88fba8fd92da0e02380a
+            check: |
+              import os, tempfile
+              from sqlcipher3 import dbapi2 as sqlcipher
+              path = os.path.join(tempfile.mkdtemp(), 'check.db')
+              db = sqlcipher.connect(path)
+              db.execute("PRAGMA key = 'right'")
+              db.execute('CREATE TABLE t (x TEXT)')
+              db.execute("INSERT INTO t VALUES ('hello')")
+              db.commit()
+              db.close()
+              with open(path, 'rb') as f:
+                  assert f.read(16) != b'SQLite format 3\x00', 'database is not encrypted'
+              db = sqlcipher.connect(path)
+              db.execute("PRAGMA key = 'right'")
+              assert db.execute('SELECT x FROM t').fetchone()[0] == 'hello'
+              print('cipher_version', db.execute('PRAGMA cipher_version').fetchone()[0])
+              db.close()
+              db = sqlcipher.connect(path)
+              db.execute("PRAGMA key = 'wrong'")
+              try:
+                  db.execute('SELECT x FROM t').fetchone()
+                  raise SystemExit('a wrong key read the database')
+              except sqlcipher.DatabaseError:
+                  pass
+          - name: lz4
+            version: 4.3.3
+            runner: windows-latest
+            arch: x64
+            python: '3.13'
+            sdist: https://files.pythonhosted.org/packages/a4/31/ec1259ca8ad11568abaf090a7da719616ca96b60d097ccc5799cd0ff599c/lz4-4.3.3.tar.gz
+            sha256: 01fe674ef2889dbb9899d8a67361e0c4a2c833af5aeb37dd505727cf5d2a131e
+            check: |
+              import lz4.block
+              data = bytes(range(256)) * 64
+              assert lz4.block.decompress(lz4.block.compress(data)) == data
+          - name: lz4
+            version: 4.3.3
+            runner: windows-latest
+            arch: x64
+            python: '3.14'
+            sdist: https://files.pythonhosted.org/packages/a4/31/ec1259ca8ad11568abaf090a7da719616ca96b60d097ccc5799cd0ff599c/lz4-4.3.3.tar.gz
+            sha256: 01fe674ef2889dbb9899d8a67361e0c4a2c833af5aeb37dd505727cf5d2a131e
+            check: |
+              import lz4.block
+              data = bytes(range(256)) * 64
+              assert lz4.block.decompress(lz4.block.compress(data)) == data
+          - name: lz4
+            version: 4.3.3
+            runner: windows-latest
+            arch: x64
+            python: '3.15'
+            sdist: https://files.pythonhosted.org/packages/a4/31/ec1259ca8ad11568abaf090a7da719616ca96b60d097ccc5799cd0ff599c/lz4-4.3.3.tar.gz
+            sha256: 01fe674ef2889dbb9899d8a67361e0c4a2c833af5aeb37dd505727cf5d2a131e
+            check: |
+              import lz4.block
+              data = bytes(range(256)) * 64
+              assert lz4.block.decompress(lz4.block.compress(data)) == data
+          - name: lz4
+            version: 4.3.3
+            runner: windows-11-arm
+            arch: arm64
+            python: '3.11'
+            sdist: https://files.pythonhosted.org/packages/a4/31/ec1259ca8ad11568abaf090a7da719616ca96b60d097ccc5799cd0ff599c/lz4-4.3.3.tar.gz
+            sha256: 01fe674ef2889dbb9899d8a67361e0c4a2c833af5aeb37dd505727cf5d2a131e
+            check: |
+              import lz4.block
+              data = bytes(range(256)) * 64
+              assert lz4.block.decompress(lz4.block.compress(data)) == data
+          - name: lz4
+            version: 4.3.3
+            runner: windows-11-arm
+            arch: arm64
+            python: '3.12'
+            sdist: https://files.pythonhosted.org/packages/a4/31/ec1259ca8ad11568abaf090a7da719616ca96b60d097ccc5799cd0ff599c/lz4-4.3.3.tar.gz
+            sha256: 01fe674ef2889dbb9899d8a67361e0c4a2c833af5aeb37dd505727cf5d2a131e
+            check: |
+              import lz4.block
+              data = bytes(range(256)) * 64
+              assert lz4.block.decompress(lz4.block.compress(data)) == data
+          - name: lz4
+            version: 4.3.3
+            runner: windows-11-arm
+            arch: arm64
+            python: '3.13'
+            sdist: https://files.pythonhosted.org/packages/a4/31/ec1259ca8ad11568abaf090a7da719616ca96b60d097ccc5799cd0ff599c/lz4-4.3.3.tar.gz
+            sha256: 01fe674ef2889dbb9899d8a67361e0c4a2c833af5aeb37dd505727cf5d2a131e
+            check: |
+              import lz4.block
+              data = bytes(range(256)) * 64
+              assert lz4.block.decompress(lz4.block.compress(data)) == data
+          - name: lz4
+            version: 4.3.3
+            runner: windows-11-arm
+            arch: arm64
+            python: '3.14'
+            sdist: https://files.pythonhosted.org/packages/a4/31/ec1259ca8ad11568abaf090a7da719616ca96b60d097ccc5799cd0ff599c/lz4-4.3.3.tar.gz
+            sha256: 01fe674ef2889dbb9899d8a67361e0c4a2c833af5aeb37dd505727cf5d2a131e
+            check: |
+              import lz4.block
+              data = bytes(range(256)) * 64
+              assert lz4.block.decompress(lz4.block.compress(data)) == data
+          - name: lz4
+            version: 4.3.3
+            runner: windows-11-arm
+            arch: arm64
+            python: '3.15'
+            sdist: https://files.pythonhosted.org/packages/a4/31/ec1259ca8ad11568abaf090a7da719616ca96b60d097ccc5799cd0ff599c/lz4-4.3.3.tar.gz
+            sha256: 01fe674ef2889dbb9899d8a67361e0c4a2c833af5aeb37dd505727cf5d2a131e
+            check: |
+              import lz4.block
+              data = bytes(range(256)) * 64
+              assert lz4.block.decompress(lz4.block.compress(data)) == data
+          - name: zstd
+            version: 1.5.7.2
+            runner: windows-latest
+            arch: x64
+            python: '3.14'
+            sdist: https://files.pythonhosted.org/packages/0f/78/9a476e09c825304df47b98be80d1ffe223733b03550af71325415028f615/zstd-1.5.7.2.tar.gz
+            sha256: 6d8684c69009be49e1b18ec251a5eb0d7e24f93624990a8a124a1da66a92fc8a
+            check: |
+              import zstd
+              data = bytes(range(256)) * 64
+              assert zstd.decompress(zstd.compress(data)) == data
+              print('libzstd', zstd.ZSTD_version())
+          - name: zstd
+            version: 1.5.7.2
+            runner: windows-latest
+            arch: x64
+            python: '3.15'
+            sdist: https://files.pythonhosted.org/packages/0f/78/9a476e09c825304df47b98be80d1ffe223733b03550af71325415028f615/zstd-1.5.7.2.tar.gz
+            sha256: 6d8684c69009be49e1b18ec251a5eb0d7e24f93624990a8a124a1da66a92fc8a
+            check: |
+              import zstd
+              data = bytes(range(256)) * 64
+              assert zstd.decompress(zstd.compress(data)) == data
+              print('libzstd', zstd.ZSTD_version())
+          - name: zstd
+            version: 1.5.7.2
+            runner: windows-11-arm
+            arch: arm64
+            python: '3.11'
+            sdist: https://files.pythonhosted.org/packages/0f/78/9a476e09c825304df47b98be80d1ffe223733b03550af71325415028f615/zstd-1.5.7.2.tar.gz
+            sha256: 6d8684c69009be49e1b18ec251a5eb0d7e24f93624990a8a124a1da66a92fc8a
+            check: |
+              import zstd
+              data = bytes(range(256)) * 64
+              assert zstd.decompress(zstd.compress(data)) == data
+              print('libzstd', zstd.ZSTD_version())
+          - name: zstd
+            version: 1.5.7.2
+            runner: windows-11-arm
+            arch: arm64
+            python: '3.12'
+            sdist: https://files.pythonhosted.org/packages/0f/78/9a476e09c825304df47b98be80d1ffe223733b03550af71325415028f615/zstd-1.5.7.2.tar.gz
+            sha256: 6d8684c69009be49e1b18ec251a5eb0d7e24f93624990a8a124a1da66a92fc8a
+            check: |
+              import zstd
+              data = bytes(range(256)) * 64
+              assert zstd.decompress(zstd.compress(data)) == data
+              print('libzstd', zstd.ZSTD_version())
+          - name: zstd
+            version: 1.5.7.2
+            runner: windows-11-arm
+            arch: arm64
+            python: '3.13'
+            sdist: https://files.pythonhosted.org/packages/0f/78/9a476e09c825304df47b98be80d1ffe223733b03550af71325415028f615/zstd-1.5.7.2.tar.gz
+            sha256: 6d8684c69009be49e1b18ec251a5eb0d7e24f93624990a8a124a1da66a92fc8a
+            check: |
+              import zstd
+              data = bytes(range(256)) * 64
+              assert zstd.decompress(zstd.compress(data)) == data
+              print('libzstd', zstd.ZSTD_version())
+          - name: zstd
+            version: 1.5.7.2
+            runner: windows-11-arm
+            arch: arm64
+            python: '3.14'
+            sdist: https://files.pythonhosted.org/packages/0f/78/9a476e09c825304df47b98be80d1ffe223733b03550af71325415028f615/zstd-1.5.7.2.tar.gz
+            sha256: 6d8684c69009be49e1b18ec251a5eb0d7e24f93624990a8a124a1da66a92fc8a
+            check: |
+              import zstd
+              data = bytes(range(256)) * 64
+              assert zstd.decompress(zstd.compress(data)) == data
+              print('libzstd', zstd.ZSTD_version())
+          - name: zstd
+            version: 1.5.7.2
+            runner: windows-11-arm
+            arch: arm64
+            python: '3.15'
+            sdist: https://files.pythonhosted.org/packages/0f/78/9a476e09c825304df47b98be80d1ffe223733b03550af71325415028f615/zstd-1.5.7.2.tar.gz
+            sha256: 6d8684c69009be49e1b18ec251a5eb0d7e24f93624990a8a124a1da66a92fc8a
+            check: |
+              import zstd
+              data = bytes(range(256)) * 64
+              assert zstd.decompress(zstd.compress(data)) == data
+              print('libzstd', zstd.ZSTD_version())
+          - name: Brotli
+            version: 1.2.0
+            runner: windows-latest
+            arch: x64
+            python: '3.15'
+            sdist: https://files.pythonhosted.org/packages/f7/16/c92ca344d646e71a43b8bb353f0a6490d7f6e06210f8554c8f874e454285/brotli-1.2.0.tar.gz
+            sha256: e310f77e41941c13340a95976fe66a8a95b01e783d430eeaf7a2f87e0a57dd0a
+            check: |
+              import brotli
+              data = bytes(range(256)) * 64
+              assert brotli.decompress(brotli.compress(data)) == data
+          - name: Brotli
+            version: 1.2.0
+            runner: windows-11-arm
+            arch: arm64
+            python: '3.11'
+            sdist: https://files.pythonhosted.org/packages/f7/16/c92ca344d646e71a43b8bb353f0a6490d7f6e06210f8554c8f874e454285/brotli-1.2.0.tar.gz
+            sha256: e310f77e41941c13340a95976fe66a8a95b01e783d430eeaf7a2f87e0a57dd0a
+            check: |
+              import brotli
+              data = bytes(range(256)) * 64
+              assert brotli.decompress(brotli.compress(data)) == data
+          - name: Brotli
+            version: 1.2.0
+            runner: windows-11-arm
+            arch: arm64
+            python: '3.12'
+            sdist: https://files.pythonhosted.org/packages/f7/16/c92ca344d646e71a43b8bb353f0a6490d7f6e06210f8554c8f874e454285/brotli-1.2.0.tar.gz
+            sha256: e310f77e41941c13340a95976fe66a8a95b01e783d430eeaf7a2f87e0a57dd0a
+            check: |
+              import brotli
+              data = bytes(range(256)) * 64
+              assert brotli.decompress(brotli.compress(data)) == data
+          - name: Brotli
+            version: 1.2.0
+            runner: windows-11-arm
+            arch: arm64
+            python: '3.13'
+            sdist: https://files.pythonhosted.org/packages/f7/16/c92ca344d646e71a43b8bb353f0a6490d7f6e06210f8554c8f874e454285/brotli-1.2.0.tar.gz
+            sha256: e310f77e41941c13340a95976fe66a8a95b01e783d430eeaf7a2f87e0a57dd0a
+            check: |
+              import brotli
+              data = bytes(range(256)) * 64
+              assert brotli.decompress(brotli.compress(data)) == data
+          - name: Brotli
+            version: 1.2.0
+            runner: windows-11-arm
+            arch: arm64
+            python: '3.14'
+            sdist: https://files.pythonhosted.org/packages/f7/16/c92ca344d646e71a43b8bb353f0a6490d7f6e06210f8554c8f874e454285/brotli-1.2.0.tar.gz
+            sha256: e310f77e41941c13340a95976fe66a8a95b01e783d430eeaf7a2f87e0a57dd0a
+            check: |
+              import brotli
+              data = bytes(range(256)) * 64
+              assert brotli.decompress(brotli.compress(data)) == data
+          - name: Brotli
+            version: 1.2.0
+            runner: windows-11-arm
+            arch: arm64
+            python: '3.15'
+            sdist: https://files.pythonhosted.org/packages/f7/16/c92ca344d646e71a43b8bb353f0a6490d7f6e06210f8554c8f874e454285/brotli-1.2.0.tar.gz
+            sha256: e310f77e41941c13340a95976fe66a8a95b01e783d430eeaf7a2f87e0a57dd0a
+            check: |
+              import brotli
+              data = bytes(range(256)) * 64
+              assert brotli.decompress(brotli.compress(data)) == data
+
+    steps:
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python }}
+          architecture: ${{ matrix.arch }}
+
+      - name: Download and verify the sdist
+        shell: bash
+        run: |
+          curl -sSfL -o sdist.tar.gz "${{ matrix.sdist }}"
+          echo "${{ matrix.sha256 }}  sdist.tar.gz" | sha256sum -c -
+
+      - name: Build the wheel
+        shell: bash
+        run: python -m pip wheel --no-deps --wheel-dir dist sdist.tar.gz
+
+      - name: Install into a clean venv and exercise it
+        shell: bash
+        env:
+          CHECK: ${{ matrix.check }}
+        run: |
+          python -m venv check
+          check/Scripts/python -m pip install --quiet --no-index dist/*.whl
+          printf '%s\n' "$CHECK" > check.py
+          check/Scripts/python check.py
+          check/Scripts/python -c "import platform, sys; print(sys.version, platform.machine())"
+          sha256sum dist/*.whl
+          python -m zipfile -l dist/*.whl
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.name }}-${{ matrix.version }}-py${{ matrix.python }}-${{ matrix.arch }}
+          path: dist/*.whl
+          if-no-files-found: error
