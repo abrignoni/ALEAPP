@@ -135,6 +135,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | trailSense |
 | uber |
 | untappd |
+| userDict |
 | vivaVideo |
 | waze |
 | weibo |
@@ -365,7 +366,6 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | tusky |
 | tutanota |
 | usageapps |
-| userDict |
 | vaulty_files |
 | vinted |
 | vlcMedia |
