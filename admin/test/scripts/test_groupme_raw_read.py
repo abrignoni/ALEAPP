@@ -44,21 +44,25 @@ def create_store(path, affinity='', missing=(), fanout=False):
 class TestGroupMeRawRead(unittest.TestCase):
     def parse(self, path):
         return groupMe.get_groupMe_chat.__wrapped__(
-            SimpleNamespace(get_files_found=lambda: [str(path)]))
+            SimpleNamespace(get_files_found=lambda: [str(path)],
+                            get_relative_path=lambda full_path: Path(full_path).name))
 
     def test_storage_classes_and_join_occurrences(self):
         with tempfile.TemporaryDirectory() as folder:
             for affinity in ['', 'TEXT', 'INTEGER']:
                 with self.subTest(affinity=affinity):
-                    path = Path(folder) / ((affinity or 'NONE') + '.db')
+                    store_dir = Path(folder) / (affinity or 'NONE')
+                    store_dir.mkdir()
+                    path = store_dir / 'groupme.db'
                     with create_store(path, affinity, fanout=True) as db:
                         expected = db.execute('SELECT messages.read FROM messages LEFT JOIN groups '
                                               'ON groups.group_id=messages.conversation_id '
                                               'ORDER BY messages.created_at ASC').fetchall()
                     headers, rows, source = self.parse(path)
                     self.assertEqual(headers[7], 'read (as stored)')
-                    self.assertEqual(len(headers), 19)
-                    self.assertTrue(all(len(r) == 19 for r in rows))
+                    self.assertEqual(len(headers), 20)
+                    self.assertEqual(headers[-1], 'Source File')
+                    self.assertTrue(all(len(r) == 20 for r in rows))
                     self.assertEqual([(r[7],) for r in rows], expected)
                     self.assertEqual([type(r[7]) for r in rows], [type(r[0]) for r in expected])
                     self.assertEqual(source, str(path))
