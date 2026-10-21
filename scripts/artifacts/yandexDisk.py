@@ -14,9 +14,8 @@ __artifacts_v2__ = {
                  "came from, so the same account signed in on two Android users is reported once per "
                  "user.\n"
                  "Field meanings were sourced from the decompiled Yandex Disk 6.90.0 app "
-                 "(versionCode 690000, database version 85) and were not exercised against a real "
-                 "extraction: the module was run only against synthetic databases built from the app's "
-                 "own schema. The app's upgrade step from database version 84 adds two tables this "
+                 "(versionCode 690000, database version 85). The committed test data is synthetic: "
+                 "databases built from the app's own schema with invented values. The app's upgrade step from database version 84 adds two tables this "
                  "artifact does not read; a fresh 6.90.0 install orders the DISK columns differently "
                  "and adds LATITUDE and LONGITUDE to FOREIGN_DISK, so columns are read by name and a missing "
                  "column reads blank.\n"
@@ -76,8 +75,8 @@ __artifacts_v2__ = {
                  "joined to DISK_QUEUE_EXT on upload_id. Account UID is the number in the file name "
                  "and Account is the queue's own user column; Android User is taken from the storage "
                  "path the database came from. Field meanings were sourced from the decompiled Yandex "
-                 "Disk 6.90.0 app and were not exercised against a real extraction: the module was "
-                 "run only against synthetic databases built from the app's own schema.\n"
+                 "Disk 6.90.0 app. The committed test data is synthetic: databases built from the "
+                 "app's own schema with invented values.\n"
                  "What the table keeps matters more than any column. The app deletes completed "
                  "manual uploads (from_autoupload 0 with state 3 or higher). That cleanup does not "
                  "touch completed camera autoupload rows, though other paths can remove them, for "
@@ -128,14 +127,87 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "upload-cloud",
     },
+    "yandex_disk_accounts": {
+        "name": "Yandex Disk Accounts",
+        "description": "Yandex accounts recorded by the Yandex Disk app, with the profile it stored for each",
+        "author": "@AlexisBrignoni, @4n6Wizard, Claude",
+        "creation_date": "2026-10-21",
+        "last_update_date": "2026-10-21",
+        "requirements": "none",
+        "category": "Yandex Disk",
+        "notes": "One row per row of the accounts table in ru.yandex.disk/databases/PassportInternal.db, "
+                 "joined by account uid to accounts_last_action, tokens and gcm_subscriptions in the "
+                 "same file and to CREDENTIAL in the SETTINGS database beside it. PassportInternal.db "
+                 "belongs to the Yandex Passport library, and only the copy under ru.yandex.disk is "
+                 "read; the library is shared code, so other Yandex apps may carry a file of the same "
+                 "name. Android User is taken from "
+                 "the storage path. Field meanings were sourced from the decompiled Yandex Disk 6.90.0 "
+                 "app (PassportInternal.db version 13, SETTINGS version 16). The committed test data is "
+                 "synthetic: databases built from the app's own schema with invented values.\n"
+                 "The profile columns come from whichever of three stores the row carries and could be "
+                 "parsed, named in Profile Source; a store that is present but does not parse as JSON "
+                 "is not named, and the columns it would fill stay blank. legacy_extra_data_body is @jsn followed by JSON whose extra_data "
+                 "object holds _uid, _display_name, _default_avatar, _is_avatar_empty, _is_staff and "
+                 "_is_beta_tester, each as a val string; the app fills it from the account's user info. "
+                 "user_info_body is the account's user info JSON (keys such as display_name, "
+                 "public_name, display_login, native_default_email, firstname, lastname, birthday and "
+                 "avatar_url). When the library's secure-blob flag is on it writes secure_blob and "
+                 "nulls user_info_body, master_token_value and stash_body. A separate flag encrypts "
+                 "what is written, so with it on and the blob flag off those three columns hold "
+                 "ciphertext and the profile columns read blank. A plaintext secure_blob reads "
+                 "v=1&masterToken=...&userInfo=...&stash=...; only its userInfo part is reported, and "
+                 "its masterToken part is checked for presence and never shown. A secure_blob that "
+                 "does not start with v=1& is reported as Encrypted, not readable; in 6.90.0 the only "
+                 "other writer is AES-GCM encryption under a key in the Android keystore. Where user info and "
+                 "the legacy data both give a display name or avatar, the user info value is shown. "
+                 "Profile values are the account's user info as the library stored it; they are not "
+                 "evidence of who used the device.\n"
+                 "Secrets are never reported, only whether they are present: Master Token "
+                 "(master_token_value or the masterToken in a plaintext secure_blob; blank when the "
+                 "secure_blob is encrypted, since any token is inside the ciphertext), Pin Codes (the "
+                 "disk.pincode and mail.pincode entries of the legacy data), Client Tokens (tokens "
+                 "rows with a client_token) and Push Token Hash (gcm_subscriptions). Client IDs are the "
+                 "client id the library stores beside each token, not the token, and are shown.\n"
+                 "Last Action Time is accounts_last_action.local_timestamp, the device clock in "
+                 "milliseconds when the library wrote the ADD or DELETE in Last Action. The library's "
+                 "sign-in sync between Yandex apps can copy another Yandex app's action row in "
+                 "unchanged, and then the time is that app's clock. Token Issued is "
+                 "accounts_last_action.timestamp, which the library takes from the server's "
+                 "x_token_issued_at and stores as a 32 bit integer with no conversion; it is read as "
+                 "Unix seconds because a millisecond value would not fit, and that unit is not stated "
+                 "in the code. On a DELETE the library keeps the previous value. User Info Time is the "
+                 "seconds part of user_info_meta, which the library writes as <seconds>:<second "
+                 "string> from the time it recorded with the user info. Added To Disk App is "
+                 "CREDENTIAL.LAST_TIME_LOGGED_IN, the device clock in milliseconds when the app "
+                 "inserted the account's credential row. The app does not update it in place; removing "
+                 "the account and adding it again writes a new row with a new time. It is blank when 0.\n"
+                 "Environment reads Production (1), Team production (2), Testing (3), Team testing (4) or RC (5) "
+                 "from the first part of the stored uid. Account Type is stored as text (login, social, "
+                 "phone, external_mail or team). legacy_affinity is not shown: the library derives it "
+                 "from the environment (TEST for Testing and Team testing, PROD otherwise). Current Disk Account is "
+                 "CREDENTIAL.IS_SELECTED. The app's select path clears it on every row before setting it "
+                 "on one, but its insert path can also set it, so more than one row can carry it. "
+                 "Accounts that have a "
+                 "CREDENTIAL row but no accounts row are not reported.\n"
+                 "Not read: the children and local_uids tables, and passport-database, which holds "
+                 "the library's auth cookies (secrets) and its method diary.",
+        "paths": ('*/ru.yandex.disk/databases/PassportInternal.db*', '*/ru.yandex.disk/databases/SETTINGS*'),
+        "output_types": "standard",
+        "artifact_icon": "user",
+    },
 }
 
+import json
 import os
 import re
+from urllib.parse import parse_qs
 
 from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records, \
     logfunc
 from scripts.artifacts.storagePathViews import canonical_path, unique_files
+
+PASSPORT_STORE = re.compile(r'(?:^|/)ru\.yandex\.disk/databases/(PassportInternal\.db|SETTINGS)$')
+ENVIRONMENT = {1: 'Production', 2: 'Team production', 3: 'Testing', 4: 'Team testing', 5: 'RC'}
 
 DISK_DB = re.compile(r'(?:^|/)ru\.yandex\.disk/databases/(\d+)_disk$')
 STORAGE_USER = re.compile(r'\x00(?:ce|de):(\d+)\x00')
@@ -307,4 +379,162 @@ def yandex_disk_uploads(context):
         'Media Type',
         'Local Path', 'Destination', 'Uploaded Path', 'Size (bytes)', 'Uploaded (bytes)', 'MD5',
         'SHA-256', 'Local Cleanup', 'Network', 'Date (ms, as stored)', 'Queue ID')
+    return data_headers, data_list, '\n'.join(sources)
+
+
+def _passport_containers(context):
+    """{container key: {'user': Android user, 'PassportInternal.db': path, 'SETTINGS': path}}.
+
+    The key is the database folder with the storage view folded, so the Passport store and the
+    SETTINGS database of one app data directory pair up, and two Android users stay apart.
+    """
+    found = {}
+    for path in unique_files(context):
+        path = str(path)
+        if os.path.isdir(path):
+            continue
+        match = PASSPORT_STORE.search(path.replace('\\', '/'))
+        if not match:
+            continue
+        key, _ = canonical_path(context.get_relative_path(path))
+        folder = key.rsplit('/', 1)[0]
+        user = STORAGE_USER.search(key)
+        entry = found.setdefault(folder, {'user': user.group(1) if user else ''})
+        entry[match.group(1)] = path
+    return found
+
+
+def _rows_by_name(db_path, table, wanted):
+    """Rows of a table as dicts of the wanted columns, NULL for columns this schema lacks."""
+    present = _columns(db_path, table)
+    if not present:
+        return []
+    return [dict(zip(wanted, r))
+            for r in get_sqlite_db_records(db_path, f'SELECT {_select(present, wanted)} FROM "{table}"')]
+
+
+def _legacy_extra(value):
+    """The extra_data values of legacy_extra_data_body: "@jsn" + {"extra_data": {key: {"val": ...}}}."""
+    if not value:
+        return {}
+    text = value[4:] if value.startswith('@jsn') else value
+    try:
+        extra = json.loads(text).get('extra_data') or {}
+    except (ValueError, AttributeError):
+        return {}
+    return {k: v.get('val') for k, v in extra.items() if isinstance(v, dict)}
+
+
+def _json_object(text):
+    """A JSON object from text, or {} when the text is not one (ciphertext, for instance)."""
+    try:
+        value = json.loads(text)
+    except ValueError:
+        return {}
+    return value if isinstance(value, dict) else {}
+
+
+def _user_info(body, secure_blob):
+    """(user info dict, store it came from, secure blob state, master token present in the blob)."""
+    info = _json_object(body) if body else {}
+    source = 'user info' if info else ''
+    if not secure_blob:
+        return info, source, 'Absent', False
+    if not secure_blob.startswith('v=1&'):
+        return info, source, 'Encrypted, not readable', False
+    parts = parse_qs(secure_blob, keep_blank_values=True)
+    blob_info = (parts.get('userInfo') or [''])[0]
+    master = (parts.get('masterToken') or [''])[0] not in ('', '~')
+    if not info and blob_info and blob_info != '~':
+        info = _json_object(blob_info)
+        source = 'secure blob user info' if info else ''
+    return info, source, 'Plaintext', master
+
+
+def _seconds(value):
+    """A stored Unix seconds value as a UTC datetime, blank for NULL or 0."""
+    if not value:
+        return ''
+    try:
+        return convert_unix_ts_to_utc(int(value))
+    except (TypeError, ValueError, OverflowError):
+        return ''
+
+
+def _present(flag):
+    return 'Present' if flag else 'Absent'
+
+
+def _yes_no(value):
+    if value is None or value == '':
+        return ''
+    return 'Yes' if str(value).lower() in ('1', 'true') else 'No'
+
+
+@artifact_processor
+def yandex_disk_accounts(context):
+    data_list = []
+    sources = []
+    for _, stores in sorted(_passport_containers(context).items()):
+        passport = stores.get('PassportInternal.db')
+        if not passport:
+            continue
+        settings = stores.get('SETTINGS')
+        credentials = {}
+        if settings:
+            for c in _rows_by_name(settings, 'CREDENTIAL', ('UID', 'LAST_TIME_LOGGED_IN', 'IS_SELECTED')):
+                credentials[str(c['UID'])] = c
+        actions = {a['uid']: a for a in _rows_by_name(
+            passport, 'accounts_last_action', ('uid', 'timestamp', 'last_action', 'local_timestamp'))}
+        tokens = {}
+        for t in _rows_by_name(passport, 'tokens', ('uid', 'client_id', 'client_token')):
+            tokens.setdefault(t['uid'], []).append(t)
+        push = {g['uid'] for g in _rows_by_name(passport, 'gcm_subscriptions', ('uid', 'gcm_token_hash'))
+                if g['gcm_token_hash']}
+        accounts = _rows_by_name(passport, 'accounts', (
+            'name', 'master_token_value', 'uid', 'user_info_body', 'user_info_meta', 'stash_body',
+            'legacy_account_type', 'legacy_affinity', 'legacy_extra_data_body', 'secure_blob'))
+        for a in accounts:
+            stored_uid = str(a['uid'] or '')
+            env, _, uid_value = stored_uid.partition(':') if ':' in stored_uid else ('', '', stored_uid)
+            legacy = _legacy_extra(a['legacy_extra_data_body'])
+            info, info_source, blob_state, blob_master = _user_info(a['user_info_body'], a['secure_blob'])
+            profile_source = '; '.join(x for x in (info_source, 'legacy extra data' if legacy else '') if x)
+            # An encrypted blob holds any master token inside the ciphertext, so absence is unknown.
+            master_token = '' if blob_state.startswith('Encrypted') else \
+                _present(a['master_token_value'] or blob_master)
+            action = actions.get(stored_uid, {})
+            cred = credentials.get(uid_value, {})
+            account_tokens = tokens.get(stored_uid, [])
+            meta = str(a['user_info_meta'] or '')
+            data_list.append((
+                _ms(action.get('local_timestamp')), _seconds(action.get('timestamp')),
+                _seconds(meta.split(':', 1)[0]) if meta.split(':', 1)[0].isdigit() else '',
+                _ms(cred.get('LAST_TIME_LOGGED_IN')),
+                stores['user'], uid_value, _label(ENVIRONMENT, env) if env else '', a['name'] or '',
+                info.get('display_name') or legacy.get('_display_name') or '',
+                info.get('public_name') or '', info.get('display_login') or '',
+                info.get('native_default_email') or '', info.get('firstname') or '',
+                info.get('lastname') or '', info.get('birthday') or '',
+                info.get('avatar_url') or legacy.get('_default_avatar') or '',
+                a['legacy_account_type'] or '',
+                action.get('last_action') or '', _yes_no(cred.get('IS_SELECTED')),
+                _yes_no(legacy.get('_is_staff')), _yes_no(legacy.get('_is_beta_tester')),
+                master_token, blob_state,
+                _present(legacy.get('disk.pincode') or legacy.get('mail.pincode')),
+                sum(1 for t in account_tokens if t['client_token']),
+                ', '.join(sorted({t['client_id'] for t in account_tokens if t['client_id']})),
+                _present(stored_uid in push), profile_source))
+        if accounts:
+            sources.append(passport)
+            if settings:
+                sources.append(settings)
+
+    data_headers = (
+        ('Last Action Time', 'datetime'), ('Token Issued', 'datetime'),
+        ('User Info Time', 'datetime'), ('Added To Disk App', 'datetime'), 'Android User',
+        'Account UID', 'Environment', 'Account Name', 'Display Name', 'Public Name', 'Display Login',
+        'Default Email', 'First Name', 'Last Name', 'Birthday', 'Avatar URL', 'Account Type', 'Last Action',
+        'Current Disk Account', 'Staff', 'Beta Tester', 'Master Token', 'Secure Blob',
+        'Pin Codes', 'Client Tokens', 'Client IDs', 'Push Token Hash', 'Profile Source')
     return data_headers, data_list, '\n'.join(sources)

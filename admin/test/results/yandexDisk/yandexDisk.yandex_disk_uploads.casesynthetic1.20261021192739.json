@@ -10,15 +10,15 @@
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/yandexDisk/testdata.yandexDisk.yandex_disk_uploads.casesynthetic1.zip",
-    "start_time": "2026-10-21T18:41:46.243913+00:00",
-    "end_time": "2026-10-21T18:41:46.305997+00:00",
-    "run_time_seconds": 0.004488945007324219,
+    "start_time": "2026-10-21T19:27:39.116477+00:00",
+    "end_time": "2026-10-21T19:27:39.141045+00:00",
+    "run_time_seconds": 0.004556179046630859,
     "last_commit": {
-      "hash": "Uncommitted",
-      "author_name": "N/A",
-      "author_email": "N/A",
-      "date": "2026-10-21T14:41:46.295069",
-      "message": "File not yet committed to git"
+      "hash": "71b61fce93e0df345e229d81a68b906df0a6c392",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-10-21T14:46:23-04:00",
+      "message": "Add Yandex Disk cloud files and uploads artifacts"
     }
   },
   "headers": [
