@@ -78,7 +78,7 @@ def show_history_menu(button, path_type):
                     menu.add_command(
                         label=selection_text([history.format_path_for_display(p) for p in given]),
                         command=lambda g=given: set_input_selection(g))
-    x = input_entry.winfo_rootx()
+    x = button.winfo_rootx()
     y = button.winfo_rooty() + button.winfo_height()
     menu.post(x, y)
 
