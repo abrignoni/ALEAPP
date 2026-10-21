@@ -1,0 +1,40 @@
+{
+  "casesynthetic1": {
+    "description": "Synthetic Android extraction with invented values, laid out in the Yandex Disk database schema (database version 84, and the 6.90.0 version 85 fresh-install column order). Holds Android user 0 under data/data, data/user/0 and data_mirror, two Yandex accounts, and rows that exist only in the -wal sidecar.",
+    "maker": "@AlexisBrignoni, Claude",
+    "make_data": {
+      "input_data_path": "yandex_disk_synthetic_case.zip",
+      "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+      "timestamp": "2026-10-21T14:13:43.291227",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-21T14:13:43.282317",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "yandex_disk_cloud_files": {
+        "search_patterns": [
+          "*/ru.yandex.disk/databases/*_disk*"
+        ],
+        "file_count": 12,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "yandex_disk_uploads": {
+        "search_patterns": [
+          "*/ru.yandex.disk/databases/*_disk*"
+        ],
+        "file_count": 12,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  }
+}
