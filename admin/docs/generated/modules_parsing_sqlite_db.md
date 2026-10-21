@@ -141,6 +141,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | weibo |
 | wikipedia |
 | xiaohongshu |
+| yandexDisk |
 | youCamPerfect |
 <!-- GET_RECORDS_END -->
 
