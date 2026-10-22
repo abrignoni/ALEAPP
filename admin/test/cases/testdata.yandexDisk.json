@@ -1,17 +1,17 @@
 {
   "casesynthetic1": {
-    "description": "Synthetic Android extraction with invented values, laid out in the Yandex Disk database schema (database version 84, and the 6.90.0 version 85 fresh-install column order). Holds Android user 0 under data/data, data/user/0 and data_mirror, two Yandex accounts, and rows that exist only in the -wal sidecar. Account rows cover a legacy extra data JSON with a ciphertext secure_blob, a plaintext secure_blob, and plain user info columns.",
+    "description": "Synthetic Android extraction with invented values, laid out in the Yandex Disk database schema (database version 84, and the 6.90.0 version 85 fresh-install column order). Holds Android user 0 under data/data, data/user/0 and data_mirror, two Yandex accounts, and rows that exist only in the -wal sidecar. Account rows cover a legacy extra data JSON with a ciphertext secure_blob, a plaintext secure_blob, and plain user info columns. SETTINGS holds per-account settings, including saved video positions that match, mismatch or are absent from the cloud listing, a scope with no CREDENTIAL row, and one malformed entry.",
     "maker": "@AlexisBrignoni, Claude",
     "make_data": {
       "input_data_path": "yandex_disk_synthetic_case.zip",
       "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
-      "timestamp": "2026-10-22T09:37:52.562595",
+      "timestamp": "2026-10-22T14:22:29.580898",
       "last_commit": {
-        "hash": "dd2dd18606a85444b03ac72bacf89ba29b142067",
+        "hash": "d3227ab49883d604eb305a38d1625c672ff227a8",
         "author_name": "Brigs",
         "author_email": "abrignoni@gmail.com",
-        "date": "2026-10-21T15:28:23-04:00",
-        "message": "Add Yandex Disk Accounts artifact"
+        "date": "2026-10-22T09:47:53-04:00",
+        "message": "Add Yandex Disk Trash, Downloads and Notes, and media on uploads"
       }
     },
     "artifacts": {
@@ -41,6 +41,17 @@
           "*/ru.yandex.disk/databases/SETTINGS*"
         ],
         "file_count": 6,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "yandex_disk_video_positions": {
+        "search_patterns": [
+          "*/ru.yandex.disk/databases/SETTINGS*",
+          "*/ru.yandex.disk/databases/*_disk*"
+        ],
+        "file_count": 15,
         "expected_output": {
           "headers": [],
           "data": []

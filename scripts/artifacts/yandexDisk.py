@@ -145,7 +145,7 @@ __artifacts_v2__ = {
         "description": "Yandex accounts recorded by the Yandex Disk app, with the profile it stored for each",
         "author": "@AlexisBrignoni, @4n6Wizard, Claude",
         "creation_date": "2026-10-21",
-        "last_update_date": "2026-10-21",
+        "last_update_date": "2026-10-22",
         "requirements": "none",
         "category": "Yandex Disk",
         "notes": "One row per row of the accounts table in ru.yandex.disk/databases/PassportInternal.db, "
@@ -202,11 +202,83 @@ __artifacts_v2__ = {
                  "on one, but its insert path can also set it, so more than one row can carry it. "
                  "Accounts that have a "
                  "CREDENTIAL row but no accounts row are not reported.\n"
+                 "Last App Open, Registration Time, Paid, Pro and the storage columns come from "
+                 "PLAIN_SETTINGS_TABLE in SETTINGS, from the rows whose SCOPE is user@ followed by the "
+                 "account's CREDENTIAL.USER, which is how the app scopes its per-account settings. Last "
+                 "App Open is last_open_app_time, the device clock in milliseconds that the app writes "
+                 "on its user interface launch event; each write replaces the last. In 6.90.0 that "
+                 "event is raised by the main screen when it is first created, by the login screen "
+                 "after a login, by a base screen callback other screens inherit, and by the auto login "
+                 "command, so it is not written on every return to the app. Registration Time is "
+                 "registration_time, the text the app copies from the server's reg_time field at its "
+                 "user settings fetch; the app names that field isoRegistrationTime and does not parse "
+                 "it. It is read as an ISO 8601 time with an offset and reported in UTC, and left blank "
+                 "with the value logged when it does not read that way. Paid is is_paid and Pro is "
+                 "IS_PRO, which the app stores as 1 or 0; IS_PRO is copied from the server's is_pro "
+                 "user feature toggle, and what that toggle grants was not traced. Storage Capacity, "
+                 "Storage Used, Disk Size, Mail Size and Trash Size are capacity_info_total, "
+                 "capacity_info_used, capacity_info_disk_size, capacity_info_mail_size and "
+                 "capacity_info_trash_size, the server's total_space, used_space, disk_size, mail_size "
+                 "and trash_size as stored at the app's last disk information fetch; their unit is not "
+                 "stated in the app's code. The app stores -1 for capacity or used when the server sent "
+                 "none, and -1 is reported blank. It stores 0 for the disk, mail and trash sizes when "
+                 "the server sent none, so a 0 there is not a measured zero. A setting the table does "
+                 "not hold reads blank. The upload file size limits stored beside these (max_file_size, "
+                 "paid_max_file_size and the upload_file_size_limits entries) are copied from the "
+                 "server and are not reported. Saved video positions from the same table are in Yandex "
+                 "Disk Video Playback Positions.\n"
                  "Not read: the children and local_uids tables, and passport-database, which holds "
                  "the library's auth cookies (secrets) and its method diary.",
         "paths": ('*/ru.yandex.disk/databases/PassportInternal.db*', '*/ru.yandex.disk/databases/SETTINGS*'),
         "output_types": "standard",
         "artifact_icon": "user",
+    },
+    "yandex_disk_video_positions": {
+        "name": "Yandex Disk Video Playback Positions",
+        "description": "Saved playback positions the Yandex Disk app's video viewer kept for each account",
+        "author": "@AlexisBrignoni, @4n6Wizard, Claude",
+        "creation_date": "2026-10-22",
+        "last_update_date": "2026-10-22",
+        "requirements": "none",
+        "category": "Yandex Disk",
+        "notes": "One row per entry of the video_timecodes setting in PLAIN_SETTINGS_TABLE of "
+                 "ru.yandex.disk/databases/SETTINGS, which holds one such setting per account scope "
+                 "(user@ followed by the account). Account is the scope with user@ removed; Account UID "
+                 "comes from the CREDENTIAL row whose USER matches it and is blank when none does. "
+                 "Android User is taken from the storage path. Field meanings were sourced from the "
+                 "decompiled Yandex Disk 6.90.0 app. The committed test data is synthetic: databases "
+                 "built from the app's own schema with invented values.\n"
+                 "The setting is a JSON list of entries, each keyed by a server path and an ETag with "
+                 "a position in milliseconds; the ETag can be null and then reads blank. When the video "
+                 "viewer screen stops (it is closed, left, or the app goes to the background) the app "
+                 "takes the video's duration, from the stream information or the player, and the "
+                 "playback position the player reports. It removes the video's entry when the duration "
+                 "is 30 seconds or less, the position is 10 seconds or less, or the position is within "
+                 "10 seconds of the end; otherwise it saves the position minus 5 seconds. When the "
+                 "duration is unknown (0) it does neither. Stored Position is the saved value and "
+                 "Position When Viewer Stopped adds the 5 seconds back. A removal changes only the "
+                 "app's in-memory list and reaches the setting when the app next writes it, which a "
+                 "later save or the path rewrite command below does, so a stored entry can belong to a "
+                 "video that was later stopped near its end. A video with no entry may never have been "
+                 "opened in the viewer, may have been stopped under a removal condition, or may have "
+                 "been pushed out of the 11-entry cache by later videos.\n"
+                 "The app keeps at most 11 entries in a least recently used cache and writes them in "
+                 "the cache's order, least recently used first. Reading an entry, which the viewer does "
+                 "when it opens a video, counts as a use. Recency Rank counts from the end of the "
+                 "stored list, so 1 is the entry most recently used as of the last save. The setting "
+                 "records no time, so the rank orders entries without dating them. A separate app "
+                 "command rewrites an entry's path when it is given a path change and keeps the "
+                 "position; which actions send it was not traced.\n"
+                 "Cloud File Match compares each entry with the account's DISK table (see Yandex Disk "
+                 "Cloud Files) by path: Same ETag, Different ETag, or Not listed when DISK holds no row "
+                 "at that path or no DISK database was found for the account (for instance when Account "
+                 "UID is blank). Duration (as stored) and Size (bytes) come from that DISK row. A saved "
+                 "position shows that the viewer screen for that video stopped with the player at "
+                 "Position When Viewer Stopped, under this account's settings on this device; it is not "
+                 "evidence of who watched it or that it played continuously.",
+        "paths": ('*/ru.yandex.disk/databases/SETTINGS*', '*/ru.yandex.disk/databases/*_disk*'),
+        "output_types": "standard",
+        "artifact_icon": "film",
     },
     "yandex_disk_trash": {
         "name": "Yandex Disk Trash",
@@ -315,6 +387,7 @@ __artifacts_v2__ = {
 import json
 import os
 import re
+from datetime import datetime, timezone
 from urllib.parse import parse_qs
 
 from scripts.ilapfuncs import artifact_processor, check_in_media, convert_unix_ts_to_utc, \
@@ -587,6 +660,46 @@ def _seconds(value):
         return ''
 
 
+# capacity_info_<key> settings, in the column order the Accounts artifact reports them.
+CAPACITY_KEYS = ('total', 'used', 'disk_size', 'mail_size', 'trash_size')
+
+
+def _user_settings(settings_path):
+    """{scope: {name: value}} for the per-account (user@...) scopes of PLAIN_SETTINGS_TABLE."""
+    scoped = {}
+    for r in _rows_by_name(settings_path, 'PLAIN_SETTINGS_TABLE', ('SCOPE', 'NAME', 'VALUE')):
+        scope = str(r['SCOPE'] or '')
+        if scope.startswith('user@'):
+            scoped.setdefault(scope, {})[r['NAME']] = r['VALUE']
+    return scoped
+
+
+def _iso(value):
+    """An ISO 8601 text time with an offset as a UTC datetime; blank, and logged, otherwise."""
+    if not value:
+        return ''
+    text = str(value).strip()
+    try:
+        parsed = datetime.fromisoformat(text[:-1] + '+00:00' if text.endswith('Z') else text)
+    except ValueError:
+        parsed = None
+    if parsed is None or parsed.tzinfo is None:
+        logfunc(f'Yandex Disk: registration_time not read as an ISO 8601 time with an offset: {text}')
+        return ''
+    return parsed.astimezone(timezone.utc)
+
+
+def _capacity(value):
+    """A stored byte count, blank when absent or the app's -1 for a value the server did not send."""
+    if value is None or value == '':
+        return ''
+    try:
+        number = int(value)
+    except (TypeError, ValueError):
+        return value
+    return '' if number == -1 else number
+
+
 def _present(flag):
     return 'Present' if flag else 'Absent'
 
@@ -607,9 +720,11 @@ def yandex_disk_accounts(context):
             continue
         settings = stores.get('SETTINGS')
         credentials = {}
+        prefs = {}
         if settings:
-            for c in _rows_by_name(settings, 'CREDENTIAL', ('UID', 'LAST_TIME_LOGGED_IN', 'IS_SELECTED')):
+            for c in _rows_by_name(settings, 'CREDENTIAL', ('USER', 'UID', 'LAST_TIME_LOGGED_IN', 'IS_SELECTED')):
                 credentials[str(c['UID'])] = c
+            prefs = _user_settings(settings)
         actions = {a['uid']: a for a in _rows_by_name(
             passport, 'accounts_last_action', ('uid', 'timestamp', 'last_action', 'local_timestamp'))}
         tokens = {}
@@ -631,12 +746,14 @@ def yandex_disk_accounts(context):
                 _present(a['master_token_value'] or blob_master)
             action = actions.get(stored_uid, {})
             cred = credentials.get(uid_value, {})
+            pref = prefs.get(f"user@{cred['USER']}", {}) if cred.get('USER') else {}
             account_tokens = tokens.get(stored_uid, [])
             meta = str(a['user_info_meta'] or '')
             data_list.append((
                 _ms(action.get('local_timestamp')), _seconds(action.get('timestamp')),
                 _seconds(meta.split(':', 1)[0]) if meta.split(':', 1)[0].isdigit() else '',
-                _ms(cred.get('LAST_TIME_LOGGED_IN')),
+                _ms(cred.get('LAST_TIME_LOGGED_IN')), _ms(pref.get('last_open_app_time')),
+                _iso(pref.get('registration_time')),
                 stores['user'], uid_value, _label(ENVIRONMENT, env) if env else '', a['name'] or '',
                 info.get('display_name') or legacy.get('_display_name') or '',
                 info.get('public_name') or '', info.get('display_login') or '',
@@ -645,6 +762,8 @@ def yandex_disk_accounts(context):
                 info.get('avatar_url') or legacy.get('_default_avatar') or '',
                 a['legacy_account_type'] or '',
                 action.get('last_action') or '', _yes_no(cred.get('IS_SELECTED')),
+                _yes_no(pref.get('is_paid')), _yes_no(pref.get('IS_PRO')),
+                *(_capacity(pref.get(f'capacity_info_{k}')) for k in CAPACITY_KEYS),
                 _yes_no(legacy.get('_is_staff')), _yes_no(legacy.get('_is_beta_tester')),
                 master_token, blob_state,
                 _present(legacy.get('disk.pincode') or legacy.get('mail.pincode')),
@@ -658,13 +777,90 @@ def yandex_disk_accounts(context):
 
     data_headers = (
         ('Last Action Time', 'datetime'), ('Token Issued', 'datetime'),
-        ('User Info Time', 'datetime'), ('Added To Disk App', 'datetime'), 'Android User',
+        ('User Info Time', 'datetime'), ('Added To Disk App', 'datetime'),
+        ('Last App Open', 'datetime'), ('Registration Time', 'datetime'), 'Android User',
         'Account UID', 'Environment', 'Account Name', 'Display Name', 'Public Name', 'Display Login',
         'Default Email', 'First Name', 'Last Name', 'Birthday', 'Avatar URL', 'Account Type', 'Last Action',
-        'Current Disk Account', 'Staff', 'Beta Tester', 'Master Token', 'Secure Blob',
+        'Current Disk Account', 'Paid', 'Pro', 'Storage Capacity (as stored)', 'Storage Used (as stored)',
+        'Disk Size (as stored)', 'Mail Size (as stored)', 'Trash Size (as stored)', 'Staff', 'Beta Tester', 'Master Token', 'Secure Blob',
         'Pin Codes', 'Client Tokens', 'Client IDs', 'Push Token Hash', 'Profile Source')
     return data_headers, data_list, '\n'.join(sources)
 
+
+def _hms(ms):
+    """Milliseconds as HH:MM:SS.mmm."""
+    ms = int(ms)
+    return f'{ms // 3600000:02d}:{ms // 60000 % 60:02d}:{ms // 1000 % 60:02d}.{ms % 1000:03d}'
+
+
+def _timecodes(raw, scope):
+    """(path, etag, position ms) for each well-formed entry of a video_timecodes value, in stored order."""
+    try:
+        entries = json.loads(raw)
+    except ValueError:
+        logfunc(f'Yandex Disk: video_timecodes for {scope} is not JSON, not read')
+        return []
+    if not isinstance(entries, list):
+        logfunc(f'Yandex Disk: video_timecodes for {scope} is not a list, not read')
+        return []
+    found = []
+    for entry in entries:
+        key = entry.get('key') if isinstance(entry, dict) else None
+        value = entry.get('value') if isinstance(entry, dict) else None
+        if not isinstance(key, dict) or not key.get('path') or isinstance(value, bool) \
+                or not isinstance(value, int):
+            logfunc(f'Yandex Disk: an entry of video_timecodes for {scope} has an unexpected shape, not read')
+            continue
+        found.append((key['path'], key.get('etag'), value))
+    return found
+
+
+def _disk_listing(db_path):
+    """{path: DISK row} for one account's cloud file listing."""
+    return {_path(r['PARENT'], r['NAME']): r
+            for r in _rows_by_name(db_path, 'DISK', ('PARENT', 'NAME', 'ETAG', 'DURATION', 'SIZE'))}
+
+
+@artifact_processor
+def yandex_disk_video_positions(context):
+    data_list = []
+    sources = []
+    disks = {(user, uid): path for user, uid, path in _disk_databases(context)}
+    for _, stores in sorted(_passport_containers(context).items()):
+        settings = stores.get('SETTINGS')
+        if not settings:
+            continue
+        uids = {str(c['USER']): str(c['UID'] or '')
+                for c in _rows_by_name(settings, 'CREDENTIAL', ('USER', 'UID')) if c['USER']}
+        read_rows = False
+        for scope, prefs in sorted(_user_settings(settings).items()):
+            if not prefs.get('video_timecodes'):
+                continue
+            entries = _timecodes(prefs['video_timecodes'], scope)
+            account = scope[len('user@'):]
+            uid = uids.get(account, '')
+            disk_path = disks.get((stores['user'], uid)) if uid else None
+            listing = _disk_listing(disk_path) if disk_path else {}
+            for rank, (path, etag, stored) in zip(range(len(entries), 0, -1), entries):
+                read_rows = True
+                cloud = listing.get(path)
+                if cloud is None:
+                    match = 'Not listed'
+                else:
+                    match = 'Same ETag' if (cloud['ETAG'] or None) == (etag or None) else 'Different ETag'
+                data_list.append((
+                    rank, stores['user'], uid, account, path, _hms(stored), stored, _hms(stored + 5000),
+                    cloud['DURATION'] if cloud else '', cloud['SIZE'] if cloud else '', etag or '', match))
+            if entries and disk_path and disk_path not in sources:
+                sources.append(disk_path)
+        if read_rows:
+            sources.insert(0, settings)
+
+    data_headers = (
+        'Recency Rank', 'Android User', 'Account UID', 'Account', 'Video Path', 'Stored Position',
+        'Stored Position (ms)', 'Position When Viewer Stopped', 'Duration (as stored)', 'Size (bytes)', 'ETag',
+        'Cloud File Match')
+    return data_headers, data_list, '\n'.join(sources)
 
 def _shared_tails(recorded):
     """The forms a recorded /storage/emulated/<user>/... path takes inside an extraction.

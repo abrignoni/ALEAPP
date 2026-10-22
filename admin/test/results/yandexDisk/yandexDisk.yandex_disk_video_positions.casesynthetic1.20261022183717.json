@@ -1,0 +1,110 @@
+{
+  "metadata": {
+    "module_name": "yandexDisk",
+    "artifact_name": "Yandex Disk Video Playback Positions",
+    "function_name": "yandex_disk_video_positions",
+    "case_number": "casesynthetic1",
+    "number_of_columns": 12,
+    "number_of_rows": 5,
+    "total_data_size_bytes": 603,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/yandexDisk/testdata.yandexDisk.yandex_disk_video_positions.casesynthetic1.zip",
+    "start_time": "2026-10-22T18:37:17.354264+00:00",
+    "end_time": "2026-10-22T18:37:17.385000+00:00",
+    "run_time_seconds": 0.0032377243041992188,
+    "last_commit": {
+      "hash": "9ac0838903a7b530fe45b4c5ab6554ea1437b75d",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-10-22T14:23:42-04:00",
+      "message": "Add Yandex Disk settings and video playback positions"
+    }
+  },
+  "headers": [
+    "Recency Rank",
+    "Android User",
+    "Account UID",
+    "Account",
+    "Video Path",
+    "Stored Position",
+    "Stored Position (ms)",
+    "Position When Viewer Stopped",
+    "Duration (as stored)",
+    "Size (bytes)",
+    "ETag",
+    "Cloud File Match"
+  ],
+  "data": [
+    [
+      4,
+      "0",
+      "4000000001",
+      "fixture.user.a",
+      "/disk/moved_away_fixture.mp4",
+      "00:00:15.000",
+      15000,
+      "00:00:20.000",
+      "",
+      "",
+      "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "Not listed"
+    ],
+    [
+      3,
+      "0",
+      "4000000001",
+      "fixture.user.a",
+      "/disk/fixture_video.mp4",
+      "00:00:30.000",
+      30000,
+      "00:00:35.000",
+      125000,
+      52428800,
+      "dddddddddddddddddddddddddddddddd",
+      "Different ETag"
+    ],
+    [
+      2,
+      "0",
+      "4000000001",
+      "fixture.user.a",
+      "/disk/no_etag_fixture.mp4",
+      "00:00:45.000",
+      45000,
+      "00:00:50.000",
+      "",
+      "",
+      "",
+      "Not listed"
+    ],
+    [
+      1,
+      "0",
+      "4000000001",
+      "fixture.user.a",
+      "/disk/fixture_video.mp4",
+      "00:01:00.000",
+      60000,
+      "00:01:05.000",
+      125000,
+      52428800,
+      "6a99b44c6a9a52836a9af0ba6a9b8ef1",
+      "Same ETag"
+    ],
+    [
+      1,
+      "0",
+      "",
+      "removed.fixture.user",
+      "/disk/orphan_fixture.mp4",
+      "00:00:20.000",
+      20000,
+      "00:00:25.000",
+      "",
+      "",
+      "ffffffffffffffffffffffffffffffff",
+      "Not listed"
+    ]
+  ]
+}
