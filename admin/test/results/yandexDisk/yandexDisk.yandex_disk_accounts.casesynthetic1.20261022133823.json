@@ -10,15 +10,15 @@
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/yandexDisk/testdata.yandexDisk.yandex_disk_accounts.casesynthetic1.zip",
-    "start_time": "2026-10-21T19:27:39.094977+00:00",
-    "end_time": "2026-10-21T19:27:39.115829+00:00",
-    "run_time_seconds": 0.0016548633575439453,
+    "start_time": "2026-10-22T13:38:23.285446+00:00",
+    "end_time": "2026-10-22T13:38:23.308180+00:00",
+    "run_time_seconds": 0.0019130706787109375,
     "last_commit": {
-      "hash": "71b61fce93e0df345e229d81a68b906df0a6c392",
+      "hash": "dd2dd18606a85444b03ac72bacf89ba29b142067",
       "author_name": "Brigs",
       "author_email": "abrignoni@gmail.com",
-      "date": "2026-10-21T14:46:23-04:00",
-      "message": "Add Yandex Disk cloud files and uploads artifacts"
+      "date": "2026-10-21T15:28:23-04:00",
+      "message": "Add Yandex Disk Accounts artifact"
     }
   },
   "headers": [

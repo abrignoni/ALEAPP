@@ -1,0 +1,71 @@
+{
+  "metadata": {
+    "module_name": "yandexDisk",
+    "artifact_name": "Yandex Disk Downloads",
+    "function_name": "yandex_disk_downloads",
+    "case_number": "casesynthetic1",
+    "number_of_columns": 13,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 268,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/yandexDisk/testdata.yandexDisk.yandex_disk_downloads.casesynthetic1.zip",
+    "start_time": "2026-10-22T13:38:23.343452+00:00",
+    "end_time": "2026-10-22T13:38:23.360138+00:00",
+    "run_time_seconds": 0.0007951259613037109,
+    "last_commit": {
+      "hash": "dd2dd18606a85444b03ac72bacf89ba29b142067",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-10-21T15:28:23-04:00",
+      "message": "Add Yandex Disk Accounts artifact"
+    }
+  },
+  "headers": [
+    "Android User",
+    "Account UID",
+    "Cloud Path",
+    "Local Folder",
+    "File Name",
+    "Local File",
+    "Type",
+    "State",
+    "Size (bytes)",
+    "Downloaded (bytes)",
+    "Public Link Key",
+    "Password Token",
+    "Queue ID"
+  ],
+  "data": [
+    [
+      "0",
+      "4000000001",
+      "/disk/offline_fixture.pdf",
+      "/storage/emulated/0/Download",
+      "offline_fixture.pdf",
+      "",
+      "UI download (100)",
+      "Done (1)",
+      300000,
+      300000,
+      "",
+      "Absent",
+      1
+    ],
+    [
+      "0",
+      "4000000001",
+      "/public_fixture.zip",
+      "/storage/emulated/0/Download",
+      "public_fixture.zip",
+      "",
+      "Public file (150)",
+      "Queued (0)",
+      900000,
+      1000,
+      "FIXTUREPUBLICKEY0001",
+      "Present",
+      2
+    ]
+  ]
+}

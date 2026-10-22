@@ -1,0 +1,56 @@
+{
+  "metadata": {
+    "module_name": "yandexDisk",
+    "artifact_name": "Yandex Disk Notes",
+    "function_name": "yandex_disk_notes",
+    "case_number": "casesynthetic1",
+    "number_of_columns": 13,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 209,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/yandexDisk/testdata.yandexDisk.yandex_disk_notes.casesynthetic1.zip",
+    "start_time": "2026-10-22T13:38:23.326415+00:00",
+    "end_time": "2026-10-22T13:38:23.343080+00:00",
+    "run_time_seconds": 0.0009019374847412109,
+    "last_commit": {
+      "hash": "dd2dd18606a85444b03ac72bacf89ba29b142067",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-10-21T15:28:23-04:00",
+      "message": "Add Yandex Disk Accounts artifact"
+    }
+  },
+  "headers": [
+    "Modified",
+    "Android User",
+    "Account UID",
+    "Title",
+    "Text",
+    "Snippet",
+    "Pinned",
+    "Hidden",
+    "Local Changes",
+    "Attachments",
+    "Attachment Resource IDs",
+    "Remote ID",
+    "Revision"
+  ],
+  "data": [
+    [
+      1770000000,
+      "0",
+      "4000000001",
+      "Fixture note",
+      "Fixture note text.",
+      "Fixture note text.",
+      "Yes",
+      "No",
+      "None (0)",
+      "attached_to_note_fixture.png (OK (3))",
+      "4000000001:cf844ad3cf84e90acf858741cf862578cf86c3afcf8761e6cf88001dcf889e54",
+      "fixture-note-1",
+      3
+    ]
+  ]
+}

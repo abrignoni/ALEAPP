@@ -119,7 +119,20 @@ __artifacts_v2__ = {
                  "the local file of an already uploaded duplicate is gone. So 2 shows the local file "
                  "was gone, not which of the two happened. Any code outside these lists is reported "
                  "as Unknown with its number.\n"
-                 "The local files are not resolved or shown in this version. A separate "
+                 "Local File shows the file at Local Path when the extraction holds it. Local Path is "
+                 "reported as stored; when it starts with /storage/emulated/<user> or /sdcard, the parser "
+                 "searches the "
+                 "extraction only for the folders the queue rows name, under media/<user> (the "
+                 "data/media/<user> form an extraction holds) or storage/emulated/<user>, and only after "
+                 "it has read queue rows, so no shared storage is staged on a device without them. Only "
+                 "a file whose extraction path ends with the recorded path's shared-storage form is "
+                 "shown, never one that merely shares the file name, and "
+                 "the file type is taken from its bytes. A blank Local File means no file was found at "
+                 "that path, or Local Path is a folder or not a shared-storage path; it is not evidence "
+                 "the upload never happened. A file found at the "
+                 "path is what the extraction holds there now, which need not be the bytes that were "
+                 "uploaded; MD5 and SHA-256 are the hashes the app computed over the local file when it "
+                 "hashed it. A separate "
                  "disk_queue_snapshot database, which the app uses while migrating queue rows, is "
                  "not read. The AUTOUPLOAD_SYNC_V2 tables that database version 85 added are not "
                  "read.",
@@ -195,6 +208,108 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "user",
     },
+    "yandex_disk_trash": {
+        "name": "Yandex Disk Trash",
+        "description": "Items the Yandex Disk app listed in each account's server trash, with pending trash actions",
+        "author": "@AlexisBrignoni, @4n6Wizard, Claude",
+        "creation_date": "2026-10-22",
+        "last_update_date": "2026-10-22",
+        "requirements": "none",
+        "category": "Yandex Disk",
+        "notes": "One row per row of the TRASH table in ru.yandex.disk/databases/<uid>_trash.db, one "
+                 "database per signed-in account; Account UID is the number in the file name and Android "
+                 "User is taken from the storage path. Field meanings were sourced from the decompiled "
+                 "Yandex Disk 6.90.0 app (trash database version 2). The committed test data is "
+                 "synthetic: databases built from the app's own schema with invented values.\n"
+                 "The app fills TRASH from the server's trash listing and, when a listing completes, "
+                 "deletes local rows the listing did not return. A row is therefore an item that was in "
+                 "the account's server trash at the app's last trash listing. Deleted is the server's "
+                 "deleted time for the item, parsed from ISO 8601 to milliseconds and reported in UTC; "
+                 "it is blank when the app stored 0, which it does when the server sent no time. Trash "
+                 "Path is the server's path for the item inside the trash; the item's original location "
+                 "is parsed by the app but not stored, so it is not available here. ETag is the server's "
+                 "md5 field for the item.\n"
+                 "Completed In App reads Yes (1) when the app finished a delete forever, restore or empty "
+                 "trash for the item on the server, which hides it from the app's trash view, and No (0) "
+                 "otherwise. Pending Action comes from the OPERATIONS table: Empty trash (0), Delete "
+                 "forever (1) or Restore (2), with its state Queued (0), Sent (1) or Failed (2). An empty "
+                 "trash action has no path and is shown on every row. OPERATIONS.added is an ordering "
+                 "counter, not a time, and is not reported.",
+        "paths": ('*/ru.yandex.disk/databases/*_trash.db*',),
+        "output_types": "standard",
+        "artifact_icon": "trash-2",
+    },
+    "yandex_disk_downloads": {
+        "name": "Yandex Disk Downloads",
+        "description": "Downloads in the Yandex Disk download queue, with the local file where the extraction holds it",
+        "author": "@AlexisBrignoni, @4n6Wizard, Claude",
+        "creation_date": "2026-10-22",
+        "last_update_date": "2026-10-22",
+        "requirements": "none",
+        "category": "Yandex Disk",
+        "notes": "One row per row of the queue table in ru.yandex.disk/databases/<uid>_download_queue, "
+                 "one database per signed-in account; Account UID is the number in the file name and "
+                 "Android User is taken from the storage path. Field meanings were sourced from the "
+                 "decompiled Yandex Disk 6.90.0 app (download queue database version 5). The committed "
+                 "test data is synthetic: databases built from the app's own schema with invented "
+                 "values.\n"
+                 "The table has no time column, so the rows carry no times. Cloud Path is the path of "
+                 "the item to download; for a public file or folder the form of the stored path was "
+                 "not traced. Local Folder is the local destination folder the app recorded; it is blank "
+                 "on sync downloads and on some downloads started in the app. Type reads Audio (50), UI "
+                 "download (100), Foreign album item (110), Public file (150), Public folder (200), Sync "
+                 "(300) or None (-1), and State reads Queued (0), Done (1) or Inactive (2), the stored "
+                 "number kept in brackets. Public Link Key is the key of the public link the download "
+                 "came from. Password Token is the token for a password-protected public link and is "
+                 "reported only as Present or Absent. The albumId and albumItemId columns, which foreign "
+                 "album downloads fill, are not reported.\n"
+                 "Local File shows the file at Local Folder and File Name (the cloud file name when File "
+                 "Name is blank) when the extraction holds it. The parser searches only the folders the "
+                 "queue rows name, under media/<user> (the data/media/<user> form an extraction holds) "
+                 "or storage/emulated/<user>, and only after it has read queue rows; only a file whose "
+                 "extraction path ends with that path's shared-storage form is shown, and its type is "
+                 "taken from its bytes. A file found "
+                 "there is what the extraction holds at that path now, which need not be the downloaded "
+                 "copy. A blank Local File means no file was found at that path, or Local Folder is "
+                 "blank or not a shared-storage path.",
+        "paths": ('*/ru.yandex.disk/databases/*_download_queue*',),
+        "output_types": "standard",
+        "artifact_icon": "cloud-download",
+    },
+    "yandex_disk_notes": {
+        "name": "Yandex Disk Notes",
+        "description": "Notes stored by the Yandex Disk app, with their text and attachment names",
+        "author": "@AlexisBrignoni, @4n6Wizard, Claude",
+        "creation_date": "2026-10-22",
+        "last_update_date": "2026-10-22",
+        "requirements": "none",
+        "category": "Yandex Disk",
+        "notes": "One row per row of the note table in ru.yandex.disk/databases/<uid>_notes.db, joined "
+                 "to content and attach on the note's local_id; one database per signed-in account. "
+                 "Account UID is the number in the file name and Android User is taken from the storage "
+                 "path. Field meanings were sourced from the decompiled Yandex Disk 6.90.0 app (notes "
+                 "database version 2). The committed test data is synthetic: databases built from the "
+                 "app's own schema with invented values.\n"
+                 "Modified is note.mtime in milliseconds, reported in UTC: the time the app wrote on a "
+                 "local edit, or the server's modified time for a note it synced. Title is the note's "
+                 "title. Snippet is the stored snippet; on a local edit the app builds it from the first "
+                 "two non-blank lines of the text. Text is built from content.body, which the app "
+                 "stores as a JSON tree of nodes with attributes, name, children and data; Text joins the "
+                 "data values in document order, one line per top-level node, and drops the formatting "
+                 "the tree carries. Pinned reads Yes when the note is pinned. Hidden is reported as "
+                 "stored (Yes or No); the app sets it from server tags, whose meaning was not "
+                 "established, and on a local hide action. Local Changes reads None (0), Pin or hide changed (1) or Content and meta "
+                 "changed (2), for changes made on the device and not yet synced.\n"
+                 "Attachments lists each attach row's name with its file state: Waiting download (0), "
+                 "Waiting upload (1), Waiting delete (2) or OK (3). Attachment Resource IDs are the "
+                 "resource ids the notes service gave the attachments; no join from them to the cloud "
+                 "file listing was found, so whether they match a Yandex Disk Cloud Files Resource ID "
+                 "was not established. Local copies of attachments are not resolved or shown in this "
+                 "version.",
+        "paths": ('*/ru.yandex.disk/databases/*_notes.db*',),
+        "output_types": "standard",
+        "artifact_icon": "file-text",
+    },
 }
 
 import json
@@ -202,14 +317,19 @@ import os
 import re
 from urllib.parse import parse_qs
 
-from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records, \
-    logfunc
+from scripts.ilapfuncs import artifact_processor, check_in_media, convert_unix_ts_to_utc, \
+    get_sqlite_db_records, logfunc
 from scripts.artifacts.storagePathViews import canonical_path, unique_files
 
 PASSPORT_STORE = re.compile(r'(?:^|/)ru\.yandex\.disk/databases/(PassportInternal\.db|SETTINGS)$')
 ENVIRONMENT = {1: 'Production', 2: 'Team production', 3: 'Testing', 4: 'Team testing', 5: 'RC'}
 
 DISK_DB = re.compile(r'(?:^|/)ru\.yandex\.disk/databases/(\d+)_disk$')
+TRASH_DB = re.compile(r'(?:^|/)ru\.yandex\.disk/databases/(\d+)_trash\.db$')
+DOWNLOAD_DB = re.compile(r'(?:^|/)ru\.yandex\.disk/databases/(\d+)_download_queue$')
+NOTES_DB = re.compile(r'(?:^|/)ru\.yandex\.disk/databases/(\d+)_notes\.db$')
+# A path the app recorded as the device sees shared storage, and the folder an extraction holds it in.
+SHARED_STORAGE = re.compile(r'^/(?:storage/emulated|sdcard)/?(\d*)/')
 STORAGE_USER = re.compile(r'\x00(?:ce|de):(\d+)\x00')
 
 OFFLINE_MARK = {0: 'Not marked', 1: 'Marked', 2: 'In marked folder'}
@@ -234,8 +354,8 @@ QUEUE_EXT_COLUMNS = ('cleanup_state', 'uploaded_path', 'added_to_queue_time', 'u
                      'enqueued_network')
 
 
-def _disk_databases(context):
-    """(Android user, account uid, path) for every <uid>_disk database, one copy per storage view.
+def _disk_databases(context, pattern=DISK_DB):
+    """(Android user, account uid, path) for every per-account database, one copy per storage view.
 
     An Android extraction carries the app's private directory under data/data, data/user/0
     and data_mirror, so the seeker's list would open each database once per view. The
@@ -247,7 +367,7 @@ def _disk_databases(context):
         path = str(path)
         if os.path.isdir(path):
             continue
-        match = DISK_DB.search(path.replace('\\', '/'))
+        match = pattern.search(path.replace('\\', '/'))
         if not match:
             continue
         key, _ = canonical_path(context.get_relative_path(path))
@@ -339,6 +459,7 @@ def yandex_disk_cloud_files(context):
 def yandex_disk_uploads(context):
     data_list = []
     sources = []
+    pending = []
     for android_user, uid, db_path in _disk_databases(context):
         present = _columns(db_path, 'DISK_QUEUE')
         if not present:
@@ -361,15 +482,19 @@ def yandex_disk_uploads(context):
             queued = _ms(stored_date) if upload_type == 0 else ''
             other_date = stored_date if upload_type not in (0, 1) and stored_date else ''
             destination = _path(r[2], r[3])
-            data_list.append((
+            pending.append((None if r[10] else r[1], (
                 _ms(r[16]), date_taken, queued, _ms(r[12]), _ms(r[20]), _ms(r[21]), _ms(r[9]),
                 android_user, uid, r[17] or '', _label(UPLOAD_TYPE, upload_type), _label(QUEUE_STATE, r[6]),
                 _label(ERROR_REASON, r[7]), 'Folder' if r[10] else 'File',
-                _label(QUEUE_MEDIA_TYPE, r[14]), r[1] or '', destination, r[19] or '',
+                _label(QUEUE_MEDIA_TYPE, r[14]), r[1] or ''), (destination, r[19] or '',
                 r[13], r[5], r[8] or '', r[15] or '', _label(CLEANUP_STATE, r[18]),
-                r[22] or '', other_date, r[0]))
+                r[22] or '', other_date, r[0])))
         if read_rows:
             sources.append(db_path)
+
+    staged = _stage_shared(context, [local for local, _, _ in pending if local])
+    for local, head, tail in pending:
+        data_list.append(head + (_local_media(staged, local) if local else '',) + tail)
 
     data_headers = (
         ('Uploaded', 'datetime'), ('Date Taken', 'datetime'), ('Queued', 'datetime'),
@@ -377,7 +502,8 @@ def yandex_disk_uploads(context):
         ('Upload Started', 'datetime'), ('File Modified When Hashed', 'datetime'),
         'Android User', 'Account UID', 'Account', 'Upload Type', 'Status', 'Error', 'Type',
         'Media Type',
-        'Local Path', 'Destination', 'Uploaded Path', 'Size (bytes)', 'Uploaded (bytes)', 'MD5',
+        'Local Path', ('Local File', 'media'), 'Destination', 'Uploaded Path', 'Size (bytes)',
+        'Uploaded (bytes)', 'MD5',
         'SHA-256', 'Local Cleanup', 'Network', 'Date (ms, as stored)', 'Queue ID')
     return data_headers, data_list, '\n'.join(sources)
 
@@ -537,4 +663,181 @@ def yandex_disk_accounts(context):
         'Default Email', 'First Name', 'Last Name', 'Birthday', 'Avatar URL', 'Account Type', 'Last Action',
         'Current Disk Account', 'Staff', 'Beta Tester', 'Master Token', 'Secure Blob',
         'Pin Codes', 'Client Tokens', 'Client IDs', 'Push Token Hash', 'Profile Source')
+    return data_headers, data_list, '\n'.join(sources)
+
+
+def _shared_tails(recorded):
+    """The forms a recorded /storage/emulated/<user>/... path takes inside an extraction.
+
+    A full file system extraction holds shared storage under data/media/<user> (or
+    userdata/media/<user>); a logical one can keep storage/emulated/<user>. Both are
+    matched as path endings.
+    """
+    text = str(recorded or '').replace('\\', '/')
+    match = SHARED_STORAGE.match(text)
+    if not match:
+        return ()
+    user, rest = match.group(1) or '0', text[match.end():]
+    return (f'media/{user}/{rest}', f'emulated/{user}/{rest}')
+
+
+def _fn_escape(text):
+    """Escape fnmatch metacharacters so a folder name is matched literally."""
+    return ''.join(f'[{c}]' if c in '*?[' else c for c in text)
+
+
+def _stage_shared(context, recorded_paths):
+    """Extraction-relative path -> staged path for the folders the recorded paths name.
+
+    Only those folders are searched, and only when there are recorded paths, so an
+    extraction without Yandex Disk rows stages no shared storage.
+    """
+    folders = set()
+    for recorded in recorded_paths:
+        for tail in _shared_tails(recorded):
+            if '/' in tail:
+                folders.add(tail.rsplit('/', 1)[0])
+    if not folders:
+        return {}
+    seeker = context.get_seeker()
+    staged = {}
+    for folder in sorted(folders):
+        for found in seeker.search(f'*/{_fn_escape(folder)}/*'):
+            found = str(found)
+            if os.path.isdir(found):
+                continue
+            relative = str(context.get_relative_path(found)).replace('\\', '/').lstrip('/')
+            staged.setdefault(relative, found)
+    return staged
+
+
+def _local_media(staged, recorded):
+    """The checked-in media for the file at a recorded device path, or ''.
+
+    Only a file whose extraction path ends with the recorded path's shared-storage form is
+    taken. A file that only shares the name is not.
+    """
+    for tail in _shared_tails(recorded):
+        for relative, candidate in staged.items():
+            if relative == tail or relative.endswith('/' + tail):
+                return check_in_media(candidate, os.path.basename(candidate)) or ''
+    return ''
+
+
+TRASH_OPERATION = {0: 'Empty trash', 1: 'Delete forever', 2: 'Restore'}
+TRASH_OPERATION_STATE = {0: 'Queued', 1: 'Sent', 2: 'Failed'}
+DOWNLOAD_TYPE = {-1: 'None', 50: 'Audio', 100: 'UI download', 110: 'Foreign album item',
+                 150: 'Public file', 200: 'Public folder', 300: 'Sync'}
+DOWNLOAD_STATE = {0: 'Queued', 1: 'Done', 2: 'Inactive'}
+NOTE_MODIFIED = {0: 'None', 1: 'Pin or hide changed', 2: 'Content and meta changed'}
+ATTACH_STATE = {0: 'Waiting download', 1: 'Waiting upload', 2: 'Waiting delete', 3: 'OK'}
+
+
+@artifact_processor
+def yandex_disk_trash(context):
+    data_list = []
+    sources = []
+    for android_user, uid, db_path in _disk_databases(context, TRASH_DB):
+        operations = _rows_by_name(db_path, 'OPERATIONS', ('path', 'type', 'state'))
+        rows = _rows_by_name(db_path, 'TRASH', (
+            'path', 'dir', 'etag', 'displayName', 'size', 'deleted', 'mimeType', 'mediaType',
+            'onlyForSync'))
+        for t in rows:
+            pending = '; '.join(
+                f"{_label(TRASH_OPERATION, o['type'])}: {_label(TRASH_OPERATION_STATE, o['state'])}"
+                for o in operations if o['path'] == t['path'] or (o['path'] is None and o['type'] == 0))
+            data_list.append((
+                _ms(t['deleted']), android_user, uid, t['path'] or '', t['displayName'] or '',
+                'Folder' if t['dir'] else 'File', t['size'], t['mimeType'] or '', t['mediaType'] or '',
+                t['etag'] or '', _label({0: 'No', 1: 'Yes'}, t['onlyForSync']), pending))
+        if rows:
+            sources.append(db_path)
+
+    data_headers = (
+        ('Deleted', 'datetime'), 'Android User', 'Account UID', 'Trash Path', 'Name', 'Type',
+        'Size (bytes)', 'MIME Type', 'Media Type', 'ETag', 'Completed In App', 'Pending Action')
+    return data_headers, data_list, '\n'.join(sources)
+
+
+@artifact_processor
+def yandex_disk_downloads(context):
+    data_list = []
+    sources = []
+    pending = []
+    for android_user, uid, db_path in _disk_databases(context, DOWNLOAD_DB):
+        rows = _rows_by_name(db_path, 'queue', (
+            'id', 'serverPath', 'destinationDirectory', 'type', 'size', 'downloadedSize', 'state',
+            'publicKey', 'token', 'destinationName'))
+        for q in rows:
+            name = q['destinationName'] or os.path.basename(str(q['serverPath'] or '').rstrip('/'))
+            local = (f"{str(q['destinationDirectory']).rstrip('/')}/{name}"
+                     if q['destinationDirectory'] and name else None)
+            pending.append((local, (
+                android_user, uid, q['serverPath'] or '', q['destinationDirectory'] or '',
+                q['destinationName'] or ''), (_label(DOWNLOAD_TYPE, q['type']),
+                _label(DOWNLOAD_STATE, q['state']), q['size'], q['downloadedSize'],
+                q['publicKey'] or '', _present(q['token']), q['id'])))
+        if rows:
+            sources.append(db_path)
+
+    staged = _stage_shared(context, [local for local, _, _ in pending if local])
+    for local, head, tail in pending:
+        data_list.append(head + (_local_media(staged, local) if local else '',) + tail)
+
+    data_headers = (
+        'Android User', 'Account UID', 'Cloud Path', 'Local Folder', 'File Name',
+        ('Local File', 'media'), 'Type', 'State', 'Size (bytes)', 'Downloaded (bytes)',
+        'Public Link Key', 'Password Token', 'Queue ID')
+    return data_headers, data_list, '\n'.join(sources)
+
+
+def _note_text(body):
+    """The data values of a ContentJson tree in document order, one line per top-level node."""
+    root = _json_object(body) if body else {}
+
+    def collect(node, out):
+        if isinstance(node, dict):
+            if isinstance(node.get('data'), str):
+                out.append(node['data'])
+            for child in node.get('children') or []:
+                collect(child, out)
+        return out
+
+    lines = []
+    for top in root.get('children') or []:
+        text = ''.join(collect(top, []))
+        if text:
+            lines.append(text)
+    if not lines and isinstance(root.get('data'), str):
+        lines.append(root['data'])
+    return '\n'.join(lines)
+
+
+@artifact_processor
+def yandex_disk_notes(context):
+    data_list = []
+    sources = []
+    for android_user, uid, db_path in _disk_databases(context, NOTES_DB):
+        bodies = {c['local_id']: c['body'] for c in _rows_by_name(db_path, 'content', ('local_id', 'body'))}
+        attachments = {}
+        for a in _rows_by_name(db_path, 'attach', ('note_local_id', 'name', 'resource_id', 'file_status')):
+            attachments.setdefault(a['note_local_id'], []).append(a)
+        notes = _rows_by_name(db_path, 'note', (
+            'local_id', 'remote_id', 'title', 'snippet', 'mtime', 'revision', 'pinned', 'hidden',
+            'modified'))
+        for n in notes:
+            attached = attachments.get(n['local_id'], [])
+            data_list.append((
+                _ms(n['mtime']), android_user, uid, n['title'] or '', _note_text(bodies.get(n['local_id'])),
+                n['snippet'] or '', _yes_no(n['pinned']), _yes_no(n['hidden']),
+                _label(NOTE_MODIFIED, n['modified']),
+                '\n'.join(f"{a['name'] or ''} ({_label(ATTACH_STATE, a['file_status'])})" for a in attached),
+                '\n'.join(a['resource_id'] or '' for a in attached), n['remote_id'] or '', n['revision']))
+        if notes:
+            sources.append(db_path)
+
+    data_headers = (
+        ('Modified', 'datetime'), 'Android User', 'Account UID', 'Title', 'Text', 'Snippet',
+        'Pinned', 'Hidden', 'Local Changes', 'Attachments', 'Attachment Resource IDs', 'Remote ID',
+        'Revision')
     return data_headers, data_list, '\n'.join(sources)

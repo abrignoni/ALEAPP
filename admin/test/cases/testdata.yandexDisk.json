@@ -5,13 +5,13 @@
     "make_data": {
       "input_data_path": "yandex_disk_synthetic_case.zip",
       "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
-      "timestamp": "2026-10-21T15:17:47.378063",
+      "timestamp": "2026-10-22T09:37:52.562595",
       "last_commit": {
-        "hash": "71b61fce93e0df345e229d81a68b906df0a6c392",
+        "hash": "dd2dd18606a85444b03ac72bacf89ba29b142067",
         "author_name": "Brigs",
         "author_email": "abrignoni@gmail.com",
-        "date": "2026-10-21T14:46:23-04:00",
-        "message": "Add Yandex Disk cloud files and uploads artifacts"
+        "date": "2026-10-21T15:28:23-04:00",
+        "message": "Add Yandex Disk Accounts artifact"
       }
     },
     "artifacts": {
@@ -41,6 +41,36 @@
           "*/ru.yandex.disk/databases/SETTINGS*"
         ],
         "file_count": 6,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "yandex_disk_trash": {
+        "search_patterns": [
+          "*/ru.yandex.disk/databases/*_trash.db*"
+        ],
+        "file_count": 3,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "yandex_disk_downloads": {
+        "search_patterns": [
+          "*/ru.yandex.disk/databases/*_download_queue*"
+        ],
+        "file_count": 3,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "yandex_disk_notes": {
+        "search_patterns": [
+          "*/ru.yandex.disk/databases/*_notes.db*"
+        ],
+        "file_count": 3,
         "expected_output": {
           "headers": [],
           "data": []
