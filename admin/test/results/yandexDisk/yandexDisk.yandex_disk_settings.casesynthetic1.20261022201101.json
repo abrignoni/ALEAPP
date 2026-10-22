@@ -1,0 +1,68 @@
+{
+  "metadata": {
+    "module_name": "yandexDisk",
+    "artifact_name": "Yandex Disk Settings",
+    "function_name": "yandex_disk_settings",
+    "case_number": "casesynthetic1",
+    "number_of_columns": 12,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 130,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/yandexDisk/testdata.yandexDisk.yandex_disk_settings.casesynthetic1.zip",
+    "start_time": "2026-10-22T20:11:01.489231+00:00",
+    "end_time": "2026-10-22T20:11:01.511275+00:00",
+    "run_time_seconds": 0.0009028911590576172,
+    "last_commit": {
+      "hash": "1731566bb665da02687dc1eeae8d6cb66f895275",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-10-22T14:23:42-04:00",
+      "message": "Add Yandex Disk settings and video playback positions"
+    }
+  },
+  "headers": [
+    "Last App Open",
+    "Registration Time",
+    "Android User",
+    "Account UID",
+    "Account",
+    "Paid",
+    "Pro",
+    "Storage Capacity (as stored)",
+    "Storage Used (as stored)",
+    "Disk Size (as stored)",
+    "Mail Size (as stored)",
+    "Trash Size (as stored)"
+  ],
+  "data": [
+    [
+      1771500000,
+      1764479700,
+      "0",
+      "4000000001",
+      "fixture.user.a",
+      "Yes",
+      "No",
+      10737418240,
+      2147483648,
+      2147400000,
+      83648,
+      1048576
+    ],
+    [
+      "",
+      1764583200,
+      "0",
+      "4000000002",
+      "fixture.user.b",
+      "No",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
+    ]
+  ]
+}

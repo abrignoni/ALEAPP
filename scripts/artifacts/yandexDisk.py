@@ -201,37 +201,55 @@ __artifacts_v2__ = {
                  "CREDENTIAL.IS_SELECTED. The app's select path clears it on every row before setting it "
                  "on one, but its insert path can also set it, so more than one row can carry it. "
                  "Accounts that have a "
-                 "CREDENTIAL row but no accounts row are not reported.\n"
-                 "Last App Open, Registration Time, Paid, Pro and the storage columns come from "
-                 "PLAIN_SETTINGS_TABLE in SETTINGS, from the rows whose SCOPE is user@ followed by the "
-                 "account's CREDENTIAL.USER, which is how the app scopes its per-account settings. Last "
-                 "App Open is last_open_app_time, the device clock in milliseconds that the app writes "
-                 "on its user interface launch event; each write replaces the last. In 6.90.0 that "
-                 "event is raised by the main screen when it is first created, by the login screen "
-                 "after a login, by a base screen callback other screens inherit, and by the auto login "
-                 "command, so it is not written on every return to the app. Registration Time is "
-                 "registration_time, the text the app copies from the server's reg_time field at its "
-                 "user settings fetch; the app names that field isoRegistrationTime and does not parse "
-                 "it. It is read as an ISO 8601 time with an offset and reported in UTC, and left blank "
-                 "with the value logged when it does not read that way. Paid is is_paid and Pro is "
-                 "IS_PRO, which the app stores as 1 or 0; IS_PRO is copied from the server's is_pro "
-                 "user feature toggle, and what that toggle grants was not traced. Storage Capacity, "
-                 "Storage Used, Disk Size, Mail Size and Trash Size are capacity_info_total, "
-                 "capacity_info_used, capacity_info_disk_size, capacity_info_mail_size and "
-                 "capacity_info_trash_size, the server's total_space, used_space, disk_size, mail_size "
-                 "and trash_size as stored at the app's last disk information fetch; their unit is not "
-                 "stated in the app's code. The app stores -1 for capacity or used when the server sent "
-                 "none, and -1 is reported blank. It stores 0 for the disk, mail and trash sizes when "
-                 "the server sent none, so a 0 there is not a measured zero. A setting the table does "
-                 "not hold reads blank. The upload file size limits stored beside these (max_file_size, "
-                 "paid_max_file_size and the upload_file_size_limits entries) are copied from the "
-                 "server and are not reported. Saved video positions from the same table are in Yandex "
-                 "Disk Video Playback Positions.\n"
+                 "CREDENTIAL row but no accounts row are not reported. The app's per-account settings "
+                 "(app open, registration, paid flags and storage) are in Yandex Disk Settings.\n"
                  "Not read: the children and local_uids tables, and passport-database, which holds "
                  "the library's auth cookies (secrets) and its method diary.",
         "paths": ('*/ru.yandex.disk/databases/PassportInternal.db*', '*/ru.yandex.disk/databases/SETTINGS*'),
         "output_types": "standard",
         "artifact_icon": "user",
+    },
+    "yandex_disk_settings": {
+        "name": "Yandex Disk Settings",
+        "description": "Per-account settings the Yandex Disk app stored: app open, registration, paid flags and storage",
+        "author": "@AlexisBrignoni, @4n6Wizard, Claude",
+        "creation_date": "2026-10-22",
+        "last_update_date": "2026-10-22",
+        "requirements": "none",
+        "category": "Yandex Disk",
+        "notes": "One row per account scope in PLAIN_SETTINGS_TABLE of ru.yandex.disk/databases/SETTINGS "
+                 "that holds at least one of the settings below. The app scopes its per-account settings "
+                 "as user@ followed by the account's CREDENTIAL.USER; Account is the scope with user@ "
+                 "removed, and Account UID comes from the CREDENTIAL row whose USER matches it and is "
+                 "blank when none does. Android User is taken from the storage path. Field meanings were "
+                 "sourced from the decompiled Yandex Disk 6.90.0 app (SETTINGS version 16). The committed "
+                 "test data is synthetic: databases built from the app's own schema with invented "
+                 "values.\nLast App Open is last_open_app_time, the device clock in milliseconds that the "
+                 "app writes on its user interface launch event; each write replaces the last. In 6.90.0 "
+                 "that event is raised by the main screen when it is first created, by the login screen "
+                 "after a login, by a base screen callback other screens inherit, and by the auto login "
+                 "command, so it is not written on every return to the app. Registration Time is "
+                 "registration_time, the text the app copies from the server's reg_time field at its user "
+                 "settings fetch; the app names that field isoRegistrationTime and stores it as text. It "
+                 "is read as an ISO 8601 time with an offset and reported in UTC, and left blank with the "
+                 "value logged when it does not read that way. Paid is is_paid and Pro is IS_PRO, which "
+                 "the app stores as 1 or 0; IS_PRO is copied from the server's disk_pro user feature "
+                 "toggle, which the app's code names isPro, and what that toggle grants was not traced. "
+                 "Storage Capacity, Storage Used, Disk Size, Mail Size and Trash Size are "
+                 "capacity_info_total, capacity_info_used, capacity_info_disk_size, "
+                 "capacity_info_mail_size and capacity_info_trash_size, the server's total_space, "
+                 "used_space, disk_size, mail_size and trash_size as stored the last time the app fetched "
+                 "its disk information from the server (two code paths write them); their unit is not "
+                 "stated in the app's code. The app stores -1 for capacity or used when the server sent "
+                 "none, and -1 is reported blank. It stores 0 for the disk, mail and trash sizes when the "
+                 "server sent none, so a 0 there is not a measured zero. A setting the table does not "
+                 "hold reads blank. The upload file size limits stored beside these (max_file_size, "
+                 "paid_max_file_size and the upload_file_size_limits entries) are copied from the server "
+                 "and are not reported. Saved video positions from the same table are in Yandex Disk "
+                 "Video Playback Positions; the account profile is in Yandex Disk Accounts.",
+        "paths": ('*/ru.yandex.disk/databases/SETTINGS*',),
+        "output_types": "standard",
+        "artifact_icon": "settings",
     },
     "yandex_disk_video_positions": {
         "name": "Yandex Disk Video Playback Positions",
@@ -720,11 +738,9 @@ def yandex_disk_accounts(context):
             continue
         settings = stores.get('SETTINGS')
         credentials = {}
-        prefs = {}
         if settings:
-            for c in _rows_by_name(settings, 'CREDENTIAL', ('USER', 'UID', 'LAST_TIME_LOGGED_IN', 'IS_SELECTED')):
+            for c in _rows_by_name(settings, 'CREDENTIAL', ('UID', 'LAST_TIME_LOGGED_IN', 'IS_SELECTED')):
                 credentials[str(c['UID'])] = c
-            prefs = _user_settings(settings)
         actions = {a['uid']: a for a in _rows_by_name(
             passport, 'accounts_last_action', ('uid', 'timestamp', 'last_action', 'local_timestamp'))}
         tokens = {}
@@ -746,14 +762,12 @@ def yandex_disk_accounts(context):
                 _present(a['master_token_value'] or blob_master)
             action = actions.get(stored_uid, {})
             cred = credentials.get(uid_value, {})
-            pref = prefs.get(f"user@{cred['USER']}", {}) if cred.get('USER') else {}
             account_tokens = tokens.get(stored_uid, [])
             meta = str(a['user_info_meta'] or '')
             data_list.append((
                 _ms(action.get('local_timestamp')), _seconds(action.get('timestamp')),
                 _seconds(meta.split(':', 1)[0]) if meta.split(':', 1)[0].isdigit() else '',
-                _ms(cred.get('LAST_TIME_LOGGED_IN')), _ms(pref.get('last_open_app_time')),
-                _iso(pref.get('registration_time')),
+                _ms(cred.get('LAST_TIME_LOGGED_IN')),
                 stores['user'], uid_value, _label(ENVIRONMENT, env) if env else '', a['name'] or '',
                 info.get('display_name') or legacy.get('_display_name') or '',
                 info.get('public_name') or '', info.get('display_login') or '',
@@ -762,8 +776,6 @@ def yandex_disk_accounts(context):
                 info.get('avatar_url') or legacy.get('_default_avatar') or '',
                 a['legacy_account_type'] or '',
                 action.get('last_action') or '', _yes_no(cred.get('IS_SELECTED')),
-                _yes_no(pref.get('is_paid')), _yes_no(pref.get('IS_PRO')),
-                *(_capacity(pref.get(f'capacity_info_{k}')) for k in CAPACITY_KEYS),
                 _yes_no(legacy.get('_is_staff')), _yes_no(legacy.get('_is_beta_tester')),
                 master_token, blob_state,
                 _present(legacy.get('disk.pincode') or legacy.get('mail.pincode')),
@@ -777,15 +789,47 @@ def yandex_disk_accounts(context):
 
     data_headers = (
         ('Last Action Time', 'datetime'), ('Token Issued', 'datetime'),
-        ('User Info Time', 'datetime'), ('Added To Disk App', 'datetime'),
-        ('Last App Open', 'datetime'), ('Registration Time', 'datetime'), 'Android User',
+        ('User Info Time', 'datetime'), ('Added To Disk App', 'datetime'), 'Android User',
         'Account UID', 'Environment', 'Account Name', 'Display Name', 'Public Name', 'Display Login',
         'Default Email', 'First Name', 'Last Name', 'Birthday', 'Avatar URL', 'Account Type', 'Last Action',
-        'Current Disk Account', 'Paid', 'Pro', 'Storage Capacity (as stored)', 'Storage Used (as stored)',
-        'Disk Size (as stored)', 'Mail Size (as stored)', 'Trash Size (as stored)', 'Staff', 'Beta Tester', 'Master Token', 'Secure Blob',
+        'Current Disk Account', 'Staff', 'Beta Tester', 'Master Token', 'Secure Blob',
         'Pin Codes', 'Client Tokens', 'Client IDs', 'Push Token Hash', 'Profile Source')
     return data_headers, data_list, '\n'.join(sources)
 
+
+# Settings the Settings artifact reports; a scope holding none of them gets no row.
+SETTINGS_KEYS = ('last_open_app_time', 'registration_time', 'is_paid', 'IS_PRO') + \
+    tuple(f'capacity_info_{k}' for k in CAPACITY_KEYS)
+
+
+@artifact_processor
+def yandex_disk_settings(context):
+    data_list = []
+    sources = []
+    for _, stores in sorted(_passport_containers(context).items()):
+        settings = stores.get('SETTINGS')
+        if not settings:
+            continue
+        uids = {str(c['USER']): str(c['UID'] or '')
+                for c in _rows_by_name(settings, 'CREDENTIAL', ('USER', 'UID')) if c['USER']}
+        read_rows = False
+        for scope, pref in sorted(_user_settings(settings).items()):
+            if not any(k in pref for k in SETTINGS_KEYS):
+                continue
+            read_rows = True
+            account = scope[len('user@'):]
+            data_list.append((
+                _ms(pref.get('last_open_app_time')), _iso(pref.get('registration_time')), stores['user'],
+                uids.get(account, ''), account, _yes_no(pref.get('is_paid')), _yes_no(pref.get('IS_PRO')),
+                *(_capacity(pref.get(f'capacity_info_{k}')) for k in CAPACITY_KEYS)))
+        if read_rows:
+            sources.append(settings)
+
+    data_headers = (
+        ('Last App Open', 'datetime'), ('Registration Time', 'datetime'), 'Android User', 'Account UID',
+        'Account', 'Paid', 'Pro', 'Storage Capacity (as stored)', 'Storage Used (as stored)',
+        'Disk Size (as stored)', 'Mail Size (as stored)', 'Trash Size (as stored)')
+    return data_headers, data_list, '\n'.join(sources)
 
 def _hms(ms):
     """Milliseconds as HH:MM:SS.mmm."""
