@@ -5,13 +5,13 @@
     "make_data": {
       "input_data_path": "yandex_disk_synthetic_case.zip",
       "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
-      "timestamp": "2026-10-22T14:22:29.580898",
+      "timestamp": "2026-10-22T16:10:51.837702",
       "last_commit": {
-        "hash": "d3227ab49883d604eb305a38d1625c672ff227a8",
+        "hash": "1731566bb665da02687dc1eeae8d6cb66f895275",
         "author_name": "Brigs",
         "author_email": "abrignoni@gmail.com",
-        "date": "2026-10-22T09:47:53-04:00",
-        "message": "Add Yandex Disk Trash, Downloads and Notes, and media on uploads"
+        "date": "2026-10-22T14:23:42-04:00",
+        "message": "Add Yandex Disk settings and video playback positions"
       }
     },
     "artifacts": {
@@ -41,6 +41,16 @@
           "*/ru.yandex.disk/databases/SETTINGS*"
         ],
         "file_count": 6,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "yandex_disk_settings": {
+        "search_patterns": [
+          "*/ru.yandex.disk/databases/SETTINGS*"
+        ],
+        "file_count": 3,
         "expected_output": {
           "headers": [],
           "data": []
