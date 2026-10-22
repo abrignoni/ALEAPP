@@ -1,0 +1,82 @@
+{
+  "metadata": {
+    "module_name": "yandexDisk",
+    "artifact_name": "Yandex Disk Trash",
+    "function_name": "yandex_disk_trash",
+    "case_number": "casesynthetic1",
+    "number_of_columns": 12,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 366,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/yandexDisk/testdata.yandexDisk.yandex_disk_trash.casesynthetic1.zip",
+    "start_time": "2026-10-22T13:38:23.308581+00:00",
+    "end_time": "2026-10-22T13:38:23.325989+00:00",
+    "run_time_seconds": 0.0007500648498535156,
+    "last_commit": {
+      "hash": "dd2dd18606a85444b03ac72bacf89ba29b142067",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-10-21T15:28:23-04:00",
+      "message": "Add Yandex Disk Accounts artifact"
+    }
+  },
+  "headers": [
+    "Deleted",
+    "Android User",
+    "Account UID",
+    "Trash Path",
+    "Name",
+    "Type",
+    "Size (bytes)",
+    "MIME Type",
+    "Media Type",
+    "ETag",
+    "Completed In App",
+    "Pending Action"
+  ],
+  "data": [
+    [
+      1769000000,
+      "0",
+      "4000000001",
+      "/trash/deleted_fixture.docx",
+      "deleted_fixture.docx",
+      "File",
+      22000,
+      "application/msword",
+      "document",
+      "28b7bc6f28b85aa628b8f8dd28b99714",
+      "No (0)",
+      ""
+    ],
+    [
+      1768996400,
+      "0",
+      "4000000001",
+      "/trash/restored_fixture.jpg",
+      "restored_fixture.jpg",
+      "File",
+      3000,
+      "image/jpeg",
+      "image",
+      "c6ef3620c6efd457c6f0728ec6f110c5",
+      "Yes (1)",
+      ""
+    ],
+    [
+      "",
+      "0",
+      "4000000001",
+      "/trash/Old Folder Fixture",
+      "Old Folder Fixture",
+      "Folder",
+      0,
+      "",
+      "",
+      "",
+      "No (0)",
+      "Delete forever (1): Sent (1)"
+    ]
+  ]
+}
