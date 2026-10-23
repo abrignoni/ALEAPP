@@ -99,7 +99,7 @@ def get_chromeMediaHistorySessions(context):
     lava_data_headers = data_headers.copy()
     lava_data_headers[0] = (lava_data_headers[0], 'datetime')
     all_data_headers = lava_data_headers + ['Browser Name']
-    report_file = 'Unknown'
+    report_files = []
 
     for file_found, browser_name in _media_history_files(files_found):
         all_rows = _media_history_rows(file_found, browser_name, '''
@@ -119,7 +119,7 @@ def get_chromeMediaHistorySessions(context):
             continue
 
         if len(all_rows) > 0:
-            report_file = file_found if report_file == 'Unknown' else report_file + '\n' + file_found
+            report_files.append(file_found)
             data_list = []
             for row in all_rows:
                 data_list.append((convert_human_ts_to_utc(row[0]),row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8]))
@@ -129,7 +129,7 @@ def get_chromeMediaHistorySessions(context):
         else:
             logfunc(f'No {browser_name} - Media History - Sessions data available')
 
-    return all_data_headers, all_data, report_file
+    return all_data_headers, all_data, '\n'.join(report_files)
 
 
 @artifact_processor
@@ -140,7 +140,7 @@ def get_chromeMediaHistoryPlaybacks(context):
     lava_data_headers = data_headers.copy()
     lava_data_headers[0] = (lava_data_headers[0], 'datetime')
     all_data_headers = lava_data_headers + ['Browser Name']
-    report_file = 'Unknown'
+    report_files = []
 
     for file_found, browser_name in _media_history_files(files_found):
         all_rows = _media_history_rows(file_found, browser_name, '''
@@ -164,7 +164,7 @@ def get_chromeMediaHistoryPlaybacks(context):
             continue
 
         if len(all_rows) > 0:
-            report_file = file_found if report_file == 'Unknown' else report_file + '\n' + file_found
+            report_files.append(file_found)
             data_list = []
             for row in all_rows:
                 data_list.append((convert_human_ts_to_utc(row[0]),row[1],row[2],row[3],row[4],row[5],row[6]))
@@ -174,7 +174,7 @@ def get_chromeMediaHistoryPlaybacks(context):
         else:
             logfunc(f'No {browser_name} - Media History - Playbacks data available')
 
-    return all_data_headers, all_data, report_file
+    return all_data_headers, all_data, '\n'.join(report_files)
 
 
 @artifact_processor
@@ -185,7 +185,7 @@ def get_chromeMediaHistoryOrigins(context):
     lava_data_headers = data_headers.copy()
     lava_data_headers[0] = (lava_data_headers[0], 'datetime')
     all_data_headers = lava_data_headers + ['Browser Name']
-    report_file = 'Unknown'
+    report_files = []
 
     for file_found, browser_name in _media_history_files(files_found):
         all_rows = _media_history_rows(file_found, browser_name, '''
@@ -200,7 +200,7 @@ def get_chromeMediaHistoryOrigins(context):
             continue
 
         if len(all_rows) > 0:
-            report_file = file_found if report_file == 'Unknown' else report_file + '\n' + file_found
+            report_files.append(file_found)
             data_list = []
             for row in all_rows:
                 data_list.append((convert_human_ts_to_utc(row[0]),row[1],row[2],row[3]))
@@ -210,4 +210,4 @@ def get_chromeMediaHistoryOrigins(context):
         else:
             logfunc(f'No {browser_name} - Media History - Origins data available')
 
-    return all_data_headers, all_data, report_file
+    return all_data_headers, all_data, '\n'.join(report_files)

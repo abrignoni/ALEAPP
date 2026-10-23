@@ -45,7 +45,7 @@ def get_chromeOfflinePages(context):
     lava_data_headers[1] = (lava_data_headers[1], 'datetime')
     all_data_headers = lava_data_headers + ['Browser Name']
 
-    report_file = 'Unknown'
+    report_files = []
 
     for file_found in files_found:
         file_found = str(file_found)
@@ -84,7 +84,7 @@ def get_chromeOfflinePages(context):
         finally:
             db.close()
 
-        report_file = file_found if report_file == 'Unknown' else report_file + '\n' + file_found
+        report_files.append(file_found)
 
         if len(all_rows) > 0:
             data_list = []
@@ -96,4 +96,4 @@ def get_chromeOfflinePages(context):
         else:
             logfunc(f'No {browser_name} - Offline Pages data available')
 
-    return all_data_headers, all_data, report_file
+    return all_data_headers, all_data, '\n'.join(report_files)

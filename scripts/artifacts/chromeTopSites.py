@@ -43,7 +43,7 @@ def get_chromeTopSites(context):
     lava_data_headers = data_headers.copy()
     all_data_headers = lava_data_headers + ['Browser Name']
 
-    report_file = 'Unknown'
+    report_files = []
 
     for file_found in files_found:
         file_found = str(file_found)
@@ -72,7 +72,7 @@ def get_chromeTopSites(context):
             all_rows = []
 
         if len(all_rows) > 0:
-            report_file = file_found if report_file == 'Unknown' else report_file + '\n' + file_found
+            report_files.append(file_found)
 
             data_list = []
             for row in all_rows:
@@ -85,4 +85,4 @@ def get_chromeTopSites(context):
 
         db.close()
 
-    return all_data_headers, all_data, report_file
+    return all_data_headers, all_data, '\n'.join(report_files)

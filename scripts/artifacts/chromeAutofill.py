@@ -97,7 +97,7 @@ def get_chromeAutofill(context):
     lava_data_headers[0] = (lava_data_headers[0], 'datetime')
     lava_data_headers[3] = (lava_data_headers[3], 'datetime')
     all_data_headers = lava_data_headers + ['Browser Name']
-    report_file = 'Unknown'
+    report_files = []
 
     for file_found in files_found:
         file_found = str(file_found)
@@ -145,14 +145,14 @@ def get_chromeAutofill(context):
         finally:
             db.close()
 
-        report_file = file_found if report_file == 'Unknown' else report_file + '\n' + file_found
+        report_files.append(file_found)
 
         if len(data_list) > 0:
             all_data.extend([row + (browser_name,) for row in data_list])
         else:
             logfunc(f'No {browser_name} - Autofill - Entries data available')
 
-    return all_data_headers, all_data, report_file
+    return all_data_headers, all_data, '\n'.join(report_files)
 
 
 # Chrome retired the autofill_profiles / autofill_profile_* join in favour of a
@@ -255,7 +255,7 @@ def get_chromeAutofillProfiles(context):
     lava_data_headers[6] = (lava_data_headers[6], 'phonenumber')
     lava_data_headers[12] = (lava_data_headers[12], 'datetime')
     all_data_headers = lava_data_headers + ['Browser Name']
-    report_file = 'Unknown'
+    report_files = []
 
     for file_found in files_found:
         file_found = str(file_found)
@@ -283,7 +283,7 @@ def get_chromeAutofillProfiles(context):
         finally:
             db.close()
 
-        report_file = file_found if report_file == 'Unknown' else report_file + '\n' + file_found
+        report_files.append(file_found)
 
         data_list = []
         for r in rows:
@@ -295,4 +295,4 @@ def get_chromeAutofillProfiles(context):
         else:
             logfunc(f'No {browser_name} - Autofill - Profiles data available')
 
-    return all_data_headers, all_data, report_file
+    return all_data_headers, all_data, '\n'.join(report_files)
