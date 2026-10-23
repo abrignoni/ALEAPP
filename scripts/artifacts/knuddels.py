@@ -212,7 +212,9 @@ def knuddels_chats(context):
         bare_id = os.path.basename(img_path).split(".", 1)[0]
         media_index.setdefault(bare_id, []).append(img_path)
 
+    source_paths = set()
     for file_found in db_files:
+        source_paths.add(file_found)
         # The owner's nickname is only recoverable from the file name. When the name does
         # not follow the 'knuddels<nickname>' convention, or carries no nickname at all,
         # the owner is unknown and From Me is left blank instead of reading as received.
@@ -253,6 +255,7 @@ def knuddels_chats(context):
                     ref = check_in_media(img_path, name=f"knuddels_{message_id}")
                     if ref:
                         refs.append(ref)
+                        source_paths.add(img_path)
                 if refs:
                     media_cell = refs if len(refs) > 1 else refs[0]
 
@@ -300,22 +303,20 @@ def knuddels_chats(context):
         'Users Table UID',
     )
 
-    db_count = len(db_files)
-    source_note = f"{db_count} Knuddels database{'s' if db_count != 1 else ''} - see Source File column"
-    return data_headers, data_list, source_note
+    return data_headers, data_list, '\n'.join(sorted(source_paths))
 
 
 @artifact_processor
 def knuddels_contacts(context):
     files_found = context.get_files_found()
     data_list = []
-    db_count = 0
+    source_paths = set()
 
     for file_found in files_found:
         file_found = str(file_found)
         if guess_mime(file_found) != 'application/x-sqlite3':
             continue
-        db_count += 1
+        source_paths.add(file_found)
 
         query = '''
         SELECT
@@ -370,8 +371,7 @@ def knuddels_contacts(context):
         'Distance',
         'Source File',
     )
-    source_note = f"{db_count} Knuddels database{'s' if db_count != 1 else ''} - see Source File column"
-    return data_headers, data_list, source_note
+    return data_headers, data_list, '\n'.join(sorted(source_paths))
 
 
 @artifact_processor
@@ -429,8 +429,10 @@ def knuddels_account(context):
         )
 
     data_list = []
+    source_paths = set()
     matched_instances = set()
     for db in db_files:
+        source_paths.add(db)
         norm = db.replace("\\", "/")
         instance = norm.split("/databases/")[0]
         nickname = os.path.basename(norm)
@@ -449,6 +451,7 @@ def knuddels_account(context):
         info = active.get(instance)
         if info and info.get("nickname", "") == nickname:
             data_list.append(active_row(nickname, info, last_msg, [db]))
+            source_paths.update(info["sources"])
             matched_instances.add(instance)
         else:
             # No User.xml carrying this nickname was collected; the cell is left blank
@@ -461,6 +464,7 @@ def knuddels_account(context):
     for instance, info in active.items():
         if instance not in matched_instances and info.get("nickname", ""):
             data_list.append(active_row(info["nickname"], info, "", []))
+            source_paths.update(info["sources"])
 
     data_headers = (
         'Nickname',
@@ -480,6 +484,4 @@ def knuddels_account(context):
         ('Last Message', 'datetime'),
         'Source File',
     )
-    db_count = len(db_files)
-    source_note = f"{db_count} Knuddels database{'s' if db_count != 1 else ''} - see Source File column"
-    return data_headers, data_list, source_note
+    return data_headers, data_list, '\n'.join(sorted(source_paths))
