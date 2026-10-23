@@ -94,7 +94,7 @@ def _unique_web_data(context):
 def get_chromePaymentsCustomerData(context):
     all_data = []
     data_headers = ['Customer ID', 'Browser Name']
-    report_file = 'Unknown'
+    report_files = []
 
     for file_found in _unique_web_data(context):
         browser_name = get_browser_name(file_found)
@@ -125,9 +125,9 @@ def get_chromePaymentsCustomerData(context):
         if not rows:
             continue
 
-        report_file = file_found if report_file == 'Unknown' else report_file + '\n' + file_found
+        report_files.append(file_found)
 
         for row in rows:
             all_data.append((row[0], browser_name))
 
-    return data_headers, all_data, report_file
+    return data_headers, all_data, '\n'.join(report_files)

@@ -251,7 +251,7 @@ def get_chrome(context):
     lava_data_headers = data_headers.copy()
     lava_data_headers[0] = (lava_data_headers[0], 'datetime')
     all_data_headers = lava_data_headers + ['Browser Name']
-    report_file = 'Unknown'
+    report_files = []
 
     for file_found, browser_name in _history_files(files_found):
         rows = _history_rows(file_found, browser_name, '''
@@ -261,7 +261,7 @@ def get_chrome(context):
         ''')
         if rows is None:
             continue
-        report_file = file_found if report_file == 'Unknown' else report_file + '\n' + file_found
+        report_files.append(file_found)
 
         data_list = [(_webkit_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6]) for r in rows]
         if data_list:
@@ -269,7 +269,7 @@ def get_chrome(context):
         else:
             logfunc(f'No {browser_name} - Web History data available')
 
-    return all_data_headers, all_data, report_file
+    return all_data_headers, all_data, '\n'.join(report_files)
 
 
 @artifact_processor
@@ -280,7 +280,7 @@ def get_chromeWebVisits(context):
     lava_data_headers = data_headers.copy()
     lava_data_headers[0] = (lava_data_headers[0], 'datetime')
     all_data_headers = lava_data_headers + ['Browser Name']
-    report_file = 'Unknown'
+    report_files = []
 
     for file_found, browser_name in _history_files(files_found):
         rows = _history_rows(file_found, browser_name, '''
@@ -324,7 +324,7 @@ def get_chromeWebVisits(context):
         ''')
         if rows is None:
             continue
-        report_file = file_found if report_file == 'Unknown' else report_file + '\n' + file_found
+        report_files.append(file_found)
 
         data_list = [(_webkit_to_utc(r[0]), r[1], r[2], r[3], r[7], r[4], r[5], r[6]) for r in rows]
         if data_list:
@@ -332,7 +332,7 @@ def get_chromeWebVisits(context):
         else:
             logfunc(f'No {browser_name} - Web Visits data available')
 
-    return all_data_headers, all_data, report_file
+    return all_data_headers, all_data, '\n'.join(report_files)
 
 
 @artifact_processor
@@ -343,7 +343,7 @@ def get_chromeSearchTerms(context):
     lava_data_headers = data_headers.copy()
     lava_data_headers[0] = (lava_data_headers[0], 'datetime')
     all_data_headers = lava_data_headers + ['Browser Name']
-    report_file = 'Unknown'
+    report_files = []
 
     for file_found, browser_name in _history_files(files_found):
         rows = _history_rows(file_found, browser_name, '''
@@ -353,7 +353,7 @@ def get_chromeSearchTerms(context):
         ''')
         if rows is None:
             continue
-        report_file = file_found if report_file == 'Unknown' else report_file + '\n' + file_found
+        report_files.append(file_found)
 
         data_list = []
         for r in rows:
@@ -366,7 +366,7 @@ def get_chromeSearchTerms(context):
         else:
             logfunc(f'No {browser_name} - Search Terms data available')
 
-    return all_data_headers, all_data, report_file
+    return all_data_headers, all_data, '\n'.join(report_files)
 
 
 @artifact_processor
@@ -379,7 +379,7 @@ def get_chromeDownloads(context):
     for i in (0, 1, 2):
         lava_data_headers[i] = (lava_data_headers[i], 'datetime')
     all_data_headers = lava_data_headers + ['Browser Name']
-    report_file = 'Unknown'
+    report_files = []
 
     for file_found, browser_name in _history_files(files_found):
         # older chrome db (32) lacks last_access_time; pre-v65 lacks tab_url
@@ -403,7 +403,7 @@ def get_chromeDownloads(context):
         ''')
         if rows is None:
             continue
-        report_file = file_found if report_file == 'Unknown' else report_file + '\n' + file_found
+        report_files.append(file_found)
 
         data_list = []
         for r in rows:
@@ -415,7 +415,7 @@ def get_chromeDownloads(context):
         else:
             logfunc(f'No {browser_name} - Downloads data available')
 
-    return all_data_headers, all_data, report_file
+    return all_data_headers, all_data, '\n'.join(report_files)
 
 
 @artifact_processor
@@ -426,7 +426,7 @@ def get_chromeKeywordSearchTerms(context):
     lava_data_headers = data_headers.copy()
     lava_data_headers[0] = (lava_data_headers[0], 'datetime')
     all_data_headers = lava_data_headers + ['Browser Name']
-    report_file = 'Unknown'
+    report_files = []
 
     for file_found, browser_name in _history_files(files_found):
         rows = _history_rows(file_found, browser_name, '''
@@ -436,7 +436,7 @@ def get_chromeKeywordSearchTerms(context):
         ''')
         if rows is None:
             continue
-        report_file = file_found if report_file == 'Unknown' else report_file + '\n' + file_found
+        report_files.append(file_found)
 
         data_list = [(_webkit_to_utc(r[4]), r[1], r[3]) for r in rows]
         if data_list:
@@ -444,4 +444,4 @@ def get_chromeKeywordSearchTerms(context):
         else:
             logfunc(f'No {browser_name} - Keyword Search Terms data available')
 
-    return all_data_headers, all_data, report_file
+    return all_data_headers, all_data, '\n'.join(report_files)

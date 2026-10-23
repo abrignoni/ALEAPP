@@ -110,7 +110,7 @@ def get_chromeLoginData(context):
     lava_data_headers[0] = (lava_data_headers[0], 'datetime')
     all_data_headers = lava_data_headers + ['Browser Name']
 
-    report_file = 'Unknown'
+    report_files = []
 
     for file_found in files_found:
         file_found = str(file_found)
@@ -148,7 +148,7 @@ def get_chromeLoginData(context):
             db.close()
 
         if len(all_rows) > 0:
-            report_file = file_found if report_file == 'Unknown' else report_file + '\n' + file_found
+            report_files.append(file_found)
 
             data_list = []
             for row in all_rows:
@@ -160,4 +160,4 @@ def get_chromeLoginData(context):
         else:
             logfunc(f'No {browser_name} - Login Data available')
 
-    return all_data_headers, all_data, report_file
+    return all_data_headers, all_data, '\n'.join(report_files)

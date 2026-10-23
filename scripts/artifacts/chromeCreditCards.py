@@ -159,7 +159,7 @@ def get_chromeCreditCards(context):
         'Bank Name', 'Nickname', 'Product Description', 'Card Issuer ID', 'Card Issuer',
         'Virtual Card Enrollment State', 'Card Creation Source', 'Billing Address ID',
         'Instrument ID', 'Card Art URL', 'Server ID', 'Browser Name']
-    report_file = 'Unknown'
+    report_files = []
 
     for file_found in files_found:
         file_found = str(file_found)
@@ -200,7 +200,7 @@ def get_chromeCreditCards(context):
             logfunc(f'No {browser_name} - Saved Credit Cards data available')
             continue
 
-        report_file = file_found if report_file == 'Unknown' else report_file + '\n' + file_found
+        report_files.append(file_found)
 
         for card in cards:
             meta = metadata.get(card.get('id'), {})
@@ -226,4 +226,4 @@ def get_chromeCreditCards(context):
                 browser_name,
             ))
 
-    return data_headers, all_data, report_file
+    return data_headers, all_data, '\n'.join(report_files)
