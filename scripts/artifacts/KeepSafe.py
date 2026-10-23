@@ -7,15 +7,20 @@ __artifacts_v2__ = {
             "on-disk copy under files/media/XX/ID/TYPE (XX the first two characters of the ID, "
             "TYPE e.g. PHOTO, VIDEO, THUMBNAIL)."
         ),
-        "author": "@charpy4n6, Claude",
+        "author": "@charpy4n6, Claude, @AlexisBrignoni",
         "creation_date": "2026-10-22",
-        "last_update_date": "2026-10-22",
+        "last_update_date": "2026-10-23",
         "requirements": "none",
         "category": "KeepSafe",
         "notes": (
             "Document bodies are Fleece-encoded and are decoded with the database's own "
-            "SharedKeys entry in kv_info. db.sqlite3 is opened read-only with its -wal, where "
-            "most documents lived on the validation image. Column names from the database are "
+            "SharedKeys entry in kv_info; a store in the LiteCore 2.x layout, whose body column "
+            "holds a revision tree, is read from its current revision, a path not exercised on "
+            "an Android image. db.sqlite3 is opened read-only with its -wal, where "
+            "most documents lived on the validation image. Each store is paired only with the "
+            "media files of the same Android user (data/user/<n>, with data/data as user 0), and "
+            "Android User names it; the same store seen under data/data and data/user/0 is read "
+            "once. Column names from the database are "
             "its own field names written as words (isInTrash is Is In Trash, albumId is Album "
             "ID); values are as stored, booleans shown as Yes/No and epoch seconds or "
             "milliseconds converted to UTC. Album Name is the name field of the album document "
@@ -27,8 +32,8 @@ __artifacts_v2__ = {
             "not established. Documents in kv_del_default have no body and are reported with "
             "only their ID and In kv_del_default set to Yes. Created At and Imported At "
             "(createdAt, importedAt) are not established to mean any particular event; they are "
-            "not the time in the file: on the validation image photos with August EXIF dates "
-            "had October createdAt values, and the two fields were identical on every file. "
+            "not the time in the file: on the validation image they were identical on every "
+            "file and did not match the photos' EXIF dates. "
             "Date/Time In File, Make, Model, Software and "
             "location are read from the file itself: for images from EXIF (DateTimeOriginal "
             "with OffsetTimeOriginal, falling back to DateTimeDigitized and DateTime), converted "
@@ -53,9 +58,9 @@ __artifacts_v2__ = {
             "The 'album' documents of mediaDb.cblite2, with the number of 'file' documents "
             "whose albumId equals each album's id."
         ),
-        "author": "@charpy4n6, Claude",
+        "author": "@charpy4n6, Claude, @AlexisBrignoni",
         "creation_date": "2026-10-22",
-        "last_update_date": "2026-10-22",
+        "last_update_date": "2026-10-23",
         "requirements": "none",
         "category": "KeepSafe",
         "notes": (
@@ -74,16 +79,18 @@ __artifacts_v2__ = {
             "The 'breakIn' documents of files/breakin_db/breakinDb.cblite2, with the photo "
             "file each one's photoFileUri names."
         ),
-        "author": "@charpy4n6, Claude",
+        "author": "@charpy4n6, Claude, @AlexisBrignoni",
         "creation_date": "2026-10-22",
-        "last_update_date": "2026-10-22",
+        "last_update_date": "2026-10-23",
         "requirements": "none",
         "category": "KeepSafe",
         "notes": (
             "Column names are the document's field names written as words; values are as "
             "stored, booleans shown as Yes/No and timeCaptured (epoch milliseconds) converted to "
-            "UTC. The photo is read from files/breakin/NAME.ksd, the name taken from "
-            "photoFileUri. On the validation image the .ksd file was a plain JPEG."
+            "UTC. The photo is read from files/breakin/NAME.ksd of the same Android user, the name "
+            "taken from photoFileUri. Its first bytes are read: a JPEG, PNG or WebP file is shown, "
+            "and anything else is named in Photo Format (sniffed) and not shown. On the "
+            "validation image the .ksd file was a plain JPEG."
         ),
         "paths": (
             "*/com.kii.safe/files/breakin_db/breakinDb.cblite2/db.sqlite3*",
@@ -95,9 +102,9 @@ __artifacts_v2__ = {
     "keepsafe_browser": {
         "name": "KeepSafe - Browser Tabs",
         "description": "The 'browserTab' documents of files/browser_db/browserDb.cblite2.",
-        "author": "@charpy4n6, Claude",
+        "author": "@charpy4n6, Claude, @AlexisBrignoni",
         "creation_date": "2026-10-22",
-        "last_update_date": "2026-10-22",
+        "last_update_date": "2026-10-23",
         "requirements": "none",
         "category": "KeepSafe",
         "notes": (
@@ -116,7 +123,7 @@ __artifacts_v2__ = {
             "Selected values from the MessagePack record list in files/accountsv2.mpack (group "
             "Account), followed by KeepSafe preference and related values."
         ),
-        "author": "@charpy4n6, Claude",
+        "author": "@charpy4n6, Claude, @AlexisBrignoni",
         "creation_date": "2026-10-22",
         "last_update_date": "2026-10-23",
         "requirements": "none",
@@ -127,9 +134,10 @@ __artifacts_v2__ = {
             "the key is the one each value was read from. The Account Field labels are this module's, inferred from the "
             "values on the validation image: Package was com.kii.safe; App Version Code equalled "
             "initial-install-version in com.kii.keepsafe.preferences.xml; Email values had the "
-            "form of an email address; Owner ID equalled couchbase_owner_id; Device Name was "
-            "'Pixel 8 Pro'; Device ID equalled device_id in device_id.xml.xml; Device UUID was a "
-            "UUID in the same record as Device ID; Country was 'US'; Language was 'en'; and "
+            "form of an email address; Owner ID equalled couchbase_owner_id; Device Name held "
+            "the device's model name; Device ID equalled device_id in device_id.xml.xml; Device "
+            "UUID was a UUID in the same record as Device ID; Country held a two-letter country "
+            "code; Language held a two-letter language code; and "
             "Firebase Push Token equalled the Fid in files/PersistedInstallation*.json followed "
             "by a token. Only these keys are reported. Record type 98 holds local key material, "
             "including an RSA private key, and is not reported."
@@ -137,16 +145,14 @@ __artifacts_v2__ = {
             "and device_id.xml.xml device_id) are not repeated. Stored Key gives the record ID, "
             "record type and key for Account rows and the preference key for the others."
             "Values are reported as stored. key-last-saved-pin-hash held a bcrypt hash "
-            "($2b$04$) on the validation image. 'Secret Door (selected)' is the disguise chosen "
-            "in the app (e.g. CALCULATOR). It does not show the disguise is active: the "
-            "disguise is a premium feature that can be tried and then lapses without the value "
-            "being cleared, and on the validation image (no subscription) it was CALCULATOR "
-            "while the calculator icon was not in use. Whether the disguised launcher icon is "
-            "enabled is recorded by Android in /data/system/users/0/package-restrictions.xml, "
-            "not in the app's data. Three launch counters are kept and disagree "
-            "(app-launches-count 9, app-lifetime-open-count 8 and Usage-Metrics.xml "
-            "LAUNCH_COUNT 5 on the validation image); what each one counts is not established, "
-            "so each is reported under its own key. App Theme Color and Dark Mode are "
+            "($2b$04$) on the validation image. 'Secret Door (selected)' is the secret_door value "
+            "as stored, which names a disguise (e.g. CALCULATOR). It does not show the disguise "
+            "is active: on the validation image it named a disguise while the app's launcher "
+            "icon was not disguised. This module does not read the launcher state. Three launch "
+            "counters are kept (app-launches-count, app-lifetime-open-count and "
+            "Usage-Metrics.xml LAUNCH_COUNT) and held three different values on the validation "
+            "image; what each one counts is not established, so each is reported under its own "
+            "key. App Theme Color and Dark Mode are "
             "theme_preferences.xml appTheme/darkMode as stored (SYSTEM follows the device "
             "setting); prev_pref_pin_theme is a numeric code whose mapping is not established. "
             "The Account Device ID is 16 hex characters, the format of Android's "
@@ -159,12 +165,16 @@ __artifacts_v2__ = {
             "seconds, first_open_time and the trash/session values epoch milliseconds, and "
             "appsFlyerFirstInstall local time with its UTC offset; these are converted to UTC. "
             "First Install and First Open come from the AppsFlyer and Google Analytics SDKs "
-            "bundled in the app, not from KeepSafe's own preferences. Last Analytics Event and "
+            "bundled in the app, not from KeepSafe's own preferences. Rows are grouped by Android "
+            "user (data/user/<n>, with data/data as user 0); a file whose path names no user is "
+            "logged and not reported. Last Analytics Event and "
             "Last Session Start are last_event_time and previous_session_id (epoch "
             "milliseconds) from the bundled Amplitude SDK's database. Blocklist values are the "
             "private browser's tracker blocklist download, from browser_privacy.xml. Help "
-            "Center Visit is the date text the KeepSafe help center page (opened inside the "
-            "app's WebView) wrote to its Local Storage, with the offset it carries."
+            "Center Visit is a WebView Local Storage key of a getkeepsafe.com origin whose name "
+            "is a date string, reported with the offset it carries. The LevelDB is read with "
+            "ccl_leveldb; for each key only the record with the highest sequence number counts, "
+            "and a key whose latest record is a deletion is not reported."
         ),
         "paths": (
             "*/com.kii.safe/files/accountsv2.mpack",
@@ -172,13 +182,14 @@ __artifacts_v2__ = {
             "*/com.kii.safe/files/device-id",
             "*/com.kii.safe/files/internal-device-id",
             "*/com.kii.safe/databases/com.amplitude.api*",
-            "*/com.kii.safe/app_webview/Default/Local Storage/leveldb/*.log",
+            "*/com.kii.safe/app_webview/Default/Local Storage/leveldb/*",
         ),
         "output_types": "standard",
         "artifact_icon": "user",
     },
 }
 
+import hashlib
 import json
 import math
 import os
@@ -190,100 +201,212 @@ from datetime import datetime, timedelta, timezone
 
 from PIL import ExifTags, Image, UnidentifiedImageError
 
+from scripts.ccl import ccl_leveldb
 from scripts.ilapfuncs import artifact_processor, check_in_media, logfunc, open_sqlite_db_readonly
 
 # ---------------------------------------------------------------------------
-# Minimal Fleece decoder (Couchbase Lite 2.x/3.x document body format).
+# Couchbase Lite (LiteCore) store reader.
+#
+# Document bodies are Fleece. The decoder follows couchbase/fleece at commit
+# 8ce5f690480b77c0f93d03f456a29828b5a55d66: Fleece.md, Fleece/Core/Value.cc,
+# Fleece/Core/Array.cc and Fleece/Core/Pointer.hh. Dict keys that are integers index
+# the store's SharedKeys array, kept in kv_info under the key 'SharedKeys'.
+# A kv_default table without an 'extra' column is the LiteCore 2.x layout, where 'body'
+# is a revision tree holding the Fleece body of each revision
+# (couchbase-lite-core LiteCore/RevTrees/RawRevTree.hh at 3f90f2e97b9a07ca84af6ea56a8b1b0d25860e1f);
+# the current revision is first. Same decoder as iLEAPP's KeepSafe module.
 # ---------------------------------------------------------------------------
 
 class _FleeceError(ValueError):
     pass
 
 
-def _varint(data, pos):
+_FLEECE_UNDEFINED = object()
+
+
+def _fleece_uvarint(buf, pos):
     result = shift = 0
-    while True:
-        if pos >= len(data):
-            raise _FleeceError("truncated varint")
-        byte = data[pos]
-        pos += 1
+    for i in range(10):
+        if pos + i >= len(buf):
+            raise _FleeceError("varint runs past the end of the data")
+        byte = buf[pos + i]
         result |= (byte & 0x7F) << shift
-        if not byte & 0x80:
-            return result, pos
+        if byte < 0x80:
+            return result, i + 1
         shift += 7
+    raise _FleeceError("varint is too long")
 
 
-def _fleece_decode(data, shared_keys=()):
-    """Decode a Fleece buffer. Integer dict keys are mapped through shared_keys."""
-    data = bytes(data)
-    if len(data) < 2:
-        raise _FleeceError("buffer too short")
+def _fleece_deref(buf, pos, wide):
+    if wide:
+        if pos + 4 > len(buf):
+            raise _FleeceError("wide pointer runs past the end of the data")
+        raw = struct.unpack_from(">I", buf, pos)[0]
+        external, offset = raw & 0x40000000, (raw & 0x3FFFFFFF) << 1
+    else:
+        raw = struct.unpack_from(">H", buf, pos)[0]
+        external, offset = raw & 0x4000, (raw & 0x3FFF) << 1
+    if external:
+        # points into a separate base document (delta encoding), which this reader does not have
+        raise _FleeceError("external pointer")
+    if offset == 0 or offset > pos:
+        raise _FleeceError(f"pointer at {pos} has an invalid offset {offset}")
+    return pos - offset
 
-    def deref(pos, wide):
-        if data[pos] < 0x80:
-            return pos
-        if wide:
-            offset = struct.unpack(">I", data[pos:pos + 4])[0] & 0x3FFFFFFF
-        else:
-            offset = ((data[pos] & 0x3F) << 8) | data[pos + 1]
-        target = pos - offset * 2
-        if offset == 0 or target < 0:
-            raise _FleeceError(f"bad pointer at {pos}")
-        return target
 
-    def value_at(pos, wide=False):
-        pos = deref(pos, wide)
-        b0 = data[pos]
-        tag = b0 >> 4
-        if tag == 0:
-            value = ((b0 & 0x0F) << 8) | data[pos + 1]
-            return value - 0x1000 if value & 0x800 else value
-        if tag == 1:
-            size = (b0 & 0x07) + 1
-            return int.from_bytes(data[pos + 1:pos + 1 + size], "little", signed=not b0 & 0x08)
-        if tag == 2:
-            if b0 & 0x08:
-                return struct.unpack("<d", data[pos + 2:pos + 10])[0]
-            return struct.unpack("<f", data[pos + 2:pos + 6])[0]
-        if tag == 3:
-            return {0x34: False, 0x38: True}.get(b0 & 0x3C | 0x30)
-        if tag in (4, 5):
-            size = b0 & 0x0F
-            start = pos + 1
-            if size == 0x0F:
-                size, start = _varint(data, start)
-            raw = data[start:start + size]
-            return raw.decode("utf-8", "replace") if tag == 4 else raw
-        if tag in (6, 7):
-            item_wide = bool(b0 & 0x08)
-            count = ((b0 & 0x07) << 8) | data[pos + 1]
-            start = pos + 2
-            if count == 0x7FF:
-                count, start = _varint(data, start)
-                start += start & 1
-            width = 4 if item_wide else 2
-            if tag == 6:
-                return [value_at(start + i * width, item_wide) for i in range(count)]
-            result = {}
-            for i in range(count):
-                key_pos = start + i * 2 * width
-                key = value_at(key_pos, item_wide)
-                if isinstance(key, int) and 0 <= key < len(shared_keys):
-                    key = shared_keys[key]
-                result[key] = value_at(key_pos + width, item_wide)
-            return result
-        raise _FleeceError(f"unknown tag 0x{b0:02x} at {pos}")
+def _fleece_slot(buf, pos, wide, shared_keys, depth):
+    if pos + 2 > len(buf):
+        raise _FleeceError("collection slot runs past the end of the data")
+    if buf[pos] & 0x80:
+        pos = _fleece_deref(buf, pos, wide)
+    return _fleece_value(buf, pos, shared_keys, depth + 1)
 
-    return value_at(len(data) - 2)
+
+def _fleece_value(buf, pos, shared_keys, depth):
+    if depth > 200:
+        raise _FleeceError("values are nested too deeply")
+    if pos + 2 > len(buf):
+        raise _FleeceError("value runs past the end of the data")
+    b0, b1 = buf[pos], buf[pos + 1]
+    tag = b0 >> 4
+    if tag == 0:
+        small = ((b0 & 0x0F) << 8) | b1
+        return small - 0x1000 if small & 0x800 else small
+    if tag == 1:
+        size = (b0 & 0x07) + 1
+        data = buf[pos + 1:pos + 1 + size]
+        if len(data) != size:
+            raise _FleeceError("integer runs past the end of the data")
+        return int.from_bytes(data, "little", signed=not b0 & 0x08)
+    if tag == 2:
+        fmt, size = ("<d", 8) if b0 & 0x08 else ("<f", 4)
+        if pos + 2 + size > len(buf):
+            raise _FleeceError("float runs past the end of the data")
+        return struct.unpack_from(fmt, buf, pos + 2)[0]
+    if tag == 3:
+        return {0x00: None, 0x04: False, 0x08: True, 0x0C: _FLEECE_UNDEFINED}[b0 & 0x0C]
+    if tag in (4, 5):
+        size, start = b0 & 0x0F, pos + 1
+        if size == 0x0F:
+            size, used = _fleece_uvarint(buf, start)
+            start += used
+        data = buf[start:start + size]
+        if len(data) != size:
+            raise _FleeceError("string runs past the end of the data")
+        return data.decode("utf-8", "replace") if tag == 4 else bytes(data)
+    if tag in (6, 7):
+        wide = bool(b0 & 0x08)
+        width = 4 if wide else 2
+        count = ((b0 & 0x07) << 8) | b1
+        first = pos + 2
+        if count == 0x7FF:
+            # the long count is 2047 plus a varint, padded to an even length (Array.cc)
+            extra, used = _fleece_uvarint(buf, first)
+            count += extra
+            first += used + (used & 1)
+        if tag == 6:
+            return [_fleece_slot(buf, first + i * width, wide, shared_keys, depth) for i in range(count)]
+        result = {}
+        for i in range(count):
+            key_pos = first + 2 * i * width
+            key = _fleece_slot(buf, key_pos, wide, None, depth)
+            value = _fleece_slot(buf, key_pos + width, wide, shared_keys, depth)
+            if key == -2048:
+                # dict inheritance: the value is the parent dict, overridden by the keys after it
+                if isinstance(value, dict):
+                    result.update(value)
+                continue
+            if isinstance(key, int) and shared_keys and 0 <= key < len(shared_keys):
+                key = shared_keys[key]
+            if value is _FLEECE_UNDEFINED:
+                result.pop(key, None)
+            else:
+                result[key] = value
+        return result
+    raise _FleeceError(f"unexpected pointer at {pos}")
+
+
+def _fleece_decode(data, shared_keys=None):
+    """Return the root value of a Fleece document. Raises _FleeceError on data it cannot read."""
+    buf = bytes(data)
+    if len(buf) < 2 or len(buf) % 2:
+        raise _FleeceError(f"length {len(buf)} is not a positive even number")
+    pos = len(buf) - 2
+    if buf[pos] & 0x80:
+        pos = _fleece_deref(buf, pos, False)
+        if buf[pos] & 0x80:
+            pos = _fleece_deref(buf, pos, True)
+    return _fleece_value(buf, pos, shared_keys, 0)
+
+
+def _revtree_current_body(data):
+    """Body of the first (current) revision in a LiteCore 2.x RawRevTree, or None when that
+    revision carries no body."""
+    buf = bytes(data)
+    if len(buf) < 12:
+        raise _FleeceError("revision tree is too short")
+    size = struct.unpack_from(">I", buf, 0)[0]
+    _parent, flags, rev_id_len = struct.unpack_from(">HBB", buf, 4)
+    if size < 8 + rev_id_len or size > len(buf):
+        raise _FleeceError(f"revision size {size} does not fit the data")
+    if not flags & 0x80:  # RawRevision::kHasData
+        return None
+    _sequence, used = _fleece_uvarint(buf, 8 + rev_id_len)
+    return buf[8 + rev_id_len + used:size]
 
 
 # ---------------------------------------------------------------------------
-# Couchbase Lite store access.
+# Android user scoping. A file is paired only with files of the same Android user, so a
+# second user's copy of the app cannot supply a picture or a value for this one's rows.
+# data/data is user 0's credential-encrypted storage, the same storage as data/user/0.
 # ---------------------------------------------------------------------------
+
+_USER_VIEWS = (
+    re.compile(r"(?:^|/)data/user/(\d+)/com\.kii\.safe/"),
+    re.compile(r"(?:^|/)data_mirror/data_ce/[^/]+/(\d+)/com\.kii\.safe/"),
+)
+_USER_ZERO = re.compile(r"(?:^|/)data/data/com\.kii\.safe/")
+
+
+def _android_user(path):
+    """The Android user a KeepSafe file belongs to, or '' when its path does not name one."""
+    path = str(path).replace("\\", "/")
+    for pattern in _USER_VIEWS:
+        match = pattern.search(path)
+        if match:
+            return match.group(1)
+    return "0" if _USER_ZERO.search(path) else ""
+
+
+def _file_digest(path):
+    digest = hashlib.sha256()
+    try:
+        with open(path, "rb") as file_obj:
+            for chunk in iter(lambda: file_obj.read(1 << 20), b""):
+                digest.update(chunk)
+    except OSError:
+        return None
+    return digest.hexdigest()
+
 
 def _db_paths(files_found, db_name):
+    """(Android user, path) for each <db_name>.cblite2/db.sqlite3, one per user and content:
+    the same store seen under data/data and data/user/0 is read once."""
     suffix = f"{db_name}.cblite2/db.sqlite3"
-    return sorted(f for f in files_found if f.replace("\\", "/").endswith(suffix))
+    chosen, seen = [], set()
+    for path in sorted(f for f in files_found if f.replace("\\", "/").endswith(suffix)):
+        if os.path.isdir(path):
+            continue
+        user = _android_user(path)
+        if not user:
+            logfunc(f"KeepSafe: no Android user in the path of {path}; its files are not paired with it")
+        wal = _file_digest(path + "-wal") if os.path.exists(path + "-wal") else ""
+        key = (user, _file_digest(path), wal)
+        if key in seen:
+            continue
+        seen.add(key)
+        chosen.append((user, path))
+    return chosen
 
 
 def _read_cblite(db_path):
@@ -292,23 +415,34 @@ def _read_cblite(db_path):
     if db is None:
         return
     try:
-        shared_keys = []
-        row = db.execute("SELECT body FROM kv_info WHERE key = 'SharedKeys'").fetchone()
-        if row and row[0]:
-            shared_keys = _fleece_decode(row[0])
+        tables = {row[0] for row in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+        shared_keys = None
+        if "kv_info" in tables:
+            row = db.execute("SELECT body FROM kv_info WHERE key = 'SharedKeys'").fetchone()
+            if row and row[0]:
+                try:
+                    shared_keys = _fleece_decode(row[0])
+                except _FleeceError as ex:
+                    logfunc(f"KeepSafe: SharedKeys in {db_path} could not be decoded ({ex}); "
+                            "document keys are reported as integers")
+        if not isinstance(shared_keys, list):
+            shared_keys = None
         for table, purged in (("kv_default", False), ("kv_del_default", True)):
-            try:
-                rows = db.execute(f'SELECT key, body FROM "{table}" ORDER BY sequence').fetchall()
-            except sqlite3.OperationalError:
+            if table not in tables:
                 continue
-            for doc_id, body in rows:
+            columns = {row[1] for row in db.execute(f'PRAGMA table_info("{table}")')}
+            rev_tree_layout = "extra" not in columns
+            for doc_id, body in db.execute(f'SELECT key, body FROM "{table}" ORDER BY sequence'):
                 value = None
                 if body:
                     try:
-                        value = _fleece_decode(body, shared_keys)
-                    except (_FleeceError, IndexError, struct.error) as ex:
+                        fleece = _revtree_current_body(body) if rev_tree_layout else body
+                        value = _fleece_decode(fleece, shared_keys) if fleece else None
+                    except (_FleeceError, KeyError, struct.error) as ex:
                         logfunc(f"KeepSafe: undecoded document {doc_id!r} in {db_path}: {ex}")
                 yield doc_id, value if isinstance(value, dict) else None, purged
+    except sqlite3.Error as ex:
+        logfunc(f"KeepSafe: error reading {db_path}: {ex}")
     finally:
         db.close()
 
@@ -513,15 +647,35 @@ def _file_metadata(path, mime_type):
 
 
 def _media_file_index(files_found):
-    """(id hex without dashes, TYPE) -> path, for files/media/<xx>/<id>/<TYPE>."""
+    """(Android user, id hex without dashes, TYPE) -> path, for files/media/<xx>/<id>/<TYPE>.
+    Files whose path names no Android user are left out, so they are never paired."""
     index = {}
     for path in files_found:
         norm = path.replace("\\", "/")
         if "/com.kii.safe/files/media/" not in norm or os.path.isdir(path):
             continue
+        user = _android_user(norm)
+        if not user:
+            continue
         parts = norm.split("/")
-        index[(parts[-2].lower(), parts[-1].upper())] = path
+        index.setdefault((user, parts[-2].lower(), parts[-1].upper()), path)
     return index
+
+
+def _sniff_image(path):
+    """(MIME type, extension) for the image formats a report can show, or ("", "")."""
+    try:
+        with open(path, "rb") as file_obj:
+            head = file_obj.read(16)
+    except OSError:
+        return "", ""
+    if head.startswith(b"\xff\xd8\xff"):
+        return "image/jpeg", "jpg"
+    if head.startswith(b"\x89PNG\r\n\x1a\n"):
+        return "image/png", "png"
+    if head[:4] == b"RIFF" and head[8:12] == b"WEBP":
+        return "image/webp", "webp"
+    return "", ""
 
 
 # ---------------------------------------------------------------------------
@@ -535,7 +689,7 @@ def keepsafe_media(context):
     data_list = []
     source_files = set()
 
-    for db_path in _db_paths(files_found, "mediaDb"):
+    for user, db_path in _db_paths(files_found, "mediaDb"):
         docs = list(_read_cblite(db_path))
         albums = {doc_id: doc.get("name", "") for doc_id, doc, _ in docs
                   if doc and doc.get("modelType") == "album"}
@@ -543,7 +697,7 @@ def keepsafe_media(context):
 
         for doc_id, doc, purged in docs:
             if purged:
-                data_list.append(("", "", "", "", "", "", "", "", "", "", "", "", None, None, doc_id,
+                data_list.append(("", "", "", "", "", "", "", "", "", "", "", "", None, None, user, doc_id,
                                   "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
                                   "", "", "", "Yes"))
                 continue
@@ -554,8 +708,9 @@ def keepsafe_media(context):
             original = next((m for m in media if m.get("type") == file_type), media[0] if media else {})
 
             folder = doc_id.replace("-", "").lower()
-            original_path = media_index.get((folder, str(original.get("type", "")).upper()))
-            thumb_path = media_index.get((folder, "THUMBNAIL")) or media_index.get((folder, "PREVIEW"))
+            original_path = media_index.get((user, folder, str(original.get("type", "")).upper())) if user else None
+            thumb_path = (media_index.get((user, folder, "THUMBNAIL")) or media_index.get((user, folder, "PREVIEW"))
+                          if user else None)
             original_ref = check_in_media(original_path, doc_id) if original_path else None
             thumb_ref = check_in_media(thumb_path, f"{doc_id} thumbnail") if thumb_path else None
             for path in (original_path, thumb_path):
@@ -579,6 +734,7 @@ def keepsafe_media(context):
                 file_meta["note"],
                 thumb_ref,
                 original_ref,
+                user,
                 doc_id,
                 file_type,
                 original.get("mimeType", ""),
@@ -616,6 +772,7 @@ def keepsafe_media(context):
         "File Metadata Note",
         ("Thumbnail", "media"),
         ("Media", "media"),
+        "Android User",
         "ID",
         "Type",
         "MIME Type",
@@ -646,7 +803,7 @@ def keepsafe_albums(context):
     data_list = []
     source_files = set()
 
-    for db_path in _db_paths(files_found, "mediaDb"):
+    for user, db_path in _db_paths(files_found, "mediaDb"):
         docs = [(doc_id, doc) for doc_id, doc, _ in _read_cblite(db_path) if doc]
         counts = {}
         for _doc_id, doc in docs:
@@ -659,6 +816,7 @@ def keepsafe_albums(context):
             data_list.append((
                 _utc(doc.get("createdAt")),
                 doc.get("name", ""),
+                user,
                 doc_id,
                 doc.get("type", ""),
                 doc.get("specialType", ""),
@@ -672,6 +830,7 @@ def keepsafe_albums(context):
     data_headers = (
         ("Created At", "datetime"),
         "Name",
+        "Android User",
         "ID",
         "Type",
         "Special Type",
@@ -687,24 +846,34 @@ def keepsafe_albums(context):
 @artifact_processor
 def keepsafe_breakins(context):
     files_found = [str(f) for f in context.get_files_found()]
-    photos = {os.path.basename(f): f for f in files_found
-              if "/com.kii.safe/files/breakin/" in f.replace("\\", "/") and not os.path.isdir(f)}
+    photos = {}
+    for f in files_found:
+        if "/com.kii.safe/files/breakin/" in f.replace("\\", "/") and not os.path.isdir(f) and _android_user(f):
+            photos.setdefault((_android_user(f), os.path.basename(f)), f)
     data_list = []
     source_files = set()
 
-    for db_path in _db_paths(files_found, "breakinDb"):
+    for user, db_path in _db_paths(files_found, "breakinDb"):
         source_files.add(db_path)
         for doc_id, doc, _purged in _read_cblite(db_path):
             if not doc or doc.get("modelType") != "breakIn":
                 continue
-            photo_path = photos.get(os.path.basename(str(doc.get("photoFileUri", "")).replace("\\", "/")))
-            photo_ref = None
+            name = os.path.basename(str(doc.get("photoFileUri", "")).replace("\\", "/"))
+            photo_path = photos.get((user, name)) if user else None
+            photo_ref, photo_format = None, ""
             if photo_path:
                 source_files.add(photo_path)
-                photo_ref = check_in_media(photo_path, doc_id, force_type="image/jpeg", force_extension="jpg")
+                mime_type, extension = _sniff_image(photo_path)
+                if mime_type:
+                    photo_format = mime_type
+                    photo_ref = check_in_media(photo_path, doc_id, force_type=mime_type, force_extension=extension)
+                else:
+                    photo_format = "not a JPEG, PNG or WebP image"
             data_list.append((
                 _utc(doc.get("timeCaptured"), millis=True),
                 photo_ref,
+                photo_format,
+                user,
                 doc.get("attemptedPin", ""),
                 _yes_no(doc.get("isPinLockType")),
                 _yes_no(doc.get("isRead")),
@@ -715,6 +884,8 @@ def keepsafe_breakins(context):
     data_headers = (
         ("Time Captured", "datetime"),
         ("Photo", "media"),
+        "Photo Format (sniffed)",
+        "Android User",
         "Attempted PIN",
         "Is PIN Lock Type",
         "Is Read",
@@ -730,7 +901,7 @@ def keepsafe_browser(context):
     data_list = []
     source_files = set()
 
-    for db_path in _db_paths(files_found, "browserDb"):
+    for user, db_path in _db_paths(files_found, "browserDb"):
         source_files.add(db_path)
         docs = [doc for _id, doc, _ in _read_cblite(db_path) if doc]
         current = {d.get("currentTabId") for d in docs if d.get("modelType") == "browserSession"}
@@ -745,6 +916,7 @@ def keepsafe_browser(context):
                 doc.get("url", ""),
                 "Yes" if doc.get("id") in current else "No",
                 engine,
+                user,
                 doc.get("id", ""),
                 doc.get("ownerId", ""),
             ))
@@ -756,6 +928,7 @@ def keepsafe_browser(context):
         "URL",
         "Matches Session currentTabId",
         "Session Search Engine",
+        "Android User",
         "ID",
         "Owner ID",
     )
@@ -842,10 +1015,11 @@ _ACCOUNT_FIELDS = (
 )
 
 
-def _account_rows(files_found, source_files):
+def _account_rows(files_found, source_files, user):
     """(group, field, value, utc, stored key) rows from files/accountsv2.mpack."""
     data_list = []
-    for path in sorted(f for f in files_found if f.replace("\\", "/").endswith("/files/accountsv2.mpack")):
+    for path in sorted(f for f in files_found if f.replace("\\", "/").endswith("/files/accountsv2.mpack")
+                       and _android_user(f) == user):
         try:
             with open(path, "rb") as file_obj:
                 records = _msgpack_unpack(file_obj.read())
@@ -946,12 +1120,31 @@ def _read_prefs(path):
 @artifact_processor
 def keepsafe_account(context):
     files_found = [str(f) for f in context.get_files_found()]
+    users = sorted({_android_user(f) for f in files_found} - {""}, key=int)
+    unscoped = [f for f in files_found if not _android_user(f) and not os.path.isdir(f)]
+    if unscoped:
+        logfunc(f"KeepSafe: {len(unscoped)} file(s) name no Android user in their path and are not reported")
+
+    source_files = set()
+    data_list = []
+    for user in users:
+        user_files = [f for f in files_found if _android_user(f) == user and not os.path.isdir(f)]
+        user_rows = _account_rows(user_files, source_files, user)
+        _preference_rows(user_files, source_files, user_rows)
+        user_rows.sort(key=lambda row: _GROUPS.index(row[0]))
+        data_list.extend((user,) + row for row in user_rows)
+
+    # The HTML report sorts on the first column, so a row number keeps the user and group order.
+    data_list = [(index,) + row for index, row in enumerate(data_list, 1)]
+    data_headers = ("#", "Android User", "Group", "Field", "Value", ("Value as UTC", "datetime"), "Stored Key")
+    return data_headers, data_list, "\n".join(sorted(source_files))
+
+
+def _preference_rows(files_found, source_files, data_list):
+    """Preference, Amplitude and WebView Local Storage rows for one Android user's files."""
     by_name = {}
     for path in files_found:
         by_name.setdefault(os.path.basename(path), []).append(path)
-
-    source_files = set()
-    data_list = _account_rows(files_found, source_files)
     cache = {}
     for group, file_name, key, label, unit in _SETTINGS:
         for path in sorted(by_name.get(file_name, [])):
@@ -980,35 +1173,47 @@ def keepsafe_account(context):
                 source_files.add(path)
                 data_list.append(("Account & Login", label, stored[key], _pref_time(stored[key], "ms"), key))
 
-    for path in sorted(f for f in files_found
-                       if "/app_webview/Default/Local Storage/leveldb/" in f.replace("\\", "/")
-                       and f.endswith(".log")):
-        try:
-            with open(path, "rb") as file_obj:
-                raw = file_obj.read()
-        except OSError as ex:
-            logfunc(f"KeepSafe: error reading {path}: {ex}")
-            continue
-        for match in _HELP_VISIT_RE.finditer(raw):
-            origin = match.group(1).decode("utf-8", "replace")
-            text = match.group(2).decode("utf-8", "replace")
+    leveldb_dirs = sorted({os.path.dirname(f) for f in files_found
+                           if "/app_webview/Default/Local Storage/leveldb/" in f.replace("\\", "/")})
+    for leveldb_dir in leveldb_dirs:
+        for origin, text, record_file in _help_center_visits(leveldb_dir):
             try:
                 when = datetime.strptime(text.split(" (")[0], "%a %b %d %Y %H:%M:%S GMT%z")
             except ValueError:
                 when = ""
-            source_files.add(path)
+            source_files.add(record_file)
             data_list.append(("Private Browser & Web", "Help Center Visit (WebView Local Storage)", f"{text} [{origin}]",
                               when.astimezone(timezone.utc) if when else "", "Local Storage"))
 
-    data_list.sort(key=lambda row: _GROUPS.index(row[0]))
-    # The HTML report sorts on the first column, so a row number keeps the group order.
-    data_list = [(index,) + row for index, row in enumerate(data_list, 1)]
-    data_headers = ("#", "Group", "Field", "Value", ("Value as UTC", "datetime"), "Stored Key")
-    return data_headers, data_list, "\n".join(sorted(source_files))
+
+def _help_center_visits(leveldb_dir):
+    """(origin, date text, file) for each live Local Storage key of a getkeepsafe.com origin
+    whose name is a JavaScript Date string. Read with ccl_leveldb; for each key only the
+    record with the highest sequence number counts, and a key whose latest record is a
+    deletion is not reported."""
+    try:
+        records = list(ccl_leveldb.RawLevelDb(leveldb_dir).iterate_records_raw())
+    except (OSError, ValueError, KeyError, IndexError, struct.error) as ex:
+        logfunc(f"KeepSafe: error reading the LevelDB in {leveldb_dir}: {ex}")
+        return []
+    latest = {}
+    for record in records:
+        current = latest.get(record.user_key)
+        if current is None or record.seq > current.seq:
+            latest[record.user_key] = record
+    visits = []
+    for key, record in sorted(latest.items(), key=lambda item: item[1].seq):
+        match = _HELP_VISIT_KEY_RE.fullmatch(key)
+        if not match or record.state != ccl_leveldb.KeyState.Live:
+            continue
+        visits.append((match.group(1).decode("utf-8", "replace"), match.group(2).decode("latin-1"),
+                       str(record.origin_file)))
+    return visits
 
 
-# A Local Storage entry of the KeepSafe help center whose key is a JavaScript Date string.
-_HELP_VISIT_RE = re.compile(
+# A Local Storage key of a getkeepsafe.com origin whose name is a JavaScript Date string:
+# "_" + origin + "\x00", then 0x01 and the key name in Latin-1.
+_HELP_VISIT_KEY_RE = re.compile(
     rb"_(https://[a-z0-9.-]*getkeepsafe\.com)\x00\x01"
     rb"([A-Z][a-z]{2} [A-Z][a-z]{2} \d{2} \d{4} \d{2}:\d{2}:\d{2} GMT[+-]\d{4}(?: \([^)\x00]{1,60}\))?)"
 )
