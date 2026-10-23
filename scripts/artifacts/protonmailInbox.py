@@ -227,7 +227,7 @@ def protonmailInboxMessages(context):
         if rows_seen:
             sources.append(rel_path)
 
-    return data_headers, data_list, ', '.join(dict.fromkeys(sources))
+    return data_headers, data_list, '\n'.join(dict.fromkeys(sources))
 
 
 @artifact_processor
@@ -288,7 +288,7 @@ def protonmailInboxAttachments(context):
         if rows_seen:
             sources.append(rel_path)
 
-    return data_headers, data_list, ', '.join(dict.fromkeys(sources))
+    return data_headers, data_list, '\n'.join(dict.fromkeys(sources))
 
 
 @artifact_processor
@@ -328,7 +328,7 @@ def protonmailInboxContacts(context):
         if rows_seen:
             sources.append(rel_path)
 
-    return data_headers, data_list, ', '.join(dict.fromkeys(sources))
+    return data_headers, data_list, '\n'.join(dict.fromkeys(sources))
 
 
 @artifact_processor
@@ -371,4 +371,4 @@ def protonmailInboxAccount(context):
             if data_list:
                 sources.append(rel_path)
 
-    return data_headers, data_list, ', '.join(dict.fromkeys(sources))
+    return data_headers, data_list, '\n'.join(dict.fromkeys(sources))

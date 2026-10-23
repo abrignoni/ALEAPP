@@ -825,7 +825,7 @@ def etsy_account(context):
         'Encrypted Preference Entries',
         'Source Directories',
     )
-    return data_headers, data_list, '; '.join(sorted(set(source_files)))
+    return data_headers, data_list, '\n'.join(sorted(set(source_files)))
 
 
 def _accept_viewed(rowid, values):
@@ -913,7 +913,7 @@ def etsy_recently_viewed(context):
         'Source View',
         'Source File',
     )
-    return data_headers, data_list, '; '.join(sorted(set(source_files)))
+    return data_headers, data_list, '\n'.join(sorted(set(source_files)))
 
 
 def _accept_interaction(rowid, values):
@@ -981,7 +981,7 @@ def etsy_listing_interactions(context):
         'Source View',
         'Source File',
     )
-    return data_headers, data_list, '; '.join(sorted(set(source_files)))
+    return data_headers, data_list, '\n'.join(sorted(set(source_files)))
 
 
 def _accept_impression(_rowid, values):
@@ -1048,7 +1048,7 @@ def etsy_ad_impressions(context):
         'Source View',
         'Source File',
     )
-    return data_headers, data_list, '; '.join(sorted(set(source_files)))
+    return data_headers, data_list, '\n'.join(sorted(set(source_files)))
 
 
 _LOG_ENVELOPE = {'log_created_time', 'app_version', 'device_id', 'data_type',
@@ -1119,7 +1119,7 @@ def etsy_app_logs(context):
         'Source View',
         'Source File',
     )
-    return data_headers, data_list, '; '.join(sorted(set(source_files)))
+    return data_headers, data_list, '\n'.join(sorted(set(source_files)))
 
 
 def _json_objects(text):
@@ -1209,7 +1209,7 @@ def etsy_network_breadcrumbs(context):
         'Breadcrumb Type (as stored)',
         'Source File',
     )
-    return data_headers, data_list, '; '.join(sorted(set(source_files)))
+    return data_headers, data_list, '\n'.join(sorted(set(source_files)))
 
 
 @artifact_processor
@@ -1269,4 +1269,4 @@ def etsy_image_caches(context):
         'Entry Types',
         'Source Path',
     )
-    return data_headers, data_list, '; '.join(sorted(set(source_files)))
+    return data_headers, data_list, '\n'.join(sorted(set(source_files)))

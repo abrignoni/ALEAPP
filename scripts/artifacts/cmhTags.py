@@ -203,7 +203,7 @@ def _run(files_found, required_tables, sql, row_builder):
             sources.append(file_found)
         for row in rows:
             data_list.append(row_builder(row))
-    return data_list, ', '.join(sources)
+    return data_list, '\n'.join(sources)
 
 
 @artifact_processor
@@ -307,4 +307,4 @@ def cmh_user_tags(context):
     data_headers = (
         ('Timestamp', 'datetime'), 'Tag Value', ('Date Taken', 'datetime'),
         'File Name', 'File Path')
-    return data_headers, data_list, ', '.join(sources)
+    return data_headers, data_list, '\n'.join(sources)

@@ -84,7 +84,7 @@ def get_chromeOfflinePages(context):
         finally:
             db.close()
 
-        report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
+        report_file = file_found if report_file == 'Unknown' else report_file + '\n' + file_found
 
         if len(all_rows) > 0:
             data_list = []

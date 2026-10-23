@@ -116,4 +116,4 @@ def get_wifiConfigstore(context):
         ('ConnectChoiceTimeStamp', 'datetime'), 'CreationTime',
         'ConfigKey', 'SSID', 'BSSID', 'PreSharedKey', 'WEPKeys', 'HiddenSSID', 'RandomizedMacAddress',
         'CreatorName', 'ConnectChoice', 'HasEverConnected', 'IpAssignment', 'ProxySettings')
-    return data_headers, data_list, ', '.join(source_paths)
+    return data_headers, data_list, '\n'.join(source_paths)

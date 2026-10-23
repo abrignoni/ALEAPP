@@ -421,7 +421,7 @@ def get_mewe_chat(context):
             values = tuple('' if value is None else value for value in row[1:])
             data_list.append((timestamp,) + values)
 
-    source_path = ', '.join(sources)
+    source_path = '\n'.join(sources)
     data_headers = (('Timestamp', 'datetime'), 'Message Direction', 'User Name', 'Thread Name',
                     'Message Text', 'Thread Id', 'Group Id', 'Chat Type', 'User Id',
                     'Message Type', 'Attachment Name', 'Deleted')
@@ -660,7 +660,7 @@ def get_mewe_reactions(context):
         if found_any:
             sources.append(db_path)
 
-    return headers, data_list, ', '.join(sources)
+    return headers, data_list, '\n'.join(sources)
 
 
 @artifact_processor
@@ -703,7 +703,7 @@ def get_mewe_groups(context):
         if found_any:
             sources.append(db_path)
 
-    return headers, data_list, ', '.join(sources)
+    return headers, data_list, '\n'.join(sources)
 
 
 PARTICIPANTS_QUERY = '''

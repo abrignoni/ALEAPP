@@ -200,7 +200,7 @@ def get_chromeCreditCards(context):
             logfunc(f'No {browser_name} - Saved Credit Cards data available')
             continue
 
-        report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
+        report_file = file_found if report_file == 'Unknown' else report_file + '\n' + file_found
 
         for card in cards:
             meta = metadata.get(card.get('id'), {})

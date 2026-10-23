@@ -173,7 +173,7 @@ def zoom_meeting_folders(context):
         'Folder Name',
         'Source Path',
     )
-    return data_headers, data_list, '; '.join(sorted(set(source_files)))
+    return data_headers, data_list, '\n'.join(sorted(set(source_files)))
 
 
 @artifact_processor
@@ -232,4 +232,4 @@ def zoom_account(context):
         'Source Files',
         'xmpp.zoom.us Path Matches (JSON)',
     )
-    return data_headers, data_list, '; '.join(sorted(set(source_files)))
+    return data_headers, data_list, '\n'.join(sorted(set(source_files)))

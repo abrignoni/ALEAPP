@@ -100,7 +100,7 @@ class RawUnreadTest(unittest.TestCase):
             _, rows, source = parser.protonmailDbMailMessages.__wrapped__(context(paths, root))
             self.assertEqual([r[6] for r in rows], [None, 0, 5])
             self.assertEqual([r[13] for r in rows], [str(Path(p).relative_to(root)) for p in paths])
-            self.assertEqual(source, ', '.join(r[13] for r in rows))
+            self.assertEqual(source, '\n'.join(r[13] for r in rows))
 
 
 if __name__ == '__main__':

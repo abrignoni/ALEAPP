@@ -295,7 +295,7 @@ def vinted_items(context):
         'Listing ID',
         'Source File',
     )
-    return data_headers, data_list, '; '.join(sorted(set(source_files)))
+    return data_headers, data_list, '\n'.join(sorted(set(source_files)))
 
 
 @artifact_processor
@@ -332,7 +332,7 @@ def vinted_favorites(context):
         'Listing URL',
         'Source File',
     )
-    return data_headers, data_list, '; '.join(sorted(set(source_files)))
+    return data_headers, data_list, '\n'.join(sorted(set(source_files)))
 
 
 @artifact_processor
@@ -387,7 +387,7 @@ def vinted_feedbacks(context):
         'Feedback ID',
         'Source File',
     )
-    return data_headers, data_list, '; '.join(sorted(set(source_files)))
+    return data_headers, data_list, '\n'.join(sorted(set(source_files)))
 
 
 @artifact_processor
@@ -429,4 +429,4 @@ def vinted_session(context):
         'Last Stored Bundle ID (as stored)',
         'Source File',
     )
-    return data_headers, data_list, '; '.join(sorted(set(source_files)))
+    return data_headers, data_list, '\n'.join(sorted(set(source_files)))

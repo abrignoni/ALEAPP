@@ -257,7 +257,7 @@ def _collect(context, basename, table, query, shape):
             seen = True
         if seen:
             sources.append(rel_path)
-    return data_list, ', '.join(dict.fromkeys(sources))
+    return data_list, '\n'.join(dict.fromkeys(sources))
 
 
 @artifact_processor
@@ -367,4 +367,4 @@ def get_smyfiles_operations(context):
             seen = True
         if seen:
             sources.append(rel_path)
-    return data_headers, data_list, ', '.join(dict.fromkeys(sources))
+    return data_headers, data_list, '\n'.join(dict.fromkeys(sources))

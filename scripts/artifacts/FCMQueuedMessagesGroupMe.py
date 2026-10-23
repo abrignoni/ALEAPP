@@ -282,5 +282,5 @@ def get_fcm_groupme(context):
                     'Attachments',
                     ('Media', 'media'),
                     'FCM Key')
-    source_files = ' '.join(str(x) for x in store_dirs)
+    source_files = '\n'.join(str(x) for x in store_dirs)
     return data_headers, _rows(store_dirs, cache_files), source_files

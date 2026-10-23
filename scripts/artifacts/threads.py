@@ -263,7 +263,7 @@ def threads_accounts(context):
         'Has Preference File',
         'Source Files',
     )
-    return data_headers, data_list, '; '.join(sorted(set(source_files)))
+    return data_headers, data_list, '\n'.join(sorted(set(source_files)))
 
 
 @artifact_processor
@@ -324,7 +324,7 @@ def threads_app_usage(context):
         ('Store Last Eviction', 'datetime'),
         'Source File',
     )
-    return data_headers, data_list, '; '.join(sorted(set(source_files)))
+    return data_headers, data_list, '\n'.join(sorted(set(source_files)))
 
 
 @artifact_processor
@@ -408,4 +408,4 @@ def threads_feed_items(context):
         'Thread ID',
         'Source File',
     )
-    return data_headers, data_list, '; '.join(sorted(set(source_files)))
+    return data_headers, data_list, '\n'.join(sorted(set(source_files)))

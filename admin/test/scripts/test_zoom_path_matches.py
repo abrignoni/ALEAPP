@@ -45,7 +45,7 @@ class TestZoomPathMatches(unittest.TestCase):
             self.assertEqual(rows[0][0:3], ('', 0, 51))
             self.assertEqual(rows[0][4], '[]')
             self.assertEqual(rows[0][3], '; '.join(p for p, _ in entries[:5]))
-            self.assertEqual(source, '; '.join(p for p, _ in entries[:50]))
+            self.assertEqual(source, '\n'.join(p for p, _ in entries[:50]))
 
     def test_alias_preference_and_distinct_user(self):
         with tempfile.TemporaryDirectory() as temp:
