@@ -13,7 +13,7 @@ __artifacts_v2__ = {
             "anne_a15": "38 rows",
             "cookbook_a11": "Android 11 | 9 rows",
             "df020_mavic_pro_android": "0 rows",
-            "emu_a15_oss_v1": "0 rows",
+            "emu_a15_oss_v1": "Android 15 | 18 rows",
             "emu_a15_oss_v10": "Android 15 | 49 rows",
             "emu_a15_oss_v11": "Android 15 | 55 rows",
             "emu_a15_oss_v12": "Android 15 | 59 rows",
