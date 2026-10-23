@@ -1,17 +1,17 @@
 {
   "casesynthetic1": {
-    "description": "Synthetic Android extraction with invented values, laid out in the Yandex Disk database schema (database version 84, and the 6.90.0 version 85 fresh-install column order). Holds Android user 0 under data/data, data/user/0 and data_mirror, two Yandex accounts, and rows that exist only in the -wal sidecar. Account rows cover a legacy extra data JSON with a ciphertext secure_blob, a plaintext secure_blob, and plain user info columns. SETTINGS holds per-account settings, including saved video positions that match, mismatch or are absent from the cloud listing, a scope with no CREDENTIAL row, and one malformed entry.",
+    "description": "Synthetic Android extraction with invented values, laid out in the Yandex Disk database schema (database version 84, and the 6.90.0 version 85 fresh-install column order). Holds Android user 0 under data/data, data/user/0 and data_mirror, two Yandex accounts, and rows that exist only in the -wal sidecar. Account rows cover a legacy extra data JSON with a ciphertext secure_blob, a plaintext secure_blob, and plain user info columns. SETTINGS holds per-account settings, including saved video positions that match, mismatch or are absent from the cloud listing, a scope with no CREDENTIAL row, and one malformed entry. The account database also holds local media hash and index rows covering a hash whose file is gone, a staged upload copy of a cloud file, a hash present only in the -wal sidecar, and an indexed file that was never hashed.",
     "maker": "@AlexisBrignoni, Claude",
     "make_data": {
       "input_data_path": "yandex_disk_synthetic_case.zip",
       "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
-      "timestamp": "2026-10-22T16:10:51.837702",
+      "timestamp": "2026-10-23T11:50:00.404185",
       "last_commit": {
-        "hash": "1731566bb665da02687dc1eeae8d6cb66f895275",
+        "hash": "4eeaccdcec26fa0ed8612d82b4e3424139ee2a42",
         "author_name": "Brigs",
         "author_email": "abrignoni@gmail.com",
-        "date": "2026-10-22T14:23:42-04:00",
-        "message": "Add Yandex Disk settings and video playback positions"
+        "date": "2026-10-23T11:41:22-04:00",
+        "message": "Add Yandex Disk Local Media artifact"
       }
     },
     "artifacts": {
@@ -62,6 +62,16 @@
           "*/ru.yandex.disk/databases/*_disk*"
         ],
         "file_count": 15,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "yandex_disk_local_media": {
+        "search_patterns": [
+          "*/ru.yandex.disk/databases/*_disk*"
+        ],
+        "file_count": 12,
         "expected_output": {
           "headers": [],
           "data": []
