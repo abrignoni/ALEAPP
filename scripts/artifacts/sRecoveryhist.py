@@ -122,4 +122,4 @@ def get_sRecoveryhist(context):
         if len(data_list) > rows_before:
             sources.append(rel_path)
 
-    return data_headers, data_list, ', '.join(dict.fromkeys(sources))
+    return data_headers, data_list, '\n'.join(dict.fromkeys(sources))

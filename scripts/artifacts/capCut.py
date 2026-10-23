@@ -228,7 +228,7 @@ def capcut_app_sessions(context):
         'Event Index (as stored)',
         'Source File',
     )
-    return data_headers, data_list, '; '.join(sorted(set(source_files)))
+    return data_headers, data_list, '\n'.join(sorted(set(source_files)))
 
 
 @artifact_processor
@@ -295,4 +295,4 @@ def capcut_device(context):
         'Version Code',
         'Source Files',
     )
-    return data_headers, data_list, '; '.join(sorted(set(source_files)))
+    return data_headers, data_list, '\n'.join(sorted(set(source_files)))

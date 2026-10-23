@@ -82,7 +82,7 @@ def _annotation(kv):
 def get_fcm_jungrammer(context):
     files_found = context.get_files_found()
     in_dirs = set(pathlib.Path(str(x)).parent for x in files_found)
-    source = " ".join(str(x) for x in in_dirs)
+    source = "\n".join(str(x) for x in in_dirs)
     conversations = {}  # conv_key -> {package, from_token, parties: [], messages: [(ts, type, text)]}
 
     for in_db_path in in_dirs:

@@ -91,4 +91,4 @@ def get_siminfo(context):
     data_headers = (
         'User ID', ('Number', 'phonenumber'), 'IMSI', 'Display Name',
         'Carrier Name', 'ISO Code', 'Carrier ID', 'ICC ID')
-    return data_headers, data_list, ', '.join(source_paths)
+    return data_headers, data_list, '\n'.join(source_paths)

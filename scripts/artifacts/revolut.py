@@ -194,7 +194,7 @@ def revolut_payment_recipients(context):
         'Unread Counter',
         'Source File',
     )
-    return data_headers, data_list, '; '.join(sorted(set(source_files)))
+    return data_headers, data_list, '\n'.join(sorted(set(source_files)))
 
 
 @artifact_processor
@@ -258,4 +258,4 @@ def revolut_app_state(context):
         'Configuration File Version',
         'Source Files',
     )
-    return data_headers, data_list, '; '.join(sorted(set(source_files)))
+    return data_headers, data_list, '\n'.join(sorted(set(source_files)))

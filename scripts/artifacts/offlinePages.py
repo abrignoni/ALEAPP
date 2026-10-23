@@ -101,4 +101,4 @@ def get_offlinePages(context):
 
     data_headers = (
         ('Timestamp Modified', 'datetime'), 'Archive Time Modified (No Zone)', ('File', 'media'), 'Web Source', 'Subject', 'MIME Date', 'Source in Extraction')
-    return data_headers, data_list, ', '.join(context.get_relative_path(p) for p in source_paths)
+    return data_headers, data_list, '\n'.join(context.get_relative_path(p) for p in source_paths)

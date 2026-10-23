@@ -236,4 +236,4 @@ def microsoft_onedrive(context):
         'Source File'
     )
 
-    return data_headers, data_list, ", ".join(sources) if sources else ""
+    return data_headers, data_list, "\n".join(sources) if sources else ""

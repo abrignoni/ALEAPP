@@ -111,7 +111,7 @@ def get_chromeCookies(context):
             db.close()
 
         if len(all_rows) > 0:
-            report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
+            report_file = file_found if report_file == 'Unknown' else report_file + '\n' + file_found
 
             data_list = []
             for row in all_rows:

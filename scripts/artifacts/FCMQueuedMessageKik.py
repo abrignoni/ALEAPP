@@ -101,7 +101,7 @@ def fcm_kik(context):
 
 
     data_headers = ["FCM Timestamp", "Body", "Bin ID", "STS", "ID", "google.c.sender.id"]
-    source_files = " ".join(str(x) for x in in_dirs)
+    source_files = "\n".join(str(x) for x in in_dirs)
 
     return data_headers, rows, source_files
 
@@ -123,6 +123,6 @@ def fcm_kik_blanks(context):
                         ])
 
     data_headers = ["FCM Timestamp", "google.c.sender.id"]
-    source_files = " ".join(str(x) for x in in_dirs)
+    source_files = "\n".join(str(x) for x in in_dirs)
 
     return data_headers, rows, source_files

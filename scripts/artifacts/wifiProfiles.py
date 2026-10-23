@@ -111,4 +111,4 @@ def get_wifiProfiles(context):
         'SecurityMode', 'SSID', 'PreSharedKey', 'WEPKeys', 'Password', 'Identity', 'DefaultGwMacAddress',
         ('semCreationTime', 'datetime'), ('semUpdateTime', 'datetime'), ('LastConnectedTime', 'datetime'),
         'CaptivePortal', 'LoginUrl', 'IpAssignment')
-    return data_headers, data_list, ', '.join(source_paths)
+    return data_headers, data_list, '\n'.join(source_paths)

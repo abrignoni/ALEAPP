@@ -112,6 +112,6 @@ def get_cmh(context):
         for r in all_rows:
             data_list.append((_ms_to_utc(r[0]), _sec_to_utc(r[1]), _sec_to_utc(r[2]), r[3], r[4], r[5], r[6], r[7], r[8], r[9], r[10]))
 
-    source_path = ', '.join(sources) if sources else str(files_found[0])
+    source_path = '\n'.join(sources) if sources else str(files_found[0])
     data_headers = (('Timestamp', 'datetime'), ('Date Added', 'datetime'), ('Date Modified', 'datetime'), 'Title', 'Bucket Name', 'Latitude', 'Longitude', 'Address', 'URI', 'Data Location', 'Is Private')
     return data_headers, data_list, source_path

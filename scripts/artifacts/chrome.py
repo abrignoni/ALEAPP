@@ -261,7 +261,7 @@ def get_chrome(context):
         ''')
         if rows is None:
             continue
-        report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
+        report_file = file_found if report_file == 'Unknown' else report_file + '\n' + file_found
 
         data_list = [(_webkit_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6]) for r in rows]
         if data_list:
@@ -324,7 +324,7 @@ def get_chromeWebVisits(context):
         ''')
         if rows is None:
             continue
-        report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
+        report_file = file_found if report_file == 'Unknown' else report_file + '\n' + file_found
 
         data_list = [(_webkit_to_utc(r[0]), r[1], r[2], r[3], r[7], r[4], r[5], r[6]) for r in rows]
         if data_list:
@@ -353,7 +353,7 @@ def get_chromeSearchTerms(context):
         ''')
         if rows is None:
             continue
-        report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
+        report_file = file_found if report_file == 'Unknown' else report_file + '\n' + file_found
 
         data_list = []
         for r in rows:
@@ -403,7 +403,7 @@ def get_chromeDownloads(context):
         ''')
         if rows is None:
             continue
-        report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
+        report_file = file_found if report_file == 'Unknown' else report_file + '\n' + file_found
 
         data_list = []
         for r in rows:
@@ -436,7 +436,7 @@ def get_chromeKeywordSearchTerms(context):
         ''')
         if rows is None:
             continue
-        report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
+        report_file = file_found if report_file == 'Unknown' else report_file + '\n' + file_found
 
         data_list = [(_webkit_to_utc(r[4]), r[1], r[3]) for r in rows]
         if data_list:

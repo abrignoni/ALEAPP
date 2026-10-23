@@ -207,4 +207,4 @@ def twitch_account(context):
         'Cookie Domain (as stored)',
         'Source Files',
     )
-    return data_headers, data_list, '; '.join(sorted(set(source_files)))
+    return data_headers, data_list, '\n'.join(sorted(set(source_files)))

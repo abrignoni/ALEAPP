@@ -198,7 +198,7 @@ def paypal_app_sessions(context):
         'Events Encrypted (as stored)',
         'Source File',
     )
-    return data_headers, data_list, '; '.join(sorted(set(source_files)))
+    return data_headers, data_list, '\n'.join(sorted(set(source_files)))
 
 
 @artifact_processor
@@ -255,4 +255,4 @@ def paypal_device(context):
         'kmliOptOutFlag (as stored)',
         'Source Files',
     )
-    return data_headers, data_list, '; '.join(sorted(set(source_files)))
+    return data_headers, data_list, '\n'.join(sorted(set(source_files)))

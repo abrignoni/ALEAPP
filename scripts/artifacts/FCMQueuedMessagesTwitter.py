@@ -103,7 +103,7 @@ def _process_dm(rec):
 def get_fcm_twitter(context):
     files_found = context.get_files_found()
     in_dirs = set(pathlib.Path(str(x)).parent for x in files_found)
-    source = " ".join(str(x) for x in in_dirs)
+    source = "\n".join(str(x) for x in in_dirs)
     data_list = []
     for in_db_path in in_dirs:
         try:

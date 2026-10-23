@@ -119,7 +119,7 @@ def get_chromeMediaHistorySessions(context):
             continue
 
         if len(all_rows) > 0:
-            report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
+            report_file = file_found if report_file == 'Unknown' else report_file + '\n' + file_found
             data_list = []
             for row in all_rows:
                 data_list.append((convert_human_ts_to_utc(row[0]),row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8]))
@@ -164,7 +164,7 @@ def get_chromeMediaHistoryPlaybacks(context):
             continue
 
         if len(all_rows) > 0:
-            report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
+            report_file = file_found if report_file == 'Unknown' else report_file + '\n' + file_found
             data_list = []
             for row in all_rows:
                 data_list.append((convert_human_ts_to_utc(row[0]),row[1],row[2],row[3],row[4],row[5],row[6]))
@@ -200,7 +200,7 @@ def get_chromeMediaHistoryOrigins(context):
             continue
 
         if len(all_rows) > 0:
-            report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
+            report_file = file_found if report_file == 'Unknown' else report_file + '\n' + file_found
             data_list = []
             for row in all_rows:
                 data_list.append((convert_human_ts_to_utc(row[0]),row[1],row[2],row[3]))

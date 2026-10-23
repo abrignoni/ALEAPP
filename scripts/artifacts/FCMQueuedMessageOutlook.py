@@ -92,7 +92,7 @@ def fcm_outlook(context):
         logfunc(f'{failures} records could not be parsed')
 
     data_headers = ["FCM Timestamp", "Received / Renew Time", "FCM Key", "Tenant / Mailbox GUID", "Sender", "Topic", "Preview"]
-    source_files = " ".join(str(x) for x in in_dirs)
+    source_files = "\n".join(str(x) for x in in_dirs)
 
 
     return data_headers, rows, source_files

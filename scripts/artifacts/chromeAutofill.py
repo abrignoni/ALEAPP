@@ -145,7 +145,7 @@ def get_chromeAutofill(context):
         finally:
             db.close()
 
-        report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
+        report_file = file_found if report_file == 'Unknown' else report_file + '\n' + file_found
 
         if len(data_list) > 0:
             all_data.extend([row + (browser_name,) for row in data_list])
@@ -283,7 +283,7 @@ def get_chromeAutofillProfiles(context):
         finally:
             db.close()
 
-        report_file = file_found if report_file == 'Unknown' else report_file + ', ' + file_found
+        report_file = file_found if report_file == 'Unknown' else report_file + '\n' + file_found
 
         data_list = []
         for r in rows:
