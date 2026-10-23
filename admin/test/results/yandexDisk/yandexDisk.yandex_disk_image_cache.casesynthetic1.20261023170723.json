@@ -1,0 +1,126 @@
+{
+  "metadata": {
+    "module_name": "yandexDisk",
+    "artifact_name": "Yandex Disk Image Cache",
+    "function_name": "yandex_disk_image_cache",
+    "case_number": "casesynthetic1",
+    "number_of_columns": 8,
+    "number_of_rows": 9,
+    "total_data_size_bytes": 1818,
+    "media_checkins": 9,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/yandexDisk/testdata.yandexDisk.yandex_disk_image_cache.casesynthetic1.zip",
+    "start_time": "2026-10-23T17:07:23.136015+00:00",
+    "end_time": "2026-10-23T17:07:23.473518+00:00",
+    "run_time_seconds": 0.30588483810424805,
+    "last_commit": {
+      "hash": "e3659ad7e0f603e7a5300cd33f43b00cc15bc47d",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-10-23T11:41:22-04:00",
+      "message": "Add Yandex Disk Local Media artifact"
+    }
+  },
+  "headers": [
+    "Image",
+    "Cache",
+    "Resolved To",
+    "Item",
+    "Account UID",
+    "Android User",
+    "Size (bytes)",
+    "Cache Entry"
+  ],
+  "data": [
+    [
+      "mock_hash_for_940142337a2c778901147d6f7a6c4af8ebd13154e9b6e87ce73cd8392c7d0b98.0",
+      "Preview",
+      "Cloud file",
+      "/disk/fixture_video.mp4",
+      "4000000001",
+      "0",
+      677,
+      "940142337a2c778901147d6f7a6c4af8ebd13154e9b6e87ce73cd8392c7d0b98"
+    ],
+    [
+      "mock_hash_for_ffa50fd399215be73a95cc2ff9bc18e59665ecbf014bd2cf853b8fc27ba88651.0",
+      "Preview",
+      "Not resolved",
+      "",
+      "",
+      "0",
+      674,
+      "ffa50fd399215be73a95cc2ff9bc18e59665ecbf014bd2cf853b8fc27ba88651"
+    ],
+    [
+      "mock_hash_for_3ea4dc7de156c9468098fa727f4c9b900a5e5fcbe7d7aeeafe426e9d551a48ad.0",
+      "Thumbnail",
+      "MediaStore image",
+      "1500",
+      "",
+      "0",
+      677,
+      "3ea4dc7de156c9468098fa727f4c9b900a5e5fcbe7d7aeeafe426e9d551a48ad"
+    ],
+    [
+      "mock_hash_for_68eeb191153bc1ca0b3afeb76ad5ab7c7d1c44fe421cb2837e2ab944d6ffc877.0",
+      "Thumbnail",
+      "MediaStore video",
+      "2000",
+      "",
+      "0",
+      677,
+      "68eeb191153bc1ca0b3afeb76ad5ab7c7d1c44fe421cb2837e2ab944d6ffc877"
+    ],
+    [
+      "mock_hash_for_9b23db031971aeea53cb6fcf49d29a8cd9b75e98f25d3206629ea531c09a078d.0",
+      "Thumbnail",
+      "Cloud file",
+      "/disk/fixture_video.mp4",
+      "4000000001",
+      "0",
+      677,
+      "9b23db031971aeea53cb6fcf49d29a8cd9b75e98f25d3206629ea531c09a078d"
+    ],
+    [
+      "mock_hash_for_a2274b6d3d86ada09268057454d84913a52095bad3588d58a3733c5f3a94963f.0",
+      "Thumbnail",
+      "Indexed local media",
+      "/storage/emulated/0/Pictures/Telegram/listed_only_fixture.jpg",
+      "4000000001",
+      "0",
+      677,
+      "a2274b6d3d86ada09268057454d84913a52095bad3588d58a3733c5f3a94963f"
+    ],
+    [
+      "mock_hash_for_e5221e8566e7469d2e7659dfacf3cd16903878e9e58cb346f5cb8980cd68cb32.0",
+      "Thumbnail",
+      "Cloud file",
+      "/disk/Camera Uploads/2026-01-02 10-11-12.JPG",
+      "4000000001",
+      "0",
+      677,
+      "e5221e8566e7469d2e7659dfacf3cd16903878e9e58cb346f5cb8980cd68cb32"
+    ],
+    [
+      "mock_hash_for_0b12b38f7d7cf61583b2eafc7bffe16956002c0efe0337e600678d9de0d34cc6.0",
+      "Tile",
+      "Cloud file",
+      "/disk/fixture_video.mp4",
+      "4000000001",
+      "0",
+      677,
+      "0b12b38f7d7cf61583b2eafc7bffe16956002c0efe0337e600678d9de0d34cc6"
+    ],
+    [
+      "mock_hash_for_286703f5ef68f8631ca5e1e5bcd30717e1ac15c8b873b1719721b182848a8a61.0",
+      "Tile",
+      "Indexed local media",
+      "/storage/emulated/0/DCIM/Camera/IMG_20260102_101112.jpg",
+      "4000000001",
+      "0",
+      677,
+      "286703f5ef68f8631ca5e1e5bcd30717e1ac15c8b873b1719721b182848a8a61"
+    ]
+  ]
+}
