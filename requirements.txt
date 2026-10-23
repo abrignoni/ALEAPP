@@ -34,7 +34,7 @@ bencoding
 fitdecode==0.10.0
 folium==0.14.0
 packaging>=24.0
-pillow==12.3.0
+pillow==13.0.0
 polyline==2.0.0
 # Do NOT pip install the PyPI 'blackboxprotobuf' into this environment: it
 # force-downgrades protobuf to 3.10.0 (reintroducing patched CVEs). ALEAPP

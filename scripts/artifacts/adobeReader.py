@@ -383,7 +383,7 @@ def _iso(value):
 
     The fractional second is normalised to six digits first. These stores wrote one, two
     and three digits, and datetime.fromisoformat accepts an arbitrary count only from
-    Python 3.11: on 3.10, which this repo still supports, a one or two digit fraction
+    Python 3.11: on 3.10 a one or two digit fraction
     raises and the value would be silently dropped.
     '''
     if not value or not isinstance(value, str):

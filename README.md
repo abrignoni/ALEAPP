@@ -42,7 +42,7 @@ sudo ln -s /Applications/ALEAPP.app/Contents/MacOS/aleapp /usr/local/bin/aleapp
 
 ## Requirements
 
-**Python 3.10 or above**
+**Python 3.11 or above**
 
 ### Dependencies
 
