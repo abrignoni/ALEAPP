@@ -105,8 +105,10 @@ __artifacts_v2__ = {
                  "folder is still reported by name and size with nothing rendered. Staged Copy mtime is "
                  "the modification time the report tool restored on its copy of the file. For a "
                  "tar extraction that is the Unix time the archive stores. For a zip extraction "
-                 "it comes from the member's zip date and time, which carry no time zone, so it "
-                 "is not a UTC instant. The numeric staged-copy value is reported as text without "
+                 "it comes from the member's NTFS or extended timestamp field, a UTC time, when "
+                 "the member carries one and the report folder accepts that time, and otherwise from the member's zip date and time, which "
+                 "carry no time zone, so it is then not a UTC instant. The numeric staged-copy "
+                 "value is reported as text without "
                  "an asserted evidence time zone and should be checked against the archive.",
         "paths": ('*/DCIM/YouCam Perfect/*',),
         "output_types": "standard",

@@ -8,7 +8,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Wipe & Setup",
         "notes": "Timestamp is the modification time the extraction recorded for the file as an "
-                 "epoch value, shown in UTC: the extended timestamp field (0x5455) of a zip member, the mtime "
+                 "epoch value, shown in UTC: the NTFS field (0x000a), or else the extended timestamp field "
+                 "(0x5455), of a zip member, the mtime "
                  "of a tar member, or the file's own modification time when the input is a folder. It is "
                  "blank when the extraction recorded no such value. Archive Time Modified (No Zone) is "
                  "filled only in that case, for a zip member, with the date and time in the member's zip "
@@ -19,7 +20,9 @@ __artifacts_v2__ = {
                  "galaxys10_a10, hc_pixel8pro_a16, kevin_pocox7_a15, pixel7a_a14, samsunga53_a14 and "
                  "russell_pixel6a_a13, where the zip directory reading was within 1 second of a whole "
                  "number of hours from it (2 hours later on galaxys10_a10, 4 or 5 hours earlier on the "
-                 "other six); it carried none on samsungs20_a13 and sharon_a14; userb2_a13 is a tar. "
+                 "other six); it carried none on samsungs20_a13 and sharon_a14, whose zips record the NTFS "
+                 "field instead, and on runs of 2026-10-23 the zip directory reading there was 4 hours "
+                 "earlier than it to within 1 second; userb2_a13 is a tar. "
                  "Extraction and acquisition handling can disturb file timestamps, so validate the value "
                  "against other sources. Reference: AOSP bootstat, 'boot_event_record_store.cpp (event "
                  "values are stored in the file mtime attribute)', "

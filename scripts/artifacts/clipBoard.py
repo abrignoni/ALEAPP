@@ -9,9 +9,10 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Clipboard",
         "notes": "Modified Time is the modification time the extraction records for the file, read from the "
-                 "seeker's record of it and shown in UTC: a tar member's own time, the extended timestamp field "
-                 "(0x5455) of a zip member, or the file's time in a folder input. It is blank for a zip member "
-                 "with no extended timestamp field, because the seeker records no time for it and the member's "
+                 "seeker's record of it and shown in UTC: a tar member's own time, the NTFS field (0x000a) or else "
+                 "the extended timestamp field (0x5455) of a zip member, or the file's time in a folder input. "
+                 "It is blank for a zip member whose fields hold no modification time, or that has neither "
+                 "field, because the seeker then records no time for it and the member's "
                  "own date and time carry no zone. The time of the copy staged in the report folder is not used. On "
                  "anne_a15, galaxys10_a10 and samsunga53_a14 every matched file carried the extended timestamp "
                  "field; on samsungs20_a13 and sharon_a14 none did, and neither produced a row. The declared "
@@ -46,8 +47,9 @@ CLIPBOARD_FOLDERS = ('clipboard', 'semclipboard')
 def recorded_modtime(seeker, file_found):
     """The modification time the extraction records for a staged file, or '' when it records none.
 
-    The staged copy's own time is not used: for a zip member the seeker sets it from the
-    member's zone-less date and time read in the examiner machine's zone.
+    The staged copy's own time is not used: for a zip member with no NTFS or extended
+    timestamp field the seeker sets it from the member's zone-less date and time read in
+    the examiner machine's zone.
     """
     info = seeker.file_infos.get(file_found) if seeker else None
     if info and info.modification_date:

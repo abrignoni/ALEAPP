@@ -657,9 +657,9 @@ __artifacts_v2__ = {
                  "log are local-time strings with no timezone, so they are reported as recorded "
                  "and only their difference is used for the logged span. Log Last Modified (UTC) "
                  "is the modification time the extraction records for the log file as seconds "
-                 "since 1970 UTC: a zip member's extended timestamp field, a tar member's time, or "
-                 "the file's own time for a folder input. It is blank when a zip member carries "
-                 "no extended timestamp, because the member's other stored time has no zone. "
+                 "since 1970 UTC: a zip member's NTFS or extended timestamp field, a tar member's "
+                 "time, or the file's own time for a folder input. It is blank when a zip member's "
+                 "fields hold no modification time or it carries neither field, because the member's other stored time has no zone. "
                  "On pixel7a_a14 the log's zip member carries an extended timestamp. "
                  "The logged span is the difference "
                  "between the first and last timestamp in the log and is not a call duration. "
@@ -2208,8 +2208,9 @@ def get_telegramVoipLogs(context):
         first, last = _voip_log_span(path)
         span = int((last - first).total_seconds()) if first and last else ''
         # The time the extraction records for the file, not the staged copy's own
-        # time: for a zip member the seeker sets the copy's time from the member's
-        # zone-less date and time read in the examiner machine's zone.
+        # time: for a zip member with no NTFS or extended timestamp field the seeker
+        # sets the copy's time from the member's zone-less date and time read in the
+        # examiner machine's zone.
         info = seeker.file_infos.get(path) if seeker else None
         modified = ''
         if info and info.modification_date:

@@ -9,7 +9,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Google Now & QuickSearch",
         "notes": "File Modified Time is the modification time the extraction recorded for the session file "
-                 "as an epoch value, shown in UTC: the extended timestamp field (0x5455) of a zip member, the "
+                 "as an epoch value, shown in UTC: the NTFS field (0x000a), or else the extended timestamp field "
+                 "(0x5455), of a zip member, the "
                  "mtime of a tar member, or the file's own modification time when the input is a folder. It "
                  "is blank when the extraction recorded no such value. Archive Time Modified (No Zone) is "
                  "filled only in that case, for a zip member, with the date and time in the member's zip "
@@ -19,7 +20,8 @@ __artifacts_v2__ = {
                  "On the registered images checked on 2026-10-04, both matched zip members on "
                  "russell_pixel6a_a13 carried the extended timestamp, and the zip directory reading was "
                  "4 hours earlier than it to within 1 second; the one matched member on sharon_a14 "
-                 "carried none. Extraction and acquisition handling can disturb file timestamps, so "
+                 "carried none and records the NTFS field instead, and on a run of 2026-10-23 the zip "
+                 "directory reading was 4 hours earlier than it to within 1 second. Extraction and acquisition handling can disturb file timestamps, so "
                  "validate the value against other sources.",
         "paths": ('*/com.google.android.googlequicksearchbox/app_session/*.binarypb',),
         "output_types": "standard",
@@ -44,8 +46,9 @@ from scripts.artifacts.storagePathViews import unique_files
 def _recorded_times(seeker, file_found):
     """Return (epoch modification time as UTC, zone-less zip directory time as stored).
 
-    The staged copy's own time is not used: for a zip member the seeker sets it from the
-    member's zone-less date and time read in the examiner machine's zone.
+    The staged copy's own time is not used: for a zip member with no NTFS or extended
+    timestamp field the seeker sets it from the member's zone-less date and time read in
+    the examiner machine's zone.
     """
     info = seeker.file_infos.get(file_found) if seeker else None
     if not info:

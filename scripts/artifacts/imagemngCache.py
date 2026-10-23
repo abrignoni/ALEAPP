@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Image Manager Cache",
         "notes": "Timestamp Modified is the modification time the extraction recorded for the file as "
-                 "an epoch value (a tar member time, a zip extended timestamp field, or the time of the "
+                 "an epoch value (a tar member time, a zip NTFS or extended timestamp field, or the time of the "
                  "file in an input folder), shown in UTC. It is blank when the extraction recorded no "
                  "such value. Archive Time Modified (No Zone) is filled only in that case, from the zip "
                  "directory entry, which carries a wall clock reading with no time zone; it is reported "

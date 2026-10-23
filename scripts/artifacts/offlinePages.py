@@ -10,7 +10,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Offline Pages",
         "notes": "Timestamp Modified is the modification time the extraction recorded for the file as "
-                 "an epoch value: the extended timestamp field (0x5455) of a zip member, the mtime of a tar "
+                 "an epoch value: the NTFS field (0x000a), or else the extended timestamp field (0x5455), of a "
+                 "zip member, the mtime of a tar "
                  "member, or the file's own modification time when the input is a folder. It is blank when "
                  "the extraction recorded no such value. Archive Time Modified (No Zone) is filled only in "
                  "that case, for a zip member, with the date and time in the member's zip directory entry, "
@@ -22,7 +23,9 @@ __artifacts_v2__ = {
                  "checked on 2026-10-04, every matched member carried the extended timestamp on anne_a15 "
                  "(7), galaxys10_a10 (4), hc_pixel8pro_a16 (2), kevin_pocox7_a15 (2), pixel7a_a14 (8), "
                  "samsunga53_a14 (12) and russell_pixel6a_a13 (9), and no matched member carried it on "
-                 "samsungs20_a13 (7) and sharon_a14 (37). Those are counts of matched archive members "
+                 "samsungs20_a13 (7) and sharon_a14 (37). Those two zips record the NTFS field instead, and "
+                 "on runs of 2026-10-23 Timestamp Modified was filled on every row of both. Those "
+                 "member counts are counts of matched archive members "
                  "before duplicate storage views of one file are folded, so they can exceed the row "
                  "count.",
         "paths": ('*/*.mhtml', '*/*.mht'),
