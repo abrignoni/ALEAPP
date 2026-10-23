@@ -184,6 +184,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | Grok |
 | HideX |
 | K9Mail |
+| KeepSafe |
 | L360driveblade |
 | L360eventstore |
 | L360noshowalerts |
