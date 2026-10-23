@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Parses Discord chat messages from the kv-storage key-value store",
         "author": "@abrignoni",
         "creation_date": "2023-09-18",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-10-23",
         "requirements": "none",
         "category": "Discord Chats",
         "notes": "Each account's "
@@ -20,7 +20,12 @@ __artifacts_v2__ = {
                  "it held every kv-storage message but 2. On the tested images Edited Timestamp was blank, Pinned "
                  "was False and Mention Roles was an empty list on every message, Mentions was an empty list on "
                  "all but one image, on three images every message carried the same Avatar value, and on four the "
-                 "messages sat in one Channel ID.",
+                 "messages sat in one Channel ID. "
+                 "Conversation, Server Name, Server ID, Channel Name and DM Recipients come from the channel and server records the app caches in the kv_cache0 table of the same database, matched on Channel ID. For a server channel, Conversation is the server name and #channel name; for a channel with no guild_id it is the channel name, or 'DM:' and the recipients from the record's rawRecipients (username and user id). When the channel is not cached those columns are blank and Conversation shows the Channel ID. In tested samples every row resolved: 25 of 47 "
+                 "on pixel7a_a14 and 2 of 27 on falken_a326u_a13 in a server channel and the rest in a channel "
+                 "with no guild_id, and all rows on userb2_a13 (25), hc_pixel8pro_a16 (7) and samsungs20_a13 (1) "
+                 "in a channel with no guild_id. Channel Name was blank on every row in a channel with no "
+                 "guild_id.",
         "paths": ('*/com.discord/files/kv-storage/*/a*',
                   '*/com.discord/cache/http-cache/[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f].[01]'),
         "output_types": "standard",
@@ -36,6 +41,7 @@ __artifacts_v2__ = {
         "data_views": {
             "conversation": {
                 "conversationDiscriminatorColumn": "Channel ID",
+                "conversationLabelColumn": "Conversation",
                 "textColumn": "Content",
                 "directionColumn": "Direction",
                 "directionSentValue": "Outgoing",
@@ -55,6 +61,7 @@ import sys
 
 from scripts.ilapfuncs import artifact_processor, check_in_media, logfunc, open_sqlite_db_readonly
 from scripts.artifacts.storagePathViews import canonical_path, unique_files
+from scripts.artifacts.discordServers import discord_channel_context, discord_kv_lookup
 
 _PACKAGE = 'com.discord'
 _ENTRY = re.compile(r'^([0-9a-f]{32})\.([01])$')
@@ -145,6 +152,7 @@ def get_discordChats(context):
         account_match = _ACCOUNT.search(source_path)
         account_id = account_match.group(1) if account_match else ''
         images = _cached_images(context, _container_key(context, source_path), files)
+        lookup = discord_kv_lookup([source_path])
         db = open_sqlite_db_readonly(source_path)
         if db is None:
             continue
@@ -177,14 +185,22 @@ def get_discordChats(context):
                 direction = 'Outgoing' if sender_id == account_id else 'Incoming'
             else:
                 direction = ''
+            channel_id = _text(data.get('channelId'))
+            conversation, server_name, server_id, channel_name, recipients = \
+                discord_channel_context(channel_id, *lookup)
             data_list.append((
                 _text(message.get('timestamp')),
                 _text(message.get('edited_timestamp')),
                 direction,
                 _text(author.get('username')),
+                conversation,
                 _text(message.get('content')),
                 media,
-                _text(data.get('channelId')),
+                channel_id,
+                server_name,
+                server_id,
+                channel_name,
+                recipients,
                 _text(data.get('id')),
                 '; '.join(_text(a.get('filename')) for a in attachments),
                 '; '.join(_text(a.get('url')) for a in attachments),
@@ -203,9 +219,14 @@ def get_discordChats(context):
         ('Edited Timestamp', 'datetime'),
         'Direction',
         'Username',
+        'Conversation',
         'Content',
         ('Attachment', 'media'),
         'Channel ID',
+        'Server Name',
+        'Server ID',
+        'Channel Name',
+        'DM Recipients',
         'ID',
         'Attachment Filename',
         'Attachment URL',

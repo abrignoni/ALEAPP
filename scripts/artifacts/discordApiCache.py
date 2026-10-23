@@ -6,7 +6,7 @@ __artifacts_v2__ = {
                        "where the cache holds one. One row per distinct message id.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-10-23",
         "requirements": "none",
         "category": "Discord Chats",
         "notes": "Read from cache/http-cache, an OkHttp DiskLruCache: <hash>.0 holds the URL, status line and "
@@ -31,7 +31,11 @@ __artifacts_v2__ = {
                  "messages on one image were not in any cached page. Edited Timestamp and Pinned were blank on "
                  "every cached message of the tested images (no edited or pinned message was cached), Mentions was "
                  "filled only on one image and Reply To Message ID on two, and every image's messages came from "
-                 "one account (the value in Account IDs), on four of the five images in one Channel ID.",
+                 "one account (the value in Account IDs), on four of the five images in one Channel ID. "
+                 "Conversation, Server Name, Server ID, Channel Name and DM Recipients come from the channel and server records the app caches in the kv_cache0 table of the kv-storage databases in the same app container, matched on Channel ID. For a server channel, Conversation is the server name and #channel name; for a channel with no guild_id it is the channel name, or 'DM:' and the recipients from the record's rawRecipients (username and user id). When the channel is not cached those columns are blank and Conversation shows the Channel ID. In tested samples every row resolved: 70 of 92 "
+                 "on pixel7a_a14 in a server channel and 22 in a channel with no guild_id, and all rows on "
+                 "falken_a326u_a13 (25), userb2_a13 (38) and hc_pixel8pro_a16 (7) in a channel with no "
+                 "guild_id. Channel Name was blank on every row in a channel with no guild_id.",
         "paths": ('*/com.discord/cache/http-cache/journal',
                   '*/com.discord/cache/http-cache/[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f].[01]',
                   '*/com.discord/files/kv-storage/@account.*/a*'),
@@ -48,6 +52,7 @@ __artifacts_v2__ = {
         "data_views": {
             "conversation": {
                 "conversationDiscriminatorColumn": "Channel ID",
+                "conversationLabelColumn": "Conversation",
                 "textColumn": "Content",
                 "directionColumn": "Direction",
                 "directionSentValue": "Outgoing",
@@ -139,6 +144,7 @@ from datetime import datetime, timezone
 
 from scripts.ilapfuncs import artifact_processor, check_in_media, logfunc, open_sqlite_db_readonly
 from scripts.artifacts.storagePathViews import canonical_path, unique_files
+from scripts.artifacts.discordServers import discord_channel_context, discord_kv_lookup
 
 _PACKAGE = 'com.discord'
 _ENTRY = re.compile(r'^([0-9a-f]{32})\.([01])$')
@@ -388,6 +394,7 @@ def discordCacheMessages(context):
         ('Call Ended', 'datetime'),
         'Direction',
         'Username',
+        'Conversation',
         'Content',
         ('Attachment', 'media'),
         'Global Name',
@@ -395,6 +402,10 @@ def discordCacheMessages(context):
         'Attachment URLs',
         'Message Type (as stored)',
         'Channel ID',
+        'Server Name',
+        'Server ID',
+        'Channel Name',
+        'DM Recipients',
         'Message ID',
         'Sender ID',
         'Reply To Message ID',
@@ -415,6 +426,7 @@ def discordCacheMessages(context):
         images = _image_bodies(exchanges)
         accounts = _account_ids(container['kv'])
         kv_ids = _kv_message_ids(container['kv'])
+        lookup = discord_kv_lookup(container['kv'])
         messages = {}
         for exchange in exchanges:
             if not _MESSAGES.search(exchange['url']):
@@ -450,19 +462,27 @@ def discordCacheMessages(context):
                 direction = 'Outgoing' if sender in accounts else 'Incoming'
             else:
                 direction = ''
+            channel_id = _text(message.get('channel_id'))
+            conversation, server_name, server_id, channel_name, recipients = \
+                discord_channel_context(channel_id, *lookup)
             data_list.append((
                 _iso(message.get('timestamp')),
                 _iso(message.get('edited_timestamp')),
                 _iso(call.get('ended_timestamp')) if isinstance(call, dict) else '',
                 direction,
                 _text(author.get('username')),
+                conversation,
                 _text(message.get('content')),
                 media,
                 _text(author.get('global_name')),
                 '; '.join(_text(a.get('filename')) for a in attachments),
                 '; '.join(_text(a.get('url')) for a in attachments),
                 _text(message.get('type')),
-                _text(message.get('channel_id')),
+                channel_id,
+                server_name,
+                server_id,
+                channel_name,
+                recipients,
                 message_id,
                 sender,
                 _text(reference.get('message_id')),
