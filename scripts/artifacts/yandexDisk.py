@@ -4,61 +4,62 @@ __artifacts_v2__ = {
         "description": "Cloud files and folders the Yandex Disk app had listed for each signed-in account",
         "author": "@AlexisBrignoni, @4n6Wizard, Claude",
         "creation_date": "2026-10-21",
-        "last_update_date": "2026-10-21",
+        "last_update_date": "2026-10-23",
         "requirements": "none",
         "category": "Yandex Disk",
         "notes": "One row per row of the DISK and FOREIGN_DISK tables in "
-                 "ru.yandex.disk/databases/<uid>_disk, one database per signed-in account. Account "
-                 "UID is the number in the file name, which the app builds from the signed-in "
-                 "account's numeric uid. Android User is taken from the storage path the database "
-                 "came from, so the same account signed in on two Android users is reported once per "
-                 "user.\n"
-                 "Field meanings were sourced from the decompiled Yandex Disk 6.90.0 app "
-                 "(versionCode 690000, database version 85). The committed test data is synthetic: "
-                 "databases built from the app's own schema with invented values. The app's upgrade step from database version 84 adds two tables this "
-                 "artifact does not read; a fresh 6.90.0 install orders the DISK columns differently "
-                 "and adds LATITUDE and LONGITUDE to FOREIGN_DISK, so columns are read by name and a missing "
-                 "column reads blank.\n"
-                 "These rows are what the app had synced from the server, not a record of what was "
-                 "on the device. The app deletes DISK rows by folder path, the folder and everything "
-                 "below it, and DISK has no deleted flag; which sync events trigger that delete was "
-                 "not traced. A file absent here is not evidence it never existed in the account.\n"
-                 "Last Modified is the server's modified time for the resource and EXIF Date is the "
-                 "EXIF date the server reported for the resource; both are stored in milliseconds "
-                 "and reported in UTC, and EXIF Date is blank when the app stored 0. Local Copy Last "
-                 "Access is set to the current time when the app touches a cached local copy, and the "
-                 "one caller found in 6.90.0 opens the file in an external viewer; the app resets it "
-                 "to 0 when it deletes the local copy and orders cached copies by it when freeing "
-                 "space. It is blank when 0. PHOTOSLICE_TIME, which places a photo on the app's "
-                 "timeline, is not reported.\n"
-                 "ETag holds the server's md5 field on rows from the app's REST and album sync, and "
-                 "the file index's MD5 field on rows from its index sync. On rows written by its "
-                 "WebDAV sync it holds the server's getetag. That these all equal the MD5 of the "
-                 "file's content was not established from the app's code; one of the app's own views "
-                 "joins the upload queue's content MD5 to this column. Local Copy MD5 is an MD5 the "
-                 "app computed over a local copy. The app clears it for rows that are not offline "
-                 "marked when it clears its cache. Where local copies are kept was not established, "
-                 "so they are not resolved or shown.\n"
+                 "ru.yandex.disk/databases/<uid>_disk, one database per signed-in account. Account UID is "
+                 "the number in the file name, which the app builds from the signed-in account's numeric "
+                 "uid. Android User is taken from the storage path the database came from, so the same "
+                 "account signed in on two Android users is reported once per user.\n"
+                 "Field meanings were sourced from the decompiled Yandex Disk 6.90.0 app (versionCode "
+                 "690000, database version 85). The committed test data is synthetic: databases built from "
+                 "the app's own schema with invented values. The app's upgrade step from database version "
+                 "84 adds two tables this artifact does not read; a fresh 6.90.0 install orders the DISK "
+                 "columns differently and adds LATITUDE and LONGITUDE to FOREIGN_DISK, so columns are read "
+                 "by name and a missing column reads blank.\n"
+                 "These rows are what the app had synced from the server, not a record of what was on the "
+                 "device. The app deletes DISK rows by folder path, the folder and everything below it, "
+                 "and DISK has no deleted flag; which sync events trigger that delete was not traced. A "
+                 "file absent here is not evidence it never existed in the account.\n"
+                 "Last Modified is the server's modified time for the resource and EXIF Date is the EXIF "
+                 "date the server reported for the resource; both are stored in milliseconds and reported "
+                 "in UTC, and EXIF Date is blank when the app stored 0. Local Copy Last Access is set to "
+                 "the current time when the app touches a cached local copy, and the one caller found in "
+                 "6.90.0 opens the file in an external viewer; the app resets it to 0 when it deletes the "
+                 "local copy and orders cached copies by it when freeing space. It is blank when 0. "
+                 "PHOTOSLICE_TIME, which places a photo on the app's timeline, is not reported.\n"
+                 "ETag holds the server's md5 field on rows from the app's REST and album sync, and the "
+                 "file index's MD5 field on rows from its index sync. On rows written by its WebDAV sync "
+                 "it holds the server's getetag. That these all equal the MD5 of the file's content was "
+                 "not established from the app's code; one of the app's own views joins the upload queue's "
+                 "content MD5 to this column. Local Copy MD5 is an MD5 the app computed over a local copy. "
+                 "The app clears it for rows that are not offline marked when it clears its cache. Where "
+                 "local copies are kept was not established, so they are not resolved or shown.\n"
                  "Owner UID is blank for the account's own items (DISK). It is filled only for "
-                 "FOREIGN_DISK rows, which the app's album sync writes for items whose owner is "
-                 "another account; those rows carry no coordinates.\n"
-                 "Shared is 1 when the server marked the item shared (a share object on the album "
-                 "path, a shared flag on the WebDAV and index paths); the REST update does not write "
-                 "it, so it can be stale. On the REST path Read Only is 1 when shared, not owned and "
-                 "without rw rights; other sync paths store the server's readonly flag. Share Group "
-                 "reads Family (1), Other (0) or blank when no group was recorded. Offline Mark reads "
-                 "Not marked (0), Marked (1) or In marked folder (2), from the app's own enum. Public "
-                 "URL is reported as stored; the file-index sync writes the literal FAKE LINK when an "
-                 "item is public.\n"
+                 "FOREIGN_DISK rows, which the app's album sync writes for items whose owner is another "
+                 "account; those rows carry no coordinates.\n"
+                 "Shared is 1 when the server marked the item shared (a share object on the album path, a "
+                 "shared flag on the WebDAV and index paths); the REST update does not write it, so it can "
+                 "be stale. On the REST path Read Only is 1 when shared, not owned and without rw rights; "
+                 "other sync paths store the server's readonly flag. Share Group reads Family (1), Other "
+                 "(0) or blank when no group was recorded. Offline Mark reads Not marked (0), Marked (1) "
+                 "or In marked folder (2), from the app's own enum. Public URL is reported as stored; the "
+                 "file-index sync writes the literal FAKE LINK when an item is public.\n"
                  "Latitude and Longitude are reported as stored. The app's own queries treat -1 as "
-                 "missing, so -1 and NULL are reported blank and left out of the KML. Duration (as "
-                 "stored) is milliseconds on the WebDAV sync path; its unit on the album path was not "
-                 "established. Width and Height are reported as stored; their unit was not "
-                 "established.\n"
+                 "missing, so -1 and NULL are reported blank and left out of the KML. Duration (as stored) "
+                 "is milliseconds on the WebDAV sync path; its unit on the album path was not established. "
+                 "Width and Height are reported as stored; their unit was not established.\n"
                  "Not read by this artifact: the upload queue (see Yandex Disk Uploads), the local "
                  "MediaItems, MediaHashes, MediaDownloads and RECENT_AUTOUPLOADS tables, Album and "
                  "AlbumItem, MOMENTS, FEED and SEARCH tables, pending shared-folder invites, and the "
-                 "trash, notes, download queue and account stores beside this database.",
+                 "trash, notes, download queue and account stores beside this database.\n"
+                 "Cached Image shows the app's cached rendition of the image (a scaled JPEG) from its "
+                 "image cache, bitmapCache under the app's files folder, normally "
+                 "Android/data/ru.yandex.disk/files in shared storage; a cache the app moved to another "
+                 "storage volume is not searched. It is found by the cache entry name the app derives from "
+                 "the row's ETag; folders have none; the largest cached size is shown (preview, then tile, "
+                 "then thumbnail). See Yandex Disk Image Cache.",
         "paths": ('*/ru.yandex.disk/databases/*_disk*',),
         "output_types": "all",
         "artifact_icon": "cloud",
@@ -256,44 +257,51 @@ __artifacts_v2__ = {
         "description": "Saved playback positions the Yandex Disk app's video viewer kept for each account",
         "author": "@AlexisBrignoni, @4n6Wizard, Claude",
         "creation_date": "2026-10-22",
-        "last_update_date": "2026-10-22",
+        "last_update_date": "2026-10-23",
         "requirements": "none",
         "category": "Yandex Disk",
         "notes": "One row per entry of the video_timecodes setting in PLAIN_SETTINGS_TABLE of "
-                 "ru.yandex.disk/databases/SETTINGS, which holds one such setting per account scope "
-                 "(user@ followed by the account). Account is the scope with user@ removed; Account UID "
-                 "comes from the CREDENTIAL row whose USER matches it and is blank when none does. "
-                 "Android User is taken from the storage path. Field meanings were sourced from the "
-                 "decompiled Yandex Disk 6.90.0 app. The committed test data is synthetic: databases "
-                 "built from the app's own schema with invented values.\n"
-                 "The setting is a JSON list of entries, each keyed by a server path and an ETag with "
-                 "a position in milliseconds; the ETag can be null and then reads blank. When the video "
+                 "ru.yandex.disk/databases/SETTINGS, which holds one such setting per account scope (user@ "
+                 "followed by the account). Account is the scope with user@ removed; Account UID comes "
+                 "from the CREDENTIAL row whose USER matches it and is blank when none does. Android User "
+                 "is taken from the storage path. Field meanings were sourced from the decompiled Yandex "
+                 "Disk 6.90.0 app. The committed test data is synthetic: databases built from the app's "
+                 "own schema with invented values.\n"
+                 "The setting is a JSON list of entries, each keyed by a server path and an ETag with a "
+                 "position in milliseconds; the ETag can be null and then reads blank. When the video "
                  "viewer screen stops (it is closed, left, or the app goes to the background) the app "
-                 "takes the video's duration, from the stream information or the player, and the "
-                 "playback position the player reports. It removes the video's entry when the duration "
-                 "is 30 seconds or less, the position is 10 seconds or less, or the position is within "
-                 "10 seconds of the end; otherwise it saves the position minus 5 seconds. When the "
-                 "duration is unknown (0) it does neither. Stored Position is the saved value and "
-                 "Position When Viewer Stopped adds the 5 seconds back. A removal changes only the "
-                 "app's in-memory list and reaches the setting when the app next writes it, which a "
-                 "later save or the path rewrite command below does, so a stored entry can belong to a "
-                 "video that was later stopped near its end. A video with no entry may never have been "
-                 "opened in the viewer, may have been stopped under a removal condition, or may have "
-                 "been pushed out of the 11-entry cache by later videos.\n"
-                 "The app keeps at most 11 entries in a least recently used cache and writes them in "
-                 "the cache's order, least recently used first. Reading an entry, which the viewer does "
-                 "when it opens a video, counts as a use. Recency Rank counts from the end of the "
-                 "stored list, so 1 is the entry most recently used as of the last save. The setting "
-                 "records no time, so the rank orders entries without dating them. A separate app "
-                 "command rewrites an entry's path when it is given a path change and keeps the "
-                 "position; which actions send it was not traced.\n"
+                 "takes the video's duration, from the stream information or the player, and the playback "
+                 "position the player reports. It removes the video's entry when the duration is 30 "
+                 "seconds or less, the position is 10 seconds or less, or the position is within 10 "
+                 "seconds of the end; otherwise it saves the position minus 5 seconds. When the duration "
+                 "is unknown (0) it does neither. Stored Position is the saved value and Position When "
+                 "Viewer Stopped adds the 5 seconds back. A removal changes only the app's in-memory list "
+                 "and reaches the setting when the app next writes it, which a later save or the path "
+                 "rewrite command below does, so a stored entry can belong to a video that was later "
+                 "stopped near its end. A video with no entry may never have been opened in the viewer, "
+                 "may have been stopped under a removal condition, or may have been pushed out of the "
+                 "11-entry cache by later videos.\n"
+                 "The app keeps at most 11 entries in a least recently used cache and writes them in the "
+                 "cache's order, least recently used first. Reading an entry, which the viewer does when "
+                 "it opens a video, counts as a use. Recency Rank counts from the end of the stored list, "
+                 "so 1 is the entry most recently used as of the last save. The setting records no time, "
+                 "so the rank orders entries without dating them. A separate app command rewrites an "
+                 "entry's path when it is given a path change and keeps the position; which actions send "
+                 "it was not traced.\n"
                  "Cloud File Match compares each entry with the account's DISK table (see Yandex Disk "
-                 "Cloud Files) by path: Same ETag, Different ETag, or Not listed when DISK holds no row "
-                 "at that path or no DISK database was found for the account (for instance when Account "
-                 "UID is blank). Duration (as stored) and Size (bytes) come from that DISK row. A saved "
-                 "position shows that the viewer screen for that video stopped with the player at "
-                 "Position When Viewer Stopped, under this account's settings on this device; it is not "
-                 "evidence of who watched it or that it played continuously.",
+                 "Cloud Files) by path: Same ETag, Different ETag, or Not listed when DISK holds no row at "
+                 "that path or no DISK database was found for the account (for instance when Account UID "
+                 "is blank). Duration (as stored) and Size (bytes) come from that DISK row. A saved "
+                 "position shows that the viewer screen for that video stopped with the player at Position "
+                 "When Viewer Stopped, under this account's settings on this device; it is not evidence of "
+                 "who watched it or that it played continuously.\n"
+                 "Cached Image shows the app's cached rendition of the image (a scaled JPEG) from its "
+                 "image cache, bitmapCache under the app's files folder, normally "
+                 "Android/data/ru.yandex.disk/files in shared storage; a cache the app moved to another "
+                 "storage volume is not searched. It is found by the cache entry name computed from the "
+                 "ETag saved in the entry; an image the app cached under a later ETag of the same file is "
+                 "not matched; the largest cached size is shown (preview, then tile, then thumbnail). See "
+                 "Yandex Disk Image Cache.",
         "paths": ('*/ru.yandex.disk/databases/SETTINGS*', '*/ru.yandex.disk/databases/*_disk*'),
         "output_types": "standard",
         "artifact_icon": "film",
@@ -311,35 +319,92 @@ __artifacts_v2__ = {
                  "the number in the file name and Android User is taken from the storage path. Field "
                  "meanings were sourced from the decompiled Yandex Disk 6.90.0 app (database version 85). "
                  "The committed test data is synthetic: databases built from the app's own schema with "
-                 "invented values.\nMediaHashes is the app's cache of file hashes. When it needs a local "
-                 "file's hashes (its uploader, its gallery hash command and its photo editor upload are "
-                 "among the callers), the app computes MD5 and SHA-256 over the file's content and writes "
-                 "them with the path, the file's size and its last modified time, replacing any row for "
-                 "the same path; it reuses a row whose path, size and modified time still match. No "
-                 "statement in 6.90.0 deletes single MediaHashes rows; the table is dropped only together "
-                 "with the database's other Room tables, and when that happens was not traced. A row can "
-                 "therefore remain after the file is gone from the device. Hashed reads Yes for a path in "
-                 "MediaHashes.\nMediaItems is the app's index of device media, built from Android's "
-                 "MediaStore. Taken Or Added is its eTime: MediaStore's date taken, or the date added "
-                 "when date taken is 0. The app deletes MediaItems rows by id; which events delete them "
-                 "was not traced, so Media Index reads Listed for a path MediaItems holds and Not listed "
-                 "for a path only MediaHashes holds, and Not listed is not evidence the file was deleted. "
-                 "MediaStore ID is the item's id in MediaStore. Sync Status (as stored) is the app's "
-                 "integer status; the code branches on several values, and their meanings were not "
-                 "established. File Modified is the MediaHashes modified time in milliseconds when the "
-                 "path was hashed, and otherwise MediaItems mTime, MediaStore's modified time, which the "
-                 "app stores in milliseconds from a whole-second value. Size, MD5 and SHA-256 come from "
-                 "MediaHashes when present and otherwise from MediaItems; the app's upgrade from database "
-                 "version 68 to 78 filled MediaItems MD5 from MediaHashes rows of the same path and size, "
-                 "and its gallery hash command stores a hash it computes in both tables.\nCloud Paths "
-                 "lists the account's DISK rows (see Yandex Disk Cloud Files) whose ETag equals the MD5. "
-                 "ETag holds the server's md5 field on the app's REST and album sync paths; on other sync "
-                 "paths it can hold a different value, so a blank Cloud Paths is not evidence the file "
-                 "was never uploaded. Local File shows the file where the extraction holds it at the "
-                 "recorded path in shared storage; only the folders the rows name are searched. Rows that "
-                 "the database's write-ahead log has since deleted are not recovered. A row records that "
-                 "the app saw or hashed the file; it is not evidence of who created or viewed it.",
+                 "invented values.\n"
+                 "MediaHashes is the app's cache of file hashes. When it needs a local file's hashes (its "
+                 "uploader, its gallery hash command and its photo editor upload are among the callers), "
+                 "the app computes MD5 and SHA-256 over the file's content and writes them with the path, "
+                 "the file's size and its last modified time, replacing any row for the same path; it "
+                 "reuses a row whose path, size and modified time still match. No statement in 6.90.0 "
+                 "deletes single MediaHashes rows; the table is dropped only together with the database's "
+                 "other Room tables, and when that happens was not traced. A row can therefore remain "
+                 "after the file is gone from the device. Hashed reads Yes for a path in MediaHashes.\n"
+                 "MediaItems is the app's index of device media, built from Android's MediaStore. Taken Or "
+                 "Added is its eTime: MediaStore's date taken, or the date added when date taken is 0. The "
+                 "app deletes MediaItems rows by id; which events delete them was not traced, so Media "
+                 "Index reads Listed for a path MediaItems holds and Not listed for a path only "
+                 "MediaHashes holds, and Not listed is not evidence the file was deleted. MediaStore ID is "
+                 "the item's id in MediaStore. Sync Status (as stored) is the app's integer status; the "
+                 "code branches on several values, and their meanings were not established. File Modified "
+                 "is the MediaHashes modified time in milliseconds when the path was hashed, and otherwise "
+                 "MediaItems mTime, MediaStore's modified time, which the app stores in milliseconds from "
+                 "a whole-second value. Size, MD5 and SHA-256 come from MediaHashes when present and "
+                 "otherwise from MediaItems; the app's upgrade from database version 68 to 78 filled "
+                 "MediaItems MD5 from MediaHashes rows of the same path and size, and its gallery hash "
+                 "command stores a hash it computes in both tables.\n"
+                 "Cloud Paths lists the account's DISK rows (see Yandex Disk Cloud Files) whose ETag "
+                 "equals the MD5. ETag holds the server's md5 field on the app's REST and album sync "
+                 "paths; on other sync paths it can hold a different value, so a blank Cloud Paths is not "
+                 "evidence the file was never uploaded. Local File shows the file where the extraction "
+                 "holds it at the recorded path in shared storage; only the folders the rows name are "
+                 "searched. Rows that the database's write-ahead log has since deleted are not recovered. "
+                 "A row records that the app saw or hashed the file; it is not evidence of who created or "
+                 "viewed it.\n"
+                 "Cached Image shows the app's cached rendition of the image (a scaled JPEG) from its "
+                 "image cache, bitmapCache under the app's files folder, normally "
+                 "Android/data/ru.yandex.disk/files in shared storage; a cache the app moved to another "
+                 "storage volume is not searched. It is found by the cache entry name computed from the "
+                 "item's MediaStore image or video content URI, or from its MD5, which matches when the "
+                 "app cached an image under an ETag equal to that MD5; media the app files under neither "
+                 "image nor video is not matched; the largest cached size is shown (preview, then tile, "
+                 "then thumbnail). See Yandex Disk Image Cache.",
         "paths": ('*/ru.yandex.disk/databases/*_disk*',),
+        "output_types": "standard",
+        "artifact_icon": "image",
+    },
+    "yandex_disk_image_cache": {
+        "name": "Yandex Disk Image Cache",
+        "description": "Images in the Yandex Disk app's image cache, with the cloud file or device media an image was cached for where the account databases show it",
+        "author": "@AlexisBrignoni, @4n6Wizard, Claude",
+        "creation_date": "2026-10-23",
+        "last_update_date": "2026-10-23",
+        "requirements": "none",
+        "category": "Yandex Disk",
+        "notes": "One row per entry file in the app's image cache, bitmapCache under the app's files "
+                 "folder, normally Android/data/ru.yandex.disk/files in shared storage, in its thumbCache, "
+                 "tileCache, commonCache and faceCache folders. A cache the app moved to another storage "
+                 "volume is not searched. Android User is taken from the shared-storage path. Field "
+                 "meanings were sourced from the decompiled Yandex Disk 6.90.0 app. The committed test "
+                 "data is synthetic: invented images stored at the app's cache paths, under entry names "
+                 "computed with the naming the decompiled app shows.\n"
+                 "The app caches images with Glide disk caches (vt0/p0.java, DiskLruCacheWrapper2). Each "
+                 "image type has a cache number that picks the folder: thumbnails in thumbCache, tiles in "
+                 "tileCache, previews and large previews in commonCache, faces in faceCache. commonCache "
+                 "also receives every other image the app loads through Glide: link images, other URL "
+                 "loads and transformed copies, whose names this artifact cannot compute. An entry Glide "
+                 "wrote as source data for a plain image key is named with the SHA-256 of the key (Glide's "
+                 "SafeKeyGenerator): the item's ETag, or else its path, or else a content URI, followed by "
+                 "the image type's name such as THUMB (vt0/n.java). Album keys (vt0/e.java) add album "
+                 "fields, and transformed copies and other key types are named differently. Cache shows "
+                 "the folder as Thumbnail, Tile, Preview or Face.\n"
+                 "Resolved To is found by computing that name for each recorded key and comparing: Cloud "
+                 "file for a DISK or FOREIGN_DISK ETag, with Item the cloud path; Trash item for a TRASH "
+                 "etag, with Item the trash path (not exercised by the test data); Indexed local media for "
+                 "the MediaStore image or video content URI of a MediaItems row, with Item the device path "
+                 "(media of another kind, which the app addresses by a MediaStore files URI, is not "
+                 "tried); MediaStore image or MediaStore video for a MediaStore content URI whose id no "
+                 "MediaItems row holds, with Item the id, tried for ids up to twice the largest MediaItems "
+                 "id plus 50,000 and never above 500,000; and Not resolved when no tried key produces the "
+                 "name. A MediaStore id resolved this way is not in the app's index; the device's "
+                 "MediaStore records can be checked for that id. Account UID is the first account, in uid "
+                 "order, whose database held the key; blank for ids found by trying. Keys the app builds "
+                 "from paths, other URIs, album items, link images or transformed copies were not tried, "
+                 "so Not resolved is not evidence the image is unrelated to the account.\n"
+                 "A cached image shows that the app displayed or prepared that image at some point; it is "
+                 "not evidence of who viewed it, and the cache drops its least recently used entries when "
+                 "it passes its size limit and can be cleared or moved by the app, so absence is not "
+                 "evidence an image was never shown. The cache journal files are not read.",
+        "paths": ('*/ru.yandex.disk/databases/*_disk*', '*/ru.yandex.disk/databases/*_trash.db*',
+                  '*/Android/data/ru.yandex.disk/files/bitmapCache/*'),
         "output_types": "standard",
         "artifact_icon": "image",
     },
@@ -447,6 +512,7 @@ __artifacts_v2__ = {
     },
 }
 
+import hashlib
 import json
 import os
 import re
@@ -467,6 +533,13 @@ NOTES_DB = re.compile(r'(?:^|/)ru\.yandex\.disk/databases/(\d+)_notes\.db$')
 # A path the app recorded as the device sees shared storage, and the folder an extraction holds it in.
 SHARED_STORAGE = re.compile(r'^/(?:storage/emulated|sdcard)/?(\d*)/')
 STORAGE_USER = re.compile(r'\x00(?:ce|de):(\d+)\x00')
+# The app's image caches in its external files folder: Glide disk caches whose entry names are
+# the SHA-256 of an image key (vt0/n.java, DiskLruCacheWrapper2 with SafeKeyGenerator).
+BITMAP_CACHE = re.compile(r'(?:^|/)(?:(?:media|emulated)/(\d+)/|sdcard/)Android/data/ru\.yandex\.disk/files/'
+                          r'bitmapCache/(thumbCache|tileCache|commonCache|faceCache)/([0-9a-f]{64})\.0$')
+# Folder -> (label, the image types the app caches there), from vt0/n.java and vt0/p0.java.
+CACHE_FOLDERS = {'commonCache': ('Preview', ('PREVIEW', 'LARGE_PREVIEW')), 'tileCache': ('Tile', ('TILE',)),
+                 'thumbCache': ('Thumbnail', ('THUMB',)), 'faceCache': ('Face', ('FACE',))}
 
 OFFLINE_MARK = {0: 'Not marked', 1: 'Marked', 2: 'In marked folder'}
 SHARE_GROUP = {0: 'Other', 1: 'Family'}
@@ -572,7 +645,7 @@ def yandex_disk_cloud_files(context):
                 read_rows = True
                 data_list.append((
                     _ms(r[6]), _ms(r[7]), _ms(r[8]), android_user, uid, r[22] or '',
-                    _path(r[0], r[1]), 'Folder' if r[2] else 'File', r[3],
+                    _path(r[0], r[1]), None if r[2] else (r[4] or None), 'Folder' if r[2] else 'File', r[3],
                     r[9] or '', r[10] or '', r[4] or '', r[5] or '', r[11] or '',
                     r[12], r[13], _label(SHARE_GROUP, r[14]), _label(OFFLINE_MARK, r[15]),
                     _coordinate(r[16]), _coordinate(r[17]), r[18], r[19], r[20], r[21] or ''))
@@ -580,11 +653,13 @@ def yandex_disk_cloud_files(context):
             sources.append(db_path)
         else:
             logfunc(f'Yandex Disk: no DISK rows read from {os.path.basename(db_path)}')
+    cache = _find_bitmap_cache(context) if data_list else {}
+    data_list = [r[:7] + (_thumbnail(cache.get(r[3], {}), (r[7],)) if r[7] else '',) + r[8:] for r in data_list]
 
     data_headers = (
         ('Last Modified', 'datetime'), ('EXIF Date', 'datetime'),
         ('Local Copy Last Access', 'datetime'), 'Android User', 'Account UID', 'Owner UID', 'Path',
-        'Type',
+        ('Cached Image', 'media'), 'Type',
         'Size (bytes)', 'MIME Type', 'Media Type', 'ETag', 'Local Copy MD5', 'Public URL',
         'Shared', 'Read Only', 'Share Group', 'Offline Mark', 'Latitude', 'Longitude', 'Width',
         'Height', 'Duration (as stored)', 'Resource ID')
@@ -938,18 +1013,62 @@ def yandex_disk_video_positions(context):
                 else:
                     match = 'Same ETag' if (cloud['ETAG'] or None) == (etag or None) else 'Different ETag'
                 data_list.append((
-                    rank, stores['user'], uid, account, path, _hms(stored), stored, _hms(stored + 5000),
+                    rank, stores['user'], uid, account, path, etag, _hms(stored), stored, _hms(stored + 5000),
                     cloud['DURATION'] if cloud else '', cloud['SIZE'] if cloud else '', etag or '', match))
             if entries and disk_path and disk_path not in sources:
                 sources.append(disk_path)
         if read_rows:
             sources.insert(0, settings)
+    cache = _find_bitmap_cache(context) if data_list else {}
+    data_list = [r[:5] + (_thumbnail(cache.get(r[1], {}), (r[5],)) if r[5] else '',) + r[6:] for r in data_list]
 
     data_headers = (
-        'Recency Rank', 'Android User', 'Account UID', 'Account', 'Video Path', 'Stored Position',
+        'Recency Rank', 'Android User', 'Account UID', 'Account', 'Video Path', ('Cached Image', 'media'),
+        'Stored Position',
         'Stored Position (ms)', 'Position When Viewer Stopped', 'Duration (as stored)', 'Size (bytes)', 'ETag',
         'Cloud File Match')
     return data_headers, data_list, '\n'.join(sources)
+
+def _bitmap_cache_files(context, paths):
+    """{Android user: {entry name: (folder, staged path)}} for the app's image cache files among paths."""
+    found = {}
+    for path in paths:
+        path = str(path)
+        relative = str(context.get_relative_path(path)).replace('\\', '/')
+        match = BITMAP_CACHE.search(relative)
+        if match and not os.path.isdir(path):
+            found.setdefault(match.group(1) or '0', {}).setdefault(match.group(3), (match.group(2), path))
+    return found
+
+
+def _find_bitmap_cache(context):
+    """The app's image cache files in the extraction, searched for only when a caller has rows."""
+    return _bitmap_cache_files(context, context.get_seeker().search(
+        '*/Android/data/ru.yandex.disk/files/bitmapCache/*'))
+
+
+def _cache_name(key, image_type):
+    """The cache entry name for an image key: SHA-256 of the key followed by the image type's name."""
+    return hashlib.sha256(f'{key}{image_type}'.encode('utf-8')).hexdigest()
+
+
+def _media_store_uri(media_store_id, mime_type):
+    kind = 'video' if str(mime_type or '').startswith('video/') else 'images'
+    return f'content://media/external/{kind}/media/{media_store_id}'
+
+
+def _thumbnail(entries, keys):
+    """The checked-in cached image for the first key found, preferring the largest cached size."""
+    for folder in ('commonCache', 'tileCache', 'thumbCache'):
+        for key in keys:
+            if not key:
+                continue
+            for image_type in CACHE_FOLDERS[folder][1]:
+                hit = entries.get(_cache_name(key, image_type))
+                if hit and hit[0] == folder:
+                    return check_in_media(hit[1], os.path.basename(hit[1])) or ''
+    return ''
+
 
 def _shared_tails(recorded):
     """The forms a recorded /storage/emulated/<user>/... path takes inside an extraction.
@@ -1029,7 +1148,8 @@ def yandex_disk_local_media(context):
         for path in sorted(set(hashes) | set(items)):
             h, i = hashes.get(path) or {}, items.get(path) or {}
             md5 = h.get('md5') or i.get('md5') or ''
-            pending.append((path, (
+            keys = (_media_store_uri(i['mediaStoreId'], i.get('mimeType')) if i.get('mediaStoreId') else None, md5)
+            pending.append((path, keys, (
                 _ms(i.get('eTime')), _ms(h.get('mTime') or i.get('mTime')), android_user, uid, path),
                 (h.get('size') if h else i.get('size'), md5, h.get('sha256') or i.get('sha256') or '',
                  i.get('mimeType') or '', 'Yes' if h else 'No', 'Listed' if i else 'Not listed',
@@ -1037,14 +1157,80 @@ def yandex_disk_local_media(context):
                  '\n'.join(sorted(cloud.get(md5.lower(), []))) if md5 else '')))
         sources.append(db_path)
 
-    staged = _stage_shared(context, [path for path, _, _ in pending])
-    for path, head, tail in pending:
-        data_list.append(head + (_local_media(staged, path),) + tail)
+    staged = _stage_shared(context, [path for path, _, _, _ in pending])
+    cache = _find_bitmap_cache(context) if pending else {}
+    for path, keys, head, tail in pending:
+        data_list.append(head + (_local_media(staged, path), _thumbnail(cache.get(head[2], {}), keys)) + tail)
 
     data_headers = (
         ('Taken Or Added', 'datetime'), ('File Modified', 'datetime'), 'Android User', 'Account UID',
-        'Local Path', ('Local File', 'media'), 'Size (bytes)', 'MD5', 'SHA-256', 'MIME Type', 'Hashed',
+        'Local Path', ('Local File', 'media'), ('Cached Image', 'media'), 'Size (bytes)', 'MD5', 'SHA-256', 'MIME Type', 'Hashed',
         'Media Index', 'Sync Status (as stored)', 'MediaStore ID', 'Cloud Paths')
+    return data_headers, data_list, '\n'.join(sources)
+
+
+# MediaStore ids are tried up to this bound when a cache entry matches no recorded key.
+MEDIA_STORE_ID_LIMIT = 500000
+
+
+def _name_keys(named, key, resolution):
+    """Record the cache entry name of key for every image type."""
+    for _, image_types in CACHE_FOLDERS.values():
+        for image_type in image_types:
+            named.setdefault(_cache_name(key, image_type), resolution)
+
+
+@artifact_processor
+def yandex_disk_image_cache(context):
+    data_headers = (
+        ('Image', 'media'), 'Cache', 'Resolved To', 'Item', 'Account UID', 'Android User', 'Size (bytes)',
+        'Cache Entry')
+    cache = _bitmap_cache_files(context, unique_files(context))
+    if not cache:
+        return data_headers, [], ''
+    keys = {}  # Android user -> {entry name: (resolved to, item, account uid)}
+    media_ids = {}  # Android user -> MediaItems ids
+    sources = []
+    for android_user, uid, db_path in _disk_databases(context):
+        named = keys.setdefault(android_user, {})
+        for table in ('DISK', 'FOREIGN_DISK'):
+            for r in _rows_by_name(db_path, table, ('PARENT', 'NAME', 'ETAG', 'IS_DIR')):
+                if r['ETAG'] and not r['IS_DIR']:
+                    _name_keys(named, r['ETAG'], ('Cloud file', _path(r['PARENT'], r['NAME']), uid))
+        for r in _rows_by_name(db_path, 'MediaItems', ('path', 'mediaStoreId', 'mimeType')):
+            if r['mediaStoreId'] is not None:
+                media_ids.setdefault(android_user, []).append(int(r['mediaStoreId']))
+                _name_keys(named, _media_store_uri(r['mediaStoreId'], r['mimeType']),
+                           ('Indexed local media', r['path'] or '', uid))
+        sources.append(db_path)
+    for android_user, uid, db_path in _disk_databases(context, TRASH_DB):
+        named = keys.setdefault(android_user, {})
+        for r in _rows_by_name(db_path, 'TRASH', ('path', 'etag', 'dir')):
+            if r['etag'] and not r['dir']:
+                _name_keys(named, r['etag'], ('Trash item', r['path'] or '', uid))
+        sources.append(db_path)
+
+    data_list = []
+    for android_user, entries in sorted(cache.items()):
+        named = keys.setdefault(android_user, {})
+        unresolved = {name for name in entries if name not in named}
+        limit = min(MEDIA_STORE_ID_LIMIT, max(media_ids.get(android_user) or [0]) * 2 + 50000)
+        media_store_id = 0
+        while unresolved and media_store_id < limit:
+            media_store_id += 1
+            for kind, label in (('images', 'MediaStore image'), ('video', 'MediaStore video')):
+                found = {}
+                _name_keys(found, f'content://media/external/{kind}/media/{media_store_id}',
+                           (label, str(media_store_id), ''))
+                for name in unresolved & set(found):
+                    named[name] = found[name]
+                    unresolved.discard(name)
+        for name, (folder, path) in sorted(entries.items(), key=lambda e: (e[1][0], e[0])):
+            resolved, item, uid = named.get(name, ('Not resolved', '', ''))
+            data_list.append((
+                check_in_media(path, os.path.basename(path)) or '', CACHE_FOLDERS[folder][0], resolved, item,
+                uid, android_user, os.path.getsize(path), name))
+            sources.append(path)
     return data_headers, data_list, '\n'.join(sources)
 
 TRASH_OPERATION = {0: 'Empty trash', 1: 'Delete forever', 2: 'Restore'}
