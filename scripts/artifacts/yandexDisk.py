@@ -298,6 +298,51 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "film",
     },
+    "yandex_disk_local_media": {
+        "name": "Yandex Disk Local Media",
+        "description": "Device files the Yandex Disk app indexed as media or hashed, with the account's cloud files whose ETag equals the MD5",
+        "author": "@AlexisBrignoni, @4n6Wizard, Claude",
+        "creation_date": "2026-10-23",
+        "last_update_date": "2026-10-23",
+        "requirements": "none",
+        "category": "Yandex Disk",
+        "notes": "One row per local path found in the MediaHashes or MediaItems table of "
+                 "ru.yandex.disk/databases/<uid>_disk, one database per signed-in account; Account UID is "
+                 "the number in the file name and Android User is taken from the storage path. Field "
+                 "meanings were sourced from the decompiled Yandex Disk 6.90.0 app (database version 85). "
+                 "The committed test data is synthetic: databases built from the app's own schema with "
+                 "invented values.\nMediaHashes is the app's cache of file hashes. When it needs a local "
+                 "file's hashes (its uploader, its gallery hash command and its photo editor upload are "
+                 "among the callers), the app computes MD5 and SHA-256 over the file's content and writes "
+                 "them with the path, the file's size and its last modified time, replacing any row for "
+                 "the same path; it reuses a row whose path, size and modified time still match. No "
+                 "statement in 6.90.0 deletes single MediaHashes rows; the table is dropped only together "
+                 "with the database's other Room tables, and when that happens was not traced. A row can "
+                 "therefore remain after the file is gone from the device. Hashed reads Yes for a path in "
+                 "MediaHashes.\nMediaItems is the app's index of device media, built from Android's "
+                 "MediaStore. Taken Or Added is its eTime: MediaStore's date taken, or the date added "
+                 "when date taken is 0. The app deletes MediaItems rows by id; which events delete them "
+                 "was not traced, so Media Index reads Listed for a path MediaItems holds and Not listed "
+                 "for a path only MediaHashes holds, and Not listed is not evidence the file was deleted. "
+                 "MediaStore ID is the item's id in MediaStore. Sync Status (as stored) is the app's "
+                 "integer status; the code branches on several values, and their meanings were not "
+                 "established. File Modified is the MediaHashes modified time in milliseconds when the "
+                 "path was hashed, and otherwise MediaItems mTime, MediaStore's modified time, which the "
+                 "app stores in milliseconds from a whole-second value. Size, MD5 and SHA-256 come from "
+                 "MediaHashes when present and otherwise from MediaItems; the app's upgrade from database "
+                 "version 68 to 78 filled MediaItems MD5 from MediaHashes rows of the same path and size, "
+                 "and its gallery hash command stores a hash it computes in both tables.\nCloud Paths "
+                 "lists the account's DISK rows (see Yandex Disk Cloud Files) whose ETag equals the MD5. "
+                 "ETag holds the server's md5 field on the app's REST and album sync paths; on other sync "
+                 "paths it can hold a different value, so a blank Cloud Paths is not evidence the file "
+                 "was never uploaded. Local File shows the file where the extraction holds it at the "
+                 "recorded path in shared storage; only the folders the rows name are searched. Rows that "
+                 "the database's write-ahead log has since deleted are not recovered. A row records that "
+                 "the app saw or hashed the file; it is not evidence of who created or viewed it.",
+        "paths": ('*/ru.yandex.disk/databases/*_disk*',),
+        "output_types": "standard",
+        "artifact_icon": "image",
+    },
     "yandex_disk_trash": {
         "name": "Yandex Disk Trash",
         "description": "Items the Yandex Disk app listed in each account's server trash, with pending trash actions",
@@ -963,6 +1008,44 @@ def _local_media(staged, recorded):
                 return check_in_media(candidate, os.path.basename(candidate)) or ''
     return ''
 
+
+@artifact_processor
+def yandex_disk_local_media(context):
+    data_list = []
+    sources = []
+    pending = []
+    for android_user, uid, db_path in _disk_databases(context):
+        hashes = {r['path']: r for r in _rows_by_name(db_path, 'MediaHashes', ('path', 'mTime', 'size', 'md5', 'sha256'))
+                  if r['path']}
+        items = {r['path']: r for r in _rows_by_name(db_path, 'MediaItems', (
+            'path', 'mediaStoreId', 'eTime', 'mTime', 'size', 'md5', 'sha256', 'mimeType', 'syncStatus'))
+                 if r['path']}
+        if not hashes and not items:
+            continue
+        cloud = {}
+        for r in _rows_by_name(db_path, 'DISK', ('PARENT', 'NAME', 'ETAG', 'IS_DIR')):
+            if r['ETAG'] and not r['IS_DIR']:
+                cloud.setdefault(str(r['ETAG']).lower(), []).append(_path(r['PARENT'], r['NAME']))
+        for path in sorted(set(hashes) | set(items)):
+            h, i = hashes.get(path) or {}, items.get(path) or {}
+            md5 = h.get('md5') or i.get('md5') or ''
+            pending.append((path, (
+                _ms(i.get('eTime')), _ms(h.get('mTime') or i.get('mTime')), android_user, uid, path),
+                (h.get('size') if h else i.get('size'), md5, h.get('sha256') or i.get('sha256') or '',
+                 i.get('mimeType') or '', 'Yes' if h else 'No', 'Listed' if i else 'Not listed',
+                 i.get('syncStatus') if i else '', i.get('mediaStoreId') if i else '',
+                 '\n'.join(sorted(cloud.get(md5.lower(), []))) if md5 else '')))
+        sources.append(db_path)
+
+    staged = _stage_shared(context, [path for path, _, _ in pending])
+    for path, head, tail in pending:
+        data_list.append(head + (_local_media(staged, path),) + tail)
+
+    data_headers = (
+        ('Taken Or Added', 'datetime'), ('File Modified', 'datetime'), 'Android User', 'Account UID',
+        'Local Path', ('Local File', 'media'), 'Size (bytes)', 'MD5', 'SHA-256', 'MIME Type', 'Hashed',
+        'Media Index', 'Sync Status (as stored)', 'MediaStore ID', 'Cloud Paths')
+    return data_headers, data_list, '\n'.join(sources)
 
 TRASH_OPERATION = {0: 'Empty trash', 1: 'Delete forever', 2: 'Restore'}
 TRASH_OPERATION_STATE = {0: 'Queued', 1: 'Sent', 2: 'Failed'}
