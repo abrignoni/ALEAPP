@@ -8,7 +8,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Browser Cache",
         "notes": "Timestamp Modified is the modification time the extraction recorded for the cache file as "
-                 "an epoch value: the extended timestamp field (0x5455) of a zip member, the mtime of a tar "
+                 "an epoch value: the NTFS field (0x000a), or else the extended timestamp field (0x5455), of a "
+                 "zip member, the mtime of a tar "
                  "member, or the file's own modification time when the input is a folder. It is blank when "
                  "the extraction recorded no such value. Archive Time Modified (No Zone) is filled only in "
                  "that case, for a zip member, with the date and time in the member's zip directory entry, "
@@ -17,7 +18,10 @@ __artifacts_v2__ = {
                  "the cache entry. On the registered zip images checked on 2026-10-04, every matched "
                  "member carried the extended timestamp on anne_a15 (21956), galaxys10_a10 (847), "
                  "hc_pixel8pro_a16 (1289), pixel7a_a14 (3035) and samsunga53_a14 (1701), and no matched "
-                 "member carried it on samsungs20_a13 (44) and sharon_a14 (13958).",
+                 "member carried it on samsungs20_a13 (44) and sharon_a14 (13958). Those two zips record "
+                 "the NTFS field instead: on runs of 2026-10-23 Timestamp Modified was filled on all 44 "
+                 "rows of samsungs20_a13 and all 13957 rows of sharon_a14, and the zip directory reading was "
+                 "5 hours (samsungs20_a13) or 4 hours (sharon_a14) earlier than it to within 1 second.",
         "paths": ('*/data/com.android.chrome/cache/Cache/*_0',),
         "output_types": "standard",
         "artifact_icon": "globe",

@@ -9,15 +9,17 @@ __artifacts_v2__ = {
         "category": "Google Maps Voice Guidance",
         "notes": (
             "Timestamp Modified is the modification time the extraction records for the file, shown in UTC: "
-            "a tar member's own time, the extended timestamp field of a zip member, or the file's own time "
+            "a tar member's own time, the NTFS field (0x000a) or else the extended timestamp field (0x5455) "
+            "of a zip member, or the file's own time "
             "when the input is a folder. The time of the copy the tool stages is not used. "
-            "A zip member with no extended timestamp field has only a zone-less date and time in the "
+            "A zip member whose fields hold no modification time, or that has neither field, has only "
+            "a zone-less date and time in the "
             "archive directory; Timestamp Modified is then blank and that reading is shown as stored in "
             "Archive Time Modified (No Zone), with no zone applied. "
-            "Of the five registered zip images with rows, sharon_a14 (13 files) records no extended "
-            "timestamp field on these files and the other four record one on every file. "
-            "On galaxys10_a10 the staged copy's time, read on a US Eastern machine, was 21,599 or 21,600 "
-            "seconds later than the recorded time on each of the 7 files. "
+            "Of the five registered zip images with rows, sharon_a14 (13 files) records the NTFS field on "
+            "these files, and the 2026-10-04 check read no extended timestamp from them, and the other "
+            "four record the extended timestamp on every file; on a run of 2026-10-23 Timestamp Modified was filled on all 13 "
+            "sharon_a14 rows. "
             "What event of the app sets the file's modification time is not established."
         ),
         "paths": ('*/com.google.android.apps.maps/app_tts-temp/**',),
@@ -46,8 +48,9 @@ from scripts.artifacts.storagePathViews import unique_files
 def _recorded_times(seeker, file_found):
     """Return (recorded modification time as UTC, zone-less zip directory time as stored).
 
-    The staged copy's own time is not used: for a zip member the seeker sets it from the
-    member's zone-less date and time read in the examiner machine's zone.
+    The staged copy's own time is not used: for a zip member with no NTFS or extended
+    timestamp field the seeker sets it from the member's zone-less date and time read in
+    the examiner machine's zone.
     """
     info = seeker.file_infos.get(file_found) if seeker else None
     if not info:
