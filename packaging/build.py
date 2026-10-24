@@ -112,6 +112,7 @@ FIXED_HIDDEN_IMPORTS = (
     "Crypto.Util.Padding",
     "fitdecode",
     "html.parser",
+    "msgpack",  # imported by the zip seeker only when it opens a CLBX zip
     "polyline",
     "sqlcipher3",
     "uuid",
