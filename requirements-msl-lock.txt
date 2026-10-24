@@ -23,4 +23,4 @@ ccl_mozilla_reader @ git+https://github.com/cclgroupltd/ccl_mozilla_reader.git@b
 ccl_simplesnappy @ git+https://github.com/cclgroupltd/ccl_simplesnappy.git@3d085230baa8c46cf2090ebba29bf6e8eab31087
 lz4==4.3.3
 zstd==1.5.7.3
-Brotli==1.2.0
+Brotli==1.2.1
