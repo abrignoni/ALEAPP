@@ -9,7 +9,7 @@
     "total_data_size_bytes": 222,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
-    "input_zip_path": "admin\\test\\cases\\data\\bluetoothOpp\\testdata.bluetoothOpp.get_bluetooth_opp.casesynthetic_btopp_google_module.zip",
+    "input_zip_path": "admin/test/cases/data/bluetoothOpp/testdata.bluetoothOpp.get_bluetooth_opp.casesynthetic_btopp_google_module.zip",
     "start_time": "2026-10-25T05:48:53.087189+00:00",
     "end_time": "2026-10-25T05:48:53.252720+00:00",
     "run_time_seconds": 0.002604246139526367,
@@ -56,7 +56,7 @@
       0,
       1,
       1,
-      "Dump\\data\\user_de\\0\\com.google.android.bluetooth\\databases\\btopp.db"
+      "Dump/data/user_de/0/com.google.android.bluetooth/databases/btopp.db"
     ]
   ]
 }
