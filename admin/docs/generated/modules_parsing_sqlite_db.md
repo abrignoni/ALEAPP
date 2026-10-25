@@ -41,6 +41,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | avastCleanup |
 | avesGallery |
 | bitwarden |
+| blockedNumbers |
 | breadWallet |
 | breezyWeather |
 | calculatorLockVault |
@@ -218,6 +219,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | adobeReader |
 | airGuard |
 | amazonShopping |
+| androidauto |
 | appicons |
 | battery_usage_v4 |
 | battery_usage_v9 |
