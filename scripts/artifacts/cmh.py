@@ -48,10 +48,6 @@ __artifacts_v2__ = {
             "samsungs20_a13": "Android 13 | com.samsung.cmh | 16 rows",
             "sharon_a14": "Android 14 | com.samsung.cmh | 1410 rows",
             "anne_a15": "Android 15 | com.samsung.cmh | 212 rows",
-            "samsung_ffs_a16_set1": "Android 16 | com.samsung.cmh | 5523 rows",
-            "samsung_ffs_a16_set2": "Android 16 | com.samsung.cmh | 215 rows",
-            "samsung_ffs_a16_set3": "Android 16 | com.samsung.cmh | 4582 rows",
-            "samsung_ffs_a16_set4": "Android 16 | com.samsung.cmh | 1450 rows",
         },
     }
 }
