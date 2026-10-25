@@ -1,0 +1,86 @@
+{
+  "casesynthetic_blocked_users": {
+    "description": "Synthetic blockednumbers.db for Android users 0 and 150 plus a second storage view of user 0 (data_mirror), invented values; contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_blocked_users.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-25T05:44:24.387117",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-25T05:44:24.174651",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "get_blocked_numbers": {
+        "search_patterns": [
+          "*/com.android.providers.blockednumber/databases/blockednumbers.db*"
+        ],
+        "file_count": 3,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_blocked_no_e164": {
+    "description": "Synthetic blockednumbers.db from an older schema without the e164_number column, invented values; contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_blocked_no_e164.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-25T05:44:25.413181",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-25T05:44:25.183811",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "get_blocked_numbers": {
+        "search_patterns": [
+          "*/com.android.providers.blockednumber/databases/blockednumbers.db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_blocked_empty": {
+    "description": "Synthetic blockednumbers.db with an empty blocked table; contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_blocked_empty.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-25T05:44:26.401965",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-25T05:44:26.175607",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "get_blocked_numbers": {
+        "search_patterns": [
+          "*/com.android.providers.blockednumber/databases/blockednumbers.db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  }
+}

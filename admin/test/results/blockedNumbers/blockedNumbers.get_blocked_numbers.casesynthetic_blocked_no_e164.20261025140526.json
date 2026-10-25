@@ -1,0 +1,38 @@
+{
+  "metadata": {
+    "module_name": "blockedNumbers",
+    "artifact_name": "Blocked Numbers",
+    "function_name": "get_blocked_numbers",
+    "case_number": "casesynthetic_blocked_no_e164",
+    "number_of_columns": 4,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 98,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/blockedNumbers/testdata.blockedNumbers.get_blocked_numbers.casesynthetic_blocked_no_e164.zip",
+    "start_time": "2026-10-25T14:05:26.587393+00:00",
+    "end_time": "2026-10-25T14:05:26.612817+00:00",
+    "run_time_seconds": 0.0008790493011474609,
+    "last_commit": {
+      "hash": "73d963ee122072af4cbf775a307ebd9f36c58558",
+      "author_name": "danjethh",
+      "author_email": "danjethh@gmail.com",
+      "date": "2026-10-25T05:07:01-04:00",
+      "message": "Blocked Numbers, Android Auto: add sample_data from four Android 16 extractions, update the notes with what they showed"
+    }
+  },
+  "headers": [
+    "ID",
+    "Original Number",
+    "E.164 Number",
+    "Source File"
+  ],
+  "data": [
+    [
+      1,
+      "5550100300",
+      null,
+      "Dump/data/user_de/0/com.android.providers.blockednumber/databases/blockednumbers.db"
+    ]
+  ]
+}
