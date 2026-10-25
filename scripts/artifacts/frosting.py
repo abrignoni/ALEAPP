@@ -11,7 +11,7 @@ __artifacts_v2__ = {
                  "whose app folder holds it. Taking the first match instead reported 376 rows on a "
                  "One UI 8 (Android 16) extraction whose Secure Folder user's copy sorted first, "
                  "against 494 in the owner's copy."
-                 " On the four tested Android 16 extractions the owner's copy held 606, 494, 740 and 559 rows and the Secure Folder user's copy, present on three of them, 376, 458 and 373; Android User held one value (0) on every row of the extraction that has one user.",
+                 " On the four tested Android 16 extractions the owner's copy held 606, 494, 740 and 559 rows and the Secure Folder user's copy, present on three of them, 376, 458 and 373; Android User held one value (0) on every row of the extraction that has one user. On the corpus images in sample_data that hold a second Android user's database, the row count equals the sum of the rows in each user's table, counted without ALEAPP.",
         "paths": ('*/com.android.vending/databases/frosting.db*',),
         "output_types": "standard",
         "artifact_icon": "package",
@@ -22,14 +22,12 @@ __artifacts_v2__ = {
             "kevin_pocox7_a15": "Android 15 | com.android.vending vc 84812830 | 464 rows",
             "pixel7a_a14": "Android 14 | com.android.vending vc 84191730 | 407 rows",
             "samsunga53_a14": "Android 14 | com.android.vending vc 84913330 | 527 rows",
-            "samsungs20_a13": "Android 13 | com.android.vending vc 84962330 | 507 rows",
+            "samsungs20_a13": "Android 13 | com.android.vending vc 84962330 | 869 rows",
             "sharon_a14": "Android 14 | com.android.vending vc 84222730 | 541 rows",
-            "russell_pixel6a_a13": "Android 13 | com.android.vending vc 83631220 | 324 rows",
+            "russell_pixel6a_a13": "Android 13 | com.android.vending vc 83631220 | 642 rows",
             "userb2_a13": "Android 13 | com.android.vending vc 84371930 | 333 rows",
-            "samsung_ffs_a16_set1": "Android 16 | com.android.vending | 606 rows",
-            "samsung_ffs_a16_set2": "Android 16 | com.android.vending | 870 rows",
-            "samsung_ffs_a16_set3": "Android 16 | com.android.vending | 1198 rows",
-            "samsung_ffs_a16_set4": "Android 16 | com.android.vending | 932 rows",
+            "cookbook_a11": "Android 11 | com.android.vending | 874 rows",
+            "russell_a14": "Android 14 | com.android.vending | 742 rows",
         },
     }
 }

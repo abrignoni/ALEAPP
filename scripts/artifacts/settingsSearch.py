@@ -11,7 +11,7 @@ __artifacts_v2__ = {
                  "user whose app folder holds it. Taking the first match instead returned no rows on a "
                  "One UI 8 (Android 16) extraction whose Secure Folder user's copy sorted first and held "
                  "no saved queries while the owner's copy held five."
-                 " On the four tested Android 16 extractions the owner's copy held five saved queries and a Secure Folder user's copy, present on three, held none; Android User held one value (0) on every row of each.",
+                 " On the four tested Android 16 extractions the owner's copy held five saved queries and a Secure Folder user's copy, present on three, held none; Android User held one value (0) on every row of each. On the corpus images in sample_data that hold a second Android user's database, the row count equals the sum of the rows in each user's table, counted without ALEAPP.",
         "paths": (
             "*/com.android.settings.intelligence/databases/search_index.db*",
             "*/com.google.android.settings.intelligence/databases/search_index.db*",
@@ -19,10 +19,10 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "search",
         "sample_data": {
-            "samsung_ffs_a16_set1": "Android 16 | com.android.settings.intelligence | 5 rows",
-            "samsung_ffs_a16_set2": "Android 16 | com.android.settings.intelligence | 5 rows",
-            "samsung_ffs_a16_set3": "Android 16 | com.android.settings.intelligence | 5 rows",
-            "samsung_ffs_a16_set4": "Android 16 | com.android.settings.intelligence | 5 rows",
+            "cookbook_a11": "Android 11 | com.android.settings.intelligence | 3 rows",
+            "samsungs20_a13": "Android 13 | com.android.settings.intelligence | 2 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.settings.intelligence | 4 rows",
+            "russell_a14": "Android 14 | com.google.android.settings.intelligence | 0 rows",
         },
     }
 }

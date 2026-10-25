@@ -11,7 +11,7 @@ __artifacts_v2__ = {
                  "user whose app folder holds it. Taking the first match instead returned no rows on a "
                  "One UI 8 (Android 16) extraction whose Secure Folder user's copy sorted first and held "
                  "no events while the owner's copy held three."
-                 " On the four tested Android 16 extractions Android User held one value (0) on every row, because the Secure Folder user's copy held no events. Event Location had no value on any of the 111 rows of one extraction and on any of the 3 rows of another. On those 3 rows Description and All Day Event had no value, and Event Timezone, Organizer, Calendar Display Name and Has Alarm each held one value.",
+                 " On the four tested Android 16 extractions Android User held one value (0) on every row, because the Secure Folder user's copy held no events. Event Location had no value on any of the 111 rows of one extraction and on any of the 3 rows of another. On those 3 rows Description and All Day Event had no value, and Event Timezone, Organizer, Calendar Display Name and Has Alarm each held one value. On the corpus images in sample_data that hold a second Android user's database, the row count equals the sum of the rows in each user's table, counted without ALEAPP.",
         "paths": ('*/com.android.providers.calendar/databases/calendar.db*',),
         "output_types": "standard",
         "artifact_icon": "calendar",
@@ -26,10 +26,8 @@ __artifacts_v2__ = {
             "sharon_a14": "Android 14 | com.android.providers.calendar | 0 rows",
             "russell_pixel6a_a13": "Android 13 | com.android.providers.calendar | 79 rows",
             "userb2_a13": "Android 13 | com.android.providers.calendar | 0 rows",
-            "samsung_ffs_a16_set1": "Android 16 | com.android.providers.calendar | 111 rows",
-            "samsung_ffs_a16_set2": "Android 16 | com.android.providers.calendar | 3 rows",
-            "samsung_ffs_a16_set3": "Android 16 | com.android.providers.calendar | 291 rows",
-            "samsung_ffs_a16_set4": "Android 16 | com.android.providers.calendar | 27 rows",
+            "cookbook_a11": "Android 11 | com.android.providers.calendar | 1 row",
+            "russell_a14": "Android 14 | com.android.providers.calendar | 235 rows",
         },
     },
     "get_calendar_calendars": {
@@ -55,12 +53,12 @@ __artifacts_v2__ = {
                  "CalendarDatabaseHelper.java#1724). "
                  "What a sync adapter stores there is the adapter's choice. What the value marks is "
                  "not established, and the reading as Unix milliseconds rests on the size of the "
-                 "stored values, not on a source. On the ten listed images every Calendars row with "
+                 "stored values, not on a source. On the twelve listed images every Calendars row with "
                  "account type com.google stored a 13 digit text value and every row with another "
                  "account type (LOCAL, com.osp.app.signin, com.xiaomi) stored NULL. A stored value "
                  "that is not a whole number leaves the first column blank and appears only in the "
                  "cal_sync8 (As Stored) column."
-                 " On the four tested Android 16 extractions Calendar Location had no value on any row, and Android User held one value (0) on every row of the one extraction that holds a single user's calendars. On two of them cal_sync8 (Read As Unix Milliseconds) had no value on any of 5 rows, and Timezone, Is Primary and Color Index had no value on any row, Account Name and Owner Account were identical on all 5 rows, and on one of them Visible held one value (Yes).",
+                 " On the four tested Android 16 extractions Calendar Location had no value on any row, and Android User held one value (0) on every row of the one extraction that holds a single user's calendars. On two of them cal_sync8 (Read As Unix Milliseconds) had no value on any of 5 rows, and Timezone, Is Primary and Color Index had no value on any row, Account Name and Owner Account were identical on all 5 rows, and on one of them Visible held one value (Yes). On the corpus images in sample_data that hold a second Android user's database, the row count equals the sum of the rows in each user's table, counted without ALEAPP.",
         "paths": ('*/com.android.providers.calendar/databases/calendar.db*',),
         "output_types": "standard",
         "artifact_icon": "calendar",
@@ -71,14 +69,12 @@ __artifacts_v2__ = {
             "kevin_pocox7_a15": "Android 15 | com.android.providers.calendar | 4 rows",
             "pixel7a_a14": "Android 14 | com.android.providers.calendar | 1 row",
             "samsunga53_a14": "Android 14 | com.android.providers.calendar | 5 rows",
-            "samsungs20_a13": "Android 13 | com.android.providers.calendar | 3 rows",
+            "samsungs20_a13": "Android 13 | com.android.providers.calendar | 4 rows",
             "sharon_a14": "Android 14 | com.android.providers.calendar | 4 rows",
-            "russell_pixel6a_a13": "Android 13 | com.android.providers.calendar | 3 rows",
+            "russell_pixel6a_a13": "Android 13 | com.android.providers.calendar | 4 rows",
             "userb2_a13": "Android 13 | com.android.providers.calendar | 1 row",
-            "samsung_ffs_a16_set1": "Android 16 | com.android.providers.calendar | 5 rows",
-            "samsung_ffs_a16_set2": "Android 16 | com.android.providers.calendar | 5 rows",
-            "samsung_ffs_a16_set3": "Android 16 | com.android.providers.calendar | 12 rows",
-            "samsung_ffs_a16_set4": "Android 16 | com.android.providers.calendar | 5 rows",
+            "cookbook_a11": "Android 11 | com.android.providers.calendar | 4 rows",
+            "russell_a14": "Android 14 | com.android.providers.calendar | 4 rows",
         },
     },
     "googleCalendarAppEvents": {

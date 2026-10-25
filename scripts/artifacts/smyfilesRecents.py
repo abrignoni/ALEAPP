@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_smyfilesRecents": {
         "name": "My Files - Recent Files",
-        "description": "Parses Samsung My Files recent files (modified timestamp, name, size, path, extension and source) from the My Files database.",
+        "description": "Recent files (modified and recent timestamps, name, size, path, extension, source, description and Android user) from the My Files myfiles.db or FileInfo.db recent_files table.",
         "author": "@abrignoni",
         "creation_date": "2020-03-21",
         "last_update_date": "2026-10-25",
@@ -10,7 +10,7 @@ __artifacts_v2__ = {
         "category": "My Files",
         "notes": "Every myfiles.db and FileInfo.db found is read once per Android user, and Android "
                  "User names the user whose app folder holds it."
-                 " On the four tested Android 16 extractions Source had no value on any row because the recent_files table has no _source column there, and Description had no value on any row because the _description column holds none (930, 214, 280 and 142 rows for the owner), and Android User held one value (0) on the rows of each extraction except the one where a Secure Folder user's copy held one row of its own.",
+                 " On the four tested Android 16 extractions Source had no value on any row because the recent_files table has no _source column there, and Description had no value on any row because the _description column holds none (930, 214, 280 and 142 rows), and Android User held one value (0) on the rows of each extraction except the one where a Secure Folder user's copy held one row of its own. On the corpus images in sample_data that hold a second Android user's database, the row count equals the sum of the rows in each user's table, counted without ALEAPP.",
         "paths": ('*/com.sec.android.app.myfiles/databases/myfiles.db*', '*/com.sec.android.app.myfiles/databases/FileInfo.db*'),
         "output_types": "standard",
         "artifact_icon": "file",
@@ -18,17 +18,14 @@ __artifacts_v2__ = {
             "anne_a15": "Android 15 | com.sec.android.app.myfiles vc 1520402000 | 97 rows",
             "galaxys10_a10": "Android 10 | com.sec.android.app.myfiles vc 1150303551 | 13 rows",
             "samsunga53_a14": "Android 14 | com.sec.android.app.myfiles vc 1520402000 | 0 rows",
-            "samsungs20_a13": "Android 13 | com.sec.android.app.myfiles | 0 rows",
+            "samsungs20_a13": "Android 13 | com.sec.android.app.myfiles | 1 row",
             "sharon_a14": "Android 14 | com.sec.android.app.myfiles vc 1500405000 | 102 rows",
-            "samsung_ffs_a16_set1": "Android 16 | com.sec.android.app.myfiles | 930 rows",
-            "samsung_ffs_a16_set2": "Android 16 | com.sec.android.app.myfiles | 214 rows",
-            "samsung_ffs_a16_set3": "Android 16 | com.sec.android.app.myfiles | 280 rows",
-            "samsung_ffs_a16_set4": "Android 16 | com.sec.android.app.myfiles | 142 rows",
+            "cookbook_a11": "Android 11 | com.sec.android.app.myfiles | 2 rows",
         },
     },
     "get_smyfilesRecents_fileinfo": {
         "name": "My Files - Recent Files (FileInfo)",
-        "description": "Parses Samsung My Files recent files (recent and modified timestamps, file ID, package, path, size and download, hidden and trashed flags) from the My Files FileInfo database.",
+        "description": "Parses Samsung My Files recent files (recent and modified timestamps, file ID, package, path, size and download, hidden and trashed flags, and Android user) from the My Files myfiles.db or FileInfo.db recent_files table.",
         "author": "@abrignoni",
         "creation_date": "2020-03-21",
         "last_update_date": "2026-10-25",
@@ -36,7 +33,7 @@ __artifacts_v2__ = {
         "category": "My Files",
         "notes": "Every myfiles.db and FileInfo.db found is read once per Android user, and Android "
                  "User names the user whose app folder holds it."
-                 " On the four tested Android 16 extractions one value, False, was held on every row by the columns Is Hidden?, Is Trashed?, and, on one extraction, Is Downloaded?. Android User held one value (0) on the rows of each extraction except the one where a Secure Folder user's copy held one row of its own.",
+                 " On the four tested Android 16 extractions one value, False, was held on every row by the columns Is Hidden?, Is Trashed?, and, on one extraction, Is Downloaded?. Android User held one value (0) on the rows of each extraction except the one where a Secure Folder user's copy held one row of its own. On the corpus images in sample_data that hold a second Android user's database, the row count equals the sum of the rows in each user's table, counted without ALEAPP.",
         "paths": ('*/com.sec.android.app.myfiles/databases/myfiles.db*', '*/com.sec.android.app.myfiles/databases/FileInfo.db*'),
         "output_types": "standard",
         "artifact_icon": "file",
@@ -44,12 +41,9 @@ __artifacts_v2__ = {
             "anne_a15": "Android 15 | com.sec.android.app.myfiles vc 1520402000 | 97 rows",
             "galaxys10_a10": "Android 10 | com.sec.android.app.myfiles vc 1150303551 | 13 rows",
             "samsunga53_a14": "Android 14 | com.sec.android.app.myfiles vc 1520402000 | 0 rows",
-            "samsungs20_a13": "Android 13 | com.sec.android.app.myfiles | 0 rows",
+            "samsungs20_a13": "Android 13 | com.sec.android.app.myfiles | 1 row",
             "sharon_a14": "Android 14 | com.sec.android.app.myfiles vc 1500405000 | 102 rows",
-            "samsung_ffs_a16_set1": "Android 16 | com.sec.android.app.myfiles | 930 rows",
-            "samsung_ffs_a16_set2": "Android 16 | com.sec.android.app.myfiles | 214 rows",
-            "samsung_ffs_a16_set3": "Android 16 | com.sec.android.app.myfiles | 280 rows",
-            "samsung_ffs_a16_set4": "Android 16 | com.sec.android.app.myfiles | 142 rows",
+            "cookbook_a11": "Android 11 | com.sec.android.app.myfiles | 2 rows",
         },
     }
 }
@@ -72,7 +66,7 @@ def _myfiles_dbs(context):
     The first database found is not necessarily the owner's: a Secure Folder user's copy can sort
     first and hold no recent files, which would leave both artifacts empty on a One UI 8 (Android 16)
     extraction whose Secure Folder user's FileInfo.db has no recent_files table while the owner's
-    holds 677 rows.
+    holds rows.
     """
     return user_files(context, 'myfiles.db') + user_files(context, 'FileInfo.db')
 
