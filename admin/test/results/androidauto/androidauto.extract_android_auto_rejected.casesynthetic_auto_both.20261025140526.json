@@ -9,16 +9,16 @@
     "total_data_size_bytes": 431,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
-    "input_zip_path": "admin\\test\\cases\\data\\androidauto\\testdata.androidauto.extract_android_auto_rejected.casesynthetic_auto_both.zip",
-    "start_time": "2026-10-25T05:46:17.733638+00:00",
-    "end_time": "2026-10-25T05:46:17.862462+00:00",
-    "run_time_seconds": 0.0037419795989990234,
+    "input_zip_path": "admin/test/cases/data/androidauto/testdata.androidauto.extract_android_auto_rejected.casesynthetic_auto_both.zip",
+    "start_time": "2026-10-25T14:05:26.416145+00:00",
+    "end_time": "2026-10-25T14:05:26.442203+00:00",
+    "run_time_seconds": 0.0007648468017578125,
     "last_commit": {
-      "hash": "53d9460364cf9d3687e43f93a6864e5564d4607f",
-      "author_name": "Brigs",
-      "author_email": "abrignoni@gmail.com",
-      "date": "2026-10-04T08:49:26-04:00",
-      "message": "Fix timestamp handling and unsupported field labels in audited artifacts"
+      "hash": "73d963ee122072af4cbf775a307ebd9f36c58558",
+      "author_name": "danjethh",
+      "author_email": "danjethh@gmail.com",
+      "date": "2026-10-25T05:07:01-04:00",
+      "message": "Blocked Numbers, Android Auto: add sample_data from four Android 16 extractions, update the notes with what they showed"
     }
   },
   "headers": [
@@ -50,7 +50,7 @@
       "Model C HU",
       "1.0",
       "synthetic-client-rejectedcars-1",
-      "Dump\\data\\data\\com.google.android.projection.gearhead\\databases\\carservicedata.db"
+      "Dump/data/data/com.google.android.projection.gearhead/databases/carservicedata.db"
     ],
     [
       null,
@@ -65,7 +65,7 @@
       "Model D HU",
       "1.0",
       "synthetic-client-rejectedcars-2",
-      "Dump\\data\\data\\com.google.android.projection.gearhead\\databases\\carservicedata.db"
+      "Dump/data/data/com.google.android.projection.gearhead/databases/carservicedata.db"
     ]
   ]
 }

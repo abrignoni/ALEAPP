@@ -1,18 +1,18 @@
 __artifacts_v2__ = {
     "extract_android_auto": {
         "name": "Android Auto - Allowed Cars",
-        "description": "Rows of the allowedcars table in Android Auto's carservicedata.db: car and head unit details with the stored connectiontime value",
+        "description": "Rows of the allowedcars table in Android Auto's carservicedata.db: car and head unit details, with the connectiontime column read as a Unix millisecond time",
         "author": "its5Q, @AlexisBrignoni, Codex",
         "creation_date": "2025-07-28",
         "last_update_date": "2026-10-25",
         "requirements": "none",
         "category": "Android Auto",
-        "notes": "One row per row of the allowedcars table. The same database also has a rejectedcars table with "
-                 "the same columns, which the Android Auto - Rejected Cars artifact reads. Android Auto is closed source and what places "
+        "notes": "One row per row of the allowedcars table. On every copy examined the same database also has a rejectedcars "
+                 "table with the same columns; the Android Auto - Rejected Cars artifact reads it. Android Auto is closed source and what places "
                  "a car in allowedcars, or what event the connectiontime column marks, is not established; a row is "
                  "not by itself shown to be a completed connection. The connectiontime column is declared INTEGER and "
-                 "held a 13-digit value on all 7 rows of the tested images and on all 8 rows of one further Android 16 image, read here as Unix milliseconds and shown "
-                 "in UTC to the second. Every copy of carservicedata.db found is read, one per Android user with the storage views of one copy collapsed, and Source File names the copy a row came from.",
+                 "held a 13-digit value on all 15 rows found in 8 of the 11 corpus images that hold the database, and on all 8 rows of one further Android 16 image, read here as Unix milliseconds and shown "
+                 "in UTC to the second. Each carservicedata.db is read once per Android user; duplicate storage views of one copy are collapsed to one, and Source File names the copy a row came from.",
         "paths": ('*/com.google.android.projection.gearhead/databases/carservicedata.db*'),
         "output_types": "standard",
         "artifact_icon": "truck",
@@ -24,35 +24,35 @@ __artifacts_v2__ = {
             "sharon_a14": "Android 14 | com.google.android.projection.gearhead vc 124642854 | 0 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.projection.gearhead vc 97632214 | 2 rows",
             "userb2_a13": "Android 13 | com.google.android.projection.gearhead vc 132644464 | 0 rows",
-            "samsung_ffs_a16_set1": "Android 16 | com.google.android.projection.gearhead | 0 rows",
-            "samsung_ffs_a16_set3": "Android 16 | com.google.android.projection.gearhead | 8 rows",
-            "samsung_ffs_a16_set4": "Android 16 | com.google.android.projection.gearhead | 0 rows",
         },
     },
     "extract_android_auto_rejected": {
         "name": "Android Auto - Rejected Cars",
-        "description": "Rows of the rejectedcars table in Android Auto's carservicedata.db: car and head unit details with the stored connectiontime value",
+        "description": "Rows of the rejectedcars table in Android Auto's carservicedata.db: car and head unit details, with the connectiontime column read as a Unix millisecond time",
         "author": "@danjethh, Claude",
         "creation_date": "2026-10-25",
         "last_update_date": "2026-10-25",
         "requirements": "none",
         "category": "Android Auto",
         "notes": "One row per row of the rejectedcars table, which has the same columns as allowedcars and is read "
-                 "with the same code as Android Auto - Allowed Cars, whose notes describe the columns. Android Auto "
+                 "with the same code as Android Auto - Allowed Cars, whose notes describe the connectiontime column. Android Auto "
                  "is closed source and what places a car in rejectedcars, or what event the connectiontime column "
                  "marks, is not established; the table name is the only thing the database says about why a row is "
-                 "there. Validation boundary: in the three real Android 16 databases examined the rejectedcars table was present "
-                 "with the same 24 columns as allowedcars and held no rows, so the stored values of a rejectedcars "
+                 "there. Validation boundary: in the three Android 16 databases examined, and in all 20 copies of the "
+                 "database in 11 corpus images (database user_version 10 to 13, 16 to 24 columns), the rejectedcars "
+                 "table was present with the same columns as allowedcars and held no rows, so the stored values of a rejectedcars "
                  "row (including whether connectiontime and the Wi-Fi columns are filled the way allowedcars rows "
                  "are) have not been decoded from real data, and the row handling was exercised on a constructed "
-                 "database only. An empty table is not evidence that no car was ever rejected. Every copy of carservicedata.db found is read, one per Android user with the storage views of one copy collapsed, and Source File names the copy a row came from.",
+                 "database only. An empty table is not evidence that no car was ever rejected. Each carservicedata.db is read once per Android user; duplicate storage views of one copy are collapsed to one, and Source File names the copy a row came from.",
         "paths": ('*/com.google.android.projection.gearhead/databases/carservicedata.db*',),
         "output_types": "standard",
         "artifact_icon": "truck",
         "sample_data": {
-            "samsung_ffs_a16_set1": "Android 16 | com.google.android.projection.gearhead | 0 rows",
-            "samsung_ffs_a16_set3": "Android 16 | com.google.android.projection.gearhead | 0 rows",
-            "samsung_ffs_a16_set4": "Android 16 | com.google.android.projection.gearhead | 0 rows",
+            "anne_a15": "Android 15 | com.google.android.projection.gearhead vc 151653424 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.google.android.projection.gearhead vc 152653624 | 0 rows",
+            "pixel7a_a14": "Android 14 | com.google.android.projection.gearhead vc 123642624 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.projection.gearhead vc 97632214 | 0 rows",
+            "userb2_a13": "Android 13 | com.google.android.projection.gearhead vc 132644464 | 0 rows",
         },
     }
 }
