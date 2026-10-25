@@ -1,0 +1,104 @@
+{
+  "synthetic_a16": {
+    "description": "Synthetic com.sec.android.easyMover tree (Smart Switch History, TransferredHistory and backup_media.db; user 0, its data/user/0 mirror and user 10) built by admin/test/scripts/smart_switch_fixture.py. Invented values, not from a real device.",
+    "maker": "@danjethh, Claude",
+    "make_data": {
+      "input_data_path": "smart_switch_fixture.py (synthetic)",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-25T01:55:17.147868",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-25T01:55:16.884692",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "smartswitch_sessions": {
+        "search_patterns": [
+          "*/com.sec.android.easyMover/files/History/*/mainDataModel.json",
+          "*/com.sec.android.easyMover/files/History/*/peerDeviceInfo.json",
+          "*/com.sec.android.easyMover/files/History/*/objItems.json"
+        ],
+        "file_count": 8,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "smartswitch_items": {
+        "search_patterns": [
+          "*/com.sec.android.easyMover/files/History/*/objItems.json"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "smartswitch_peer_apps": {
+        "search_patterns": [
+          "*/com.sec.android.easyMover/files/History/*/peerDeviceInfo.json"
+        ],
+        "file_count": 3,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "smartswitch_peer_accounts": {
+        "search_patterns": [
+          "*/com.sec.android.easyMover/files/History/*/peerDeviceInfo.json"
+        ],
+        "file_count": 3,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "smartswitch_peer_messages": {
+        "search_patterns": [
+          "*/com.sec.android.easyMover/files/History/*/peerDeviceInfo.json"
+        ],
+        "file_count": 3,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "smartswitch_peer_contacts": {
+        "search_patterns": [
+          "*/com.sec.android.easyMover/files/History/*/peerDeviceInfo.json"
+        ],
+        "file_count": 3,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "smartswitch_transferred_history": {
+        "search_patterns": [
+          "*/com.sec.android.easyMover/files/TransferredHistory/List.json"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "smartswitch_backup_media": {
+        "search_patterns": [
+          "*/com.sec.android.easyMover/files/SmartSwitch/SmartSwitchBackup/backup_media.db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    },
+    "os_name": "Android",
+    "os_version": "16"
+  }
+}

@@ -1,0 +1,101 @@
+{
+  "metadata": {
+    "module_name": "samsungSmartSwitch",
+    "artifact_name": "Samsung Smart Switch - Peer App Categories",
+    "function_name": "smartswitch_peer_apps",
+    "case_number": "synthetic_a16",
+    "number_of_columns": 13,
+    "number_of_rows": 4,
+    "total_data_size_bytes": 302,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\samsungSmartSwitch\\testdata.samsungSmartSwitch.smartswitch_peer_apps.synthetic_a16.zip",
+    "start_time": "2026-10-25T05:55:19.333010+00:00",
+    "end_time": "2026-10-25T05:55:19.538651+00:00",
+    "run_time_seconds": 0.0027713775634765625,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-25T05:55:19.498942",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Android User",
+    "History ID",
+    "History Folder Time",
+    "Category",
+    "Package",
+    "App Name",
+    "Version Name",
+    "Version Code",
+    "Stub Version Code",
+    "Stub Content Size",
+    "Support Stub Install",
+    "Last Time Used",
+    "Runtime Permissions"
+  ],
+  "data": [
+    [
+      "0",
+      "1767225600000",
+      1767225600,
+      "CONTACT",
+      "com.example.contacts",
+      "Contacts",
+      "1.0",
+      100,
+      0,
+      0,
+      "Yes",
+      1767225595,
+      2
+    ],
+    [
+      "0",
+      "1767225600000",
+      1767225600,
+      "MESSAGE",
+      "com.example.messages",
+      "Messages",
+      "2.0",
+      200,
+      7,
+      99,
+      "No",
+      "",
+      ""
+    ],
+    [
+      "0",
+      "1767229200000",
+      1767229200,
+      "CONTACT",
+      "com.example.contacts",
+      "Contacts",
+      "1.0",
+      100,
+      0,
+      0,
+      "Yes",
+      1767225595,
+      2
+    ],
+    [
+      "0",
+      "1767229200000",
+      1767229200,
+      "MESSAGE",
+      "com.example.messages",
+      "Messages",
+      "2.0",
+      200,
+      7,
+      99,
+      "No",
+      "",
+      ""
+    ]
+  ]
+}

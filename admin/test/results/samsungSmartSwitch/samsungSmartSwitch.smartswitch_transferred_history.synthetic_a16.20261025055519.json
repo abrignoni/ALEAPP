@@ -1,0 +1,38 @@
+{
+  "metadata": {
+    "module_name": "samsungSmartSwitch",
+    "artifact_name": "Samsung Smart Switch - Transferred History",
+    "function_name": "smartswitch_transferred_history",
+    "case_number": "synthetic_a16",
+    "number_of_columns": 4,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 57,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\samsungSmartSwitch\\testdata.samsungSmartSwitch.smartswitch_transferred_history.synthetic_a16.zip",
+    "start_time": "2026-10-25T05:55:19.911726+00:00",
+    "end_time": "2026-10-25T05:55:20.118866+00:00",
+    "run_time_seconds": 0.0015494823455810547,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-25T05:55:20.093348",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Android User",
+    "UUID",
+    "Display Name",
+    "Time"
+  ],
+  "data": [
+    [
+      "0",
+      "00000000-1111-2222-3333-444444444444",
+      "Test phone",
+      1767229200
+    ]
+  ]
+}

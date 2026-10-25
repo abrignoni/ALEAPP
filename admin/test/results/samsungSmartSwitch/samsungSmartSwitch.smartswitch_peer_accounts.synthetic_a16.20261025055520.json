@@ -1,0 +1,61 @@
+{
+  "metadata": {
+    "module_name": "samsungSmartSwitch",
+    "artifact_name": "Samsung Smart Switch - Peer Accounts",
+    "function_name": "smartswitch_peer_accounts",
+    "case_number": "synthetic_a16",
+    "number_of_columns": 5,
+    "number_of_rows": 4,
+    "total_data_size_bytes": 160,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\samsungSmartSwitch\\testdata.samsungSmartSwitch.smartswitch_peer_accounts.synthetic_a16.zip",
+    "start_time": "2026-10-25T05:55:20.328335+00:00",
+    "end_time": "2026-10-25T05:55:20.534919+00:00",
+    "run_time_seconds": 0.002567768096923828,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-25T05:55:20.499432",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Android User",
+    "History ID",
+    "History Folder Time",
+    "Type",
+    "Name"
+  ],
+  "data": [
+    [
+      "0",
+      "1767225600000",
+      1767225600,
+      "com.example.chat",
+      "user-a"
+    ],
+    [
+      "0",
+      "1767225600000",
+      1767225600,
+      "com.google",
+      ""
+    ],
+    [
+      "0",
+      "1767229200000",
+      1767229200,
+      "com.example.chat",
+      "user-a"
+    ],
+    [
+      "0",
+      "1767229200000",
+      1767229200,
+      "com.google",
+      ""
+    ]
+  ]
+}

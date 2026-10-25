@@ -1,0 +1,56 @@
+{
+  "metadata": {
+    "module_name": "samsungSmartSwitch",
+    "artifact_name": "Samsung Smart Switch - Backup Media Index",
+    "function_name": "smartswitch_backup_media",
+    "case_number": "synthetic_a16",
+    "number_of_columns": 8,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 64,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\samsungSmartSwitch\\testdata.samsungSmartSwitch.smartswitch_backup_media.synthetic_a16.zip",
+    "start_time": "2026-10-25T05:55:19.721989+00:00",
+    "end_time": "2026-10-25T05:55:19.909615+00:00",
+    "run_time_seconds": 0.0021860599517822266,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-25T05:55:19.889401",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Android User",
+    "ID",
+    "Name",
+    "File Path",
+    "Backup File Path",
+    "Size",
+    "Unique ID",
+    "Count"
+  ],
+  "data": [
+    [
+      "0",
+      1,
+      "a.jpg",
+      "/sdcard/a.jpg",
+      "/bk/a",
+      10,
+      1001,
+      1
+    ],
+    [
+      "0",
+      2,
+      "b.mp4",
+      "/sdcard/b.mp4",
+      "/bk/b",
+      20,
+      1002,
+      2
+    ]
+  ]
+}

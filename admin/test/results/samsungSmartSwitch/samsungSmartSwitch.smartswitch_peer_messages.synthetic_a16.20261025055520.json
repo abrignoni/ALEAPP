@@ -1,0 +1,101 @@
+{
+  "metadata": {
+    "module_name": "samsungSmartSwitch",
+    "artifact_name": "Samsung Smart Switch - Peer Message Counts",
+    "function_name": "smartswitch_peer_messages",
+    "case_number": "synthetic_a16",
+    "number_of_columns": 13,
+    "number_of_rows": 4,
+    "total_data_size_bytes": 186,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\samsungSmartSwitch\\testdata.samsungSmartSwitch.smartswitch_peer_messages.synthetic_a16.zip",
+    "start_time": "2026-10-25T05:55:20.121584+00:00",
+    "end_time": "2026-10-25T05:55:20.326209+00:00",
+    "run_time_seconds": 0.002252340316772461,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-25T05:55:20.293744",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Android User",
+    "History ID",
+    "History Folder Time",
+    "Period",
+    "Count",
+    "SMS Count",
+    "MMS Count",
+    "RCS Count",
+    "RCS File Transfer Count",
+    "RCS Instant Message Count",
+    "Size",
+    "MMS Size",
+    "RCS File Transfer Size"
+  ],
+  "data": [
+    [
+      "0",
+      "1767225600000",
+      1767225600,
+      "ALL_DATA",
+      30,
+      20,
+      8,
+      2,
+      1,
+      1,
+      1000,
+      800,
+      100
+    ],
+    [
+      "0",
+      "1767225600000",
+      1767225600,
+      "LAST_YEAR",
+      3,
+      3,
+      0,
+      0,
+      0,
+      0,
+      10,
+      0,
+      0
+    ],
+    [
+      "0",
+      "1767229200000",
+      1767229200,
+      "ALL_DATA",
+      30,
+      20,
+      8,
+      2,
+      1,
+      1,
+      1000,
+      800,
+      100
+    ],
+    [
+      "0",
+      "1767229200000",
+      1767229200,
+      "LAST_YEAR",
+      3,
+      3,
+      0,
+      0,
+      0,
+      0,
+      10,
+      0,
+      0
+    ]
+  ]
+}
