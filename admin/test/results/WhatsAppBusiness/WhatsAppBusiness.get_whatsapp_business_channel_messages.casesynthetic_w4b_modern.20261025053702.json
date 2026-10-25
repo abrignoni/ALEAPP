@@ -1,0 +1,54 @@
+{
+  "metadata": {
+    "module_name": "WhatsAppBusiness",
+    "artifact_name": "WhatsApp Business - Channel Messages",
+    "function_name": "get_whatsapp_business_channel_messages",
+    "case_number": "casesynthetic_w4b_modern",
+    "number_of_columns": 12,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 113,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\WhatsAppBusiness\\testdata.WhatsAppBusiness.get_whatsapp_business_channel_messages.casesynthetic_w4b_modern.zip",
+    "start_time": "2026-10-25T05:37:02.803767+00:00",
+    "end_time": "2026-10-25T05:37:02.986352+00:00",
+    "run_time_seconds": 0.0035109519958496094,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-25T05:37:02.944386",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Message Timestamp",
+    "Received Timestamp",
+    "Message Direction",
+    "Channel Name",
+    "Message",
+    "Media",
+    "Message Type",
+    "Channel JID",
+    "Server Message ID",
+    "Reaction From Me",
+    "Local Path To Media",
+    "Media File Size"
+  ],
+  "data": [
+    [
+      1760000080,
+      1760000080,
+      "Incoming",
+      "Synthetic Channel",
+      "synthetic channel post",
+      "",
+      "Text",
+      "120363000000000001@newsletter",
+      7,
+      null,
+      null,
+      null
+    ]
+  ]
+}

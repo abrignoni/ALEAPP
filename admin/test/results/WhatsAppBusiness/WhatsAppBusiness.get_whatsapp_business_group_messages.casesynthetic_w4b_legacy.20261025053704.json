@@ -1,0 +1,45 @@
+{
+  "metadata": {
+    "module_name": "WhatsAppBusiness",
+    "artifact_name": "WhatsApp Business - Group Messages",
+    "function_name": "get_whatsapp_business_group_messages",
+    "case_number": "casesynthetic_w4b_legacy",
+    "number_of_columns": 18,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\WhatsAppBusiness\\testdata.WhatsAppBusiness.get_whatsapp_business_group_messages.casesynthetic_w4b_legacy.zip",
+    "start_time": "2026-10-25T05:37:04.141538+00:00",
+    "end_time": "2026-10-25T05:37:04.312813+00:00",
+    "run_time_seconds": 0.0037958621978759766,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-25T05:37:04.285518",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Message Timestamp",
+    "Received Timestamp",
+    "Final Location Timestamp",
+    "Message Direction",
+    "Sending Party",
+    "Conversation Name",
+    "Message",
+    "Media",
+    "Sending Party JID",
+    "Message Type",
+    "Local Path To Media",
+    "Media File Size",
+    "Shared Latitude/Starting Latitude (Live Location)",
+    "Shared Longitude/Starting Longitude (Live Location)",
+    "Duration Live Location Shared (Seconds)",
+    "Final Live Latitude",
+    "Final Live Longitude",
+    "Group JID"
+  ],
+  "data": []
+}

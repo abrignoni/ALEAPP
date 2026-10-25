@@ -260,6 +260,17 @@ def process_artifact(zip_path, module_name, artifact_name, _artifact_data, targe
 
         ]
 
+        # A module that runs another module's artifact (justalk's Kids variants, WhatsApp Business)
+        # reaches check_in_media through the other module's namespace, which the patches above do
+        # not cover. Patch every other loaded artifact module that holds the names.
+        for loaded_name, loaded in list(sys.modules.items()):
+            if not loaded_name.startswith('scripts.artifacts.') or loaded_name == f'scripts.artifacts.{module_name}':
+                continue
+            for media_name, media_mock in (('check_in_media', mocked_check_in_media),
+                                           ('check_in_embedded_media', mocked_check_in_embedded_media)):
+                if hasattr(loaded, media_name):
+                    patches.append(patch(f'{loaded_name}.{media_name}', media_mock))
+
         # If a target OS version is provided, mock iOS.get_version() where the
         # core defines it (iLEAPP); other cores have no such class to mock.
         import scripts.ilapfuncs as _ilapfuncs
