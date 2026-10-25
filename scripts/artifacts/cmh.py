@@ -31,7 +31,11 @@ __artifacts_v2__ = {
                  "main.location\" and the artifact reported no rows. The artifact now tests the view first and, "
                  "when it cannot be queried, reports the files rows with Address blank because there is no "
                  "table to read it from; that blank does not show the photos had no address. On that database "
-                 "Latitude, Longitude and Is Private held no value on any of the 213 rows. Whether other builds "
+                 "Latitude, Longitude and Is Private held no value on any of the 213 rows. On a second Samsung "
+                 "Android 16 database (5,523 image rows in files, same missing location table) Date Added, "
+                 "Date Modified, Title and Bucket Name held no value on any row, as did Latitude, Longitude "
+                 "and Is Private, while Date Taken, URI and Path were filled on all 5,523; those columns are "
+                 "NULL in the files table, not dropped by this artifact. Whether other builds "
                  "keep addresses in another table was not examined.",
         "paths": ('*/cmh.db*',),
         "output_types": "all",
@@ -42,6 +46,8 @@ __artifacts_v2__ = {
             "samsungs20_a13": "Android 13 | com.samsung.cmh | 16 rows",
             "sharon_a14": "Android 14 | com.samsung.cmh | 1410 rows",
             "anne_a15": "Android 15 | com.samsung.cmh | 212 rows",
+            "samsung_ffs_a16_set1": "Android 16 | com.samsung.cmh | 5523 rows",
+            "samsung_ffs_a16_set2": "Android 16 | com.samsung.cmh | 215 rows",
         },
     }
 }
@@ -103,8 +109,8 @@ def get_cmh(context):
             address, join = 'location_view.address_text', 'LEFT JOIN location_view ON location_view._id = files._id'
             try:
                 cursor.execute('SELECT _id FROM location_view LIMIT 1').fetchall()
-            except sqlite3.OperationalError as ex:
-                logfunc(f'CMH: location_view cannot be queried in {file_found} ({ex}); Address is left blank')
+            except sqlite3.OperationalError:
+                logfunc(f'CMH: location_view could not be queried in {file_found}; Address is left blank')
                 address, join = 'NULL', ''
             cursor.execute(f'''
                 SELECT
