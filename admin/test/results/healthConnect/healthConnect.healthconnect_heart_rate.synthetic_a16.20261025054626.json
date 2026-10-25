@@ -1,0 +1,90 @@
+{
+  "metadata": {
+    "module_name": "healthConnect",
+    "artifact_name": "Health Connect - Heart Rate Samples",
+    "function_name": "healthconnect_heart_rate",
+    "case_number": "synthetic_a16",
+    "number_of_columns": 14,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 501,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\healthConnect\\testdata.healthConnect.healthconnect_heart_rate.synthetic_a16.zip",
+    "start_time": "2026-10-25T05:46:26.273531+00:00",
+    "end_time": "2026-10-25T05:46:26.454980+00:00",
+    "run_time_seconds": 0.008037328720092773,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-25T05:46:26.432810",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Android User",
+    "Sample Time",
+    "Beats Per Minute",
+    "Record Start",
+    "Record End",
+    "Record UUID",
+    "Last Modified",
+    "Client Record ID",
+    "Package",
+    "App Name",
+    "Recording Method",
+    "Device Manufacturer",
+    "Device Model",
+    "Device Type"
+  ],
+  "data": [
+    [
+      "0",
+      1767225600,
+      70,
+      1767225600,
+      1767225660,
+      "0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f",
+      1767225605,
+      "client-15",
+      "com.example.synthetictracker",
+      "Synthetic Tracker",
+      "3 (Manual entry)",
+      "MakerX",
+      "Model-1",
+      "1 (Watch)"
+    ],
+    [
+      "0",
+      1767225630,
+      74,
+      1767225600,
+      1767225660,
+      "0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f",
+      1767225605,
+      "client-15",
+      "com.example.synthetictracker",
+      "Synthetic Tracker",
+      "3 (Manual entry)",
+      "MakerX",
+      "Model-1",
+      "1 (Watch)"
+    ],
+    [
+      "0",
+      1767225660,
+      71,
+      1767225600,
+      1767225660,
+      "0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f",
+      1767225605,
+      "client-15",
+      "com.example.synthetictracker",
+      "Synthetic Tracker",
+      "3 (Manual entry)",
+      "MakerX",
+      "Model-1",
+      "1 (Watch)"
+    ]
+  ]
+}

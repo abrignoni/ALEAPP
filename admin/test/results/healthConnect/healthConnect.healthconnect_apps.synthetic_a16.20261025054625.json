@@ -1,0 +1,50 @@
+{
+  "metadata": {
+    "module_name": "healthConnect",
+    "artifact_name": "Health Connect - Apps",
+    "function_name": "healthconnect_apps",
+    "case_number": "synthetic_a16",
+    "number_of_columns": 6,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 157,
+    "media_checkins": 0,
+    "media_embedded_checkins": 1,
+    "input_zip_path": "admin\\test\\cases\\data\\healthConnect\\testdata.healthConnect.healthconnect_apps.synthetic_a16.zip",
+    "start_time": "2026-10-25T05:46:25.897870+00:00",
+    "end_time": "2026-10-25T05:46:26.082920+00:00",
+    "run_time_seconds": 0.009697437286376953,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-25T05:46:26.056922",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Android User",
+    "Row ID",
+    "Package",
+    "App Name",
+    "App Icon",
+    "Record Types Used"
+  ],
+  "data": [
+    [
+      "0",
+      1,
+      "com.example.syntheticfit",
+      "Synthetic Fit",
+      "mock_embedded_html_path",
+      "1 (Steps), 7 (Distance), 11 (Heart rate), 99"
+    ],
+    [
+      "0",
+      2,
+      "com.example.synthetictracker",
+      "Synthetic Tracker",
+      null,
+      ""
+    ]
+  ]
+}

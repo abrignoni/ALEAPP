@@ -1,0 +1,59 @@
+{
+  "metadata": {
+    "module_name": "healthConnect",
+    "artifact_name": "Health Connect - Access Logs",
+    "function_name": "healthconnect_access_logs",
+    "case_number": "synthetic_a16",
+    "number_of_columns": 9,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 162,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\healthConnect\\testdata.healthConnect.healthconnect_access_logs.synthetic_a16.zip",
+    "start_time": "2026-10-25T05:46:24.781290+00:00",
+    "end_time": "2026-10-25T05:46:25.003947+00:00",
+    "run_time_seconds": 0.009340047836303711,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-25T05:46:24.979125",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Android User",
+    "Access Time",
+    "Package",
+    "App Name",
+    "Operation",
+    "Record Types",
+    "Medical Resource Type",
+    "Medical Data Source Accessed",
+    "Row ID"
+  ],
+  "data": [
+    [
+      "0",
+      1767225608,
+      "com.example.synthetictracker",
+      "Synthetic Tracker",
+      "0 (Upsert)",
+      "7 (Distance)",
+      "",
+      "",
+      2
+    ],
+    [
+      "0",
+      1767225609,
+      "com.example.syntheticfit",
+      "Synthetic Fit",
+      "2 (Read)",
+      "1 (Steps), 11 (Heart rate)",
+      "",
+      "",
+      1
+    ]
+  ]
+}

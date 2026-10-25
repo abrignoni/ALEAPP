@@ -1,0 +1,152 @@
+{
+  "synthetic_a16": {
+    "description": "Synthetic healthconnect.db (Android 16 layout, AOSP schema, invented rows) built by admin/test/scripts/health_connect_fixture.py, plus a first-grant-times file. Not from a real device.",
+    "maker": "@danjethh, Claude",
+    "make_data": {
+      "input_data_path": "health_connect_fixture.py (synthetic)",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-25T01:46:14.043957",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-25T01:46:13.829793",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "healthconnect_apps": {
+        "search_patterns": [
+          "*/system_ce/*/healthconnect/healthconnect.db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "healthconnect_preferences": {
+        "search_patterns": [
+          "*/system_ce/*/healthconnect/healthconnect.db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "healthconnect_first_grants": {
+        "search_patterns": [
+          "*/system_ce/*/healthconnect/health-permissions-first-grant-times.xml"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "healthconnect_activity": {
+        "search_patterns": [
+          "*/system_ce/*/healthconnect/healthconnect.db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "healthconnect_measurements": {
+        "search_patterns": [
+          "*/system_ce/*/healthconnect/healthconnect.db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "healthconnect_heart_rate": {
+        "search_patterns": [
+          "*/system_ce/*/healthconnect/healthconnect.db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "healthconnect_sleep": {
+        "search_patterns": [
+          "*/system_ce/*/healthconnect/healthconnect.db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "healthconnect_sleep_stages": {
+        "search_patterns": [
+          "*/system_ce/*/healthconnect/healthconnect.db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "healthconnect_exercise": {
+        "search_patterns": [
+          "*/system_ce/*/healthconnect/healthconnect.db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "healthconnect_exercise_route": {
+        "search_patterns": [
+          "*/system_ce/*/healthconnect/healthconnect.db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "healthconnect_access_logs": {
+        "search_patterns": [
+          "*/system_ce/*/healthconnect/healthconnect.db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "healthconnect_read_access_logs": {
+        "search_patterns": [
+          "*/system_ce/*/healthconnect/healthconnect.db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "healthconnect_change_logs": {
+        "search_patterns": [
+          "*/system_ce/*/healthconnect/healthconnect.db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    },
+    "os_name": "Android",
+    "os_version": "16"
+  }
+}

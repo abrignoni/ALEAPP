@@ -1,0 +1,78 @@
+{
+  "metadata": {
+    "module_name": "healthConnect",
+    "artifact_name": "Health Connect - Exercise Route",
+    "function_name": "healthconnect_exercise_route",
+    "case_number": "synthetic_a16",
+    "number_of_columns": 11,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 286,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\healthConnect\\testdata.healthConnect.healthconnect_exercise_route.synthetic_a16.zip",
+    "start_time": "2026-10-25T05:46:25.712087+00:00",
+    "end_time": "2026-10-25T05:46:25.895641+00:00",
+    "run_time_seconds": 0.01063394546508789,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-25T05:46:25.866243",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Android User",
+    "Time",
+    "Latitude",
+    "Longitude",
+    "Altitude",
+    "Horizontal Accuracy",
+    "Vertical Accuracy",
+    "Session Exercise Type",
+    "Session Start",
+    "Session End",
+    "Session UUID"
+  ],
+  "data": [
+    [
+      "0",
+      1767225600,
+      50.0,
+      10.0,
+      100.0,
+      5.0,
+      3.0,
+      "33 (Running)",
+      1767225600,
+      1767229200,
+      "11111111111111111111111111111111"
+    ],
+    [
+      "0",
+      1767225601,
+      50.01,
+      10.01,
+      101.0,
+      5.0,
+      3.0,
+      "33 (Running)",
+      1767225600,
+      1767229200,
+      "11111111111111111111111111111111"
+    ],
+    [
+      "0",
+      1767225602,
+      50.02,
+      10.02,
+      102.0,
+      5.0,
+      3.0,
+      "33 (Running)",
+      1767225600,
+      1767229200,
+      "11111111111111111111111111111111"
+    ]
+  ]
+}

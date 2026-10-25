@@ -1,0 +1,48 @@
+{
+  "metadata": {
+    "module_name": "healthConnect",
+    "artifact_name": "Health Connect - Read Access Logs",
+    "function_name": "healthconnect_read_access_logs",
+    "case_number": "synthetic_a16",
+    "number_of_columns": 9,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 119,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\healthConnect\\testdata.healthConnect.healthconnect_read_access_logs.synthetic_a16.zip",
+    "start_time": "2026-10-25T05:46:24.610133+00:00",
+    "end_time": "2026-10-25T05:46:24.779205+00:00",
+    "run_time_seconds": 0.010472297668457031,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-25T05:46:24.754408",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Android User",
+    "Read Time",
+    "Reader Package",
+    "Reader App Name",
+    "Writer Package",
+    "Writer App Name",
+    "Record Type",
+    "Write Time",
+    "Row ID"
+  ],
+  "data": [
+    [
+      "0",
+      1767225609,
+      "com.example.syntheticfit",
+      "Synthetic Fit",
+      "com.example.synthetictracker",
+      "Synthetic Tracker",
+      "11 (Heart rate)",
+      1767225600,
+      1
+    ]
+  ]
+}
