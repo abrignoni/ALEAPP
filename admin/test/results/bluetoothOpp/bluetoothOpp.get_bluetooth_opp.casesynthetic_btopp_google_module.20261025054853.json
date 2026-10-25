@@ -1,0 +1,62 @@
+{
+  "metadata": {
+    "module_name": "bluetoothOpp",
+    "artifact_name": "Bluetooth File Transfers",
+    "function_name": "get_bluetooth_opp",
+    "case_number": "casesynthetic_btopp_google_module",
+    "number_of_columns": 16,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 222,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\bluetoothOpp\\testdata.bluetoothOpp.get_bluetooth_opp.casesynthetic_btopp_google_module.zip",
+    "start_time": "2026-10-25T05:48:53.087189+00:00",
+    "end_time": "2026-10-25T05:48:53.252720+00:00",
+    "run_time_seconds": 0.002604246139526367,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-25T05:48:53.225488",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Timestamp",
+    "ID",
+    "Direction (as stored)",
+    "Destination",
+    "Device Name",
+    "File Path",
+    "Hint",
+    "URI",
+    "MIME Type",
+    "Status (as stored)",
+    "Total Bytes",
+    "Current Bytes",
+    "Visibility (as stored)",
+    "Confirm (as stored)",
+    "Scanned (as stored)",
+    "Source File"
+  ],
+  "data": [
+    [
+      1760000120,
+      1,
+      1,
+      "00:11:22:33:44:04",
+      "Synthetic Phone Four",
+      "/storage/emulated/150/Download/synthetic-d.mp3",
+      "synthetic-d.mp3",
+      "content://synthetic/4",
+      "audio/mpeg",
+      200,
+      2048,
+      2048,
+      0,
+      1,
+      1,
+      "Dump\\data\\user_de\\0\\com.google.android.bluetooth\\databases\\btopp.db"
+    ]
+  ]
+}

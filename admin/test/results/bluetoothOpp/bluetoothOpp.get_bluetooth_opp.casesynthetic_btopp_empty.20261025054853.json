@@ -1,0 +1,43 @@
+{
+  "metadata": {
+    "module_name": "bluetoothOpp",
+    "artifact_name": "Bluetooth File Transfers",
+    "function_name": "get_bluetooth_opp",
+    "case_number": "casesynthetic_btopp_empty",
+    "number_of_columns": 16,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\bluetoothOpp\\testdata.bluetoothOpp.get_bluetooth_opp.casesynthetic_btopp_empty.zip",
+    "start_time": "2026-10-25T05:48:53.255287+00:00",
+    "end_time": "2026-10-25T05:48:53.425302+00:00",
+    "run_time_seconds": 0.0025396347045898438,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-25T05:48:53.397009",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Timestamp",
+    "ID",
+    "Direction (as stored)",
+    "Destination",
+    "Device Name",
+    "File Path",
+    "Hint",
+    "URI",
+    "MIME Type",
+    "Status (as stored)",
+    "Total Bytes",
+    "Current Bytes",
+    "Visibility (as stored)",
+    "Confirm (as stored)",
+    "Scanned (as stored)",
+    "Source File"
+  ],
+  "data": []
+}
