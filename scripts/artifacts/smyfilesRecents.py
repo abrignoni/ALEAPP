@@ -9,7 +9,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "My Files",
         "notes": "Every myfiles.db and FileInfo.db found is read once per Android user, and Android "
-                 "User names the user whose app folder holds it.",
+                 "User names the user whose app folder holds it."
+                 " On the four tested Android 16 extractions Source had no value on any row because the recent_files table has no _source column there, and Description had no value on any row because the _description column holds none (930, 214, 280 and 142 rows for the owner), and Android User held one value (0) on the rows of each extraction except the one where a Secure Folder user's copy held one row of its own.",
         "paths": ('*/com.sec.android.app.myfiles/databases/myfiles.db*', '*/com.sec.android.app.myfiles/databases/FileInfo.db*'),
         "output_types": "standard",
         "artifact_icon": "file",
@@ -19,6 +20,10 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | com.sec.android.app.myfiles vc 1520402000 | 0 rows",
             "samsungs20_a13": "Android 13 | com.sec.android.app.myfiles | 0 rows",
             "sharon_a14": "Android 14 | com.sec.android.app.myfiles vc 1500405000 | 102 rows",
+            "samsung_ffs_a16_set1": "Android 16 | com.sec.android.app.myfiles | 930 rows",
+            "samsung_ffs_a16_set2": "Android 16 | com.sec.android.app.myfiles | 214 rows",
+            "samsung_ffs_a16_set3": "Android 16 | com.sec.android.app.myfiles | 280 rows",
+            "samsung_ffs_a16_set4": "Android 16 | com.sec.android.app.myfiles | 142 rows",
         },
     },
     "get_smyfilesRecents_fileinfo": {
@@ -30,7 +35,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "My Files",
         "notes": "Every myfiles.db and FileInfo.db found is read once per Android user, and Android "
-                 "User names the user whose app folder holds it.",
+                 "User names the user whose app folder holds it."
+                 " On the four tested Android 16 extractions one value, False, was held on every row by the columns Is Hidden?, Is Trashed?, and, on one extraction, Is Downloaded?. Android User held one value (0) on the rows of each extraction except the one where a Secure Folder user's copy held one row of its own.",
         "paths": ('*/com.sec.android.app.myfiles/databases/myfiles.db*', '*/com.sec.android.app.myfiles/databases/FileInfo.db*'),
         "output_types": "standard",
         "artifact_icon": "file",
@@ -40,6 +46,10 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | com.sec.android.app.myfiles vc 1520402000 | 0 rows",
             "samsungs20_a13": "Android 13 | com.sec.android.app.myfiles | 0 rows",
             "sharon_a14": "Android 14 | com.sec.android.app.myfiles vc 1500405000 | 102 rows",
+            "samsung_ffs_a16_set1": "Android 16 | com.sec.android.app.myfiles | 930 rows",
+            "samsung_ffs_a16_set2": "Android 16 | com.sec.android.app.myfiles | 214 rows",
+            "samsung_ffs_a16_set3": "Android 16 | com.sec.android.app.myfiles | 280 rows",
+            "samsung_ffs_a16_set4": "Android 16 | com.sec.android.app.myfiles | 142 rows",
         },
     }
 }

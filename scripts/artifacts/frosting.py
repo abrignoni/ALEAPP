@@ -10,7 +10,8 @@ __artifacts_v2__ = {
         "notes": "Every frosting.db found is read once per Android user, and Android User names the user "
                  "whose app folder holds it. Taking the first match instead reported 376 rows on a "
                  "One UI 8 (Android 16) extraction whose Secure Folder user's copy sorted first, "
-                 "against 494 in the owner's copy.",
+                 "against 494 in the owner's copy."
+                 " On the four tested Android 16 extractions the owner's copy held 606, 494, 740 and 559 rows and the Secure Folder user's copy, present on three of them, 376, 458 and 373; Android User held one value (0) on every row of the extraction that has one user.",
         "paths": ('*/com.android.vending/databases/frosting.db*',),
         "output_types": "standard",
         "artifact_icon": "package",
@@ -25,7 +26,11 @@ __artifacts_v2__ = {
             "sharon_a14": "Android 14 | com.android.vending vc 84222730 | 541 rows",
             "russell_pixel6a_a13": "Android 13 | com.android.vending vc 83631220 | 324 rows",
             "userb2_a13": "Android 13 | com.android.vending vc 84371930 | 333 rows",
-        }
+            "samsung_ffs_a16_set1": "Android 16 | com.android.vending | 606 rows",
+            "samsung_ffs_a16_set2": "Android 16 | com.android.vending | 870 rows",
+            "samsung_ffs_a16_set3": "Android 16 | com.android.vending | 1198 rows",
+            "samsung_ffs_a16_set4": "Android 16 | com.android.vending | 932 rows",
+        },
     }
 }
 

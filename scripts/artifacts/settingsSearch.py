@@ -10,13 +10,20 @@ __artifacts_v2__ = {
         "notes": "Every search_index.db found is read once per Android user, and Android User names the "
                  "user whose app folder holds it. Taking the first match instead returned no rows on a "
                  "One UI 8 (Android 16) extraction whose Secure Folder user's copy sorted first and held "
-                 "no saved queries while the owner's copy held five.",
+                 "no saved queries while the owner's copy held five."
+                 " On the four tested Android 16 extractions the owner's copy held five saved queries and a Secure Folder user's copy, present on three, held none; Android User held one value (0) on every row of each.",
         "paths": (
             "*/com.android.settings.intelligence/databases/search_index.db*",
             "*/com.google.android.settings.intelligence/databases/search_index.db*",
         ),
         "output_types": "standard",
         "artifact_icon": "search",
+        "sample_data": {
+            "samsung_ffs_a16_set1": "Android 16 | com.android.settings.intelligence | 5 rows",
+            "samsung_ffs_a16_set2": "Android 16 | com.android.settings.intelligence | 5 rows",
+            "samsung_ffs_a16_set3": "Android 16 | com.android.settings.intelligence | 5 rows",
+            "samsung_ffs_a16_set4": "Android 16 | com.android.settings.intelligence | 5 rows",
+        },
     }
 }
 
