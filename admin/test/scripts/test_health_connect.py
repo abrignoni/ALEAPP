@@ -76,35 +76,37 @@ class HealthConnectTest(unittest.TestCase):
         self.assertTrue(all(len(row) == len(headers) for row in rows))
         by_type = {}
         for row in rows:
-            by_type.setdefault(row[1], []).append(row)
-        steps = sorted(by_type['Steps'], key=lambda r: r[2])
-        self.assertEqual(steps[0][2], START)
-        self.assertEqual(steps[0][3], START + datetime.timedelta(hours=1))
-        self.assertEqual(steps[0][4:8], ('+01:00', '+01:00', 1200, 'steps'))
-        self.assertEqual(steps[1][4], '-01:00')
-        second = named(headers, steps[1])
+            by_type.setdefault(named(headers, row)['Record Type'], []).append(named(headers, row))
+        steps = sorted(by_type['Steps'], key=lambda r: r['Start'])
+        self.assertEqual(steps[0]['Start'], START)
+        self.assertEqual(steps[0]['End'], START + datetime.timedelta(hours=1))
+        self.assertEqual(tuple(steps[0][k] for k in ('Start Zone Offset', 'End Zone Offset', 'Value', 'Unit')),
+                         ('+01:00', '+01:00', 1200, 'steps'))
+        self.assertEqual(steps[1]['Start Zone Offset'], '-01:00')
+        second = steps[1]
         self.assertEqual(second['Package'], 'com.example.syntheticfit')
         self.assertEqual(second['Recording Method'], '1 (Actively recorded)')
         self.assertEqual((second['Device Manufacturer'], second['Device Type']), ('MakerY', '77'))
         self.assertEqual(second['Record UUID'], '02' * 16)
         self.assertEqual(second['Client Record ID'], 'client-2')
-        first = named(headers, steps[0])
+        first = steps[0]
         self.assertEqual(first['Recording Method'], '3 (Manual entry)')
         self.assertEqual(first['Device Type'], '1 (Watch)')
-        self.assertEqual(by_type['Distance'][0][6:8], (812.5, 'm'))
-        self.assertEqual(by_type['Active calories burned'][0][7], 'cal')
-        self.assertEqual(by_type['Hydration'][0][7], 'L')
+        self.assertEqual((by_type['Distance'][0]['Value'], by_type['Distance'][0]['Unit']), (812.5, 'm'))
+        self.assertEqual(by_type['Active calories burned'][0]['Unit'], 'cal')
+        self.assertEqual(by_type['Hydration'][0]['Unit'], 'L')
+        self.assertEqual(headers[0], ('Start', 'datetime'))
 
     def test_measurements(self):
         headers, rows, _ = self.go(hc.healthconnect_measurements)
         self.assertTrue(all(len(row) == len(headers) for row in rows))
-        by_type = {row[1]: row for row in rows}
+        by_type = {named(headers, row)['Record Type']: named(headers, row) for row in rows}
         self.assertEqual(set(by_type), {'Weight', 'Height', 'Oxygen saturation',
                                         'Resting heart rate', 'Blood pressure'})
-        self.assertEqual(by_type['Weight'][2], START)
-        self.assertEqual(by_type['Weight'][3], '-05:00')
-        self.assertEqual(by_type['Weight'][4:6], (70500.0, 'g'))
-        self.assertEqual(by_type['Blood pressure'][4:7], (
+        self.assertEqual(by_type['Weight']['Time'], START)
+        self.assertEqual(by_type['Weight']['Zone Offset'], '-05:00')
+        self.assertEqual((by_type['Weight']['Value'], by_type['Weight']['Unit']), (70500.0, 'g'))
+        self.assertEqual(tuple(by_type['Blood pressure'][k] for k in ('Value', 'Unit', 'Detail')), (
             120.0, 'mmHg',
             'diastolic (as stored) 80.0; measurement_location (as stored) 1; '
             'body_position (as stored) 2'))
@@ -112,22 +114,26 @@ class HealthConnectTest(unittest.TestCase):
     def test_heart_rate_samples_join_parent(self):
         headers, rows, _ = self.go(hc.healthconnect_heart_rate)
         self.assertTrue(all(len(row) == len(headers) for row in rows))
-        self.assertEqual([r[2] for r in rows], [70, 74, 71])
-        self.assertEqual(rows[1][1], START + datetime.timedelta(seconds=30))
-        self.assertEqual(rows[0][3], START)
-        self.assertEqual(rows[0][4], START + datetime.timedelta(minutes=1))
+        rows = [named(headers, r) for r in rows]
+        self.assertEqual([r['Beats Per Minute'] for r in rows], [70, 74, 71])
+        self.assertEqual(rows[1]['Sample Time'], START + datetime.timedelta(seconds=30))
+        self.assertEqual(rows[0]['Record Start'], START)
+        self.assertEqual(rows[0]['Record End'], START + datetime.timedelta(minutes=1))
+        self.assertEqual(headers[0], ('Sample Time', 'datetime'))
 
     def test_sleep_sessions_and_stages(self):
         headers, sessions, _ = self.go(hc.healthconnect_sleep)
         self.assertEqual(len(sessions), 1)
         self.assertEqual(len(sessions[0]), len(headers))
-        self.assertEqual(sessions[0][5:8], ('Night', 'n', 5))
+        session = named(headers, sessions[0])
+        self.assertEqual((session['Title'], session['Notes'], session['Stage Count']), ('Night', 'n', 5))
         headers, stages, _ = self.go(hc.healthconnect_sleep_stages)
-        self.assertEqual([r[3] for r in stages],
-                         ['1 (Awake)', '4 (Light)', '5 (Deep)', '6 (REM)', '42'])
-        self.assertEqual(stages[1][1], START + datetime.timedelta(hours=1))
-        self.assertEqual(stages[1][2], START + datetime.timedelta(hours=4))
         self.assertEqual(len(headers), len(stages[0]))
+        stages = [named(headers, r) for r in stages]
+        self.assertEqual([r['Stage Type'] for r in stages],
+                         ['1 (Awake)', '4 (Light)', '5 (Deep)', '6 (REM)', '42'])
+        self.assertEqual(stages[1]['Stage Start'], START + datetime.timedelta(hours=1))
+        self.assertEqual(stages[1]['Stage End'], START + datetime.timedelta(hours=4))
 
     def test_exercise_sessions_and_route(self):
         headers, rows, _ = self.go(hc.healthconnect_exercise)
@@ -150,17 +156,20 @@ class HealthConnectTest(unittest.TestCase):
         self.assertEqual(route['Session Exercise Type'], '33 (Running)')
 
     def test_access_read_and_change_logs(self):
-        _, access, _ = self.go(hc.healthconnect_access_logs)
-        self.assertEqual([(r[2], r[4], r[5]) for r in access],
+        headers, access, _ = self.go(hc.healthconnect_access_logs)
+        access = [named(headers, r) for r in access]
+        self.assertEqual([(r['Package'], r['Operation'], r['Record Types']) for r in access],
                          [('com.example.synthetictracker', '0 (Upsert)', '7 (Distance)'),
                           ('com.example.syntheticfit', '2 (Read)', '1 (Steps), 11 (Heart rate)')])
-        _, reads, _ = self.go(hc.healthconnect_read_access_logs)
-        self.assertEqual((reads[0][2], reads[0][4], reads[0][6]),
+        headers, reads, _ = self.go(hc.healthconnect_read_access_logs)
+        reads = [named(headers, r) for r in reads]
+        self.assertEqual((reads[0]['Reader Package'], reads[0]['Writer Package'], reads[0]['Record Type']),
                          ('com.example.syntheticfit', 'com.example.synthetictracker',
                           '11 (Heart rate)'))
-        self.assertEqual(reads[0][7], START + datetime.timedelta(milliseconds=100))
-        _, changes, _ = self.go(hc.healthconnect_change_logs)
-        self.assertEqual(changes[0][4:8],
+        self.assertEqual(reads[0]['Write Time'], START + datetime.timedelta(milliseconds=100))
+        headers, changes, _ = self.go(hc.healthconnect_change_logs)
+        change = named(headers, changes[0])
+        self.assertEqual(tuple(change[k] for k in ('Operation', 'Record Type', 'UUID Count', 'UUIDs')),
                          ('0 (Upsert)', '1 (Steps)', 2,
                           '000102030405060708090a0b0c0d0e0f, 101112131415161718191a1b1c1d1e1f'))
 
@@ -180,8 +189,8 @@ class HealthConnectTest(unittest.TestCase):
     def test_two_users_are_both_read_and_named(self):
         root = pathlib.Path(self.folder.name)
         second = make_database(root / 'data/system_ce/150/healthconnect/healthconnect.db')
-        _, rows, source = run(hc.healthconnect_activity, root, [self.db, second])
-        self.assertEqual(sorted({r[0] for r in rows}), ['0', '150'])
+        headers, rows, source = run(hc.healthconnect_activity, root, [self.db, second])
+        self.assertEqual(sorted({named(headers, r)['Android User'] for r in rows}), ['0', '150'])
         self.assertEqual(len(rows), 18)
         self.assertEqual(source, f'{self.db}\n{second}')
 
@@ -195,13 +204,15 @@ class HealthConnectTest(unittest.TestCase):
             '<shared-user name="example.shared.uid" first-grant-time="2026-01-02T00:00:00Z" />'
             '</first-grant-times>',
             encoding='utf-8')
-        _, rows, _ = self.go(hc.healthconnect_first_grants, [xml])
-        self.assertEqual([row[4] for row in rows], ['package', 'package', 'shared-user'])
-        self.assertEqual(rows[2][1], 'example.shared.uid')
-        self.assertEqual(rows[0][1:4], ('com.example.a', '2026-01-01T00:00:01.500000Z',
+        headers, rows, _ = self.go(hc.healthconnect_first_grants, [xml])
+        rows = [named(headers, r) for r in rows]
+        self.assertEqual([row['Entry Type'] for row in rows], ['package', 'package', 'shared-user'])
+        self.assertEqual(rows[2]['Package'], 'example.shared.uid')
+        self.assertEqual(tuple(rows[0][k] for k in ('Package', 'First Grant Time (as stored)', 'First Grant Time')),
+                         ('com.example.a', '2026-01-01T00:00:01.500000Z',
                                         datetime.datetime(2026, 1, 1, 0, 0, 1, 500000,
                                                           tzinfo=UTC)))
-        self.assertEqual(rows[1][3], '')
+        self.assertEqual(rows[1]['First Grant Time'], '')
 
     def test_time_helpers_reject_nonsense(self):
         # pylint: disable=protected-access

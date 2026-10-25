@@ -9,16 +9,16 @@
     "total_data_size_bytes": 157,
     "media_checkins": 0,
     "media_embedded_checkins": 1,
-    "input_zip_path": "admin\\test\\cases\\data\\healthConnect\\testdata.healthConnect.healthconnect_apps.synthetic_a16.zip",
-    "start_time": "2026-10-25T05:46:25.897870+00:00",
-    "end_time": "2026-10-25T05:46:26.082920+00:00",
-    "run_time_seconds": 0.009697437286376953,
+    "input_zip_path": "admin/test/cases/data/healthConnect/testdata.healthConnect.healthconnect_apps.synthetic_a16.zip",
+    "start_time": "2026-10-25T15:40:44.707787+00:00",
+    "end_time": "2026-10-25T15:40:44.724535+00:00",
+    "run_time_seconds": 0.0014989376068115234,
     "last_commit": {
-      "hash": "Uncommitted",
-      "author_name": "N/A",
-      "author_email": "N/A",
-      "date": "2026-10-25T05:46:26.056922",
-      "message": "File not yet committed to git"
+      "hash": "90c34b48487f051ea071cca88acc15631626a039",
+      "author_name": "danjethh",
+      "author_email": "danjethh@gmail.com",
+      "date": "2026-10-25T05:14:28-04:00",
+      "message": "Health Connect: read shared-user entries of the first-grant-times file, add sample_data, update the notes from four Android 16 extractions"
     }
   },
   "headers": [

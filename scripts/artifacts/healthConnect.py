@@ -17,7 +17,7 @@ __artifacts_v2__ = {
             "from application_info_table. Record Types Used is the comma separated list of "
             "numeric record type ids the table holds; each id is shown with the name the "
             "AOSP RecordTypeIdentifier class gives it, and an id that class does not name is "
-            "shown as stored. The column is empty for an app that has not written a record. "
+            "shown as stored. The column is empty where the table stores no value. "
             "Android User is the number in the system_ce path. A row here shows that the "
             "platform kept an entry for the package; it does not show that the app wrote or "
             "read any record, which the record artifacts and the access log artifacts show. "
@@ -25,18 +25,16 @@ __artifacts_v2__ = {
             "Connect database schema versions 20 and 23), on which the table held two "
             "platform packages and no fitness app, and on two further Samsung phones (schema "
             "version 26), on which it held those two and a third row whose package name starts "
-            "com.android.healthconnect.phone, again with no fitness app. Android 14 and 15 are "
-            "not verified."
-            " On the four extractions tested Record Types Used was empty on every row, because no listed app had written a record, and Android User held one value (0) on every row."
+            "com.android.healthconnect.phone, again with no fitness app. On the corpus, kevin_pocox7_a15 (Android 15) and pixel7a_a14 (Android 14) gave 2 and 3 rows, equal to their application_info_table rows."
+            " On the contributor's four extractions Record Types Used was empty on every row and Android User held one value (0) on every row."
         ),
         "paths": ('*/system_ce/*/healthconnect/healthconnect.db*',),
         "output_types": "standard",
         "artifact_icon": "heart",
         "sample_data": {
-            "samsung_ffs_a16_set1": "Android 16 | Health Connect schema version 23 | 2 rows",
-            "samsung_ffs_a16_set2": "Android 16 | Health Connect schema version 20 | 2 rows",
-            "samsung_ffs_a16_set3": "Android 16 | Health Connect schema version 26 | 3 rows",
-            "samsung_ffs_a16_set4": "Android 16 | Health Connect schema version 26 | 3 rows",
+            "kevin_pocox7_a15": "Android 15 | Health Connect schema version 20 | 2 rows",
+            "pixel7a_a14": "Android 14 | Health Connect schema version 12 | 3 rows",
+            "hc_pixel8pro_a16": "Android 16 | Health Connect schema version 26 | 3 rows",
         },
     },
     "healthconnect_preferences": {
@@ -58,23 +56,23 @@ __artifacts_v2__ = {
             "stored; on two further extractions (schema version 26) it held those seven and "
             "two more, app_icons_resize_completed_key and synthetic_package_name_salt. Android "
             "User is the number in the system_ce path."
-            " On the four extractions tested Android User held one value (0) on every row."
+            " On the contributor's four extractions Android User held one value (0) on every row."
         ),
         "paths": ('*/system_ce/*/healthconnect/healthconnect.db*',),
         "output_types": "standard",
         "artifact_icon": "settings",
         "sample_data": {
-            "samsung_ffs_a16_set1": "Android 16 | Health Connect schema version 23 | 7 rows",
-            "samsung_ffs_a16_set2": "Android 16 | Health Connect schema version 20 | 7 rows",
-            "samsung_ffs_a16_set3": "Android 16 | Health Connect schema version 26 | 9 rows",
-            "samsung_ffs_a16_set4": "Android 16 | Health Connect schema version 26 | 9 rows",
+            "kevin_pocox7_a15": "Android 15 | Health Connect schema version 20 | 5 rows",
+            "pixel7a_a14": "Android 14 | Health Connect schema version 12 | 3 rows",
+            "hc_pixel8pro_a16": "Android 16 | Health Connect schema version 26 | 6 rows",
+            "russell_a14": "Android 14 | Health Connect schema versions 13 and 12 (two users) | 9 rows",
+            "anne_a15": "Android 15 | Health Connect schema version 20 | 4 rows",
         },
     },
     "healthconnect_first_grants": {
         "name": "Health Connect - Permission First Grant Times",
         "description": (
-            "Per package times from health-permissions-first-grant-times.xml, which sits "
-            "beside healthconnect.db."
+            "Per package or shared-user entry times from health-permissions-first-grant-times.xml, which sits beside healthconnect.db."
         ),
         "author": "@danjethh, Claude",
         "creation_date": "2026-10-25",
@@ -86,22 +84,17 @@ __artifacts_v2__ = {
             "an ISO 8601 UTC string, which is shown as stored and also converted to a time; Entry "
             "Type says which element the row came from, and the Package column holds the name "
             "attribute of either. The file is read as plain XML or as Android binary XML, "
-            "whichever it is. On the two Android 16 extractions with store versions 20 and 23 the "
-            "file held one package element; on two others (store version 26) it held one "
-            "shared-user element and no package element, and what a shared-user name identifies is "
-            "not established here. What the file records beyond its name is not established "
+            "whichever it is. On the contributor's Android 16 extractions the file held package or shared-user elements, and what a shared-user name identifies is not established here; kevin_pocox7_a15 holds one of each in the same file. What the file records beyond its name is not established "
             "here: it is not evidence that the package wrote or read any health record. Android "
-            "User is the number in the system_ce path. Entry Type held one value on the rows of "
-            "each tested extraction."
+            "User is the number in the system_ce path."
         ),
         "paths": ('*/system_ce/*/healthconnect/health-permissions-first-grant-times.xml',),
         "output_types": "standard",
         "artifact_icon": "key",
         "sample_data": {
-            "samsung_ffs_a16_set1": "Android 16 | Health Connect schema version 23 | 1 row",
-            "samsung_ffs_a16_set2": "Android 16 | Health Connect schema version 20 | 2 rows",
-            "samsung_ffs_a16_set3": "Android 16 | Health Connect schema version 26 | 2 rows",
-            "samsung_ffs_a16_set4": "Android 16 | Health Connect schema version 26 | 1 row",
+            "kevin_pocox7_a15": "Android 15 | Health Connect schema version 20 | 2 rows",
+            "pixel7a_a14": "Android 14 | Health Connect schema version 12 | 3 rows",
+            "hc_pixel8pro_a16": "Android 16 | Health Connect schema version 26 | 1 row",
         },
     },
     "healthconnect_activity": {
@@ -134,22 +127,18 @@ __artifacts_v2__ = {
             "the store does not establish who or what produced them, so a manual entry or an "
             "app that imports from another source is a possibility the examiner has to rule "
             "out with Recording Method, the app and the device columns. Calories burned and "
-            "distance totals may overlap between apps. Evidence tier: source-verified. The "
-            "table and column names were checked against the database schema of two Android "
+            "distance totals may overlap between apps. Evidence tier: data-proven on two corpus stores, source-verified for the units. The table and column names were checked against the database schema of two Android "
             "16 extractions and the units against the AOSP HealthFitness module (commit "
-            "45168a88ae2a7e1abafe1cc81001d97ff00194e2), and the output was exercised on a "
-            "synthetic database of the same schema; no tested extraction held a record in "
-            "any of these tables, so the values on real data are unverified. Reproductive "
+            "45168a88ae2a7e1abafe1cc81001d97ff00194e2), and the output was exercised on a synthetic database of the same schema. On two corpus stores, kevin_pocox7_a15 (schema version 20) and pixel7a_a14 (schema version 12), the artifact reported 68,617 and 79,052 rows, equal to the rows of the tables it reads, and for every steps row the start time (to the second in LAVA, to the millisecond in the TSV) and the count equalled the values in the store; the contributor's four Android 16 extractions held no record. On both corpus stores Device Manufacturer and Device Model were empty on every row because device_info_table stores no manufacturer or model there. Speed records (speed_record_table, 1,784 rows on pixel7a_a14) and skin temperature records (skin_temperature_record_table, 65 rows, with 9 rows in skin_temperature_delta_table, on kevin_pocox7_a15) are not read by any Health Connect artifact. Reproductive "
             "health, medical record and other record tables are not read."
         ),
         "paths": ('*/system_ce/*/healthconnect/healthconnect.db*',),
         "output_types": "standard",
         "artifact_icon": "activity",
         "sample_data": {
-            "samsung_ffs_a16_set1": "Android 16 | Health Connect schema version 23 | 0 rows",
-            "samsung_ffs_a16_set2": "Android 16 | Health Connect schema version 20 | 0 rows",
-            "samsung_ffs_a16_set3": "Android 16 | Health Connect schema version 26 | 0 rows",
-            "samsung_ffs_a16_set4": "Android 16 | Health Connect schema version 26 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | Health Connect schema version 20 | 68,617 rows",
+            "pixel7a_a14": "Android 14 | Health Connect schema version 12 | 79,052 rows",
+            "hc_pixel8pro_a16": "Android 16 | Health Connect schema version 26 | 0 rows",
         },
     },
     "healthconnect_measurements": {
@@ -180,18 +169,16 @@ __artifacts_v2__ = {
             "stored numbers; their names are not decoded here. Time is epoch milliseconds "
             "shown as UTC with the zone offset the writing app supplied. The other columns "
             "work as in the Activity Records artifact, and so does its caution about the "
-            "origin of a value. Evidence tier: source-verified, with no record present in "
-            "any tested extraction, so the values on real data are unverified. Reproductive "
+            "origin of a value. Evidence tier: data-proven on two corpus stores: the artifact reported 535 rows on kevin_pocox7_a15 and 8 on pixel7a_a14, equal to the rows of the tables it reads; the contributor's Android 16 extractions held none. Reproductive "
             "health records are not read."
         ),
         "paths": ('*/system_ce/*/healthconnect/healthconnect.db*',),
         "output_types": "standard",
         "artifact_icon": "heart",
         "sample_data": {
-            "samsung_ffs_a16_set1": "Android 16 | Health Connect schema version 23 | 0 rows",
-            "samsung_ffs_a16_set2": "Android 16 | Health Connect schema version 20 | 0 rows",
-            "samsung_ffs_a16_set3": "Android 16 | Health Connect schema version 26 | 0 rows",
-            "samsung_ffs_a16_set4": "Android 16 | Health Connect schema version 26 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | Health Connect schema version 20 | 535 rows",
+            "pixel7a_a14": "Android 14 | Health Connect schema version 12 | 8 rows",
+            "hc_pixel8pro_a16": "Android 16 | Health Connect schema version 26 | 0 rows",
         },
     },
     "healthconnect_heart_rate": {
@@ -210,18 +197,16 @@ __artifacts_v2__ = {
             "epoch_millis) and its parent_key names the row of heart_rate_record_table, which "
             "carries the record's start and end time, app, device and recording method. "
             "Sample Time is epoch milliseconds shown as UTC. The other columns work as in the "
-            "Activity Records artifact. Evidence tier: source-verified; the tested "
-            "extractions held no heart rate record, so values on real data are unverified. "
+            "Activity Records artifact. Evidence tier: data-proven: on kevin_pocox7_a15 and pixel7a_a14 the artifact reported 169,098 and 35,166 samples, and every sample's time (to the second in LAVA, to the millisecond in the TSV) and beats per minute equalled the stored series values; the contributor's Android 16 extractions held none. "
             "Resting heart rate records are in the Measurements artifact."
         ),
         "paths": ('*/system_ce/*/healthconnect/healthconnect.db*',),
         "output_types": "standard",
         "artifact_icon": "heart",
         "sample_data": {
-            "samsung_ffs_a16_set1": "Android 16 | Health Connect schema version 23 | 0 rows",
-            "samsung_ffs_a16_set2": "Android 16 | Health Connect schema version 20 | 0 rows",
-            "samsung_ffs_a16_set3": "Android 16 | Health Connect schema version 26 | 0 rows",
-            "samsung_ffs_a16_set4": "Android 16 | Health Connect schema version 26 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | Health Connect schema version 20 | 169,098 rows",
+            "pixel7a_a14": "Android 14 | Health Connect schema version 12 | 35,166 rows",
+            "hc_pixel8pro_a16": "Android 16 | Health Connect schema version 26 | 0 rows",
         },
     },
     "healthconnect_sleep": {
@@ -238,17 +223,15 @@ __artifacts_v2__ = {
             "session (Stage Count). Start and End are epoch milliseconds shown as UTC with the "
             "zone offsets the writing app supplied. The other columns work as in the Activity "
             "Records artifact. A session is what the writing app reported; it does not "
-            "establish that the person slept. Evidence tier: source-verified; the tested "
-            "extractions held no sleep record, so values on real data are unverified."
+            "establish that the person slept. Evidence tier: data-proven: 98 and 17 sessions on kevin_pocox7_a15 and pixel7a_a14, equal to the stored session rows; Title and Notes were empty on every row of both. The contributor's Android 16 extractions held none."
         ),
         "paths": ('*/system_ce/*/healthconnect/healthconnect.db*',),
         "output_types": "standard",
         "artifact_icon": "moon",
         "sample_data": {
-            "samsung_ffs_a16_set1": "Android 16 | Health Connect schema version 23 | 0 rows",
-            "samsung_ffs_a16_set2": "Android 16 | Health Connect schema version 20 | 0 rows",
-            "samsung_ffs_a16_set3": "Android 16 | Health Connect schema version 26 | 0 rows",
-            "samsung_ffs_a16_set4": "Android 16 | Health Connect schema version 26 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | Health Connect schema version 20 | 98 rows",
+            "pixel7a_a14": "Android 14 | Health Connect schema version 12 | 17 rows",
+            "hc_pixel8pro_a16": "Android 16 | Health Connect schema version 26 | 0 rows",
         },
     },
     "healthconnect_sleep_stages": {
@@ -264,17 +247,15 @@ __artifacts_v2__ = {
             "name of the AOSP framework (0 unknown, 1 awake, 2 sleeping, 3 awake out of bed, "
             "4 light, 5 deep, 6 REM, 7 awake in bed); a number that class does not name is "
             "shown as stored. Stage times are epoch milliseconds shown as UTC. Session Start, "
-            "Session End and the app columns come from the parent session row. Evidence tier: "
-            "source-verified; no tested extraction held a stage row."
+            "Session End and the app columns come from the parent session row. Evidence tier: data-proven: 5,957 and 1,025 stage rows on kevin_pocox7_a15 and pixel7a_a14, and every stage's start time and type equalled the values in the store."
         ),
         "paths": ('*/system_ce/*/healthconnect/healthconnect.db*',),
         "output_types": "standard",
         "artifact_icon": "moon",
         "sample_data": {
-            "samsung_ffs_a16_set1": "Android 16 | Health Connect schema version 23 | 0 rows",
-            "samsung_ffs_a16_set2": "Android 16 | Health Connect schema version 20 | 0 rows",
-            "samsung_ffs_a16_set3": "Android 16 | Health Connect schema version 26 | 0 rows",
-            "samsung_ffs_a16_set4": "Android 16 | Health Connect schema version 26 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | Health Connect schema version 20 | 5,957 rows",
+            "pixel7a_a14": "Android 14 | Health Connect schema version 12 | 1,025 rows",
+            "hc_pixel8pro_a16": "Android 16 | Health Connect schema version 26 | 0 rows",
         },
     },
     "healthconnect_exercise": {
@@ -289,23 +270,20 @@ __artifacts_v2__ = {
             "One row per row of exercise_session_record_table. Exercise Type is the number "
             "stored, shown with the name of the AOSP ExerciseSessionType class; a number that "
             "class does not name is shown as stored. Title and Notes are the text the writing "
-            "app supplied. Has Route is the stored flag; Route Points, Lap Count and Segment "
+            "app supplied. Has Route is Yes or No from the stored has_route flag, blank where it is null; Route Points, Lap Count and Segment "
             "Count are the number of rows the exercise_route_table, exercise_laps_table and "
             "exercise_segments_table hold for the session, and the route points themselves are "
             "in the Exercise Route artifact. Rate of Perceived Exertion is the stored "
             "session_rate_of_perceived_exertion where the column exists. The other columns "
-            "work as in the Activity Records artifact. Evidence tier: source-verified; the "
-            "tested extractions held no exercise record, so values on real data are "
-            "unverified."
+            "work as in the Activity Records artifact. Evidence tier: data-proven: 126 and 16 sessions on kevin_pocox7_a15 and pixel7a_a14, equal to the stored session rows; Title and Notes were empty on every row of both."
         ),
         "paths": ('*/system_ce/*/healthconnect/healthconnect.db*',),
         "output_types": "standard",
         "artifact_icon": "activity",
         "sample_data": {
-            "samsung_ffs_a16_set1": "Android 16 | Health Connect schema version 23 | 0 rows",
-            "samsung_ffs_a16_set2": "Android 16 | Health Connect schema version 20 | 0 rows",
-            "samsung_ffs_a16_set3": "Android 16 | Health Connect schema version 26 | 0 rows",
-            "samsung_ffs_a16_set4": "Android 16 | Health Connect schema version 26 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | Health Connect schema version 20 | 126 rows",
+            "pixel7a_a14": "Android 14 | Health Connect schema version 12 | 16 rows",
+            "hc_pixel8pro_a16": "Android 16 | Health Connect schema version 26 | 0 rows",
         },
     },
     "healthconnect_exercise_route": {
@@ -325,18 +303,15 @@ __artifacts_v2__ = {
             "supplied, with the parent session's type, start and end. The units of altitude "
             "and accuracy are not read from the database; the AOSP Location class they are "
             "copied from uses metres. A point is a position the writing app reported for the "
-            "session; it does not by itself show where the device was. Evidence tier: "
-            "source-verified; no tested extraction held a route point, so values on real data "
-            "are unverified."
+            "session; it does not by itself show where the device was. Evidence tier: data-proven: 64,533 route points on kevin_pocox7_a15, and every point's time (to the second in LAVA, to the millisecond in the TSV), latitude and longitude equalled the values in the store; pixel7a_a14 held no route point."
         ),
         "paths": ('*/system_ce/*/healthconnect/healthconnect.db*',),
         "output_types": "all",
         "artifact_icon": "map-pin",
         "sample_data": {
-            "samsung_ffs_a16_set1": "Android 16 | Health Connect schema version 23 | 0 rows",
-            "samsung_ffs_a16_set2": "Android 16 | Health Connect schema version 20 | 0 rows",
-            "samsung_ffs_a16_set3": "Android 16 | Health Connect schema version 26 | 0 rows",
-            "samsung_ffs_a16_set4": "Android 16 | Health Connect schema version 26 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | Health Connect schema version 20 | 64,533 rows",
+            "pixel7a_a14": "Android 14 | Health Connect schema version 12 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | Health Connect schema version 26 | 0 rows",
         },
     },
     "healthconnect_access_logs": {
@@ -359,17 +334,15 @@ __artifacts_v2__ = {
             "stored where the columns exist. The app is the row of application_info_table "
             "that app_id points to. A log row records an access the platform logged; the "
             "log's retention period is not established here, so the absence of a row is not "
-            "evidence that no access took place. Evidence tier: source-verified; the tested "
-            "extractions held no access log row."
+            "evidence that no access took place. Evidence tier: data-proven: 2,972 and 855 rows on kevin_pocox7_a15 and pixel7a_a14, equal to the stored access_logs_table rows."
         ),
         "paths": ('*/system_ce/*/healthconnect/healthconnect.db*',),
         "output_types": "standard",
         "artifact_icon": "list",
         "sample_data": {
-            "samsung_ffs_a16_set1": "Android 16 | Health Connect schema version 23 | 0 rows",
-            "samsung_ffs_a16_set2": "Android 16 | Health Connect schema version 20 | 0 rows",
-            "samsung_ffs_a16_set3": "Android 16 | Health Connect schema version 26 | 0 rows",
-            "samsung_ffs_a16_set4": "Android 16 | Health Connect schema version 26 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | Health Connect schema version 20 | 2,972 rows",
+            "pixel7a_a14": "Android 14 | Health Connect schema version 12 | 855 rows",
+            "hc_pixel8pro_a16": "Android 16 | Health Connect schema version 26 | 0 rows",
         },
     },
     "healthconnect_read_access_logs": {
@@ -389,16 +362,15 @@ __artifacts_v2__ = {
             "AOSP RecordTypeIdentifier name. Read Time and Write Time are epoch milliseconds "
             "shown as UTC; what Write Time denotes beyond its column name is not established "
             "here. The table is absent from older schema versions, where the artifact reports "
-            "nothing. Evidence tier: source-verified; no tested extraction held a row."
+            "nothing. Evidence tier: source-verified; no tested extraction and no corpus store held a row."
         ),
         "paths": ('*/system_ce/*/healthconnect/healthconnect.db*',),
         "output_types": "standard",
         "artifact_icon": "list",
         "sample_data": {
-            "samsung_ffs_a16_set1": "Android 16 | Health Connect schema version 23 | 0 rows",
-            "samsung_ffs_a16_set2": "Android 16 | Health Connect schema version 20 | 0 rows",
-            "samsung_ffs_a16_set3": "Android 16 | Health Connect schema version 26 | 0 rows",
-            "samsung_ffs_a16_set4": "Android 16 | Health Connect schema version 26 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | Health Connect schema version 20 | 0 rows",
+            "pixel7a_a14": "Android 14 | Health Connect schema version 12 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | Health Connect schema version 26 | 0 rows",
         },
     },
     "healthconnect_change_logs": {
@@ -419,17 +391,15 @@ __artifacts_v2__ = {
             "and UUIDs lists them as hex. Time is epoch milliseconds shown as UTC. Medical "
             "Resource Type and Medical Data Source ID are shown as stored where the columns "
             "exist. The store trims this table, so the absence of a row is not evidence that "
-            "no change took place. Evidence tier: source-verified; the tested extractions held "
-            "no change log row."
+            "no change took place. Evidence tier: data-proven: 9,957 and 3,472 rows on kevin_pocox7_a15 and pixel7a_a14, equal to the stored change_logs_table rows."
         ),
         "paths": ('*/system_ce/*/healthconnect/healthconnect.db*',),
         "output_types": "standard",
         "artifact_icon": "list",
         "sample_data": {
-            "samsung_ffs_a16_set1": "Android 16 | Health Connect schema version 23 | 0 rows",
-            "samsung_ffs_a16_set2": "Android 16 | Health Connect schema version 20 | 0 rows",
-            "samsung_ffs_a16_set3": "Android 16 | Health Connect schema version 26 | 0 rows",
-            "samsung_ffs_a16_set4": "Android 16 | Health Connect schema version 26 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | Health Connect schema version 20 | 9,957 rows",
+            "pixel7a_a14": "Android 14 | Health Connect schema version 12 | 3,472 rows",
+            "hc_pixel8pro_a16": "Android 16 | Health Connect schema version 26 | 0 rows",
         },
     },
 }
@@ -685,6 +655,14 @@ def _source(stores):
     return '\n'.join(path for path, _ in stores)
 
 
+def _time_first(headers, rows):
+    """(headers, rows) with the datetime columns moved to the front, in their own order, so the
+    event time leads and the other times follow it."""
+    order = ([i for i, h in enumerate(headers) if isinstance(h, tuple) and h[1] == 'datetime']
+             + [i for i, h in enumerate(headers) if not (isinstance(h, tuple) and h[1] == 'datetime')])
+    return tuple(headers[i] for i in order), [tuple(row[i] for i in order) for row in rows]
+
+
 @artifact_processor
 def healthconnect_apps(context):
     stores = _stores(context)
@@ -705,7 +683,7 @@ def healthconnect_apps(context):
                               _names(RECORD_TYPES, used)))
     headers = ('Android User', 'Row ID', 'Package', 'App Name', ('App Icon', 'media'),
                'Record Types Used')
-    return headers, data_list, _source(stores)
+    return _time_first(headers, data_list) + (_source(stores),)
 
 
 @artifact_processor
@@ -748,7 +726,7 @@ def healthconnect_first_grants(context):
             data_list.append((user, entry.get('name') or '', stored, parsed, entry.tag))
     headers = ('Android User', 'Package', 'First Grant Time (as stored)',
                ('First Grant Time', 'datetime'), 'Entry Type')
-    return headers, data_list, '\n'.join(paths)
+    return _time_first(headers, data_list) + ('\n'.join(paths),)
 
 
 @artifact_processor
@@ -778,7 +756,7 @@ def healthconnect_activity(context):
     headers = (('Android User', 'Record Type', ('Start', 'datetime'), ('End', 'datetime'),
                 'Start Zone Offset', 'End Zone Offset', 'Value', 'Unit')
                + COMMON_HEADERS[1:])
-    return headers, data_list, _source(stores)
+    return _time_first(headers, data_list) + (_source(stores),)
 
 
 @artifact_processor
@@ -809,7 +787,7 @@ def healthconnect_measurements(context):
                                                     unit, detail] + cells[1:]))
     headers = (('Android User', 'Record Type', ('Time', 'datetime'), 'Zone Offset', 'Value',
                 'Unit', 'Detail') + COMMON_HEADERS[1:])
-    return headers, data_list, _source(stores)
+    return _time_first(headers, data_list) + (_source(stores),)
 
 
 @artifact_processor
@@ -840,7 +818,7 @@ def healthconnect_heart_rate(context):
     headers = (('Android User', ('Sample Time', 'datetime'), 'Beats Per Minute',
                 ('Record Start', 'datetime'), ('Record End', 'datetime'))
                + COMMON_HEADERS[1:])
-    return headers, data_list, _source(stores)
+    return _time_first(headers, data_list) + (_source(stores),)
 
 
 def _session_rows(path, schema, table, extra_columns):
@@ -886,7 +864,7 @@ def healthconnect_sleep(context):
     headers = (('Android User', ('Start', 'datetime'), ('End', 'datetime'),
                 'Start Zone Offset', 'End Zone Offset', 'Title', 'Notes', 'Stage Count')
                + COMMON_HEADERS[1:])
-    return headers, data_list, _source(stores)
+    return _time_first(headers, data_list) + (_source(stores),)
 
 
 @artifact_processor
@@ -918,7 +896,7 @@ def healthconnect_sleep_stages(context):
     headers = (('Android User', ('Stage Start', 'datetime'), ('Stage End', 'datetime'),
                 'Stage Type', ('Session Start', 'datetime'), ('Session End', 'datetime'))
                + COMMON_HEADERS[1:])
-    return headers, data_list, _source(stores)
+    return _time_first(headers, data_list) + (_source(stores),)
 
 
 @artifact_processor
@@ -951,7 +929,7 @@ def healthconnect_exercise(context):
                 'Start Zone Offset', 'End Zone Offset', 'Exercise Type', 'Title', 'Notes',
                 'Has Route', 'Route Points', 'Lap Count', 'Segment Count',
                 'Rate of Perceived Exertion') + COMMON_HEADERS[1:])
-    return headers, data_list, _source(stores)
+    return _time_first(headers, data_list) + (_source(stores),)
 
 
 @artifact_processor
@@ -978,7 +956,7 @@ def healthconnect_exercise_route(context):
     headers = ('Android User', ('Time', 'datetime'), 'Latitude', 'Longitude', 'Altitude',
                'Horizontal Accuracy', 'Vertical Accuracy', 'Session Exercise Type',
                ('Session Start', 'datetime'), ('Session End', 'datetime'), 'Session UUID')
-    return headers, data_list, _source(stores)
+    return _time_first(headers, data_list) + (_source(stores),)
 
 
 def _app_lookup(path, schema):
@@ -1012,7 +990,7 @@ def healthconnect_access_logs(context):
     headers = ('Android User', ('Access Time', 'datetime'), 'Package', 'App Name', 'Operation',
                'Record Types', 'Medical Resource Type', 'Medical Data Source Accessed',
                'Row ID')
-    return headers, data_list, _source(stores)
+    return _time_first(headers, data_list) + (_source(stores),)
 
 
 @artifact_processor
@@ -1035,7 +1013,7 @@ def healthconnect_read_access_logs(context):
     headers = ('Android User', ('Read Time', 'datetime'), 'Reader Package', 'Reader App Name',
                'Writer Package', 'Writer App Name', 'Record Type',
                ('Write Time', 'datetime'), 'Row ID')
-    return headers, data_list, _source(stores)
+    return _time_first(headers, data_list) + (_source(stores),)
 
 
 @artifact_processor
@@ -1063,4 +1041,4 @@ def healthconnect_change_logs(context):
     headers = ('Android User', ('Time', 'datetime'), 'Package', 'App Name', 'Operation',
                'Record Type', 'UUID Count', 'UUIDs', 'Medical Resource Type',
                'Medical Data Source ID', 'Row ID')
-    return headers, data_list, _source(stores)
+    return _time_first(headers, data_list) + (_source(stores),)
