@@ -40,7 +40,7 @@ class SmartSwitchTest(unittest.TestCase):
     def test_sessions_merge_files_collapse_views_and_keep_users_apart(self):
         headers, rows, source = self.go(ss.smartswitch_sessions)
         self.assertTrue(all(len(row) == len(headers) for row in rows))
-        self.assertEqual([(r[0], r[1]) for r in rows],
+        self.assertEqual([(named(headers, r)['Android User'], named(headers, r)['History ID']) for r in rows],
                          [('0', str(T0)), ('0', str(T0 + 3600000)), ('10', str(T0))])
         first = named(headers, rows[0])
         self.assertEqual(first['History Folder Time'], START)
@@ -90,9 +90,13 @@ class SmartSwitchTest(unittest.TestCase):
         self.assertEqual(named(headers, contacts[0])['Selected'], 'Yes')
 
     def test_transferred_history_and_backup_media(self):
-        _, rows, _ = self.go(ss.smartswitch_transferred_history)
-        self.assertEqual(rows, [('0', '00000000-1111-2222-3333-444444444444', 'Test phone',
-                                 START + datetime.timedelta(milliseconds=3600052))])
+        headers, rows, _ = self.go(ss.smartswitch_transferred_history)
+        self.assertEqual(len(rows), 1)
+        entry = named(headers, rows[0])
+        self.assertEqual((entry['Android User'], entry['UUID'], entry['Display Name'], entry['Time']),
+                         ('0', '00000000-1111-2222-3333-444444444444', 'Test phone',
+                          START + datetime.timedelta(milliseconds=3600052)))
+        self.assertEqual(headers[0], ('Time', 'datetime'))
         headers, media, _ = self.go(ss.smartswitch_backup_media)
         self.assertEqual([r[1:4] for r in media],
                          [(1, 'a.jpg', '/sdcard/a.jpg'), (2, 'b.mp4', '/sdcard/b.mp4')])
@@ -109,8 +113,8 @@ class SmartSwitchTest(unittest.TestCase):
                        ss.smartswitch_peer_messages, ss.smartswitch_peer_contacts):
             _, rows, _ = self.go(parser, [bad, odd])
             self.assertEqual(rows, [], parser.__name__)
-        _, sessions, _ = self.go(ss.smartswitch_sessions, [bad, odd])
-        self.assertEqual([r[1] for r in sessions], ['1', '2'])
+        headers, sessions, _ = self.go(ss.smartswitch_sessions, [bad, odd])
+        self.assertEqual([named(headers, r)['History ID'] for r in sessions], ['1', '2'])
 
     def test_time_helper(self):
         # pylint: disable=protected-access

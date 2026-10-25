@@ -9,22 +9,22 @@
     "total_data_size_bytes": 490,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
-    "input_zip_path": "admin\\test\\cases\\data\\samsungSmartSwitch\\testdata.samsungSmartSwitch.smartswitch_sessions.synthetic_a16.zip",
-    "start_time": "2026-10-25T05:55:20.768516+00:00",
-    "end_time": "2026-10-25T05:55:21.002604+00:00",
-    "run_time_seconds": 0.005501508712768555,
+    "input_zip_path": "admin/test/cases/data/samsungSmartSwitch/testdata.samsungSmartSwitch.smartswitch_sessions.synthetic_a16.zip",
+    "start_time": "2026-10-25T15:43:08.063483+00:00",
+    "end_time": "2026-10-25T15:43:08.086114+00:00",
+    "run_time_seconds": 0.0007228851318359375,
     "last_commit": {
-      "hash": "Uncommitted",
-      "author_name": "N/A",
-      "author_email": "N/A",
-      "date": "2026-10-25T05:55:20.948251",
-      "message": "File not yet committed to git"
+      "hash": "a127e7dc24a239cdff3472da515d58e244d1e43a",
+      "author_name": "danjethh",
+      "author_email": "danjethh@gmail.com",
+      "date": "2026-10-25T05:04:15-04:00",
+      "message": "Smart Switch: record the sessions second-tenant leg as a known failure, document the output-checker findings, add sample_data"
     }
   },
   "headers": [
+    "History Folder Time",
     "Android User",
     "History ID",
-    "History Folder Time",
     "Service Type",
     "Sender Type",
     "Restore Type",
@@ -41,21 +41,21 @@
     "OS Type",
     "OS Version",
     "One UI Version",
-    "Smart Switch App Version",
+    "App Version",
     "Accessory Role",
     "UUID",
     "IMEI",
     "Google Account",
     "Device Storage Size",
-    "Available Memory",
+    "Available Memory (AvailInMemSize)",
     "Account Count",
     "Item Count"
   ],
   "data": [
     [
+      1767225600,
       "0",
       "1767225600000",
-      1767225600,
       "AccessoryD2d",
       "Receiver",
       "NORMAL",
@@ -83,9 +83,9 @@
       2
     ],
     [
+      1767229200,
       "0",
       "1767229200000",
-      1767229200,
       "",
       "",
       "",
@@ -113,9 +113,9 @@
       ""
     ],
     [
+      1767225600,
       "10",
       "1767225600000",
-      1767225600,
       "AccessoryD2d",
       "Sender",
       "NORMAL",

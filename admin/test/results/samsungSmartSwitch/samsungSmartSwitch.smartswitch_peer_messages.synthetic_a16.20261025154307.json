@@ -9,22 +9,22 @@
     "total_data_size_bytes": 186,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
-    "input_zip_path": "admin\\test\\cases\\data\\samsungSmartSwitch\\testdata.samsungSmartSwitch.smartswitch_peer_messages.synthetic_a16.zip",
-    "start_time": "2026-10-25T05:55:20.121584+00:00",
-    "end_time": "2026-10-25T05:55:20.326209+00:00",
-    "run_time_seconds": 0.002252340316772461,
+    "input_zip_path": "admin/test/cases/data/samsungSmartSwitch/testdata.samsungSmartSwitch.smartswitch_peer_messages.synthetic_a16.zip",
+    "start_time": "2026-10-25T15:43:07.960377+00:00",
+    "end_time": "2026-10-25T15:43:07.979650+00:00",
+    "run_time_seconds": 0.00026226043701171875,
     "last_commit": {
-      "hash": "Uncommitted",
-      "author_name": "N/A",
-      "author_email": "N/A",
-      "date": "2026-10-25T05:55:20.293744",
-      "message": "File not yet committed to git"
+      "hash": "a127e7dc24a239cdff3472da515d58e244d1e43a",
+      "author_name": "danjethh",
+      "author_email": "danjethh@gmail.com",
+      "date": "2026-10-25T05:04:15-04:00",
+      "message": "Smart Switch: record the sessions second-tenant leg as a known failure, document the output-checker findings, add sample_data"
     }
   },
   "headers": [
+    "History Folder Time",
     "Android User",
     "History ID",
-    "History Folder Time",
     "Period",
     "Count",
     "SMS Count",
@@ -38,9 +38,9 @@
   ],
   "data": [
     [
+      1767225600,
       "0",
       "1767225600000",
-      1767225600,
       "ALL_DATA",
       30,
       20,
@@ -53,9 +53,9 @@
       100
     ],
     [
+      1767225600,
       "0",
       "1767225600000",
-      1767225600,
       "LAST_YEAR",
       3,
       3,
@@ -68,9 +68,9 @@
       0
     ],
     [
+      1767229200,
       "0",
       "1767229200000",
-      1767229200,
       "ALL_DATA",
       30,
       20,
@@ -83,9 +83,9 @@
       100
     ],
     [
+      1767229200,
       "0",
       "1767229200000",
-      1767229200,
       "LAST_YEAR",
       3,
       3,

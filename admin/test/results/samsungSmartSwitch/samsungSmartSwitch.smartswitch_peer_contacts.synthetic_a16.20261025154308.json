@@ -9,22 +9,22 @@
     "total_data_size_bytes": 292,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
-    "input_zip_path": "admin\\test\\cases\\data\\samsungSmartSwitch\\testdata.samsungSmartSwitch.smartswitch_peer_contacts.synthetic_a16.zip",
-    "start_time": "2026-10-25T05:55:20.537938+00:00",
-    "end_time": "2026-10-25T05:55:20.766291+00:00",
-    "run_time_seconds": 0.003832578659057617,
+    "input_zip_path": "admin/test/cases/data/samsungSmartSwitch/testdata.samsungSmartSwitch.smartswitch_peer_contacts.synthetic_a16.zip",
+    "start_time": "2026-10-25T15:43:08.043023+00:00",
+    "end_time": "2026-10-25T15:43:08.062611+00:00",
+    "run_time_seconds": 0.0003018379211425781,
     "last_commit": {
-      "hash": "Uncommitted",
-      "author_name": "N/A",
-      "author_email": "N/A",
-      "date": "2026-10-25T05:55:20.730976",
-      "message": "File not yet committed to git"
+      "hash": "a127e7dc24a239cdff3472da515d58e244d1e43a",
+      "author_name": "danjethh",
+      "author_email": "danjethh@gmail.com",
+      "date": "2026-10-25T05:04:15-04:00",
+      "message": "Smart Switch: record the sessions second-tenant leg as a known failure, document the output-checker findings, add sample_data"
     }
   },
   "headers": [
+    "History Folder Time",
     "Android User",
     "History ID",
-    "History Folder Time",
     "List",
     "Account",
     "Type",
@@ -39,9 +39,9 @@
   ],
   "data": [
     [
+      1767225600,
       "0",
       "1767225600000",
-      1767225600,
       "AllContactAccounts",
       "acct-a",
       "com.google",
@@ -55,9 +55,9 @@
       2
     ],
     [
+      1767225600,
       "0",
       "1767225600000",
-      1767225600,
       "ContactAccounts",
       "acct-a",
       "com.google",
@@ -71,9 +71,9 @@
       2
     ],
     [
+      1767229200,
       "0",
       "1767229200000",
-      1767229200,
       "AllContactAccounts",
       "acct-a",
       "com.google",
@@ -87,9 +87,9 @@
       2
     ],
     [
+      1767229200,
       "0",
       "1767229200000",
-      1767229200,
       "ContactAccounts",
       "acct-a",
       "com.google",
