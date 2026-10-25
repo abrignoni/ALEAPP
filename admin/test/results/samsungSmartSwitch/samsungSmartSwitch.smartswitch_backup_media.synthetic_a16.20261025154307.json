@@ -1,0 +1,56 @@
+{
+  "metadata": {
+    "module_name": "samsungSmartSwitch",
+    "artifact_name": "Samsung Smart Switch - Backup Media Table (bkmedia)",
+    "function_name": "smartswitch_backup_media",
+    "case_number": "synthetic_a16",
+    "number_of_columns": 8,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 64,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/samsungSmartSwitch/testdata.samsungSmartSwitch.smartswitch_backup_media.synthetic_a16.zip",
+    "start_time": "2026-10-25T15:43:07.980497+00:00",
+    "end_time": "2026-10-25T15:43:07.999705+00:00",
+    "run_time_seconds": 0.0005099773406982422,
+    "last_commit": {
+      "hash": "a127e7dc24a239cdff3472da515d58e244d1e43a",
+      "author_name": "danjethh",
+      "author_email": "danjethh@gmail.com",
+      "date": "2026-10-25T05:04:15-04:00",
+      "message": "Smart Switch: record the sessions second-tenant leg as a known failure, document the output-checker findings, add sample_data"
+    }
+  },
+  "headers": [
+    "Android User",
+    "ID",
+    "Name",
+    "File Path",
+    "Backup File Path",
+    "Size",
+    "Unique ID",
+    "Count"
+  ],
+  "data": [
+    [
+      "0",
+      1,
+      "a.jpg",
+      "/sdcard/a.jpg",
+      "/bk/a",
+      10,
+      1001,
+      1
+    ],
+    [
+      "0",
+      2,
+      "b.mp4",
+      "/sdcard/b.mp4",
+      "/bk/b",
+      20,
+      1002,
+      2
+    ]
+  ]
+}

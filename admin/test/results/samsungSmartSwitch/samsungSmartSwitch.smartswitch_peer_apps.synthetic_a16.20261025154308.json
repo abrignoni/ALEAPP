@@ -1,0 +1,101 @@
+{
+  "metadata": {
+    "module_name": "samsungSmartSwitch",
+    "artifact_name": "Samsung Smart Switch - Peer App Categories",
+    "function_name": "smartswitch_peer_apps",
+    "case_number": "synthetic_a16",
+    "number_of_columns": 13,
+    "number_of_rows": 4,
+    "total_data_size_bytes": 302,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/samsungSmartSwitch/testdata.samsungSmartSwitch.smartswitch_peer_apps.synthetic_a16.zip",
+    "start_time": "2026-10-25T15:43:08.021450+00:00",
+    "end_time": "2026-10-25T15:43:08.042237+00:00",
+    "run_time_seconds": 0.00030612945556640625,
+    "last_commit": {
+      "hash": "a127e7dc24a239cdff3472da515d58e244d1e43a",
+      "author_name": "danjethh",
+      "author_email": "danjethh@gmail.com",
+      "date": "2026-10-25T05:04:15-04:00",
+      "message": "Smart Switch: record the sessions second-tenant leg as a known failure, document the output-checker findings, add sample_data"
+    }
+  },
+  "headers": [
+    "History Folder Time",
+    "Last Time Used",
+    "Android User",
+    "History ID",
+    "Category",
+    "Package",
+    "App Name",
+    "Version Name",
+    "Version Code",
+    "Stub Version Code",
+    "Stub Content Size",
+    "Support Stub Install",
+    "Runtime Permissions"
+  ],
+  "data": [
+    [
+      1767225600,
+      1767225595,
+      "0",
+      "1767225600000",
+      "CONTACT",
+      "com.example.contacts",
+      "Contacts",
+      "1.0",
+      100,
+      0,
+      0,
+      "Yes",
+      2
+    ],
+    [
+      1767225600,
+      "",
+      "0",
+      "1767225600000",
+      "MESSAGE",
+      "com.example.messages",
+      "Messages",
+      "2.0",
+      200,
+      7,
+      99,
+      "No",
+      ""
+    ],
+    [
+      1767229200,
+      1767225595,
+      "0",
+      "1767229200000",
+      "CONTACT",
+      "com.example.contacts",
+      "Contacts",
+      "1.0",
+      100,
+      0,
+      0,
+      "Yes",
+      2
+    ],
+    [
+      1767229200,
+      "",
+      "0",
+      "1767229200000",
+      "MESSAGE",
+      "com.example.messages",
+      "Messages",
+      "2.0",
+      200,
+      7,
+      99,
+      "No",
+      ""
+    ]
+  ]
+}

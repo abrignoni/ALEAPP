@@ -1,0 +1,38 @@
+{
+  "metadata": {
+    "module_name": "samsungSmartSwitch",
+    "artifact_name": "Samsung Smart Switch - Transferred History",
+    "function_name": "smartswitch_transferred_history",
+    "case_number": "synthetic_a16",
+    "number_of_columns": 4,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 57,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/samsungSmartSwitch/testdata.samsungSmartSwitch.smartswitch_transferred_history.synthetic_a16.zip",
+    "start_time": "2026-10-25T15:43:07.940951+00:00",
+    "end_time": "2026-10-25T15:43:07.959643+00:00",
+    "run_time_seconds": 0.00020503997802734375,
+    "last_commit": {
+      "hash": "a127e7dc24a239cdff3472da515d58e244d1e43a",
+      "author_name": "danjethh",
+      "author_email": "danjethh@gmail.com",
+      "date": "2026-10-25T05:04:15-04:00",
+      "message": "Smart Switch: record the sessions second-tenant leg as a known failure, document the output-checker findings, add sample_data"
+    }
+  },
+  "headers": [
+    "Time",
+    "Android User",
+    "UUID",
+    "Display Name"
+  ],
+  "data": [
+    [
+      1767229200,
+      "0",
+      "00000000-1111-2222-3333-444444444444",
+      "Test phone"
+    ]
+  ]
+}
