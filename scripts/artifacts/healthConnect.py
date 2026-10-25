@@ -23,11 +23,21 @@ __artifacts_v2__ = {
             "read any record, which the record artifacts and the access log artifacts show. "
             "Verified on Android 16 full file system extractions of two Samsung phones (Health "
             "Connect database schema versions 20 and 23), on which the table held two "
-            "platform packages and no fitness app. Android 14 and 15 are not verified."
+            "platform packages and no fitness app, and on two further Samsung phones (schema "
+            "version 26), on which it held those two and a third row whose package name starts "
+            "com.android.healthconnect.phone, again with no fitness app. Android 14 and 15 are "
+            "not verified."
+            " On the four extractions tested Record Types Used was empty on every row, because no listed app had written a record, and Android User held one value (0) on every row."
         ),
         "paths": ('*/system_ce/*/healthconnect/healthconnect.db*',),
         "output_types": "standard",
         "artifact_icon": "heart",
+        "sample_data": {
+            "samsung_ffs_a16_set1": "Android 16 | Health Connect schema version 23 | 2 rows",
+            "samsung_ffs_a16_set2": "Android 16 | Health Connect schema version 20 | 2 rows",
+            "samsung_ffs_a16_set3": "Android 16 | Health Connect schema version 26 | 3 rows",
+            "samsung_ffs_a16_set4": "Android 16 | Health Connect schema version 26 | 3 rows",
+        },
     },
     "healthconnect_preferences": {
         "name": "Health Connect - Preferences",
@@ -42,14 +52,23 @@ __artifacts_v2__ = {
         "notes": (
             "Keys and values are reported as stored; the meaning of a key is not established "
             "here, and a key the store does not contain is not evidence about the setting it "
-            "would hold. On the two Android 16 extractions tested the table held seven keys "
+            "would hold. On the two Android 16 extractions tested first the table held seven keys "
             "(for example inactive_apps_added, migration_state, onboarding_state_0), one of "
             "them a UTC time written as text (current_state_start_time), which is shown as "
-            "stored. Android User is the number in the system_ce path."
+            "stored; on two further extractions (schema version 26) it held those seven and "
+            "two more, app_icons_resize_completed_key and synthetic_package_name_salt. Android "
+            "User is the number in the system_ce path."
+            " On the four extractions tested Android User held one value (0) on every row."
         ),
         "paths": ('*/system_ce/*/healthconnect/healthconnect.db*',),
         "output_types": "standard",
         "artifact_icon": "settings",
+        "sample_data": {
+            "samsung_ffs_a16_set1": "Android 16 | Health Connect schema version 23 | 7 rows",
+            "samsung_ffs_a16_set2": "Android 16 | Health Connect schema version 20 | 7 rows",
+            "samsung_ffs_a16_set3": "Android 16 | Health Connect schema version 26 | 9 rows",
+            "samsung_ffs_a16_set4": "Android 16 | Health Connect schema version 26 | 9 rows",
+        },
     },
     "healthconnect_first_grants": {
         "name": "Health Connect - Permission First Grant Times",
@@ -63,16 +82,27 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Health Connect",
         "notes": (
-            "Each package element carries a name and a first-grant-time written as an ISO 8601 "
-            "UTC string, which is shown as stored and also converted to a time. The file is "
-            "read as plain XML or as Android binary XML, whichever it is. On the two Android 16 "
-            "extractions tested the file held one package. What the file records beyond its "
-            "name is not established here: it is not evidence that the package wrote or read "
-            "any health record. Android User is the number in the system_ce path."
+            "Each package or shared-user element carries a name and a first-grant-time written as "
+            "an ISO 8601 UTC string, which is shown as stored and also converted to a time; Entry "
+            "Type says which element the row came from, and the Package column holds the name "
+            "attribute of either. The file is read as plain XML or as Android binary XML, "
+            "whichever it is. On the two Android 16 extractions with store versions 20 and 23 the "
+            "file held one package element; on two others (store version 26) it held one "
+            "shared-user element and no package element, and what a shared-user name identifies is "
+            "not established here. What the file records beyond its name is not established "
+            "here: it is not evidence that the package wrote or read any health record. Android "
+            "User is the number in the system_ce path. Entry Type held one value on the rows of "
+            "each tested extraction."
         ),
         "paths": ('*/system_ce/*/healthconnect/health-permissions-first-grant-times.xml',),
         "output_types": "standard",
         "artifact_icon": "key",
+        "sample_data": {
+            "samsung_ffs_a16_set1": "Android 16 | Health Connect schema version 23 | 1 row",
+            "samsung_ffs_a16_set2": "Android 16 | Health Connect schema version 20 | 2 rows",
+            "samsung_ffs_a16_set3": "Android 16 | Health Connect schema version 26 | 2 rows",
+            "samsung_ffs_a16_set4": "Android 16 | Health Connect schema version 26 | 1 row",
+        },
     },
     "healthconnect_activity": {
         "name": "Health Connect - Activity Records",
@@ -115,6 +145,12 @@ __artifacts_v2__ = {
         "paths": ('*/system_ce/*/healthconnect/healthconnect.db*',),
         "output_types": "standard",
         "artifact_icon": "activity",
+        "sample_data": {
+            "samsung_ffs_a16_set1": "Android 16 | Health Connect schema version 23 | 0 rows",
+            "samsung_ffs_a16_set2": "Android 16 | Health Connect schema version 20 | 0 rows",
+            "samsung_ffs_a16_set3": "Android 16 | Health Connect schema version 26 | 0 rows",
+            "samsung_ffs_a16_set4": "Android 16 | Health Connect schema version 26 | 0 rows",
+        },
     },
     "healthconnect_measurements": {
         "name": "Health Connect - Measurements",
@@ -151,6 +187,12 @@ __artifacts_v2__ = {
         "paths": ('*/system_ce/*/healthconnect/healthconnect.db*',),
         "output_types": "standard",
         "artifact_icon": "heart",
+        "sample_data": {
+            "samsung_ffs_a16_set1": "Android 16 | Health Connect schema version 23 | 0 rows",
+            "samsung_ffs_a16_set2": "Android 16 | Health Connect schema version 20 | 0 rows",
+            "samsung_ffs_a16_set3": "Android 16 | Health Connect schema version 26 | 0 rows",
+            "samsung_ffs_a16_set4": "Android 16 | Health Connect schema version 26 | 0 rows",
+        },
     },
     "healthconnect_heart_rate": {
         "name": "Health Connect - Heart Rate Samples",
@@ -175,6 +217,12 @@ __artifacts_v2__ = {
         "paths": ('*/system_ce/*/healthconnect/healthconnect.db*',),
         "output_types": "standard",
         "artifact_icon": "heart",
+        "sample_data": {
+            "samsung_ffs_a16_set1": "Android 16 | Health Connect schema version 23 | 0 rows",
+            "samsung_ffs_a16_set2": "Android 16 | Health Connect schema version 20 | 0 rows",
+            "samsung_ffs_a16_set3": "Android 16 | Health Connect schema version 26 | 0 rows",
+            "samsung_ffs_a16_set4": "Android 16 | Health Connect schema version 26 | 0 rows",
+        },
     },
     "healthconnect_sleep": {
         "name": "Health Connect - Sleep Sessions",
@@ -196,6 +244,12 @@ __artifacts_v2__ = {
         "paths": ('*/system_ce/*/healthconnect/healthconnect.db*',),
         "output_types": "standard",
         "artifact_icon": "moon",
+        "sample_data": {
+            "samsung_ffs_a16_set1": "Android 16 | Health Connect schema version 23 | 0 rows",
+            "samsung_ffs_a16_set2": "Android 16 | Health Connect schema version 20 | 0 rows",
+            "samsung_ffs_a16_set3": "Android 16 | Health Connect schema version 26 | 0 rows",
+            "samsung_ffs_a16_set4": "Android 16 | Health Connect schema version 26 | 0 rows",
+        },
     },
     "healthconnect_sleep_stages": {
         "name": "Health Connect - Sleep Stages",
@@ -216,6 +270,12 @@ __artifacts_v2__ = {
         "paths": ('*/system_ce/*/healthconnect/healthconnect.db*',),
         "output_types": "standard",
         "artifact_icon": "moon",
+        "sample_data": {
+            "samsung_ffs_a16_set1": "Android 16 | Health Connect schema version 23 | 0 rows",
+            "samsung_ffs_a16_set2": "Android 16 | Health Connect schema version 20 | 0 rows",
+            "samsung_ffs_a16_set3": "Android 16 | Health Connect schema version 26 | 0 rows",
+            "samsung_ffs_a16_set4": "Android 16 | Health Connect schema version 26 | 0 rows",
+        },
     },
     "healthconnect_exercise": {
         "name": "Health Connect - Exercise Sessions",
@@ -241,6 +301,12 @@ __artifacts_v2__ = {
         "paths": ('*/system_ce/*/healthconnect/healthconnect.db*',),
         "output_types": "standard",
         "artifact_icon": "activity",
+        "sample_data": {
+            "samsung_ffs_a16_set1": "Android 16 | Health Connect schema version 23 | 0 rows",
+            "samsung_ffs_a16_set2": "Android 16 | Health Connect schema version 20 | 0 rows",
+            "samsung_ffs_a16_set3": "Android 16 | Health Connect schema version 26 | 0 rows",
+            "samsung_ffs_a16_set4": "Android 16 | Health Connect schema version 26 | 0 rows",
+        },
     },
     "healthconnect_exercise_route": {
         "name": "Health Connect - Exercise Route",
@@ -266,6 +332,12 @@ __artifacts_v2__ = {
         "paths": ('*/system_ce/*/healthconnect/healthconnect.db*',),
         "output_types": "all",
         "artifact_icon": "map-pin",
+        "sample_data": {
+            "samsung_ffs_a16_set1": "Android 16 | Health Connect schema version 23 | 0 rows",
+            "samsung_ffs_a16_set2": "Android 16 | Health Connect schema version 20 | 0 rows",
+            "samsung_ffs_a16_set3": "Android 16 | Health Connect schema version 26 | 0 rows",
+            "samsung_ffs_a16_set4": "Android 16 | Health Connect schema version 26 | 0 rows",
+        },
     },
     "healthconnect_access_logs": {
         "name": "Health Connect - Access Logs",
@@ -293,6 +365,12 @@ __artifacts_v2__ = {
         "paths": ('*/system_ce/*/healthconnect/healthconnect.db*',),
         "output_types": "standard",
         "artifact_icon": "list",
+        "sample_data": {
+            "samsung_ffs_a16_set1": "Android 16 | Health Connect schema version 23 | 0 rows",
+            "samsung_ffs_a16_set2": "Android 16 | Health Connect schema version 20 | 0 rows",
+            "samsung_ffs_a16_set3": "Android 16 | Health Connect schema version 26 | 0 rows",
+            "samsung_ffs_a16_set4": "Android 16 | Health Connect schema version 26 | 0 rows",
+        },
     },
     "healthconnect_read_access_logs": {
         "name": "Health Connect - Read Access Logs",
@@ -316,6 +394,12 @@ __artifacts_v2__ = {
         "paths": ('*/system_ce/*/healthconnect/healthconnect.db*',),
         "output_types": "standard",
         "artifact_icon": "list",
+        "sample_data": {
+            "samsung_ffs_a16_set1": "Android 16 | Health Connect schema version 23 | 0 rows",
+            "samsung_ffs_a16_set2": "Android 16 | Health Connect schema version 20 | 0 rows",
+            "samsung_ffs_a16_set3": "Android 16 | Health Connect schema version 26 | 0 rows",
+            "samsung_ffs_a16_set4": "Android 16 | Health Connect schema version 26 | 0 rows",
+        },
     },
     "healthconnect_change_logs": {
         "name": "Health Connect - Change Logs",
@@ -341,6 +425,12 @@ __artifacts_v2__ = {
         "paths": ('*/system_ce/*/healthconnect/healthconnect.db*',),
         "output_types": "standard",
         "artifact_icon": "list",
+        "sample_data": {
+            "samsung_ffs_a16_set1": "Android 16 | Health Connect schema version 23 | 0 rows",
+            "samsung_ffs_a16_set2": "Android 16 | Health Connect schema version 20 | 0 rows",
+            "samsung_ffs_a16_set3": "Android 16 | Health Connect schema version 26 | 0 rows",
+            "samsung_ffs_a16_set4": "Android 16 | Health Connect schema version 26 | 0 rows",
+        },
     },
 }
 
@@ -650,12 +740,14 @@ def healthconnect_first_grants(context):
         except (ET.ParseError, OSError, ValueError) as error:
             logfunc(f'Health Connect: could not read {relative}: {error}')
             continue
-        for package in root.iter('package'):
-            stored = package.get('first-grant-time') or ''
+        for entry in root.iter():
+            if entry.tag not in ('package', 'shared-user'):
+                continue
+            stored = entry.get('first-grant-time') or ''
             parsed = _iso_utc(stored)
-            data_list.append((user, package.get('name') or '', stored, parsed))
+            data_list.append((user, entry.get('name') or '', stored, parsed, entry.tag))
     headers = ('Android User', 'Package', 'First Grant Time (as stored)',
-               ('First Grant Time', 'datetime'))
+               ('First Grant Time', 'datetime'), 'Entry Type')
     return headers, data_list, '\n'.join(paths)
 
 

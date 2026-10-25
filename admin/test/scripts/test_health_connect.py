@@ -191,9 +191,13 @@ class HealthConnectTest(unittest.TestCase):
             "<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>"
             '<first-grant-times version="1">'
             '<package name="com.example.a" first-grant-time="2026-01-01T00:00:01.500000Z" />'
-            '<package name="com.example.b" first-grant-time="not a time" /></first-grant-times>',
+            '<package name="com.example.b" first-grant-time="not a time" />'
+            '<shared-user name="example.shared.uid" first-grant-time="2026-01-02T00:00:00Z" />'
+            '</first-grant-times>',
             encoding='utf-8')
         _, rows, _ = self.go(hc.healthconnect_first_grants, [xml])
+        self.assertEqual([row[4] for row in rows], ['package', 'package', 'shared-user'])
+        self.assertEqual(rows[2][1], 'example.shared.uid')
         self.assertEqual(rows[0][1:4], ('com.example.a', '2026-01-01T00:00:01.500000Z',
                                         datetime.datetime(2026, 1, 1, 0, 0, 1, 500000,
                                                           tzinfo=UTC)))
