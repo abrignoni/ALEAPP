@@ -9,7 +9,7 @@
     "total_data_size_bytes": 136,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
-    "input_zip_path": "admin\\test\\cases\\data\\WhatsAppBusiness\\testdata.WhatsAppBusiness.get_whatsapp_business_user_profile.casesynthetic_w4b_modern.zip",
+    "input_zip_path": "admin/test/cases/data/WhatsAppBusiness/testdata.WhatsAppBusiness.get_whatsapp_business_user_profile.casesynthetic_w4b_modern.zip",
     "start_time": "2026-10-25T05:37:02.257134+00:00",
     "end_time": "2026-10-25T05:37:02.447313+00:00",
     "run_time_seconds": 0.007528781890869141,
@@ -36,7 +36,7 @@
       "synthetic about text",
       "1",
       "5550100000",
-      "Dump\\data\\data\\com.whatsapp.w4b\\shared_prefs\\com.whatsapp_preferences_light.xml"
+      "Dump/data/data/com.whatsapp.w4b/shared_prefs/com.whatsapp_preferences_light.xml"
     ]
   ]
 }
