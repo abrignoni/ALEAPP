@@ -1,0 +1,70 @@
+{
+  "casesynthetic_auto_both": {
+    "description": "Synthetic carservicedata.db with two allowedcars rows and two rejectedcars rows, invented values; contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_auto_both.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-25T05:44:27.364988",
+      "last_commit": {
+        "hash": "53d9460364cf9d3687e43f93a6864e5564d4607f",
+        "author_name": "Brigs",
+        "author_email": "abrignoni@gmail.com",
+        "date": "2026-10-04T08:49:26-04:00",
+        "message": "Fix timestamp handling and unsupported field labels in audited artifacts"
+      }
+    },
+    "artifacts": {
+      "extract_android_auto": {
+        "search_patterns": "*/com.google.android.projection.gearhead/databases/carservicedata.db*",
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "extract_android_auto_rejected": {
+        "search_patterns": "*/com.google.android.projection.gearhead/databases/carservicedata.db*",
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_auto_no_rejected_table": {
+    "description": "Synthetic carservicedata.db without a rejectedcars table, one allowedcars row, invented values; contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_auto_no_rejected_table.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-25T05:44:28.423450",
+      "last_commit": {
+        "hash": "53d9460364cf9d3687e43f93a6864e5564d4607f",
+        "author_name": "Brigs",
+        "author_email": "abrignoni@gmail.com",
+        "date": "2026-10-04T08:49:26-04:00",
+        "message": "Fix timestamp handling and unsupported field labels in audited artifacts"
+      }
+    },
+    "artifacts": {
+      "extract_android_auto": {
+        "search_patterns": "*/com.google.android.projection.gearhead/databases/carservicedata.db*",
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "extract_android_auto_rejected": {
+        "search_patterns": "*/com.google.android.projection.gearhead/databases/carservicedata.db*",
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  }
+}

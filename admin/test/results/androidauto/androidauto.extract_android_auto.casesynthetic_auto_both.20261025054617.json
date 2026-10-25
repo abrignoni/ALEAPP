@@ -1,0 +1,71 @@
+{
+  "metadata": {
+    "module_name": "androidauto",
+    "artifact_name": "Android Auto - Allowed Cars",
+    "function_name": "extract_android_auto",
+    "case_number": "casesynthetic_auto_both",
+    "number_of_columns": 13,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 474,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\androidauto\\testdata.androidauto.extract_android_auto.casesynthetic_auto_both.zip",
+    "start_time": "2026-10-25T05:46:17.864749+00:00",
+    "end_time": "2026-10-25T05:46:17.990980+00:00",
+    "run_time_seconds": 0.0037946701049804688,
+    "last_commit": {
+      "hash": "53d9460364cf9d3687e43f93a6864e5564d4607f",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-10-04T08:49:26-04:00",
+      "message": "Fix timestamp handling and unsupported field labels in audited artifacts"
+    }
+  },
+  "headers": [
+    "connectiontime",
+    "Manufacturer",
+    "Model",
+    "Year",
+    "Bluetooth MAC",
+    "Wi-Fi SSID",
+    "Wi-Fi BSSID",
+    "Wi-Fi Password",
+    "Head Unit Make",
+    "Head Unit Model",
+    "Head Unit Software Version",
+    "Vehicle Client ID",
+    "Source File"
+  ],
+  "data": [
+    [
+      1760000000,
+      "SyntheticMake",
+      "Model A",
+      "2022",
+      "AA:BB:CC:00:00:01",
+      "SyntheticNet A",
+      "02:00:00:00:00:01",
+      "synthetic-password",
+      "SyntheticMake",
+      "Model A HU",
+      "1.0",
+      "synthetic-client-allowedcars-1",
+      "Dump\\data\\data\\com.google.android.projection.gearhead\\databases\\carservicedata.db"
+    ],
+    [
+      1760000060,
+      "SyntheticMake",
+      "Model B",
+      "2023",
+      "AA:BB:CC:00:00:02",
+      "SyntheticNet B",
+      "02:00:00:00:00:01",
+      "synthetic-password",
+      "SyntheticMake",
+      "Model B HU",
+      "1.0",
+      "synthetic-client-allowedcars-2",
+      "Dump\\data\\data\\com.google.android.projection.gearhead\\databases\\carservicedata.db"
+    ]
+  ]
+}

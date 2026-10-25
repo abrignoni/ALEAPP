@@ -1,0 +1,71 @@
+{
+  "metadata": {
+    "module_name": "androidauto",
+    "artifact_name": "Android Auto - Rejected Cars",
+    "function_name": "extract_android_auto_rejected",
+    "case_number": "casesynthetic_auto_both",
+    "number_of_columns": 13,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 431,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\androidauto\\testdata.androidauto.extract_android_auto_rejected.casesynthetic_auto_both.zip",
+    "start_time": "2026-10-25T05:46:17.733638+00:00",
+    "end_time": "2026-10-25T05:46:17.862462+00:00",
+    "run_time_seconds": 0.0037419795989990234,
+    "last_commit": {
+      "hash": "53d9460364cf9d3687e43f93a6864e5564d4607f",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-10-04T08:49:26-04:00",
+      "message": "Fix timestamp handling and unsupported field labels in audited artifacts"
+    }
+  },
+  "headers": [
+    "connectiontime",
+    "Manufacturer",
+    "Model",
+    "Year",
+    "Bluetooth MAC",
+    "Wi-Fi SSID",
+    "Wi-Fi BSSID",
+    "Wi-Fi Password",
+    "Head Unit Make",
+    "Head Unit Model",
+    "Head Unit Software Version",
+    "Vehicle Client ID",
+    "Source File"
+  ],
+  "data": [
+    [
+      1760000120,
+      "OtherMake",
+      "Model C",
+      "2021",
+      "AA:BB:CC:00:00:03",
+      "SyntheticNet C",
+      "02:00:00:00:00:01",
+      "synthetic-password",
+      "OtherMake",
+      "Model C HU",
+      "1.0",
+      "synthetic-client-rejectedcars-1",
+      "Dump\\data\\data\\com.google.android.projection.gearhead\\databases\\carservicedata.db"
+    ],
+    [
+      null,
+      "OtherMake",
+      "Model D",
+      "2020",
+      null,
+      null,
+      "02:00:00:00:00:01",
+      "synthetic-password",
+      "OtherMake",
+      "Model D HU",
+      "1.0",
+      "synthetic-client-rejectedcars-2",
+      "Dump\\data\\data\\com.google.android.projection.gearhead\\databases\\carservicedata.db"
+    ]
+  ]
+}
