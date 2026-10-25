@@ -104,3 +104,35 @@ def unique_files(context, files=None):
         elif rank < best[key][0]:
             best[key] = (rank, file_found)
     return [best[key][1] for key in order]
+
+
+def android_user(relative_path):
+    """The Android user whose storage holds a path under an app data directory.
+
+    data/data and userdata/data are user 0's; data/user/<n>, data/user_de/<n>,
+    userdata/user/<n>, userdata/user_de/<n> and data_mirror/data_*/<volume>/<n> name the
+    user. A path outside every app data directory names no user and returns ''.
+    """
+    path = str(relative_path).replace('\\', '/')
+    for _storage, pattern in _VIEWS:
+        match = pattern.search(path)
+        if match:
+            return match.group(2) if match.lastindex and match.lastindex >= 2 else '0'
+    return ''
+
+
+def user_files(context, name, files=None):
+    """[(path, Android user)] of the files called name, one per user and storage class.
+
+    Sidecar files (-wal, -shm, -journal) are not matched because name is compared in full.
+    The duplicate storage views of one file are collapsed by unique_files, and a second
+    Android user's copy is kept, so an artifact that reads every pair reads every user's
+    database once. A module that takes the first match instead reads one user's database
+    and silently leaves out the others, which is how a Secure Folder user's near-empty
+    copy can hide the owner's data.
+    """
+    pairs = []
+    for path in unique_files(context, files):
+        if str(path).replace('\\', '/').rsplit('/', 1)[-1] == name:
+            pairs.append((str(path), android_user(context.get_relative_path(path))))
+    return pairs

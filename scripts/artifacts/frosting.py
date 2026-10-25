@@ -4,11 +4,14 @@ __artifacts_v2__ = {
         "description": "Rows of the frosting table in the Play Store's frosting.db: package name, APK path and the last_updated value read as Unix milliseconds. What last_updated marks is not established here.",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-07-28",
-        "last_update_date": "2025-09-09",
+        "last_update_date": "2026-10-25",
         "requirements": "none",
         "category": "Installed Apps",
-        "notes": "",
-        "paths": ('*/com.android.vending/databases/frosting.db*'),
+        "notes": "Every frosting.db found is read once per Android user, and Android User names the user "
+                 "whose app folder holds it. Taking the first match instead reported 376 rows on a "
+                 "One UI 8 (Android 16) extraction whose Secure Folder user's copy sorted first, "
+                 "against 494 in the owner's copy.",
+        "paths": ('*/com.android.vending/databases/frosting.db*',),
         "output_types": "standard",
         "artifact_icon": "package",
         "sample_data": {
@@ -28,14 +31,14 @@ __artifacts_v2__ = {
 
     
 
-from scripts.ilapfuncs import artifact_processor, get_file_path, get_sqlite_db_records
+from scripts.artifacts.storagePathViews import user_files
+from scripts.ilapfuncs import artifact_processor, get_sqlite_db_records
 
 @artifact_processor
 def frosting(context):
-    files_found = context.get_files_found()
     data_list = []
-    source_path = get_file_path(files_found, "frosting.db")
-    
+    sources = []
+
     query = '''
     select
     case last_updated
@@ -47,9 +50,10 @@ def frosting(context):
     from frosting
     '''
 
-    db_records = get_sqlite_db_records(source_path, query)
-    for record in db_records:
-        data_list.append((record[0], record[1], record[2]))
+    for source_path, user in user_files(context, "frosting.db"):
+        sources.append(source_path)
+        for record in get_sqlite_db_records(source_path, query):
+            data_list.append((record[0], record[1], record[2], user))
 
-    data_headers = (('Last Updated Timestamp','datetime'),'App Package Name','APK Path')
-    return data_headers, data_list, source_path
+    data_headers = (('Last Updated Timestamp','datetime'),'App Package Name','APK Path','Android User')
+    return data_headers, data_list, '\n'.join(sources)
