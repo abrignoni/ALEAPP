@@ -18,16 +18,23 @@ __artifacts_v2__ = {
                  "both national-format and +-prefixed numbers, and e164_number was an empty string, not NULL, on the "
                  "6 rows whose original_number is a 5- or 6-digit number and a +-prefixed number on the other 120; "
                  "those counts are an observation on that database, not a rule for the column. "
+                 "On two further databases (561 and 958 rows) _id ran to 612 and 960, so ids are missing from the sequence; "
+                 "the table keeps no record of what a missing id held. "
                  "Validation boundary: the schema (blocked with _id, original_number and e164_number, database "
-                 "user_version 2) was read from two real Android 16 databases found under data/user_de/0, one with "
-                 "126 rows and one with none. Other Android versions, a second Android user and the Samsung "
+                 "user_version 2) was read from four real Android 16 databases found under data/user_de/0, with "
+                 "126, 0, 561 and 958 rows. Other Android versions, a second Android user and the Samsung "
                  "dialer's own list were not examined, and the second-user and storage-view handling was exercised "
                  "on constructed databases only. A database without an e164_number column is read with that column "
                  "blank.",
         "paths": ('*/com.android.providers.blockednumber/databases/blockednumbers.db*',),
         "output_types": "standard",
         "artifact_icon": "phone-off",
-        "sample_data": {},
+        "sample_data": {
+            "samsung_ffs_a16_set1": "Android 16 | com.android.providers.blockednumber | 126 rows",
+            "samsung_ffs_a16_set2": "Android 16 | com.android.providers.blockednumber | 0 rows",
+            "samsung_ffs_a16_set3": "Android 16 | com.android.providers.blockednumber | 561 rows",
+            "samsung_ffs_a16_set4": "Android 16 | com.android.providers.blockednumber | 958 rows",
+        },
     }
 }
 

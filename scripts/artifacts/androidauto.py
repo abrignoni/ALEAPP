@@ -11,7 +11,7 @@ __artifacts_v2__ = {
                  "the same columns, which the Android Auto - Rejected Cars artifact reads. Android Auto is closed source and what places "
                  "a car in allowedcars, or what event the connectiontime column marks, is not established; a row is "
                  "not by itself shown to be a completed connection. The connectiontime column is declared INTEGER and "
-                 "held a 13-digit value on all 7 rows of the tested images, read here as Unix milliseconds and shown "
+                 "held a 13-digit value on all 7 rows of the tested images and on all 8 rows of one further Android 16 image, read here as Unix milliseconds and shown "
                  "in UTC to the second. Every copy of carservicedata.db found is read, one per Android user with the storage views of one copy collapsed, and Source File names the copy a row came from.",
         "paths": ('*/com.google.android.projection.gearhead/databases/carservicedata.db*'),
         "output_types": "standard",
@@ -24,6 +24,9 @@ __artifacts_v2__ = {
             "sharon_a14": "Android 14 | com.google.android.projection.gearhead vc 124642854 | 0 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.projection.gearhead vc 97632214 | 2 rows",
             "userb2_a13": "Android 13 | com.google.android.projection.gearhead vc 132644464 | 0 rows",
+            "samsung_ffs_a16_set1": "Android 16 | com.google.android.projection.gearhead | 0 rows",
+            "samsung_ffs_a16_set3": "Android 16 | com.google.android.projection.gearhead | 8 rows",
+            "samsung_ffs_a16_set4": "Android 16 | com.google.android.projection.gearhead | 0 rows",
         },
     },
     "extract_android_auto_rejected": {
@@ -38,7 +41,7 @@ __artifacts_v2__ = {
                  "with the same code as Android Auto - Allowed Cars, whose notes describe the columns. Android Auto "
                  "is closed source and what places a car in rejectedcars, or what event the connectiontime column "
                  "marks, is not established; the table name is the only thing the database says about why a row is "
-                 "there. Validation boundary: in the one real database examined the rejectedcars table was present "
+                 "there. Validation boundary: in the three real Android 16 databases examined the rejectedcars table was present "
                  "with the same 24 columns as allowedcars and held no rows, so the stored values of a rejectedcars "
                  "row (including whether connectiontime and the Wi-Fi columns are filled the way allowedcars rows "
                  "are) have not been decoded from real data, and the row handling was exercised on a constructed "
@@ -46,7 +49,11 @@ __artifacts_v2__ = {
         "paths": ('*/com.google.android.projection.gearhead/databases/carservicedata.db*',),
         "output_types": "standard",
         "artifact_icon": "truck",
-        "sample_data": {},
+        "sample_data": {
+            "samsung_ffs_a16_set1": "Android 16 | com.google.android.projection.gearhead | 0 rows",
+            "samsung_ffs_a16_set3": "Android 16 | com.google.android.projection.gearhead | 0 rows",
+            "samsung_ffs_a16_set4": "Android 16 | com.google.android.projection.gearhead | 0 rows",
+        },
     }
 }
 
