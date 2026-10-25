@@ -39,6 +39,7 @@ FILES = [
     'root/Dump/data/data/com.whatsapp.w4b/files/Avatars/120363000000000001@g.us.j',
     'root/Dump/data/data/com.whatsapp.w4b/shared_prefs/com.whatsapp_preferences_light.xml',
     'root/Dump/data/data/com.whatsapp.w4b/shared_prefs/startup_prefs.xml',
+    'root/Dump/data/data/com.whatsapp.w4b/shared_prefs/com.whatsapp.w4b_preferences.xml',
     'root/Dump/sdcard/Android/media/com.whatsapp.w4b/WhatsApp Business/Media/WhatsApp Business Images/IMG-2.jpg',
 ]
 
@@ -71,6 +72,14 @@ class WhatsAppBusinessPathsTest(unittest.TestCase):
         for key, info in BUSINESS.items():
             twin = STANDARD['get_whatsapp_' + key[len(PREFIX):]]
             self.assertEqual(info.get('data_views'), twin.get('data_views'), key)
+
+    def test_profile_paths_include_the_vendor_documented_preferences_name(self):
+        # Name taken from a vendor guide (Elcomsoft), not verified on a device.
+        path = 'root/Dump/data/data/com.whatsapp.w4b/shared_prefs/com.whatsapp.w4b_preferences.xml'
+        business = BUSINESS['get_whatsapp_business_user_profile']['paths']
+        self.assertTrue(any(fnmatch.fnmatchcase(path, p) for p in business))
+        standard = STANDARD['get_whatsapp_user_profile']['paths']
+        self.assertFalse(any(fnmatch.fnmatchcase(path, p) for p in standard))
 
     def test_each_function_is_a_distinct_artifact_processor(self):
         for key in BUSINESS:
@@ -125,6 +134,21 @@ class WhatsAppBusinessRunTest(unittest.TestCase):
             _headers, rows, source = getattr(module, artifact).__wrapped__(Context)
             self.assertEqual([r[5] for r in rows], [expected], artifact)
             self.assertEqual(source, found[0], artifact)
+
+    def test_profile_reads_the_vendor_documented_preferences_file(self):
+        folder = os.path.join(self.data_folder, 'Dump', 'data', 'data', 'com.whatsapp.w4b', 'shared_prefs')
+        os.makedirs(folder)
+        prefs = os.path.join(folder, 'com.whatsapp.w4b_preferences.xml')
+        with open(prefs, 'w', encoding='utf-8') as fd:
+            fd.write("<?xml version='1.0' encoding='utf-8' standalone='yes' ?><map>"
+                     '<string name="push_name">Synthetic Shop</string>'
+                     '<string name="my_current_status">synthetic about</string>'
+                     '<string name="cc">1</string><string name="ph">5550100002</string>'
+                     '<string name="version">2.25.1.1</string></map>')
+        Context.set_files_found([prefs])
+        _headers, rows, _source = WhatsAppBusiness.get_whatsapp_business_user_profile.__wrapped__(Context)
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0][:5], ('2.25.1.1', 'Synthetic Shop', 'synthetic about', '1', '5550100002'))
 
 
 if __name__ == '__main__':

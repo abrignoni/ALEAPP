@@ -168,9 +168,10 @@ __artifacts_v2__ = {
         "last_update_date": "2026-10-25",
         "requirements": "none",
         "category": "WhatsApp Business",
-        "notes": "Reads the same five keys as WhatsApp - User Profile (push_name, my_current_status, cc, ph and version), whose notes describe the columns, from the com.whatsapp.w4b shared_prefs files whose names end with preferences_light.xml or startup_prefs.xml. "
-                 "Validation boundary: no WhatsApp Business extraction was available when this was written. The file names are matched by their ending because the exact name of the preferences file in com.whatsapp.w4b was not seen, and whether the Business app writes these five keys under the same names is not established; the code has been run against constructed files only. The business profile (business name, address, hours, catalog) is not read.",
+        "notes": "Reads the same five keys as WhatsApp - User Profile (push_name, my_current_status, cc, ph and version), whose notes describe the columns, from the com.whatsapp.w4b shared_prefs files whose names end with preferences_light.xml or startup_prefs.xml, or are named com.whatsapp.w4b_preferences.xml. "
+                 "Validation boundary: no WhatsApp Business extraction was available when this was written. The file names are matched by their ending because the exact name of the preferences file in com.whatsapp.w4b was not seen. The name com.whatsapp.w4b_preferences.xml is taken from a vendor acquisition guide (Elcomsoft, 'About data from Android devices') and has NOT been verified on a real device; the other endings follow the WhatsApp file names. Whether the Business app writes these five keys under the same names is not established; the code has been run against constructed files only. The business profile (business name, address, hours, catalog) is not read.",
         "paths": ('*/com.whatsapp.w4b/shared_prefs/*preferences_light.xml',
+                  '*/com.whatsapp.w4b/shared_prefs/com.whatsapp.w4b_preferences.xml',
                   '*/com.whatsapp.w4b/shared_prefs/startup_prefs.xml'),
         "output_types": "standard",
         "artifact_icon": "user",
@@ -239,6 +240,7 @@ def get_whatsapp_business_channel_messages(context):
 
 @artifact_processor
 def get_whatsapp_business_user_profile(context):
-    data_list, source = _user_profile_rows(context, ('preferences_light.xml', 'startup_prefs.xml'))
+    data_list, source = _user_profile_rows(
+        context, ('preferences_light.xml', 'com.whatsapp.w4b_preferences.xml', 'startup_prefs.xml'))
     data_headers = ('Version', 'Name', 'User Status', 'Country Code', 'Mobile Number', 'Source Files')
     return data_headers, data_list, source
