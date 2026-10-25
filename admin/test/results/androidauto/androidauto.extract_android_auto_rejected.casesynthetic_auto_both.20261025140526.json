@@ -1,0 +1,71 @@
+{
+  "metadata": {
+    "module_name": "androidauto",
+    "artifact_name": "Android Auto - Rejected Cars",
+    "function_name": "extract_android_auto_rejected",
+    "case_number": "casesynthetic_auto_both",
+    "number_of_columns": 13,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 431,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/androidauto/testdata.androidauto.extract_android_auto_rejected.casesynthetic_auto_both.zip",
+    "start_time": "2026-10-25T14:05:26.416145+00:00",
+    "end_time": "2026-10-25T14:05:26.442203+00:00",
+    "run_time_seconds": 0.0007648468017578125,
+    "last_commit": {
+      "hash": "73d963ee122072af4cbf775a307ebd9f36c58558",
+      "author_name": "danjethh",
+      "author_email": "danjethh@gmail.com",
+      "date": "2026-10-25T05:07:01-04:00",
+      "message": "Blocked Numbers, Android Auto: add sample_data from four Android 16 extractions, update the notes with what they showed"
+    }
+  },
+  "headers": [
+    "connectiontime",
+    "Manufacturer",
+    "Model",
+    "Year",
+    "Bluetooth MAC",
+    "Wi-Fi SSID",
+    "Wi-Fi BSSID",
+    "Wi-Fi Password",
+    "Head Unit Make",
+    "Head Unit Model",
+    "Head Unit Software Version",
+    "Vehicle Client ID",
+    "Source File"
+  ],
+  "data": [
+    [
+      1760000120,
+      "OtherMake",
+      "Model C",
+      "2021",
+      "AA:BB:CC:00:00:03",
+      "SyntheticNet C",
+      "02:00:00:00:00:01",
+      "synthetic-password",
+      "OtherMake",
+      "Model C HU",
+      "1.0",
+      "synthetic-client-rejectedcars-1",
+      "Dump/data/data/com.google.android.projection.gearhead/databases/carservicedata.db"
+    ],
+    [
+      null,
+      "OtherMake",
+      "Model D",
+      "2020",
+      null,
+      null,
+      "02:00:00:00:00:01",
+      "synthetic-password",
+      "OtherMake",
+      "Model D HU",
+      "1.0",
+      "synthetic-client-rejectedcars-2",
+      "Dump/data/data/com.google.android.projection.gearhead/databases/carservicedata.db"
+    ]
+  ]
+}
