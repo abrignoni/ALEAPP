@@ -1,0 +1,58 @@
+{
+  "casesynthetic_cmh_location": {
+    "description": "Synthetic cmh.db with a files table, a location table and the location_view, invented values; contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_cmh_location.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-25T06:00:50.512696",
+      "last_commit": {
+        "hash": "f31203aa5d23fd279ab868cc7b5ed265c06ff819",
+        "author_name": "Brigs",
+        "author_email": "abrignoni@gmail.com",
+        "date": "2026-10-23T15:25:32-04:00",
+        "message": "Join artifact source paths with newlines (#1762)"
+      }
+    },
+    "artifacts": {
+      "get_cmh": {
+        "search_patterns": [
+          "*/cmh.db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_cmh_no_location_table": {
+    "description": "Synthetic cmh.db with the location_view present but the location table it selects from dropped, as in a Samsung Android 16 database; invented values; contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_cmh_no_location_table.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-25T06:00:51.627768",
+      "last_commit": {
+        "hash": "f31203aa5d23fd279ab868cc7b5ed265c06ff819",
+        "author_name": "Brigs",
+        "author_email": "abrignoni@gmail.com",
+        "date": "2026-10-23T15:25:32-04:00",
+        "message": "Join artifact source paths with newlines (#1762)"
+      }
+    },
+    "artifacts": {
+      "get_cmh": {
+        "search_patterns": [
+          "*/cmh.db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "metadata": {
+    "module_name": "cmh",
+    "artifact_name": "cmh",
+    "function_name": "get_cmh",
+    "case_number": "casesynthetic_cmh_location",
+    "number_of_columns": 11,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 321,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\cmh\\testdata.cmh.get_cmh.casesynthetic_cmh_location.zip",
+    "start_time": "2026-10-25T06:00:52.512353+00:00",
+    "end_time": "2026-10-25T06:00:52.639051+00:00",
+    "run_time_seconds": 0.0036461353302001953,
+    "last_commit": {
+      "hash": "f31203aa5d23fd279ab868cc7b5ed265c06ff819",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-10-23T15:25:32-04:00",
+      "message": "Join artifact source paths with newlines (#1762)"
+    }
+  },
+  "headers": [
+    "Timestamp",
+    "Date Added",
+    "Date Modified",
+    "Title",
+    "Bucket Name",
+    "Latitude",
+    "Longitude",
+    "Address",
+    "URI",
+    "Data Location",
+    "Is Private"
+  ],
+  "data": [
+    [
+      1760000000,
+      1760000000,
+      1760000000,
+      "synthetic_1",
+      "Camera",
+      51.5,
+      -0.12,
+      "Synthetic Street, Synthetic City",
+      "content://media/external/images/media/1",
+      "/storage/emulated/0/DCIM/Camera/synthetic_1.jpg",
+      0
+    ],
+    [
+      1760000060,
+      1760000060,
+      1760000060,
+      "synthetic_2",
+      "Camera",
+      null,
+      null,
+      null,
+      "content://media/external/images/media/2",
+      "/storage/emulated/0/DCIM/Camera/synthetic_2.jpg",
+      0
+    ]
+  ]
+}

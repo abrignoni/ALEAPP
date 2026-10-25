@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Parses the Samsung CMH media store (image dates, title, bucket, latitude, longitude, address (from location_view, joined on the file's _id), URI and path) from cmh.db.",
         "author": "@abrignoni",
         "creation_date": "2020-03-05",
-        "last_update_date": "2026-10-04",
+        "last_update_date": "2026-10-25",
         "requirements": "none",
         "category": "Samsung_CMH",
         "notes": "Queries the files table directly (media_type 1 = images). In the samples "
@@ -26,7 +26,13 @@ __artifacts_v2__ = {
                  "the view held one row per _id. Address is therefore the location table's text "
                  "for a row holding the same coordinates as the file, and it is blank when the "
                  "location table holds no such row for the database's locale. URI is the files "
-                 "row's uri column, as stored.",
+                 "row's uri column, as stored. On a Samsung Android 16 database (213 rows in files) the location_view was still in the schema but the "
+                 "location table it selects from was not, so querying the view failed with \"no such table: "
+                 "main.location\" and the artifact reported no rows. The artifact now tests the view first and, "
+                 "when it cannot be queried, reports the files rows with Address blank because there is no "
+                 "table to read it from; that blank does not show the photos had no address. On that database "
+                 "Latitude, Longitude and Is Private held no value on any of the 213 rows. Whether other builds "
+                 "keep addresses in another table was not examined.",
         "paths": ('*/cmh.db*',),
         "output_types": "all",
         "artifact_icon": "file",
@@ -92,13 +98,21 @@ def get_cmh(context):
             # Older CMH versions defined an images view as exactly
             # "SELECT ... FROM files WHERE media_type=1"; newer versions
             # dropped the view, so query the files table directly.
-            cursor.execute('''
+            # location_view selects from the location table. A database can keep the view
+            # and lack that table, which makes the view, and any query joining it, fail.
+            address, join = 'location_view.address_text', 'LEFT JOIN location_view ON location_view._id = files._id'
+            try:
+                cursor.execute('SELECT _id FROM location_view LIMIT 1').fetchall()
+            except sqlite3.OperationalError as ex:
+                logfunc(f'CMH: location_view cannot be queried in {file_found} ({ex}); Address is left blank')
+                address, join = 'NULL', ''
+            cursor.execute(f'''
                 SELECT
                 files.datetaken, files.date_added, files.date_modified, files.title,
                 files.bucket_display_name, files.latitude, files.longitude,
-                location_view.address_text, files.uri, files._data, files.isprivate
+                {address}, files.uri, files._data, files.isprivate
                 FROM files
-                left join location_view on location_view._id = files._id
+                {join}
                 WHERE files.media_type = 1
             ''')
             all_rows = cursor.fetchall()
