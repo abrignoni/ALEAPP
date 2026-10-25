@@ -1,0 +1,37 @@
+{
+  "metadata": {
+    "module_name": "telephonyTrafficStats",
+    "artifact_name": "Telephony Network Lookups, Cells Seen",
+    "function_name": "get_telephony_cell_summary",
+    "case_number": "casesynthetic_trafficstats_empty",
+    "number_of_columns": 10,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/telephonyTrafficStats/testdata.telephonyTrafficStats.get_telephony_cell_summary.casesynthetic_trafficstats_empty.zip",
+    "start_time": "2026-10-25T16:17:21.778110+00:00",
+    "end_time": "2026-10-25T16:17:22.058765+00:00",
+    "run_time_seconds": 0.00373077392578125,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-25T16:17:22.019777",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "First Seen",
+    "Last Seen",
+    "Cell ID (as stored)",
+    "Technology (as stored)",
+    "Network Detail (as stored)",
+    "Band (as stored)",
+    "Rows",
+    "RSRP Min (excluding -999)",
+    "RSRP Max (excluding -999)",
+    "Android User"
+  ],
+  "data": []
+}

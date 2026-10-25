@@ -1,0 +1,41 @@
+{
+  "metadata": {
+    "module_name": "telephonyTrafficStats",
+    "artifact_name": "Telephony Network Lookups (trafficstats)",
+    "function_name": "get_telephony_trafficstats",
+    "case_number": "casesynthetic_trafficstats_empty",
+    "number_of_columns": 14,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/telephonyTrafficStats/testdata.telephonyTrafficStats.get_telephony_trafficstats.casesynthetic_trafficstats_empty.zip",
+    "start_time": "2026-10-25T16:17:21.501159+00:00",
+    "end_time": "2026-10-25T16:17:21.774470+00:00",
+    "run_time_seconds": 0.004015922546386719,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-25T16:17:21.735952",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Timestamp",
+    "ID",
+    "Cell ID (as stored)",
+    "RSRP (as stored)",
+    "Technology (as stored)",
+    "Network Detail (as stored)",
+    "Band (as stored)",
+    "Transaction ID (as stored)",
+    "DNS Type (as stored)",
+    "Address Items (as stored)",
+    "Response Time (as stored)",
+    "Response Code (as stored)",
+    "Consumed (as stored)",
+    "Android User"
+  ],
+  "data": []
+}

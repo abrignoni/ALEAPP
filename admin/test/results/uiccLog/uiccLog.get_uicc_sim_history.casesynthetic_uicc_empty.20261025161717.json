@@ -1,0 +1,42 @@
+{
+  "metadata": {
+    "module_name": "uiccLog",
+    "artifact_name": "SIM Subscriptions Seen in UICC Log",
+    "function_name": "get_uicc_sim_history",
+    "case_number": "casesynthetic_uicc_empty",
+    "number_of_columns": 15,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/uiccLog/testdata.uiccLog.get_uicc_sim_history.casesynthetic_uicc_empty.zip",
+    "start_time": "2026-10-25T16:17:17.876205+00:00",
+    "end_time": "2026-10-25T16:17:18.166347+00:00",
+    "run_time_seconds": 0.007715940475463867,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-25T16:17:18.118486",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "First Seen (device local time, as stored)",
+    "Last Seen (device local time, as stored)",
+    "Phone Index",
+    "Subscription ID",
+    "READY Lines",
+    "LOADED Lines",
+    "Display Name",
+    "Carrier Name (as stored)",
+    "Carrier ID",
+    "ICC ID",
+    "IMSI",
+    "Phone Number (as stored)",
+    "Embedded (as stored)",
+    "Slot Index in siminfo (as stored)",
+    "Android User"
+  ],
+  "data": []
+}
