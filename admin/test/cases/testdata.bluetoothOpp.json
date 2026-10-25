@@ -1,0 +1,89 @@
+{
+  "casesynthetic_btopp_users": {
+    "description": "Synthetic btopp.db for Android users 0 and 150 plus a second storage view of user 0 (data_mirror), invented values; contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_btopp_users.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-25T05:48:49.990265",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-25T05:48:49.732069",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "get_bluetooth_opp": {
+        "search_patterns": [
+          "*/com.android.bluetooth/databases/btopp.db*",
+          "*/com.google.android.bluetooth/databases/btopp.db*"
+        ],
+        "file_count": 3,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_btopp_google_module": {
+    "description": "Synthetic btopp.db under com.google.android.bluetooth, one row, invented values; contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_btopp_google_module.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-25T05:48:51.046618",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-25T05:48:50.785064",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "get_bluetooth_opp": {
+        "search_patterns": [
+          "*/com.android.bluetooth/databases/btopp.db*",
+          "*/com.google.android.bluetooth/databases/btopp.db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_btopp_empty": {
+    "description": "Synthetic btopp.db with an empty btopp table; contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_btopp_empty.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-25T05:48:52.021470",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-25T05:48:51.782615",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "get_bluetooth_opp": {
+        "search_patterns": [
+          "*/com.android.bluetooth/databases/btopp.db*",
+          "*/com.google.android.bluetooth/databases/btopp.db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  }
+}
