@@ -219,7 +219,7 @@ class ArtifactTest(unittest.TestCase):
         a = self.uicc('data/user_de/0/com.android.phone/databases/uicc_log.db', [('2026-03-01 01:02:03', 'SIM_STATE_CHANGED[1] LOADED,null(3)')])
         b = self.uicc('data/user_de/150/com.android.phone/databases/uicc_log.db', [('2026-03-02 01:02:03', 'SIM_STATE_CHANGED[1] LOADED,null(3)')])
         _, rows, _ = self.run_artifact(uiccLog, 'get_uicc_log', [b, a])
-        self.assertEqual(sorted((row[1], row[-1]) for row in rows), [('2026-03-01 01:02:03', '0'), ('2026-03-02 01:02:03', '150')])
+        self.assertEqual(sorted((row[0], row[-1]) for row in rows), [('2026-03-01 01:02:03', '0'), ('2026-03-02 01:02:03', '150')])
         _, rows, _ = self.run_artifact(uiccLog, 'get_uicc_sim_history', [b, a])
         self.assertEqual(sorted(row[-1] for row in rows), ['0', '150'])
 

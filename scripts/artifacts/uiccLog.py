@@ -10,14 +10,10 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Device Information",
         "notes": "One row per row of the uicclog table (_id, time, log) of each uicc_log.db found, read once per "
-                 "Android user with the duplicate storage views of one file collapsed. Rows are listed in _id "
-                 "order, which is the order they were written; the stored times are not always in that order "
-                 "(see below). The file is a Samsung component's log on the tested devices; AOSP has no file "
-                 "of this name, no documentation of it was found, and the line formats below are read from the "
+                 "Android user with the duplicate storage views of one file collapsed. Rows are listed in _id order; the stored times are not always in that order "
+                 "(see below). On the tested devices, all Samsung, the file sat under com.android.phone; which component writes it was not established; no AOSP source for a file of this name was found, no documentation of it was found, and the line formats below are read from the "
                  "data, not from a source.\n"
-                 "Log Time is the time column as stored. The column is declared as DEFAULT "
-                 "(datetime('now','localtime')), so it is a local time of the device with no zone recorded in "
-                 "the file, and it is NOT converted to UTC here. On the two tested devices that also hold the "
+                 "Log Time is the time column as stored. On the tested devices the column is declared as DEFAULT (datetime('now','localtime')), so a row written through that default holds the device local wall clock at write time, with no zone recorded in the file; the value is NOT converted to UTC here. On the two tested devices that also hold the "
                  "telephony traffic statistics database, the last log row falls 2 and 10 minutes before the "
                  "last traffic row if Log Time is read as UTC-4, and about 4 hours before it if read as UTC; "
                  "that is consistent with a local time but does not prove the zone, which can also have "
@@ -28,34 +24,35 @@ __artifacts_v2__ = {
                  "num_apps=a,SupportedMepMode=m,SlotPortMapping={physicalSlotIndex=p, portIndex=q}', "
                  "'SlotStatus: count=n{...}{...}' and 'switchSlots: [UiccSlotMapping (...), ...]'. Index is "
                  "the number in brackets. Subscription ID is the number in parentheses of a SIM_STATE_CHANGED "
-                 "line, -1 on most ABSENT, NOT_READY and UNKNOWN lines and 0 or more on most READY and LOADED lines (a few "
+                 "line, on the tested devices it was -1 on most ABSENT, NOT_READY and UNKNOWN lines and 0 or more on most READY and LOADED lines (a few "
                  "NOT_READY and UNKNOWN lines carry a non-negative id and one READY line carries -1); on all five tested "
                  "devices every non-negative value equals an _id of the siminfo table of the telephony "
                  "provider database (telephony.db) on the same device (see SIM Subscriptions Seen in UICC Log). "
-                 "The SIM states (READY, LOADED, ABSENT, NOT_READY, UNKNOWN), card states, Apps On Card and "
-                 "MEP mode values are reported as stored and are not translated; what the null token before "
-                 "the subscription id stands for is not known. Slot Layout shows the SlotStatus or switchSlots "
-                 "text as stored. Lines that match none of the formats are kept with only Raw Log filled.\n"
-                 "The log carries no ICCID, IMSI or phone number of its own: none of the 1,584 rows of the five "
-                 "tested devices contains a run of seven or more digits. Which SIM a subscription id refers to "
-                 "comes from telephony.db, see the second artifact. The table is a bounded log: row ids run from "
-                 "1 on four devices and from 2001 on one, so older rows were removed from that one; absence of "
+                 "The SIM states seen on the tested devices (READY, LOADED, ABSENT, NOT_READY, UNKNOWN), and any other state token, card states, num_apps and MEP mode values are reported as stored and are not translated; what the null token before "
+                 "the subscription id stands for is not known. Slot Layout shows the text after the 'SlotStatus:' or 'switchSlots:' label, outer whitespace trimmed; Raw Log holds the full line. Lines that match none of the formats are kept with Event set to Other and only Raw Log otherwise filled.\n"
+                 "On the five tested devices the log carried no ICCID, IMSI or phone number: none of the 1,584 rows contains a run of seven or more digits. Which SIM a subscription id refers to "
+                 "comes from telephony.db, see the second artifact. Row ids run from 1 on four devices and from 2001 on one, which is consistent with older rows having been removed there; treat the table as a log that can be trimmed; absence of "
                  "an event is not evidence it did not happen. A row records that the logging component wrote a "
                  "line; a SIM state is not by itself proof of who inserted or used a SIM.\n"
                  "Validation boundary: five Samsung devices (Android 16, One UI 8.5; S- and A-series "
                  "models) held uicc_log.db with 123, 223, 387, 423 and 428 rows; the file "
-                 "was not present on the two older tested Samsung devices (Android 10 and Android 14), and no "
-                 "non-Samsung device was available. Android users other than 0 were exercised only on a "
-                 "constructed database. A damaged or non-SQLite file is logged and skipped. Android User held one value (0) on every row of every tested device; it stays because an image can carry another Android user's copy of the file.",
+                 "was not present on the two older tested Samsung devices (Android 10 and Android 14), and no non-Samsung device holding the file was available (the corpus Pixel and emulator images, see below, do not hold it). Android users other than 0 were exercised only on a "
+                 "constructed database. A file that is not SQLite or cannot be opened is logged and skipped; a truncated database yields the rows readable before the damage. Android User held one value (0) on every row of every tested device; it stays because an image can carry another Android user's copy of the file. No Android corpus image holds uicc_log.db (telephony.db is present on most); on samsunga53_a14, sharon_a14, anne_a15 and hc_pixel8pro_a16 the artifact ran without error and reports no rows, so the rows described here come only from the contributor's five Samsung Android 16 extractions.",
         "paths": ('*/com.android.phone/databases/uicc_log.db*',),
         "output_types": ["html", "lava", "tsv"],
         "artifact_icon": "smartphone",
+        "sample_data": {
+            "samsunga53_a14": "Android 14 | com.android.phone | 0 rows",
+            "sharon_a14": "Android 14 | com.android.phone | 0 rows",
+            "anne_a15": "Android 15 | com.android.phone | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.android.phone | 0 rows",
+        },
     },
     "get_uicc_sim_history": {
         "name": "SIM Subscriptions Seen in UICC Log",
         "description": "One row per phone index and subscription id that appears in a SIM_STATE_CHANGED line of "
                        "uicc_log.db, with the first and last log time, the READY and LOADED line counts and the "
-                       "matching siminfo row of telephony.db (display name, carrier, ICCID, IMSI, number)",
+                       "matching siminfo row of telephony.db (display name, carrier name and id, ICCID, IMSI, number, embedded flag, slot index)",
         "author": "@danjethh, Claude",
         "creation_date": "2026-10-25",
         "last_update_date": "2026-10-25",
@@ -68,12 +65,11 @@ __artifacts_v2__ = {
                  "(see the first artifact) and is not converted. READY Lines and LOADED Lines count the lines "
                  "with that state. They count log lines, not times a SIM was inserted.\n"
                  "The SIM details are the siminfo row whose _id equals the subscription id, read from the "
-                 "telephony.db of the same Android user. ICC ID, IMSI and Phone Number are reported exactly as "
-                 "stored (a blank is blank). The join is by value: on all five tested devices every "
+                 "telephony.db of the same Android user. ICC ID, IMSI and Phone Number are reported as stored; a NULL or empty value is shown blank. The join is by value: on all five tested devices every "
                  "non-negative subscription id in the log matched a siminfo _id (0 unmatched), and for the SIM "
                  "that was current at extraction the siminfo sim_id equalled the log's index, but the meaning of "
                  "the number in the log line is not documented anywhere that was found, so treat the join as an "
-                 "observed match. siminfo keeps its row after the SIM is removed, and its display name and "
+                 "observed match. a siminfo row may outlive the SIM it describes, and its display name and "
                  "carrier can have been edited after the log line was written, so the details describe the "
                  "database at extraction and not necessarily the SIM at First Seen. Where telephony.db is "
                  "missing or has no matching row the details are blank. Embedded (as stored) is siminfo's "
@@ -81,11 +77,17 @@ __artifacts_v2__ = {
                  "A subscription seen only on LOADED/READY lines has a time span in the log, not proof of "
                  "continuous presence between First Seen and Last Seen, and nothing before the oldest retained "
                  "row. Validation boundary: five Samsung devices (Android 16, One UI 8.5), 1, 1, 1, 2 and 3 "
-                 "subscriptions on the five devices; the same boundary as the first artifact applies. Android User held one value (0) on every row of every tested device and stays to attribute rows when an image carries a second user's copy. Carrier Name (as stored) had no value on the single row of three tested devices; on other rows it held the text No service or (Searching), so it appears to be a status text and is reported as stored. On one device Phone Index and Embedded (as stored) were the same value on both rows; that is a coincidence of which SIM sat in which index there, not a derivation.",
+                 "subscriptions on the five devices; the same boundary as the first artifact applies. Android User held one value (0) on every row of every tested device and stays to attribute rows when an image carries a second user's copy. Carrier Name (as stored) had no value on the single row of three tested devices; on other rows it held the text No service or (Searching), so it appears to be a status text and is reported as stored. On one device Index and Embedded (as stored) were the same value on both rows; that is a coincidence of which SIM sat in which index there, not a derivation. No Android corpus image holds uicc_log.db (telephony.db is present on most); on samsunga53_a14, sharon_a14, anne_a15 and hc_pixel8pro_a16 the artifact ran without error and reports no rows, so the rows described here come only from the contributor's five Samsung Android 16 extractions.",
         "paths": ('*/com.android.phone/databases/uicc_log.db*',
                   '*/com.android.providers.telephony/databases/telephony.db*'),
         "output_types": ["html", "lava", "tsv"],
         "artifact_icon": "smartphone",
+        "sample_data": {
+            "samsunga53_a14": "Android 14 | com.android.phone | 0 rows",
+            "sharon_a14": "Android 14 | com.android.phone | 0 rows",
+            "anne_a15": "Android 15 | com.android.phone | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.android.phone | 0 rows",
+        },
     },
 }
 
@@ -158,16 +160,16 @@ def _read_uicc_rows(path):
 
 @artifact_processor
 def get_uicc_log(context):
-    data_headers = ('Log ID', 'Log Time (device local time, as stored)', 'Event', 'Index', 'State',
-                    'Subscription ID', 'Apps On Card', 'MEP Mode', 'Physical Slot Index', 'Port Index',
-                    'Slot Layout (as stored)', 'Raw Log', 'Android User')
+    data_headers = ('Log Time (device local time, as stored)', 'Log ID', 'Event', 'Index', 'State',
+                    'Subscription ID', 'num_apps (as stored)', 'Supported MEP Mode (as stored)',
+                    'Physical Slot Index', 'Port Index', 'Slot Layout', 'Raw Log', 'Android User')
     data_list = []
     sources = []
     for path, user in _uicc_files(context):
         sources.append(path)
         for row in _read_uicc_rows(path):
             event, index, state, sub_id, apps, mep, physical, port, layout = parse_uicc_line(row[2])
-            data_list.append((row[0], row[1], event, index, state, sub_id, apps, mep, physical, port,
+            data_list.append((row[1], row[0], event, index, state, sub_id, apps, mep, physical, port,
                               layout, row[2], user))
     return data_headers, data_list, '\n'.join(sources)
 
@@ -194,7 +196,7 @@ def _siminfo_for(context):
 @artifact_processor
 def get_uicc_sim_history(context):
     data_headers = ('First Seen (device local time, as stored)', 'Last Seen (device local time, as stored)',
-                    'Phone Index', 'Subscription ID', 'READY Lines', 'LOADED Lines', 'Display Name',
+                    'Index', 'Subscription ID', 'READY Lines', 'LOADED Lines', 'Display Name',
                     'Carrier Name (as stored)', 'Carrier ID', 'ICC ID', 'IMSI', 'Phone Number (as stored)',
                     'Embedded (as stored)', 'Slot Index in siminfo (as stored)', 'Android User')
     siminfo, sim_sources = _siminfo_for(context)

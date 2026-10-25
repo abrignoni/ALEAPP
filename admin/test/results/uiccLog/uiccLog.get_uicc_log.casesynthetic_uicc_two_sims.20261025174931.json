@@ -3,43 +3,43 @@
     "module_name": "uiccLog",
     "artifact_name": "UICC Log (SIM Slot Events)",
     "function_name": "get_uicc_log",
-    "case_number": "casesynthetic_uicc_data_data",
+    "case_number": "casesynthetic_uicc_two_sims",
     "number_of_columns": 13,
     "number_of_rows": 20,
     "total_data_size_bytes": 2866,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
-    "input_zip_path": "admin/test/cases/data/uiccLog/testdata.uiccLog.get_uicc_log.casesynthetic_uicc_data_data.zip",
-    "start_time": "2026-10-25T16:17:18.830088+00:00",
-    "end_time": "2026-10-25T16:17:19.085468+00:00",
-    "run_time_seconds": 0.002693653106689453,
+    "input_zip_path": "admin/test/cases/data/uiccLog/testdata.uiccLog.get_uicc_log.casesynthetic_uicc_two_sims.zip",
+    "start_time": "2026-10-25T17:49:31.537622+00:00",
+    "end_time": "2026-10-25T17:49:31.564931+00:00",
+    "run_time_seconds": 0.0017178058624267578,
     "last_commit": {
-      "hash": "Uncommitted",
-      "author_name": "N/A",
-      "author_email": "N/A",
-      "date": "2026-10-25T16:17:19.052210",
-      "message": "File not yet committed to git"
+      "hash": "1ff92b971cf3f355271aeafef96d6759926d33a5",
+      "author_name": "danjethh",
+      "author_email": "danjethh@gmail.com",
+      "date": "2026-10-25T12:34:43-04:00",
+      "message": "Add UICC log, SIM subscriptions and telephony network lookup artifacts"
     }
   },
   "headers": [
-    "Log ID",
     "Log Time (device local time, as stored)",
+    "Log ID",
     "Event",
     "Index",
     "State",
     "Subscription ID",
-    "Apps On Card",
-    "MEP Mode",
+    "num_apps (as stored)",
+    "Supported MEP Mode (as stored)",
     "Physical Slot Index",
     "Port Index",
-    "Slot Layout (as stored)",
+    "Slot Layout",
     "Raw Log",
     "Android User"
   ],
   "data": [
     [
-      1,
       "2026-01-10 08:00:00",
+      1,
       "SlotStatus",
       "",
       "",
@@ -53,8 +53,8 @@
       "0"
     ],
     [
-      2,
       "2026-01-10 08:00:00",
+      2,
       "CardState",
       0,
       "CARDSTATE_PRESENT",
@@ -68,8 +68,8 @@
       "0"
     ],
     [
-      3,
       "2026-01-10 08:00:00",
+      3,
       "CardState",
       1,
       "CARDSTATE_ABSENT",
@@ -83,8 +83,8 @@
       "0"
     ],
     [
-      4,
       "2026-01-10 08:00:03",
+      4,
       "SIM_STATE_CHANGED",
       0,
       "NOT_READY",
@@ -98,8 +98,8 @@
       "0"
     ],
     [
-      5,
       "2026-01-10 08:00:05",
+      5,
       "SIM_STATE_CHANGED",
       0,
       "READY",
@@ -113,8 +113,8 @@
       "0"
     ],
     [
-      6,
       "2026-01-10 08:00:06",
+      6,
       "SIM_STATE_CHANGED",
       0,
       "LOADED",
@@ -128,8 +128,8 @@
       "0"
     ],
     [
-      7,
       "2026-01-10 08:00:06",
+      7,
       "SIM_STATE_CHANGED",
       1,
       "ABSENT",
@@ -143,8 +143,8 @@
       "0"
     ],
     [
-      8,
       "2026-02-01 19:30:10",
+      8,
       "SIM_STATE_CHANGED",
       0,
       "ABSENT",
@@ -158,8 +158,8 @@
       "0"
     ],
     [
-      9,
       "2026-02-01 19:30:09",
+      9,
       "CardState",
       0,
       "CARDSTATE_ABSENT",
@@ -173,8 +173,8 @@
       "0"
     ],
     [
-      10,
       "2026-02-01 19:31:40",
+      10,
       "SlotStatus",
       "",
       "",
@@ -188,8 +188,8 @@
       "0"
     ],
     [
-      11,
       "2026-02-01 19:31:41",
+      11,
       "CardState",
       1,
       "CARDSTATE_PRESENT",
@@ -203,8 +203,8 @@
       "0"
     ],
     [
-      12,
       "2026-02-01 19:31:44",
+      12,
       "SIM_STATE_CHANGED",
       1,
       "READY",
@@ -218,8 +218,8 @@
       "0"
     ],
     [
-      13,
       "2026-02-01 19:31:45",
+      13,
       "SIM_STATE_CHANGED",
       1,
       "LOADED",
@@ -233,8 +233,8 @@
       "0"
     ],
     [
-      14,
       "2026-02-02 07:00:00",
+      14,
       "switchSlots",
       "",
       "",
@@ -248,8 +248,8 @@
       "0"
     ],
     [
-      15,
       "2026-02-02 07:00:09",
+      15,
       "SIM_STATE_CHANGED",
       0,
       "UNKNOWN",
@@ -263,8 +263,8 @@
       "0"
     ],
     [
-      16,
       "2026-02-02 07:00:12",
+      16,
       "SIM_STATE_CHANGED",
       0,
       "READY",
@@ -278,8 +278,8 @@
       "0"
     ],
     [
-      17,
       "2026-02-02 07:00:13",
+      17,
       "SIM_STATE_CHANGED",
       0,
       "LOADED",
@@ -293,8 +293,8 @@
       "0"
     ],
     [
-      18,
       "2026-03-05 12:00:00",
+      18,
       "SIM_STATE_CHANGED",
       1,
       "LOADED",
@@ -308,8 +308,8 @@
       "0"
     ],
     [
-      19,
       "2026-03-05 12:00:01",
+      19,
       "Other",
       "",
       "",
@@ -323,8 +323,8 @@
       "0"
     ],
     [
-      20,
       "2026-03-05 12:00:02",
+      20,
       "SIM_STATE_CHANGED",
       0,
       "PIN_REQUIRED",

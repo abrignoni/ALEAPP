@@ -10,15 +10,15 @@
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/telephonyTrafficStats/testdata.telephonyTrafficStats.get_telephony_trafficstats.casesynthetic_trafficstats_b.zip",
-    "start_time": "2026-10-25T16:17:20.930048+00:00",
-    "end_time": "2026-10-25T16:17:21.194525+00:00",
-    "run_time_seconds": 0.00408172607421875,
+    "start_time": "2026-10-25T17:49:31.961400+00:00",
+    "end_time": "2026-10-25T17:49:31.978077+00:00",
+    "run_time_seconds": 0.0007479190826416016,
     "last_commit": {
-      "hash": "Uncommitted",
-      "author_name": "N/A",
-      "author_email": "N/A",
-      "date": "2026-10-25T16:17:21.155099",
-      "message": "File not yet committed to git"
+      "hash": "1ff92b971cf3f355271aeafef96d6759926d33a5",
+      "author_name": "danjethh",
+      "author_email": "danjethh@gmail.com",
+      "date": "2026-10-25T12:34:43-04:00",
+      "message": "Add UICC log, SIM subscriptions and telephony network lookup artifacts"
     }
   },
   "headers": [
@@ -31,7 +31,7 @@
     "Band (as stored)",
     "Transaction ID (as stored)",
     "DNS Type (as stored)",
-    "Address Items (as stored)",
+    "Address Items",
     "Response Time (as stored)",
     "Response Code (as stored)",
     "Consumed (as stored)",
