@@ -1,0 +1,59 @@
+{
+  "metadata": {
+    "module_name": "smyfilesRecents",
+    "artifact_name": "My Files - Recent Files",
+    "function_name": "get_smyfilesRecents",
+    "case_number": "casesynthetic_a16",
+    "number_of_columns": 9,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 104,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\smyfilesRecents\\testdata.smyfilesRecents.get_smyfilesRecents.casesynthetic_a16.zip",
+    "start_time": "2026-10-25T09:31:04.061846+00:00",
+    "end_time": "2026-10-25T09:31:04.260187+00:00",
+    "run_time_seconds": 0.0030372142791748047,
+    "last_commit": {
+      "hash": "9b92cca390ccca9be4433c076f8cf1e2f137efb1",
+      "author_name": "danjethh",
+      "author_email": "danjethh@gmail.com",
+      "date": "2026-10-25T09:19:36+00:00",
+      "message": "Multi-user first match: document the output-checker findings, add sample_data from four Android 16 extractions"
+    }
+  },
+  "headers": [
+    "Timestamp",
+    "Name",
+    "Size",
+    "Data",
+    "Ext.",
+    "Source",
+    "Description",
+    "Recent Timestamp",
+    "Android User"
+  ],
+  "data": [
+    [
+      1700000000,
+      "example1.txt",
+      1,
+      "/x/example1.txt",
+      "txt",
+      "",
+      "",
+      1700000000,
+      "0"
+    ],
+    [
+      1700000000,
+      "example2.txt",
+      1,
+      "/x/example2.txt",
+      "txt",
+      "",
+      "",
+      1700000000,
+      "0"
+    ]
+  ]
+}

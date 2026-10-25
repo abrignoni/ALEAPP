@@ -1,0 +1,62 @@
+{
+  "metadata": {
+    "module_name": "smyfilesRecents",
+    "artifact_name": "My Files - Recent Files (FileInfo)",
+    "function_name": "get_smyfilesRecents_fileinfo",
+    "case_number": "casesynthetic_a16",
+    "number_of_columns": 10,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 92,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\smyfilesRecents\\testdata.smyfilesRecents.get_smyfilesRecents_fileinfo.casesynthetic_a16.zip",
+    "start_time": "2026-10-25T09:31:04.262815+00:00",
+    "end_time": "2026-10-25T09:31:04.444376+00:00",
+    "run_time_seconds": 0.004525661468505859,
+    "last_commit": {
+      "hash": "9b92cca390ccca9be4433c076f8cf1e2f137efb1",
+      "author_name": "danjethh",
+      "author_email": "danjethh@gmail.com",
+      "date": "2026-10-25T09:19:36+00:00",
+      "message": "Multi-user first match: document the output-checker findings, add sample_data from four Android 16 extractions"
+    }
+  },
+  "headers": [
+    "Recent Timestamp",
+    "Modified Timestamp",
+    "File ID",
+    "Package Name",
+    "Path",
+    "Size",
+    "Is Downloaded?",
+    "Is Hidden?",
+    "Is Trashed?",
+    "Android User"
+  ],
+  "data": [
+    [
+      1700000000,
+      1700000000,
+      null,
+      null,
+      null,
+      1,
+      null,
+      null,
+      null,
+      "0"
+    ],
+    [
+      1700000000,
+      1700000000,
+      null,
+      null,
+      null,
+      1,
+      null,
+      null,
+      null,
+      "0"
+    ]
+  ]
+}

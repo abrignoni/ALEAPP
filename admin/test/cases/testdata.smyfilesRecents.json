@@ -1,0 +1,44 @@
+{
+  "casesynthetic_a16": {
+    "description": "Synthetic My Files FileInfo.db with two invented recent files; contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_fi.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-25T09:31:02.944707",
+      "last_commit": {
+        "hash": "9b92cca390ccca9be4433c076f8cf1e2f137efb1",
+        "author_name": "danjethh",
+        "author_email": "danjethh@gmail.com",
+        "date": "2026-10-25T09:19:36+00:00",
+        "message": "Multi-user first match: document the output-checker findings, add sample_data from four Android 16 extractions"
+      }
+    },
+    "artifacts": {
+      "get_smyfilesRecents": {
+        "search_patterns": [
+          "*/com.sec.android.app.myfiles/databases/myfiles.db*",
+          "*/com.sec.android.app.myfiles/databases/FileInfo.db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_smyfilesRecents_fileinfo": {
+        "search_patterns": [
+          "*/com.sec.android.app.myfiles/databases/myfiles.db*",
+          "*/com.sec.android.app.myfiles/databases/FileInfo.db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    },
+    "os_name": "Android",
+    "os_version": "16"
+  }
+}
