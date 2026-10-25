@@ -1,0 +1,41 @@
+{
+  "metadata": {
+    "module_name": "healthConnect",
+    "artifact_name": "Health Connect - Preferences",
+    "function_name": "healthconnect_preferences",
+    "case_number": "synthetic_a16",
+    "number_of_columns": 3,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 69,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/healthConnect/testdata.healthConnect.healthconnect_preferences.synthetic_a16.zip",
+    "start_time": "2026-10-25T15:40:44.637678+00:00",
+    "end_time": "2026-10-25T15:40:44.653738+00:00",
+    "run_time_seconds": 0.0015070438385009766,
+    "last_commit": {
+      "hash": "90c34b48487f051ea071cca88acc15631626a039",
+      "author_name": "danjethh",
+      "author_email": "danjethh@gmail.com",
+      "date": "2026-10-25T05:14:28-04:00",
+      "message": "Health Connect: read shared-user entries of the first-grant-times file, add sample_data, update the notes from four Android 16 extractions"
+    }
+  },
+  "headers": [
+    "Android User",
+    "Key",
+    "Value"
+  ],
+  "data": [
+    [
+      "0",
+      "current_state_start_time",
+      "2026-01-01T00:00:00.000000Z"
+    ],
+    [
+      "0",
+      "migration_state",
+      "5"
+    ]
+  ]
+}

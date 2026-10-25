@@ -1,0 +1,59 @@
+{
+  "metadata": {
+    "module_name": "healthConnect",
+    "artifact_name": "Health Connect - Access Logs",
+    "function_name": "healthconnect_access_logs",
+    "case_number": "synthetic_a16",
+    "number_of_columns": 9,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 162,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/healthConnect/testdata.healthConnect.healthconnect_access_logs.synthetic_a16.zip",
+    "start_time": "2026-10-25T15:40:44.590912+00:00",
+    "end_time": "2026-10-25T15:40:44.614920+00:00",
+    "run_time_seconds": 0.0020799636840820312,
+    "last_commit": {
+      "hash": "90c34b48487f051ea071cca88acc15631626a039",
+      "author_name": "danjethh",
+      "author_email": "danjethh@gmail.com",
+      "date": "2026-10-25T05:14:28-04:00",
+      "message": "Health Connect: read shared-user entries of the first-grant-times file, add sample_data, update the notes from four Android 16 extractions"
+    }
+  },
+  "headers": [
+    "Access Time",
+    "Android User",
+    "Package",
+    "App Name",
+    "Operation",
+    "Record Types",
+    "Medical Resource Type",
+    "Medical Data Source Accessed",
+    "Row ID"
+  ],
+  "data": [
+    [
+      1767225608,
+      "0",
+      "com.example.synthetictracker",
+      "Synthetic Tracker",
+      "0 (Upsert)",
+      "7 (Distance)",
+      "",
+      "",
+      2
+    ],
+    [
+      1767225609,
+      "0",
+      "com.example.syntheticfit",
+      "Synthetic Fit",
+      "2 (Read)",
+      "1 (Steps), 11 (Heart rate)",
+      "",
+      "",
+      1
+    ]
+  ]
+}
