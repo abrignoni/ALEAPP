@@ -1,0 +1,42 @@
+{
+  "metadata": {
+    "module_name": "WhatsAppBusiness",
+    "artifact_name": "WhatsApp Business - User Profile",
+    "function_name": "get_whatsapp_business_user_profile",
+    "case_number": "casesynthetic_w4b_legacy",
+    "number_of_columns": 6,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 136,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\WhatsAppBusiness\\testdata.WhatsAppBusiness.get_whatsapp_business_user_profile.casesynthetic_w4b_legacy.zip",
+    "start_time": "2026-10-25T05:37:03.818313+00:00",
+    "end_time": "2026-10-25T05:37:03.977722+00:00",
+    "run_time_seconds": 0.0014863014221191406,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-25T05:37:03.961856",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Version",
+    "Name",
+    "User Status",
+    "Country Code",
+    "Mobile Number",
+    "Source Files"
+  ],
+  "data": [
+    [
+      "2.25.1.1",
+      "Synthetic Business",
+      "synthetic about text",
+      "1",
+      "5550100000",
+      "Dump\\data\\data\\com.whatsapp.w4b\\shared_prefs\\com.whatsapp_preferences_light.xml"
+    ]
+  ]
+}

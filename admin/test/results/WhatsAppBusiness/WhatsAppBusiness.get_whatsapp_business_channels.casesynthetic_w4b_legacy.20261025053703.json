@@ -1,0 +1,37 @@
+{
+  "metadata": {
+    "module_name": "WhatsAppBusiness",
+    "artifact_name": "WhatsApp Business - Channels",
+    "function_name": "get_whatsapp_business_channels",
+    "case_number": "casesynthetic_w4b_legacy",
+    "number_of_columns": 10,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\WhatsAppBusiness\\testdata.WhatsAppBusiness.get_whatsapp_business_channels.casesynthetic_w4b_legacy.zip",
+    "start_time": "2026-10-25T05:37:03.980153+00:00",
+    "end_time": "2026-10-25T05:37:04.139303+00:00",
+    "run_time_seconds": 0.0016112327575683594,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-25T05:37:04.116448",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Chat Created Timestamp",
+    "Channel Name",
+    "Channel JID",
+    "Description",
+    "Invite Code",
+    "Verified (as stored)",
+    "Membership (as stored)",
+    "Muted (as stored)",
+    "Subscriber Count",
+    "Messages Stored"
+  ],
+  "data": []
+}

@@ -1,0 +1,244 @@
+{
+  "casesynthetic_w4b_modern": {
+    "description": "Synthetic com.whatsapp.w4b stores (modern msgstore.db schema with jid_map, wa.db, one Avatars file, one media file, preferences). Built by hand with invented values; contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_w4b_modern.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-25T05:36:21.132975",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-25T05:36:20.909504",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "get_whatsapp_business_contacts": {
+        "search_patterns": [
+          "*/com.whatsapp.w4b/databases/wa.db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_whatsapp_business_call_logs": {
+        "search_patterns": [
+          "*/com.whatsapp.w4b/databases/msgstore.db*",
+          "*/com.whatsapp.w4b/databases/wa.db*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_whatsapp_business_messages": {
+        "search_patterns": [
+          "*/com.whatsapp.w4b/databases/msgstore.db*",
+          "*/com.whatsapp.w4b/databases/wa.db*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_whatsapp_business_one_to_one_messages": {
+        "search_patterns": [
+          "*/com.whatsapp.w4b/databases/msgstore.db*",
+          "*/com.whatsapp.w4b/databases/wa.db*",
+          "*/WhatsApp Business/Media/*",
+          "*/com.whatsapp.w4b/files/Media/*"
+        ],
+        "file_count": 3,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_whatsapp_business_group_messages": {
+        "search_patterns": [
+          "*/com.whatsapp.w4b/databases/msgstore.db*",
+          "*/com.whatsapp.w4b/databases/wa.db*",
+          "*/WhatsApp Business/Media/*",
+          "*/com.whatsapp.w4b/files/Media/*"
+        ],
+        "file_count": 3,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_whatsapp_business_group_details": {
+        "search_patterns": [
+          "*/com.whatsapp.w4b/databases/msgstore.db*",
+          "*/com.whatsapp.w4b/databases/wa.db*",
+          "*/com.whatsapp.w4b/files/Avatars/*"
+        ],
+        "file_count": 3,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_whatsapp_business_channels": {
+        "search_patterns": [
+          "*/com.whatsapp.w4b/databases/msgstore.db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_whatsapp_business_channel_messages": {
+        "search_patterns": [
+          "*/com.whatsapp.w4b/databases/msgstore.db*",
+          "*/WhatsApp Business/Media/*",
+          "*/com.whatsapp.w4b/files/Media/*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_whatsapp_business_user_profile": {
+        "search_patterns": [
+          "*/com.whatsapp.w4b/shared_prefs/*preferences_light.xml",
+          "*/com.whatsapp.w4b/shared_prefs/startup_prefs.xml"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_w4b_legacy": {
+    "description": "Synthetic com.whatsapp.w4b stores (legacy msgstore.db schema: messages and group_participants tables, no jid_map). Built by hand with invented values; contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_w4b_legacy.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-25T05:36:22.291471",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-25T05:36:21.988697",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "get_whatsapp_business_contacts": {
+        "search_patterns": [
+          "*/com.whatsapp.w4b/databases/wa.db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_whatsapp_business_call_logs": {
+        "search_patterns": [
+          "*/com.whatsapp.w4b/databases/msgstore.db*",
+          "*/com.whatsapp.w4b/databases/wa.db*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_whatsapp_business_messages": {
+        "search_patterns": [
+          "*/com.whatsapp.w4b/databases/msgstore.db*",
+          "*/com.whatsapp.w4b/databases/wa.db*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_whatsapp_business_one_to_one_messages": {
+        "search_patterns": [
+          "*/com.whatsapp.w4b/databases/msgstore.db*",
+          "*/com.whatsapp.w4b/databases/wa.db*",
+          "*/WhatsApp Business/Media/*",
+          "*/com.whatsapp.w4b/files/Media/*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_whatsapp_business_group_messages": {
+        "search_patterns": [
+          "*/com.whatsapp.w4b/databases/msgstore.db*",
+          "*/com.whatsapp.w4b/databases/wa.db*",
+          "*/WhatsApp Business/Media/*",
+          "*/com.whatsapp.w4b/files/Media/*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_whatsapp_business_group_details": {
+        "search_patterns": [
+          "*/com.whatsapp.w4b/databases/msgstore.db*",
+          "*/com.whatsapp.w4b/databases/wa.db*",
+          "*/com.whatsapp.w4b/files/Avatars/*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_whatsapp_business_channels": {
+        "search_patterns": [
+          "*/com.whatsapp.w4b/databases/msgstore.db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_whatsapp_business_channel_messages": {
+        "search_patterns": [
+          "*/com.whatsapp.w4b/databases/msgstore.db*",
+          "*/WhatsApp Business/Media/*",
+          "*/com.whatsapp.w4b/files/Media/*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_whatsapp_business_user_profile": {
+        "search_patterns": [
+          "*/com.whatsapp.w4b/shared_prefs/*preferences_light.xml",
+          "*/com.whatsapp.w4b/shared_prefs/startup_prefs.xml"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  }
+}

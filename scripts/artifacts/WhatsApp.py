@@ -855,16 +855,18 @@ def get_whatsapp_channel_messages(context):
     return data_headers, data_list, source
 
 
-@artifact_processor
-def get_whatsapp_user_profile(context):
+def _user_profile_rows(context, names):
+    """Profile rows and the files read, from the shared_prefs files whose names end with names.
+
+    Returns (data_list, source), source being the newline joined paths of the files read.
+    """
     keys = ('push_name', 'my_current_status', 'version', 'ph', 'cc')
-    names = ('com.whatsapp_preferences_light.xml', 'startup_prefs.xml')
     # One row per shared_prefs folder, so values from two copies of the app (a second Android
     # user, for one) are never combined. unique_files collapses the data/data, data/user/0 and
     # data_mirror views of one folder.
     folders = {}
     for file_found in unique_files(context):
-        if os.path.basename(file_found) in names:
+        if os.path.basename(file_found).endswith(names):
             folders.setdefault(os.path.dirname(file_found), []).append(file_found)
 
     data_list = []
@@ -892,6 +894,11 @@ def get_whatsapp_user_profile(context):
         if any(data.values()):
             data_list.append((data['version'], data['push_name'], data['my_current_status'], data['cc'],
                               data['ph'], ', '.join(context.get_relative_path(p) for p in read)))
+    return data_list, '\n'.join(sources)
 
+
+@artifact_processor
+def get_whatsapp_user_profile(context):
+    data_list, source = _user_profile_rows(context, ('com.whatsapp_preferences_light.xml', 'startup_prefs.xml'))
     data_headers = ('Version', 'Name', 'User Status', 'Country Code', 'Mobile Number', 'Source Files')
-    return data_headers, data_list, '\n'.join(sources)
+    return data_headers, data_list, source

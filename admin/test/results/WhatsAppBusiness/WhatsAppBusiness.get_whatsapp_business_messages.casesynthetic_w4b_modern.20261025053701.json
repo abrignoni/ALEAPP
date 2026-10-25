@@ -1,0 +1,35 @@
+{
+  "metadata": {
+    "module_name": "WhatsAppBusiness",
+    "artifact_name": "WhatsApp Business - Messages",
+    "function_name": "get_whatsapp_business_messages",
+    "case_number": "casesynthetic_w4b_modern",
+    "number_of_columns": 8,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\WhatsAppBusiness\\testdata.WhatsAppBusiness.get_whatsapp_business_messages.casesynthetic_w4b_modern.zip",
+    "start_time": "2026-10-25T05:37:01.683286+00:00",
+    "end_time": "2026-10-25T05:37:01.866345+00:00",
+    "run_time_seconds": 0.003298521041870117,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-25T05:37:01.836042",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Message Timestamp",
+    "Received Timestamp",
+    "Key Remote JID",
+    "Recipients",
+    "Direction",
+    "Message",
+    "Group Sender",
+    "Attachment"
+  ],
+  "data": []
+}
