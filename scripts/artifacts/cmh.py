@@ -35,7 +35,9 @@ __artifacts_v2__ = {
                  "Android 16 database (5,523 image rows in files, same missing location table) Date Added, "
                  "Date Modified, Title and Bucket Name held no value on any row, as did Latitude, Longitude "
                  "and Is Private, while Date Taken, URI and Path were filled on all 5,523; those columns are "
-                 "NULL in the files table, not dropped by this artifact. Whether other builds "
+                 "NULL in the files table, not dropped by this artifact. On two further Android 16 "
+                 "extractions the owner's database (4,561 and 1,447 image rows) also lacked the location table, "
+                 "and a Secure Folder user's database (21 and 3 rows) was read beside it. Whether other builds "
                  "keep addresses in another table was not examined.",
         "paths": ('*/cmh.db*',),
         "output_types": "all",
@@ -48,6 +50,8 @@ __artifacts_v2__ = {
             "anne_a15": "Android 15 | com.samsung.cmh | 212 rows",
             "samsung_ffs_a16_set1": "Android 16 | com.samsung.cmh | 5523 rows",
             "samsung_ffs_a16_set2": "Android 16 | com.samsung.cmh | 215 rows",
+            "samsung_ffs_a16_set3": "Android 16 | com.samsung.cmh | 4582 rows",
+            "samsung_ffs_a16_set4": "Android 16 | com.samsung.cmh | 1450 rows",
         },
     }
 }
