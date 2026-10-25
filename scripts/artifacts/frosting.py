@@ -4,11 +4,15 @@ __artifacts_v2__ = {
         "description": "Rows of the frosting table in the Play Store's frosting.db: package name, APK path and the last_updated value read as Unix milliseconds. What last_updated marks is not established here.",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-07-28",
-        "last_update_date": "2025-09-09",
+        "last_update_date": "2026-10-25",
         "requirements": "none",
         "category": "Installed Apps",
-        "notes": "",
-        "paths": ('*/com.android.vending/databases/frosting.db*'),
+        "notes": "Every frosting.db found is read once per Android user, and Android User names the user "
+                 "whose app folder holds it. Taking the first match instead reported 376 rows on a "
+                 "One UI 8 (Android 16) extraction whose Secure Folder user's copy sorted first, "
+                 "against 494 in the owner's copy."
+                 " On the four tested Android 16 extractions the owner's copy held 606, 494, 740 and 559 rows and the Secure Folder user's copy, present on three of them, 376, 458 and 373; Android User held one value (0) on every row of the extraction that has one user. On the corpus images in sample_data that hold a second Android user's database, the row count equals the sum of the rows in each user's table, counted without ALEAPP.",
+        "paths": ('*/com.android.vending/databases/frosting.db*',),
         "output_types": "standard",
         "artifact_icon": "package",
         "sample_data": {
@@ -18,24 +22,26 @@ __artifacts_v2__ = {
             "kevin_pocox7_a15": "Android 15 | com.android.vending vc 84812830 | 464 rows",
             "pixel7a_a14": "Android 14 | com.android.vending vc 84191730 | 407 rows",
             "samsunga53_a14": "Android 14 | com.android.vending vc 84913330 | 527 rows",
-            "samsungs20_a13": "Android 13 | com.android.vending vc 84962330 | 507 rows",
+            "samsungs20_a13": "Android 13 | com.android.vending vc 84962330 | 869 rows",
             "sharon_a14": "Android 14 | com.android.vending vc 84222730 | 541 rows",
-            "russell_pixel6a_a13": "Android 13 | com.android.vending vc 83631220 | 324 rows",
+            "russell_pixel6a_a13": "Android 13 | com.android.vending vc 83631220 | 642 rows",
             "userb2_a13": "Android 13 | com.android.vending vc 84371930 | 333 rows",
-        }
+            "cookbook_a11": "Android 11 | com.android.vending | 874 rows",
+            "russell_a14": "Android 14 | com.android.vending | 742 rows",
+        },
     }
 }
 
     
 
-from scripts.ilapfuncs import artifact_processor, get_file_path, get_sqlite_db_records
+from scripts.artifacts.storagePathViews import user_files
+from scripts.ilapfuncs import artifact_processor, get_sqlite_db_records
 
 @artifact_processor
 def frosting(context):
-    files_found = context.get_files_found()
     data_list = []
-    source_path = get_file_path(files_found, "frosting.db")
-    
+    sources = []
+
     query = '''
     select
     case last_updated
@@ -47,9 +53,10 @@ def frosting(context):
     from frosting
     '''
 
-    db_records = get_sqlite_db_records(source_path, query)
-    for record in db_records:
-        data_list.append((record[0], record[1], record[2]))
+    for source_path, user in user_files(context, "frosting.db"):
+        sources.append(source_path)
+        for record in get_sqlite_db_records(source_path, query):
+            data_list.append((record[0], record[1], record[2], user))
 
-    data_headers = (('Last Updated Timestamp','datetime'),'App Package Name','APK Path')
-    return data_headers, data_list, source_path
+    data_headers = (('Last Updated Timestamp','datetime'),'App Package Name','APK Path','Android User')
+    return data_headers, data_list, '\n'.join(sources)

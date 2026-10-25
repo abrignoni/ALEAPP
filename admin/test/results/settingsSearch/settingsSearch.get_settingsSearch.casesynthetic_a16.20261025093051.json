@@ -1,0 +1,41 @@
+{
+  "metadata": {
+    "module_name": "settingsSearch",
+    "artifact_name": "Android Settings Search",
+    "function_name": "get_settingsSearch",
+    "case_number": "casesynthetic_a16",
+    "number_of_columns": 3,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 67,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\settingsSearch\\testdata.settingsSearch.get_settingsSearch.casesynthetic_a16.zip",
+    "start_time": "2026-10-25T09:30:51.004159+00:00",
+    "end_time": "2026-10-25T09:30:51.136771+00:00",
+    "run_time_seconds": 0.0021817684173583984,
+    "last_commit": {
+      "hash": "9b92cca390ccca9be4433c076f8cf1e2f137efb1",
+      "author_name": "danjethh",
+      "author_email": "danjethh@gmail.com",
+      "date": "2026-10-25T09:19:36+00:00",
+      "message": "Multi-user first match: document the output-checker findings, add sample_data from four Android 16 extractions"
+    }
+  },
+  "headers": [
+    "Timestamp",
+    "Query",
+    "Android User"
+  ],
+  "data": [
+    [
+      "2023-11-14 22:13:20",
+      "example wifi",
+      "0"
+    ],
+    [
+      "2023-11-14 22:13:20",
+      "example battery",
+      "0"
+    ]
+  ]
+}

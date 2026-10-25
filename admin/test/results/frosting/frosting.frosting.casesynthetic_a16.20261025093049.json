@@ -1,0 +1,50 @@
+{
+  "metadata": {
+    "module_name": "frosting",
+    "artifact_name": "App Updates (Frosting.db)",
+    "function_name": "frosting",
+    "case_number": "casesynthetic_a16",
+    "number_of_columns": 4,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 217,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\frosting\\testdata.frosting.frosting.casesynthetic_a16.zip",
+    "start_time": "2026-10-25T09:30:49.132474+00:00",
+    "end_time": "2026-10-25T09:30:49.345623+00:00",
+    "run_time_seconds": 0.002244710922241211,
+    "last_commit": {
+      "hash": "9b92cca390ccca9be4433c076f8cf1e2f137efb1",
+      "author_name": "danjethh",
+      "author_email": "danjethh@gmail.com",
+      "date": "2026-10-25T09:19:36+00:00",
+      "message": "Multi-user first match: document the output-checker findings, add sample_data from four Android 16 extractions"
+    }
+  },
+  "headers": [
+    "Last Updated Timestamp",
+    "App Package Name",
+    "APK Path",
+    "Android User"
+  ],
+  "data": [
+    [
+      "2023-11-14 22:13:20",
+      "com.example.alpha",
+      "/data/app/com.example.alpha/base.apk",
+      "0"
+    ],
+    [
+      "2023-11-14 22:13:20",
+      "com.example.beta",
+      "/data/app/com.example.beta/base.apk",
+      "0"
+    ],
+    [
+      "2023-11-14 22:13:20",
+      "com.example.gamma",
+      "/data/app/com.example.gamma/base.apk",
+      "0"
+    ]
+  ]
+}
