@@ -31,17 +31,15 @@ __artifacts_v2__ = {
                  "android16-qpr2-release). Code-present, never run on a real image: the app_op_history.db layout of "
                  "the Android 16.0 release, which has no Total Duration, Access Count or Reject Count and never a NULL "
                  "device id, built from AOSP DiscreteOpsTable at android-16.0.0_r1 and tested on a constructed "
-                 "database only. Not examined: any Android version other than 16 and any device other than Samsung. "
+                 "database only. On two corpus Google Pixel 8 Pro images (hc_pixel8pro_a16, Android 16, and hc_pixel8pro_a17, Android 17) the two aggregated databases, each with a -wal, gave 90,420 and 62,102 rows, equal to app_op_accesses with the -wal applied, counted without ALEAPP. Not examined: any other device or Android version. "
                  "The one Android 14 image checked held none of these files. Releases before Android 16 keep this "
                  "information in other forms that this artifact does not read: appops_accesses.xml (App Ops Recent "
-                 "Accesses), appops.xml (App Ops Permissions) and appops/discrete (DiscreteNative); the XML files in "
+                 "Accesses), appops.xml (App Ops Permission Modes) and appops/discrete (DiscreteNative); the XML files in "
                  "appops/history are read by none of the App Ops artifacts.\n"
                  "Access Time is milliseconds since the Unix epoch, shown in UTC; the stored integer, or text, is in "
-                 "Access Time (ms As Stored), and a value that is not a whole number, is below zero or is beyond the "
-                 "years Python's datetime holds leaves Access Time empty. By the AOSP source it is the actual time of the first access the platform recorded in an "
+                 "Access Time (ms As Stored), and a stored value that is text SQLite cannot read as a number, is below zero or is beyond the years Python's datetime holds leaves Access Time empty; a stored decimal is truncated to a whole millisecond. By the AOSP source it is the actual time of the first access the platform recorded in an "
                  "aggregation window, so a row stands for Access Count accesses and Reject Count rejected attempts "
-                 "grouped under the same package, op, attribution tag, process state, flags and chain within one "
-                 "window, and the other accesses of the window have no time of their own. The default windows are 1 "
+                 "grouped under the same uid, package, device, op, attribution tag, process state, flags, chain and duration bucket within one window, and the other accesses of the window have no time of their own. The default windows are 1 "
                  "minute for the short database and 15 minutes for the long one, are configurable, and the window a "
                  "device used is not stored. A row records that the platform noted an op for a package; it does not "
                  "say what the app did with it, whether anything was captured, or whether the user knew.\n"
@@ -50,9 +48,7 @@ __artifacts_v2__ = {
                  "the long database. On the five images camera (26), microphone (27), coarse location (0) and fine "
                  "location (1) were in the short databases only, 2,936, 573, 22,430 and 75,860 rows, and in none of "
                  "the long ones. A missing row is not evidence that an app did not use an op: records are kept for a "
-                 "retention period only (AOSP default 7 days, at most 30), and the observed spans were 3.6 to 8.8 days "
-                 "on eight of the ten databases and 37.9 days on both databases of one image, so those figures did not "
-                 "describe that image.\n"
+                 "retention period only (AOSP default 7 days, at most 30), and the observed spans were 3.6 to 8.8 days on eight of the ten Samsung databases, 37.9 days on both databases of one Samsung image, 43.5 days on both databases of hc_pixel8pro_a17 and 104.4 days on both of hc_pixel8pro_a16, so the AOSP figures did not describe three of the seven images.\n"
                  "Access Duration (ms) is, by the AOSP source, -1 for an access noted without a duration, 0 for a "
                  "start or resume of the op, and a positive number of milliseconds on the row recorded when the op "
                  "finished or paused; Total Duration (ms) is the sum of the durations grouped into the row. On the "
@@ -82,15 +78,14 @@ __artifacts_v2__ = {
                  "other App Ops artifacts use, 156 to 169 are added here from android16-qpr2-release "
                  "(android16-qpr1-release gives the same names for 156 to 166). Codes 163 "
                  "(POST_PROMOTED_NOTIFICATIONS, 166 rows, one package, one image) and 166 (READ_CELL_INFO, 3 rows, one "
-                 "system package, two images) occurred on the tested images; their names are the AOSP names and were "
+                 "system package, two images) occurred on the tested images (on the two Pixel 8 Pro images codes 163, 164, 166 and 169 also occurred, and hc_pixel8pro_a17 held 112 rows of code 176, which this table does not name); their names are the AOSP names and were "
                  "not confirmed on a device, and a vendor can use a code that AOSP does not define. Code 96 is a "
                  "retired placeholder and any code above 169 is left unnamed, with the number in Op Code.\n"
                  "The path pattern is tolerant, so a second copy of these files in an extraction adds its rows again, "
                  "and Source File names the file each row came from. A database without the app_op_accesses table logs "
                  "the error and gives no rows; an empty table gives none either. The largest pair of databases tested "
                  "produced 286,819 rows, more than the 50,000 the framework puts on an HTML page, and an output "
-                 "folder of about 360 MB. The file-only companion artifact lists "
-                 "rows that are in the database file but not in the log-applied view.\n"
+                 "folder of about 360 MB. The file-only companion artifact lists rows that are in the database file but not in the log-applied view, or that differ from it.\n"
                  "References: AOSP AppOpHistoryTable (columns), "
                  "https://android.googlesource.com/platform/frameworks/base/+/33b96ce8a122757002e5040ac59824bd7a262e00/services/core/java/com/android/server/appop/AppOpHistoryTable.java#76 "
                  "; AppOpHistoryHelper (duration values -1 and 0, first-event time, window discretization), "
@@ -107,11 +102,8 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "shield",
         "sample_data": {
-            "samsung_ffs_a16_set1": "Android 16 | 2940 rows",
-            "samsung_ffs_a16_set2": "Android 16 | 8587 rows",
-            "samsung_ffs_a16_set3": "Android 16 | 286819 rows",
-            "samsung_ffs_a16_set4": "Android 16 | 23269 rows",
-            "samsung_ffs_a16_set5": "Android 16 | 6904 rows",
+            "hc_pixel8pro_a16": "Android 16 | 90,420 rows",
+            "hc_pixel8pro_a17": "Android 17 | 62,102 rows",
         },
     },
     "appops_history_db_file_only": {
@@ -129,11 +121,8 @@ __artifacts_v2__ = {
                  "once the -wal is applied, or Different once the -wal is applied (the row shown has the values stored "
                  "in the database file). The two reads are matched by Row ID. Nothing is reported for a database with "
                  "no -wal beside it, or with an empty one, because then the two reads are the same. Interval is taken "
-                 "from the file name and separates the files exactly as Source File does; Row Status held one value on "
-                 "every row of both images.\n"
-                 "Evidence tier: proven on real data for the rows reported, not for their cause. Of the five tested "
-                 "Android 16 Samsung images all five carried a -wal for both databases; two had rows in this artifact, "
-                 "703 (691 short, 12 long) and 238 (17 short, 221 long). All were Not in the database once the -wal is "
+                 "from the file name and separates the files exactly as Source File does; Row Status held one value on every row of the two Samsung images that had rows.\n"
+                 "Evidence tier: proven on real data for the rows reported, not for their cause. Of the five tested Android 16 Samsung images all five carried a -wal for both databases; two had rows in this artifact, 703 (691 short, 12 long) and 238 (17 short, 221 long). On the two corpus Pixel 8 Pro images (Android 16 and 17) both databases also carried a -wal and no row of the main file was missing once it was applied, counted without ALEAPP, so this artifact reports none there. All were Not in the database once the -wal is "
                  "applied; no row differed in value. In each of those database files the Access Time of every such row "
                  "is earlier than the oldest row left in the log-applied view, which is what deleting the oldest "
                  "records would give; the database does not record why a row was removed. The rows can be older than "
@@ -141,8 +130,7 @@ __artifacts_v2__ = {
                  "accesses that the live view no longer holds.\n"
                  "Not covered: pages freed inside the database file, earlier -wal frames that a checkpoint has already "
                  "folded in, and the -wal's own frames beyond what SQLite applies. A -wal and its database copied at "
-                 "different moments can disagree for reasons unrelated to the device. On both images Android User held 0 "
-                 "on every row, Access Flag held SELF, Attribution Flags held NONE and Device ID was empty. Attribution "
+                 "different moments can disagree for reasons unrelated to the device. On the two Samsung images that had rows, Android User held 0 on every row, Access Flag held SELF, Attribution Flags held NONE and Device ID was empty. Attribution "
                  "Chain ID held -1 on every row of one image and -1 or 136 on the other, and Reject Count held 0 on every "
                  "row of the 703-row image. See App Ops Access History (Database) for what the other columns mean and "
                  "for the references.",
@@ -150,11 +138,8 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "shield",
         "sample_data": {
-            "samsung_ffs_a16_set1": "Android 16 | 703 rows",
-            "samsung_ffs_a16_set2": "Android 16 | 0 rows",
-            "samsung_ffs_a16_set3": "Android 16 | 0 rows",
-            "samsung_ffs_a16_set4": "Android 16 | 0 rows",
-            "samsung_ffs_a16_set5": "Android 16 | 238 rows",
+            "hc_pixel8pro_a16": "Android 16 | 0 rows",
+            "hc_pixel8pro_a17": "Android 17 | 0 rows",
         },
     },
 }
