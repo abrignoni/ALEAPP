@@ -23,8 +23,8 @@ __artifacts_v2__ = {
                  "Share, messaging apps) are not in this table. "
                  "Validation boundary: the schema (table btopp with _id, uri, hint, _data, mimetype, direction, "
                  "destination, visibility, confirm, status, total_bytes, current_bytes, timestamp, scanned, "
-                 "device_name, reserved; user_version 2) was read from two real Android 16 databases under "
-                 "data/user_de/0/com.android.bluetooth/databases, both with no rows, so row values have not been "
+                 "device_name, reserved; user_version 2) was read from four real Android 16 databases under "
+                 "data/user_de/0/com.android.bluetooth/databases, all with no rows, so row values have not been "
                  "decoded from real data and the row handling was exercised on a constructed database only. "
                  "The com.google.android.bluetooth path (the Bluetooth module on some builds) is included from "
                  "the module's naming and was not seen in an extraction.",
@@ -32,7 +32,12 @@ __artifacts_v2__ = {
                   '*/com.google.android.bluetooth/databases/btopp.db*'),
         "output_types": "standard",
         "artifact_icon": "bluetooth",
-        "sample_data": {},
+        "sample_data": {
+            "samsung_ffs_a16_set1": "Android 16 | com.android.bluetooth | 0 rows",
+            "samsung_ffs_a16_set2": "Android 16 | com.android.bluetooth | 0 rows",
+            "samsung_ffs_a16_set3": "Android 16 | com.android.bluetooth | 0 rows",
+            "samsung_ffs_a16_set4": "Android 16 | com.android.bluetooth | 0 rows",
+        },
     }
 }
 
