@@ -29,10 +29,11 @@ __artifacts_v2__ = {
             "is the number of entries in AccountInfos. Item Count is the number of entries "
             "objItems.json holds for the same folder. Tested on an Android 16 (One UI 8) "
             "full file system extraction, where two sessions were present, both with a Smart "
-            "Switch role stored as Receiver; versions before One UI 7 are not verified. A "
+            "Switch role stored as Receiver; two further Android 16 (One UI 8) extractions held one session each, so the count varies with the device; versions before One UI 7 are not verified. A "
             "folder missing one of the three files is still reported, with the columns of the "
             "missing file empty. The absence of a folder is not evidence that no transfer "
             "took place."
+            " On the two further Android 16 images Connect Type and Product Code were empty, because mainDataModel.json and peerDeviceInfo.json there hold no ConnectType or ProductCode key."
         ),
         "paths": (
             '*/com.sec.android.easyMover/files/History/*/mainDataModel.json',
@@ -41,6 +42,12 @@ __artifacts_v2__ = {
         ),
         "output_types": "standard",
         "artifact_icon": "smartphone",
+        "sample_data": {
+            "samsung_ffs_a16_set1": "Android 16 | com.sec.android.easyMover | 2 rows",
+            "samsung_ffs_a16_set2": "Android 16 | com.sec.android.easyMover | 0 rows",
+            "samsung_ffs_a16_set3": "Android 16 | com.sec.android.easyMover | 1 row",
+            "samsung_ffs_a16_set4": "Android 16 | com.sec.android.easyMover | 1 row",
+        },
     },
     "smartswitch_items": {
         "name": "Samsung Smart Switch - Transferred Data Categories",
@@ -68,12 +75,19 @@ __artifacts_v2__ = {
             "device by this module. Tested on an Android 16 (One UI 8) full file system "
             "extraction, where one session listed 32 categories (29 with a status of COMPLETED "
             "and 3 with NODATA), among them contacts, call logs, messages, calendar, notes, "
-            "photos and videos, and a second session listed 11. A category missing from the list is not evidence that its "
+            "photos and videos, and a second session listed 11; on two further Android 16 images one session each listed 92 and 65. A category missing from the list is not evidence that its "
             "data was not on the other device."
+            " Android User, History ID and History Folder Time held one value on every row of an image with one user and one session. On the first tested image Restore Step and Backup Step held one value each (Restore and Backup) on all 43 rows, and Restore Error and Backup Error were identical on all 43 rows because the file stores the same text in ContentBnrResult and CrmBackupBnrResult (empty on 41 rows, the same app message on 2), while Restore Result and Backup Result differed. On the two further images Predicted Backup Time, Restore Step, Backup Result, Backup Step and Backup Error were empty on every row, because those entries hold no CrmPredictBackupTime or CrmBackupBnrResult and their ContentBnrResult holds no Step; it holds CategoryType, FailCount, FailSize, ChildInfo and Extra fields that this artifact does not report."
         ),
         "paths": ('*/com.sec.android.easyMover/files/History/*/objItems.json',),
         "output_types": "standard",
         "artifact_icon": "list",
+        "sample_data": {
+            "samsung_ffs_a16_set1": "Android 16 | com.sec.android.easyMover | 43 rows",
+            "samsung_ffs_a16_set2": "Android 16 | com.sec.android.easyMover | 0 rows",
+            "samsung_ffs_a16_set3": "Android 16 | com.sec.android.easyMover | 92 rows",
+            "samsung_ffs_a16_set4": "Android 16 | com.sec.android.easyMover | 65 rows",
+        },
     },
     "smartswitch_peer_apps": {
         "name": "Samsung Smart Switch - Peer App Categories",
@@ -97,11 +111,18 @@ __artifacts_v2__ = {
             "package missing from the list is not evidence that it was not installed there. "
             "Last Time Used is the value in the file; where the file's writer took it from is "
             "not established here. Tested on an Android 16 (One UI 8) full file system "
-            "extraction, where each of two sessions listed 118 entries."
+            "extraction, where each of two sessions listed 118 entries, and the one session on each of two further images listed 97 and 66."
+            " Android User held one value (0) on every row of each tested image, and History ID and History Folder Time held one value on every row of an image with one session."
         ),
         "paths": ('*/com.sec.android.easyMover/files/History/*/peerDeviceInfo.json',),
         "output_types": "standard",
         "artifact_icon": "package",
+        "sample_data": {
+            "samsung_ffs_a16_set1": "Android 16 | com.sec.android.easyMover | 236 rows",
+            "samsung_ffs_a16_set2": "Android 16 | com.sec.android.easyMover | 0 rows",
+            "samsung_ffs_a16_set3": "Android 16 | com.sec.android.easyMover | 97 rows",
+            "samsung_ffs_a16_set4": "Android 16 | com.sec.android.easyMover | 66 rows",
+        },
     },
     "smartswitch_peer_accounts": {
         "name": "Samsung Smart Switch - Peer Accounts",
@@ -120,11 +141,18 @@ __artifacts_v2__ = {
             "masked by the other device before it is written. The list shows accounts "
             "the file recorded; it does not show that an app was in use. Tested on an "
             "Android 16 (One UI 8) full file system extraction, where each of two sessions "
-            "listed 8 accounts."
+            "listed 8 accounts, and the one session on each of two further images listed 7 and 10."
+            " Android User held one value (0) on every row of each tested image, and History ID and History Folder Time held one value on every row of an image with one session."
         ),
         "paths": ('*/com.sec.android.easyMover/files/History/*/peerDeviceInfo.json',),
         "output_types": "standard",
         "artifact_icon": "users",
+        "sample_data": {
+            "samsung_ffs_a16_set1": "Android 16 | com.sec.android.easyMover | 16 rows",
+            "samsung_ffs_a16_set2": "Android 16 | com.sec.android.easyMover | 0 rows",
+            "samsung_ffs_a16_set3": "Android 16 | com.sec.android.easyMover | 7 rows",
+            "samsung_ffs_a16_set4": "Android 16 | com.sec.android.easyMover | 10 rows",
+        },
     },
     "smartswitch_peer_messages": {
         "name": "Samsung Smart Switch - Peer Message Counts",
@@ -144,10 +172,17 @@ __artifacts_v2__ = {
             "messages found by this module, and the messages themselves are not in this file. "
             "Tested on an Android 16 (One UI 8) full file system extraction, where each of two "
             "sessions held six entries (periods such as ALL_DATA and LAST_2YEARS)."
+            " Android User held one value (0) on every row of each tested image, and History ID and History Folder Time held one value on every row of an image with one session. On one further image Count, SMS Count, MMS Count, RCS Count, RCS File Transfer Count, RCS Instant Message Count, Size, MMS Size and RCS File Transfer Size were empty on all six rows, because its MessagePeriods entries hold only a Period and a CalcTime; on another RCS File Transfer Size held one value on all six rows."
         ),
         "paths": ('*/com.sec.android.easyMover/files/History/*/peerDeviceInfo.json',),
         "output_types": "standard",
         "artifact_icon": "message-square",
+        "sample_data": {
+            "samsung_ffs_a16_set1": "Android 16 | com.sec.android.easyMover | 12 rows",
+            "samsung_ffs_a16_set2": "Android 16 | com.sec.android.easyMover | 0 rows",
+            "samsung_ffs_a16_set3": "Android 16 | com.sec.android.easyMover | 6 rows",
+            "samsung_ffs_a16_set4": "Android 16 | com.sec.android.easyMover | 6 rows",
+        },
     },
     "smartswitch_peer_contacts": {
         "name": "Samsung Smart Switch - Peer Contact Accounts",
@@ -166,11 +201,19 @@ __artifacts_v2__ = {
             "eSIM, Count, Size, Binary Count, Binary Size and Photo Count are the other fields "
             "of the entry as stored. Contact IDs, when the file holds them, are not reported. "
             "The counts are those the file holds, not contacts found by this module. Tested on "
-            "an Android 16 (One UI 8) full file system extraction."
+            "an Android 16 (One UI 8) full file system extraction. On two further Android 16 images "
+            "one session listed no contact accounts and the other listed six entries across the two lists."
+            " Android User held one value (0) on every row of each tested image, and History ID and History Folder Time held one value on every row of an image with one session. Selected, eSIM, Binary Count and Binary Size held one value on every row (Yes, No, 0 and 0)."
         ),
         "paths": ('*/com.sec.android.easyMover/files/History/*/peerDeviceInfo.json',),
         "output_types": "standard",
         "artifact_icon": "users",
+        "sample_data": {
+            "samsung_ffs_a16_set1": "Android 16 | com.sec.android.easyMover | 12 rows",
+            "samsung_ffs_a16_set2": "Android 16 | com.sec.android.easyMover | 0 rows",
+            "samsung_ffs_a16_set3": "Android 16 | com.sec.android.easyMover | 0 rows",
+            "samsung_ffs_a16_set4": "Android 16 | com.sec.android.easyMover | 6 rows",
+        },
     },
     "smartswitch_transferred_history": {
         "name": "Samsung Smart Switch - Transferred History",
@@ -191,6 +234,12 @@ __artifacts_v2__ = {
         "paths": ('*/com.sec.android.easyMover/files/TransferredHistory/List.json',),
         "output_types": "standard",
         "artifact_icon": "clock",
+        "sample_data": {
+            "samsung_ffs_a16_set1": "Android 16 | com.sec.android.easyMover | 1 row",
+            "samsung_ffs_a16_set2": "Android 16 | com.sec.android.easyMover | 0 rows",
+            "samsung_ffs_a16_set3": "Android 16 | com.sec.android.easyMover | 1 row",
+            "samsung_ffs_a16_set4": "Android 16 | com.sec.android.easyMover | 1 row",
+        },
     },
     "smartswitch_backup_media": {
         "name": "Samsung Smart Switch - Backup Media Index",
@@ -209,11 +258,19 @@ __artifacts_v2__ = {
             "that a listed file exists at the path or in the backup is not checked here, and "
             "what the unique id and count denote is not established. Tested on an Android 16 "
             "(One UI 8) full file system extraction, where the table held 5,169 rows. The "
-            "database is read with its -wal file."
+            "database is read with its -wal file. It was absent from the two further Android 16 images "
+            "checked, so those report no rows."
+            " Android User, Unique ID and Count each held one value on all 5,169 rows of the tested image (0, one number, and 1)."
         ),
         "paths": ('*/com.sec.android.easyMover/files/SmartSwitch/SmartSwitchBackup/backup_media.db*',),
         "output_types": "standard",
         "artifact_icon": "image",
+        "sample_data": {
+            "samsung_ffs_a16_set1": "Android 16 | com.sec.android.easyMover | 5169 rows",
+            "samsung_ffs_a16_set2": "Android 16 | com.sec.android.easyMover | 0 rows",
+            "samsung_ffs_a16_set3": "Android 16 | com.sec.android.easyMover | 0 rows",
+            "samsung_ffs_a16_set4": "Android 16 | com.sec.android.easyMover | 0 rows",
+        },
     },
 }
 
