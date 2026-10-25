@@ -42,6 +42,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | avesGallery |
 | bitwarden |
 | blockedNumbers |
+| bluetoothOpp |
 | breadWallet |
 | breezyWeather |
 | calculatorLockVault |
