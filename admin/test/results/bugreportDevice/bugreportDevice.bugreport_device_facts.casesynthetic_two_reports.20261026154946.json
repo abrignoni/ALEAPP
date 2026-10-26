@@ -1,0 +1,411 @@
+{
+  "metadata": {
+    "module_name": "bugreportDevice",
+    "artifact_name": "Bug Report - Device Facts",
+    "function_name": "bugreport_device_facts",
+    "case_number": "casesynthetic_two_reports",
+    "number_of_columns": 5,
+    "number_of_rows": 54,
+    "total_data_size_bytes": 4471,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportDevice/testdata.bugreportDevice.bugreport_device_facts.casesynthetic_two_reports.zip",
+    "start_time": "2026-10-26T15:49:46.431521+00:00",
+    "end_time": "2026-10-26T15:49:46.452994+00:00",
+    "run_time_seconds": 0.005595207214355469,
+    "last_commit": {
+      "hash": "22e699e10c50c5b4f518859b7ad186e54acf3b7d",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T01:07:43-04:00",
+      "message": "Bug report notes: name the empty Timeout Marker column in a sentence of its own"
+    }
+  },
+  "headers": [
+    "Fact",
+    "Value",
+    "Origin",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Report time (as printed)",
+      "2026-11-02 10:15:30",
+      "header",
+      2,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Build",
+      "EXAMPLE.260101.001.A1",
+      "header",
+      5,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Build fingerprint",
+      "example/examplephone/examplephone:16/EXAMPLE.260101.001/1001:user/release-keys",
+      "header",
+      6,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Bootloader",
+      "EXAMPLEBL1",
+      "header",
+      7,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Radio",
+      "EXAMPLERADIO1",
+      "header",
+      8,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Network",
+      "ExampleNet,ExampleNet2",
+      "header",
+      9,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Module Metadata version",
+      "372546000",
+      "header",
+      10,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Android SDK version",
+      "36",
+      "header",
+      11,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "SDK extensions",
+      "[ad_services=23, b=23, c=<not set>]",
+      "header",
+      12,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Kernel",
+      "Linux version 6.12.0-example (builder@example-host) #1 SMP PREEMPT Mon Jan 5 10:00:00 UTC 2026",
+      "header",
+      13,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Uptime",
+      "up 0 weeks, 1 days, 2 hours, 3 minutes,  load average: 1.00, 1.00, 1.00",
+      "header",
+      17,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Bugreport format version",
+      "2.0",
+      "header",
+      18,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Dumpstate info",
+      "id=1 pid=4242 dry_run=0 args=/system/bin/dumpstate -d -p -z -o /data/user_de/0/com.android.shell/files/bugreports/bugreport",
+      "header",
+      19,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "persist.sys.locale",
+      "en-US",
+      "getprop",
+      28,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "persist.sys.timezone",
+      "Asia/Kolkata",
+      "getprop",
+      29,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "ro.adb.secure",
+      "1",
+      "getprop",
+      30,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "ro.boot.verifiedbootstate",
+      "green",
+      "getprop",
+      33,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "ro.build.characteristics",
+      "default",
+      "getprop",
+      34,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "ro.build.fingerprint",
+      "example/examplephone/examplephone:16/EXAMPLE.260101.001/1001:user/release-keys",
+      "getprop",
+      35,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "ro.build.type",
+      "user",
+      "getprop",
+      36,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "ro.build.version.release",
+      "16",
+      "getprop",
+      37,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "ro.build.version.sdk",
+      "36",
+      "getprop",
+      38,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "ro.build.version.security_patch",
+      "2026-01-05",
+      "getprop",
+      39,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "ro.debuggable",
+      "0",
+      "getprop",
+      40,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "ro.product.manufacturer",
+      "Example",
+      "getprop",
+      41,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "ro.product.model",
+      "Example Phone 1",
+      "getprop",
+      42,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Report time (UTC)",
+      "2026-11-02 04:45:30",
+      "derived",
+      null,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Time zone used for UTC values",
+      "Asia/Kolkata",
+      "derived",
+      null,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Report time (as printed)",
+      "2026-11-02 10:15:30",
+      "header",
+      2,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Build",
+      "EXAMPLE-OLD-10.0.1",
+      "header",
+      5,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Build fingerprint",
+      "Example/EXOLD/exold:10/QP1A.190711.020/1001:user/release-keys",
+      "header",
+      6,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Bootloader",
+      "unknown",
+      "header",
+      7,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Radio",
+      "EXAMPLERADIO0",
+      "header",
+      8,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Network",
+      "ExampleNet",
+      "header",
+      9,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Module Metadata version",
+      "292700600",
+      "header",
+      10,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Kernel",
+      "Linux version 4.14.0-example (builder@example-host) #1 SMP PREEMPT",
+      "header",
+      11,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Uptime",
+      "up 0 weeks, 0 days, 3 hours, 1 minutes",
+      "header",
+      13,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Bugreport format version",
+      "2.0",
+      "header",
+      14,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Dumpstate info",
+      "id=1 pid=4243 dry_run=0 args=/system/bin/dumpstate -d -p -z -B",
+      "header",
+      15,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "persist.sys.locale",
+      "en-US",
+      "getprop",
+      24,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "persist.sys.timezone",
+      "America/Sao_Paulo",
+      "getprop",
+      25,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "ro.adb.secure",
+      "1",
+      "getprop",
+      26,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "ro.boot.verifiedbootstate",
+      "green",
+      "getprop",
+      29,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "ro.build.characteristics",
+      "default",
+      "getprop",
+      30,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "ro.build.fingerprint",
+      "example/examplephone/examplephone:10/EXAMPLE.260101.001/1001:user/release-keys",
+      "getprop",
+      31,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "ro.build.type",
+      "user",
+      "getprop",
+      32,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "ro.build.version.release",
+      "10",
+      "getprop",
+      33,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "ro.build.version.sdk",
+      "29",
+      "getprop",
+      34,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "ro.build.version.security_patch",
+      "2026-01-05",
+      "getprop",
+      35,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "ro.debuggable",
+      "0",
+      "getprop",
+      36,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "ro.product.manufacturer",
+      "Example",
+      "getprop",
+      37,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "ro.product.model",
+      "Example Phone 1",
+      "getprop",
+      38,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Report time (UTC)",
+      "2026-11-02 13:15:30",
+      "derived",
+      null,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Time zone used for UTC values",
+      "America/Sao_Paulo",
+      "derived",
+      null,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}
