@@ -13,7 +13,7 @@ Layout of the text, as far as this reader relies on it::
     ========================================================
     Build: ...                                 <- header lines ("Key: value")
     ------ SYSTEM PROPERTIES (getprop) ------  <- a command section
-    [persist.sys.timezone]: [Africa/Accra]
+    [persist.sys.timezone]: [Europe/Paris]
     ------ 0.1s was the duration of 'SYSTEM PROPERTIES' ------
     DUMP OF SERVICE package:                   <- a dumpsys service section
     ...
