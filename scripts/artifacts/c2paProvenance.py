@@ -8,11 +8,13 @@ __artifacts_v2__ = {
                        "Generated? column derived by this parser from the IPTC DigitalSourceType "
                        "code the file states (Yes, No or Unknown under the parser's own mapping; "
                        "Yes only for the three codes the IPTC vocabulary defines as generative AI; "
-                       "read the Digital Source Type column for the stated code). "
-                       "Values are reported as the file carries them and are not cryptographically verified.",
+                       "the Digital Source Type column shows the parser's label for the stated code, or the raw "
+                       "code when the parser has no label for it). Values are read from the file and are not "
+                       "cryptographically verified; the parser relabels digital source type codes and "
+                       "reformats certificate names, claim generator strings and times.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-07-12",
-        "last_update_date": "2026-10-09",
+        "last_update_date": "2026-10-25",
         "requirements": "none",
         "category": "AI Provenance",
         "notes": "AI Generated? is Yes for trainedAlgorithmicMedia, "
@@ -21,9 +23,10 @@ __artifacts_v2__ = {
                  "release dated 2024-10-23) name generative AI or a trained AI model. It is Unknown "
                  "for algorithmicMedia, algorithmicallyEnhanced, digitalArt and dataDrivenMedia, "
                  "whose definitions there do not, for virtualRecording, whose definition allows "
-                 "generative AI or captured elements, and for any code the parser "
-                 "does not map. No is the parser's own reading of the capture, scan, human edit, "
-                 "screen capture and software image codes. When one manifest states several codes, "
+                 "generative AI or captured elements, for any code the parser "
+                 "does not map, and when a manifest states no code at all. No is the parser's own reading of the capture, scan, human edit, "
+                 "screen capture and software image codes in its table; originalPhotograph is in that table "
+                 "but not in the cited IPTC release. When one manifest states several codes, "
                  "any Yes makes the row Yes and Unknown codes leave the others' result unchanged. "
                  "SIGNATURE CAVEAT: the signer, issuer, algorithm, and signing time are read "
                  "from the C2PA manifest AS STATED. This artifact does NOT cryptographically "
@@ -38,9 +41,10 @@ __artifacts_v2__ = {
                  "carries a DigitalSourceType, so a file with no row has not been shown to carry "
                  "no provenance metadata. JPEG (C2PA + XMP + signature) handling was run on test "
                  "files that are not identified here; the corpora in sample_data returned rows, "
-                 "and the container format of those rows is not recorded here. PNG and ISOBMFF "
-                 "(HEIC/AVIF/MP4/MOV) containers are implemented from the C2PA specification, "
-                 "and whether they were exercised on any tested file is not recorded here.",
+                 "and the container format of those rows is not recorded here. The PNG extractor produced manifest rows on anne_a15 "
+                 "(one file, two manifests) and kevin_pocox7_a15 (three files, four manifests). No "
+                 "tested file produced a C2PA row from an ISOBMFF (HEIC/AVIF/MP4/MOV) container; "
+                 "treat that extractor as unexercised.",
         "paths": (  # case-insensitive extensions; fnmatch '*' already spans '/', so these
                     # match media at ANY depth. Uppercase forms catch iOS defaults (.HEIC/.JPG/.MOV).
             '*.[jJ][pP][gG]', '*.[jJ][pP][eE][gG]', '*.[jJ][pP][eE]',
@@ -703,6 +707,7 @@ def _fmt(items):
 @artifact_processor
 def get_c2paProvenance(context):
     data_headers = (
+        ('Signing Time (TSA)', 'datetime'),
         ('Media', 'media'),
         'Media State',
         'AI Generated?',
@@ -715,7 +720,6 @@ def get_c2paProvenance(context):
         'Credit / Copyright',
         'Title',
         'Ingredients (Prior Assets)',
-        ('Signing Time (TSA)', 'datetime'),
         'Signed By (stated)',
         'Certificate Issuer',
         'Certificate Validity',
@@ -786,6 +790,7 @@ def get_c2paProvenance(context):
             if n_states > 1 and i == n_states:
                 state += ' (current)'
             data_list.append((
+                sig.get('signing_time', ''),
                 thumb,
                 state,
                 _ai_str(r['ai']),
@@ -798,7 +803,6 @@ def get_c2paProvenance(context):
                 '',
                 r['title'],
                 _fmt(r['ingredients']),
-                sig.get('signing_time', ''),
                 sig.get('signed_by', ''),
                 sig.get('issuer', ''),
                 sig.get('validity', ''),
@@ -810,6 +814,7 @@ def get_c2paProvenance(context):
 
         if xmp_has_signal:
             data_list.append((
+                '',
                 thumb,
                 'IPTC tag',
                 _ai_str(xmp['ai']),
@@ -820,7 +825,6 @@ def get_c2paProvenance(context):
                 '',
                 _fmt(xmp['creators']),
                 _fmt([xmp['credit'], xmp['copyright']]),
-                '',
                 '',
                 '',
                 '',
