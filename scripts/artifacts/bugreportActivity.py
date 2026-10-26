@@ -31,7 +31,7 @@ __artifacts_v2__ = {
                  "Evidence tiers. Data-proven on five real bug reports (Samsung A-series and S-series on Android 16, Huawei and a "
                  "Transsion-brand phone on Android 10, Motorola on Android 15): 15,043, 4,114, 6,154, 9,841 and 14,147 rows, each "
                  "equal to a count made from the raw text and to an independent parser, field by field and in UTC. All five "
-                 "reports record the time zone Africa/Accra (UTC+0, no daylight saving), so the conversion of wall-clock text to "
+                 "reports record a UTC+0 time zone without daylight saving, so the conversion of wall-clock text to "
                  "UTC was the identity on every real row; offsets and daylight saving were tested on constructed text only. Only "
                  "user 0 had events in the tested reports, so User held one value, 0, on all rows of every tested report; a "
                  "second user's list was built on constructed text. Source Section held one value, CHECKIN USAGESTATS, on all "
@@ -72,7 +72,7 @@ __artifacts_v2__ = {
                  "Evidence tiers. Data-proven on three real bug reports: a Samsung A-series phone (5,154 rows) and a Samsung "
                  "S-series phone (7,170 rows) on Android 16 and a Motorola phone (6,187 rows) on Android 15, each equal to a "
                  "count of ApplicationExitInfo lines in the raw text and to an independent parser, field by field and in UTC; "
-                 "none on the two Android 10 reports, which print none. As the tested reports use the zone Africa/Accra (UTC+0), "
+                 "none on the two Android 10 reports, which print none. As the tested reports are in a UTC+0 zone, "
                  "the conversion to UTC was checked on constructed text for other zones. Not examined: Android 11 to 13 and other "
                  "vendors.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip'),
@@ -141,7 +141,7 @@ __artifacts_v2__ = {
                  "reports.\n"
                  "Evidence tiers. Data-proven on two real Android 16 bug reports (Samsung A-series and S-series): 1,807 and "
                  "1,109 rows, equal to a count of time: lines outside the CONFIG table in the raw text and to an independent "
-                 "parser, field by field and in UTC. As both are in the zone Africa/Accra (UTC+0) the conversion to UTC was "
+                 "parser, field by field and in UTC. As both are in a UTC+0 zone the conversion to UTC was "
                  "checked on constructed text for other zones. Not examined: other Android versions and vendors.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip'),
         "output_types": "standard",
