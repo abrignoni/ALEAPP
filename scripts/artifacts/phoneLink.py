@@ -75,7 +75,7 @@ __artifacts_v2__ = {
         "category": "Phone Link",
         "notes": "com.microsoft.appmanager is the phone side of Microsoft Phone Link, which pairs "
                  "a phone with a Windows PC. content_access_event is the only table in this "
-                 "package holding dated event rows on the corpora below. start_time is Unix "
+                 "package holding dated event rows in the current state on the corpora below. start_time is Unix "
                  "milliseconds and duration is stored alongside it without a recorded unit, so "
                  "Duration (as stored) is reported unconverted. Content Type (as stored) and "
                  "Access Was Useful (as stored) are the schema's own integer columns; no source "
@@ -84,8 +84,8 @@ __artifacts_v2__ = {
                  "carried 18 different values on samsunga53_a14. The states of the database hold "
                  "different row sets: this artifact reports the current state's rows and, through "
                  "scripts/sqlite_wal.py, rows another state holds that the current state does not, "
-                 "read as in Snapchat - Messages (arroyo.db): every earlier committed state of the "
-                 "log, the previous log generation's left-over frames where every gate passes, and "
+                 "read as in Snapchat - Messages (arroyo.db): each earlier committed state of the "
+                 "log that SQLite can still read exactly, the previous log generation's left-over frames where every gate passes, and "
                  "frames after the last commit. Reading names where each row was found, and "
                  "Recovery Location the committed states and any previous-generation commits it "
                  "was read in, with first and last numbers, or the frames after the last commit "
@@ -102,8 +102,10 @@ __artifacts_v2__ = {
                  "generation; no tested log had frames after its last commit. Reading held one "
                  "value on all 31 rows of userb2_a13, whose current state holds no "
                  "content_access_event rows. The same "
-                 "eventstore holds FcmNotificationEvent and agent_service_event, which held at "
-                 "most 1 and 3 rows on a single corpus and have no artifact here.",
+                 "eventstore holds FcmNotificationEvent and agent_service_event, the latter with a "
+                 "timestamp column. Both were empty in the current state on every corpus below; in "
+                 "other states of the log they held up to 2 and 10 rows on samsunga53_a14, and "
+                 "agent_service_event up to 10 on userb2_a13. They have no artifact here.",
         "paths": ('*/com.microsoft.appmanager/databases/eventstore*',),
         "output_types": "standard",
         "artifact_icon": "link",
