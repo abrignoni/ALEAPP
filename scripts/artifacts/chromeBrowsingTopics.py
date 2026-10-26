@@ -156,12 +156,15 @@ def chromeBrowsingTopics(context):
         sources.append(path)
         lookups = []
         history = _sibling(context, path, 'History')
+        if history:
+            sources.append(history)
+            lookups.append(('History', {_host_hash(h): h for h in
+                                        _hosts(history, 'SELECT url FROM urls', True)}))
         cookies = _sibling(context, path, 'Cookies')
-        for label, sibling, sql, is_url in (('History', history, 'SELECT url FROM urls', True),
-                                            ('Cookies', cookies, 'SELECT host_key FROM cookies', False)):
-            if sibling:
-                sources.append(sibling)
-                lookups.append((label, {_host_hash(h): h for h in _hosts(sibling, sql, is_url)}))
+        if cookies:
+            sources.append(cookies)
+            lookups.append(('Cookies', {_host_hash(h): h for h in
+                                        _hosts(cookies, 'SELECT host_key FROM cookies', False)}))
         package = _package(context, path)
         for last_usage, context_domain, hashed_domain, hashed_host in rows:
             host, matched_in = '', ''
