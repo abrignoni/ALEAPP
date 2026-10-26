@@ -126,14 +126,16 @@ __artifacts_v2__ = {
                  "and state 0 the database file without its log. The previous generation's "
                  "left-over frames, which a reset of the log leaves behind, are written by page "
                  "number onto a copy of the database file and read by SQLite, only where the "
-                 "file matches that generation's last commit, every page the state needs has an "
+                 "current generation has not reached the database file, the file matches that "
+                 "generation's last commit, every page the state needs has an "
                  "image at or before it, and SQLite's quick_check passes. Frames after the last "
                  "commit are read the same way as an uncommitted state. Rows are compared with "
                  "the current state on primary key rather than row count, and a Recovered row is "
                  "reported once, as the newest committed state holding its key stored it. "
                  "Recovery Location names each kind of state the key was read in: committed "
-                 "states with their numbers, the previous log generation with the numbers of "
-                 "its left-over commits, or frames after the last commit, whose rows carry "
+                 "states with their first and last numbers, the previous log generation with the "
+                 "first and last numbers of its left-over commits, or frames after the last "
+                 "commit, whose rows carry "
                  "Recovery Method WAL uncommitted frames; a pending change to a message that is "
                  "still current is not reported. SQLite does the decoding, so column names, type "
                  "affinity and overflow pages are handled for us. On the tested images this "
@@ -1015,6 +1017,8 @@ def _recovered_provenance(source_path, spans):
         first, last = committed
         if last == 0:
             parts.append(f'{name} without its log, state 0')
+        elif first == 0:
+            parts.append(f'{name} and {name}-wal, committed states 0 to {last}')
         else:
             states = f'state {first}' if first == last else f'states {first} to {last}'
             parts.append(f'{name}-wal, committed {states}')
