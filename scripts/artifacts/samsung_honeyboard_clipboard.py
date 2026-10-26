@@ -4,7 +4,7 @@ ALEAPP module
 
 Parses:
   1. ClipItem.db      — clipboard text history (live entries)
-  2. ClipItem.db-wal  — deleted entries recovered from the SQLite WAL
+  2. ClipItem.db-wal  — clip_table rows from earlier committed states in the WAL
   3. clip files       — clipboard image clips (JPEG), with the package named in
                         the Samsung trailer's Captured_App_Info field
 
@@ -52,48 +52,48 @@ __artifacts_v2__ = {
         },
     },
     "get_honeyboard_clipboard_deleted": {
-        "name": "Samsung Honeyboard - WAL Record Candidates",
+        "name": "Samsung Honeyboard - Clipboard (Earlier WAL States)",
         "description": (
-            "Reports eligible decoded record candidates from selected ClipItem.db-wal files using the"
-            " existing physical last-frame-per-page parser and live-ID exclusion when available. A "
-            "reported candidate does not establish deletion, table ownership or transaction validity."
+            "Reports clip_table rows held by an earlier committed state of ClipItem.db that is "
+            "still in ClipItem.db-wal, when the current state does not hold the same row. Each "
+            "state is read by SQLite from a copy of the database whose log copy is cut at the "
+            "end of a committed transaction."
         ),
-        "author": "@AlexisBrignoni, Codex",
+        "author": "@AlexisBrignoni, Codex, Claude",
         "creation_date": "2026-07-13",
-        "last_update_date": "2026-10-09",
+        "last_update_date": "2026-10-26",
         "requirements": "",
         "category": "Clipboard",
         "notes": (
-            "WAL Frame is the zero-based physical frame index and WAL Page is its stored page number."
-            " These positions identify candidate locations, not verified transaction or table "
-            "membership. Frame salts, checksums and commit boundaries are not validated; the last "
-            "complete physical frame for each page is used. The decoded B-tree rowid is compared with"
-            " clip_table.id values when collected from the adjacent main and its own SQLite sidecars;"
-            " equivalence of those identifiers is not established. With no adjacent main, live-ID "
-            "exclusion is empty, but timestamp/type/text and duplicate filters still apply. SQLite "
-            "query errors can leave an empty or partial live-ID set; a main database that cannot be "
-            "opened leaves it empty and is logged. A blank result does not establish absence of records"
-            " or deletion: missing WAL, live-ID matches, filtering and decode failures can also "
-            "produce it. Historical, unremeasured observations reported WALs of 9 to 32 frames and "
-            "clip counts of 11, 1, 19 and 8 on samsungs20_a13, samsunga53_a14, sharon_a14 and "
-            "anne_a15, with no output rows; positive real-data candidate coverage was not established"
-            " by those observations. Overflow payloads are not reassembled and long values may be "
-            "truncated. Global duplicate suppression excludes frame/page/source differences; the "
-            "returned source is the last selected WAL, not per-row provenance. Type labels, timestamp"
-            " meaning, UID/account association, page/table ownership and source-state integrity "
-            "remain research limits. Original Honeyboard work: @segumarc; WAL/parser rewrite: Al3x101"
-            " (MSAB)."
+            "State n is the database after the first n committed transactions in the log; state 0 "
+            "is the database file without its log. First State and Last State are the oldest and "
+            "newest states the row was read in. WAL State Status is 'Earlier version of a current "
+            "row' when the current state holds the same id with different values, otherwise 'Not "
+            "in current state', which does not establish who or what removed the row. Timestamp "
+            "(UTC) is time_stamp as stored in the earlier state; Current Row Timestamp (UTC) is the "
+            "current state's time_stamp for that id. Only the log's current generation is read, up "
+            "to its last checksum-valid commit; frames after it, frames left by an earlier "
+            "generation, freelist pages and free space in the database file are not read, and the "
+            "log names how many frames each run skipped. Measured on samsungs20_a13, sharon_a14 and "
+            "anne_a15 (2, 5 and 1 rows; 17, 27 and 12 committed transactions): every row's WAL "
+            "State Status was 'Earlier version of a current row', and comparing all clip_table "
+            "columns, time_stamp was the only one that differed, earlier than the current value on "
+            "all 8. samsunga53_a14 (4 committed transactions) had none. User ID held 0 on all 8 "
+            "rows; URI held the text null on all 8 rows, as stored; Type held Text on all 5 "
+            "rows from sharon_a14 and on 7 of the 8; HTML Content was empty on 7; and First State "
+            "equalled Last State on 7. The same rows came back from an independent rebuild that writes the log's page "
+            "images onto a copy of the database. Why the app rewrites time_stamp is not sourced. "
+            "Original Honeyboard work: @segumarc; earlier WAL parser: Al3x101 (MSAB)."
         ),
-        # Match ClipItem.db* so the main .db is co-extracted alongside the -wal;
-        # the main db supplies live row IDs used to exclude non-deleted rows.
+        # Match ClipItem.db* so the -wal is staged beside the database it belongs to.
         "paths": ('*/com.samsung.android.honeyboard/databases/ClipItem.db*',),
         "output_types": "standard",
         "artifact_icon": "clipboard",
         "sample_data": {
-            "samsungs20_a13": "Android 13 | com.samsung.android.honeyboard | 0 rows",
+            "samsungs20_a13": "Android 13 | com.samsung.android.honeyboard | 2 rows",
             "samsunga53_a14": "Android 14 | com.samsung.android.honeyboard | 0 rows",
-            "sharon_a14": "Android 14 | com.samsung.android.honeyboard | 0 rows",
-            "anne_a15": "Android 15 | com.samsung.android.honeyboard | 0 rows",
+            "sharon_a14": "Android 14 | com.samsung.android.honeyboard | 5 rows",
+            "anne_a15": "Android 15 | com.samsung.android.honeyboard | 1 row",
         },
     },
     "get_honeyboard_screenshot": {
@@ -156,6 +156,7 @@ except ImportError:
 
 from scripts.ilapfuncs import (artifact_processor, logfunc, open_sqlite_db_readonly,
                                check_in_embedded_media, checkabx, abxread)
+from scripts.sqlite_wal import EARLIER_VERSION, rows_not_in_current
 
 # ClipData type codes
 _TYPE_CODES = {1: "Text", 2: "Intent", 3: "URI", 4: "HTML/Rich Text"}
@@ -267,183 +268,34 @@ def _dedup_rows(rows, key):
     return out
 
 
-# ---------------------------------------------------------------------------
-# WAL frame-by-frame B-tree parser
-# ---------------------------------------------------------------------------
+def _clip_select(cols):
+    """The clip_table query for the columns this ClipItem.db has.
 
-class _WalRecovery:
-    """Parse a SQLite WAL file and extract B-tree leaf cell payloads.
-
-    Implements last-frame-wins deduplication: when the same database page
-    appears in multiple frames, only the last frame is parsed. Earlier frames
-    for the same page are superseded intermediate states and are skipped.
-
-    Payloads that spill onto SQLite overflow pages are not reassembled, so a
-    very long clipboard entry may be truncated to its in-cell portion.
+    Returns (query, new_schema, has_html, has_uri).
     """
+    new_schema = "caller_package_name" in cols
+    has_html = "html" in cols
+    has_uri = "uri" in cols
+    app_col = "caller_package_name" if new_schema else "caller_app_uid"
+    select_cols = ["id", "time_stamp", "type", "text", app_col]
+    select_cols.append("user_id" if "user_id" in cols else "0 AS user_id")
+    if has_html:
+        select_cols.append("html")
+    if has_uri:
+        select_cols.append("uri")
+    query = f"SELECT {', '.join(select_cols)} FROM clip_table ORDER BY time_stamp ASC"
+    return query, new_schema, has_html, has_uri
 
-    WAL_MAGIC_LE = 0x377F0682
-    WAL_MAGIC_BE = 0x377F0683
-    FRAME_HDR = 24
-    FILE_HDR = 32
 
-    def __init__(self, wal_path):
-        self.wal_path = wal_path
-        self.page_size = 4096
-        self.records = []
-        self.error = None
-
-    def parse(self):
-        try:
-            with open(self.wal_path, "rb") as fh:
-                data = fh.read()
-        except OSError as exc:
-            self.error = str(exc)
-            return False
-
-        if len(data) < self.FILE_HDR:
-            self.error = "WAL too small"
-            return False
-
-        magic = struct.unpack(">I", data[0:4])[0]
-        if magic not in (self.WAL_MAGIC_LE, self.WAL_MAGIC_BE):
-            self.error = f"Bad WAL magic 0x{magic:08x}"
-            return False
-
-        ps_raw = struct.unpack(">I", data[8:12])[0]
-        self.page_size = 65536 if ps_raw in (0, 1) else ps_raw
-
-        # Collect all frames — later frames overwrite earlier ones for the same
-        # page_num (last-frame-wins, per SQLite WAL read semantics).
-        page_to_frame = {}
-        off = self.FILE_HDR
-        fn = 0
-        while off + self.FRAME_HDR + self.page_size <= len(data):
-            fh_bytes = data[off: off + self.FRAME_HDR]
-            page = data[off + self.FRAME_HDR: off + self.FRAME_HDR + self.page_size]
-            page_num = struct.unpack(">I", fh_bytes[0:4])[0]
-            page_to_frame[page_num] = {"frame": fn, "page_num": page_num, "data": page}
-            off += self.FRAME_HDR + self.page_size
-            fn += 1
-
-        # Parse only the winning (most recent) frame for each page
-        for fr in page_to_frame.values():
-            try:
-                for rec in self._parse_leaf_page(fr["data"]):
-                    rec["frame"] = fr["frame"]
-                    rec["page_num"] = fr["page_num"]
-                    self.records.append(rec)
-            except (struct.error, IndexError, ValueError):
-                continue
-        return True
-
-    @staticmethod
-    def _read_varint(data, off):
-        result = 0
-        for i in range(9):
-            if off + i >= len(data):
-                return result, i
-            b = data[off + i]
-            if i == 8:
-                result = (result << 8) | b
-                return result, 9
-            result = (result << 7) | (b & 0x7F)
-            if not (b & 0x80):
-                return result, i + 1
-        return result, 9
-
-    def _parse_leaf_page(self, page):
-        if len(page) < 8 or page[0] != 0x0D:
-            return []
-        num_cells = struct.unpack(">H", page[3:5])[0]
-        ptrs = []
-        for i in range(num_cells):
-            o = 8 + i * 2
-            if o + 2 > len(page):
-                break
-            ptrs.append(struct.unpack(">H", page[o: o + 2])[0])
-        out = []
-        for cp in ptrs:
-            try:
-                rec = self._parse_cell(page, cp)
-                if rec:
-                    out.append(rec)
-            except (struct.error, IndexError, ValueError):
-                continue
-        return out
-
-    def _parse_cell(self, page, off):
-        if off >= len(page):
-            return None
-        payload_size, n = self._read_varint(page, off)
-        off += n
-        row_id, n = self._read_varint(page, off)
-        off += n
-        payload = page[off: off + payload_size]
-        return {"row_id": row_id, "payload": payload}
-
-    def decoded_records(self):
-        out = []
-        for rec in self.records:
-            try:
-                cols = self._decode_payload(rec["payload"])
-            except (struct.error, IndexError, ValueError):
-                continue
-            if cols is not None:
-                out.append({
-                    "row_id": rec["row_id"],
-                    "columns": cols,
-                    "frame": rec["frame"],
-                    "page_num": rec["page_num"],
-                })
-        return out
-
-    def _decode_payload(self, payload):
-        if not payload:
-            return None
-        hdr_size, n = self._read_varint(payload, 0)
-        if hdr_size < 1 or hdr_size > len(payload):
-            return None
-        serial_types = []
-        p = n
-        while p < hdr_size:
-            t, m = self._read_varint(payload, p)
-            serial_types.append(t)
-            p += m
-        values = []
-        body = hdr_size
-        for t in serial_types:
-            v, used = self._read_value(payload, body, t)
-            values.append(v)
-            body += used
-        return values
-
-    def _read_value(self, data, off, serial):
-        if serial == 0:
-            return (None, 0)
-        if serial == 1:
-            return (int.from_bytes(data[off:off + 1], "big", signed=True), 1)
-        if serial == 2:
-            return (int.from_bytes(data[off:off + 2], "big", signed=True), 2)
-        if serial == 3:
-            return (int.from_bytes(data[off:off + 3], "big", signed=True), 3)
-        if serial == 4:
-            return (int.from_bytes(data[off:off + 4], "big", signed=True), 4)
-        if serial == 5:
-            return (int.from_bytes(data[off:off + 6], "big", signed=True), 6)
-        if serial == 6:
-            return (int.from_bytes(data[off:off + 8], "big", signed=True), 8)
-        if serial == 7:
-            return (struct.unpack(">d", data[off:off + 8])[0], 8)
-        if serial in (8, 9):
-            return (serial - 8, 0)
-        if serial >= 12 and serial % 2 == 0:
-            n = (serial - 12) // 2
-            return (data[off:off + n], n)
-        if serial >= 13 and serial % 2 == 1:
-            n = (serial - 13) // 2
-            return (data[off:off + n].decode("utf-8", errors="replace"), n)
-        return (None, 0)
+def _clip_fields(row, new_schema, has_html, has_uri, uid_map):
+    """(id, time_stamp, type, text, source app, user_id, html, uri) from a _clip_select row."""
+    app_id = row[4]
+    user_id = row[5] if row[5] is not None else 0
+    html_val = row[6] if has_html and len(row) > 6 else ""
+    uri_idx = 7 if has_html else 6
+    uri_val = row[uri_idx] if has_uri and len(row) > uri_idx else ""
+    source_app = app_id if (new_schema and app_id) else _resolve_uid(app_id, uid_map)
+    return row[0], row[1], row[2], row[3], source_app, user_id, html_val, uri_val
 
 
 # ---------------------------------------------------------------------------
@@ -540,33 +392,11 @@ def get_honeyboard_clipboard_live(context):
                 db.close()
                 continue
 
-            new_schema = "caller_package_name" in cols
-            has_html = "html" in cols
-            has_uri = "uri" in cols
-            has_uid = "user_id" in cols
-
-            app_col = "caller_package_name" if new_schema else "caller_app_uid"
-            select_cols = ["id", "time_stamp", "type", "text", app_col]
-            select_cols.append("user_id" if has_uid else "0 AS user_id")
-            if has_html:
-                select_cols.append("html")
-            if has_uri:
-                select_cols.append("uri")
-
-            query = f"SELECT {', '.join(select_cols)} FROM clip_table ORDER BY time_stamp ASC"
+            query, new_schema, has_html, has_uri = _clip_select(cols)
 
             for row in cur.execute(query):
-                clip_id = row[0]
-                ts_ms = row[1]
-                ctype = row[2]
-                text = row[3]
-                app_id = row[4]
-                user_id = row[5] if row[5] is not None else 0
-                html_val = row[6] if has_html and len(row) > 6 else ""
-                uri_idx = 7 if has_html else 6
-                uri_val = row[uri_idx] if has_uri and len(row) > uri_idx else ""
-
-                source_app = app_id if (new_schema and app_id) else _resolve_uid(app_id, uid_map)
+                clip_id, ts_ms, ctype, text, source_app, user_id, html_val, uri_val = _clip_fields(
+                    row, new_schema, has_html, has_uri, uid_map)
 
                 data_list.append((
                     _ms_to_utc(ts_ms),
@@ -602,124 +432,97 @@ def get_honeyboard_clipboard_live(context):
 
 
 # ---------------------------------------------------------------------------
-# Artifact 2: Deleted entries recovered from ClipItem.db-wal
+# Artifact 2: Clipboard rows from earlier committed states in ClipItem.db-wal
 # ---------------------------------------------------------------------------
 
 @artifact_processor
 def get_honeyboard_clipboard_deleted(context):
-    """Recover deleted clipboard entries from ClipItem.db-wal.
+    """Report clip_table rows held by an earlier committed state of ClipItem.db.
 
-    Uses direct SQLite WAL frame B-tree parsing with last-frame-wins
-    deduplication — no external tools, no modification of original files.
-
-    Column order in WAL rows (from PRAGMA table_info on observed devices):
-      0:id  1:time_stamp  2:type  3:text  4:html  5:uri  6:uri_list
-      7:mime_type  8:caller_app_uid  9:caller_package_name  10:origin  11:user_id
+    Each committed state the -wal still holds is read by SQLite through
+    scripts/sqlite_wal.py, with the same query as the live artifact. A row is
+    reported when the current state does not hold it with the same values.
     """
     files_found = context.get_files_found()
-    seeker = context.get_seeker()
+    uid_map = _build_uid_map(context.get_seeker())
     data_list = []
-    source_path = ""
-
-    uid_map = _build_uid_map(seeker)
+    source_paths = set()
 
     for file_found in files_found:
         file_found = str(file_found)
-        if not file_found.endswith("-wal"):
+        if file_found.endswith(("-wal", "-shm", "-journal")):
+            continue
+        if not os.path.exists(file_found + "-wal"):
+            logfunc(f"honeyboard_clipboard WAL states: no -wal beside {file_found}")
             continue
 
-        source_path = file_found
-        main_db_path = file_found[:-4]
-
-        # Determine schema and collect live row IDs from the main DB
-        new_schema = False
-        live_ids = set()
-        if os.path.exists(main_db_path):
-            try:
-                db = open_sqlite_db_readonly(main_db_path)
-                if db is None:
-                    logfunc(f"honeyboard_clipboard WAL: could not open {main_db_path}; "
-                            "no live IDs collected")
-                else:
-                    cur = db.cursor()
-                    pragma_cols = [r[1] for r in cur.execute("PRAGMA table_info(clip_table)")]
-                    new_schema = "caller_package_name" in pragma_cols
-                    for (rid,) in cur.execute("SELECT id FROM clip_table"):
-                        live_ids.add(rid)
-                    db.close()
-            except sqlite3.Error:
-                pass
-
-        recov = _WalRecovery(file_found)
-        if not recov.parse():
-            logfunc(f"honeyboard_clipboard WAL: could not parse {file_found}: {recov.error}")
+        db = open_sqlite_db_readonly(file_found)
+        if db is None:
+            continue
+        current_times = {}
+        try:
+            cols = [row[1] for row in db.execute("PRAGMA table_info(clip_table)")]
+            if cols:
+                current_times = dict(db.execute("SELECT id, time_stamp FROM clip_table"))
+        except sqlite3.Error as exc:
+            logfunc(f"honeyboard_clipboard WAL states: error reading {file_found}: {exc}")
+            cols = []
+        finally:
+            db.close()
+        if not cols:
+            logfunc(f"honeyboard_clipboard WAL states: clip_table not found in {file_found}")
             continue
 
-        seen_row_ids = set()
-        for rec in recov.decoded_records():
-            cols_vals = rec["columns"]
-            if len(cols_vals) < 4:
-                continue
+        query, new_schema, has_html, has_uri = _clip_select(cols)
+        try:
+            _columns, earlier, wal = rows_not_in_current(file_found, query, key_columns=[0])
+        except (OSError, sqlite3.Error) as exc:
+            logfunc(f"honeyboard_clipboard WAL states: could not read the states of "
+                    f"{file_found}: {exc}")
+            continue
+        logfunc(f"honeyboard_clipboard WAL states: {wal.summary()}")
+        source_paths.add(file_found + "-wal")
 
-            try:
-                ts = int(cols_vals[1]) if isinstance(cols_vals[1], (int, float)) else None
-                ctype = int(cols_vals[2]) if isinstance(cols_vals[2], (int, float)) else None
-            except (ValueError, OverflowError):
-                continue
-
-            if ts is None or ctype not in _TYPE_CODES:
-                continue
-
-            text = cols_vals[3] if len(cols_vals) > 3 else None
-            if not isinstance(text, str) or not text.strip():
-                continue
-
-            row_id = rec["row_id"]
-            if row_id in live_ids or row_id in seen_row_ids:
-                continue
-            seen_row_ids.add(row_id)
-
-            # Source app: prefer package name (col 9), fall back to UID (col 8)
-            app_id = None
-            if (new_schema and len(cols_vals) > 9
-                    and isinstance(cols_vals[9], str) and "." in cols_vals[9]):
-                app_id = cols_vals[9]
-            elif (len(cols_vals) > 8
-                  and isinstance(cols_vals[8], (int, float)) and cols_vals[8]):
-                app_id = int(cols_vals[8])
-
-            source_app = app_id if (new_schema and app_id) else _resolve_uid(app_id, uid_map)
-
-            user_id = 0
-            if len(cols_vals) > 11 and isinstance(cols_vals[11], (int, float)):
-                user_id = int(cols_vals[11])
-
+        for item in earlier:
+            clip_id, ts_ms, ctype, text, source_app, user_id, html_val, uri_val = _clip_fields(
+                item.values, new_schema, has_html, has_uri, uid_map)
+            current_ts = ""
+            if item.status == EARLIER_VERSION:
+                current_ts = _ms_to_utc(current_times.get(clip_id))
             data_list.append((
-                _ms_to_utc(ts),
-                row_id,
+                _ms_to_utc(ts_ms),
+                current_ts,
+                clip_id,
                 _decode_type(ctype),
-                text,
+                text or "",
                 source_app or "Unknown",
                 user_id,
-                rec["frame"],
-                rec["page_num"],
+                html_val or "",
+                uri_val or "",
+                item.status,
+                item.first_state,
+                item.last_state,
             ))
 
-    # Frame/page differ across mirror WALs, so exclude them from the signature
-    data_list = _dedup_rows(data_list, key=lambda r: r[:6])
+    # Collapse identical rows produced by ClipItem.db bind-mount mirrors
+    data_list = _dedup_rows(data_list, key=lambda r: r)
     data_list.sort(key=lambda r: r[0] if isinstance(r[0], datetime.datetime) else _AWARE_MIN)
 
     data_headers = (
         ("Timestamp (UTC)", "datetime"),
+        ("Current Row Timestamp (UTC)", "datetime"),
         "ID",
         "Type",
         "Clipboard Content",
         "Source App",
         "User ID",
-        "WAL Frame",
-        "WAL Page",
+        "HTML Content",
+        "URI",
+        "WAL State Status",
+        "First State",
+        "Last State",
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, "\n".join(sorted(source_paths))
 
 
 # ---------------------------------------------------------------------------
