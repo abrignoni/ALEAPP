@@ -320,6 +320,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | life360LocalStores |
 | likee |
 | line |
+| lockSettings |
 | mastodon |
 | meetme |
 | mega |
