@@ -8,9 +8,9 @@ Parses:
   3. clip files       — clipboard image clips (JPEG), with the package named in
                         the Samsung trailer's Captured_App_Info field
 
-Supersedes the original SamsungHoneyboard.py (@segumarc), adding WAL deleted-entry
-recovery, Samsung SEFT source-app decoding, dual-schema support, and packages.xml
-UID resolution.
+Supersedes the original SamsungHoneyboard.py (@segumarc), adding WAL
+recovery (now through scripts/sqlite_wal.py), Samsung SEFT source-app decoding,
+dual-schema support, and packages.xml UID resolution.
 
 Authors: @segumarc (original Honeyboard artifacts); Al3x101 (MSAB) — rewrite
 """
@@ -55,9 +55,9 @@ __artifacts_v2__ = {
         "name": "Samsung Honeyboard - Clipboard (Earlier WAL States)",
         "description": (
             "Reports clip_table rows held by an earlier committed state of ClipItem.db that is "
-            "still in ClipItem.db-wal, when the current state does not hold the same row. Each "
-            "state is read by SQLite from a copy of the database whose log copy is cut at the "
-            "end of a committed transaction."
+            "still in ClipItem.db-wal, when the current state does not hold a row with the same "
+            "values in the reported columns. Each state is read by SQLite from a copy of the "
+            "database whose log copy is cut at the end of a committed transaction."
         ),
         "author": "@AlexisBrignoni, Codex, Claude",
         "creation_date": "2026-07-13",
@@ -70,20 +70,24 @@ __artifacts_v2__ = {
             "newest states the row was read in. WAL State Status is 'Earlier version of a current "
             "row' when the current state holds the same id with different values, otherwise 'Not "
             "in current state', which does not establish who or what removed the row. Timestamp "
-            "(UTC) is time_stamp as stored in the earlier state; Current Row Timestamp (UTC) is the "
-            "current state's time_stamp for that id. Only the log's current generation is read, up "
-            "to its last checksum-valid commit; frames after it, frames left by an earlier "
-            "generation, freelist pages and free space in the database file are not read, and the "
-            "log names how many frames each run skipped. Measured on samsungs20_a13, sharon_a14 and "
-            "anne_a15 (2, 5 and 1 rows; 17, 27 and 12 committed transactions): every row's WAL "
-            "State Status was 'Earlier version of a current row', and comparing all clip_table "
-            "columns, time_stamp was the only one that differed, earlier than the current value on "
-            "all 8. samsunga53_a14 (4 committed transactions) had none. User ID held 0 on all 8 "
-            "rows; URI held the text null on all 8 rows, as stored; Type held Text on all 5 "
-            "rows from sharon_a14 and on 7 of the 8; HTML Content was empty on 7; and First State "
-            "equalled Last State on 7. The same rows came back from an independent rebuild that writes the log's page "
-            "images onto a copy of the database. Why the app rewrites time_stamp is not sourced. "
-            "Original Honeyboard work: @segumarc; earlier WAL parser: Al3x101 (MSAB)."
+            "(UTC) is the earlier state's time_stamp read as Unix milliseconds; Current Row "
+            "Timestamp (UTC) is the current state's time_stamp for that id, read the same way, and "
+            "is empty for a row not in the current state. Type uses the live artifact's labels, "
+            "whose source is not recorded. Only the log's current generation is read, up to its "
+            "last checksum-valid commit; frames after it, frames left by an earlier generation, "
+            "freelist pages and free space in the database file are not read, and the run log "
+            "names how many frames were skipped when any were. Measured on samsungs20_a13, "
+            "sharon_a14 and anne_a15 (2, 5 and 1 rows; 17, 27 and 12 committed transactions): "
+            "every row's WAL State Status was 'Earlier version of a current row', and comparing "
+            "all clip_table columns, time_stamp was the only one that differed, earlier than the "
+            "current value on all 8, by between 27 ms and about 35 days; on one sharon_a14 row "
+            "the two fall in the same second and the report shows them as equal. "
+            "samsunga53_a14 (4 committed transactions) had none. User ID held 0 on all 8 rows; "
+            "URI held the text null on all 8 rows, as stored; Type held Text on all 5 rows from "
+            "sharon_a14 and on 7 of the 8; HTML Content was empty on 7; and First State equalled "
+            "Last State on 7. The same rows came back from an independent rebuild that writes the "
+            "log's page images onto a copy of the database. Why the app rewrites time_stamp is not "
+            "sourced. Original Honeyboard work: @segumarc; earlier WAL parser: Al3x101 (MSAB)."
         ),
         # Match ClipItem.db* so the -wal is staged beside the database it belongs to.
         "paths": ('*/com.samsung.android.honeyboard/databases/ClipItem.db*',),
