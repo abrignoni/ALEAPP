@@ -65,10 +65,12 @@ __artifacts_v2__ = {
     "phonelink_content_access": {
         "name": "Phone Link - Content Access Events",
         "description": "Rows from the content_access_event table of the app's eventstore, each "
-                       "with a start time, a stored content type and a stored duration",
+                       "with a start time, a stored content type and a stored duration, including "
+                       "rows that another state in the write-ahead log holds and the current state "
+                       "does not",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-30",
-        "last_update_date": "2026-08-30",
+        "last_update_date": "2026-10-26",
         "requirements": "none",
         "category": "Phone Link",
         "notes": "com.microsoft.appmanager is the phone side of Microsoft Phone Link, which pairs "
@@ -79,24 +81,38 @@ __artifacts_v2__ = {
                  "Access Was Useful (as stored) are the schema's own integer columns; no source "
                  "for their code lists was located, so they are not expanded into labels. "
                  "Content Type was 22 on every row of seven of the eight corpora below and "
-                 "carried fifteen different values on the eighth. The database and its "
-                 "write-ahead log hold different row sets: this "
-                 "artifact reads both and reports their union, with Reading naming where each row "
-                 "was found. Rows marked as recovered from the pre-log database are ones the "
-                 "current state no longer carries, and on the corpora below the recovered share "
-                 "ranged from none of 28 rows on one image to all 9 on another, with 16 of 17, 17 "
-                 "of 27, 7 of 10, 7 of 26, 5 of 14 and 1 of 3 on the other six. The same "
+                 "carried 18 different values on samsunga53_a14. The states of the database hold "
+                 "different row sets: this artifact reports the current state's rows and, through "
+                 "scripts/sqlite_wal.py, rows another state holds that the current state does not, "
+                 "read as in Snapchat - Messages (arroyo.db): every earlier committed state of the "
+                 "log, the previous log generation's left-over frames where every gate passes, and "
+                 "frames after the last commit. Reading names where each row was found and "
+                 "Recovery Location the states, with first and last numbers; a recovered event is "
+                 "reported once, as the newest committed state holding it stored it, and an event "
+                 "read only in frames after the last commit is labelled so. On the corpora below "
+                 "the recovered share was 33 of 35 rows on anne_a15, 34 of 44 on falken_a326u_a13, "
+                 "49 of 52 on kevin_pocox7_a15, 20 of 48 on s20fe_a13, 42 of 43 on samsunga53_a14, "
+                 "7 of 26 on samsungs20_a13, 27 of 36 on sharon_a14 and 31 of 31 on userb2_a13, "
+                 "where comparing the database file without its log against the file with it "
+                 "applied recovered 1, 17, 7, 0, 16, 7, 5 and 9, all among them. 25 on "
+                 "kevin_pocox7_a15 and 22 on userb2_a13 were read only in the previous log "
+                 "generation; no tested log had frames after its last commit. Reading held one "
+                 "value on all 31 rows of userb2_a13, whose current state holds no "
+                 "content_access_event rows. The same "
                  "eventstore holds FcmNotificationEvent and agent_service_event, which held at "
                  "most 1 and 3 rows on a single corpus and have no artifact here.",
         "paths": ('*/com.microsoft.appmanager/databases/eventstore*',),
         "output_types": "standard",
         "artifact_icon": "link",
         "sample_data": {
-            "s20fe_a13": "Android 13 | com.microsoft.appmanager | 28 rows",
-            "samsunga53_a14": "Android 14 | com.microsoft.appmanager | 17 rows",
-            "sharon_a14": "Android 14 | com.microsoft.appmanager | 14 rows",
-            "kevin_pocox7_a15": "Android 15 | com.microsoft.appmanager | 10 rows",
-            "anne_a15": "Android 15 | com.microsoft.appmanager | 3 rows",
+            "s20fe_a13": "Android 13 | com.microsoft.appmanager | 48 rows (28 current, 20 recovered)",
+            "samsunga53_a14": "Android 14 | com.microsoft.appmanager | 43 rows (1 current, 42 recovered)",
+            "sharon_a14": "Android 14 | com.microsoft.appmanager | 36 rows (9 current, 27 recovered)",
+            "kevin_pocox7_a15": "Android 15 | com.microsoft.appmanager | 52 rows (3 current, 49 recovered)",
+            "anne_a15": "Android 15 | com.microsoft.appmanager | 35 rows (2 current, 33 recovered)",
+            "falken_a326u_a13": "Android 13 | com.microsoft.appmanager | 44 rows (10 current, 34 recovered)",
+            "samsungs20_a13": "Android 13 | com.microsoft.appmanager | 26 rows (19 current, 7 recovered)",
+            "userb2_a13": "Android 13 | com.microsoft.appmanager | 31 rows (0 current, 31 recovered)",
         },
     },
     "phonelink_phone_apps": {
@@ -150,13 +166,16 @@ from scripts.ilapfuncs import (
     get_sqlite_db_records,
     logfunc,
 )
+from scripts.sqlite_wal import KIND_COMMITTED, KIND_EARLIER, KIND_UNCOMMITTED, rows_not_in_current
 
 import sqlite3
 
 SIDECARS = ('-wal', '-shm', '-journal')
 
 CURRENT_STATE = 'Current state'
-PRE_LOG_ONLY = 'Recovered from the database without its log'
+OTHER_STATE = 'Recovered from another state of the log'
+UNCOMMITTED_ONLY = 'Only in uncommitted frames'
+WAL_KINDS = (KIND_COMMITTED, KIND_EARLIER, KIND_UNCOMMITTED)
 
 
 def _stores(context, name):
@@ -171,28 +190,66 @@ def _stores(context, name):
     return found
 
 
-def _read_both_ways(db_path, query, key_index):
-    """Rows from the database with its log applied, plus rows only the file holds.
+def _wal_location(db_path, item):
+    """Where in the write-ahead log a row was read, from an EarlierRow."""
+    name = os.path.basename(db_path)
+    parts = []
+    if item.first_state is not None:
+        first, last = item.first_state, item.last_state
+        if last == 0:
+            parts.append(f'{name} without its log, state 0')
+        elif first == 0:
+            parts.append(f'{name} and {name}-wal, committed states 0 to {last}')
+        else:
+            states = f'state {first}' if first == last else f'states {first} to {last}'
+            parts.append(f'{name}-wal, committed {states}')
+    if item.earlier_generation:
+        first, last = item.earlier_generation
+        commits = f'commit {first}' if first == last else f'commits {first} to {last}'
+        parts.append(f'{name}-wal, previous log generation, left-over {commits}')
+    if not parts:
+        parts.append(f'{name}-wal, frames after the last commit')
+    return '; '.join(parts)
+
+
+def _read_states(db_path, query, key_index):
+    """Rows from the database with its log applied, plus rows only another state holds.
 
     The table this reads is a rolling buffer the application trims, so the write
-    ahead log can carry deletions: the file alone then holds rows the current state
-    no longer has, and the current state holds rows not yet written back. Reading
-    only one of the two loses whichever set that reading drops, so both are read and
-    keyed on the table's own primary key. Which reading a row came from is reported
-    rather than hidden, because a row absent from the current state is a different
-    claim than one present in it.
+    ahead log can carry deletions: an earlier state then holds rows the current state
+    no longer has. Every state scripts/sqlite_wal.py can read is compared with the
+    current one on the table's own primary key, and a key the current state lacks is
+    reported once, as the newest committed state holding it stored it. Which reading a
+    row came from is reported rather than hidden, because a row absent from the current
+    state is a different claim than one present in it.
     """
     rows = {}
-    for uri_suffix, label in (('mode=ro', CURRENT_STATE), ('immutable=1', PRE_LOG_ONLY)):
-        try:
-            connection = sqlite3.connect(
-                f'file:{get_sqlite_db_path(db_path)}?{uri_suffix}', uri=True)
-            for row in connection.cursor().execute(query):
-                rows.setdefault(row[key_index], (row, label))
-            connection.close()
-        except sqlite3.Error as error:
-            logfunc(f'Phone Link: could not read {os.path.basename(db_path)} '
-                    f'({uri_suffix}): {error}')
+    try:
+        connection = sqlite3.connect(f'file:{get_sqlite_db_path(db_path)}?mode=ro', uri=True)
+        for row in connection.cursor().execute(query):
+            rows.setdefault(row[key_index], (row, CURRENT_STATE, ''))
+        connection.close()
+    except sqlite3.Error as error:
+        logfunc(f'Phone Link: could not read {os.path.basename(db_path)}: {error}')
+    try:
+        _columns, found, wal = rows_not_in_current(str(db_path), query,
+                                                   key_columns=[key_index], include=WAL_KINDS)
+    except (OSError, sqlite3.Error) as error:
+        logfunc(f'Phone Link: could not read the states of {os.path.basename(db_path)}: {error}')
+        return rows
+    logfunc(f'Phone Link {wal.summary()}')
+    best = {}
+    for item in found:
+        key = item.values[key_index]
+        if key in rows:
+            continue
+        rank = ((2, item.last_state) if item.first_state is not None else
+                (1, item.earlier_generation[1]) if item.earlier_generation else (0, 0))
+        if key not in best or rank > best[key][0]:
+            best[key] = (rank, item)
+    for key, (rank, item) in best.items():
+        label = UNCOMMITTED_ONLY if rank[0] == 0 else OTHER_STATE
+        rows[key] = (item.values, label, _wal_location(db_path, item))
     return rows
 
 
@@ -204,11 +261,12 @@ def phonelink_content_access(context):
              'FROM content_access_event')
 
     for db_path in _stores(context, 'eventstore'):
-        rows = _read_both_ways(db_path, query, 0)
+        rows = _read_states(db_path, query, 0)
         if not rows:
             continue
         source_paths.append(context.get_relative_path(db_path))
-        for uid, (row, label) in sorted(rows.items(), key=lambda item: item[1][0][1] or 0):
+        for uid, (row, label, location) in sorted(rows.items(),
+                                                   key=lambda item: item[1][0][1] or 0):
             _, start_time, duration, content_type, useful = row
             data_list.append((
                 convert_unix_ts_to_utc(start_time / 1000) if start_time else '',
@@ -216,6 +274,7 @@ def phonelink_content_access(context):
                 content_type if content_type is not None else '',
                 useful if useful is not None else '',
                 label,
+                location,
                 uid,
             ))
 
@@ -225,6 +284,7 @@ def phonelink_content_access(context):
         'Content Type (as stored)',
         'Access Was Useful (as stored)',
         'Reading',
+        'Recovery Location',
         'Event ID',
     )
     return data_headers, data_list, '\n'.join(source_paths)

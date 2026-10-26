@@ -19,7 +19,7 @@ ROOT_DIR = os.path.dirname(
 if ROOT_DIR not in sys.path:
     sys.path.insert(0, ROOT_DIR)
 
-from scripts.artifacts import snapchat  # pylint: disable=wrong-import-position
+from scripts.artifacts import phoneLink, snapchat  # pylint: disable=wrong-import-position
 
 
 def _capture(folder, name, statements):
@@ -66,6 +66,17 @@ class WalRecoveryPathTest(unittest.TestCase):
             "DELETE FROM conversation WHERE client_conversation_id = 'gone'"])
         removed = snapchat._removed_conversation_ids(path)  # pylint: disable=protected-access
         self.assertEqual(set(removed), {'gone'})
+
+    def test_phone_link_events_found_beside_a_path_with_a_space(self):
+        path = _capture(self.tmp, 'eventstore', [
+            'CREATE TABLE content_access_event (uid INTEGER PRIMARY KEY, start_time INTEGER)',
+            'INSERT INTO content_access_event VALUES (1, 1)',
+            'INSERT INTO content_access_event VALUES (2, 2)',
+            'DELETE FROM content_access_event WHERE uid = 2'])
+        rows = phoneLink._read_states(  # pylint: disable=protected-access
+            path, 'SELECT uid, start_time FROM content_access_event', 0)
+        self.assertEqual({uid: label for uid, (_row, label, _location) in rows.items()},
+                         {1: phoneLink.CURRENT_STATE, 2: phoneLink.OTHER_STATE})
 
 if __name__ == '__main__':
     unittest.main()
