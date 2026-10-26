@@ -53,6 +53,17 @@ video held in its MP4 fragments, copying the sample bytes as stored.
 `scripts/artifacts/chromeCacheVideos.py` imports it. Standard library only;
 Brotli-compressed bodies are read when the optional brotli package is installed.
 
+## c2paprobe.py
+
+| | |
+| --- | --- |
+| upstream | https://github.com/abrignoni/c2paprobe |
+| licence | MIT, kept beside it as LICENSE-c2paprobe |
+
+Reads the Content Credentials (C2PA) manifest store and the XMP a picture or video
+holds, walking its container from the bytes. `scripts/artifacts/c2paProvenance.py`
+imports it. iLEAPP vendors the same file. Standard library only.
+
 The vendored version, upstream commit and sha256 of each file are recorded in
 `vendored.json` in this directory, which `admin/scripts/check_vendored.py`
 enforces in CI: it checks the hashes and fetches each upstream file at its
@@ -68,6 +79,7 @@ re-vendor, or the next sync silently reverts the change.
     cp ../qnxprobe/ewfprobe.py scripts/vendor/ewfprobe.py
     cp ../exoprobe/exoprobe.py scripts/vendor/exoprobe.py
     cp ../chromiumcacheprobe/chromiumcacheprobe.py scripts/vendor/chromiumcacheprobe.py
+    cp ../c2paprobe/c2paprobe/__init__.py scripts/vendor/c2paprobe.py
     python3 admin/scripts/check_vendored.py --update
 
 `--update` rewrites the hashes only. The upstream commit and date in
