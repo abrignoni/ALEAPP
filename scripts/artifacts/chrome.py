@@ -179,25 +179,35 @@ def _package_from_path(file_name):
     return match.group(1) if match else ''
 
 
-def get_browser_name(file_name):
+def _app_folder(file_name):
+    """(package, app_* folder) nearest the file, read from whole path segments.
 
-    if 'brave' in file_name.lower():
+    The name is tested segment by segment, nearest the file first, so a folder above the
+    extraction (a case folder named after a vendor, say) cannot be taken for the browser.
+    """
+    segments = [s for s in re.split(r'[\\/]', str(file_name)) if s][:-1]  # folders only
+    for index in range(len(segments) - 1, 0, -1):
+        if segments[index].startswith('app_') and '.' in segments[index - 1]:
+            return segments[index - 1], segments[index]
+    return '', ''
+
+
+def get_browser_name(file_name):
+    package, folder = _app_folder(file_name)
+    if folder == 'app_webview':
+        # An app's embedded WebView, not a browser: name the app that holds it.
+        return package or 'Unknown'
+    lowered = package.lower()
+    if 'brave' in lowered:
         return 'Brave'
-    elif 'microsoft' in file_name.lower():
+    elif 'microsoft' in lowered:
         return 'Edge'
-    elif 'opera' in file_name.lower():
+    elif 'opera' in lowered:
         return 'Opera'
-    elif 'android.chrome' in file_name.lower():
+    elif 'android.chrome' in lowered:
         return 'Chrome'
-    elif 'app_webview' in file_name:
-        try:
-            result = re.search('.*/(.*)/app_webview/Default.*', file_name)
-            return result.group(1)
-        except Exception:
-            return 'Unknown'
-    else:
-        # Any other Chromium build: name it by its own package rather than 'Unknown'.
-        return _package_from_path(file_name) or 'Unknown'
+    # Any other Chromium build: name it by its own package rather than 'Unknown'.
+    return package or _package_from_path(file_name) or 'Unknown'
 
 
 def _webkit_to_utc(value):
