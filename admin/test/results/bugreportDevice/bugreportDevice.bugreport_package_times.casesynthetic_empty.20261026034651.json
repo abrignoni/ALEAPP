@@ -1,0 +1,37 @@
+{
+  "metadata": {
+    "module_name": "bugreportDevice",
+    "artifact_name": "Bug Report - Package Times",
+    "function_name": "bugreport_package_times",
+    "case_number": "casesynthetic_empty",
+    "number_of_columns": 10,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportDevice/testdata.bugreportDevice.bugreport_package_times.casesynthetic_empty.zip",
+    "start_time": "2026-10-26T03:46:51.264811+00:00",
+    "end_time": "2026-10-26T03:46:51.417889+00:00",
+    "run_time_seconds": 0.007424592971801758,
+    "last_commit": {
+      "hash": "d13a8e8c258efbcf42a53bcd205321b35468a9c7",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-25T23:46:32-04:00",
+      "message": "Add Android bug report device facts, sections, installed packages and package times"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Package",
+    "Event",
+    "User",
+    "Installer",
+    "Block",
+    "Time Note",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

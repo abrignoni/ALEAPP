@@ -1,0 +1,116 @@
+{
+  "metadata": {
+    "module_name": "bugreportDevice",
+    "artifact_name": "Bug Report - Sections",
+    "function_name": "bugreport_sections",
+    "case_number": "casesynthetic_odd_bytes",
+    "number_of_columns": 8,
+    "number_of_rows": 8,
+    "total_data_size_bytes": 523,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportDevice/testdata.bugreportDevice.bugreport_sections.casesynthetic_odd_bytes.zip",
+    "start_time": "2026-10-26T03:46:52.545368+00:00",
+    "end_time": "2026-10-26T03:46:52.710246+00:00",
+    "run_time_seconds": 0.018268823623657227,
+    "last_commit": {
+      "hash": "d13a8e8c258efbcf42a53bcd205321b35468a9c7",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-25T23:46:32-04:00",
+      "message": "Add Android bug report device facts, sections, installed packages and package times"
+    }
+  },
+  "headers": [
+    "Section",
+    "Kind",
+    "Start Line",
+    "Last Line",
+    "Lines",
+    "Printed Duration (s)",
+    "Read By",
+    "Source File"
+  ],
+  "data": [
+    [
+      "preamble",
+      "header",
+      1,
+      20,
+      20,
+      null,
+      "Device Facts",
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "SYSTEM PROPERTIES",
+      "command",
+      21,
+      46,
+      25,
+      0.05,
+      "Device Facts",
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "DUMPSYS CRITICAL",
+      "dumpsys group",
+      49,
+      1292,
+      1243,
+      0.5,
+      "not read",
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "package",
+      "dumpsys service",
+      51,
+      1290,
+      1239,
+      0.321,
+      "Installed Packages; Package Times",
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "DUMPSYS",
+      "dumpsys group",
+      1295,
+      1366,
+      71,
+      0.9,
+      "not read",
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "settings",
+      "dumpsys service",
+      1296,
+      1330,
+      34,
+      0.08,
+      "not read",
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "activity",
+      "dumpsys service",
+      1333,
+      1364,
+      31,
+      0.5,
+      "not read",
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "CHECKIN USAGESTATS",
+      "command",
+      1369,
+      1382,
+      13,
+      0.346,
+      "not read",
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

@@ -1,0 +1,229 @@
+{
+  "metadata": {
+    "module_name": "bugreportDevice",
+    "artifact_name": "Bug Report - Device Facts",
+    "function_name": "bugreport_device_facts",
+    "case_number": "casesynthetic_a16",
+    "number_of_columns": 5,
+    "number_of_rows": 28,
+    "total_data_size_bytes": 1901,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportDevice/testdata.bugreportDevice.bugreport_device_facts.casesynthetic_a16.zip",
+    "start_time": "2026-10-26T03:46:48.179897+00:00",
+    "end_time": "2026-10-26T03:46:48.323476+00:00",
+    "run_time_seconds": 0.014351606369018555,
+    "last_commit": {
+      "hash": "d13a8e8c258efbcf42a53bcd205321b35468a9c7",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-25T23:46:32-04:00",
+      "message": "Add Android bug report device facts, sections, installed packages and package times"
+    }
+  },
+  "headers": [
+    "Fact",
+    "Value",
+    "Origin",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Report time (as printed)",
+      "2026-11-02 10:15:30",
+      "header",
+      2,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Build",
+      "EXAMPLE.260101.001.A1",
+      "header",
+      5,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Build fingerprint",
+      "example/examplephone/examplephone:16/EXAMPLE.260101.001/1001:user/release-keys",
+      "header",
+      6,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Bootloader",
+      "EXAMPLEBL1",
+      "header",
+      7,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Radio",
+      "EXAMPLERADIO1",
+      "header",
+      8,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Network",
+      "ExampleNet,ExampleNet2",
+      "header",
+      9,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Module Metadata version",
+      "372546000",
+      "header",
+      10,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Android SDK version",
+      "36",
+      "header",
+      11,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "SDK extensions",
+      "[ad_services=23, b=23, c=<not set>]",
+      "header",
+      12,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Kernel",
+      "Linux version 6.12.0-example (builder@example-host) #1 SMP PREEMPT Mon Jan 5 10:00:00 UTC 2026",
+      "header",
+      13,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Uptime",
+      "up 0 weeks, 1 days, 2 hours, 3 minutes,  load average: 1.00, 1.00, 1.00",
+      "header",
+      17,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Bugreport format version",
+      "2.0",
+      "header",
+      18,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Dumpstate info",
+      "id=1 pid=4242 dry_run=0 args=/system/bin/dumpstate -d -p -z -o /data/user_de/0/com.android.shell/files/bugreports/bugreport",
+      "header",
+      19,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "persist.sys.locale",
+      "en-US",
+      "getprop",
+      28,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "persist.sys.timezone",
+      "Europe/Paris",
+      "getprop",
+      29,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "ro.adb.secure",
+      "1",
+      "getprop",
+      30,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "ro.boot.verifiedbootstate",
+      "green",
+      "getprop",
+      33,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "ro.build.characteristics",
+      "default",
+      "getprop",
+      34,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "ro.build.fingerprint",
+      "example/examplephone/examplephone:16/EXAMPLE.260101.001/1001:user/release-keys",
+      "getprop",
+      35,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "ro.build.type",
+      "user",
+      "getprop",
+      36,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "ro.build.version.release",
+      "16",
+      "getprop",
+      37,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "ro.build.version.sdk",
+      "36",
+      "getprop",
+      38,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "ro.build.version.security_patch",
+      "2026-01-05",
+      "getprop",
+      39,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "ro.debuggable",
+      "0",
+      "getprop",
+      40,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "ro.product.manufacturer",
+      "Example",
+      "getprop",
+      41,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "ro.product.model",
+      "Example Phone 1",
+      "getprop",
+      42,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Report time (UTC)",
+      "2026-11-02 09:15:30",
+      "derived",
+      null,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Time zone used for UTC values",
+      "Europe/Paris",
+      "derived",
+      null,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}
