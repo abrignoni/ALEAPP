@@ -286,6 +286,15 @@ class PackageTests(unittest.TestCase):
         first = [t for t in report.package_times if t.package == 'com.example.user.chat' and t.event == 'firstInstallTime']
         self.assertEqual([t.user for t in first], [None])
 
+    def test_a_damaged_line_at_column_zero_does_not_end_the_list(self):
+        text = fixture.build_report('a16')
+        whole = len(scan_text(text).packages)
+        damaged = text.replace('\n    pkg=Package{def456 com.example.system.app05}', '\n\rpkg=Package{def456 com.example.system.app05}', 1)
+        self.assertNotEqual(damaged, text)
+        report = scan_text(damaged)
+        self.assertEqual(len(report.packages), whole)
+        self.assertEqual(len(report.package_times), len(scan_text(text).package_times))
+
     def test_time_notes(self):
         report = scan_text(fixture.build_report('a16', zone='Europe/Paris'))
         moment, note = report.time_value('2026-07-04 23:30:00')

@@ -609,10 +609,10 @@ class PackageReader(SectionReader):
         indent = len(text) - len(text.lstrip(' '))
         body = text.strip()
         if indent == 0:
-            if text.startswith('***'):
-                return
+            if text.startswith('***') or not text.rstrip().endswith(':'):
+                return          # a heading ends with a colon; another line at column 0 inside the dump is damaged text
             self._close_package()
-            self.top = text.rstrip(':') if text.endswith(':') else text
+            self.top = text.rstrip().rstrip(':')
             self.block = self.top if self.top in ('Packages', 'Hidden system packages') else ''
             return
         if not self.block:
