@@ -407,7 +407,6 @@ class Report:
         self.source = source
         self.total_lines = 0
         self.warnings = []
-        self.timeouts = {}            # service name -> milliseconds of the "DUMP TIMEOUT" marker printed inside it
         self.sections = []            # every preamble, command and service section, in the order printed
         self.sections_seen = set()    # names of the sections that a reader was run on
         self.report_wall = ''         # "== dumpstate:" time as printed
@@ -477,6 +476,7 @@ class Section:
         self.group = group      # a command that runs the dumpsys binary and holds service sections
         self.end_line = 0
         self.duration = None    # seconds, when the text prints the duration line of the section
+        self.timeout_ms = None  # the milliseconds of a "DUMP TIMEOUT" marker printed inside the service: the platform cut it
 
 
 class SectionReader:
@@ -777,7 +777,7 @@ def scan_lines(raw_lines, report):
             if text.startswith("*** SERVICE '") and ' DUMP TIMEOUT (' in text:
                 milliseconds = text.partition(' DUMP TIMEOUT (')[2].partition('ms)')[0]
                 if state['svc'] is not None and milliseconds.isdigit():
-                    report.timeouts[state['svc'].name] = int(milliseconds)
+                    state['svc'].timeout_ms = int(milliseconds)
             elif text.startswith('--------- ') and ' was the duration of dumpsys ' in text:
                 name = text.partition(' was the duration of dumpsys ')[2].partition(', ending at: ')[0].strip()
                 if state['svc'] is not None and state['svc'].name == name:

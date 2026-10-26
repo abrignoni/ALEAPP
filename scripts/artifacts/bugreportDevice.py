@@ -57,7 +57,10 @@ __artifacts_v2__ = {
                  "duration line, and Lines counts the lines between. Printed Duration (s) is the number in the duration line that "
                  "the platform prints when it finishes a section (a line like '------ 0.3s was the duration of 'TITLE' ------' or "
                  "'--------- 0.3s was the duration of dumpsys name, ending at: ...'); it is empty for a section that has none, "
-                 "for example the last section of a text that was cut. Read By names the Android Bug Report artifacts that present "
+                 "for example the last section of a text that was cut. Timeout Marker (ms) holds the number of milliseconds in a "
+                 "DUMP TIMEOUT line that the platform printed inside a service when it stopped waiting for that service (the "
+                 "section was cut short and its rows may be partial); it is empty for every other section, and it was empty on all "
+                 "rows of two of the five tested reports. Read By names the Android Bug Report artifacts that present "
                  "rows from the section, and 'not read' means that none of them does, which says nothing about what the section "
                  "holds: the logs (SYSTEM LOG, EVENT LOG, RADIO LOG), app ops, battery, network, Wi-Fi, accounts, notifications, jobs, "
                  "alarms, kernel, process, ANR trace and tombstone sections are among those not read here. A service the platform "
@@ -96,8 +99,8 @@ __artifacts_v2__ = {
                  "builds tested print the installer only when one is set and print neither of the other two, so Initiating Package "
                  "is empty on all rows of two of the five reports. Originating Package was empty on all rows of four of the five tested "
                  "reports (the value printed was null). Initiating Package is identical to Installer on every row of one report. Package "
-                 "Source is the packageSource number as stored, not decoded; it is empty on all rows of two reports and 0 on every "
-                 "row of two others. Users Installed lists the Android users for which the dump prints installed=true, and User "
+                 "Source is the packageSource number as stored, not decoded. Package Source is empty on all rows of two reports and holds "
+                 "one value, 0, on every row of two others. Users Installed lists the Android users for which the dump prints installed=true, and User "
                  "State shows for each user the installed, stopped, hidden, suspended and enabled values as printed (enabled is a "
                  "stored number, not decoded). Users Installed held one value, 0, on all rows of four of the five tested reports, "
                  "because the dump listed one Android user there; the fifth listed two users (0 and 11). Source Line is the line "
@@ -207,8 +210,9 @@ def bugreport_packages(context):
     for label, report in reports:
         if 'package' not in report.sections_seen:
             logfunc(f'Bug report {label}: no package service dump in this report')
-        if 'package' in report.timeouts:
-            logfunc(f'Bug report {label}: the package service dump was cut by a {report.timeouts["package"]} ms '
+        cut = [section.timeout_ms for section in report.sections if section.name == 'package' and section.timeout_ms]
+        if cut:
+            logfunc(f'Bug report {label}: the package service dump was cut by a {cut[0]} ms '
                     f'timeout, the list is partial')
         for package in report.packages:
             rows.append((package.package, package.block, package.app_id, package.shared_user, package.version_code,
@@ -234,7 +238,8 @@ def bugreport_package_times(context):
 
 @artifact_processor
 def bugreport_sections(context):
-    headers = ('Section', 'Kind', 'Start Line', 'Last Line', 'Lines', 'Printed Duration (s)', 'Read By', 'Source File')
+    headers = ('Section', 'Kind', 'Start Line', 'Last Line', 'Lines', 'Printed Duration (s)', 'Timeout Marker (ms)', 'Read By',
+               'Source File')
     kinds = {'preamble': 'header', 'command': 'command', 'service': 'dumpsys service'}
     rows = []
     reports = _reports(context)
@@ -244,5 +249,5 @@ def bugreport_sections(context):
             last = section.end_line - 1
             lines = last - section.line + (1 if section.kind == 'preamble' else 0)
             read_by = dumpstate_reader.READ_BY.get((section.kind, section.name), 'not read')
-            rows.append((section.name, kind, section.line, last, lines, section.duration, read_by, label))
+            rows.append((section.name, kind, section.line, last, lines, section.duration, section.timeout_ms, read_by, label))
     return headers, rows, _source_path(context, reports)
