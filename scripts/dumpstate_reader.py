@@ -41,6 +41,7 @@ import pytz
 BANNER = b'== dumpstate:'
 HEAD_BYTES = 8192
 MAX_LINE_CHARS = 65536
+MAX_LINE_BYTES = 1 << 20
 # Rows kept per table. A real report holds up to a few thousand rows of each kind; the cap only
 # bounds memory for a damaged or hostile text and is reported when it is reached.
 MAX_ROWS = 500000
@@ -367,7 +368,7 @@ def _open_binary(source):
 
 
 def _line_text(raw):
-    """Text of one raw line without its line ending (``\\n`` or ``\\r\\n``); a lone ``\\r`` stays in the text."""
+    """Text of one raw line without its line ending (``\n`` or ``\r\n``); a lone ``\r`` stays in the text."""
     if raw.endswith(b'\n'):
         raw = raw[:-1]
         if raw.endswith(b'\r'):
@@ -375,6 +376,25 @@ def _line_text(raw):
     if len(raw) > MAX_LINE_CHARS:
         raw = raw[:MAX_LINE_CHARS]
     return raw.decode('utf-8', 'replace')
+
+
+def iter_lines(stream):
+    """The lines of a binary stream, split on ``\n`` only, each cut to MAX_LINE_BYTES.
+
+    The rest of a longer line is skipped without being held in memory, so a text with a
+    multi-megabyte line, or with no line breaks at all, costs the same as any other.
+    """
+    while True:
+        raw = stream.readline(MAX_LINE_BYTES)
+        if not raw:
+            return
+        if len(raw) == MAX_LINE_BYTES and not raw.endswith(b'\n'):
+            while True:
+                rest = stream.readline(MAX_LINE_BYTES)
+                if not rest or rest.endswith(b'\n'):
+                    break
+            raw += b'\n'
+        yield raw
 
 
 # ---------------------------------------------------------------------------------------------
@@ -811,7 +831,7 @@ def read_report(source):
     stream = close = None
     try:
         stream, close = _open_binary(source)
-        scan_lines(stream, report)
+        scan_lines(iter_lines(stream), report)
     except READ_ERRORS as error:
         report.warn('reading stopped at line %d: %s' % (report.total_lines, error))
     finally:

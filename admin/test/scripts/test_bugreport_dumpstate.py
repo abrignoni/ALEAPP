@@ -31,7 +31,7 @@ def scan_text(text):
     """A Report from a text, without a file."""
     report = reader.Report(reader.Source('memory', ''))
     data = text.encode('utf-8') if isinstance(text, str) else text
-    reader.scan_lines(io.BytesIO(data), report)
+    reader.scan_lines(reader.iter_lines(io.BytesIO(data)), report)
     report.finish()
     return report
 
@@ -169,6 +169,16 @@ class ScannerTests(unittest.TestCase):
         build = [fact for fact in report.facts if fact.name == 'Build'][0]
         self.assertLessEqual(len(build.value), 400)
         self.assertIn('Uptime', [fact.name for fact in report.facts])
+
+    def test_lines_split_on_newline_only_and_a_long_line_is_one_line(self):
+        long_line = b'X' * (3 * reader.MAX_LINE_BYTES + 5)
+        lines = list(reader.iter_lines(io.BytesIO(b'a\rb\x0cc\n' + long_line + b'\nlast')))
+        self.assertEqual(len(lines), 3)
+        self.assertEqual(lines[0], b'a\rb\x0cc\n')
+        self.assertEqual(len(lines[1]), reader.MAX_LINE_BYTES + 1)
+        self.assertTrue(lines[1].endswith(b'\n'))
+        self.assertEqual(lines[2], b'last')
+        self.assertEqual(list(reader.iter_lines(io.BytesIO(b''))), [])
 
     def test_row_cap(self):
         text = fixture.build_report('a16')
