@@ -1,0 +1,37 @@
+{
+  "metadata": {
+    "module_name": "bugreportDevice",
+    "artifact_name": "Bug Report - Package Times",
+    "function_name": "bugreport_package_times",
+    "case_number": "casesynthetic_not_a_report",
+    "number_of_columns": 10,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportDevice/testdata.bugreportDevice.bugreport_package_times.casesynthetic_not_a_report.zip",
+    "start_time": "2026-10-26T16:07:23.050052+00:00",
+    "end_time": "2026-10-26T16:07:23.064257+00:00",
+    "run_time_seconds": 0.0001518726348876953,
+    "last_commit": {
+      "hash": "abeb545a0e559c0c512cc6164dc977a4965a493d",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T01:07:43-04:00",
+      "message": "Bug report notes: name the empty Timeout Marker column and the uniform Boot Reasons columns"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Package",
+    "Event",
+    "User",
+    "Installer",
+    "Block",
+    "Time Note",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

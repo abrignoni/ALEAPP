@@ -1,0 +1,36 @@
+{
+  "metadata": {
+    "module_name": "bugreportDevice",
+    "artifact_name": "Bug Report - Sections",
+    "function_name": "bugreport_sections",
+    "case_number": "casesynthetic_not_a_report",
+    "number_of_columns": 9,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportDevice/testdata.bugreportDevice.bugreport_sections.casesynthetic_not_a_report.zip",
+    "start_time": "2026-10-26T16:07:22.999212+00:00",
+    "end_time": "2026-10-26T16:07:23.014670+00:00",
+    "run_time_seconds": 0.00018286705017089844,
+    "last_commit": {
+      "hash": "abeb545a0e559c0c512cc6164dc977a4965a493d",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T01:07:43-04:00",
+      "message": "Bug report notes: name the empty Timeout Marker column and the uniform Boot Reasons columns"
+    }
+  },
+  "headers": [
+    "Section",
+    "Kind",
+    "Start Line",
+    "Last Line",
+    "Lines",
+    "Printed Duration (s)",
+    "Timeout Marker (ms)",
+    "Read By",
+    "Source File"
+  ],
+  "data": []
+}
