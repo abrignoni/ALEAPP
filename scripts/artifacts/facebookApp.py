@@ -100,8 +100,8 @@ __artifacts_v2__ = {
                  "Converted Value is filled only for keys ending in _time_ms (two on those "
                  "images) and for a delta cursor that decodes to text, so it is empty on every Upload Snapshot "
                  "row. On pixel7a_a14 and hickman_a13 only a Messenger copy was present, "
-                 "so all 5 rows on each were Upload Snapshot "
-                 "rows, App held com.facebook.orca on all 5 and Converted Value held no value.",
+                 "so on each Record Type held Upload Snapshot on all 5 rows, App held "
+                 "com.facebook.orca on all 5 rows and Converted Value held no value.",
         "paths": ('*/com.facebook.katana/databases/*android_facebook_contacts_db*',
                   '*/com.facebook.orca/databases/*android_facebook_contacts_db*'),
         "output_types": "standard",
