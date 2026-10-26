@@ -257,8 +257,8 @@ __artifacts_v2__ = {
     "facebookAppPreferences": {
         "name": "Facebook - Preferences",
         "description": "Key and value pairs from the preference store of the Facebook app "
-                       "and of Messenger (prefs_db, preferences table), with the app the "
-                       "store belongs to.",
+                       "and of Messenger (prefs_db, preferences table), with the package "
+                       "directory the store was found under.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-20",
         "last_update_date": "2026-10-25",
@@ -266,23 +266,25 @@ __artifacts_v2__ = {
         "category": "Facebook",
         "notes": "Every row of each store's preferences table is reported rather than a "
                  "selected subset, so nothing is filtered out by this module's choices. Messenger "
-                 "(com.facebook.orca) holds a database of the same name and schema under its "
-                 "own databases directory, and both are read. The App column holds the "
+                 "(com.facebook.orca) holds a database of the same name under its own "
+                 "databases directory, with the same preferences table schema on every corpus "
+                 "copy checked, and both are read. The App column holds the "
                  "package directory the database was found in, and is needed because the two "
                  "apps keep separate stores that share key names: on sharon_a14 272 keys "
                  "appeared in both, and 142 of them held a different value in each. On the "
                  "eleven corpus images checked that hold a Messenger copy, it held 420 to 661 "
                  "rows. On pixel3_a11, pixel3_a12, pixel7a_a14 and hickman_a13 only a "
-                 "Messenger copy was present, so App held com.facebook.orca on every row; on "
+                 "Messenger copy was found, so App held com.facebook.orca on every row; on "
                  "galaxys10_a10, s20fe_a13, kevin_pocox7_a15 and adams_ss135dl_a13 only a "
-                 "Facebook app copy was present, so App held com.facebook.katana on every row. "
+                 "Facebook app copy was found, so App held com.facebook.katana on every row. "
                  "App does not tell Android users apart: on samsungs20_a13 a second Facebook "
                  "app copy under user 150 added 216 rows that also carry com.facebook.katana. "
                  "On sharon_a13 the Facebook app's 896 rows carried 327 keys under "
                  "logged_in_user_scoped, 116 under config and 88 under ras_blobs, and the "
                  "remainder were spread across smaller groups. The stored type integer is "
-                 "reported as stored. Values are reported as written by the app and are not "
-                 "interpreted.",
+                 "reported as stored. Text values are reported as written by the app and are "
+                 "not interpreted. A value stored as a BLOB is shown as a Python bytes literal; "
+                 "one row on sharon_a13 held one.",
         "paths": ('*/com.facebook.katana/databases/prefs_db*',
                   '*/com.facebook.orca/databases/prefs_db*'),
         "output_types": "standard",
