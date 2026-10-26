@@ -5,20 +5,20 @@
     "function_name": "bugreport_device_facts",
     "case_number": "casesynthetic_a10",
     "number_of_columns": 5,
-    "number_of_rows": 31,
-    "total_data_size_bytes": 2949,
+    "number_of_rows": 34,
+    "total_data_size_bytes": 3250,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/bugreportDevice/testdata.bugreportDevice.bugreport_device_facts.casesynthetic_a10.zip",
-    "start_time": "2026-10-26T16:07:22.621563+00:00",
-    "end_time": "2026-10-26T16:07:22.639581+00:00",
-    "run_time_seconds": 0.0030329227447509766,
+    "start_time": "2026-10-26T20:24:30.950564+00:00",
+    "end_time": "2026-10-26T20:24:31.273293+00:00",
+    "run_time_seconds": 0.18177318572998047,
     "last_commit": {
-      "hash": "abeb545a0e559c0c512cc6164dc977a4965a493d",
-      "author_name": "danjethh",
-      "author_email": "danjethh@users.noreply.github.com",
-      "date": "2026-10-26T01:07:43-04:00",
-      "message": "Bug report notes: name the empty Timeout Marker column and the uniform Boot Reasons columns"
+      "hash": "96c1053a43108e04637259080a80fffca86a3865",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-10-26T12:19:27-04:00",
+      "message": "Merge the reviewed bug report reader into the activity branch"
     }
   },
   "headers": [
@@ -73,7 +73,7 @@
     ],
     [
       "Module Metadata version",
-      "292700600",
+      "133990923",
       "header",
       10,
       "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
@@ -83,6 +83,13 @@
       "Linux version 4.14.0-example (builder@example-host) #1 SMP PREEMPT",
       "header",
       11,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Command line",
+      "loglevel=1 androidboot.serialno=SYNTH0001EXAMPLE",
+      "header",
+      12,
       "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
     ],
     [
@@ -139,6 +146,13 @@
       "reboot",
       "getprop",
       27,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "ro.boot.serialno",
+      "SYNTH0000EXAMPLE",
+      "getprop",
+      28,
       "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
     ],
     [
@@ -209,6 +223,13 @@
       "Example Phone 1",
       "getprop",
       38,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "ro.serialno",
+      "SYNTH0000EXAMPLE",
+      "getprop",
+      39,
       "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
     ],
     [

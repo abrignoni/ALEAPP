@@ -62,9 +62,8 @@ NOTE_NONEXISTENT = 'time cannot be converted with the report time zone (it does 
 
 HEADER_KEYS = ('Build', 'Build fingerprint', 'Bootloader', 'Radio', 'Network', 'Module Metadata version',
                'Android SDK version', 'SDK extensions', 'Kernel', 'Uptime', 'Bugreport format version')
-# Properties that are reported. Serial numbers, IMEIs, advertising and account identifiers are not
-# in this list on purpose; neither is the kernel command line, which can carry a serial number.
-PROPERTY_ALLOW = (
+# Properties that are reported: build, product, security state, locale, time zone and boot reason.
+STATE_PROPERTIES = (
     'ro.product.manufacturer', 'ro.product.brand', 'ro.product.model', 'ro.product.device', 'ro.product.name',
     'ro.build.fingerprint', 'ro.build.version.release', 'ro.build.version.sdk', 'ro.build.version.security_patch',
     'ro.build.version.incremental', 'ro.build.type', 'ro.build.tags', 'ro.build.date.utc', 'ro.debuggable',
@@ -75,6 +74,26 @@ PROPERTY_ALLOW = (
     'ro.build.display.id', 'ro.boot.hardware', 'sys.boot.reason', 'sys.boot.reason.last', 'ro.boot.bootreason',
     'persist.sys.boot.reason', 'sys.reset_reason',
 )
+# Properties that carry a device identifier, reported as printed: serial numbers, IMEI and MEID values, SIM card
+# numbers (ICCID), Bluetooth and Wi-Fi addresses and device or nearby ids. Names seen on the tested reports and
+# names that other builds are documented or known to use.
+IDENTIFIER_PROPERTIES = (
+    'ro.serialno', 'ro.boot.serialno', 'ro.vendor.boot.serialno', 'ro.boot.ap_serial', 'ro.ril.oem.sno',
+    'ro.ril.oem.psno',
+    'ro.ril.oem.imei', 'ro.ril.oem.imei1', 'ro.ril.oem.imei2', 'ro.ril.oem.meid', 'ro.product.imeisv',
+    'ro.vendor.radio.imei.sv',
+    'persist.radio.sim.iccid', 'gsm.sim.preiccid_0', 'gsm.sim.preiccid_1', 'odm.gsm.sim.preiccid_0',
+    'odm.gsm.sim.preiccid_1', 'persist.odm.radio.preiccid_0', 'persist.odm.radio.preiccid_1',
+    'persist.vendor.radio.ss.hashed_last_iccid1',
+    'ro.boot.btmacaddr', 'ro.boot.wifimacaddr',
+    'persist.sys.nearby.uuid', 'ro.quick_start.device_id', 'sys.fingerprint.deviceId',
+)
+PROPERTY_ALLOW = STATE_PROPERTIES + IDENTIFIER_PROPERTIES
+# The kernel command line and the bootconfig lines of the header are reported as printed (they can hold a serial
+# number); the command line is cut at this length, a bootconfig line at the header value length.
+COMMAND_LINE_CHARS = 4000
+MAX_BOOTCONFIG_LINES = 1000
+BOOTCONFIG_LINE = re.compile(r'^([^\s=]+) = (.*)$')
 TIMEZONE_PROPERTY = 'persist.sys.timezone'
 
 # Lines that can open or close a section start with one of these bytes: '-' ('------ ', '--------- '),
@@ -644,8 +663,21 @@ class PreambleReader(SectionReader):
     def __init__(self, report, section):
         SectionReader.__init__(self, report, section)
         self.seen = set()
+        self.bootconfig = None      # the number of bootconfig lines read, while the bootconfig lines go on
+
+    def _bootconfig_line(self, line_no, text):
+        found = BOOTCONFIG_LINE.match(text)
+        if found is None or self.bootconfig >= MAX_BOOTCONFIG_LINES:
+            return found is not None
+        self.bootconfig += 1
+        self.report.add('facts', Fact(tidy(found.group(1))[:200], tidy(found.group(2))[:400], 'bootconfig', line_no))
+        return True
 
     def feed(self, line_no, text):
+        if self.bootconfig is not None:
+            if self._bootconfig_line(line_no, text):
+                return
+            self.bootconfig = None
         if text.startswith('== dumpstate: '):
             if not self.report.report_wall:
                 self.report.report_wall = text[len('== dumpstate: '):].strip()
@@ -655,6 +687,13 @@ class PreambleReader(SectionReader):
         if separator and key in HEADER_KEYS and key not in self.seen:
             self.seen.add(key)
             self.report.add('facts', Fact(key, tidy(value.strip().strip("'"))[:400], 'header', line_no))
+        elif separator and key == 'Command line' and key not in self.seen:
+            self.seen.add(key)
+            self.report.add('facts', Fact(key, tidy(value.strip())[:COMMAND_LINE_CHARS], 'header', line_no))
+        elif separator and key == 'Bootconfig' and key not in self.seen:
+            self.seen.add(key)
+            self.bootconfig = 0
+            self._bootconfig_line(line_no, value.strip())
         elif text.startswith('Dumpstate info:'):
             self.report.add('facts', Fact('Dumpstate info', tidy(text[len('Dumpstate info:'):].strip())[:400],
                                           'header', line_no))
@@ -1355,4 +1394,6 @@ def say_once(log, message):
     if message not in _LOGGED:
         _LOGGED.add(message)
         log(message)
+
+
 

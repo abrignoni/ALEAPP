@@ -204,13 +204,50 @@ class ScannerTests(unittest.TestCase):
         self.assertEqual(len(report.package_times), 5)
         self.assertTrue(any('rows' in warning for warning in report.warnings))
 
-    def test_identifiers_are_not_reported(self):
+    def test_identifiers_are_reported_as_printed(self):
         report = scan_text(fixture.build_report('a16'))
-        blob = '\n'.join('%s=%s' % (fact.name, fact.value) for fact in report.facts)
-        self.assertNotIn('SYNTH0000', blob)
-        self.assertNotIn('serialno', blob)
-        self.assertNotIn('imei', blob.lower())
-        self.assertNotIn('Command line', blob)
+        facts = {(fact.name, fact.origin): fact for fact in report.facts}
+        self.assertEqual(facts[('ro.serialno', 'getprop')].value, 'SYNTH0000EXAMPLE')
+        self.assertEqual(facts[('ro.boot.serialno', 'getprop')].value, 'SYNTH0000EXAMPLE')
+        self.assertEqual(facts[('Command line', 'header')].value,
+                         'console=ttynull androidboot.serialno=SYNTH0000EXAMPLE androidboot.hardware=example')
+        self.assertEqual(facts[('androidboot.hardware', 'bootconfig')].value, '"example"')
+        self.assertEqual(facts[('androidboot.serialno', 'bootconfig')].value, '"SYNTH0000EXAMPLE"')
+        self.assertEqual(facts[('androidboot.serialno', 'bootconfig')].line, facts[('androidboot.hardware', 'bootconfig')].line + 1)
+        # a property that is not on either list stays out, whatever its name says
+        self.assertNotIn('gsm.sim.imei.example', {fact.name for fact in report.facts})
+        old = scan_text(fixture.build_report('a10'))
+        self.assertEqual([fact.value for fact in old.facts if fact.name == 'Command line'],
+                         ['loglevel=1 androidboot.serialno=SYNTH0001EXAMPLE'])
+        self.assertFalse([fact for fact in old.facts if fact.origin == 'bootconfig'])
+
+    def test_identifier_properties_one_row_each(self):
+        lines = ['[%s]: [INVENTED-%d]' % (name, number) for number, name in enumerate(reader.IDENTIFIER_PROPERTIES)]
+        lines += ['[%s]: [again]' % reader.IDENTIFIER_PROPERTIES[0], '[ro.not.listed.serialno]: [INVENTED-X]',
+                  '[persist.log.tag.Phone]: [D]']
+        text = ('== dumpstate: 2026-01-01 10:00:00\n\n------ SYSTEM PROPERTIES (getprop) ------\n' + '\n'.join(lines) + '\n')
+        report = scan_text(text)
+        found = {fact.name: fact.value for fact in report.facts}
+        self.assertEqual(len(report.facts) - 1, len(reader.IDENTIFIER_PROPERTIES))     # the report time row is the other
+        for number, name in enumerate(reader.IDENTIFIER_PROPERTIES):
+            self.assertEqual(found[name], 'INVENTED-%d' % number)
+        self.assertNotIn('ro.not.listed.serialno', found)
+
+    def test_command_line_and_bootconfig_edges(self):
+        text = ('== dumpstate: 2026-01-01 10:00:00\n\nBuild: X\nCommand line: ' + 'a=1 ' * 2000 + '\n'
+                'Bootconfig: androidboot.a = "1"\nandroidboot.b = "x", "y"\nnot a bootconfig line\n'
+                'androidboot.after = "2"\nUptime: up 1 minutes\n')
+        report = scan_text(text)
+        by_name = {(fact.name, fact.origin): fact.value for fact in report.facts}
+        self.assertEqual(len(by_name[('Command line', 'header')]), reader.COMMAND_LINE_CHARS)
+        self.assertEqual(by_name[('androidboot.a', 'bootconfig')], '"1"')
+        self.assertEqual(by_name[('androidboot.b', 'bootconfig')], '"x", "y"')
+        self.assertNotIn(('androidboot.after', 'bootconfig'), by_name)      # the bootconfig lines ended at the first other line
+        self.assertIn(('Uptime', 'header'), by_name)
+        with mock.patch.object(reader, 'MAX_BOOTCONFIG_LINES', 1):
+            capped = scan_text(text)
+        self.assertEqual([fact.name for fact in capped.facts if fact.origin == 'bootconfig'], ['androidboot.a'])
+        self.assertIn(('Uptime', 'header'), {(fact.name, fact.origin) for fact in capped.facts})
 
     def test_property_value_over_several_lines(self):
         text = ('== dumpstate: 2026-01-01 10:00:00\n\n------ SYSTEM PROPERTIES (getprop) ------\n'

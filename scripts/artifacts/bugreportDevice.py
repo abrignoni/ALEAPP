@@ -1,23 +1,41 @@
 __artifacts_v2__ = {
     "bugreport_device_facts": {
         "name": "Bug Report - Device Facts",
-        "description": "Build and security properties and header lines of an Android bug report text (dumpstate), "
-                       "with the report time and the time zone used for the UTC values in the other bug report artifacts.",
+        "description": "Build and security properties, device identifier properties and header lines of an Android bug report "
+                       "text (dumpstate), with the report time and the time zone used for the UTC values in the other bug report artifacts.",
         "author": "@danjethh, Claude",
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report",
-        "notes": "One row per header line of the bug report text that is named here, the report time as printed, and each of 40 "
-                 "properties of the SYSTEM PROPERTIES (getprop) section that are on a fixed list (build, product, security state, locale, time zone and boot reason), as printed (control characters shown as a space, a value over several lines joined with spaces, values cut at 400 characters) and once each. Header lines read: Build, Build fingerprint, Bootloader, Radio, "
-                 "Network, Module Metadata version, Android SDK version, SDK extensions, Kernel, Uptime, Bugreport format version "
-                 "and Dumpstate info. Origin says where a row came from: header, getprop or derived. Two derived rows close each "
+        "category": "Android Bug Report - Device and Build",
+        "notes": "One row per header line of the bug report text that is named here, the report time as printed, each of 65 "
+                 "properties of the SYSTEM PROPERTIES (getprop) section that are on a fixed list (40 for build, product, security "
+                 "state, locale, time zone and boot reason, and 25 that carry a device identifier), as printed (control characters shown as a space, a value over several lines joined with spaces, values cut at 400 characters) and once each, and each "
+                 "bootconfig line. Header lines read: Build, Build fingerprint, Bootloader, Radio, "
+                 "Network, Module Metadata version, Android SDK version, SDK extensions, Kernel, Command line (the kernel command "
+                 "line, cut at 4,000 characters), Uptime, Bugreport format version "
+                 "and Dumpstate info. Origin says where a row came from: header, getprop, bootconfig or derived. Two derived rows close each "
                  "report: Report time (UTC), the printed report time converted with the time zone in the property "
                  "persist.sys.timezone, and Time zone used for UTC values, which is that zone or the sentence 'none: the report records no usable time zone', printed both when the property is missing and when it names a zone this tool does not know (the log says which). The device clock is printed without a zone, so every UTC value in the "
                  "Android Bug Report artifacts rests on that property naming the zone the device clock used; where it is missing "
                  "the UTC columns are empty and the printed time is kept. A wall time that occurs twice when clocks go back is read "
-                 "with the daylight-saving offset, and one that does not occur has no UTC value. Serial numbers, IMEIs and account or advertising identifiers can be printed in this text (for example in some properties and in the bootconfig lines); they are not on the list and are not reported. A property on the list that the report does not "
-                 "print has no row, which says nothing about the device. Uptime is the text of the header line (up N weeks, days, hours, minutes, and the load average), as printed. Source Line is the line of the text. Source File is the file, or file.zip!/member for the "
+                 "with the daylight-saving offset, and one that does not occur has no UTC value. Device identifiers are shown as "
+                 "printed, nothing is masked or left out of a row that is read: the serial number, IMEI, MEID, SIM card number "
+                 "(ICCID), Bluetooth and Wi-Fi address and device id properties on the list (ro.serialno, ro.boot.serialno, "
+                 "ro.vendor.boot.serialno, ro.boot.ap_serial, ro.ril.oem.sno, ro.ril.oem.psno, ro.ril.oem.imei, ro.ril.oem.imei1, "
+                 "ro.ril.oem.imei2, ro.ril.oem.meid, ro.product.imeisv, ro.vendor.radio.imei.sv, persist.radio.sim.iccid, "
+                 "gsm.sim.preiccid_0 and _1, odm.gsm.sim.preiccid_0 and _1, persist.odm.radio.preiccid_0 and _1, "
+                 "persist.vendor.radio.ss.hashed_last_iccid1, ro.boot.btmacaddr, ro.boot.wifimacaddr, persist.sys.nearby.uuid, "
+                 "ro.quick_start.device_id and sys.fingerprint.deviceId), the Command line row (which can hold a serial number) and "
+                 "the bootconfig rows (Fact is the key as printed, Value the text after the equals sign, Origin bootconfig; "
+                 "they follow the Bootconfig line of the header and end at the first line that is not a key = value line). "
+                 "A property that is not on the list is not read, whatever its name says, and this includes properties that hold "
+                 "other numbers of the device (cell ids, SIM state, boot times). No property named for an account or an advertising "
+                 "identifier was found on the seven real reports (a search of the property names for 'account' and 'advertis' "
+                 "found cache keys and a Bluetooth advertising setting only), so none is on the list; an account or advertising "
+                 "identifier that another build prints under another name is not read. A property on the list that the report does not "
+                 "print has no row, which says nothing about the device. A report can print a value in the bootconfig lines and the "
+                 "command line and in a property, and each is its own row. Uptime is the text of the header line (up N weeks, days, hours, minutes, and the load average), as printed. Source Line is the line of the text. Source File is the file, or file.zip!/member for the "
                  "main text inside a zip; it held one value on all rows of each tested report, since each was read alone, and "
                  "holds one value per report when several are staged.\n"
                  "Files read: dumpstate.txt, bugreport-*.txt and bugreport-*.zip (the zip made by adb bugreport, or the one the Shell app keeps on the device, whose main text is the file main_entry.txt names), the Shell app's bugreport-*.tmp texts, and the Samsung dumpstate zips under a log folder (*dumpState*.zip, dumpstate_*.zip). A file is read only when the "
@@ -25,8 +43,14 @@ __artifacts_v2__ = {
                  "says so. The text is read line by line and is not modified; up to six report texts are kept for the bug report artifacts of one run, so each is read once per run (with more than six staged, a text can be read again).\n"
                  "Evidence tiers. Data-proven on five real bug reports: a Samsung A-series phone (Android 16), a Samsung S-series "
                  "phone (Android 16), a Huawei phone (Android 10), a Motorola phone (Android 15) and a Transsion-brand phone "
-                 "(Android 10). The rows of each (49 to 52, plus the two derived rows) equal a count made from the raw text with "
-                 "plain regular expressions and the rows of an independent parser written for another tool. Constructed only: the Shell app's finished bugreport-*.zip found in a file system extraction (the corpus extractions hold Samsung log zips and partial .tmp texts instead, see below). A report with no time zone property was built on constructed text and is also seen in the two partial .tmp texts of userb2_a13. Not examined: Android 11 and 12, vendors other than the five named here and the Google build of userb2_a13 (header lines only), other locales, and header lines or properties that other builds print under other names, which "
+                 "(Android 10). The first 49 to 52 rows of each (plus the two derived rows) equal a count made from the raw text with "
+                 "plain regular expressions and the rows of an independent parser written for another tool. The identifier rows "
+                 "added later were checked on these five reports and on two more (a Samsung A07 and a Samsung A26 report): the "
+                 "identifier property rows (3, 5, 3, 4, 4, 8 and 4 on the seven reports), the Command line row (1 on each) and the "
+                 "bootconfig rows (0, 0, 46, 53, 67, 35 and 105; none on the two Android 10 reports) equal a count made from the raw "
+                 "text with plain regular expressions, name and value by name and value. Of the 25 identifier property names, 16 occur on at least one of the seven reports and "
+                 "the other nine on none; those nine are exercised by invented text only. Rows per report are then 55, 57, 97, 112 "
+                 "and 164 on the five reports (the derived rows included). Constructed only: the Shell app's finished bugreport-*.zip found in a file system extraction (the corpus extractions hold Samsung log zips and partial .tmp texts instead, see below). A report with no time zone property was built on constructed text and is also seen in the two partial .tmp texts of userb2_a13. The row counts in sample_data were recorded before the identifier and bootconfig rows were added and have not been run again. Not examined: Android 11 and 12, vendors other than the five named here and the Google build of userb2_a13 (header lines only), other locales, and header lines or properties that other builds print under other names, which "
                  "are not read. On the corpus, bug report texts sit in Samsung dumpstate zips under a log folder (a dumpState zip holding a full dumpstate.txt, and dumpstate_app_error, dumpstate_app_native and dumpstate_sys_error zips, automatically generated as their banner says, whose main_entry.txt names the text) and in the Shell app's partial .tmp texts under bugreports; these are read too, and only when the dumpstate banner is in the first 8,192 bytes of the text. The automatically generated dumps print a line '== automatically generated by' under the banner, and the header lines after it are read. On the corpus the error dumps and the partial texts hold no package service dump. A byte-identical copy of a file found at a second path (s20fe_a13 holds the dumpState zip under both data/log and data/media/0/log) is read once, and the run log names the copy left out.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
@@ -47,7 +71,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report",
+        "category": "Android Bug Report - Device and Build",
         "notes": "One row per section that the bug report text opens: a command section (a line like '------ TITLE (command) "
                  "------'), a dumpsys service section (a line 'DUMP OF SERVICE name:', priority words dropped), a dumpsys group (a "
                  "command that runs the dumpsys binary and holds service sections) and the header before the first section. Start Line "
@@ -91,7 +115,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report",
+        "category": "Android Bug Report - Installed Apps",
         "notes": "One row per Package [name] block of the Packages: and Hidden system packages: parts of the package service dump "
                  "(DUMP OF SERVICE package) of the bug report text. Block says which part. The same package name is in both parts "
                  "in the tested reports (29 to 90 names); the hidden part is read here as the system copy that an update replaced, "
@@ -139,7 +163,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report",
+        "category": "Android Bug Report - Installed Apps",
         "notes": "One row per firstInstallTime, lastUpdateTime and timeStamp value printed in a Package block of the package "
                  "service dump. Event is the key as printed. firstInstallTime is printed for each Android user on the Android 13, 15 and "
                  "16 reports (User names the user) and once per package on the two Android 10 reports, where User is empty. lastUpdateTime and timeStamp are printed once per package. What the platform means by timeStamp is not "

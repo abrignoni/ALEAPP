@@ -5,20 +5,20 @@
     "function_name": "bugreport_device_facts",
     "case_number": "casesynthetic_two_reports",
     "number_of_columns": 5,
-    "number_of_rows": 64,
-    "total_data_size_bytes": 5197,
+    "number_of_rows": 72,
+    "total_data_size_bytes": 5866,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/bugreportDevice/testdata.bugreportDevice.bugreport_device_facts.casesynthetic_two_reports.zip",
-    "start_time": "2026-10-26T16:07:22.787817+00:00",
-    "end_time": "2026-10-26T16:07:22.809271+00:00",
-    "run_time_seconds": 0.0057489871978759766,
+    "start_time": "2026-10-26T20:24:35.493008+00:00",
+    "end_time": "2026-10-26T20:24:35.818405+00:00",
+    "run_time_seconds": 0.18855977058410645,
     "last_commit": {
-      "hash": "abeb545a0e559c0c512cc6164dc977a4965a493d",
-      "author_name": "danjethh",
-      "author_email": "danjethh@users.noreply.github.com",
-      "date": "2026-10-26T01:07:43-04:00",
-      "message": "Bug report notes: name the empty Timeout Marker column and the uniform Boot Reasons columns"
+      "hash": "96c1053a43108e04637259080a80fffca86a3865",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-10-26T12:19:27-04:00",
+      "message": "Merge the reviewed bug report reader into the activity branch"
     }
   },
   "headers": [
@@ -73,7 +73,7 @@
     ],
     [
       "Module Metadata version",
-      "372546000",
+      "473318123",
       "header",
       10,
       "Dump1/dumpstate.txt"
@@ -97,6 +97,27 @@
       "Linux version 6.12.0-example (builder@example-host) #1 SMP PREEMPT Mon Jan 5 10:00:00 UTC 2026",
       "header",
       13,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Command line",
+      "console=ttynull androidboot.serialno=SYNTH0000EXAMPLE androidboot.hardware=example",
+      "header",
+      14,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "androidboot.hardware",
+      "\"example\"",
+      "bootconfig",
+      15,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "androidboot.serialno",
+      "\"SYNTH0000EXAMPLE\"",
+      "bootconfig",
+      16,
       "Dump1/dumpstate.txt"
     ],
     [
@@ -153,6 +174,13 @@
       "reboot",
       "getprop",
       31,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "ro.boot.serialno",
+      "SYNTH0000EXAMPLE",
+      "getprop",
+      32,
       "Dump1/dumpstate.txt"
     ],
     [
@@ -223,6 +251,13 @@
       "Example Phone 1",
       "getprop",
       42,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "ro.serialno",
+      "SYNTH0000EXAMPLE",
+      "getprop",
+      43,
       "Dump1/dumpstate.txt"
     ],
     [
@@ -304,7 +339,7 @@
     ],
     [
       "Module Metadata version",
-      "292700600",
+      "133990923",
       "header",
       10,
       "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
@@ -314,6 +349,13 @@
       "Linux version 4.14.0-example (builder@example-host) #1 SMP PREEMPT",
       "header",
       11,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Command line",
+      "loglevel=1 androidboot.serialno=SYNTH0001EXAMPLE",
+      "header",
+      12,
       "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
     ],
     [
@@ -370,6 +412,13 @@
       "reboot",
       "getprop",
       27,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "ro.boot.serialno",
+      "SYNTH0000EXAMPLE",
+      "getprop",
+      28,
       "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
     ],
     [
@@ -440,6 +489,13 @@
       "Example Phone 1",
       "getprop",
       38,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "ro.serialno",
+      "SYNTH0000EXAMPLE",
+      "getprop",
+      39,
       "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
     ],
     [
