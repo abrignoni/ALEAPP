@@ -4,21 +4,21 @@
     "artifact_name": "Bug Report - Sections",
     "function_name": "bugreport_sections",
     "case_number": "casesynthetic_a16",
-    "number_of_columns": 8,
+    "number_of_columns": 9,
     "number_of_rows": 8,
-    "total_data_size_bytes": 524,
+    "total_data_size_bytes": 556,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/bugreportDevice/testdata.bugreportDevice.bugreport_sections.casesynthetic_a16.zip",
-    "start_time": "2026-10-26T03:46:48.023637+00:00",
-    "end_time": "2026-10-26T03:46:48.177388+00:00",
-    "run_time_seconds": 0.015761137008666992,
+    "start_time": "2026-10-26T04:15:34.092527+00:00",
+    "end_time": "2026-10-26T04:15:34.284573+00:00",
+    "run_time_seconds": 0.0177459716796875,
     "last_commit": {
-      "hash": "d13a8e8c258efbcf42a53bcd205321b35468a9c7",
+      "hash": "3d82f535570300551b0c00cd2442192825f00222",
       "author_name": "danjethh",
       "author_email": "danjethh@users.noreply.github.com",
-      "date": "2026-10-25T23:46:32-04:00",
-      "message": "Add Android bug report device facts, sections, installed packages and package times"
+      "date": "2026-10-26T00:15:23-04:00",
+      "message": "Bug report reader: a timeout marker belongs to its own service section, shown in Sections"
     }
   },
   "headers": [
@@ -28,6 +28,7 @@
     "Last Line",
     "Lines",
     "Printed Duration (s)",
+    "Timeout Marker (ms)",
     "Read By",
     "Source File"
   ],
@@ -39,6 +40,7 @@
       20,
       20,
       null,
+      null,
       "Device Facts",
       "Dump/dumpstate.txt"
     ],
@@ -49,6 +51,7 @@
       47,
       26,
       0.05,
+      null,
       "Device Facts",
       "Dump/dumpstate.txt"
     ],
@@ -59,6 +62,7 @@
       1572,
       1522,
       0.5,
+      null,
       "not read",
       "Dump/dumpstate.txt"
     ],
@@ -69,6 +73,7 @@
       1570,
       1518,
       0.321,
+      null,
       "Installed Packages; Package Times",
       "Dump/dumpstate.txt"
     ],
@@ -79,6 +84,7 @@
       1676,
       101,
       0.9,
+      null,
       "not read",
       "Dump/dumpstate.txt"
     ],
@@ -89,6 +95,7 @@
       1640,
       64,
       0.08,
+      null,
       "not read",
       "Dump/dumpstate.txt"
     ],
@@ -99,6 +106,7 @@
       1674,
       31,
       0.5,
+      null,
       "not read",
       "Dump/dumpstate.txt"
     ],
@@ -109,6 +117,7 @@
       1697,
       18,
       0.346,
+      null,
       "not read",
       "Dump/dumpstate.txt"
     ]
