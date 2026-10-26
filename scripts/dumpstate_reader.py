@@ -551,7 +551,6 @@ class Section:
         self.end_line = 0
         self.duration = None    # seconds, when the text prints the duration line of the section
         self.timeout_ms = None  # the milliseconds of a "DUMP TIMEOUT" marker printed inside the service: the platform cut it
-        self.timeout_ms = None  # the milliseconds of a "DUMP TIMEOUT" marker printed inside the service: the platform cut it
 
 
 class SectionReader:

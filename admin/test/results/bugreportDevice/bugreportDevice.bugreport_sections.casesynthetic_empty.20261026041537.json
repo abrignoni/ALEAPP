@@ -4,21 +4,21 @@
     "artifact_name": "Bug Report - Sections",
     "function_name": "bugreport_sections",
     "case_number": "casesynthetic_empty",
-    "number_of_columns": 8,
+    "number_of_columns": 9,
     "number_of_rows": 1,
-    "total_data_size_bytes": 51,
+    "total_data_size_bytes": 55,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/bugreportDevice/testdata.bugreportDevice.bugreport_sections.casesynthetic_empty.zip",
-    "start_time": "2026-10-26T03:46:51.420397+00:00",
-    "end_time": "2026-10-26T03:46:51.562280+00:00",
-    "run_time_seconds": 0.0027437210083007812,
+    "start_time": "2026-10-26T04:15:37.755966+00:00",
+    "end_time": "2026-10-26T04:15:37.908001+00:00",
+    "run_time_seconds": 0.002602815628051758,
     "last_commit": {
-      "hash": "d13a8e8c258efbcf42a53bcd205321b35468a9c7",
+      "hash": "3d82f535570300551b0c00cd2442192825f00222",
       "author_name": "danjethh",
       "author_email": "danjethh@users.noreply.github.com",
-      "date": "2026-10-25T23:46:32-04:00",
-      "message": "Add Android bug report device facts, sections, installed packages and package times"
+      "date": "2026-10-26T00:15:23-04:00",
+      "message": "Bug report reader: a timeout marker belongs to its own service section, shown in Sections"
     }
   },
   "headers": [
@@ -28,6 +28,7 @@
     "Last Line",
     "Lines",
     "Printed Duration (s)",
+    "Timeout Marker (ms)",
     "Read By",
     "Source File"
   ],
@@ -38,6 +39,7 @@
       1,
       4,
       4,
+      null,
       null,
       "Device Facts",
       "Dump/dumpstate.txt"

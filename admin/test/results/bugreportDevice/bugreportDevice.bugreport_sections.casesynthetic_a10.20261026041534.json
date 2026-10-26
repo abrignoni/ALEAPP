@@ -4,21 +4,21 @@
     "artifact_name": "Bug Report - Sections",
     "function_name": "bugreport_sections",
     "case_number": "casesynthetic_a10",
-    "number_of_columns": 8,
+    "number_of_columns": 9,
     "number_of_rows": 8,
-    "total_data_size_bytes": 797,
+    "total_data_size_bytes": 829,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/bugreportDevice/testdata.bugreportDevice.bugreport_sections.casesynthetic_a10.zip",
-    "start_time": "2026-10-26T03:46:48.628918+00:00",
-    "end_time": "2026-10-26T03:46:48.780181+00:00",
-    "run_time_seconds": 0.01445770263671875,
+    "start_time": "2026-10-26T04:15:34.830724+00:00",
+    "end_time": "2026-10-26T04:15:35.004024+00:00",
+    "run_time_seconds": 0.014336585998535156,
     "last_commit": {
-      "hash": "d13a8e8c258efbcf42a53bcd205321b35468a9c7",
+      "hash": "3d82f535570300551b0c00cd2442192825f00222",
       "author_name": "danjethh",
       "author_email": "danjethh@users.noreply.github.com",
-      "date": "2026-10-25T23:46:32-04:00",
-      "message": "Add Android bug report device facts, sections, installed packages and package times"
+      "date": "2026-10-26T00:15:23-04:00",
+      "message": "Bug report reader: a timeout marker belongs to its own service section, shown in Sections"
     }
   },
   "headers": [
@@ -28,6 +28,7 @@
     "Last Line",
     "Lines",
     "Printed Duration (s)",
+    "Timeout Marker (ms)",
     "Read By",
     "Source File"
   ],
@@ -39,6 +40,7 @@
       16,
       16,
       null,
+      null,
       "Device Facts",
       "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
     ],
@@ -49,6 +51,7 @@
       43,
       26,
       0.05,
+      null,
       "Device Facts",
       "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
     ],
@@ -59,6 +62,7 @@
       1026,
       980,
       0.5,
+      null,
       "not read",
       "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
     ],
@@ -69,6 +73,7 @@
       1024,
       976,
       0.321,
+      null,
       "Installed Packages; Package Times",
       "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
     ],
@@ -79,6 +84,7 @@
       1074,
       45,
       0.9,
+      null,
       "not read",
       "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
     ],
@@ -89,6 +95,7 @@
       1051,
       21,
       0.08,
+      null,
       "not read",
       "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
     ],
@@ -99,6 +106,7 @@
       1072,
       18,
       0.044,
+      null,
       "not read",
       "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
     ],
@@ -109,6 +117,7 @@
       1090,
       13,
       0.346,
+      null,
       "not read",
       "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
     ]
