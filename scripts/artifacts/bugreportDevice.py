@@ -8,9 +8,9 @@ __artifacts_v2__ = {
         "last_update_date": "2026-10-26",
         "requirements": "none",
         "category": "Android Bug Report",
-        "notes": "One row per header line of the bug report text that is named here, the report time as printed, and each of 35 "
+        "notes": "One row per header line of the bug report text that is named here, the report time as printed, and each of 40 "
                  "properties of the SYSTEM PROPERTIES (getprop) section that are on a fixed list (build, product, security state, "
-                 "locale and time zone), as printed and once each. Header lines read: Build, Build fingerprint, Bootloader, Radio, "
+                 "locale, time zone and boot reason), as printed and once each. Header lines read: Build, Build fingerprint, Bootloader, Radio, "
                  "Network, Module Metadata version, Android SDK version, SDK extensions, Kernel, Uptime, Bugreport format version "
                  "and Dumpstate info. Origin says where a row came from: header, getprop or derived. Two derived rows close each "
                  "report: Report time (UTC), the printed report time converted with the time zone in the property "

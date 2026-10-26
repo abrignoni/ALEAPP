@@ -33,7 +33,10 @@ __artifacts_v2__ = {
                  "equal to a count made from the raw text and to an independent parser, field by field and in UTC. All five "
                  "reports record the time zone Africa/Accra (UTC+0, no daylight saving), so the conversion of wall-clock text to "
                  "UTC was the identity on every real row; offsets and daylight saving were tested on constructed text only. Only "
-                 "user 0 had events in the tested reports; a second user's list was built on constructed text.",
+                 "user 0 had events in the tested reports, so User held one value, 0, on all rows of every tested report; a "
+                 "second user's list was built on constructed text. Source Section held one value, CHECKIN USAGESTATS, on all "
+                 "rows of the two Samsung reports, and Flags held one value, 0x0, on all rows of the Huawei and Transsion-brand "
+                 "reports.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip'),
         "output_types": "standard",
         "artifact_icon": "activity"
@@ -60,7 +63,8 @@ __artifacts_v2__ = {
                  "number kept for a package is the platform's, so an exit that is not listed says nothing about whether it "
                  "happened. A row says that the platform recorded that a process of the package ended with the printed reason "
                  "and status; it does not say who or what ended it, and the reason name is the dump's own wording. The Motorola "
-                 "report lists entries for two Android users (0 and 11); User is the user value of the entry. The activity "
+                 "report lists entries for two Android users (0 and 11); User is the user value of the entry, and it held one value, 0, "
+                 "on all rows of the two Samsung reports. The activity "
                  "service is dumped twice in the tested reports and the entries are in the longer dump (the first dump of the "
                  "Samsung A-series report ends with a 500 ms timeout marker and holds none). The Android 10 reports (Huawei and "
                  "the Transsion-brand phone) print no exit information, so the table is empty for them, which says nothing "
@@ -104,7 +108,7 @@ __artifacts_v2__ = {
                  "Transsion-brand phone on Android 10, Motorola on Android 15): 1,057, 1,290, 938, 439 and 647 rows, each equal "
                  "to a count of _id: lines outside the CONFIG table in the raw text and to an independent parser, field by "
                  "field except the 3 multi-line values, which are read differently on purpose. The Motorola report lists two "
-                 "Android users (0 with 501 rows and 11 with 146). Not examined: Android 11 to 13, other vendors, and a value "
+                 "Android users (0 with 501 rows and 11 with 146); User held one value, 0, on all rows of the other four reports. Not examined: Android 11 to 13, other vendors, and a value "
                  "that itself contains the words default: or defaultSystemSet: on a single line, which would be cut there.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip'),
         "output_types": ["html", "tsv", "lava"],
@@ -133,7 +137,8 @@ __artifacts_v2__ = {
                  "before the report would therefore be given a year too late; the changes of the tested reports span 362 and 297 "
                  "days. The time is empty where the report has no time or no zone.\n"
                  "A row records that the settings provider noted the change; it does not say what a person did, and the entries "
-                 "kept per setting are the provider's own limited history.\n"
+                 "kept per setting are the provider's own limited history. User held one value, 0, on all rows of both "
+                 "reports.\n"
                  "Evidence tiers. Data-proven on two real Android 16 bug reports (Samsung A-series and S-series): 1,807 and "
                  "1,109 rows, equal to a count of time: lines outside the CONFIG table in the raw text and to an independent "
                  "parser, field by field and in UTC. As both are in the zone Africa/Accra (UTC+0) the conversion to UTC was "
@@ -151,22 +156,21 @@ __artifacts_v2__ = {
         "last_update_date": "2026-10-26",
         "requirements": "none",
         "category": "Android Bug Report",
-        "notes": "Rows of two kinds from the SYSTEM PROPERTIES (getprop) section. Property rows (Position empty) show the value "
-                 "of sys.boot.reason, sys.boot.reason.last, ro.boot.bootreason, persist.sys.boot.reason and sys.reset_reason in "
-                 "Entry, as printed; a property the report does not print has no row, and an empty value gives a row with an "
-                 "empty Entry. History rows are the entries of persist.sys.boot.reason.history, one per line, in the order "
-                 "printed with Position 0 for the first one printed: Entry is the line, Reason the first word, Sub-reason the "
-                 "words between the first and the last, and the last number is the entry's time in seconds since the Unix epoch, "
-                 "shown as Time As Printed and, when it falls between 2009 and 2100, as Time (UTC). An entry whose last item is "
-                 "not a number has no time. The reason words are the platform's own and are not decoded or explained here, and "
-                 "an entry says that the platform recorded a start with that reason at that time, not why it happened. The "
-                 "platform keeps a short list: the tested reports printed 2 to 4 history entries, and 4 or 5 of the property "
-                 "rows (the properties that were absent have no row). The kernel command line, which can carry a serial number, "
-                 "is not read.\n"
+        "notes": "One row per line of the persist.sys.boot.reason.history property in the SYSTEM PROPERTIES (getprop) section, "
+                 "in the order printed with Position 0 for the first one printed. Entry is the line, Reason the first word, "
+                 "Sub-reason the words between the first and the last, and the last number is the entry's time in seconds since "
+                 "the Unix epoch, shown as Time As Printed and, when it falls between 2009 and 2100, as Time (UTC). An entry "
+                 "whose last item is not a number has no time. The reason words are the platform's own and are not decoded or "
+                 "explained here, and an entry says that the platform recorded a start with that reason at that time, not why it "
+                 "happened. The platform keeps a short list: the tested reports printed 2 to 4 entries. A report without the "
+                 "property has no rows, which says nothing about the device. The properties sys.boot.reason, "
+                 "sys.boot.reason.last, ro.boot.bootreason, persist.sys.boot.reason and sys.reset_reason, which the report "
+                 "prints when it has them, are rows of Bug Report - Device Facts. The kernel command line, which can carry a "
+                 "serial number, is not read.\n"
                  "Evidence tiers. Data-proven on five real bug reports (Samsung A-series and S-series on Android 16, Huawei and a "
-                 "Transsion-brand phone on Android 10, Motorola on Android 15): 9, 9, 7, 6 and 8 rows, equal to the properties "
-                 "and history entries in the raw text and to an independent parser, field by field and in UTC. Not examined: other "
-                 "Android versions and vendors, and a history longer than the 4 entries seen (at most 500 are read).",
+                 "Transsion-brand phone on Android 10, Motorola on Android 15): 4, 4, 3, 2 and 4 rows, equal to the history "
+                 "lines in the raw text and to an independent parser, field by field and in UTC. Not examined: other Android "
+                 "versions and vendors, and a history longer than the 4 entries seen (at most 500 are read).",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip'),
         "output_types": "standard",
         "artifact_icon": "power"
@@ -261,8 +265,8 @@ def bugreport_settings_changes(context):
 
 @artifact_processor
 def bugreport_boot_reasons(context):
-    headers = (('Time (UTC)', 'datetime'), 'Time As Printed', 'Source Property', 'Entry', 'Reason', 'Sub-reason',
-               'Position', 'Source Line', 'Source File')
+    headers = (('Time (UTC)', 'datetime'), 'Time As Printed', 'Entry', 'Reason', 'Sub-reason', 'Position', 'Source Line',
+               'Source File')
     rows = []
     reports = _reports(context)
     for label, report in reports:
@@ -270,6 +274,5 @@ def bugreport_boot_reasons(context):
             moment = None
             if item.epoch_text.isdigit() and dumpstate_reader.plausible_epoch_ms(int(item.epoch_text) * 1000):
                 moment = dumpstate_reader.epoch_s_to_utc(int(item.epoch_text))
-            rows.append((moment, item.epoch_text, item.source, item.entry, item.reason, item.sub_reason, item.position,
-                         item.line, label))
+            rows.append((moment, item.epoch_text, item.entry, item.reason, item.sub_reason, item.position, item.line, label))
     return headers, rows, _source_path(context, reports)

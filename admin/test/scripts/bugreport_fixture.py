@@ -254,6 +254,12 @@ USAGE_EVENTS = (
 )
 
 
+PENDING_EVENTS = ('  Pending events: count=2\n'
+                  '    time="1970-01-01 07:04:12" type=SYSTEM_INTERACTION package=com.example.user.chat flags=0x0 \n'
+                  '    time="1970-01-01 07:06:08" type=STANDBY_BUCKET_CHANGED package=com.example.user.chat standbyBucket=10 '
+                  'reason=u-si flags=0x0 \n')
+
+
 def usage_event_line(event, form):
     stamp, kind, package, class_name, extra = event
     shown = 'time="%s"' % stamp if form == 'plain' else 'time=%d' % epoch_ms(stamp)
@@ -271,6 +277,7 @@ def usage_plain(users):
         text += '  Last 24 hour events (timeRange="01/11/2026, 21:00 – 02/11/2026, 10:15" )\n'
         for event in (USAGE_EVENTS if user == 0 else USAGE_EVENTS[:2]):
             text += usage_event_line(event, 'plain') + '\n'
+        text += PENDING_EVENTS if user == 0 else ''
         text += ('  In-memory daily stats\n  timeRange="02/11/2026, 00:00–10:15" \n    packages\n'
                  '      package=com.example.user.chat totalTimeUsed="01:20" lastTimeUsed="2026-11-02 09:59:59" '
                  'totalTimeVisible="01:21" lastTimeVisible="2026-11-02 09:59:59" totalTimeFS="00:00" '
@@ -293,6 +300,7 @@ def usage_checkin(users, begin='2026-11-01 10:15:30'):
         for event in (USAGE_EVENTS if user == 0 else USAGE_EVENTS[:2]):
             text += usage_event_line(event, 'checkin') + '\n'
         text += '    time=1000 type=ACTIVITY_RESUMED package=com.example.user.chat class=com.example.user.chat.Main flags=0x0 \n'
+        text += PENDING_EVENTS if user == 0 else ''
     return text + "------ 0.346s was the duration of 'CHECKIN USAGESTATS' ------\n\n"
 
 
@@ -302,8 +310,8 @@ def usage_checkin(users, begin='2026-11-01 10:15:30'):
 EXITS = (
     ('2026-11-01 22:41:03.120', 4321, 10300, 'com.example.user.chat', '2 (SIGNALED)', '0 (UNKNOWN)', '9', 230, 'null'),
     ('2026-10-29 06:12:45.007', 3987, 10300, 'com.example.user.chat:sync', '10 (USER_REQUESTED)', '0 (UNKNOWN)', '0', 400, 'remove task'),
-    ('2026-10-20 18:00:00.500', 1234, 10301, 'com.example.user.sideloaded', '4 (APP CRASH(NATIVE))', '0 (UNKNOWN)', '6', 100, 'crash'),
     ('2026-10-11 02:03:04.999', 2222, 1010300, 'com.example.user.chat', '3 (LOW_MEMORY)', '0 (UNKNOWN)', '9', 500, 'null'),
+    ('2026-10-20 18:00:00.500', 1234, 10301, 'com.example.user.sideloaded', '4 (APP CRASH(NATIVE))', '0 (UNKNOWN)', '6', 100, 'crash'),
 )
 
 
@@ -311,18 +319,21 @@ def activity_service():
     text = ['DUMP OF SERVICE activity:', 'ACTIVITY MANAGER SETTINGS (dumpsys activity settings)', '  max_cached_processes=32',
             '', 'ACTIVITY MANAGER PROCESS EXIT INFO (dumpsys activity exit-info)',
             'Last Timestamp of Persistence Into Persistent Storage: 2026-11-02 09:00:00.000']
-    seen = set()
-    for index, (stamp, pid, uid, process, reason, sub, status, importance, description) in enumerate(EXITS):
+    package_now, uid_now, index = '', None, 0
+    for stamp, pid, uid, process, reason, sub, status, importance, description in EXITS:
         package = process.split(':')[0]
-        if package not in seen:
-            seen.add(package)
+        if package != package_now:
+            package_now, uid_now = package, None
             text.append('  package: %s' % package)
-        text.append('    Historical Process Exit for uid=%d' % uid)
+        if uid != uid_now:
+            uid_now, index = uid, 0
+            text.append('    Historical Process Exit for uid=%d' % uid)
         text += ['        ApplicationExitInfo #%d:' % index,
                  '          timestamp=%s pid=%d realUid=%d packageUid=%d definingUid=%d user=%d'
                  % (stamp, pid, uid, uid, uid, uid // 100000),
                  '          process=%s reason=%s subreason=%s status=%s' % (process, reason, sub, status),
                  '          importance=%d pss=0.00 rss=0.00 description=%s state=empty trace=null' % (importance, description)]
+        index += 1
     text += ['', 'ACTIVITY MANAGER OTHER (dumpsys activity other)', '  nothing to see']
     return '\n'.join(text) + '\n\n--------- 0.500s was the duration of dumpsys activity, ending at: 2026-11-02 10:15:16\n\n'
 

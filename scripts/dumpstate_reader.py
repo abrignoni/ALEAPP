@@ -71,7 +71,8 @@ PROPERTY_ALLOW = (
     'ro.crypto.state', 'ro.crypto.type', 'persist.sys.timezone', 'ro.product.locale', 'persist.sys.locale',
     'ro.build.characteristics', 'ro.hardware', 'ro.board.platform', 'sys.usb.config', 'persist.sys.usb.config',
     'service.adb.root', 'ro.build.version.codename', 'ro.build.version.base_os', 'ro.vendor.build.fingerprint',
-    'ro.build.display.id', 'ro.boot.hardware',
+    'ro.build.display.id', 'ro.boot.hardware', 'sys.boot.reason', 'sys.boot.reason.last', 'ro.boot.bootreason',
+    'persist.sys.boot.reason', 'sys.reset_reason',
 )
 TIMEZONE_PROPERTY = 'persist.sys.timezone'
 
@@ -96,7 +97,7 @@ ProcessExit = collections.namedtuple(
 Setting = collections.namedtuple(
     'Setting', 'user namespace setting_id name writer value value_length default default_system_set preserved continuations line')
 SettingChange = collections.namedtuple('SettingChange', 'user namespace name time_text mode old_value new_value package caller line')
-BootEntry = collections.namedtuple('BootEntry', 'source position entry reason sub_reason epoch_text line')
+BootEntry = collections.namedtuple('BootEntry', 'position entry reason sub_reason epoch_text line')
 
 
 def tidy(value):
@@ -593,8 +594,6 @@ class PreambleReader(SectionReader):
                                           'header', line_no))
 
 
-BOOT_PROPERTIES = ('sys.boot.reason', 'sys.boot.reason.last', 'ro.boot.bootreason', 'persist.sys.boot.reason',
-                   'sys.reset_reason')
 BOOT_HISTORY = 'persist.sys.boot.reason.history'
 MAX_BOOT_HISTORY = 500
 
@@ -605,7 +604,7 @@ def boot_history_entry(position, line_no, text):
     parts = [part.strip() for part in entry.split(',')]
     stamp = to_int(parts[-1]) if len(parts) > 1 else None
     words = parts[:-1] if stamp is not None else parts
-    return BootEntry(BOOT_HISTORY, position, tidy(entry)[:160], tidy(words[0] if words else '')[:60],
+    return BootEntry(position, tidy(entry)[:160], tidy(words[0] if words else '')[:60],
                      tidy(','.join(words[1:]))[:120], str(stamp) if stamp is not None else '', line_no)
 
 
@@ -625,10 +624,7 @@ class PropertiesReader(SectionReader):
             value = ' '.join(text for _line, text in lines)
             self.report.properties[name] = (value, first)
             self.report.add('facts', Fact(name, tidy(value)[:400], 'getprop', first))
-        if name in BOOT_PROPERTIES:
-            self.report.add('boot_entries', BootEntry(name, None, tidy(' '.join(text for _line, text in lines))[:160], '', '',
-                                                      '', first))
-        elif name == BOOT_HISTORY:
+        if name == BOOT_HISTORY:
             kept = [(line_no, text) for line_no, text in lines if text.strip()][:MAX_BOOT_HISTORY]
             for position, (line_no, text) in enumerate(kept):
                 self.report.add('boot_entries', boot_history_entry(position, line_no, text))

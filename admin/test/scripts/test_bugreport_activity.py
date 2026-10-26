@@ -93,7 +93,9 @@ class UsageTests(unittest.TestCase):
         packages = {e.package for e in report.usage_events}
         self.assertNotIn('', packages)
         self.assertTrue(all(e.event_type for e in report.usage_events))
-        # the daily statistics and the standby states follow the events and hold package= lines, not events
+        # the pending events (times that start at 1970), the daily statistics and the standby states follow the events
+        self.assertFalse([e for e in report.usage_events if e.time_text.startswith('1970')])
+        self.assertIn('Pending events', fixture.build_report('a10'))
         self.assertEqual(len([e for e in report.usage_events if e.section == 'DUMP OF SERVICE usagestats' and e.user == 0]),
                          len(fixture.USAGE_EVENTS))
 
@@ -114,7 +116,8 @@ class ExitInfoTests(unittest.TestCase):
         self.assertEqual(report.exit_time(first.stamp), utc(2026, 11, 1, 17, 11, 3, 120000))
         self.assertEqual(exits[1].description, 'remove task')
         self.assertEqual(exits[1].process, 'com.example.user.chat:sync')
-        self.assertEqual(exits[3].user, 10)
+        self.assertEqual((exits[2].user, exits[2].package, exits[2].entry), (10, 'com.example.user.chat', 0))   # a second uid group
+        self.assertEqual((exits[1].entry, exits[3].package, exits[3].entry), (1, 'com.example.user.sideloaded', 0))
 
     def test_other_activity_headings_end_the_list(self):
         text = fixture.build_report('a16').replace('ACTIVITY MANAGER OTHER (dumpsys activity other)',
@@ -224,18 +227,22 @@ class SettingsTests(unittest.TestCase):
 
 
 class BootTests(unittest.TestCase):
-    def test_history_entries_and_properties(self):
+    def test_history_entries(self):
         report = scan_text(fixture.build_report('a16'))
-        history = [e for e in report.boot_entries if e.position is not None]
+        history = report.boot_entries
         self.assertEqual([(e.position, e.reason, e.sub_reason) for e in history],
                          [(0, 'reboot', 'userrequested'), (1, 'cold', 'powerkey'), (2, 'reboot', 'ota')])
         self.assertEqual(history[0].epoch_text, str(fixture.epoch_s('2026-10-30 07:00:00')))
         self.assertEqual(reader.epoch_s_to_utc(int(history[0].epoch_text)), utc(2026, 10, 30, 7, 0))
         self.assertTrue(history[1].line > history[0].line)                    # each entry carries its own line
-        properties = {e.source: e.entry for e in report.boot_entries if e.position is None}
-        self.assertEqual(properties, {'persist.sys.boot.reason': '', 'ro.boot.bootreason': 'reboot',
-                                      'sys.boot.reason': 'reboot,userrequested', 'sys.boot.reason.last': 'reboot,userrequested',
-                                      'sys.reset_reason': ''})
+
+    def test_the_boot_reason_properties_are_device_facts(self):
+        report = scan_text(fixture.build_report('a16'))
+        facts = {fact.name: fact.value for fact in report.facts if fact.origin == 'getprop'}
+        self.assertEqual({name: facts[name] for name in ('persist.sys.boot.reason', 'ro.boot.bootreason', 'sys.boot.reason',
+                                                         'sys.boot.reason.last', 'sys.reset_reason')},
+                         {'persist.sys.boot.reason': '', 'ro.boot.bootreason': 'reboot', 'sys.boot.reason': 'reboot,userrequested',
+                          'sys.boot.reason.last': 'reboot,userrequested', 'sys.reset_reason': ''})
 
     def test_history_in_one_line_and_odd_entries(self):
         text = ('== dumpstate: 2026-01-01 10:00:00\n\n------ SYSTEM PROPERTIES (getprop) ------\n'
@@ -308,7 +315,7 @@ class ArtifactTests(unittest.TestCase):
         _headers, rows, _source = self.run_artifact(activity.bugreport_process_exits, path)
         self.assertEqual(rows[0][0], utc(2026, 11, 1, 17, 11, 3, 120000))
         self.assertEqual(rows[0][1], '2026-11-01 22:41:03.120')
-        self.assertEqual(rows[2][8], '4 (APP CRASH(NATIVE))')
+        self.assertEqual(rows[3][8], '4 (APP CRASH(NATIVE))')
 
     def test_settings_rows(self):
         path = self.stage('Dump/dumpstate.txt', fixture.build_report('a16', users=(0, 10)))
@@ -327,10 +334,9 @@ class ArtifactTests(unittest.TestCase):
     def test_boot_reason_rows(self):
         path = self.stage('Dump/dumpstate.txt', fixture.build_report('a16'))
         _headers, rows, _source = self.run_artifact(activity.bugreport_boot_reasons, path)
-        history = [row for row in rows if row[6] is not None]
-        self.assertEqual(history[0][0], utc(2026, 10, 30, 7, 0))
-        self.assertEqual([row[6] for row in history], [0, 1, 2])
-        self.assertEqual(len([row for row in rows if row[6] is None]), 5)
+        self.assertEqual(rows[0][0], utc(2026, 10, 30, 7, 0))
+        self.assertEqual([row[5] for row in rows], [0, 1, 2])
+        self.assertEqual([row[3] for row in rows], ['reboot', 'cold', 'reboot'])
 
     def test_a_dump_cut_by_the_platform_is_logged_once(self):
         text = ('== dumpstate: 2026-06-01 10:00:00\n\n------ DUMPSYS (/system/bin/dumpsys) ------\nDUMP OF SERVICE settings:\n'
