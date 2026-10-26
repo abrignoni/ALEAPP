@@ -1,0 +1,36 @@
+{
+  "metadata": {
+    "module_name": "bugreportDevice",
+    "artifact_name": "Bug Report - Sections",
+    "function_name": "bugreport_sections",
+    "case_number": "casesynthetic_not_a_report",
+    "number_of_columns": 9,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportDevice/testdata.bugreportDevice.bugreport_sections.casesynthetic_not_a_report.zip",
+    "start_time": "2026-10-26T15:49:46.680723+00:00",
+    "end_time": "2026-10-26T15:49:46.695514+00:00",
+    "run_time_seconds": 0.00012922286987304688,
+    "last_commit": {
+      "hash": "22e699e10c50c5b4f518859b7ad186e54acf3b7d",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T01:07:43-04:00",
+      "message": "Bug report notes: name the empty Timeout Marker column in a sentence of its own"
+    }
+  },
+  "headers": [
+    "Section",
+    "Kind",
+    "Start Line",
+    "Last Line",
+    "Lines",
+    "Printed Duration (s)",
+    "Timeout Marker (ms)",
+    "Read By",
+    "Source File"
+  ],
+  "data": []
+}
