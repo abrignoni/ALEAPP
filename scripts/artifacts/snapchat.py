@@ -535,7 +535,7 @@ import xml.etree.ElementTree as ET
 import bcrypt
 
 from scripts.ilapfuncs import artifact_processor, check_in_media, decode_protobuf, \
-    get_sqlite_db_path, logfunc, open_sqlite_db_readonly
+    logfunc, open_sqlite_db_readonly
 from scripts.sqlite_wal import (KIND_COMMITTED, KIND_EARLIER, KIND_UNCOMMITTED, WalStates,
                                 rows_not_in_current)
 
@@ -754,7 +754,7 @@ def _removed_in_log(source_path, sql, key_indexes, live_keys):
     spans = {'committed': (first, last) or None, 'earlier': (first, last) or None,
     'uncommitted': bool} across every version of the key.
     '''
-    _columns, found, wal = rows_not_in_current(get_sqlite_db_path(source_path), sql,
+    _columns, found, wal = rows_not_in_current(str(source_path), sql,
                                                key_columns=key_indexes, include=_WAL_KINDS)
     logfunc(f'Snapchat {wal.summary()}')
     by_key = {}
@@ -782,7 +782,7 @@ def _rows_all_states(source_path, sql):
     '''sql's rows across every state the write-ahead log holds, one per value of the first
     column, taken from the newest committed state that has it.'''
     rows = {}
-    with WalStates(get_sqlite_db_path(source_path), include=_WAL_KINDS) as wal:
+    with WalStates(str(source_path), include=_WAL_KINDS) as wal:
         for state in wal.states():
             if state.kind == KIND_UNCOMMITTED:
                 continue
@@ -1112,7 +1112,7 @@ def _removed_conversation_ids(source_path):
     _removed_in_log.'''
     current = None
     found = {}
-    with WalStates(get_sqlite_db_path(source_path), include=_WAL_KINDS) as wal:
+    with WalStates(str(source_path), include=_WAL_KINDS) as wal:
         logfunc(f'Snapchat {wal.summary()}')
         for state in wal.states():
             ids = set()
