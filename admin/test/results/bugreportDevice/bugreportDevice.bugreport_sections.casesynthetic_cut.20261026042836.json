@@ -1,0 +1,81 @@
+{
+  "metadata": {
+    "module_name": "bugreportDevice",
+    "artifact_name": "Bug Report - Sections",
+    "function_name": "bugreport_sections",
+    "case_number": "casesynthetic_cut",
+    "number_of_columns": 9,
+    "number_of_rows": 4,
+    "total_data_size_bytes": 304,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportDevice/testdata.bugreportDevice.bugreport_sections.casesynthetic_cut.zip",
+    "start_time": "2026-10-26T04:28:36.415163+00:00",
+    "end_time": "2026-10-26T04:28:36.626886+00:00",
+    "run_time_seconds": 0.013538360595703125,
+    "last_commit": {
+      "hash": "60feb0e6464e0ea58cdcb61c032c78fc0cafae3a",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T00:28:02-04:00",
+      "message": "Bug report activity: boot reason properties are Device Facts rows, the cut dump holding the rows is logged, notes name the uniform columns"
+    }
+  },
+  "headers": [
+    "Section",
+    "Kind",
+    "Start Line",
+    "Last Line",
+    "Lines",
+    "Printed Duration (s)",
+    "Timeout Marker (ms)",
+    "Read By",
+    "Source File"
+  ],
+  "data": [
+    [
+      "preamble",
+      "header",
+      1,
+      20,
+      20,
+      null,
+      null,
+      "Device Facts",
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "SYSTEM PROPERTIES",
+      "command",
+      21,
+      47,
+      26,
+      0.05,
+      null,
+      "Device Facts; Boot Reasons",
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "DUMPSYS CRITICAL",
+      "dumpsys group",
+      50,
+      1316,
+      1266,
+      null,
+      null,
+      "not read",
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "package",
+      "dumpsys service",
+      52,
+      1316,
+      1264,
+      null,
+      10000,
+      "Installed Packages; Package Times",
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

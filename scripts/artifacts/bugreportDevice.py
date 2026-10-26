@@ -31,7 +31,7 @@ __artifacts_v2__ = {
                  "says so. The text is read once per run, line by line, and is not modified.\n"
                  "Evidence tiers. Data-proven on five real bug reports: a Samsung A-series phone (Android 16), a Samsung S-series "
                  "phone (Android 16), a Huawei phone (Android 10), a Motorola phone (Android 15) and a Transsion-brand phone "
-                 "(Android 10). The rows of each (45 to 47, plus the two derived rows) equal a count made from the raw text with "
+                 "(Android 10). The rows of each (49 to 52, plus the two derived rows) equal a count made from the raw text with "
                  "plain regular expressions and the rows of an independent parser written for another tool. Constructed only: a "
                  "bug report kept on the device and found in a file system extraction (none of the tested extractions held one; zips "
                  "made with adb bugreport were read), and a report with no time zone property. Not examined: Android 11 to 14, "
