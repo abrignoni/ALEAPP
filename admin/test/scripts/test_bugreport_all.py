@@ -2,6 +2,7 @@
 import collections
 import importlib
 import os
+import subprocess
 import sys
 import unittest
 
@@ -10,11 +11,12 @@ sys.path.insert(0, REPO_ROOT)
 
 from scripts import dumpstate_reader as reader  # noqa: E402  pylint: disable=wrong-import-position
 
-MODULES = ('bugreportDevice', 'bugreportActivity')
+MODULES = ('bugreportDevice', 'bugreportActivity', 'bugreportPermissions', 'bugreportUsageJobs')
 PREFIX = 'Android Bug Report - '
 GROUPS = collections.OrderedDict([
-    ('Device and Build', 2), ('Installed Apps', 2), ('Processes and Memory', 1), ('App Usage', 1),
-    ('Settings and Config', 2), ('Boot, Crash and Dropbox', 1)])
+    ('Device and Build', 2), ('Installed Apps', 2), ('Permissions and App Ops', 6), ('Processes and Memory', 1),
+    ('App Usage', 4), ('Notifications', 3), ('Alarms and Jobs', 3), ('Settings and Config', 2),
+    ('Boot, Crash and Dropbox', 1)])
 PATHS = ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
          '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip')
 
@@ -34,7 +36,7 @@ class CategoryTests(unittest.TestCase):
             self.assertTrue(category.startswith(PREFIX), (module, key, category))
             counts[category[len(PREFIX):]] += 1
         self.assertEqual(dict(counts), dict(GROUPS))
-        self.assertEqual(sum(counts.values()), 9)
+        self.assertEqual(sum(counts.values()), 24)
 
     def test_names_and_paths_are_the_same_kind_everywhere(self):
         names = collections.Counter()
@@ -50,12 +52,25 @@ class RegistrationTests(unittest.TestCase):
         self.assertEqual(len(reader.READERS), len(set(reader.READERS)))
 
     def test_section_index_names_every_reading_artifact(self):
-        self.assertEqual(reader.READ_BY[('service', 'package')], 'Installed Packages; Package Times')
-        self.assertEqual(reader.READ_BY[('service', 'usagestats')], 'Usage Events')
+        self.assertEqual(reader.READ_BY[('service', 'package')],
+                         'Installed Packages; Package Times; Package Permissions; Permission Definitions')
+        self.assertEqual(reader.READ_BY[('service', 'usagestats')],
+                         'Usage Events; Usage Intervals; Usage Interval Event Counts; Standby Buckets')
         known = {value['name'][len('Bug Report - '):] for _module, _key, value in all_artifacts()}
         for key, text in reader.READ_BY.items():
             for name in text.split('; '):
                 self.assertIn(name, known, (key, name))
+
+    def test_topic_modules_import_in_any_order(self):
+        topics = ('dumpstate_permissions', 'dumpstate_usagejobs')
+        expected = '%d %d' % (len(reader.READERS), len(reader.READ_BY))
+        for topic in topics:
+            code = ('import scripts.%s; from scripts import dumpstate_reader as r; '
+                    'print(len(r.READERS), len(r.READ_BY))' % topic)
+            result = subprocess.run([sys.executable, '-c', code], cwd=REPO_ROOT, capture_output=True, text=True, check=False)
+            self.assertEqual(result.returncode, 0, (topic, result.stderr[-500:]))
+            self.assertEqual(result.stdout.strip(), expected, topic)
+
 
 
 if __name__ == '__main__':

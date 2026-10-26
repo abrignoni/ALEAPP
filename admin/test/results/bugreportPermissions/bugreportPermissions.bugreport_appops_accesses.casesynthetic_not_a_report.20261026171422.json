@@ -1,0 +1,49 @@
+{
+  "metadata": {
+    "module_name": "bugreportPermissions",
+    "artifact_name": "Bug Report - App Ops Accesses",
+    "function_name": "bugreport_appops_accesses",
+    "case_number": "casesynthetic_not_a_report",
+    "number_of_columns": 22,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportPermissions/testdata.bugreportPermissions.bugreport_appops_accesses.casesynthetic_not_a_report.zip",
+    "start_time": "2026-10-26T17:14:22.459073+00:00",
+    "end_time": "2026-10-26T17:14:22.551500+00:00",
+    "run_time_seconds": 0.002386808395385742,
+    "last_commit": {
+      "hash": "dd21f4b8cfc9b79aac8fad2724e8f66cb9786d80",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:14:15-04:00",
+      "message": "Bug report permissions: bound the uid-level lines kept for one uid, name the 50,000-row HTML limit in the notes, test the section index"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Time Note",
+    "Kind",
+    "Uid (as printed)",
+    "Numeric Uid",
+    "Package",
+    "Op",
+    "Op Mode (as printed)",
+    "Attribution Tag",
+    "Uid State (as printed)",
+    "Op Flags (as printed)",
+    "Duration As Printed",
+    "Duration (ms)",
+    "Offset From Dump As Printed",
+    "Proxy Uid",
+    "Proxy Package",
+    "Proxy Attribution Tag",
+    "Running Start As Printed",
+    "Start Nesting",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

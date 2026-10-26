@@ -536,7 +536,7 @@ class ArtifactTests(unittest.TestCase):
         self.assertEqual(by_name['package'][1], 'dumpsys service')
         self.assertEqual(by_name['package'][5], 0.321)
         self.assertEqual(by_name['package'][6], None)
-        self.assertEqual(by_name['package'][7], 'Installed Packages; Package Times')
+        self.assertEqual(by_name['package'][7], 'Installed Packages; Package Times; Package Permissions; Permission Definitions')
         self.assertEqual(by_name['DUMPSYS CRITICAL'][1], 'dumpsys group')
         self.assertEqual(by_name['DUMPSYS'][7], 'not read')
         self.assertTrue(all(row[3] >= row[2] for row in rows))

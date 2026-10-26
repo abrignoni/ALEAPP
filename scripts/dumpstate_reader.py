@@ -1194,12 +1194,17 @@ READERS = [PreambleReader, PropertiesReader, PackageReader, UsageServiceReader, 
 READ_BY = {
     ('preamble', 'preamble'): 'Device Facts',
     ('command', 'SYSTEM PROPERTIES'): 'Device Facts; Boot Reasons',
-    ('service', 'package'): 'Installed Packages; Package Times',
-    ('service', 'usagestats'): 'Usage Events',
-    ('command', 'CHECKIN USAGESTATS'): 'Usage Events',
+    ('service', 'package'): 'Installed Packages; Package Times; Package Permissions; Permission Definitions',
+    ('service', 'usagestats'): 'Usage Events; Usage Intervals; Usage Interval Event Counts; Standby Buckets',
+    ('command', 'CHECKIN USAGESTATS'): 'Usage Events; Usage Intervals; Usage Interval Event Counts; Standby Buckets',
     ('service', 'activity'): 'Process Exit Info',
     ('service', 'settings'): 'Settings; Settings Changes',
 }
+
+# Permission readers (scripts/dumpstate_permissions.py): package permission lines, appops, role, permissionmgr
+from scripts.dumpstate_permissions import PERMISSION_READ_BY, PERMISSION_READERS  # noqa: E402
+READERS.extend(PERMISSION_READERS)
+READ_BY.update(PERMISSION_READ_BY)
 
 
 def readers_by_section():
@@ -1397,3 +1402,5 @@ def say_once(log, message):
 
 
 
+# usagejobs readers (scripts/dumpstate_usagejobs.py): the module adds its readers to READERS and READ_BY when imported
+from scripts import dumpstate_usagejobs  # noqa: E402  pylint: disable=wrong-import-position,unused-import,cyclic-import

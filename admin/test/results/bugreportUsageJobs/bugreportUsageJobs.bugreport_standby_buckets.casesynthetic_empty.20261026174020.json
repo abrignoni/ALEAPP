@@ -1,0 +1,45 @@
+{
+  "metadata": {
+    "module_name": "bugreportUsageJobs",
+    "artifact_name": "Bug Report - Standby Buckets",
+    "function_name": "bugreport_standby_buckets",
+    "case_number": "casesynthetic_empty",
+    "number_of_columns": 18,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportUsageJobs/testdata.bugreportUsageJobs.bugreport_standby_buckets.casesynthetic_empty.zip",
+    "start_time": "2026-10-26T17:40:20.747464+00:00",
+    "end_time": "2026-10-26T17:40:20.885578+00:00",
+    "run_time_seconds": 0.0023148059844970703,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-26T17:40:20.873249",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Package",
+    "User",
+    "Bucket",
+    "Bucket Name",
+    "Reason",
+    "Used (as printed)",
+    "Used By User (as printed)",
+    "Used Screen (as printed)",
+    "Last Predicted (as printed)",
+    "Expiry Times (as printed)",
+    "Last Job (as printed)",
+    "Last Informed Bucket",
+    "Next Estimated Launch (as printed)",
+    "Idle",
+    "Other Fields",
+    "Source Section",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}
