@@ -1,9 +1,10 @@
 __artifacts_v2__ = {
     "playDataUsage": {
         "name": "Google Play Store - App Data Usage",
-        "description": "Rows of the app_data_usage table of the Google Play Store's data_usage.db: per "
-                       "app and date, the bytes recorded with the connection type, foreground state, "
-                       "metered state, roaming state and data usage type stored beside them.",
+        "description": "Rows of the app_data_usage table of the Google Play Store's data_usage.db: one "
+                       "row per package, date and combination of connection type, foreground state, "
+                       "metered state, roaming state and data usage type, with the byte count stored "
+                       "for that combination.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
@@ -13,17 +14,22 @@ __artifacts_v2__ = {
                  "folder; one row per table row. The meanings below come from the Play Store build "
                  "installed on pixel7a_a14 (base.apk, SHA-256 "
                  "4b600ace4af875f579a607d79ae2bcf63fb033032d2a37ae8aa89d752f5ad98d), decompiled with jadx "
-                 "1.5.6; its class names are obfuscated and differ between builds, and other builds were "
-                 "not decompiled. In that build the code that fills the table reads Android's "
-                 "NetworkStats for each app: Package is the package name for the bucket's uid, Date is "
-                 "the bucket's start time converted to a date in the device's time zone, and Bytes is "
-                 "the bucket's received bytes plus transmitted bytes, summed with any existing record of "
-                 "the same package, date and states. Bytes is field 8 of the row's data blob, decoded "
-                 "without a schema; the blob's fields 1 to 7 equalled the package_name, date, "
-                 "connection_type, foreground_state, metered_state, roaming_state and data_usage_type "
-                 "columns on all 94,948 rows of the tested databases, duplicate storage copies "
-                 "included, so field 8 is the one value the columns do not "
-                 "hold, and it was present on every row. Date is reported as stored: the column is "
+                 "1.5.6; its class names are obfuscated and can differ between builds; other builds were "
+                 "not decompiled. In that build two code paths write the table. The IN_APP rows come "
+                 "from Android's NetworkStats: Package is each package name Android maps to the "
+                 "bucket's uid (a shared uid gives one row per package), Date is the bucket's start "
+                 "time as a date in the device's time zone, and Bytes is the bucket's received bytes "
+                 "plus transmitted bytes. The install and update rows come from the Play Store's own "
+                 "install record: Date is the day the row was written, in the device's time zone, and "
+                 "Bytes is the byte count that record carries. Both paths add Bytes into any existing "
+                 "row with the same package, date and states. Bytes is field 8 of the row's data blob, "
+                 "decoded with fields 1 and 2 typed as strings and 3 to 8 as integers; read that way the "
+                 "blob's fields 1 to 7 equalled the package_name, date, connection_type, "
+                 "foreground_state, metered_state, roaming_state and data_usage_type columns on all "
+                 "94,948 rows of the 31 tested databases, duplicate storage copies included, so field 8 "
+                 "is the one value the columns do not hold, and it was present on every row. A decode "
+                 "with no field types read field 1 as a nested message on 115 of those rows. "
+                 "Date is reported as stored: the column is "
                  "declared INTEGER but held text in YYYY-MM-DD form on every tested row, a local "
                  "calendar date rather than a moment in time. Connection Type, Foreground State, "
                  "Metered State, Roaming State and Data Usage Type are the stored integers with the "
@@ -86,12 +92,17 @@ def _named(value, names):
     return f'{value} ({name})' if name else str(value)
 
 
+# Field types of the stored record, so a package name is never guessed to be a nested message.
+_TYPEDEF = {'1': {'type': 'bytes', 'name': ''}, '2': {'type': 'bytes', 'name': ''},
+            **{str(n): {'type': 'int', 'name': ''} for n in range(3, 9)}}
+
+
 def _bytes(blob):
     """Field 8 of the row's data blob, the byte count the Play Store stores with the row."""
     if not blob:
         return ''
     try:
-        message, _ = decode_protobuf(blob)
+        message, _ = decode_protobuf(blob, _TYPEDEF)
     except Exception:  # pylint: disable=broad-exception-caught
         # blackboxprotobuf raises several unrelated types on a malformed blob.
         return ''
