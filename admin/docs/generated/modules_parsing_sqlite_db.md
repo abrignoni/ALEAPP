@@ -290,6 +290,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | googleDuo |
 | googleKeepNotes |
 | googleMapsGmm |
+| googleMapsSync |
 | googleMessages |
 | googleNowPlaying |
 | googlePay |
