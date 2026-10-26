@@ -12,17 +12,16 @@ __artifacts_v2__ = {
         "notes": "Reads the locksettings table (name, user, value) of each system locksettings.db; one "
                  "row per table row, except internal migration and version markers (names starting "
                  "with migrated or enable-sp-for-, or ending in .ver), which are not reported. Value "
-                 "(as stored) and User are the value and user columns as stored. AOSP Constant names "
-                 "the frameworks/base constant for keys found at tag android-14.0.0_r1 "
-                 "(commit bd9ef6de90a1b726729d939f48dd8e7dbbe27218) in "
+                 "(as stored) and User are the value and user columns as stored; a NULL value is shown "
+                 "as an empty cell. AOSP Constant names the frameworks/base constant for keys found at "
+                 "tag android-14.0.0_r1 (commit 299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368) in "
                  "core/java/com/android/internal/widget/LockPatternUtils.java and "
                  "services/core/java/com/android/server/locksettings/LockSettingsService.java "
-                 "(https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-14.0.0_r1/core/java/com/android/internal/widget/LockPatternUtils.java#174), and for "
-                 "lock_screen_owner_info and lock_screen_owner_info_enabled, which Android 9's "
-                 "LockPatternUtils writes here from setOwnerInfo "
-                 "(https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-9.0.0_r1/core/java/com/android/internal/widget/LockPatternUtils.java#758); other keys "
-                 "were not found in those sources, their meaning is not established, and AOSP Constant "
-                 "is blank. LSKF Last Changed is the value of sp-handle-ts read as Unix milliseconds: "
+                 "(https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-14.0.0_r1/core/java/com/android/internal/widget/LockPatternUtils.java#174), "
+                 "including lock_screen_owner_info and lock_screen_owner_info_enabled, which "
+                 "LockPatternUtils writes here from setOwnerInfo (lines 187 and 796). Keys not in this "
+                 "mapping were not found in those sources, their meaning is not established, and AOSP "
+                 "Constant is blank. Other Android versions were not sourced. LSKF Last Changed is the value of sp-handle-ts read as Unix milliseconds: "
                  "Android 14 writes System.currentTimeMillis() under LSKF_LAST_CHANGED_TIME_KEY each "
                  "time it records the current LSKF based protector "
                  "(https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-14.0.0_r1/services/core/java/com/android/server/locksettings/LockSettingsService.java#2777), "
@@ -32,10 +31,10 @@ __artifacts_v2__ = {
                  "Knowledge Factor, which may be empty "
                  "(https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-14.0.0_r1/services/core/java/com/android/server/locksettings/SyntheticPasswordManager.java#82). "
                  "The time therefore marks the last of those two events, not which one. It was present "
-                 "on 35 of the 412 rows of the tested images and absent on galaxys10_a10 (Android 10); "
-                 "on pixel7a_a14 it fell on the same date as the earliest entry in the call log. On "
-                 "the tested images the password hint was empty wherever the key was present, the owner "
-                 "info was empty, and the lockout deadline values were 0. User held 0, 10, 150, 1000, "
+                 "on 35 of the 412 rows of the tested images and absent on galaxys10_a10 (Android 10). "
+                 "On the tested images the password hint held no value (NULL) wherever the key was "
+                 "present, the owner info held no value (NULL or empty), and the lockout deadline "
+                 "values were 0. User held 0, 10, 150, 1000, "
                  "1001 and -2 on the tested images; what each non-zero value denotes is not "
                  "established here.",
         "paths": ('*/system/locksettings.db*',),
@@ -74,7 +73,7 @@ import sqlite3
 
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
 
-# Keys and the AOSP constant that names them (frameworks/base, see the notes for the tags).
+# Keys and the AOSP constant that names them (frameworks/base, see the notes for the tag).
 _AOSP_14 = {
     'lockscreen.password_type': 'LockPatternUtils.PASSWORD_TYPE_KEY',
     'lockscreen.password_type_alternate': 'LockPatternUtils.PASSWORD_TYPE_ALTERNATE_KEY',
@@ -88,10 +87,10 @@ _AOSP_14 = {
     'sp-handle': 'LockPatternUtils.CURRENT_LSKF_BASED_PROTECTOR_ID_KEY',
     'prev-sp-handle': 'LockSettingsService.PREV_LSKF_BASED_PROTECTOR_ID_KEY',
     'sp-handle-ts': 'LockSettingsService.LSKF_LAST_CHANGED_TIME_KEY',
-}
-_AOSP_9 = {
-    'lock_screen_owner_info': 'LockPatternUtils.LOCK_SCREEN_OWNER_INFO (Android 9)',
-    'lock_screen_owner_info_enabled': 'LockPatternUtils.LOCK_SCREEN_OWNER_INFO_ENABLED (Android 9)',
+    'serial-number': 'LockSettingsService.USER_SERIAL_NUMBER_KEY',
+    'lockscreen.istrustusuallymanaged': 'LockPatternUtils.IS_TRUST_USUALLY_MANAGED',
+    'lock_screen_owner_info': 'LockPatternUtils.LOCK_SCREEN_OWNER_INFO',
+    'lock_screen_owner_info_enabled': 'LockPatternUtils.LOCK_SCREEN_OWNER_INFO_ENABLED',
 }
 _LAST_CHANGED_KEY = 'sp-handle-ts'
 # Internal migration and version markers, not reported (see the notes).
@@ -136,7 +135,7 @@ def lockSettings(context):
             if name is None or _internal(name):
                 continue
             changed = _unix_millis(value) if name == _LAST_CHANGED_KEY else ''
-            constant = _AOSP_14.get(name) or _AOSP_9.get(name, '')
+            constant = _AOSP_14.get(name, '')
             data_list.append((changed, name, value if value is not None else '', user, constant))
 
     data_headers = (('LSKF Last Changed', 'datetime'), 'Name', 'Value (as stored)',
