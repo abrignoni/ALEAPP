@@ -1,0 +1,42 @@
+{
+  "metadata": {
+    "module_name": "bugreportLogsCrash",
+    "artifact_name": "Bug Report - Tombstones",
+    "function_name": "bugreport_tombstones",
+    "case_number": "casesynthetic_not_a_report",
+    "number_of_columns": 15,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportLogsCrash/testdata.bugreportLogsCrash.bugreport_tombstones.casesynthetic_not_a_report.zip",
+    "start_time": "2026-10-26T17:38:19.213917+00:00",
+    "end_time": "2026-10-26T17:38:19.378625+00:00",
+    "run_time_seconds": 0.002571582794189453,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-26T17:38:19.359626",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Timestamp (UTC)",
+    "Process",
+    "Command Line",
+    "Thread",
+    "PID",
+    "TID",
+    "UID",
+    "Signal",
+    "Abort Message",
+    "Process Uptime",
+    "Build Fingerprint",
+    "Format",
+    "Size (bytes)",
+    "Zip Member",
+    "Source File"
+  ],
+  "data": []
+}

@@ -1,0 +1,306 @@
+{
+  "metadata": {
+    "module_name": "bugreportSecurityStorage",
+    "artifact_name": "Bug Report - Device Policy State",
+    "function_name": "bugreport_device_policy_state",
+    "case_number": "casesynthetic_two_reports",
+    "number_of_columns": 6,
+    "number_of_rows": 34,
+    "total_data_size_bytes": 2745,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSecurityStorage/testdata.bugreportSecurityStorage.bugreport_device_policy_state.casesynthetic_two_reports.zip",
+    "start_time": "2026-10-26T17:40:19.207288+00:00",
+    "end_time": "2026-10-26T17:40:19.374171+00:00",
+    "run_time_seconds": 0.0326228141784668,
+    "last_commit": {
+      "hash": "702ca90825fbb296e5cc429838c511eb52a44af6",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:39:47-04:00",
+      "message": "Bug report security and storage: readers and 30 artifacts for device policy, lock settings, biometrics, trust, ADB, vendor services, storage, dbinfo and flags"
+    }
+  },
+  "headers": [
+    "Group",
+    "User",
+    "Name",
+    "Value",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Immutable state",
+      null,
+      "mHasFeature",
+      "true",
+      1419,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Immutable state",
+      null,
+      "mIsWatch",
+      "false",
+      1420,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Device policy manager state",
+      null,
+      "Pending System Update",
+      "SystemUpdateInfo (receivedTime = 1790000000000, securityPatchState = unknown)",
+      1421,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Profile Owner (User 10)",
+      10,
+      "admin",
+      "ComponentInfo{com.example.vault/com.example.vault.backend.VaultReceiver}",
+      1424,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Profile Owner (User 10)",
+      10,
+      "package",
+      "com.example.vault",
+      1425,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Profile Owner (User 10)",
+      10,
+      "isOrganizationOwnedDevice",
+      "false",
+      1426,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Device admins state",
+      0,
+      "mPasswordOwner",
+      "-1",
+      1458,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Device admins state",
+      0,
+      "mUserSetupComplete",
+      "true",
+      1459,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Device admins state",
+      0,
+      "mFailedPasswordAttempts",
+      "0",
+      1460,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Device admins state",
+      10,
+      "mPasswordOwner",
+      "-1",
+      1479,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Device admins state",
+      10,
+      "mAppsSuspended",
+      "false",
+      1480,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Device policy manager state",
+      null,
+      "Default admin policy size limit",
+      "-1",
+      1512,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Device policy manager state",
+      null,
+      "Current admin policy size limit",
+      "-1",
+      1513,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Admin policies size",
+      0,
+      "com.example.guard",
+      "77",
+      1516,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Device policy manager",
+      null,
+      "Encryption Status",
+      "per-user",
+      1518,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Device policy manager",
+      null,
+      "Logout user",
+      "-10000",
+      1519,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Device policy manager",
+      null,
+      "no pending user created callback tokens",
+      "",
+      1521,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Device policy cache",
+      null,
+      "Screen capture disallowed users",
+      "[]",
+      1524,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Device policy cache",
+      null,
+      "Password quality",
+      "{0=0, 10=131072}",
+      1525,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Device policy cache",
+      null,
+      "Admin can grant sensors permission",
+      "false",
+      1526,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Device state cache",
+      null,
+      "Device provisioned",
+      "true",
+      1529,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Device state cache",
+      null,
+      "Device Owner Type",
+      "-1",
+      1530,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Device state cache",
+      null,
+      "Has PO",
+      "",
+      1531,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Device state cache",
+      null,
+      "Has PO / User 10",
+      "true",
+      1532,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Personal apps suspension helper",
+      null,
+      "critical packages",
+      "1 app",
+      1535,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Personal apps suspension helper",
+      null,
+      "launcher packages",
+      "2 apps",
+      1537,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Personal apps suspension helper",
+      null,
+      "accessibility services",
+      "empty",
+      1540,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Personal apps suspension helper",
+      null,
+      "SMS package",
+      "com.example.messages",
+      1541,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Personal apps suspension helper",
+      null,
+      "Settings package",
+      "com.example.settings",
+      1542,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Personal apps suspension helper",
+      null,
+      "Packages subject to suspension",
+      "2 apps",
+      1543,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Device admins state",
+      0,
+      "mPasswordOwner",
+      "-1",
+      1105,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Device policy manager state",
+      null,
+      "Encryption Status",
+      "per-user",
+      1113,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Device policy cache",
+      null,
+      "Screen capture disabled",
+      "{0=false}",
+      1116,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Device policy cache",
+      null,
+      "Password quality",
+      "{0=0}",
+      1117,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

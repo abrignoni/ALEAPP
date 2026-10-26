@@ -1,0 +1,82 @@
+{
+  "metadata": {
+    "module_name": "bugreportSecurityStorage",
+    "artifact_name": "Bug Report - knoxcustom State",
+    "function_name": "bugreport_vendor_custom_state",
+    "case_number": "casesynthetic_cut",
+    "number_of_columns": 6,
+    "number_of_rows": 6,
+    "total_data_size_bytes": 632,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSecurityStorage/testdata.bugreportSecurityStorage.bugreport_vendor_custom_state.casesynthetic_cut.zip",
+    "start_time": "2026-10-26T17:40:13.341826+00:00",
+    "end_time": "2026-10-26T17:40:13.468534+00:00",
+    "run_time_seconds": 0.01836109161376953,
+    "last_commit": {
+      "hash": "702ca90825fbb296e5cc429838c511eb52a44af6",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:39:47-04:00",
+      "message": "Bug report security and storage: readers and 30 artifacts for device policy, lock settings, biometrics, trust, ADB, vendor services, storage, dbinfo and flags"
+    }
+  },
+  "headers": [
+    "Manager",
+    "Name",
+    "Value",
+    "As Printed",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "ProKioskManager",
+      "",
+      "false",
+      "ProKioskManager: false",
+      1733,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "ProKioskManager",
+      "ExitUI",
+      "null:null",
+      "ProKioskManager:ExitUI: null:null",
+      1734,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "SystemManager",
+      "BatteryLevelColour",
+      "null",
+      "SystemManager:BatteryLevelColour is null",
+      1735,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "SystemManager",
+      "InfraredState",
+      "false",
+      "SystemManager:InfraredState:false",
+      1736,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "SystemManager",
+      "LockScreenShortcuts",
+      "com.example.dialer/.Dial, com.example.camera/.Cam",
+      "SystemManager:LockScreenShortcuts: com.example.dialer/.Dial, com.example.camera/.Cam",
+      1737,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "SettingsManager",
+      "SettingsHiddenState",
+      "0x00000000",
+      "SettingsManager:SettingsHiddenState: 0x00000000",
+      1738,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

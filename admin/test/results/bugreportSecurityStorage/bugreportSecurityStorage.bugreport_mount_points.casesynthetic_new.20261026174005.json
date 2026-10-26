@@ -1,0 +1,58 @@
+{
+  "metadata": {
+    "module_name": "bugreportSecurityStorage",
+    "artifact_name": "Bug Report - Mount Points",
+    "function_name": "bugreport_mount_points",
+    "case_number": "casesynthetic_new",
+    "number_of_columns": 6,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 295,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSecurityStorage/testdata.bugreportSecurityStorage.bugreport_mount_points.casesynthetic_new.zip",
+    "start_time": "2026-10-26T17:40:05.064747+00:00",
+    "end_time": "2026-10-26T17:40:05.187868+00:00",
+    "run_time_seconds": 0.016672134399414062,
+    "last_commit": {
+      "hash": "702ca90825fbb296e5cc429838c511eb52a44af6",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:39:47-04:00",
+      "message": "Bug report security and storage: readers and 30 artifacts for device policy, lock settings, biometrics, trust, ADB, vendor services, storage, dbinfo and flags"
+    }
+  },
+  "headers": [
+    "Device",
+    "Mount Point",
+    "FS Type",
+    "Options",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "/dev/block/dm-8",
+      "/",
+      "erofs",
+      "ro,seclabel,relatime,user_xattr,acl,cache_strategy=readaround",
+      1793,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "tmpfs",
+      "/dev",
+      "tmpfs",
+      "rw,seclabel,nosuid,relatime,size=1500200k,nr_inodes=375050,mode=755",
+      1794,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "/dev/block/sdc30",
+      "/metadata",
+      "ext4",
+      "rw,sync,seclabel,nosuid,nodev,noatime",
+      1795,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}
