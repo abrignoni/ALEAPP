@@ -29,11 +29,18 @@ __artifacts_v2__ = {
                  "it; the header says these values are stored in ShortcutsDatabase and cannot be "
                  "renumbered "
                  "(https://chromium.googlesource.com/chromium/src/+/33f34ef179f55596f6c2fc8a55878b7ccf6276e4/components/omnibox/browser/autocomplete_match_type.h#16). "
+                 "The names are those of the current enum. The writer's version 1 migration rewrote "
+                 "stored types 9 to 12 as 13 to 16 "
+                 "(https://chromium.googlesource.com/chromium/src/+/33f34ef179f55596f6c2fc8a55878b7ccf6276e4/components/omnibox/browser/shortcuts_database.cc#390), so in a database with no "
+                 "meta table, which has not run it, values 9 to 12 are named by the value they migrate "
+                 "to and marked as pre-migration numbering; no tested database was at that version. "
                  "Transition is the transition column, a ui::PageTransition value: the name is that of "
-                 "its low byte, the core value, and any higher qualifier bits are shown in hex "
+                 "its low byte, the core value, and any higher qualifier bits are shown in hex as the "
+                 "unsigned 32-bit value "
                  "(https://chromium.googlesource.com/chromium/src/+/33f34ef179f55596f6c2fc8a55878b7ccf6276e4/ui/base/page_transition_types.h#113). "
                  "On the tested images only two pairs occur: 7 (SEARCH_HISTORY) with 5 (GENERATED) on "
-                 "42 rows and 1 (HISTORY_URL) with 1 (TYPED) on 4 rows; no qualifier bits were set. "
+                 "42 rows and 1 (HISTORY_URL) with 1 (TYPED) on 4 rows; no qualifier bits were set, so the "
+                 "qualifier branch is unexercised. "
                  "Match Type and Transition each held one value on every row of adams_ss135dl_a13, "
                  "anne_a15, russell_a14, s20fe_a13, samsunga53_a14 and samsungs20_a13, which carry "
                  "only the first pair. Input Text, Fill Into Edit, URL, "
@@ -112,11 +119,32 @@ def _named(value, names):
 def _transition(value):
     if not isinstance(value, int):
         return value
+    value &= 0xFFFFFFFF  # stored as a signed 32-bit int; a qualifier can set the sign bit
     core = value & 0xFF
     text = _named(core, _TRANSITIONS)
     if value != core:
-        text += f', qualifiers 0x{value & ~0xFF:08X}'
+        text += f', qualifiers 0x{value & 0xFFFFFF00:08X}'
     return text
+
+
+def _match_type(value, version):
+    """A database with no meta table (version 0) predates the version 1 migration, which
+    rewrote stored types 9 to 12 as 13 to 16; name those by the value they migrate to."""
+    if version == 0 and isinstance(value, int) and 9 <= value <= 12:
+        return f'{value} ({_MATCH_TYPES[value + 4]}, pre-migration numbering)'
+    return _named(value, _MATCH_TYPES)
+
+
+def _shortcuts_version(db):
+    """The meta table's version, or 0 when the database has no meta table."""
+    try:
+        row = db.execute("SELECT value FROM meta WHERE key = 'version'").fetchone()
+    except sqlite3.Error:
+        return 0
+    try:
+        return int(row[0]) if row else 0
+    except (TypeError, ValueError):
+        return 0
 
 
 def _package(context, path):
@@ -140,6 +168,7 @@ def chromeShortcuts(context):
         if db is None:
             continue
         try:
+            version = _shortcuts_version(db)
             rows = db.execute('''
                 SELECT last_access_time, text, type, transition, url, fill_into_edit, contents,
                        description, keyword, number_of_hits
@@ -153,7 +182,7 @@ def chromeShortcuts(context):
         package = _package(context, path)
         for (last_access, text, match_type, transition, url, fill_into_edit, contents,
              description, keyword, hits) in rows:
-            data_list.append((_webkit_to_utc(last_access), text, _named(match_type, _MATCH_TYPES),
+            data_list.append((_webkit_to_utc(last_access), text, _match_type(match_type, version),
                               _transition(transition), url, fill_into_edit, contents, description,
                               keyword, hits, package, user))
 
