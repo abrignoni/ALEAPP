@@ -57,6 +57,21 @@ class TimeTests(unittest.TestCase):
         # clocks go forward on 2026-03-29 02:00 to 03:00: 02:30 does not happen
         self.assertIsNone(paris.to_utc('2026-03-29 02:30:00'))
 
+    def test_times_at_the_edge_of_the_calendar_have_no_value_instead_of_an_error(self):
+        for zone in ('Asia/Kolkata', 'America/Sao_Paulo', 'UTC', 'Pacific/Kiritimati', 'Pacific/Pago_Pago'):
+            clock = reader.ZoneClock(zone)
+            for text in ('0001-01-01 00:00:00', '0001-01-01 05:00:00', '9999-12-31 23:59:59', '9999-12-31 12:00:00'):
+                result = clock.to_utc(text)
+                self.assertTrue(result is None or result.tzinfo is not None, (zone, text))
+        self.assertIsNone(reader.ZoneClock('Asia/Kolkata').to_utc('0001-01-01 00:00:00'))
+        self.assertIsNone(reader.ZoneClock('America/Sao_Paulo').to_utc('9999-12-31 23:59:59'))
+
+    def test_only_ascii_digits_are_numbers(self):
+        for text in ('0', '12', '1790000000'):
+            self.assertTrue(reader.is_digits(text))
+        for text in ('', 'x', '1x', '²', '١٢', '-1', '1.5'):
+            self.assertFalse(reader.is_digits(text), text)
+
     def test_unknown_zone(self):
         for name in ('', 'Not/AZone', None):
             clock = reader.ZoneClock(name)
@@ -286,6 +301,19 @@ class PackageTests(unittest.TestCase):
         self.assertEqual(report.time_value('garbage')[1], reader.NOTE_NOT_A_TIME)
         # user-installed packages that were updated within seconds of each other are not stamps
         self.assertEqual(report.time_value('2026-10-01 07:00:00')[1], '')
+
+    def test_a_time_at_the_edge_of_the_calendar_gets_a_note_not_an_error(self):
+        report = scan_text(fixture.build_report('a16', zone='Asia/Kolkata'))
+        moment, note = report.time_value('0001-01-01 00:00:00')
+        self.assertIsNone(moment)
+        self.assertEqual(note, reader.NOTE_NONEXISTENT)
+        text = fixture.build_report('a16', zone='America/Sao_Paulo').replace(
+            'lastUpdateTime=2026-09-14 08:30:11', 'lastUpdateTime=9999-12-31 23:59:59', 1)
+        report = scan_text(text)
+        edge = [t for t in report.package_times if t.wall == '9999-12-31 23:59:59']
+        self.assertTrue(edge)
+        self.assertIsNone(report.time_value(edge[0].wall)[0])
+        self.assertEqual(report.time_value(edge[0].wall)[1], reader.NOTE_NONEXISTENT)
 
     def test_no_zone_gives_no_utc_but_keeps_the_stamp_note(self):
         report = scan_text(fixture.build_report('a16', zone=''))

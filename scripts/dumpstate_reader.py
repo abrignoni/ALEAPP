@@ -57,7 +57,7 @@ UNSET_WALL_TIMES = frozenset({'1970-01-01 00:00:00', '1969-12-31 23:59:59'})
 NOTE_UNSET = 'time not set on the device (shown as printed)'
 NOTE_NO_ZONE = 'no time zone in the report: no UTC value'
 NOTE_NOT_A_TIME = 'time text not recognised: no UTC value'
-NOTE_NONEXISTENT = 'time falls in a clock change of the time zone: no UTC value'
+NOTE_NONEXISTENT = 'time cannot be converted with the report time zone (it does not occur when clocks are set forward): no UTC value'
 
 HEADER_KEYS = ('Build', 'Build fingerprint', 'Bootloader', 'Radio', 'Network', 'Module Metadata version',
                'Android SDK version', 'SDK extensions', 'Kernel', 'Uptime', 'Bugreport format version')
@@ -105,6 +105,11 @@ def tidy(value):
     if value is None:
         return ''
     return _CONTROL.sub(' ', str(value))
+
+
+def is_digits(text):
+    """True for a non-empty text of ASCII digits (str.isdigit also accepts other scripts and superscripts, which int() rejects)."""
+    return text.isascii() and text.isdigit()
 
 
 def to_int(text, default=None):
@@ -224,12 +229,15 @@ class ZoneClock:
         if naive is None or self._zone is None:
             return None
         try:
-            local = self._zone.localize(naive, is_dst=None)
-        except pytz.exceptions.AmbiguousTimeError:
-            local = self._zone.localize(naive, is_dst=True)
+            try:
+                local = self._zone.localize(naive, is_dst=None)
+            except pytz.exceptions.AmbiguousTimeError:
+                local = self._zone.localize(naive, is_dst=True)
+            return local.astimezone(timezone.utc)
         except pytz.exceptions.NonExistentTimeError:
             return None
-        return local.astimezone(timezone.utc)
+        except (OverflowError, ValueError):      # a time at the first or last day the calendar holds, moved by the zone offset
+            return None
 
 
 # ---------------------------------------------------------------------------------------------
@@ -489,7 +497,7 @@ class Report:
         Android 10 builds 1973-08-29 05:00:27, for a time that was never set) get no UTC.
         """
         value = str(text).strip()
-        if value.isdigit():
+        if is_digits(value):
             milliseconds = int(value)
             return epoch_ms_to_utc(milliseconds) if plausible_epoch_ms(milliseconds) else None
         moment = parse_wall_time(value)
@@ -732,7 +740,7 @@ class PackageReader(SectionReader):
         if body.startswith('User ') and ':' in body:
             head, _, rest = body.partition(':')
             user = to_int(head[5:])
-            if user is not None and head[5:].strip().isdigit():
+            if user is not None and is_digits(head[5:].strip()):
                 self.user = user
                 state = key_values(rest)
                 kept = collections.OrderedDict()
@@ -790,7 +798,7 @@ class UsageReader(SectionReader):
         if not body:
             return
         indent = len(text) - len(text.lstrip(' '))
-        if indent == 0 and body.startswith('user=') and body.split()[0][5:].isdigit():
+        if indent == 0 and body.startswith('user=') and is_digits(body.split()[0][5:]):
             self.user = int(body.split()[0][5:])
             self.in_events = False
             return
@@ -1183,7 +1191,7 @@ def scan_lines(raw_lines, report):
                 continue
             if text.startswith("*** SERVICE '") and ' DUMP TIMEOUT (' in text:
                 milliseconds = text.partition(' DUMP TIMEOUT (')[2].partition('ms)')[0]
-                if state['svc'] is not None and milliseconds.isdigit():
+                if state['svc'] is not None and is_digits(milliseconds):
                     state['svc'].timeout_ms = int(milliseconds)
             elif text.startswith('--------- ') and ' was the duration of dumpsys ' in text:
                 name = text.partition(' was the duration of dumpsys ')[2].partition(', ending at: ')[0].strip()

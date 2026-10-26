@@ -272,7 +272,7 @@ def bugreport_boot_reasons(context):
     for label, report in reports:
         for item in report.boot_entries:
             moment = None
-            if item.epoch_text.isdigit() and dumpstate_reader.plausible_epoch_ms(int(item.epoch_text) * 1000):
+            if dumpstate_reader.is_digits(item.epoch_text) and dumpstate_reader.plausible_epoch_ms(int(item.epoch_text) * 1000):
                 moment = dumpstate_reader.epoch_s_to_utc(int(item.epoch_text))
             rows.append((moment, item.epoch_text, item.entry, item.reason, item.sub_reason, item.position, item.line, label))
     return headers, rows, _source_path(context, reports)

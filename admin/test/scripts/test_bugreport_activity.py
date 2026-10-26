@@ -80,6 +80,13 @@ class UsageTests(unittest.TestCase):
         self.assertEqual(plain.time_text, '2026-11-01 21:05:10')
         self.assertEqual(report.usage_time(plain.time_text), utc(2026, 11, 1, 20, 5, 10))
 
+    def test_numbers_must_be_ascii_digits(self):
+        report = scan_text(fixture.build_report('a16'))
+        self.assertIsNone(report.usage_time('²'))
+        self.assertIsNone(report.usage_time('١٢٣'))
+        scan_text(fixture.build_report('a16').replace('user=0 ', 'user=² ', 1))        # must neither raise nor stop the pass
+        scan_text(fixture.build_report('a16').replace("DUMP TIMEOUT (10000ms)", "DUMP TIMEOUT (²ms)"))
+
     def test_no_zone_and_unset_wall_times(self):
         report = scan_text(fixture.build_report('a10', zone=''))
         self.assertIsNone(report.usage_time('2026-11-01 21:05:10'))
