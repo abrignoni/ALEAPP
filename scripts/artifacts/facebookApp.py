@@ -27,7 +27,7 @@ __artifacts_v2__ = {
                        "links recorded for each.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-20",
-        "last_update_date": "2026-10-25",
+        "last_update_date": "2026-10-26",
         "requirements": "none",
         "category": "Facebook",
         "notes": "This is each app's own contacts store and is separate from the msys mailbox "
@@ -44,7 +44,14 @@ __artifacts_v2__ = {
                  "Messenger half of this artifact has not produced a row on them. On "
                  "sharon_a14 App held com.facebook.katana on all 33 rows for that reason. "
                  "Small Picture URL and Big Picture URL held the same link on all 186 rows of "
-                 "the seven Facebook app stores with contacts on those images.",
+                 "the seven Facebook app stores with contacts on those images. "
+                 "The Android User column is read from the directories above the package "
+                 "directory: data/data is user 0, and data/user/N and "
+                 "data_mirror/data_ce/<volume>/N are user N; any other layout leaves it blank. On "
+                 "every corpus image checked, each contacts store sat under user 0, so Android "
+                 "User held 0 on every row; a user other than 0 has been read only from a test "
+                 "tree built from copies of the sharon_a14 stores, where a user 10 copy added its "
+                 "own rows.",
         "paths": ('*/com.facebook.katana/databases/*android_facebook_contacts_db*',
                   '*/com.facebook.orca/databases/*android_facebook_contacts_db*'),
         "output_types": "standard",
@@ -54,6 +61,7 @@ __artifacts_v2__ = {
             "cookbook_a11": "Android 11 | 126 rows",
             "pixel3_a11": "Android 11 | 0 rows",
             "pixel3_a12": "Android 12 | 0 rows",
+            "adams_ss135dl_a13": "Android 13 | 0 rows",
             "hickman_a13": "Android 13 | 0 rows",
             "russell_pixel6a_a13": "Android 13 | 0 rows",
             "s20fe_a13": "Android 13 | 0 rows",
@@ -77,7 +85,7 @@ __artifacts_v2__ = {
                        "per-contact hashes each app kept as its upload snapshot.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-20",
-        "last_update_date": "2026-10-25",
+        "last_update_date": "2026-10-26",
         "requirements": "none",
         "category": "Facebook",
         "notes": "Two sources are combined. Rows labelled Sync Property come from "
@@ -96,13 +104,20 @@ __artifacts_v2__ = {
                  "because the two apps keep separate snapshots: on sharon_a14 the Facebook "
                  "app held 12 snapshot rows and Messenger 19, and 10 local_contact_id values "
                  "appeared in both. A NULL hash is reported as empty. On the same nine corpus "
-                 "images checked for the Contacts artifact that hold a Messenger copy, its contacts_db_properties table "
-                 "was empty, so Messenger rows have so far been Upload Snapshot rows only. "
-                 "Converted Value is filled only for keys ending in _time_ms (two on those "
-                 "images) and for a delta cursor that decodes to text, so it is empty on every Upload Snapshot "
-                 "row. On pixel7a_a14 and hickman_a13 only a Messenger copy was present, "
-                 "so on each Record Type held Upload Snapshot on all 5 rows, App held "
-                 "com.facebook.orca on all 5 rows and Converted Value held no value.",
+                 "images checked for the Contacts artifact that hold a Messenger copy, its "
+                 "contacts_db_properties table was empty, so Messenger rows have so far been "
+                 "Upload Snapshot rows only. Converted Value is filled only for keys ending in "
+                 "_time_ms (two on those images) and for a delta cursor that decodes to text, so "
+                 "it is empty on every Upload Snapshot row. On pixel7a_a14 and hickman_a13 only a "
+                 "Messenger copy was present, so on each Record Type held Upload Snapshot on all 5"
+                 " rows, App held com.facebook.orca on all 5 rows and Converted Value held no "
+                 "value. The Android User column is read from the directories above the package "
+                 "directory: data/data is user 0, and data/user/N and "
+                 "data_mirror/data_ce/<volume>/N are user N; any other layout leaves it blank. On "
+                 "every corpus image checked, each contacts store sat under user 0, so Android "
+                 "User held 0 on every row; a user other than 0 has been read only from a test "
+                 "tree built from copies of the sharon_a14 stores, where a user 10 copy added its "
+                 "own rows.",
         "paths": ('*/com.facebook.katana/databases/*android_facebook_contacts_db*',
                   '*/com.facebook.orca/databases/*android_facebook_contacts_db*'),
         "output_types": "standard",
@@ -112,6 +127,7 @@ __artifacts_v2__ = {
             "cookbook_a11": "Android 11 | 5 rows",
             "pixel3_a11": "Android 11 | 0 rows",
             "pixel3_a12": "Android 12 | 0 rows",
+            "adams_ss135dl_a13": "Android 13 | 0 rows",
             "hickman_a13": "Android 13 | 5 rows",
             "russell_pixel6a_a13": "Android 13 | 0 rows",
             "s20fe_a13": "Android 13 | 0 rows",
@@ -261,7 +277,7 @@ __artifacts_v2__ = {
                        "directory the store was found under.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-20",
-        "last_update_date": "2026-10-25",
+        "last_update_date": "2026-10-26",
         "requirements": "none",
         "category": "Facebook",
         "notes": "Every row of each store's preferences table is reported rather than a "
@@ -277,14 +293,17 @@ __artifacts_v2__ = {
                  "Messenger copy was found, so App held com.facebook.orca on every row; on "
                  "galaxys10_a10, s20fe_a13, kevin_pocox7_a15 and adams_ss135dl_a13 only a "
                  "Facebook app copy was found, so App held com.facebook.katana on every row. "
-                 "App does not tell Android users apart: on samsungs20_a13 a second Facebook "
-                 "app copy under user 150 added 216 rows that also carry com.facebook.katana. "
-                 "On sharon_a13 the Facebook app's 896 rows carried 327 keys under "
+                 "The Android User column is read from the directories above the package "
+                 "directory: data/data is user 0, and data/user/N and "
+                 "data_mirror/data_ce/<volume>/N are user N; any other layout leaves it blank. On "
+                 "samsungs20_a13 a second Facebook app copy under user 150 added 216 rows, which "
+                 "Android User marks 150; on every other corpus image checked, Android User held 0"
+                 " on every row. On sharon_a13 the Facebook app's 896 rows carried 327 keys under "
                  "logged_in_user_scoped, 116 under config and 88 under ras_blobs, and the "
-                 "remainder were spread across smaller groups. The stored type integer is "
-                 "reported as stored. Text values are reported as written by the app and are "
-                 "not interpreted. A value stored as a BLOB is shown as a Python bytes literal; "
-                 "one row on sharon_a13 held one.",
+                 "remainder were spread across smaller groups. The stored type integer is reported"
+                 " as stored. Text values are reported as written by the app and are not "
+                 "interpreted. A value stored as a BLOB is shown as a Python bytes literal; one "
+                 "row on sharon_a13 held one.",
         "paths": ('*/com.facebook.katana/databases/prefs_db*',
                   '*/com.facebook.orca/databases/prefs_db*'),
         "output_types": "standard",
@@ -356,6 +375,22 @@ def _app(context, path):
     return ''
 
 
+# The Android user whose app data directory holds a database, read from the directories
+# directly above the package directory: data/data is user 0, and data/user/N and
+# data_mirror/data_ce/<volume>/N are user N. A userdata directory in place of the first
+# data, as on samsungs20_a13, reads the same way. Any other path leaves the user blank.
+_USER_DIR = re.compile(
+    r'(?:^|/)(?:(?:user)?data/(?:data|user/(\d+))|data_mirror/data_ce/[^/]+/(\d+))'
+    r'/com\.facebook\.(?:katana|orca)/databases/')
+
+
+def _android_user(context, path):
+    match = _USER_DIR.search(str(context.get_relative_path(str(path))).replace('\\', '/'))
+    if not match:
+        return ''
+    return match.group(1) or match.group(2) or '0'
+
+
 def _unix_seconds(value):
     if not isinstance(value, int) or value <= 0:
         return ''
@@ -381,14 +416,16 @@ def facebookAppContacts(context):
     for path in _matching(context, r'android_facebook_contacts_db$'):
         source_paths.append(str(path))
         app = _app(context, path)
+        user = _android_user(context, path)
         for row in _rows(path, '''
                 SELECT contact_id, fbid, display_name, first_name, last_name,
                        small_picture_url, big_picture_url
                 FROM contacts
                 ORDER BY display_name'''):
-            data_list.append((row[1], row[2], row[3], row[4], app, row[0], row[5], row[6]))
+            data_list.append((row[1], row[2], row[3], row[4], app, user, row[0], row[5],
+                              row[6]))
     data_headers = ('Facebook ID', 'Display Name', 'First Name', 'Last Name', 'App',
-                    'Contact ID', 'Small Picture URL', 'Big Picture URL')
+                    'Android User', 'Contact ID', 'Small Picture URL', 'Big Picture URL')
     return data_headers, data_list, '\n'.join(source_paths)
 
 
@@ -399,6 +436,7 @@ def facebookAppContactSync(context):
     for path in _matching(context, r'android_facebook_contacts_db$'):
         source_paths.append(str(path))
         app = _app(context, path)
+        user = _android_user(context, path)
         for key, value in _rows(path, 'SELECT key, value FROM contacts_db_properties'):
             converted = ''
             if isinstance(key, str) and key.endswith('_time_ms'):
@@ -409,14 +447,14 @@ def facebookAppContactSync(context):
                     converted = decoded if decoded.isprintable() else ''
                 except (ValueError, UnicodeDecodeError):
                     converted = ''
-            data_list.append((converted, 'Sync Property', app, key, value))
+            data_list.append((converted, 'Sync Property', app, user, key, value))
         for local_id, contact_hash, extra_hash in _rows(path, '''
                 SELECT local_contact_id, contact_hash, contact_extra_fields_hash
                 FROM contacts_upload_snapshot
                 ORDER BY local_contact_id'''):
-            data_list.append(('', 'Upload Snapshot', app, f'local_contact_id {local_id}',
+            data_list.append(('', 'Upload Snapshot', app, user, f'local_contact_id {local_id}',
                               f'{contact_hash or ""} / {extra_hash or ""}'))
-    data_headers = (('Converted Value', 'datetime'), 'Record Type', 'App', 'Key',
+    data_headers = (('Converted Value', 'datetime'), 'Record Type', 'App', 'Android User', 'Key',
                     'Stored Value')
     return data_headers, data_list, '\n'.join(source_paths)
 
@@ -487,8 +525,9 @@ def facebookAppPreferences(context):
     for path in _matching(context, r'^prefs_db$'):
         source_paths.append(str(path))
         app = _app(context, path)
+        user = _android_user(context, path)
         for key, value, stored_type in _rows(path, '''
                 SELECT key, value, type FROM preferences ORDER BY key'''):
-            data_list.append((app, key, value, stored_type))
-    data_headers = ('App', 'Key', 'Value', 'Type (as stored)')
+            data_list.append((app, user, key, value, stored_type))
+    data_headers = ('App', 'Android User', 'Key', 'Value', 'Type (as stored)')
     return data_headers, data_list, '\n'.join(source_paths)
