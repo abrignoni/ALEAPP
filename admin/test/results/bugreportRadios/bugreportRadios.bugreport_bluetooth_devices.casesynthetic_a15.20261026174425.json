@@ -1,0 +1,65 @@
+{
+  "metadata": {
+    "module_name": "bugreportRadios",
+    "artifact_name": "Bug Report - Bluetooth Devices",
+    "function_name": "bugreport_bluetooth_devices",
+    "case_number": "casesynthetic_a15",
+    "number_of_columns": 11,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 135,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportRadios/testdata.bugreportRadios.bugreport_bluetooth_devices.casesynthetic_a15.zip",
+    "start_time": "2026-10-26T17:44:25.418739+00:00",
+    "end_time": "2026-10-26T17:44:25.581825+00:00",
+    "run_time_seconds": 0.011675357818603516,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-26T17:44:25.549135",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Listed Under",
+    "Name",
+    "Address",
+    "Address Type",
+    "Device Type",
+    "Class (as stored)",
+    "Profiles",
+    "Packages",
+    "Connection State",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Bonded devices",
+      "Example Watch",
+      "02:00:00:00:CC:11",
+      "",
+      "????",
+      "",
+      "",
+      "",
+      "",
+      83,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Bonded devices",
+      "Example Buds",
+      "02:00:00:00:CC:22",
+      "",
+      "????",
+      "",
+      "",
+      "",
+      "",
+      84,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

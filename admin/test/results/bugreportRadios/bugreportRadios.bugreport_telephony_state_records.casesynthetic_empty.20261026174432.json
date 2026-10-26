@@ -1,0 +1,39 @@
+{
+  "metadata": {
+    "module_name": "bugreportRadios",
+    "artifact_name": "Bug Report - Telephony State Machine Records",
+    "function_name": "bugreport_telephony_state_records",
+    "case_number": "casesynthetic_empty",
+    "number_of_columns": 12,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportRadios/testdata.bugreportRadios.bugreport_telephony_state_records.casesynthetic_empty.zip",
+    "start_time": "2026-10-26T17:44:32.737089+00:00",
+    "end_time": "2026-10-26T17:44:32.881188+00:00",
+    "run_time_seconds": 0.0031964778900146484,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-26T17:44:32.864457",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Service",
+    "State Machine",
+    "Position",
+    "Processed In",
+    "From",
+    "To",
+    "Message",
+    "Time Note",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

@@ -1,0 +1,80 @@
+{
+  "metadata": {
+    "module_name": "bugreportNetwork",
+    "artifact_name": "Bug Report - Network Policy Events",
+    "function_name": "bugreport_netpolicy_events",
+    "case_number": "casesynthetic_zip_on_device",
+    "number_of_columns": 7,
+    "number_of_rows": 5,
+    "total_data_size_bytes": 1234,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportNetwork/testdata.bugreportNetwork.bugreport_netpolicy_events.casesynthetic_zip_on_device.zip",
+    "start_time": "2026-10-26T19:10:37.035633+00:00",
+    "end_time": "2026-10-26T19:10:37.322631+00:00",
+    "run_time_seconds": 0.16368985176086426,
+    "last_commit": {
+      "hash": "1867b8f203459f34a25f13dd49852b764f108ee2",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T14:24:14-04:00",
+      "message": "Network notes name the User Selected column without a claim; category tests accept the group categories"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Time Note",
+    "Log",
+    "Message",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1793547377,
+      "2026-11-01T21:06:17:657",
+      "",
+      "mEventLogs",
+      "Firewall rule changed: 10246-powersave-allow",
+      353,
+      "Dump/data/user_de/0/com.android.shell/files/bugreports/bugreport-example-2026-11-02-10-15-30.zip!/bugreport-example-EXAMPLE-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793547317,
+      "2026-11-01T21:05:17:165",
+      "",
+      "mEventLogs",
+      "Firewall rule changed: 20065-background-allow",
+      354,
+      "Dump/data/user_de/0/com.android.shell/files/bugreports/bugreport-example-2026-11-02-10-15-30.zip!/bugreport-example-EXAMPLE-2026-11-02-10-15-30.txt"
+    ],
+    [
+      null,
+      "1970-01-01T00:00:00:000",
+      "time not set on the device (shown as printed)",
+      "mEventLogs",
+      "null",
+      355,
+      "Dump/data/user_de/0/com.android.shell/files/bugreports/bugreport-example-2026-11-02-10-15-30.zip!/bugreport-example-EXAMPLE-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793547378,
+      "2026-11-01T21:06:18:679",
+      "",
+      "mNetworkBlockedLogs",
+      "86664-{blocked=BATTERY_SAVER|APP_BACKGROUND,allowed=NOT_IN_BACKGROUND,effective=BATTERY_SAVER}",
+      357,
+      "Dump/data/user_de/0/com.android.shell/files/bugreports/bugreport-example-2026-11-02-10-15-30.zip!/bugreport-example-EXAMPLE-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793547173,
+      "2026-11-01T21:02:53:415",
+      "",
+      "mUidStateChangeLogs",
+      "86098:LAST:--------:46474",
+      359,
+      "Dump/data/user_de/0/com.android.shell/files/bugreports/bugreport-example-2026-11-02-10-15-30.zip!/bugreport-example-EXAMPLE-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

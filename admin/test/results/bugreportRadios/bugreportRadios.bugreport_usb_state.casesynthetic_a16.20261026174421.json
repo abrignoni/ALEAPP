@@ -1,0 +1,34 @@
+{
+  "metadata": {
+    "module_name": "bugreportRadios",
+    "artifact_name": "Bug Report - USB Manager State",
+    "function_name": "bugreport_usb_state",
+    "case_number": "casesynthetic_a16",
+    "number_of_columns": 7,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportRadios/testdata.bugreportRadios.bugreport_usb_state.casesynthetic_a16.zip",
+    "start_time": "2026-10-26T17:44:21.338920+00:00",
+    "end_time": "2026-10-26T17:44:21.500157+00:00",
+    "run_time_seconds": 0.015134334564208984,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-26T17:44:21.471761",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Path",
+    "Value",
+    "Time As Printed",
+    "Time (UTC)",
+    "Time Note",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

@@ -1,0 +1,2066 @@
+{
+  "casesynthetic_a16": {
+    "description": "Synthetic Android 16 style bug report text (dumpstate.txt) with the network sections: three saved Wi-Fi networks (one marked current, one disabled, one with a comma in the SSID) and a stray entry outside the block, connection events with unpadded times, two mWifiInfo snapshots, scan result tables, state machine records and log blocks, the netstats service and the CHECKIN NETSTATS full dump with a UID table and a bucket at epoch 1000, network policy lists and logs, two connected networks, ip -s link and /proc/net/dev, DNS servers with a private DNS log, netstat with a raw6 line, ss with continuation lines, and a tethering service. Device zone Europe/Paris. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_a16.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-26T17:21:58.553974",
+      "last_commit": {
+        "hash": "35ad867ff7da9d4bd9ac2bb41cca31cb5a49f8b2",
+        "author_name": "danjethh",
+        "author_email": "danjethh@users.noreply.github.com",
+        "date": "2026-10-26T13:21:50-04:00",
+        "message": "Bug report network: Wi-Fi, network usage, policy, connectivity, DNS, interface, socket and tethering artifacts"
+      }
+    },
+    "artifacts": {
+      "bugreport_wifi_saved_networks": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_connection_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_current_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_scan_results": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_state_records": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_service_log": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_network_usage_buckets": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_netpolicy_uid_entries": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_netpolicy_settings": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_netpolicy_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_connected_networks": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_network_interfaces": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_interface_counters": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_dns_servers": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_private_dns_log": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_open_sockets": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_unix_sockets": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_socket_details": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_tethering_log": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_tethering_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_a10": {
+    "description": "Synthetic Android 10 style bug report text (bugreport-*.txt, CRLF line endings): Wi-Fi entries with creation and update times and a connect choice, the compact CHECKIN NETSTATS form, Dev and Xt stats with a second counter set, one connected network without link properties, ip link without counters, netstat without user and inode columns, no private DNS log and no tethering service. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_a10.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-26T17:21:59.472159",
+      "last_commit": {
+        "hash": "35ad867ff7da9d4bd9ac2bb41cca31cb5a49f8b2",
+        "author_name": "danjethh",
+        "author_email": "danjethh@users.noreply.github.com",
+        "date": "2026-10-26T13:21:50-04:00",
+        "message": "Bug report network: Wi-Fi, network usage, policy, connectivity, DNS, interface, socket and tethering artifacts"
+      }
+    },
+    "artifacts": {
+      "bugreport_wifi_saved_networks": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_connection_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_current_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_scan_results": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_state_records": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_service_log": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_network_usage_buckets": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_netpolicy_uid_entries": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_netpolicy_settings": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_netpolicy_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_connected_networks": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_network_interfaces": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_interface_counters": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_dns_servers": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_private_dns_log": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_open_sockets": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_unix_sockets": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_socket_details": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_tethering_log": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_tethering_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_zip_on_device": {
+    "description": "Synthetic bug report zip as the Shell app keeps it on the device (data/user_de/0/com.android.shell/files/bugreports/bugreport-*.zip), with main_entry.txt and the main text inside; device zone Asia/Kolkata. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_zip_on_device.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-26T17:22:00.411818",
+      "last_commit": {
+        "hash": "35ad867ff7da9d4bd9ac2bb41cca31cb5a49f8b2",
+        "author_name": "danjethh",
+        "author_email": "danjethh@users.noreply.github.com",
+        "date": "2026-10-26T13:21:50-04:00",
+        "message": "Bug report network: Wi-Fi, network usage, policy, connectivity, DNS, interface, socket and tethering artifacts"
+      }
+    },
+    "artifacts": {
+      "bugreport_wifi_saved_networks": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_connection_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_current_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_scan_results": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_state_records": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_service_log": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_network_usage_buckets": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_netpolicy_uid_entries": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_netpolicy_settings": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_netpolicy_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_connected_networks": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_network_interfaces": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_interface_counters": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_dns_servers": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_private_dns_log": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_open_sockets": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_unix_sockets": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_socket_details": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_tethering_log": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_tethering_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_two_reports": {
+    "description": "Two synthetic bug report texts in two folders (Android 16 style in Asia/Kolkata and Android 10 style in America/Sao_Paulo): both are read and the Source File column tells their rows apart. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_two_reports.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-26T17:22:01.355706",
+      "last_commit": {
+        "hash": "35ad867ff7da9d4bd9ac2bb41cca31cb5a49f8b2",
+        "author_name": "danjethh",
+        "author_email": "danjethh@users.noreply.github.com",
+        "date": "2026-10-26T13:21:50-04:00",
+        "message": "Bug report network: Wi-Fi, network usage, policy, connectivity, DNS, interface, socket and tethering artifacts"
+      }
+    },
+    "artifacts": {
+      "bugreport_wifi_saved_networks": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_connection_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_current_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_scan_results": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_state_records": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_service_log": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_network_usage_buckets": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_netpolicy_uid_entries": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_netpolicy_settings": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_netpolicy_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_connected_networks": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_network_interfaces": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_interface_counters": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_dns_servers": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_private_dns_log": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_open_sockets": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_unix_sockets": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_socket_details": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_tethering_log": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_tethering_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_cut": {
+    "description": "Synthetic Android 16 style bug report text whose netpolicy service dump ends with the DUMP TIMEOUT marker and has no trailer: the rows are read and the cut is logged once. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_cut.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-26T17:22:02.238530",
+      "last_commit": {
+        "hash": "35ad867ff7da9d4bd9ac2bb41cca31cb5a49f8b2",
+        "author_name": "danjethh",
+        "author_email": "danjethh@users.noreply.github.com",
+        "date": "2026-10-26T13:21:50-04:00",
+        "message": "Bug report network: Wi-Fi, network usage, policy, connectivity, DNS, interface, socket and tethering artifacts"
+      }
+    },
+    "artifacts": {
+      "bugreport_wifi_saved_networks": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_connection_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_current_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_scan_results": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_state_records": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_service_log": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_network_usage_buckets": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_netpolicy_uid_entries": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_netpolicy_settings": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_netpolicy_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_connected_networks": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_network_interfaces": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_interface_counters": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_dns_servers": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_private_dns_log": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_open_sockets": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_unix_sockets": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_socket_details": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_tethering_log": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_tethering_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_empty": {
+    "description": "Synthetic bug report text with the banner and no sections. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_empty.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-26T17:22:03.148982",
+      "last_commit": {
+        "hash": "35ad867ff7da9d4bd9ac2bb41cca31cb5a49f8b2",
+        "author_name": "danjethh",
+        "author_email": "danjethh@users.noreply.github.com",
+        "date": "2026-10-26T13:21:50-04:00",
+        "message": "Bug report network: Wi-Fi, network usage, policy, connectivity, DNS, interface, socket and tethering artifacts"
+      }
+    },
+    "artifacts": {
+      "bugreport_wifi_saved_networks": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_connection_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_current_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_scan_results": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_state_records": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_service_log": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_network_usage_buckets": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_netpolicy_uid_entries": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_netpolicy_settings": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_netpolicy_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_connected_networks": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_network_interfaces": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_interface_counters": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_dns_servers": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_private_dns_log": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_open_sockets": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_unix_sockets": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_socket_details": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_tethering_log": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_tethering_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_not_a_report": {
+    "description": "Two files that match the path patterns but carry no dumpstate banner (a text and a block of arbitrary bytes): neither is read and no rows are reported. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_not_a_report.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-26T17:22:04.062351",
+      "last_commit": {
+        "hash": "35ad867ff7da9d4bd9ac2bb41cca31cb5a49f8b2",
+        "author_name": "danjethh",
+        "author_email": "danjethh@users.noreply.github.com",
+        "date": "2026-10-26T13:21:50-04:00",
+        "message": "Bug report network: Wi-Fi, network usage, policy, connectivity, DNS, interface, socket and tethering artifacts"
+      }
+    },
+    "artifacts": {
+      "bugreport_wifi_saved_networks": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_connection_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_current_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_scan_results": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_state_records": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_service_log": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_network_usage_buckets": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_netpolicy_uid_entries": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_netpolicy_settings": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_netpolicy_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_connected_networks": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_network_interfaces": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_interface_counters": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_dns_servers": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_private_dns_log": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_open_sockets": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_unix_sockets": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_socket_details": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_tethering_log": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_tethering_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_odd_bytes": {
+    "description": "Synthetic bug report text with a byte order mark, an invalid UTF-8 byte, a NUL, a lone carriage return and a form feed inside values, and no time zone property: control characters are shown as spaces and no UTC is given. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_odd_bytes.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-26T17:22:04.984891",
+      "last_commit": {
+        "hash": "35ad867ff7da9d4bd9ac2bb41cca31cb5a49f8b2",
+        "author_name": "danjethh",
+        "author_email": "danjethh@users.noreply.github.com",
+        "date": "2026-10-26T13:21:50-04:00",
+        "message": "Bug report network: Wi-Fi, network usage, policy, connectivity, DNS, interface, socket and tethering artifacts"
+      }
+    },
+    "artifacts": {
+      "bugreport_wifi_saved_networks": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_connection_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_current_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_scan_results": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_state_records": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_wifi_service_log": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_network_usage_buckets": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_netpolicy_uid_entries": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_netpolicy_settings": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_netpolicy_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_connected_networks": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_network_interfaces": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_interface_counters": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_dns_servers": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_private_dns_log": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_open_sockets": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_unix_sockets": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_socket_details": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_tethering_log": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_tethering_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  }
+}

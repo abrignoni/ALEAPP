@@ -1,0 +1,34 @@
+{
+  "metadata": {
+    "module_name": "bugreportNetwork",
+    "artifact_name": "Bug Report - Network Policy Events",
+    "function_name": "bugreport_netpolicy_events",
+    "case_number": "casesynthetic_not_a_report",
+    "number_of_columns": 7,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportNetwork/testdata.bugreportNetwork.bugreport_netpolicy_events.casesynthetic_not_a_report.zip",
+    "start_time": "2026-10-26T17:22:20.924762+00:00",
+    "end_time": "2026-10-26T17:22:21.033111+00:00",
+    "run_time_seconds": 0.0024776458740234375,
+    "last_commit": {
+      "hash": "35ad867ff7da9d4bd9ac2bb41cca31cb5a49f8b2",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:21:50-04:00",
+      "message": "Bug report network: Wi-Fi, network usage, policy, connectivity, DNS, interface, socket and tethering artifacts"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Time Note",
+    "Log",
+    "Message",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

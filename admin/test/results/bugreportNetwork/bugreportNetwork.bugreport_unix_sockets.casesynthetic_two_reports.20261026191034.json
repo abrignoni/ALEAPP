@@ -1,0 +1,98 @@
+{
+  "metadata": {
+    "module_name": "bugreportNetwork",
+    "artifact_name": "Bug Report - Unix Domain Sockets",
+    "function_name": "bugreport_unix_sockets",
+    "case_number": "casesynthetic_two_reports",
+    "number_of_columns": 10,
+    "number_of_rows": 5,
+    "total_data_size_bytes": 423,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportNetwork/testdata.bugreportNetwork.bugreport_unix_sockets.casesynthetic_two_reports.zip",
+    "start_time": "2026-10-26T19:10:34.378933+00:00",
+    "end_time": "2026-10-26T19:10:34.683110+00:00",
+    "run_time_seconds": 0.17822694778442383,
+    "last_commit": {
+      "hash": "1867b8f203459f34a25f13dd49852b764f108ee2",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T14:24:14-04:00",
+      "message": "Network notes name the User Selected column without a claim; category tests accept the group categories"
+    }
+  },
+  "headers": [
+    "Protocol",
+    "Reference Count",
+    "Flags",
+    "Socket Type",
+    "State",
+    "Inode",
+    "Program",
+    "Path (as printed)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "unix",
+      2,
+      "[ ]",
+      "DGRAM",
+      "CONNECTED",
+      67485743,
+      "-",
+      "",
+      89,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "unix",
+      2,
+      "[ ACC ]",
+      "STREAM",
+      "LISTENING",
+      67293694,
+      "-",
+      "/dev/socket/example",
+      90,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "unix",
+      3,
+      "[ ]",
+      "SEQPACKET",
+      "CONNECTED",
+      67222009,
+      "1234/example_daemon",
+      "/dev/socket/example name",
+      91,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "unix",
+      76,
+      "[ ]",
+      "DGRAM",
+      "",
+      23594,
+      "",
+      "/dev/socket/example",
+      70,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "unix",
+      2,
+      "[ ]",
+      "STREAM",
+      "CONNECTED",
+      674368,
+      "",
+      "/dev/socket/example2",
+      71,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

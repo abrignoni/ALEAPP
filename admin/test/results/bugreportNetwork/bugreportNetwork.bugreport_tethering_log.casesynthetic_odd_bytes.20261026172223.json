@@ -1,0 +1,54 @@
+{
+  "metadata": {
+    "module_name": "bugreportNetwork",
+    "artifact_name": "Bug Report - Tethering Log",
+    "function_name": "bugreport_tethering_log",
+    "case_number": "casesynthetic_odd_bytes",
+    "number_of_columns": 5,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 273,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportNetwork/testdata.bugreportNetwork.bugreport_tethering_log.casesynthetic_odd_bytes.zip",
+    "start_time": "2026-10-26T17:22:23.503629+00:00",
+    "end_time": "2026-10-26T17:22:23.652768+00:00",
+    "run_time_seconds": 0.014391422271728516,
+    "last_commit": {
+      "hash": "35ad867ff7da9d4bd9ac2bb41cca31cb5a49f8b2",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:21:50-04:00",
+      "message": "Bug report network: Wi-Fi, network usage, policy, connectivity, DNS, interface, socket and tethering artifacts"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Message",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      null,
+      "2026-11-01T21:05:34.472718",
+      "MARK Tethering.constructed",
+      426,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      null,
+      "2026-11-01T21:05:36.767088",
+      "OBSERVED configuration changed",
+      427,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      null,
+      "2026-11-01T21:05:38.044112",
+      "USB bcast connected:false configured:false rndis:false ncm:false",
+      428,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

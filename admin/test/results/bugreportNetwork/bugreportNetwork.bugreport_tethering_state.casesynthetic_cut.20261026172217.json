@@ -1,0 +1,96 @@
+{
+  "metadata": {
+    "module_name": "bugreportNetwork",
+    "artifact_name": "Bug Report - Tethering State",
+    "function_name": "bugreport_tethering_state",
+    "case_number": "casesynthetic_cut",
+    "number_of_columns": 5,
+    "number_of_rows": 9,
+    "total_data_size_bytes": 503,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportNetwork/testdata.bugreportNetwork.bugreport_tethering_state.casesynthetic_cut.zip",
+    "start_time": "2026-10-26T17:22:17.278594+00:00",
+    "end_time": "2026-10-26T17:22:17.400270+00:00",
+    "run_time_seconds": 0.012909889221191406,
+    "last_commit": {
+      "hash": "35ad867ff7da9d4bd9ac2bb41cca31cb5a49f8b2",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:21:50-04:00",
+      "message": "Bug report network: Wi-Fi, network usage, policy, connectivity, DNS, interface, socket and tethering artifacts"
+    }
+  },
+  "headers": [
+    "Group",
+    "Name",
+    "Value (as printed)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Tethering",
+      "Callbacks registered",
+      "24",
+      413,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Configuration",
+      "activeDataSubId",
+      "2",
+      415,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Configuration",
+      "tetherableUsbRegexs",
+      "[rndis/d]",
+      416,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Entitlement",
+      "isCellularUpstreamPermitted",
+      "true",
+      418,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Tether state",
+      "Upstream wanted",
+      "false",
+      420,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Tether state",
+      "Current upstream interface(s)",
+      "null",
+      421,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Hardware offload",
+      "",
+      "Offload HALs not started",
+      423,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Hardware offload",
+      "",
+      "ForwardedStats:",
+      424,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Hardware offload",
+      "",
+      "<empty>",
+      425,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}
