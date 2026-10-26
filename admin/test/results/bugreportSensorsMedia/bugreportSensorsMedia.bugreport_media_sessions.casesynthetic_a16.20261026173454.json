@@ -1,0 +1,77 @@
+{
+  "metadata": {
+    "module_name": "bugreportSensorsMedia",
+    "artifact_name": "Bug Report - Media Sessions",
+    "function_name": "bugreport_media_sessions",
+    "case_number": "casesynthetic_a16",
+    "number_of_columns": 15,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 530,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSensorsMedia/testdata.bugreportSensorsMedia.bugreport_media_sessions.casesynthetic_a16.zip",
+    "start_time": "2026-10-26T17:34:54.517729+00:00",
+    "end_time": "2026-10-26T17:34:54.653999+00:00",
+    "run_time_seconds": 0.015273809432983398,
+    "last_commit": {
+      "hash": "e56d9fc859d2e83c7207c6514d3727ee6bf6a291",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:32:45-04:00",
+      "message": "Bug report sensors and media: location, sensors, camera, audio, media, accessibility, input method, display and window artifacts"
+    }
+  },
+  "headers": [
+    "Session",
+    "Key",
+    "Role",
+    "User",
+    "Owner PID",
+    "Owner UID",
+    "Package",
+    "Active",
+    "Flags (as stored)",
+    "Playback State (as printed)",
+    "Audio Attributes",
+    "Volume (as printed)",
+    "Metadata (as printed)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "HeadsetMediaButton",
+      "com.example.server.telecom/HeadsetMediaButton/1",
+      "global priority session",
+      0,
+      1852,
+      1000,
+      "com.example.server.telecom",
+      "false",
+      "65537",
+      "null",
+      "AudioAttributes: usage=USAGE_VOICE_COMMUNICATION content=CONTENT_TYPE_SPEECH flags=0x800",
+      "volumeType=LOCAL, controlType=ABSOLUTE, max=0, current=0, volumeControlId=null",
+      "null",
+      829,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Example player",
+      "com.example.user.chat/Example player/6",
+      "",
+      0,
+      4321,
+      10300,
+      "com.example.user.chat",
+      "true",
+      "3",
+      "PlaybackState {state=PLAYING(3), position=0}",
+      "",
+      "",
+      "size=1, description=Example title, Example artist",
+      838,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

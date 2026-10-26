@@ -12,12 +12,14 @@ sys.path.insert(0, REPO_ROOT)
 from scripts import dumpstate_reader as reader  # noqa: E402  pylint: disable=wrong-import-position
 
 MODULES = ('bugreportDevice', 'bugreportActivity', 'bugreportPermissions', 'bugreportUsageJobs', 'bugreportNetwork',
-           'bugreportRadios')
+           'bugreportRadios', 'bugreportAccountsPower', 'bugreportSensorsMedia')
 PREFIX = 'Android Bug Report - '
 GROUPS = collections.OrderedDict([
-    ('Device and Build', 2), ('Installed Apps', 2), ('Permissions and App Ops', 6), ('Processes and Memory', 1),
+    ('Device and Build', 2), ('Installed Apps', 2), ('Permissions and App Ops', 6), ('Processes and Memory', 6),
     ('App Usage', 4), ('Network', 14), ('Wi-Fi', 6), ('Bluetooth, NFC and USB', 10), ('Telephony', 7),
-    ('Notifications', 3), ('Alarms and Jobs', 3), ('Settings and Config', 2), ('Boot, Crash and Dropbox', 1)])
+    ('Battery and Power', 12), ('Location and Sensors', 10), ('Camera and Media', 7),
+    ('Accounts, Sync and Backup', 16), ('Notifications', 3), ('Display and Input', 9), ('Alarms and Jobs', 3),
+    ('Settings and Config', 2), ('Boot, Crash and Dropbox', 1)])
 PATHS = ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
          '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip')
 
@@ -37,7 +39,7 @@ class CategoryTests(unittest.TestCase):
             self.assertTrue(category.startswith(PREFIX), (module, key, category))
             counts[category[len(PREFIX):]] += 1
         self.assertEqual(dict(counts), dict(GROUPS))
-        self.assertEqual(sum(counts.values()), 61)
+        self.assertEqual(sum(counts.values()), 120)
 
     def test_names_and_paths_are_the_same_kind_everywhere(self):
         names = collections.Counter()
@@ -63,7 +65,8 @@ class RegistrationTests(unittest.TestCase):
                 self.assertIn(name, known, (key, name))
 
     def test_topic_modules_import_in_any_order(self):
-        topics = ('dumpstate_permissions', 'dumpstate_usagejobs', 'dumpstate_network', 'dumpstate_radios')
+        topics = ('dumpstate_permissions', 'dumpstate_usagejobs', 'dumpstate_network', 'dumpstate_radios',
+                  'dumpstate_accountspower', 'dumpstate_sensorsmedia')
         expected = '%d %d' % (len(reader.READERS), len(reader.READ_BY))
         for topic in topics:
             code = ('import scripts.%s; from scripts import dumpstate_reader as r; '

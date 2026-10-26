@@ -1,0 +1,62 @@
+{
+  "metadata": {
+    "module_name": "bugreportSensorsMedia",
+    "artifact_name": "Bug Report - Accessibility Services",
+    "function_name": "bugreport_accessibility_services",
+    "case_number": "casesynthetic_a16",
+    "number_of_columns": 7,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 221,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSensorsMedia/testdata.bugreportSensorsMedia.bugreport_accessibility_services.casesynthetic_a16.zip",
+    "start_time": "2026-10-26T17:34:55.483479+00:00",
+    "end_time": "2026-10-26T17:34:55.615169+00:00",
+    "run_time_seconds": 0.014938116073608398,
+    "last_commit": {
+      "hash": "e56d9fc859d2e83c7207c6514d3727ee6bf6a291",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:32:45-04:00",
+      "message": "Bug report sensors and media: location, sensors, camera, audio, media, accessibility, input method, display and window artifacts"
+    }
+  },
+  "headers": [
+    "User",
+    "List",
+    "Index",
+    "Component",
+    "Tags (as printed)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      0,
+      "installed",
+      0,
+      "com.example.access/.ExampleService",
+      "(A11yTool)",
+      872,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      0,
+      "installed",
+      1,
+      "com.example.other/com.example.other.SwitchService",
+      "",
+      873,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      0,
+      "enabled",
+      0,
+      "com.example.access/.ExampleService",
+      "",
+      876,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

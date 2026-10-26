@@ -1,0 +1,68 @@
+{
+  "metadata": {
+    "module_name": "bugreportSensorsMedia",
+    "artifact_name": "Bug Report - Sensor Registrations",
+    "function_name": "bugreport_sensor_registrations",
+    "case_number": "casesynthetic_a16",
+    "number_of_columns": 12,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 258,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSensorsMedia/testdata.bugreportSensorsMedia.bugreport_sensor_registrations.casesynthetic_a16.zip",
+    "start_time": "2026-10-26T17:34:54.785844+00:00",
+    "end_time": "2026-10-26T17:34:54.929378+00:00",
+    "run_time_seconds": 0.014237165451049805,
+    "last_commit": {
+      "hash": "e56d9fc859d2e83c7207c6514d3727ee6bf6a291",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:32:45-04:00",
+      "message": "Bug report sensors and media: location, sensors, camera, audio, media, accessibility, input method, display and window artifacts"
+    }
+  },
+  "headers": [
+    "Clock Time (as printed)",
+    "Sign (as printed)",
+    "Handle",
+    "PID",
+    "UID",
+    "Sampling Period (us)",
+    "Batching Period (us)",
+    "Result",
+    "Sensor",
+    "Package or Class (as printed)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "08:02:00",
+      "-",
+      "0x00000001",
+      2682,
+      1000,
+      "N/A",
+      "N/A",
+      "OK",
+      "example_acc Accelerometer Non-wakeup",
+      "com.example.server.Orientation",
+      743,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "08:01:00",
+      "+",
+      "0x00000001",
+      4321,
+      10300,
+      "20000",
+      "5000000",
+      "OK",
+      "example_acc Accelerometer Non-wakeup",
+      "com.example.user.chat.collect.Scanner",
+      744,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

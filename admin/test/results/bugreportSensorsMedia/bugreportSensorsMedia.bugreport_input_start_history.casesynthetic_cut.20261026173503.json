@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "module_name": "bugreportSensorsMedia",
+    "artifact_name": "Bug Report - Input Start History",
+    "function_name": "bugreport_input_start_history",
+    "case_number": "casesynthetic_cut",
+    "number_of_columns": 14,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 353,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSensorsMedia/testdata.bugreportSensorsMedia.bugreport_input_start_history.casesynthetic_cut.zip",
+    "start_time": "2026-10-26T17:35:03.358197+00:00",
+    "end_time": "2026-10-26T17:35:03.495304+00:00",
+    "run_time_seconds": 0.012928485870361328,
+    "last_commit": {
+      "hash": "e56d9fc859d2e83c7207c6514d3727ee6bf6a291",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:32:45-04:00",
+      "message": "Bug report sensors and media: location, sensors, camera, audio, media, accessibility, input method, display and window artifacts"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Entry",
+    "Reason",
+    "Restarting",
+    "Input Method",
+    "Target Window",
+    "Soft Input Mode",
+    "Input Type",
+    "IME Options",
+    "Field ID",
+    "Field Name",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1793604000,
+      "2026-11-02 08:20:00.100",
+      11,
+      "WINDOW_FOCUS_GAIN",
+      "false",
+      "com.example.keyboard/.KeyboardService",
+      "com.example.user.chat",
+      "STATE_UNSPECIFIED|ADJUST_RESIZE",
+      "0x1",
+      "0x2",
+      "0x7f0a0001",
+      "search_box",
+      785,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793604060,
+      "2026-11-02 08:21:00.200",
+      12,
+      "SESSION_CREATED_BY_IME",
+      "true",
+      "com.example.keyboard/.KeyboardService",
+      "com.example.user.sideloaded/.MainActivity",
+      "",
+      "",
+      "",
+      "",
+      "",
+      791,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

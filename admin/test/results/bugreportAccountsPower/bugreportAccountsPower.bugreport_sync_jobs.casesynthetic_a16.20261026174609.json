@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "module_name": "bugreportAccountsPower",
+    "artifact_name": "Bug Report - Sync Jobs",
+    "function_name": "bugreport_sync_jobs",
+    "case_number": "casesynthetic_a16",
+    "number_of_columns": 10,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 556,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportAccountsPower/testdata.bugreportAccountsPower.bugreport_sync_jobs.casesynthetic_a16.zip",
+    "start_time": "2026-10-26T17:46:09.192829+00:00",
+    "end_time": "2026-10-26T17:46:09.333787+00:00",
+    "run_time_seconds": 0.017108440399169922,
+    "last_commit": {
+      "hash": "7450687ec1476569021e50b0cfc221c1d2c13a09",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:45:32-04:00",
+      "message": "Bug report accounts, sync, backup, users, battery, power and memory: readers, 33 artifacts, synthetic fixture and tests"
+    }
+  },
+  "headers": [
+    "List",
+    "Job ID",
+    "User",
+    "Account",
+    "Account Type",
+    "Authority",
+    "Source",
+    "Details (as printed)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Pending",
+      429,
+      0,
+      "person.one@example.test",
+      "com.example.auth",
+      "example.mail",
+      "OTHER",
+      "ExpectedIn=-6h49m44s Reason=10267 Owner={u0a267 com.example.mail [20]} [sync_reason=7 ]",
+      426,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Periodic",
+      21,
+      0,
+      "person.one@example.test",
+      "com.example.auth",
+      "example.calendar",
+      "PERIODIC",
+      "Reason=Periodic (period=1d00h00m00s flex=57m36s) Owner={u0a251 com.example.calendar [5]}",
+      429,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Periodic",
+      22,
+      10,
+      "Example Chat",
+      "com.example.chat",
+      "example.contacts",
+      "PERIODIC",
+      "Reason=Periodic (period=1h00m00s flex=2m24s) Owner={u10a102 com.example.chat [10] [ACTIVE]} [periodic_sync=true ]",
+      430,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

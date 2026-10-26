@@ -1,0 +1,90 @@
+{
+  "metadata": {
+    "module_name": "bugreportSensorsMedia",
+    "artifact_name": "Bug Report - Location Providers",
+    "function_name": "bugreport_location_providers",
+    "case_number": "casesynthetic_a10",
+    "number_of_columns": 14,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 237,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSensorsMedia/testdata.bugreportSensorsMedia.bugreport_location_providers.casesynthetic_a10.zip",
+    "start_time": "2026-10-26T17:35:00.803063+00:00",
+    "end_time": "2026-10-26T17:35:00.952881+00:00",
+    "run_time_seconds": 0.011658430099487305,
+    "last_commit": {
+      "hash": "e56d9fc859d2e83c7207c6514d3727ee6bf6a291",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:32:45-04:00",
+      "message": "Bug report sensors and media: location, sensors, camera, audio, media, accessibility, input method, display and window artifacts"
+    }
+  },
+  "headers": [
+    "Provider",
+    "Service State",
+    "Allowed",
+    "Useable",
+    "Enabled",
+    "Identity",
+    "Properties",
+    "Listeners",
+    "Target Service",
+    "Connected",
+    "Stationary Throttled",
+    "Started",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "passive",
+      "",
+      "",
+      "true",
+      "",
+      "",
+      "",
+      0,
+      "",
+      "",
+      "",
+      "",
+      419,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "gps",
+      "",
+      "",
+      "true",
+      "",
+      "",
+      "",
+      0,
+      "",
+      "",
+      "",
+      "false   (changed +59m34s287ms ago)",
+      423,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "network",
+      "",
+      "",
+      "false",
+      "false",
+      "",
+      "",
+      0,
+      "",
+      "",
+      "",
+      "",
+      427,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

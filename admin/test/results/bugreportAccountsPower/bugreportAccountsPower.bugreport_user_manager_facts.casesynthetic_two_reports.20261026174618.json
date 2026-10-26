@@ -1,0 +1,92 @@
+{
+  "metadata": {
+    "module_name": "bugreportAccountsPower",
+    "artifact_name": "Bug Report - User Manager Facts",
+    "function_name": "bugreport_user_manager_facts",
+    "case_number": "casesynthetic_two_reports",
+    "number_of_columns": 4,
+    "number_of_rows": 10,
+    "total_data_size_bytes": 600,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportAccountsPower/testdata.bugreportAccountsPower.bugreport_user_manager_facts.casesynthetic_two_reports.zip",
+    "start_time": "2026-10-26T17:46:18.162298+00:00",
+    "end_time": "2026-10-26T17:46:18.298864+00:00",
+    "run_time_seconds": 0.023131847381591797,
+    "last_commit": {
+      "hash": "7450687ec1476569021e50b0cfc221c1d2c13a09",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:45:32-04:00",
+      "message": "Bug report accounts, sync, backup, users, battery, power and memory: readers, 33 artifacts, synthetic fixture and tests"
+    }
+  },
+  "headers": [
+    "Name",
+    "Value",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Current user",
+      "0",
+      596,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Device owner id",
+      "-10000",
+      632,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Device managed",
+      "false",
+      633,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Started users state",
+      "{0=3, 10=1}",
+      634,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Max users",
+      "4",
+      635,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Device owner id",
+      "-10000",
+      532,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Guest restrictions",
+      "no_sms, no_outgoing_calls",
+      534,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Device managed",
+      "false",
+      538,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Started users state",
+      "{0=3}",
+      539,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Max users",
+      "4",
+      541,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}
