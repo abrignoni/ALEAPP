@@ -34,7 +34,7 @@ import os
 import re
 import zipfile
 import zlib
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 import pytz
 
@@ -52,6 +52,7 @@ READ_ERRORS = (OSError, EOFError, zipfile.BadZipFile, zlib.error, RuntimeError, 
                ValueError, OverflowError)
 
 # The platform's "no time" value as it is printed in zone-less wall clock text.
+UNIX_EPOCH = datetime(1970, 1, 1, tzinfo=timezone.utc)
 UNSET_WALL_TIMES = frozenset({'1970-01-01 00:00:00', '1969-12-31 23:59:59'})
 NOTE_UNSET = 'time not set on the device (shown as printed)'
 NOTE_NO_ZONE = 'no time zone in the report: no UTC value'
@@ -88,6 +89,14 @@ PackageRecord = collections.namedtuple(
                      'code_path flags installer initiating originating package_source users_installed user_states line')
 # One printed package time, before it is converted: ``wall`` is the text as printed.
 PackageTime = collections.namedtuple('PackageTime', 'package event wall user installer block line resident')
+
+UsageEvent = collections.namedtuple('UsageEvent', 'section user time_text event_type package class_name flags extras line')
+ProcessExit = collections.namedtuple(
+    'ProcessExit', 'package entry stamp pid real_uid package_uid user process reason sub_reason status importance description line')
+Setting = collections.namedtuple(
+    'Setting', 'user namespace setting_id name writer value value_length default default_system_set preserved continuations line')
+SettingChange = collections.namedtuple('SettingChange', 'user namespace name time_text mode old_value new_value package caller line')
+BootEntry = collections.namedtuple('BootEntry', 'source position entry reason sub_reason epoch_text line')
 
 
 def tidy(value):
@@ -165,6 +174,27 @@ def parse_wall_time(text):
                         int(value[11:13]), int(value[14:16]), int(value[17:19]), micro)
     except ValueError:
         return None
+
+
+def epoch_ms_to_utc(milliseconds):
+    """A timezone-aware UTC datetime from epoch milliseconds, or None when out of range."""
+    try:
+        return UNIX_EPOCH + timedelta(milliseconds=int(milliseconds))
+    except (OverflowError, ValueError, TypeError):
+        return None
+
+
+def epoch_s_to_utc(seconds):
+    """A timezone-aware UTC datetime from epoch seconds, or None when out of range."""
+    try:
+        return UNIX_EPOCH + timedelta(seconds=int(seconds))
+    except (OverflowError, ValueError, TypeError):
+        return None
+
+
+def plausible_epoch_ms(milliseconds):
+    """True for 2009 to 2100. Rejects 0, small counters and garbage without guessing a unit."""
+    return 1230000000000 <= milliseconds <= 4102444800000
 
 
 class ZoneClock:
@@ -407,7 +437,6 @@ class Report:
         self.source = source
         self.total_lines = 0
         self.warnings = []
-        self.timeouts = {}            # service name -> milliseconds of the "DUMP TIMEOUT" marker printed inside it
         self.sections = []            # every preamble, command and service section, in the order printed
         self.sections_seen = set()    # names of the sections that a reader was run on
         self.report_wall = ''         # "== dumpstate:" time as printed
@@ -415,6 +444,12 @@ class Report:
         self.properties = {}          # property -> (value, line), for the properties that are reported
         self.packages = []
         self.package_times = []
+        self.usage_events = []
+        self.process_exits = []
+        self.settings = []
+        self.setting_changes = []
+        self.boot_entries = []
+        self.config_settings = {}     # user -> (entries, history entries) of the CONFIG SETTINGS table, counted and not listed
         self.zone_name = ''
         self.clock = ZoneClock('')
         self.factory_stamps = frozenset()
@@ -445,6 +480,44 @@ class Report:
 
     def report_utc(self):
         return self.clock.to_utc(self.report_wall)
+
+    def usage_time(self, text):
+        """UTC datetime or None for the time of a usage event: epoch milliseconds, or device wall-clock text.
+
+        A number outside 2009 to 2100 and a wall time before 2009 (the platform prints 1970-01-01 00:00:00, and on some
+        Android 10 builds 1973-08-29 05:00:27, for a time that was never set) get no UTC.
+        """
+        value = str(text).strip()
+        if value.isdigit():
+            milliseconds = int(value)
+            return epoch_ms_to_utc(milliseconds) if plausible_epoch_ms(milliseconds) else None
+        moment = parse_wall_time(value)
+        if moment is None or moment.year < 2009:
+            return None
+        return self.clock.to_utc(value)
+
+    def exit_time(self, text):
+        """UTC datetime or None for the ``timestamp=`` of an exit record (device wall clock with milliseconds)."""
+        moment = parse_wall_time(text)
+        if moment is None or moment.year < 2009:
+            return None
+        return self.clock.to_utc(text)
+
+    def setting_change_time(self, text):
+        """``(wall text with a year, UTC datetime or None)`` for a change time printed as ``MM-DD HH:MM:SS.mmm``.
+
+        The year is not printed: it is the latest year, this one or the one before, that does not put the change
+        after the report time.
+        """
+        reference = parse_wall_time(self.report_wall)
+        if reference is None or len(text) < 14:
+            return '', None
+        for year in (reference.year, reference.year - 1):
+            full = '%04d-%s' % (year, text)
+            moment = parse_wall_time(full)
+            if moment is not None and moment <= reference + timedelta(days=1):
+                return full, self.clock.to_utc(full)
+        return '', None
 
     def time_value(self, text):
         """``(UTC datetime or None, note)`` for a device wall time printed in the report."""
@@ -477,6 +550,8 @@ class Section:
         self.group = group      # a command that runs the dumpsys binary and holds service sections
         self.end_line = 0
         self.duration = None    # seconds, when the text prints the duration line of the section
+        self.timeout_ms = None  # the milliseconds of a "DUMP TIMEOUT" marker printed inside the service: the platform cut it
+        self.timeout_ms = None  # the milliseconds of a "DUMP TIMEOUT" marker printed inside the service: the platform cut it
 
 
 class SectionReader:
@@ -519,6 +594,22 @@ class PreambleReader(SectionReader):
                                           'header', line_no))
 
 
+BOOT_PROPERTIES = ('sys.boot.reason', 'sys.boot.reason.last', 'ro.boot.bootreason', 'persist.sys.boot.reason',
+                   'sys.reset_reason')
+BOOT_HISTORY = 'persist.sys.boot.reason.history'
+MAX_BOOT_HISTORY = 500
+
+
+def boot_history_entry(position, line_no, text):
+    """A ``reason,subreason,epoch seconds`` entry of the boot reason history as a BootEntry."""
+    entry = text.strip()
+    parts = [part.strip() for part in entry.split(',')]
+    stamp = to_int(parts[-1]) if len(parts) > 1 else None
+    words = parts[:-1] if stamp is not None else parts
+    return BootEntry(BOOT_HISTORY, position, tidy(entry)[:160], tidy(words[0] if words else '')[:60],
+                     tidy(','.join(words[1:]))[:120], str(stamp) if stamp is not None else '', line_no)
+
+
 class PropertiesReader(SectionReader):
     """``getprop`` output: ``[name]: [value]``. A value can continue over several lines."""
     kind = 'command'
@@ -527,23 +618,32 @@ class PropertiesReader(SectionReader):
 
     def __init__(self, report, section):
         SectionReader.__init__(self, report, section)
-        self.pending = None           # (name, first line number, value lines)
+        self.pending = None           # (name, [(line number, text), ...])
 
-    def _store(self, name, line_no, value):
+    def _store(self, name, lines):
+        first = lines[0][0]
         if name in PROPERTY_ALLOW and name not in self.report.properties:
-            self.report.properties[name] = (value, line_no)
-            self.report.add('facts', Fact(name, tidy(value)[:400], 'getprop', line_no))
+            value = ' '.join(text for _line, text in lines)
+            self.report.properties[name] = (value, first)
+            self.report.add('facts', Fact(name, tidy(value)[:400], 'getprop', first))
+        if name in BOOT_PROPERTIES:
+            self.report.add('boot_entries', BootEntry(name, None, tidy(' '.join(text for _line, text in lines))[:160], '', '',
+                                                      '', first))
+        elif name == BOOT_HISTORY:
+            kept = [(line_no, text) for line_no, text in lines if text.strip()][:MAX_BOOT_HISTORY]
+            for position, (line_no, text) in enumerate(kept):
+                self.report.add('boot_entries', boot_history_entry(position, line_no, text))
 
     def feed(self, line_no, text):
         text = text.rstrip()
         if self.pending is not None:
-            self.pending[2].append(text)
-            if text.endswith(']') or len(self.pending[2]) > self.max_value_lines:
-                name, first, lines = self.pending
+            self.pending[1].append((line_no, text))
+            if text.endswith(']') or len(self.pending[1]) > self.max_value_lines:
+                name, lines = self.pending
                 self.pending = None
                 if text.endswith(']'):
-                    lines[-1] = text[:-1]
-                    self._store(name, first, ' '.join(lines))
+                    lines[-1] = (line_no, text[:-1])
+                    self._store(name, lines)
             return
         if not text.startswith('['):
             return
@@ -553,9 +653,9 @@ class PropertiesReader(SectionReader):
         name = text[1:close]
         value = text[close + 4:]
         if value.endswith(']'):
-            self._store(name, line_no, value[:-1])
+            self._store(name, [(line_no, value[:-1])])
         else:
-            self.pending = (name, line_no, [value])
+            self.pending = (name, [(line_no, value)])
 
 
 class PackageReader(SectionReader):
@@ -681,12 +781,324 @@ class PackageReader(SectionReader):
         self._close_package()
 
 
-READERS = [PreambleReader, PropertiesReader, PackageReader]
+class UsageReader(SectionReader):
+    """The ``Last 24 hour events`` list of each user in the usagestats dump (service form or checkin form)."""
+    label = ''
+
+    def __init__(self, report, section):
+        SectionReader.__init__(self, report, section)
+        self.user = None
+        self.in_events = False
+
+    def feed(self, line_no, text):
+        body = text.strip()
+        if not body:
+            return
+        indent = len(text) - len(text.lstrip(' '))
+        if indent == 0 and body.startswith('user=') and body.split()[0][5:].isdigit():
+            self.user = int(body.split()[0][5:])
+            self.in_events = False
+            return
+        if body.startswith('Last 24 hour events'):
+            self.in_events = True
+            return
+        if indent <= 2 and not body.startswith(('package=', 'timeRange=', 'beginTime=', 'time=')):
+            self.in_events = False      # any other heading closes the list
+            return
+        if self.in_events and body.startswith('time='):
+            values = key_values(body)
+            extras = ' '.join('%s=%s' % (key, value) for key, value in values.items()
+                              if key not in ('time', 'type', 'package', 'class', 'flags'))
+            self.report.add('usage_events', UsageEvent(
+                self.label, self.user, tidy(values.get('time', '')), tidy(values.get('type', '')),
+                tidy(values.get('package', '')), tidy(values.get('class', '')), tidy(values.get('flags', '')),
+                tidy(extras)[:400], line_no))
+
+
+class UsageServiceReader(UsageReader):
+    kind = 'service'
+    name = 'usagestats'
+    label = 'DUMP OF SERVICE usagestats'
+
+
+class UsageCheckinReader(UsageReader):
+    kind = 'command'
+    name = 'CHECKIN USAGESTATS'
+    label = 'CHECKIN USAGESTATS'
+
+
+def _between(text, left, right):
+    """The text after the first ``left`` and before the next ``right`` (to the end when ``right`` is missing)."""
+    start = text.find(left)
+    if start < 0:
+        return ''
+    start += len(left)
+    stop = text.find(right, start) if right else -1
+    return text[start:stop if stop >= 0 else len(text)]
+
+
+class ExitInfoReader(SectionReader):
+    """``ApplicationExitInfo #N`` entries of the ACTIVITY MANAGER PROCESS EXIT INFO part of the activity dump."""
+    kind = 'service'
+    name = 'activity'
+
+    def __init__(self, report, section):
+        SectionReader.__init__(self, report, section)
+        self.active = False
+        self.package = ''
+        self.entry = None
+
+    def _flush(self):
+        entry = self.entry
+        self.entry = None
+        if entry is not None:
+            self.report.add('process_exits', ProcessExit(
+                tidy(self.package), entry['index'], entry['stamp'], entry['pid'], entry['real_uid'], entry['package_uid'],
+                entry['user'], entry['process'], entry['reason'], entry['sub_reason'], entry['status'],
+                entry['importance'], entry['description'], entry['line']))
+
+    def feed(self, line_no, text):
+        body = text.strip()
+        if not body:
+            return
+        indent = len(text) - len(text.lstrip(' '))
+        if indent == 0 and body.startswith('ACTIVITY MANAGER'):
+            self._flush()
+            self.active = body.startswith('ACTIVITY MANAGER PROCESS EXIT INFO')
+            return
+        if not self.active:
+            return
+        if indent == 2 and body.startswith('package: '):
+            self._flush()
+            self.package = body[len('package: '):].strip()
+            return
+        if body.startswith('ApplicationExitInfo #'):
+            self._flush()
+            self.entry = {'index': to_int(_between(body, '#', ':')), 'stamp': '', 'pid': None, 'real_uid': None,
+                          'package_uid': None, 'user': None, 'process': '', 'reason': '', 'sub_reason': '', 'status': '',
+                          'importance': None, 'description': '', 'line': line_no}
+            return
+        entry = self.entry
+        if entry is None:
+            return
+        values = key_values(body)
+        if body.startswith('timestamp='):
+            entry['stamp'] = tidy(' '.join(body[len('timestamp='):].split(' ')[:2]))
+            entry['pid'], entry['real_uid'] = to_int(values.get('pid')), to_int(values.get('realUid'))
+            entry['package_uid'], entry['user'] = to_int(values.get('packageUid')), to_int(values.get('user'))
+        elif body.startswith('process='):
+            entry['process'] = tidy(values.get('process', ''))
+            entry['reason'] = tidy(_between(body, ' reason=', ' subreason=') if ' subreason=' in body
+                                   else _between(body, ' reason=', ' status='))
+            entry['sub_reason'] = tidy(_between(body, ' subreason=', ' status='))
+            entry['status'] = tidy(values.get('status', ''))
+        elif body.startswith('importance='):
+            entry['importance'] = to_int(values.get('importance'))
+            description = _between(body, ' description=', ' state=')
+            entry['description'] = '' if description == 'null' else tidy(description)
+
+    def finish(self):
+        self._flush()
+
+
+SETTING_TABLES = {'CONFIG SETTINGS': 'config', 'GLOBAL SETTINGS': 'global', 'SECURE SETTINGS': 'secure',
+                  'SYSTEM SETTINGS': 'system'}
+SETTING_TRAILERS = (' default:', ' defaultSystemSet:', ' isValuePreservedInRestore:', ' notPreservedInRestore')
+SETTING_VALUE_CHARS = 2000
+SETTING_CHANGE_CHARS = 400
+
+
+def _first_trailer(text):
+    best = -1
+    for token in SETTING_TRAILERS:
+        index = text.find(token)
+        if index >= 0 and (best < 0 or index < best):
+            best = index
+    return best
+
+
+def _bool_text(text):
+    return {'true': 'true', 'false': 'false'}.get(text.strip(), '')
+
+
+def parse_setting_entry(first, extra):
+    """The fields of one ``_id:N name:KEY pkg:WRITER value:VALUE [default:D] ...`` entry, or None.
+
+    ``extra`` are the lines after the first that belong to the entry (a long value continues on them).
+    """
+    if not first.startswith('_id:'):
+        return None
+    name_at = first.find(' name:')
+    if name_at < 0:
+        return None
+    writer_at = first.find(' pkg:', name_at + 1)
+    value_at = first.find(' value:', (writer_at if writer_at >= 0 else name_at) + 1)
+    found = {'id': to_int(first[4:name_at])}
+    key_end = writer_at if writer_at >= 0 else (value_at if value_at >= 0 else len(first))
+    found['name'] = first[name_at + len(' name:'):key_end].strip()
+    found['writer'] = (first[writer_at + len(' pkg:'):(value_at if value_at >= 0 else len(first))].strip()
+                       if writer_at >= 0 else '')
+    rest = first[value_at + len(' value:'):] if value_at >= 0 else ''
+    zone = ' ' + rest          # a leading space lets an empty value ("value: default: ...") find its trailer at index 0
+    trailer = _first_trailer(zone)
+    if trailer >= 0:
+        value, tail = zone[1:trailer], zone[trailer:]
+        tail += ''.join(' ' + line.strip() for line in extra)
+    elif extra:
+        # no trailing token on the first line: the value contains line breaks. The platform prints the trailing tokens after
+        # the last chunk of the value, so they are on the last line; the same words earlier in the value belong to it.
+        # A line break inside the value is shown as one space.
+        chunks = [rest] + [line.strip() for line in extra[:-1]]
+        last = ' ' + extra[-1].lstrip()
+        at = _first_trailer(last)
+        if at >= 0:
+            chunks.append(last[1:at])
+            tail = last[at:]
+        else:
+            chunks.append(last[1:])
+            tail = ''
+        value = ' '.join(chunks)
+    else:
+        value, tail = rest, ''
+    found['value'] = value
+    found['continuations'] = len(extra)
+    default = None
+    at = tail.find(' default:')
+    if at >= 0:
+        after = tail[at + len(' default:'):]
+        stop = min([i for i in (after.find(' defaultSystemSet:'), after.find(' isValuePreservedInRestore:'),
+                                after.find(' notPreservedInRestore')) if i >= 0], default=len(after))
+        default = after[:stop]
+    found['default'] = default
+    at = tail.find(' defaultSystemSet:')
+    found['default_system_set'] = _bool_text(tail[at + len(' defaultSystemSet:'):].split(' ', 1)[0]) if at >= 0 else ''
+    at = tail.find(' isValuePreservedInRestore:')
+    if at >= 0:
+        found['preserved'] = _bool_text(tail[at + len(' isValuePreservedInRestore:'):].split(' ', 1)[0])
+    else:
+        found['preserved'] = 'false' if ' notPreservedInRestore' in tail else ''
+    return found
+
+
+def _history_fields(text):
+    """``time:10-25 03:07:36.010 mode:update oldValue:A newValue:B package:P caller:C`` as a dict."""
+    marks = [('mode', ' mode:'), ('old', ' oldValue:'), ('new', ' newValue:'), ('package', ' package:'), ('caller', ' caller:')]
+    positions = []
+    for name, token in marks:
+        index = text.find(token)
+        if index >= 0:
+            positions.append((index, name, token))
+    positions.sort()
+    found = {'time': text[len('time:'):positions[0][0]].strip() if positions else text[len('time:'):].strip()}
+    for number, (index, name, token) in enumerate(positions):
+        stop = positions[number + 1][0] if number + 1 < len(positions) else len(text)
+        found[name] = text[index + len(token):stop]
+    return found
+
+
+class SettingsReader(SectionReader):
+    """The SettingsProvider tables of the settings dump (global, secure, system; per user) and their change history."""
+    kind = 'service'
+    name = 'settings'
+
+    def __init__(self, report, section):
+        SectionReader.__init__(self, report, section)
+        self.namespace = ''
+        self.user = None
+        self.generation = False
+        self.pending = None
+        self.extra = []
+        self.history_key = ''
+        self.table_entries = 0
+        self.table_history = 0
+
+    def _flush(self):
+        if self.pending is None:
+            return
+        first, line_no = self.pending
+        found = parse_setting_entry(first, self.extra)
+        self.pending = None
+        self.extra = []
+        if found is None:
+            self.report.warn('settings: unreadable entry at line %d' % line_no)
+            return
+        self.table_entries += 1
+        if self.namespace == 'config':
+            return          # counted, not listed
+        value = found['value']
+        default = found['default']
+        self.report.add('settings', Setting(
+            self.user, self.namespace, found['id'], tidy(found['name']), tidy(found['writer']),
+            tidy(value[:SETTING_VALUE_CHARS]), 0 if value.strip() == '{null}' else len(value), '' if default is None else tidy(default[:SETTING_VALUE_CHARS]),
+            found['default_system_set'], found['preserved'], found['continuations'], line_no))
+
+    def _close_table(self):
+        self._flush()
+        if self.namespace == 'config':
+            entries, history = self.report.config_settings.get(self.user, (0, 0))
+            self.report.config_settings[self.user] = (entries + self.table_entries, history + self.table_history)
+
+    def feed(self, line_no, text):
+        body = text.strip()
+        if not body:
+            return
+        head, paren, tail = body.partition(' (user ')
+        if paren and head in SETTING_TABLES and tail.endswith(')'):
+            self._close_table()
+            self.namespace = SETTING_TABLES[head]
+            self.user = to_int(tail[:-1])
+            self.table_entries = self.table_history = 0
+            self.history_key = ''
+            self.generation = False
+            return
+        if body == 'GENERATION REGISTRY':
+            self._close_table()
+            self.namespace = ''
+            self.generation = True
+            return
+        if self.generation or not self.namespace:
+            return
+        if text.startswith('_id:'):
+            self._flush()
+            self.pending = (text.rstrip('\r'), line_no)
+            self.extra = []
+            self.history_key = ''
+            return
+        if body.startswith('version:') and self.pending is None:
+            return
+        if body.startswith('History (') and body.endswith(')'):
+            self._flush()
+            self.history_key = body[len('History ('):-1]
+            return
+        if body.startswith('time:') and self.history_key:
+            self.table_history += 1
+            if self.namespace != 'config':
+                found = _history_fields(body)
+                self.report.add('setting_changes', SettingChange(
+                    self.user, self.namespace, tidy(self.history_key), tidy(found.get('time', '')), tidy(found.get('mode', '')),
+                    tidy(found.get('old', ''))[:SETTING_CHANGE_CHARS], tidy(found.get('new', ''))[:SETTING_CHANGE_CHARS],
+                    tidy(found.get('package', '')), tidy(found.get('caller', ''))[:200], line_no))
+            return
+        if self.pending is not None and not body.startswith(('Unknown argument', 'Service host process', 'Threads in use',
+                                                             'Client PIDs')):
+            self.extra.append(text.rstrip('\r'))
+
+    def finish(self):
+        self._close_table()
+        self.namespace = ''
+
+
+READERS = [PreambleReader, PropertiesReader, PackageReader, UsageServiceReader, UsageCheckinReader, ExitInfoReader,
+           SettingsReader]
 # Which artifacts present each section, for the section index.
 READ_BY = {
     ('preamble', 'preamble'): 'Device Facts',
-    ('command', 'SYSTEM PROPERTIES'): 'Device Facts',
+    ('command', 'SYSTEM PROPERTIES'): 'Device Facts; Boot Reasons',
     ('service', 'package'): 'Installed Packages; Package Times',
+    ('service', 'usagestats'): 'Usage Events',
+    ('command', 'CHECKIN USAGESTATS'): 'Usage Events',
+    ('service', 'activity'): 'Process Exit Info',
+    ('service', 'settings'): 'Settings; Settings Changes',
 }
 
 
@@ -777,7 +1189,7 @@ def scan_lines(raw_lines, report):
             if text.startswith("*** SERVICE '") and ' DUMP TIMEOUT (' in text:
                 milliseconds = text.partition(' DUMP TIMEOUT (')[2].partition('ms)')[0]
                 if state['svc'] is not None and milliseconds.isdigit():
-                    report.timeouts[state['svc'].name] = int(milliseconds)
+                    state['svc'].timeout_ms = int(milliseconds)
             elif text.startswith('--------- ') and ' was the duration of dumpsys ' in text:
                 name = text.partition(' was the duration of dumpsys ')[2].partition(', ending at: ')[0].strip()
                 if state['svc'] is not None and state['svc'].name == name:
@@ -870,8 +1282,13 @@ def load_reports(paths, relative_path, log):
         messages.extend('Bug report %s: %s' % (os.path.basename(label), warning) for warning in report.warnings)
         loaded.append((label, report))
     for message in messages:
-        if message not in _LOGGED:       # the artifacts of one run read the same files: say each thing once
-            _LOGGED.add(message)
-            log(message)
+        say_once(log, message)
     return loaded
+
+
+def say_once(log, message):
+    """Pass a message to ``log`` unless this run has said it already (the artifacts of one run read the same files)."""
+    if message not in _LOGGED:
+        _LOGGED.add(message)
+        log(message)
 

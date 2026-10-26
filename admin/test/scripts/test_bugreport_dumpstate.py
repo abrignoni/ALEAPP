@@ -145,7 +145,8 @@ class ScannerTests(unittest.TestCase):
         report = scan_text(text[:len(text) // 2])
         self.assertTrue(report.packages)
         self.assertTrue(all(p.package for p in report.packages))
-        self.assertEqual(scan_text(text).timeouts, {'package': 10000})
+        cut = [s for s in scan_text(text).sections if s.timeout_ms]
+        self.assertEqual([(s.name, s.timeout_ms) for s in cut], [('package', 10000)])
         report = scan_text(text[:-37])                                   # cut inside the last line, no newline at the end
         self.assertTrue(report.packages)
 
@@ -414,12 +415,13 @@ class ArtifactTests(unittest.TestCase):
         _headers, rows, _source = self.run_artifact(device.bugreport_sections, path)
         by_name = {row[0]: row for row in rows}
         self.assertEqual(by_name['preamble'][1], 'header')
-        self.assertEqual(by_name['preamble'][6], 'Device Facts')
+        self.assertEqual(by_name['preamble'][7], 'Device Facts')
         self.assertEqual(by_name['package'][1], 'dumpsys service')
         self.assertEqual(by_name['package'][5], 0.321)
-        self.assertEqual(by_name['package'][6], 'Installed Packages; Package Times')
+        self.assertEqual(by_name['package'][6], None)
+        self.assertEqual(by_name['package'][7], 'Installed Packages; Package Times')
         self.assertEqual(by_name['DUMPSYS CRITICAL'][1], 'dumpsys group')
-        self.assertEqual(by_name['settings'][6], 'not read')
+        self.assertEqual(by_name['DUMPSYS'][7], 'not read')
         self.assertTrue(all(row[3] >= row[2] for row in rows))
 
     def test_package_times_rows(self):
