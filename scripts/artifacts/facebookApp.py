@@ -2,10 +2,11 @@
 Parses Android Facebook application (com.facebook.katana) artifacts.
 
 These are stores belonging to the Facebook app itself. The messaging mailbox the app
-shares with Messenger is read by FacebookMessenger.py and is not repeated here. The one
-exception is the contacts store, android_facebook_contacts_db, which also exists under the
-same name in Messenger's (com.facebook.orca) databases directory, with every column read
-here; the two contacts artifacts read both copies and report which app each row came from.
+shares with Messenger is read by FacebookMessenger.py and is not repeated here. Two
+exceptions are the contacts store, android_facebook_contacts_db, and the preference store,
+prefs_db, which also exist under the same names in Messenger's (com.facebook.orca)
+databases directory, with every column read here; the contacts and preferences artifacts
+read both copies and report which app each row came from.
 """
 
 import base64
@@ -255,40 +256,57 @@ __artifacts_v2__ = {
     },
     "facebookAppPreferences": {
         "name": "Facebook - Preferences",
-        "description": "Key and value pairs from the Facebook app preference store "
-                       "(prefs_db, preferences table).",
+        "description": "Key and value pairs from the preference store of the Facebook app "
+                       "and of Messenger (prefs_db, preferences table), with the app the "
+                       "store belongs to.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-20",
-        "last_update_date": "2026-08-20",
+        "last_update_date": "2026-10-25",
         "requirements": "none",
         "category": "Facebook",
-        "notes": "Every row in the table is reported rather than a selected subset, so nothing "
-                 "is filtered out by this module's choices. On "
-                 "sharon_a13 896 rows carried 327 keys under logged_in_user_scoped, 116 under "
-                 "config and 88 under ras_blobs, and the remainder were spread across smaller "
-                 "groups. The stored type integer is reported as stored. Values are reported as "
-                 "written by the app and are not interpreted.",
-        "paths": ('*/com.facebook.katana/databases/prefs_db*',),
+        "notes": "Every row of each store's preferences table is reported rather than a "
+                 "selected subset, so nothing is filtered out by this module's choices. Messenger "
+                 "(com.facebook.orca) holds a database of the same name and schema under its "
+                 "own databases directory, and both are read. The App column holds the "
+                 "package directory the database was found in, and is needed because the two "
+                 "apps keep separate stores that share key names: on sharon_a14 272 keys "
+                 "appeared in both, and 142 of them held a different value in each. On the "
+                 "eleven corpus images checked that hold a Messenger copy, it held 420 to 661 "
+                 "rows. On pixel3_a11, pixel3_a12, pixel7a_a14 and hickman_a13 only a "
+                 "Messenger copy was present, so App held com.facebook.orca on every row; on "
+                 "galaxys10_a10, s20fe_a13, kevin_pocox7_a15 and adams_ss135dl_a13 only a "
+                 "Facebook app copy was present, so App held com.facebook.katana on every row. "
+                 "App does not tell Android users apart: on samsungs20_a13 a second Facebook "
+                 "app copy under user 150 added 216 rows that also carry com.facebook.katana. "
+                 "On sharon_a13 the Facebook app's 896 rows carried 327 keys under "
+                 "logged_in_user_scoped, 116 under config and 88 under ras_blobs, and the "
+                 "remainder were spread across smaller groups. The stored type integer is "
+                 "reported as stored. Values are reported as written by the app and are not "
+                 "interpreted.",
+        "paths": ('*/com.facebook.katana/databases/prefs_db*',
+                  '*/com.facebook.orca/databases/prefs_db*'),
         "output_types": "standard",
         "artifact_icon": "settings",
         "sample_data": {
             "galaxys10_a10": "Android 10 | 203 rows",
-            "cookbook_a11": "Android 11 | 1018 rows",
-            "pixel3_a11": "Android 11 | 0 rows",
-            "pixel3_a12": "Android 12 | 0 rows",
+            "cookbook_a11": "Android 11 | 1499 rows",
+            "pixel3_a11": "Android 11 | 661 rows",
+            "pixel3_a12": "Android 12 | 556 rows",
+            "adams_ss135dl_a13": "Android 13 | 78 rows",
+            "hickman_a13": "Android 13 | 494 rows",
             "russell_pixel6a_a13": "Android 13 | 0 rows",
             "s20fe_a13": "Android 13 | 75 rows",
-            "samsungs20_a13": "Android 13 | 1128 rows",
-            "sharon_a13": "Android 13 | 896 rows",
+            "samsungs20_a13": "Android 13 | 1548 rows",
+            "sharon_a13": "Android 13 | 1414 rows",
             "userb2_a13": "Android 13 | 0 rows",
-            "pixel7a_a14": "Android 14 | 0 rows",
+            "pixel7a_a14": "Android 14 | 607 rows",
             "russell_a14": "Android 14 | 0 rows",
             "samsunga53_a14": "Android 14 | 0 rows",
-            "sharon_a14": "Android 14 | 1130 rows",
-            "anne_a15": "Android 15 | 1039 rows",
+            "sharon_a14": "Android 14 | 1674 rows",
+            "anne_a15": "Android 15 | 1556 rows",
             "kevin_pocox7_a15": "Android 15 | 215 rows",
-            "hc_pixel8pro_a16": "Android 16 | 1172 rows",
-            "hc_pixel8pro_a17": "Android 17 | 1069 rows",
+            "hc_pixel8pro_a16": "Android 16 | 1720 rows",
+            "hc_pixel8pro_a17": "Android 17 | 1559 rows",
         },
     },
 }
@@ -323,7 +341,7 @@ def _matching(context, pattern):
             and re.search(pattern, os.path.basename(str(p)))]
 
 
-_CONTACTS_APPS = ('com.facebook.katana', 'com.facebook.orca')
+_FB_APPS = ('com.facebook.katana', 'com.facebook.orca')
 
 
 def _app(context, path):
@@ -331,7 +349,7 @@ def _app(context, path):
     path so a folder name above the extraction cannot be mistaken for it."""
     segments = re.split(r'[\\/]', str(context.get_relative_path(str(path))))
     for segment in reversed(segments):
-        if segment in _CONTACTS_APPS:
+        if segment in _FB_APPS:
             return segment
     return ''
 
@@ -466,8 +484,9 @@ def facebookAppPreferences(context):
     source_paths = []
     for path in _matching(context, r'^prefs_db$'):
         source_paths.append(str(path))
+        app = _app(context, path)
         for key, value, stored_type in _rows(path, '''
                 SELECT key, value, type FROM preferences ORDER BY key'''):
-            data_list.append((key, value, stored_type))
-    data_headers = ('Key', 'Value', 'Type (as stored)')
+            data_list.append((app, key, value, stored_type))
+    data_headers = ('App', 'Key', 'Value', 'Type (as stored)')
     return data_headers, data_list, '\n'.join(source_paths)
