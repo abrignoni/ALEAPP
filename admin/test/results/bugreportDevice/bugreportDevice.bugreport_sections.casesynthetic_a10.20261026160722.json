@@ -1,0 +1,125 @@
+{
+  "metadata": {
+    "module_name": "bugreportDevice",
+    "artifact_name": "Bug Report - Sections",
+    "function_name": "bugreport_sections",
+    "case_number": "casesynthetic_a10",
+    "number_of_columns": 9,
+    "number_of_rows": 8,
+    "total_data_size_bytes": 869,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportDevice/testdata.bugreportDevice.bugreport_sections.casesynthetic_a10.zip",
+    "start_time": "2026-10-26T16:07:22.603634+00:00",
+    "end_time": "2026-10-26T16:07:22.621112+00:00",
+    "run_time_seconds": 0.0028209686279296875,
+    "last_commit": {
+      "hash": "abeb545a0e559c0c512cc6164dc977a4965a493d",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T01:07:43-04:00",
+      "message": "Bug report notes: name the empty Timeout Marker column and the uniform Boot Reasons columns"
+    }
+  },
+  "headers": [
+    "Section",
+    "Kind",
+    "Start Line",
+    "Last Line",
+    "Lines",
+    "Printed Duration (s)",
+    "Timeout Marker (ms)",
+    "Read By",
+    "Source File"
+  ],
+  "data": [
+    [
+      "preamble",
+      "header",
+      1,
+      16,
+      16,
+      null,
+      null,
+      "Device Facts",
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "SYSTEM PROPERTIES",
+      "command",
+      17,
+      43,
+      26,
+      0.05,
+      null,
+      "Device Facts; Boot Reasons",
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "DUMPSYS CRITICAL",
+      "dumpsys group",
+      46,
+      1026,
+      980,
+      0.5,
+      null,
+      "not read",
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "package",
+      "dumpsys service",
+      48,
+      1024,
+      976,
+      0.321,
+      null,
+      "Installed Packages; Package Times",
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "DUMPSYS",
+      "dumpsys group",
+      1029,
+      1077,
+      48,
+      0.9,
+      null,
+      "not read",
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "settings",
+      "dumpsys service",
+      1030,
+      1051,
+      21,
+      0.08,
+      null,
+      "Settings; Settings Changes",
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "usagestats",
+      "dumpsys service",
+      1054,
+      1075,
+      21,
+      0.044,
+      null,
+      "Usage Events",
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "CHECKIN USAGESTATS",
+      "command",
+      1080,
+      1096,
+      16,
+      0.346,
+      null,
+      "Usage Events",
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

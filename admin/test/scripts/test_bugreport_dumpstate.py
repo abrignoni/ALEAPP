@@ -501,7 +501,7 @@ class ArtifactTests(unittest.TestCase):
         self.assertEqual(by_name['package'][6], None)
         self.assertEqual(by_name['package'][7], 'Installed Packages; Package Times')
         self.assertEqual(by_name['DUMPSYS CRITICAL'][1], 'dumpsys group')
-        self.assertEqual(by_name['settings'][7], 'not read')
+        self.assertEqual(by_name['DUMPSYS'][7], 'not read')
         self.assertTrue(all(row[3] >= row[2] for row in rows))
 
     def test_package_times_rows(self):

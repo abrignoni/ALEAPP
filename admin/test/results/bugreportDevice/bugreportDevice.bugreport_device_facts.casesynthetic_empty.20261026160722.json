@@ -1,0 +1,54 @@
+{
+  "metadata": {
+    "module_name": "bugreportDevice",
+    "artifact_name": "Bug Report - Device Facts",
+    "function_name": "bugreport_device_facts",
+    "case_number": "casesynthetic_empty",
+    "number_of_columns": 5,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 216,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportDevice/testdata.bugreportDevice.bugreport_device_facts.casesynthetic_empty.zip",
+    "start_time": "2026-10-26T16:07:22.951788+00:00",
+    "end_time": "2026-10-26T16:07:22.967161+00:00",
+    "run_time_seconds": 0.0003540515899658203,
+    "last_commit": {
+      "hash": "abeb545a0e559c0c512cc6164dc977a4965a493d",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T01:07:43-04:00",
+      "message": "Bug report notes: name the empty Timeout Marker column and the uniform Boot Reasons columns"
+    }
+  },
+  "headers": [
+    "Fact",
+    "Value",
+    "Origin",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Report time (as printed)",
+      "2026-11-02 10:15:30",
+      "header",
+      2,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Report time (UTC)",
+      "",
+      "derived",
+      null,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Time zone used for UTC values",
+      "none: the report records no usable time zone",
+      "derived",
+      null,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}
