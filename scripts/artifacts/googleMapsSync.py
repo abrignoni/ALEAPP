@@ -2,8 +2,8 @@ __artifacts_v2__ = {
     "googleMapsSyncPlaces": {
         "name": "Google Maps Sync - Places",
         "description": "Place records from the sync_item_data table of Google Maps' gmm_sync.db, "
-                       "corpus 11 and 14: the stored timestamp, name or label text, address, "
-                       "coordinates and stored id decoded from each record's item_proto.",
+                       "corpus 11 and 14: the row's timestamp and coordinates, and the name or label "
+                       "text, address and stored id decoded from each record's item_proto.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
@@ -17,22 +17,25 @@ __artifacts_v2__ = {
                  "the 5 tested corpus 14 records that carry field 10 of the place message (seconds and "
                  "nanos) it equalled that value. Latitude and Longitude are latitude_e6 and longitude_e6 divided "
                  "by 1,000,000; on every tested record that also carries coordinates inside item_proto, "
-                 "as doubles at 5.4.3 and 5.4.4 (corpus 11) or 2.6.3 and 2.6.4 of the place message "
+                 "as 64-bit fields read as doubles at 5.4.3 and 5.4.4 (corpus 11) or 2.6.3 and 2.6.4 of the place message "
                  "(corpus 14), the two readings agreed. Corpus 11: Address is item_proto field 5.3 and "
                  "Label Code (as stored) is field 1.1, observed as 0, 1, 3, 4 and 5; what the codes mean "
                  "is not established. Label Text is field 3, present only on the 2 tested rows with code "
-                 "3. Name and ID (as stored) were blank on every corpus 11 row. Corpus 14: the place "
+                 "3. Name and ID (as stored) are read only from corpus 14 records and are blank on "
+                 "corpus 11 rows. Corpus 14: the place "
                  "message is item_proto field 1, or field 1.1 in the layout seen on hc_pixel8pro_a16 and "
                  "hc_pixel8pro_a17; Name is its field 3, Address its field 2.5 and ID (as stored) its field "
                  "2.8, a string beginning /g/ on the 4 tested rows that carry it; the 2 rows in the newer "
-                 "layout carried none. Label Text was blank on every corpus 14 row. Client ID is client_id "
+                 "layout carried none. Label Text is read only from corpus 11 records and is blank on "
+                 "corpus 14 rows. Client ID is client_id "
                  "as stored. Android User is the user whose app data folder holds the database; the same "
                  "database under data/data and data/user/0 is read once. Not reported: corpus 13 records, "
-                 "which hold list names: the same list names appeared on all 16 tested images that hold "
-                 "them and one other name on one image, and no field was found that tells a list a user "
+                 "which hold list names: four list names appeared on all 16 tested images that hold "
+                 "corpus 13 records, one more on 14 of them, one on 5, and two names on one image each, "
+                 "and no field was found that tells a list a user "
                  "created from one present on every account; corpus 6 records, which hold integer fields "
-                 "only; and the sync_corpus_metadata and sync_metadata tables, which hold sync tokens and "
-                 "counters. A constructed tree with the database under data/data, data/user/0 and "
+                 "only; and the sync_corpus_metadata and sync_metadata tables, which hold sync tokens, a "
+                 "provider number and last sync times. A constructed tree with the database under data/data, data/user/0 and "
                  "data/user/10 and a decoy copy under another package returned the user 0 rows once, the "
                  "user 10 rows separately, and nothing from the decoy. A text field the decoder does not "
                  "return as bytes is left blank and counted in the run log; none was on the tested images.",
@@ -58,8 +61,8 @@ __artifacts_v2__ = {
     "googleMapsSyncPeople": {
         "name": "Google Maps Sync - People",
         "description": "Records of corpus 1 of the sync_item_data table of Google Maps' gmm_sync.db: "
-                       "the stored timestamp, display name, photo URL and numeric id decoded from "
-                       "each record's item_proto.",
+                       "the row's timestamp, and the display name, photo URL and numeric id decoded "
+                       "from each record's item_proto.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
