@@ -526,7 +526,7 @@ Registered HCE-F services for current user:
         self.assertIn('USB Manager State', names['usb'])
         self.assertIn('Telephony State Machine Records', names['isms'])
         self.assertEqual(names['RADIO LOG'], 'Radio Log State Lines')
-        self.assertEqual(names['SYSTEM PROPERTIES'], 'Device Facts; Boot Reasons')       # the shared entries are kept
+        self.assertEqual(names['SYSTEM PROPERTIES'], 'Device Facts; Device Identifiers; Boot Reasons')       # the shared entries are kept
 
 
 if __name__ == '__main__':
