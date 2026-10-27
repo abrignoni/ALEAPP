@@ -1,5 +1,6 @@
 {
   "**/oruxmaps/tracklogs/oruxmapstracks.db*": "pre-existing when the anchor check was added; matched nothing on the corpora measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12, breadth unestablished",
+  "*/system/locksettings.db*": "shared or system location: no app data container in the path; measured 2026-10-26 on 22 registered Android corpora, one database per image under data/system or userdata/system",
   "**/system/notification_policy.xml": "shared or system location: no app data container in the path; measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
   "**/system/users/*/settings_secure.xml": "shared or system location: no app data container in the path; measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
   "**/system_ce/*/notification_history/history/*": "shared or system location: no app data container in the path; measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",

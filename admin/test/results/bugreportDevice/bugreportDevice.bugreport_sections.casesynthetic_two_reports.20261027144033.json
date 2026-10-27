@@ -6,13 +6,13 @@
     "case_number": "casesynthetic_two_reports",
     "number_of_columns": 9,
     "number_of_rows": 16,
-    "total_data_size_bytes": 1764,
+    "total_data_size_bytes": 1844,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/bugreportDevice/testdata.bugreportDevice.bugreport_sections.casesynthetic_two_reports.zip",
-    "start_time": "2026-10-26T20:53:00.616651+00:00",
-    "end_time": "2026-10-26T20:53:00.939998+00:00",
-    "run_time_seconds": 0.19318485260009766,
+    "start_time": "2026-10-27T14:40:33.263543+00:00",
+    "end_time": "2026-10-27T14:40:33.285557+00:00",
+    "run_time_seconds": 0.006895780563354492,
     "last_commit": {
       "hash": "34925548575444782d88efa5d8a4d0028005ceb2",
       "author_name": "danjethh",
@@ -41,7 +41,7 @@
       20,
       null,
       null,
-      "Device Facts",
+      "Device Facts; Device Identifiers",
       "Dump1/dumpstate.txt"
     ],
     [
@@ -52,7 +52,7 @@
       26,
       0.05,
       null,
-      "Device Facts; Boot Reasons",
+      "Device Facts; Device Identifiers; Boot Reasons",
       "Dump1/dumpstate.txt"
     ],
     [
@@ -129,7 +129,7 @@
       16,
       null,
       null,
-      "Device Facts",
+      "Device Facts; Device Identifiers",
       "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
     ],
     [
@@ -140,7 +140,7 @@
       26,
       0.05,
       null,
-      "Device Facts; Boot Reasons",
+      "Device Facts; Device Identifiers; Boot Reasons",
       "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
     ],
     [

@@ -6,13 +6,13 @@
     "case_number": "casesynthetic_a10",
     "number_of_columns": 9,
     "number_of_rows": 8,
-    "total_data_size_bytes": 1040,
+    "total_data_size_bytes": 1080,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/bugreportDevice/testdata.bugreportDevice.bugreport_sections.casesynthetic_a10.zip",
-    "start_time": "2026-10-26T20:52:55.570731+00:00",
-    "end_time": "2026-10-26T20:52:55.878540+00:00",
-    "run_time_seconds": 0.17554688453674316,
+    "start_time": "2026-10-27T14:40:33.224206+00:00",
+    "end_time": "2026-10-27T14:40:33.243263+00:00",
+    "run_time_seconds": 0.003564119338989258,
     "last_commit": {
       "hash": "34925548575444782d88efa5d8a4d0028005ceb2",
       "author_name": "danjethh",
@@ -41,7 +41,7 @@
       16,
       null,
       null,
-      "Device Facts",
+      "Device Facts; Device Identifiers",
       "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
     ],
     [
@@ -52,7 +52,7 @@
       26,
       0.05,
       null,
-      "Device Facts; Boot Reasons",
+      "Device Facts; Device Identifiers; Boot Reasons",
       "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
     ],
     [

@@ -6,13 +6,13 @@
     "case_number": "casesynthetic_zip_on_device",
     "number_of_columns": 9,
     "number_of_rows": 8,
-    "total_data_size_bytes": 1740,
+    "total_data_size_bytes": 1780,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/bugreportDevice/testdata.bugreportDevice.bugreport_sections.casesynthetic_zip_on_device.zip",
-    "start_time": "2026-10-26T20:53:01.944789+00:00",
-    "end_time": "2026-10-26T20:53:02.253024+00:00",
-    "run_time_seconds": 0.17434430122375488,
+    "start_time": "2026-10-27T14:40:33.243824+00:00",
+    "end_time": "2026-10-27T14:40:33.263007+00:00",
+    "run_time_seconds": 0.004227161407470703,
     "last_commit": {
       "hash": "34925548575444782d88efa5d8a4d0028005ceb2",
       "author_name": "danjethh",
@@ -41,7 +41,7 @@
       20,
       null,
       null,
-      "Device Facts",
+      "Device Facts; Device Identifiers",
       "Dump/data/user_de/0/com.android.shell/files/bugreports/bugreport-example-2026-11-02-10-15-30.zip!/bugreport-example-EXAMPLE-2026-11-02-10-15-30.txt"
     ],
     [
@@ -52,7 +52,7 @@
       26,
       0.05,
       null,
-      "Device Facts; Boot Reasons",
+      "Device Facts; Device Identifiers; Boot Reasons",
       "Dump/data/user_de/0/com.android.shell/files/bugreports/bugreport-example-2026-11-02-10-15-30.zip!/bugreport-example-EXAMPLE-2026-11-02-10-15-30.txt"
     ],
     [

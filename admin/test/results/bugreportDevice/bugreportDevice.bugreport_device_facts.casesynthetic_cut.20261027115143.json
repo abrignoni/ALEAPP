@@ -3,22 +3,22 @@
     "module_name": "bugreportDevice",
     "artifact_name": "Bug Report - Device Facts",
     "function_name": "bugreport_device_facts",
-    "case_number": "casesynthetic_identifiers",
+    "case_number": "casesynthetic_cut",
     "number_of_columns": 5,
-    "number_of_rows": 61,
-    "total_data_size_bytes": 3972,
+    "number_of_rows": 33,
+    "total_data_size_bytes": 2174,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
-    "input_zip_path": "admin/test/cases/data/bugreportDevice/testdata.bugreportDevice.bugreport_device_facts.casesynthetic_identifiers.zip",
-    "start_time": "2026-10-26T20:13:27.796233+00:00",
-    "end_time": "2026-10-26T20:13:28.105946+00:00",
-    "run_time_seconds": 0.16413164138793945,
+    "input_zip_path": "admin/test/cases/data/bugreportDevice/testdata.bugreportDevice.bugreport_device_facts.casesynthetic_cut.zip",
+    "start_time": "2026-10-27T11:51:43.047739+00:00",
+    "end_time": "2026-10-27T11:51:43.063479+00:00",
+    "run_time_seconds": 0.002669095993041992,
     "last_commit": {
-      "hash": "d1aa88ec6597139a2e6c891969cef84a01cd6a2c",
+      "hash": "34925548575444782d88efa5d8a4d0028005ceb2",
       "author_name": "danjethh",
       "author_email": "danjethh@users.noreply.github.com",
-      "date": "2026-10-26T14:15:20-04:00",
-      "message": "Give each bug report topic group its own ALEAPP category"
+      "date": "2026-10-26T16:32:03-04:00",
+      "message": "Bug report artifacts: per-group categories, device identifiers as printed in Device Facts, invented fixture values"
     }
   },
   "headers": [
@@ -100,27 +100,6 @@
       "Dump/dumpstate.txt"
     ],
     [
-      "Command line",
-      "console=ttynull androidboot.serialno=SYNTH0000EXAMPLE androidboot.hardware=example",
-      "header",
-      14,
-      "Dump/dumpstate.txt"
-    ],
-    [
-      "androidboot.hardware",
-      "\"example\"",
-      "bootconfig",
-      15,
-      "Dump/dumpstate.txt"
-    ],
-    [
-      "androidboot.serialno",
-      "\"SYNTH0000EXAMPLE\"",
-      "bootconfig",
-      16,
-      "Dump/dumpstate.txt"
-    ],
-    [
       "Uptime",
       "up 0 weeks, 1 days, 2 hours, 3 minutes,  load average: 1.00, 1.00, 1.00",
       "header",
@@ -174,13 +153,6 @@
       "reboot",
       "getprop",
       31,
-      "Dump/dumpstate.txt"
-    ],
-    [
-      "ro.boot.serialno",
-      "SYNTH0000EXAMPLE",
-      "getprop",
-      32,
       "Dump/dumpstate.txt"
     ],
     [
@@ -254,13 +226,6 @@
       "Dump/dumpstate.txt"
     ],
     [
-      "ro.serialno",
-      "SYNTH0000EXAMPLE",
-      "getprop",
-      43,
-      "Dump/dumpstate.txt"
-    ],
-    [
       "sys.boot.reason",
       "reboot,userrequested",
       "getprop",
@@ -279,167 +244,6 @@
       "",
       "getprop",
       46,
-      "Dump/dumpstate.txt"
-    ],
-    [
-      "ro.vendor.boot.serialno",
-      "SYNTH0002EXAMPLE",
-      "getprop",
-      48,
-      "Dump/dumpstate.txt"
-    ],
-    [
-      "ro.boot.ap_serial",
-      "SYNTH0003EXAMPLE",
-      "getprop",
-      49,
-      "Dump/dumpstate.txt"
-    ],
-    [
-      "ro.ril.oem.sno",
-      "SYNTH0004EXAMPLE",
-      "getprop",
-      50,
-      "Dump/dumpstate.txt"
-    ],
-    [
-      "ro.ril.oem.psno",
-      "SYNTH0005EXAMPLE",
-      "getprop",
-      51,
-      "Dump/dumpstate.txt"
-    ],
-    [
-      "ro.ril.oem.imei",
-      "000000000000001",
-      "getprop",
-      52,
-      "Dump/dumpstate.txt"
-    ],
-    [
-      "ro.ril.oem.imei1",
-      "000000000000002",
-      "getprop",
-      53,
-      "Dump/dumpstate.txt"
-    ],
-    [
-      "ro.ril.oem.imei2",
-      "000000000000003",
-      "getprop",
-      54,
-      "Dump/dumpstate.txt"
-    ],
-    [
-      "ro.ril.oem.meid",
-      "00000000000004",
-      "getprop",
-      55,
-      "Dump/dumpstate.txt"
-    ],
-    [
-      "ro.product.imeisv",
-      "00",
-      "getprop",
-      56,
-      "Dump/dumpstate.txt"
-    ],
-    [
-      "ro.vendor.radio.imei.sv",
-      "00",
-      "getprop",
-      57,
-      "Dump/dumpstate.txt"
-    ],
-    [
-      "persist.radio.sim.iccid",
-      "00000000000000000001,00000000000000000002",
-      "getprop",
-      58,
-      "Dump/dumpstate.txt"
-    ],
-    [
-      "gsm.sim.preiccid_0",
-      "0000001",
-      "getprop",
-      59,
-      "Dump/dumpstate.txt"
-    ],
-    [
-      "gsm.sim.preiccid_1",
-      "0000002",
-      "getprop",
-      60,
-      "Dump/dumpstate.txt"
-    ],
-    [
-      "odm.gsm.sim.preiccid_0",
-      "0000003",
-      "getprop",
-      61,
-      "Dump/dumpstate.txt"
-    ],
-    [
-      "odm.gsm.sim.preiccid_1",
-      "0000004",
-      "getprop",
-      62,
-      "Dump/dumpstate.txt"
-    ],
-    [
-      "persist.odm.radio.preiccid_0",
-      "0000005",
-      "getprop",
-      63,
-      "Dump/dumpstate.txt"
-    ],
-    [
-      "persist.odm.radio.preiccid_1",
-      "0000006",
-      "getprop",
-      64,
-      "Dump/dumpstate.txt"
-    ],
-    [
-      "persist.vendor.radio.ss.hashed_last_iccid1",
-      "0123456789abcdef0123456789abcdef",
-      "getprop",
-      65,
-      "Dump/dumpstate.txt"
-    ],
-    [
-      "ro.boot.btmacaddr",
-      "00:00:5e:00:53:01",
-      "getprop",
-      66,
-      "Dump/dumpstate.txt"
-    ],
-    [
-      "ro.boot.wifimacaddr",
-      "00:00:5e:00:53:02,00:00:5e:00:53:03",
-      "getprop",
-      67,
-      "Dump/dumpstate.txt"
-    ],
-    [
-      "persist.sys.nearby.uuid",
-      "00000000-0000-4000-8000-000000000000",
-      "getprop",
-      68,
-      "Dump/dumpstate.txt"
-    ],
-    [
-      "ro.quick_start.device_id",
-      "ex-0001",
-      "getprop",
-      69,
-      "Dump/dumpstate.txt"
-    ],
-    [
-      "sys.fingerprint.deviceId",
-      "7",
-      "getprop",
-      70,
       "Dump/dumpstate.txt"
     ],
     [
