@@ -103,6 +103,23 @@ class WalRecoveryPathTest(unittest.TestCase):
         removed = telegramAndroid._removed_messages(path, {(1, 7)})  # pylint: disable=protected-access
         self.assertEqual([(row[0], row[1]) for row, _method, _location in removed], [(2, 7)])
 
+    def test_telegram_push_messages_found_beside_a_path_with_a_space(self):
+        # unread_push_messages is keyed on (uid, mid), and a table that predates topicId and
+        # is_reaction is read with NULL in their place.
+        path = _capture(self.tmp, 'cache4.db', [
+            'CREATE TABLE unread_push_messages(uid INTEGER, mid INTEGER, random INTEGER, '
+            'date INTEGER, data BLOB, fm TEXT, name TEXT, uname TEXT, flags INTEGER, '
+            'PRIMARY KEY(uid, mid))',
+            "INSERT INTO unread_push_messages VALUES (7, 1, 0, 100, x'01', 'a', 'n', NULL, 0)",
+            "INSERT INTO unread_push_messages VALUES (7, 2, 0, 200, x'02', 'b', 'n', NULL, 0)",
+            "UPDATE unread_push_messages SET fm = 'c' WHERE mid = 1",
+            'DELETE FROM unread_push_messages WHERE mid = 2'])
+        query = telegramAndroid._push_query(path)  # pylint: disable=protected-access
+        removed = telegramAndroid._removed_messages(  # pylint: disable=protected-access
+            path, {(7, 1)}, query, telegramAndroid._PUSH_KEY)  # pylint: disable=protected-access
+        self.assertEqual([(row[0], row[1], row[4], row[8], row[9]) for row, _method, _location
+                          in removed], [(7, 2, 'b', None, None)])
+
     def test_google_chat_messages_found_beside_a_path_with_a_space(self):
         # A message is (group_id, topic_id, id). A removed message comes back as Recovered, the
         # text a message held before its current row emptied it as an Earlier version, even when
