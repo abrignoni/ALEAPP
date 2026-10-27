@@ -291,9 +291,9 @@ class TestRollbackSnapshots(unittest.TestCase):
         snap = self.write(self.SNAP, b'same')
         self.assertEqual(self.run_unique([mirror, snap, live]), [live])
 
-    def test_android_user_of_a_snapshot(self):
-        self.assertEqual(android_user(self.SNAP), '0')
-        self.assertEqual(android_user('Dump/data/misc_de/10/rollback/5/com.foo/x.xml'), '10')
+    def test_a_snapshot_names_no_android_user(self):
+        """A kept snapshot must not share a (user, name) key with the live copy."""
+        self.assertEqual(android_user(self.SNAP), '')
 
 
 if __name__ == '__main__':

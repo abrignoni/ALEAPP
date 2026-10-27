@@ -169,13 +169,10 @@ def android_user(relative_path):
     """The Android user whose storage holds a path under an app data directory.
 
     data/data and userdata/data are user 0's; data/user/<n>, data/user_de/<n>,
-    userdata/user/<n>, userdata/user_de/<n>, data_mirror/data_*/<volume>/<n> and a rollback
-    snapshot's misc_ce/<n> or misc_de/<n> name the user. A path outside every app data directory names no user and returns ''.
+    userdata/user/<n>, userdata/user_de/<n> and data_mirror/data_*/<volume>/<n> name the
+    user. A path outside every app data directory names no user and returns ''.
     """
     path = str(relative_path).replace('\\', '/')
-    snapshot = _SNAPSHOT.search(path)
-    if snapshot:
-        return snapshot.group(3)
     for _storage, pattern in _VIEWS:
         match = pattern.search(path)
         if match:
