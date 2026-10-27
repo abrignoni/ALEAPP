@@ -2,7 +2,7 @@ __artifacts_v2__ = {
     "bugreport_usage_intervals": {
         "name": "Bug Report - Usage Intervals",
         "description": "The daily, weekly, monthly and yearly interval statistics per package in the usagestats dump of an Android "
-                       "bug report text, with the durations, last times and launch counts as printed.",
+                       "bug report text, with the durations, last times and launch counts as printed and converted.",
         "author": "@danjethh, Claude",
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
@@ -81,7 +81,7 @@ __artifacts_v2__ = {
                  "Transsion-brand phone on Android 10, Motorola on Android 15): 16, 15, 32, 32 and 32 rows, each equal to a count of "
                  "the event lines in the raw text and to an independent parser, field by field. Not examined: Android 11 and 12, "
                  "other vendors, and event names other than the four seen."
-                 "\nOn the corpus only the full Samsung dumpState text of s20fe_a13 (Android 13) prints the service dumps read here; the error dumps of s20fe_a13, samsungs20_a13 and sharon_a14 and the partial texts of userb2_a13 do not print a usagestats dump. s20fe_a13 gave 16 rows (not compared with a second count).",
+                 "\nOn the corpus only the full Samsung dumpState text of s20fe_a13 (Android 13) prints the service dumps read here; the error dumps of s20fe_a13, samsungs20_a13 and sharon_a14 and the partial texts of userb2_a13 do not print a usagestats dump. s20fe_a13 gave 16 rows, equal to the event lines of its two sections (8 each).",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": ["html", "tsv", "lava"],
@@ -111,8 +111,8 @@ __artifacts_v2__ = {
                  "platform's constants and was not decoded from the dump, and a number outside that list has an empty name. "
                  "Used, Used By User, Used Screen, Last Predicted, Expiry Times, Last Job and Next Estimated Launch are the "
                  "values printed after used=, usedByUser=, usedScr=, lastPred=, expiryTimes=, lastJob= and "
-                 "nextEstimatedLaunchTime=; they are durations relative to the moment of the dump in the platform's wording and "
-                 "are shown as printed (<uninitialized> and <none> are the dump's own markers). Last Informed Bucket and Idle "
+                 "nextEstimatedLaunchTime=; they are printed as signed offsets and "
+                 "are shown as printed, not converted (<uninitialized> and <none> are the dump's own markers). Last Informed Bucket and Idle "
                  "are lastInformedBucket= and idle=. Other Fields keeps any other key=value pair of the line (activeLeft and "
                  "wsLeft on Android 10).\n"
                  "A row says which bucket the platform held for the package when the dump ran. It does not say why (the reason "
@@ -131,7 +131,7 @@ __artifacts_v2__ = {
                  "printed ACTIVE on 211 of them). Numbers 5, 10, 20, 40, 45 and 50 each matched their name on most pairs; 30 never "
                  "appeared with FREQUENT in a pair (6 pairs with ACTIVE and 31 with EXEMPTED), so the name of 30 is "
                  "source-verified only. Not examined: Android 11 and 12 and other vendors."
-                 "\nOn the corpus only the full Samsung dumpState text of s20fe_a13 (Android 13) prints the service dumps read here; the error dumps of s20fe_a13, samsungs20_a13 and sharon_a14 and the partial texts of userb2_a13 do not print a usagestats dump. s20fe_a13 gave 930 rows, 465 from each section; the 465 of the usagestats dump equal its bucket= lines (the CHECKIN half was not compared with a second count).",
+                 "\nOn the corpus only the full Samsung dumpState text of s20fe_a13 (Android 13) prints the service dumps read here; the error dumps of s20fe_a13, samsungs20_a13 and sharon_a14 and the partial texts of userb2_a13 do not print a usagestats dump. s20fe_a13 gave 930 rows, 465 from each section; each equal to the bucket= lines of its section.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": ["html", "tsv", "lava"],
@@ -162,7 +162,7 @@ __artifacts_v2__ = {
                  "Enqueue Time, Run Time Earliest and Run Time Latest, and Completed for the recently completed list, are offsets "
                  "from the moment of the dump as printed; the jobscheduler dump prints no absolute anchor, so they are not "
                  "converted to UTC. Last Successful Run and Last Failed Run are device wall-clock texts without a zone; (UTC) "
-                 "converts them with the zone shown in Bug Report - Device Facts, a time before 2009 gets no UTC value, and "
+                 "converts them with the zone shown in Bug Report - Device Facts, a time printed as 1970-01-01 00:00:00 gets no UTC value, and "
                  "Time Note says why a value has none. The constraint history, the controllers, the quota and execution "
                  "statistics, the pending queue, the active jobs and the idle contexts of the same dump are not read.\n"
                  "A row says that the job scheduler held that job when the dump ran, with the state printed; it does not say "
@@ -193,7 +193,7 @@ __artifacts_v2__ = {
     "bugreport_pending_alarms": {
         "name": "Bug Report - Pending Alarms",
         "description": "The pending alarms and the next alarm clock in the alarm dump of an Android bug report text, with the "
-                       "trigger time, tag, window and flags as printed.",
+                       "trigger offset, tag, window and flags as printed and the trigger time computed from nowRTC.",
         "author": "@danjethh, Claude",
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
@@ -237,7 +237,7 @@ __artifacts_v2__ = {
     "bugreport_alarm_history": {
         "name": "Bug Report - Alarm History",
         "description": "The alarm history lists in the alarm dump of an Android bug report text (removals, additions, deliveries, "
-                       "wakeups and per-app alarm times), with the time, tag and reason as printed.",
+                       "wakeups and per-app alarm times), with the time as printed and converted, and the tag and reason as printed.",
         "author": "@danjethh, Claude",
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
@@ -266,7 +266,7 @@ __artifacts_v2__ = {
                  "reports print the App Alarm history only. All five reports record a UTC+0 time zone, so the wall-clock "
                  "conversion was the identity on every real row; other zones were tested on constructed text only. Not examined: "
                  "Android 11 and 12 and other vendors."
-                 "\nOn the corpus only the full Samsung dumpState text of s20fe_a13 (Android 13) prints the service dumps read here; the error dumps of s20fe_a13, samsungs20_a13 and sharon_a14 and the partial texts of userb2_a13 do not print an alarm dump. s20fe_a13 gave 154 rows (not compared with a second count).",
+                 "\nOn the corpus only the full Samsung dumpState text of s20fe_a13 (Android 13) prints the service dumps read here; the error dumps of s20fe_a13, samsungs20_a13 and sharon_a14 and the partial texts of userb2_a13 do not print an alarm dump. s20fe_a13 gave 154 rows, equal to its Addition, Delivery and Wakeup history entries and App alarm times (94, 38, 11 and 11).",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": "standard",
@@ -281,7 +281,7 @@ __artifacts_v2__ = {
     "bugreport_notification_records": {
         "name": "Bug Report - Notification Records",
         "description": "The notification list and the notification archive in the notification dump of an Android bug report text, "
-                       "with the package, channel, importance and times as printed.",
+                       "with the package, channel, importance and times as printed and converted.",
         "author": "@danjethh, Claude",
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
@@ -289,7 +289,7 @@ __artifacts_v2__ = {
         "category": "Android Bug Report - Notifications",
         "notes": "One row per NotificationRecord of the Notification List (List: Notification list) and one row per "
                  "StatusBarNotification the dump prints under mArchive (List: Archive) in the notification service dump. The "
-                 "notification list is printed in the section the bug report labels CRITICAL, the archive in the main one. "
+                 "notification list is printed, in the tested reports, in the section the bug report labels CRITICAL, the archive in the main one. "
                  "Package, User, Notification ID, Tag, Key, Flags, Category, Group Key and Seen are as printed (a line break "
                  "inside a tag or key is shown as one space), Channel is the channel id of the record's channel, Importance is "
                  "the number after importance= and Importance Reason is mImportanceExplanation. Ticker Text is the short text "
@@ -312,7 +312,7 @@ __artifacts_v2__ = {
                  "archive headings in the raw text and, for the list records, to an independent parser for the package, user, id, "
                  "importance and creation time. On the 300 times the two Android 16 reports print beside a number, the converted "
                  "value equalled the printed time to the millisecond. Not examined: Android 11 and 12 and other vendors."
-                 "\nOn the corpus only the full Samsung dumpState text of s20fe_a13 (Android 13) prints the service dumps read here; the error dumps of s20fe_a13, samsungs20_a13 and sharon_a14 and the partial texts of userb2_a13 do not print the notification settings. Notification records come from the CRITICAL notification dump, which s20fe_a13 and both partial texts of userb2_a13 print: 4 rows and 5 rows (2 and 3), equal to their NotificationRecord lines.",
+                 "\nOn the corpus only the full Samsung dumpState text of s20fe_a13 (Android 13) prints the service dumps read here; the error dumps of s20fe_a13, samsungs20_a13 and sharon_a14 and the partial texts of userb2_a13 do not print the notification settings. Notification records come from the CRITICAL notification dump, which s20fe_a13 and both partial texts of userb2_a13 print: 4 rows and 5 rows (3 and 2, in file order), equal to their NotificationRecord lines.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": "standard",
@@ -347,7 +347,7 @@ __artifacts_v2__ = {
                  "Evidence tiers. Data-proven on five real bug reports (Samsung A-series and S-series on Android 16, Huawei and a "
                  "Transsion-brand phone on Android 10, Motorola on Android 15): 21, 27, 11, 20 and 6 rows, each equal to a count "
                  "of the list entries in the raw text. Not examined: Android 11 and 12 and other vendors."
-                 "\nOn the corpus only the full Samsung dumpState text of s20fe_a13 (Android 13) prints the service dumps read here; the error dumps of s20fe_a13, samsungs20_a13 and sharon_a14 and the partial texts of userb2_a13 do not print the notification settings. s20fe_a13 gave 18 rows (not compared with a second count).",
+                 "\nOn the corpus only the full Samsung dumpState text of s20fe_a13 (Android 13) prints the service dumps read here; the error dumps of s20fe_a13, samsungs20_a13 and sharon_a14 and the partial texts of userb2_a13 do not print the notification settings. s20fe_a13 gave 18 rows, equal to the components of its Allowed, Enabled, Live and Snoozed lists (4, 4, 8 and 2).",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": ["html", "tsv", "lava"],
@@ -375,9 +375,9 @@ __artifacts_v2__ = {
                  "not interpreted). Channel ID, Importance, Bypass DND, Lockscreen Visibility, Sound, Lights, Show Badge, "
                  "Vibration Enabled, Deleted, Group and User Locked Fields are the mId, mImportance, mBypassDnd, "
                  "mLockscreenVisibility, mSound, mLights, mShowBadge, mVibrationEnabled, mDeleted, mGroup and mUserLockedFields "
-                 "values as printed (the last as stored, not decoded). Name is mName as printed; the dump cuts it to three "
-                 "characters and ... (it ended with ... on 736, 1,020, 483, 1,000 and 564 of the 801, 1,126, 483, 1,006 and 566 "
-                 "channels), so a longer name is never shown. Deleted Time is mDeletedTimeMs, read as UTC epoch milliseconds; -1 "
+                 "values as printed (the last as stored, not decoded). Name is mName as printed; the dump cuts it short and ends it with ... "
+                 "(three characters on the five tested reports, where it ended with ... on 736, 1,020, 483, 1,000 and 564 of the 801, 1,126, 483, 1,006 and 566 "
+                 "channels, and six on s20fe_a13), so the full name is not shown. Deleted Time is mDeletedTimeMs, read as UTC epoch milliseconds; -1 "
                  "or a number outside 2009 to 2100 has no UTC value. The channel groups and the rest of each channel line are "
                  "not read. Channel IDs are app-chosen text; some channel ids in the tested reports held account names, and they "
                  "are shown as printed.\n"

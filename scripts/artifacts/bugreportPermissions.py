@@ -140,7 +140,7 @@ __artifacts_v2__ = {
     "bugreport_appops_accesses": {
         "name": "Bug Report - App Ops Accesses",
         "description": "The Access and Reject lines printed under each op of each package in the appops service dump of an Android "
-                       "bug report text, with the time, uid state, flags, duration and proxy text as printed.",
+                       "bug report text, with the time, uid state, flags, duration and proxy text as printed, and the time and duration converted.",
         "author": "@danjethh, Claude",
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
