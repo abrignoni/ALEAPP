@@ -1,6 +1,6 @@
 __artifacts_v2__ = {
     "rollbackStore": {
-        "name": "Package Rollbacks",
+        "name": "Package Rollback Records",
         "description": "Rollback records kept by Android's RollbackManager in data/rollback and "
                        "data/rollback-history: one row per package of each record, with the record's "
                        "time, state and state description, and the package's two version codes.",
@@ -12,11 +12,12 @@ __artifacts_v2__ = {
         "notes": "Reads the rollback.json in each folder of data/rollback (records the system still "
                  "held) and data/rollback-history (records it had deleted). One row per package listed "
                  "in a record, with the record's own fields repeated, so rows that share a Rollback ID "
-                 "and Folder are one record. The format and the meanings below come from AOSP "
+                 "and Folder are one record. A folder name that appears more than once in one "
+                 "extraction is read once. The format and the meanings below come from AOSP "
                  "frameworks/base at tag android-14.0.0_r1 (commit "
                  "299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368), "
                  "services/core/java/com/android/server/rollback; line numbers are in that commit. "
-                 "RollbackStore.java#313 writes the file; when a record is deleted it is saved again "
+                 "RollbackStore.java#309-327 writes the file; when a record is deleted it is saved again "
                  "under data/rollback-history in a folder named for the rollback ID and its time in "
                  "seconds as hex (RollbackStore.java#348). A record does not mean a package was rolled "
                  "back. The system makes one when an install asks for rollback to be enabled, and the "
@@ -25,11 +26,13 @@ __artifacts_v2__ = {
                  "(Rollback.java#389-390). For a package inside an APEX (Is APK in APEX true) the code "
                  "writes 0 as the version being installed (Rollback.java#413), and all 1,466 such rows "
                  "on the tested images held 0. A committed record, which is an actual rollback, has "
-                 "state committed, a Committed Session ID other than -1 (Rollback.java#657) and Cause "
-                 "Packages; none of the 319 records on the tested images was committed: Committed Session "
+                 "state committed and a Committed Session ID other than -1 (Rollback.java#657); Cause "
+                 "Packages holds the packages the committing caller named, which may be none "
+                 "(Rollback.java#629). None of the 319 records on the tested images was committed: Committed Session "
                  "ID held -1 on every row and Cause Packages was empty on every row, so that path was "
                  "not exercised. "
-                 "Timestamp is the record's time as stored, in UTC. It is set when the record is made "
+                 "Timestamp is the record's time, a UTC instant parsed from the stored text; the HTML "
+                 "and TSV keep its fraction of a second and the LAVA table holds it to the second. It is set when the record is made "
                  "(Rollback.java#219) and again when the rollback becomes available (Rollback.java#477), "
                  "and while the system holds the record it is moved by the size of any clock change "
                  "(RollbackManagerServiceImpl.java#425). Deleting a record does not change it, so on a "
@@ -55,8 +58,9 @@ __artifacts_v2__ = {
                  "isStaged, documented as the rollback needing a reboot to take effect once committed "
                  "(core/java/android/content/rollback/RollbackInfo.java#82); it was true on 292 records "
                  "and false on 27, and on russell_a14 Is Staged held true on every row. Rollback Lifetime ms is "
-                 "rollbackLifetimeMillis as stored, a field the writer adds at tag android-15.0.0_r1 "
-                 "(commit 4e43ad12e1b211f15152e9c5b16b0fe88e6b93f3, RollbackStore.java#328); it held 0 "
+                 "rollbackLifetimeMillis as stored, a field the android-15.0.0_r1 writer has "
+                 "(commit 4e43ad12e1b211f15152e9c5b16b0fe88e6b93f3, RollbackStore.java#328) and the "
+                 "android-14.0.0_r1 writer does not; it held 0 "
                  "on 90 records and 86400000 on 4, and was absent on 225, so Rollback Lifetime ms is "
                  "blank on every row of the Android 14 and earlier images. 13 records on galaxys10_a10, "
                  "pixel3_a11, pixel3_a12, sharon_a13 and sharon_a14 use an older layout with "
@@ -69,7 +73,9 @@ __artifacts_v2__ = {
                  "blank. On the "
                  "tested images Installer Package Name held com.android.vending on every row that "
                  "stored one, User ID held 0 on every row that stored one, and every package was named com.google.* (3,715 rows) or "
-                 "com.android.* (58). Not reported: the copies of the earlier package versions kept in "
+                 "com.android.* (58). Not reported: the stored fields extensionVersions, restoreUserDataInProgress, "
+                 "apkSessionId, rollbackImpactLevel and, per package, pendingBackups, pendingRestores, "
+                 "installedUsers, rollbackDataPolicy and ceSnapshotInodes; the copies of the earlier package versions kept in "
                  "data/rollback/<id>/<package>/, and the app data snapshots under "
                  "data/misc_ce/<user>/rollback and data/misc_de/<user>/rollback, which this artifact "
                  "does not read. A rollback.json inside an app's own data folder is not read. The files "
@@ -197,7 +203,7 @@ def rollbackStore(context):
                 record = json.loads(fh.read().decode('utf-8'))
             info = record['info']
         except (OSError, UnicodeDecodeError, ValueError, KeyError, TypeError) as ex:
-            logfunc(f'Package Rollbacks: could not read {context.get_relative_path(path)}: {ex}')
+            logfunc(f'Package Rollback Records: could not read {context.get_relative_path(path)}: {ex}')
             continue
         sources.append(path)
         packages = [p for p in info.get('packages') or [] if isinstance(p, dict)]
@@ -215,7 +221,7 @@ def rollbackStore(context):
                 _as_stored(record.get('userId')),
                 _as_stored(record.get('rollbackLifetimeMillis')))
         if not packages:
-            logfunc(f'Package Rollbacks: no packages in {context.get_relative_path(path)}')
+            logfunc(f'Package Rollback Records: no packages in {context.get_relative_path(path)}')
             data_list.append(shared + ('', '', '', '', '') + tail)
             continue
         for package in packages:
