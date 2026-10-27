@@ -1,0 +1,130 @@
+{
+  "metadata": {
+    "module_name": "bugreportNetwork",
+    "artifact_name": "Bug Report - Wi-Fi State Machine Records",
+    "function_name": "bugreport_wifi_state_records",
+    "case_number": "casesynthetic_a16",
+    "number_of_columns": 11,
+    "number_of_rows": 7,
+    "total_data_size_bytes": 1005,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportNetwork/testdata.bugreportNetwork.bugreport_wifi_state_records.casesynthetic_a16.zip",
+    "start_time": "2026-10-26T17:22:08.385432+00:00",
+    "end_time": "2026-10-26T17:22:08.527913+00:00",
+    "run_time_seconds": 0.014549016952514648,
+    "last_commit": {
+      "hash": "35ad867ff7da9d4bd9ac2bb41cca31cb5a49f8b2",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:21:50-04:00",
+      "message": "Bug report network: Wi-Fi, network usage, policy, connectivity, DNS, interface, socket and tethering artifacts"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Service",
+    "State Machine",
+    "Record",
+    "Processed State",
+    "Origin State",
+    "Destination State",
+    "What",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1793563510,
+      "11-01 21:05:10.120",
+      "wifi",
+      "WifiController",
+      0,
+      "DefaultState",
+      "EnabledState",
+      "<null>",
+      "CMD_UPDATE_AP_CAPABILITY 1 0",
+      151,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793563600,
+      "11-01 21:06:40.007",
+      "wifi",
+      "WifiController",
+      1,
+      "EnabledState",
+      "EnabledState",
+      "<null>",
+      "160006(0x27106)",
+      152,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793563510,
+      "11-01 21:05:10.527",
+      "wifiscanner",
+      "WifiPnoScanStateMachine",
+      0,
+      "DefaultState",
+      "DefaultState",
+      "StartedState",
+      "WifiScanner.CMD_ENABLE  0 0",
+      256,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793563530,
+      "11-01 21:05:30.711",
+      "wifiscanner",
+      "WifiPnoScanStateMachine",
+      1,
+      "StartedState",
+      "StartedState",
+      "<null>",
+      "160006(0x27106)",
+      257,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793563511,
+      "11-01 21:05:11.000",
+      "wifiscanner",
+      "WifiSingleScanStateMachine",
+      0,
+      "ScanningState",
+      "ScanningState",
+      "IdleState",
+      "CMD_SCAN_RESULTS_AVAILABLE  0 0",
+      262,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793563534,
+      "11-01 21:05:34.808",
+      "wifip2p",
+      "WifiP2pService",
+      0,
+      "DefaultState",
+      "P2pDisabledState",
+      "<null>",
+      "WifiP2pManager.UPDATE_CHANNEL_INFO sender=com.example.share(10120)",
+      282,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793563535,
+      "11-01 21:05:35.757",
+      "wifip2p",
+      "WifiP2pService",
+      1,
+      "DefaultState",
+      "P2pDisabledState",
+      "<null>",
+      "AsyncChannel.CMD_CHANNEL_FULL_CONNECTION sender=android(1000)",
+      283,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

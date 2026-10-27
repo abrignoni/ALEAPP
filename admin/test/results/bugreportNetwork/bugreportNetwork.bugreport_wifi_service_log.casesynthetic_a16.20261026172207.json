@@ -1,0 +1,89 @@
+{
+  "metadata": {
+    "module_name": "bugreportNetwork",
+    "artifact_name": "Bug Report - Wi-Fi Service Log",
+    "function_name": "bugreport_wifi_service_log",
+    "case_number": "casesynthetic_a16",
+    "number_of_columns": 7,
+    "number_of_rows": 6,
+    "total_data_size_bytes": 700,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportNetwork/testdata.bugreportNetwork.bugreport_wifi_service_log.casesynthetic_a16.zip",
+    "start_time": "2026-10-26T17:22:07.728398+00:00",
+    "end_time": "2026-10-26T17:22:07.865467+00:00",
+    "run_time_seconds": 0.013031482696533203,
+    "last_commit": {
+      "hash": "35ad867ff7da9d4bd9ac2bb41cca31cb5a49f8b2",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:21:50-04:00",
+      "message": "Bug report network: Wi-Fi, network usage, policy, connectivity, DNS, interface, socket and tethering artifacts"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Service",
+    "Log",
+    "Message",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1793563509,
+      "2026-11-01T21:05:09.500000",
+      "wifi",
+      "WifiDeviceStateChangeManager",
+      "mLastScreenOn: true:",
+      236,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793563512,
+      "2026-11-01T21:05:12.250000",
+      "wifi",
+      "WifiDeviceStateChangeManager",
+      "screen off",
+      238,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793563560,
+      "2026-11-01T21:06:00.001",
+      "wifi",
+      "WifiConnectivityManager",
+      "setWifiEnabled: uid=1000",
+      241,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      null,
+      "1970-01-01T00:00:00.000",
+      "wifi",
+      "WifiConnectivityManager",
+      "an unset time",
+      242,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793563510,
+      "2026-11-01T21:05:10.100000",
+      "wifiscanner",
+      "WifiScanningService",
+      "registerScanListener: ClientInfo[uid=1000, package=android]",
+      249,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793563511,
+      "2026-11-01T21:05:11.000000",
+      "wifiscanner",
+      "WifiScanningService",
+      "singleScanResults: ClientInfo[uid=1000, package=android],results=2",
+      250,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

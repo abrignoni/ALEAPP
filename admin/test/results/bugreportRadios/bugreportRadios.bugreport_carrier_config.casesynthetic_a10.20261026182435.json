@@ -1,0 +1,66 @@
+{
+  "metadata": {
+    "module_name": "bugreportRadios",
+    "artifact_name": "Bug Report - Carrier Config Values",
+    "function_name": "bugreport_carrier_config",
+    "case_number": "casesynthetic_a10",
+    "number_of_columns": 6,
+    "number_of_rows": 4,
+    "total_data_size_bytes": 435,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportRadios/testdata.bugreportRadios.bugreport_carrier_config.casesynthetic_a10.zip",
+    "start_time": "2026-10-26T18:24:35.461275+00:00",
+    "end_time": "2026-10-26T18:24:35.751240+00:00",
+    "run_time_seconds": 0.1672663688659668,
+    "last_commit": {
+      "hash": "f246f0856bad96283c9a62aa4f52d908f14298c7",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T14:24:13-04:00",
+      "message": "Radios artifacts show identifiers as printed: no withheld values, SIM subscription identifier columns, adapter address"
+    }
+  },
+  "headers": [
+    "Phone Id",
+    "Source",
+    "Key",
+    "Value",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "0",
+      "mConfigFromDefaultApp",
+      "carrier_name_string",
+      "Example Cell",
+      261,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "0",
+      "mConfigFromDefaultApp",
+      "carrier_volte_available_bool",
+      "true",
+      262,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "0",
+      "mConfigFromDefaultApp",
+      "example_array_int_array",
+      "[-110, -90]",
+      263,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "0",
+      "mConfigFromDefaultApp",
+      "example_number_string",
+      "+15550102",
+      264,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

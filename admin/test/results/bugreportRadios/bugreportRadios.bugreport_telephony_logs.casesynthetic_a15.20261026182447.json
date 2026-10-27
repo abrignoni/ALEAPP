@@ -1,0 +1,156 @@
+{
+  "metadata": {
+    "module_name": "bugreportRadios",
+    "artifact_name": "Bug Report - Telephony Service Logs",
+    "function_name": "bugreport_telephony_logs",
+    "case_number": "casesynthetic_a15",
+    "number_of_columns": 8,
+    "number_of_rows": 12,
+    "total_data_size_bytes": 1899,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportRadios/testdata.bugreportRadios.bugreport_telephony_logs.casesynthetic_a15.zip",
+    "start_time": "2026-10-26T18:24:47.815895+00:00",
+    "end_time": "2026-10-26T18:24:48.098571+00:00",
+    "run_time_seconds": 0.16966724395751953,
+    "last_commit": {
+      "hash": "f246f0856bad96283c9a62aa4f52d908f14298c7",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T14:24:13-04:00",
+      "message": "Radios artifacts show identifiers as printed: no withheld values, SIM subscription identifier columns, adapter address"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Service",
+    "Heading",
+    "Message",
+    "Time Note",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1793599454,
+      "2026-11-02T11:34:14.480813",
+      "phone",
+      "mDataRoamingNotifLog:",
+      "updateDataRoamingStatus dataAllowed=true, disallowReasons=[], dataIsNowRoaming=false, RoamingNumeric=00101, CallingReason=3",
+      "",
+      179,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793599458,
+      "2026-11-02T11:34:18.792141",
+      "phone",
+      "mDataRoamingNotifLog:",
+      "updateDataRoamingStatus dataAllowed=false, disallowReasons=[DATA_DISABLED], dataIsNowRoaming=false, RoamingNumeric=00101, CallingReason=3",
+      "",
+      180,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793579740,
+      "2026-11-02T06:05:40.308756",
+      "telephony.registry",
+      "local logs:",
+      "notifyServiceStateForSubscriber: subId=-1 phoneId=0 state={mVoiceRegState=0(IN_SERVICE)}",
+      "",
+      265,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793579747,
+      "2026-11-02T06:05:47.467786",
+      "telephony.registry",
+      "local logs:",
+      "notifyDataConnectionForSubscriber: phoneId=0 subId=1  state: CONNECTING, transport: WWAN",
+      "",
+      266,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793579747,
+      "2026-11-02T06:05:47.686650",
+      "telephony.registry",
+      "local logs:",
+      "onDataConnectionStateChanged(CONNECTED, LTE) subId=1, phoneId=0",
+      "",
+      267,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793579748,
+      "2026-11-02T06:05:48.100000",
+      "telephony.registry",
+      "listen logs:",
+      "listen subId=1 callback=ExampleCallback",
+      "",
+      269,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793584128,
+      "2026-11-02T07:18:48.444834",
+      "telecom",
+      "Call Focus History:",
+      "TC@1",
+      "",
+      280,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793584128,
+      "2026-11-02T07:18:48.468632",
+      "telecom",
+      "Call Focus History:",
+      "<none>",
+      "",
+      281,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793579743,
+      "2026-11-02T06:05:43.952898",
+      "carrier_config",
+      "CarrierConfigLoader local log=",
+      "Update config for phoneId=1 simState=NOT_READY",
+      "",
+      337,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793579746,
+      "2026-11-02T06:05:46.041134",
+      "carrier_config",
+      "CarrierConfigLoader local log=",
+      "Restored carrier config from cache. phoneId=0, xml=carrierconfig-com.example.carrier-89990000000000000011-9001-00101-FF.xml",
+      "",
+      338,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793584311,
+      "2026-11-02T07:21:51.052455",
+      "carrier_config",
+      "CarrierConfigLoader local log=",
+      "System unlocked",
+      "",
+      339,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793599470,
+      "2026-11-02T11:34:30.759660",
+      "isms",
+      "mLocalLog:",
+      "Delivering SMS to: com.example.messages com.example.messages.SmsDeliverReceiver, {x-message-id:-1234567890123456789}",
+      "",
+      359,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

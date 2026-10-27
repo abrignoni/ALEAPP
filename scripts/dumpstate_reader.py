@@ -1214,6 +1214,16 @@ from scripts.dumpstate_permissions import PERMISSION_READ_BY, PERMISSION_READERS
 READERS.extend(PERMISSION_READERS)
 READ_BY.update(PERMISSION_READ_BY)
 
+# --- network readers: scripts/dumpstate_network.py (feat/android-bugreport-network) ---
+from scripts import dumpstate_network  # pylint: disable=wrong-import-position
+READERS.extend(dumpstate_network.READERS)
+READ_BY.update(dumpstate_network.READ_BY)
+
+# Radios (Bluetooth, NFC, USB, telephony): readers and section index entries of scripts/dumpstate_radios.py
+from scripts import dumpstate_radios  # noqa: E402  pylint: disable=wrong-import-position
+READERS.extend(dumpstate_radios.READERS)
+READ_BY.update(dumpstate_radios.READ_BY)
+
 
 def readers_by_section():
     """``{(kind, name): [reader classes]}`` for the section readers above."""

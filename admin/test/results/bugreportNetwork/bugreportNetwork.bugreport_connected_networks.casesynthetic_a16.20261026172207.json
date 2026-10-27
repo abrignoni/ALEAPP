@@ -1,0 +1,83 @@
+{
+  "metadata": {
+    "module_name": "bugreportNetwork",
+    "artifact_name": "Bug Report - Connected Networks",
+    "function_name": "bugreport_connected_networks",
+    "case_number": "casesynthetic_a16",
+    "number_of_columns": 17,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 560,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportNetwork/testdata.bugreportNetwork.bugreport_connected_networks.casesynthetic_a16.zip",
+    "start_time": "2026-10-26T17:22:07.094067+00:00",
+    "end_time": "2026-10-26T17:22:07.226774+00:00",
+    "run_time_seconds": 0.011007547378540039,
+    "last_commit": {
+      "hash": "35ad867ff7da9d4bd9ac2bb41cca31cb5a49f8b2",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:21:50-04:00",
+      "message": "Bug report network: Wi-Fi, network usage, policy, connectivity, DNS, interface, socket and tethering artifacts"
+    }
+  },
+  "headers": [
+    "Created (UTC)",
+    "Created As Printed",
+    "Network ID",
+    "Default Network",
+    "Network Info",
+    "Interface",
+    "Link Addresses",
+    "DNS Addresses",
+    "Domains",
+    "Routes",
+    "Transports",
+    "Capabilities",
+    "Signal Strength",
+    "SSID (as printed)",
+    "Score",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1793565610,
+      "2026-11-01T20:40:10.404Z",
+      101,
+      "true",
+      "WIFI CONNECTED extra: ",
+      "wlan0",
+      " fe80::ff:fe00:1/64,192.0.2.15/24 ",
+      " /192.0.2.1 ",
+      "null",
+      " fe80::/64 -> :: wlan0 mtu 0,0.0.0.0/0 -> 192.0.2.1 wlan0 mtu 0 ",
+      "WIFI",
+      "NOT_METERED&INTERNET&VALIDATED&NOT_ROAMING",
+      "-64",
+      "\"Example-Home\"",
+      "Policies : TRANSPORT_PRIMARY&IS_UNMETERED ; KeepConnected : 0",
+      370,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793565660,
+      "2026-11-01T20:41:00.000Z",
+      102,
+      "false",
+      "MOBILE CONNECTED extra: internet",
+      "rmnet0",
+      " 198.51.100.7/30 ",
+      " /198.51.100.1,/198.51.100.2 ",
+      "example.test",
+      "  ",
+      "CELLULAR",
+      "INTERNET&VALIDATED",
+      "-95",
+      "",
+      "Policies : IS_VALIDATED ; KeepConnected : 0",
+      372,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

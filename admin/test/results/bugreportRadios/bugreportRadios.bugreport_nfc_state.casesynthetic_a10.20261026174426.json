@@ -1,0 +1,75 @@
+{
+  "metadata": {
+    "module_name": "bugreportRadios",
+    "artifact_name": "Bug Report - NFC State",
+    "function_name": "bugreport_nfc_state",
+    "case_number": "casesynthetic_a10",
+    "number_of_columns": 5,
+    "number_of_rows": 6,
+    "total_data_size_bytes": 543,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportRadios/testdata.bugreportRadios.bugreport_nfc_state.casesynthetic_a10.zip",
+    "start_time": "2026-10-26T17:44:26.405117+00:00",
+    "end_time": "2026-10-26T17:44:26.583156+00:00",
+    "run_time_seconds": 0.011949777603149414,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-26T17:44:26.556241",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Group",
+    "Item",
+    "Value",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Adapter state",
+      "mState",
+      "off",
+      101,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Adapter state",
+      "mIsZeroClickRequested",
+      "true",
+      102,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Adapter state",
+      "mScreenState",
+      "ON_UNLOCKED",
+      103,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Adapter state",
+      "mTechMask",
+      "0",
+      104,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Adapter state",
+      "mEnableP2p",
+      "falsemEnable2ndLevelMenu: false",
+      105,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Routing table",
+      "Default route",
+      "secure element",
+      141,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

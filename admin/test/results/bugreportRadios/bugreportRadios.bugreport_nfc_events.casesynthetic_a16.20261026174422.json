@@ -1,0 +1,71 @@
+{
+  "metadata": {
+    "module_name": "bugreportRadios",
+    "artifact_name": "Bug Report - NFC Events",
+    "function_name": "bugreport_nfc_events",
+    "case_number": "casesynthetic_a16",
+    "number_of_columns": 7,
+    "number_of_rows": 4,
+    "total_data_size_bytes": 495,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportRadios/testdata.bugreportRadios.bugreport_nfc_events.casesynthetic_a16.zip",
+    "start_time": "2026-10-26T17:44:22.318770+00:00",
+    "end_time": "2026-10-26T17:44:22.480507+00:00",
+    "run_time_seconds": 0.01198887825012207,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-26T17:44:22.455864",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Event",
+    "Detail",
+    "Time Note",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1793530637,
+      "2026-11-01 11:57:17.101",
+      "reader_mode_change",
+      "{ app_info { package_name: \"android\" uid: 1000 } flags: 4096 }",
+      "",
+      168,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793530638,
+      "2026-11-01 11:57:18.707",
+      "reader_mode_change",
+      "{ app_info { package_name: \"android\" uid: 1000 } flags: 0 }",
+      "",
+      169,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793585137,
+      "2026-11-02 03:05:37.290",
+      "bootup_state",
+      "{ enabled: true }",
+      "",
+      170,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793588865,
+      "2026-11-02 04:07:45.336",
+      "aid_registration",
+      "{ aids: \"A0000000FFFF0001\" aids: \"A0000000FFFF0002\" app_info { uid: 10501 } }",
+      "",
+      171,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

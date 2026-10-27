@@ -1,0 +1,92 @@
+{
+  "metadata": {
+    "module_name": "bugreportRadios",
+    "artifact_name": "Bug Report - Bluetooth Adapter Status",
+    "function_name": "bugreport_bluetooth_status",
+    "case_number": "casesynthetic_a10",
+    "number_of_columns": 4,
+    "number_of_rows": 10,
+    "total_data_size_bytes": 750,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportRadios/testdata.bugreportRadios.bugreport_bluetooth_status.casesynthetic_a10.zip",
+    "start_time": "2026-10-26T18:24:34.075229+00:00",
+    "end_time": "2026-10-26T18:24:34.362837+00:00",
+    "run_time_seconds": 0.16350793838500977,
+    "last_commit": {
+      "hash": "f246f0856bad96283c9a62aa4f52d908f14298c7",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T14:24:13-04:00",
+      "message": "Radios artifacts show identifiers as printed: no withheld values, SIM subscription identifier columns, adapter address"
+    }
+  },
+  "headers": [
+    "Item",
+    "Value",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "enabled",
+      "false",
+      61,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "state",
+      "BLE_ON",
+      62,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "address",
+      "02:00:00:**:**:**",
+      63,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "name",
+      "Example Old Phone",
+      64,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "time since enabled",
+      "00:59:32.678",
+      65,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Bluetooth crashed (times)",
+      "0",
+      70,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "BLE apps registered",
+      "1",
+      72,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "ScanMode",
+      "SCAN_MODE_NONE",
+      80,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "ConnectionState",
+      "STATE_DISCONNECTED",
+      81,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "State",
+      "BLE_ON",
+      82,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "metadata": {
+    "module_name": "bugreportNetwork",
+    "artifact_name": "Bug Report - Network Policy Events",
+    "function_name": "bugreport_netpolicy_events",
+    "case_number": "casesynthetic_a16",
+    "number_of_columns": 7,
+    "number_of_rows": 5,
+    "total_data_size_bytes": 589,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportNetwork/testdata.bugreportNetwork.bugreport_netpolicy_events.casesynthetic_a16.zip",
+    "start_time": "2026-10-26T19:10:00.158333+00:00",
+    "end_time": "2026-10-26T19:10:00.438795+00:00",
+    "run_time_seconds": 0.1701676845550537,
+    "last_commit": {
+      "hash": "1867b8f203459f34a25f13dd49852b764f108ee2",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T14:24:14-04:00",
+      "message": "Network notes name the User Selected column without a claim; category tests accept the group categories"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Time Note",
+    "Log",
+    "Message",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1793563577,
+      "2026-11-01T21:06:17:657",
+      "",
+      "mEventLogs",
+      "Firewall rule changed: 10246-powersave-allow",
+      353,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793563517,
+      "2026-11-01T21:05:17:165",
+      "",
+      "mEventLogs",
+      "Firewall rule changed: 20065-background-allow",
+      354,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      null,
+      "1970-01-01T00:00:00:000",
+      "time not set on the device (shown as printed)",
+      "mEventLogs",
+      "null",
+      355,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793563578,
+      "2026-11-01T21:06:18:679",
+      "",
+      "mNetworkBlockedLogs",
+      "86664-{blocked=BATTERY_SAVER|APP_BACKGROUND,allowed=NOT_IN_BACKGROUND,effective=BATTERY_SAVER}",
+      357,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793563373,
+      "2026-11-01T21:02:53:415",
+      "",
+      "mUidStateChangeLogs",
+      "86098:LAST:--------:46474",
+      359,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}
