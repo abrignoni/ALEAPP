@@ -1,0 +1,78 @@
+{
+  "metadata": {
+    "module_name": "bugreportAccountsPower",
+    "artifact_name": "Bug Report - Battery Daily Summary",
+    "function_name": "bugreport_battery_daily_summary",
+    "case_number": "casesynthetic_cut",
+    "number_of_columns": 11,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 508,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportAccountsPower/testdata.bugreportAccountsPower.bugreport_battery_daily_summary.casesynthetic_cut.zip",
+    "start_time": "2026-10-26T17:46:23.435751+00:00",
+    "end_time": "2026-10-26T17:46:23.559218+00:00",
+    "run_time_seconds": 0.011668920516967773,
+    "last_commit": {
+      "hash": "7450687ec1476569021e50b0cfc221c1d2c13a09",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:45:32-04:00",
+      "message": "Bug report accounts, sync, backup, users, battery, power and memory: readers, 33 artifacts, synthetic fixture and tests"
+    }
+  },
+  "headers": [
+    "Period Start (UTC)",
+    "Period End (UTC)",
+    "Period",
+    "Period Start As Printed",
+    "Period End As Printed",
+    "Discharge Steps",
+    "Charge Steps",
+    "Totals (as printed)",
+    "Package Changes",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1793584800,
+      null,
+      "Current",
+      "2026-11-02-03-00-00",
+      "",
+      2,
+      1,
+      "Discharge total time: 1d 16h 50m 34s 500ms  (from 2 steps) | Charge total time: 41m 36s 0ms  (from 1 steps)",
+      0,
+      339,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793495608,
+      1793584800,
+      "Daily",
+      "2026-11-01-02-13-28",
+      "2026-11-02-03-00-00",
+      3,
+      1,
+      "Discharge total time: 9h 50m 23s 100ms  (from 3 steps) | Discharge screen on time: 3h 11m 8s 400ms  (from 1 steps) | Charge total time: 2m 0s 762ms  (from 1 steps)",
+      3,
+      346,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793404800,
+      1793495608,
+      "Daily",
+      "2026-10-31-01-00-00",
+      "2026-11-01-02-13-28",
+      1,
+      0,
+      "",
+      0,
+      360,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

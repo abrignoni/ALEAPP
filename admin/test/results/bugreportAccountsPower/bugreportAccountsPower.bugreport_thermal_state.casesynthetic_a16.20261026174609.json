@@ -1,0 +1,169 @@
+{
+  "metadata": {
+    "module_name": "bugreportAccountsPower",
+    "artifact_name": "Bug Report - Thermal Service State",
+    "function_name": "bugreport_thermal_state",
+    "case_number": "casesynthetic_a16",
+    "number_of_columns": 9,
+    "number_of_rows": 12,
+    "total_data_size_bytes": 844,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportAccountsPower/testdata.bugreportAccountsPower.bugreport_thermal_state.casesynthetic_a16.zip",
+    "start_time": "2026-10-26T17:46:09.847992+00:00",
+    "end_time": "2026-10-26T17:46:09.970324+00:00",
+    "run_time_seconds": 0.015341758728027344,
+    "last_commit": {
+      "hash": "7450687ec1476569021e50b0cfc221c1d2c13a09",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:45:32-04:00",
+      "message": "Bug report accounts, sync, backup, users, battery, power and memory: readers, 33 artifacts, synthetic fixture and tests"
+    }
+  },
+  "headers": [
+    "Group",
+    "Kind",
+    "Name",
+    "Type (as stored)",
+    "Value (as printed)",
+    "Status (as stored)",
+    "Detail (as printed)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "",
+      "Status",
+      "IsStatusOverride",
+      "",
+      "false",
+      "",
+      "",
+      570,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "ThermalEventListeners",
+      "Status",
+      "callbacks",
+      "",
+      "4",
+      "",
+      "",
+      572,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "ThermalEventListeners",
+      "Status",
+      "killed",
+      "",
+      "false",
+      "",
+      "",
+      573,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "",
+      "Status",
+      "Thermal Status",
+      "",
+      "0",
+      "",
+      "",
+      574,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Cached temperatures",
+      "Temperature",
+      "gpu",
+      "1",
+      "38.0",
+      "0",
+      "",
+      576,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Cached temperatures",
+      "Temperature",
+      "Battery",
+      "2",
+      "32.0",
+      "0",
+      "",
+      577,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "",
+      "Status",
+      "HAL Ready",
+      "",
+      "true",
+      "",
+      "",
+      578,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "HAL connection",
+      "Status",
+      "ThermalHAL 2.0 connected",
+      "",
+      "yes",
+      "",
+      "",
+      580,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Current temperatures from HAL",
+      "Temperature",
+      "cluster1",
+      "0",
+      "44.0",
+      "0",
+      "",
+      582,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Current cooling devices from HAL",
+      "Cooling Device",
+      "cluster0",
+      "2",
+      "0",
+      "",
+      "",
+      584,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Temperature static thresholds from HAL",
+      "Threshold",
+      "CPU",
+      "0",
+      "",
+      "",
+      "mHotThrottlingThresholds=[NaN, 85.0, 90.0], mColdThrottlingThresholds=[NaN, NaN, NaN]",
+      586,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Temperature headroom thresholds",
+      "Status",
+      "Values",
+      "",
+      "[NaN, NaN, 1.1666666, 1.3333334]",
+      "",
+      "",
+      588,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

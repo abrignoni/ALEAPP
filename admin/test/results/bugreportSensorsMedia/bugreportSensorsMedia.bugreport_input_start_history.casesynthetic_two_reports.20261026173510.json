@@ -1,0 +1,90 @@
+{
+  "metadata": {
+    "module_name": "bugreportSensorsMedia",
+    "artifact_name": "Bug Report - Input Start History",
+    "function_name": "bugreport_input_start_history",
+    "case_number": "casesynthetic_two_reports",
+    "number_of_columns": 14,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 578,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSensorsMedia/testdata.bugreportSensorsMedia.bugreport_input_start_history.casesynthetic_two_reports.zip",
+    "start_time": "2026-10-26T17:35:10.131653+00:00",
+    "end_time": "2026-10-26T17:35:10.272178+00:00",
+    "run_time_seconds": 0.026087284088134766,
+    "last_commit": {
+      "hash": "e56d9fc859d2e83c7207c6514d3727ee6bf6a291",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:32:45-04:00",
+      "message": "Bug report sensors and media: location, sensors, camera, audio, media, accessibility, input method, display and window artifacts"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Entry",
+    "Reason",
+    "Restarting",
+    "Input Method",
+    "Target Window",
+    "Soft Input Mode",
+    "Input Type",
+    "IME Options",
+    "Field ID",
+    "Field Name",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1793587800,
+      "2026-11-02 08:20:00.100",
+      11,
+      "WINDOW_FOCUS_GAIN",
+      "false",
+      "com.example.keyboard/.KeyboardService",
+      "com.example.user.chat",
+      "STATE_UNSPECIFIED|ADJUST_RESIZE",
+      "0x1",
+      "0x2",
+      "0x7f0a0001",
+      "search_box",
+      785,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      1793587860,
+      "2026-11-02 08:21:00.200",
+      12,
+      "SESSION_CREATED_BY_IME",
+      "true",
+      "com.example.keyboard/.KeyboardService",
+      "com.example.user.sideloaded/.MainActivity",
+      "",
+      "",
+      "",
+      "",
+      "",
+      791,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      1793618400,
+      "2026-11-02 08:20:00.100",
+      5,
+      "WINDOW_FOCUS_GAIN",
+      "false",
+      "com.example.keyboard/.KeyboardService",
+      "com.example.user.chat",
+      "STATE_ALWAYS_HIDDEN|ADJUST_RESIZE",
+      "0x0",
+      "0x0",
+      "0xffffffff",
+      "null",
+      597,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

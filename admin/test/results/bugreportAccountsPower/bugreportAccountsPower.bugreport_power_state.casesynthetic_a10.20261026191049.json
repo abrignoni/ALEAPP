@@ -1,0 +1,103 @@
+{
+  "metadata": {
+    "module_name": "bugreportAccountsPower",
+    "artifact_name": "Bug Report - Power Manager State",
+    "function_name": "bugreport_power_state",
+    "case_number": "casesynthetic_a10",
+    "number_of_columns": 5,
+    "number_of_rows": 10,
+    "total_data_size_bytes": 975,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportAccountsPower/testdata.bugreportAccountsPower.bugreport_power_state.casesynthetic_a10.zip",
+    "start_time": "2026-10-26T19:10:49.173115+00:00",
+    "end_time": "2026-10-26T19:10:49.455725+00:00",
+    "run_time_seconds": 0.16420745849609375,
+    "last_commit": {
+      "hash": "d1aa88ec6597139a2e6c891969cef84a01cd6a2c",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T14:15:20-04:00",
+      "message": "Give each bug report topic group its own ALEAPP category"
+    }
+  },
+  "headers": [
+    "Block",
+    "Name",
+    "Value",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Power Manager State",
+      "Settings power_manager_constants.no_cached_wake_locks",
+      "true",
+      63,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Power Manager State",
+      "mDirty",
+      "0x0",
+      64,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Power Manager State",
+      "mWakefulness",
+      "Awake",
+      65,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Power Manager State",
+      "mIsPowered",
+      "false",
+      66,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Power Manager State",
+      "mBatteryLevel",
+      "15",
+      67,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Power Manager State",
+      "mLastWakeTime",
+      "85435552 (315377 ms ago)",
+      68,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Settings and Configuration",
+      "mDreamsSupportedConfig",
+      "true",
+      71,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Settings and Configuration",
+      "mScreenOffTimeoutSetting",
+      "60000",
+      72,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Timeouts",
+      "Attentive timeout",
+      "-1 ms",
+      74,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Timeouts",
+      "Screen off timeout",
+      "60000 ms",
+      75,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

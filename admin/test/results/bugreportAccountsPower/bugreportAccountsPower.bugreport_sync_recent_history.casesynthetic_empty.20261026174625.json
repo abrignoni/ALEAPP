@@ -1,0 +1,43 @@
+{
+  "metadata": {
+    "module_name": "bugreportAccountsPower",
+    "artifact_name": "Bug Report - Sync Recent History",
+    "function_name": "bugreport_sync_recent_history",
+    "case_number": "casesynthetic_empty",
+    "number_of_columns": 16,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportAccountsPower/testdata.bugreportAccountsPower.bugreport_sync_recent_history.casesynthetic_empty.zip",
+    "start_time": "2026-10-26T17:46:25.770932+00:00",
+    "end_time": "2026-10-26T17:46:25.871160+00:00",
+    "run_time_seconds": 0.0021970272064208984,
+    "last_commit": {
+      "hash": "7450687ec1476569021e50b0cfc221c1d2c13a09",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:45:32-04:00",
+      "message": "Bug report accounts, sync, backup, users, battery, power and memory: readers, 33 artifacts, synthetic fixture and tests"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Source",
+    "Duration (s as printed)",
+    "Extra Field (as printed)",
+    "User",
+    "Account",
+    "Account Type",
+    "Authority",
+    "Reason",
+    "Message",
+    "Extras",
+    "Entry",
+    "Row As Printed",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

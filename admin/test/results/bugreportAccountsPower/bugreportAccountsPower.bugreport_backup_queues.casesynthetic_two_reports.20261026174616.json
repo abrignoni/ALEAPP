@@ -1,0 +1,114 @@
+{
+  "metadata": {
+    "module_name": "bugreportAccountsPower",
+    "artifact_name": "Bug Report - Backup Queues",
+    "function_name": "bugreport_backup_queues",
+    "case_number": "casesynthetic_two_reports",
+    "number_of_columns": 6,
+    "number_of_rows": 10,
+    "total_data_size_bytes": 850,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportAccountsPower/testdata.bugreportAccountsPower.bugreport_backup_queues.casesynthetic_two_reports.zip",
+    "start_time": "2026-10-26T17:46:16.769913+00:00",
+    "end_time": "2026-10-26T17:46:16.897340+00:00",
+    "run_time_seconds": 0.021435976028442383,
+    "last_commit": {
+      "hash": "7450687ec1476569021e50b0cfc221c1d2c13a09",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:45:32-04:00",
+      "message": "Bug report accounts, sync, backup, users, battery, power and memory: readers, 33 artifacts, synthetic fixture and tests"
+    }
+  },
+  "headers": [
+    "Queue",
+    "Package",
+    "Number Before Package (as printed)",
+    "Time (UTC)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Pending key/value backup",
+      "com.example.maps",
+      "",
+      null,
+      279,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Pending key/value backup",
+      "android",
+      "",
+      null,
+      280,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Full backup queue",
+      "com.example.never",
+      "0",
+      null,
+      282,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Full backup queue",
+      "com.example.chat",
+      "1793355120000",
+      1793355120,
+      283,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Full backup queue",
+      "com.example.maps",
+      "1793610720000",
+      1793610720,
+      284,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Pending key/value backup",
+      "com.example.maps",
+      "",
+      null,
+      207,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Pending key/value backup",
+      "android",
+      "",
+      null,
+      208,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Full backup queue",
+      "com.example.never",
+      "0",
+      null,
+      210,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Full backup queue",
+      "com.example.chat",
+      "1793355120000",
+      1793355120,
+      211,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Full backup queue",
+      "com.example.maps",
+      "1793610720000",
+      1793610720,
+      212,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

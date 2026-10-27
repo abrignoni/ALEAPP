@@ -1,0 +1,169 @@
+{
+  "metadata": {
+    "module_name": "bugreportAccountsPower",
+    "artifact_name": "Bug Report - Thermal Service State",
+    "function_name": "bugreport_thermal_state",
+    "case_number": "casesynthetic_a10",
+    "number_of_columns": 9,
+    "number_of_rows": 12,
+    "total_data_size_bytes": 1252,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportAccountsPower/testdata.bugreportAccountsPower.bugreport_thermal_state.casesynthetic_a10.zip",
+    "start_time": "2026-10-26T17:46:13.971660+00:00",
+    "end_time": "2026-10-26T17:46:14.112775+00:00",
+    "run_time_seconds": 0.012573719024658203,
+    "last_commit": {
+      "hash": "7450687ec1476569021e50b0cfc221c1d2c13a09",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:45:32-04:00",
+      "message": "Bug report accounts, sync, backup, users, battery, power and memory: readers, 33 artifacts, synthetic fixture and tests"
+    }
+  },
+  "headers": [
+    "Group",
+    "Kind",
+    "Name",
+    "Type (as stored)",
+    "Value (as printed)",
+    "Status (as stored)",
+    "Detail (as printed)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "",
+      "Status",
+      "IsStatusOverride",
+      "",
+      "false",
+      "",
+      "",
+      494,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "ThermalEventListeners",
+      "Status",
+      "callbacks",
+      "",
+      "4",
+      "",
+      "",
+      496,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "ThermalEventListeners",
+      "Status",
+      "killed",
+      "",
+      "false",
+      "",
+      "",
+      497,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "",
+      "Status",
+      "Thermal Status",
+      "",
+      "0",
+      "",
+      "",
+      498,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Cached temperatures",
+      "Temperature",
+      "gpu",
+      "1",
+      "38.0",
+      "0",
+      "",
+      500,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Cached temperatures",
+      "Temperature",
+      "Battery",
+      "2",
+      "32.0",
+      "0",
+      "",
+      501,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "",
+      "Status",
+      "HAL Ready",
+      "",
+      "true",
+      "",
+      "",
+      502,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "HAL connection",
+      "Status",
+      "ThermalHAL 2.0 connected",
+      "",
+      "yes",
+      "",
+      "",
+      504,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Current temperatures from HAL",
+      "Temperature",
+      "cluster1",
+      "0",
+      "44.0",
+      "0",
+      "",
+      506,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Current cooling devices from HAL",
+      "Cooling Device",
+      "cluster0",
+      "2",
+      "0",
+      "",
+      "",
+      508,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Temperature static thresholds from HAL",
+      "Threshold",
+      "CPU",
+      "0",
+      "",
+      "",
+      "mHotThrottlingThresholds=[NaN, 85.0, 90.0], mColdThrottlingThresholds=[NaN, NaN, NaN]",
+      510,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Temperature headroom thresholds",
+      "Status",
+      "Values",
+      "",
+      "[NaN, NaN, 1.1666666, 1.3333334]",
+      "",
+      "",
+      512,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

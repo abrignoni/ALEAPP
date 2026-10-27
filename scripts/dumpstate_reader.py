@@ -1219,10 +1219,18 @@ from scripts import dumpstate_network  # pylint: disable=wrong-import-position
 READERS.extend(dumpstate_network.READERS)
 READ_BY.update(dumpstate_network.READ_BY)
 
+# Accounts, sync, backup, users, battery, power, process and memory readers (scripts/dumpstate_accountspower.py)
+from scripts import dumpstate_accountspower  # noqa: E402  pylint: disable=wrong-import-position
+READERS.extend(dumpstate_accountspower.READERS)
+READ_BY.update(dumpstate_accountspower.READ_BY)
+
 # Radios (Bluetooth, NFC, USB, telephony): readers and section index entries of scripts/dumpstate_radios.py
 from scripts import dumpstate_radios  # noqa: E402  pylint: disable=wrong-import-position
 READERS.extend(dumpstate_radios.READERS)
 READ_BY.update(dumpstate_radios.READ_BY)
+
+# Sensors and media (scripts/dumpstate_sensorsmedia.py): the module registers its readers when imported
+from scripts import dumpstate_sensorsmedia  # noqa: E402  pylint: disable=wrong-import-position,unused-import,cyclic-import
 
 
 def readers_by_section():

@@ -1,0 +1,50 @@
+{
+  "metadata": {
+    "module_name": "bugreportAccountsPower",
+    "artifact_name": "Bug Report - Memory Process Detail",
+    "function_name": "bugreport_memory_process_detail",
+    "case_number": "casesynthetic_empty",
+    "number_of_columns": 23,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportAccountsPower/testdata.bugreportAccountsPower.bugreport_memory_process_detail.casesynthetic_empty.zip",
+    "start_time": "2026-10-26T17:46:26.823137+00:00",
+    "end_time": "2026-10-26T17:46:26.919650+00:00",
+    "run_time_seconds": 0.002295255661010742,
+    "last_commit": {
+      "hash": "7450687ec1476569021e50b0cfc221c1d2c13a09",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:45:32-04:00",
+      "message": "Bug report accounts, sync, backup, users, battery, power and memory: readers, 33 artifacts, synthetic fixture and tests"
+    }
+  },
+  "headers": [
+    "PID",
+    "Process",
+    "Pss Total (KB)",
+    "Private Dirty (KB)",
+    "Shared Dirty (KB)",
+    "SwapPss Dirty (KB)",
+    "Rss Total (KB)",
+    "Heap Size (KB)",
+    "Heap Alloc (KB)",
+    "Heap Free (KB)",
+    "Native Heap Pss (KB)",
+    "Dalvik Heap Pss (KB)",
+    "Summary Java Heap (KB)",
+    "Summary Native Heap (KB)",
+    "Summary Code (KB)",
+    "Summary Stack (KB)",
+    "Summary Graphics (KB)",
+    "Summary Private Other (KB)",
+    "Summary System (KB)",
+    "Views",
+    "Activities",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

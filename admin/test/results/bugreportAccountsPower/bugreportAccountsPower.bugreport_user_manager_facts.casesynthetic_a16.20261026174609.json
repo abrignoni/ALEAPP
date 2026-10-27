@@ -1,0 +1,62 @@
+{
+  "metadata": {
+    "module_name": "bugreportAccountsPower",
+    "artifact_name": "Bug Report - User Manager Facts",
+    "function_name": "bugreport_user_manager_facts",
+    "case_number": "casesynthetic_a16",
+    "number_of_columns": 4,
+    "number_of_rows": 5,
+    "total_data_size_bytes": 198,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportAccountsPower/testdata.bugreportAccountsPower.bugreport_user_manager_facts.casesynthetic_a16.zip",
+    "start_time": "2026-10-26T17:46:09.473581+00:00",
+    "end_time": "2026-10-26T17:46:09.611800+00:00",
+    "run_time_seconds": 0.012397050857543945,
+    "last_commit": {
+      "hash": "7450687ec1476569021e50b0cfc221c1d2c13a09",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:45:32-04:00",
+      "message": "Bug report accounts, sync, backup, users, battery, power and memory: readers, 33 artifacts, synthetic fixture and tests"
+    }
+  },
+  "headers": [
+    "Name",
+    "Value",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Current user",
+      "0",
+      596,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Device owner id",
+      "-10000",
+      632,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Device managed",
+      "false",
+      633,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Started users state",
+      "{0=3, 10=1}",
+      634,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Max users",
+      "4",
+      635,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

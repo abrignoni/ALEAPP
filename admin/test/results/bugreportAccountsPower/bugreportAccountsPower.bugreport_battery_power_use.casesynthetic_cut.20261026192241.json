@@ -1,0 +1,98 @@
+{
+  "metadata": {
+    "module_name": "bugreportAccountsPower",
+    "artifact_name": "Bug Report - Battery Power Use",
+    "function_name": "bugreport_battery_power_use",
+    "case_number": "casesynthetic_cut",
+    "number_of_columns": 7,
+    "number_of_rows": 7,
+    "total_data_size_bytes": 619,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportAccountsPower/testdata.bugreportAccountsPower.bugreport_battery_power_use.casesynthetic_cut.zip",
+    "start_time": "2026-10-26T19:22:41.820931+00:00",
+    "end_time": "2026-10-26T19:22:42.127903+00:00",
+    "run_time_seconds": 0.1804661750793457,
+    "last_commit": {
+      "hash": "d1aa88ec6597139a2e6c891969cef84a01cd6a2c",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T14:15:20-04:00",
+      "message": "Give each bug report topic group its own ALEAPP category"
+    }
+  },
+  "headers": [
+    "Kind",
+    "Name",
+    "Context (as printed)",
+    "Total (as printed)",
+    "Detail (as printed)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Item",
+      "Capacity",
+      "",
+      4860.0,
+      "Computed drain: 5460, actual drain: 5460",
+      371,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Item",
+      "screen",
+      "",
+      1271.0,
+      "apps: 1271",
+      373,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Item",
+      "cpu",
+      "",
+      41870.0,
+      "apps: 41272 duration: 8d 11h 32m 45s 422ms",
+      374,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Item",
+      "screen",
+      "(on battery, screen on)",
+      1271.0,
+      "apps: 1271",
+      376,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "UID",
+      "1000",
+      "",
+      8816.0,
+      "bg: 8816 | cpu=8784 cpu:bg=8784 audio=0.837 (1m 56s 723ms) | (on battery, screen on) cpu=1135 cpu:bg=1135",
+      377,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "UID",
+      "u0a300",
+      "",
+      7542.0,
+      "fg: 346 (6h 29m 26s 160ms) bg: 6418 (7h 39m 30s 113ms) fgs: 44.9 (1h 24m 27s 968ms) cached: 28.5 | screen=705 cpu=6615 cpu:fg=227",
+      380,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "UID",
+      "u0a301",
+      "",
+      12.5,
+      "bg: 12.5",
+      382,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

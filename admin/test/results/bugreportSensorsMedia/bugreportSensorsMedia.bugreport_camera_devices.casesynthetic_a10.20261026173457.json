@@ -1,0 +1,65 @@
+{
+  "metadata": {
+    "module_name": "bugreportSensorsMedia",
+    "artifact_name": "Bug Report - Camera Devices",
+    "function_name": "bugreport_camera_devices",
+    "case_number": "casesynthetic_a10",
+    "number_of_columns": 11,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 154,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSensorsMedia/testdata.bugreportSensorsMedia.bugreport_camera_devices.casesynthetic_a10.zip",
+    "start_time": "2026-10-26T17:34:57.935130+00:00",
+    "end_time": "2026-10-26T17:34:58.061631+00:00",
+    "run_time_seconds": 0.013404607772827148,
+    "last_commit": {
+      "hash": "e56d9fc859d2e83c7207c6514d3727ee6bf6a291",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:32:45-04:00",
+      "message": "Bug report sensors and media: location, sensors, camera, audio, media, accessibility, input method, display and window artifacts"
+    }
+  },
+  "headers": [
+    "Part",
+    "Device",
+    "State",
+    "Opened (as printed)",
+    "Package",
+    "PID",
+    "UID",
+    "Priority Score",
+    "Device Status",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "current",
+      "0",
+      "closed",
+      "",
+      "",
+      null,
+      null,
+      "",
+      "",
+      504,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "current",
+      "1",
+      "closed",
+      "",
+      "",
+      null,
+      null,
+      "",
+      "",
+      506,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

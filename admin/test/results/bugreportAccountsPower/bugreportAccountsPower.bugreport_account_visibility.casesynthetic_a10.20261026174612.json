@@ -1,0 +1,58 @@
+{
+  "metadata": {
+    "module_name": "bugreportAccountsPower",
+    "artifact_name": "Bug Report - Account Visibility",
+    "function_name": "bugreport_account_visibility",
+    "case_number": "casesynthetic_a10",
+    "number_of_columns": 6,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 277,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportAccountsPower/testdata.bugreportAccountsPower.bugreport_account_visibility.casesynthetic_a10.zip",
+    "start_time": "2026-10-26T17:46:12.732718+00:00",
+    "end_time": "2026-10-26T17:46:12.859936+00:00",
+    "run_time_seconds": 0.012569665908813477,
+    "last_commit": {
+      "hash": "7450687ec1476569021e50b0cfc221c1d2c13a09",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:45:32-04:00",
+      "message": "Bug report accounts, sync, backup, users, battery, power and memory: readers, 33 artifacts, synthetic fixture and tests"
+    }
+  },
+  "headers": [
+    "User",
+    "Account",
+    "Package",
+    "Visibility (as stored)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      0,
+      "person.one@example.test",
+      "com.example.maps",
+      "2",
+      160,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      0,
+      "person.one@example.test",
+      "com.example.mail",
+      "2",
+      161,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      0,
+      "Example Chat",
+      "com.example.chat",
+      "1",
+      163,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

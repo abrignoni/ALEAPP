@@ -1,0 +1,152 @@
+{
+  "metadata": {
+    "module_name": "bugreportAccountsPower",
+    "artifact_name": "Bug Report - Backup State",
+    "function_name": "bugreport_backup_state",
+    "case_number": "casesynthetic_a10",
+    "number_of_columns": 5,
+    "number_of_rows": 17,
+    "total_data_size_bytes": 1483,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportAccountsPower/testdata.bugreportAccountsPower.bugreport_backup_state.casesynthetic_a10.zip",
+    "start_time": "2026-10-26T19:10:45.128293+00:00",
+    "end_time": "2026-10-26T19:10:45.405823+00:00",
+    "run_time_seconds": 0.15631747245788574,
+    "last_commit": {
+      "hash": "d1aa88ec6597139a2e6c891969cef84a01cd6a2c",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T14:15:20-04:00",
+      "message": "Give each bug report topic group its own ALEAPP category"
+    }
+  },
+  "headers": [
+    "Name",
+    "Value",
+    "Time (UTC)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Statement",
+      "Backup Manager is enabled / setup complete / not pending init",
+      null,
+      174,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Statement",
+      "Auto-restore is enabled",
+      null,
+      175,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Statement",
+      "No backups running",
+      null,
+      176,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Statement",
+      "Framework scheduling is enabled",
+      null,
+      177,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Last backup pass started",
+      "0",
+      null,
+      178,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "now (in the Last backup pass started line)",
+      "1793614320000",
+      1793614320,
+      178,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "next scheduled",
+      "1793647320000",
+      1793647320,
+      179,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Transport clients created",
+      "4",
+      null,
+      193,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Current transport clients",
+      "0",
+      null,
+      194,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Pending init",
+      "0",
+      null,
+      195,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Ancestral",
+      "0",
+      null,
+      196,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Current",
+      "21c53c20b328bc21",
+      null,
+      197,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Ancestral packages",
+      "none",
+      null,
+      204,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Ever backed up",
+      "2",
+      null,
+      205,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Pending key/value backup",
+      "2",
+      null,
+      206,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Full backup queue",
+      "3",
+      null,
+      209,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Agent timeouts",
+      "",
+      null,
+      213,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

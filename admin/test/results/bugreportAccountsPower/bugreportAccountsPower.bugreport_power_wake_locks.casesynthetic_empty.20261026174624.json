@@ -1,0 +1,36 @@
+{
+  "metadata": {
+    "module_name": "bugreportAccountsPower",
+    "artifact_name": "Bug Report - Power Wake Locks",
+    "function_name": "bugreport_power_wake_locks",
+    "case_number": "casesynthetic_empty",
+    "number_of_columns": 9,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportAccountsPower/testdata.bugreportAccountsPower.bugreport_power_wake_locks.casesynthetic_empty.zip",
+    "start_time": "2026-10-26T17:46:24.762191+00:00",
+    "end_time": "2026-10-26T17:46:24.871708+00:00",
+    "run_time_seconds": 0.0021216869354248047,
+    "last_commit": {
+      "hash": "7450687ec1476569021e50b0cfc221c1d2c13a09",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:45:32-04:00",
+      "message": "Bug report accounts, sync, backup, users, battery, power and memory: readers, 33 artifacts, synthetic fixture and tests"
+    }
+  },
+  "headers": [
+    "Level",
+    "Tag",
+    "Flags",
+    "Held (as printed, relative)",
+    "UID",
+    "PID",
+    "Details (as printed)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

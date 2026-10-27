@@ -1,0 +1,71 @@
+{
+  "metadata": {
+    "module_name": "bugreportAccountsPower",
+    "artifact_name": "Bug Report - Backup Transports",
+    "function_name": "bugreport_backup_transports",
+    "case_number": "casesynthetic_a16",
+    "number_of_columns": 7,
+    "number_of_rows": 4,
+    "total_data_size_bytes": 410,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportAccountsPower/testdata.bugreportAccountsPower.bugreport_backup_transports.casesynthetic_a16.zip",
+    "start_time": "2026-10-26T17:46:07.012765+00:00",
+    "end_time": "2026-10-26T17:46:07.136731+00:00",
+    "run_time_seconds": 0.012832880020141602,
+    "last_commit": {
+      "hash": "7450687ec1476569021e50b0cfc221c1d2c13a09",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:45:32-04:00",
+      "message": "Bug report accounts, sync, backup, users, battery, power and memory: readers, 33 artifacts, synthetic fixture and tests"
+    }
+  },
+  "headers": [
+    "List",
+    "Transport",
+    "Marked With * (current)",
+    "Destination",
+    "Intent",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Whitelist",
+      "com.example.localtransport/.LocalTransportService",
+      "",
+      "",
+      "",
+      253,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Whitelist",
+      "com.example.cloud/.BackupTransportService",
+      "",
+      "",
+      "",
+      254,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Available",
+      "com.example.localtransport/.LocalTransport",
+      "",
+      "Backing up to a private cache",
+      "null",
+      256,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Available",
+      "com.example.cloud/.BackupTransportService",
+      "yes",
+      "person.one@example.test",
+      "Intent { cmp=com.example.cloud/.SetBackupAccountActivity }",
+      259,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

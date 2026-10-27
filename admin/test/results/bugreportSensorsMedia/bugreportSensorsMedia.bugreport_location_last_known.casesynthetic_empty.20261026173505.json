@@ -1,0 +1,39 @@
+{
+  "metadata": {
+    "module_name": "bugreportSensorsMedia",
+    "artifact_name": "Bug Report - Location Last Known",
+    "function_name": "bugreport_location_last_known",
+    "case_number": "casesynthetic_empty",
+    "number_of_columns": 12,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSensorsMedia/testdata.bugreportSensorsMedia.bugreport_location_last_known.casesynthetic_empty.zip",
+    "start_time": "2026-10-26T17:35:05.993938+00:00",
+    "end_time": "2026-10-26T17:35:06.093027+00:00",
+    "run_time_seconds": 0.0023200511932373047,
+    "last_commit": {
+      "hash": "e56d9fc859d2e83c7207c6514d3727ee6bf6a291",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:32:45-04:00",
+      "message": "Bug report sensors and media: location, sensors, camera, audio, media, accessibility, input method, display and window artifacts"
+    }
+  },
+  "headers": [
+    "List",
+    "Provider",
+    "User",
+    "Location Provider (as printed)",
+    "Latitude (as printed)",
+    "Longitude (as printed)",
+    "Accuracy (as printed)",
+    "Elapsed Time (as printed)",
+    "Enabled",
+    "Last Location (as printed)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}
