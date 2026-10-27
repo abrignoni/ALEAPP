@@ -253,8 +253,7 @@ __artifacts_v2__ = {
                  "whether it happened.\n"
                  "Of the five tested reports, only the two Samsung reports (Android 16) print this log; the Huawei, Motorola and Transsion-brand reports have no "
                  "LSSLog lines, so the table is empty for them. Evidence tiers. Data-proven on two real bug reports (Samsung "
-                 "A-series 479 rows and Samsung S-series 463 rows), each equal to a count of timestamped lines after LSSLog: in "
-                 "the raw text. As both are in a UTC+0 zone, the conversion to UTC was checked on constructed text for other "
+                 "A-series 479 rows and Samsung S-series 463 rows), each equal to a count of timestamped lines after LSSLog: in the raw text (counted before indented entries were read, so these counts may now be higher). As both are in a UTC+0 zone, the conversion to UTC was checked on constructed text for other "
                  "zones. Not examined: other vendors and Android versions."
                  " Control characters in a value read from the report text are shown as spaces."
                  "\nOn the corpus the run gave s20fe_a13 3 rows, equal to the timestamped LSSLog entries of the dump it read; samsungs20_a13, sharon_a14 and userb2_a13 gave none.",
