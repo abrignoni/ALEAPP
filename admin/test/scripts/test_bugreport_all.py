@@ -13,7 +13,7 @@ from scripts import dumpstate_reader as reader  # noqa: E402  pylint: disable=wr
 MODULES = ('bugreportDevice', 'bugreportActivity')
 PREFIX = 'Android Bug Report - '
 GROUPS = collections.OrderedDict([
-    ('Device and Build', 2), ('Installed Apps', 2), ('Processes and Memory', 1), ('App Usage', 1),
+    ('Device and Build', 3), ('Installed Apps', 2), ('Processes and Memory', 1), ('App Usage', 1),
     ('Settings and Config', 2), ('Boot, Crash and Dropbox', 1)])
 PATHS = ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
          '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip')
@@ -34,7 +34,7 @@ class CategoryTests(unittest.TestCase):
             self.assertTrue(category.startswith(PREFIX), (module, key, category))
             counts[category[len(PREFIX):]] += 1
         self.assertEqual(dict(counts), dict(GROUPS))
-        self.assertEqual(sum(counts.values()), 9)
+        self.assertEqual(sum(counts.values()), 10)
 
     def test_names_and_paths_are_the_same_kind_everywhere(self):
         names = collections.Counter()

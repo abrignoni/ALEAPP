@@ -478,8 +478,8 @@ class SourceTests(unittest.TestCase):
         path = self.write('a/dumpstate.txt', fixture.build_report('a16'))
         before = (path.read_bytes(), path.stat().st_mtime_ns)
         context = Context(self.work, [path])
-        for function in (device.bugreport_device_facts, device.bugreport_sections, device.bugreport_packages,
-                         device.bugreport_package_times):
+        for function in (device.bugreport_device_facts, device.bugreport_device_identifiers, device.bugreport_sections,
+                         device.bugreport_packages, device.bugreport_package_times):
             function.__wrapped__(context)
         self.assertEqual((path.read_bytes(), path.stat().st_mtime_ns), before)
 
@@ -502,8 +502,8 @@ class ArtifactTests(unittest.TestCase):
 
     def test_row_width_matches_the_headers(self):
         path = self.stage('Dump/dumpstate.txt', fixture.build_report('a16', users=(0, 10)))
-        for function in (device.bugreport_device_facts, device.bugreport_sections, device.bugreport_packages,
-                         device.bugreport_package_times):
+        for function in (device.bugreport_device_facts, device.bugreport_device_identifiers, device.bugreport_sections,
+                         device.bugreport_packages, device.bugreport_package_times):
             headers, rows, source_path = self.run_artifact(function, path)
             self.assertTrue(rows)
             self.assertTrue(all(len(row) == len(headers) for row in rows))
@@ -520,6 +520,23 @@ class ArtifactTests(unittest.TestCase):
         self.assertEqual(facts['persist.sys.timezone'][2], 'getprop')
         self.assertEqual(facts['Kernel'][4], 'Dump/dumpstate.txt')
 
+    def test_identifiers_are_rows_of_device_identifiers_only(self):
+        path = self.stage('Dump/dumpstate.txt', fixture.build_report('a16'))
+        _headers, facts, _source = self.run_artifact(device.bugreport_device_facts, path)
+        _headers, identifiers, _source = self.run_artifact(device.bugreport_device_identifiers, path)
+        by_name = {(row[0], row[2]): row for row in identifiers}
+        self.assertEqual(by_name[('ro.serialno', 'getprop')][1], 'SYNTH0000EXAMPLE')
+        self.assertIn(('Command line', 'header'), by_name)
+        self.assertEqual(by_name[('androidboot.serialno', 'bootconfig')][1], '"SYNTH0000EXAMPLE"')
+        self.assertEqual(by_name[('ro.serialno', 'getprop')][4], 'Dump/dumpstate.txt')
+        fact_keys = {(row[0], row[2]) for row in facts}
+        self.assertFalse(fact_keys & set(by_name))
+        self.assertFalse([row for row in facts if row[2] == 'bootconfig' or row[0] in reader.IDENTIFIER_PROPERTIES
+                          or row[0] == 'Command line'])
+        # every fact of the report is a row of exactly one of the two artifacts (Device Facts adds two derived rows)
+        report = reader.read_report(reader.find_sources([str(path)])[0][0])
+        self.assertEqual(len(facts) - 2 + len(identifiers), len(report.facts))
+
     def test_device_facts_without_a_zone(self):
         path = self.stage('Dump/dumpstate.txt', fixture.build_report('a16', zone=''))
         _headers, rows, _source = self.run_artifact(device.bugreport_device_facts, path)
@@ -532,7 +549,7 @@ class ArtifactTests(unittest.TestCase):
         _headers, rows, _source = self.run_artifact(device.bugreport_sections, path)
         by_name = {row[0]: row for row in rows}
         self.assertEqual(by_name['preamble'][1], 'header')
-        self.assertEqual(by_name['preamble'][7], 'Device Facts')
+        self.assertEqual(by_name['preamble'][7], 'Device Facts; Device Identifiers')
         self.assertEqual(by_name['package'][1], 'dumpsys service')
         self.assertEqual(by_name['package'][5], 0.321)
         self.assertEqual(by_name['package'][6], None)
@@ -568,8 +585,8 @@ class ArtifactTests(unittest.TestCase):
 
     def test_nothing_to_read(self):
         path = self.stage('Dump/dumpstate.txt', 'not a bug report\n')
-        for function in (device.bugreport_device_facts, device.bugreport_sections, device.bugreport_packages,
-                         device.bugreport_package_times):
+        for function in (device.bugreport_device_facts, device.bugreport_device_identifiers, device.bugreport_sections,
+                         device.bugreport_packages, device.bugreport_package_times):
             headers, rows, source_path = self.run_artifact(function, path)
             self.assertEqual(rows, [])
             self.assertTrue(headers)

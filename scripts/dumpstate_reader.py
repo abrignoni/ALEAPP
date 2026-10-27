@@ -105,6 +105,14 @@ _CONTROL = re.compile('[\x00-\x08\x0b-\x1f\x7f]')
 
 Source = collections.namedtuple('Source', 'path member')
 Fact = collections.namedtuple('Fact', 'name value origin line')
+
+
+def is_identifier(fact):
+    """True for a fact that is or can hold a device identifier: a property on the identifier list, the kernel command
+    line and the bootconfig lines. These are the rows of Device Identifiers; every other fact is a row of Device Facts."""
+    if fact.origin == 'getprop':
+        return fact.name in IDENTIFIER_PROPERTIES
+    return fact.origin == 'bootconfig' or (fact.origin == 'header' and fact.name == 'Command line')
 PackageRecord = collections.namedtuple(
     'PackageRecord', 'block package app_id_key app_id shared_user version_code version_name min_sdk target_sdk '
                      'code_path flags installer initiating originating package_source users_installed user_states line')
@@ -1192,8 +1200,8 @@ READERS = [PreambleReader, PropertiesReader, PackageReader, UsageServiceReader, 
            SettingsReader]
 # Which artifacts present each section, for the section index.
 READ_BY = {
-    ('preamble', 'preamble'): 'Device Facts',
-    ('command', 'SYSTEM PROPERTIES'): 'Device Facts; Boot Reasons',
+    ('preamble', 'preamble'): 'Device Facts; Device Identifiers',
+    ('command', 'SYSTEM PROPERTIES'): 'Device Facts; Device Identifiers; Boot Reasons',
     ('service', 'package'): 'Installed Packages; Package Times',
     ('service', 'usagestats'): 'Usage Events',
     ('command', 'CHECKIN USAGESTATS'): 'Usage Events',
@@ -1394,6 +1402,3 @@ def say_once(log, message):
     if message not in _LOGGED:
         _LOGGED.add(message)
         log(message)
-
-
-
