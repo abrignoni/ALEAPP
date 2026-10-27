@@ -6,13 +6,13 @@ __artifacts_v2__ = {
                        "one state, whether the device was secure at that check, and how many checks "
                        "the run had.",
         "author": "@AlexisBrignoni, Claude",
-        "creation_date": "2026-10-27",
-        "last_update_date": "2026-10-27",
+        "creation_date": "2026-10-26",
+        "last_update_date": "2026-10-26",
         "requirements": "none",
         "category": "Device Settings",
         "notes": "Reads screenlock_state_history and acknowledged_secure_lock_state from Google Play Services' "
-                 "com.google.android.gms.auth.authzen.cryptauth.DeviceStateSyncManager preferences (plain or "
-                 "ABX XML); one row per history entry, in stored order, Entry 1 being the oldest kept. The "
+                 "com.google.android.gms.auth.authzen.cryptauth.DeviceStateSyncManager preferences (plain XML; "
+                 "the ABX reader is present in the code but no tested file was ABX); one row per history entry, in stored order, Entry 1 being the oldest kept. The "
                  "meanings below come from the Play Services build installed on pixel7a_a14 (24.26.32, "
                  "base.apk SHA-256 06c467b1bc80356cf530c5775d7ce76a757d5e58765c813c3098f75eb766005e), whose "
                  "classes2.dex was decompiled with jadx 1.5.6; other builds were not decompiled. The two keys "
@@ -43,8 +43,9 @@ __artifacts_v2__ = {
                  "short history is not evidence of a short period. Device Secure (as checked) and Checks in "
                  "Run are is_secure and count as stored. Acknowledged Secure Lock State (as stored) is "
                  "acknowledged_secure_lock_state, one value per preferences file repeated on each of its rows: "
-                 "the build writes it after a successful sync of the state to Google's server and removes it "
-                 "when the state changed during that sync. It was present in every tested file and held true "
+                 "the build writes it after a successful sync of the state to the server (the code's "
+                 "own wording; the endpoint was not traced) and removes it when the state changed during that "
+                 "sync. It was present in every tested file and held true "
                  "on 28 and false on 7 of the 35 rows. On sharon_a14 and hc_pixel8pro_a17 the last check of a "
                  "not-secure run came 78 and 51 seconds before the time the Lock Settings artifact reports as "
                  "LSKF Last Changed for user 0, and the next entry was secure. Across the 35 rows of the "
@@ -53,8 +54,8 @@ __artifacts_v2__ = {
                  "app data folder holds the file; the same file under data/data and data/user/0 is read once, "
                  "and the second users on cookbook_a11 and samsungs20_a13 (150) and russell_a14 and "
                  "russell_pixel6a_a13 (10) were reported separately, so Android User held 0 on every row of "
-                 "the other images. An entry that is not a JSON object is reported as a row with blank values "
-                 "and logged.",
+                 "the other images. An entry that is not a JSON object is reported as a row with blank "
+                 "time, secure and count values and logged; none was seen in the tested images.",
         "paths": ('*/com.google.android.gms/shared_prefs/'
                   'com.google.android.gms.auth.authzen.cryptauth.DeviceStateSyncManager.xml',),
         "output_types": "standard",
