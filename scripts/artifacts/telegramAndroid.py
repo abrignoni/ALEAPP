@@ -1613,7 +1613,8 @@ def _removed_messages(db_file, live_keys):
     except (sqlite3.Error, OSError) as ex:
         logfunc(f'Telegram - Messages: write-ahead log not read for {os.path.basename(db_file)}: {ex}')
         return []
-    logfunc(f'Telegram - Messages: {wal.summary()}')
+    if wal.log:
+        logfunc(f'Telegram - Messages: {wal.summary()}')
     by_key = {}
     for item in found:
         key = tuple(item.values[i] for i in _MESSAGE_KEY)
