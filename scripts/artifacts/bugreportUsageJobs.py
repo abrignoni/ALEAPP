@@ -41,12 +41,19 @@ __artifacts_v2__ = {
                  "to a count of the package lines in the raw text (rows plus the unlisted lines) and to an independent parser "
                  "for the package, user, interval, durations, last times and launch count as printed. All five reports record a "
                  "UTC+0 time zone without daylight saving, so the conversion of wall-clock text to UTC was the identity on every "
-                 "real row; other zones and daylight saving were tested on constructed text only. Not examined: Android 11 to 13 "
-                 "and other vendors.",
+                 "real row; other zones and daylight saving were tested on constructed text only. Not examined: Android 11 and 12 "
+                 "and other vendors."
+                 "\nOn the corpus only the full Samsung dumpState text of s20fe_a13 (Android 13) prints the service dumps read here; the error dumps of s20fe_a13, samsungs20_a13 and sharon_a14 and the partial texts of userb2_a13 do not print a usagestats dump. s20fe_a13 gave 886 rows, 457 from the usagestats dump and 429 from CHECKIN USAGESTATS; with the 1,158 and 1,186 rows the log counts and does not list, each adds up to the 1,615 package lines of its section.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "bar-chart"
+        "artifact_icon": "bar-chart",
+        "sample_data": {
+            "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 886 rows",
+            "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 0 rows",
+            "sharon_a14": "Android 14 | Samsung error dumpstate zip | 0 rows",
+            "userb2_a13": "Android 13 | two partial Shell bug report texts (.tmp) | 0 rows",
+        }
     },
     "bugreport_usage_interval_events": {
         "name": "Bug Report - Usage Interval Event Counts",
@@ -72,12 +79,19 @@ __artifacts_v2__ = {
                  "Interval End (UTC) held one value on all rows of each Samsung report.\n"
                  "Evidence tiers. Data-proven on five real bug reports (Samsung A-series and S-series on Android 16, Huawei and a "
                  "Transsion-brand phone on Android 10, Motorola on Android 15): 16, 15, 32, 32 and 32 rows, each equal to a count of "
-                 "the event lines in the raw text and to an independent parser, field by field. Not examined: Android 11 to 13, "
-                 "other vendors, and event names other than the four seen.",
+                 "the event lines in the raw text and to an independent parser, field by field. Not examined: Android 11 and 12, "
+                 "other vendors, and event names other than the four seen."
+                 "\nOn the corpus only the full Samsung dumpState text of s20fe_a13 (Android 13) prints the service dumps read here; the error dumps of s20fe_a13, samsungs20_a13 and sharon_a14 and the partial texts of userb2_a13 do not print a usagestats dump. s20fe_a13 gave 16 rows (not compared with a second count).",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "bar-chart"
+        "artifact_icon": "bar-chart",
+        "sample_data": {
+            "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 16 rows",
+            "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 0 rows",
+            "sharon_a14": "Android 14 | Samsung error dumpstate zip | 0 rows",
+            "userb2_a13": "Android 13 | two partial Shell bug report texts (.tmp) | 0 rows",
+        }
     },
     "bugreport_standby_buckets": {
         "name": "Bug Report - Standby Buckets",
@@ -116,11 +130,18 @@ __artifacts_v2__ = {
                  "2,042; on the other 394 the job scheduler printed EXEMPTED or ACTIVE for a package in another bucket (bucket 5 "
                  "printed ACTIVE on 211 of them). Numbers 5, 10, 20, 40, 45 and 50 each matched their name on most pairs; 30 never "
                  "appeared with FREQUENT in a pair (6 pairs with ACTIVE and 31 with EXEMPTED), so the name of 30 is "
-                 "source-verified only. Not examined: Android 11 to 13 and other vendors.",
+                 "source-verified only. Not examined: Android 11 and 12 and other vendors."
+                 "\nOn the corpus only the full Samsung dumpState text of s20fe_a13 (Android 13) prints the service dumps read here; the error dumps of s20fe_a13, samsungs20_a13 and sharon_a14 and the partial texts of userb2_a13 do not print a usagestats dump. s20fe_a13 gave 930 rows, 465 from each section; the 465 of the usagestats dump equal its bucket= lines (the CHECKIN half was not compared with a second count).",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "layers"
+        "artifact_icon": "layers",
+        "sample_data": {
+            "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 930 rows",
+            "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 0 rows",
+            "sharon_a14": "Android 14 | Samsung error dumpstate zip | 0 rows",
+            "userb2_a13": "Android 13 | two partial Shell bug report texts (.tmp) | 0 rows",
+        }
     },
     "bugreport_scheduled_jobs": {
         "name": "Bug Report - Scheduled Jobs",
@@ -156,11 +177,18 @@ __artifacts_v2__ = {
                  "registered list plus a count of the completed entries, and to an independent parser for the list, job id, "
                  "package, service, bucket, last run times and enqueue time. All five reports record a UTC+0 time zone, so the "
                  "wall-clock conversion was the identity on every real row; other zones were tested on constructed text only. "
-                 "Not examined: Android 11 to 13 and other vendors.",
+                 "Not examined: Android 11 and 12 and other vendors."
+                 "\nOn the corpus only the full Samsung dumpState text of s20fe_a13 (Android 13) prints the service dumps read here; the error dumps of s20fe_a13, samsungs20_a13 and sharon_a14 and the partial texts of userb2_a13 do not print a jobscheduler dump. s20fe_a13 gave 268 rows: 248 Registered rows, equal to its JOB # lines, and 20 Recently completed rows.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "clock"
+        "artifact_icon": "clock",
+        "sample_data": {
+            "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 268 rows",
+            "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 0 rows",
+            "sharon_a14": "Android 14 | Samsung error dumpstate zip | 0 rows",
+            "userb2_a13": "Android 13 | two partial Shell bug report texts (.tmp) | 0 rows",
+        }
     },
     "bugreport_pending_alarms": {
         "name": "Bug Report - Pending Alarms",
@@ -193,11 +221,18 @@ __artifacts_v2__ = {
                  "pending alarms plus the alarm clock on the Samsung reports), each equal to a count of the alarm headings in the "
                  "raw text and to an independent parser for the type, package, tag and trigger offset. The nowRTC arithmetic "
                  "reproduced the printed wall-clock time of the Next wakeup alarm and Next non-wakeup alarm lines on all five "
-                 "reports (10 of 10 lines, to the millisecond). Not examined: Android 11 to 13 and other vendors.",
+                 "reports (10 of 10 lines, to the millisecond). Not examined: Android 11 and 12 and other vendors."
+                 "\nOn the corpus only the full Samsung dumpState text of s20fe_a13 (Android 13) prints the service dumps read here; the error dumps of s20fe_a13, samsungs20_a13 and sharon_a14 and the partial texts of userb2_a13 do not print an alarm dump. s20fe_a13 gave 70 rows, equal to the alarm entry lines of its alarm dump.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": "standard",
-        "artifact_icon": "alarm"
+        "artifact_icon": "alarm",
+        "sample_data": {
+            "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 70 rows",
+            "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 0 rows",
+            "sharon_a14": "Android 14 | Samsung error dumpstate zip | 0 rows",
+            "userb2_a13": "Android 13 | two partial Shell bug report texts (.tmp) | 0 rows",
+        }
     },
     "bugreport_alarm_history": {
         "name": "Bug Report - Alarm History",
@@ -230,11 +265,18 @@ __artifacts_v2__ = {
                  "reports the converted rtc= text and the nowRTC plus offset differed by at most 0.51 seconds. The Android 10 "
                  "reports print the App Alarm history only. All five reports record a UTC+0 time zone, so the wall-clock "
                  "conversion was the identity on every real row; other zones were tested on constructed text only. Not examined: "
-                 "Android 11 to 13 and other vendors.",
+                 "Android 11 and 12 and other vendors."
+                 "\nOn the corpus only the full Samsung dumpState text of s20fe_a13 (Android 13) prints the service dumps read here; the error dumps of s20fe_a13, samsungs20_a13 and sharon_a14 and the partial texts of userb2_a13 do not print an alarm dump. s20fe_a13 gave 154 rows (not compared with a second count).",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": "standard",
-        "artifact_icon": "history"
+        "artifact_icon": "history",
+        "sample_data": {
+            "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 154 rows",
+            "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 0 rows",
+            "sharon_a14": "Android 14 | Samsung error dumpstate zip | 0 rows",
+            "userb2_a13": "Android 13 | two partial Shell bug report texts (.tmp) | 0 rows",
+        }
     },
     "bugreport_notification_records": {
         "name": "Bug Report - Notification Records",
@@ -269,11 +311,18 @@ __artifacts_v2__ = {
                  "notification list records plus 5, 5, 5, 0 and 5 archive entries), each equal to a count of the record and "
                  "archive headings in the raw text and, for the list records, to an independent parser for the package, user, id, "
                  "importance and creation time. On the 300 times the two Android 16 reports print beside a number, the converted "
-                 "value equalled the printed time to the millisecond. Not examined: Android 11 to 13 and other vendors.",
+                 "value equalled the printed time to the millisecond. Not examined: Android 11 and 12 and other vendors."
+                 "\nOn the corpus only the full Samsung dumpState text of s20fe_a13 (Android 13) prints the service dumps read here; the error dumps of s20fe_a13, samsungs20_a13 and sharon_a14 and the partial texts of userb2_a13 do not print the notification settings. Notification records come from the CRITICAL notification dump, which s20fe_a13 and both partial texts of userb2_a13 print: 4 rows and 5 rows (2 and 3), equal to their NotificationRecord lines.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": "standard",
-        "artifact_icon": "bell"
+        "artifact_icon": "bell",
+        "sample_data": {
+            "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 4 rows",
+            "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 0 rows",
+            "sharon_a14": "Android 14 | Samsung error dumpstate zip | 0 rows",
+            "userb2_a13": "Android 13 | two partial Shell bug report texts (.tmp) | 5 rows",
+        }
     },
     "bugreport_notification_listeners": {
         "name": "Bug Report - Notification Listeners",
@@ -297,11 +346,18 @@ __artifacts_v2__ = {
                  "which lists no assistant.\n"
                  "Evidence tiers. Data-proven on five real bug reports (Samsung A-series and S-series on Android 16, Huawei and a "
                  "Transsion-brand phone on Android 10, Motorola on Android 15): 21, 27, 11, 20 and 6 rows, each equal to a count "
-                 "of the list entries in the raw text. Not examined: Android 11 to 13 and other vendors.",
+                 "of the list entries in the raw text. Not examined: Android 11 and 12 and other vendors."
+                 "\nOn the corpus only the full Samsung dumpState text of s20fe_a13 (Android 13) prints the service dumps read here; the error dumps of s20fe_a13, samsungs20_a13 and sharon_a14 and the partial texts of userb2_a13 do not print the notification settings. s20fe_a13 gave 18 rows (not compared with a second count).",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "bell"
+        "artifact_icon": "bell",
+        "sample_data": {
+            "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 18 rows",
+            "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 0 rows",
+            "sharon_a14": "Android 14 | Samsung error dumpstate zip | 0 rows",
+            "userb2_a13": "Android 13 | two partial Shell bug report texts (.tmp) | 0 rows",
+        }
     },
     "bugreport_notification_channels": {
         "name": "Bug Report - Notification Channels",
@@ -334,11 +390,18 @@ __artifacts_v2__ = {
                  "Transsion-brand phone on Android 10, Motorola on Android 15): 942, 1,292, 484, 1,246 and 567 rows (801, 1,126, "
                  "483, 1,006 and 566 channels plus 141, 166, 1, 240 and 1 package rows without a channel), each equal to a count "
                  "of the channel lines in the raw text and to an independent parser for the package, uid, channel id, importance "
-                 "and deleted flag. Not examined: Android 11 to 13 and other vendors.",
+                 "and deleted flag. Not examined: Android 11 and 12 and other vendors."
+                 "\nOn the corpus only the full Samsung dumpState text of s20fe_a13 (Android 13) prints the service dumps read here; the error dumps of s20fe_a13, samsungs20_a13 and sharon_a14 and the partial texts of userb2_a13 do not print the notification settings. s20fe_a13 gave 412 rows: 203 NotificationChannel lines and 209 packages with settings but no channel.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "bell"
+        "artifact_icon": "bell",
+        "sample_data": {
+            "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 412 rows",
+            "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 0 rows",
+            "sharon_a14": "Android 14 | Samsung error dumpstate zip | 0 rows",
+            "userb2_a13": "Android 13 | two partial Shell bug report texts (.tmp) | 0 rows",
+        }
     },
 }
 
