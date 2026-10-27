@@ -1,0 +1,125 @@
+{
+  "metadata": {
+    "module_name": "bugreportDevice",
+    "artifact_name": "Bug Report - Sections",
+    "function_name": "bugreport_sections",
+    "case_number": "casesynthetic_odd_bytes",
+    "number_of_columns": 9,
+    "number_of_rows": 8,
+    "total_data_size_bytes": 748,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportDevice/testdata.bugreportDevice.bugreport_sections.casesynthetic_odd_bytes.zip",
+    "start_time": "2026-10-27T16:51:34.108692+00:00",
+    "end_time": "2026-10-27T16:51:34.208223+00:00",
+    "run_time_seconds": 0.025444507598876953,
+    "last_commit": {
+      "hash": "328afcdabbf6e2965d0a6eb6c9125580be4fb217",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-10-27T07:53:23-04:00",
+      "message": "Bug report: move device identifiers to their own artifact"
+    }
+  },
+  "headers": [
+    "Section",
+    "Kind",
+    "Start Line",
+    "Last Line",
+    "Lines",
+    "Printed Duration (s)",
+    "Timeout Marker (ms)",
+    "Read By",
+    "Source File"
+  ],
+  "data": [
+    [
+      "preamble",
+      "header",
+      1,
+      20,
+      20,
+      null,
+      null,
+      "Device Facts; Device Identifiers",
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "SYSTEM PROPERTIES",
+      "command",
+      21,
+      46,
+      25,
+      0.05,
+      null,
+      "Device Facts; Device Identifiers; Boot Reasons",
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "DUMPSYS CRITICAL",
+      "dumpsys group",
+      49,
+      1292,
+      1243,
+      0.5,
+      null,
+      "not read",
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "package",
+      "dumpsys service",
+      51,
+      1290,
+      1239,
+      0.321,
+      null,
+      "Installed Packages; Package Times; Package Permissions; Permission Definitions",
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "DUMPSYS",
+      "dumpsys group",
+      1295,
+      1365,
+      70,
+      0.9,
+      null,
+      "not read",
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "settings",
+      "dumpsys service",
+      1296,
+      1330,
+      34,
+      0.08,
+      null,
+      "Settings; Settings Changes",
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "activity",
+      "dumpsys service",
+      1333,
+      1363,
+      30,
+      0.5,
+      null,
+      "Process Exit Info",
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "CHECKIN USAGESTATS",
+      "command",
+      1368,
+      1384,
+      16,
+      0.346,
+      null,
+      "Usage Events; Usage Intervals; Usage Interval Event Counts; Standby Buckets",
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

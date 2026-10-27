@@ -1,0 +1,72 @@
+{
+  "metadata": {
+    "module_name": "bugreportUsageJobs",
+    "artifact_name": "Bug Report - Pending Alarms",
+    "function_name": "bugreport_pending_alarms",
+    "case_number": "casesynthetic_cut",
+    "number_of_columns": 21,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 104,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportUsageJobs/testdata.bugreportUsageJobs.bugreport_pending_alarms.casesynthetic_cut.zip",
+    "start_time": "2026-10-26T17:40:17.150641+00:00",
+    "end_time": "2026-10-26T17:40:17.321678+00:00",
+    "run_time_seconds": 0.013432741165161133,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-26T17:40:17.295759",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Trigger Time (UTC)",
+    "Trigger As Printed",
+    "Latest Trigger Time (UTC)",
+    "Latest Trigger As Printed",
+    "List",
+    "Alarm Type",
+    "Package (as printed)",
+    "Tag",
+    "Original When (as printed)",
+    "Window",
+    "Repeat Interval (ms)",
+    "Count",
+    "Flags",
+    "Exact Allow Reason",
+    "Operation",
+    "Listener",
+    "Batch",
+    "Index",
+    "Time Note",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1793630920,
+      "1793630920000 = 2026-11-02 15:48:40.000",
+      null,
+      "",
+      "Next alarm clock",
+      "user 0",
+      "",
+      "",
+      "",
+      "",
+      "",
+      null,
+      "",
+      "",
+      "",
+      "",
+      "",
+      null,
+      "",
+      143,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}
