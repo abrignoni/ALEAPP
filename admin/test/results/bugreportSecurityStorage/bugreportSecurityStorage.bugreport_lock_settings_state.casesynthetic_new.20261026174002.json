@@ -1,0 +1,146 @@
+{
+  "metadata": {
+    "module_name": "bugreportSecurityStorage",
+    "artifact_name": "Bug Report - Lock Settings State",
+    "function_name": "bugreport_lock_settings_state",
+    "case_number": "casesynthetic_new",
+    "number_of_columns": 6,
+    "number_of_rows": 14,
+    "total_data_size_bytes": 1010,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSecurityStorage/testdata.bugreportSecurityStorage.bugreport_lock_settings_state.casesynthetic_new.zip",
+    "start_time": "2026-10-26T17:40:02.929246+00:00",
+    "end_time": "2026-10-26T17:40:03.231255+00:00",
+    "run_time_seconds": 0.17651128768920898,
+    "last_commit": {
+      "hash": "702ca90825fbb296e5cc429838c511eb52a44af6",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:39:47-04:00",
+      "message": "Bug report security and storage: readers and 30 artifacts for device policy, lock settings, biometrics, trust, ADB, vendor services, storage, dbinfo and flags"
+    }
+  },
+  "headers": [
+    "Group",
+    "User",
+    "Name",
+    "Value",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Service",
+      null,
+      "DO Enabled",
+      "false",
+      1555,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Keys in namespace",
+      null,
+      "",
+      "synthetic_password_0123456789abcdef",
+      1581,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Keys in namespace",
+      null,
+      "",
+      "synthetic_password_fedcba9876543210",
+      1582,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "StrongAuth: PrimaryAuthFlags state",
+      0,
+      "primaryAuthFlags",
+      "0",
+      1594,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "StrongAuth: PrimaryAuthFlags state",
+      10,
+      "primaryAuthFlags",
+      "5",
+      1595,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "StrongAuth: NonStrongBiometricAllowed state",
+      0,
+      "allowed",
+      "true",
+      1598,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "StrongAuth: strong auth timeout state",
+      null,
+      "strong biometric timeout",
+      "2026/11/05 06:01:36.858",
+      1601,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "RebootEscrow",
+      null,
+      "mRebootEscrowWanted",
+      "false",
+      1605,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "RebootEscrow",
+      null,
+      "mRebootEscrowReady",
+      "false",
+      1606,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "RebootEscrow",
+      null,
+      "mRebootEscrowListener",
+      "com.example.RecoveryService@1a2b3c",
+      1607,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "RebootEscrow",
+      null,
+      "mPendingRebootEscrowKey is not set",
+      "",
+      1608,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "RebootEscrow",
+      null,
+      "RebootEscrowProvider type is null",
+      "",
+      1609,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Service",
+      null,
+      "PasswordHandleCount",
+      "0",
+      1613,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Service",
+      null,
+      "ThirdPartyAppsStarted",
+      "true",
+      1614,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

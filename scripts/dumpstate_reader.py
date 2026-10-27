@@ -1232,6 +1232,12 @@ READ_BY.update(dumpstate_radios.READ_BY)
 # Sensors and media (scripts/dumpstate_sensorsmedia.py): the module registers its readers when imported
 from scripts import dumpstate_sensorsmedia  # noqa: E402  pylint: disable=wrong-import-position,unused-import,cyclic-import
 
+# Security and storage (scripts/dumpstate_securitystorage.py): the module registers its readers when imported
+from scripts import dumpstate_securitystorage  # noqa: E402  pylint: disable=wrong-import-position,unused-import,cyclic-import
+
+# Logs, crashes, dropbox, reset reasons and vendor services (scripts/dumpstate_logscrash.py): the module registers its readers when imported
+from scripts import dumpstate_logscrash  # noqa: E402  pylint: disable=wrong-import-position,unused-import,cyclic-import
+
 
 def readers_by_section():
     """``{(kind, name): [reader classes]}`` for the section readers above."""

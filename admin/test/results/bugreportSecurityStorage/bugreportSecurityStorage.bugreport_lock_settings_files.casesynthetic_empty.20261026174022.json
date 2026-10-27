@@ -1,0 +1,36 @@
+{
+  "metadata": {
+    "module_name": "bugreportSecurityStorage",
+    "artifact_name": "Bug Report - Lock Settings Files",
+    "function_name": "bugreport_lock_settings_files",
+    "case_number": "casesynthetic_empty",
+    "number_of_columns": 9,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSecurityStorage/testdata.bugreportSecurityStorage.bugreport_lock_settings_files.casesynthetic_empty.zip",
+    "start_time": "2026-10-26T17:40:22.234217+00:00",
+    "end_time": "2026-10-26T17:40:22.327911+00:00",
+    "run_time_seconds": 0.0024919509887695312,
+    "last_commit": {
+      "hash": "702ca90825fbb296e5cc429838c511eb52a44af6",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:39:47-04:00",
+      "message": "Bug report security and storage: readers and 30 artifacts for device policy, lock settings, biometrics, trust, ADB, vendor services, storage, dbinfo and flags"
+    }
+  },
+  "headers": [
+    "Modified (UTC)",
+    "Modified As Printed",
+    "Time Note",
+    "Location",
+    "Directory",
+    "Size (bytes)",
+    "File Name",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}
