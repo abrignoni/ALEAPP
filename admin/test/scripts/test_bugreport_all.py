@@ -15,7 +15,7 @@ MODULES = ('bugreportDevice', 'bugreportActivity', 'bugreportPermissions', 'bugr
            'bugreportRadios')
 PREFIX = 'Android Bug Report - '
 GROUPS = collections.OrderedDict([
-    ('Device and Build', 2), ('Installed Apps', 2), ('Permissions and App Ops', 6), ('Processes and Memory', 1),
+    ('Device and Build', 3), ('Installed Apps', 2), ('Permissions and App Ops', 6), ('Processes and Memory', 1),
     ('App Usage', 4), ('Network', 14), ('Wi-Fi', 6), ('Bluetooth, NFC and USB', 10), ('Telephony', 7),
     ('Notifications', 3), ('Alarms and Jobs', 3), ('Settings and Config', 2), ('Boot, Crash and Dropbox', 1)])
 PATHS = ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
@@ -37,7 +37,7 @@ class CategoryTests(unittest.TestCase):
             self.assertTrue(category.startswith(PREFIX), (module, key, category))
             counts[category[len(PREFIX):]] += 1
         self.assertEqual(dict(counts), dict(GROUPS))
-        self.assertEqual(sum(counts.values()), 61)
+        self.assertEqual(sum(counts.values()), 62)
 
     def test_names_and_paths_are_the_same_kind_everywhere(self):
         names = collections.Counter()
