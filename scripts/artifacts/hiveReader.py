@@ -1,120 +1,77 @@
-"""Reader for the Hive key-value boxes Flutter apps write.
+"""LEAPP-side adapter for the Hive reader.
 
-Shared by more than one artifact module, so it lives on its own rather than being copied.
-A box is a flat log of frames, each `[len u32 LE][key][value][crc32 LE]`, and a later frame
-for the same key supersedes an earlier one. Every frame carries its own CRC32, which is what
-tells a real frame from the tail of a partly overwritten file, so the read stops at the first
-frame whose checksum does not match rather than guessing.
-
-Values are self describing: a type id then the payload. A registered class is written as a
-field count and then numbered fields, and the field NAMES live only in the app's compiled
-Dart, so a caller has to map the numbers itself against data it created deliberately.
+The reader itself is vendored as ``scripts/hive_parser.py`` from
+github.com/abrignoni/hive-parser. This module keeps the shape the artifact
+modules already call, and owns the two things that belong to this tool rather
+than to the reader: turning an unreadable file into an empty result instead of
+an exception, and saying in the log when a box was not read to its end, with
+the reason.
 """
 
 import os
-import struct
-import zlib
 
 from scripts.ilapfuncs import logfunc
+from scripts.hive_parser import looks_encrypted, read_frames, read_value
 
-# Hive value type ids, from the format's own writer.
-_NULL, _INT, _DOUBLE, _BOOL, _STRING, _BYTELIST = 0, 1, 2, 3, 4, 5
-_INTLIST, _DOUBLELIST, _BOOLLIST, _STRINGLIST, _LIST, _MAP = 6, 7, 8, 9, 10, 11
-_HIVELIST, _DATETIME = 12, 13
-
-
-def read_value(buf, index):
-    """One Hive value at `index`, returning it and the index after it."""
-    kind = buf[index]
-    index += 1
-    if kind == _NULL:
-        return None, index
-    if kind in (_INT, _DOUBLE, _DATETIME):
-        number, = struct.unpack('<d', buf[index:index + 8])
-        return (number if kind == _DOUBLE else int(number)), index + 8
-    if kind == _BOOL:
-        return bool(buf[index]), index + 1
-    if kind in (_STRING, _BYTELIST):
-        length, = struct.unpack('<I', buf[index:index + 4])
-        index += 4
-        chunk = buf[index:index + length]
-        return (chunk.decode('utf-8', 'replace') if kind == _STRING else chunk), index + length
-    if kind in (_INTLIST, _DOUBLELIST, _BOOLLIST, _STRINGLIST, _LIST, _MAP, _HIVELIST):
-        count, = struct.unpack('<I', buf[index:index + 4])
-        index += 4
-        items = []
-        for _ in range(count):
-            if kind in (_INTLIST, _DOUBLELIST):
-                number, = struct.unpack('<d', buf[index:index + 8])
-                items.append(int(number) if kind == _INTLIST else number)
-                index += 8
-            elif kind == _BOOLLIST:
-                items.append(bool(buf[index]))
-                index += 1
-            elif kind == _STRINGLIST:
-                length, = struct.unpack('<I', buf[index:index + 4])
-                index += 4
-                items.append(buf[index:index + length].decode('utf-8', 'replace'))
-                index += length
-            else:
-                item, index = read_value(buf, index)
-                items.append(item)
-        return items, index
-    # A registered class: a field count, then that many (field number, value) pairs.
-    count = buf[index]
-    index += 1
-    obj = {}
-    for _ in range(count):
-        field = buf[index]
-        index += 1
-        obj[field], index = read_value(buf, index)
-    return obj, index
+__all__ = ['hive_entries', 'read_value']
 
 
 def hive_entries(path):
     """The live entries of a Hive box, plus how many superseded frames each key has.
 
-    Every frame carries a CRC32 of itself, so a frame that does not match is not read and
-    the walk stops there rather than guessing at the rest of the file.
+    Every frame carries a CRC32 of itself, so a frame that does not match is not
+    read and the walk stops there rather than guessing at the rest of the file.
     """
+    name = os.path.basename(path)
     try:
-        with open(path, 'rb') as handle:
-            buf = handle.read()
+        frames = read_frames(path)
+        size = os.path.getsize(path)
     except OSError as ex:
-        logfunc(f'HERE WeGo: could not read {os.path.basename(path)}: {ex}')
+        logfunc(f'Hive: could not read {name}: {ex}')
         return {}, {}
-    live = {}
-    earlier = {}
-    offset = 0
-    try:
-        while offset + 4 <= len(buf):
-            length, = struct.unpack('<I', buf[offset:offset + 4])
-            if length < 8 or offset + length > len(buf):
-                break
-            frame = buf[offset:offset + length]
-            stored, = struct.unpack('<I', frame[-4:])
-            if (zlib.crc32(frame[:-4]) & 0xffffffff) != stored:
-                logfunc(f'HERE WeGo: frame at offset {offset} of '
-                        f'{os.path.basename(path)} failed its own CRC, stopping there')
-                break
-            index = 4
-            key_kind = frame[index]
-            index += 1
-            if key_kind == 0:
-                key, = struct.unpack('<I', frame[index:index + 4])
-                index += 4
-            else:
-                key_length = frame[index]
-                index += 1
-                key = frame[index:index + key_length].decode('utf-8', 'replace')
-                index += key_length
-            value = None
-            if index < length - 4:
-                value, index = read_value(frame, index)
-            if key in live:
-                earlier[key] = earlier.get(key, 0) + 1
-            live[key] = value
-            offset += length
-    except (IndexError, struct.error, ValueError) as ex:
-        logfunc(f'HERE WeGo: stopped reading {os.path.basename(path)} at offset {offset}: {ex}')
+
+    if looks_encrypted(frames):
+        logfunc(f'Hive: every frame of {name} failed its own CRC while its keys '
+                f'read cleanly, which is how an encrypted box reads. '
+                f'{len(frames)} key(s) recovered; the values are not decoded.')
+        return {}, {}
+
+    # Why the walk ended before the end of the file, if it did. A truncated
+    # frame has no CRC to check, so it is not a checksum failure and is not
+    # reported as one, and a frame length the format cannot hold stops the walk
+    # without producing a frame at all.
+    truncated = next((f for f in frames if f['truncated']), None)
+    failed = next((f for f in frames if not f['crc_ok'] and not f['truncated']), None)
+    if truncated is not None:
+        logfunc(f'Hive: frame at offset {truncated["offset"]} of {name} is cut '
+                f'short: it declares {truncated["length"]} bytes and '
+                f'{size - truncated["offset"]} are present; stopping there')
+    elif failed is not None:
+        logfunc(f'Hive: frame at offset {failed["offset"]} of {name} failed its '
+                f'own CRC, stopping there')
+    else:
+        read_to = sum(f['length'] for f in frames)
+        if read_to != size:
+            logfunc(f'Hive: {name} stopped reading at offset {read_to} of {size}: '
+                    f'what follows does not begin a frame this format can hold')
+
+    unreadable = [f for f in frames if f['error'] and f['crc_ok']]
+    if unreadable:
+        logfunc(f'Hive: {len(unreadable)} value(s) in {name} could not be '
+                f'decoded; the rest of the box was still read')
+
+    # This module keeps the contract the artifact modules were written against:
+    # a deleted key stays in live with a value of None, and a deletion counts as
+    # a supersession of the key it removes. hive_parser.live_entries models what
+    # the app would read instead, which drops the key. The two differ only for a
+    # box that holds a deletion.
+    live, earlier = {}, {}
+    for f in frames:
+        if f['key'] is None or not f['crc_ok']:
+            continue
+        if f['error'] is not None and not f['deleted']:
+            continue
+        if f['key'] in live:
+            earlier[f['key']] = earlier.get(f['key'], 0) + 1
+        live[f['key']] = None if f['deleted'] else f['value']
     return live, earlier

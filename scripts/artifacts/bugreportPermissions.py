@@ -33,14 +33,21 @@ __artifacts_v2__ = {
                  "a Transsion-brand phone on Android 10, Motorola on Android 15): 14,995, 19,976, 7,697, 3,579 and 13,133 rows, "
                  "each equal to the rows of an independent parser (an indentation tree over the raw text) on every field "
                  "including the source line. Flags is empty on the install rows of the Huawei and Transsion-brand reports and on "
-                 "all but 63, 62 and 105 install rows of the other three. Not examined: Android 11 to 14, other vendors, a "
+                 "all but 63, 62 and 105 install rows of the other three. Not examined: Android 11, 12 and 14, other vendors, a "
                  "granted= value other than true or false, a report with more than two Android users. Run together, the five "
                  "tested reports gave 59,380 rows, above the 50,000-row limit the report builder sets for an HTML page, so "
-                 "the page left the table out; the TSV and LAVA outputs hold the rows.",
+                 "the page left the table out; the TSV and LAVA outputs hold the rows."
+                 "\nOn the corpus only the full Samsung dumpState text of s20fe_a13 (Android 13) prints the service dumps read here; the error dumps of s20fe_a13, samsungs20_a13 and sharon_a14 and the partial texts of userb2_a13 do not print a package service dump. s20fe_a13 gave 8,470 rows, equal to the granted= lines of its package dump.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": "standard",
-        "artifact_icon": "key"
+        "artifact_icon": "key",
+        "sample_data": {
+            "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 8,470 rows",
+            "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 0 rows",
+            "sharon_a14": "Android 14 | Samsung error dumpstate zip | 0 rows",
+            "userb2_a13": "Android 13 | two partial Shell bug report texts (.tmp) | 0 rows",
+        }
     },
     "bugreport_permission_definitions": {
         "name": "Bug Report - Permission Definitions",
@@ -67,11 +74,18 @@ __artifacts_v2__ = {
                  "a Transsion-brand phone on Android 10, Motorola on Android 15): 3,141, 3,631, 2,212, 890 and 2,302 rows, each "
                  "equal to the rows of an independent parser on every field including the source line. Type held the single "
                  "value 0 on all rows of the three Android 15 and 16 reports and the values 0, 1 and 2 on the Android 10 "
-                 "reports. Not examined: Android 11 to 14 and other vendors.",
+                 "reports. Not examined: Android 11, 12 and 14 and other vendors."
+                 "\nOn the corpus only the full Samsung dumpState text of s20fe_a13 (Android 13) prints the service dumps read here; the error dumps of s20fe_a13, samsungs20_a13 and sharon_a14 and the partial texts of userb2_a13 do not print a package service dump. s20fe_a13 gave 2,142 rows, equal to the Permission [ entries under its Permissions: heading.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": "standard",
-        "artifact_icon": "list"
+        "artifact_icon": "list",
+        "sample_data": {
+            "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 2,142 rows",
+            "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 0 rows",
+            "sharon_a14": "Android 14 | Samsung error dumpstate zip | 0 rows",
+            "userb2_a13": "Android 13 | two partial Shell bug report texts (.tmp) | 0 rows",
+        }
     },
     "bugreport_appops_modes": {
         "name": "Bug Report - App Ops Modes",
@@ -109,17 +123,24 @@ __artifacts_v2__ = {
                  "Evidence tiers. Data-proven on five real bug reports (Samsung A-series and S-series on Android 16, Huawei and "
                  "a Transsion-brand phone on Android 10, Motorola on Android 15): 3,001, 5,592, 639, 709 and 4,261 rows, each equal "
                  "to the rows of an independent parser (an indentation tree) on every field including the source line. The "
-                 "Motorola report prints uid headings of users 0 and 11. Not examined: Android 11 to 14, other vendors, and a "
-                 "dump with a package heading under a uid that also prints uid-level modes after it.",
+                 "Motorola report prints uid headings of users 0 and 11. Not examined: Android 11, 12 and 14, other vendors, and a "
+                 "dump with a package heading under a uid that also prints uid-level modes after it."
+                 "\nOn the corpus only the full Samsung dumpState text of s20fe_a13 (Android 13) prints the service dumps read here; the error dumps of s20fe_a13, samsungs20_a13 and sharon_a14 and the partial texts of userb2_a13 do not print an appops dump. s20fe_a13 gave 391 rows: 213 package rows, equal to its package op lines, and 178 uid rows whose Op Count adds up to its 592 uid-level mode= lines.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": "standard",
-        "artifact_icon": "shield"
+        "artifact_icon": "shield",
+        "sample_data": {
+            "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 391 rows",
+            "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 0 rows",
+            "sharon_a14": "Android 14 | Samsung error dumpstate zip | 0 rows",
+            "userb2_a13": "Android 13 | two partial Shell bug report texts (.tmp) | 0 rows",
+        }
     },
     "bugreport_appops_accesses": {
         "name": "Bug Report - App Ops Accesses",
         "description": "The Access and Reject lines printed under each op of each package in the appops service dump of an Android "
-                       "bug report text, with the time, uid state, flags, duration and proxy text as printed.",
+                       "bug report text, with the time, uid state, flags, duration and proxy text as printed, and the time and duration converted.",
         "author": "@danjethh, Claude",
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
@@ -160,12 +181,19 @@ __artifacts_v2__ = {
                  "each equal to the rows of an independent parser (an indentation tree) on every field including the source "
                  "line, with the times and durations read from the printed text. All five reports record a UTC+0 zone without "
                  "daylight saving, so the conversion to UTC was the identity on every real row; other offsets and daylight "
-                 "saving were tested on constructed text only. Not examined: Android 11 to 14, other vendors, and a "
-                 "dump that prints an access line outside an op line.",
+                 "saving were tested on constructed text only. Not examined: Android 11, 12 and 14, other vendors, and a "
+                 "dump that prints an access line outside an op line."
+                 "\nOn the corpus only the full Samsung dumpState text of s20fe_a13 (Android 13) prints the service dumps read here; the error dumps of s20fe_a13, samsungs20_a13 and sharon_a14 and the partial texts of userb2_a13 do not print an appops dump. s20fe_a13 gave 274 rows, equal to its Access:, Reject: and Running start at: lines (165, 104 and 5).",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": "standard",
-        "artifact_icon": "clock"
+        "artifact_icon": "clock",
+        "sample_data": {
+            "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 274 rows",
+            "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 0 rows",
+            "sharon_a14": "Android 14 | Samsung error dumpstate zip | 0 rows",
+            "userb2_a13": "Android 13 | two partial Shell bug report texts (.tmp) | 0 rows",
+        }
     },
     "bugreport_role_holders": {
         "name": "Bug Report - Role Holders",
@@ -188,11 +216,18 @@ __artifacts_v2__ = {
                  "Evidence tiers. Data-proven on three real bug reports: 8 rows on the Huawei and the Transsion-brand phone "
                  "(Android 10, user 0) and 76 rows on the Motorola phone (Android 15, users 0 and 11, 37 of the rows without a "
                  "holder), each equal to the rows of an independent regular expression parser on every field. Not examined: "
-                 "Android 11 to 14, other vendors, a holders= line with several holders.",
+                 "Android 11, 12 and 14, other vendors, a holders= line with several holders."
+                 "\nOn the corpus only the full Samsung dumpState text of s20fe_a13 (Android 13) prints the service dumps read here; the error dumps of s20fe_a13, samsungs20_a13 and sharon_a14 and the partial texts of userb2_a13 do not print a role dump. s20fe_a13 gave 33 rows: 23 with a holders= line and 10 roles printed without one.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": "standard",
-        "artifact_icon": "user-check"
+        "artifact_icon": "user-check",
+        "sample_data": {
+            "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 33 rows",
+            "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 0 rows",
+            "sharon_a14": "Android 14 | Samsung error dumpstate zip | 0 rows",
+            "userb2_a13": "Android 13 | two partial Shell bug report texts (.tmp) | 0 rows",
+        }
     },
     "bugreport_permission_grants": {
         "name": "Bug Report - Permission Manager Grants",
@@ -221,11 +256,18 @@ __artifacts_v2__ = {
                  "independent parser (an indentation tree) on every field including the source line. User held the single "
                  "value 0 on all rows of the two Samsung reports. Run together, the three reports gave 55,041 rows, above the "
                  "50,000-row limit the report builder sets for an HTML page, so the page left the table out; the TSV and LAVA "
-                 "outputs hold the rows. Not examined: Android 11 to 14 and other vendors.",
+                 "outputs hold the rows. Not examined: Android 11, 12 and 14 and other vendors."
+                 "\nOn the corpus only the full Samsung dumpState text of s20fe_a13 (Android 13) prints the service dumps read here; the error dumps of s20fe_a13, samsungs20_a13 and sharon_a14 and the partial texts of userb2_a13 do not print a permissionmgr dump, and the one of s20fe_a13 prints only its service header lines, so it gave no rows.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": "standard",
-        "artifact_icon": "key"
+        "artifact_icon": "key",
+        "sample_data": {
+            "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 0 rows",
+            "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 0 rows",
+            "sharon_a14": "Android 14 | Samsung error dumpstate zip | 0 rows",
+            "userb2_a13": "Android 13 | two partial Shell bug report texts (.tmp) | 0 rows",
+        }
     },
 }
 

@@ -461,9 +461,12 @@ _DEVICE_STATE = re.compile(r'(?:\(handle=(0x[0-9a-fA-F]+)\)\s*|^(0x[0-9a-fA-F]+|
 _ACTIVE_SENSOR = re.compile(r'\(handle=(0x[0-9a-fA-F]+|\d+), connections=(\d+)\)')
 _EVENT_HEAD = re.compile(r'^(.+): last (\d+) events?:?$')
 _EVENT_ROW = re.compile(r'^(\d+) \(ts=([\d.]+), wall=(.*?)\)\s*(.*)$')
-_REGISTRATION = re.compile(r'^(\d\d:\d\d:\d\d) ([+-]) (0x[0-9a-fA-F]+|\d+) pid=\s*(-?\d+) uid=\s*(-?\d+)(?: package=(\S+))?'
+# The clock is HH:MM:SS, or MM-DD HH:MM:SS.mmm on Samsung's Android 13 report, which also ends a line with [ sensor ].
+_REGISTRATION = re.compile(r'^((?:\d\d-\d\d )?\d\d:\d\d:\d\d(?:\.\d+)?) ([+-]) (0x[0-9a-fA-F]+|\d+) pid=\s*(-?\d+) '
+                           r'uid=\s*(-?\d+)(?: package=(\S+))?'
                            r'(?: samplingPeriod=\s*(N/A|-?\d+)\s*us\s+batchingPeriod=\s*(N/A|-?\d+)\s*us)?'
-                           r'(?:\s+result=(\S+)(?: \(sensor, package\): \((.*)\))?)?')
+                           r'(?:\s+result=(\S+)(?: \(sensor, package\): \((.*)\))?)?'
+                           r'(?:\s+\[ (.*?) \])?')
 
 
 class SensorReader(base.SectionReader):
@@ -546,8 +549,8 @@ class SensorReader(base.SectionReader):
         elif part == 'registrations':
             match = _REGISTRATION.match(body)
             if match:
-                clock, action, handle, pid, uid, package, sampling, batching, result, tail = match.groups()
-                sensor = ''
+                clock, action, handle, pid, uid, package, sampling, batching, result, tail, bracket = match.groups()
+                sensor = bracket or ''
                 if tail:
                     sensor, _sep, package = tail.rpartition(', ')
                     if not _sep:
@@ -1167,7 +1170,8 @@ class DisplayReader(base.SectionReader):
                     'Logical Displays', self.logical['id'], clean(state.group(1), 40) if state else '', '', '',
                     clean(name.group(1), 120) if name else '', size.group(1) if size else '', self.logical['line']))
                 self.logical['done'] = True
-        match = re.match(r'^(\d\d-\d\d \d\d:\d\d:\d\d\.\d+)\s*(?:-|,)\s*(BrightnessEvent:)?\s*(.*)$', body)
+        # a month-day time with a fraction, or (Samsung Android 13) a full date with no fraction
+        match = re.match(r'^((?:\d{4}-)?\d\d-\d\d \d\d:\d\d:\d\d(?:\.\d+)?)\s*(?:-|,)\s*(BrightnessEvent:)?\s*(.*)$', body)
         if match and (match.group(2) or 'isUserSetBrightness=' in body):
             stamp, event, rest = match.groups()
             fields = {}
