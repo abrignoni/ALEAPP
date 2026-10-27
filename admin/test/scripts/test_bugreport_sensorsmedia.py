@@ -325,6 +325,22 @@ class InterfaceTests(unittest.TestCase):
         self.assertEqual(sm.rows(a10(), 'brightness_events'), [])
         self.assertEqual([(s.source, s.state) for s in sm.rows(a10(), 'display_states')], [('Logical Displays', 'ON')])
 
+    def test_brightness_event_with_full_date_and_no_fraction(self):
+        # the shape of a Samsung Android 13 report: a column-0 heading, then a full date with no fraction
+        samsung = ('Automatic Brightness Adjustments Last 1 Events: \n'
+                   '  2026-11-02 08:40:00 - BrightnessEvent: disp=0, brt=0.3, rcmdBrt=NaN, preBrt=NaN, lux=20.0, preLux=10.0, '
+                   'hbmMax=1.0, hbmMode=off, thrmMax=1.0, flags=, reason=manual\n')
+        text = fixture.build_report('a16', zone='Europe/Paris').replace('Display Power Controller:\n',
+                                                                        samsung + 'Display Power Controller:\n', 1)
+        report = scan_text(text)
+        events = sm.rows(report, 'brightness_events')
+        self.assertEqual(len(events), 4)
+        first = events[0]
+        self.assertEqual((first.time_text, first.kind, first.display, first.brightness, first.nits, first.lux, first.reason),
+                         ('2026-11-02 08:40:00', 'BrightnessEvent', '0', '0.3', '', '20.0', 'manual'))
+        self.assertEqual(sm.utc_for(report, first.time_text), utc(2026, 11, 2, 7, 40, 0))   # Paris is UTC+1 in November
+        self.assertEqual([e.time_text for e in events[1:]], ['11-02 08:00:00.100', '11-02 08:30:00.200', '10-30 12:00:00.300'])
+
     def test_window_focus_and_windows(self):
         report = a16()
         focus = sm.rows(report, 'window_focus')

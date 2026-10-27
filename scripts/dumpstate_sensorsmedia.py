@@ -1170,7 +1170,8 @@ class DisplayReader(base.SectionReader):
                     'Logical Displays', self.logical['id'], clean(state.group(1), 40) if state else '', '', '',
                     clean(name.group(1), 120) if name else '', size.group(1) if size else '', self.logical['line']))
                 self.logical['done'] = True
-        match = re.match(r'^(\d\d-\d\d \d\d:\d\d:\d\d\.\d+)\s*(?:-|,)\s*(BrightnessEvent:)?\s*(.*)$', body)
+        # a month-day time with a fraction, or (Samsung Android 13) a full date with no fraction
+        match = re.match(r'^((?:\d{4}-)?\d\d-\d\d \d\d:\d\d:\d\d(?:\.\d+)?)\s*(?:-|,)\s*(BrightnessEvent:)?\s*(.*)$', body)
         if match and (match.group(2) or 'isUserSetBrightness=' in body):
             stamp, event, rest = match.groups()
             fields = {}
