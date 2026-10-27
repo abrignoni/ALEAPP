@@ -48,8 +48,24 @@ Keying is done on the evidence relative path rather than the extracted path. The
 own extraction folder is itself named "data", so a pattern applied to the full on-disk
 path can rewrite the harness boundary instead of the evidence path on extractions whose
 members start with "data/".
+
+An update installed with rollback enabled can leave a third copy. Android keeps a snapshot of
+the app's data from before the update under misc_ce/<user>/rollback/<rollback id>/<package>/
+(credential encrypted) or misc_de/<user>/rollback/<rollback id>/<package>/ (device
+encrypted), and a glob written for the app's own folder matches that copy too. On 7 of the 22
+registered Android images (listings of 2026-10-27) 12 artifact modules read such snapshots, and
+on russell_a14 the snapshot copies of MediaProvider's external.db gave 307 of the 622 rows of
+Emulated Storage Metadata - Images, each identical to a row from the live database. A snapshot
+is not a storage view: it was taken at one moment and may hold data the live copy no longer
+does. So unique_files drops a snapshot only when the same call also holds the live copy of
+that file, for the same storage class and user, and the two are byte identical. Otherwise the
+snapshot is kept, and its path names the rollback it belongs to. Of the 111 snapshot files
+artifacts matched on those images, 98 had the size of their live copy and 13 did not.
+The apexrollback folders beside them hold APEX module data, not an app data folder, and are
+left as they are.
 """
 
+import filecmp
 import re
 
 # Ordered so the first alternative that matches is also the preferred spelling to keep.
@@ -63,6 +79,18 @@ _VIEWS = (
     ('ce', re.compile(r'(^|/)data_mirror/data_ce/[^/]+/(\d+)/')),
     ('de', re.compile(r'(^|/)data_mirror/data_de/[^/]+/(\d+)/')),
 )
+
+# A pre-update snapshot of an app's data folder, kept for a rollback (see the module notes).
+_SNAPSHOT = re.compile(r'(^|/)(?:user)?data/misc_(ce|de)/(\d+)/rollback/\d+/')
+
+
+def snapshot_key(relative_path):
+    """The canonical_path key of the live file a rollback snapshot copies, or None."""
+    path = str(relative_path).replace('\\', '/')
+    match = _SNAPSHOT.search(path)
+    if not match:
+        return None
+    return f'{path[:match.start()]}{match.group(1)}\x00{match.group(2)}:{match.group(3)}\x00/{path[match.end():]}'
 
 
 def canonical_path(relative_path):
@@ -89,31 +117,61 @@ def unique_files(context, files=None):
 
     Order follows the first appearance of each file, so an artifact that relied on the
     order the seeker returned keeps it. Where an extraction carries several copies the
-    one under the shortest, most conventional path is the one reported.
+    one under the shortest, most conventional path is the one reported. A rollback
+    snapshot of a file is left out only when its live copy is among the files and the two
+    are byte identical; otherwise it is kept in its place.
     """
     if files is None:
         files = context.get_files_found()
     best = {}
     order = []
+    snapshots = {}
     for file_found in files:
         file_found = str(file_found)
-        key, rank = canonical_path(context.get_relative_path(file_found))
+        relative = context.get_relative_path(file_found)
+        live_key = snapshot_key(relative)
+        if live_key is not None:
+            key = ('snapshot', str(relative).replace('\\', '/'))
+            if key not in snapshots:
+                snapshots[key] = (live_key, file_found)
+                order.append(key)
+            continue
+        key, rank = canonical_path(relative)
         if key not in best:
             best[key] = (rank, file_found)
             order.append(key)
         elif rank < best[key][0]:
             best[key] = (rank, file_found)
-    return [best[key][1] for key in order]
+    kept = []
+    for key in order:
+        if key in snapshots:
+            live_key, file_found = snapshots[key]
+            if live_key in best and _same_bytes(file_found, best[live_key][1]):
+                continue
+            kept.append(file_found)
+        else:
+            kept.append(best[key][1])
+    return kept
+
+
+def _same_bytes(first, second):
+    try:
+        return filecmp.cmp(first, second, shallow=False)
+    except OSError:
+        return False
 
 
 def android_user(relative_path):
     """The Android user whose storage holds a path under an app data directory.
 
     data/data and userdata/data are user 0's; data/user/<n>, data/user_de/<n>,
-    userdata/user/<n>, userdata/user_de/<n> and data_mirror/data_*/<volume>/<n> name the
-    user. A path outside every app data directory names no user and returns ''.
+    userdata/user/<n>, userdata/user_de/<n>, data_mirror/data_*/<volume>/<n> and a rollback
+    snapshot's misc_ce/<n> or misc_de/<n> name the user. A path outside every app data directory names no user and returns ''.
     """
     path = str(relative_path).replace('\\', '/')
+    snapshot = _SNAPSHOT.search(path)
+    if snapshot:
+        return snapshot.group(3)
     for _storage, pattern in _VIEWS:
         match = pattern.search(path)
         if match:
