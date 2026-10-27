@@ -49,6 +49,32 @@ def service_text(name, body):
             '--------- 0.1s was the duration of dumpsys %s, ending at: 2026-06-01 10:00:01\n' % (name, body, name))
 
 
+def zoned_service_text(name, body):
+    """The base report (zone Europe/Paris, report time 2026-11-02 10:15:30) with one service dump."""
+    plain = fixture.base.build_report('a16', zone='Europe/Paris', report='2026-11-02 10:15:30')
+    closing = '== dumpstate: done (id 1)\n'
+    return (plain[:plain.rindex(closing)] + '------ DUMPSYS HIGH (/system/bin/dumpsys) ------\n' + fixture.service(name, body)
+            + "------ 0.900s was the duration of 'DUMPSYS HIGH' ------\n\n" + closing)
+
+
+# invented values in the Android 13 Samsung layouts: an LSSLog indented by two spaces with no year, a Last changed key
+A13_LOCK = ('Current lock settings service state:\n\nSP Enabled = true\n\nUser State:\n  User 7\n    SP Handle: 0\n'
+            '    Last changed: 1970-01-01 00:00:00 (0)\n    SID: 0\n  \nLSSLog:\n  \n'
+            '  ----------------- Start Summary state -----------------\n  <Summary not available>\n'
+            '  ----------------- End Summary state -----------------\n  \n'
+            '  ----------------- Start Example state -----------------\n'
+            '  03-14 09:26:53.589 Example one -> Z9\n'
+            '  03-14 09:26:53.600 Example two\n'
+            '          <No example>\n'
+            '          03-14 09:26:53.601 a detail line that starts with a time\n'
+            '  03-14 09:26:53.700 Example three!\n'
+            '  ----------------- End Example state -----------------\n  \n')
+# invented values in the pid|tid layout of knoxguard_service
+A13_GUARD = ('KG.example state: \n'
+             '2026-03-12 07:31:44 : 4100|4100 : first example message: x? y, [a.b.c\n'
+             '2026-03-12 07:31:45 : 4100|4122 : [ExampleTag] second example : k_v n: 9 p: f\n')
+
+
 def command_text(title, body):
     return ('== dumpstate: 2026-06-01 10:00:00\n\n------ %s (some command) ------\n%s------ 0.1s was the duration of \'%s\' ------\n'
             % (title, body, title))
@@ -253,6 +279,18 @@ class LockSettingsTests(unittest.TestCase):
         self.assertEqual(log[-1].message, 'User 0 PIN Fail on [com.example.systemui](2/5)]')
         self.assertEqual(len(log), 8)
 
+    def test_android_13_log_without_a_year_and_indented(self):
+        log = table(scan_text(service_text('lock_settings', A13_LOCK)), 'ss_lock_log')
+        self.assertEqual([(entry.state, entry.time_text, entry.message) for entry in log],
+                         [('Example', '03-14 09:26:53.589', 'Example one -> Z9'), ('Example', '03-14 09:26:53.600', 'Example two'),
+                          ('Example', '03-14 09:26:53.700', 'Example three!')])
+        self.assertEqual(log[1].detail, '<No example> | 03-14 09:26:53.601 a detail line that starts with a time')
+
+    def test_android_13_last_changed(self):
+        users = table(scan_text(service_text('lock_settings', A13_LOCK)), 'ss_lock_users')
+        self.assertEqual([(user.user, user.changed_text, user.previous_protector, user.other) for user in users],
+                         [(7, '1970-01-01 00:00:00 (0)', '', '')])
+
     def test_old_layout_has_no_log_files_or_strong_auth(self):
         report = scan_text(fixture.build_report('old'))
         self.assertEqual(table(report, 'ss_lock_log'), [])
@@ -359,6 +397,12 @@ class AdbAndVendorTests(unittest.TestCase):
         self.assertEqual(rows[5].message, 'Refreshed token: AbCd1234')
         self.assertEqual(rows[6].time_text, '1970-01-01 00:00:00')
         self.assertEqual(table(scan_text(fixture.build_report('old')), 'ss_knox_log'), [])
+
+    def test_guard_log_with_process_and_thread_ids(self):
+        rows = table(scan_text(service_text('knoxguard_service', A13_GUARD)), 'ss_knox_log')
+        self.assertEqual([(r.kind, r.time_text, r.tag, r.message) for r in rows],
+                         [('Log', '2026-03-12 07:31:44', '', '4100|4100 : first example message: x? y, [a.b.c'),
+                          ('Log', '2026-03-12 07:31:45', 'ExampleTag', '4100|4122 : [ExampleTag] second example : k_v n: 9 p: f')])
 
     def test_custom_state(self):
         rows = table(scan_text(fixture.build_report('new')), 'ss_knox_custom')
@@ -683,6 +727,18 @@ class ArtifactTests(unittest.TestCase):
         _headers, rows, _source = self.run_artifact(art.bugreport_database_operations, path)
         self.assertEqual(rows[0][:3], (utc(2026, 11, 1, 13, 22, 31, 250000), '11-01 14:22:31.250', ''))
         self.assertEqual(rows[5][:2], (utc(2025, 12, 31, 22, 59, 59, 999000), '12-31 23:59:59.999'))      # after the report: last year
+
+    def test_android_13_time_columns(self):
+        path = self.stage('Dump/dumpstate.txt', zoned_service_text('lock_settings', A13_LOCK))
+        _headers, rows, _source = self.run_artifact(art.bugreport_lock_settings_log, path)
+        self.assertEqual([row[:3] for row in rows][:2], [(utc(2026, 3, 14, 8, 26, 53, 589000), '03-14 09:26:53.589', ''),
+                                                         (utc(2026, 3, 14, 8, 26, 53, 600000), '03-14 09:26:53.600', '')])
+        _headers, rows, _source = self.run_artifact(art.bugreport_lock_settings_users, path)
+        self.assertEqual(rows[0][:3], (None, '1970-01-01 00:00:00 (0)', reader.NOTE_UNSET))      # not set: no UTC value
+        path = self.stage('Dump/dumpstate.txt', zoned_service_text('knoxguard_service', A13_GUARD))
+        _headers, rows, _source = self.run_artifact(art.bugreport_vendor_guard_log, path)
+        self.assertEqual(rows[1][:6], (utc(2026, 3, 12, 6, 31, 45), '2026-03-12 07:31:45', '', 'Log', 'ExampleTag',
+                                       '4100|4122 : [ExampleTag] second example : k_v n: 9 p: f'))
 
     def test_no_zone_gives_a_note_and_no_utc(self):
         path = self.stage('Dump/dumpstate.txt', fixture.build_report('new', zone=''))

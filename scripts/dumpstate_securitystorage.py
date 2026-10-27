@@ -370,7 +370,8 @@ class DevicePolicyReader(SectionReader):
 # lock settings
 # ---------------------------------------------------------------------------------------------
 LOCK_USER_KEYS = {
-    'LSKF-based SP protector ID': 'protector_id', 'LSKF last changed': 'changed', 'Backup protector': 'backup_protector',
+    'LSKF-based SP protector ID': 'protector_id', 'LSKF last changed': 'changed', 'Last changed': 'changed',
+    'Backup protector': 'backup_protector',
     'SI Checker': 'si_checker', 'Secure Mode': 'secure_mode', 'SID': 'sid', 'Quality': 'quality',
     'CredentialType': 'credential_type', 'SeparateChallenge': 'separate_challenge', 'Metrics': 'metrics',
     'failed attempt': 'failed_attempts', 'SP Handle': 'sp_handle'}
@@ -379,7 +380,9 @@ _LOCK_FILE = re.compile(r'^(\d+) (\d{4}-\d\d-\d\d \d\d:\d\d:\d\d) (.+)$')
 _LOCK_DIR = re.compile(r'^(User -?\d+|Backup) \[(.*)\]:$')
 _PREVIOUS = re.compile(r'^(.*?) \(previous protector: ([^)]*)\)$')
 _LOG_BOUNDARY = re.compile(r'^-+ (Start|End) (.*?) state -+$')
-_LOG_TIME = re.compile(r'^(\d{4}-\d\d-\d\d \d\d:\d\d:\d\d(?:\.\d+)?) ?(.*)$')
+# an entry time with a year (Android 14 and later) or without one (the Android 13 Samsung layout, indented by two spaces)
+_LOG_TIME = re.compile(r'^((?:\d{4}-)?\d\d-\d\d \d\d:\d\d:\d\d(?:\.\d+)?) ?(.*)$')
+_LOG_ENTRY_INDENT = 2
 _LOG_FRAME = re.compile(r'^\s+[A-Za-z_$][\w$.]*\.[\w$<>]+:\d+$')
 
 
@@ -414,7 +417,8 @@ class LockSettingsReader(SectionReader):
             self._flush_entry()
             self.log_state = boundary.group(2) if boundary.group(1) == 'Start' else ''
             return
-        match = _LOG_TIME.match(body) if body[0].isdigit() else None
+        # an entry starts at the left or two spaces in; a deeper line that starts with a time is detail of the entry above
+        match = _LOG_TIME.match(stripped) if stripped[0].isdigit() and indent_of(body) <= _LOG_ENTRY_INDENT else None
         if match:
             self._flush_entry()
             self.entry = {'state': cap(self.log_state, 60), 'time': match.group(1), 'message': match.group(2).strip(), 'detail': [],
@@ -730,6 +734,10 @@ class AdbManagerReader(SectionReader):
 # vendor security services
 # ---------------------------------------------------------------------------------------------
 _KNOX_EVENT = re.compile(r'^(\d{4}-\d\d-\d\d \d\d:\d\d:\d\d) : \[([^\]]*)\] ?(.*)$')
+# time : pid|tid : message, the message sometimes led by a [tag]; the message keeps the ids
+_KNOX_THREAD_EVENT = re.compile(r'^(\d{4}-\d\d-\d\d \d\d:\d\d:\d\d) : (\d+\|\d+ : (?:\[([^\]]*)\])?.*)$')
+
+
 class KnoxGuardReader(SectionReader):
     """The ``knoxguard_service`` dump: a few state lines and the timestamped event lines."""
     kind = 'service'
@@ -743,6 +751,11 @@ class KnoxGuardReader(SectionReader):
         if event:
             add(self.report, 'ss_knox_log', KnoxLog('Log', event.group(1), cap(event.group(2), 200),
                                                    cap(event.group(3), 600), line_no))
+            return
+        event = _KNOX_THREAD_EVENT.match(body)
+        if event:
+            add(self.report, 'ss_knox_log', KnoxLog('Log', event.group(1), cap(event.group(3) or '', 200),
+                                                   cap(event.group(2), 600), line_no))
         elif not body.endswith('state:'):
             add(self.report, 'ss_knox_log', KnoxLog('State', '', '', cap(body, 600), line_no))
 

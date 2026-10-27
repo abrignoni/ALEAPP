@@ -1019,12 +1019,14 @@ __artifacts_v2__ = {
     },
 }
 
+import re
 from datetime import timezone
 
 from scripts import dumpstate_reader
 from scripts import dumpstate_securitystorage as storage_reader
 from scripts.ilapfuncs import artifact_processor, logfunc
 
+_TIME_WITH_SUFFIX = re.compile(r'^\d{4}-\d\d-\d\d \d\d:\d\d:\d\d \([^()\s]*\)$')
 NOTE_NO_YEAR = ('no UTC value: the report has no time, or the text is not a month, day and clock time')
 
 
@@ -1084,6 +1086,12 @@ def no_year_time(report, text):
     if moment is None:
         return None, dumpstate_reader.NOTE_NO_ZONE
     return moment, ''
+
+
+def _printed_time(text):
+    """The ``YYYY-MM-DD HH:MM:SS`` part of a time printed with a bracketed word after it, as ``... (0)``; other text unchanged."""
+    value = str(text).strip()
+    return value[:19] if _TIME_WITH_SUFFIX.match(value) else value
 
 
 def either_time(report, text):
@@ -1152,7 +1160,7 @@ def bugreport_lock_settings_users(context):
                'Source File')
 
     def make(report, item, label):
-        moment, note = wall_time(report, item.changed_text)
+        moment, note = wall_time(report, _printed_time(item.changed_text))
         return (moment, item.changed_text, note, item.user, item.protector_id, item.previous_protector, item.backup_protector,
                 item.si_checker, item.secure_mode, item.sid, item.quality, item.credential_type, item.separate_challenge,
                 item.metrics, item.failed_attempts, item.sp_handle, item.other, item.line, label)
@@ -1186,7 +1194,7 @@ def bugreport_lock_settings_log(context):
                'Source Line', 'Source File')
 
     def make(report, item, label):
-        moment, note = wall_time(report, item.time_text)
+        moment, note = either_time(report, item.time_text)
         return moment, item.time_text, note, item.state, item.message, item.detail, item.frames, item.line, label
     rows, source = _collect(context, 'ss_lock_log', ('lock_settings',), make)
     return headers, rows, source
