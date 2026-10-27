@@ -116,7 +116,9 @@ class RadioReader:
                     table, MAX_SECTION_ROWS, self.name))
             return
         self.section_rows[table] += 1
-        self.report.add(table, row)
+        # Every text field is tidied here, so a field taken as printed (a word matched by a pattern, a key, a mark)
+        # shows its control characters as spaces like the fields that clean() cuts.
+        self.report.add(table, type(row)(*[tidy(value) if isinstance(value, str) else value for value in row]))
 
     def clean(self, value, limit=MAX_VALUE):
         """Control characters shown as spaces, cut to ``limit`` characters. The text is otherwise as printed."""

@@ -356,6 +356,27 @@ class BoundTests(unittest.TestCase):
         event = rows_of(scan_text(text), 'nfc_events')[0]
         self.assertLessEqual(len(event.detail), radios.MAX_VALUE)
 
+    def test_control_characters_in_fields_taken_as_printed(self):
+        # Fields that the readers take as printed without clean(): each one gets a NUL, its row must still be read, and
+        # the NUL must come out as a space.
+        text = fixture.build_report('a15')
+        for old, new in (('    current_functions_applied=true', '    current_functions\x00applied=true'),
+                         ('  handler={', '  han\x00dler={'),
+                         ('Registered HCE services for current user', 'Registered H\x00CE services for current user'),
+                         ('    [[X] PhoneAccount:', '    [[\x00] PhoneAccount:'),
+                         ('Bluetooth crashed 0 times', 'Bluetooth crashed 0\x001 times')):
+            self.assertEqual(text.count(old), 1, old)
+            text = text.replace(old, new)
+        report = scan_text(text)
+        self.assertIn('device_manager.han dler.current_functions applied', [row.path for row in rows_of(report, 'usb_state')])
+        self.assertEqual({row.service_list for row in rows_of(report, 'nfc_services')}, {'H CE services'})
+        self.assertEqual([row.enabled for row in rows_of(report, 'telecom_accounts')], [' ', ' '])
+        self.assertIn(('Bluetooth crashed (times)', '0 1'), [(row.item, row.value) for row in rows_of(report, 'bt_status')])
+        for table in radios.BluetoothReader.tables + radios.NfcReader.tables + radios.UsbStateReader.tables + \
+                radios.TelephonyReader.tables:
+            for row in rows_of(report, table):
+                self.assertFalse([value for value in row if isinstance(value, str) and '\x00' in value], table)
+
     def test_damaged_lines_do_not_stop_the_pass(self):
         damaged = fixture.build_report('a16').replace('mState=on', 'mState=on\x00\x0c\r').replace(
             'XX:XX:XX:XX:BB:11', 'XX:XX:XX\xff\xfe').encode('utf-8').replace(b'Example Pay', b'Example \xff Pay')
