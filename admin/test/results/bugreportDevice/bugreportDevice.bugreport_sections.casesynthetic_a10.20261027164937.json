@@ -3,16 +3,16 @@
     "module_name": "bugreportDevice",
     "artifact_name": "Bug Report - Sections",
     "function_name": "bugreport_sections",
-    "case_number": "casesynthetic_odd_bytes",
+    "case_number": "casesynthetic_a10",
     "number_of_columns": 9,
     "number_of_rows": 8,
-    "total_data_size_bytes": 708,
+    "total_data_size_bytes": 1080,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
-    "input_zip_path": "admin/test/cases/data/bugreportDevice/testdata.bugreportDevice.bugreport_sections.casesynthetic_odd_bytes.zip",
-    "start_time": "2026-10-26T20:52:59.449030+00:00",
-    "end_time": "2026-10-26T20:52:59.593149+00:00",
-    "run_time_seconds": 0.023248910903930664,
+    "input_zip_path": "admin\\test\\cases\\data\\bugreportDevice\\testdata.bugreportDevice.bugreport_sections.casesynthetic_a10.zip",
+    "start_time": "2026-10-27T16:49:37.042774+00:00",
+    "end_time": "2026-10-27T16:49:37.137612+00:00",
+    "run_time_seconds": 0.016582727432250977,
     "last_commit": {
       "hash": "34925548575444782d88efa5d8a4d0028005ceb2",
       "author_name": "danjethh",
@@ -37,89 +37,89 @@
       "preamble",
       "header",
       1,
-      20,
-      20,
+      16,
+      16,
       null,
       null,
-      "Device Facts",
-      "Dump/dumpstate.txt"
+      "Device Facts; Device Identifiers",
+      "Dump\\bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
     ],
     [
       "SYSTEM PROPERTIES",
       "command",
-      21,
-      46,
-      25,
+      17,
+      43,
+      26,
       0.05,
       null,
-      "Device Facts; Boot Reasons",
-      "Dump/dumpstate.txt"
+      "Device Facts; Device Identifiers; Boot Reasons",
+      "Dump\\bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
     ],
     [
       "DUMPSYS CRITICAL",
       "dumpsys group",
-      49,
-      1292,
-      1243,
+      46,
+      1026,
+      980,
       0.5,
       null,
       "not read",
-      "Dump/dumpstate.txt"
+      "Dump\\bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
     ],
     [
       "package",
       "dumpsys service",
-      51,
-      1290,
-      1239,
+      48,
+      1024,
+      976,
       0.321,
       null,
       "Installed Packages; Package Times; Package Permissions; Permission Definitions",
-      "Dump/dumpstate.txt"
+      "Dump\\bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
     ],
     [
       "DUMPSYS",
       "dumpsys group",
-      1295,
-      1365,
-      70,
+      1029,
+      1077,
+      48,
       0.9,
       null,
       "not read",
-      "Dump/dumpstate.txt"
+      "Dump\\bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
     ],
     [
       "settings",
       "dumpsys service",
-      1296,
-      1330,
-      34,
+      1030,
+      1051,
+      21,
       0.08,
       null,
       "Settings; Settings Changes",
-      "Dump/dumpstate.txt"
+      "Dump\\bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
     ],
     [
-      "activity",
+      "usagestats",
       "dumpsys service",
-      1333,
-      1363,
-      30,
-      0.5,
+      1054,
+      1075,
+      21,
+      0.044,
       null,
-      "Process Exit Info",
-      "Dump/dumpstate.txt"
+      "Usage Events; Usage Intervals; Usage Interval Event Counts; Standby Buckets",
+      "Dump\\bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
     ],
     [
       "CHECKIN USAGESTATS",
       "command",
-      1368,
-      1384,
+      1080,
+      1096,
       16,
       0.346,
       null,
       "Usage Events; Usage Intervals; Usage Interval Event Counts; Standby Buckets",
-      "Dump/dumpstate.txt"
+      "Dump\\bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
     ]
   ]
 }

@@ -1,0 +1,68 @@
+{
+  "metadata": {
+    "module_name": "bugreportDevice",
+    "artifact_name": "Bug Report - Device Identifiers",
+    "function_name": "bugreport_device_identifiers",
+    "case_number": "casesynthetic_a16",
+    "number_of_columns": 5,
+    "number_of_rows": 5,
+    "total_data_size_bytes": 360,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportDevice/testdata.bugreportDevice.bugreport_device_identifiers.casesynthetic_a16.zip",
+    "start_time": "2026-10-27T11:51:43.258257+00:00",
+    "end_time": "2026-10-27T11:51:43.295713+00:00",
+    "run_time_seconds": 0.02002096176147461,
+    "last_commit": {
+      "hash": "34925548575444782d88efa5d8a4d0028005ceb2",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T16:32:03-04:00",
+      "message": "Bug report artifacts: per-group categories, device identifiers as printed in Device Facts, invented fixture values"
+    }
+  },
+  "headers": [
+    "Name",
+    "Value",
+    "Origin",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Command line",
+      "console=ttynull androidboot.serialno=SYNTH0000EXAMPLE androidboot.hardware=example",
+      "header",
+      14,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "androidboot.hardware",
+      "\"example\"",
+      "bootconfig",
+      15,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "androidboot.serialno",
+      "\"SYNTH0000EXAMPLE\"",
+      "bootconfig",
+      16,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "ro.boot.serialno",
+      "SYNTH0000EXAMPLE",
+      "getprop",
+      32,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "ro.serialno",
+      "SYNTH0000EXAMPLE",
+      "getprop",
+      43,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

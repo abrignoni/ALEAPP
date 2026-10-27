@@ -53,10 +53,12 @@ the `py` part is correct for your environment, eg `py`, `python`, or `python3`, 
 or
 `pip3 install -r requirements.txt`
 
-For the exact mister_skinnylegs dependency chain the releases are built with, install
-`requirements-msl-lock.txt` over that, without dependencies:
+For the exact mister_skinnylegs dependency chain the releases are built with, use this
+instead. It installs `requirements.txt` without the mister_skinnylegs line, then
+`requirements-msl-lock.txt` without dependencies, and stops if Brotli is older than 1.2.1.
+It also works on a day when one of the ccl readers' default branches will not install:
 
-`pip3 install --no-deps -r requirements-msl-lock.txt`
+`python3 admin/scripts/install_requirements.py`
 
 To run on **Linux**, you will also need to install `tkinter` separately like so:
 
@@ -65,8 +67,8 @@ To run on **Linux**, you will also need to install `tkinter` separately like so:
 ## Building the binaries
 
 `packaging/build.py` builds `aleapp` with PyInstaller for the machine it runs on, from the
-same virtual environment. It installs `requirements.txt`, the pinned build tools and
-`requirements-msl-lock.txt` first.
+same virtual environment. It installs the pinned build tools, then `requirements.txt` and
+`requirements-msl-lock.txt` with `admin/scripts/install_requirements.py`, first.
 
 ```
 python packaging/build.py exe          # dist/ALEAPP/, and dist/ALEAPP.app on macOS

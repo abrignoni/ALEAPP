@@ -6,13 +6,13 @@
     "case_number": "casesynthetic_cut",
     "number_of_columns": 9,
     "number_of_rows": 4,
-    "total_data_size_bytes": 349,
+    "total_data_size_bytes": 389,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
-    "input_zip_path": "admin/test/cases/data/bugreportDevice/testdata.bugreportDevice.bugreport_sections.casesynthetic_cut.zip",
-    "start_time": "2026-10-26T20:52:58.184802+00:00",
-    "end_time": "2026-10-26T20:52:58.492530+00:00",
-    "run_time_seconds": 0.17824792861938477,
+    "input_zip_path": "admin\\test\\cases\\data\\bugreportDevice\\testdata.bugreportDevice.bugreport_sections.casesynthetic_cut.zip",
+    "start_time": "2026-10-27T16:49:37.351672+00:00",
+    "end_time": "2026-10-27T16:49:37.443557+00:00",
+    "run_time_seconds": 0.016468286514282227,
     "last_commit": {
       "hash": "34925548575444782d88efa5d8a4d0028005ceb2",
       "author_name": "danjethh",
@@ -41,8 +41,8 @@
       20,
       null,
       null,
-      "Device Facts",
-      "Dump/dumpstate.txt"
+      "Device Facts; Device Identifiers",
+      "Dump\\dumpstate.txt"
     ],
     [
       "SYSTEM PROPERTIES",
@@ -52,8 +52,8 @@
       26,
       0.05,
       null,
-      "Device Facts; Boot Reasons",
-      "Dump/dumpstate.txt"
+      "Device Facts; Device Identifiers; Boot Reasons",
+      "Dump\\dumpstate.txt"
     ],
     [
       "DUMPSYS CRITICAL",
@@ -64,7 +64,7 @@
       null,
       null,
       "not read",
-      "Dump/dumpstate.txt"
+      "Dump\\dumpstate.txt"
     ],
     [
       "package",
@@ -75,7 +75,7 @@
       null,
       10000,
       "Installed Packages; Package Times; Package Permissions; Permission Definitions",
-      "Dump/dumpstate.txt"
+      "Dump\\dumpstate.txt"
     ]
   ]
 }

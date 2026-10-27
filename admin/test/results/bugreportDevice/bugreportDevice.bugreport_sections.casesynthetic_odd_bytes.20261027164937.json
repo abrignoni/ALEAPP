@@ -3,16 +3,16 @@
     "module_name": "bugreportDevice",
     "artifact_name": "Bug Report - Sections",
     "function_name": "bugreport_sections",
-    "case_number": "casesynthetic_a16",
+    "case_number": "casesynthetic_odd_bytes",
     "number_of_columns": 9,
     "number_of_rows": 8,
-    "total_data_size_bytes": 709,
+    "total_data_size_bytes": 748,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
-    "input_zip_path": "admin/test/cases/data/bugreportDevice/testdata.bugreportDevice.bugreport_sections.casesynthetic_a16.zip",
-    "start_time": "2026-10-26T20:52:56.895570+00:00",
-    "end_time": "2026-10-26T20:52:57.197254+00:00",
-    "run_time_seconds": 0.17464470863342285,
+    "input_zip_path": "admin\\test\\cases\\data\\bugreportDevice\\testdata.bugreportDevice.bugreport_sections.casesynthetic_odd_bytes.zip",
+    "start_time": "2026-10-27T16:49:37.607811+00:00",
+    "end_time": "2026-10-27T16:49:37.703929+00:00",
+    "run_time_seconds": 0.021699905395507812,
     "last_commit": {
       "hash": "34925548575444782d88efa5d8a4d0028005ceb2",
       "author_name": "danjethh",
@@ -41,85 +41,85 @@
       20,
       null,
       null,
-      "Device Facts",
-      "Dump/dumpstate.txt"
+      "Device Facts; Device Identifiers",
+      "Dump\\dumpstate.txt"
     ],
     [
       "SYSTEM PROPERTIES",
       "command",
       21,
-      47,
-      26,
+      46,
+      25,
       0.05,
       null,
-      "Device Facts; Boot Reasons",
-      "Dump/dumpstate.txt"
+      "Device Facts; Device Identifiers; Boot Reasons",
+      "Dump\\dumpstate.txt"
     ],
     [
       "DUMPSYS CRITICAL",
       "dumpsys group",
-      50,
-      1572,
-      1522,
+      49,
+      1292,
+      1243,
       0.5,
       null,
       "not read",
-      "Dump/dumpstate.txt"
+      "Dump\\dumpstate.txt"
     ],
     [
       "package",
       "dumpsys service",
-      52,
-      1570,
-      1518,
+      51,
+      1290,
+      1239,
       0.321,
       null,
       "Installed Packages; Package Times; Package Permissions; Permission Definitions",
-      "Dump/dumpstate.txt"
+      "Dump\\dumpstate.txt"
     ],
     [
       "DUMPSYS",
       "dumpsys group",
-      1575,
-      1675,
-      100,
+      1295,
+      1365,
+      70,
       0.9,
       null,
       "not read",
-      "Dump/dumpstate.txt"
+      "Dump\\dumpstate.txt"
     ],
     [
       "settings",
       "dumpsys service",
-      1576,
-      1640,
-      64,
+      1296,
+      1330,
+      34,
       0.08,
       null,
       "Settings; Settings Changes",
-      "Dump/dumpstate.txt"
+      "Dump\\dumpstate.txt"
     ],
     [
       "activity",
       "dumpsys service",
-      1643,
-      1673,
+      1333,
+      1363,
       30,
       0.5,
       null,
       "Process Exit Info",
-      "Dump/dumpstate.txt"
+      "Dump\\dumpstate.txt"
     ],
     [
       "CHECKIN USAGESTATS",
       "command",
-      1678,
-      1699,
-      21,
+      1368,
+      1384,
+      16,
       0.346,
       null,
       "Usage Events; Usage Intervals; Usage Interval Event Counts; Standby Buckets",
-      "Dump/dumpstate.txt"
+      "Dump\\dumpstate.txt"
     ]
   ]
 }

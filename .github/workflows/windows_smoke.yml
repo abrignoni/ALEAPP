@@ -34,7 +34,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: python -m pip install --prefer-binary -r requirements.txt
+        run: python admin/scripts/install_requirements.py --prefer-binary
 
       - name: Import all artifact modules on Windows
         run: python admin/test/scripts/test_artifact_imports.py
