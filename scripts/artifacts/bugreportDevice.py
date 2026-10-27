@@ -5,18 +5,20 @@ __artifacts_v2__ = {
                        "with the report time and the time zone used for the UTC values in the other bug report artifacts.",
         "author": "@danjethh, Claude",
         "creation_date": "2026-10-26",
-        "last_update_date": "2026-10-26",
+        "last_update_date": "2026-10-27",
         "requirements": "none",
-        "category": "Android Bug Report",
+        "category": "Android Bug Report - Device and Build",
         "notes": "One row per header line of the bug report text that is named here, the report time as printed, and each of 40 "
-                 "properties of the SYSTEM PROPERTIES (getprop) section that are on a fixed list (build, product, security state, locale, time zone and boot reason), as printed (control characters shown as a space, a value over several lines joined with spaces, values cut at 400 characters) and once each. Header lines read: Build, Build fingerprint, Bootloader, Radio, "
+                 "properties of the SYSTEM PROPERTIES (getprop) section that are on a fixed list (build, product, hardware, security state, USB configuration, locale, time zone and boot reason), as printed (control characters shown as a space, a value over several lines joined with spaces, values cut at 400 characters) and once each. Header lines read: Build, Build fingerprint, Bootloader, Radio, "
                  "Network, Module Metadata version, Android SDK version, SDK extensions, Kernel, Uptime, Bugreport format version "
                  "and Dumpstate info. Origin says where a row came from: header, getprop or derived. Two derived rows close each "
                  "report: Report time (UTC), the printed report time converted with the time zone in the property "
                  "persist.sys.timezone, and Time zone used for UTC values, which is that zone or the sentence 'none: the report records no usable time zone', printed both when the property is missing and when it names a zone this tool does not know (the log says which). The device clock is printed without a zone, so every UTC value in the "
                  "Android Bug Report artifacts rests on that property naming the zone the device clock used; where it is missing "
                  "the UTC columns are empty and the printed time is kept. A wall time that occurs twice when clocks go back is read "
-                 "with the daylight-saving offset, and one that does not occur has no UTC value. Serial numbers, IMEIs and account or advertising identifiers can be printed in this text (for example in some properties and in the bootconfig lines); they are not on the list and are not reported. A property on the list that the report does not "
+                 "with the daylight-saving offset, and one that does not occur has no UTC value. The device identifier properties, "
+                 "the kernel command line and the bootconfig lines are read by Bug Report - Device Identifiers and are not rows here. "
+                 "A property on the list that the report does not "
                  "print has no row, which says nothing about the device. Uptime is the text of the header line (up N weeks, days, hours, minutes, and the load average), as printed. Source Line is the line of the text. Source File is the file, or file.zip!/member for the "
                  "main text inside a zip; it held one value on all rows of each tested report, since each was read alone, and "
                  "holds one value per report when several are staged.\n"
@@ -39,6 +41,63 @@ __artifacts_v2__ = {
             "userb2_a13": "Android 13 | two partial Shell bug report texts (.tmp) | 26 rows",
         },
     },
+    "bugreport_device_identifiers": {
+        "name": "Bug Report - Device Identifiers",
+        "description": "Device identifier properties (serial numbers, IMEI and MEID values, SIM card numbers, Bluetooth and "
+                       "Wi-Fi addresses, device ids), the kernel command line and the bootconfig lines of an Android bug report "
+                       "text (dumpstate), as printed.",
+        "author": "@danjethh, @AlexisBrignoni, Claude",
+        "creation_date": "2026-10-27",
+        "last_update_date": "2026-10-27",
+        "requirements": "none",
+        "category": "Android Bug Report - Device and Build",
+        "notes": "Values are shown as printed, nothing is masked: control characters shown as a space, a value over several "
+                 "lines joined with spaces. Rows, in the order of the text: each of 25 properties of the SYSTEM PROPERTIES "
+                 "(getprop) section that are on a fixed list, once each, values cut at 400 characters (ro.serialno, ro.boot.serialno, "
+                 "ro.vendor.boot.serialno, ro.boot.ap_serial, ro.ril.oem.sno, ro.ril.oem.psno, ro.ril.oem.imei, ro.ril.oem.imei1, "
+                 "ro.ril.oem.imei2, ro.ril.oem.meid, ro.product.imeisv, ro.vendor.radio.imei.sv, persist.radio.sim.iccid, "
+                 "gsm.sim.preiccid_0 and _1, odm.gsm.sim.preiccid_0 and _1, persist.odm.radio.preiccid_0 and _1, "
+                 "persist.vendor.radio.ss.hashed_last_iccid1, ro.boot.btmacaddr, ro.boot.wifimacaddr, persist.sys.nearby.uuid, "
+                 "ro.quick_start.device_id and sys.fingerprint.deviceId); the Command line header line (the kernel command line, "
+                 "which can hold a serial number, cut at 4,000 characters); and each bootconfig line (they follow the Bootconfig "
+                 "line of the header and end at the first line that is not a key = value line; at most 1,000 lines, values cut at "
+                 "400 characters). Name is the property name, Command line, or the bootconfig key as printed; Origin is getprop, "
+                 "header or bootconfig. The bootconfig lines are all reported, including the keys that name hardware rather than "
+                 "the device. A property that is not on the list is not read, whatever its name says, and this includes "
+                 "properties that hold other numbers of the device (cell ids, SIM state, boot times). No property named for an "
+                 "account or an advertising identifier was found on the seven real reports below (a search of the property names "
+                 "for 'account' and 'advertis' found cache keys and a Bluetooth advertising setting only), so none is on the list; "
+                 "an account or advertising identifier that another build prints under another name is not read. A property on "
+                 "the list that the report does not print has no row, which says nothing about the device. A report can print a "
+                 "value in the bootconfig lines, the command line and a property, and each is its own row. Source Line is the "
+                 "line of the text. Source File is the file, or file.zip!/member for the main text inside a zip. The files read "
+                 "and the rule for picking them are those of Bug Report - Device Facts.\n"
+                 "Evidence tiers. Data-proven on seven real bug reports (a Samsung A-series, a Samsung S-series, a Samsung A07 "
+                 "and a Samsung A26 phone on Android 16, a Huawei and a Transsion-brand phone on Android 10, and a Motorola phone "
+                 "on Android 15): the identifier property rows (31 in all, 3 to 8 per report), the Command line row (1 on each) and "
+                 "the bootconfig rows (306 in all: none on the two Android 10 reports, 35 to 105 on each of the other five) equal "
+                 "a count made from the raw text with plain regular expressions, name and value by name and value. On the four corpus extractions in "
+                 "sample_data the rows equal, by name, a count made from the raw text with plain regular expressions; they are "
+                 "identifier property rows and Command line rows only, and no bootconfig row (sharon_a14 prints a Bootconfig "
+                 "line that holds a read error and no key = value line, which gives no row). Of the 25 identifier property names, "
+                 "16 occur on at least one of the seven reports; the corpus runs print four (ro.serialno, ro.boot.serialno, "
+                 "ro.boot.ap_serial and ro.quick_start.device_id). A name printed by none of these reports is exercised by "
+                 "invented text only. Constructed only: a bootconfig line count above the cap and a command line above 4,000 characters. "
+                 "Not examined: Android 11 and 12; on Android 13 and 14 only the corpus error dumps and partial texts above, "
+                 "which print no bootconfig row; vendors other than Samsung, Huawei, Motorola, Transsion and "
+                 "the Google build of userb2_a13, and identifiers that other builds print under other property names, which are "
+                 "not read.",
+        "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
+                  '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
+        "output_types": ["html", "tsv", "lava"],
+        "artifact_icon": "fingerprint",
+        "sample_data": {
+            "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 12 rows",
+            "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 4 rows",
+            "sharon_a14": "Android 14 | Samsung error dumpstate zip | 5 rows",
+            "userb2_a13": "Android 13 | two partial Shell bug report texts (.tmp) | 2 rows",
+        },
+    },
     "bugreport_sections": {
         "name": "Bug Report - Sections",
         "description": "The command and dumpsys service sections that an Android bug report text opens, with their line "
@@ -47,7 +106,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report",
+        "category": "Android Bug Report - Device and Build",
         "notes": "One row per section that the bug report text opens: a command section (a line like '------ TITLE (command) "
                  "------'), a dumpsys service section (a line 'DUMP OF SERVICE name:', priority words dropped), a dumpsys group (a "
                  "command that runs the dumpsys binary and holds service sections) and the header before the first section. Start Line "
@@ -91,7 +150,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report",
+        "category": "Android Bug Report - Installed Apps",
         "notes": "One row per Package [name] block of the Packages: and Hidden system packages: parts of the package service dump "
                  "(DUMP OF SERVICE package) of the bug report text. Block says which part. The same package name is in both parts "
                  "in the tested reports (29 to 90 names); the hidden part is read here as the system copy that an update replaced, "
@@ -139,7 +198,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report",
+        "category": "Android Bug Report - Installed Apps",
         "notes": "One row per firstInstallTime, lastUpdateTime and timeStamp value printed in a Package block of the package "
                  "service dump. Event is the key as printed. firstInstallTime is printed for each Android user on the Android 13, 15 and "
                  "16 reports (User names the user) and once per package on the two Android 10 reports, where User is empty. lastUpdateTime and timeStamp are printed once per package. What the platform means by timeStamp is not "
@@ -210,11 +269,24 @@ def bugreport_device_facts(context):
     reports = _reports(context)
     for label, report in reports:
         for fact in report.facts:
-            rows.append((fact.name, fact.value, fact.origin, fact.line, label))
+            if not dumpstate_reader.is_identifier(fact):
+                rows.append((fact.name, fact.value, fact.origin, fact.line, label))
         rows.append(('Report time (UTC)', _utc_text(report.report_utc()), 'derived', None, label))
         rows.append(('Time zone used for UTC values',
                      report.zone_name if report.clock.known else 'none: the report records no usable time zone',
                      'derived', None, label))
+    return headers, rows, _source_path(context, reports)
+
+
+@artifact_processor
+def bugreport_device_identifiers(context):
+    headers = ('Name', 'Value', 'Origin', 'Source Line', 'Source File')
+    rows = []
+    reports = _reports(context)
+    for label, report in reports:
+        for fact in report.facts:
+            if dumpstate_reader.is_identifier(fact):
+                rows.append((fact.name, fact.value, fact.origin, fact.line, label))
     return headers, rows, _source_path(context, reports)
 
 

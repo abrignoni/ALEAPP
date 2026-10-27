@@ -10,15 +10,15 @@
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/bugreportDevice/testdata.bugreportDevice.bugreport_device_facts.casesynthetic_zip_on_device.zip",
-    "start_time": "2026-10-26T16:07:22.702826+00:00",
-    "end_time": "2026-10-26T16:07:22.722492+00:00",
-    "run_time_seconds": 0.0032989978790283203,
+    "start_time": "2026-10-27T11:51:43.010486+00:00",
+    "end_time": "2026-10-27T11:51:43.027682+00:00",
+    "run_time_seconds": 0.0032799243927001953,
     "last_commit": {
-      "hash": "abeb545a0e559c0c512cc6164dc977a4965a493d",
+      "hash": "34925548575444782d88efa5d8a4d0028005ceb2",
       "author_name": "danjethh",
       "author_email": "danjethh@users.noreply.github.com",
-      "date": "2026-10-26T01:07:43-04:00",
-      "message": "Bug report notes: name the empty Timeout Marker column and the uniform Boot Reasons columns"
+      "date": "2026-10-26T16:32:03-04:00",
+      "message": "Bug report artifacts: per-group categories, device identifiers as printed in Device Facts, invented fixture values"
     }
   },
   "headers": [
@@ -73,7 +73,7 @@
     ],
     [
       "Module Metadata version",
-      "372546000",
+      "473318123",
       "header",
       10,
       "Dump/data/user_de/0/com.android.shell/files/bugreports/bugreport-example-2026-11-02-10-15-30.zip!/bugreport-example-EXAMPLE-2026-11-02-10-15-30.txt"

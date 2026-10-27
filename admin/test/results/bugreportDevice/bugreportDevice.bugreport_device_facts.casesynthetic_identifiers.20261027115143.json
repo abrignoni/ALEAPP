@@ -3,22 +3,22 @@
     "module_name": "bugreportDevice",
     "artifact_name": "Bug Report - Device Facts",
     "function_name": "bugreport_device_facts",
-    "case_number": "casesynthetic_a16",
+    "case_number": "casesynthetic_identifiers",
     "number_of_columns": 5,
     "number_of_rows": 33,
     "total_data_size_bytes": 2174,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
-    "input_zip_path": "admin/test/cases/data/bugreportDevice/testdata.bugreportDevice.bugreport_device_facts.casesynthetic_a16.zip",
-    "start_time": "2026-10-26T16:07:22.540913+00:00",
-    "end_time": "2026-10-26T16:07:22.561350+00:00",
-    "run_time_seconds": 0.0039937496185302734,
+    "input_zip_path": "admin/test/cases/data/bugreportDevice/testdata.bugreportDevice.bugreport_device_facts.casesynthetic_identifiers.zip",
+    "start_time": "2026-10-27T11:51:43.107323+00:00",
+    "end_time": "2026-10-27T11:51:43.123628+00:00",
+    "run_time_seconds": 0.0032320022583007812,
     "last_commit": {
-      "hash": "abeb545a0e559c0c512cc6164dc977a4965a493d",
+      "hash": "34925548575444782d88efa5d8a4d0028005ceb2",
       "author_name": "danjethh",
       "author_email": "danjethh@users.noreply.github.com",
-      "date": "2026-10-26T01:07:43-04:00",
-      "message": "Bug report notes: name the empty Timeout Marker column and the uniform Boot Reasons columns"
+      "date": "2026-10-26T16:32:03-04:00",
+      "message": "Bug report artifacts: per-group categories, device identifiers as printed in Device Facts, invented fixture values"
     }
   },
   "headers": [
@@ -73,7 +73,7 @@
     ],
     [
       "Module Metadata version",
-      "372546000",
+      "473318123",
       "header",
       10,
       "Dump/dumpstate.txt"

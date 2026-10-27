@@ -10,15 +10,15 @@
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/bugreportDevice/testdata.bugreportDevice.bugreport_device_facts.casesynthetic_two_reports.zip",
-    "start_time": "2026-10-26T16:07:22.787817+00:00",
-    "end_time": "2026-10-26T16:07:22.809271+00:00",
-    "run_time_seconds": 0.0057489871978759766,
+    "start_time": "2026-10-27T11:51:43.028239+00:00",
+    "end_time": "2026-10-27T11:51:43.047087+00:00",
+    "run_time_seconds": 0.005510091781616211,
     "last_commit": {
-      "hash": "abeb545a0e559c0c512cc6164dc977a4965a493d",
+      "hash": "34925548575444782d88efa5d8a4d0028005ceb2",
       "author_name": "danjethh",
       "author_email": "danjethh@users.noreply.github.com",
-      "date": "2026-10-26T01:07:43-04:00",
-      "message": "Bug report notes: name the empty Timeout Marker column and the uniform Boot Reasons columns"
+      "date": "2026-10-26T16:32:03-04:00",
+      "message": "Bug report artifacts: per-group categories, device identifiers as printed in Device Facts, invented fixture values"
     }
   },
   "headers": [
@@ -73,7 +73,7 @@
     ],
     [
       "Module Metadata version",
-      "372546000",
+      "473318123",
       "header",
       10,
       "Dump1/dumpstate.txt"
@@ -304,7 +304,7 @@
     ],
     [
       "Module Metadata version",
-      "292700600",
+      "133990923",
       "header",
       10,
       "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
