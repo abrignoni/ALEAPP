@@ -9,11 +9,13 @@ __artifacts_v2__ = {
             "changes are named, with the detail they carry. Messages whose blob uses a "
             "constructor this parser does not cover are still reported, with that "
             "constructor named in the message column. A message whose blob cannot be "
-            "walked is still reported from the table's columns."
+            "walked is still reported from the table's columns. A message whose (mid, uid) key "
+            "another readable state in the database's write-ahead log holds and the current "
+            "state does not is reported too, as a Recovered row."
         ),
         "author": "Alexis Brignoni, John Hyla, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-03",
-        "last_update_date": "2026-10-09",
+        "last_update_date": "2026-10-26",
         "requirements": "none",
         "category": "Telegram",
         "notes": (
@@ -87,10 +89,10 @@ __artifacts_v2__ = {
             'expects or the record ends early, is still reported: the timestamp, dialog, direction, read '
             "state and message id are the table's own columns, the text is looked for after the row's "
             "date value as above, and where that finds nothing the Message column reads '[Message not "
-            "decoded]'. Each such record is named in the run log. No record on the nine images listed in "
+            "decoded]'. Each such record is named in the run log. No record on the ten images listed in "
             'sample_data ended its walk that way, so this handling is exercised by tests on constructed '
             'records, not on an image. Sender ID is the from_id read from the record, for a service '
-            'message as for a message. Every from_id on the nine images listed in sample_data is a user '
+            'message as for a message. Every from_id on the nine images listed in sample_data before hickman_a13 was added is a user '
             'peer; a from_id that is a chat or channel peer is reported by its bare id, without the sign '
             'a dialog id carries, and no image exercises that. On an incoming row whose record holds no '
             'from_id, Sender ID is the dialog id; in a group or channel dialog that is the id of the '
@@ -112,7 +114,7 @@ __artifacts_v2__ = {
             "reader implemented is reported by name alone. When the client stored the message's media at "
             'a known location it appends that path to the record as a trailing string, which is reported '
             'as the recorded media path; it is the path the app wrote, and the file is linked only when '
-            'it is still present in the extraction. On the nine images listed in sample_data Recorded '
+            'it is still present in the extraction. On the nine images listed in sample_data before hickman_a13 was added Recorded '
             "Media Path held a value on some rows; no file of the recorded name is in those images' "
             'archives; and Media File had no value on any row. Reference: Telegram-Android, '
             "'TL_legacy_message.java (TL_message layer constructors)', "
@@ -121,6 +123,36 @@ __artifacts_v2__ = {
             'TlGen_MessageFwdHeader.kt, TlGen_Message.kt and TlGen_MessageAction.kt (header field order, '
             "flag bits, service constructors and action constructors)', "
             'https://github.com/DrKLO/Telegram/tree/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj_AppTests/src/androidTest/kotlin/org/telegram/tgnet/model/generated'
+            ' Record Origin. Live rows come from a normal read of messages_v2. Recovered rows do '
+            'not: their (mid, uid) key, the primary key of messages_v2, is held by another state in '
+            "the database's write-ahead log and absent from the current one. A row whose key the "
+            'current state still holds is not reported, whatever its older versions held. Recovery Method and Recovery '
+            'Location are filled in only on Recovered rows. Why a Recovered row is absent is not '
+            'established here. States are read by scripts/sqlite_wal.py: each readable earlier '
+            "committed state of the log's current generation (states the reader cannot rebuild "
+            'exactly are skipped and counted in the run log; state n is the database after the '
+            'first n committed transactions, and state 0 the database file without its log), the '
+            "previous generation's left-over frames where its checks pass, and frames after the "
+            "last commit where SQLite's quick_check passes. "
+            'A Recovered row is reported once, as the newest committed state holding its key stored '
+            "it, else the previous generation's newest left-over commit, else the frames after the "
+            'last commit, and is decoded and named the same way as a Live row, with names looked up '
+            'in the current users and chats tables. Recovery Location names the committed states '
+            'the key was read in, with their first and last numbers, and the previous log '
+            "generation with the first and last numbers of its left-over commits; for a key read "
+            "only after the last commit it names the log's frames after the last commit. Recovery "
+            'Method is WAL committed states, or WAL uncommitted frames for a key read only after the '
+            'last commit. The previous-generation and uncommitted-frame paths were not exercised on '
+            'the ten images listed in sample_data or by the unit test. Recovered rows '
+            'were returned on kevin_pocox7_a15 (4), hc_pixel8pro_a16 (4), hc_pixel8pro_a17 (4), '
+            'hickman_a13 (2) and pixel3_a12 (2), every one from committed states of the current '
+            'generation; one on kevin_pocox7_a15 was read in state 0 only. The 4 on hickman_a13 and '
+            'pixel3_a12 have an empty Message and no Recorded Media Path, as 5 and 18 Live rows on '
+            'those images do. On the other images Record Origin held Live on every row and Recovery '
+            "Method and Recovery Location were empty on every row. On every image tested, the one "
+            "database whose log held left-over frames of a previous generation had none of those "
+            'commits read; the reader reported that the database file may already hold part of the '
+            'current log.'
         ),
         "paths": ('*/org.telegram.messenger*/files/cache4.db*',
                   '*/org.telegram.messenger*/files/account1/cache4.db*',
@@ -132,10 +164,11 @@ __artifacts_v2__ = {
         "artifact_icon": "message-circle",
         "sample_data": {
             "anne_a15": "240 rows",
-            "hc_pixel8pro_a16": "6 rows",
-            "hc_pixel8pro_a17": "17 | 6 rows",
-            "kevin_pocox7_a15": "1609 rows",
-            "pixel3_a12": "76 rows",
+            "hc_pixel8pro_a16": "10 rows (4 Recovered)",
+            "hickman_a13": "29 rows (2 Recovered)",
+            "hc_pixel8pro_a17": "17 | 10 rows (4 Recovered)",
+            "kevin_pocox7_a15": "1613 rows (4 Recovered)",
+            "pixel3_a12": "78 rows (2 Recovered)",
             "pixel7a_a14": "34 rows",
             "russell_a14": "51 rows",
             "russell_pixel6a_a13": "3 rows",
@@ -726,11 +759,14 @@ import datetime
 import io
 import os
 import re
+import sqlite3
 import struct
 import xml.etree.ElementTree as ET
 
 from scripts.ilapfuncs import artifact_processor, logfunc, convert_unix_ts_to_utc, \
     get_sqlite_db_records, get_file_path, check_in_media
+from scripts.sqlite_wal import (KIND_COMMITTED, KIND_EARLIER, KIND_UNCOMMITTED,
+                                rows_not_in_current)
 
 
 # --- TL deserialisation ------------------------------------------------------
@@ -1530,6 +1566,76 @@ def _rows_per_main(context, data_headers, rows_of):
     return data_headers, data_list, '\n'.join(db_file for db_file, _ in mains)
 
 
+# messages_v2 is keyed on PRIMARY KEY(mid, uid). A row whose key another state in the
+# write-ahead log holds and the current state does not is reported as Recovered.
+_MESSAGES_SQL = 'SELECT mid, uid, date, out, read_state, data FROM messages_v2'
+_MESSAGE_KEY = (0, 1)
+_WAL_KINDS = (KIND_COMMITTED, KIND_EARLIER, KIND_UNCOMMITTED)
+_ORIGIN_LIVE = 'Live'
+_ORIGIN_RECOVERED = 'Recovered'
+_METHOD_WAL_STATES = 'WAL committed states'
+_METHOD_WAL_UNCOMMITTED = 'WAL uncommitted frames'
+
+
+def _recovery_location(name, spans):
+    """(method, location) for a key read in the states spans names."""
+    parts = []
+    committed, earlier = spans['committed'], spans['earlier']
+    if committed:
+        first, last = committed
+        if last == 0:
+            parts.append(f'{name} without its log, state 0')
+        elif first == 0:
+            parts.append(f'{name} and {name}-wal, committed states 0 to {last}')
+        else:
+            states = f'state {first}' if first == last else f'states {first} to {last}'
+            parts.append(f'{name}-wal, committed {states}')
+    if earlier:
+        first, last = earlier
+        commits = f'commit {first}' if first == last else f'commits {first} to {last}'
+        parts.append(f'{name}-wal, previous log generation, left-over {commits}')
+    if not parts:
+        return _METHOD_WAL_UNCOMMITTED, f'{name}-wal, frames after the last commit'
+    return _METHOD_WAL_STATES, '; '.join(parts)
+
+
+def _removed_messages(db_file, live_keys):
+    """messages_v2 rows whose key another state in the write-ahead log holds and the current
+    state does not, read through scripts/sqlite_wal.py.
+
+    Returns [(row, method, location)], one per key: the row as the newest state holding the
+    key stored it (a committed state before the previous log generation before the frames
+    after the last commit).
+    """
+    try:
+        _columns, found, wal = rows_not_in_current(str(db_file), _MESSAGES_SQL,
+                                                   key_columns=_MESSAGE_KEY, include=_WAL_KINDS)
+    except (sqlite3.Error, OSError) as ex:
+        logfunc(f'Telegram - Messages: write-ahead log not read for {os.path.basename(db_file)}: {ex}')
+        return []
+    if wal.log:
+        logfunc(f'Telegram - Messages: {wal.summary()}')
+    by_key = {}
+    for item in found:
+        key = tuple(item.values[i] for i in _MESSAGE_KEY)
+        if key in live_keys:
+            continue
+        rank = ((2, item.last_state) if item.first_state is not None else
+                (1, item.earlier_generation[1]) if item.earlier_generation else (0, 0))
+        entry = by_key.setdefault(key, {'row': item.values, 'rank': rank, 'committed': None,
+                                        'earlier': None})
+        if rank > entry['rank']:
+            entry['row'], entry['rank'] = item.values, rank
+        for slot, span in (('committed', (item.first_state, item.last_state)
+                            if item.first_state is not None else None),
+                           ('earlier', item.earlier_generation)):
+            if span:
+                old = entry[slot]
+                entry[slot] = span if old is None else (min(old[0], span[0]), max(old[1], span[1]))
+    name = os.path.basename(str(db_file))
+    return [(entry['row'], *_recovery_location(name, entry)) for entry in by_key.values()]
+
+
 @artifact_processor
 def get_telegramMessages(context):
     data_headers = (
@@ -1540,10 +1646,13 @@ def get_telegramMessages(context):
         'Sender ID',
         'Sender',
         'Message',
+        'Record Origin',
         'Recorded Media Path',
         ('Media File', 'media'),
         'Read State',
         'Message ID',
+        'Recovery Method',
+        'Recovery Location',
     )
     def rows_of(db_file):
         data_list = []
@@ -1561,9 +1670,12 @@ def get_telegramMessages(context):
             if os.path.isfile(path):
                 media_index.setdefault(normalized.rsplit('/', 1)[-1], path)
 
-        query = '''SELECT mid, uid, date, out, read_state, data
-                   FROM messages_v2 ORDER BY date'''
-        for mid, uid, date, out, read_state, blob in get_sqlite_db_records(db_file, query) or []:
+        live = [tuple(row) for row in get_sqlite_db_records(db_file, _MESSAGES_SQL) or []]
+        records = [(row, _ORIGIN_LIVE, '', '') for row in live]
+        records.extend((row, _ORIGIN_RECOVERED, method, location) for row, method, location
+                       in _removed_messages(db_file, {row[:2] for row in live}))
+        records.sort(key=lambda record: (record[0][2] is None, record[0][2] or 0))
+        for (mid, uid, date, out, read_state, blob), origin, method, location in records:
             decoded = _decode_message_row(blob, date)
             text = decoded.get('text') or ''
             if decoded.get('service'):
@@ -1612,10 +1724,13 @@ def get_telegramMessages(context):
                 sender_id if sender_id is not None else '',
                 names.get(sender_id, '') if sender_id is not None else '',
                 text,
+                origin,
                 attach,
                 media_ref,
                 read_state,
                 mid,
+                method,
+                location,
             ))
         return data_list
 

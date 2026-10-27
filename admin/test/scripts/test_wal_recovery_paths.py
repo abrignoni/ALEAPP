@@ -19,7 +19,7 @@ ROOT_DIR = os.path.dirname(
 if ROOT_DIR not in sys.path:
     sys.path.insert(0, ROOT_DIR)
 
-from scripts.artifacts import discordServers, googleChat, phoneLink, snapchat  # pylint: disable=wrong-import-position
+from scripts.artifacts import discordServers, googleChat, phoneLink, snapchat, telegramAndroid  # pylint: disable=wrong-import-position
 
 
 def _capture(folder, name, statements):
@@ -90,6 +90,18 @@ class WalRecoveryPathTest(unittest.TestCase):
             "DELETE FROM messages0 WHERE d = '2'"])
         removed = discordServers.discord_removed_messages(path)
         self.assertEqual([data for data, _method, _location in removed], ['two'])
+    def test_telegram_messages_found_beside_a_path_with_a_space(self):
+        # messages_v2 is keyed on (mid, uid): a row rewritten under its key is the same
+        # message and must not come back; a removed key must.
+        path = _capture(self.tmp, 'cache4.db', [
+            'CREATE TABLE messages_v2 (mid INTEGER, uid INTEGER, read_state INTEGER, '
+            'send_state INTEGER, date INTEGER, data BLOB, out INTEGER, PRIMARY KEY(mid, uid))',
+            "INSERT INTO messages_v2 VALUES (1, 7, 0, 0, 100, x'01', 0)",
+            "INSERT INTO messages_v2 VALUES (2, 7, 0, 0, 200, x'02', 0)",
+            'UPDATE messages_v2 SET read_state = 1 WHERE mid = 1',
+            'DELETE FROM messages_v2 WHERE mid = 2'])
+        removed = telegramAndroid._removed_messages(path, {(1, 7)})  # pylint: disable=protected-access
+        self.assertEqual([(row[0], row[1]) for row, _method, _location in removed], [(2, 7)])
 
     def test_google_chat_messages_found_beside_a_path_with_a_space(self):
         # A message is (group_id, topic_id, id). A removed message comes back as Recovered, the
