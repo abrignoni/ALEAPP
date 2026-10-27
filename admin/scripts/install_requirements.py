@@ -3,19 +3,17 @@
 
 mister_skinnylegs names its ccl readers as unversioned git URLs, so a plain
 ``pip install -r requirements.txt`` installs whatever their default branches hold that day, and
-fails for everyone the day one of them pushes a broken commit. The commits pinned in the lock still
-declare Brotli<=1.2.0, so letting pip resolve them would also bring back Brotli 1.2.0, which the
-1.2.1 decoder fix replaces.
+fails for everyone the day one of them pushes a broken commit. Reader commits before 2026-10-27
+declare Brotli<=1.2.0, which the 1.2.1 decoder fix replaces, so the floor below stays in case the lock
+is ever pointed back at one of them.
 
 So this installs requirements.txt without its mister_skinnylegs line, then the lock with --no-deps
 (as packaging/build.py does over a regular install), then refuses a Brotli older than MIN_BROTLI.
 The lock always sets the git readers and Brotli. Its other pins (lz4, zstd) are left alone when the
 first install already provided the package: on Windows that is a wheel from whl_files, for the
-Python versions PyPI has no wheel for (zstd 1.5.7.3, the lock's pin, has none for Python 3.15).
+Python versions PyPI has no wheel for.
 Any arguments are passed to both pip installs, for example
 ``--only-binary=:all: --no-binary=mister-skinnylegs,ccl-chromium-reader,ccl-mozilla-reader,ccl-simplesnappy``.
-pip check reports the Brotli<=1.2.0 metadata of the pinned readers as a conflict; that is the cap
-this script overrides, so pip check is not run.
 
 Usage: python admin/scripts/install_requirements.py [pip options]
 """
