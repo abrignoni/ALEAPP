@@ -31,13 +31,14 @@ __artifacts_v2__ = {
                  "Encryption Requested, Disabled Keyguard Features, Network Logging and the two VPN columns held one value on all three "
                  "rows. Not examined: Android 11, 12 and 14, an entry for a device owner, a second admin for one user, "
                  "other vendors."
-                 "\nOn the corpus the run gave s20fe_a13 1 row; samsungs20_a13, sharon_a14 and userb2_a13 gave none. Not compared with a second count.",
+                 " Control characters in a value read from the report text are shown as spaces."
+                 "\nOn the corpus the run gave s20fe_a13 1 row; samsungs20_a13, sharon_a14 and userb2_a13 gave none. An independent count of the raw text gave the same number.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "shield",
         "sample_data": {
-            "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 1 rows",
+            "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 1 row",
             "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 0 rows",
             "sharon_a14": "Android 14 | Samsung error dumpstate zip | 0 rows",
             "userb2_a13": "Android 13 | two partial Shell bug report texts (.tmp) | 0 rows",
@@ -103,6 +104,7 @@ __artifacts_v2__ = {
                  "Evidence tiers. Data-proven on two real Android 16 bug reports (Samsung A-series 1 row, Samsung S-series 3 "
                  "rows). Not examined: other Android versions and vendors, a policy with more than one admin and a policy value "
                  "other than an integer."
+                 " Control characters in a value read from the report text are shown as spaces."
                  "\nOn the corpus none of s20fe_a13, samsungs20_a13, sharon_a14 and userb2_a13 gave a row; the device_policy dump of s20fe_a13 (Android 13) prints no Local Policies or Global Policies section (its admin's declared policies are in Bug Report - Device Policy Admins).",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
@@ -132,7 +134,10 @@ __artifacts_v2__ = {
                  "credential, a hash of it or its length. Quality and Secure Mode are the printed numbers (as stored). Last "
                  "Changed As Printed is a device wall-clock time without a zone; Last Changed (UTC) converts it with the zone "
                  "shown in Bug Report - Device Facts and is empty, with a Time Note, where the report records no zone or the "
-                 "time was not set. Backup Protector keeps its own printed times (1970-01-01 when not set).\n"
+                 "time was not set. Backup Protector keeps its own printed times (1970-01-01 when not set). The Android 13 "
+                 "layout (s20fe_a13) prints Last changed, read like LSKF last changed; there the time is followed by a number "
+                 "in parentheses, which is kept in Last Changed As Printed and not decoded, and Last Changed (UTC) is taken "
+                 "from the time before it.\n"
                  "A row says what the lock settings service printed when the dump ran. It does not say how the credential "
                  "was chosen or whether a screen lock is on: a Credential Type of PIN is the printed word. The log of "
                  "credential enrollments and verifications that the Samsung reports print is in Bug Report - Lock Settings Log.\n"
@@ -141,13 +146,13 @@ __artifacts_v2__ = {
                  "users 0 and 11), each equal to a count of User N lines in the raw text. The two Android 10 reports print the "
                  "short layout, so Protector ID, Last Changed and Credential Type are empty for them. Not examined: Android 11 "
                  "and 12, other vendors, a user with a pattern or password credential."
-                 "\nOn the corpus the run gave s20fe_a13 1 row; samsungs20_a13, sharon_a14 and userb2_a13 gave none. Not compared with a second count.",
+                 "\nOn the corpus the run gave s20fe_a13 1 row, whose Last changed time is the unset 1970-01-01 time, so Last Changed (UTC) is empty with the not set note; samsungs20_a13, sharon_a14 and userb2_a13 gave none. Not compared with a second count.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": "standard",
         "artifact_icon": "lock",
         "sample_data": {
-            "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 1 rows",
+            "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 1 row",
             "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 0 rows",
             "sharon_a14": "Android 14 | Samsung error dumpstate zip | 0 rows",
             "userb2_a13": "Android 13 | two partial Shell bug report texts (.tmp) | 0 rows",
@@ -163,8 +168,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Android Bug Report - Security and Device Policy",
         "notes": "One row per file printed under Storage: in the lock_settings service dump. Location says which listing (User N, "
-                 "or Backup) and Directory is the directory printed on the heading. Size is the number printed before the time "
-                 "(a count of bytes, as printed). Modified As Printed is a device wall-clock time without a zone and Modified "
+                 "or Backup) and Directory is the directory printed on the heading. Size is the number printed before the time, "
+                 "as printed. Modified As Printed is a device wall-clock time without a zone and Modified "
                  "(UTC) converts it with the zone shown in Bug Report - Device Facts, empty with a Time Note where the report has "
                  "no zone. File Name is as printed; it contains the protector id. The dump lists names, sizes and times only: the "
                  "file contents are not in a bug report.\n"
@@ -174,7 +179,8 @@ __artifacts_v2__ = {
                  "Evidence tiers. Data-proven on three of five real bug reports (13 rows on the Samsung A-series and the Samsung "
                  "S-series phone on Android 16, 12 rows on the Motorola phone on Android 15), each equal to a count of "
                  "listing lines in the raw text. Not examined: other Android versions and vendors."
-                 "\nOn the corpus none of s20fe_a13, samsungs20_a13, sharon_a14 and userb2_a13 gave a row; why was not examined.",
+                 " Control characters in a value read from the report text are shown as spaces."
+                 "\nOn the corpus none of s20fe_a13, samsungs20_a13, sharon_a14 and userb2_a13 gave a row; the Storage listing of s20fe_a13 prints one directory heading followed by [Not found] and no file lines.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": "standard",
@@ -230,29 +236,34 @@ __artifacts_v2__ = {
         "category": "Android Bug Report - Security and Device Policy",
         "notes": "One row per timestamped entry after the LSSLog: line of the lock_settings service dump. State is the part the "
                  "entry sits in (the text between Start and End on the dashed lines: Enroll, Verify, Events, Restore, Keyguard, "
-                 "Summary, KeystoreErr and Unknown in the tested reports). Message is the "
+                 "Summary, KeystoreErr and Unknown in the tested reports). An entry is a line at the left, or two spaces in, "
+                 "that starts with a time; a deeper line that starts with a time stays in Detail. Message is the "
                  "first line of the entry as printed after the time; Detail joins the lines that follow it and are not call "
                  "stack frames (up to 50 lines, 1,000 characters) with ' | '; Stack Frames counts the call stack lines of the entry, "
-                 "which are not listed. Time As Printed is a device wall-clock time with milliseconds and no zone; Time (UTC) "
-                 "converts it with the zone shown in Bug Report - Device Facts and is empty, with a Time Note, where the report "
-                 "records no zone. The numbers in square brackets in some messages are printed by the platform and are not decoded.\n"
+                 "which are not listed. Time As Printed is a device wall-clock time with milliseconds and no zone, printed with "
+                 "a year on the Android 16 reports and without one on the Android 13 layout of s20fe_a13 (whose entries are "
+                 "indented by two spaces). Time (UTC) converts it with the zone shown in Bug Report - Device Facts; for a time "
+                 "without a year it uses the latest year, the one of the report or the one before, that does not put the time "
+                 "more than a day after the report time (the rule of Bug Report - Settings Changes), and it is empty, with a "
+                 "Time Note, where the report records no time or zone. The numbers in square brackets in some messages are printed by the platform and are not decoded.\n"
                  "An entry records that the lock settings service logged that message at that time. The platform wording (for "
                  "example INCORRECT_KEY, PIN Fail) is shown as printed and the table does not say who was entering what, or "
                  "why. The log is a bounded list kept by the device: the entries of the tested reports span about ten months "
                  "(Samsung A-series) and eighteen months (Samsung S-series), so an event that is not listed says nothing about "
                  "whether it happened.\n"
-                 "Only the two Samsung reports (Android 16) print this log; the Huawei, Motorola and Transsion-brand reports have no "
+                 "Of the five tested reports, only the two Samsung reports (Android 16) print this log; the Huawei, Motorola and Transsion-brand reports have no "
                  "LSSLog lines, so the table is empty for them. Evidence tiers. Data-proven on two real bug reports (Samsung "
                  "A-series 479 rows and Samsung S-series 463 rows), each equal to a count of timestamped lines after LSSLog: in "
                  "the raw text. As both are in a UTC+0 zone, the conversion to UTC was checked on constructed text for other "
                  "zones. Not examined: other vendors and Android versions."
-                 "\nOn the corpus none of s20fe_a13, samsungs20_a13, sharon_a14 and userb2_a13 gave a row; why was not examined.",
+                 " Control characters in a value read from the report text are shown as spaces."
+                 "\nOn the corpus the run gave s20fe_a13 3 rows, equal to the timestamped LSSLog entries of the dump it read; samsungs20_a13, sharon_a14 and userb2_a13 gave none.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": "standard",
         "artifact_icon": "lock",
         "sample_data": {
-            "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 0 rows",
+            "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 3 rows",
             "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 0 rows",
             "sharon_a14": "Android 14 | Samsung error dumpstate zip | 0 rows",
             "userb2_a13": "Android 13 | two partial Shell bug report texts (.tmp) | 0 rows",
@@ -283,7 +294,7 @@ __artifacts_v2__ = {
                  "Transsion-brand phone on Android 10, Motorola on Android 15): 2, 2, 1, 2 and 4 rows, each equal to a count of "
                  "id entries in the raw JSON lines. Not examined: Android 11 and 12, other vendors, a device with more than one "
                  "sensor of a kind."
-                 "\nOn the corpus the run gave s20fe_a13 2 rows; samsungs20_a13, sharon_a14 and userb2_a13 gave none. Not compared with a second count.",
+                 "\nOn the corpus the run gave s20fe_a13 2 rows; samsungs20_a13, sharon_a14 and userb2_a13 gave none. An independent count of the raw text gave the same number.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": ["html", "tsv", "lava"],
@@ -313,7 +324,8 @@ __artifacts_v2__ = {
                  "Evidence tiers. Data-proven on three of five real bug reports (2 rows each on the Samsung A-series and S-series "
                  "phones on Android 16 and the Motorola phone on Android 15), each equal to a count of ID( lines in the raw "
                  "text. Not examined: other Android versions and vendors."
-                 "\nOn the corpus the run gave s20fe_a13 2 rows; samsungs20_a13, sharon_a14 and userb2_a13 gave none. Not compared with a second count.",
+                 " Control characters in a value read from the report text are shown as spaces."
+                 "\nOn the corpus the run gave s20fe_a13 2 rows; samsungs20_a13, sharon_a14 and userb2_a13 gave none. An independent count of the raw text gave the same number.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": ["html", "tsv", "lava"],
@@ -348,7 +360,8 @@ __artifacts_v2__ = {
                  "three of five real bug reports: Samsung A-series 152 rows and Samsung S-series 200 rows (Android 16, each line "
                  "twice) and Motorola 100 rows (Android 15), each equal to a count of numbered lines in the raw text. Not "
                  "examined: other Android versions and vendors."
-                 "\nOn the corpus none of s20fe_a13, samsungs20_a13, sharon_a14 and userb2_a13 gave a row; why was not examined.",
+                 " Control characters in a value read from the report text are shown as spaces."
+                 "\nOn the corpus none of s20fe_a13, samsungs20_a13, sharon_a14 and userb2_a13 gave a row; the fingerprint and face dumps of s20fe_a13 print no AuthSessionCoordinator log.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": ["html", "tsv", "lava"],
@@ -390,7 +403,7 @@ __artifacts_v2__ = {
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "shield",
         "sample_data": {
-            "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 1 rows",
+            "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 1 row",
             "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 0 rows",
             "sharon_a14": "Android 14 | Samsung error dumpstate zip | 0 rows",
             "userb2_a13": "Android 13 | two partial Shell bug report texts (.tmp) | 0 rows",
@@ -418,6 +431,7 @@ __artifacts_v2__ = {
                  "phone on Android 10, 2 rows on the Motorola phone on Android 15), each equal to a count of event lines in the "
                  "raw text. As the tested reports are in a UTC+0 zone the conversion to UTC was checked on constructed text for "
                  "other zones. Not examined: other Android versions and vendors, a list longer than two lines."
+                 " Control characters in a value read from the report text are shown as spaces."
                  "\nOn the corpus none of s20fe_a13, samsungs20_a13, sharon_a14 and userb2_a13 gave a row; the Events list of the trust dump of s20fe_a13 is empty.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
@@ -450,13 +464,14 @@ __artifacts_v2__ = {
                  "(debugging_manager.connected_to_adb, false), each equal to a count of key=value lines in the raw text. "
                  "The reader also reads a deeper nesting and a key with a value in other layouts, which is constructed text only. "
                  "Not examined: Android 11 and 12, other vendors, a report with a connected computer."
+                 " Control characters in a value read from the report text are shown as spaces."
                  "\nOn the corpus the run gave s20fe_a13 1 row; samsungs20_a13, sharon_a14 and userb2_a13 gave none. Not compared with a second count.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "settings",
         "sample_data": {
-            "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 1 rows",
+            "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 1 row",
             "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 0 rows",
             "sharon_a14": "Android 14 | Samsung error dumpstate zip | 0 rows",
             "userb2_a13": "Android 13 | two partial Shell bug report texts (.tmp) | 0 rows",
@@ -472,21 +487,24 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Android Bug Report - Vendor",
         "notes": "One row per line of the knoxguard_service service dump after its heading. Kind is Log for a line of the form "
-                 "time : [tag] message and State for any other line (for example ADB blocked : false, DO blocked : false, "
-                 "SF counter : 1). Tag is the text in square brackets and Message the text after it. Time As Printed is a device "
+                 "time : [tag] message or time : pid|tid : message (the Android 13 layout of s20fe_a13), and State for any other "
+                 "line (for example ADB blocked : false, DO blocked : false, SF counter : 1). Tag is the text in square brackets "
+                 "and Message the text after it; on the pid|tid form Tag is the bracketed tag when the text after the ids starts "
+                 "with one (empty otherwise) and Message is everything after the time, ids included. Time As Printed is a device "
                  "wall-clock time without a zone; Time (UTC) converts it with the zone shown in Bug Report - Device Facts and is "
                  "empty, with a Time Note, where the report has no zone or the time was not set (1970-01-01). Values are shown "
-                 "as printed, with nothing masked or left out; this includes a value printed after token: or token= in a "
-                 "message (the dump prints a refresh token). A row records a line of the vendor service's own log; the table does not interpret the "
+                 "as printed and nothing is masked, including a value printed after token: or token= in a message (the dump "
+                 "prints a refresh token); Message is cut at 600 characters and Tag at 200. A row records a line of the vendor service's own log; the table does not interpret the "
                  "state words (for example kgState values) or say what caused an event.\n"
                  "The rows are in the order printed: 2 of the 203 log rows of the Samsung A-series report have a time earlier than the "
                  "row before them. The Samsung S-series dump was cut by "
                  "the platform's 10,000 ms limit (a DUMP TIMEOUT line follows its last line), so its rows may be partial; this is "
-                 "written to the log of the run. The section exists only on the two Samsung reports (Android 16); the others do "
+                 "written to the log of the run. Of the five tested reports, the section exists only on the two Samsung reports (Android 16); the others do "
                  "not print it. Evidence tiers. Data-proven on two real bug reports (Samsung A-series 206 rows, Samsung S-series "
                  "444 rows), each equal to a count of lines in the raw text. As both are in a UTC+0 zone the conversion to UTC was "
                  "checked on constructed text for other zones. Not examined: other vendors and Android versions."
-                 "\nOn the corpus the run gave s20fe_a13 12 rows; samsungs20_a13, sharon_a14 and userb2_a13 gave none. Not compared with a second count.",
+                 " Control characters in a value read from the report text are shown as spaces."
+                 "\nOn the corpus the run gave s20fe_a13 12 rows, all Kind Log with a time, equal to its timestamped lines; samsungs20_a13, sharon_a14 and userb2_a13 gave none.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": "standard",
@@ -513,11 +531,12 @@ __artifacts_v2__ = {
                  "As Printed keeps the line. The list values (up to 2,000 characters) are not split. A row records a "
                  "setting the vendor service printed when the dump ran; the table does not say whether the setting was changed "
                  "by anyone, and a default value is not distinguishable from a configured one.\n"
-                 "The section exists only on the two Samsung reports (Android 16); the others do not print it. Evidence tiers. "
+                 "Of the five tested reports, the section exists only on the two Samsung reports (Android 16); the others do not print it. Evidence tiers. "
                  "Data-proven on two real bug reports (106 rows each), each equal to a count of lines with a colon after the "
                  "heading in the raw text. The two reports do not print the same set of names. Not examined: "
                  "other vendors and Android versions."
-                 "\nOn the corpus the run gave s20fe_a13 100 rows; samsungs20_a13, sharon_a14 and userb2_a13 gave none. Not compared with a second count.",
+                 " Control characters in a value read from the report text are shown as spaces."
+                 "\nOn the corpus the run gave s20fe_a13 100 rows; samsungs20_a13, sharon_a14 and userb2_a13 gave none. An independent count of the raw text gave the same number.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": ["html", "tsv", "lava"],
@@ -547,7 +566,8 @@ __artifacts_v2__ = {
                  "Evidence tiers. Data-proven on five real bug reports (Samsung A-series and S-series on Android 16, Huawei and a "
                  "Transsion-brand phone on Android 10, Motorola on Android 15): 70, 78, 41, 15 and 55 rows, each equal to a count "
                  "of lines after the header in the raw text. Not examined: Android 11 and 12, other vendors."
-                 "\nOn the corpus the run gave s20fe_a13 186 rows (62 from the dumpState text, 62 from an automatically generated dump, 62 from an automatically generated dump), samsungs20_a13 57 rows and sharon_a14 126 rows; userb2_a13 gave none. Not compared with a second count.",
+                 " Control characters in a value read from the report text are shown as spaces."
+                 "\nOn the corpus the run gave s20fe_a13 186 rows (62 from the dumpState text, 62 from an automatically generated dump, 62 from an automatically generated dump), samsungs20_a13 57 rows and sharon_a14 126 rows; userb2_a13 gave none. An independent count of the raw text gave the same numbers. The sharon_a14 text prints this section twice, a FILESYSTEMS & FREE SPACE (vendor) copy run by /vendor/bin/sh -c /vendor/bin/df and the standard (df) section, so its 126 rows are 63 lines each printed twice.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": ["html", "tsv", "lava"],
@@ -576,7 +596,8 @@ __artifacts_v2__ = {
                  "is empty for them. Evidence tiers. Data-proven on two real bug reports (Samsung A-series 70 rows, Samsung S-series "
                  "78 rows), each equal to a count of lines after the header in the raw text and to the number of rows of Bug Report - "
                  "File Systems of the same report. Not examined: other vendors and Android versions."
-                 "\nOn the corpus the run gave s20fe_a13 186 rows (62 from the dumpState text, 62 from an automatically generated dump, 62 from an automatically generated dump), samsungs20_a13 57 rows and sharon_a14 126 rows; userb2_a13 gave none. Not compared with a second count.",
+                 " Control characters in a value read from the report text are shown as spaces."
+                 "\nOn the corpus the run gave s20fe_a13 186 rows (62 from the dumpState text, 62 from an automatically generated dump, 62 from an automatically generated dump), samsungs20_a13 57 rows and sharon_a14 126 rows; userb2_a13 gave none. An independent count of the raw text gave the same numbers. The sharon_a14 text prints this section twice, a FILESYSTEMS & FREE INODE (vendor) copy run by /vendor/bin/sh -c /vendor/bin/df -i and the standard (df -i) section, so its 126 rows are 63 lines each printed twice.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": ["html", "tsv", "lava"],
@@ -605,7 +626,8 @@ __artifacts_v2__ = {
                  "for them. Evidence tiers. Data-proven on two real bug reports (Samsung A-series 164 rows, Samsung S-series 178 "
                  "rows), each equal to a count of lines containing ' on ' and ' type ' in the raw text. Not examined: other "
                  "vendors and Android versions."
-                 "\nOn the corpus the run gave s20fe_a13 471 rows (157 from the dumpState text, 157 from an automatically generated dump, 157 from an automatically generated dump), samsungs20_a13 146 rows and sharon_a14 152 rows; userb2_a13 gave none. Not compared with a second count.",
+                 " Control characters in a value read from the report text are shown as spaces."
+                 "\nOn the corpus the run gave s20fe_a13 471 rows (157 from the dumpState text, 157 from an automatically generated dump, 157 from an automatically generated dump), samsungs20_a13 146 rows and sharon_a14 152 rows; userb2_a13 gave none. An independent count of the raw text gave the same numbers.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": ["html", "tsv", "lava"],
@@ -639,6 +661,7 @@ __artifacts_v2__ = {
                  "each equal to a count of entries in the raw text. Every tested volume was the emulated internal storage; an "
                  "external volume, a private volume and a Disk entry were not present and are constructed text only. Not "
                  "examined: Android 11 and 12, a device with an SD card."
+                 " Control characters in a value read from the report text are shown as spaces."
                  "\nOn the corpus the run gave s20fe_a13 2 rows; samsungs20_a13, sharon_a14 and userb2_a13 gave none. Not compared with a second count.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
@@ -672,7 +695,8 @@ __artifacts_v2__ = {
                  "tiers. Data-proven on two real bug reports (Samsung A-series 3,265 rows, Samsung S-series 5,663 rows), each "
                  "equal to a count of lines after the BUF heading in the raw text. Not examined: other vendors and Android "
                  "versions, a log with more than one BUF heading."
-                 "\nOn the corpus the run gave s20fe_a13 566 rows; samsungs20_a13, sharon_a14 and userb2_a13 gave none. Not compared with a second count.",
+                 " Control characters in a value read from the report text are shown as spaces."
+                 "\nOn the corpus the run gave s20fe_a13 566 rows; samsungs20_a13, sharon_a14 and userb2_a13 gave none. The 566 equals the 532 timed lines and the 34 lines without a time of its vold log.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": "standard",
@@ -705,7 +729,8 @@ __artifacts_v2__ = {
                  "Evidence tiers. Data-proven on five real bug reports (Samsung A-series and S-series on Android 16, Huawei and a "
                  "Transsion-brand phone on Android 10, Motorola on Android 15): 266, 275, 117, 86 and 224 rows, each equal to a "
                  "count of lines after the header in the raw text. Not examined: Android 11 and 12, other vendors."
-                 "\nOn the corpus the run gave s20fe_a13 404 rows (152 from the dumpState text, 89 from an automatically generated dump, 163 from an automatically generated dump), samsungs20_a13 156 rows and sharon_a14 187 rows; userb2_a13 gave none. Not compared with a second count.",
+                 " Control characters in a value read from the report text are shown as spaces."
+                 "\nOn the corpus the run gave s20fe_a13 404 rows (152 from the dumpState text, 89 from an automatically generated dump, 163 from an automatically generated dump), samsungs20_a13 156 rows and sharon_a14 187 rows; userb2_a13 gave none. An independent count of the raw text gave the same numbers.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": ["html", "tsv", "lava"],
@@ -771,6 +796,7 @@ __artifacts_v2__ = {
                  "Transsion-brand phone on Android 10, Motorola on Android 15): 495, 629, 292, 240 and 587 rows, each equal to the "
                  "number of names in the raw list and to the length of each size list. Not examined: Android 11 and 12, other "
                  "vendors, a device with a list longer than the line limit."
+                 " Control characters in a value read from the report text are shown as spaces."
                  "\nOn the corpus none of s20fe_a13, samsungs20_a13, sharon_a14 and userb2_a13 gave a row; the diskstats dump of s20fe_a13 prints no package sizes.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
@@ -805,7 +831,7 @@ __artifacts_v2__ = {
                  "A-series 210 rows and S-series 64 rows on Android 16, Huawei 219 and Transsion-brand 151 on Android 10, Motorola "
                  "211 on Android 15), each equal to a count of Connection pool for lines in the raw text. Not examined: Android "
                  "11 and 12, other vendors."
-                 "\nOn the corpus the run gave s20fe_a13 161 rows; samsungs20_a13, sharon_a14 and userb2_a13 gave none. Not compared with a second count.",
+                 "\nOn the corpus the run gave s20fe_a13 161 rows; samsungs20_a13, sharon_a14 and userb2_a13 gave none. An independent count of the raw text gave the same number.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": ["html", "tsv", "lava"],
@@ -830,7 +856,7 @@ __artifacts_v2__ = {
                  "the ** Database info for pid N [process] ** heading above the listing. Directory is the path printed, File Name and "
                  "Size (bytes) are as printed (the size is the number before the b). ctime, mtime and atime are the three times the "
                  "line prints, as ISO text ending in Z; each (UTC) column reads that text as UTC. The listing names, sizes and "
-                 "times only; the file contents are not in a bug report. The platform's ctime is the inode change time, not a "
+                 "times only; the file contents are not in a bug report. ctime is shown as the dump prints it; it is not a "
                  "creation time. A time of 1970-01-01 is shown as printed. A row records what the listing printed for a file when "
                  "the dump ran, for the processes that were running; a file that is not listed says nothing about whether it "
                  "exists.\n"
@@ -839,7 +865,7 @@ __artifacts_v2__ = {
                  "Evidence tiers. Data-proven on four of five real bug reports (Samsung A-series 1,120 rows and S-series 373 rows "
                  "on Android 16, Transsion-brand 543 on Android 10, Motorola 1,614 on Android 15), each equal to a count of file "
                  "lines in the raw text. Not examined: Android 11 and 12, other vendors."
-                 "\nOn the corpus the run gave s20fe_a13 628 rows; samsungs20_a13, sharon_a14 and userb2_a13 gave none. Not compared with a second count.",
+                 "\nOn the corpus the run gave s20fe_a13 628 rows; samsungs20_a13, sharon_a14 and userb2_a13 gave none. An independent count of the raw text gave the same number.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": "standard",
@@ -867,8 +893,8 @@ __artifacts_v2__ = {
                  "closing quote before path= (up to 2,000 characters, with SQL Length the full length) and Details is any text "
                  "after it. A line the reader cannot split keeps its text in Details. The SQL text is shown exactly as the "
                  "platform printed it: it can contain values the application used in a statement.\n"
-                 "Time As Printed is month, day and clock time without a year (the Android 14 and later reports) or a full date and "
-                 "time (the Android 10 and 15 reports). Time (UTC) converts it with the zone shown in Bug Report - Device Facts; for "
+                 "Time As Printed is month, day and clock time without a year (the two Samsung Android 16 reports) or a full date and "
+                 "time (the Android 10, 13 and 15 reports). Time (UTC) converts it with the zone shown in Bug Report - Device Facts; for "
                  "a time without a year it uses the latest year, the one of the report or the one before, that does not put the time "
                  "more than a day after the report time (the rule of Bug Report - Settings Changes), and it is empty with a Time Note "
                  "where the report has no time or zone. Each connection lists a bounded number of operations (a median of 7 to 20 and at most 108 in the tested reports), "
@@ -881,7 +907,7 @@ __artifacts_v2__ = {
                  "Motorola 5,955 on Android 15), each equal to a count of numbered operation lines in the raw text. As the tested "
                  "reports are in a UTC+0 zone the conversion to UTC was checked on constructed text for other zones. Not "
                  "examined: Android 11 and 12, other vendors, an operation line with a stack trace or exception text."
-                 "\nOn the corpus the run gave s20fe_a13 4,033 rows; samsungs20_a13, sharon_a14 and userb2_a13 gave none. Not compared with a second count.",
+                 "\nOn the corpus the run gave s20fe_a13 4,033 rows; samsungs20_a13, sharon_a14 and userb2_a13 gave none. An independent count of the raw text gave the same number.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": "standard",
@@ -912,6 +938,7 @@ __artifacts_v2__ = {
                  "tiers. Data-proven on three of five real bug reports (Samsung A-series 4,633 rows and S-series 4,842 rows on "
                  "Android 16, Motorola 4,005 rows on Android 15), each equal to a count of namespace/flag= lines in the raw text. "
                  "Not examined: Android 11, 12 and 14 other than the Android 15 report, other vendors."
+                 " Control characters in a value read from the report text are shown as spaces."
                  "\nOn the corpus none of s20fe_a13, samsungs20_a13, sharon_a14 and userb2_a13 gave a row; the device_config dump of s20fe_a13 prints only its service header lines.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
@@ -943,7 +970,8 @@ __artifacts_v2__ = {
                  "tiers. Data-proven on three of five real bug reports (Samsung A-series 354 rows and S-series 357 rows on Android "
                  "16, Motorola 326 rows on Android 15), each equal to a count of ChangeId( lines in the raw text. Not examined: other "
                  "Android versions and vendors."
-                 "\nOn the corpus the run gave s20fe_a13 173 rows; samsungs20_a13, sharon_a14 and userb2_a13 gave none. Not compared with a second count.",
+                 " Control characters in a value read from the report text are shown as spaces."
+                 "\nOn the corpus the run gave s20fe_a13 173 rows; samsungs20_a13, sharon_a14 and userb2_a13 gave none. The 173 equals the ChangeId lines of its platform_compat dump.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": ["html", "tsv", "lava"],
@@ -976,6 +1004,7 @@ __artifacts_v2__ = {
                  "the Samsung A-series report only. Evidence tiers. Data-proven on three of five real bug reports (Samsung A-series "
                  "641 rows and S-series 686 rows on Android 16, Motorola 261 rows on Android 15), each equal to a count of "
                  "flag_declaration objects in the raw text. Not examined: other Android versions and vendors."
+                 " Control characters in a value read from the report text are shown as spaces."
                  "\nOn the corpus none of s20fe_a13, samsungs20_a13, sharon_a14 and userb2_a13 gave a row; s20fe_a13 prints no release flag section.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
@@ -1005,6 +1034,7 @@ __artifacts_v2__ = {
                  "header is a row of Bug Report - Device Facts. Evidence tiers. Data-proven on three of five real bug reports "
                  "(30 rows each: Samsung A-series and S-series on Android 16, Motorola on Android 15), each equal to a count of "
                  "indented lines in the raw text. Not examined: other Android versions and vendors."
+                 " Control characters in a value read from the report text are shown as spaces."
                  "\nOn the corpus none of s20fe_a13, samsungs20_a13, sharon_a14 and userb2_a13 gave a row; s20fe_a13 prints no SDK extensions section.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),

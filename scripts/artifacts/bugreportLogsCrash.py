@@ -17,8 +17,8 @@ __artifacts_v2__ = {
                  "UID is the uid column as printed (a number or a name such as root or shell), PID and TID are the process and "
                  "thread ids, Level is the letter as printed, Tag is the tag with the platform's padding removed, and Message is "
                  "the rest of the line, shown up to 2,000 characters with control characters shown as spaces. Buffer is the "
-                 "text of the last '--------- beginning of' marker above the line (crash, system or main in the tested "
-                 "reports). Log lines can hold text written by apps and by people using the phone; they are shown as printed.\n"
+                 "text of the last '--------- beginning of' marker above the line (crash, system, main and, on userb2_a13, "
+                 "kernel). Log lines can hold text written by apps and by people using the phone; they are shown as printed.\n"
                  "The sections hold what the log buffers held when the dump ran, which spanned about 4 minutes (Transsion-brand), "
                  "1 hour (Huawei), 10.6 days (A-series), 7.5 hours (Motorola) and 37 minutes (S-series) in the five tested "
                  "reports, so a line that is not listed says nothing about earlier events. SYSTEM LOG AFTER DONE (two of the "
@@ -37,9 +37,9 @@ __artifacts_v2__ = {
                  "every line with its own header, and record a UTC+0 zone without daylight saving, so the conversion to UTC "
                  "was the identity on every real row. Constructed text only: the layout without a uid column, a time printed "
                  "with a year, other zones and daylight saving, lines that are not in logcat form, a command stopped by a time "
-                 "limit, and a year change inside the logs. Not examined: Android 11, 12 and 14, other vendors, and logcat sections "
+                 "limit, and a year change inside the logs. Not examined: Android 11 and 12, other vendors, and logcat sections "
                  "other than these (RADIO LOG and LAST LOGCAT are not read here)."
-                 "\nOn the corpus the run gave s20fe_a13 388,049 rows (135,260 from the dumpState text, 56,939 from an automatically generated dump, 195,850 from an automatically generated dump), samsungs20_a13 207,204 rows, sharon_a14 224,821 rows and userb2_a13 29,276 rows (17,983 from a partial text, 11,293 from a partial text). Not compared with a second count.",
+                 "\nOn the corpus the run gave s20fe_a13 388,049 rows (135,260 from the dumpState text, 56,939 from an automatically generated dump, 195,850 from an automatically generated dump), samsungs20_a13 207,204 rows, sharon_a14 224,821 rows and userb2_a13 29,276 rows (17,983 from a partial text, 11,293 from a partial text). An independent count of the raw text gave the same numbers. Time (UTC) is empty on every userb2_a13 row (the partial texts record no usable time zone).",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": "standard",
@@ -75,8 +75,8 @@ __artifacts_v2__ = {
                  "(A-series, Huawei, Transsion-brand, Motorola and S-series respectively), each equal to a count of timestamped "
                  "lines in the raw section and to an independent split, field by field. The conversion to UTC was the identity "
                  "on every real row (UTC+0 zone on all five). Constructed only: a continuation of a value list on a line of its "
-                 "own, zones with an offset, and the layout without a uid column. Not examined: Android 11, 12 and 14 and other vendors."
-                 "\nOn the corpus the run gave s20fe_a13 15,635 rows (4,225 from the dumpState text, 1,224 from an automatically generated dump, 10,186 from an automatically generated dump), samsungs20_a13 6,988 rows, sharon_a14 12,938 rows and userb2_a13 3,460 rows (2,811 from a partial text, 649 from a partial text). Not compared with a second count.",
+                 "own, zones with an offset, and the layout without a uid column. Not examined: Android 11 and 12 and other vendors."
+                 "\nOn the corpus the run gave s20fe_a13 15,635 rows (4,225 from the dumpState text, 1,224 from an automatically generated dump, 10,186 from an automatically generated dump), samsungs20_a13 6,988 rows, sharon_a14 12,938 rows and userb2_a13 3,460 rows (2,811 from a partial text, 649 from a partial text). An independent count of the raw text gave the same numbers. Time (UTC) is empty on every userb2_a13 row (the partial texts record no usable time zone).",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": "standard",
@@ -102,7 +102,7 @@ __artifacts_v2__ = {
                  "/sys/fs/pstore/console-ramoops-0 in the tested reports). Seconds Since Boot is the number in the first square "
                  "brackets, a count from the kernel's own clock, shown as printed: no clock time is computed from it, because the "
                  "report does not print the kernel clock's start. Level is the number in angle brackets that starts a KERNEL "
-                 "LOG line, as printed (empty on LAST KMSG lines in the tested reports). CPU or Task is the second bracket "
+                 "LOG line, as printed (empty on LAST KMSG lines in the five tested reports, printed on the stamped LAST KMSG lines of s20fe_a13). CPU or Task is the second bracket "
                  "([T123], [C1], [ 2: kworker/u16:2: 86]) or a cpu word such as c0, as printed. Message is the rest of the "
                  "line, up to 2,000 characters. A line without a stamp (for example the first line of a ring buffer that was "
                  "cut) keeps its whole text in Message and leaves the first three columns empty. The platform's own notice "
@@ -118,9 +118,10 @@ __artifacts_v2__ = {
                  "count of the non-blank lines of the two sections in the raw text, with the section, stamp, level and line "
                  "equal to an independent regular expression on every row. Lines without a stamp: 43 (A-series), 1,776 (S-series) and the one "
                  "line of the Huawei report, none on the others; Seconds Since Boot, Level and CPU or Task are empty on that "
-                 "Huawei row. Level is empty on every LAST KMSG row. Not examined: Android 11, 12 and 14, other vendors, and kernel "
+                 "Huawei row. Level is empty on every LAST KMSG row of these five reports. Not examined: Android 11 and 12, other vendors, and kernel "
                  "lines that carry a wall-clock stamp or another prefix than those above."
-                 "\nOn the corpus the run gave s20fe_a13 48,176 rows (30,248 from the dumpState text, 8,794 from an automatically generated dump, 9,134 from an automatically generated dump), samsungs20_a13 18,345 rows and sharon_a14 18,701 rows; userb2_a13 gave none. Not compared with a second count.",
+                 " Control characters in a value read from the report text are shown as spaces."
+                 "\nOn the corpus the run gave s20fe_a13 48,176 rows (30,248 from the dumpState text, 8,794 from an automatically generated dump, 9,134 from an automatically generated dump), samsungs20_a13 18,345 rows and sharon_a14 18,701 rows; userb2_a13 gave none. An independent count of the raw text gave the same numbers. On s20fe_a13 (Android 13) the LAST KMSG lines with a stamp carry a level, and 1,825 of its 21,072 LAST KMSG rows have no stamp.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": "standard",
@@ -145,7 +146,7 @@ __artifacts_v2__ = {
                  "VM TRACES AT LAST ANR and HISTORICAL ANR sections of the text, and in the anr_* and trace* files under "
                  "FS/data/anr of a bug report zip (the zip made by adb bugreport or kept by the Shell app). Source Section is the "
                  "section name or the zip member; Source File is the text or the zip. Dump Time As Printed is the time in the dump "
-                 "header: nanoseconds and a UTC offset on the Android 15 and 16 reports (read exactly), seconds without an offset "
+                 "header: nanoseconds and a UTC offset on the Android 13, 15 and 16 reports (read exactly), seconds without an offset "
                  "on the Android 10 reports (converted with the report zone). Process is the Cmd line of the dump and Subject is "
                  "the 'Subject:' line that precedes the first dump of a file or section (empty where there is none). Thread, "
                  "Priority, Thread ID, State, Daemon, System Thread ID, Nice, Cgroup, OS State, User Ticks, System Ticks and Core "
@@ -169,7 +170,7 @@ __artifacts_v2__ = {
                  "header, a dump time without an offset on an Android 10 layout in another zone, and the 500,000 thread limit "
                  "(the log says when it is reached). Not examined: Android 11, 12 and 14, other vendors, and files of other names in "
                  "the anr folder."
-                 "\nOn the corpus the run gave s20fe_a13 2,600 rows; samsungs20_a13, sharon_a14 and userb2_a13 gave none. Not compared with a second count.",
+                 "\nOn the corpus the run gave s20fe_a13 2,600 rows; samsungs20_a13, sharon_a14 and userb2_a13 gave none. The 2,600 equals the thread header lines of its VM TRACES JUST NOW section.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": "standard",
@@ -214,7 +215,7 @@ __artifacts_v2__ = {
                  "Command Line and Process Uptime are empty on all rows of the Transsion-brand report and Command Line, Abort Message and Process Uptime on all rows of the Huawei report (the Android 10 text form does not print them), and Thread is empty on every protobuf row. Constructed only: "
                  "a wrapped protobuf, a damaged member and a time with a negative offset. Not examined: Android 11, 12 and 14 and "
                  "other vendors."
-                 "\nOn the corpus the run gave s20fe_a13 32 rows; samsungs20_a13, sharon_a14 and userb2_a13 gave none. Not compared with a second count.",
+                 "\nOn the corpus the run gave s20fe_a13 32 rows; samsungs20_a13, sharon_a14 and userb2_a13 gave none. The 32 equals the tombstone members of dumpstate_app_native.zip (16 text and 16 protobuf).",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": "standard",
@@ -259,8 +260,9 @@ __artifacts_v2__ = {
                  "every row of the Transsion-brand, Motorola and S-series reports (no entry is printed there), PID, UID, Packages, "
                  "Foreground and Subject on every row of the A-series report, Subject on every row of the Huawei report, and "
                  "Preview on every row of the Motorola report. Not examined: entries of other tags are listed but "
-                 "not printed by the report (only the three tags above are), Android 11, 12 and 14 and other vendors."
-                 "\nOn the corpus the run gave s20fe_a13 24 rows and sharon_a14 5 rows; samsungs20_a13 and userb2_a13 gave none. Not compared with a second count.",
+                 "not printed by the report (only the three tags above are), Android 11 and 12 and other vendors."
+                 " Control characters in a value read from the report text are shown as spaces."
+                 "\nOn the corpus the run gave s20fe_a13 24 rows and sharon_a14 5 rows; samsungs20_a13 and userb2_a13 gave none. An independent count of the raw text gave the same numbers.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": "standard",
@@ -301,7 +303,8 @@ __artifacts_v2__ = {
                  "text. Constructed only: a negative offset, a record time in another zone, and the cuts. The other three reports do not print "
                  "these sections. SHUTDOWN CHECKPOINTS (a Motorola section) appears in one of the "
                  "five reports and is not read."
-                 "\nOn the corpus the run gave s20fe_a13 10 rows and sharon_a14 213 rows; samsungs20_a13 and userb2_a13 gave none. Not compared with a second count.",
+                 " Control characters in a value read from the report text are shown as spaces."
+                 "\nOn the corpus the run gave s20fe_a13 10 rows and sharon_a14 213 rows; samsungs20_a13 and userb2_a13 gave none. An independent count of the raw text gave the same numbers.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": "standard",
@@ -352,7 +355,8 @@ __artifacts_v2__ = {
                  "Of the 11,973 and 21,868 rows with a time, 7,952 and 12,640 have a masked year (no UTC value) and 2,962 and "
                  "4,306 print no year (the year comes from the report time). Not in the other three reports (their services are not printed), so 2 of 5. Both reports record a UTC+0 "
                  "zone; other zones are constructed only. Not examined: other Samsung builds and Android versions."
-                 "\nOn the corpus the run gave s20fe_a13 1,256 rows; samsungs20_a13, sharon_a14 and userb2_a13 gave none. Not compared with a second count.",
+                 " Control characters in a value read from the report text are shown as spaces."
+                 "\nOn the corpus the run gave s20fe_a13 1,256 rows; samsungs20_a13, sharon_a14 and userb2_a13 gave none. An independent count of the raw text gave the same number.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": "standard",
