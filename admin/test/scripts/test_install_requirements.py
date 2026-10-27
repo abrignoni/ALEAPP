@@ -28,6 +28,21 @@ class InstallRequirementsTests(unittest.TestCase):
         with self.assertRaises(SystemExit):
             install.without_mister_skinnylegs('bcrypt==5.0.0\nfolium==0.14.0\n')
 
+    def test_lock_sets_the_readers_and_brotli_and_fills_in_the_rest(self):
+        with open(install.MSL_LOCK, encoding='utf-8') as handle:
+            lock = handle.read()
+        already = {'zstd': '1.5.7.2', 'Brotli': '1.2.0', 'lz4': '4.3.3'}
+        lines = install.lock_lines(lock, already.get)
+        names = [line.split()[0].split('==')[0] for line in lines]
+        self.assertIn('Brotli', names)                        # always, even over an installed 1.2.0
+        self.assertNotIn('zstd', names)                       # kept as installed
+        self.assertNotIn('lz4', names)
+        self.assertTrue(all(name in names for name in ('mister_skinnylegs', 'ccl_chromium_reader',
+                                                       'ccl_mozilla_reader', 'ccl_simplesnappy')))
+        fresh = [line.split()[0].split('==')[0] for line in install.lock_lines(lock, lambda name: None)]
+        self.assertIn('zstd', fresh)                          # nothing installed: the whole lock
+        self.assertIn('lz4', fresh)
+
     def test_brotli_older_than_1_2_1_is_refused(self):
         for version in ('1.2.0', '1.1.0', '1.0.9'):
             with self.assertRaises(SystemExit):
