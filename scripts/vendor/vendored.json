@@ -78,6 +78,20 @@
       "licence": "MIT",
       "licence_file": "scripts/vendor/LICENSE-c2paprobe",
       "note": "Copied verbatim. Fix upstream and re-vendor; edits here are reverted by the next sync."
+    },
+    {
+      "path": "scripts/hive_parser.py",
+      "name": "hive-parser",
+      "version": "0.1.0",
+      "upstream": "https://github.com/abrignoni/hive-parser",
+      "upstream_file": "hive_parser/__init__.py",
+      "commit": "af71cff143d66b2a4f58fb28d3da8cdde91b036f",
+      "commit_date": "2026-10-27",
+      "sha256": "3ebf2d30a5e230379eb800810c26db45c22a97a4c2f3e8a1cfdc3cb883c17eb7",
+      "licence": "MIT",
+      "licence_file": "",
+      "banner": true,
+      "note": "Copied verbatim below its banner. Fix upstream and re-vendor; edits here are reverted by the next sync."
     }
   ]
 }
