@@ -54,13 +54,17 @@ the app's data from before the update under misc_ce/<user>/rollback/<rollback id
 (credential encrypted) or misc_de/<user>/rollback/<rollback id>/<package>/ (device
 encrypted), and a glob written for the app's own folder matches that copy too. On 7 of the 22
 registered Android images (listings of 2026-10-27) 12 artifact modules read such snapshots, and
-on russell_a14 the snapshot copies of MediaProvider's external.db gave 307 of the 622 rows of
-Emulated Storage Metadata - Images, each identical to a row from the live database. A snapshot
+on s20fe_a13 the snapshot copy of MediaProvider's external.db doubled every Emulated Storage
+Metadata table (Files 498 rows, 249 of them from the snapshot). A snapshot
 is not a storage view: it was taken at one moment and may hold data the live copy no longer
 does. So unique_files drops a snapshot only when the same call also holds the live copy of
 that file, for the same storage class and user, and the two are byte identical. Otherwise the
 snapshot is kept, and its path names the rollback it belongs to. Of the 111 snapshot files
-artifacts matched on those images, 98 had the size of their live copy and 13 did not.
+artifacts matched on those images, 98 had the size of their live copy and 13 did not. Run over
+the 45 affected artifacts on the 7 images, this removed 363 of 18,361 rows, every one a copy of
+a row the live file also gave. A database whose snapshot holds the same rows in different bytes
+is still read twice: on russell_a14 and hc_pixel8pro_a16 the external.db snapshots differ from
+the live file and their rows stay in Emulated Storage Metadata.
 The apexrollback folders beside them hold APEX module data, not an app data folder, and are
 left as they are.
 """
