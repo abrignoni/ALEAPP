@@ -37,12 +37,19 @@ __artifacts_v2__ = {
                  "every line with its own header, and record a UTC+0 zone without daylight saving, so the conversion to UTC "
                  "was the identity on every real row. Constructed text only: the layout without a uid column, a time printed "
                  "with a year, other zones and daylight saving, lines that are not in logcat form, a command stopped by a time "
-                 "limit, and a year change inside the logs. Not examined: Android 11 to 14, other vendors, and logcat sections "
-                 "other than these (RADIO LOG and LAST LOGCAT are not read here).",
+                 "limit, and a year change inside the logs. Not examined: Android 11, 12 and 14, other vendors, and logcat sections "
+                 "other than these (RADIO LOG and LAST LOGCAT are not read here)."
+                 "\nOn the corpus the run gave s20fe_a13 388,049 rows (135,260 from the dumpState text, 56,939 from an automatically generated dump, 195,850 from an automatically generated dump), samsungs20_a13 207,204 rows, sharon_a14 224,821 rows and userb2_a13 29,276 rows (17,983 from a partial text, 11,293 from a partial text). Not compared with a second count.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": "standard",
-        "artifact_icon": "file-text"
+        "artifact_icon": "file-text",
+        "sample_data": {
+            "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 388,049 rows",
+            "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 207,204 rows",
+            "sharon_a14": "Android 14 | Samsung error dumpstate zip | 224,821 rows",
+            "userb2_a13": "Android 13 | two partial Shell bug report texts (.tmp) | 29,276 rows",
+        }
     },
     "bugreport_event_log": {
         "name": "Bug Report - Event Log",
@@ -68,11 +75,18 @@ __artifacts_v2__ = {
                  "(A-series, Huawei, Transsion-brand, Motorola and S-series respectively), each equal to a count of timestamped "
                  "lines in the raw section and to an independent split, field by field. The conversion to UTC was the identity "
                  "on every real row (UTC+0 zone on all five). Constructed only: a continuation of a value list on a line of its "
-                 "own, zones with an offset, and the layout without a uid column. Not examined: Android 11 to 14 and other vendors.",
+                 "own, zones with an offset, and the layout without a uid column. Not examined: Android 11, 12 and 14 and other vendors."
+                 "\nOn the corpus the run gave s20fe_a13 15,635 rows (4,225 from the dumpState text, 1,224 from an automatically generated dump, 10,186 from an automatically generated dump), samsungs20_a13 6,988 rows, sharon_a14 12,938 rows and userb2_a13 3,460 rows (2,811 from a partial text, 649 from a partial text). Not compared with a second count.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": "standard",
-        "artifact_icon": "list"
+        "artifact_icon": "list",
+        "sample_data": {
+            "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 15,635 rows",
+            "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 6,988 rows",
+            "sharon_a14": "Android 14 | Samsung error dumpstate zip | 12,938 rows",
+            "userb2_a13": "Android 13 | two partial Shell bug report texts (.tmp) | 3,460 rows",
+        }
     },
     "bugreport_kernel_log": {
         "name": "Bug Report - Kernel Log",
@@ -104,12 +118,19 @@ __artifacts_v2__ = {
                  "count of the non-blank lines of the two sections in the raw text, with the section, stamp, level and line "
                  "equal to an independent regular expression on every row. Lines without a stamp: 43 (A-series), 1,776 (S-series) and the one "
                  "line of the Huawei report, none on the others; Seconds Since Boot, Level and CPU or Task are empty on that "
-                 "Huawei row. Level is empty on every LAST KMSG row. Not examined: Android 11 to 14, other vendors, and kernel "
-                 "lines that carry a wall-clock stamp or another prefix than those above.",
+                 "Huawei row. Level is empty on every LAST KMSG row. Not examined: Android 11, 12 and 14, other vendors, and kernel "
+                 "lines that carry a wall-clock stamp or another prefix than those above."
+                 "\nOn the corpus the run gave s20fe_a13 48,176 rows (30,248 from the dumpState text, 8,794 from an automatically generated dump, 9,134 from an automatically generated dump), samsungs20_a13 18,345 rows and sharon_a14 18,701 rows; userb2_a13 gave none. Not compared with a second count.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": "standard",
-        "artifact_icon": "cpu"
+        "artifact_icon": "cpu",
+        "sample_data": {
+            "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 48,176 rows",
+            "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 18,345 rows",
+            "sharon_a14": "Android 14 | Samsung error dumpstate zip | 18,701 rows",
+            "userb2_a13": "Android 13 | two partial Shell bug report texts (.tmp) | 0 rows",
+        }
     },
     "bugreport_anr_threads": {
         "name": "Bug Report - ANR Trace Threads",
@@ -146,12 +167,19 @@ __artifacts_v2__ = {
                  "so conversion of a dump time without an offset was the identity. The S-series zip also holds trace_00, an older "
                  "dump file with a different content, read in the same way. Constructed only: other zones and offsets in a dump "
                  "header, a dump time without an offset on an Android 10 layout in another zone, and the 500,000 thread limit "
-                 "(the log says when it is reached). Not examined: Android 11 to 14, other vendors, and files of other names in "
-                 "the anr folder.",
+                 "(the log says when it is reached). Not examined: Android 11, 12 and 14, other vendors, and files of other names in "
+                 "the anr folder."
+                 "\nOn the corpus the run gave s20fe_a13 2,600 rows; samsungs20_a13, sharon_a14 and userb2_a13 gave none. Not compared with a second count.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": "standard",
-        "artifact_icon": "alert-triangle"
+        "artifact_icon": "alert-triangle",
+        "sample_data": {
+            "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 2,600 rows",
+            "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 0 rows",
+            "sharon_a14": "Android 14 | Samsung error dumpstate zip | 0 rows",
+            "userb2_a13": "Android 13 | two partial Shell bug report texts (.tmp) | 0 rows",
+        }
     },
     "bugreport_tombstones": {
         "name": "Bug Report - Tombstones",
@@ -184,12 +212,19 @@ __artifacts_v2__ = {
                  "process, pid, tid, uid, uptime, build, signal and abort message) were equal on 1, 32 and 31; the remaining "
                  "Motorola pair differs by one trailing character of the abort message. "
                  "Command Line and Process Uptime are empty on all rows of the Transsion-brand report and Command Line, Abort Message and Process Uptime on all rows of the Huawei report (the Android 10 text form does not print them), and Thread is empty on every protobuf row. Constructed only: "
-                 "a wrapped protobuf, a damaged member and a time with a negative offset. Not examined: Android 11 to 14 and "
-                 "other vendors.",
+                 "a wrapped protobuf, a damaged member and a time with a negative offset. Not examined: Android 11, 12 and 14 and "
+                 "other vendors."
+                 "\nOn the corpus the run gave s20fe_a13 32 rows; samsungs20_a13, sharon_a14 and userb2_a13 gave none. Not compared with a second count.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": "standard",
-        "artifact_icon": "cpu"
+        "artifact_icon": "cpu",
+        "sample_data": {
+            "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 32 rows",
+            "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 0 rows",
+            "sharon_a14": "Android 14 | Samsung error dumpstate zip | 0 rows",
+            "userb2_a13": "Android 13 | two partial Shell bug report texts (.tmp) | 0 rows",
+        }
     },
     "bugreport_dropbox_entries": {
         "name": "Bug Report - Dropbox Entries",
@@ -224,11 +259,18 @@ __artifacts_v2__ = {
                  "every row of the Transsion-brand, Motorola and S-series reports (no entry is printed there), PID, UID, Packages, "
                  "Foreground and Subject on every row of the A-series report, Subject on every row of the Huawei report, and "
                  "Preview on every row of the Motorola report. Not examined: entries of other tags are listed but "
-                 "not printed by the report (only the three tags above are), Android 11 to 14 and other vendors.",
+                 "not printed by the report (only the three tags above are), Android 11, 12 and 14 and other vendors."
+                 "\nOn the corpus the run gave s20fe_a13 24 rows and sharon_a14 5 rows; samsungs20_a13 and userb2_a13 gave none. Not compared with a second count.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": "standard",
-        "artifact_icon": "archive"
+        "artifact_icon": "archive",
+        "sample_data": {
+            "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 24 rows",
+            "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 0 rows",
+            "sharon_a14": "Android 14 | Samsung error dumpstate zip | 5 rows",
+            "userb2_a13": "Android 13 | two partial Shell bug report texts (.tmp) | 0 rows",
+        }
     },
     "bugreport_reset_reasons": {
         "name": "Bug Report - Reset Reasons",
@@ -258,11 +300,18 @@ __artifacts_v2__ = {
                  "rows, equal to the pipe-separated lines (190 and 943) and the record headers (14 and 9) counted in the raw "
                  "text. Constructed only: a negative offset, a record time in another zone, and the cuts. The other three reports do not print "
                  "these sections. SHUTDOWN CHECKPOINTS (a Motorola section) appears in one of the "
-                 "five reports and is not read.",
+                 "five reports and is not read."
+                 "\nOn the corpus the run gave s20fe_a13 10 rows and sharon_a14 213 rows; samsungs20_a13 and userb2_a13 gave none. Not compared with a second count.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": "standard",
-        "artifact_icon": "power"
+        "artifact_icon": "power",
+        "sample_data": {
+            "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 10 rows",
+            "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 0 rows",
+            "sharon_a14": "Android 14 | Samsung error dumpstate zip | 213 rows",
+            "userb2_a13": "Android 13 | two partial Shell bug report texts (.tmp) | 0 rows",
+        }
     },
     "bugreport_vendor_services": {
         "name": "Bug Report - Vendor Service Lines",
@@ -302,11 +351,18 @@ __artifacts_v2__ = {
                  "above. Time (UTC) is filled on 4,021 of the 14,027 and 9,228 of the 25,916 rows; most lines print no time. "
                  "Of the 11,973 and 21,868 rows with a time, 7,952 and 12,640 have a masked year (no UTC value) and 2,962 and "
                  "4,306 print no year (the year comes from the report time). Not in the other three reports (their services are not printed), so 2 of 5. Both reports record a UTC+0 "
-                 "zone; other zones are constructed only. Not examined: other Samsung builds and Android versions.",
+                 "zone; other zones are constructed only. Not examined: other Samsung builds and Android versions."
+                 "\nOn the corpus the run gave s20fe_a13 1,256 rows; samsungs20_a13, sharon_a14 and userb2_a13 gave none. Not compared with a second count.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": "standard",
-        "artifact_icon": "server"
+        "artifact_icon": "server",
+        "sample_data": {
+            "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 1,256 rows",
+            "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 0 rows",
+            "sharon_a14": "Android 14 | Samsung error dumpstate zip | 0 rows",
+            "userb2_a13": "Android 13 | two partial Shell bug report texts (.tmp) | 0 rows",
+        }
     },
 }
 
