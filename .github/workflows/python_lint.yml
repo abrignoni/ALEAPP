@@ -37,7 +37,7 @@ jobs:
 
       - name: Install dependencies
         if: steps.changed-files-py.outputs.any_changed == 'true'
-        run: python -m pip install -r requirements.txt
+        run: python admin/scripts/install_requirements.py
 
       # Artifact name and description fields reach the HTML report and the LAVA manifest
       # and get quoted in casework, so they must not claim more than the data shows.
