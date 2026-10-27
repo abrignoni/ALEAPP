@@ -461,9 +461,12 @@ _DEVICE_STATE = re.compile(r'(?:\(handle=(0x[0-9a-fA-F]+)\)\s*|^(0x[0-9a-fA-F]+|
 _ACTIVE_SENSOR = re.compile(r'\(handle=(0x[0-9a-fA-F]+|\d+), connections=(\d+)\)')
 _EVENT_HEAD = re.compile(r'^(.+): last (\d+) events?:?$')
 _EVENT_ROW = re.compile(r'^(\d+) \(ts=([\d.]+), wall=(.*?)\)\s*(.*)$')
-_REGISTRATION = re.compile(r'^(\d\d:\d\d:\d\d) ([+-]) (0x[0-9a-fA-F]+|\d+) pid=\s*(-?\d+) uid=\s*(-?\d+)(?: package=(\S+))?'
+# The clock is HH:MM:SS, or MM-DD HH:MM:SS.mmm on Samsung's Android 13 report, which also ends a line with [ sensor ].
+_REGISTRATION = re.compile(r'^((?:\d\d-\d\d )?\d\d:\d\d:\d\d(?:\.\d+)?) ([+-]) (0x[0-9a-fA-F]+|\d+) pid=\s*(-?\d+) '
+                           r'uid=\s*(-?\d+)(?: package=(\S+))?'
                            r'(?: samplingPeriod=\s*(N/A|-?\d+)\s*us\s+batchingPeriod=\s*(N/A|-?\d+)\s*us)?'
-                           r'(?:\s+result=(\S+)(?: \(sensor, package\): \((.*)\))?)?')
+                           r'(?:\s+result=(\S+)(?: \(sensor, package\): \((.*)\))?)?'
+                           r'(?:\s+\[ (.*?) \])?')
 
 
 class SensorReader(base.SectionReader):
@@ -546,8 +549,8 @@ class SensorReader(base.SectionReader):
         elif part == 'registrations':
             match = _REGISTRATION.match(body)
             if match:
-                clock, action, handle, pid, uid, package, sampling, batching, result, tail = match.groups()
-                sensor = ''
+                clock, action, handle, pid, uid, package, sampling, batching, result, tail, bracket = match.groups()
+                sensor = bracket or ''
                 if tail:
                     sensor, _sep, package = tail.rpartition(', ')
                     if not _sep:

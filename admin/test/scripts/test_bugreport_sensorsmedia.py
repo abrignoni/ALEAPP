@@ -171,6 +171,16 @@ class SensorTests(unittest.TestCase):
         self.assertEqual((old[0].action, old[0].sampling, old[0].sensor, old[0].package), ('-', '', '', 'com.example.server.Orientation'))
         self.assertEqual((old[1].sampling, old[1].batching, old[1].package), ('20000', '0', 'com.example.user.chat.collect.Scanner'))
 
+    def test_registration_with_date_and_bracketed_sensor(self):
+        # the shape of a Samsung Android 13 report: month-day and milliseconds before the clock, sensor in brackets
+        on = sm._REGISTRATION.match('10-30 08:02:00.123 + 0x0000001f pid= 4321 uid=10300 package=com.example.user.chat '
+                                    'samplingPeriod=66667us batchingPeriod=0us [ example_light Light ]')
+        off = sm._REGISTRATION.match('10-30 08:03:00.456 - 0x0000001f pid= 4321 uid=10300 package=com.example.user.chat '
+                                     '[ example_light Light ]')
+        self.assertEqual(on.group(1, 2, 6, 7, 8, 11),
+                         ('10-30 08:02:00.123', '+', 'com.example.user.chat', '66667', '0', 'example_light Light'))
+        self.assertEqual(off.group(1, 2, 7, 11), ('10-30 08:03:00.456', '-', None, 'example_light Light'))
+
     def test_events_dated_and_clock_only(self):
         report = a16(zone='Europe/Paris')
         events = sm.rows(report, 'sensor_events')
