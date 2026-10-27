@@ -54,11 +54,15 @@ def indent_of(text):
 
 
 def put(report, table, row):
-    """Append a row to the report's ``net_<table>`` list (created on first use); the cap is the report's own."""
+    """Append a row to the report's ``net_<table>`` list (created on first use); the cap is the report's own.
+
+    Every text field of the row is tidied here, so a field that a reader takes as printed (a word matched by a pattern,
+    a heading) shows its control characters as spaces like the fields the reader cuts.
+    """
     name = 'net_' + table
     if name not in report.__dict__:
         setattr(report, name, [])
-    report.add(name, row)
+    report.add(name, type(row)(*[tidy(value) if isinstance(value, str) else value for value in row]))
 
 
 def braced(text, key):

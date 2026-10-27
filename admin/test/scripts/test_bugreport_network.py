@@ -397,6 +397,56 @@ class BoundTests(unittest.TestCase):
         ssids = [n.ssid for n in table(scan_text(text), 'wifi_networks')]
         self.assertIn('"Example   Guest"', ssids)
 
+    def test_control_characters_in_fields_taken_as_printed(self):
+        # Fields that the readers take from a pattern match or a split without cutting them: each one gets a NUL in
+        # the middle, its row must still be read, and the NUL must come out as a space.
+        head = next(line for line in A16.split('\n') if line.startswith('* ID: 0 SSID: '))
+        planted = head
+        for old, new in (('BSSID: null', 'BSSID: nu\x00ll'), ('HIDDEN: false', 'HIDDEN: fa\x00lse'), ('PMF: false', 'PMF: fa\x00lse'),
+                         ('CarrierId: -1', 'CarrierId: -\x001'), ('SubscriptionId: -1', 'SubscriptionId: -\x001'),
+                         ('Currently Connected: true', 'Currently Connected: tr\x00ue'),
+                         ('User Selected: true', 'User Selected: tr\x00ue')):
+            self.assertIn(old, planted)
+            planted = planted.replace(old, new, 1)
+        plants = ((head, planted), (' hasEverConnected: true', ' hasEverConnected: tr\x00ue'),
+                  ('macRandomizationSetting: 3', 'macRandomizationSetting: 3\x003'),
+                  ('mRandomizedMacAddress: 02:00', 'mRandomizedMacAddress: 02\x00:00'),
+                  ('cuid=1000 ', 'cuid=10\x0000 '), ('luid=10100 ', 'luid=10\x00100 '), ('lcuid=10100 ', 'lcuid=10\x00100 '),
+                  ('mostRecentlyConnected=true', 'mostRecentlyConnected=tr\x00ue'), ('allowAutojoin=true', 'allowAutojoin=tr\x00ue'),
+                  ('WifiDeviceStateChangeManager - Log Begin', 'WifiDevice\x00StateChangeManager - Log Begin'),
+                  ('set=ALL tag=0x0', 'set=ALL tag=0x\x000'), ('created=2026-11-01T20:40:10.404Z', 'created=2026-11-01T20:40:10.4\x0004Z'),
+                  ('lp{{InterfaceName: wlan0', 'lp{{InterfaceName: wl\x00an0'), ('Domains: example.test', 'Domains: exam\x00ple.test'),
+                  ('qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000',
+                   'qdisc noq\x00ueue state UNK\x00NOWN mode DEF\x00AULT group def\x00ault qlen 10\x0000'),
+                  ('link/loopback', 'link/loop\x00back'), ('state=in_process', 'state=in_\x00process'),
+                  ('Latest scan results:', 'Latest sc\x00an results:'))
+        text = A16
+        for old, new in plants:
+            self.assertIn(old, text)
+            text = text.replace(old, new, 1)
+        report = scan_text(text)
+        home = table(report, 'wifi_networks')[0]
+        self.assertEqual((home.bssid, home.hidden, home.pmf, home.carrier_id, home.subscription_id, home.currently_connected,
+                          home.user_selected, home.has_ever_connected, home.mac_setting, home.random_mac),
+                         ('nu ll', 'fa lse', 'fa lse', '- 1', '- 1', 'tr ue', 'tr ue', 'tr ue', '3 3', '02 :00:5e:10:00:01'))
+        self.assertEqual((home.creator_uid, home.update_uid, home.connect_uid, home.most_recent, home.auto_join),
+                         ('10 00', '10 100', '10 100', 'tr ue', 'tr ue'))
+        self.assertIn('WifiDevice StateChangeManager', {log.log_name for log in table(report, 'wifi_log')})
+        self.assertIn('0x 0', {bucket.tag for bucket in table(report, 'usage_buckets')})
+        connected = table(report, 'connectivity_networks')[0]
+        self.assertEqual((connected.created, connected.interface), ('2026-11-01T20:40:10.4 04Z', 'wl an0'))
+        self.assertIn('exam ple.test', {network.domains for network in table(report, 'connectivity_networks')})
+        loopback = table(report, 'interfaces')[0]
+        self.assertEqual((loopback.qdisc, loopback.state, loopback.mode, loopback.group, loopback.qlen, loopback.link_type),
+                         ('noq ueue', 'UNK NOWN', 'DEF AULT', 'def ault', '10 00', 'loop back'))
+        self.assertIn('in_ process', {entry.state for entry in table(report, 'private_dns')})
+        self.assertIn('Latest sc an results', {result.table for result in table(report, 'wifi_scan_results')})
+        a10 = scan_text(A10.replace('CLOSE_WAIT', 'CLOSE\x00WAIT', 1))
+        self.assertIn('CLOSE WAIT', {socket.state for socket in table(a10, 'inet_sockets')})   # no User column: the state is any word
+        for name in [name for name in report.__dict__ if name.startswith('net_')] + ['net_inet_sockets']:
+            for row in getattr(report, name, []) + getattr(a10, name, []):
+                self.assertFalse([value for value in row if isinstance(value, str) and '\x00' in value], name)
+
 
 class TimeTests(unittest.TestCase):
     def setUp(self):
