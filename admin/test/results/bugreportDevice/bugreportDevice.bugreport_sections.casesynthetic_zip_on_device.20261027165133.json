@@ -9,7 +9,7 @@
     "total_data_size_bytes": 1780,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
-    "input_zip_path": "admin\\test\\cases\\data\\bugreportDevice\\testdata.bugreportDevice.bugreport_sections.casesynthetic_zip_on_device.zip",
+    "input_zip_path": "admin/test/cases/data/bugreportDevice/testdata.bugreportDevice.bugreport_sections.casesynthetic_zip_on_device.zip",
     "start_time": "2026-10-27T16:51:33.606662+00:00",
     "end_time": "2026-10-27T16:51:33.698529+00:00",
     "run_time_seconds": 0.011673212051391602,
@@ -42,7 +42,7 @@
       null,
       null,
       "Device Facts; Device Identifiers",
-      "Dump\\data\\user_de\\0\\com.android.shell\\files\\bugreports\\bugreport-example-2026-11-02-10-15-30.zip!/bugreport-example-EXAMPLE-2026-11-02-10-15-30.txt"
+      "Dump/data/user_de/0/com.android.shell/files/bugreports/bugreport-example-2026-11-02-10-15-30.zip!/bugreport-example-EXAMPLE-2026-11-02-10-15-30.txt"
     ],
     [
       "SYSTEM PROPERTIES",
@@ -53,7 +53,7 @@
       0.05,
       null,
       "Device Facts; Device Identifiers; Boot Reasons",
-      "Dump\\data\\user_de\\0\\com.android.shell\\files\\bugreports\\bugreport-example-2026-11-02-10-15-30.zip!/bugreport-example-EXAMPLE-2026-11-02-10-15-30.txt"
+      "Dump/data/user_de/0/com.android.shell/files/bugreports/bugreport-example-2026-11-02-10-15-30.zip!/bugreport-example-EXAMPLE-2026-11-02-10-15-30.txt"
     ],
     [
       "DUMPSYS CRITICAL",
@@ -64,7 +64,7 @@
       0.5,
       null,
       "not read",
-      "Dump\\data\\user_de\\0\\com.android.shell\\files\\bugreports\\bugreport-example-2026-11-02-10-15-30.zip!/bugreport-example-EXAMPLE-2026-11-02-10-15-30.txt"
+      "Dump/data/user_de/0/com.android.shell/files/bugreports/bugreport-example-2026-11-02-10-15-30.zip!/bugreport-example-EXAMPLE-2026-11-02-10-15-30.txt"
     ],
     [
       "package",
@@ -75,7 +75,7 @@
       0.321,
       null,
       "Installed Packages; Package Times; Package Permissions; Permission Definitions",
-      "Dump\\data\\user_de\\0\\com.android.shell\\files\\bugreports\\bugreport-example-2026-11-02-10-15-30.zip!/bugreport-example-EXAMPLE-2026-11-02-10-15-30.txt"
+      "Dump/data/user_de/0/com.android.shell/files/bugreports/bugreport-example-2026-11-02-10-15-30.zip!/bugreport-example-EXAMPLE-2026-11-02-10-15-30.txt"
     ],
     [
       "DUMPSYS",
@@ -86,7 +86,7 @@
       0.9,
       null,
       "not read",
-      "Dump\\data\\user_de\\0\\com.android.shell\\files\\bugreports\\bugreport-example-2026-11-02-10-15-30.zip!/bugreport-example-EXAMPLE-2026-11-02-10-15-30.txt"
+      "Dump/data/user_de/0/com.android.shell/files/bugreports/bugreport-example-2026-11-02-10-15-30.zip!/bugreport-example-EXAMPLE-2026-11-02-10-15-30.txt"
     ],
     [
       "settings",
@@ -97,7 +97,7 @@
       0.08,
       null,
       "Settings; Settings Changes",
-      "Dump\\data\\user_de\\0\\com.android.shell\\files\\bugreports\\bugreport-example-2026-11-02-10-15-30.zip!/bugreport-example-EXAMPLE-2026-11-02-10-15-30.txt"
+      "Dump/data/user_de/0/com.android.shell/files/bugreports/bugreport-example-2026-11-02-10-15-30.zip!/bugreport-example-EXAMPLE-2026-11-02-10-15-30.txt"
     ],
     [
       "activity",
@@ -108,7 +108,7 @@
       0.5,
       null,
       "Process Exit Info",
-      "Dump\\data\\user_de\\0\\com.android.shell\\files\\bugreports\\bugreport-example-2026-11-02-10-15-30.zip!/bugreport-example-EXAMPLE-2026-11-02-10-15-30.txt"
+      "Dump/data/user_de/0/com.android.shell/files/bugreports/bugreport-example-2026-11-02-10-15-30.zip!/bugreport-example-EXAMPLE-2026-11-02-10-15-30.txt"
     ],
     [
       "CHECKIN USAGESTATS",
@@ -119,7 +119,7 @@
       0.346,
       null,
       "Usage Events; Usage Intervals; Usage Interval Event Counts; Standby Buckets",
-      "Dump\\data\\user_de\\0\\com.android.shell\\files\\bugreports\\bugreport-example-2026-11-02-10-15-30.zip!/bugreport-example-EXAMPLE-2026-11-02-10-15-30.txt"
+      "Dump/data/user_de/0/com.android.shell/files/bugreports/bugreport-example-2026-11-02-10-15-30.zip!/bugreport-example-EXAMPLE-2026-11-02-10-15-30.txt"
     ]
   ]
 }

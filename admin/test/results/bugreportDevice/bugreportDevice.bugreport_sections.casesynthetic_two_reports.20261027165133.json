@@ -9,7 +9,7 @@
     "total_data_size_bytes": 1844,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
-    "input_zip_path": "admin\\test\\cases\\data\\bugreportDevice\\testdata.bugreportDevice.bugreport_sections.casesynthetic_two_reports.zip",
+    "input_zip_path": "admin/test/cases/data/bugreportDevice/testdata.bugreportDevice.bugreport_sections.casesynthetic_two_reports.zip",
     "start_time": "2026-10-27T16:51:33.700379+00:00",
     "end_time": "2026-10-27T16:51:33.835939+00:00",
     "run_time_seconds": 0.03290390968322754,
@@ -42,7 +42,7 @@
       null,
       null,
       "Device Facts; Device Identifiers",
-      "Dump1\\dumpstate.txt"
+      "Dump1/dumpstate.txt"
     ],
     [
       "SYSTEM PROPERTIES",
@@ -53,7 +53,7 @@
       0.05,
       null,
       "Device Facts; Device Identifiers; Boot Reasons",
-      "Dump1\\dumpstate.txt"
+      "Dump1/dumpstate.txt"
     ],
     [
       "DUMPSYS CRITICAL",
@@ -64,7 +64,7 @@
       0.5,
       null,
       "not read",
-      "Dump1\\dumpstate.txt"
+      "Dump1/dumpstate.txt"
     ],
     [
       "package",
@@ -75,7 +75,7 @@
       0.321,
       null,
       "Installed Packages; Package Times; Package Permissions; Permission Definitions",
-      "Dump1\\dumpstate.txt"
+      "Dump1/dumpstate.txt"
     ],
     [
       "DUMPSYS",
@@ -86,7 +86,7 @@
       0.9,
       null,
       "not read",
-      "Dump1\\dumpstate.txt"
+      "Dump1/dumpstate.txt"
     ],
     [
       "settings",
@@ -97,7 +97,7 @@
       0.08,
       null,
       "Settings; Settings Changes",
-      "Dump1\\dumpstate.txt"
+      "Dump1/dumpstate.txt"
     ],
     [
       "activity",
@@ -108,7 +108,7 @@
       0.5,
       null,
       "Process Exit Info",
-      "Dump1\\dumpstate.txt"
+      "Dump1/dumpstate.txt"
     ],
     [
       "CHECKIN USAGESTATS",
@@ -119,7 +119,7 @@
       0.346,
       null,
       "Usage Events; Usage Intervals; Usage Interval Event Counts; Standby Buckets",
-      "Dump1\\dumpstate.txt"
+      "Dump1/dumpstate.txt"
     ],
     [
       "preamble",
@@ -130,7 +130,7 @@
       null,
       null,
       "Device Facts; Device Identifiers",
-      "Dump2\\bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
     ],
     [
       "SYSTEM PROPERTIES",
@@ -141,7 +141,7 @@
       0.05,
       null,
       "Device Facts; Device Identifiers; Boot Reasons",
-      "Dump2\\bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
     ],
     [
       "DUMPSYS CRITICAL",
@@ -152,7 +152,7 @@
       0.5,
       null,
       "not read",
-      "Dump2\\bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
     ],
     [
       "package",
@@ -163,7 +163,7 @@
       0.321,
       null,
       "Installed Packages; Package Times; Package Permissions; Permission Definitions",
-      "Dump2\\bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
     ],
     [
       "DUMPSYS",
@@ -174,7 +174,7 @@
       0.9,
       null,
       "not read",
-      "Dump2\\bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
     ],
     [
       "settings",
@@ -185,7 +185,7 @@
       0.08,
       null,
       "Settings; Settings Changes",
-      "Dump2\\bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
     ],
     [
       "usagestats",
@@ -196,7 +196,7 @@
       0.044,
       null,
       "Usage Events; Usage Intervals; Usage Interval Event Counts; Standby Buckets",
-      "Dump2\\bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
     ],
     [
       "CHECKIN USAGESTATS",
@@ -207,7 +207,7 @@
       0.346,
       null,
       "Usage Events; Usage Intervals; Usage Interval Event Counts; Standby Buckets",
-      "Dump2\\bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
     ]
   ]
 }
