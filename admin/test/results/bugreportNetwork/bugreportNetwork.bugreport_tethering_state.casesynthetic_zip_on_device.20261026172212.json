@@ -46,7 +46,7 @@
     [
       "Configuration",
       "tetherableUsbRegexs",
-      "[rndis/d]",
+      "[rndis\\d]",
       416,
       "Dump/data/user_de/0/com.android.shell/files/bugreports/bugreport-example-2026-11-02-10-15-30.zip!/bugreport-example-EXAMPLE-2026-11-02-10-15-30.txt"
     ],

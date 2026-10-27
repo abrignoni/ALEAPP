@@ -46,7 +46,7 @@
     [
       "Configuration",
       "tetherableUsbRegexs",
-      "[rndis/d]",
+      "[rndis\\d]",
       415,
       "Dump/dumpstate.txt"
     ],
