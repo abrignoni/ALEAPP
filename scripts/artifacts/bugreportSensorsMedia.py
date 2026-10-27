@@ -964,7 +964,7 @@ __artifacts_v2__ = {
                  "on all rows of the Samsung A-series and Samsung S-series reports; Strategy was empty on all rows of the "
                  "Motorola report.\n"
                  "Evidence tiers. Data-proven on three real bug reports (Samsung A-series and S-series on Android 16, Motorola on "
-                 "Android 15): 29, 179 and 161 rows, equal to a count of the event and change lines in the raw text; the two "
+                 "Android 15): 29, 179 and 161 rows, equal to a count of the event and change lines in the raw text (counted before the full-date form was read, so a report that prints that form may now give more); the two "
                  "Android 10 reports print neither list. The conversion to UTC was the identity on real rows (UTC+0 zone). Not "
                  "examined: Android 11, 12 and 14, other vendors."
                  "\nOn the corpus the run gave s20fe_a13 13 rows, equal to the BrightnessEvent lines of its display "
