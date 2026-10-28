@@ -108,6 +108,10 @@ def _new_entry(header, line_no):
         code, date, firmware = '', (rest.split(':', 1)[1].strip() if ':' in rest else rest), ''
     else:
         inner = header.group('inner')
+        tail = header.group('tail')
+        if '|' not in inner and tail.lstrip().startswith('|'):
+            # '+ [tag] | date | build]': the first bracket closes after the tag and the rest of the header follows it.
+            inner += tail.partition(']')[0]
         parts = [part.strip() for part in inner.split('|')]
         if len(parts) >= 3:
             code, date, firmware = parts[0], parts[1], '|'.join(parts[2:]).strip()
@@ -143,7 +147,7 @@ def _add_line(raw, text):
         raw['reboot_reason'] = tidy(text.split(':', 1)[1].strip())
     elif _STATUS.match(text):
         raw['status'] = tidy(text.strip())
-    elif text.strip():
+    elif text.strip() and text.strip() != '-':      # a lone '-' is the separator that can end a record
         raw['other'].append(tidy(text.strip()))
 
 

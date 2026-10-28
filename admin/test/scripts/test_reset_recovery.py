@@ -132,6 +132,23 @@ class RecoveryParserTests(unittest.TestCase):
         self.assertEqual([(e.code, e.header_text) for e in entries], [('', '2021/01/02 03:04:05'), ('', 'junk')])
         self.assertEqual(entries[0].options, ('--wipe_data',))
 
+    def test_a_header_whose_first_bracket_closes_after_the_tag(self):
+        text = ('+ [Qq] | 2026/01/02 03:04:05 | EXAMPLEFW9]\n--wipe_data\n'
+                '+ [Rr] | 2026/01/03 03:04:05 | EXAMPLEFW9] [-]\n'
+                '+ [Ss | 2026/01/04 03:04:05 | EXAMPLEFW9] [-]\n')
+        entries, warnings = recovery.parse_history(text)
+        self.assertEqual(warnings, [])
+        self.assertEqual([(e.code, e.header_text, e.firmware) for e in entries],
+                         [('Qq', '2026/01/02 03:04:05', 'EXAMPLEFW9'), ('Rr', '2026/01/03 03:04:05', 'EXAMPLEFW9'),
+                          ('Ss', '2026/01/04 03:04:05', 'EXAMPLEFW9')])
+        self.assertEqual(entries[0].header_time, datetime(2026, 1, 2, 3, 4, 5))
+        self.assertEqual(recovery.entry_notes(entries[0], False), [])
+
+    def test_a_lone_dash_separator_is_not_an_other_line(self):
+        entries, _ = recovery.parse_history('+ [Qq | 2026/01/02 03:04:05 | EXAMPLEFW9]\n--wipe_data\nsome words\n - \n-\n'
+                                            '+ [Rr | 2026/01/03 03:04:05 | EXAMPLEFW9]\n- not a separator\n-\n')
+        self.assertEqual([e.other_lines for e in entries], [('some words',), ('- not a separator',)])
+
     def test_header_variants(self):
         entries, warnings = recovery.parse_history(fixture.malformed_history())
         self.assertEqual(len(entries), 3)
