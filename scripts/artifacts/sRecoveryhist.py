@@ -1,15 +1,18 @@
 __artifacts_v2__ = {
     "get_sRecoveryhist": {
         "name": "sRecoveryhist",
-        "description": "Parses Samsung recovery history (timestamp, firmware build, wipe and prompt-and-wipe arguments, reason, reboot reason and locale) from the efs recovery history file.",
-        "author": "@abrignoni",
+        "description": "Parses Samsung recovery history (timestamp, firmware build, wipe and prompt-and-wipe arguments, reason, reboot reason, "
+                       "locale, the options as printed, an activity reading and the volumes named in the extra history file) from the efs "
+                       "and cache recovery history files.",
+        "author": "@abrignoni, @danjethh, Claude",
         "creation_date": "2021-08-15",
-        "last_update_date": "2026-10-09",
+        "last_update_date": "2026-10-28",
         "requirements": "none",
         "category": "Wipe & Setup",
         "notes": "Each record begins with a '+ [tag | timestamp | build]' header. A record can end "
                  "with a lone '-' line or with no separator, in which case the next '+' header ends "
-                 "the previous record. Both layouts are read. The header timestamp carries no time "
+                 "the previous record. Both layouts are read, and so is an older header shape without brackets "
+                 "('+ ... : timestamp'). The header timestamp carries no time "
                  "zone and is reported as written, with slashes replaced by dashes. The zone it was "
                  "written in is not established here. A record with --wipe_data shows recovery was "
                  "started with the argument AOSP documents as erasing user data and cache. A record "
@@ -20,8 +23,50 @@ __artifacts_v2__ = {
                  "leaves Wipe blank unless the record also carries --wipe_data. The --carry_out value is reported as stored in Carry Out; its meaning is "
                  "not sourced here. Reference: AOSP, bootable/recovery/recovery.cpp at tag "
                  "android-14.0.0_r1, "
-                 "https://android.googlesource.com/platform/bootable/recovery/+/refs/tags/android-14.0.0_r1/recovery.cpp#83",
-        "paths": ('*/efs/recovery/history',),
+                 "https://android.googlesource.com/platform/bootable/recovery/+/refs/tags/android-14.0.0_r1/recovery.cpp#83\n"
+                 "Added 2026-10-28: Build no longer carries the closing bracket and the dash of a header that ends in ' [-]' (the earlier "
+                 "reading returned them as part of the build text on the two Android 16 files tested). Options (as printed) lists every "
+                 "'--' line of the record, so options with no column of their own (for example --data_resizing) are visible. Activity is "
+                 "this tool's reading of the options: 'Wipe requested (--wipe_data)', 'Prompt and wipe requested (--prompt_and_wipe_data)', "
+                 "'Update package (--update_package)', 'SIM region change (A -> B)' (read from a reason of the form "
+                 "'[SIMBasedChangeCSC] A -> B', A and B shown as printed and not decoded) or 'Other'; the words say which options are "
+                 "printed ('wipe requested'), not that a wipe or an update was carried out or finished, nor who asked for it or why. Status Line is the NP or "
+                 "RP line of the record, Other Lines are lines of the record in no other form and Entry Line is the line of the header "
+                 "in the file. Formatted Volumes lists the volumes named in 'format_volume : <volume>' lines of the extra history file "
+                 "(extra_history, or last_extra_history next to the cache files) that carry the same code ('start and end lines' when the "
+                 "file has an S line and an E line for the volume, read here as the start and the end of the step); a code in the extra "
+                 "file with no record in the history file gets a row of its own, and a code used by more than one record of a file is "
+                 "noted because volumes can only be matched by code. Other lines of the extra file (for example 'resizing data') are not "
+                 "shown.\n"
+                 "Times. Timestamp is the header date and Request Timestamp the --requested_time value, both as printed (slashes replaced "
+                 "by dashes, as before); no other time is derived from them and none is labelled UTC. A header date before 2012 is noted "
+                 "in Entry Notes: the tested wipe records show 1970 header dates and an update-only phone showed 2010, so a header date is "
+                 "not by itself the time of the record. Header dates were not "
+                 "always in ascending order in the files tested (one bug report file with 19 entries held earlier dates after later "
+                 "ones), so the order of rows is the order written and not a time order.\n"
+                 "Files: efs/recovery/history with efs/recovery/extra_history, and cache/recovery/last_history, last_all_history and "
+                 "last_extra_history wherever a search finds them (cache files also turn up loose when a bug report zip is the input; a "
+                 "bug report zip kept inside an extraction is read by Bug Report - Recovery History). last_history and "
+                 "last_all_history can hold the same entries, and then both are listed, each with its own Source File. "
+                 "last_extra_history_old and the other recovery files (logs, kernel messages) are not read. sWipehist lists the wipe "
+                 "records of the same efs file and reads data/log/recovery_history.log as well.\n"
+                 "Evidence tiers. Data-proven on two Samsung full file system extractions (a flagship phone and an A-series phone, both "
+                 "Android 16) and on three Samsung bug report zips that carry cache recovery files (Android 16): the efs files gave 5 and 3 "
+                 "records, equal to a count of the header lines, and the columns of the earlier reading matched field by field except "
+                 "Build (see above); the cache files gave 1, 4 and 19 records from last_history and the same numbers from last_all_history. The "
+                 "5-record file holds two wipe options with requested times and header dates of 1970, and three SIM region change records. "
+                 "The volumes '/data', '/cache' and '/metadata' (an S line and an E line each) of both wipe codes came from the extra "
+                 "history file by code. The 3-record file holds one SIM region change and two update records with header dates after 2012 and "
+                 "no wipe option. Constructed text only: prompt-and-wipe records, the spaced reboot reason form, header lines "
+                 "without pipes or firmware, a code used twice, CRLF line ends and an extra file without a history file. Not examined: "
+                 "devices other than Samsung (the files are Samsung's), Android versions before 16 with the added columns, and a cache "
+                 "recovery folder in a file system extraction (it was empty in both extractions tested). A history file is a short log: "
+                 "a record that is not listed says nothing about earlier use, and a file with no wipe option says only that this file "
+                 "holds none. A wipe option says that a wipe was requested of recovery; it does not show that the wipe ran or "
+                 "finished, when it ran, or who asked for it. The sample_data counts below were taken before this change; the number of records read from "
+                 "efs/recovery/history does not change with it.",
+        "paths": ('*/efs/recovery/history', '*/efs/recovery/extra_history', '*/cache/recovery/last_history',
+                  '*/cache/recovery/last_all_history', '*/cache/recovery/last_extra_history'),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "file",
         "sample_data": {
@@ -33,93 +78,64 @@ __artifacts_v2__ = {
     }
 }
 
-from scripts.ilapfuncs import artifact_processor
+import os
+
+from scripts import android_recovery_history as recovery
+from scripts.ilapfuncs import artifact_processor, logfunc
+
+MAX_FILE_BYTES = 16 * 1024 * 1024
+
+DATA_HEADERS = ('Timestamp', 'Request Timestamp', 'Build', 'Entry Tag (as stored)', 'Wipe', 'Prompt & Wipe', 'Reason',
+                'Reboot Reason', 'Locale', 'Carry Out', 'Update ORG', 'Update PKG', 'Activity', 'Options (as printed)',
+                'Formatted Volumes', 'Status Line', 'Other Lines', 'Entry Notes', 'Entry Line', 'Extra History File', 'Source File')
 
 
-_EMPTY = {
-    'timestamp': '', 'tag': '', 'build': '', 'wipe': '', 'promptwipe': '',
-    'reason': '', 'rebootreason': '', 'locale': '', 'carryout': '',
-    'reqtime': '', 'updateorg': '', 'updatepkg': '',
-}
+def read_text(path):
+    """The decoded text of a file (utf-8, undecodable bytes replaced), or None when it cannot be read."""
+    try:
+        with open(path, 'rb') as handle:
+            data = handle.read(MAX_FILE_BYTES + 1)
+    except OSError as error:
+        logfunc(f'Recovery history: {os.path.basename(path)} could not be read: {error}')
+        return None
+    if len(data) > MAX_FILE_BYTES:
+        logfunc(f'Recovery history: {os.path.basename(path)} is larger than {MAX_FILE_BYTES} bytes, the first {MAX_FILE_BYTES} were read')
+        data = data[:MAX_FILE_BYTES]
+    return data.decode('utf-8', 'replace')
 
 
-def _record_row(rec, rel_path):
-    return (
-        rec['timestamp'], rec['reqtime'], rec['build'], rec['tag'],
-        rec['wipe'], rec['promptwipe'], rec['reason'], rec['rebootreason'],
-        rec['locale'], rec['carryout'], rec['updateorg'], rec['updatepkg'],
-        rel_path)
+def dashed(text):
+    """A date as the earlier reading of this artifact showed it: slashes replaced by dashes."""
+    return text.replace('/', '-')
 
 
-def _parse_header(line):
-    """A '+ [tag | 2022/01/24 14:11:57 | BUILD]' header into (tag, timestamp, build)."""
-    inner = line.lstrip('+').strip().strip('[]')
-    if '|' in inner:
-        parts = [p.strip() for p in inner.split('|')]
-        tag = parts[0]
-        timestamp = parts[1].replace('/', '-') if len(parts) > 1 else ''
-        build = parts[2] if len(parts) > 2 else ''
-        return tag, timestamp, build
-    # Fallback for an older header shape without pipes: '+ ... : timestamp'
-    if ':' in inner:
-        timestamp = inner.split(':', 1)[1].strip().replace('/', '-')
-        return '', timestamp, ''
-    return '', inner, ''
+def row_of(record):
+    """The row of one record of android_recovery_history.records_from_files."""
+    entry = record['entry']
+    names = [option.split('=', 1)[0] for option in entry.options] if entry else []
+    return (dashed(record['header_text']), dashed(record['requested']), record['firmware'], record['code'],
+            'Yes' if '--wipe_data' in names else '', 'Yes' if '--prompt_and_wipe_data' in names else '',
+            record['reason'], record['reboot_reason'],
+            recovery.option_value(entry, '--locale') if entry else '', recovery.option_value(entry, '--carry_out') if entry else '',
+            recovery.option_value(entry, '--update_org_package') if entry else '', entry.update_package if entry else '',
+            record['activity'], record['options'], record['volumes'],
+            record['status'], record['other'], record['notes'], record['line'], record['extra_file'], record['source'])
 
 
 @artifact_processor
 def get_sRecoveryhist(context):
-    data_headers = (
-        'Timestamp', 'Request Timestamp', 'Build', 'Entry Tag (as stored)',
-        'Wipe', 'Prompt & Wipe', 'Reason', 'Reboot Reason', 'Locale',
-        'Carry Out', 'Update ORG', 'Update PKG', 'Source File')
-    data_list = []
-    sources = []
-
-    for file_found in context.get_files_found():
-        file_found = str(file_found)
-        if not file_found.endswith('history'):
+    files = []
+    for path in sorted(str(item) for item in context.get_files_found()):
+        name = os.path.basename(path)
+        if name not in recovery.HISTORY_NAMES and name not in recovery.EXTRA_NAMES:
             continue  # Skip all other files
+        text = read_text(path)
+        if text is None:
+            continue
+        files.append((os.path.dirname(path), name, context.get_relative_path(path), text))
 
-        rel_path = context.get_relative_path(file_found)
-        record = None
-        rows_before = len(data_list)
-
-        with open(file_found, 'r', encoding='utf-8', errors='replace') as f:
-            for line in f:
-                line = line.rstrip('\n')
-                if line.startswith('+'):
-                    if record is not None:
-                        data_list.append(_record_row(record, rel_path))
-                    record = dict(_EMPTY)
-                    record['tag'], record['timestamp'], record['build'] = _parse_header(line)
-                    continue
-                if record is None:
-                    continue  # content before the first header
-                if line.startswith('--wipe_data'):
-                    record['wipe'] = 'Yes'
-                elif line.startswith('--prompt_and_wipe_data'):
-                    record['promptwipe'] = 'Yes'
-                elif line.startswith('--reason'):
-                    record['reason'] = line.split('=', 1)[1] if '=' in line else ''
-                elif line.startswith('--locale'):
-                    record['locale'] = line.split('=', 1)[1] if '=' in line else ''
-                elif line.startswith('--carry_out'):
-                    record['carryout'] = line.split('=', 1)[1] if '=' in line else ''
-                elif line.startswith('--requested_time'):
-                    record['reqtime'] = line.split('=', 1)[1].replace('/', '-') if '=' in line else ''
-                elif line.startswith('--update_org_package'):
-                    record['updateorg'] = line.split('=', 1)[1] if '=' in line else ''
-                elif line.startswith('--update_package'):
-                    record['updatepkg'] = line.split('=', 1)[1] if '=' in line else ''
-                elif line.startswith('reboot_reason'):
-                    record['rebootreason'] = line.split('=', 1)[1] if '=' in line else ''
-                elif line.startswith('reboot reason'):
-                    record['rebootreason'] = line.split(':', 1)[1].strip() if ':' in line else ''
-            if record is not None:
-                data_list.append(_record_row(record, rel_path))  # last record has no trailing header
-
-        if len(data_list) > rows_before:
-            sources.append(rel_path)
-
-    return data_headers, data_list, '\n'.join(dict.fromkeys(sources))
+    def warn(label, text):
+        logfunc(f'Recovery history {label}: {text}')
+    data_list = [row_of(record) for record in recovery.records_from_files(files, warn)]
+    sources = list(dict.fromkeys(label for _folder, _name, label, _text in files))
+    return DATA_HEADERS, data_list, '\n'.join(sources)
