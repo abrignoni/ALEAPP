@@ -1,0 +1,39 @@
+{
+  "metadata": {
+    "module_name": "androidSetupFlags",
+    "artifact_name": "Setup Flags",
+    "function_name": "android_setup_flags",
+    "case_number": "casesynthetic_no_flags",
+    "number_of_columns": 12,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/androidSetupFlags/testdata.androidSetupFlags.android_setup_flags.casesynthetic_no_flags.zip",
+    "start_time": "2026-10-27T22:25:57.662531+00:00",
+    "end_time": "2026-10-27T22:25:57.825992+00:00",
+    "run_time_seconds": 0.007417917251586914,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-27T22:25:57.801170",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Stored",
+    "Setting",
+    "Value",
+    "Written By",
+    "Record",
+    "Old Value",
+    "Default Value",
+    "Namespace",
+    "User",
+    "Location",
+    "Source File"
+  ],
+  "data": []
+}

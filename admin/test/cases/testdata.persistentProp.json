@@ -1,0 +1,198 @@
+{
+  "casesynthetic_factory_reset": {
+    "description": "Synthetic persistent_properties (protobuf) with a boot reason history that holds a factory_reset entry, a persist.sys.boot.reason value and other properties. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_factory_reset.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-27T12:00:00.000000",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-27T12:00:00.000000",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "get_persistentProp": {
+        "search_patterns": [
+          "*/property/persistent_properties"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_no_factory_reset": {
+    "description": "Synthetic persistent_properties with a boot reason history without a factory_reset entry and an empty persist.sys.boot.reason. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_no_factory_reset.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-27T12:00:00.000000",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-27T12:00:00.000000",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "get_persistentProp": {
+        "search_patterns": [
+          "*/property/persistent_properties"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_odd_entries": {
+    "description": "Synthetic boot reason history with entries that have no epoch, a text epoch, a small epoch, a huge epoch, an empty line, a lower case and an upper case factory_reset word, a subreason with commas and CRLF line ends. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_odd_entries.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-27T12:00:00.000000",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-27T12:00:00.000000",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "get_persistentProp": {
+        "search_patterns": [
+          "*/property/persistent_properties"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_truncated": {
+    "description": "Synthetic persistent_properties cut in the middle of its last record. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_truncated.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-27T12:00:00.000000",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-27T12:00:00.000000",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "get_persistentProp": {
+        "search_patterns": [
+          "*/property/persistent_properties"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_not_a_store": {
+    "description": "A text file in place of persistent_properties, with no line the text rules select. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_not_a_store.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-27T12:00:00.000000",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-27T12:00:00.000000",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "get_persistentProp": {
+        "search_patterns": [
+          "*/property/persistent_properties"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_empty_store": {
+    "description": "An empty persistent_properties file. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_empty_store.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-27T12:00:00.000000",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-27T12:00:00.000000",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "get_persistentProp": {
+        "search_patterns": [
+          "*/property/persistent_properties"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_text_lines": {
+    "description": "A text file in place of persistent_properties with lines the text rules select (a history prefix line, two-part reboot lines, a factory_reset line). Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_text_lines.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-27T12:00:00.000000",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-27T12:00:00.000000",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "get_persistentProp": {
+        "search_patterns": [
+          "*/property/persistent_properties"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  }
+}
