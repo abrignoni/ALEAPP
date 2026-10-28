@@ -40,7 +40,7 @@ __artifacts_v2__ = {
                  "the history files of anne_a15 (Android 15) hold epoch milliseconds in every entry. Constructed only: a cut ABX or XML "
                  "file, JSON that is not an object and a history entry that is not an object. Data-proven on 19 corpus keys (Android 10 "
                  "to 17; Samsung, Google Pixel, Xiaomi POCO and an emulator): 3 to 12 rows per key; settings files in plain XML on 4 "
-                 "keys, a second user on 8 keys, and history files on one key (anne_a15). The settings_system namespace is not read.",
+                 "keys, a second user on 8 keys, and history files on one key (anne_a15). On samsungs20_a13 the settings_secure.xml of user 0 is not well-formed XML and is skipped with a log line, as Settings Secure skips it, so only its other sources give rows. The settings_system namespace is not read.",
         "paths": ('*/system/users/*/settings_secure.xml', '*/system/users/*/settings_history_secure.json',
                   '*/system/users/*/settings_history_global.json', '*/property/persistent_properties'),
         "output_types": "standard",
