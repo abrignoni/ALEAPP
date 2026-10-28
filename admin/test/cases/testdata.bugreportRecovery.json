@@ -1,0 +1,92 @@
+{
+  "casesynthetic_zip_recovery": {
+    "description": "Synthetic bug report zip with the cache recovery folder: history files with wipe, SIM region change and update entries and an extra history file. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_zip_recovery.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-27T12:00:00.000000",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-27T12:00:00.000000",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "bugreport_recovery_history": {
+        "search_patterns": [
+          "*/bugreport-*.zip",
+          "*/log/*dumpState*.zip",
+          "*/log/dumpstate_*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_zip_no_recovery": {
+    "description": "Synthetic bug report zip without a recovery folder. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_zip_no_recovery.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-27T12:00:00.000000",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-27T12:00:00.000000",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "bugreport_recovery_history": {
+        "search_patterns": [
+          "*/bugreport-*.zip",
+          "*/log/*dumpState*.zip",
+          "*/log/dumpstate_*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_zip_unset_clock": {
+    "description": "Synthetic bug report zip whose recovery history shows header dates near 1970 and 2010 and no requested time. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_zip_unset_clock.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-27T12:00:00.000000",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-27T12:00:00.000000",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "bugreport_recovery_history": {
+        "search_patterns": [
+          "*/bugreport-*.zip",
+          "*/log/*dumpState*.zip",
+          "*/log/dumpstate_*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  }
+}
