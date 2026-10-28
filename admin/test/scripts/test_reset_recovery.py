@@ -89,13 +89,13 @@ class RecoveryParserTests(unittest.TestCase):
 
     def test_activity_words(self):
         self.assertEqual([e.activity for e in self.entries], [
-            'Wipe requested (--wipe_data)', 'SIM region change (AAA -> BBB)', 'Wipe requested (--wipe_data)',
-            'Update package (--update_package)', 'SIM region change (BBB -> CCC)'])
+            'Wipe requested (--wipe_data)', 'SIM-based CSC change (AAA -> BBB)', 'Wipe requested (--wipe_data)',
+            'Update package (--update_package)', 'SIM-based CSC change (BBB -> CCC)'])
         self.assertEqual(recovery.activity_of(['--data_resizing'], ''), 'Other')
         self.assertEqual(recovery.activity_of(['--prompt_and_wipe_data'], ''), 'Prompt and wipe requested (--prompt_and_wipe_data)')
         self.assertEqual(recovery.activity_of(['--wipe_data', '--update_package=x'], ''),
                          'Wipe requested (--wipe_data); Update package (--update_package)')
-        self.assertEqual(recovery.activity_of(['--just_exit'], '[SIMBasedChangeCSC] XAA->TMB'), 'SIM region change (XAA -> TMB)')
+        self.assertEqual(recovery.activity_of(['--just_exit'], '[SIMBasedChangeCSC] AAA->BBB'), 'SIM-based CSC change (AAA -> BBB)')
 
     def test_extra_history_volumes(self):
         extra, warnings = recovery.parse_extra_history(fixture.wipe_and_sim_extra())

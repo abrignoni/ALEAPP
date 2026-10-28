@@ -14,8 +14,8 @@ The files are plain text kept by the recovery program of the device:
 
 * ``extra_history`` (``/efs/recovery/``) and ``last_extra_history`` (``/cache/recovery/``): ``Created at <date>``
   and then lines ``[CODE][S] text`` and ``[CODE][E] text``. The code is the one of a history entry.
-  ``format_volume : /data`` names a volume that recovery formatted; S and E are the start line and the
-  end line of the step as printed.
+  ``format_volume : /data`` names a volume that recovery formatted. 'start and end lines' is written when the file has
+  an S line and an E line for the volume; what S and E stand for is not sourced here, and the words are this tool's reading.
 
 Nothing here depends on the rest of ALEAPP. Nothing is judged: an entry says that recovery was started with the
 options shown, not that the work was done. The date in a header and the ``--requested_time`` value are shown as printed;
@@ -85,7 +85,7 @@ def activity_of(options, reason):
     """The activity words for an entry: what recovery was started with, taken from the options.
 
     ``--wipe_data`` gives "Wipe requested (--wipe_data)", ``--prompt_and_wipe_data`` "Prompt and wipe requested", an
-    ``--update_package`` option "Update package", a reason ``[SIMBasedChangeCSC] A -> B`` "SIM region change (A -> B)",
+    ``--update_package`` option "Update package", a reason ``[SIMBasedChangeCSC] A -> B`` "SIM-based CSC change (A -> B)",
     and an entry with none of these "Other". The words say which options are printed, not what was carried out.
     """
     names = [option.split('=', 1)[0] for option in options]
@@ -98,7 +98,7 @@ def activity_of(options, reason):
         found.append('Update package (--update_package)')
     change = _SIM_CHANGE.search(reason)
     if change:
-        found.append('SIM region change (%s -> %s)' % (change.group('old'), change.group('new')))
+        found.append('SIM-based CSC change (%s -> %s)' % (change.group('old'), change.group('new')))
     return '; '.join(found) if found else 'Other'
 
 

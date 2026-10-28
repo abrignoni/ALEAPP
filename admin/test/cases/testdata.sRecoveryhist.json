@@ -1,6 +1,6 @@
 {
   "casesynthetic_wipe_and_sim": {
-    "description": "Synthetic recovery history: two wipe entries with requested times and header dates in 1970, SIM region change and update entries between and after them, one entry with a header date after 2012, and an extra history file with format lines for both wipe codes (one step without an end line) and for a code with no entry. Invented values, contains no real evidence.",
+    "description": "Synthetic recovery history: two wipe entries with requested times and header dates in 1970, SIM-based CSC change and update entries between and after them, one entry with a header date after 2012, and an extra history file with format lines for both wipe codes (one step without an end line) and for a code with no entry. Invented values, contains no real evidence.",
     "maker": "synthetic",
     "make_data": {
       "input_data_path": "synthetic_wipe_and_sim.zip",
@@ -32,7 +32,7 @@
     }
   },
   "casesynthetic_no_wipe": {
-    "description": "Synthetic recovery history with header dates after 2012: SIM region change and update entries and one prompt-and-wipe entry without a requested time, and an extra history file with no lines. Invented values, contains no real evidence.",
+    "description": "Synthetic recovery history with header dates after 2012: SIM-based CSC change and update entries and one prompt-and-wipe entry without a requested time, and an extra history file with no lines. Invented values, contains no real evidence.",
     "maker": "synthetic",
     "make_data": {
       "input_data_path": "synthetic_no_wipe.zip",

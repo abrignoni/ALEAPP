@@ -6,19 +6,19 @@
     "case_number": "casesynthetic_unset_clock",
     "number_of_columns": 21,
     "number_of_rows": 3,
-    "total_data_size_bytes": 784,
+    "total_data_size_bytes": 787,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/sRecoveryhist/testdata.sRecoveryhist.get_sRecoveryhist.casesynthetic_unset_clock.zip",
-    "start_time": "2026-10-28T04:11:26.653716+00:00",
-    "end_time": "2026-10-28T04:11:26.798481+00:00",
-    "run_time_seconds": 0.023836612701416016,
+    "start_time": "2026-10-28T14:52:27.771692+00:00",
+    "end_time": "2026-10-28T14:52:27.791354+00:00",
+    "run_time_seconds": 0.0005707740783691406,
     "last_commit": {
-      "hash": "a7b056968376c5f023ea948ad2b4b2029053a8ec",
+      "hash": "d6a8e0a2addcdc66bb5f3751e27d64f92a5e6859",
       "author_name": "danjethh",
-      "author_email": "danjethh@gmail.com",
-      "date": "2026-10-27T18:37:07-04:00",
-      "message": "Extend sRecoveryhist and persistentProp instead of adding duplicate artifacts"
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-28T00:16:47-04:00",
+      "message": "sRecoveryhist: read the extra history and cache recovery files; add Bug Report - Recovery History"
     }
   },
   "headers": [
@@ -104,7 +104,7 @@
       "",
       "",
       "",
-      "SIM region change (CCC -> AAA)",
+      "SIM-based CSC change (CCC -> AAA)",
       "--just_exit; --locale=; --reason=[SIMBasedChangeCSC] CCC -> AAA",
       "",
       "NP [-]",

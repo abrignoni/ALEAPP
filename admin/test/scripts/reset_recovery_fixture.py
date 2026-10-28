@@ -184,10 +184,10 @@ def cases():
 MODULE_OF = {'get_sRecoveryhist': 'sRecoveryhist', 'bugreport_recovery_history': 'bugreportRecovery'}
 DESCRIPTIONS = {
     'synthetic_wipe_and_sim': 'Synthetic recovery history: two wipe entries with requested times and header dates in 1970, '
-                              'SIM region change and update entries between and after them, one entry with a header date after 2012, '
+                              'SIM-based CSC change and update entries between and after them, one entry with a header date after 2012, '
                               'and an extra history file with format lines for both wipe codes (one step without an end line) and for a '
                               'code with no entry.',
-    'synthetic_no_wipe': 'Synthetic recovery history with header dates after 2012: SIM region change and update entries and one '
+    'synthetic_no_wipe': 'Synthetic recovery history with header dates after 2012: SIM-based CSC change and update entries and one '
                          'prompt-and-wipe entry without a requested time, and an extra history file with no lines.',
     'synthetic_unset_clock': 'Synthetic recovery history with header dates near 1970 and 2010 and no requested time.',
     'synthetic_cache_recovery': 'Synthetic cache recovery folder (last_history, last_all_history, last_extra_history) and an efs history '
@@ -196,7 +196,7 @@ DESCRIPTIONS = {
                            'time, a control character, the spaced reboot reason form, and an extra file with lines in other forms.',
     'synthetic_empty': 'Synthetic empty history and extra history files.',
     'synthetic_extra_only': 'Synthetic extra history file with no history file next to it.',
-    'synthetic_zip_recovery': 'Synthetic bug report zip with the cache recovery folder: history files with wipe, SIM region change and '
+    'synthetic_zip_recovery': 'Synthetic bug report zip with the cache recovery folder: history files with wipe, SIM-based CSC change and '
                               'update entries and an extra history file.',
     'synthetic_zip_no_recovery': 'Synthetic bug report zip without a recovery folder.',
     'synthetic_zip_unset_clock': 'Synthetic bug report zip whose recovery history shows header dates near 1970 and 2010 and no requested '

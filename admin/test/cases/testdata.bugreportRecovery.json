@@ -1,6 +1,6 @@
 {
   "casesynthetic_zip_recovery": {
-    "description": "Synthetic bug report zip with the cache recovery folder: history files with wipe, SIM region change and update entries and an extra history file. Invented values, contains no real evidence.",
+    "description": "Synthetic bug report zip with the cache recovery folder: history files with wipe, SIM-based CSC change and update entries and an extra history file. Invented values, contains no real evidence.",
     "maker": "synthetic",
     "make_data": {
       "input_data_path": "synthetic_zip_recovery.zip",
