@@ -1,0 +1,78 @@
+{
+  "metadata": {
+    "module_name": "persistentProp",
+    "artifact_name": "Persistent Properties - Matched Text Observations",
+    "function_name": "get_persistentProp",
+    "case_number": "casesynthetic_text_lines",
+    "number_of_columns": 11,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 341,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/persistentProp/testdata.persistentProp.get_persistentProp.casesynthetic_text_lines.zip",
+    "start_time": "2026-10-27T22:25:56.328335+00:00",
+    "end_time": "2026-10-27T22:25:56.442245+00:00",
+    "run_time_seconds": 0.005835294723510742,
+    "last_commit": {
+      "hash": "8cb057d5119943244a1059760b8b6eb8e513fd06",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-10-06T20:26:11-04:00",
+      "message": "Retain persistent property observations with invalid timestamps"
+    }
+  },
+  "headers": [
+    "Timestamp",
+    "Raw Timestamp Text",
+    "Event",
+    "Timestamp Conversion Status",
+    "Input Line Ordinal",
+    "Matched Text (replacement decoded)",
+    "Property",
+    "Reason",
+    "Subreason",
+    "Position",
+    "factory_reset Reason Present"
+  ],
+  "data": [
+    [
+      1790812800,
+      "1790812800",
+      "persist.sys.boot.reason.historyDreboot",
+      "Converted by existing Unix-seconds rule",
+      1,
+      "persist.sys.boot.reason.historyDreboot,1790812800",
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
+    [
+      1790726400,
+      "1790726400",
+      "reboot",
+      "Converted by existing Unix-seconds rule",
+      2,
+      "reboot,1790726400",
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
+    [
+      1789190401,
+      "1789190401",
+      "reboot factory_reset",
+      "Converted by existing Unix-seconds rule",
+      3,
+      "reboot,factory_reset,1789190401",
+      "",
+      "",
+      "",
+      "",
+      ""
+    ]
+  ]
+}
