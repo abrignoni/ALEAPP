@@ -1,0 +1,226 @@
+{
+  "casesynthetic_wipe_and_sim": {
+    "description": "Synthetic recovery history: two wipe entries with requested times and header dates in 1970, SIM-based CSC change and update entries between and after them, one entry with a header date after 2012, and an extra history file with format lines for both wipe codes (one step without an end line) and for a code with no entry. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_wipe_and_sim.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-27T12:00:00.000000",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-27T12:00:00.000000",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "get_sRecoveryhist": {
+        "search_patterns": [
+          "*/efs/recovery/history",
+          "*/efs/recovery/extra_history",
+          "*/cache/recovery/last_history",
+          "*/cache/recovery/last_all_history",
+          "*/cache/recovery/last_extra_history"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_no_wipe": {
+    "description": "Synthetic recovery history with header dates after 2012: SIM-based CSC change and update entries and one prompt-and-wipe entry without a requested time, and an extra history file with no lines. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_no_wipe.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-27T12:00:00.000000",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-27T12:00:00.000000",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "get_sRecoveryhist": {
+        "search_patterns": [
+          "*/efs/recovery/history",
+          "*/efs/recovery/extra_history",
+          "*/cache/recovery/last_history",
+          "*/cache/recovery/last_all_history",
+          "*/cache/recovery/last_extra_history"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_unset_clock": {
+    "description": "Synthetic recovery history with header dates near 1970 and 2010 and no requested time. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_unset_clock.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-27T12:00:00.000000",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-27T12:00:00.000000",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "get_sRecoveryhist": {
+        "search_patterns": [
+          "*/efs/recovery/history",
+          "*/efs/recovery/extra_history",
+          "*/cache/recovery/last_history",
+          "*/cache/recovery/last_all_history",
+          "*/cache/recovery/last_extra_history"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_cache_recovery": {
+    "description": "Synthetic cache recovery folder (last_history, last_all_history, last_extra_history) and an efs history in which one code is used twice. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_cache_recovery.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-27T12:00:00.000000",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-27T12:00:00.000000",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "get_sRecoveryhist": {
+        "search_patterns": [
+          "*/efs/recovery/history",
+          "*/efs/recovery/extra_history",
+          "*/cache/recovery/last_history",
+          "*/cache/recovery/last_all_history",
+          "*/cache/recovery/last_extra_history"
+        ],
+        "file_count": 5,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_malformed": {
+    "description": "Synthetic recovery files that are not clean: a stray line, a header without pipes, a bad date, a bad requested time, a control character, the spaced reboot reason form, and an extra file with lines in other forms. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_malformed.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-27T12:00:00.000000",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-27T12:00:00.000000",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "get_sRecoveryhist": {
+        "search_patterns": [
+          "*/efs/recovery/history",
+          "*/efs/recovery/extra_history",
+          "*/cache/recovery/last_history",
+          "*/cache/recovery/last_all_history",
+          "*/cache/recovery/last_extra_history"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_empty": {
+    "description": "Synthetic empty history and extra history files. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_empty.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-27T12:00:00.000000",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-27T12:00:00.000000",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "get_sRecoveryhist": {
+        "search_patterns": [
+          "*/efs/recovery/history",
+          "*/efs/recovery/extra_history",
+          "*/cache/recovery/last_history",
+          "*/cache/recovery/last_all_history",
+          "*/cache/recovery/last_extra_history"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_extra_only": {
+    "description": "Synthetic extra history file with no history file next to it. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_extra_only.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-27T12:00:00.000000",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-27T12:00:00.000000",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "get_sRecoveryhist": {
+        "search_patterns": [
+          "*/efs/recovery/history",
+          "*/efs/recovery/extra_history",
+          "*/cache/recovery/last_history",
+          "*/cache/recovery/last_all_history",
+          "*/cache/recovery/last_extra_history"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  }
+}
