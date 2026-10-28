@@ -8,7 +8,8 @@ if str(ROOT_DIR) not in sys.path:
 
 import tempfile
 
-from scripts.artifacts.storagePathViews import android_user, canonical_path, snapshot_key, unique_files
+from scripts.artifacts.storagePathViews import (android_user, canonical_path, snapshot_key, unique_files,
+                                                without_snapshot_repeats)
 
 
 class FakeContext:
@@ -294,6 +295,48 @@ class TestRollbackSnapshots(unittest.TestCase):
     def test_a_snapshot_names_no_android_user(self):
         """A kept snapshot must not share a (user, name) key with the live copy."""
         self.assertEqual(android_user(self.SNAP), '')
+
+
+class TestWithoutSnapshotRepeats(unittest.TestCase):
+    LIVE = 'Dump/data/data/com.foo/databases/x.db'
+    LIVE10 = 'Dump/data/user/10/com.foo/databases/x.db'
+    SNAP = 'Dump/data/misc_ce/0/rollback/7/com.foo/databases/x.db'
+    SNAP10 = 'Dump/data/misc_ce/10/rollback/7/com.foo/databases/x.db'
+
+    def test_a_snapshot_row_the_live_copy_repeats_is_left_out(self):
+        rows = [('a', 1, self.LIVE), ('a', 1, self.SNAP)]
+        self.assertEqual(without_snapshot_repeats(rows), [('a', 1, self.LIVE)])
+
+    def test_a_row_only_the_snapshot_holds_is_kept(self):
+        rows = [('a', 1, self.LIVE), ('a', 1, self.SNAP), ('gone', 2, self.SNAP)]
+        self.assertEqual(without_snapshot_repeats(rows), [('a', 1, self.LIVE), ('gone', 2, self.SNAP)])
+
+    def test_a_changed_row_is_kept(self):
+        rows = [('a', 1, self.LIVE), ('a', 2, self.SNAP)]
+        self.assertEqual(without_snapshot_repeats(rows), rows)
+
+    def test_another_users_live_row_does_not_answer(self):
+        rows = [('a', 1, self.LIVE10), ('a', 1, self.SNAP)]
+        self.assertEqual(without_snapshot_repeats(rows), rows)
+        rows = [('a', 1, self.LIVE10), ('a', 1, self.SNAP10)]
+        self.assertEqual(without_snapshot_repeats(rows), [('a', 1, self.LIVE10)])
+
+    def test_each_live_row_answers_for_one_snapshot_row(self):
+        rows = [('a', 1, self.SNAP), ('a', 1, self.LIVE), ('a', 1, self.SNAP)]
+        self.assertEqual(without_snapshot_repeats(rows), [('a', 1, self.LIVE), ('a', 1, self.SNAP)])
+
+    def test_rows_from_live_sources_are_never_removed(self):
+        rows = [('a', 1, self.LIVE), ('a', 1, self.LIVE), ('a', 1, 'Dump/data/data/com.bar/x.db')]
+        self.assertEqual(without_snapshot_repeats(rows), rows)
+
+    def test_the_source_can_sit_at_any_position(self):
+        rows = [(self.LIVE, 'a'), (self.SNAP, 'a'), (self.SNAP, 'b')]
+        self.assertEqual(without_snapshot_repeats(rows, 0), [(self.LIVE, 'a'), (self.SNAP, 'b')])
+
+    def test_device_encrypted_snapshots_match_user_de(self):
+        rows = [('a', 'Dump/data/user_de/0/com.foo/x'), ('a', 'Dump/data/misc_de/0/rollback/7/com.foo/x'),
+                ('a', 'Dump/data/misc_ce/0/rollback/7/com.foo/x')]
+        self.assertEqual(without_snapshot_repeats(rows), [rows[0], rows[2]])
 
 
 if __name__ == '__main__':

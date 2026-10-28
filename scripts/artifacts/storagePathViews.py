@@ -71,6 +71,7 @@ left as they are.
 
 import filecmp
 import re
+from collections import Counter
 
 # Ordered so the first alternative that matches is also the preferred spelling to keep.
 _VIEWS = (
@@ -157,6 +158,38 @@ def unique_files(context, files=None):
             kept.append(best[key][1])
     return kept
 
+
+
+def without_snapshot_repeats(rows, source_index=-1):
+    """rows without the ones from a rollback snapshot that repeat a row the live copy gave.
+
+    source_index is the position of each row's evidence relative source path. A row from a
+    snapshot (see snapshot_key) is left out when a row from the live file of the same storage
+    class and Android user is equal to it in every other position; each live row answers for
+    one snapshot row. Every other row is kept, in order, so a record only the snapshot holds
+    is still reported, under the snapshot's path.
+    """
+    def rest(row):
+        values = list(row)
+        del values[source_index]
+        return repr(values)
+
+    live = {}
+    for row in rows:
+        source = str(row[source_index])
+        if snapshot_key(source) is None:
+            live.setdefault(canonical_path(source)[0], Counter())[rest(row)] += 1
+    kept = []
+    for row in rows:
+        key = snapshot_key(str(row[source_index]))
+        if key is not None:
+            counts = live.get(key)
+            value = rest(row)
+            if counts and counts[value] > 0:
+                counts[value] -= 1
+                continue
+        kept.append(row)
+    return kept
 
 def _same_bytes(first, second):
     try:
