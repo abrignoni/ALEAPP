@@ -1,0 +1,117 @@
+{
+  "metadata": {
+    "module_name": "chromiumFileSystem",
+    "artifact_name": "Chromium File System API - Files",
+    "function_name": "chromiumFileSystemEntries",
+    "case_number": "caseknowndata_s2_history_cleared",
+    "number_of_columns": 11,
+    "number_of_rows": 6,
+    "total_data_size_bytes": 849,
+    "media_checkins": 2,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/chromiumFileSystem/testdata.chromiumFileSystem.chromiumFileSystemEntries.caseknowndata_s2_history_cleared.zip",
+    "start_time": "2026-10-29T22:07:25.375098+00:00",
+    "end_time": "2026-10-29T22:07:25.403025+00:00",
+    "run_time_seconds": 0.0014040470123291016,
+    "last_commit": {
+      "hash": "bf8511686b0921c7f5a60e4982006c07f3685255",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-10-29T18:05:03-04:00",
+      "message": "Add Chromium File System API artifacts (sites and saved files)"
+    }
+  },
+  "headers": [
+    "Folder Last Changed",
+    "Site",
+    "Path",
+    "Entry Type",
+    "State",
+    "File",
+    "Size",
+    "Data Path (as stored)",
+    "Storage Type",
+    "Browser",
+    "Profile Folder"
+  ],
+  "data": [
+    [
+      1793308979,
+      "http://localhost:8765",
+      "/",
+      "Folder",
+      "Live",
+      "",
+      "",
+      "",
+      "Temporary",
+      "Chrome",
+      "data/data/com.android.chrome/app_chrome/Default/File System"
+    ],
+    [
+      1793308934,
+      "http://localhost:8765",
+      "/knowndir",
+      "Folder",
+      "Live",
+      "",
+      "",
+      "",
+      "Temporary",
+      "Chrome",
+      "data/data/com.android.chrome/app_chrome/Default/File System"
+    ],
+    [
+      "",
+      "http://localhost:8765",
+      "/knowndir/knowndata-fsapi.txt",
+      "File",
+      "Live",
+      "mock_hash_for_00000000",
+      46,
+      "00/00000000",
+      "Temporary",
+      "Chrome",
+      "data/data/com.android.chrome/app_chrome/Default/File System"
+    ],
+    [
+      1793309018,
+      "http://localhost:8765",
+      "/knowndir-opfs",
+      "Folder",
+      "Live",
+      "",
+      "",
+      "",
+      "Temporary",
+      "Chrome",
+      "data/data/com.android.chrome/app_chrome/Default/File System"
+    ],
+    [
+      "",
+      "http://localhost:8765",
+      "/knowndir-opfs/knowndata-opfs.txt",
+      "File",
+      "Live",
+      "mock_hash_for_00000003",
+      27,
+      "00/00000003",
+      "Temporary",
+      "Chrome",
+      "data/data/com.android.chrome/app_chrome/Default/File System"
+    ],
+    [
+      "",
+      "http://localhost:8765",
+      "/knowndir-opfs/knowndata-opfs.txt.crswap",
+      "",
+      "Deleted",
+      "",
+      "",
+      "",
+      "Temporary",
+      "Chrome",
+      "data/data/com.android.chrome/app_chrome/Default/File System"
+    ]
+  ]
+}
