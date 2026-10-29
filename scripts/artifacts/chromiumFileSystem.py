@@ -2,7 +2,8 @@ __artifacts_v2__ = {
     "chromiumFileSystemSites": {
         "name": "Chromium File System API - Sites",
         "description": "Sites listed in the Origins database of a Chromium profile's File System folder, the "
-                       "store Chromium keeps for files websites save through its File System APIs.",
+                       "store Chromium keeps for its File System APIs (webkitRequestFileSystem and the "
+                       "Origin Private File System).",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-10-29",
         "last_update_date": "2026-10-29",
@@ -21,11 +22,13 @@ __artifacts_v2__ = {
                  "page that wrote one through the Origin Private File System "
                  "(navigator.storage.getDirectory) both stored them in this folder, under one site "
                  "folder. After clearing only browsing history for the last hour, the site's History rows "
-                 "were gone and its Origins record, folders and files were unchanged. After clearing "
-                 "cookies and site data for the last hour, the site folder was removed and the newest "
-                 "version of its Origins key was a deletion. Other Chrome versions and WebView apps were "
-                 "not tested this way. The Origins database keys each site as ORIGIN:<identifier> and "
-                 "stores the name of the numbered folder that holds its files "
+                 "were gone and its Origins record, folder names, file names and file contents were "
+                 "unchanged; Chrome rewrote the Origin Private File System file between the two "
+                 "snapshots, so that file's data path and its folder's stored time changed. After "
+                 "clearing cookies and site data for the last hour, the site folder was removed and the "
+                 "newest version of its Origins key was a deletion. Other Chrome versions and WebView "
+                 "apps were not tested this way. The Origins database keys each site as "
+                 "ORIGIN:<identifier> and stores the name of the numbered folder that holds its files "
                  "(https://github.com/chromium/chromium/blob/3a50e012e4c9b8a410a4e2b12bf577e69ee8f755/storage/browser/file_system/sandbox_origin_database.cc#L32-L33, "
                  "https://github.com/chromium/chromium/blob/3a50e012e4c9b8a410a4e2b12bf577e69ee8f755/storage/browser/file_system/sandbox_origin_database.cc#L253-L258). "
                  "Site Key is the identifier as stored; Site is the origin it encodes, scheme_host_port "
@@ -38,27 +41,28 @@ __artifacts_v2__ = {
                  "key when the site's stored data is removed "
                  "(https://github.com/chromium/chromium/blob/3a50e012e4c9b8a410a4e2b12bf577e69ee8f755/storage/browser/file_system/sandbox_origin_database.cc#L276-L277, "
                  "https://github.com/chromium/chromium/blob/3a50e012e4c9b8a410a4e2b12bf577e69ee8f755/storage/browser/file_system/obfuscated_file_util.cc#L1016-L1021), "
-                 "and the deleted key still names the site but has no Folder, Folder Present or Saved "
-                 "Entries. Folder is the stored folder name, Folder Present says whether that folder is "
-                 "in the extraction, and Saved Entries counts the folders and files its Paths databases "
-                 "list, not counting the root folder (see Chromium File System API - Files). Only a "
-                 "site's first-party default storage is kept in this folder "
+                 "and the deleted key still names the site; Folder and Saved Entries are blank on it and "
+                 "Folder Present is No. Folder is the stored folder name, Folder Present says whether "
+                 "that folder is in the extraction, and Saved Entries counts the folders and files its "
+                 "Paths databases list, not counting the root folder (see Chromium File System API - "
+                 "Files). Only a site's first-party default storage is kept in this folder "
                  "(https://github.com/chromium/chromium/blob/3a50e012e4c9b8a410a4e2b12bf577e69ee8f755/storage/browser/file_system/obfuscated_file_util.cc#L926-L930). "
                  "Storage a site holds while embedded in another site, or in a named bucket, is kept "
-                 "under WebStorage/<bucket>/FileSystem and is not read: on the tested images that held 28 "
+                 "under WebStorage/<bucket>/FileSystem and is not read; on the tested images, 28 such "
                  "Paths databases on 5 images (anne_a15, cookbook_a11, kevin_pocox7_a15, russell_a14, "
-                 "sharon_a14), each for a storage key naming two sites in WebStorage/QuotaManager, and "
-                 "none held a record. A row records that a site used these APIs in that profile; it does "
-                 "not establish when or who used the browser, and the database stores no time. On the "
-                 "tested images: 33 rows on 16 of 22 images, 30 live with their folder present, 1 live "
-                 "whose folder was not in the extraction (pixel3_a12) and 2 deleted (adams_ss135dl_a13); "
-                 "Browser was Chrome on 28 rows, com.sec.android.app.sbrowser on 2, Edge on 1, "
-                 "com.duckduckgo.mobile.android on 1 and an app's WebView (com.xingin.xhs) on 1. Browser "
-                 "and Profile Folder held one value on every row of most images, which each held one "
-                 "profile; State held Live and Folder Present held Yes on every row of every image but "
-                 "adams_ss135dl_a13 and pixel3_a12; Saved Entries held 0 on every row but one on "
-                 "pixel3_a12, which held 1. In known data Site held one value, the test site, on every "
-                 "row.",
+                 "sharon_a14) each belonged to a storage key naming two sites in WebStorage/QuotaManager, "
+                 "and none held a record. A row records that a site opened a sandboxed file system in "
+                 "that profile; it need not have saved a file, and on the tested images 30 of the 31 live "
+                 "rows had no saved entries. It does not establish when or who used the browser, and the "
+                 "database stores no time. On the tested images: 33 rows on 16 of 22 images, 30 live with "
+                 "their folder present, 1 live whose folder was not in the extraction (pixel3_a12) and 2 "
+                 "deleted (adams_ss135dl_a13); Browser was Chrome on 28 rows, "
+                 "com.sec.android.app.sbrowser on 2, Edge on 1, com.duckduckgo.mobile.android on 1 and an "
+                 "app's WebView (com.xingin.xhs) on 1. Browser and Profile Folder held one value on every "
+                 "row of 13 of the 16 images with rows, and the other 3 held two profiles; State held "
+                 "Live and Folder Present held Yes on every row of every image but adams_ss135dl_a13 and "
+                 "pixel3_a12; Saved Entries held 0 on every live row but one on pixel3_a12, which held 1. "
+                 "In known data Site held one value, the test site, on every row.",
         "paths": ('*/Default/File System/*',),
         "output_types": "standard",
         "artifact_icon": "globe",
@@ -112,11 +116,13 @@ __artifacts_v2__ = {
                  "page that wrote one through the Origin Private File System "
                  "(navigator.storage.getDirectory) both stored them in this folder, under one site "
                  "folder. After clearing only browsing history for the last hour, the site's History rows "
-                 "were gone and its Origins record, folders and files were unchanged. After clearing "
-                 "cookies and site data for the last hour, the site folder was removed and the newest "
-                 "version of its Origins key was a deletion. Other Chrome versions and WebView apps were "
-                 "not tested this way. Each entry is stored under its numeric id as a record of parent "
-                 "id, data path, name and time "
+                 "were gone and its Origins record, folder names, file names and file contents were "
+                 "unchanged; Chrome rewrote the Origin Private File System file between the two "
+                 "snapshots, so that file's data path and its folder's stored time changed. After "
+                 "clearing cookies and site data for the last hour, the site folder was removed and the "
+                 "newest version of its Origins key was a deletion. Other Chrome versions and WebView "
+                 "apps were not tested this way. Each entry is stored under its numeric id as a record of "
+                 "parent id, data path, name and time "
                  "(https://github.com/chromium/chromium/blob/3a50e012e4c9b8a410a4e2b12bf577e69ee8f755/storage/browser/file_system/sandbox_directory_database.cc#L38-L49), "
                  "and its name under CHILD_OF:<parent id>:<name> "
                  "(https://github.com/chromium/chromium/blob/3a50e012e4c9b8a410a4e2b12bf577e69ee8f755/storage/browser/file_system/sandbox_directory_database.cc#L70-L73). "
@@ -126,10 +132,10 @@ __artifacts_v2__ = {
                  "File is the saved file at Data Path in the type folder, shown as media with its type "
                  "sniffed from its content, and Size its size in bytes; both are blank when that file is "
                  "not in the extraction. A row with State Deleted comes from a CHILD_OF key whose newest "
-                 "version is a deletion: it gives the name and parent folder of an entry that was "
-                 "removed, and nothing else; Entry Type, File, Size and Data Path are blank on it. Folder "
-                 "Last Changed is the stored time of a folder entry, microseconds since 1601-01-01 UTC "
-                 "rounded down to the second "
+                 "version is a deletion: it gives the name and parent folder of a name that was removed "
+                 "from that folder, because the entry was deleted, renamed or moved, and nothing else; "
+                 "Entry Type, File, Size and Data Path are blank on it. Folder Last Changed is the stored "
+                 "time of a folder entry, microseconds since 1601-01-01 UTC rounded down to the second "
                  "(https://github.com/chromium/chromium/blob/3a50e012e4c9b8a410a4e2b12bf577e69ee8f755/storage/browser/file_system/sandbox_directory_database.cc#L38-L49): "
                  "Chromium sets it when the folder is made "
                  "(https://github.com/chromium/chromium/blob/3a50e012e4c9b8a410a4e2b12bf577e69ee8f755/storage/browser/file_system/obfuscated_file_util.cc#L450) "
@@ -139,7 +145,8 @@ __artifacts_v2__ = {
                  "https://github.com/chromium/chromium/blob/3a50e012e4c9b8a410a4e2b12bf577e69ee8f755/storage/browser/file_system/obfuscated_file_util.cc#L539-L541). "
                  "Chromium reports the stored time only for folders and takes a file's time from its data "
                  "file "
-                 "(https://github.com/chromium/chromium/blob/3a50e012e4c9b8a410a4e2b12bf577e69ee8f755/storage/browser/file_system/obfuscated_file_util.cc#L1144-L1152), "
+                 "(https://github.com/chromium/chromium/blob/3a50e012e4c9b8a410a4e2b12bf577e69ee8f755/storage/browser/file_system/obfuscated_file_util.cc#L1144-L1156, "
+                 "https://github.com/chromium/chromium/blob/3a50e012e4c9b8a410a4e2b12bf577e69ee8f755/storage/browser/file_system/sandbox_directory_database.h#L54-L56), "
                  "so the column is blank on file rows; in the known data both files stored a time of 0. "
                  "Site is the live Origins key whose folder this is, blank when none names it; Storage "
                  "Type names the type folder. In the known data the two file rows showed the exact text "
@@ -149,7 +156,7 @@ __artifacts_v2__ = {
                  "folder and one folder below it, both Live and Temporary, so File, Size and Data Path "
                  "are blank on both and Storage Type held Temporary on every row. In known data Site held "
                  "one value, the test site, on every row; Browser and Profile Folder held one value on "
-                 "every row of each image, which held one profile.",
+                 "every row of the one image with rows.",
         "paths": ('*/Default/File System/*',),
         "output_types": "standard",
         "artifact_icon": "file",
@@ -235,7 +242,7 @@ def _newest(folder, label, context):
 def _site(identifier):
     """The origin a DatabaseIdentifier string names: scheme_host_port, port 0 the default."""
     if identifier == 'file__0':
-        return 'file://'
+        return 'file:///'
     first, last = identifier.find('_'), identifier.rfind('_')
     if first <= 0 or last == first or last == len(identifier) - 1:
         return ''
