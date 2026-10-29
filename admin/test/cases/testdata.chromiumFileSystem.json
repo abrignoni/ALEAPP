@@ -1,0 +1,116 @@
+{
+ "caseknowndata_s1_written": {
+  "description": "Known data: Chrome 124.0.6367.219 on an Android 15 emulator after a local test page wrote one file through webkitRequestFileSystem and one through the Origin Private File System. Test pages only, contains no personal data.",
+  "maker": "known data",
+  "make_data": {
+   "input_data_path": "s1_written.zip",
+   "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+   "timestamp": "2026-10-29T18:06:50.768734",
+   "last_commit": {
+    "hash": "bf8511686b0921c7f5a60e4982006c07f3685255",
+    "author_name": "Brigs",
+    "author_email": "abrignoni@gmail.com",
+    "date": "2026-10-29T18:05:03-04:00",
+    "message": "Add Chromium File System API artifacts (sites and saved files)"
+   }
+  },
+  "artifacts": {
+   "chromiumFileSystemSites": {
+    "search_patterns": [
+     "*/Default/File System/*"
+    ],
+    "file_count": 19,
+    "expected_output": {
+     "headers": [],
+     "data": []
+    }
+   },
+   "chromiumFileSystemEntries": {
+    "search_patterns": [
+     "*/Default/File System/*"
+    ],
+    "file_count": 19,
+    "expected_output": {
+     "headers": [],
+     "data": []
+    }
+   }
+  }
+ },
+ "caseknowndata_s2_history_cleared": {
+  "description": "Known data: the same profile after clearing only browsing history for the last hour. Test pages only, contains no personal data.",
+  "maker": "known data",
+  "make_data": {
+   "input_data_path": "s2_history_cleared.zip",
+   "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+   "timestamp": "2026-10-29T18:06:50.932787",
+   "last_commit": {
+    "hash": "bf8511686b0921c7f5a60e4982006c07f3685255",
+    "author_name": "Brigs",
+    "author_email": "abrignoni@gmail.com",
+    "date": "2026-10-29T18:05:03-04:00",
+    "message": "Add Chromium File System API artifacts (sites and saved files)"
+   }
+  },
+  "artifacts": {
+   "chromiumFileSystemSites": {
+    "search_patterns": [
+     "*/Default/File System/*"
+    ],
+    "file_count": 21,
+    "expected_output": {
+     "headers": [],
+     "data": []
+    }
+   },
+   "chromiumFileSystemEntries": {
+    "search_patterns": [
+     "*/Default/File System/*"
+    ],
+    "file_count": 21,
+    "expected_output": {
+     "headers": [],
+     "data": []
+    }
+   }
+  }
+ },
+ "caseknowndata_s3_sitedata_cleared": {
+  "description": "Known data: the same profile after clearing cookies and site data for the last hour; the Origins key is a deletion. Test pages only, contains no personal data.",
+  "maker": "known data",
+  "make_data": {
+   "input_data_path": "s3_sitedata_cleared.zip",
+   "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+   "timestamp": "2026-10-29T18:06:51.095358",
+   "last_commit": {
+    "hash": "bf8511686b0921c7f5a60e4982006c07f3685255",
+    "author_name": "Brigs",
+    "author_email": "abrignoni@gmail.com",
+    "date": "2026-10-29T18:05:03-04:00",
+    "message": "Add Chromium File System API artifacts (sites and saved files)"
+   }
+  },
+  "artifacts": {
+   "chromiumFileSystemSites": {
+    "search_patterns": [
+     "*/Default/File System/*"
+    ],
+    "file_count": 8,
+    "expected_output": {
+     "headers": [],
+     "data": []
+    }
+   },
+   "chromiumFileSystemEntries": {
+    "search_patterns": [
+     "*/Default/File System/*"
+    ],
+    "file_count": 8,
+    "expected_output": {
+     "headers": [],
+     "data": []
+    }
+   }
+  }
+ }
+}

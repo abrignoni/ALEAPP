@@ -1,0 +1,46 @@
+{
+  "metadata": {
+    "module_name": "chromiumFileSystem",
+    "artifact_name": "Chromium File System API - Sites",
+    "function_name": "chromiumFileSystemSites",
+    "case_number": "caseknowndata_s3_sitedata_cleared",
+    "number_of_columns": 8,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 114,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/chromiumFileSystem/testdata.chromiumFileSystem.chromiumFileSystemSites.caseknowndata_s3_sitedata_cleared.zip",
+    "start_time": "2026-10-29T22:07:25.563376+00:00",
+    "end_time": "2026-10-29T22:07:25.587345+00:00",
+    "run_time_seconds": 0.0010840892791748047,
+    "last_commit": {
+      "hash": "bf8511686b0921c7f5a60e4982006c07f3685255",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-10-29T18:05:03-04:00",
+      "message": "Add Chromium File System API artifacts (sites and saved files)"
+    }
+  },
+  "headers": [
+    "State",
+    "Site",
+    "Site Key (as stored)",
+    "Folder",
+    "Folder Present",
+    "Saved Entries",
+    "Browser",
+    "Profile Folder"
+  ],
+  "data": [
+    [
+      "Deleted",
+      "http://localhost:8765",
+      "http_localhost_8765",
+      "",
+      "No",
+      "",
+      "Chrome",
+      "data/data/com.android.chrome/app_chrome/Default/File System"
+    ]
+  ]
+}
