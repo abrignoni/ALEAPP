@@ -1,7 +1,7 @@
 {
     "caseknowndata_s1_written": {
         "description": "Known data: Chrome 124.0.6367.219 on an Android 15 emulator after a local test page wrote one file through webkitRequestFileSystem and one through the Origin Private File System. Test pages only, contains no personal data.",
-        "maker": "",
+        "maker": "known data",
         "make_data": {
             "input_data_path": "s1_written.zip",
             "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
@@ -49,7 +49,7 @@
     },
     "caseknowndata_s2_history_cleared": {
         "description": "Known data: the same profile after clearing only browsing history for the last hour. Test pages only, contains no personal data.",
-        "maker": "",
+        "maker": "known data",
         "make_data": {
             "input_data_path": "s2_history_cleared.zip",
             "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
@@ -97,7 +97,7 @@
     },
     "caseknowndata_s3_sitedata_cleared": {
         "description": "Known data: the same profile after clearing cookies and site data for the last hour; the Origins key is a deletion. Test pages only, contains no personal data.",
-        "maker": "",
+        "maker": "known data",
         "make_data": {
             "input_data_path": "s3_sitedata_cleared.zip",
             "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
@@ -145,7 +145,7 @@
     },
     "caseknowndata_k1_written": {
         "description": "Known data: Chrome 124.0.6367.219 on an Android 15 emulator after a local test page on one site embedded a test page from a second local site that wrote one file through webkitRequestFileSystem and one through the Origin Private File System. Test pages only, contains no personal data.",
-        "maker": "",
+        "maker": "known data",
         "make_data": {
             "input_data_path": "k1_written.zip",
             "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
@@ -193,7 +193,7 @@
     },
     "caseknowndata_k2_history_cleared": {
         "description": "Known data: the same profile after clearing only browsing history for the last hour. Test pages only, contains no personal data.",
-        "maker": "",
+        "maker": "known data",
         "make_data": {
             "input_data_path": "k2_history_cleared.zip",
             "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
@@ -241,7 +241,7 @@
     },
     "caseknowndata_k3_sitedata_cleared": {
         "description": "Known data: the same profile after clearing cookies and site data for the last hour; the bucket folder and its QuotaManager row are gone. Test pages only, contains no personal data.",
-        "maker": "",
+        "maker": "known data",
         "make_data": {
             "input_data_path": "k3_sitedata_cleared.zip",
             "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
