@@ -4,26 +4,27 @@
     "artifact_name": "Chromium File System API - Files",
     "function_name": "chromiumFileSystemEntries",
     "case_number": "caseknowndata_s1_written",
-    "number_of_columns": 11,
+    "number_of_columns": 12,
     "number_of_rows": 6,
     "total_data_size_bytes": 849,
     "media_checkins": 2,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/chromiumFileSystem/testdata.chromiumFileSystem.chromiumFileSystemEntries.caseknowndata_s1_written.zip",
-    "start_time": "2026-10-29T22:07:24.998043+00:00",
-    "end_time": "2026-10-29T22:07:25.026938+00:00",
-    "run_time_seconds": 0.0014581680297851562,
+    "start_time": "2026-10-29T23:05:24.898692+00:00",
+    "end_time": "2026-10-29T23:05:24.920738+00:00",
+    "run_time_seconds": 0.0011467933654785156,
     "last_commit": {
-      "hash": "bf8511686b0921c7f5a60e4982006c07f3685255",
+      "hash": "929298d814a030eb08e295edbd68eab19dd74c3e",
       "author_name": "Brigs",
       "author_email": "abrignoni@gmail.com",
-      "date": "2026-10-29T18:05:03-04:00",
-      "message": "Add Chromium File System API artifacts (sites and saved files)"
+      "date": "2026-10-29T18:19:11-04:00",
+      "message": "Chromium File System API: apply notes audit"
     }
   },
   "headers": [
     "Folder Last Changed",
     "Site",
+    "Top-Level Site",
     "Path",
     "Entry Type",
     "State",
@@ -32,12 +33,13 @@
     "Data Path (as stored)",
     "Storage Type",
     "Browser",
-    "Profile Folder"
+    "Store Folder"
   ],
   "data": [
     [
       1793308979,
       "http://localhost:8765",
+      "",
       "/",
       "Folder",
       "Live",
@@ -51,6 +53,7 @@
     [
       1793308934,
       "http://localhost:8765",
+      "",
       "/knowndir",
       "Folder",
       "Live",
@@ -64,6 +67,7 @@
     [
       "",
       "http://localhost:8765",
+      "",
       "/knowndir/knowndata-fsapi.txt",
       "File",
       "Live",
@@ -77,6 +81,7 @@
     [
       1793308979,
       "http://localhost:8765",
+      "",
       "/knowndir-opfs",
       "Folder",
       "Live",
@@ -90,6 +95,7 @@
     [
       "",
       "http://localhost:8765",
+      "",
       "/knowndir-opfs/knowndata-opfs.txt",
       "File",
       "Live",
@@ -103,6 +109,7 @@
     [
       "",
       "http://localhost:8765",
+      "",
       "/knowndir-opfs/knowndata-opfs.txt.crswap",
       "",
       "Deleted",
