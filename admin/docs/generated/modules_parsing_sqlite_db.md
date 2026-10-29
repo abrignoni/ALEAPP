@@ -257,6 +257,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | chromePaymentsCustomerData |
 | chromeShortcuts |
 | chromeTopSites |
+| chromiumFileSystem |
 | citymapper |
 | cmh |
 | cmhTags |
