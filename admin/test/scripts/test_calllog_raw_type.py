@@ -16,9 +16,15 @@ TYPES = [1,2,3,4,5,6,7,0,8,None,-1,'1','unknown',1.5,1.0,0.0,'<b>unknown</b>']
 
 
 def query_text():
+    """The module's calls query, as run against a table without the phone account columns."""
     tree = ast.parse(pathlib.Path(sys.modules[get_calllog.__module__].__file__).read_text(encoding='utf-8'))
-    return next(n.args[0].value for n in ast.walk(tree) if isinstance(n, ast.Call) and
-                isinstance(n.func, ast.Attribute) and n.func.attr=='execute')
+    for n in ast.walk(tree):
+        if (isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute) and n.func.attr=='execute'
+                and isinstance(n.args[0], ast.JoinedStr)):
+            text = ''.join(part.value if isinstance(part, ast.Constant) else 'NULL' for part in n.args[0].values)
+            if 'FROM calls' in text:
+                return text
+    raise AssertionError('calls query not found')
 
 
 def make_database(root):
@@ -51,19 +57,20 @@ class CalllogRawTypeTest(unittest.TestCase):
             self.assertEqual(len(rows),len(inputs))
             self.assertEqual(source,str(path))
             self.assertEqual(headers[0],('Call Date','datetime'))
-            self.assertEqual(headers[3:5],('Raw Call Type (as stored)','Type'))
+            self.assertEqual(headers[7:9],('Raw Call Type (as stored)','Type'))
             self.assertNotIn('Source File',headers)
             self.assertEqual(__artifacts_v2__['get_calllog']['html_columns'],['Type'])
             for actual, sqlrow, original in zip(rows,selected,inputs):
-                self.assertEqual((type(actual[3]),actual[3]),(type(original[3]),original[3]))
+                self.assertEqual((type(actual[7]),actual[7]),(type(original[3]),original[3]))
                 date = datetime.datetime.fromtimestamp(int(sqlrow[0])/1000,datetime.timezone.utc) if sqlrow[0] else ''
                 old = (date,sqlrow[1],sqlrow[2],sqlrow[3]+CALL_TYPE_ICONS.get(sqlrow[3],''),
                        str(sqlrow[4]),sqlrow[5],sqlrow[6],sqlrow[7],sqlrow[8],sqlrow[9],str(sqlrow[10]))
-                self.assertEqual(actual[:3]+actual[4:],old)
+                self.assertEqual(actual[:2]+actual[6:7]+actual[8:],old)
+                self.assertEqual(actual[2:6],('','','',''))
             self.assertEqual(rows[0],rows[len(TYPES)])
-            self.assertEqual(rows[11][4],'Unknown')  # Text '1' stays subject to existing SQL comparison.
-            self.assertEqual(rows[14][4],'Incoming'+CALL_TYPE_ICONS['Incoming'])  # Real 1.0.
-            self.assertEqual(rows[16][3],'<b>unknown</b>')
+            self.assertEqual(rows[11][8],'Unknown')  # Text '1' stays subject to existing SQL comparison.
+            self.assertEqual(rows[14][8],'Incoming'+CALL_TYPE_ICONS['Incoming'])  # Real 1.0.
+            self.assertEqual(rows[16][7],'<b>unknown</b>')
 
     def test_existing_alias_selection_and_independent_source_rows(self):
         with tempfile.TemporaryDirectory() as root:
