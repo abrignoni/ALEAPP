@@ -57,20 +57,20 @@ class CalllogRawTypeTest(unittest.TestCase):
             self.assertEqual(len(rows),len(inputs))
             self.assertEqual(source,str(path))
             self.assertEqual(headers[0],('Call Date','datetime'))
-            self.assertEqual(headers[7:9],('Raw Call Type (as stored)','Type'))
+            self.assertEqual(headers[5:7],('Raw Call Type (as stored)','Type'))
             self.assertNotIn('Source File',headers)
             self.assertEqual(__artifacts_v2__['get_calllog']['html_columns'],['Type'])
             for actual, sqlrow, original in zip(rows,selected,inputs):
-                self.assertEqual((type(actual[7]),actual[7]),(type(original[3]),original[3]))
+                self.assertEqual((type(actual[5]),actual[5]),(type(original[3]),original[3]))
                 date = datetime.datetime.fromtimestamp(int(sqlrow[0])/1000,datetime.timezone.utc) if sqlrow[0] else ''
                 old = (date,sqlrow[1],sqlrow[2],sqlrow[3]+CALL_TYPE_ICONS.get(sqlrow[3],''),
                        str(sqlrow[4]),sqlrow[5],sqlrow[6],sqlrow[7],sqlrow[8],sqlrow[9],str(sqlrow[10]))
-                self.assertEqual(actual[:2]+actual[6:7]+actual[8:],old)
-                self.assertEqual(actual[2:6],('','','',''))
+                self.assertEqual(actual[:2]+actual[4:5]+actual[6:],old)
+                self.assertEqual(actual[2:4],('',''))
             self.assertEqual(rows[0],rows[len(TYPES)])
-            self.assertEqual(rows[11][8],'Unknown')  # Text '1' stays subject to existing SQL comparison.
-            self.assertEqual(rows[14][8],'Incoming'+CALL_TYPE_ICONS['Incoming'])  # Real 1.0.
-            self.assertEqual(rows[16][7],'<b>unknown</b>')
+            self.assertEqual(rows[11][6],'Unknown')  # Text '1' stays subject to existing SQL comparison.
+            self.assertEqual(rows[14][6],'Incoming'+CALL_TYPE_ICONS['Incoming'])  # Real 1.0.
+            self.assertEqual(rows[16][5],'<b>unknown</b>')
 
     def test_existing_alias_selection_and_independent_source_rows(self):
         with tempfile.TemporaryDirectory() as root:
