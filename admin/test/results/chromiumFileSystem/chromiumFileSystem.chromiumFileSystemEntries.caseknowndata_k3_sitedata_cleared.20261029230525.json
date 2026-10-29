@@ -1,0 +1,39 @@
+{
+  "metadata": {
+    "module_name": "chromiumFileSystem",
+    "artifact_name": "Chromium File System API - Files",
+    "function_name": "chromiumFileSystemEntries",
+    "case_number": "caseknowndata_k3_sitedata_cleared",
+    "number_of_columns": 12,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/chromiumFileSystem/testdata.chromiumFileSystem.chromiumFileSystemEntries.caseknowndata_k3_sitedata_cleared.zip",
+    "start_time": "2026-10-29T23:05:25.121730+00:00",
+    "end_time": "2026-10-29T23:05:25.139691+00:00",
+    "run_time_seconds": 0.00011014938354492188,
+    "last_commit": {
+      "hash": "929298d814a030eb08e295edbd68eab19dd74c3e",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-10-29T18:19:11-04:00",
+      "message": "Chromium File System API: apply notes audit"
+    }
+  },
+  "headers": [
+    "Folder Last Changed",
+    "Site",
+    "Top-Level Site",
+    "Path",
+    "Entry Type",
+    "State",
+    "File",
+    "Size",
+    "Data Path (as stored)",
+    "Storage Type",
+    "Browser",
+    "Store Folder"
+  ],
+  "data": []
+}
