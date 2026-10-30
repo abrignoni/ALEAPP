@@ -542,6 +542,7 @@ def crunch_artifacts(
             else:
                 search_regexes = [plugin.search]
             files_found = []
+            found_already = set()
             log.write(f'<b>For {plugin.name} module</b>')
             for artifact_search_regex in search_regexes:
                 artifact_search_pattern_id += 1
@@ -574,7 +575,9 @@ def crunch_artifacts(
                                 file_path_ids.add(file_path_id)
                             lava_insert_sqlite_artifact_link_pattern_to_file(artifact_search_pattern_id, file_path_id)
                     log.write('</li></ul>')
-                    files_found.extend(found)
+                    # a file two of the artifact's patterns match is handed to it once
+                    files_found.extend(path for path in found if path not in found_already)
+                    found_already.update(found)
             if files_found:
                 category_folder = os.path.join(out_params.output_folder_base, '_HTML',
                                                sanitize_report_name(plugin.category, 'category'))
