@@ -69,9 +69,11 @@ __artifacts_v2__ = {
                  "none. Of the 34 rows with no SSID, 24 had no group hint and 10 had a hint no saved "
                  "network matched: 1 hint on cookbook_a11, 1 on pixel3_a11 and 2 on samsungs20_a13, whose "
                  "settings_secure.xml could not be parsed (a value holds unescaped quotes), so no "
-                 "ANDROID_ID was read there. 80 rows on 4 images came from rollback snapshots. On the "
-                 "emulator images emu_a15_oss2_v3 and emu_a15_oss_v17 the named network was AndroidWifi, "
-                 "the only network in their WifiConfigStore.xml.",
+                 "ANDROID_ID was read there. 80 rows on 4 images came from rollback snapshots, so "
+                 "Database held one value on the images without one. Lease Expires leads the table as the "
+                 "time tied to a connection, and is blank on the rows that hold no lease. On the emulator "
+                 "images emu_a15_oss2_v3 and emu_a15_oss_v17 the named network was AndroidWifi, the only "
+                 "network in their WifiConfigStore.xml.",
         "paths": ('*/com.google.android.networkstack/databases/IpMemoryStore*.db*',
                   '*/com.android.networkstack/databases/IpMemoryStore*.db*',
                   '*/system/users/0/settings_secure.xml',
