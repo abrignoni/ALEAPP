@@ -1,0 +1,33 @@
+{
+    "caseknowndata_emu_a15_oss2_v3": {
+        "description": "Emulator known data (corpus key emu_a15_oss2_v3, Android 15 AVD): the network stack's IpMemoryStore.db with the secure settings and Wi-Fi config files it is matched against; the hotspot config is left out. Scripted test device, contains no personal data.",
+        "maker": "known data",
+        "make_data": {
+            "input_data_path": "emu_a15_oss2_v3_case.zip",
+            "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+            "timestamp": "2026-10-29T22:06:08.503584",
+            "last_commit": {
+                "hash": "Uncommitted",
+                "author_name": "N/A",
+                "author_email": "N/A",
+                "date": "2026-10-29T22:06:08.496043",
+                "message": "File not yet committed to git"
+            }
+        },
+        "artifacts": {
+            "ipMemoryStore": {
+                "search_patterns": [
+                    "*/com.google.android.networkstack/databases/IpMemoryStore*.db*",
+                    "*/com.android.networkstack/databases/IpMemoryStore*.db*",
+                    "*/system/users/0/settings_secure.xml",
+                    "*/WifiConfigStore*.xml"
+                ],
+                "file_count": 10,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            }
+        }
+    }
+}

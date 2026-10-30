@@ -1,0 +1,66 @@
+{
+  "metadata": {
+    "module_name": "ipMemoryStore",
+    "artifact_name": "Wi-Fi IP Memory Store",
+    "function_name": "ipMemoryStore",
+    "case_number": "caseknowndata_emu_a15_oss2_v3",
+    "number_of_columns": 8,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 383,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/ipMemoryStore/testdata.ipMemoryStore.ipMemoryStore.caseknowndata_emu_a15_oss2_v3.zip",
+    "start_time": "2026-10-30T02:06:08.650272+00:00",
+    "end_time": "2026-10-30T02:06:08.704573+00:00",
+    "run_time_seconds": 0.0025680065155029297,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-29T22:06:08.694289",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Lease Expires",
+    "Record Expires",
+    "SSID",
+    "Assigned IPv4 Address",
+    "DNS Servers",
+    "Group Hint",
+    "L2 Key",
+    "Database"
+  ],
+  "data": [
+    [
+      1789265154,
+      1823738756,
+      "AndroidWifi",
+      "10.0.2.16",
+      "10.0.2.3",
+      "Gcdb33b88c1c28aca",
+      "W792d36c2b14940bc",
+      "data/user_de/0/com.google.android.networkstack/databases/IpMemoryStore.db"
+    ],
+    [
+      "",
+      1817538684,
+      "AndroidWifi",
+      "",
+      "",
+      "Gcdb33b88c1c28aca",
+      "Wcdb33b88c1c28aca",
+      "data/user_de/0/com.google.android.networkstack/databases/IpMemoryStore.db"
+    ],
+    [
+      "",
+      1804027525,
+      "",
+      "",
+      "",
+      "",
+      "Wefbb55a1a0a57d0e",
+      "data/user_de/0/com.google.android.networkstack/databases/IpMemoryStore.db"
+    ]
+  ]
+}
