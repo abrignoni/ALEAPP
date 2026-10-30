@@ -1,6 +1,6 @@
 {
     "casepixel3_a12": {
-        "description": "Corpus key pixel3_a12 (Google Pixel 3, Android 12, public image): the connectivity monitor app's call_data_logs.db in user_de and its data_mirror view.",
+        "description": "Corpus key pixel3_a12 (Google Pixel 3, Android 12): the call_data_logs.db of com.google.android.apps.scone in user_de and its data_mirror view.",
         "maker": "",
         "make_data": {
             "input_data_path": "pixel3_a12.zip",

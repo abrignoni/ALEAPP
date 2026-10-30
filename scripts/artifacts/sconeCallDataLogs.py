@@ -1,8 +1,8 @@
 __artifacts_v2__ = {
     "sconeCallDataLogs": {
-        "name": "Pixel Call Data Logs (Scone)",
-        "description": "Rows of the CallDataLogs table that Google's connectivity monitor app "
-                       "(com.google.android.apps.scone) writes when a call ends: the call's date, type, "
+        "name": "Call Data Logs (Scone)",
+        "description": "Rows of the CallDataLogs table that the Google app "
+                       "com.google.android.apps.scone writes when a call ends: the call's date, type, "
                        "network operator code, roaming state, audio device, disconnect reason and "
                        "call quality fields.",
         "author": "@AlexisBrignoni, Claude",
@@ -11,26 +11,30 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Call Logs",
         "notes": "Reads the CallDataLogs table of call_data_logs.db, in the device-encrypted storage "
-                 "(user_de) of Google's connectivity monitor app, com.google.android.apps.scone. The app "
-                 "is closed source. Meanings come from the build installed on pixel7a_a14 (base.apk, "
-                 "SHA-256 28c014f45a14f1e7d8ad3fa073d057445aa2d6386fc98a624f4be162460fbc52), decompiled "
-                 "with jadx 1.5.6; its class names are obfuscated, other builds were not decompiled, and "
-                 "the tested images carry other builds. In that build one class inserts a row when a call "
-                 "ends (it logs \"Add Call Data for Call End\") and is the only code that inserts into the "
-                 "table; a second path updates Call Issue and the bad-quality fields of the row with the "
-                 "same Call ID. Call Date is the date when the build handled the call's disconnect or "
-                 "end, formatted yyyy/MM/dd in the device's time zone at that moment "
-                 "(ZoneId.systemDefault()), so it is a calendar date with no time; the call log and other "
-                 "artifacts hold the times. Network Operator is TelephonyManager.getNetworkOperator() and "
-                 "Roaming TelephonyManager.isNetworkRoaming(), both read at that moment; Audio Device is "
-                 "BT, HEADSET, SPEAKER or EARPIECE from the AudioManager state at that moment (Bluetooth "
-                 "SCO on, wired headset on, speakerphone on, otherwise earpiece). Call Type is CS, VOLTE, "
-                 "VOWIFI, VONR or UNKNOWN from the build's own enum; it is CS when the disconnect data "
-                 "did not come from IMS, and otherwise is set from the voice network type or by a branch "
-                 "that was not traced. Disconnect Reason is the disconnect code as stored: for an IMS "
-                 "call it is ImsReasonInfo.getCode(), except that the build stores 510 for code 335 when "
-                 "the IMS extra message contains CC_TERM_NOREPLY_TMR_EXPIRED; for any other call it is "
-                 "the precise disconnect cause from PhoneStateListener.onCallDisconnectCauseChanged. For "
+                 "(user_de) of the Google app com.google.android.apps.scone. The app is closed source. "
+                 "Meanings come from the build installed on pixel7a_a14 (base.apk, SHA-256 "
+                 "28c014f45a14f1e7d8ad3fa073d057445aa2d6386fc98a624f4be162460fbc52), decompiled with jadx "
+                 "1.5.6; its class names are obfuscated; no other build was decompiled, and the builds on "
+                 "the other tested images were not checked. In that build one class inserts a row when a "
+                 "call ends (it logs \"Add Call Data for Call End except Bad Quality\") and is the only "
+                 "code in the decompile that inserts into the table; a second path updates Call Issue and "
+                 "the bad-quality fields of the row with the same Call ID. Call Date is the date when the "
+                 "build handled the call's disconnect or end, formatted yyyy/MM/dd with the zone the app "
+                 "process took when it loaded its call-data class (a static formatter built with "
+                 "ZoneId.systemDefault()), so a zone change is not reflected until the process restarts; "
+                 "the report shows it as YYYY-MM-DD. It is a calendar date with no time; the call log and "
+                 "other artifacts hold the times. Network Operator is "
+                 "TelephonyManager.getNetworkOperator() and Roaming TelephonyManager.isNetworkRoaming(), "
+                 "both read at that moment; Audio Device is BT, HEADSET, SPEAKER or EARPIECE from the "
+                 "AudioManager state at that moment (Bluetooth SCO on, wired headset on, speakerphone on, "
+                 "otherwise earpiece); UNKNOWN is the enum's reset value and is not read from "
+                 "AudioManager, and 4 rows on pixel7a_a14 held it. Call Type is CS, VOLTE, VOWIFI, VONR "
+                 "or UNKNOWN from the build's own enum; it is CS when the disconnect data did not come "
+                 "from IMS, and otherwise is set from the voice network type or by a branch that was not "
+                 "traced. Disconnect Reason is the disconnect code as stored: for an IMS call it is "
+                 "ImsReasonInfo.getCode(), except that the build stores 510 for code 335 when the IMS "
+                 "extra message contains CC_TERM_NOREPLY_TMR_EXPIRED; for any other call it is the "
+                 "precise disconnect cause from PhoneStateListener.onCallDisconnectCauseChanged. For "
                  "VOLTE, VOWIFI and VONR rows the code is given the name of the "
                  "android.telephony.ims.ImsReasonInfo constant with that value "
                  "(https://android.googlesource.com/platform/frameworks/base/+/6e47c7075b91983ae501114425ea25e6df7690c8/telephony/java/android/telephony/ims/ImsReasonInfo.java, "
@@ -38,27 +42,33 @@ __artifacts_v2__ = {
                  "android14-release); other rows show the number only. Call Issue is BAD_AUDIO, "
                  "CALL_DROP, NO_ISSUE or UNKNOWN from the build's enum; how the build decides a drop was "
                  "not traced. Call ID is a random UUID the build makes for each call; it is not shared "
-                 "with the call log, so rows cannot be joined to the call log by it. Start Call Type, Bad "
-                 "Quality, Bad Call Type, Subscription ID and the as-stored columns are reported as the "
-                 "build writes them; their units and codes were not resolved. Not reported: ssid, which "
-                 "held <unknown ssid> or nothing on every row of the tested images; signal_level, which "
-                 "this build never writes and which was empty on every row; and tx_bad_quality_cause, "
-                 "which held 0 on every row. Rows with neither a Call Date nor a Call ID are left out: on "
-                 "the tested images 430 such rows on 4 images held only column defaults, and this build "
-                 "sets the date before every insert, so they came from code that was not decompiled. The "
-                 "storage views one extraction can hold are read once, and a second Android user's "
-                 "database is read as its own; Android User held 0 on every row of the tested images. On "
-                 "the tested images: 671 rows on 5 of 22 images (hickman_a13 37, pixel3_a12 7, "
-                 "pixel7a_a14 594, russell_a14 13, russell_pixel6a_a13 20); call_data_logs.db was also on "
-                 "pixel3_a11, with no rows, and on hc_pixel8pro_a17, whose 7 rows were all left out as "
-                 "above. One row on pixel7a_a14 had a Call ID and no Call Date. Roaming was Yes on 1 row "
-                 "(russell_a14), Audio Device was BT on 2 rows (hickman_a13 and pixel3_a12), and Call "
-                 "Issue was CALL_DROP or BAD_AUDIO on 1 row each, both on russell_a14. Compared with each "
-                 "image's call log, by date in the zone of persist.sys.timezone: on russell_pixel6a_a13 "
-                 "the rows per date equalled the call log's entries per date on all 15 dates (20 and 20); "
-                 "on pixel7a_a14, russell_a14 and pixel3_a12 the call log held more entries over the same "
-                 "dates (1,220 against 593, 22 against 13, 21 against 7), so the table is not a complete "
-                 "record of calls. It can hold a call the call log no longer lists; that was not tested.",
+                 "with the call log, so rows cannot be joined to the call log by it. Roaming and Bad "
+                 "Quality are the stored 1 and 0 shown as Yes and No. Start Call Type, Bad Call Type, "
+                 "Subscription ID and the as-stored columns are reported as the build writes them; their "
+                 "units and codes were not resolved. Not reported: ssid, which held <unknown ssid> or "
+                 "nothing on every row of the tested images; signal_level, which this build never writes "
+                 "and which was empty on every row; and tx_bad_quality_cause, which held 0 on every row. "
+                 "Rows with neither a Call Date nor a Call ID are left out: on the tested images 430 such "
+                 "rows on 4 images held the build's reset values (UNKNOWN types and issue, disconnect "
+                 "reason 0, no operator, a subscription ID), not call data, and one of them carried a "
+                 "Start Call Type. Their origin was not traced. When the date it last checked has "
+                 "changed, the build deletes rows dated more than two months back, which never matches a "
+                 "row with no date, and then keeps the 1,000 rows with the latest dates, which removes "
+                 "undated rows first. The storage views one extraction can hold are read once, and a "
+                 "second Android user's database is read as its own; Android User held 0 on every row of "
+                 "the tested images. On the tested images: 671 rows on 5 of 22 images (hickman_a13 37, "
+                 "pixel3_a12 7, pixel7a_a14 594, russell_a14 13, russell_pixel6a_a13 20); "
+                 "call_data_logs.db was also on pixel3_a11, with no rows, and on hc_pixel8pro_a17, whose "
+                 "7 rows were all left out as above. One row on pixel7a_a14 had a Call ID and no Call "
+                 "Date. Roaming was Yes on 1 row (russell_a14), Audio Device was BT on 2 rows "
+                 "(hickman_a13 and pixel3_a12), and Call Issue was CALL_DROP or BAD_AUDIO on 1 row each, "
+                 "both on russell_a14. Compared with each image's call log (voicemail entries, type 4, "
+                 "left out), by date in the zone of persist.sys.timezone: on russell_pixel6a_a13 the rows "
+                 "per date equalled the call log's on all 15 dates (20 and 20); on russell_a14 the call "
+                 "log held more over the same span (21 against 13); on pixel7a_a14 and pixel3_a12 the "
+                 "table held more rows than the call log on 25 of 47 and 3 of 5 of its dates. Because of "
+                 "the deletes above the table is not a complete record of calls. Whether the rows that "
+                 "exceed the call log are calls the call log no longer lists was not tested.",
         "paths": ('*/com.google.android.apps.scone/databases/call_data_logs.db*',),
         "output_types": "standard",
         "artifact_icon": "phone-call",
@@ -302,7 +312,7 @@ def sconeCallDataLogs(context):
             select = ', '.join(c if c in present else 'NULL' for c in _COLUMNS)
             rows = db.execute(f'SELECT {select} FROM CallDataLogs ORDER BY _id DESC').fetchall()
         except sqlite3.Error as ex:
-            logfunc(f'Pixel Call Data Logs: could not read {context.get_relative_path(path)}: {ex}')
+            logfunc(f'Call Data Logs (Scone): could not read {context.get_relative_path(path)}: {ex}')
             continue
         finally:
             db.close()
