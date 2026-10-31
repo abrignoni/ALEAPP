@@ -1,0 +1,158 @@
+{
+  "metadata": {
+    "module_name": "telephonyTrafficStats",
+    "artifact_name": "Telephony Network Lookups, Cells Seen",
+    "function_name": "get_telephony_cell_summary",
+    "case_number": "casesynthetic_trafficstats_b",
+    "number_of_columns": 10,
+    "number_of_rows": 10,
+    "total_data_size_bytes": 510,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/telephonyTrafficStats/testdata.telephonyTrafficStats.get_telephony_cell_summary.casesynthetic_trafficstats_b.zip",
+    "start_time": "2026-10-25T16:17:21.198806+00:00",
+    "end_time": "2026-10-25T16:17:21.497743+00:00",
+    "run_time_seconds": 0.004010915756225586,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-25T16:17:21.430807",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "First Seen",
+    "Last Seen",
+    "Cell ID (as stored)",
+    "Technology (as stored)",
+    "Network Detail (as stored)",
+    "Band (as stored)",
+    "Rows",
+    "RSRP Min (excluding -999)",
+    "RSRP Max (excluding -999)",
+    "Android User"
+  ],
+  "data": [
+    [
+      1788000000,
+      1788001153,
+      1100000001,
+      "NR",
+      "SA",
+      "n41",
+      8,
+      -115.0,
+      -82.0,
+      "0"
+    ],
+    [
+      1788000000,
+      1788001348,
+      1100000002,
+      "NR",
+      "SA",
+      "n25",
+      8,
+      -117.0,
+      -79.0,
+      "0"
+    ],
+    [
+      1788000049,
+      1788000991,
+      22000004,
+      "LTE",
+      "NSA",
+      "12",
+      3,
+      -118.0,
+      -102.0,
+      "0"
+    ],
+    [
+      1788000107,
+      1788000107,
+      -2,
+      "-1",
+      "02:00:5e:00:53:06",
+      "-1",
+      1,
+      -93.0,
+      -93.0,
+      "0"
+    ],
+    [
+      1788000227,
+      1788000763,
+      22000003,
+      "LTE",
+      "LTE",
+      "66",
+      5,
+      -119.0,
+      -79.0,
+      "0"
+    ],
+    [
+      1788000610,
+      1788000610,
+      1100000002,
+      "NR",
+      null,
+      "n25",
+      1,
+      -119.0,
+      -119.0,
+      "0"
+    ],
+    [
+      1788000642,
+      1788000642,
+      22000003,
+      "LTE",
+      null,
+      "66",
+      1,
+      -111.0,
+      -111.0,
+      "0"
+    ],
+    [
+      1788000852,
+      1788001257,
+      -2,
+      "-2",
+      "-2",
+      "-1",
+      5,
+      -95.0,
+      -90.0,
+      "0"
+    ],
+    [
+      1788000940,
+      1788000940,
+      -2,
+      "-1",
+      "02:00:5e:00:53:5e",
+      "-1",
+      1,
+      -84.0,
+      -84.0,
+      "0"
+    ],
+    [
+      1788001238,
+      1788001238,
+      -2,
+      "-1",
+      "02:00:5e:00:53:f5",
+      "-1",
+      1,
+      -101.0,
+      -101.0,
+      "0"
+    ]
+  ]
+}
