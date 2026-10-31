@@ -1,0 +1,248 @@
+{
+  "casesynthetic_appops_history": {
+    "description": "Synthetic Android 16 App Ops history databases: a short-interval database with no -wal (user 0 and user 150 uids, camera, microphone, location, a proxied access with attribution flags, an unnamed op, a NULL package) and a long-interval database with a live -wal that deletes two rows, changes one and adds two; invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_appops_history.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-25T12:00:00.000000",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-25T12:00:00.000000",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "appops_history_db": {
+        "search_patterns": [
+          "*/system/appops/app_op_history*.db*"
+        ],
+        "file_count": 4,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "appops_history_db_file_only": {
+        "search_patterns": [
+          "*/system/appops/app_op_history*.db*"
+        ],
+        "file_count": 4,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_appops_two_copies": {
+    "description": "The history fixture twice, under two extraction roots, to check that each copy is read and named by Source File; invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_appops_two_copies.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-25T12:00:00.000000",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-25T12:00:00.000000",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "appops_history_db": {
+        "search_patterns": [
+          "*/system/appops/app_op_history*.db*"
+        ],
+        "file_count": 8,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "appops_history_db_file_only": {
+        "search_patterns": [
+          "*/system/appops/app_op_history*.db*"
+        ],
+        "file_count": 8,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_appops_odd_values": {
+    "description": "Synthetic long-interval database with values the platform does not write: unreadable, negative, second-based and out-of-range times, text in numeric columns, NULLs, unknown uid state and flag bits; invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_appops_odd_values.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-25T12:00:00.000000",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-25T12:00:00.000000",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "appops_history_db": {
+        "search_patterns": [
+          "*/system/appops/app_op_history*.db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_appops_empty": {
+    "description": "Synthetic short and long databases with an empty app_op_accesses table; contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_appops_empty.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-25T12:00:00.000000",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-25T12:00:00.000000",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "appops_history_db": {
+        "search_patterns": [
+          "*/system/appops/app_op_history*.db*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "appops_history_db_file_only": {
+        "search_patterns": [
+          "*/system/appops/app_op_history*.db*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_appops_unreadable": {
+    "description": "Synthetic short-interval database file that is all zero bytes (an extraction can hold files like this) beside a readable long-interval database with its -wal; invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_appops_unreadable.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-25T12:00:00.000000",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-25T12:00:00.000000",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "appops_history_db": {
+        "search_patterns": [
+          "*/system/appops/app_op_history*.db*"
+        ],
+        "file_count": 4,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "appops_history_db_file_only": {
+        "search_patterns": [
+          "*/system/appops/app_op_history*.db*"
+        ],
+        "file_count": 4,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_appops_no_table": {
+    "description": "Synthetic database with the right file name but no app_op_accesses table; contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_appops_no_table.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-25T12:00:00.000000",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-25T12:00:00.000000",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "appops_history_db": {
+        "search_patterns": [
+          "*/system/appops/app_op_history*.db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_appops_discrete_a16": {
+    "description": "Synthetic app_op_history.db in the Android 16.0 release layout (one row per access, no aggregate columns, device id not null); built from the AOSP table definition, invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_appops_discrete_a16.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-25T12:00:00.000000",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-25T12:00:00.000000",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "appops_history_db": {
+        "search_patterns": [
+          "*/system/appops/app_op_history*.db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "appops_history_db_file_only": {
+        "search_patterns": [
+          "*/system/appops/app_op_history*.db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  }
+}

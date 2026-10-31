@@ -141,6 +141,7 @@
   "*/system/PkgPredictions.db*": "shared or system location: no app data container in the path; measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
   "*/system/WifiConfigStore.db*": "shared or system location: no app data container in the path; measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
   "*/system/appops.xml": "shared or system location: no app data container in the path; measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
+  "*/system/appops/app_op_history*.db*": "shared or system location: no app data container in the path; the platform app op history databases of Android 16, measured 2026-10-25 on five Android 16 Samsung full file system images (all five carried the short and long databases)",
   "*/system/appops/discrete/**": "shared or system location: no app data container in the path; measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
   "*/system/appops_accesses.xml": "shared or system location: no app data container in the path; the platform app op access records, measured 2026-09-06 across the registered Android corpora",
   "*/system/batterystats-daily.xml": "shared or system location: no app data container in the path; measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
