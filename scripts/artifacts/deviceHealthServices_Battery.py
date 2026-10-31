@@ -5,7 +5,7 @@ __artifacts_v2__ = {
         "description": "Battery level records from the battery_event table of Device Health Services' turbo.db, with the charge type and battery saver values as stored.",
         "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2021-06-29",
-        "last_update_date": "2026-10-04",
+        "last_update_date": "2026-10-31",
         "requirements": "none",
         "category": "Device Health Services",
         "notes": "One row per battery_event record. Timestamp is timestamp_millis read as Unix "
@@ -16,7 +16,7 @@ __artifacts_v2__ = {
                  "turbo.db in hc_pixel8pro_a16, pixel7a_a14 and russell_pixel6a_a13 (7,417 records "
                  "in four files) charge_type held 0, 1 or 2 and battery_saver held 2 on every record.",
         "paths": ('*/com.google.android.apps.turbo/databases/turbo.db*',),
-        "output_types": "all",
+        "output_types": "standard",
         "artifact_icon": "battery-charging",
         "sample_data": {
             "anne_a15": "Android 15 | com.google.android.apps.turbo | 0 rows",
@@ -35,7 +35,7 @@ __artifacts_v2__ = {
         "description": "Parses the battery and volume level events recorded for Bluetooth devices in Device Health Services' bluetooth.db",
         "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2021-06-29",
-        "last_update_date": "2026-10-04",
+        "last_update_date": "2026-10-31",
         "requirements": "none",
         "category": "Device Health Services",
         "notes": "Timestamp is timestamp_millis read as Unix milliseconds and reported in UTC, in "
@@ -43,7 +43,7 @@ __artifacts_v2__ = {
                  "to Timestamp. No registered image listed in sample_data holds a record, so the "
                  "output is unexercised on real data.",
         "paths": ('*/com.google.android.apps.turbo/databases/bluetooth.db*',),
-        "output_types": "all",
+        "output_types": "standard",
         "artifact_icon": "bluetooth",
         "sample_data": {
             "galaxys10_a10": "Android 10 | com.google.android.apps.turbo vc 10235989 | 0 rows",

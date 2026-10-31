@@ -5,7 +5,7 @@ __artifacts_v2__ = {
         "description": "Decoded nested protobuf fields and record provenance from Google Play services' semantic-location LevelDB.",
         "author": "@AlexisBrignoni, Codex",
         "creation_date": "2024/06/21",
-        "last_update_date": "2026-10-06",
+        "last_update_date": "2026-10-31",
         "requirements": "",
         "category": "App Semantic Locations",
         "notes": "Thanks to Alex Caithness for the ccl_leveldb libraries. Raw Nested Field values "
@@ -22,7 +22,7 @@ __artifacts_v2__ = {
                  "nested fields are not output. Source File appears only when returned rows combine "
                  "database directories. Recorded sample counts do not verify field semantics.",
         "paths": ('*/com.google.android.gms/app_semanticlocation_rawsignal_db/*',),
-        "output_types": "all",
+        "output_types": "standard",
         "artifact_icon": "map-pin",
         "sample_data": {
             "anne_a15": "Android 15 | com.google.android.gms | 6651 rows",
