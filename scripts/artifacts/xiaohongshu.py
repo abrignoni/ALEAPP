@@ -95,7 +95,7 @@ __artifacts_v2__ = {
         "description": "Times the Xiaohongshu app recorded a successful launch",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-03",
-        "last_update_date": "2026-09-04",
+        "last_update_date": "2026-10-31",
         "requirements": "none",
         "category": "Xiaohongshu",
         "notes": "Read from every write of the last_launch_success_time key in the "
@@ -111,7 +111,7 @@ __artifacts_v2__ = {
                  "(the wiki link is not pinned to a revision)",
         "paths": ('*/com.xingin.xhs/files/mmkv/app_cold_start_record',),
         "output_types": "standard",
-        "artifact_icon": "rotate-clock",
+        "artifact_icon": "rotate-clockwise",
         "sample_data": {
             "kevin_pocox7_a15": "Android 15 | Xiaohongshu | 21 rows",
         },
