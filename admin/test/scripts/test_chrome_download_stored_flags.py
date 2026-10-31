@@ -17,12 +17,12 @@ def fixture(root,wal=False,optional=True,affinity=''):
     path=root/'data/data/com.android.chrome/app_chrome/Default/History';path.parent.mkdir(parents=True,exist_ok=True)
     db=sqlite3.connect(path)
     if wal:db.execute('pragma journal_mode=WAL');db.execute('pragma wal_autocheckpoint=0')
-    cols=['start_time','end_time']+(['last_access_time','tab_url'] if optional else [])+['target_path','state '+affinity,'danger_type '+affinity,'interrupt_reason '+affinity,'opened','received_bytes','total_bytes']
+    cols=['start_time','end_time']+(['last_access_time','tab_url'] if optional else [])+['target_path','state '+affinity,'danger_type '+affinity,'interrupt_reason '+affinity,'opened','received_bytes','total_bytes']+(['etag','last_modified'] if optional else [])
     db.execute('create table downloads('+','.join(cols)+')');db.commit()
     if wal:db.execute('pragma wal_checkpoint(truncate)')
     for i,value in enumerate(VALUES+[VALUES[3]]):
         if i==len(VALUES):i=3
-        row=[13344473600000000,13344473601000000]+([0,'https://tab/'+str(i)] if optional else [])+['/stored/'+str(i),value,value,value,[0,1,None,7][i%4],i,i+100]
+        row=[13344473600000000,13344473601000000]+([0,'https://tab/'+str(i)] if optional else [])+['/stored/'+str(i),value,value,value,[0,1,None,7][i%4],i,i+100]+(['"etag-'+str(i)+'"' if i%2 else '','Mon, 0'+str(i%10)+' Jan 2024 00:00:00 GMT' if i%3 else None] if optional else [])
         db.execute('insert into downloads values('+','.join('?' for _ in row)+')',row)
     db.commit()
     if not wal:db.close();db=None
@@ -42,8 +42,10 @@ def oracle(path):
     columns={r[1] for r in db.execute('pragma table_info(downloads)')}
     last='last_access_time' if 'last_access_time' in columns else "''"
     tab='tab_url' if 'tab_url' in columns else "''"
-    rows=db.execute(f"select start_time,end_time,{last},{tab},target_path,state,danger_type,interrupt_reason,CASE opened WHEN 0 THEN '' WHEN 1 THEN 'Yes' END,received_bytes,total_bytes from downloads").fetchall();db.close()
-    return [(timestamp(r[0]),timestamp(r[1]),timestamp(r[2]))+r[3:]+('Chrome',) for r in rows]
+    etag='etag' if 'etag' in columns else "''"
+    modified='last_modified' if 'last_modified' in columns else "''"
+    rows=db.execute(f"select start_time,end_time,{last},{tab},target_path,state,danger_type,interrupt_reason,CASE opened WHEN 0 THEN '' WHEN 1 THEN 'Yes' END,received_bytes,total_bytes,{etag},{modified} from downloads").fetchall();db.close()
+    return [(timestamp(r[0]),timestamp(r[1]),timestamp(r[2]))+r[3:11]+(r[11] or '',r[12] or '','Chrome') for r in rows]
 
 
 class DownloadStoredFlagsTest(unittest.TestCase):
@@ -56,7 +58,8 @@ class DownloadStoredFlagsTest(unittest.TestCase):
                 expected=oracle(path);self.assertEqual(rows,expected);self.assertEqual(len(rows),20);self.assertEqual(source,str(path))
                 self.assertEqual([[type(v) for v in r] for r in rows],[[type(v) for v in r] for r in expected])
                 self.assertEqual(rows[0][5:8],(None,None,None));self.assertEqual(rows[1][5:8],(0,0,0));self.assertEqual(rows[-1],rows[3])
-                if not optional:self.assertEqual(rows[0][2:4],('',''))
+                if not optional:self.assertEqual(rows[0][2:4],('',''));self.assertEqual({r[11:13] for r in rows},{('','')})
+                else:self.assertEqual(rows[1][11:13],('"etag-1"','Mon, 01 Jan 2024 00:00:00 GMT'));self.assertEqual(rows[0][11:13],('',''))
 
     def test_actual_wal_effective_state_from_separate_copies(self):
         with tempfile.TemporaryDirectory() as directory:
