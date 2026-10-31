@@ -553,7 +553,7 @@ __artifacts_v2__ = {
                        "available, use percentage and mount point of each file system as printed.",
         "author": "@danjethh, Claude",
         "creation_date": "2026-10-26",
-        "last_update_date": "2026-10-26",
+        "last_update_date": "2026-10-31",
         "requirements": "none",
         "category": "Android Bug Report - Storage and Databases",
         "notes": "One row per line of the FILESYSTEMS & FREE SPACE (df) command section, after the header line. Filesystem, "
@@ -570,7 +570,7 @@ __artifacts_v2__ = {
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "storage",
+        "artifact_icon": "database",
         "sample_data": {
             "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 186 rows",
             "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 57 rows",
@@ -584,7 +584,7 @@ __artifacts_v2__ = {
                        "mount point of each file system as printed.",
         "author": "@danjethh, Claude",
         "creation_date": "2026-10-26",
-        "last_update_date": "2026-10-26",
+        "last_update_date": "2026-10-31",
         "requirements": "none",
         "category": "Android Bug Report - Storage and Databases",
         "notes": "One row per line of the FILESYSTEMS & FREE INODE (df -i) command section, after the header line. Inodes, IUsed, "
@@ -600,7 +600,7 @@ __artifacts_v2__ = {
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "storage",
+        "artifact_icon": "database",
         "sample_data": {
             "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 186 rows",
             "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 57 rows",
@@ -614,7 +614,7 @@ __artifacts_v2__ = {
                        "system type and options as printed.",
         "author": "@danjethh, Claude",
         "creation_date": "2026-10-26",
-        "last_update_date": "2026-10-26",
+        "last_update_date": "2026-10-31",
         "requirements": "none",
         "category": "Android Bug Report - Storage and Databases",
         "notes": "One row per line of the MOUNT POINT DUMP (mount) command section of the form device on path type fs (options). "
@@ -630,7 +630,7 @@ __artifacts_v2__ = {
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "storage",
+        "artifact_icon": "database",
         "sample_data": {
             "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 471 rows",
             "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 146 rows",
@@ -644,7 +644,7 @@ __artifacts_v2__ = {
                        "with the id, state, paths and attributes of each as printed.",
         "author": "@danjethh, Claude",
         "creation_date": "2026-10-26",
-        "last_update_date": "2026-10-26",
+        "last_update_date": "2026-10-31",
         "requirements": "none",
         "category": "Android Bug Report - Storage and Databases",
         "notes": "One row per StorageVolume: entry, per VolumeInfo{id} entry and per DiskInfo entry of the mount service dump. Kind "
@@ -665,7 +665,7 @@ __artifacts_v2__ = {
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "storage",
+        "artifact_icon": "database",
         "sample_data": {
             "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 2 rows",
             "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 0 rows",
@@ -679,7 +679,7 @@ __artifacts_v2__ = {
                        "and thread ids, component and message as printed.",
         "author": "@danjethh, Claude",
         "creation_date": "2026-10-26",
-        "last_update_date": "2026-10-26",
+        "last_update_date": "2026-10-31",
         "requirements": "none",
         "category": "Android Bug Report - Storage and Databases",
         "notes": "One row per line after a VOLD LAST LOG BUF#n line in the mount service dump. Buffer is the BUF heading. Time As "
@@ -699,7 +699,7 @@ __artifacts_v2__ = {
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": "standard",
-        "artifact_icon": "storage",
+        "artifact_icon": "database",
         "sample_data": {
             "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 566 rows",
             "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 0 rows",
@@ -713,7 +713,7 @@ __artifacts_v2__ = {
                        "package or uid under the column names the section prints.",
         "author": "@danjethh, Claude",
         "creation_date": "2026-10-26",
-        "last_update_date": "2026-10-26",
+        "last_update_date": "2026-10-31",
         "requirements": "none",
         "category": "Android Bug Report - Storage and Databases",
         "notes": "One row per line of the STORAGED IO INFO (storaged -u -p) command section after its name/uid header. Name/UID is "
@@ -733,7 +733,7 @@ __artifacts_v2__ = {
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "storage",
+        "artifact_icon": "database",
         "sample_data": {
             "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 404 rows",
             "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 156 rows",
@@ -747,7 +747,7 @@ __artifacts_v2__ = {
                        "(free space, size totals, storage totals), as item and value as printed.",
         "author": "@danjethh, Claude",
         "creation_date": "2026-10-26",
-        "last_update_date": "2026-10-26",
+        "last_update_date": "2026-10-31",
         "requirements": "none",
         "category": "Android Bug Report - Storage and Databases",
         "notes": "One row per line of the diskstats service dump other than the per-package lists (Latency, Recent Disk Write Speed, "
@@ -769,7 +769,7 @@ __artifacts_v2__ = {
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "storage",
+        "artifact_icon": "database",
         "sample_data": {
             "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 19 rows",
             "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 3 rows",
@@ -783,7 +783,7 @@ __artifacts_v2__ = {
                        "Android bug report text, joined by position, as printed.",
         "author": "@danjethh, Claude",
         "creation_date": "2026-10-26",
-        "last_update_date": "2026-10-26",
+        "last_update_date": "2026-10-31",
         "requirements": "none",
         "category": "Android Bug Report - Storage and Databases",
         "notes": "One row per entry of the Package Names list of the diskstats service dump, joined by position with the same position "
@@ -800,7 +800,7 @@ __artifacts_v2__ = {
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "storage",
+        "artifact_icon": "database",
         "sample_data": {
             "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 0 rows",
             "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 0 rows",

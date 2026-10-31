@@ -447,7 +447,7 @@ __artifacts_v2__ = {
                        "the slot, carrier, network codes, ICCID, IMSI, phone number and card string as printed.",
         "author": "@danjethh, Claude",
         "creation_date": "2026-10-26",
-        "last_update_date": "2026-10-26",
+        "last_update_date": "2026-10-31",
         "requirements": "none",
         "category": "Android Bug Report - Telephony",
         "notes": "One row per subscription line of the Active subscriptions and All subscriptions lists (ActiveSubInfoList and "
@@ -478,7 +478,7 @@ __artifacts_v2__ = {
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "sim-card",
+        "artifact_icon": "device-sim",
         "sample_data": {
             "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 0 rows",
             "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 0 rows",
