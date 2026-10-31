@@ -5,14 +5,14 @@ __artifacts_v2__ = {
         "description": "Rows of the config_history table of the SDHMS anomaly.db: time, reason, configuration key and version as stored. More info: https://bebinary4n6.blogspot.com/2026/01/inside-android-samsung-dhms-extracting.html",
         "author": "Marco Neumann {kalinko@be-binary.de}, @AlexisBrignoni, Codex",
         "creation_date": "2026-01-10",
-        "last_update_date": "2026-10-06",
+        "last_update_date": "2026-10-31",
         "requirements": "",
         "category": "Samsung Device Health Management Service",
         "notes": "Every distinct main database state is read; known canonical aliases collapse only when main/WAL/journal bytes agree. Conflicts remain separate. Combined inputs carry per-row evidence sources. The post linked in the description reports that in its test data most rows had the "
                  "reason BOOT_COMPLETED and that the last five matched that author's device "
                  "reboots. The reason column is reported as stored.",
         "paths": ('*/com.sec.android.sdhms/databases/anomaly.db*'),
-        "output_types": "all",
+        "output_types": "standard",
         "artifact_icon": "settings",
         "sample_data": {
             "anne_a15": "Android 15 | com.sec.android.sdhms | 29 rows",
@@ -27,7 +27,7 @@ __artifacts_v2__ = {
         "description": "Rows of the NETSTAT table of the SDHMS thermal_log database: a time window, package name, uid and net_usage as stored. More info: https://bebinary4n6.blogspot.com/2026/01/inside-android-samsung-dhms-extracting.html",
         "author": "Marco Neumann {kalinko@be-binary.de}, @AlexisBrignoni, Codex",
         "creation_date": "2026-01-10",
-        "last_update_date": "2026-10-09",
+        "last_update_date": "2026-10-31",
         "requirements": "",
         "category": "Samsung Device Health Management Service",
         "notes": "The post linked in the description describes net_usage as bytes transferred in the "
@@ -38,7 +38,7 @@ __artifacts_v2__ = {
                  "bytes agree; conflicting states remain separate. Multi-input rows include their "
                  "evidence-relative Source File.",
         "paths": ('*/com.sec.android.sdhms/databases/thermal_log*'),
-        "output_types": "all",
+        "output_types": "standard",
         "artifact_icon": "chart-bar-popular",
         "sample_data": {
             "anne_a15": "Android 15 | com.sec.android.sdhms | 1582 rows",
@@ -53,14 +53,14 @@ __artifacts_v2__ = {
         "description": "SDHMS temperature log, one row per reading with each sensor column divided by 10. More info: https://bebinary4n6.blogspot.com/2026/01/inside-android-samsung-dhms-extracting.html",
         "author": "Marco Neumann {kalinko@be-binary.de}, @AlexisBrignoni, Codex",
         "creation_date": "2026-01-10",
-        "last_update_date": "2026-10-09",
+        "last_update_date": "2026-10-31",
         "requirements": "",
         "category": "Samsung Device Health Management Service",
         "notes": "Every distinct main database state is read; known canonical aliases collapse only when main/WAL/journal bytes agree. Conflicts remain separate. Combined inputs carry per-row evidence sources. The post linked in the description says the values are stored in degrees Celsius "
                  "times 10 and that on devices with different regional settings they may be stored "
                  "in degrees Fahrenheit, so the unit is not established for every device.",
         "paths": ('*/com.sec.android.sdhms/databases/thermal_log*'),
-        "output_types": "all",
+        "output_types": "standard",
         "artifact_icon": "thermometer",
         "sample_data": {
             "anne_a15": "Android 15 | com.sec.android.sdhms | 567 rows",
@@ -75,7 +75,7 @@ __artifacts_v2__ = {
         "description": "Rows of the CPUSTAT table of the SDHMS thermal_log database: a time window, uptime, process name, uid, pid and the process_usage figure as stored. More info: https://bebinary4n6.blogspot.com/2026/01/inside-android-samsung-dhms-extracting.html",
         "author": "Marco Neumann {kalinko@be-binary.de}, @AlexisBrignoni, Codex",
         "creation_date": "2026-01-10",
-        "last_update_date": "2026-10-06",
+        "last_update_date": "2026-10-31",
         "requirements": "",
         "category": "Samsung Device Health Management Service",
         "notes": "The post linked in the description describes process_usage as CPU time used in the "
@@ -86,7 +86,7 @@ __artifacts_v2__ = {
                  "collapse only when main/WAL/journal bytes agree; conflicting states remain "
                  "separate. Multi-input rows include their evidence-relative Source File.",
         "paths": ('*/com.sec.android.sdhms/databases/thermal_log*'),
-        "output_types": "all",
+        "output_types": "standard",
         "artifact_icon": "cpu",
         "sample_data": {
             "anne_a15": "Android 15 | com.sec.android.sdhms | 963 rows",

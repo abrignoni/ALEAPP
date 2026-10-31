@@ -12,7 +12,7 @@ __artifacts_v2__ = {
                        "the file and are not cryptographically verified.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-07-12",
-        "last_update_date": "2026-10-27",
+        "last_update_date": "2026-10-31",
         "requirements": "none",
         "category": "AI Provenance",
         "notes": "Read by c2pareader (github.com/abrignoni/c2pareader), vendored as "
@@ -63,7 +63,7 @@ __artifacts_v2__ = {
             '*.[dD][nN][gG]', '*.[mM][pP]4', '*.[mM][oO][vV]', '*.[mM]4[vV]',
             '*.[gG][iI][fF]',
         ),
-        "output_types": "all",
+        "output_types": "standard",
         "artifact_icon": "certificate",
         "sample_data": {
             "anne_a15": "2 rows",
