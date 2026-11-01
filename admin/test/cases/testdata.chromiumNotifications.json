@@ -84,7 +84,7 @@
         }
     },
     "caseknowndata_n4_with_cache": {
-        "description": "Known data: Chrome 124.0.6367.219 on an Android 15 emulator (no Google account), a local test page served at http://localhost:8765 through adb reverse, in a fresh session of the same emulator. The page showed notification 4 with an icon and an image, still on screen; the zip adds the Simple Cache entry files of Chrome's HTTP cache, which hold both pictures. Test pages only, contains no personal data.",
+        "description": "Known data: Chrome 124.0.6367.219 on an Android 15 emulator (no Google account), a local test page served at http://localhost:8765 through adb reverse, in a fresh session of the same emulator. The page showed notification 4 with an icon and an image; the row read Live with Closed blank; the zip adds the Simple Cache entry files of Chrome's HTTP cache, which hold both pictures. Test pages only, contains no personal data.",
         "maker": "known data",
         "make_data": {
             "input_data_path": "n4_with_cache.zip",
