@@ -1,0 +1,42 @@
+{
+  "metadata": {
+    "module_name": "chromiumWebsiteUsage",
+    "artifact_name": "Chromium Share History",
+    "function_name": "chromiumShareHistory",
+    "case_number": "caseknowndata_u4_history_cleared_all",
+    "number_of_columns": 6,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 201,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/chromiumWebsiteUsage/testdata.chromiumWebsiteUsage.chromiumShareHistory.caseknowndata_u4_history_cleared_all.zip",
+    "start_time": "2026-11-01T21:39:11.349488+00:00",
+    "end_time": "2026-11-01T21:39:11.468866+00:00",
+    "run_time_seconds": 0.06889891624450684,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-11-01T16:39:11.395663",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Share Day (UTC)",
+    "Share Target (component)",
+    "Share Count",
+    "State",
+    "Browser",
+    "Store Folder"
+  ],
+  "data": [
+    [
+      "2026-11-01",
+      "com.google.android.apps.docs/com.google.android.apps.docs.drive.clipboard.SendTextToClipboardActivity",
+      1,
+      "Earlier version only",
+      "Chrome",
+      "data/data/com.android.chrome/app_chrome/Default/shared_proto_db"
+    ]
+  ]
+}

@@ -1,0 +1,143 @@
+{
+  "metadata": {
+    "module_name": "chromiumWebsiteUsage",
+    "artifact_name": "Chromium Website Usage Events",
+    "function_name": "chromiumWebsiteUsageEvents",
+    "case_number": "caseknowndata_u4_history_cleared_all",
+    "number_of_columns": 7,
+    "number_of_rows": 12,
+    "total_data_size_bytes": 1416,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/chromiumWebsiteUsage/testdata.chromiumWebsiteUsage.chromiumWebsiteUsageEvents.caseknowndata_u4_history_cleared_all.zip",
+    "start_time": "2026-11-01T21:39:11.469464+00:00",
+    "end_time": "2026-11-01T21:39:11.590610+00:00",
+    "run_time_seconds": 0.06949710845947266,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-11-01T16:39:11.516748",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Event Time",
+    "Site",
+    "Event",
+    "Event Type (as stored)",
+    "State",
+    "Browser",
+    "Store Folder"
+  ],
+  "data": [
+    [
+      1793568358,
+      "10.0.2.2",
+      "Start browsing",
+      1,
+      "Deleted, value kept",
+      "Chrome",
+      "data/data/com.android.chrome/app_chrome/Default/shared_proto_db"
+    ],
+    [
+      1793568414,
+      "10.0.2.2",
+      "Stop browsing",
+      2,
+      "Deleted, value kept",
+      "Chrome",
+      "data/data/com.android.chrome/app_chrome/Default/shared_proto_db"
+    ],
+    [
+      1794259620,
+      "10.0.2.2",
+      "Start browsing",
+      1,
+      "Deleted, value kept",
+      "Chrome",
+      "data/data/com.android.chrome/app_chrome/Default/shared_proto_db"
+    ],
+    [
+      1794259632,
+      "10.0.2.2",
+      "Stop browsing",
+      2,
+      "Deleted, value kept",
+      "Chrome",
+      "data/data/com.android.chrome/app_chrome/Default/shared_proto_db"
+    ],
+    [
+      1794259648,
+      "10.0.2.2",
+      "Start browsing",
+      1,
+      "Deleted, value kept",
+      "Chrome",
+      "data/data/com.android.chrome/app_chrome/Default/shared_proto_db"
+    ],
+    [
+      1794259718,
+      "10.0.2.2",
+      "Stop browsing",
+      2,
+      "Deleted, value kept",
+      "Chrome",
+      "data/data/com.android.chrome/app_chrome/Default/shared_proto_db"
+    ],
+    [
+      1794259756,
+      "10.0.2.2",
+      "Start browsing",
+      1,
+      "Deleted, value kept",
+      "Chrome",
+      "data/data/com.android.chrome/app_chrome/Default/shared_proto_db"
+    ],
+    [
+      1794259762,
+      "10.0.2.2",
+      "Stop browsing",
+      2,
+      "Deleted, value kept",
+      "Chrome",
+      "data/data/com.android.chrome/app_chrome/Default/shared_proto_db"
+    ],
+    [
+      1794259810,
+      "10.0.2.2",
+      "Start browsing",
+      1,
+      "Deleted, value kept",
+      "Chrome",
+      "data/data/com.android.chrome/app_chrome/Default/shared_proto_db"
+    ],
+    [
+      1794259837,
+      "10.0.2.2",
+      "Stop browsing",
+      2,
+      "Deleted, value kept",
+      "Chrome",
+      "data/data/com.android.chrome/app_chrome/Default/shared_proto_db"
+    ],
+    [
+      1794259886,
+      "10.0.2.2",
+      "Start browsing",
+      1,
+      "Live",
+      "Chrome",
+      "data/data/com.android.chrome/app_chrome/Default/shared_proto_db"
+    ],
+    [
+      1794259892,
+      "10.0.2.2",
+      "Stop browsing",
+      2,
+      "Live",
+      "Chrome",
+      "data/data/com.android.chrome/app_chrome/Default/shared_proto_db"
+    ]
+  ]
+}
