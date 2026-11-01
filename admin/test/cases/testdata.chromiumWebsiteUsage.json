@@ -1,0 +1,154 @@
+{
+    "caseknowndata_u1_visit_share": {
+        "description": "Known data: Chrome 124.0.6367.219 on an Android 15 emulator (no Google account), a local test page served from the host at 10.0.2.2. The page was opened, shared through Chrome's share sheet to a Copy to clipboard target, and Chrome sent to the background. Test pages only, contains no personal data.",
+        "maker": "known data",
+        "make_data": {
+            "input_data_path": "u1_visit_share.zip",
+            "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+            "timestamp": "2026-11-01T16:38:28.084989",
+            "last_commit": {
+                "hash": "Uncommitted",
+                "author_name": "N/A",
+                "author_email": "N/A",
+                "date": "2026-11-01T16:38:28.074199",
+                "message": "File not yet committed to git"
+            }
+        },
+        "artifacts": {
+            "chromiumWebsiteUsageEvents": {
+                "search_patterns": [
+                    "*/app_*/Default/shared_proto_db/*"
+                ],
+                "file_count": 6,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            },
+            "chromiumShareHistory": {
+                "search_patterns": [
+                    "*/app_*/Default/shared_proto_db/*"
+                ],
+                "file_count": 6,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            }
+        }
+    },
+    "caseknowndata_u2_expired": {
+        "description": "Known data: Chrome 124.0.6367.219 on an Android 15 emulator (no Google account), a local test page served from the host at 10.0.2.2. After u1, the device clock was moved 8 days forward and the page opened again: the first visit's events expired. Test pages only, contains no personal data.",
+        "maker": "known data",
+        "make_data": {
+            "input_data_path": "u2_expired.zip",
+            "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+            "timestamp": "2026-11-01T16:38:28.275725",
+            "last_commit": {
+                "hash": "Uncommitted",
+                "author_name": "N/A",
+                "author_email": "N/A",
+                "date": "2026-11-01T16:38:28.265190",
+                "message": "File not yet committed to git"
+            }
+        },
+        "artifacts": {
+            "chromiumWebsiteUsageEvents": {
+                "search_patterns": [
+                    "*/app_*/Default/shared_proto_db/*"
+                ],
+                "file_count": 7,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            },
+            "chromiumShareHistory": {
+                "search_patterns": [
+                    "*/app_*/Default/shared_proto_db/*"
+                ],
+                "file_count": 7,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            }
+        }
+    },
+    "caseknowndata_u3_history_cleared": {
+        "description": "Known data: Chrome 124.0.6367.219 on an Android 15 emulator (no Google account), a local test page served from the host at 10.0.2.2. After u2, browsing history (only) was cleared for the last hour from Chrome's Clear browsing data. Test pages only, contains no personal data.",
+        "maker": "known data",
+        "make_data": {
+            "input_data_path": "u3_history_cleared.zip",
+            "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+            "timestamp": "2026-11-01T16:38:28.468866",
+            "last_commit": {
+                "hash": "Uncommitted",
+                "author_name": "N/A",
+                "author_email": "N/A",
+                "date": "2026-11-01T16:38:28.457574",
+                "message": "File not yet committed to git"
+            }
+        },
+        "artifacts": {
+            "chromiumWebsiteUsageEvents": {
+                "search_patterns": [
+                    "*/app_*/Default/shared_proto_db/*"
+                ],
+                "file_count": 7,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            },
+            "chromiumShareHistory": {
+                "search_patterns": [
+                    "*/app_*/Default/shared_proto_db/*"
+                ],
+                "file_count": 7,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            }
+        }
+    },
+    "caseknowndata_u4_history_cleared_all": {
+        "description": "Known data: Chrome 124.0.6367.219 on an Android 15 emulator (no Google account), a local test page served from the host at 10.0.2.2. After u3, browsing history (only) was cleared for all time; the share history record was then rewritten empty. Test pages only, contains no personal data.",
+        "maker": "known data",
+        "make_data": {
+            "input_data_path": "u4_history_cleared_all.zip",
+            "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+            "timestamp": "2026-11-01T16:38:28.661675",
+            "last_commit": {
+                "hash": "Uncommitted",
+                "author_name": "N/A",
+                "author_email": "N/A",
+                "date": "2026-11-01T16:38:28.651232",
+                "message": "File not yet committed to git"
+            }
+        },
+        "artifacts": {
+            "chromiumWebsiteUsageEvents": {
+                "search_patterns": [
+                    "*/app_*/Default/shared_proto_db/*"
+                ],
+                "file_count": 8,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            },
+            "chromiumShareHistory": {
+                "search_patterns": [
+                    "*/app_*/Default/shared_proto_db/*"
+                ],
+                "file_count": 8,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            }
+        }
+    }
+}
