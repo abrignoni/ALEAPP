@@ -6,19 +6,19 @@
     "case_number": "caseknowndata_u2_expired",
     "number_of_columns": 7,
     "number_of_rows": 4,
-    "total_data_size_bytes": 452,
+    "total_data_size_bytes": 204,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/chromiumWebsiteUsage/testdata.chromiumWebsiteUsage.chromiumWebsiteUsageEvents.caseknowndata_u2_expired.zip",
-    "start_time": "2026-11-01T21:39:11.193029+00:00",
-    "end_time": "2026-11-01T21:39:11.245709+00:00",
-    "run_time_seconds": 0.0015747547149658203,
+    "start_time": "2026-11-01T22:10:31.764468+00:00",
+    "end_time": "2026-11-01T22:10:31.787668+00:00",
+    "run_time_seconds": 0.0018439292907714844,
     "last_commit": {
-      "hash": "Uncommitted",
-      "author_name": "N/A",
-      "author_email": "N/A",
-      "date": "2026-11-01T16:39:11.239657",
-      "message": "File not yet committed to git"
+      "hash": "2bab3a376928120710b06009d516b16655d759e0",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-11-01T16:58:23-05:00",
+      "message": "Chromium website usage: apply notes audit, report a deleted share history key's last version"
     }
   },
   "headers": [
@@ -28,7 +28,7 @@
     "Event Type (as stored)",
     "State",
     "Browser",
-    "Store Folder"
+    "Android User"
   ],
   "data": [
     [
@@ -38,7 +38,7 @@
       1,
       "Deleted, value kept",
       "Chrome",
-      "data/data/com.android.chrome/app_chrome/Default/shared_proto_db"
+      "0"
     ],
     [
       1793568414,
@@ -47,7 +47,7 @@
       2,
       "Deleted, value kept",
       "Chrome",
-      "data/data/com.android.chrome/app_chrome/Default/shared_proto_db"
+      "0"
     ],
     [
       1794259620,
@@ -56,7 +56,7 @@
       1,
       "Live",
       "Chrome",
-      "data/data/com.android.chrome/app_chrome/Default/shared_proto_db"
+      "0"
     ],
     [
       1794259632,
@@ -65,7 +65,7 @@
       2,
       "Live",
       "Chrome",
-      "data/data/com.android.chrome/app_chrome/Default/shared_proto_db"
+      "0"
     ]
   ]
 }

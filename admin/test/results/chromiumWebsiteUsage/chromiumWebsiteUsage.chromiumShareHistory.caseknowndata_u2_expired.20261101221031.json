@@ -6,19 +6,19 @@
     "case_number": "caseknowndata_u2_expired",
     "number_of_columns": 6,
     "number_of_rows": 1,
-    "total_data_size_bytes": 185,
+    "total_data_size_bytes": 123,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/chromiumWebsiteUsage/testdata.chromiumWebsiteUsage.chromiumShareHistory.caseknowndata_u2_expired.zip",
-    "start_time": "2026-11-01T21:39:11.142531+00:00",
-    "end_time": "2026-11-01T21:39:11.192606+00:00",
-    "run_time_seconds": 0.001341104507446289,
+    "start_time": "2026-11-01T22:10:31.788238+00:00",
+    "end_time": "2026-11-01T22:10:31.809791+00:00",
+    "run_time_seconds": 0.0014040470123291016,
     "last_commit": {
-      "hash": "Uncommitted",
-      "author_name": "N/A",
-      "author_email": "N/A",
-      "date": "2026-11-01T16:39:11.187204",
-      "message": "File not yet committed to git"
+      "hash": "2bab3a376928120710b06009d516b16655d759e0",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-11-01T16:58:23-05:00",
+      "message": "Chromium website usage: apply notes audit, report a deleted share history key's last version"
     }
   },
   "headers": [
@@ -27,7 +27,7 @@
     "Share Count",
     "State",
     "Browser",
-    "Store Folder"
+    "Android User"
   ],
   "data": [
     [
@@ -36,7 +36,7 @@
       1,
       "Live",
       "Chrome",
-      "data/data/com.android.chrome/app_chrome/Default/shared_proto_db"
+      "0"
     ]
   ]
 }
