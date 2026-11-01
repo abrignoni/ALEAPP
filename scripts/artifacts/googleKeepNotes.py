@@ -45,7 +45,7 @@ import datetime
 import os
 import sqlite3
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, is_sqlite_sidecar
 
 
 def _ms_to_utc(value):
@@ -60,7 +60,7 @@ def _ms_to_utc(value):
 def _keep_db(files_found):
     for file_found in files_found:
         file_found = str(file_found)
-        if file_found.endswith(('-wal', '-shm', '-journal')):
+        if is_sqlite_sidecar(file_found):
             continue
         if os.path.basename(file_found) == 'keep.db':
             return file_found

@@ -60,7 +60,7 @@ from scripts.ilapfuncs import (
     artifact_processor,
     does_table_exist_in_db,
     get_sqlite_db_records,
-    logfunc,
+    logfunc, is_sqlite_sidecar,
 )
 
 HISTORY_TABLE = "HistoryLog"
@@ -500,7 +500,7 @@ def samsungSecureFolderHistoryLog(context):
         # The glob matches every file in the databases directory, so skip the
         # SQLite sidecars before probing; opening a -wal/-shm/-journal file
         # logs "file is not a database" without ever holding the table.
-        if file_found.endswith(('-wal', '-shm', '-journal')):
+        if is_sqlite_sidecar(file_found):
             continue
         if not does_table_exist_in_db(file_found, HISTORY_TABLE):
             continue

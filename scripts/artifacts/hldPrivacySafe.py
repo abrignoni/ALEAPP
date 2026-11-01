@@ -153,7 +153,7 @@ from scripts.ilapfuncs import (
     artifact_processor,
     check_in_embedded_media,
     get_sqlite_db_path,
-    logfunc,
+    logfunc, is_sqlite_sidecar,
 )
 
 try:
@@ -339,7 +339,7 @@ def _index_files(context):
     seen = {}
     for file_found in unique_files(context):
         file_found = str(file_found)
-        if os.path.isdir(file_found) or file_found.endswith(('-wal', '-shm', '-journal')):
+        if os.path.isdir(file_found) or is_sqlite_sidecar(file_found):
             continue
         if os.path.basename(file_found) != 'privacy_safe.db':
             continue

@@ -223,7 +223,7 @@ import datetime
 import pathlib
 from pathlib import Path
 from scripts.ilapfuncs import (
-    artifact_processor, check_in_media, does_column_exist_in_db, get_sqlite_db_records, get_file_path, logfunc)
+    artifact_processor, check_in_media, does_column_exist_in_db, get_sqlite_db_records, get_file_path, logfunc, is_sqlite_sidecar)
 from scripts.ccl import ccl_leveldb
 
 
@@ -491,7 +491,7 @@ def duckduckgo_downloads(context):
     source_path = None
     for f in files_found:
         p = Path(f)
-        if p.name.endswith("-wal") or p.name.endswith("-shm"):
+        if is_sqlite_sidecar(p.name):
             continue
         if is_sqlite_db(f):
             source_path = str(f)

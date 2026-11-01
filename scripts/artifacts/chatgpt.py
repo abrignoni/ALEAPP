@@ -149,7 +149,7 @@ import re
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
-from scripts.ilapfuncs import decode_protobuf
+from scripts.ilapfuncs import decode_protobuf, is_sqlite_sidecar
 from PIL import Image, UnidentifiedImageError
 
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly, check_in_media, \
@@ -282,7 +282,7 @@ def get_chatgpt_user(context):
     source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
-        if file_found.endswith(('-wal', '-shm', '-journal')):
+        if is_sqlite_sidecar(file_found):
             continue
         if not file_found.endswith('_user.preferences_pb'):
             continue
@@ -303,7 +303,7 @@ def get_chatgpt_accountstatus(context):
     source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
-        if file_found.endswith(('-wal', '-shm', '-journal')):
+        if is_sqlite_sidecar(file_found):
             continue
         if not file_found.endswith('_accountstatus.preferences_pb'):
             continue
@@ -328,7 +328,7 @@ def get_chatgpt_accountuserstate(context):
     source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
-        if file_found.endswith(('-wal', '-shm', '-journal')):
+        if is_sqlite_sidecar(file_found):
             continue
         if not file_found.endswith('_accountuser_state.preferences_pb'):
             continue
@@ -364,7 +364,7 @@ def get_chatgpt_custominstructions(context):
     source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
-        if file_found.endswith(('-wal', '-shm', '-journal')):
+        if is_sqlite_sidecar(file_found):
             continue
         if not file_found.endswith('_custom_instructions.preferences_pb'):
             continue
@@ -385,7 +385,7 @@ def get_chatgpt_usersettings(context):
     source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
-        if file_found.endswith(('-wal', '-shm', '-journal')):
+        if is_sqlite_sidecar(file_found):
             continue
         if not file_found.endswith('_user_settings.preferences_pb'):
             continue
@@ -409,7 +409,7 @@ def get_chatgpt_analytics(context):
     source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
-        if file_found.endswith(('-wal', '-shm', '-journal')):
+        if is_sqlite_sidecar(file_found):
             continue
         if os.path.basename(file_found) != 'analytics-android-oai.xml':
             continue
@@ -445,7 +445,7 @@ def get_chatgpt_media(context):
     source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
-        if file_found.endswith(('-wal', '-shm', '-journal')):
+        if is_sqlite_sidecar(file_found):
             continue
         if not os.path.isfile(file_found) or not ('cache' in file_found and 'files' in file_found):
             continue
