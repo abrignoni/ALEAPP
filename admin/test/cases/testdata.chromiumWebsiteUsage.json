@@ -1,6 +1,6 @@
 {
     "caseknowndata_u1_visit_share": {
-        "description": "Known data: Chrome 124.0.6367.219 on an Android 15 emulator (no Google account), a local test page served from the host at 10.0.2.2. The page was opened, shared through the Android share sheet to the Copy to clipboard target, and Chrome sent to the background. Test pages only, contains no personal data.",
+        "description": "Known data: Chrome 124.0.6367.219 on an Android 15 emulator (no Google account), a local test page served from the host at 10.0.2.2. The page was opened, shared through Chrome's share sheet to a Copy to clipboard target, and Chrome sent to the background. Test pages only, contains no personal data.",
         "maker": "known data",
         "make_data": {
             "input_data_path": "u1_visit_share.zip",
