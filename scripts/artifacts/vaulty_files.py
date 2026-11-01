@@ -23,7 +23,8 @@ __artifacts_v2__ = {
     }
 }
 
-from scripts.ilapfuncs import artifact_processor, convert_human_ts_to_utc, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, convert_human_ts_to_utc, open_sqlite_db_readonly, \
+    sqlite_databases
 
 
 @artifact_processor
@@ -43,7 +44,7 @@ def get_vaulty_files(context):
     data_list = []
 
     # Media database
-    db_filepath = str(files_found[0])
+    db_filepath = sqlite_databases(files_found)[0]
     conn = open_sqlite_db_readonly(db_filepath)
     if not conn:
         return data_headers, data_list, db_filepath
