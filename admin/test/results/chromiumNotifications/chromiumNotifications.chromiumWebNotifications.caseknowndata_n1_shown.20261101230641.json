@@ -1,0 +1,66 @@
+{
+  "metadata": {
+    "module_name": "chromiumNotifications",
+    "artifact_name": "Chromium Web Notifications",
+    "function_name": "chromiumWebNotifications",
+    "case_number": "caseknowndata_n1_shown",
+    "number_of_columns": 18,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 161,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/chromiumNotifications/testdata.chromiumNotifications.chromiumWebNotifications.caseknowndata_n1_shown.zip",
+    "start_time": "2026-11-01T23:06:41.877651+00:00",
+    "end_time": "2026-11-01T23:06:41.930111+00:00",
+    "run_time_seconds": 0.0010209083557128906,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-11-01T18:06:41.923952",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Created",
+    "Site",
+    "Title",
+    "Body",
+    "Clicks",
+    "Action Button Clicks",
+    "First Click",
+    "Last Click",
+    "Closed",
+    "Closed Reason (as stored)",
+    "Site Timestamp",
+    "Tag",
+    "Icon URL",
+    "Image URL",
+    "Action Buttons",
+    "State",
+    "Browser",
+    "Android User"
+  ],
+  "data": [
+    [
+      1793574159,
+      "http://localhost:8765/",
+      "known data title 1",
+      "known data body 1",
+      0,
+      0,
+      "",
+      "",
+      "",
+      "Unknown",
+      1793574159,
+      "kd1",
+      "http://localhost:8765/icon.png",
+      "http://localhost:8765/image.png",
+      "",
+      "Live",
+      "Chrome",
+      "0"
+    ]
+  ]
+}
