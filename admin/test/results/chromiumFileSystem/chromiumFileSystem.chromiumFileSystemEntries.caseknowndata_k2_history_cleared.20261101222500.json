@@ -4,21 +4,21 @@
     "artifact_name": "Chromium File System API - Files",
     "function_name": "chromiumFileSystemEntries",
     "case_number": "caseknowndata_k2_history_cleared",
-    "number_of_columns": 12,
+    "number_of_columns": 13,
     "number_of_rows": 6,
-    "total_data_size_bytes": 1026,
+    "total_data_size_bytes": 612,
     "media_checkins": 2,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/chromiumFileSystem/testdata.chromiumFileSystem.chromiumFileSystemEntries.caseknowndata_k2_history_cleared.zip",
-    "start_time": "2026-10-29T23:05:25.079486+00:00",
-    "end_time": "2026-10-29T23:05:25.101792+00:00",
-    "run_time_seconds": 0.0015690326690673828,
+    "start_time": "2026-11-01T22:25:00.760243+00:00",
+    "end_time": "2026-11-01T22:25:00.787390+00:00",
+    "run_time_seconds": 0.00115203857421875,
     "last_commit": {
-      "hash": "929298d814a030eb08e295edbd68eab19dd74c3e",
+      "hash": "6beb23e1705346b54e8a134f732331f077370764",
       "author_name": "Brigs",
       "author_email": "abrignoni@gmail.com",
-      "date": "2026-10-29T18:19:11-04:00",
-      "message": "Chromium File System API: apply notes audit"
+      "date": "2026-10-29T19:15:23-04:00",
+      "message": "Chromium File System API bucket notes: tighten wording and citations"
     }
   },
   "headers": [
@@ -32,8 +32,9 @@
     "Size",
     "Data Path (as stored)",
     "Storage Type",
+    "Bucket ID",
     "Browser",
-    "Store Folder"
+    "Android User"
   ],
   "data": [
     [
@@ -47,8 +48,9 @@
       "",
       "",
       "Temporary",
+      "1",
       "Chrome",
-      "data/data/com.android.chrome/app_chrome/Default/WebStorage/1/FileSystem"
+      "0"
     ],
     [
       1793314551,
@@ -61,8 +63,9 @@
       "",
       "",
       "Temporary",
+      "1",
       "Chrome",
-      "data/data/com.android.chrome/app_chrome/Default/WebStorage/1/FileSystem"
+      "0"
     ],
     [
       1793314551,
@@ -75,8 +78,9 @@
       "",
       "",
       "Temporary",
+      "1",
       "Chrome",
-      "data/data/com.android.chrome/app_chrome/Default/WebStorage/1/FileSystem"
+      "0"
     ],
     [
       "",
@@ -89,8 +93,9 @@
       70,
       "00/00000000",
       "Temporary",
+      "1",
       "Chrome",
-      "data/data/com.android.chrome/app_chrome/Default/WebStorage/1/FileSystem"
+      "0"
     ],
     [
       "",
@@ -103,8 +108,9 @@
       51,
       "00/00000002",
       "Temporary",
+      "1",
       "Chrome",
-      "data/data/com.android.chrome/app_chrome/Default/WebStorage/1/FileSystem"
+      "0"
     ],
     [
       "",
@@ -117,8 +123,9 @@
       "",
       "",
       "Temporary",
+      "1",
       "Chrome",
-      "data/data/com.android.chrome/app_chrome/Default/WebStorage/1/FileSystem"
+      "0"
     ]
   ]
 }
