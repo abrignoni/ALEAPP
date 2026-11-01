@@ -6,11 +6,11 @@ __artifacts_v2__ = {
                        "Origin Private File System).",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-10-29",
-        "last_update_date": "2026-10-29",
+        "last_update_date": "2026-11-01",
         "requirements": "none",
         "category": "Chromium",
-        "notes": "Reads the Origins database in a Chromium profile's File System folder (any "
-                 "<package>/app_*/Default/File System). Format and meanings come from Chromium at commit "
+        "notes": "Reads the Origins database in every Default/File System folder found (on the tested "
+                 "images these sit under <package>/app_*/). Format and meanings come from Chromium at commit "
                  "3a50e012e4c9b8a410a4e2b12bf577e69ee8f755 (tag 130.0.6723.58). The folder is read with "
                  "the vendored ccl_leveldb, and only the newest version of each key is used: LevelDB "
                  "orders the versions of a key by sequence number "
@@ -23,8 +23,8 @@ __artifacts_v2__ = {
                  "(navigator.storage.getDirectory) both stored them in this folder, under one site "
                  "folder. After clearing only browsing history for the last hour, the site's History rows "
                  "were gone and its Origins record, folder names, file names and file contents were "
-                 "unchanged; Chrome rewrote the Origin Private File System file between the two "
-                 "snapshots, so that file's data path and its folder's stored time changed. After "
+                 "unchanged. Between the two snapshots the Origin Private File System file was stored "
+                 "again: its data path and its folder's stored time changed and its content did not. After "
                  "clearing cookies and site data for the last hour, the site folder was removed and the "
                  "newest version of its Origins key was a deletion. Other Chrome versions and WebView "
                  "apps were not tested this way. The Origins database keys each site as "
@@ -49,28 +49,33 @@ __artifacts_v2__ = {
                  "(https://github.com/chromium/chromium/blob/3a50e012e4c9b8a410a4e2b12bf577e69ee8f755/storage/browser/file_system/obfuscated_file_util.cc#L926-L930). "
                  "Storage a site holds while embedded in another site, or in a named bucket, is kept "
                  "under WebStorage/<bucket>/FileSystem and is reported in Chromium File System API - "
-                 "Bucket Storage. A row records that a site opened a sandboxed file system in that "
-                 "profile; it need not have saved a file, and on the tested images 30 of the 31 live rows "
-                 "had no saved entries. It does not establish when or who used the browser, and the "
-                 "database stores no time. On the tested images: 33 rows on 16 of 22 images, 30 live with "
-                 "their folder present, 1 live whose folder was not in the extraction (pixel3_a12) and 2 "
-                 "deleted (adams_ss135dl_a13); Browser was Chrome on 28 rows, "
-                 "com.sec.android.app.sbrowser on 2, Edge on 1, com.duckduckgo.mobile.android on 1 and an "
-                 "app's WebView (com.xingin.xhs) on 1. Browser and Profile Folder held one value on every "
-                 "row of 13 of the 16 images with rows, and the other 3 held two profiles; State held "
-                 "Live and Folder Present held Yes on every row of every image but adams_ss135dl_a13 and "
-                 "pixel3_a12; Saved Entries held 0 on every live row but one on pixel3_a12, which held 1. "
-                 "In known data Site held one value, the test site, on every row.",
+                 "Bucket Storage. Android User is the Android user whose app data directory holds the "
+                 "profile, read from its path (data/data, data/user/0 and userdata/data are user 0, "
+                 "data/user/<n> and userdata/user/<n> user n; data_mirror and user_de paths name the user "
+                 "the same way, and the column is blank when the path is under no app data directory); the "
+                 "Origins folder of each profile with a row, and the Paths folders under it, are listed in "
+                 "the report's source paths. A row records that a site opened a sandboxed file system in "
+                 "that profile; it need not have saved a file, and on the tested images 30 of the 31 rows had "
+                 "no saved entries. It does not establish when or who used the browser, and the database "
+                 "stores no time. On the tested images: 31 rows on 15 of 20 images, all Live, 30 with "
+                 "their folder present and 1 whose folder was not in the extraction (pixel3_a12); no "
+                 "tested image had a Deleted row, which was seen in the known data after site data was "
+                 "cleared. Browser was Chrome on 26 rows, com.sec.android.app.sbrowser on 2, Edge on 1, "
+                 "com.duckduckgo.mobile.android on 1 and com.xingin.xhs on 1; those two profiles sit under an "
+                 "app_webview folder rather than app_chrome. Browser "
+                 "held one value on every row of 12 of the 15 images with rows, and the other 3 held two "
+                 "browsers; each Browser and Android User pair named one profile, and Android User held 0 "
+                 "on every row. State held Live on every row, and Folder Present held Yes and Saved "
+                 "Entries held 0 on every row of every image but pixel3_a12, where one row had No and "
+                 "one held 1. In known data Site held one value, the test site, on every row.",
         "paths": ('*/Default/File System/*',),
         "output_types": "standard",
         "artifact_icon": "globe",
         "sample_data": {
-            "adams_ss135dl_a13": "Android 13 | 2 rows",
             "anne_a15": "Android 15 | 0 rows",
             "cookbook_a11": "Android 11 | 1 row",
             "emu_a15_oss2_v3": "Android 15 | 0 rows",
             "emu_a15_oss_v17": "Android 15 | 1 row",
-            "falken_a326u_a13": "Android 13 | 0 rows",
             "galaxys10_a10": "Android 10 | 3 rows",
             "hc_pixel8pro_a16": "Android 16 | 1 row",
             "hc_pixel8pro_a17": "Android 17 | 2 rows",
@@ -95,11 +100,12 @@ __artifacts_v2__ = {
                        "the Paths database of each site folder, with the saved file shown as media.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-10-29",
-        "last_update_date": "2026-10-29",
+        "last_update_date": "2026-11-01",
         "requirements": "none",
         "category": "Chromium",
         "notes": "Reads the Paths database in each type folder of a Chromium profile's File System folder "
-                 "(any <package>/app_*/Default/File System/<folder>/t, p or s) and of each bucket "
+                 "(every Default/File System/<folder>/t, p or s found; on the tested images these sit "
+                 "under <package>/app_*/) and of each bucket "
                  "FileSystem folder (<package>/app_*/Default/WebStorage/<bucket id>/FileSystem/t, p or "
                  "s), the temporary, persistent and syncable types "
                  "(https://github.com/chromium/chromium/blob/3a50e012e4c9b8a410a4e2b12bf577e69ee8f755/storage/browser/file_system/sandbox_file_system_backend_delegate.cc#L52-L54). "
@@ -116,8 +122,8 @@ __artifacts_v2__ = {
                  "(navigator.storage.getDirectory) both stored them in this folder, under one site "
                  "folder. After clearing only browsing history for the last hour, the site's History rows "
                  "were gone and its Origins record, folder names, file names and file contents were "
-                 "unchanged; Chrome rewrote the Origin Private File System file between the two "
-                 "snapshots, so that file's data path and its folder's stored time changed. After "
+                 "unchanged. Between the two snapshots the Origin Private File System file was stored "
+                 "again: its data path and its folder's stored time changed and its content did not. After "
                  "clearing cookies and site data for the last hour, the site folder was removed and the "
                  "newest version of its Origins key was a deletion. Other Chrome versions and WebView "
                  "apps were not tested this way. Each entry is stored under its numeric id as a record of "
@@ -151,28 +157,38 @@ __artifacts_v2__ = {
                  "bucket FileSystem folder Site is the origin of the bucket's storage key and Top-Level "
                  "Site the top-level site the key names, blank when it names none (see Chromium File "
                  "System API - Bucket Storage); Top-Level Site is blank on first-party rows. Storage Type "
-                 "names the type folder and Store Folder the File System or bucket FileSystem folder. In "
+                 "names the type folder. Bucket ID is the bucket's id, the folder under WebStorage that "
+                 "holds the bucket FileSystem folder, and is blank on first-party rows. It separates bucket "
+                 "rows from first-party rows of the same site when Top-Level Site cannot: a bucket whose "
+                 "storage key names no top-level site, such as a site's named bucket, has a blank "
+                 "Top-Level Site too (from the sources cited in Chromium File System API - Bucket Storage; "
+                 "no tested image had such a bucket with a FileSystem folder). "
+                 "Android User is the Android user whose app data directory holds the store, read from its "
+                 "path (data/data, data/user/0 and userdata/data are user 0, data/user/<n> and userdata/user/<n> "
+                 "user n; data_mirror and user_de paths name the user the same way, and the column is blank "
+                 "when the path is under no app data directory); the Paths folders that gave "
+                 "rows are listed in the report's source paths. In "
                  "the known data the two file rows showed the exact text written, the folder times "
                  "matched the test's clock to the second, and one Deleted row named a file with .crswap "
-                 "appended that Chrome created and removed during the Origin Private File System write. "
+                 "appended that Chrome created and removed during the Origin Private File System write "
+                 "(https://github.com/chromium/chromium/blob/3a50e012e4c9b8a410a4e2b12bf577e69ee8f755/content/browser/file_system_access/file_system_access_file_handle_impl.cc#L616). "
                  "On the tested images: 2 rows, both on pixel3_a12: its root folder and one folder below "
                  "it, both Live and Temporary, so File, Size and Data Path are blank on both and Storage "
                  "Type held Temporary on every row. Top-Level Site was blank on both, as no bucket store "
                  "on the tested images held an entry. In the known data of each test Site held one value, "
-                 "the test site, on every row, and Top-Level Site held one value on every row of the "
-                 "bucket test; Browser and Store Folder held one value on every row of the one image with "
+                 "the test site, on every row, and Top-Level Site and Bucket ID held one value on every "
+                 "row of the bucket test, Bucket ID being blank in the first-party test. On the one image "
+                 "with rows Bucket ID was blank, Browser held one value and Android User held 0 on both "
                  "rows.",
         "paths": ('*/Default/File System/*', '*/Default/WebStorage/*/FileSystem/*',
                   '*/Default/WebStorage/QuotaManager*'),
         "output_types": "standard",
         "artifact_icon": "file",
         "sample_data": {
-            "adams_ss135dl_a13": "Android 13 | 0 rows",
             "anne_a15": "Android 15 | 0 rows",
             "cookbook_a11": "Android 11 | 0 rows",
             "emu_a15_oss2_v3": "Android 15 | 0 rows",
             "emu_a15_oss_v17": "Android 15 | 0 rows",
-            "falken_a326u_a13": "Android 13 | 0 rows",
             "galaxys10_a10": "Android 10 | 0 rows",
             "hc_pixel8pro_a16": "Android 16 | 0 rows",
             "hc_pixel8pro_a17": "Android 17 | 0 rows",
@@ -197,7 +213,7 @@ __artifacts_v2__ = {
                        "storage of a site embedded in another site, with the bucket's storage key and times.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-10-29",
-        "last_update_date": "2026-10-29",
+        "last_update_date": "2026-11-01",
         "requirements": "none",
         "category": "Chromium",
         "notes": "Reads the File System API storage Chromium keeps per storage bucket: "
@@ -231,7 +247,13 @@ __artifacts_v2__ = {
                  "(https://github.com/chromium/chromium/blob/3a50e012e4c9b8a410a4e2b12bf577e69ee8f755/storage/browser/file_system/sandbox_file_system_backend_delegate.cc#L97-L104, "
                  "https://github.com/chromium/chromium/blob/3a50e012e4c9b8a410a4e2b12bf577e69ee8f755/storage/browser/file_system/sandbox_file_system_backend_delegate.cc#L223-L258). "
                  "When QuotaManager is missing or does not list the id, Site, Top-Level Site, Storage "
-                 "Key, Bucket Name and both times are blank. The storage views one extraction can hold "
+                 "Key, Bucket Name and both times are blank. "
+                 "Android User is the Android user whose app data directory holds the bucket, read from its "
+                 "path (data/data, data/user/0 and userdata/data are user 0, data/user/<n> and userdata/user/<n> "
+                 "user n; data_mirror and user_de paths name the user the same way, and the column is blank "
+                 "when the path is under no app data directory); each bucket FileSystem folder "
+                 "read is listed in the report's source paths, with QuotaManager when it lists any bucket. "
+                 "The storage views one extraction can hold "
                  "for an app data directory (data/data, data/user/0, data_mirror) are read once; a second "
                  "Android user's folder is read as its own. The Paths databases are read with the "
                  "vendored ccl_leveldb, newest version of each key only "
@@ -246,22 +268,20 @@ __artifacts_v2__ = {
                  "contents were unchanged. After clearing cookies and site data for the last hour, the "
                  "bucket folder and its QuotaManager row were gone, and no file left in the WebStorage "
                  "folder named the site. Other Chrome versions and WebView apps were not tested this way. "
-                 "On the tested images: 29 rows on 6 of 22 images (anne_a15 6, cookbook_a11 1, "
-                 "falken_a326u_a13 1, kevin_pocox7_a15 14, russell_a14 4, sharon_a14 3), all Chrome; "
-                 "every row held a Top-Level Site and both times, Bucket Name held _default on every row "
-                 "and Saved Entries held 0 on every row. 28 of those folders held a Paths database with "
-                 "no records and the one on falken_a326u_a13 held an empty t folder only. Buckets "
+                 "On the tested images: 28 rows on 5 of 20 images (anne_a15 6, cookbook_a11 1, "
+                 "kevin_pocox7_a15 14, russell_a14 4, sharon_a14 3); every row held a Top-Level Site and "
+                 "both times, and Browser held Chrome, Bucket Name held _default, Saved Entries held 0 "
+                 "and Android User held 0 on every row. Every one of those folders held a Paths database. "
+                 "Buckets "
                  "QuotaManager lists that have no FileSystem folder are not reported.",
         "paths": ('*/Default/WebStorage/*/FileSystem/*', '*/Default/WebStorage/QuotaManager*'),
         "output_types": "standard",
         "artifact_icon": "layers",
         "sample_data": {
-            "adams_ss135dl_a13": "Android 13 | 0 rows",
             "anne_a15": "Android 15 | 6 rows",
             "cookbook_a11": "Android 11 | 1 row",
             "emu_a15_oss2_v3": "Android 15 | 0 rows",
             "emu_a15_oss_v17": "Android 15 | 0 rows",
-            "falken_a326u_a13": "Android 13 | 1 row",
             "galaxys10_a10": "Android 10 | 0 rows",
             "hc_pixel8pro_a16": "Android 16 | 0 rows",
             "hc_pixel8pro_a17": "Android 17 | 0 rows",
@@ -289,7 +309,7 @@ import sqlite3
 import struct
 
 from scripts.artifacts.chrome import get_browser_name
-from scripts.artifacts.storagePathViews import unique_files
+from scripts.artifacts.storagePathViews import android_user, unique_files
 from scripts.ccl import ccl_leveldb
 from scripts.ilapfuncs import artifact_processor, check_in_media, logfunc, open_sqlite_db_readonly
 
@@ -494,25 +514,27 @@ def chromiumFileSystemSites(context):
     data_list = []
     sources = []
     for root in _roots(context):
-        relative = context.get_relative_path(root)
+        user = android_user(context.get_relative_path(root))
         origins = _origins(root, context, label)
         if origins:
             sources.append(os.path.join(root, 'Origins'))
         live_counts = {}
         for site_folder, _letter, paths in _path_stores(root):
             live, _deleted = _entries(paths, context, label)
+            if origins:
+                sources.append(paths)
             live_counts[site_folder] = live_counts.get(site_folder, 0) + sum(1 for entry_id in live if entry_id)
         for key, state, folder in origins:
             present = os.path.isdir(os.path.join(root, folder)) if folder else False
             data_list.append((state, _site(key), key, folder, 'Yes' if present else 'No',
                               live_counts.get(folder, 0) if folder else '',
-                              get_browser_name(root + '/x'), relative))
+                              get_browser_name(root + '/x'), user))
     data_headers = ('State', 'Site', 'Site Key (as stored)', 'Folder', 'Folder Present', 'Saved Entries',
-                    'Browser', 'Profile Folder')
+                    'Browser', 'Android User')
     return data_headers, data_list, '\n'.join(sources)
 
 
-def _entry_rows(live, deleted, type_folder, letter, site, top_site, browser, store):
+def _entry_rows(live, deleted, type_folder, letter, site, top_site, bucket_id, browser, user):
     """Rows of one Paths store: its live entries, then the names its deleted CHILD_OF keys give."""
     rows = []
     for entry_id in sorted(live):
@@ -527,11 +549,11 @@ def _entry_rows(live, deleted, type_folder, letter, site, top_site, browser, sto
         rows.append((_chromium_time(internal) if is_folder else '', site, top_site,
                      _full_path(entry_id, live) if entry_id else '/',
                      'Folder' if is_folder else 'File', 'Live', media, size, data_path,
-                     _TYPES[letter], browser, store))
+                     _TYPES[letter], bucket_id, browser, user))
     for parent, name in deleted:
         parent_path = _full_path(parent, live) if parent else ''
         rows.append(('', site, top_site, f'{parent_path}/{name}' if parent_path != '/' else f'/{name}',
-                     '', 'Deleted', '', '', '', _TYPES[letter], browser, store))
+                     '', 'Deleted', '', '', '', _TYPES[letter], bucket_id, browser, user))
     return rows
 
 
@@ -541,7 +563,7 @@ def chromiumFileSystemEntries(context):
     data_list = []
     sources = []
     for root in _roots(context):
-        relative = context.get_relative_path(root)
+        user = android_user(context.get_relative_path(root))
         sites = {folder: key for key, state, folder in _origins(root, context, label) if state == 'Live'}
         browser = get_browser_name(root + '/x')
         for site_folder, letter, paths in _path_stores(root):
@@ -551,7 +573,7 @@ def chromiumFileSystemEntries(context):
             sources.append(paths)
             key = sites.get(site_folder, '')
             data_list.extend(_entry_rows(live, deleted, os.path.join(root, site_folder, letter), letter,
-                                         _site(key) if key else '', '', browser, relative))
+                                         _site(key) if key else '', '', '', browser, user))
     quota = {}
     for webstorage, bucket_id, file_system in _bucket_stores(context):
         if webstorage not in quota:
@@ -559,15 +581,17 @@ def chromiumFileSystemEntries(context):
         storage_key = quota[webstorage].get(bucket_id, ('',))[0]
         site, top_site = _key_sites(storage_key) if storage_key else ('', '')
         browser = get_browser_name(webstorage + '/x')
+        user = android_user(context.get_relative_path(file_system))
         for letter, paths in _bucket_paths(file_system):
             live, deleted = _entries(paths, context, label)
             if not live and not deleted:
                 continue
             sources.append(paths)
             data_list.extend(_entry_rows(live, deleted, os.path.join(file_system, letter), letter, site, top_site,
-                                         browser, context.get_relative_path(file_system)))
+                                         bucket_id, browser, user))
     data_headers = (('Folder Last Changed', 'datetime'), 'Site', 'Top-Level Site', 'Path', 'Entry Type', 'State',
-                    ('File', 'media'), 'Size', 'Data Path (as stored)', 'Storage Type', 'Browser', 'Store Folder')
+                    ('File', 'media'), 'Size', 'Data Path (as stored)', 'Storage Type', 'Bucket ID', 'Browser',
+                    'Android User')
     return data_headers, data_list, '\n'.join(sources)
 
 
@@ -582,6 +606,7 @@ def chromiumFileSystemBuckets(context):
             quota[webstorage] = _buckets(webstorage, context, label)
             if quota[webstorage]:
                 sources.append(os.path.join(webstorage, 'QuotaManager'))
+        sources.append(file_system)
         storage_key, name, accessed, modified = quota[webstorage].get(bucket_id, ('', '', 0, 0))
         site, top_site = _key_sites(storage_key) if storage_key else ('', '')
         saved = 0
@@ -590,8 +615,8 @@ def chromiumFileSystemBuckets(context):
             saved += sum(1 for entry_id in live if entry_id)
         data_list.append((_chromium_time(modified), _chromium_time(accessed), site, top_site, storage_key, name,
                           bucket_id, saved, get_browser_name(webstorage + '/x'),
-                          context.get_relative_path(file_system)))
+                          android_user(context.get_relative_path(file_system))))
     data_headers = (('Bucket Last Modified', 'datetime'), ('Bucket Last Accessed', 'datetime'), 'Site',
                     'Top-Level Site', 'Storage Key (as stored)', 'Bucket Name (as stored)', 'Bucket ID',
-                    'Saved Entries', 'Browser', 'Store Folder')
+                    'Saved Entries', 'Browser', 'Android User')
     return data_headers, data_list, '\n'.join(sources)
