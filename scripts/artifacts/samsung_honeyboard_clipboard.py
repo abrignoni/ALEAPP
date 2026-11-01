@@ -159,7 +159,7 @@ except ImportError:
     _PIL_AVAILABLE = False
 
 from scripts.ilapfuncs import (artifact_processor, logfunc, open_sqlite_db_readonly,
-                               check_in_embedded_media, checkabx, abxread)
+                               check_in_embedded_media, checkabx, abxread, is_sqlite_sidecar)
 from scripts.sqlite_wal import EARLIER_VERSION, rows_not_in_current
 
 # ClipData type codes
@@ -382,7 +382,7 @@ def get_honeyboard_clipboard_live(context):
 
     for file_found in files_found:
         file_found = str(file_found)
-        if file_found.endswith("-wal") or file_found.endswith("-shm"):
+        if is_sqlite_sidecar(file_found):
             continue
 
         source_path = file_found
@@ -454,7 +454,7 @@ def get_honeyboard_clipboard_deleted(context):
 
     for file_found in files_found:
         file_found = str(file_found)
-        if file_found.endswith(("-wal", "-shm", "-journal")):
+        if is_sqlite_sidecar(file_found):
             continue
         if not os.path.exists(file_found + "-wal"):
             logfunc(f"honeyboard_clipboard WAL states: no -wal beside {file_found}")

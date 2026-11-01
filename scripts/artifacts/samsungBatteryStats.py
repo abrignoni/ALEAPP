@@ -100,14 +100,14 @@ __artifacts_v2__ = {
 }
 
 from scripts.ilapfuncs import artifact_processor, get_sqlite_db_records, \
-    convert_unix_ts_to_utc, does_column_exist_in_db
+    convert_unix_ts_to_utc, does_column_exist_in_db, is_sqlite_sidecar
 
 
 def _history_db(context):
     '''First sec_batterystats_history database, skipping -wal/-shm sidecars and mirrors.'''
     for file_found in context.get_files_found():
         file_found = str(file_found)
-        if file_found.endswith(('-wal', '-shm')):
+        if is_sqlite_sidecar(file_found):
             continue
         if 'data_mirror' in file_found:
             continue

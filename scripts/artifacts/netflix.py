@@ -360,7 +360,7 @@ from scripts.ilapfuncs import (
     check_in_media,
     convert_unix_ts_to_utc,
     get_sqlite_db_records,
-    logfunc,
+    logfunc, is_sqlite_sidecar,
 )
 from scripts.artifacts.storagePathViews import canonical_path, unique_files
 
@@ -416,12 +416,12 @@ def _databases(files_found, name):
     not databases to open in their own right.
     """
     return [path for path in _paths_matching(files_found, f'/databases/{name}')
-            if not path.endswith(('-wal', '-shm', '-journal'))]
+            if not is_sqlite_sidecar(path)]
 
 
 def _apollo_databases(files_found):
     return [path for path in _paths_matching(files_found, '/databases/apollo_cache_v1_')
-            if not path.endswith(('-wal', '-shm', '-journal'))]
+            if not is_sqlite_sidecar(path)]
 
 
 def _apollo_profile_id(path):

@@ -201,7 +201,7 @@ import os
 import re
 from pathlib import Path
 import xml.etree.ElementTree as ET
-from scripts.ilapfuncs import artifact_processor, check_in_media, get_sqlite_db_records, logfunc
+from scripts.ilapfuncs import artifact_processor, check_in_media, get_sqlite_db_records, logfunc, is_sqlite_sidecar
 
 INVALID_XML_CHARS = re.compile(r'[\x00-\x08\x0b\x0c\x0e-\x1f]')
 BARE_AMPERSAND = re.compile(r'&(?!(?:amp|lt|gt|quot|apos|#\d+|#x[0-9A-Fa-f]+);)')
@@ -237,7 +237,7 @@ def ornetbrowser_bookmarks(context):
     source_path = None
     for f in files_found:
         p = Path(f)
-        if p.name.endswith("-wal") or p.name.endswith("-shm"):
+        if is_sqlite_sidecar(p.name):
             continue
         if is_sqlite_db(f):
             source_path = str(f)
@@ -278,7 +278,7 @@ def ornetbrowser_suggestions(context):
     source_path = None
     for f in files_found:
         p = Path(f)
-        if p.name.endswith("-wal") or p.name.endswith("-shm"):
+        if is_sqlite_sidecar(p.name):
             continue
         if is_sqlite_db(f):
             source_path = str(f)
@@ -317,7 +317,7 @@ def ornetbrowser_history(context):
     source_path = None
     for f in files_found:
         p = Path(f)
-        if p.name.endswith("-wal") or p.name.endswith("-shm"):
+        if is_sqlite_sidecar(p.name):
             continue
         if is_sqlite_db(f):
             source_path = str(f)
@@ -358,7 +358,7 @@ def ornetbrowser_opentabs(context):
     source_path = None
     for f in files_found:
         p = Path(f)
-        if p.name.endswith("-wal") or p.name.endswith("-shm"):
+        if is_sqlite_sidecar(p.name):
             continue
         if is_sqlite_db(f):
             source_path = str(f)
@@ -440,7 +440,7 @@ def ornetbrowser_frequents(context):
     source_path = None
     for f in files_found:
         p = Path(f)
-        if p.name.endswith("-wal") or p.name.endswith("-shm"):
+        if is_sqlite_sidecar(p.name):
             continue
         if is_sqlite_db(f):
             source_path = str(f)
@@ -548,7 +548,7 @@ def ornetbrowser_searchhistory(context):
     source_path = None
     for f in files_found:
         p = Path(f)
-        if p.name.endswith("-wal") or p.name.endswith("-shm"):
+        if is_sqlite_sidecar(p.name):
             continue
         if is_sqlite_db(f):
             source_path = str(f)

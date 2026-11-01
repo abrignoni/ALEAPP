@@ -233,7 +233,7 @@ import sqlite3
 
 from scripts.artifacts.storagePathViews import canonical_path, unique_files
 from scripts.context import Context
-from scripts.ilapfuncs import artifact_processor, logfunc, null_absent_columns, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, logfunc, null_absent_columns, open_sqlite_db_readonly, is_sqlite_sidecar
 
 
 def _str_to_utc(value):
@@ -341,7 +341,7 @@ def get_fb_msys_chats(context):
     source = ''
     for file_found in files_found:
         file_found = str(file_found)
-        if file_found.endswith(('-shm', '-wal')):
+        if is_sqlite_sidecar(file_found):
             continue
         if 'msys_database_' not in file_found:
             continue
@@ -438,7 +438,7 @@ def get_fb_msys_calls(context):
     source = ''
     for file_found in files_found:
         file_found = str(file_found)
-        if file_found.endswith(('-shm', '-wal')):
+        if is_sqlite_sidecar(file_found):
             continue
         if 'msys_database_' not in file_found:
             continue
@@ -476,7 +476,7 @@ def get_fb_msys_contacts(context):
     source = ''
     for file_found in files_found:
         file_found = str(file_found)
-        if file_found.endswith(('-shm', '-wal')):
+        if is_sqlite_sidecar(file_found):
             continue
         if 'msys_database_' not in file_found:
             continue

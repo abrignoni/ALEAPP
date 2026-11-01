@@ -48,7 +48,7 @@ __artifacts_v2__ = {
 
 import datetime
 
-from scripts.ilapfuncs import artifact_processor, null_absent_columns, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, null_absent_columns, open_sqlite_db_readonly, is_sqlite_sidecar
 from scripts.artifacts.storagePathViews import unique_files
 
 
@@ -60,7 +60,7 @@ def get_googleMessages(context):
     source_paths = []
     for file_found in files_found:
         file_found = str(file_found)
-        if file_found.endswith(('-wal', '-shm', '-journal')):
+        if is_sqlite_sidecar(file_found):
             continue
         if not file_found.endswith('bugle_db'):
             continue  # Skip all other files

@@ -75,7 +75,7 @@ __artifacts_v2__ = {
     }
 }
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_human_ts_to_utc
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_human_ts_to_utc, is_sqlite_sidecar
 from scripts.artifacts.storagePathViews import unique_files
 
 
@@ -87,7 +87,7 @@ def get_protonmail_messages(context):
     for file_found in files_found:
         file_name = str(file_found)
 
-        if file_name.lower().endswith(('-shm','-wal','-journal')):
+        if is_sqlite_sidecar(file_name):
             continue
 
         if file_name.endswith('-MessagesDatabase.db'):
@@ -188,7 +188,7 @@ def get_protonmail_contacts(context):
     for file_found in files_found:
         file_name = str(file_found)
 
-        if file_name.lower().endswith(('-shm','-wal','-journal')):
+        if is_sqlite_sidecar(file_name):
             continue
 
         if file_name.endswith('-ContactsDatabase.db'):

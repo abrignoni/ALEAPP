@@ -144,7 +144,7 @@ from scripts.artifacts.gmail import _parse_xml
 from scripts.artifacts.storagePathViews import canonical_path, unique_files
 from scripts.context import Context
 from scripts.ilapfuncs import open_sqlite_db_readonly, check_in_media, get_sqlite_db_records, artifact_processor, \
-    decode_protobuf, logfunc
+    decode_protobuf, logfunc, is_sqlite_sidecar
 
 # whitespace plus the invisible padding characters observed in marketing preheaders
 _WHITESPACE_RUN = re.compile(r'[\s\u00ad\u034f\u200b\u200c\u200d\ufeff]+')
@@ -229,7 +229,7 @@ def _gmail_stores(files_found, basename_prefix):
     for file_found in files_found:
         file_found = str(file_found)
         base = os.path.basename(file_found)
-        if file_found.endswith(('-wal', '-shm', '-journal')) or base.startswith('.'):
+        if is_sqlite_sidecar(file_found) or base.startswith('.'):
             continue
         if file_found.find('.magisk') >= 0 and file_found.find('mirror') >= 0:
             continue  # Skip mirror, it should be duplicate data

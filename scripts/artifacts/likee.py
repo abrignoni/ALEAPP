@@ -51,7 +51,7 @@ import os
 import re
 import sqlite3
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, is_sqlite_sidecar
 
 _CONTROL_RE = re.compile('[%s]' % re.escape(
     ''.join(map(chr, itertools.chain(range(0x00, 0x20), range(0x7F, 0xA0))))))
@@ -111,7 +111,7 @@ def get_likee(context):
 def get_likee_users(context):
     files_found = context.get_files_found()
     source_path = next((str(f) for f in files_found if 'like_pub.db' in str(f)
-                        and not str(f).endswith(('-wal', '-shm'))), '')
+                        and not is_sqlite_sidecar(f)), '')
     rows = _run(source_path, '''
         SELECT history_user_name, history_user_bigo_id, history_user_uid FROM user_search_history
     ''')
@@ -126,7 +126,7 @@ def get_likee_messages(context):
     source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
-        if 'message_u' not in file_found or file_found.endswith(('-wal', '-shm')):
+        if 'message_u' not in file_found or is_sqlite_sidecar(file_found):
             continue
         source_path = file_found
         for row in _run(file_found, 'SELECT uid, content, time FROM messages'):

@@ -85,16 +85,15 @@ __artifacts_v2__ = {
 import os
 
 from scripts.artifacts.storagePathViews import unique_files
-from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records
+from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records, is_sqlite_sidecar
 
-SIDECARS = ('-wal', '-shm', '-journal')
 
 
 def _databases(context):
     found = []
     for file_found in unique_files(context):
         file_found = str(file_found)
-        if os.path.isdir(file_found) or file_found.endswith(SIDECARS):
+        if os.path.isdir(file_found) or is_sqlite_sidecar(file_found):
             continue
         if os.path.basename(file_found) == 'browser2.db':
             found.append(file_found)

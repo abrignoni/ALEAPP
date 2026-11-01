@@ -15,7 +15,7 @@ import os
 import re
 import sqlite3
 
-from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly, is_sqlite_sidecar
 from scripts.artifacts.storagePathViews import unique_files
 
 __artifacts_v2__ = {
@@ -352,13 +352,12 @@ def _rows(source_path, sql, params=()):
 # what lets SQLite apply a write ahead log on open. The artifact itself must not treat one
 # as a database: opening it fails, and the failure is silent because the path still lands
 # in source_path, which is what the report prints as the row's location.
-_SIDECARS = ('-journal', '-wal', '-shm')
 
 
 def _matching(context, pattern):
     """Databases whose base name matches, with duplicate storage views and sidecars removed."""
     return [p for p in unique_files(context)
-            if not str(p).endswith(_SIDECARS)
+            if not is_sqlite_sidecar(p)
             and re.search(pattern, os.path.basename(str(p)))]
 
 
