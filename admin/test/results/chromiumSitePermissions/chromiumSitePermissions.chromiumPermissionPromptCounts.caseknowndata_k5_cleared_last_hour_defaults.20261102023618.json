@@ -10,15 +10,15 @@
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/chromiumSitePermissions/testdata.chromiumSitePermissions.chromiumPermissionPromptCounts.caseknowndata_k5_cleared_last_hour_defaults.zip",
-    "start_time": "2026-11-02T02:19:13.957397+00:00",
-    "end_time": "2026-11-02T02:19:13.998929+00:00",
-    "run_time_seconds": 0.00017690658569335938,
+    "start_time": "2026-11-02T02:36:18.277708+00:00",
+    "end_time": "2026-11-02T02:36:18.293388+00:00",
+    "run_time_seconds": 0.0001800060272216797,
     "last_commit": {
-      "hash": "Uncommitted",
-      "author_name": "N/A",
-      "author_email": "N/A",
-      "date": "2026-11-01T21:19:13.996398",
-      "message": "File not yet committed to git"
+      "hash": "ee1f1b0bfc932d80b686ca9201d219f66925a73a",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-11-01T21:21:37-05:00",
+      "message": "Chromium Site Permissions, Permission Prompt Actions and Prompt Counts artifacts"
     }
   },
   "headers": [

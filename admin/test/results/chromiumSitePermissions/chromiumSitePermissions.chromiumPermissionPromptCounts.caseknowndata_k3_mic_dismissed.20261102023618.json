@@ -3,22 +3,22 @@
     "module_name": "chromiumSitePermissions",
     "artifact_name": "Chromium Permission Prompt Counts",
     "function_name": "chromiumPermissionPromptCounts",
-    "case_number": "caseknowndata_k4_notifications_allowed",
+    "case_number": "caseknowndata_k3_mic_dismissed",
     "number_of_columns": 8,
     "number_of_rows": 1,
     "total_data_size_bytes": 51,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
-    "input_zip_path": "admin/test/cases/data/chromiumSitePermissions/testdata.chromiumSitePermissions.chromiumPermissionPromptCounts.caseknowndata_k4_notifications_allowed.zip",
-    "start_time": "2026-11-02T02:19:13.829454+00:00",
-    "end_time": "2026-11-02T02:19:13.870827+00:00",
-    "run_time_seconds": 0.00020885467529296875,
+    "input_zip_path": "admin/test/cases/data/chromiumSitePermissions/testdata.chromiumSitePermissions.chromiumPermissionPromptCounts.caseknowndata_k3_mic_dismissed.zip",
+    "start_time": "2026-11-02T02:36:18.178771+00:00",
+    "end_time": "2026-11-02T02:36:18.195069+00:00",
+    "run_time_seconds": 0.00018286705017089844,
     "last_commit": {
-      "hash": "Uncommitted",
-      "author_name": "N/A",
-      "author_email": "N/A",
-      "date": "2026-11-01T21:19:13.868391",
-      "message": "File not yet committed to git"
+      "hash": "ee1f1b0bfc932d80b686ca9201d219f66925a73a",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-11-01T21:21:37-05:00",
+      "message": "Chromium Site Permissions, Permission Prompt Actions and Prompt Counts artifacts"
     }
   },
   "headers": [
