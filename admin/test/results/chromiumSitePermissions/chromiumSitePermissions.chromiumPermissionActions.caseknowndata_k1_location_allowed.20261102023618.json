@@ -1,0 +1,46 @@
+{
+  "metadata": {
+    "module_name": "chromiumSitePermissions",
+    "artifact_name": "Chromium Permission Prompt Actions",
+    "function_name": "chromiumPermissionActions",
+    "case_number": "caseknowndata_k1_location_allowed",
+    "number_of_columns": 8,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 49,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/chromiumSitePermissions/testdata.chromiumSitePermissions.chromiumPermissionActions.caseknowndata_k1_location_allowed.zip",
+    "start_time": "2026-11-02T02:36:18.092219+00:00",
+    "end_time": "2026-11-02T02:36:18.110295+00:00",
+    "run_time_seconds": 0.00019478797912597656,
+    "last_commit": {
+      "hash": "ee1f1b0bfc932d80b686ca9201d219f66925a73a",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-11-01T21:21:37-05:00",
+      "message": "Chromium Site Permissions, Permission Prompt Actions and Prompt Counts artifacts"
+    }
+  },
+  "headers": [
+    "Time",
+    "Permission",
+    "Action",
+    "Action (as stored)",
+    "Prompt Shown As",
+    "Prompt Disposition (as stored)",
+    "Browser",
+    "Android User"
+  ],
+  "data": [
+    [
+      1793585506,
+      "geolocation",
+      "GRANTED",
+      "0",
+      "MODAL_DIALOG",
+      "4",
+      "Chrome",
+      "0"
+    ]
+  ]
+}
