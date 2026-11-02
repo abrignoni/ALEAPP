@@ -1,0 +1,242 @@
+{
+    "caseknowndata_k1_location_allowed": {
+        "description": "Known data: Chrome 124.0.6367.219 on an Android 15 emulator (no Google account), a local test page served at http://localhost:8765 through adb reverse with buttons that request location, camera, microphone and notifications. Test page only, contains no personal data. The page asked for location and the prompt was answered Allow.",
+        "maker": "known data",
+        "make_data": {
+            "input_data_path": "k1_location_allowed.zip",
+            "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+            "timestamp": "2026-11-01T21:19:12.579936",
+            "last_commit": {
+                "hash": "Uncommitted",
+                "author_name": "N/A",
+                "author_email": "N/A",
+                "date": "2026-11-01T21:19:12.571529",
+                "message": "File not yet committed to git"
+            }
+        },
+        "artifacts": {
+            "chromiumSitePermissions": {
+                "search_patterns": [
+                    "*/app_*/Default/Preferences"
+                ],
+                "file_count": 1,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            },
+            "chromiumPermissionActions": {
+                "search_patterns": [
+                    "*/app_*/Default/Preferences"
+                ],
+                "file_count": 1,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            },
+            "chromiumPermissionPromptCounts": {
+                "search_patterns": [
+                    "*/app_*/Default/Preferences"
+                ],
+                "file_count": 1,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            }
+        }
+    },
+    "caseknowndata_k2_camera_blocked": {
+        "description": "Known data: Chrome 124.0.6367.219 on an Android 15 emulator (no Google account), a local test page served at http://localhost:8765 through adb reverse with buttons that request location, camera, microphone and notifications. Test page only, contains no personal data. After k1, the page asked for the camera and the prompt was answered Block.",
+        "maker": "known data",
+        "make_data": {
+            "input_data_path": "k2_camera_blocked.zip",
+            "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+            "timestamp": "2026-11-01T21:19:12.740318",
+            "last_commit": {
+                "hash": "Uncommitted",
+                "author_name": "N/A",
+                "author_email": "N/A",
+                "date": "2026-11-01T21:19:12.731855",
+                "message": "File not yet committed to git"
+            }
+        },
+        "artifacts": {
+            "chromiumSitePermissions": {
+                "search_patterns": [
+                    "*/app_*/Default/Preferences"
+                ],
+                "file_count": 1,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            },
+            "chromiumPermissionActions": {
+                "search_patterns": [
+                    "*/app_*/Default/Preferences"
+                ],
+                "file_count": 1,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            },
+            "chromiumPermissionPromptCounts": {
+                "search_patterns": [
+                    "*/app_*/Default/Preferences"
+                ],
+                "file_count": 1,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            }
+        }
+    },
+    "caseknowndata_k3_mic_dismissed": {
+        "description": "Known data: Chrome 124.0.6367.219 on an Android 15 emulator (no Google account), a local test page served at http://localhost:8765 through adb reverse with buttons that request location, camera, microphone and notifications. Test page only, contains no personal data. After k2, the page asked for the microphone and the prompt was dismissed with the back key.",
+        "maker": "known data",
+        "make_data": {
+            "input_data_path": "k3_mic_dismissed.zip",
+            "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+            "timestamp": "2026-11-01T21:19:12.898727",
+            "last_commit": {
+                "hash": "Uncommitted",
+                "author_name": "N/A",
+                "author_email": "N/A",
+                "date": "2026-11-01T21:19:12.890427",
+                "message": "File not yet committed to git"
+            }
+        },
+        "artifacts": {
+            "chromiumSitePermissions": {
+                "search_patterns": [
+                    "*/app_*/Default/Preferences"
+                ],
+                "file_count": 1,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            },
+            "chromiumPermissionActions": {
+                "search_patterns": [
+                    "*/app_*/Default/Preferences"
+                ],
+                "file_count": 1,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            },
+            "chromiumPermissionPromptCounts": {
+                "search_patterns": [
+                    "*/app_*/Default/Preferences"
+                ],
+                "file_count": 1,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            }
+        }
+    },
+    "caseknowndata_k4_notifications_allowed": {
+        "description": "Known data: Chrome 124.0.6367.219 on an Android 15 emulator (no Google account), a local test page served at http://localhost:8765 through adb reverse with buttons that request location, camera, microphone and notifications. Test page only, contains no personal data. After k3, the page asked for notifications; the prompt was answered Allow, then Android's own notification prompt for Chrome was answered Allow.",
+        "maker": "known data",
+        "make_data": {
+            "input_data_path": "k4_notifications_allowed.zip",
+            "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+            "timestamp": "2026-11-01T21:19:13.058245",
+            "last_commit": {
+                "hash": "Uncommitted",
+                "author_name": "N/A",
+                "author_email": "N/A",
+                "date": "2026-11-01T21:19:13.049820",
+                "message": "File not yet committed to git"
+            }
+        },
+        "artifacts": {
+            "chromiumSitePermissions": {
+                "search_patterns": [
+                    "*/app_*/Default/Preferences"
+                ],
+                "file_count": 1,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            },
+            "chromiumPermissionActions": {
+                "search_patterns": [
+                    "*/app_*/Default/Preferences"
+                ],
+                "file_count": 1,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            },
+            "chromiumPermissionPromptCounts": {
+                "search_patterns": [
+                    "*/app_*/Default/Preferences"
+                ],
+                "file_count": 1,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            }
+        }
+    },
+    "caseknowndata_k5_cleared_last_hour_defaults": {
+        "description": "Known data: Chrome 124.0.6367.219 on an Android 15 emulator (no Google account), a local test page served at http://localhost:8765 through adb reverse with buttons that request location, camera, microphone and notifications. Test page only, contains no personal data. After k4, browsing data was cleared for the last hour with Chrome's default boxes (browsing history, cookies and site data, cached files).",
+        "maker": "known data",
+        "make_data": {
+            "input_data_path": "k5_cleared_last_hour_defaults.zip",
+            "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+            "timestamp": "2026-11-01T21:19:13.217162",
+            "last_commit": {
+                "hash": "Uncommitted",
+                "author_name": "N/A",
+                "author_email": "N/A",
+                "date": "2026-11-01T21:19:13.209006",
+                "message": "File not yet committed to git"
+            }
+        },
+        "artifacts": {
+            "chromiumSitePermissions": {
+                "search_patterns": [
+                    "*/app_*/Default/Preferences"
+                ],
+                "file_count": 1,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            },
+            "chromiumPermissionActions": {
+                "search_patterns": [
+                    "*/app_*/Default/Preferences"
+                ],
+                "file_count": 1,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            },
+            "chromiumPermissionPromptCounts": {
+                "search_patterns": [
+                    "*/app_*/Default/Preferences"
+                ],
+                "file_count": 1,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            }
+        }
+    }
+}

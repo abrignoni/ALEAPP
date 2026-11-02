@@ -1,0 +1,46 @@
+{
+  "metadata": {
+    "module_name": "chromiumSitePermissions",
+    "artifact_name": "Chromium Permission Prompt Actions",
+    "function_name": "chromiumPermissionActions",
+    "case_number": "caseknowndata_k1_location_allowed",
+    "number_of_columns": 8,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 49,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/chromiumSitePermissions/testdata.chromiumSitePermissions.chromiumPermissionActions.caseknowndata_k1_location_allowed.zip",
+    "start_time": "2026-11-02T02:19:13.361152+00:00",
+    "end_time": "2026-11-02T02:19:13.408126+00:00",
+    "run_time_seconds": 0.0002231597900390625,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-11-01T21:19:13.402736",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Time",
+    "Permission",
+    "Action",
+    "Action (as stored)",
+    "Prompt Shown As",
+    "Prompt Disposition (as stored)",
+    "Browser",
+    "Android User"
+  ],
+  "data": [
+    [
+      1793585506,
+      "geolocation",
+      "GRANTED",
+      "0",
+      "MODAL_DIALOG",
+      "4",
+      "Chrome",
+      "0"
+    ]
+  ]
+}

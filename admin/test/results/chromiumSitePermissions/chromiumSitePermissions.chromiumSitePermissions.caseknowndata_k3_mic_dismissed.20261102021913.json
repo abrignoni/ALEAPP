@@ -1,0 +1,62 @@
+{
+  "metadata": {
+    "module_name": "chromiumSitePermissions",
+    "artifact_name": "Chromium Site Permissions",
+    "function_name": "chromiumSitePermissions",
+    "case_number": "caseknowndata_k3_mic_dismissed",
+    "number_of_columns": 10,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 120,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/chromiumSitePermissions/testdata.chromiumSitePermissions.chromiumSitePermissions.caseknowndata_k3_mic_dismissed.zip",
+    "start_time": "2026-11-02T02:19:13.661395+00:00",
+    "end_time": "2026-11-02T02:19:13.703131+00:00",
+    "run_time_seconds": 0.0001919269561767578,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-11-01T21:19:13.700577",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Last Modified",
+    "Site",
+    "Embedding Site",
+    "Permission",
+    "Setting",
+    "Setting (as stored)",
+    "Expiration",
+    "Last Visit",
+    "Browser",
+    "Android User"
+  ],
+  "data": [
+    [
+      1793585506,
+      "http://localhost:8765",
+      "*",
+      "geolocation",
+      "Allow",
+      "1",
+      "",
+      "",
+      "Chrome",
+      "0"
+    ],
+    [
+      1793585546,
+      "http://localhost:8765",
+      "*",
+      "media_stream_camera",
+      "Block",
+      "2",
+      "",
+      "",
+      "Chrome",
+      "0"
+    ]
+  ]
+}
