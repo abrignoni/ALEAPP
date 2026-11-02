@@ -1,0 +1,46 @@
+{
+  "metadata": {
+    "module_name": "permissionController",
+    "artifact_name": "Permission Controller Log",
+    "function_name": "permissionControllerLog",
+    "case_number": "caseknowndata_k2_denied_second_app",
+    "number_of_columns": 8,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 65,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/permissionController/testdata.permissionController.permissionControllerLog.caseknowndata_k2_denied_second_app.zip",
+    "start_time": "2026-11-02T00:25:27.883216+00:00",
+    "end_time": "2026-11-02T00:25:27.938772+00:00",
+    "run_time_seconds": 0.00024008750915527344,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-11-01T19:25:27.935994",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Logged",
+    "Event",
+    "Package",
+    "Package User",
+    "Clock Change (seconds)",
+    "Entries Removed",
+    "Copy",
+    "Android User"
+  ],
+  "data": [
+    [
+      1787416211,
+      "Package data cleared",
+      "com.example.known_data_app",
+      "0",
+      "",
+      "",
+      "Current",
+      "0"
+    ]
+  ]
+}

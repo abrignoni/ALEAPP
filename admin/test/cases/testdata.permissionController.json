@@ -1,0 +1,162 @@
+{
+    "caseknowndata_k1_allowed": {
+        "description": "Known data: Google Permission Controller on an Android 15 emulator (google_apis image, no Google account), changes made in Settings > Apps > <app> > Permissions. The emulator image already held a data clear logged in August 2026 when it was set up. Test device only, contains no personal data. Chrome's camera was set to Allow only while using the app; permission_changes.xml then held one Chrome entry dated that day.",
+        "maker": "",
+        "make_data": {
+            "input_data_path": "k1_allowed.zip",
+            "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+            "timestamp": "2026-11-01T19:25:18.187117",
+            "last_commit": {
+                "hash": "Uncommitted",
+                "author_name": "N/A",
+                "author_email": "N/A",
+                "date": "2026-11-01T19:25:18.177124",
+                "message": "File not yet committed to git"
+            }
+        },
+        "artifacts": {
+            "permissionChangeDates": {
+                "search_patterns": [
+                    "*/com.google.android.permissioncontroller/files/permission_changes.xml",
+                    "*/com.android.permissioncontroller/files/permission_changes.xml"
+                ],
+                "file_count": 1,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            },
+            "permissionControllerLog": {
+                "search_patterns": [
+                    "*/com.google.android.permissioncontroller/files/LogToDump.log",
+                    "*/com.android.permissioncontroller/files/LogToDump.log"
+                ],
+                "file_count": 1,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            }
+        }
+    },
+    "caseknowndata_k2_denied_second_app": {
+        "description": "Known data: Google Permission Controller on an Android 15 emulator (google_apis image, no Google account), changes made in Settings > Apps > <app> > Permissions. The emulator image already held a data clear logged in August 2026 when it was set up. Test device only, contains no personal data. After k1, the Messages app's camera was set to Don't allow; its entry was written first, before Chrome's.",
+        "maker": "",
+        "make_data": {
+            "input_data_path": "k2_denied_second_app.zip",
+            "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+            "timestamp": "2026-11-01T19:25:18.380474",
+            "last_commit": {
+                "hash": "Uncommitted",
+                "author_name": "N/A",
+                "author_email": "N/A",
+                "date": "2026-11-01T19:25:18.369775",
+                "message": "File not yet committed to git"
+            }
+        },
+        "artifacts": {
+            "permissionChangeDates": {
+                "search_patterns": [
+                    "*/com.google.android.permissioncontroller/files/permission_changes.xml",
+                    "*/com.android.permissioncontroller/files/permission_changes.xml"
+                ],
+                "file_count": 1,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            },
+            "permissionControllerLog": {
+                "search_patterns": [
+                    "*/com.google.android.permissioncontroller/files/LogToDump.log",
+                    "*/com.android.permissioncontroller/files/LogToDump.log"
+                ],
+                "file_count": 1,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            }
+        }
+    },
+    "caseknowndata_k3_clock_forward": {
+        "description": "Known data: Google Permission Controller on an Android 15 emulator (google_apis image, no Google account), changes made in Settings > Apps > <app> > Permissions. The emulator image already held a data clear logged in August 2026 when it was set up. Test device only, contains no personal data. After k2, the clock was moved 10 days forward with cmd alarm set-time; the log recorded a clock change of 863999 seconds and both entries moved from 2026-11-01 to 2026-11-10 with no permission touched.",
+        "maker": "",
+        "make_data": {
+            "input_data_path": "k3_clock_forward.zip",
+            "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+            "timestamp": "2026-11-01T19:25:18.571598",
+            "last_commit": {
+                "hash": "Uncommitted",
+                "author_name": "N/A",
+                "author_email": "N/A",
+                "date": "2026-11-01T19:25:18.561666",
+                "message": "File not yet committed to git"
+            }
+        },
+        "artifacts": {
+            "permissionChangeDates": {
+                "search_patterns": [
+                    "*/com.google.android.permissioncontroller/files/permission_changes.xml",
+                    "*/com.android.permissioncontroller/files/permission_changes.xml"
+                ],
+                "file_count": 1,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            },
+            "permissionControllerLog": {
+                "search_patterns": [
+                    "*/com.google.android.permissioncontroller/files/LogToDump.log",
+                    "*/com.android.permissioncontroller/files/LogToDump.log"
+                ],
+                "file_count": 1,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            }
+        }
+    },
+    "caseknowndata_k4_data_cleared": {
+        "description": "Known data: Google Permission Controller on an Android 15 emulator (google_apis image, no Google account), changes made in Settings > Apps > <app> > Permissions. The emulator image already held a data clear logged in August 2026 when it was set up. Test device only, contains no personal data. After k3, Chrome's data was cleared with pm clear; its entry was removed and the log recorded the data clear for it.",
+        "maker": "",
+        "make_data": {
+            "input_data_path": "k4_data_cleared.zip",
+            "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+            "timestamp": "2026-11-01T19:25:18.768570",
+            "last_commit": {
+                "hash": "Uncommitted",
+                "author_name": "N/A",
+                "author_email": "N/A",
+                "date": "2026-11-01T19:25:18.758115",
+                "message": "File not yet committed to git"
+            }
+        },
+        "artifacts": {
+            "permissionChangeDates": {
+                "search_patterns": [
+                    "*/com.google.android.permissioncontroller/files/permission_changes.xml",
+                    "*/com.android.permissioncontroller/files/permission_changes.xml"
+                ],
+                "file_count": 1,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            },
+            "permissionControllerLog": {
+                "search_patterns": [
+                    "*/com.google.android.permissioncontroller/files/LogToDump.log",
+                    "*/com.android.permissioncontroller/files/LogToDump.log"
+                ],
+                "file_count": 1,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            }
+        }
+    }
+}
