@@ -1,0 +1,56 @@
+{
+  "metadata": {
+    "module_name": "permissionController",
+    "artifact_name": "Permission Controller Log",
+    "function_name": "permissionControllerLog",
+    "case_number": "caseknowndata_k3_clock_forward",
+    "number_of_columns": 8,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 101,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/permissionController/testdata.permissionController.permissionControllerLog.caseknowndata_k3_clock_forward.zip",
+    "start_time": "2026-11-02T00:25:27.996387+00:00",
+    "end_time": "2026-11-02T00:25:28.052877+00:00",
+    "run_time_seconds": 0.0003209114074707031,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-11-01T19:25:28.049430",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Logged",
+    "Event",
+    "Package",
+    "Package User",
+    "Clock Change (seconds)",
+    "Entries Removed",
+    "Copy",
+    "Android User"
+  ],
+  "data": [
+    [
+      1787416211,
+      "Package data cleared",
+      "com.example.known_data_app",
+      "0",
+      "",
+      "",
+      "Current",
+      "0"
+    ],
+    [
+      1794442813,
+      "Clock change",
+      "",
+      "",
+      863999,
+      "",
+      "Current",
+      "0"
+    ]
+  ]
+}
