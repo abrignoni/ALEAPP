@@ -1,0 +1,30 @@
+{
+    "casesynthetic_s1_search_history": {
+        "description": "Synthetic: a pref_search_history.xml written by hand in the shape the Samsung One UI launcher writes (one string preference holding a JSON list of strings), with three made-up search strings. Contains no device data.",
+        "maker": "synthetic",
+        "make_data": {
+            "input_data_path": "s1_synthetic.zip",
+            "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+            "timestamp": "2026-11-01T22:29:15.763527",
+            "last_commit": {
+                "hash": "c8ff1f1e064c4653d919a464eb8886135a2ac8ad",
+                "author_name": "Brigs",
+                "author_email": "abrignoni@gmail.com",
+                "date": "2026-10-04T02:02:01-04:00",
+                "message": "Correct artifact descriptions and notes against the code and sources"
+            }
+        },
+        "artifacts": {
+            "samsungLauncherSearchHistory": {
+                "search_patterns": [
+                    "*/com.sec.android.app.launcher/shared_prefs/pref_search_history.xml"
+                ],
+                "file_count": 1,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            }
+        }
+    }
+}
