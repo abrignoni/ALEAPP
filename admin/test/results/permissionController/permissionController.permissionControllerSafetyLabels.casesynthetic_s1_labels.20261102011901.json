@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "module_name": "permissionController",
+    "artifact_name": "Permission Controller Safety Label History",
+    "function_name": "permissionControllerSafetyLabels",
+    "case_number": "casesynthetic_s1_labels",
+    "number_of_columns": 6,
+    "number_of_rows": 5,
+    "total_data_size_bytes": 236,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/permissionController/testdata.permissionController.permissionControllerSafetyLabels.casesynthetic_s1_labels.zip",
+    "start_time": "2026-11-02T01:19:01.381295+00:00",
+    "end_time": "2026-11-02T01:19:01.409106+00:00",
+    "run_time_seconds": 0.0004551410675048828,
+    "last_commit": {
+      "hash": "ca2d888b9300d771827f0c2f347e1e154091d4db",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-11-01T19:38:24-05:00",
+      "message": "Permission controller artifacts: apply notes audit, match the shared rollback path rule"
+    }
+  },
+  "headers": [
+    "Package Last Update (when recorded)",
+    "Package",
+    "Label Order",
+    "Declared Location Sharing (as stored)",
+    "Copy",
+    "Android User"
+  ],
+  "data": [
+    [
+      1767225600,
+      "com.example.maps",
+      1,
+      "",
+      "Current",
+      "0"
+    ],
+    [
+      1769904000,
+      "com.example.maps",
+      2,
+      "location (ads: false)",
+      "Current",
+      "0"
+    ],
+    [
+      1768435200,
+      "com.example.weather",
+      1,
+      "",
+      "Current",
+      "0"
+    ],
+    [
+      1767312000,
+      "com.example.maps",
+      1,
+      "",
+      "Current",
+      "10"
+    ],
+    [
+      1766016000,
+      "com.example.removed",
+      1,
+      "location (ads: false)",
+      "Rollback snapshot 5",
+      "0"
+    ]
+  ]
+}

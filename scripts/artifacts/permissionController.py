@@ -73,6 +73,43 @@ __artifacts_v2__ = {
             "userb2_a13": "Android 13 | 8 rows",
         },
     },
+    "permissionControllerSafetyLabels": {
+        "name": "Permission Controller Safety Label History",
+        "description": "Per app, the last update time the Permission Controller took from the app when it recorded the "
+                       "app's declared location sharing label, from apps_safety_label_history_persistence.xml.",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-11-01",
+        "last_update_date": "2026-11-01",
+        "requirements": "none",
+        "category": "Permissions",
+        "notes": "Reads apps_safety_label_history_persistence.xml from the Permission Controller's device encrypted files folder (<package>/files under data/user_de/<user>, data_mirror/data_de or userdata/user_de, for com.google.android.permissioncontroller or com.android.permissioncontroller). Format and meanings come from AOSP packages/modules/Permission at commit 26231a7eac744c7d2a8fea4740926620f56b20c6. The controller keeps this history on Android 14 and later, except on Android Automotive, TV and Wear (https://android.googlesource.com/platform/packages/modules/Permission/+/26231a7eac744c7d2a8fea4740926620f56b20c6/PermissionController/src/com/android/permissioncontroller/permission/utils/KotlinUtils.kt#248, https://android.googlesource.com/platform/packages/modules/Permission/+/26231a7eac744c7d2a8fea4740926620f56b20c6/PermissionController/src/com/android/permissioncontroller/permission/utils/KotlinUtils.kt#254), for apps that request a location permission and were installed by a store or preloaded (https://android.googlesource.com/platform/packages/modules/Permission/+/26231a7eac744c7d2a8fea4740926620f56b20c6/PermissionController/src/com/android/permissioncontroller/safetylabel/SafetyLabelChangedBroadcastReceiver.kt#109, https://android.googlesource.com/platform/packages/modules/Permission/+/26231a7eac744c7d2a8fea4740926620f56b20c6/PermissionController/src/com/android/permissioncontroller/safetylabel/SafetyLabelChangedBroadcastReceiver.kt#113, https://android.googlesource.com/platform/packages/modules/Permission/+/26231a7eac744c7d2a8fea4740926620f56b20c6/PermissionController/src/com/android/permissioncontroller/permission/model/livedatatypes/v34/LightInstallSourceInfo.kt#45). Each label it keeps is the location part of the data sharing section of the app's metadata, which the app's developer declares, not something the device user sets (https://android.googlesource.com/platform/packages/modules/Permission/+/26231a7eac744c7d2a8fea4740926620f56b20c6/PermissionController/src/com/android/permissioncontroller/safetylabel/SafetyLabelChangedBroadcastReceiver.kt#167, https://android.googlesource.com/platform/packages/modules/Permission/+/26231a7eac744c7d2a8fea4740926620f56b20c6/PermissionController/src/com/android/permissioncontroller/safetylabel/SafetyLabelChangedBroadcastReceiver.kt#177, https://android.googlesource.com/platform/packages/modules/Permission/+/26231a7eac744c7d2a8fea4740926620f56b20c6/PermissionController/src/com/android/permissioncontroller/safetylabel/AppsSafetyLabelHistory.kt#115). Package Last Update (when recorded) is the label's rcvd value, milliseconds since 1970 shown in UTC (https://android.googlesource.com/platform/packages/modules/Permission/+/26231a7eac744c7d2a8fea4740926620f56b20c6/PermissionController/src/com/android/permissioncontroller/safetylabel/AppsSafetyLabelHistoryPersistence.kt#54, https://android.googlesource.com/platform/packages/modules/Permission/+/26231a7eac744c7d2a8fea4740926620f56b20c6/PermissionController/src/com/android/permissioncontroller/safetylabel/AppsSafetyLabelHistoryPersistence.kt#504, https://android.googlesource.com/platform/packages/modules/Permission/+/26231a7eac744c7d2a8fea4740926620f56b20c6/PermissionController/src/com/android/permissioncontroller/safetylabel/AppsSafetyLabelHistoryPersistence.kt#538). It is not the time the controller wrote the entry: it is the app's last update time at the moment the label was recorded, taken from the package when the app is installed or updated (https://android.googlesource.com/platform/packages/modules/Permission/+/26231a7eac744c7d2a8fea4740926620f56b20c6/PermissionController/src/com/android/permissioncontroller/safetylabel/SafetyLabelChangedBroadcastReceiver.kt#62, https://android.googlesource.com/platform/packages/modules/Permission/+/26231a7eac744c7d2a8fea4740926620f56b20c6/PermissionController/src/com/android/permissioncontroller/safetylabel/SafetyLabelChangedBroadcastReceiver.kt#167) or when a periodic job records labels it is missing (https://android.googlesource.com/platform/packages/modules/Permission/+/26231a7eac744c7d2a8fea4740926620f56b20c6/PermissionController/src/com/android/permissioncontroller/permission/service/v34/SafetyLabelChangesJobService.kt#276, https://android.googlesource.com/platform/packages/modules/Permission/+/26231a7eac744c7d2a8fea4740926620f56b20c6/PermissionController/src/com/android/permissioncontroller/permission/service/v34/SafetyLabelChangesJobService.kt#363). A new label is added only when its location part differs from the app's newest kept label (https://android.googlesource.com/platform/packages/modules/Permission/+/26231a7eac744c7d2a8fea4740926620f56b20c6/PermissionController/src/com/android/permissioncontroller/safetylabel/AppsSafetyLabelHistoryPersistence.kt#568, https://android.googlesource.com/platform/packages/modules/Permission/+/26231a7eac744c7d2a8fea4740926620f56b20c6/PermissionController/src/com/android/permissioncontroller/safetylabel/AppsSafetyLabelHistoryPersistence.kt#572, https://android.googlesource.com/platform/packages/modules/Permission/+/26231a7eac744c7d2a8fea4740926620f56b20c6/PermissionController/src/com/android/permissioncontroller/safetylabel/AppsSafetyLabelHistoryPersistence.kt#576, https://android.googlesource.com/platform/packages/modules/Permission/+/26231a7eac744c7d2a8fea4740926620f56b20c6/PermissionController/src/com/android/permissioncontroller/safetylabel/AppsSafetyLabelHistoryPersistence.kt#583), so an update that leaves it unchanged adds nothing and the earlier time stays. At most 20 labels are kept per app unless device configuration sets another number (https://android.googlesource.com/platform/packages/modules/Permission/+/26231a7eac744c7d2a8fea4740926620f56b20c6/PermissionController/src/com/android/permissioncontroller/safetylabel/AppsSafetyLabelHistoryPersistence.kt#614, https://android.googlesource.com/platform/packages/modules/Permission/+/26231a7eac744c7d2a8fea4740926620f56b20c6/PermissionController/src/com/android/permissioncontroller/safetylabel/AppsSafetyLabelHistoryPersistence.kt#618). Label Order is 1 for the oldest kept label of an app. Declared Location Sharing (as stored) is the stored shared entries as category and ads value; it is empty when the stored label's shared set was empty, which is what a label whose location part declared no sharing leaves. Entries are deleted by the same periodic job, which runs every 30 days unless device configuration sets another interval (https://android.googlesource.com/platform/packages/modules/Permission/+/26231a7eac744c7d2a8fea4740926620f56b20c6/PermissionController/src/com/android/permissioncontroller/permission/service/v34/SafetyLabelChangesJobService.kt#685, https://android.googlesource.com/platform/packages/modules/Permission/+/26231a7eac744c7d2a8fea4740926620f56b20c6/PermissionController/src/com/android/permissioncontroller/permission/utils/KotlinUtils.kt#265): it removes the apps that are no longer among the installed apps that request location and were installed by a store or preloaded (https://android.googlesource.com/platform/packages/modules/Permission/+/26231a7eac744c7d2a8fea4740926620f56b20c6/PermissionController/src/com/android/permissioncontroller/permission/service/v34/SafetyLabelChangesJobService.kt#403, https://android.googlesource.com/platform/packages/modules/Permission/+/26231a7eac744c7d2a8fea4740926620f56b20c6/PermissionController/src/com/android/permissioncontroller/permission/service/v34/SafetyLabelChangesJobService.kt#406), and of the labels older than 30 days keeps only the newest one per app (https://android.googlesource.com/platform/packages/modules/Permission/+/26231a7eac744c7d2a8fea4740926620f56b20c6/PermissionController/src/com/android/permissioncontroller/permission/service/v34/SafetyLabelChangesJobService.kt#414, https://android.googlesource.com/platform/packages/modules/Permission/+/26231a7eac744c7d2a8fea4740926620f56b20c6/PermissionController/src/com/android/permissioncontroller/permission/service/v34/SafetyLabelChangesJobService.kt#635, https://android.googlesource.com/platform/packages/modules/Permission/+/26231a7eac744c7d2a8fea4740926620f56b20c6/PermissionController/src/com/android/permissioncontroller/safetylabel/AppsSafetyLabelHistoryPersistence.kt#230, https://android.googlesource.com/platform/packages/modules/Permission/+/26231a7eac744c7d2a8fea4740926620f56b20c6/PermissionController/src/com/android/permissioncontroller/safetylabel/AppsSafetyLabelHistoryPersistence.kt#241). An app removed since the last run can therefore still be listed; that is source-verified only, because every package in each tested file was in that image's packages.xml. Cross-check on the 9 live files of the 8 tested images that had one: of 255 kept labels, 81 had the app's first install time for that user (package-restrictions.xml first-install-time), 54 its last update time in packages.xml, 117 a time between the two, and 3 a time before that user's first install time. Two of those 3 are on user 10 of russell_a14 and are not before user 0's first install time of the same app; the third, on sharon_a14, was not explained. Of the 96 distinct app and time pairs that fell between first install and last update, none equals a value in the Play Store's localappstate.db, library.db or frosting.db on the same image, and 3 are within 2 seconds of one in a row for the same app; other stores were not compared. No known-data case was made: the emulator used for the other artifacts has no store installs, so this artifact is source-verified and cross-checked on the corpus only. Copy is Current for the app's own folder. Rollback snapshot <id> is the copy of an app's data Android keeps for a rollback, taken at one moment, under misc_de/<user>/rollback/<id>/<package> (https://android.googlesource.com/platform/frameworks/base/+/1cdfff555f4a21f71ccc978290e2e212e2f8b168/services/core/java/com/android/server/rollback/AppDataRollbackHelper.java#61, https://android.googlesource.com/platform/frameworks/native/+/4f463a6b1de9198963dc6aff74154a504ba3f8f6/cmds/installd/utils.cpp#274); a snapshot row equal in every column to a Current row of the same user is not shown, and a snapshot byte identical to the live file is not read. The storage views one extraction can hold for the folder (data/user_de, data_mirror) are read once. Android User is the user whose folder holds the file, read from its path (data/user_de/<n>, data_mirror/data_de/<volume>/<n>, misc_de/<n>/rollback); the files read are listed in the report's source paths. On the tested images: 255 rows on 8 of 20 images, Android 14 to 17; the 10 Android 10 to 13 images and the two Android 15 emulator images had no such file. Copy held Current on every row: the rollback snapshots on hc_pixel8pro_a16 and russell_a14 repeated their live files' labels. Android User held 0 on every row of 7 of the 8 images; russell_a14 also had user 10. Label Order held 1 on every row of 6 of the 8 images; it was 1 on 253 rows and 2 on 2, one app each on russell_a14 and sharon_a14. Declared Location Sharing (as stored) was empty on 229 rows, location (ads: false) on 14 and location (ads: true) on 12.",
+        "paths": ('*/com.google.android.permissioncontroller/files/apps_safety_label_history_persistence.xml',
+                  '*/com.android.permissioncontroller/files/apps_safety_label_history_persistence.xml'),
+        "output_types": "standard",
+        "artifact_icon": "tag",
+        "sample_data": {
+            "anne_a15": "Android 15 | 25 rows",
+            "cookbook_a11": "Android 11 | 0 rows",
+            "emu_a15_oss2_v3": "Android 15 | 0 rows",
+            "emu_a15_oss_v17": "Android 15 | 0 rows",
+            "galaxys10_a10": "Android 10 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | 26 rows",
+            "hc_pixel8pro_a17": "Android 17 | 29 rows",
+            "hickman_a13": "Android 13 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | 16 rows",
+            "pixel3_a11": "Android 11 | 0 rows",
+            "pixel3_a12": "Android 12 | 0 rows",
+            "pixel7a_a14": "Android 14 | 53 rows",
+            "russell_a14": "Android 14 | 62 rows",
+            "russell_pixel6a_a13": "Android 13 | 0 rows",
+            "s20fe_a13": "Android 13 | 0 rows",
+            "samsunga53_a14": "Android 14 | 20 rows",
+            "samsungs20_a13": "Android 13 | 0 rows",
+            "sharon_a13": "Android 13 | 0 rows",
+            "sharon_a14": "Android 14 | 24 rows",
+            "userb2_a13": "Android 13 | 0 rows",
+        },
+    },
 }
 
 import datetime
@@ -198,4 +235,40 @@ def permissionControllerLog(context):
             logfunc(f'Permission Controller Log: could not read {relative}: {type(ex).__name__}')
             continue
         rows.extend(row + (user, relative) for row in _log_rows(text))
+    return data_headers, _with_copy(rows), '\n'.join(sources)
+
+
+def _shared(label):
+    """The stored shared entries of a label as category and ads value, in file order."""
+    entries = []
+    for entry in label.iter('entry'):
+        entries.append(f"{entry.get('cat', '')} (ads: {entry.get('ads', '')})")
+    return ', '.join(entries)
+
+
+@artifact_processor
+def permissionControllerSafetyLabels(context):
+    data_headers = (('Package Last Update (when recorded)', 'datetime'), 'Package', 'Label Order',
+                    'Declared Location Sharing (as stored)', 'Copy', 'Android User')
+    rows, sources = [], []
+    for path in _files(context, 'apps_safety_label_history_persistence.xml'):
+        relative, user = _where(context, path)
+        sources.append(str(path))
+        try:
+            with open(path, 'rb') as handle:
+                root = ET.fromstring(handle.read())
+        except (OSError, ET.ParseError) as ex:
+            logfunc(f'Permission Controller Safety Label History: could not read {relative}: {type(ex).__name__}')
+            continue
+        if root.tag != 'apps-hstry':
+            logfunc(f'Permission Controller Safety Label History: {relative} starts with <{root.tag}>, not <apps-hstry>; '
+                    'skipped')
+            continue
+        for history in root.iter('app-hstry'):
+            info = history.find('app-info')
+            package = info.get('pkg-name', '') if info is not None else ''
+            for order, label in enumerate(history.iter('sfty-lbl'), 1):
+                received = label.get('rcvd', '')
+                when = _ms(received) if received.isdigit() else received
+                rows.append((when, package, order, _shared(label), user, relative))
     return data_headers, _with_copy(rows), '\n'.join(sources)

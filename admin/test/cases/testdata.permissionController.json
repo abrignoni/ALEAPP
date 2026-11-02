@@ -158,5 +158,34 @@
                 }
             }
         }
+    },
+    "casesynthetic_s1_labels": {
+        "description": "Synthetic: apps_safety_label_history_persistence.xml files written by hand to the format in AOSP packages/modules/Permission AppsSafetyLabelHistoryPersistence.kt, with com.example package names. User 0 holds one app with two labels (an empty shared set, then location with ads false) and one app with one label; a rollback snapshot of user 0 repeats the first label and holds an app the live file does not; user 10 holds one app. Contains no device data.",
+        "maker": "synthetic",
+        "make_data": {
+            "input_data_path": "s1_synthetic_labels.zip",
+            "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+            "timestamp": "2026-11-01T20:18:51.491022",
+            "last_commit": {
+                "hash": "ca2d888b9300d771827f0c2f347e1e154091d4db",
+                "author_name": "Brigs",
+                "author_email": "abrignoni@gmail.com",
+                "date": "2026-11-01T19:38:24-05:00",
+                "message": "Permission controller artifacts: apply notes audit, match the shared rollback path rule"
+            }
+        },
+        "artifacts": {
+            "permissionControllerSafetyLabels": {
+                "search_patterns": [
+                    "*/com.google.android.permissioncontroller/files/apps_safety_label_history_persistence.xml",
+                    "*/com.android.permissioncontroller/files/apps_safety_label_history_persistence.xml"
+                ],
+                "file_count": 3,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            }
+        }
     }
 }
