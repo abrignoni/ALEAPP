@@ -84,11 +84,10 @@ __artifacts_v2__ = {
                  "other three those of android-14.0.0_r1). "
                  "cookbook_a11, samsunga53_a14, samsungs20_a13 and the two emulator images held no "
                  "rollback.json. A raw image of the userdata partition alone has rollback and "
-                 "rollback-history at its root, with no data folder in the path; the patterns "
-                 "without data/ find the files there. That case was checked on the extractions' "
+                 "rollback-history at its root, with no data folder in the path, so the patterns "
+                 "do not name data/. That case was checked on the extractions' "
                  "own path listings with the data folder removed, not on a raw image.",
-        "paths": ('*/data/rollback/*/rollback.json', '*/data/rollback-history/*/rollback.json',
-                  '*/rollback/*/rollback.json', '*/rollback-history/*/rollback.json'),
+        "paths": ('*/rollback/*/rollback.json', '*/rollback-history/*/rollback.json'),
         "output_types": "standard",
         "artifact_icon": "rotate-ccw",
         "sample_data": {

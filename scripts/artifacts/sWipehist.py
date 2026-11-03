@@ -35,8 +35,7 @@ __artifacts_v2__ = {
                  "on a raw image). A file of that name under shared storage (media/<user>/log) is "
                  "not read; on s20fe_a13 that copy held the first 42 of the 46 records in "
                  "data/log/recovery_history.log and none of its own.",
-        "paths": ('*/efs/recovery/history', '*/data/log/recovery_history.log',
-                  '*/log/recovery_history.log'),
+        "paths": ('*/efs/recovery/history', '*/log/recovery_history.log'),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "file",
         "sample_data": {

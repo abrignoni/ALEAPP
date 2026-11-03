@@ -1,4 +1,5 @@
 """Which rollback.json paths rollbackStore reads (constructed paths only)."""
+# pylint: disable=protected-access
 import unittest
 
 from scripts.artifacts import rollbackStore

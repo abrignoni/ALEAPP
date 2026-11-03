@@ -275,10 +275,10 @@ __artifacts_v2__ = {
                  "the identifier, not a recorded file time. Message media held in the app's cache "
                  "directory is reported by Teleguard - Messages, not here. A raw image of the "
                  "userdata partition alone has media/ at its root, with no data folder in the "
-                 "path; the pattern without data/ finds the shared files there (checked on the "
+                 "path, so the pattern does not name data/ (checked on the "
                  "extraction's path listing, not on a raw image).",
         "paths": ('*/ch.swisscows.messenger.teleguardapp/app_flutter/avatar*.jpg',
-                  '*/data/media/*/Pictures/TeleGuard/*', '*/media/*/Pictures/TeleGuard/*'),
+                  '*/media/*/Pictures/TeleGuard/*'),
         "output_types": "standard",
         "artifact_icon": "photo",
         "sample_data": {
