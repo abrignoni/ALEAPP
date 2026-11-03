@@ -259,7 +259,7 @@ __artifacts_v2__ = {
         "description": "Teleguard images written outside the message media cache",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-21",
-        "last_update_date": "2026-08-21",
+        "last_update_date": "2026-11-03",
         "requirements": "none",
         "category": "Teleguard",
         "notes": "Two locations, distinguished by the Location column. Files named avatar<epoch>.jpg "
@@ -273,9 +273,12 @@ __artifacts_v2__ = {
                  "column; the column is blank for any other name, and that timestamp is a property "
                  "of "
                  "the identifier, not a recorded file time. Message media held in the app's cache "
-                 "directory is reported by Teleguard - Messages, not here.",
+                 "directory is reported by Teleguard - Messages, not here. A raw image of the "
+                 "userdata partition alone has media/ at its root, with no data folder in the "
+                 "path; the pattern without data/ finds the shared files there (checked on the "
+                 "extraction's path listing, not on a raw image).",
         "paths": ('*/ch.swisscows.messenger.teleguardapp/app_flutter/avatar*.jpg',
-                  '*/data/media/*/Pictures/TeleGuard/*'),
+                  '*/data/media/*/Pictures/TeleGuard/*', '*/media/*/Pictures/TeleGuard/*'),
         "output_types": "standard",
         "artifact_icon": "photo",
         "sample_data": {

@@ -43,6 +43,18 @@ class TestWipeHistoryRecords(unittest.TestCase):
             self.assertEqual(len(rows), 4)
             self.assertEqual(rows[3][0], '2020-01-02 03:04:05')
 
+    def test_a_log_folder_at_a_partition_root_is_read_and_a_shared_storage_copy_is_not(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            system = root / 'lba0/log/recovery_history.log'
+            shared = root / 'lba0/media/0/log/recovery_history.log'
+            for path in (system, shared):
+                path.parent.mkdir(parents=True)
+                path.write_text(HISTORY, encoding='utf-8')
+            _, rows, source = sWipehist.get_sWipehist.__wrapped__(context(root, [system, shared]))
+            self.assertEqual(source, str(system))
+            self.assertEqual(len(rows), 3)
+
 
 class TestSyncAccountsSources(unittest.TestCase):
     def test_mirror_is_judged_on_the_extraction_path_and_every_source_is_named(self):

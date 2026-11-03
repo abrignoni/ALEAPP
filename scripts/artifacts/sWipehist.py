@@ -6,7 +6,7 @@ __artifacts_v2__ = {
                        "reason, locale and requested time as stored.",
         "author": "@abrignoni",
         "creation_date": "2021-08-15",
-        "last_update_date": "2026-10-09",
+        "last_update_date": "2026-11-03",
         "requirements": "none",
         "category": "Wipe & Setup",
         "notes": "A record starts at a line beginning with a plus sign and runs to the next such "
@@ -28,22 +28,34 @@ __artifacts_v2__ = {
                  "sharon_a14 the two files gave the same wipe records, so each is reported once "
                  "(measured 2026-10-09). Reference: AOSP, "
                  "bootable/recovery/recovery.cpp at tag android-14.0.0_r1, "
-                 "https://android.googlesource.com/platform/bootable/recovery/+/refs/tags/android-14.0.0_r1/recovery.cpp#83",
-        "paths": ('*/efs/recovery/history', '*/data/log/recovery_history.log'),
+                 "https://android.googlesource.com/platform/bootable/recovery/+/refs/tags/android-14.0.0_r1/recovery.cpp#83. "
+                 "recovery_history.log is also found in a log folder that is not under data/: on "
+                 "samsungs20_a13 the extraction names the partition userdata, and a raw image of "
+                 "the userdata partition alone has log/ at its root (checked on path listings, not "
+                 "on a raw image). A file of that name under shared storage (media/<user>/log) is "
+                 "not read; on s20fe_a13 that copy held the first 42 of the 46 records in "
+                 "data/log/recovery_history.log and none of its own.",
+        "paths": ('*/efs/recovery/history', '*/data/log/recovery_history.log',
+                  '*/log/recovery_history.log'),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "file",
         "sample_data": {
             "anne_a15": "Android 15 | 3 rows",
             "galaxys10_a10": "Android 10 | 2 rows",
             "samsunga53_a14": "Android 14 | 5 rows",
+            "samsungs20_a13": "Android 13 | 5 rows, from userdata/log/recovery_history.log",
             "sharon_a14": "Android 14 | 2 rows",
         },
     }
 }
 
+import re
 from collections import Counter
 
 from scripts.ilapfuncs import artifact_processor
+
+
+_SHARED_STORAGE = re.compile(r'(^|/)media/\d+/')
 
 
 def _record_row(lines):
@@ -85,6 +97,8 @@ def get_sWipehist(context):
         file_found = str(file_found)
         if not (file_found.endswith('history') or file_found.endswith('recovery_history.log')):
             continue  # Skip all other files
+        if _SHARED_STORAGE.search(file_found.replace('\\', '/')):
+            continue  # a copy in shared storage, not the system log
         if file_found in seen_files:
             continue
         seen_files.add(file_found)

@@ -6,7 +6,7 @@ __artifacts_v2__ = {
                        "time, state and state description, and the package's two version codes.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-10-27",
-        "last_update_date": "2026-10-27",
+        "last_update_date": "2026-11-03",
         "requirements": "none",
         "category": "Installed Apps",
         "notes": "Reads the rollback.json in each folder of data/rollback (records the system still "
@@ -83,8 +83,12 @@ __artifacts_v2__ = {
                  "carried the keys the AOSP writer writes (galaxys10_a10 those of android-10.0.0_r1, the "
                  "other three those of android-14.0.0_r1). "
                  "cookbook_a11, samsunga53_a14, samsungs20_a13 and the two emulator images held no "
-                 "rollback.json.",
-        "paths": ('*/data/rollback/*/rollback.json', '*/data/rollback-history/*/rollback.json'),
+                 "rollback.json. A raw image of the userdata partition alone has rollback and "
+                 "rollback-history at its root, with no data folder in the path; the patterns "
+                 "without data/ find the files there. That case was checked on the extractions' "
+                 "own path listings with the data folder removed, not on a raw image.",
+        "paths": ('*/data/rollback/*/rollback.json', '*/data/rollback-history/*/rollback.json',
+                  '*/rollback/*/rollback.json', '*/rollback-history/*/rollback.json'),
         "output_types": "standard",
         "artifact_icon": "rotate-ccw",
         "sample_data": {
@@ -155,13 +159,14 @@ def _in_app_folder(parts):
 
 
 def _store(path):
-    """'rollback' or 'rollback-history' when path ends data/<store>/<folder>/rollback.json
-    with RollbackStore's folder naming, outside any app's data folder."""
+    """'rollback' or 'rollback-history' when path ends <store>/<folder>/rollback.json
+    with RollbackStore's folder naming, outside any app's data folder. The store sits under
+    data/, or at the root of a userdata partition image read on its own."""
     parts = path.replace('\\', '/').split('/')
-    if len(parts) < 4 or parts[-1] != 'rollback.json' or parts[-4] != 'data':
+    if len(parts) < 3 or parts[-1] != 'rollback.json':
         return None
     store, folder = parts[-3], parts[-2]
-    if store not in _FOLDER or not _FOLDER[store].match(folder) or _in_app_folder(parts[:-4]):
+    if store not in _FOLDER or not _FOLDER[store].match(folder) or _in_app_folder(parts[:-3]):
         return None
     return store
 
