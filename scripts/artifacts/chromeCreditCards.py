@@ -4,10 +4,11 @@ __artifacts_v2__ = {
         "description": "Parses saved payment card records from Chromium based browsers",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-08-16",
+        "last_update_date": "2026-11-04",
         "requirements": "none",
         "category": "Chromium",
-        "notes": "Reads the masked_credit_cards table in Web Data, joined to server_card_metadata on "
+        "notes": "Reads the masked_credit_cards table in Web Data and in Account Web Data, joined "
+                 "to server_card_metadata on "
                  "id, mirroring the LEFT OUTER JOIN the browser itself uses, so a card with no "
                  "metadata row is still reported with an empty Date Last Used and Use Count. These "
                  "records hold the last four digits only; the tables carry no full card number and "
@@ -38,6 +39,8 @@ __artifacts_v2__ = {
                  "that deduplication drops, so no tested image reaches that guard. It was exercised "
                  "instead by staging that same file at an ordinary /data/data path, which logged "
                  "the skip and still reported the card another browser held in the same run. "
+                 "Measured 2026-11-04 by file name across the registered Android extractions: Account Web Data is present on 38 of the 51 keys and its masked_credit_cards table held no rows in any copy, so no Android image exercises that branch. On pixel7a_a14, Chrome's Account Web Data holds one server_card_metadata row and no card, so nothing is reported from it. The branch was exercised instead on a constructed tree: Chrome's Account Web Data from the iOS image dexter_ios18, which holds one card, staged at the Android Chrome paths under /data/data, /data/user/0 and /data/user/10 beside the pixel7a_a14 Web Data. It returned three rows, one from Web Data and one per user from Account Web Data, so the /data/user/0 copy collapsed onto /data/data, and a copy staged under another package's folder added none. On the staged Account Web Data row Bank Name, Nickname, Product Description, Billing Address ID and Card Art URL held an empty string as stored, and Card Creation Source is empty because that store (schema version 141) has no card_creation_source column. Releases through v2026.4.5 did not read Account Web Data. "
+                 "Account Web Data is the second database Chromium keeps in the same profile folder as Web Data (kAccountWebDataFilename). At the pinned source it is created with only the sync metadata table and the payments table, and the wallet data sync controller is given it for transport-only mode and Web Data for full Sync mode; sync_mode.h contrasts transport-only mode with full Sync (Sync-the-feature) and says only a subset of data types runs in it. That reading is verified against the pinned source, which is newer than every Account Web Data file measured (schema versions 91 to 153), and is not established for each of those versions. Database names the file a row came from, Web Data or Account Web Data, because Browser Name does not separate the two. Reference: Chromium, 'webdata_constants.cc', https://github.com/chromium/chromium/blob/8f4baaae073181e7e0fea1807f8db6ad720dbcb7/components/webdata/common/webdata_constants.cc#L11-L12, 'web_data_service_wrapper.cc', https://github.com/chromium/chromium/blob/8f4baaae073181e7e0fea1807f8db6ad720dbcb7/components/webdata_services/web_data_service_wrapper.cc#L241-L261, 'common_controller_builder.cc', https://github.com/chromium/chromium/blob/8f4baaae073181e7e0fea1807f8db6ad720dbcb7/components/browser_sync/common_controller_builder.cc#L683-L686 and https://github.com/chromium/chromium/blob/8f4baaae073181e7e0fea1807f8db6ad720dbcb7/components/browser_sync/common_controller_builder.cc#L1324-L1356, and 'sync_mode.h', https://github.com/chromium/chromium/blob/8f4baaae073181e7e0fea1807f8db6ad720dbcb7/components/sync/base/sync_mode.h#L10-L14 . "
                  "Hu and Karabiyik report finding cardholder name, card type, last four "
                  "digits, expiration, use frequency and dates of use in these two tables at "
                  "data/data/com.android.chrome/app_chrome/Default/Web Data after TikTok Shop "
@@ -51,7 +54,9 @@ __artifacts_v2__ = {
                  " and 'enum_types.mojom', "
                  "https://github.com/chromium/chromium/blob/8f4baaae073181e7e0fea1807f8db6ad720dbcb7/components/autofill/core/browser/data_model/payments/enum_types.mojom",
         "paths": ('*/app_chrome/Default/Web Data*', '*/app_sbrowser/Default/Web Data*',
-                  '*/data/*/app_opera/Web Data*', '*/app_webview/Default/Web Data*'),
+                  '*/data/*/app_opera/Web Data*', '*/app_webview/Default/Web Data*',
+                  '*/app_chrome/Default/Account Web Data*', '*/app_sbrowser/Default/Account Web Data*',
+                  '*/data/*/app_opera/Account Web Data*', '*/app_webview/Default/Account Web Data*'),
         "output_types": "standard",
         "artifact_icon": "credit-card",
         "sample_data": {
@@ -158,12 +163,13 @@ def get_chromeCreditCards(context):
         'Last Four Digits', 'Expiration Month', 'Expiration Year', 'Use Count',
         'Bank Name', 'Nickname', 'Product Description', 'Card Issuer ID', 'Card Issuer',
         'Virtual Card Enrollment State', 'Card Creation Source', 'Billing Address ID',
-        'Instrument ID', 'Card Art URL', 'Server ID', 'Browser Name']
+        'Instrument ID', 'Card Art URL', 'Server ID', 'Browser Name', 'Database']
     report_files = []
 
     for file_found in files_found:
         file_found = str(file_found)
-        if not os.path.basename(file_found) == 'Web Data':  # skip -journal and other files
+        database = os.path.basename(file_found)
+        if database not in ('Web Data', 'Account Web Data'):  # skip -journal and other files
             continue
         if file_found.find('.magisk') >= 0 and file_found.find('mirror') >= 0:
             continue  # Skip mirror, it should be duplicate data
@@ -224,6 +230,7 @@ def get_chromeCreditCards(context):
                 card.get('card_art_url', ''),
                 card.get('id', ''),
                 browser_name,
+                database,
             ))
 
     return data_headers, all_data, '\n'.join(report_files)

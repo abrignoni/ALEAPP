@@ -4,12 +4,13 @@ __artifacts_v2__ = {
         "description": "Parses the payments customer data record from Chromium based browsers",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-08-16",
+        "last_update_date": "2026-11-04",
         "requirements": "none",
         "category": "Chromium",
-        "notes": "Reads the payments_customer_data table in Web Data. The table is created with a "
+        "notes": "Reads the payments_customer_data table in Web Data and in Account Web Data. "
+                 "The table is created with a "
                  "single VARCHAR column, customer_id, and the browser writes it by deleting every "
-                 "row and then inserting at most one, so a profile stores at most one value here. "
+                 "row and then inserting at most one, so each file stores at most one value here. "
                  "Chromium describes the struct backing this table as the Google Payments customer "
                  "data and describes customer_id as the identifier by which a Google Payments "
                  "account is identified; what account that is, and whose it is, is not recorded in "
@@ -31,13 +32,18 @@ __artifacts_v2__ = {
                  "browser's row. Extractions carry the same database at more than one path "
                  "(data_mirror, and /data/data next to /data/user/0), so files are deduplicated on "
                  "the evidence-relative path before reading; one tested image carries the Chrome "
-                 "database at all three of those paths. Reference: Chromium, "
+                 "database at all three of those paths. "
+                 'Measured 2026-11-04 by file name across the registered Android extractions: Account Web Data is present on 38 of the 51 keys, and its payments_customer_data table held a row on two, hc_pixel8pro_a16 and hc_pixel8pro_a17, one each, in the Chrome package, where the Web Data beside it held none. The same constructed tree used for Saved Credit Cards (the dexter_ios18 Chrome Account Web Data staged under /data/data, /data/user/0 and /data/user/10 beside the pixel7a_a14 Web Data) returned three rows, one from Web Data and one per user from Account Web Data. Releases through v2026.4.5 did not read Account Web Data. '
+                 "Account Web Data is the second database Chromium keeps in the same profile folder as Web Data (kAccountWebDataFilename). At the pinned source it is created with only the sync metadata table and the payments table, and the wallet data sync controller is given it for transport-only mode and Web Data for full Sync mode; sync_mode.h contrasts transport-only mode with full Sync (Sync-the-feature) and says only a subset of data types runs in it. That reading is verified against the pinned source, which is newer than every Account Web Data file measured (schema versions 91 to 153), and is not established for each of those versions. Database names the file a row came from, Web Data or Account Web Data, because Browser Name does not separate the two. Reference: Chromium, 'webdata_constants.cc', https://github.com/chromium/chromium/blob/8f4baaae073181e7e0fea1807f8db6ad720dbcb7/components/webdata/common/webdata_constants.cc#L11-L12, 'web_data_service_wrapper.cc', https://github.com/chromium/chromium/blob/8f4baaae073181e7e0fea1807f8db6ad720dbcb7/components/webdata_services/web_data_service_wrapper.cc#L241-L261, 'common_controller_builder.cc', https://github.com/chromium/chromium/blob/8f4baaae073181e7e0fea1807f8db6ad720dbcb7/components/browser_sync/common_controller_builder.cc#L683-L686 and https://github.com/chromium/chromium/blob/8f4baaae073181e7e0fea1807f8db6ad720dbcb7/components/browser_sync/common_controller_builder.cc#L1324-L1356, and 'sync_mode.h', https://github.com/chromium/chromium/blob/8f4baaae073181e7e0fea1807f8db6ad720dbcb7/components/sync/base/sync_mode.h#L10-L14 . "
+                 "Reference: Chromium, "
                  "'payments_autofill_table.cc', "
                  "https://github.com/chromium/chromium/blob/8f4baaae073181e7e0fea1807f8db6ad720dbcb7/components/autofill/core/browser/webdata/payments/payments_autofill_table.cc"
                  " and 'payments_customer_data.h', "
                  "https://github.com/chromium/chromium/blob/8f4baaae073181e7e0fea1807f8db6ad720dbcb7/components/autofill/core/browser/payments/payments_customer_data.h",
         "paths": ('*/app_chrome/Default/Web Data*', '*/app_sbrowser/Default/Web Data*',
-                  '*/data/*/app_opera/Web Data*', '*/app_webview/Default/Web Data*'),
+                  '*/data/*/app_opera/Web Data*', '*/app_webview/Default/Web Data*',
+                  '*/app_chrome/Default/Account Web Data*', '*/app_sbrowser/Default/Account Web Data*',
+                  '*/data/*/app_opera/Account Web Data*', '*/app_webview/Default/Account Web Data*'),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "id",
         "sample_data": {
@@ -46,8 +52,8 @@ __artifacts_v2__ = {
             "sharon_a14": "Android 14 | 1 row",
             "anne_a15": "Android 15 | 0 rows",
             "galaxys10_a10": "Android 10 | 0 rows",
-            "hc_pixel8pro_a16": "Android 16 | 0 rows",
-            "hc_pixel8pro_a17": "Android 17 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | 1 row",
+            "hc_pixel8pro_a17": "Android 17 | 1 row",
             "kevin_pocox7_a15": "Android 15 | 0 rows",
             "pixel3_a11": "Android 11 | 0 rows",
             "pixel3_a12": "Android 12 | 0 rows",
@@ -75,13 +81,17 @@ def _table_exists(cursor, table):
     return cursor.fetchone() is not None
 
 
+# The two databases Chromium keeps in a profile folder that hold this table.
+WEB_DATA_FILES = ('Web Data', 'Account Web Data')
+
+
 def _unique_web_data(context):
-    '''The context's Web Data files, one copy per duplicate storage view, skipping
-    .magisk mirror copies.'''
+    '''The context's Web Data and Account Web Data files, one copy per duplicate
+    storage view, skipping .magisk mirror copies.'''
     kept = []
     for file_found in context.get_files_found():
         file_found = str(file_found)
-        if os.path.basename(file_found) != 'Web Data':  # skip -journal and other files
+        if os.path.basename(file_found) not in WEB_DATA_FILES:  # skip -journal and other files
             continue
         relative = str(context.get_relative_path(file_found)).replace('\\', '/')
         if '.magisk' in relative and 'mirror' in relative:
@@ -93,7 +103,7 @@ def _unique_web_data(context):
 @artifact_processor
 def get_chromePaymentsCustomerData(context):
     all_data = []
-    data_headers = ['Customer ID', 'Browser Name']
+    data_headers = ['Customer ID', 'Browser Name', 'Database']
     report_files = []
 
     for file_found in _unique_web_data(context):
@@ -128,6 +138,6 @@ def get_chromePaymentsCustomerData(context):
         report_files.append(file_found)
 
         for row in rows:
-            all_data.append((row[0], browser_name))
+            all_data.append((row[0], browser_name, os.path.basename(file_found)))
 
     return data_headers, all_data, '\n'.join(report_files)
