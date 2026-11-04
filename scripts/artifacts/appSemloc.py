@@ -43,7 +43,7 @@ import pathlib
 
 from scripts.ilapfuncs import decode_protobuf
 
-from scripts.ccl import ccl_leveldb
+from scripts.vendor.ccl import ccl_leveldb
 from scripts.ilapfuncs import artifact_processor
 
 
