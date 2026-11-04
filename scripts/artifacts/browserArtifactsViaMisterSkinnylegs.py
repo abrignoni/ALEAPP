@@ -382,8 +382,9 @@ try:
 except (ImportError, TypeError) as _msl_import_error:
     # Without the guard a missing/broken mister_skinnylegs install would raise during
     # plugin discovery and abort loading of ALL ALEAPP artifacts, not just these.
-    # TypeError: on Python 3.10, ccl_mozilla_reader's StructuredDataType enum uses
-    # 'enum.auto(),' with a stray trailing comma (a tuple value 3.10 cannot resolve).
+    # TypeError: on Python 3.10, ccl_mozilla_reader before eb5053d (2026-10-27) has
+    # 'enum.auto(),' with a stray trailing comma in its StructuredDataType enum (a tuple
+    # value 3.10 cannot resolve). The lock pins a fixed commit; an unpinned install may not.
     _MSL_AVAILABLE = False
     logfunc(f"Mister Skinnylegs package not available, browser artifacts disabled: {_msl_import_error}")
     __artifacts_v2__ = {}

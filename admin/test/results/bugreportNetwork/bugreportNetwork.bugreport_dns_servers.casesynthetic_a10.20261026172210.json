@@ -1,0 +1,80 @@
+{
+  "metadata": {
+    "module_name": "bugreportNetwork",
+    "artifact_name": "Bug Report - DNS Servers",
+    "function_name": "bugreport_dns_servers",
+    "case_number": "casesynthetic_a10",
+    "number_of_columns": 16,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 214,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportNetwork/testdata.bugreportNetwork.bugreport_dns_servers.casesynthetic_a10.zip",
+    "start_time": "2026-10-26T17:22:10.464476+00:00",
+    "end_time": "2026-10-26T17:22:10.594667+00:00",
+    "run_time_seconds": 0.01189565658569336,
+    "last_commit": {
+      "hash": "35ad867ff7da9d4bd9ac2bb41cca31cb5a49f8b2",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:21:50-04:00",
+      "message": "Bug report network: Wi-Fi, network usage, policy, connectivity, DNS, interface, socket and tethering artifacts"
+    }
+  },
+  "headers": [
+    "Net ID",
+    "Server",
+    "Total",
+    "Successes",
+    "Errors",
+    "Timeouts",
+    "Internal Errors",
+    "RTT Average (ms)",
+    "Last Sample (s)",
+    "Interfaces",
+    "Search Domains",
+    "Private DNS Mode",
+    "Transport Type",
+    "Metered",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      101,
+      "192.0.2.1",
+      64,
+      62,
+      0,
+      2,
+      0,
+      53,
+      43,
+      "",
+      "none defined",
+      "OPPORTUNISTIC",
+      "",
+      "",
+      318,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      101,
+      "2001:db8::53%wlan0",
+      6,
+      1,
+      0,
+      5,
+      0,
+      -1,
+      257,
+      "",
+      "none defined",
+      "OPPORTUNISTIC",
+      "",
+      "",
+      319,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

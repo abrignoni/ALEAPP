@@ -9,9 +9,9 @@ name: Build Windows wheels
 #
 # Gaps covered, measured against PyPI on 2026-10-19:
 #   sqlcipher3 0.6.2: no cp315 wheel, x64 or ARM64.
-#   lz4 4.3.3, zstd 1.5.7.2 and Brotli 1.2.0, pinned by the ccl readers that
-#   mister_skinnylegs installs from git: lz4 has x64 wheels only to 3.12, zstd
-#   only to 3.13, Brotli only to 3.14, and none of the three has ARM64 wheels.
+#   lz4 4.3.3 and zstd 1.5.7.2, pinned by the ccl readers that mister_skinnylegs
+#   installs from git: lz4 has x64 wheels only to 3.12, zstd only to 3.13, and
+#   neither has ARM64 wheels.
 #   lz4 4.3.3's lz4.frame does not import from Python 3.14; the reader uses
 #   lz4.block, which does, so that is what the check exercises.
 # setup-python offers Windows ARM64 builds of Python from 3.11 only.
@@ -268,72 +268,6 @@ jobs:
               data = bytes(range(256)) * 64
               assert zstd.decompress(zstd.compress(data)) == data
               print('libzstd', zstd.ZSTD_version())
-          - name: Brotli
-            version: 1.2.0
-            runner: windows-latest
-            arch: x64
-            python: '3.15'
-            sdist: https://files.pythonhosted.org/packages/f7/16/c92ca344d646e71a43b8bb353f0a6490d7f6e06210f8554c8f874e454285/brotli-1.2.0.tar.gz
-            sha256: e310f77e41941c13340a95976fe66a8a95b01e783d430eeaf7a2f87e0a57dd0a
-            check: |
-              import brotli
-              data = bytes(range(256)) * 64
-              assert brotli.decompress(brotli.compress(data)) == data
-          - name: Brotli
-            version: 1.2.0
-            runner: windows-11-arm
-            arch: arm64
-            python: '3.11'
-            sdist: https://files.pythonhosted.org/packages/f7/16/c92ca344d646e71a43b8bb353f0a6490d7f6e06210f8554c8f874e454285/brotli-1.2.0.tar.gz
-            sha256: e310f77e41941c13340a95976fe66a8a95b01e783d430eeaf7a2f87e0a57dd0a
-            check: |
-              import brotli
-              data = bytes(range(256)) * 64
-              assert brotli.decompress(brotli.compress(data)) == data
-          - name: Brotli
-            version: 1.2.0
-            runner: windows-11-arm
-            arch: arm64
-            python: '3.12'
-            sdist: https://files.pythonhosted.org/packages/f7/16/c92ca344d646e71a43b8bb353f0a6490d7f6e06210f8554c8f874e454285/brotli-1.2.0.tar.gz
-            sha256: e310f77e41941c13340a95976fe66a8a95b01e783d430eeaf7a2f87e0a57dd0a
-            check: |
-              import brotli
-              data = bytes(range(256)) * 64
-              assert brotli.decompress(brotli.compress(data)) == data
-          - name: Brotli
-            version: 1.2.0
-            runner: windows-11-arm
-            arch: arm64
-            python: '3.13'
-            sdist: https://files.pythonhosted.org/packages/f7/16/c92ca344d646e71a43b8bb353f0a6490d7f6e06210f8554c8f874e454285/brotli-1.2.0.tar.gz
-            sha256: e310f77e41941c13340a95976fe66a8a95b01e783d430eeaf7a2f87e0a57dd0a
-            check: |
-              import brotli
-              data = bytes(range(256)) * 64
-              assert brotli.decompress(brotli.compress(data)) == data
-          - name: Brotli
-            version: 1.2.0
-            runner: windows-11-arm
-            arch: arm64
-            python: '3.14'
-            sdist: https://files.pythonhosted.org/packages/f7/16/c92ca344d646e71a43b8bb353f0a6490d7f6e06210f8554c8f874e454285/brotli-1.2.0.tar.gz
-            sha256: e310f77e41941c13340a95976fe66a8a95b01e783d430eeaf7a2f87e0a57dd0a
-            check: |
-              import brotli
-              data = bytes(range(256)) * 64
-              assert brotli.decompress(brotli.compress(data)) == data
-          - name: Brotli
-            version: 1.2.0
-            runner: windows-11-arm
-            arch: arm64
-            python: '3.15'
-            sdist: https://files.pythonhosted.org/packages/f7/16/c92ca344d646e71a43b8bb353f0a6490d7f6e06210f8554c8f874e454285/brotli-1.2.0.tar.gz
-            sha256: e310f77e41941c13340a95976fe66a8a95b01e783d430eeaf7a2f87e0a57dd0a
-            check: |
-              import brotli
-              data = bytes(range(256)) * 64
-              assert brotli.decompress(brotli.compress(data)) == data
 
     steps:
       - uses: actions/setup-python@v7

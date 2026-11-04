@@ -1,0 +1,46 @@
+{
+  "metadata": {
+    "module_name": "bugreportSecurityStorage",
+    "artifact_name": "Bug Report - Lock Settings Users",
+    "function_name": "bugreport_lock_settings_users",
+    "case_number": "casesynthetic_not_a_report",
+    "number_of_columns": 19,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSecurityStorage/testdata.bugreportSecurityStorage.bugreport_lock_settings_users.casesynthetic_not_a_report.zip",
+    "start_time": "2026-10-26T17:40:24.415500+00:00",
+    "end_time": "2026-10-26T17:40:24.523330+00:00",
+    "run_time_seconds": 0.0032286643981933594,
+    "last_commit": {
+      "hash": "702ca90825fbb296e5cc429838c511eb52a44af6",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:39:47-04:00",
+      "message": "Bug report security and storage: readers and 30 artifacts for device policy, lock settings, biometrics, trust, ADB, vendor services, storage, dbinfo and flags"
+    }
+  },
+  "headers": [
+    "Last Changed (UTC)",
+    "Last Changed As Printed",
+    "Time Note",
+    "User",
+    "Protector ID",
+    "Previous Protector",
+    "Backup Protector",
+    "SI Checker",
+    "Secure Mode (as stored)",
+    "SID",
+    "Quality (as stored)",
+    "Credential Type",
+    "Separate Challenge",
+    "Metrics",
+    "Failed Attempts",
+    "SP Handle",
+    "Other",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

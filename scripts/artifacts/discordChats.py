@@ -1,10 +1,11 @@
 __artifacts_v2__ = {
     "get_discordChats": {
         "name": "discordChats",
-        "description": "Parses Discord chat messages from the kv-storage key-value store",
+        "description": "Parses Discord chat messages from the kv-storage key-value store, including messages "
+                       "another state in its write-ahead log holds and the current state does not",
         "author": "@abrignoni",
         "creation_date": "2023-09-18",
-        "last_update_date": "2026-10-23",
+        "last_update_date": "2026-10-26",
         "requirements": "none",
         "category": "Discord Chats",
         "notes": "Each account's "
@@ -25,7 +26,16 @@ __artifacts_v2__ = {
                  "on pixel7a_a14 and 2 of 27 on falken_a326u_a13 in a server channel and the rest in a channel "
                  "with no guild_id, and all rows on userb2_a13 (25), hc_pixel8pro_a16 (7) and samsungs20_a13 (1) "
                  "in a channel with no guild_id. Channel Name was blank on every row in a channel with no "
-                 "guild_id.",
+                 "guild_id. "
+                 "Record Origin. Live rows come from a normal read of messages0. Recovered rows do not: their key, columns a to f of messages0, is held by another state in the database's write-ahead log and absent from the current one. messages0 declares no primary key; the unique index messages0_by_key on a to f is what makes a row one message, so a row whose key the current state still holds is not reported, whatever its older versions held. Recovery Method and Recovery Location are filled in only on Recovered rows. Why a Recovered row is absent is not established here. States are read by scripts/sqlite_wal.py: each earlier committed state of the log's current generation (state n is the database after the first n committed transactions, and state 0 the database file without its log), the previous generation's left-over frames where its checks pass, and frames after the last commit. A Recovered row is reported once, as the newest committed state holding its key stored it, else the previous generation's newest left-over commit, else the frames after the last commit. Recovery Location names the committed states the key was read in, with their first and last numbers, and the previous log generation with the first and last numbers of its left-over commits; for a key read only after the last commit it names the log's frames after the last commit. Recovery Method is WAL committed states, or WAL uncommitted frames for a key read only after the last commit. The previous-generation and uncommitted-frame paths were not exercised on these images or by the unit test. "
+                 "On the tested images no Recovered row was returned, so Record Origin held Live on "
+                 "every row and Recovery Method and Recovery Location were empty on every row. "
+                 "falken_a326u_a13, pixel7a_a14 and userb2_a13 had a log beside the database, and "
+                 "every key held by the states that could be read was still current; on falken_a326u_a13 none of "
+                 "the previous generation's 18 commits could be read. samsungs20_a13 had no log; "
+                 "hc_pixel8pro_a16 and hc_pixel8pro_a17 had an empty (0-byte) log, which the reader "
+                 "treats as no log. The Recovered path is exercised "
+                 "by a unit test, not by these images.",
         "paths": ('*/com.discord/files/kv-storage/*/a*',
                   '*/com.discord/cache/http-cache/[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f].[01]'),
         "output_types": "standard",
@@ -61,7 +71,8 @@ import sys
 
 from scripts.ilapfuncs import artifact_processor, check_in_media, logfunc, open_sqlite_db_readonly
 from scripts.artifacts.storagePathViews import canonical_path, unique_files
-from scripts.artifacts.discordServers import discord_channel_context, discord_kv_lookup
+from scripts.artifacts.discordServers import (ORIGIN_LIVE, ORIGIN_RECOVERED, discord_channel_context,
+                                              discord_kv_lookup, discord_removed_messages)
 
 _PACKAGE = 'com.discord'
 _ENTRY = re.compile(r'^([0-9a-f]{32})\.([01])$')
@@ -162,7 +173,10 @@ def get_discordChats(context):
             logfunc(f'Discord kv-storage {context.get_relative_path(source_path)}: {error}')
             rows = []
         sources.append(source_path)
-        for (blob,) in rows:
+        blobs = [(blob, ORIGIN_LIVE, '', '') for (blob,) in rows]
+        blobs.extend((blob, ORIGIN_RECOVERED, method, location)
+                     for blob, method, location in discord_removed_messages(source_path))
+        for blob, origin, method, location in blobs:
             try:
                 data = json.loads(bytes(blob).decode('utf-8', 'replace').translate(_NOPRINT))
             except (ValueError, TypeError):
@@ -196,6 +210,7 @@ def get_discordChats(context):
                 conversation,
                 _text(message.get('content')),
                 media,
+                origin,
                 channel_id,
                 server_name,
                 server_id,
@@ -211,6 +226,8 @@ def get_discordChats(context):
                 _text(author.get('avatar')),
                 sender_id,
                 account_id,
+                method,
+                location,
             ))
         db.close()
 
@@ -222,6 +239,7 @@ def get_discordChats(context):
         'Conversation',
         'Content',
         ('Attachment', 'media'),
+        'Record Origin',
         'Channel ID',
         'Server Name',
         'Server ID',
@@ -237,5 +255,7 @@ def get_discordChats(context):
         'Avatar',
         'Sender ID',
         'Account ID',
+        'Recovery Method',
+        'Recovery Location',
     )
     return data_headers, data_list, '\n'.join(context.get_relative_path(p) for p in sources)

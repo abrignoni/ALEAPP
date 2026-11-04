@@ -1,0 +1,37 @@
+{
+  "metadata": {
+    "module_name": "bugreportSecurityStorage",
+    "artifact_name": "Bug Report - Platform Compat Changes",
+    "function_name": "bugreport_platform_compat",
+    "case_number": "casesynthetic_old",
+    "number_of_columns": 10,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSecurityStorage/testdata.bugreportSecurityStorage.bugreport_platform_compat.casesynthetic_old.zip",
+    "start_time": "2026-10-26T17:40:08.428195+00:00",
+    "end_time": "2026-10-26T17:40:08.557101+00:00",
+    "run_time_seconds": 0.016688823699951172,
+    "last_commit": {
+      "hash": "702ca90825fbb296e5cc429838c511eb52a44af6",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:39:47-04:00",
+      "message": "Bug report security and storage: readers and 30 artifacts for device policy, lock settings, biometrics, trust, ADB, vendor services, storage, dbinfo and flags"
+    }
+  },
+  "headers": [
+    "Change ID",
+    "Name",
+    "Enable Since Target SDK",
+    "Enable After Target SDK",
+    "Disabled",
+    "Logging Only",
+    "Overridable",
+    "Other",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

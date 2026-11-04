@@ -185,7 +185,7 @@ import struct
 from collections import defaultdict
 from datetime import datetime, timezone
 
-from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly, is_sqlite_sidecar
 from scripts.artifacts.storagePathViews import canonical_path, unique_files
 from scripts.artifacts.exoplayerCachedMedia import media_ref, rejoined_records, shown, shows_media
 
@@ -305,7 +305,7 @@ def _collect(context, package, folder_pattern):
             continue
         base = os.path.basename(file_found)
         container = _container_key(context, file_found, package)
-        if base.startswith('exoplayer_internal.db') and not base.endswith(('-wal', '-shm', '-journal')):
+        if base.startswith('exoplayer_internal.db') and not is_sqlite_sidecar(base):
             groups.setdefault((container, 'databases'), {'index': None, 'spans': [], 'dbs': []})['dbs'].append(file_found)
             continue
         folder = _folder_of(context, file_found, package, folder_pattern)

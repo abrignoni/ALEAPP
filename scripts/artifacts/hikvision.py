@@ -63,7 +63,7 @@ import datetime
 import os
 import sqlite3
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, check_in_media
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, check_in_media, is_sqlite_sidecar
 
 
 def _ms_to_utc(value):
@@ -78,7 +78,7 @@ def _ms_to_utc(value):
 def _db(files_found, db_name):
     for file_found in files_found:
         file_found = str(file_found)
-        if file_found.endswith(('-wal', '-shm', '-journal')):
+        if is_sqlite_sidecar(file_found):
             continue
         if os.path.basename(file_found) == db_name:
             return file_found

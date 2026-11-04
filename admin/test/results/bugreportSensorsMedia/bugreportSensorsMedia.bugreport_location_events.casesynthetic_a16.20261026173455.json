@@ -1,0 +1,96 @@
+{
+  "metadata": {
+    "module_name": "bugreportSensorsMedia",
+    "artifact_name": "Bug Report - Location Events",
+    "function_name": "bugreport_location_events",
+    "case_number": "casesynthetic_a16",
+    "number_of_columns": 8,
+    "number_of_rows": 6,
+    "total_data_size_bytes": 709,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSensorsMedia/testdata.bugreportSensorsMedia.bugreport_location_events.casesynthetic_a16.zip",
+    "start_time": "2026-10-26T17:34:55.886443+00:00",
+    "end_time": "2026-10-26T17:34:56.023951+00:00",
+    "run_time_seconds": 0.015469551086425781,
+    "last_commit": {
+      "hash": "e56d9fc859d2e83c7207c6514d3727ee6bf6a291",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:32:45-04:00",
+      "message": "Bug report sensors and media: location, sensors, camera, audio, media, accessibility, input method, display and window artifacts"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Provider",
+    "Event",
+    "Client",
+    "Detail",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1793604600,
+      "11-02 08:30:00.123",
+      "passive",
+      "[u0] enabled",
+      "",
+      "",
+      652,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793604670,
+      "11-02 08:31:10.000",
+      "passive",
+      "+registration",
+      "10300/com.example.user.chat[chat_location]/AB12CD34",
+      "Request[@+1h0m0s0ms BALANCED, WorkSource{10300 com.example.user.chat}]",
+      653,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793604671,
+      "11-02 08:31:11.500",
+      "passive",
+      "request",
+      "",
+      "ProviderRequest[@+1h0m0s0ms, BALANCED, WorkSource{10300 com.example.user.chat}]",
+      654,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793605200,
+      "11-02 08:40:00.000",
+      "passive",
+      "delivered location[1]",
+      "10300/com.example.user.chat[chat_location]/AB12CD34",
+      "",
+      655,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793606400,
+      "11-02 09:00:00.000",
+      "passive",
+      "-registration",
+      "10300/com.example.user.chat[chat_location]/AB12CD34",
+      "",
+      656,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793606401,
+      "11-02 09:00:01.000",
+      "",
+      "[u0] visible",
+      "",
+      "",
+      657,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

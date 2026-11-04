@@ -1,0 +1,130 @@
+{
+  "metadata": {
+    "module_name": "persistentProp",
+    "artifact_name": "Persistent Properties - Matched Text Observations",
+    "function_name": "get_persistentProp",
+    "case_number": "casesynthetic_odd_entries",
+    "number_of_columns": 11,
+    "number_of_rows": 7,
+    "total_data_size_bytes": 785,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/persistentProp/testdata.persistentProp.get_persistentProp.casesynthetic_odd_entries.zip",
+    "start_time": "2026-10-27T22:25:55.006619+00:00",
+    "end_time": "2026-10-27T22:25:55.550773+00:00",
+    "run_time_seconds": 0.142869234085083,
+    "last_commit": {
+      "hash": "8cb057d5119943244a1059760b8b6eb8e513fd06",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-10-06T20:26:11-04:00",
+      "message": "Retain persistent property observations with invalid timestamps"
+    }
+  },
+  "headers": [
+    "Timestamp",
+    "Raw Timestamp Text",
+    "Event",
+    "Timestamp Conversion Status",
+    "Input Line Ordinal",
+    "Matched Text (replacement decoded)",
+    "Property",
+    "Reason",
+    "Subreason",
+    "Position",
+    "factory_reset Reason Present"
+  ],
+  "data": [
+    [
+      "",
+      "",
+      "reboot",
+      "No epoch in the entry",
+      "",
+      "reboot",
+      "persist.sys.boot.reason.history",
+      "reboot",
+      "",
+      0,
+      "no"
+    ],
+    [
+      1782864000,
+      "1782864000",
+      "reboot,a,b",
+      "Converted by Unix-seconds rule (2009 to 2100)",
+      "",
+      "reboot,a,b,1782864000",
+      "persist.sys.boot.reason.history",
+      "reboot",
+      "a,b",
+      1,
+      "no"
+    ],
+    [
+      "",
+      "",
+      "reboot,notanumber",
+      "No epoch in the entry",
+      "",
+      "reboot,notanumber",
+      "persist.sys.boot.reason.history",
+      "reboot",
+      "notanumber",
+      2,
+      "no"
+    ],
+    [
+      "",
+      "100",
+      "reboot",
+      "Not converted (no epoch, or outside 2009 to 2100)",
+      "",
+      "reboot,100",
+      "persist.sys.boot.reason.history",
+      "reboot",
+      "",
+      3,
+      "no"
+    ],
+    [
+      "",
+      "99999999999999",
+      "reboot",
+      "Not converted (no epoch, or outside 2009 to 2100)",
+      "",
+      "reboot,99999999999999",
+      "persist.sys.boot.reason.history",
+      "reboot",
+      "",
+      4,
+      "no"
+    ],
+    [
+      "",
+      "",
+      ",,",
+      "No epoch in the entry",
+      "",
+      ",,",
+      "persist.sys.boot.reason.history",
+      "",
+      ",",
+      5,
+      "no"
+    ],
+    [
+      1782950400,
+      "1782950400",
+      "REBOOT,FACTORY_RESET",
+      "Converted by Unix-seconds rule (2009 to 2100)",
+      "",
+      "REBOOT,FACTORY_RESET,1782950400",
+      "persist.sys.boot.reason.history",
+      "REBOOT",
+      "FACTORY_RESET",
+      6,
+      "yes"
+    ]
+  ]
+}

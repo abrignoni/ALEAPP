@@ -1,0 +1,187 @@
+{
+  "metadata": {
+    "module_name": "bugreportNetwork",
+    "artifact_name": "Bug Report - Network Policy Settings",
+    "function_name": "bugreport_netpolicy_settings",
+    "case_number": "casesynthetic_two_reports",
+    "number_of_columns": 5,
+    "number_of_rows": 22,
+    "total_data_size_bytes": 1872,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportNetwork/testdata.bugreportNetwork.bugreport_netpolicy_settings.casesynthetic_two_reports.zip",
+    "start_time": "2026-10-26T17:22:13.466542+00:00",
+    "end_time": "2026-10-26T17:22:13.601456+00:00",
+    "run_time_seconds": 0.02241063117980957,
+    "last_commit": {
+      "hash": "35ad867ff7da9d4bd9ac2bb41cca31cb5a49f8b2",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:21:50-04:00",
+      "message": "Bug report network: Wi-Fi, network usage, policy, connectivity, DNS, interface, socket and tethering artifacts"
+    }
+  },
+  "headers": [
+    "Group",
+    "Name",
+    "Value (as printed)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "",
+      "System ready",
+      "true",
+      317,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "",
+      "Restrict background",
+      "false",
+      318,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "",
+      "Restrict power",
+      "true",
+      319,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "",
+      "Device idle",
+      "false",
+      320,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "",
+      "com.example.net.use_metered_firewall_chains",
+      "true",
+      323,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "",
+      "mRestrictBackgroundLowPowerMode",
+      "false",
+      324,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Network policies",
+      "",
+      "NetworkPolicy{template=NetworkTemplate: matchRule=CARRIER, matchSubscriberIds=[999990...], metered=YES warningBytes=2000000000 limitBytes=-1}",
+      327,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Active subscriptions",
+      "",
+      "1=999990...",
+      330,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Network to interfaces",
+      "",
+      "101: {wlan0}",
+      347,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Stats",
+      "updateNetworkEnabledNL()",
+      "count=74, total=17.6ms, avg=0.238ms, max calls/s=4",
+      350,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "MultipathPolicyTracker",
+      "Network 101",
+      "quota 0, budget 0",
+      361,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "",
+      "System ready",
+      "true",
+      256,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "",
+      "Restrict background",
+      "false",
+      257,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "",
+      "Restrict power",
+      "true",
+      258,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "",
+      "Device idle",
+      "false",
+      259,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "",
+      "com.example.net.use_metered_firewall_chains",
+      "true",
+      262,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "",
+      "mRestrictBackgroundLowPowerMode",
+      "false",
+      263,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Network policies",
+      "",
+      "NetworkPolicy{template=NetworkTemplate: matchRule=CARRIER, matchSubscriberIds=[999990...], metered=YES warningBytes=2000000000 limitBytes=-1}",
+      266,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Active subscriptions",
+      "",
+      "1=999990...",
+      269,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Network to interfaces",
+      "",
+      "101: {wlan0}",
+      286,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Stats",
+      "updateNetworkEnabledNL()",
+      "count=74, total=17.6ms, avg=0.238ms, max calls/s=4",
+      289,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "MultipathPolicyTracker",
+      "Network 101",
+      "quota 0, budget 0",
+      300,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

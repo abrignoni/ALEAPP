@@ -1,0 +1,37 @@
+{
+  "metadata": {
+    "module_name": "bugreportNetwork",
+    "artifact_name": "Bug Report - Wi-Fi Scan Results",
+    "function_name": "bugreport_wifi_scan_results",
+    "case_number": "casesynthetic_empty",
+    "number_of_columns": 10,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportNetwork/testdata.bugreportNetwork.bugreport_wifi_scan_results.casesynthetic_empty.zip",
+    "start_time": "2026-10-26T17:22:19.768606+00:00",
+    "end_time": "2026-10-26T17:22:19.863718+00:00",
+    "run_time_seconds": 0.002716064453125,
+    "last_commit": {
+      "hash": "35ad867ff7da9d4bd9ac2bb41cca31cb5a49f8b2",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:21:50-04:00",
+      "message": "Bug report network: Wi-Fi, network usage, policy, connectivity, DNS, interface, socket and tethering artifacts"
+    }
+  },
+  "headers": [
+    "Scan Table",
+    "BSSID (as printed)",
+    "Frequency",
+    "RSSI",
+    "RSSI Detail",
+    "Age (sec)",
+    "SSID (as printed)",
+    "Flags",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

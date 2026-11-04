@@ -1,0 +1,66 @@
+{
+  "metadata": {
+    "module_name": "permissionController",
+    "artifact_name": "Permission Controller Log",
+    "function_name": "permissionControllerLog",
+    "case_number": "caseknowndata_k4_data_cleared",
+    "number_of_columns": 8,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 158,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/permissionController/testdata.permissionController.permissionControllerLog.caseknowndata_k4_data_cleared.zip",
+    "start_time": "2026-11-02T00:25:28.111880+00:00",
+    "end_time": "2026-11-02T00:25:28.168787+00:00",
+    "run_time_seconds": 0.0002510547637939453,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-11-01T19:25:28.165367",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Logged",
+    "Event",
+    "Package",
+    "Package User",
+    "Clock Change (seconds)",
+    "Entries Removed",
+    "Copy",
+    "Android User"
+  ],
+  "data": [
+    [
+      1787416211,
+      "Package data cleared",
+      "com.example.known_data_app",
+      "0",
+      "",
+      "",
+      "Current",
+      "0"
+    ],
+    [
+      1794442813,
+      "Clock change",
+      "",
+      "",
+      863999,
+      "",
+      "Current",
+      "0"
+    ],
+    [
+      1794442829,
+      "Package data cleared",
+      "com.android.chrome",
+      "0",
+      "",
+      "",
+      "Current",
+      "0"
+    ]
+  ]
+}

@@ -16,8 +16,8 @@ from scripts.artifacts.chromeBookmarks import get_chromeBookmarks  # pylint: dis
 STAMP = '13344473600123456'
 
 
-def write_json(root, data, prefix='data/data/com.android.chrome/app_chrome/Default'):
-    path = pathlib.Path(root) / prefix / 'Bookmarks'
+def write_json(root, data, prefix='data/data/com.android.chrome/app_chrome/Default', name='Bookmarks'):
+    path = pathlib.Path(root) / prefix / name
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data, ensure_ascii=False), encoding='utf-8')
     return path
@@ -56,6 +56,20 @@ class ChromeBookmarkDescendantsTest(unittest.TestCase):
         with patch('scripts.artifacts.chromeBookmarks.logfunc') as log:
             result = get_chromeBookmarks.__wrapped__(context(root,paths))
         return (*result,log)
+
+    def test_account_bookmarks_file_is_read_beside_bookmarks(self):
+        with tempfile.TemporaryDirectory() as root:
+            local = write_json(root,make_tree())
+            account = write_json(root,{'roots': {'synced': {'children':[{'date_added':STAMP,'url':'https://account.test/',
+                                                                         'name':'Acct','type':'url','id':'7'}],
+                                                            'name':'Synced','id':'s0'}}}, name='AccountBookmarks')
+            journal = write_json(root,{'roots':{}}, name='AccountBookmarks-journal')
+            headers, rows, source, log = self.parse(root,[local,account,journal])
+            self.assertEqual(len(rows),9)
+            self.assertEqual(headers[-1],'Source File')
+            self.assertEqual([r[-1] for r in rows if r[3]=='Acct'],[str(account.relative_to(root))])
+            self.assertEqual(source.split('\n'),[str(local),str(account)])
+            self.assertEqual(log.call_count,0)
 
     def test_preorder_duplicates_folder_rows_and_lossless_ancestry(self):
         with tempfile.TemporaryDirectory() as root:

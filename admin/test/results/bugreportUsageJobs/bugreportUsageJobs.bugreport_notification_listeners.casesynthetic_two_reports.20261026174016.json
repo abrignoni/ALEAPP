@@ -1,0 +1,236 @@
+{
+  "metadata": {
+    "module_name": "bugreportUsageJobs",
+    "artifact_name": "Bug Report - Notification Listeners",
+    "function_name": "bugreport_notification_listeners",
+    "case_number": "casesynthetic_two_reports",
+    "number_of_columns": 8,
+    "number_of_rows": 20,
+    "total_data_size_bytes": 2845,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportUsageJobs/testdata.bugreportUsageJobs.bugreport_notification_listeners.casesynthetic_two_reports.zip",
+    "start_time": "2026-10-26T17:40:16.653320+00:00",
+    "end_time": "2026-10-26T17:40:16.828260+00:00",
+    "run_time_seconds": 0.024309873580932617,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-26T17:40:16.779127",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Role",
+    "List",
+    "Package",
+    "Component",
+    "User",
+    "Detail",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Listener",
+      "Allowed",
+      "com.example.user.chat",
+      "com.example.user.chat/com.example.user.chat.Listener",
+      0,
+      "isPrimary: true",
+      403,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Listener",
+      "Allowed",
+      "com.example.launcher",
+      "com.example.launcher/com.example.launcher.NotificationListener",
+      0,
+      "isPrimary: true",
+      403,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Listener",
+      "Enabled for current profiles",
+      "com.example.launcher",
+      "com.example.launcher/com.example.launcher.NotificationListener",
+      null,
+      "",
+      407,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Listener",
+      "Enabled for current profiles",
+      "com.example.user.chat",
+      "com.example.user.chat/com.example.user.chat.Listener",
+      null,
+      "",
+      408,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Listener",
+      "Live",
+      "android",
+      "android/com.android.server.Demo$NotificationListener",
+      -1,
+      "SYSTEM",
+      410,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Listener",
+      "Live",
+      "com.example.launcher",
+      "com.example.launcher/com.example.launcher.NotificationListener",
+      0,
+      "",
+      411,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Listener",
+      "Live",
+      "com.example.guest",
+      "com.example.guest/com.example.guest.Assistant",
+      10,
+      "GUEST",
+      412,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Listener",
+      "Snoozed",
+      "com.example.user.chat",
+      "com.example.user.chat/com.example.user.chat.Listener",
+      0,
+      "(META_DATA_DEFAULT_AUTOBIND=false)",
+      415,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Assistant",
+      "Allowed",
+      "com.example.guest",
+      "com.example.guest/com.example.guest.Assistant",
+      0,
+      "isPrimary: true isUserChanged: false",
+      420,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Assistant",
+      "Enabled for current profiles",
+      "com.example.guest",
+      "com.example.guest/com.example.guest.Assistant",
+      null,
+      "",
+      422,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Listener",
+      "Allowed",
+      "com.example.user.chat",
+      "com.example.user.chat/com.example.user.chat.Listener",
+      0,
+      "isPrimary: true",
+      261,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Listener",
+      "Allowed",
+      "com.example.launcher",
+      "com.example.launcher/com.example.launcher.NotificationListener",
+      0,
+      "isPrimary: true",
+      261,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Listener",
+      "Enabled for current profiles",
+      "com.example.launcher",
+      "com.example.launcher/com.example.launcher.NotificationListener",
+      null,
+      "",
+      265,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Listener",
+      "Enabled for current profiles",
+      "com.example.user.chat",
+      "com.example.user.chat/com.example.user.chat.Listener",
+      null,
+      "",
+      266,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Listener",
+      "Live",
+      "android",
+      "android/com.android.server.Demo$NotificationListener",
+      -1,
+      "SYSTEM",
+      268,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Listener",
+      "Live",
+      "com.example.launcher",
+      "com.example.launcher/com.example.launcher.NotificationListener",
+      0,
+      "",
+      269,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Listener",
+      "Live",
+      "com.example.guest",
+      "com.example.guest/com.example.guest.Assistant",
+      10,
+      "GUEST",
+      270,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Listener",
+      "Snoozed",
+      "com.example.user.chat",
+      "com.example.user.chat/com.example.user.chat.Listener",
+      null,
+      "",
+      272,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Assistant",
+      "Allowed",
+      "com.example.guest",
+      "com.example.guest/com.example.guest.Assistant",
+      0,
+      "isPrimary: true isUserChanged: false",
+      277,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Assistant",
+      "Enabled for current profiles",
+      "com.example.guest",
+      "com.example.guest/com.example.guest.Assistant",
+      null,
+      "",
+      279,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

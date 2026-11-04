@@ -1,0 +1,90 @@
+{
+  "metadata": {
+    "module_name": "bugreportAccountsPower",
+    "artifact_name": "Bug Report - Sync Adapter Last Syncs",
+    "function_name": "bugreport_sync_adapter_last_syncs",
+    "case_number": "casesynthetic_cut",
+    "number_of_columns": 14,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 466,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportAccountsPower/testdata.bugreportAccountsPower.bugreport_sync_adapter_last_syncs.casesynthetic_cut.zip",
+    "start_time": "2026-10-26T17:46:20.832847+00:00",
+    "end_time": "2026-10-26T17:46:20.955881+00:00",
+    "run_time_seconds": 0.014064311981201172,
+    "last_commit": {
+      "hash": "7450687ec1476569021e50b0cfc221c1d2c13a09",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:45:32-04:00",
+      "message": "Bug report accounts, sync, backup, users, battery, power and memory: readers, 33 artifacts, synthetic fixture and tests"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Result",
+    "Source",
+    "Elapsed (as printed)",
+    "Reason",
+    "Exemption",
+    "Extras",
+    "User",
+    "Account",
+    "Account Type",
+    "Authority",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1793569723,
+      "2026-11-01 22:48:43",
+      "success",
+      "OTHER",
+      "0s",
+      "10169",
+      "",
+      "[sync_default=true feed_internal=person.one@example.test ]",
+      0,
+      "person.one@example.test",
+      "com.example.auth",
+      "example.calendar",
+      477,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793569716,
+      "2026-11-01 22:48:36",
+      "canceled",
+      "PERIODIC",
+      "6s",
+      "Periodic",
+      "fg",
+      "[]",
+      0,
+      "person.one@example.test",
+      "com.example.auth",
+      "example.calendar",
+      478,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793343600,
+      "2026-10-30 08:00:00",
+      "success",
+      "LOCAL",
+      "1s",
+      "android.uid.shared:10011",
+      "",
+      "[upload=true ]",
+      0,
+      "Example Chat",
+      "com.example.chat",
+      "example.contacts",
+      482,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

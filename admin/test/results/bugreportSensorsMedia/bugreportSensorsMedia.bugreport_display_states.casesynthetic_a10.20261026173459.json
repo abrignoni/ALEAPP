@@ -1,0 +1,48 @@
+{
+  "metadata": {
+    "module_name": "bugreportSensorsMedia",
+    "artifact_name": "Bug Report - Display States",
+    "function_name": "bugreport_display_states",
+    "case_number": "casesynthetic_a10",
+    "number_of_columns": 9,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 100,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSensorsMedia/testdata.bugreportSensorsMedia.bugreport_display_states.casesynthetic_a10.zip",
+    "start_time": "2026-10-26T17:34:59.190803+00:00",
+    "end_time": "2026-10-26T17:34:59.324076+00:00",
+    "run_time_seconds": 0.013906240463256836,
+    "last_commit": {
+      "hash": "e56d9fc859d2e83c7207c6514d3727ee6bf6a291",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:32:45-04:00",
+      "message": "Bug report sensors and media: location, sensors, camera, audio, media, accessibility, input method, display and window artifacts"
+    }
+  },
+  "headers": [
+    "Source",
+    "Display",
+    "State",
+    "Brightness (as printed)",
+    "SDR Brightness (as printed)",
+    "Name",
+    "Size",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Logical Displays",
+      0,
+      "ON",
+      "",
+      "",
+      "Built-in Screen",
+      "1080 x 2340",
+      611,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

@@ -1,0 +1,154 @@
+{
+  "metadata": {
+    "module_name": "bugreportRadios",
+    "artifact_name": "Bug Report - Telephony State",
+    "function_name": "bugreport_telephony_state",
+    "case_number": "casesynthetic_cut",
+    "number_of_columns": 6,
+    "number_of_rows": 15,
+    "total_data_size_bytes": 737,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportRadios/testdata.bugreportRadios.bugreport_telephony_state.casesynthetic_cut.zip",
+    "start_time": "2026-10-26T17:44:30.516054+00:00",
+    "end_time": "2026-10-26T17:44:30.660965+00:00",
+    "run_time_seconds": 0.012789726257324219,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-26T17:44:30.638049",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Service",
+    "Phone Id",
+    "Item",
+    "Value",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "phone",
+      "",
+      "mCurrentRoamingNotification",
+      "0",
+      181,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "phone",
+      "",
+      "mDefaultDataSubId",
+      "1",
+      182,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "phone",
+      "",
+      "isSmsCapable",
+      "true",
+      183,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "carrier_config",
+      "",
+      "mNumPhones",
+      "2",
+      228,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "carrier_config",
+      "",
+      "mPlatformCarrierConfigPackage",
+      "com.example.carrier",
+      229,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "carrier_config",
+      "",
+      "mHasSentConfigChange",
+      "[true, true]",
+      230,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "isub",
+      "",
+      "Active modem count",
+      "2",
+      264,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "isub",
+      "",
+      "Logical SIM slot 0",
+      "subId=1",
+      266,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "isub",
+      "",
+      "defaultSubId",
+      "1",
+      270,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "isub",
+      "",
+      "defaultVoiceSubId",
+      "1",
+      271,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "isub",
+      "",
+      "defaultDataSubId",
+      "1",
+      272,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "isub",
+      "",
+      "activeDataSubId",
+      "1",
+      273,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "isub",
+      "",
+      "areAllSubscriptionsLoaded",
+      "true",
+      274,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "isub",
+      "",
+      "mSimState[0]",
+      "LOADED",
+      275,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "isub",
+      "",
+      "mSimState[1]",
+      "NOT_READY",
+      276,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

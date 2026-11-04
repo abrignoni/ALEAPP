@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "module_name": "bugreportRadios",
+    "artifact_name": "Bug Report - Bluetooth Adapter Status",
+    "function_name": "bugreport_bluetooth_status",
+    "case_number": "casesynthetic_a15",
+    "number_of_columns": 4,
+    "number_of_rows": 7,
+    "total_data_size_bytes": 283,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportRadios/testdata.bugreportRadios.bugreport_bluetooth_status.casesynthetic_a15.zip",
+    "start_time": "2026-10-26T18:24:42.351237+00:00",
+    "end_time": "2026-10-26T18:24:42.650717+00:00",
+    "run_time_seconds": 0.16796302795410156,
+    "last_commit": {
+      "hash": "f246f0856bad96283c9a62aa4f52d908f14298c7",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T14:24:13-04:00",
+      "message": "Radios artifacts show identifiers as printed: no withheld values, SIM subscription identifier columns, adapter address"
+    }
+  },
+  "headers": [
+    "Item",
+    "Value",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "enabled",
+      "false",
+      67,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "state",
+      "BLE_ON",
+      68,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "address",
+      "02:00:00:00:AA:02",
+      69,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "name",
+      "Example Phone BT",
+      70,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "time since enabled",
+      "00:17:03.907",
+      71,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Bluetooth crashed (times)",
+      "0",
+      77,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "BLE apps registered",
+      "1",
+      79,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

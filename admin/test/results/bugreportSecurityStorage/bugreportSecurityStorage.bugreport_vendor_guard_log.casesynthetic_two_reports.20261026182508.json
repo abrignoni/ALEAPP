@@ -1,0 +1,106 @@
+{
+  "metadata": {
+    "module_name": "bugreportSecurityStorage",
+    "artifact_name": "Bug Report - knoxguard_service Log",
+    "function_name": "bugreport_vendor_guard_log",
+    "case_number": "casesynthetic_two_reports",
+    "number_of_columns": 8,
+    "number_of_rows": 7,
+    "total_data_size_bytes": 608,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSecurityStorage/testdata.bugreportSecurityStorage.bugreport_vendor_guard_log.casesynthetic_two_reports.zip",
+    "start_time": "2026-10-26T18:25:08.507722+00:00",
+    "end_time": "2026-10-26T18:25:08.856637+00:00",
+    "run_time_seconds": 0.21712851524353027,
+    "last_commit": {
+      "hash": "41a69adfd183c8ec78f9329db700a967a6cbdaba",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T14:24:14-04:00",
+      "message": "knoxguard_service log shows the token value as printed"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Time Note",
+    "Kind",
+    "Tag",
+    "Message",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      null,
+      "",
+      "",
+      "State",
+      "",
+      "ADB blocked : false",
+      1747,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      null,
+      "",
+      "",
+      "State",
+      "",
+      "DO blocked : false",
+      1748,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      null,
+      "",
+      "",
+      "State",
+      "",
+      "SF counter : 1",
+      1749,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      1773280904,
+      "2026-03-12 07:31:44",
+      "",
+      "Log",
+      "action",
+      "android.intent.action.TIMEZONE_CHANGED",
+      1750,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      1773280912,
+      "2026-03-12 07:31:52",
+      "",
+      "Log",
+      "android.intent.action.BOOT_COMPLETED",
+      "kgState : Prenormal | isNetworkConnected : false",
+      1751,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      1773495330,
+      "2026-03-14 19:05:30",
+      "",
+      "Log",
+      "TOKEN REFRESH",
+      "Refreshed token: AbCd1234",
+      1752,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      null,
+      "1970-01-01 00:00:00",
+      "time not set on the device (shown as printed)",
+      "Log",
+      "action",
+      "android.intent.action.TIME_SET",
+      1753,
+      "Dump1/dumpstate.txt"
+    ]
+  ]
+}

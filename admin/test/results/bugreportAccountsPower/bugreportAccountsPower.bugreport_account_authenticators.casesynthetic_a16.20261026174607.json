@@ -1,0 +1,71 @@
+{
+  "metadata": {
+    "module_name": "bugreportAccountsPower",
+    "artifact_name": "Bug Report - Account Authenticators",
+    "function_name": "bugreport_account_authenticators",
+    "case_number": "casesynthetic_a16",
+    "number_of_columns": 7,
+    "number_of_rows": 4,
+    "total_data_size_bytes": 384,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportAccountsPower/testdata.bugreportAccountsPower.bugreport_account_authenticators.casesynthetic_a16.zip",
+    "start_time": "2026-10-26T17:46:07.277811+00:00",
+    "end_time": "2026-10-26T17:46:07.412200+00:00",
+    "run_time_seconds": 0.01330113410949707,
+    "last_commit": {
+      "hash": "7450687ec1476569021e50b0cfc221c1d2c13a09",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:45:32-04:00",
+      "message": "Bug report accounts, sync, backup, users, battery, power and memory: readers, 33 artifacts, synthetic fixture and tests"
+    }
+  },
+  "headers": [
+    "User",
+    "Account Type",
+    "Component",
+    "UID",
+    "Last Update Time (as printed)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      0,
+      "com.example.auth",
+      "com.example.accounts/com.example.accounts.AuthService",
+      10101,
+      "-1",
+      205,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      0,
+      "com.example.chat",
+      "com.example.chat/com.example.chat.AccountService",
+      10102,
+      "-1",
+      206,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      10,
+      "com.example.auth",
+      "com.example.accounts/com.example.accounts.AuthService",
+      10101,
+      "-1",
+      227,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      10,
+      "com.example.chat",
+      "com.example.chat/com.example.chat.AccountService",
+      10102,
+      "-1",
+      228,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

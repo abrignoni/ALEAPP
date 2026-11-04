@@ -1,0 +1,34 @@
+{
+  "metadata": {
+    "module_name": "bugreportPermissions",
+    "artifact_name": "Bug Report - Permission Manager Grants",
+    "function_name": "bugreport_permission_grants",
+    "case_number": "casesynthetic_not_a_report",
+    "number_of_columns": 7,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportPermissions/testdata.bugreportPermissions.bugreport_permission_grants.casesynthetic_not_a_report.zip",
+    "start_time": "2026-10-26T17:14:22.054698+00:00",
+    "end_time": "2026-10-26T17:14:22.143770+00:00",
+    "run_time_seconds": 0.0021715164184570312,
+    "last_commit": {
+      "hash": "dd21f4b8cfc9b79aac8fad2724e8f66cb9786d80",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:14:15-04:00",
+      "message": "Bug report permissions: bound the uid-level lines kept for one uid, name the 50,000-row HTML limit in the notes, test the section index"
+    }
+  },
+  "headers": [
+    "App ID",
+    "User",
+    "Permission",
+    "Granted",
+    "Flags (as printed)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

@@ -196,7 +196,7 @@ import re
 import sqlite3
 from datetime import datetime, timedelta, timezone
 
-from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly, is_sqlite_sidecar
 from scripts.artifacts.storagePathViews import unique_files
 
 _EPOCH = datetime(1970, 1, 1, tzinfo=timezone.utc)
@@ -205,7 +205,7 @@ _EPOCH = datetime(1970, 1, 1, tzinfo=timezone.utc)
 def _sources(context, suffix):
     """Every distinct copy of the store named by suffix, one per app container."""
     return [f for f in unique_files(context)
-            if str(f).endswith(suffix) and not str(f).endswith(('-wal', '-shm', '-journal'))
+            if str(f).endswith(suffix) and not is_sqlite_sidecar(f)
             and not os.path.isdir(f)]
 
 

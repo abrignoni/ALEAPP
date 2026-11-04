@@ -1,0 +1,59 @@
+{
+  "metadata": {
+    "module_name": "bugreportAccountsPower",
+    "artifact_name": "Bug Report - Power Wake Locks",
+    "function_name": "bugreport_power_wake_locks",
+    "case_number": "casesynthetic_cut",
+    "number_of_columns": 9,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 305,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportAccountsPower/testdata.bugreportAccountsPower.bugreport_power_wake_locks.casesynthetic_cut.zip",
+    "start_time": "2026-10-26T19:32:31.305837+00:00",
+    "end_time": "2026-10-26T19:32:31.616319+00:00",
+    "run_time_seconds": 0.1757369041442871,
+    "last_commit": {
+      "hash": "d1aa88ec6597139a2e6c891969cef84a01cd6a2c",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T14:15:20-04:00",
+      "message": "Give each bug report topic group its own ALEAPP category"
+    }
+  },
+  "headers": [
+    "Level",
+    "Tag",
+    "Flags",
+    "Held (as printed, relative)",
+    "UID",
+    "PID",
+    "Details (as printed)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "PARTIAL_WAKE_LOCK",
+      "wake:com.example.user.chat.Holder",
+      "",
+      "-936ms",
+      10300,
+      19915,
+      "(uid=10300 pid=19915 displayId=0 lock=57fbc17)",
+      87,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "PARTIAL_WAKE_LOCK",
+      "AudioIn",
+      "LONG",
+      "-7mf4sc8dms",
+      1041,
+      null,
+      "LONG (uid=1041 isFrozen=false ws=WorkSource{ chains=WorkChain{(10349), (1041)}} displayId=-1 lock=7d8a703)",
+      88,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

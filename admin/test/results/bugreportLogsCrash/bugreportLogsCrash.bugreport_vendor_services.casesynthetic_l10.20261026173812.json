@@ -1,0 +1,35 @@
+{
+  "metadata": {
+    "module_name": "bugreportLogsCrash",
+    "artifact_name": "Bug Report - Vendor Service Lines",
+    "function_name": "bugreport_vendor_services",
+    "case_number": "casesynthetic_l10",
+    "number_of_columns": 8,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportLogsCrash/testdata.bugreportLogsCrash.bugreport_vendor_services.casesynthetic_l10.zip",
+    "start_time": "2026-10-26T17:38:12.334909+00:00",
+    "end_time": "2026-10-26T17:38:12.501408+00:00",
+    "run_time_seconds": 0.004112958908081055,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-26T17:38:12.482790",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Time Note",
+    "Service",
+    "Text",
+    "Indent",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

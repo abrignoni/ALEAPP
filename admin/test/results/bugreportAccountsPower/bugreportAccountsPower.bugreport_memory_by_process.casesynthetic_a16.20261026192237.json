@@ -1,0 +1,81 @@
+{
+  "metadata": {
+    "module_name": "bugreportAccountsPower",
+    "artifact_name": "Bug Report - Memory By Process",
+    "function_name": "bugreport_memory_by_process",
+    "case_number": "casesynthetic_a16",
+    "number_of_columns": 9,
+    "number_of_rows": 4,
+    "total_data_size_bytes": 272,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportAccountsPower/testdata.bugreportAccountsPower.bugreport_memory_by_process.casesynthetic_a16.zip",
+    "start_time": "2026-10-26T19:22:37.612704+00:00",
+    "end_time": "2026-10-26T19:22:37.939119+00:00",
+    "run_time_seconds": 0.19564175605773926,
+    "last_commit": {
+      "hash": "d1aa88ec6597139a2e6c891969cef84a01cd6a2c",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T14:15:20-04:00",
+      "message": "Give each bug report topic group its own ALEAPP category"
+    }
+  },
+  "headers": [
+    "List",
+    "Kilobytes",
+    "Process",
+    "PID",
+    "Note",
+    "User (as printed)",
+    "In Swap (KB)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "RSS",
+      513003,
+      "com.example.user.chat",
+      18300,
+      "activities",
+      null,
+      null,
+      121,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "RSS",
+      310960,
+      "system",
+      8107,
+      "",
+      null,
+      null,
+      122,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "PSS",
+      687382,
+      "com.example.user.chat",
+      18300,
+      "activities",
+      null,
+      255444,
+      129,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "PSS",
+      84821,
+      "vendor.example.camera-service_64",
+      1138,
+      "",
+      null,
+      81312,
+      130,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

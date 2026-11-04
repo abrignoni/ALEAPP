@@ -1,0 +1,78 @@
+{
+  "metadata": {
+    "module_name": "bugreportSensorsMedia",
+    "artifact_name": "Bug Report - Media Metrics",
+    "function_name": "bugreport_media_metrics",
+    "case_number": "casesynthetic_a16",
+    "number_of_columns": 11,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 457,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSensorsMedia/testdata.bugreportSensorsMedia.bugreport_media_metrics.casesynthetic_a16.zip",
+    "start_time": "2026-10-26T17:34:57.785547+00:00",
+    "end_time": "2026-10-26T17:34:57.932481+00:00",
+    "run_time_seconds": 0.015359163284301758,
+    "last_commit": {
+      "hash": "e56d9fc859d2e83c7207c6514d3727ee6bf6a291",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:32:45-04:00",
+      "message": "Bug report sensors and media: location, sensors, camera, audio, media, accessibility, input method, display and window artifacts"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Key",
+    "Package",
+    "PID",
+    "UID",
+    "Properties (as printed)",
+    "Record Form",
+    "Record No.",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1793605867,
+      "11-02 08:51:07.308",
+      "audio.track.386",
+      "com.example.user.chat",
+      4321,
+      10300,
+      "event#=start, state=STATE_ACTIVE",
+      "name, time, owner",
+      0,
+      858,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793605867,
+      "11-02 08:51:07.838",
+      "codec",
+      "com.example.user.chat",
+      0,
+      10300,
+      "android.media.mediacodec.codec=c2.example.decoder, android.media.mediacodec.mode=audio",
+      "name, time, owner",
+      1,
+      859,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793605920,
+      "11-02 08:52:00.000",
+      "audio.mode",
+      "android.uid.system",
+      0,
+      1000,
+      "event#=set, mode=MODE_NORMAL",
+      "name, time, owner",
+      2,
+      860,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

@@ -1,0 +1,147 @@
+{
+  "metadata": {
+    "module_name": "bugreportAccountsPower",
+    "artifact_name": "Bug Report - Battery History",
+    "function_name": "bugreport_battery_history",
+    "case_number": "casesynthetic_a16",
+    "number_of_columns": 9,
+    "number_of_rows": 10,
+    "total_data_size_bytes": 975,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportAccountsPower/testdata.bugreportAccountsPower.bugreport_battery_history.casesynthetic_a16.zip",
+    "start_time": "2026-10-26T17:46:06.885102+00:00",
+    "end_time": "2026-10-26T17:46:07.009382+00:00",
+    "run_time_seconds": 0.013823747634887695,
+    "last_commit": {
+      "hash": "7450687ec1476569021e50b0cfc221c1d2c13a09",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:45:32-04:00",
+      "message": "Bug report accounts, sync, backup, users, battery, power and memory: readers, 33 artifacts, synthetic fixture and tests"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Clock Record Used (as printed)",
+    "Level (%)",
+    "State Bits (hex as printed)",
+    "Marker",
+    "Changes (as printed)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1793563200,
+      "11-01 21:00:00.033",
+      "",
+      null,
+      "",
+      "Reset",
+      "RESET:TIME: 2026-11-01-21-00-00-033",
+      317,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793563200,
+      "11-01 21:00:00.033",
+      "",
+      100,
+      "c4900011",
+      "",
+      "status=discharging health=good plug=none temp=390 volt=4432 +running +wake_lock +screen",
+      318,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793563200,
+      "11-01 21:00:00.066",
+      "",
+      100,
+      "c4900011",
+      "",
+      "",
+      320,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793563512,
+      "11-01 21:05:12.400",
+      "",
+      99,
+      "c4900011",
+      "",
+      "+top=u0a300:\"com.example.user.chat\" volt=4401",
+      322,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793563600,
+      "11-01 21:06:40.000",
+      "",
+      98,
+      "c0900011",
+      "",
+      "-top=u0a300:\"com.example.user.chat\" +wake_lock=1001:\"*example-radio*\" -screen",
+      323,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793563601,
+      "11-01 21:06:41.250",
+      "",
+      98,
+      "80900011",
+      "",
+      "-wake_lock=1001:\"*example-radio*\"",
+      324,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793586600,
+      "11-02 03:30:00.000",
+      "",
+      90,
+      "c0800011",
+      "",
+      "+job=u0a301:\"com.example.user.sideloaded/.SyncJob\" stats=0:\"dump\"",
+      325,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793610920,
+      "11-02 10:15:20.500",
+      "",
+      null,
+      "",
+      "Clock",
+      "TIME: 2026-11-02-10-15-20-500",
+      326,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793610921,
+      "11-02 10:15:21.000",
+      "",
+      null,
+      "",
+      "Shutdown",
+      "SHUTDOWN",
+      327,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793610922,
+      "11-02 10:15:22.000",
+      "",
+      null,
+      "",
+      "Start",
+      "START",
+      328,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

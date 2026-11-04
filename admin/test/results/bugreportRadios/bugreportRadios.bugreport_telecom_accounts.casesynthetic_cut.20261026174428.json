@@ -1,0 +1,39 @@
+{
+  "metadata": {
+    "module_name": "bugreportRadios",
+    "artifact_name": "Bug Report - Telecom Phone Accounts",
+    "function_name": "bugreport_telecom_accounts",
+    "case_number": "casesynthetic_cut",
+    "number_of_columns": 12,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportRadios/testdata.bugreportRadios.bugreport_telecom_accounts.casesynthetic_cut.zip",
+    "start_time": "2026-10-26T17:44:28.796667+00:00",
+    "end_time": "2026-10-26T17:44:28.967185+00:00",
+    "run_time_seconds": 0.014687299728393555,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-26T17:44:28.938900",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Package",
+    "Service",
+    "Account Id",
+    "User",
+    "Enabled Mark",
+    "Capabilities",
+    "Audio Routes",
+    "Schemes",
+    "Extras",
+    "Restrictions",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

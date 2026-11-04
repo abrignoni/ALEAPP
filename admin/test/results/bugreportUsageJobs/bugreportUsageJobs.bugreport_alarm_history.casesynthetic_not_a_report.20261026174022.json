@@ -1,0 +1,41 @@
+{
+  "metadata": {
+    "module_name": "bugreportUsageJobs",
+    "artifact_name": "Bug Report - Alarm History",
+    "function_name": "bugreport_alarm_history",
+    "case_number": "casesynthetic_not_a_report",
+    "number_of_columns": 14,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportUsageJobs/testdata.bugreportUsageJobs.bugreport_alarm_history.casesynthetic_not_a_report.zip",
+    "start_time": "2026-10-26T17:40:22.326041+00:00",
+    "end_time": "2026-10-26T17:40:22.466127+00:00",
+    "run_time_seconds": 0.0022573471069335938,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-26T17:40:22.450405",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Offset From Dump As Printed",
+    "History",
+    "UID",
+    "Package",
+    "User",
+    "Alarm Type",
+    "Tag",
+    "Reason",
+    "Detail",
+    "Time Note",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

@@ -1,0 +1,66 @@
+{
+  "metadata": {
+    "module_name": "bugreportSensorsMedia",
+    "artifact_name": "Bug Report - Window Focus",
+    "function_name": "bugreport_window_focus",
+    "case_number": "casesynthetic_a16",
+    "number_of_columns": 6,
+    "number_of_rows": 4,
+    "total_data_size_bytes": 349,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSensorsMedia/testdata.bugreportSensorsMedia.bugreport_window_focus.casesynthetic_a16.zip",
+    "start_time": "2026-10-26T17:34:54.656500+00:00",
+    "end_time": "2026-10-26T17:34:54.781655+00:00",
+    "run_time_seconds": 0.017235994338989258,
+    "last_commit": {
+      "hash": "e56d9fc859d2e83c7207c6514d3727ee6bf6a291",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:32:45-04:00",
+      "message": "Bug report sensors and media: location, sensors, camera, audio, media, accessibility, input method, display and window artifacts"
+    }
+  },
+  "headers": [
+    "Display",
+    "Item",
+    "Value",
+    "Package",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "0",
+      "mCurrentFocus",
+      "Window{94913b7 u0 com.example.user.chat/com.example.user.chat.Main}",
+      "com.example.user.chat",
+      962,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "0",
+      "mFocusedApp",
+      "ActivityRecord{2fe6c62 u0 com.example.user.chat/.Main t28709}",
+      "com.example.user.chat",
+      963,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "",
+      "mTopFocusedDisplayId",
+      "0",
+      "",
+      964,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "",
+      "mInputMethodWindow",
+      "Window{237e85c u0 InputMethod}",
+      "",
+      965,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

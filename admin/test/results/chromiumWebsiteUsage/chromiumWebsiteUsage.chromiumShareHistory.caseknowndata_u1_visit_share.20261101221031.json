@@ -1,0 +1,42 @@
+{
+  "metadata": {
+    "module_name": "chromiumWebsiteUsage",
+    "artifact_name": "Chromium Share History",
+    "function_name": "chromiumShareHistory",
+    "case_number": "caseknowndata_u1_visit_share",
+    "number_of_columns": 6,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 123,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/chromiumWebsiteUsage/testdata.chromiumWebsiteUsage.chromiumShareHistory.caseknowndata_u1_visit_share.zip",
+    "start_time": "2026-11-01T22:10:31.742770+00:00",
+    "end_time": "2026-11-01T22:10:31.764016+00:00",
+    "run_time_seconds": 0.0010602474212646484,
+    "last_commit": {
+      "hash": "2bab3a376928120710b06009d516b16655d759e0",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-11-01T16:58:23-05:00",
+      "message": "Chromium website usage: apply notes audit, report a deleted share history key's last version"
+    }
+  },
+  "headers": [
+    "Share Day (UTC)",
+    "Share Target (component)",
+    "Share Count",
+    "State",
+    "Browser",
+    "Android User"
+  ],
+  "data": [
+    [
+      "2026-11-01",
+      "com.google.android.apps.docs/com.google.android.apps.docs.drive.clipboard.SendTextToClipboardActivity",
+      1,
+      "Live",
+      "Chrome",
+      "0"
+    ]
+  ]
+}

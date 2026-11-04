@@ -1,0 +1,92 @@
+{
+  "metadata": {
+    "module_name": "bugreportSecurityStorage",
+    "artifact_name": "Bug Report - Vold Log",
+    "function_name": "bugreport_vold_log",
+    "case_number": "casesynthetic_cut",
+    "number_of_columns": 9,
+    "number_of_rows": 5,
+    "total_data_size_bytes": 492,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSecurityStorage/testdata.bugreportSecurityStorage.bugreport_vold_log.casesynthetic_cut.zip",
+    "start_time": "2026-10-26T17:40:11.309587+00:00",
+    "end_time": "2026-10-26T17:40:11.439245+00:00",
+    "run_time_seconds": 0.01762557029724121,
+    "last_commit": {
+      "hash": "702ca90825fbb296e5cc429838c511eb52a44af6",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:39:47-04:00",
+      "message": "Bug report security and storage: readers and 30 artifacts for device policy, lock settings, biometrics, trust, ADB, vendor services, storage, dbinfo and flags"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "PID",
+    "TID",
+    "Component",
+    "Message",
+    "Buffer",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1791083227,
+      "2026/10/04-03:07:07(GMT)",
+      412,
+      9021,
+      "vold",
+      "Starting trim of /mnt/vendor/example",
+      "BUF#0",
+      1864,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1791083227,
+      "2026/10/04-03:07:07(GMT)",
+      412,
+      9021,
+      "vold",
+      "Failed to open /mnt/vendor/example: Permission denied",
+      "BUF#0",
+      1865,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1791083349,
+      "2026/10/04-03:09:09(GMT)",
+      412,
+      9021,
+      "vold",
+      "VolumeBase::unmount()++",
+      "BUF#0",
+      1866,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1791083532,
+      "2026/10/04-03:12:12(UTC)",
+      412,
+      9021,
+      "vold",
+      "idle maintenance completed",
+      "BUF#0",
+      1867,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      null,
+      "",
+      null,
+      null,
+      "",
+      "continuation without a time",
+      "BUF#0",
+      1868,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

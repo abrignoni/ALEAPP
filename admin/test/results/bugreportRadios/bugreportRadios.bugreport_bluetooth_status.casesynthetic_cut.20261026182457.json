@@ -1,0 +1,116 @@
+{
+  "metadata": {
+    "module_name": "bugreportRadios",
+    "artifact_name": "Bug Report - Bluetooth Adapter Status",
+    "function_name": "bugreport_bluetooth_status",
+    "case_number": "casesynthetic_cut",
+    "number_of_columns": 4,
+    "number_of_rows": 14,
+    "total_data_size_bytes": 580,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportRadios/testdata.bugreportRadios.bugreport_bluetooth_status.casesynthetic_cut.zip",
+    "start_time": "2026-10-26T18:24:57.474921+00:00",
+    "end_time": "2026-10-26T18:24:57.767391+00:00",
+    "run_time_seconds": 0.1660141944885254,
+    "last_commit": {
+      "hash": "f246f0856bad96283c9a62aa4f52d908f14298c7",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T14:24:13-04:00",
+      "message": "Radios artifacts show identifiers as printed: no withheld values, SIM subscription identifier columns, adapter address"
+    }
+  },
+  "headers": [
+    "Item",
+    "Value",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "enabled",
+      "true",
+      290,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "state",
+      "ON",
+      291,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "address",
+      "XX:XX:XX:XX:AA:01",
+      292,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "name",
+      "Example Phone BT",
+      293,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "time since enabled",
+      "02:58:14.660",
+      294,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Bluetooth crashed (times)",
+      "0",
+      299,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "BLE apps registered",
+      "2",
+      301,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "ConnectionState",
+      "STATE_DISCONNECTED",
+      314,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "State",
+      "ON",
+      315,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "MaxConnectedAudioDevices",
+      "2",
+      316,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "A2dpOffloadEnabled",
+      "false",
+      317,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Discovering",
+      "false",
+      318,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "DiscoveryEndMs",
+      "0",
+      319,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "ScanMode",
+      "SCAN_MODE_CONNECTABLE",
+      328,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

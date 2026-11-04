@@ -1,0 +1,98 @@
+{
+  "metadata": {
+    "module_name": "bugreportSensorsMedia",
+    "artifact_name": "Bug Report - Window Focus",
+    "function_name": "bugreport_window_focus",
+    "case_number": "casesynthetic_two_reports",
+    "number_of_columns": 6,
+    "number_of_rows": 8,
+    "total_data_size_bytes": 842,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSensorsMedia/testdata.bugreportSensorsMedia.bugreport_window_focus.casesynthetic_two_reports.zip",
+    "start_time": "2026-10-26T17:35:08.381662+00:00",
+    "end_time": "2026-10-26T17:35:08.522111+00:00",
+    "run_time_seconds": 0.023293733596801758,
+    "last_commit": {
+      "hash": "e56d9fc859d2e83c7207c6514d3727ee6bf6a291",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:32:45-04:00",
+      "message": "Bug report sensors and media: location, sensors, camera, audio, media, accessibility, input method, display and window artifacts"
+    }
+  },
+  "headers": [
+    "Display",
+    "Item",
+    "Value",
+    "Package",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "0",
+      "mCurrentFocus",
+      "Window{94913b7 u0 com.example.user.chat/com.example.user.chat.Main}",
+      "com.example.user.chat",
+      862,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "0",
+      "mFocusedApp",
+      "ActivityRecord{2fe6c62 u0 com.example.user.chat/.Main t28709}",
+      "com.example.user.chat",
+      863,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "",
+      "mTopFocusedDisplayId",
+      "0",
+      "",
+      864,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "",
+      "mInputMethodWindow",
+      "Window{237e85c u0 InputMethod}",
+      "",
+      865,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "0",
+      "mCurrentFocus",
+      "Window{94913b7 u0 com.example.user.chat/com.example.user.chat.Main}",
+      "com.example.user.chat",
+      626,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "0",
+      "mFocusedApp",
+      "ActivityRecord{2fe6c62 u0 com.example.user.chat/.Main t28709}",
+      "com.example.user.chat",
+      627,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "",
+      "mTopFocusedDisplayId",
+      "0",
+      "",
+      628,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "",
+      "mInputMethodWindow",
+      "Window{237e85c u0 InputMethod}",
+      "",
+      629,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

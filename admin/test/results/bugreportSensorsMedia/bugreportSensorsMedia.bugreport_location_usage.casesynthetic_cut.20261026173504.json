@@ -1,0 +1,68 @@
+{
+  "metadata": {
+    "module_name": "bugreportSensorsMedia",
+    "artifact_name": "Bug Report - Location Usage",
+    "function_name": "bugreport_location_usage",
+    "case_number": "casesynthetic_cut",
+    "number_of_columns": 12,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 281,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSensorsMedia/testdata.bugreportSensorsMedia.bugreport_location_usage.casesynthetic_cut.zip",
+    "start_time": "2026-10-26T17:35:04.359007+00:00",
+    "end_time": "2026-10-26T17:35:04.494207+00:00",
+    "run_time_seconds": 0.011823892593383789,
+    "last_commit": {
+      "hash": "e56d9fc859d2e83c7207c6514d3727ee6bf6a291",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:32:45-04:00",
+      "message": "Bug report sensors and media: location, sensors, camera, audio, media, accessibility, input method, display and window artifacts"
+    }
+  },
+  "headers": [
+    "List",
+    "Provider",
+    "Client",
+    "Min Interval",
+    "Max Interval",
+    "Total Duration",
+    "Active Duration",
+    "Foreground Duration",
+    "Locations",
+    "Detail (as printed)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Historical Aggregate Location Provider Data",
+      "passive",
+      "10300/com.example.user.chat[chat_location]",
+      "0s",
+      "3600s",
+      "+1h0m0s0ms",
+      "+59m0s0ms",
+      "+10m0s0ms",
+      7,
+      "",
+      546,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Historical Aggregate Location Provider Data",
+      "gps",
+      "1000/android[GnssService]",
+      "1s",
+      "passive",
+      "+2h0m0s0ms",
+      "+1h0m0s0ms",
+      "+2h0m0s0ms",
+      0,
+      "",
+      548,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

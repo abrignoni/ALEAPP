@@ -1,0 +1,52 @@
+{
+  "metadata": {
+    "module_name": "bugreportUsageJobs",
+    "artifact_name": "Bug Report - Notification Records",
+    "function_name": "bugreport_notification_records",
+    "case_number": "casesynthetic_empty",
+    "number_of_columns": 25,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportUsageJobs/testdata.bugreportUsageJobs.bugreport_notification_records.casesynthetic_empty.zip",
+    "start_time": "2026-10-26T17:40:19.925555+00:00",
+    "end_time": "2026-10-26T17:40:20.070966+00:00",
+    "run_time_seconds": 0.0024178028106689453,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-26T17:40:20.058489",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Created (UTC)",
+    "Created As Printed",
+    "Updated (UTC)",
+    "Updated As Printed",
+    "Interruption (UTC)",
+    "Interruption As Printed",
+    "Visible Since (UTC)",
+    "Visible Since As Printed",
+    "List",
+    "User",
+    "Package",
+    "UID",
+    "Notification ID",
+    "Tag",
+    "Key",
+    "Channel",
+    "Importance",
+    "Importance Reason",
+    "Flags",
+    "Category",
+    "Group Key",
+    "Ticker Text",
+    "Seen",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

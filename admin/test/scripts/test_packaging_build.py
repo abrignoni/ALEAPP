@@ -242,12 +242,14 @@ class TestDriver(unittest.TestCase):
 
     def test_the_msl_lock_goes_over_the_regular_install_without_dependencies(self):
         """requirements-msl-lock.txt says how it is installed: after requirements.txt,
-        with --no-deps, or pip resolves the ccl_* readers to their master again."""
-        regular, lock = self.driver.install_commands('python')
-        self.assertIn(str(REPO_ROOT / 'requirements.txt'), regular)
-        self.assertIn(str(PACKAGING / 'requirements-build.txt'), regular)
-        self.assertNotIn('--no-deps', regular)
-        self.assertEqual(lock[-3:], ['--no-deps', '-r', str(REPO_ROOT / 'requirements-msl-lock.txt')])
+        with --no-deps, or pip resolves the ccl_* readers to their master again. Phase 1
+        does that through the same script CI uses."""
+        build, runtime = self.driver.install_commands('python')
+        self.assertEqual(build[-2:], ['-r', str(PACKAGING / 'requirements-build.txt')])
+        self.assertEqual(runtime[:2], ['python', str(REPO_ROOT / 'admin' / 'scripts' / 'install_requirements.py')])
+        script = (REPO_ROOT / 'admin' / 'scripts' / 'install_requirements.py').read_text(encoding='utf-8')
+        self.assertIn("'--no-deps'", script)
+        self.assertIn('MSL_LOCK', script)
         self.assertIn('pip install --no-deps -r requirements-msl-lock.txt',
                       (REPO_ROOT / 'requirements-msl-lock.txt').read_text(encoding='utf-8'))
 

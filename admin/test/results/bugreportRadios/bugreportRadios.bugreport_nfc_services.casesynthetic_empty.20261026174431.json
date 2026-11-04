@@ -1,0 +1,41 @@
+{
+  "metadata": {
+    "module_name": "bugreportRadios",
+    "artifact_name": "Bug Report - NFC Card Emulation Services",
+    "function_name": "bugreport_nfc_services",
+    "case_number": "casesynthetic_empty",
+    "number_of_columns": 14,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportRadios/testdata.bugreportRadios.bugreport_nfc_services.casesynthetic_empty.zip",
+    "start_time": "2026-10-26T17:44:31.462341+00:00",
+    "end_time": "2026-10-26T17:44:31.632720+00:00",
+    "run_time_seconds": 0.0024242401123046875,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-26T17:44:31.619188",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Package",
+    "Service",
+    "Description",
+    "UID",
+    "Service List",
+    "Host Type",
+    "AID Group",
+    "Category",
+    "AID",
+    "Settings Activity",
+    "Requires Device Unlock",
+    "Requires Screen On",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

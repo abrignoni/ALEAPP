@@ -1,0 +1,125 @@
+{
+  "metadata": {
+    "module_name": "bugreportSecurityStorage",
+    "artifact_name": "Bug Report - Lock Settings Log",
+    "function_name": "bugreport_lock_settings_log",
+    "case_number": "casesynthetic_two_reports",
+    "number_of_columns": 9,
+    "number_of_rows": 8,
+    "total_data_size_bytes": 1083,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSecurityStorage/testdata.bugreportSecurityStorage.bugreport_lock_settings_log.casesynthetic_two_reports.zip",
+    "start_time": "2026-10-26T17:40:16.900830+00:00",
+    "end_time": "2026-10-26T17:40:17.042913+00:00",
+    "run_time_seconds": 0.03203606605529785,
+    "last_commit": {
+      "hash": "702ca90825fbb296e5cc429838c511eb52a44af6",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:39:47-04:00",
+      "message": "Bug report security and storage: readers and 30 artifacts for device policy, lock settings, biometrics, trust, ADB, vendor services, storage, dbinfo and flags"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Time Note",
+    "State",
+    "Message",
+    "Detail",
+    "Stack Frames",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1770086662,
+      "2026-02-03 08:14:22.311",
+      "",
+      "Enroll",
+      "Start Logging",
+      "",
+      0,
+      1621,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      1781010725,
+      "2026-06-09 18:42:05.127",
+      "",
+      "Enroll",
+      "Enroll [User 0 PIN][com.example.settings:19989]",
+      "",
+      3,
+      1622,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      1781010725,
+      "2026-06-09 18:42:05.481",
+      "",
+      "Enroll",
+      "Enroll Finish [User 0 PIN(1)][com.example.settings:19989]",
+      "[Enroll Success(0)][0123456789abcdef][1, -2, 3](352ms)",
+      0,
+      1627,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      1781010726,
+      "2026-06-09 18:42:06.002",
+      "",
+      "Enroll",
+      "User 0 [/data/system_de/0/spblob]:",
+      "91 2026-06-09 18:42:07 0000000000000000.e0.bku | 57 2026-06-09 18:42:05 0000000000000000.handle | 193 2026-06-09 18:42:05 0123456789abcdef.spblob",
+      0,
+      1630,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      1793324560,
+      "2026-10-30 07:12:40.215",
+      "",
+      "Verify",
+      "User 0(1) weaver INCORRECT_KEY(2) [com.example.systemui][1, -2, 3](1/0)(213ms)",
+      "",
+      0,
+      1638,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      1793324561,
+      "2026-10-30 07:12:41.870",
+      "",
+      "Verify",
+      "User 0(1) weaver Success! [com.example.systemui][1, -2, 3](134ms)",
+      "",
+      0,
+      1639,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      1793324635,
+      "2026-10-30 07:13:55.002",
+      "",
+      "Verify",
+      "User 0 PIN OK on [com.example.systemui]",
+      "",
+      0,
+      1640,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      1793324660,
+      "2026-10-30 07:14:20.640",
+      "",
+      "Verify",
+      "User 0 PIN Fail on [com.example.systemui](2/5)]",
+      "",
+      0,
+      1641,
+      "Dump1/dumpstate.txt"
+    ]
+  ]
+}

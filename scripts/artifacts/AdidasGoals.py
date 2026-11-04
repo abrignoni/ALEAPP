@@ -21,7 +21,7 @@ __artifacts_v2__ = {
 
 import datetime
 
-from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly, is_sqlite_sidecar
 
 
 def _ms_to_utc(value):
@@ -41,7 +41,7 @@ def _yyyymmdd(value):
 def get_adidas_goals(context):
     files_found = context.get_files_found()
     logfunc("Processing data for Adidas Goals")
-    files_found = [x for x in files_found if not str(x).endswith('-journal')]
+    files_found = [x for x in files_found if not is_sqlite_sidecar(x)]
     source_path = str(files_found[0])
     db = open_sqlite_db_readonly(source_path)
     cursor = db.cursor()

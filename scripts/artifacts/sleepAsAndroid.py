@@ -81,17 +81,16 @@ from scripts.ilapfuncs import (
     convert_unix_ts_to_utc,
     convert_utc_human_to_timezone,
     get_sqlite_db_records,
-    logfunc,
+    logfunc, is_sqlite_sidecar,
 )
 
-SIDECARS = ('-wal', '-shm', '-journal')
 
 
 def _databases(context, name):
     found = []
     for file_found in unique_files(context):
         file_found = str(file_found)
-        if os.path.isdir(file_found) or file_found.endswith(SIDECARS):
+        if os.path.isdir(file_found) or is_sqlite_sidecar(file_found):
             continue
         if os.path.basename(file_found) == name:
             found.append(file_found)

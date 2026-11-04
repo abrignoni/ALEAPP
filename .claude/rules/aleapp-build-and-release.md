@@ -47,10 +47,15 @@ So the spec ships `mister_skinnylegs.plugins` as files (`collect_data_files`, wi
 `.py` files) and names every submodule as a hidden import, so what the plugins import is
 bundled too.
 
-Phase 1 installs `requirements.txt` and `packaging/requirements-build.txt`, then
-`requirements-msl-lock.txt` over them with `--no-deps`, as that file prescribes:
-mister_skinnylegs declares its `ccl_*` readers as unversioned git URLs, and without the lock
-a build would carry whatever their master was that day. Bumping mister_skinnylegs means
+Phase 1 installs `packaging/requirements-build.txt`, then runs
+`admin/scripts/install_requirements.py`, which CI's install steps also use: `requirements.txt`
+without its mister_skinnylegs line, then `requirements-msl-lock.txt` with `--no-deps`, then a
+refusal of any Brotli older than 1.2.1. mister_skinnylegs declares its `ccl_*` readers as
+unversioned git URLs, so without the lock a build would carry whatever their master was that
+day, and a broken push there (ccl_mozilla_reader, 2026-10-27) failed every plain install until it
+was fixed. The
+lock is installed without resolving the readers, so their own metadata cannot pull a
+different Brotli or zstd in. Bumping mister_skinnylegs means
 bumping both files; a test checks they name the same repository.
 
 If mister_skinnylegs does not import, the artifact empties its own `__artifacts_v2__`, so

@@ -4,14 +4,14 @@ __artifacts_v2__ = {
         "description": "Extracts conversation index from Nova AI Chatbot",
         "author": "Guilherme Guilherme, @AlexisBrignoni, Codex",
         "creation_date": "2026-05-29",
-        "last_update_date": "2026-10-05",
+        "last_update_date": "2026-10-31",
         "requirements": "none",
         "category": "AI Chatbot - Nova",
         "notes": (
             "Selected User Message uses the earliest non-NULL stored createdAt among type 0 messages, with the lowest message id breaking timestamp ties. Undated messages follow dated messages; when all eligible messages are undated, the lowest id is a deterministic fallback, not evidence of chronological order. Selection Basis identifies the fallback and histories without eligible messages. Selected message text is retained as stored. The AI Model and Assistant Persona names are mapped from the numeric codes as observed in the app by the author; the mapping is not vendor-documented, so the stored code is shown beside every name and an unmapped code is reported as stored. Type 0 is read as the user side on the same basis as the model names. Stored epochs are read as milliseconds above 1e11 and as seconds below it, and reported in UTC; every timestamp in the tested extraction was a 13-digit millisecond value. An extraction can carry one chat-ai.db per Android user and every copy is read, so the located at line lists each database and the row identifiers are per database. Developed against the author's own installation; no registered corpus image carries this app. The committed test case is the author's own extraction of the app's private data directory. The store's MyBot table holds two integer columns and no text, and its Assistant table held no rows in the tested extraction, so neither is reported. Created At and Updated At are separate stored columns and hold the same value on every row of the committed test case, where no conversation had been updated after it was created."
         ),
         "paths": ("*/com.scaleup.chatai/databases/chat-ai.db",),
-        "output_types": "all",
+        "output_types": "standard",
         "artifact_icon": "message-square",
     },
     "nova_chatbot_history_detail": {
@@ -19,7 +19,7 @@ __artifacts_v2__ = {
         "description": "Extracts individual messages from Nova AI Chatbot",
         "author": "Guilherme Guilherme, @AlexisBrignoni, Codex",
         "creation_date": "2026-05-29",
-        "last_update_date": "2026-10-06",
+        "last_update_date": "2026-10-31",
         "requirements": "none",
         "category": "AI Chatbot - Nova",
         "notes": (
@@ -27,7 +27,7 @@ __artifacts_v2__ = {
             "The AI Model and Assistant Persona names are mapped from the numeric codes as observed in the app by the author; the mapping is not vendor-documented, so the stored code is shown beside every name and an unmapped code is reported as stored. Role reads type 0 as USER and 1 as ASSISTANT on the same basis. Token (as stored) is the store's token column as stored; what it counts is not established. Stored epochs are read as milliseconds above 1e11 and as seconds below it, and reported in UTC; every timestamp in the tested extraction was a 13-digit millisecond value. An extraction can carry one chat-ai.db per Android user and every copy is read, so the located at line lists each database and the row identifiers are per database. Developed against the author's own installation; no registered corpus image carries this app. The committed test case is the author's own extraction of the app's private data directory. Has Link reads No on every row of the committed test case because that store's HistoryDetailLink table holds no rows."
         ),
         "paths": ("*/com.scaleup.chatai/databases/chat-ai.db",),
-        "output_types": "all",
+        "output_types": "standard",
         "artifact_icon": "message-circle",
     },
     "nova_chatbot_documents": {
@@ -35,7 +35,7 @@ __artifacts_v2__ = {
         "description": "Extracts document records from Nova AI Chatbot with the URL stored for each",
         "author": "Guilherme Guilherme, @AlexisBrignoni, Codex",
         "creation_date": "2026-05-29",
-        "last_update_date": "2026-10-06",
+        "last_update_date": "2026-10-31",
         "requirements": "none",
         "category": "AI Chatbot - Nova",
         "notes": (
@@ -43,7 +43,7 @@ __artifacts_v2__ = {
             "The AI Model and Assistant Persona names are mapped from the numeric codes as observed in the app by the author; the mapping is not vendor-documented, so the stored code is shown beside every name and an unmapped code is reported as stored. Submitted By is the message's type column read as USER for 0 and ASSISTANT for 1 on the same basis; it is the side of the conversation the message belongs to and does not by itself establish who supplied the file. Source Type prints Local File for a stored 0 and Remote File for a stored 1; that mapping is the author's observation and is not vendor-documented. Stored epochs are read as milliseconds above 1e11 and as seconds below it, and reported in UTC; every timestamp in the tested extraction was a 13-digit millisecond value. An extraction can carry one chat-ai.db per Android user and every copy is read, so the located at line lists each database and the row identifiers are per database. Developed against the author's own installation; no registered corpus image carries this app. The committed test case is the author's own extraction of the app's private data directory. The Size (as stored) column is the integer the store keeps under that name, reported without a unit: its unit is not established, and all three records in the tested extraction hold 3, one of them a video."
         ),
         "paths": ("*/com.scaleup.chatai/databases/chat-ai.db",),
-        "output_types": "all",
+        "output_types": "standard",
         "artifact_icon": "file-text",
     },
     "nova_chatbot_images": {
@@ -51,7 +51,7 @@ __artifacts_v2__ = {
         "description": "Extracts image records from Nova AI Chatbot with the URL stored for each",
         "author": "Guilherme Guilherme, @AlexisBrignoni, Codex",
         "creation_date": "2026-05-29",
-        "last_update_date": "2026-10-06",
+        "last_update_date": "2026-10-31",
         "requirements": "none",
         "category": "AI Chatbot - Nova",
         "notes": (
@@ -59,7 +59,7 @@ __artifacts_v2__ = {
             "The AI Model and Assistant Persona names are mapped from the numeric codes as observed in the app by the author; the mapping is not vendor-documented, so the stored code is shown beside every name and an unmapped code is reported as stored. Submitted By is the message's type column read as USER for 0 and ASSISTANT for 1 on the same basis; it does not by itself establish who supplied or generated the image. State prints Pending, Success and Failed for stored 0, 1 and 2; that mapping is the author's observation and is not vendor-documented. Stored epochs are read as milliseconds above 1e11 and as seconds below it, and reported in UTC; every timestamp in the tested extraction was a 13-digit millisecond value. An extraction can carry one chat-ai.db per Android user and every copy is read, so the located at line lists each database and the row identifiers are per database. Developed against the author's own installation; no registered corpus image carries this app. The committed test case is the author's own extraction of the app's private data directory."
         ),
         "paths": ("*/com.scaleup.chatai/databases/chat-ai.db",),
-        "output_types": "all",
+        "output_types": "standard",
         "artifact_icon": "image",
     },
     "nova_chatbot_links": {
@@ -67,14 +67,14 @@ __artifacts_v2__ = {
         "description": "Extracts link records from Nova AI Chatbot",
         "author": "Guilherme Guilherme",
         "creation_date": "2026-05-29",
-        "last_update_date": "2026-09-19",
+        "last_update_date": "2026-10-31",
         "requirements": "none",
         "category": "AI Chatbot - Nova",
         "notes": (
             "The AI Model and Assistant Persona names are mapped from the numeric codes as observed in the app by the author; the mapping is not vendor-documented, so the stored code is shown beside every name and an unmapped code is reported as stored. Role reads type 0 as USER and 1 as ASSISTANT on the same basis. Stored epochs are read as milliseconds above 1e11 and as seconds below it, and reported in UTC; every timestamp in the tested extraction was a 13-digit millisecond value. An extraction can carry one chat-ai.db per Android user and every copy is read, so the located at line lists each database and the row identifiers are per database. Developed against the author's own installation; no registered corpus image carries this app. The committed test case is the author's own extraction of the app's private data directory. The HistoryDetailLink table held no rows in the committed test case, so this artifact is code present and unexercised by it."
         ),
         "paths": ("*/com.scaleup.chatai/databases/chat-ai.db",),
-        "output_types": "all",
+        "output_types": "standard",
         "artifact_icon": "link",
     },
 }

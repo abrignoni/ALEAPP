@@ -1,0 +1,50 @@
+{
+  "metadata": {
+    "module_name": "bugreportAccountsPower",
+    "artifact_name": "Bug Report - Backup Participants",
+    "function_name": "bugreport_backup_participants",
+    "case_number": "casesynthetic_a16",
+    "number_of_columns": 4,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 123,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportAccountsPower/testdata.bugreportAccountsPower.bugreport_backup_participants.casesynthetic_a16.zip",
+    "start_time": "2026-10-26T17:46:06.646599+00:00",
+    "end_time": "2026-10-26T17:46:06.761241+00:00",
+    "run_time_seconds": 0.011950969696044922,
+    "last_commit": {
+      "hash": "7450687ec1476569021e50b0cfc221c1d2c13a09",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:45:32-04:00",
+      "message": "Bug report accounts, sync, backup, users, battery, power and memory: readers, 33 artifacts, synthetic fixture and tests"
+    }
+  },
+  "headers": [
+    "UID",
+    "Package",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1000,
+      "com.example.settings",
+      272,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1000,
+      "android",
+      273,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      10101,
+      "com.example.accounts",
+      275,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

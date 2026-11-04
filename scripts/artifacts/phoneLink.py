@@ -169,13 +169,12 @@ from scripts.ilapfuncs import (
     convert_unix_ts_to_utc,
     get_sqlite_db_path,
     get_sqlite_db_records,
-    logfunc,
+    logfunc, is_sqlite_sidecar,
 )
 from scripts.sqlite_wal import KIND_COMMITTED, KIND_EARLIER, KIND_UNCOMMITTED, rows_not_in_current
 
 import sqlite3
 
-SIDECARS = ('-wal', '-shm', '-journal')
 
 CURRENT_STATE = 'Current state'
 OTHER_STATE = 'Recovered from another state of the log'
@@ -188,7 +187,7 @@ def _stores(context, name):
     found = []
     for file_found in unique_files(context):
         file_found = str(file_found)
-        if os.path.isdir(file_found) or file_found.endswith(SIDECARS):
+        if os.path.isdir(file_found) or is_sqlite_sidecar(file_found):
             continue
         if os.path.basename(file_found) == name:
             found.append(file_found)

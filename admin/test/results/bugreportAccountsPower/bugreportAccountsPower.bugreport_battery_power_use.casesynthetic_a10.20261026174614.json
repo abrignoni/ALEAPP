@@ -1,0 +1,89 @@
+{
+  "metadata": {
+    "module_name": "bugreportAccountsPower",
+    "artifact_name": "Bug Report - Battery Power Use",
+    "function_name": "bugreport_battery_power_use",
+    "case_number": "casesynthetic_a10",
+    "number_of_columns": 7,
+    "number_of_rows": 6,
+    "total_data_size_bytes": 682,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportAccountsPower/testdata.bugreportAccountsPower.bugreport_battery_power_use.casesynthetic_a10.zip",
+    "start_time": "2026-10-26T17:46:14.622096+00:00",
+    "end_time": "2026-10-26T17:46:14.773600+00:00",
+    "run_time_seconds": 0.0166471004486084,
+    "last_commit": {
+      "hash": "7450687ec1476569021e50b0cfc221c1d2c13a09",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:45:32-04:00",
+      "message": "Bug report accounts, sync, backup, users, battery, power and memory: readers, 33 artifacts, synthetic fixture and tests"
+    }
+  },
+  "headers": [
+    "Kind",
+    "Name",
+    "Context (as printed)",
+    "Total (as printed)",
+    "Detail (as printed)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Item",
+      "Capacity",
+      "",
+      4860.0,
+      "Computed drain: 5460, actual drain: 5460",
+      301,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Item",
+      "Unaccounted",
+      "",
+      3157.0,
+      "( ) Including smearing: 0 ( ) Excluded from smearing",
+      302,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Item",
+      "Screen",
+      "",
+      575.0,
+      "Excluded from smearing",
+      303,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "UID",
+      "1000",
+      "",
+      27.4,
+      "( cpu=20.1 wake=0.259 wifi=3.53 ) Excluded from smearing",
+      304,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "UID",
+      "u0a300",
+      "",
+      23.3,
+      "( cpu=1.41 wake=1.07 ) Including smearing: 24.1 ( proportional=0.818 )",
+      305,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Item",
+      "Idle",
+      "",
+      15.6,
+      "Excluded from smearing",
+      306,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

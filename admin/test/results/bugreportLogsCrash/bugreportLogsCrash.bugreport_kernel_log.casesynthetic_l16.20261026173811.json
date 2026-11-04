@@ -1,0 +1,125 @@
+{
+  "metadata": {
+    "module_name": "bugreportLogsCrash",
+    "artifact_name": "Bug Report - Kernel Log",
+    "function_name": "bugreport_kernel_log",
+    "case_number": "casesynthetic_l16",
+    "number_of_columns": 7,
+    "number_of_rows": 10,
+    "total_data_size_bytes": 780,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportLogsCrash/testdata.bugreportLogsCrash.bugreport_kernel_log.casesynthetic_l16.zip",
+    "start_time": "2026-10-26T17:38:11.463059+00:00",
+    "end_time": "2026-10-26T17:38:11.643849+00:00",
+    "run_time_seconds": 0.011046886444091797,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-26T17:38:11.621379",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Seconds Since Boot (as printed)",
+    "Level (as printed)",
+    "CPU or Task (as printed)",
+    "Message",
+    "Source Section",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "0.000000",
+      "6",
+      "",
+      "Booting Linux on physical CPU 0x0",
+      "KERNEL LOG",
+      81,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "12345.678901",
+      "6",
+      "T21461",
+      "invented_driver: input id(0) value(1)",
+      "KERNEL LOG",
+      82,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "12345.678950",
+      "6",
+      "T9474",
+      "[wlan] invented line with a space in the task tag",
+      "KERNEL LOG",
+      83,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "12346.000001",
+      "4",
+      "C1",
+      "invented line with a cpu tag",
+      "KERNEL LOG",
+      84,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "12347.123456",
+      "6",
+      "2:  kworker/u16:2:   86",
+      "invented line with cpu, comm and pid",
+      "KERNEL LOG",
+      85,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "",
+      "",
+      "",
+      "a line without a stamp",
+      "KERNEL LOG",
+      86,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "12348.000000",
+      "6",
+      "",
+      "",
+      "KERNEL LOG",
+      88,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "",
+      "",
+      "",
+      " 0.785203]  [ 2:  kworker/u16:2:   86] invented first line cut by the ring buffer",
+      "LAST KMSG",
+      92,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "0.785860",
+      "",
+      "2:  kworker/u16:2:   86",
+      "invented message",
+      "LAST KMSG",
+      93,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "62.000001",
+      "",
+      "T1",
+      "invented line with a task tag",
+      "LAST KMSG",
+      94,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

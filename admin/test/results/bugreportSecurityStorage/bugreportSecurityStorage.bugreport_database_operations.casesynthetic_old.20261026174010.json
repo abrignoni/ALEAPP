@@ -1,0 +1,83 @@
+{
+  "metadata": {
+    "module_name": "bugreportSecurityStorage",
+    "artifact_name": "Bug Report - Database Operations",
+    "function_name": "bugreport_database_operations",
+    "case_number": "casesynthetic_old",
+    "number_of_columns": 17,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 640,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSecurityStorage/testdata.bugreportSecurityStorage.bugreport_database_operations.casesynthetic_old.zip",
+    "start_time": "2026-10-26T17:40:10.786657+00:00",
+    "end_time": "2026-10-26T17:40:10.896602+00:00",
+    "run_time_seconds": 0.014752626419067383,
+    "last_commit": {
+      "hash": "702ca90825fbb296e5cc429838c511eb52a44af6",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:39:47-04:00",
+      "message": "Bug report security and storage: readers and 30 artifacts for device policy, lock settings, biometrics, trust, ADB, vendor services, storage, dbinfo and flags"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Time Note",
+    "Process",
+    "PID",
+    "Database Path",
+    "Connection",
+    "List",
+    "Index",
+    "Operation",
+    "Took (ms)",
+    "Status",
+    "SQL",
+    "SQL Length",
+    "Details",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1793587743,
+      "2026-11-02 08:19:03.552",
+      "",
+      "com.example.settings",
+      2576,
+      "/data/user_de/0/com.example.settings/databases/search_index.db",
+      0,
+      "Most recently executed operations",
+      0,
+      "executeForCursorWindow",
+      0,
+      "succeeded",
+      "SELECT * FROM saved_queries",
+      27,
+      "path=/data/user_de/0/com.example.settings/databases/search_index.db",
+      1246,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793587742,
+      "2026-11-02 08:19:02.904",
+      "",
+      "com.example.settings",
+      2576,
+      "/data/user_de/0/com.example.settings/databases/search_index.db",
+      0,
+      "Most recently executed operations",
+      1,
+      "prepare",
+      1,
+      "succeeded",
+      "COMMIT;",
+      7,
+      "path=/data/user_de/0/com.example.settings/databases/search_index.db",
+      1247,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

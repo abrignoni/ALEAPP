@@ -1,0 +1,66 @@
+{
+  "metadata": {
+    "module_name": "bugreportSensorsMedia",
+    "artifact_name": "Bug Report - Audio Clients",
+    "function_name": "bugreport_audio_clients",
+    "case_number": "casesynthetic_a16",
+    "number_of_columns": 8,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 221,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSensorsMedia/testdata.bugreportSensorsMedia.bugreport_audio_clients.casesynthetic_a16.zip",
+    "start_time": "2026-10-26T19:11:28.388757+00:00",
+    "end_time": "2026-10-26T19:11:28.675365+00:00",
+    "run_time_seconds": 0.17051172256469727,
+    "last_commit": {
+      "hash": "d1aa88ec6597139a2e6c891969cef84a01cd6a2c",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T14:15:20-04:00",
+      "message": "Give each bug report topic group its own ALEAPP category"
+    }
+  },
+  "headers": [
+    "List",
+    "PID",
+    "UID",
+    "Name",
+    "Session",
+    "Count",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Notification Clients",
+      1229,
+      1041,
+      "audioserver",
+      null,
+      null,
+      815,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Notification Clients",
+      4321,
+      10300,
+      "com.example.user.chat",
+      null,
+      null,
+      816,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Global session refs",
+      2333,
+      86624,
+      "example.uid.systemui",
+      1953,
+      1,
+      820,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

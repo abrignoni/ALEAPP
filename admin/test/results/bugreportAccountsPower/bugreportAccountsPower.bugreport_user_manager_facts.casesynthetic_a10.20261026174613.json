@@ -1,0 +1,62 @@
+{
+  "metadata": {
+    "module_name": "bugreportAccountsPower",
+    "artifact_name": "Bug Report - User Manager Facts",
+    "function_name": "bugreport_user_manager_facts",
+    "case_number": "casesynthetic_a10",
+    "number_of_columns": 4,
+    "number_of_rows": 5,
+    "total_data_size_bytes": 392,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportAccountsPower/testdata.bugreportAccountsPower.bugreport_user_manager_facts.casesynthetic_a10.zip",
+    "start_time": "2026-10-26T17:46:13.591144+00:00",
+    "end_time": "2026-10-26T17:46:13.716936+00:00",
+    "run_time_seconds": 0.01597285270690918,
+    "last_commit": {
+      "hash": "7450687ec1476569021e50b0cfc221c1d2c13a09",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:45:32-04:00",
+      "message": "Bug report accounts, sync, backup, users, battery, power and memory: readers, 33 artifacts, synthetic fixture and tests"
+    }
+  },
+  "headers": [
+    "Name",
+    "Value",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Device owner id",
+      "-10000",
+      532,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Guest restrictions",
+      "no_sms, no_outgoing_calls",
+      534,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Device managed",
+      "false",
+      538,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Started users state",
+      "{0=3}",
+      539,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Max users",
+      "4",
+      541,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

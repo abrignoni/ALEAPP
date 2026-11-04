@@ -1,0 +1,1136 @@
+{
+  "casesynthetic_a16": {
+    "description": "Synthetic Android 16 style bug report text (dumpstate.txt) with two Android users: usage statistics in the CHECKIN USAGESTATS section as epoch milliseconds with a User N App Standby States list, jobs with namespaces and a recently completed list, N pending alarms with the next alarm clock and the removal, addition, delivery and wakeup histories, notification records with readable times (one with a line break in its tag), an archive cut after three entries, listeners, assistants and channels. Device zone Europe/Paris. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_a16.zip",
+      "os": "synthetic",
+      "timestamp": "2026-10-26T00:00:00",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-26T00:00:00",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "bugreport_usage_intervals": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_usage_interval_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_standby_buckets": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_scheduled_jobs": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_pending_alarms": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_alarm_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_notification_records": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_notification_listeners": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_notification_channels": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_a10": {
+    "description": "Synthetic Android 10 style bug report text (bugreport-*.txt, CRLF line endings): usage statistics in the service form (formatted wall-clock text, indented App Standby States) and the checkin form, jobs without namespaces, alarm batches, the per-app alarm history and notification records with plain millisecond times. Device zone Europe/Paris. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_a10.zip",
+      "os": "synthetic",
+      "timestamp": "2026-10-26T00:00:00",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-26T00:00:00",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "bugreport_usage_intervals": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_usage_interval_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_standby_buckets": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_scheduled_jobs": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_pending_alarms": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_alarm_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_notification_records": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_notification_listeners": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_notification_channels": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_zip_on_device": {
+    "description": "Synthetic bug report zip as the Shell app keeps it on the device (data/user_de/0/com.android.shell/files/bugreports), holding an Android 16 style text in the Asia/Kolkata zone. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_zip_on_device.zip",
+      "os": "synthetic",
+      "timestamp": "2026-10-26T00:00:00",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-26T00:00:00",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "bugreport_usage_intervals": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_usage_interval_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_standby_buckets": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_scheduled_jobs": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_pending_alarms": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_alarm_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_notification_records": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_notification_listeners": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_notification_channels": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_two_reports": {
+    "description": "Two synthetic bug report texts in two folders (Android 16 style in Asia/Kolkata and Android 10 style in America/Sao_Paulo). Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_two_reports.zip",
+      "os": "synthetic",
+      "timestamp": "2026-10-26T00:00:00",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-26T00:00:00",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "bugreport_usage_intervals": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_usage_interval_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_standby_buckets": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_scheduled_jobs": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_pending_alarms": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_alarm_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_notification_records": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_notification_listeners": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_notification_channels": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_cut": {
+    "description": "Synthetic Android 16 style bug report text whose usagestats, jobscheduler, alarm and notification dumps end with the DUMP TIMEOUT marker. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_cut.zip",
+      "os": "synthetic",
+      "timestamp": "2026-10-26T00:00:00",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-26T00:00:00",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "bugreport_usage_intervals": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_usage_interval_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_standby_buckets": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_scheduled_jobs": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_pending_alarms": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_alarm_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_notification_records": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_notification_listeners": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_notification_channels": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_no_zone": {
+    "description": "Synthetic Android 10 style bug report text that records no time zone: wall-clock texts get no UTC value and a note, offsets from the alarm dump still give UTC. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_no_zone.zip",
+      "os": "synthetic",
+      "timestamp": "2026-10-26T00:00:00",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-26T00:00:00",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "bugreport_usage_intervals": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_usage_interval_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_standby_buckets": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_scheduled_jobs": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_pending_alarms": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_alarm_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_notification_records": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_notification_listeners": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_notification_channels": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_empty": {
+    "description": "Synthetic bug report text with the banner and no sections. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_empty.zip",
+      "os": "synthetic",
+      "timestamp": "2026-10-26T00:00:00",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-26T00:00:00",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "bugreport_usage_intervals": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_usage_interval_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_standby_buckets": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_scheduled_jobs": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_pending_alarms": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_alarm_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_notification_records": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_notification_listeners": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_notification_channels": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_not_a_report": {
+    "description": "Two files that match the path patterns but carry no dumpstate banner (a text and a block of arbitrary bytes). Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_not_a_report.zip",
+      "os": "synthetic",
+      "timestamp": "2026-10-26T00:00:00",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-26T00:00:00",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "bugreport_usage_intervals": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_usage_interval_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_standby_buckets": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_scheduled_jobs": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_pending_alarms": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_alarm_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_notification_records": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_notification_listeners": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_notification_channels": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_odd_bytes": {
+    "description": "Synthetic bug report text with a byte order mark, invalid UTF-8 bytes, a NUL, a lone carriage return and a form feed inside alarm tags and notification text, and no time zone. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_odd_bytes.zip",
+      "os": "synthetic",
+      "timestamp": "2026-10-26T00:00:00",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-26T00:00:00",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "bugreport_usage_intervals": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_usage_interval_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_standby_buckets": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_scheduled_jobs": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_pending_alarms": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_alarm_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_notification_records": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_notification_listeners": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_notification_channels": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  }
+}

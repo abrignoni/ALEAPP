@@ -1,0 +1,86 @@
+{
+  "metadata": {
+    "module_name": "bugreportNetwork",
+    "artifact_name": "Bug Report - Wi-Fi Scan Results",
+    "function_name": "bugreport_wifi_scan_results",
+    "case_number": "casesynthetic_cut",
+    "number_of_columns": 10,
+    "number_of_rows": 4,
+    "total_data_size_bytes": 438,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportNetwork/testdata.bugreportNetwork.bugreport_wifi_scan_results.casesynthetic_cut.zip",
+    "start_time": "2026-10-26T17:22:17.523463+00:00",
+    "end_time": "2026-10-26T17:22:17.637945+00:00",
+    "run_time_seconds": 0.010987043380737305,
+    "last_commit": {
+      "hash": "35ad867ff7da9d4bd9ac2bb41cca31cb5a49f8b2",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:21:50-04:00",
+      "message": "Bug report network: Wi-Fi, network usage, policy, connectivity, DNS, interface, socket and tethering artifacts"
+    }
+  },
+  "headers": [
+    "Scan Table",
+    "BSSID (as printed)",
+    "Frequency",
+    "RSSI",
+    "RSSI Detail",
+    "Age (sec)",
+    "SSID (as printed)",
+    "Flags",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Latest scan results",
+      "02:00:5e:30:00:01",
+      2437,
+      -58,
+      "(0:-61/1:-62)",
+      "226.141",
+      "Example-Home",
+      "[WPA2-PSK-CCMP-128][RSN-PSK-CCMP-128][ESS]",
+      267,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Latest scan results",
+      "02:00:5e:30:00:02",
+      5180,
+      -86,
+      "",
+      ">1000.0",
+      "Example Neighbor 5G",
+      "[RSN-SAE-CCMP-128][ESS][WPS]",
+      268,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Latest scan results",
+      "02:00:5e:30:00:03",
+      2412,
+      -90,
+      "",
+      "12.5",
+      "",
+      "",
+      269,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Latest native scan results",
+      "02:00:5e:30:00:01",
+      2437,
+      -57,
+      "",
+      "226.150",
+      "Example-Home",
+      "[WPA2-PSK-CCMP-128][ESS]",
+      273,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

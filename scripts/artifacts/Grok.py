@@ -52,7 +52,7 @@ from pathlib import Path
 import xml.etree.ElementTree as ET
 import json
 
-from scripts.ilapfuncs import artifact_processor, check_in_media, logfunc, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, check_in_media, logfunc, open_sqlite_db_readonly, is_sqlite_sidecar
 
 INVALID_XML_CHARS = re.compile(r'[\x00-\x08\x0b\x0c\x0e-\x1f]')
 BARE_AMPERSAND = re.compile(r'&(?!(?:amp|lt|gt|quot|apos|#\d+|#x[0-9A-Fa-f]+);)')
@@ -155,7 +155,7 @@ def grok_generatedvideos(context):
     exo_files_present = set()
     for f in files_found:
         f = str(f)
-        if f.endswith(('-wal', '-shm', '-journal')):
+        if is_sqlite_sidecar(f):
             continue
         p = Path(f)
         if p.is_file() and p.suffix.lower() == '.exo':
@@ -163,7 +163,7 @@ def grok_generatedvideos(context):
 
     for file_found in files_found:
         file_found = str(file_found)
-        if file_found.endswith(('-wal', '-shm', '-journal')):
+        if is_sqlite_sidecar(file_found):
             continue
         media_path = Path(file_found)
 

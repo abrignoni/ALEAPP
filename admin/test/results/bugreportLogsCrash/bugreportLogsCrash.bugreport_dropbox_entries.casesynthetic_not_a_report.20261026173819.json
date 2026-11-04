@@ -1,0 +1,43 @@
+{
+  "metadata": {
+    "module_name": "bugreportLogsCrash",
+    "artifact_name": "Bug Report - Dropbox Entries",
+    "function_name": "bugreport_dropbox_entries",
+    "case_number": "casesynthetic_not_a_report",
+    "number_of_columns": 16,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportLogsCrash/testdata.bugreportLogsCrash.bugreport_dropbox_entries.casesynthetic_not_a_report.zip",
+    "start_time": "2026-10-26T17:38:19.734382+00:00",
+    "end_time": "2026-10-26T17:38:19.899354+00:00",
+    "run_time_seconds": 0.0026955604553222656,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-26T17:38:19.883420",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Tag",
+    "Content",
+    "Size (bytes)",
+    "Process",
+    "PID",
+    "UID",
+    "Packages",
+    "Foreground",
+    "Subject",
+    "First Body Line",
+    "Preview",
+    "Source Section",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

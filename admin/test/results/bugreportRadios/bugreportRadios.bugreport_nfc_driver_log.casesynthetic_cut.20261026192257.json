@@ -1,0 +1,116 @@
+{
+  "metadata": {
+    "module_name": "bugreportRadios",
+    "artifact_name": "Bug Report - NFC Driver Log",
+    "function_name": "bugreport_nfc_driver_log",
+    "case_number": "casesynthetic_cut",
+    "number_of_columns": 7,
+    "number_of_rows": 9,
+    "total_data_size_bytes": 483,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportRadios/testdata.bugreportRadios.bugreport_nfc_driver_log.casesynthetic_cut.zip",
+    "start_time": "2026-10-26T19:22:57.436718+00:00",
+    "end_time": "2026-10-26T19:22:57.739451+00:00",
+    "run_time_seconds": 0.17473721504211426,
+    "last_commit": {
+      "hash": "f246f0856bad96283c9a62aa4f52d908f14298c7",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T14:24:13-04:00",
+      "message": "Radios artifacts show identifiers as printed: no withheld values, SIM subscription identifier columns, adapter address"
+    }
+  },
+  "headers": [
+    "Kernel Time (as stored)",
+    "Time (UTC)",
+    "Time As Printed",
+    "Message",
+    "Time Note",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "B   1.670555",
+      null,
+      "",
+      "sec_nfc_init",
+      "",
+      63,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "B   2.337835",
+      null,
+      "",
+      "probe start",
+      "",
+      64,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "B   7.204979",
+      null,
+      "",
+      "late_pvdd_en 1",
+      "",
+      65,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "B  62.172558",
+      null,
+      "",
+      "sec_nfc_open",
+      "",
+      66,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "B  72.187516",
+      1793547213,
+      "11-01 16:33:33.757",
+      "en(0) firm(1) pvdd(1) irq(0) mode(2) clk_state(0)",
+      "",
+      67,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "B  72.187691",
+      null,
+      "",
+      "clk",
+      "",
+      68,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "687861.569311",
+      1793595278,
+      "11-02 05:54:38.685",
+      "clk",
+      "",
+      69,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "687861.729541",
+      null,
+      "",
+      "clk",
+      "",
+      70,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "",
+      null,
+      "",
+      "32.684900] clk",
+      "",
+      71,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

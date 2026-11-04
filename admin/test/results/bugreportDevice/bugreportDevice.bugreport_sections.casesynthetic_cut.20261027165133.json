@@ -1,0 +1,81 @@
+{
+  "metadata": {
+    "module_name": "bugreportDevice",
+    "artifact_name": "Bug Report - Sections",
+    "function_name": "bugreport_sections",
+    "case_number": "casesynthetic_cut",
+    "number_of_columns": 9,
+    "number_of_rows": 4,
+    "total_data_size_bytes": 389,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportDevice/testdata.bugreportDevice.bugreport_sections.casesynthetic_cut.zip",
+    "start_time": "2026-10-27T16:51:33.838255+00:00",
+    "end_time": "2026-10-27T16:51:33.937412+00:00",
+    "run_time_seconds": 0.017352581024169922,
+    "last_commit": {
+      "hash": "328afcdabbf6e2965d0a6eb6c9125580be4fb217",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-10-27T07:53:23-04:00",
+      "message": "Bug report: move device identifiers to their own artifact"
+    }
+  },
+  "headers": [
+    "Section",
+    "Kind",
+    "Start Line",
+    "Last Line",
+    "Lines",
+    "Printed Duration (s)",
+    "Timeout Marker (ms)",
+    "Read By",
+    "Source File"
+  ],
+  "data": [
+    [
+      "preamble",
+      "header",
+      1,
+      20,
+      20,
+      null,
+      null,
+      "Device Facts; Device Identifiers",
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "SYSTEM PROPERTIES",
+      "command",
+      21,
+      47,
+      26,
+      0.05,
+      null,
+      "Device Facts; Device Identifiers; Boot Reasons",
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "DUMPSYS CRITICAL",
+      "dumpsys group",
+      50,
+      1316,
+      1266,
+      null,
+      null,
+      "not read",
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "package",
+      "dumpsys service",
+      52,
+      1316,
+      1264,
+      null,
+      10000,
+      "Installed Packages; Package Times; Package Permissions; Permission Definitions",
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

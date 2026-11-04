@@ -1,0 +1,47 @@
+{
+  "metadata": {
+    "module_name": "bugreportUsageJobs",
+    "artifact_name": "Bug Report - Notification Channels",
+    "function_name": "bugreport_notification_channels",
+    "case_number": "casesynthetic_empty",
+    "number_of_columns": 20,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportUsageJobs/testdata.bugreportUsageJobs.bugreport_notification_channels.casesynthetic_empty.zip",
+    "start_time": "2026-10-26T17:40:20.561158+00:00",
+    "end_time": "2026-10-26T17:40:20.744009+00:00",
+    "run_time_seconds": 0.002456188201904297,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-26T17:40:20.729956",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Package",
+    "UID",
+    "User",
+    "App Settings (as printed)",
+    "Channel ID",
+    "Name (as printed)",
+    "Importance",
+    "Bypass DND",
+    "Lockscreen Visibility",
+    "Sound",
+    "Lights",
+    "Show Badge",
+    "Vibration Enabled",
+    "Deleted",
+    "Deleted Time (UTC)",
+    "Deleted Time As Printed",
+    "Group",
+    "User Locked Fields (as stored)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

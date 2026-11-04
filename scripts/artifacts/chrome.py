@@ -100,7 +100,7 @@ __artifacts_v2__ = {
         "description": "Parses Downloads from Chromium based browsers",
         "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2020-03-19",
-        "last_update_date": "2026-10-06",
+        "last_update_date": "2026-10-31",
         "requirements": "none",
         "category": "Chromium",
         "notes": "Tab URL is the downloads.tab_url column, the page the download was started from. The "
@@ -114,7 +114,8 @@ __artifacts_v2__ = {
                  "'download_interrupt_reason_values.h', "
                  "https://github.com/chromium/chromium/blob/8f4baaae073181e7e0fea1807f8db6ad720dbcb7/components/download/public/common/download_interrupt_reason_values.h"
                  "; 'download_row.h', "
-                 "https://github.com/chromium/chromium/blob/8f4baaae073181e7e0fea1807f8db6ad720dbcb7/components/history/core/browser/download_row.h#L58-L60",
+                 "https://github.com/chromium/chromium/blob/8f4baaae073181e7e0fea1807f8db6ad720dbcb7/components/history/core/browser/download_row.h#L58-L60"
+                 '. ETag (as stored) and Last-Modified (as stored) are downloads.etag and downloads.last_modified, which DownloadRow describes as the contents of the most recently seen ETag and Last-Modified headers (https://github.com/chromium/chromium/blob/030bb0851e6c8c0fdd53d2270d5ae905a9dbce07/components/history/core/browser/download_row.h#L82-L86). The history schema migration from version 27 to 28 adds both columns as NOT NULL with an empty default (https://github.com/chromium/chromium/blob/030bb0851e6c8c0fdd53d2270d5ae905a9dbce07/components/history/core/browser/history_database.cc#L847-L850; https://github.com/chromium/chromium/blob/030bb0851e6c8c0fdd53d2270d5ae905a9dbce07/components/history/core/browser/download_database.cc#L206-L208), so on a History database from before that migration both are blank because the columns do not exist (no registered image carries a database that old, so that path is not exercised), and a blank on a later database means the column holds an empty string. The values are reported as stored; nothing is parsed from them. On the tested images an ETag was filled on 3 of 3 rows on adams_ss135dl_a13, 12 of 17 on cookbook_a11, 1 of 1 on hickman_a13, 2 of 4 on pixel7a_a14, 0 of 1 on russell_a14, 1 of 4 on s20fe_a13, 3 of 90 on sharon_a13, 4 of 108 on sharon_a14 and 1 of 1 on userb2_a13, and Last-Modified on 3, 15, 1, 4, 0, 2, 89, 107 and 1 of those rows.',
         "paths": ('*/app_chrome/Default/History*', '*/app_sbrowser/Default/History*', '*/app_opera/History*', '*/app_webview/Default/History*'),
         "output_types": "standard",
         "artifact_icon": "download",
@@ -129,6 +130,12 @@ __artifacts_v2__ = {
             "sharon_a14": "Android 14 | com.android.chrome vc 653310333, com.sec.android.app.sbrowser vc 1260103502 | 108 rows",
             "russell_pixel6a_a13": "Android 13 | com.android.chrome vc 573513033, com.brave.browser vc 415212624 | 1 row",
             "userb2_a13": "Android 13 | com.android.chrome vc 677808133 | 1 row",
+            "adams_ss135dl_a13": "Android 13 | 3 rows",
+            "cookbook_a11": "Android 11 | 17 rows",
+            "hickman_a13": "Android 13 | 1 row",
+            "russell_a14": "Android 14 | 1 row",
+            "s20fe_a13": "Android 13 | 4 rows",
+            "sharon_a13": "Android 13 | 90 rows",
         },
     },
     "get_chromeKeywordSearchTerms": {
@@ -384,7 +391,8 @@ def get_chromeDownloads(context):
     files_found = unique_files(context)
     all_data = []
     data_headers = ['Start Time', 'End Time', 'Last Access Time', 'Tab URL', 'Target Path', 'State (as stored)',
-                    'Danger Type (as stored)', 'Interrupt Reason (as stored)', 'Opened?', 'Received Bytes', 'Total Bytes']
+                    'Danger Type (as stored)', 'Interrupt Reason (as stored)', 'Opened?', 'Received Bytes', 'Total Bytes',
+                    'ETag (as stored)', 'Last-Modified (as stored)']
     lava_data_headers = data_headers.copy()
     for i in (0, 1, 2):
         lava_data_headers[i] = (lava_data_headers[i], 'datetime')
@@ -395,6 +403,10 @@ def get_chromeDownloads(context):
         # older chrome db (32) lacks last_access_time; pre-v65 lacks tab_url
         last_access_sel = 'last_access_time' if does_column_exist_in_db(file_found, 'downloads', 'last_access_time') else "'' as last_access_time"
         tab_url_sel = 'tab_url' if does_column_exist_in_db(file_found, 'downloads', 'tab_url') else "'' as tab_url"
+        # etag and last_modified arrive with history schema 28
+        etag_sel = 'etag' if does_column_exist_in_db(file_found, 'downloads', 'etag') else "'' as etag"
+        last_modified_sel = ('last_modified' if does_column_exist_in_db(file_found, 'downloads', 'last_modified')
+                             else "'' as last_modified")
 
         rows = _history_rows(file_found, browser_name, f'''
         SELECT
@@ -408,7 +420,9 @@ def get_chromeDownloads(context):
         interrupt_reason,
         CASE opened WHEN 0 THEN '' WHEN 1 THEN 'Yes' END,
         received_bytes,
-        total_bytes
+        total_bytes,
+        {etag_sel},
+        {last_modified_sel}
         FROM downloads
         ''')
         if rows is None:
@@ -418,7 +432,7 @@ def get_chromeDownloads(context):
         data_list = []
         for r in rows:
             data_list.append((_webkit_to_utc(r[0]), _webkit_to_utc(r[1]), _webkit_to_utc(r[2]),
-                              r[3], r[4], r[5], r[6], r[7], r[8], r[9], r[10]))
+                              r[3], r[4], r[5], r[6], r[7], r[8], r[9], r[10], r[11] or '', r[12] or ''))
 
         if data_list:
             all_data.extend([row + (browser_name,) for row in data_list])

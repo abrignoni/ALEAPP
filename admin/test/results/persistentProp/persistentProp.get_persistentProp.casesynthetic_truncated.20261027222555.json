@@ -1,0 +1,104 @@
+{
+  "metadata": {
+    "module_name": "persistentProp",
+    "artifact_name": "Persistent Properties - Matched Text Observations",
+    "function_name": "get_persistentProp",
+    "case_number": "casesynthetic_truncated",
+    "number_of_columns": 11,
+    "number_of_rows": 5,
+    "total_data_size_bytes": 739,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/persistentProp/testdata.persistentProp.get_persistentProp.casesynthetic_truncated.zip",
+    "start_time": "2026-10-27T22:25:55.553664+00:00",
+    "end_time": "2026-10-27T22:25:55.862757+00:00",
+    "run_time_seconds": 0.006412029266357422,
+    "last_commit": {
+      "hash": "8cb057d5119943244a1059760b8b6eb8e513fd06",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-10-06T20:26:11-04:00",
+      "message": "Retain persistent property observations with invalid timestamps"
+    }
+  },
+  "headers": [
+    "Timestamp",
+    "Raw Timestamp Text",
+    "Event",
+    "Timestamp Conversion Status",
+    "Input Line Ordinal",
+    "Matched Text (replacement decoded)",
+    "Property",
+    "Reason",
+    "Subreason",
+    "Position",
+    "factory_reset Reason Present"
+  ],
+  "data": [
+    [
+      1779271200,
+      "1779271200",
+      "reboot,userrequested",
+      "Converted by Unix-seconds rule (2009 to 2100)",
+      "",
+      "reboot,userrequested,1779271200",
+      "persist.sys.boot.reason.history",
+      "reboot",
+      "userrequested",
+      0,
+      "no"
+    ],
+    [
+      1778398215,
+      "1778398215",
+      "reboot,factory_reset",
+      "Converted by Unix-seconds rule (2009 to 2100)",
+      "",
+      "reboot,factory_reset,1778398215",
+      "persist.sys.boot.reason.history",
+      "reboot",
+      "factory_reset",
+      1,
+      "yes"
+    ],
+    [
+      1777672800,
+      "1777672800",
+      "shutdown,lpm",
+      "Converted by Unix-seconds rule (2009 to 2100)",
+      "",
+      "shutdown,lpm,1777672800",
+      "persist.sys.boot.reason.history",
+      "shutdown",
+      "lpm",
+      2,
+      "no"
+    ],
+    [
+      1776661200,
+      "1776661200",
+      "cold,powerkey",
+      "Converted by Unix-seconds rule (2009 to 2100)",
+      "",
+      "cold,powerkey,1776661200",
+      "persist.sys.boot.reason.history",
+      "cold",
+      "powerkey",
+      3,
+      "no"
+    ],
+    [
+      "",
+      "",
+      "reboot,factory_reset",
+      "No epoch in the entry",
+      "",
+      "reboot,factory_reset",
+      "persist.sys.boot.reason",
+      "reboot",
+      "factory_reset",
+      0,
+      "yes"
+    ]
+  ]
+}

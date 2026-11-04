@@ -1,0 +1,152 @@
+{
+  "metadata": {
+    "module_name": "bugreportRadios",
+    "artifact_name": "Bug Report - NFC State",
+    "function_name": "bugreport_nfc_state",
+    "case_number": "casesynthetic_a16",
+    "number_of_columns": 5,
+    "number_of_rows": 17,
+    "total_data_size_bytes": 1067,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportRadios/testdata.bugreportRadios.bugreport_nfc_state.casesynthetic_a16.zip",
+    "start_time": "2026-10-26T17:44:20.866941+00:00",
+    "end_time": "2026-10-26T17:44:21.018317+00:00",
+    "run_time_seconds": 0.014938116073608398,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-26T17:44:20.992964",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Group",
+    "Item",
+    "Value",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Adapter state",
+      "mState",
+      "on",
+      99,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Adapter state",
+      "mAlwaysOnState",
+      "off",
+      100,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Adapter state",
+      "mScreenState",
+      "ON_UNLOCKED",
+      101,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Adapter state",
+      "mIsSecureNfcEnabled",
+      "false",
+      102,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Adapter state",
+      "SnoopLogMode",
+      "FILTERED",
+      103,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Adapter state",
+      "listenTech",
+      "0x7",
+      104,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Adapter state",
+      "pollTech",
+      "0x2f",
+      105,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Adapter state",
+      "mTechMask",
+      "default",
+      106,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Adapter state",
+      "mEnableLPD",
+      "true",
+      107,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Adapter state",
+      "mEnableHostRouting",
+      "true",
+      108,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Preferred services",
+      "Current preferred foreground service",
+      "null (UID:0)",
+      148,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Preferred services",
+      "Current preferred payment service",
+      "ComponentInfo{com.example.pay/com.example.pay.HceService}",
+      149,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Preferred services",
+      "Next tap default",
+      "null (Gid***)",
+      150,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Preferred services",
+      "Default for foreground app (UID: 0)",
+      "null",
+      151,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Preferred services",
+      "Service preferred by foreground app",
+      "null",
+      157,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Preferred services",
+      "Preferred payment service",
+      "null",
+      158,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Routing table",
+      "Default route",
+      "host",
+      161,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

@@ -1,0 +1,202 @@
+{
+  "metadata": {
+    "module_name": "bugreportRadios",
+    "artifact_name": "Bug Report - Telephony State",
+    "function_name": "bugreport_telephony_state",
+    "case_number": "casesynthetic_a10",
+    "number_of_columns": 6,
+    "number_of_rows": 21,
+    "total_data_size_bytes": 2173,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportRadios/testdata.bugreportRadios.bugreport_telephony_state.casesynthetic_a10.zip",
+    "start_time": "2026-10-26T18:24:40.903854+00:00",
+    "end_time": "2026-10-26T18:24:41.227051+00:00",
+    "run_time_seconds": 0.18934059143066406,
+    "last_commit": {
+      "hash": "f246f0856bad96283c9a62aa4f52d908f14298c7",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T14:24:13-04:00",
+      "message": "Radios artifacts show identifiers as printed: no withheld values, SIM subscription identifier columns, adapter address"
+    }
+  },
+  "headers": [
+    "Service",
+    "Phone Id",
+    "Item",
+    "Value",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "phone",
+      "",
+      "mNoDataDueToRoaming",
+      "false",
+      146,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "phone",
+      "",
+      "mDefaultDataSubId",
+      "2",
+      147,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "phone",
+      "",
+      "isSmsCapable",
+      "true",
+      149,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "telephony.registry",
+      "0",
+      "mCallState",
+      "0",
+      200,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "telephony.registry",
+      "0",
+      "mCallIncomingNumber",
+      "+15550100",
+      201,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "telephony.registry",
+      "0",
+      "mServiceState",
+      "{mVoiceRegState=0(IN_SERVICE), mDataRegState=0(IN_SERVICE), mOperatorAlphaLong=ExampleCell, getRilVoiceRadioTechnology=14(LTE)}",
+      202,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "telephony.registry",
+      "0",
+      "mDataConnectionState",
+      "2",
+      203,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "telephony.registry",
+      "0",
+      "mCellIdentity",
+      "CellIdentityLte:{ mCi=1000 mPci=1 mTac=2 mMcc=001 mMnc=01 mAlphaLong=ExampleCell}",
+      204,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "telephony.registry",
+      "0",
+      "mTelephonyDisplayInfo",
+      "TelephonyDisplayInfo {network=LTE, overrideNetwork=NONE, isRoaming=false}",
+      205,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "telephony.registry",
+      "1",
+      "mCallState",
+      "0",
+      207,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "telephony.registry",
+      "1",
+      "mCellIdentity",
+      "null",
+      208,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "telephony.registry",
+      "",
+      "mPhoneCapability",
+      "mMaxActiveVoiceSubscriptions=1 mMaxActiveDataSubscriptions=1",
+      209,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "telephony.registry",
+      "",
+      "mActiveDataSubId",
+      "1",
+      210,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "telephony.registry",
+      "",
+      "mRadioPowerState",
+      "1",
+      211,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "telephony.registry",
+      "",
+      "mDefaultPhoneId",
+      "0",
+      213,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "telephony.registry",
+      "",
+      "mDefaultSubId",
+      "1",
+      214,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "carrier_config",
+      "",
+      "CarrierConfigLoadingLog",
+      "",
+      269,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "isub",
+      "",
+      "defaultSubId",
+      "1",
+      296,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "isub",
+      "",
+      "defaultDataSubId",
+      "2",
+      297,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "isub",
+      "",
+      "sSlotIndexToSubId[0]",
+      "subIds=0=[1]",
+      298,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "isub",
+      "",
+      "sSlotIndexToSubId[1]",
+      "subIds=1=[2]",
+      299,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

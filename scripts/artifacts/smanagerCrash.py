@@ -16,14 +16,14 @@ __artifacts_v2__ = {
 
 import datetime
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, sqlite_databases
 
 
 @artifact_processor
 def get_smanagerCrash(context):
     files_found = context.get_files_found()
 
-    source_path = str(files_found[0])
+    source_path = sqlite_databases(files_found)[0]
     db = open_sqlite_db_readonly(source_path)
     cursor = db.cursor()
     cursor.execute('''

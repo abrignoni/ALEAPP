@@ -1,0 +1,49 @@
+{
+  "metadata": {
+    "module_name": "bugreportLogsCrash",
+    "artifact_name": "Bug Report - ANR Trace Threads",
+    "function_name": "bugreport_anr_threads",
+    "case_number": "casesynthetic_empty",
+    "number_of_columns": 22,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportLogsCrash/testdata.bugreportLogsCrash.bugreport_anr_threads.casesynthetic_empty.zip",
+    "start_time": "2026-10-26T17:38:18.844443+00:00",
+    "end_time": "2026-10-26T17:38:19.011211+00:00",
+    "run_time_seconds": 0.0022912025451660156,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-26T17:38:18.998040",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Dump Time (UTC)",
+    "Dump Time As Printed",
+    "Process ID",
+    "Process",
+    "Subject",
+    "Thread",
+    "Daemon",
+    "Priority",
+    "Thread ID",
+    "State",
+    "System Thread ID",
+    "Nice",
+    "Cgroup",
+    "OS State",
+    "User Ticks",
+    "System Ticks",
+    "Core",
+    "Top Frame",
+    "Frames",
+    "Source Section",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

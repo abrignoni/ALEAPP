@@ -1,0 +1,86 @@
+{
+  "metadata": {
+    "module_name": "bugreportSecurityStorage",
+    "artifact_name": "Bug Report - Storage IO Counters",
+    "function_name": "bugreport_storage_io",
+    "case_number": "casesynthetic_new",
+    "number_of_columns": 13,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 277,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSecurityStorage/testdata.bugreportSecurityStorage.bugreport_storage_io.casesynthetic_new.zip",
+    "start_time": "2026-10-26T17:40:05.190235+00:00",
+    "end_time": "2026-10-26T17:40:05.313361+00:00",
+    "run_time_seconds": 0.020359039306640625,
+    "last_commit": {
+      "hash": "702ca90825fbb296e5cc429838c511eb52a44af6",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:39:47-04:00",
+      "message": "Bug report security and storage: readers and 30 artifacts for device policy, lock settings, biometrics, trust, ADB, vendor services, storage, dbinfo and flags"
+    }
+  },
+  "headers": [
+    "Name/UID",
+    "fg_rchar",
+    "fg_wchar",
+    "fg_rbytes",
+    "fg_wbytes",
+    "bg_rchar",
+    "bg_wchar",
+    "bg_rbytes",
+    "bg_wbytes",
+    "fg_fsync",
+    "bg_fsync",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "com.example.chat",
+      9120344,
+      412008,
+      51200000,
+      1310720,
+      880001200,
+      44001300,
+      7700000000,
+      91000000,
+      12,
+      3400,
+      1801,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "shared:android.uid.example",
+      120045,
+      88002,
+      4096000,
+      0,
+      61000200,
+      7300100,
+      990000000,
+      12000000,
+      0,
+      210,
+      1802,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "com.example.huge",
+      "99999999999999999999",
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      1803,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

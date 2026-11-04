@@ -1,0 +1,64 @@
+{
+  "metadata": {
+    "module_name": "bugreportNetwork",
+    "artifact_name": "Bug Report - Connected Networks",
+    "function_name": "bugreport_connected_networks",
+    "case_number": "casesynthetic_a10",
+    "number_of_columns": 17,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 259,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportNetwork/testdata.bugreportNetwork.bugreport_connected_networks.casesynthetic_a10.zip",
+    "start_time": "2026-10-26T17:22:09.598191+00:00",
+    "end_time": "2026-10-26T17:22:09.709239+00:00",
+    "run_time_seconds": 0.011604547500610352,
+    "last_commit": {
+      "hash": "35ad867ff7da9d4bd9ac2bb41cca31cb5a49f8b2",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:21:50-04:00",
+      "message": "Bug report network: Wi-Fi, network usage, policy, connectivity, DNS, interface, socket and tethering artifacts"
+    }
+  },
+  "headers": [
+    "Created (UTC)",
+    "Created As Printed",
+    "Network ID",
+    "Default Network",
+    "Network Info",
+    "Interface",
+    "Link Addresses",
+    "DNS Addresses",
+    "Domains",
+    "Routes",
+    "Transports",
+    "Capabilities",
+    "Signal Strength",
+    "SSID (as printed)",
+    "Score",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      null,
+      "",
+      100,
+      "true",
+      "[type: WIFI[], state: CONNECTED/CONNECTED, reason: (unspecified), extra: (none), failover: false, available: true, roaming: false]",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "WIFI",
+      "INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VPN&VALIDATED",
+      "-36",
+      "*****",
+      "60",
+      309,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

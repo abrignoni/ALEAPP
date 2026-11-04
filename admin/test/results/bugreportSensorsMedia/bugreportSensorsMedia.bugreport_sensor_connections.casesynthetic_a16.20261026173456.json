@@ -1,0 +1,110 @@
+{
+  "metadata": {
+    "module_name": "bugreportSensorsMedia",
+    "artifact_name": "Bug Report - Sensor Connections",
+    "function_name": "bugreport_sensor_connections",
+    "case_number": "casesynthetic_a16",
+    "number_of_columns": 12,
+    "number_of_rows": 5,
+    "total_data_size_bytes": 349,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSensorsMedia/testdata.bugreportSensorsMedia.bugreport_sensor_connections.casesynthetic_a16.zip",
+    "start_time": "2026-10-26T17:34:56.551943+00:00",
+    "end_time": "2026-10-26T17:34:56.681875+00:00",
+    "run_time_seconds": 0.014797687530517578,
+    "last_commit": {
+      "hash": "e56d9fc859d2e83c7207c6514d3727ee6bf6a291",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:32:45-04:00",
+      "message": "Bug report sensors and media: location, sensors, camera, audio, media, accessibility, input method, display and window artifacts"
+    }
+  },
+  "headers": [
+    "Connection",
+    "Operating Mode",
+    "Client (as printed)",
+    "UID",
+    "Has Sensor Access",
+    "Sensor",
+    "Handle",
+    "Status",
+    "First Flush Pending",
+    "Pending Flush Events",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      0,
+      "NORMAL",
+      "com.example.server.Brightness$2",
+      1000,
+      "",
+      "example_light",
+      "0x00000005",
+      "active",
+      "",
+      "0",
+      725,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1,
+      "NORMAL",
+      "ab1",
+      10300,
+      "",
+      "example_acc",
+      "0x00000001",
+      "active",
+      "",
+      "2",
+      729,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1,
+      "NORMAL",
+      "ab1",
+      10300,
+      "",
+      "example_steps",
+      "0x00000012",
+      "active",
+      "",
+      "0",
+      729,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      2,
+      "NORMAL",
+      "com.example.server.Grip",
+      1000,
+      "true",
+      "Example Grip Sensor",
+      "0x02000012",
+      "",
+      "false",
+      "3",
+      734,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      3,
+      "NORMAL",
+      "",
+      null,
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      739,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

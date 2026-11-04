@@ -1,0 +1,146 @@
+{
+  "metadata": {
+    "module_name": "bugreportAccountsPower",
+    "artifact_name": "Bug Report - Account History",
+    "function_name": "bugreport_account_history",
+    "case_number": "casesynthetic_a16",
+    "number_of_columns": 10,
+    "number_of_rows": 9,
+    "total_data_size_bytes": 787,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportAccountsPower/testdata.bugreportAccountsPower.bugreport_account_history.casesynthetic_a16.zip",
+    "start_time": "2026-10-26T17:46:07.415423+00:00",
+    "end_time": "2026-10-26T17:46:07.532502+00:00",
+    "run_time_seconds": 0.01196146011352539,
+    "last_commit": {
+      "hash": "7450687ec1476569021e50b0cfc221c1d2c13a09",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:45:32-04:00",
+      "message": "Bug report accounts, sync, backup, users, battery, power and memory: readers, 33 artifacts, synthetic fixture and tests"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "User",
+    "Account ID",
+    "Action",
+    "UID",
+    "Table",
+    "Key",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1772352000,
+      "2026-03-01 09:00:00",
+      0,
+      -1,
+      "action_called_account_add",
+      10100,
+      "accounts",
+      0,
+      194,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1772352005,
+      "2026-03-01 09:00:05",
+      0,
+      1,
+      "action_account_add",
+      10101,
+      "accounts",
+      1,
+      195,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1772352005,
+      "2026-03-01 09:00:05",
+      0,
+      1,
+      "action_set_password",
+      10101,
+      "accounts",
+      2,
+      196,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1772472610,
+      "2026-03-02 18:30:10",
+      0,
+      2,
+      "action_account_add",
+      10102,
+      "accounts",
+      3,
+      197,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1786772700,
+      "2026-08-15 07:45:00",
+      0,
+      2,
+      "action_called_account_remove",
+      10102,
+      "accounts",
+      4,
+      198,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1786772700,
+      "2026-08-15 07:45:00",
+      0,
+      2,
+      "action_account_remove",
+      1000,
+      "accounts",
+      5,
+      199,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1786772709,
+      "2026-08-15 07:45:09",
+      0,
+      3,
+      "action_account_add",
+      10102,
+      "accounts",
+      6,
+      200,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1772352000,
+      "2026-03-01 09:00:00",
+      10,
+      -1,
+      "action_called_account_add",
+      10100,
+      "accounts",
+      0,
+      221,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1772352005,
+      "2026-03-01 09:00:05",
+      10,
+      1,
+      "action_account_add",
+      10101,
+      "accounts",
+      1,
+      222,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

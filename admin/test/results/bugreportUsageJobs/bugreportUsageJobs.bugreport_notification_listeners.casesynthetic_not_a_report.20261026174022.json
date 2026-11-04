@@ -1,0 +1,35 @@
+{
+  "metadata": {
+    "module_name": "bugreportUsageJobs",
+    "artifact_name": "Bug Report - Notification Listeners",
+    "function_name": "bugreport_notification_listeners",
+    "case_number": "casesynthetic_not_a_report",
+    "number_of_columns": 8,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportUsageJobs/testdata.bugreportUsageJobs.bugreport_notification_listeners.casesynthetic_not_a_report.zip",
+    "start_time": "2026-10-26T17:40:22.617301+00:00",
+    "end_time": "2026-10-26T17:40:22.780374+00:00",
+    "run_time_seconds": 0.0026273727416992188,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-26T17:40:22.762434",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Role",
+    "List",
+    "Package",
+    "Component",
+    "User",
+    "Detail",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

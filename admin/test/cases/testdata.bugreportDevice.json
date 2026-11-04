@@ -27,6 +27,18 @@
           "data": []
         }
       },
+      "bugreport_device_identifiers": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
       "bugreport_sections": {
         "search_patterns": [
           "*/dumpstate.txt",
@@ -82,6 +94,18 @@
     },
     "artifacts": {
       "bugreport_device_facts": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_device_identifiers": {
         "search_patterns": [
           "*/dumpstate.txt",
           "*/bugreport-*.txt",
@@ -159,6 +183,18 @@
           "data": []
         }
       },
+      "bugreport_device_identifiers": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
       "bugreport_sections": {
         "search_patterns": [
           "*/dumpstate.txt",
@@ -214,6 +250,18 @@
     },
     "artifacts": {
       "bugreport_device_facts": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_device_identifiers": {
         "search_patterns": [
           "*/dumpstate.txt",
           "*/bugreport-*.txt",
@@ -291,6 +339,18 @@
           "data": []
         }
       },
+      "bugreport_device_identifiers": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
       "bugreport_sections": {
         "search_patterns": [
           "*/dumpstate.txt",
@@ -346,6 +406,18 @@
     },
     "artifacts": {
       "bugreport_device_facts": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_device_identifiers": {
         "search_patterns": [
           "*/dumpstate.txt",
           "*/bugreport-*.txt",
@@ -423,6 +495,18 @@
           "data": []
         }
       },
+      "bugreport_device_identifiers": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
       "bugreport_sections": {
         "search_patterns": [
           "*/dumpstate.txt",
@@ -489,6 +573,18 @@
           "data": []
         }
       },
+      "bugreport_device_identifiers": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
       "bugreport_sections": {
         "search_patterns": [
           "*/dumpstate.txt",
@@ -514,6 +610,48 @@
         }
       },
       "bugreport_package_times": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_identifiers": {
+    "description": "Synthetic Android 16 style bug report text (dumpstate.txt) whose properties section prints every identifier property on the Device Identifiers list (serial numbers, IMEI and MEID values, SIM card numbers, Bluetooth and Wi-Fi addresses, device ids) plus one property with a similar name that is not on the list; the header prints a kernel command line and bootconfig lines. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_identifiers.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-26T20:00:00.327614",
+      "last_commit": {
+        "hash": "d1aa88ec6597139a2e6c891969cef84a01cd6a2c",
+        "author_name": "danjethh",
+        "author_email": "danjethh@users.noreply.github.com",
+        "date": "2026-10-26T14:15:20-04:00",
+        "message": "Give each bug report topic group its own ALEAPP category"
+      }
+    },
+    "artifacts": {
+      "bugreport_device_facts": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_device_identifiers": {
         "search_patterns": [
           "*/dumpstate.txt",
           "*/bugreport-*.txt",

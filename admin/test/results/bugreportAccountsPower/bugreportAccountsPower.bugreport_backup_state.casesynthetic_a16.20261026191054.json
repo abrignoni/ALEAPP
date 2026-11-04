@@ -1,0 +1,152 @@
+{
+  "metadata": {
+    "module_name": "bugreportAccountsPower",
+    "artifact_name": "Bug Report - Backup State",
+    "function_name": "bugreport_backup_state",
+    "case_number": "casesynthetic_a16",
+    "number_of_columns": 5,
+    "number_of_rows": 17,
+    "total_data_size_bytes": 905,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportAccountsPower/testdata.bugreportAccountsPower.bugreport_backup_state.casesynthetic_a16.zip",
+    "start_time": "2026-10-26T19:10:54.522040+00:00",
+    "end_time": "2026-10-26T19:10:54.799941+00:00",
+    "run_time_seconds": 0.16377902030944824,
+    "last_commit": {
+      "hash": "d1aa88ec6597139a2e6c891969cef84a01cd6a2c",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T14:15:20-04:00",
+      "message": "Give each bug report topic group its own ALEAPP category"
+    }
+  },
+  "headers": [
+    "Name",
+    "Value",
+    "Time (UTC)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Statement",
+      "Backup Manager is enabled / setup complete / not pending init",
+      null,
+      246,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Statement",
+      "Auto-restore is enabled",
+      null,
+      247,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Statement",
+      "No backups running",
+      null,
+      248,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Statement",
+      "Framework scheduling is enabled",
+      null,
+      249,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Last backup pass started",
+      "0",
+      null,
+      250,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "now (in the Last backup pass started line)",
+      "1793614320000",
+      1793614320,
+      250,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "next scheduled",
+      "1793647320000",
+      1793647320,
+      251,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Transport clients created",
+      "4",
+      null,
+      265,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Current transport clients",
+      "0",
+      null,
+      266,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Pending init",
+      "0",
+      null,
+      267,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Ancestral",
+      "0",
+      null,
+      268,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Current",
+      "21c53c20b328bc21",
+      null,
+      269,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Ancestral packages",
+      "none",
+      null,
+      276,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Ever backed up",
+      "2",
+      null,
+      277,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Pending key/value backup",
+      "2",
+      null,
+      278,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Full backup queue",
+      "3",
+      null,
+      281,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Agent timeouts",
+      "",
+      null,
+      285,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

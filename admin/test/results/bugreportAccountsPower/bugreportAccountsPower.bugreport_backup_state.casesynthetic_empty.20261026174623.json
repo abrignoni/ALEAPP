@@ -1,0 +1,32 @@
+{
+  "metadata": {
+    "module_name": "bugreportAccountsPower",
+    "artifact_name": "Bug Report - Backup State",
+    "function_name": "bugreport_backup_state",
+    "case_number": "casesynthetic_empty",
+    "number_of_columns": 5,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportAccountsPower/testdata.bugreportAccountsPower.bugreport_backup_state.casesynthetic_empty.zip",
+    "start_time": "2026-10-26T17:46:23.672578+00:00",
+    "end_time": "2026-10-26T17:46:23.771434+00:00",
+    "run_time_seconds": 0.0026133060455322266,
+    "last_commit": {
+      "hash": "7450687ec1476569021e50b0cfc221c1d2c13a09",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:45:32-04:00",
+      "message": "Bug report accounts, sync, backup, users, battery, power and memory: readers, 33 artifacts, synthetic fixture and tests"
+    }
+  },
+  "headers": [
+    "Name",
+    "Value",
+    "Time (UTC)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

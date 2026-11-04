@@ -31,7 +31,7 @@ import datetime
 import json
 import sqlite3
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, is_sqlite_sidecar
 
 def _ms_to_utc(value):
     if not value:
@@ -45,7 +45,7 @@ def _ms_to_utc(value):
 def _db(files_found):
     for file_found in files_found:
         file_found = str(file_found)
-        if 'ChatComDatabase' in file_found and not file_found.endswith('-journal'):
+        if 'ChatComDatabase' in file_found and not is_sqlite_sidecar(file_found):
             return file_found
     return ''
 

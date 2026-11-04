@@ -1,0 +1,1652 @@
+{
+  "casesynthetic_a16": {
+    "description": "Synthetic Android 12 and later style bug report text (dumpstate.txt) with the base fixture sections plus invented location (providers, listeners, last locations for two users, aggregate usage, event log), location_time_zone_manager, sensorservice (list, connections in both printed forms, previous registrations, recent events with dates), media.camera (events, closed devices, a previous open session), audio and media.audio_flinger, media_session, media.metrics, accessibility (installed and enabled lists), input_method (nested layout, start and soft input histories), display (states, brightness events), window and SurfaceFlinger dumps. Device zone Europe/Paris. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_a16.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-26T13:34:48.435511",
+      "last_commit": {
+        "hash": "e56d9fc859d2e83c7207c6514d3727ee6bf6a291",
+        "author_name": "danjethh",
+        "author_email": "danjethh@users.noreply.github.com",
+        "date": "2026-10-26T13:32:45-04:00",
+        "message": "Bug report sensors and media: location, sensors, camera, audio, media, accessibility, input method, display and window artifacts"
+      }
+    },
+    "artifacts": {
+      "bugreport_location_providers": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_location_last_known": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_location_requests": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_location_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_location_usage": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_time_zone_detection": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sensors": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sensor_connections": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sensor_registrations": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sensor_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_camera_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_camera_devices": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_audio_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_audio_clients": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_media_sessions": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_audio_playback_order": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_media_metrics": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_accessibility_services": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_input_methods": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_input_start_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_soft_input_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_display_states": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_brightness_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_window_focus": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_windows": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_surfaceflinger_layers": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_a10": {
+    "description": "Synthetic Android 10 style bug report text (bugreport-*.txt, CRLF line endings) with the older layouts of the same dumps: Current Location Manager state, clock-time-only sensor events, package= registrations, Audio event log headings, colon separated media.metrics records, flat input_method lists, logical displays only and a SurfaceFlinger table without a Focused column; no time zone manager, audio_flinger or accessibility dump. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_a10.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-26T13:34:49.614893",
+      "last_commit": {
+        "hash": "e56d9fc859d2e83c7207c6514d3727ee6bf6a291",
+        "author_name": "danjethh",
+        "author_email": "danjethh@users.noreply.github.com",
+        "date": "2026-10-26T13:32:45-04:00",
+        "message": "Bug report sensors and media: location, sensors, camera, audio, media, accessibility, input method, display and window artifacts"
+      }
+    },
+    "artifacts": {
+      "bugreport_location_providers": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_location_last_known": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_location_requests": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_location_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_location_usage": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_time_zone_detection": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sensors": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sensor_connections": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sensor_registrations": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sensor_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_camera_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_camera_devices": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_audio_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_audio_clients": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_media_sessions": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_audio_playback_order": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_media_metrics": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_accessibility_services": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_input_methods": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_input_start_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_soft_input_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_display_states": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_brightness_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_window_focus": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_windows": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_surfaceflinger_layers": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_cut": {
+    "description": "Synthetic Android 12 and later style bug report text in which the location and sensorservice dumps end with the DUMP TIMEOUT marker and no duration line. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_cut.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-26T13:34:50.682792",
+      "last_commit": {
+        "hash": "e56d9fc859d2e83c7207c6514d3727ee6bf6a291",
+        "author_name": "danjethh",
+        "author_email": "danjethh@users.noreply.github.com",
+        "date": "2026-10-26T13:32:45-04:00",
+        "message": "Bug report sensors and media: location, sensors, camera, audio, media, accessibility, input method, display and window artifacts"
+      }
+    },
+    "artifacts": {
+      "bugreport_location_providers": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_location_last_known": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_location_requests": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_location_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_location_usage": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_time_zone_detection": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sensors": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sensor_connections": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sensor_registrations": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sensor_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_camera_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_camera_devices": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_audio_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_audio_clients": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_media_sessions": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_audio_playback_order": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_media_metrics": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_accessibility_services": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_input_methods": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_input_start_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_soft_input_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_display_states": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_brightness_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_window_focus": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_windows": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_surfaceflinger_layers": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_empty": {
+    "description": "Synthetic bug report text with the banner and no sections: every sensors and media artifact has no rows. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_empty.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-26T13:34:51.749208",
+      "last_commit": {
+        "hash": "e56d9fc859d2e83c7207c6514d3727ee6bf6a291",
+        "author_name": "danjethh",
+        "author_email": "danjethh@users.noreply.github.com",
+        "date": "2026-10-26T13:32:45-04:00",
+        "message": "Bug report sensors and media: location, sensors, camera, audio, media, accessibility, input method, display and window artifacts"
+      }
+    },
+    "artifacts": {
+      "bugreport_location_providers": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_location_last_known": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_location_requests": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_location_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_location_usage": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_time_zone_detection": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sensors": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sensor_connections": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sensor_registrations": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sensor_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_camera_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_camera_devices": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_audio_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_audio_clients": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_media_sessions": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_audio_playback_order": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_media_metrics": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_accessibility_services": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_input_methods": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_input_start_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_soft_input_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_display_states": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_brightness_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_window_focus": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_windows": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_surfaceflinger_layers": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_two_reports": {
+    "description": "Two synthetic bug report texts in two folders (Android 12 and later style in Asia/Kolkata and Android 10 style in America/Sao_Paulo): rows of both are listed with their Source File. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_two_reports.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-26T13:34:52.852175",
+      "last_commit": {
+        "hash": "e56d9fc859d2e83c7207c6514d3727ee6bf6a291",
+        "author_name": "danjethh",
+        "author_email": "danjethh@users.noreply.github.com",
+        "date": "2026-10-26T13:32:45-04:00",
+        "message": "Bug report sensors and media: location, sensors, camera, audio, media, accessibility, input method, display and window artifacts"
+      }
+    },
+    "artifacts": {
+      "bugreport_location_providers": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_location_last_known": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_location_requests": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_location_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_location_usage": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_time_zone_detection": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sensors": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sensor_connections": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sensor_registrations": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sensor_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_camera_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_camera_devices": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_audio_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_audio_clients": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_media_sessions": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_audio_playback_order": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_media_metrics": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_accessibility_services": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_input_methods": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_input_start_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_soft_input_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_display_states": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_brightness_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_window_focus": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_windows": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_surfaceflinger_layers": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  }
+}

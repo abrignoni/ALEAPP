@@ -735,7 +735,15 @@ def artifact_processor(func):
                 if media_header_info and needs_text_or_html_data:
                     html_columns.extend([data_headers[idx][0] for idx in media_header_info])
                     if not is_artifact_result:
-                        html_data_list, txt_data_list = get_data_list_with_media(media_header_info, data_list)
+                        if html_data_list is data_list:
+                            html_data_list, txt_data_list = get_data_list_with_media(media_header_info, data_list)
+                        else:
+                            # The module returned its own HTML rows (#1202). Build the HTML
+                            # output from those, so its formatting survives, and the text
+                            # outputs from the plain rows. Media cells resolve the same way
+                            # in both; a value that is not a reference leaves the cell empty.
+                            html_data_list, _ = get_data_list_with_media(media_header_info, html_data_list)
+                            _, txt_data_list = get_data_list_with_media(media_header_info, data_list)
 
                 table_name = None
                 object_columns = None
@@ -990,6 +998,29 @@ def get_sqlite_db_uri_query(path):
                 'with immutable=1, which reads the database file alone.')
         return 'mode=ro&immutable=1'
     return 'mode=ro'
+
+SQLITE_SIDECAR_SUFFIXES = ('-wal', '-shm', '-journal')
+
+
+def is_sqlite_sidecar(path):
+    """True for the -wal, -shm or -journal file SQLite keeps beside a database.
+
+    A path pattern such as '*/Foo.sqlite*' also matches these files. A sidecar is not a
+    database: queried on its own it raises sqlite3.DatabaseError ('file is not a database').
+    open_sqlite_db_readonly reads the -wal and -shm through the database itself, and
+    sqlite_wal.WalStates finds the log at <database>-wal on disk, so neither needs the sidecar
+    in the list an artifact loops over.
+
+    Use it where an artifact picks the files it will open. Leave the 'paths' patterns
+    alone: the seeker stages a sidecar only because the pattern matches it.
+    """
+    return str(path).lower().endswith(SQLITE_SIDECAR_SUFFIXES)
+
+
+def sqlite_databases(files_found):
+    """The found files that are not SQLite sidecars, as strings, in their original order."""
+    return [str(f) for f in files_found if not is_sqlite_sidecar(f)]
+
 
 def open_sqlite_db_readonly(path):
     '''Opens a sqlite db in read-only mode, so original db (and -wal/journal are intact)'''

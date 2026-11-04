@@ -1,0 +1,2444 @@
+{
+  "casesynthetic_a16": {
+    "description": "Synthetic Android 16 style bug report text (dumpstate.txt) with two Android users, in the Europe/Paris zone: accounts with a history table and a visibility list, sync status tables (one with a failure cell), recent sync history, per adapter history, backup transports and queues, two user records, a battery history with a printed date on every record, daily periods with package changes, estimated power use, wake locks, thermalservice, power wake locks with the wake up and release histories, device idle, process stats, threads from ps and meminfo with the process lists and blocks. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_a16.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-26T12:00:00.000000"
+    },
+    "artifacts": {
+      "bugreport_accounts": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_account_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_account_authenticators": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_account_visibility": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sync_adapter_status": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sync_recent_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sync_adapter_last_syncs": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sync_jobs": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sync_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_backup_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_backup_transports": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_backup_package_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_backup_participants": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_backup_queues": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_users": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_user_manager_facts": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_battery_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_battery_daily_summary": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_battery_package_changes": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_battery_power_use": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_battery_wake_locks": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_battery_service_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_thermal_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_power_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_power_wake_locks": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_power_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_device_idle_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_device_idle_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_process_stats": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_process_threads": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_memory_by_process": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_memory_process_detail": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_memory_summary": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_a10": {
+    "description": "Synthetic Android 10 style bug report text (bugreport-*.txt, CRLF line endings) with one user, in the Europe/Paris zone: the same sections in the older shapes (sync entries printed as account/ uN (type uN [authority]), battery history with offsets from clock records and a wrapped details line, Uid power lines, no PowerHistorian lists, a user record without Type and Flags, meminfo blocks without Rss columns and without process lists). Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_a10.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-26T12:00:00.000000"
+    },
+    "artifacts": {
+      "bugreport_accounts": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_account_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_account_authenticators": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_account_visibility": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sync_adapter_status": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sync_recent_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sync_adapter_last_syncs": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sync_jobs": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sync_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_backup_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_backup_transports": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_backup_package_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_backup_participants": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_backup_queues": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_users": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_user_manager_facts": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_battery_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_battery_daily_summary": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_battery_package_changes": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_battery_power_use": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_battery_wake_locks": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_battery_service_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_thermal_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_power_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_power_wake_locks": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_power_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_device_idle_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_device_idle_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_process_stats": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_process_threads": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_memory_by_process": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_memory_process_detail": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_memory_summary": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_two_reports": {
+    "description": "Two synthetic bug report texts in two folders (Android 16 style in Asia/Kolkata and Android 10 style in America/Sao_Paulo): both are read and the Source File column tells their rows apart. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_two_reports.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-26T12:00:00.000000"
+    },
+    "artifacts": {
+      "bugreport_accounts": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_account_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_account_authenticators": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_account_visibility": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sync_adapter_status": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sync_recent_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sync_adapter_last_syncs": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sync_jobs": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sync_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_backup_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_backup_transports": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_backup_package_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_backup_participants": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_backup_queues": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_users": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_user_manager_facts": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_battery_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_battery_daily_summary": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_battery_package_changes": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_battery_power_use": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_battery_wake_locks": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_battery_service_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_thermal_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_power_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_power_wake_locks": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_power_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_device_idle_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_device_idle_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_process_stats": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_process_threads": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_memory_by_process": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_memory_process_detail": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_memory_summary": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_cut": {
+    "description": "Synthetic Android 16 style bug report text whose meminfo service dump ends with the DUMP TIMEOUT marker and has no trailer: the rows read before the cut are listed and the cut is logged. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_cut.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-26T12:00:00.000000"
+    },
+    "artifacts": {
+      "bugreport_accounts": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_account_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_account_authenticators": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_account_visibility": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sync_adapter_status": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sync_recent_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sync_adapter_last_syncs": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sync_jobs": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sync_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_backup_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_backup_transports": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_backup_package_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_backup_participants": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_backup_queues": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_users": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_user_manager_facts": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_battery_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_battery_daily_summary": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_battery_package_changes": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_battery_power_use": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_battery_wake_locks": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_battery_service_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_thermal_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_power_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_power_wake_locks": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_power_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_device_idle_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_device_idle_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_process_stats": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_process_threads": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_memory_by_process": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_memory_process_detail": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_memory_summary": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_empty": {
+    "description": "Synthetic bug report text with the banner and no sections. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_empty.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-26T12:00:00.000000"
+    },
+    "artifacts": {
+      "bugreport_accounts": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_account_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_account_authenticators": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_account_visibility": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sync_adapter_status": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sync_recent_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sync_adapter_last_syncs": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sync_jobs": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sync_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_backup_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_backup_transports": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_backup_package_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_backup_participants": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_backup_queues": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_users": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_user_manager_facts": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_battery_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_battery_daily_summary": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_battery_package_changes": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_battery_power_use": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_battery_wake_locks": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_battery_service_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_thermal_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_power_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_power_wake_locks": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_power_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_device_idle_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_device_idle_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_process_stats": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_process_threads": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_memory_by_process": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_memory_process_detail": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_memory_summary": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_not_a_report": {
+    "description": "Two files that match the path patterns but carry no dumpstate banner (a text and a block of arbitrary bytes): neither is read and no rows are reported. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_not_a_report.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-26T12:00:00.000000"
+    },
+    "artifacts": {
+      "bugreport_accounts": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_account_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_account_authenticators": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_account_visibility": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sync_adapter_status": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sync_recent_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sync_adapter_last_syncs": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sync_jobs": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_sync_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_backup_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_backup_transports": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_backup_package_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_backup_participants": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_backup_queues": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_users": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_user_manager_facts": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_battery_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_battery_daily_summary": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_battery_package_changes": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_battery_power_use": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_battery_wake_locks": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_battery_service_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_thermal_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_power_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_power_wake_locks": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_power_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_device_idle_state": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_device_idle_history": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_process_stats": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_process_threads": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_memory_by_process": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_memory_process_detail": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_memory_summary": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  }
+}

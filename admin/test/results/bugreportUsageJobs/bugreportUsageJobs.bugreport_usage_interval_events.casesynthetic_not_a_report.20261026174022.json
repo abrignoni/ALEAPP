@@ -1,0 +1,40 @@
+{
+  "metadata": {
+    "module_name": "bugreportUsageJobs",
+    "artifact_name": "Bug Report - Usage Interval Event Counts",
+    "function_name": "bugreport_usage_interval_events",
+    "case_number": "casesynthetic_not_a_report",
+    "number_of_columns": 13,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportUsageJobs/testdata.bugreportUsageJobs.bugreport_usage_interval_events.casesynthetic_not_a_report.zip",
+    "start_time": "2026-10-26T17:40:22.469418+00:00",
+    "end_time": "2026-10-26T17:40:22.612870+00:00",
+    "run_time_seconds": 0.0025713443756103516,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-26T17:40:22.596943",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Interval Begin (UTC)",
+    "Interval End (UTC)",
+    "Interval",
+    "Interval As Printed",
+    "User",
+    "Event",
+    "Count",
+    "Total Time (ms)",
+    "Total Time As Printed",
+    "Printed After",
+    "Source Section",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

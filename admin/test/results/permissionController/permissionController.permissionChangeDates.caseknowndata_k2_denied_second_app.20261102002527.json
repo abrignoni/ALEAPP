@@ -1,0 +1,47 @@
+{
+  "metadata": {
+    "module_name": "permissionController",
+    "artifact_name": "Permission Change Dates",
+    "function_name": "permissionChangeDates",
+    "case_number": "caseknowndata_k2_denied_second_app",
+    "number_of_columns": 5,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 89,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/permissionController/testdata.permissionController.permissionChangeDates.caseknowndata_k2_denied_second_app.zip",
+    "start_time": "2026-11-02T00:25:27.939340+00:00",
+    "end_time": "2026-11-02T00:25:27.995813+00:00",
+    "run_time_seconds": 0.00022721290588378906,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-11-01T19:25:27.992839",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Last Permission Change (as stored)",
+    "Package",
+    "Position",
+    "Copy",
+    "Android User"
+  ],
+  "data": [
+    [
+      "2026-11-01",
+      "com.google.android.apps.messaging",
+      1,
+      "Current",
+      "0"
+    ],
+    [
+      "2026-11-01",
+      "com.android.chrome",
+      2,
+      "Current",
+      "0"
+    ]
+  ]
+}

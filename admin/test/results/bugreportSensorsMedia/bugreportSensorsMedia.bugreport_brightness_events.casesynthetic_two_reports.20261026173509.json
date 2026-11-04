@@ -1,0 +1,90 @@
+{
+  "metadata": {
+    "module_name": "bugreportSensorsMedia",
+    "artifact_name": "Bug Report - Brightness Events",
+    "function_name": "bugreport_brightness_events",
+    "case_number": "casesynthetic_two_reports",
+    "number_of_columns": 14,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 600,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSensorsMedia/testdata.bugreportSensorsMedia.bugreport_brightness_events.casesynthetic_two_reports.zip",
+    "start_time": "2026-10-26T17:35:09.655776+00:00",
+    "end_time": "2026-10-26T17:35:09.804967+00:00",
+    "run_time_seconds": 0.02765345573425293,
+    "last_commit": {
+      "hash": "e56d9fc859d2e83c7207c6514d3727ee6bf6a291",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:32:45-04:00",
+      "message": "Bug report sensors and media: location, sensors, camera, audio, media, accessibility, input method, display and window artifacts"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Kind",
+    "Display",
+    "Display State",
+    "Display Policy",
+    "Brightness",
+    "Nits",
+    "Lux",
+    "Reason",
+    "Strategy",
+    "Text (as printed)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1793586600,
+      "11-02 08:00:00.100",
+      "BrightnessEvent",
+      "0",
+      "ON",
+      "BRIGHT",
+      "0.25",
+      "40.0",
+      "12.5",
+      "automatic",
+      "ExampleStrategy",
+      "disp=0, physDisp=local:0, displayState=ON, displayPolicy=BRIGHT, brt=0.25, brtNits=40.0, lux=12.5, reason=automatic, strat=ExampleStrategy, flags=",
+      849,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      1793588400,
+      "11-02 08:30:00.200",
+      "BrightnessEvent",
+      "0",
+      "OFF",
+      "DOZE",
+      "0.0",
+      "5.0",
+      "0.0",
+      "screen_off",
+      "",
+      "disp=0, physDisp=local:0, displayState=OFF, displayPolicy=DOZE, brt=0.0, brtNits=5.0, lux=0.0, reason=screen_off",
+      850,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      1793341800,
+      "10-30 12:00:00.300",
+      "brightness change",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "userId=0, 40.0->45.0, isUserSetBrightness=true, powerBrightnessFactor=1.0",
+      851,
+      "Dump1/dumpstate.txt"
+    ]
+  ]
+}

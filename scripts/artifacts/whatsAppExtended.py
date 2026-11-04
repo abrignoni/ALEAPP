@@ -227,7 +227,7 @@ import sqlite3
 
 from scripts.ilapfuncs import (artifact_processor, attach_sqlite_db_readonly,
                                convert_unix_ts_to_utc, null_absent_columns,
-                               open_sqlite_db_readonly, logfunc)
+                               open_sqlite_db_readonly, logfunc, is_sqlite_sidecar)
 
 _DIRECTION_CASE = "CASE m.from_me WHEN 1 THEN 'Outgoing' WHEN 0 THEN 'Incoming' END"
 
@@ -235,7 +235,7 @@ _DIRECTION_CASE = "CASE m.from_me WHEN 1 THEN 'Outgoing' WHEN 0 THEN 'Incoming' 
 def _find(files_found, suffix):
     for file_found in files_found:
         file_found = str(file_found)
-        if file_found.endswith(('-wal', '-shm', '-journal')):
+        if is_sqlite_sidecar(file_found):
             continue
         if file_found.endswith(suffix):
             return file_found

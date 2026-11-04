@@ -36,7 +36,7 @@ HEADER = {
             'Bootloader: EXAMPLEBL1\n'
             'Radio: EXAMPLERADIO1\n'
             'Network: ExampleNet,ExampleNet2\n'
-            'Module Metadata version: 372546000\n'
+            'Module Metadata version: 473318123\n'
             'Android SDK version: 36\n'
             'SDK extensions: [ad_services=23, b=23, c=<not set>]\n'
             'Kernel: Linux version 6.12.0-example (builder@example-host) #1 SMP PREEMPT Mon Jan 5 10:00:00 UTC 2026\n'
@@ -51,7 +51,7 @@ HEADER = {
             'Bootloader: unknown\n'
             'Radio: EXAMPLERADIO0\n'
             'Network: ExampleNet\n'
-            'Module Metadata version: 292700600\n'
+            'Module Metadata version: 133990923\n'
             'Kernel: Linux version 4.14.0-example (builder@example-host) #1 SMP PREEMPT\n'
             'Command line: loglevel=1 androidboot.serialno=SYNTH0001EXAMPLE\n'
             'Uptime: up 0 weeks, 0 days, 3 hours, 1 minutes\n'
@@ -76,7 +76,7 @@ def add_seconds(text, seconds):
 # ------------------------------------------------------------------------------------------
 # properties
 # ------------------------------------------------------------------------------------------
-def properties(layout, zone, boot_history):
+def properties(layout, zone, boot_history, extra=()):
     lines = [
         '[dalvik.vm.isa.arm64.variant]: [generic]',
         '[init.svc.adbd]: [running]',
@@ -107,6 +107,7 @@ def properties(layout, zone, boot_history):
         '[sys.reset_reason]: []',
         '[gsm.sim.imei.example]: [000000000000000]',
     ]
+    lines += extra
     return ('------ SYSTEM PROPERTIES (getprop) ------\n' + '\n'.join(lines) + '\n'
             "------ 0.050s was the duration of 'SYSTEM PROPERTIES' ------\n\n")
 
@@ -381,12 +382,13 @@ def settings_service(layout, users):
 # the whole text
 # ------------------------------------------------------------------------------------------
 def build_report(layout='a16', zone='Europe/Paris', users=(0,), report='2026-11-02 10:15:30', cut=False,
-                 stamp_count=22, bulk_count=22, newline='\n', with_banner=True, boot_history=None):
+                 stamp_count=22, bulk_count=22, newline='\n', with_banner=True, boot_history=None,
+                 extra_properties=()):
     if boot_history is None:
         boot_history = 'reboot,userrequested,%d\ncold,powerkey,%d\nreboot,ota,%d' % (
             epoch_s('2026-10-30 07:00:00'), epoch_s('2026-09-12 05:20:01'), epoch_s('2026-08-03 22:10:09'))
     text = (BANNER.format(report=report) if with_banner else '') + '\n' + HEADER[layout] + '\n'
-    text += properties(layout, zone, boot_history)
+    text += properties(layout, zone, boot_history, extra_properties)
     text += '------ DUMPSYS CRITICAL (/system/bin/dumpsys) ------\n'
     text += '-------------------------------------------------------------------------------\n'
     text += package_service(layout, users, cut=cut, stamp_count=stamp_count, bulk_count=bulk_count)
@@ -410,6 +412,35 @@ def build_report(layout='a16', zone='Europe/Paris', users=(0,), report='2026-11-
 # ------------------------------------------------------------------------------------------
 # cases
 # ------------------------------------------------------------------------------------------
+# Invented identifier properties of the device facts case: one line per name on the identifier list, plus a name that is not on it.
+IDENTIFIER_LINES = (
+    '[ro.vendor.boot.serialno]: [SYNTH0002EXAMPLE]',
+    '[ro.boot.ap_serial]: [SYNTH0003EXAMPLE]',
+    '[ro.ril.oem.sno]: [SYNTH0004EXAMPLE]',
+    '[ro.ril.oem.psno]: [SYNTH0005EXAMPLE]',
+    '[ro.ril.oem.imei]: [000000000000001]',
+    '[ro.ril.oem.imei1]: [000000000000002]',
+    '[ro.ril.oem.imei2]: [000000000000003]',
+    '[ro.ril.oem.meid]: [00000000000004]',
+    '[ro.product.imeisv]: [00]',
+    '[ro.vendor.radio.imei.sv]: [00]',
+    '[persist.radio.sim.iccid]: [00000000000000000001,00000000000000000002]',
+    '[gsm.sim.preiccid_0]: [0000001]',
+    '[gsm.sim.preiccid_1]: [0000002]',
+    '[odm.gsm.sim.preiccid_0]: [0000003]',
+    '[odm.gsm.sim.preiccid_1]: [0000004]',
+    '[persist.odm.radio.preiccid_0]: [0000005]',
+    '[persist.odm.radio.preiccid_1]: [0000006]',
+    '[persist.vendor.radio.ss.hashed_last_iccid1]: [0123456789abcdef0123456789abcdef]',
+    '[ro.boot.btmacaddr]: [00:00:5e:00:53:01]',
+    '[ro.boot.wifimacaddr]: [00:00:5e:00:53:02,00:00:5e:00:53:03]',
+    '[persist.sys.nearby.uuid]: [00000000-0000-4000-8000-000000000000]',
+    '[ro.quick_start.device_id]: [ex-0001]',
+    '[sys.fingerprint.deviceId]: [7]',
+    '[ro.serialno.not.on.the.list]: [SYNTH0009EXAMPLE]',
+)
+
+
 def zip_info(name):
     info = zipfile.ZipInfo(name, date_time=ZIP_TIME)
     info.external_attr = 0o600 << 16
@@ -437,6 +468,7 @@ def cases():
     """{case name: [(member name, bytes), ...]}"""
     out = {}
     out['synthetic_a16'] = [('Dump/dumpstate.txt', build_report('a16', users=(0, 10)).encode('utf-8'))]
+    out['synthetic_identifiers'] = [('Dump/dumpstate.txt', build_report('a16', extra_properties=IDENTIFIER_LINES).encode('utf-8'))]
     out['synthetic_a10'] = [('Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt',
                              build_report('a10', newline='\r\n').encode('utf-8')),
                             ('Dump/main_entry.txt', b'bugreport-example-EXOLD-2026-11-02-10-15-30.txt')]

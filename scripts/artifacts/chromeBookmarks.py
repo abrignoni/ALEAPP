@@ -2,10 +2,10 @@
 __artifacts_v2__ = {
     "get_chromeBookmarks": {
         "name": "Bookmarks",
-        "description": "Parses bookmark and folder entries under each root of Chromium based browser Bookmarks files, including descendants and their immediate parent and ancestor context.",
+        "description": "Parses bookmark and folder entries under each root of Chromium based browser Bookmarks and AccountBookmarks files, including descendants and their immediate parent and ancestor context.",
         "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2020-03-20",
-        "last_update_date": "2026-10-06",
+        "last_update_date": "2026-10-31",
         "requirements": "none",
         "category": "Chromium",
         "notes": "Rows follow source, root and child-array depth-first order, not chronology. "
@@ -14,8 +14,17 @@ __artifacts_v2__ = {
                  "Stored IDs are input-local context and do not establish ownership or browser visits. "
                  "Integers outside SQLite range retain their decimal text for export. "
                  "Canonical alias state conflicts, broader profile coverage and sync semantics remain "
-                 "unresolved. Source File appears only for actual combined row origins.",
-        "paths": ('*/app_chrome/Default/Bookmarks*', '*/app_sbrowser/Default/Bookmarks*', '*/app_opera/Bookmarks*', '*/app_webview/Default/Bookmarks*'),
+                 "unresolved. Source File appears only for actual combined row origins. "
+                 "Bookmarks and AccountBookmarks are the unencrypted bookmark file names in Chromium's "
+                 "bookmark_constants.cc (kLocalOrSyncableBookmarksFileName and kAccountBookmarksFileName, "
+                 "https://github.com/chromium/chromium/blob/33f34ef179f55596f6c2fc8a55878b7ccf6276e4/components/bookmarks/common/bookmark_constants.cc#L13-L16); "
+                 "the encrypted bookmark files named in the same file (lines 17 to 26) are not read. "
+                 "Releases through v2026.4.4 did not read AccountBookmarks. The Chrome AccountBookmarks "
+                 "files on anne_a15, kevin_pocox7_a15, hc_pixel8pro_a16 and hc_pixel8pro_a17 were read and "
+                 "held only empty root folders, so those four images produced no AccountBookmarks row; "
+                 "rows from that file are exercised on Android by a unit test "
+                 "(admin/test/scripts/test_chrome_bookmark_descendants.py).",
+        "paths": ('*/app_chrome/Default/Bookmarks*', '*/app_chrome/Default/AccountBookmarks*', '*/app_sbrowser/Default/Bookmarks*', '*/app_opera/Bookmarks*', '*/app_webview/Default/Bookmarks*'),
         "output_types": "standard",
         "artifact_icon": "bookmark",
         "sample_data": {
@@ -23,6 +32,10 @@ __artifacts_v2__ = {
             "samsungs20_a13": "Android 13 | com.microsoft.emmx vc 365012523 | 4 rows",
             "sharon_a14": "Android 14 | com.android.chrome vc 653310333 | 7 rows",
             "russell_pixel6a_a13": "Android 13 | com.android.chrome vc 573513033 | 0 rows",
+            "anne_a15": "Android 15 | com.android.chrome vc 733915533 | 0 rows",
+            "kevin_pocox7_a15": "Android 15 | com.android.chrome vc 733920733 | 0 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.android.chrome vc 782711433 | 0 rows",
+            "hc_pixel8pro_a17": "Android 17 | com.android.chrome | 0 rows",
         },
     }
 }
@@ -101,7 +114,7 @@ def get_chromeBookmarks(context):
 
     for file_found in files_found:
         file_found = str(file_found)
-        if not os.path.basename(file_found) == 'Bookmarks':  # skip -journal and other files
+        if os.path.basename(file_found) not in ('Bookmarks', 'AccountBookmarks'):  # skip -journal and other files
             continue
         if file_found.find('.magisk') >= 0 and file_found.find('mirror') >= 0:
             continue  # Skip sbin/.magisk/mirror/data/.. , it should be duplicate data

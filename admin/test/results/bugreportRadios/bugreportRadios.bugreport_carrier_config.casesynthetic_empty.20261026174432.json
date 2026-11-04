@@ -1,0 +1,33 @@
+{
+  "metadata": {
+    "module_name": "bugreportRadios",
+    "artifact_name": "Bug Report - Carrier Config Values",
+    "function_name": "bugreport_carrier_config",
+    "case_number": "casesynthetic_empty",
+    "number_of_columns": 6,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportRadios/testdata.bugreportRadios.bugreport_carrier_config.casesynthetic_empty.zip",
+    "start_time": "2026-10-26T17:44:32.258099+00:00",
+    "end_time": "2026-10-26T17:44:32.419968+00:00",
+    "run_time_seconds": 0.002467632293701172,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-26T17:44:32.406795",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Phone Id",
+    "Source",
+    "Key",
+    "Value",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

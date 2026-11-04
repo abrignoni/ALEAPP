@@ -1,0 +1,170 @@
+{
+  "metadata": {
+    "module_name": "bugreportSensorsMedia",
+    "artifact_name": "Bug Report - Time Zone Detection State",
+    "function_name": "bugreport_time_zone_detection",
+    "case_number": "casesynthetic_cut",
+    "number_of_columns": 7,
+    "number_of_rows": 15,
+    "total_data_size_bytes": 1324,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSensorsMedia/testdata.bugreportSensorsMedia.bugreport_time_zone_detection.casesynthetic_cut.zip",
+    "start_time": "2026-10-26T17:35:03.217688+00:00",
+    "end_time": "2026-10-26T17:35:03.354731+00:00",
+    "run_time_seconds": 0.01314854621887207,
+    "last_commit": {
+      "hash": "e56d9fc859d2e83c7207c6514d3727ee6bf6a291",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:32:45-04:00",
+      "message": "Bug report sensors and media: location, sensors, camera, audio, media, accessibility, input method, display and window artifacts"
+    }
+  },
+  "headers": [
+    "Component",
+    "Item",
+    "Index",
+    "Elapsed (as printed)",
+    "Value (as printed)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Primary provider config",
+      "config mode",
+      null,
+      "",
+      "enabled",
+      564,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Primary provider config",
+      "config package",
+      null,
+      "",
+      "com.example.geotz",
+      565,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Secondary provider config",
+      "config mode",
+      null,
+      "",
+      "disabled",
+      567,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Secondary provider config",
+      "config package",
+      null,
+      "",
+      "",
+      568,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Controller",
+      "controller mCurrentUserConfiguration",
+      null,
+      "",
+      "ConfigurationInternal{mUserId=0, mGeoDetectionEnabledSetting=true}",
+      570,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Controller",
+      "controller mState",
+      null,
+      "",
+      "CERTAIN",
+      572,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Controller",
+      "controller state history",
+      0,
+      "PT21.171S",
+      "UNKNOWN",
+      574,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Controller",
+      "controller state history",
+      1,
+      "PT21.175S",
+      "STOPPED",
+      575,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Controller",
+      "controller state history",
+      2,
+      "PT1H16M45.024S",
+      "CERTAIN",
+      576,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Primary Provider",
+      "provider mCurrentState",
+      null,
+      "",
+      "ProviderState{stateEnum=Started certain (2), mTimeZoneIds=[Example/Zone]}",
+      580,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Primary Provider",
+      "provider state history",
+      0,
+      "PT21.172S",
+      "ProviderState{stateEnum=Stopped (4)}",
+      582,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Primary Provider",
+      "provider state history",
+      1,
+      "PT1H16M45.023S",
+      "ProviderState{stateEnum=Started certain (2)}",
+      583,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Primary Provider",
+      "provider target service",
+      null,
+      "",
+      "10301/com.example.geotz/.GeoService@1",
+      585,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Primary Provider",
+      "provider connected",
+      null,
+      "",
+      "true",
+      586,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Secondary Provider",
+      "provider mCurrentState",
+      null,
+      "",
+      "ProviderState{stateEnum=Perm failure (5)}",
+      590,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

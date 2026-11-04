@@ -1,0 +1,53 @@
+{
+  "metadata": {
+    "module_name": "mozillaProfileTimes",
+    "artifact_name": "Mozilla Browser Profile Times",
+    "function_name": "mozillaProfileTimes",
+    "case_number": "casehickman_a13",
+    "number_of_columns": 7,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 254,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/mozillaProfileTimes/testdata.mozillaProfileTimes.mozillaProfileTimes.casehickman_a13.zip",
+    "start_time": "2026-10-30T13:53:37.133005+00:00",
+    "end_time": "2026-10-30T13:53:37.213554+00:00",
+    "run_time_seconds": 0.0002682209014892578,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-30T09:53:37.206504",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Created",
+    "First Use (as stored)",
+    "App Package",
+    "Profile Folder",
+    "Other Keys (as stored)",
+    "Android User",
+    "Source File"
+  ],
+  "data": [
+    [
+      1669558460,
+      "null",
+      "org.mozilla.firefox",
+      "torpxars.default",
+      "",
+      "0",
+      "data/data/org.mozilla.firefox/files/mozilla/torpxars.default/times.json"
+    ],
+    [
+      1669580799,
+      "null",
+      "org.torproject.torbrowser",
+      "i8o6u7oh.default",
+      "",
+      "0",
+      "data/data/org.torproject.torbrowser/files/mozilla/i8o6u7oh.default/times.json"
+    ]
+  ]
+}

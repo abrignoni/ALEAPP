@@ -9,7 +9,7 @@ import unittest
 from unittest.mock import patch
 
 from scripts.artifacts import appSemloc as module
-from scripts.ccl import ccl_leveldb
+from scripts.vendor.ccl import ccl_leveldb
 from admin.test.scripts.test_fcm_skype_raw_events import varint, field, checksum
 
 
@@ -152,9 +152,6 @@ class AppSemlocRawFieldsTest(unittest.TestCase):
     def test_unexpected_iteration_failure_propagates_and_closes_actual_reader(self):
         with tempfile.TemporaryDirectory() as folder:
             path = write_log(Path(folder)/'db/000001.log')
-            data = bytearray(path.read_bytes())
-            data[6] = 2  # First fragment followed by Full is a malformed log sequence.
-            path.write_bytes(data)
             original = ccl_leveldb.RawLevelDb.close
             closed = []
 
@@ -162,7 +159,11 @@ class AppSemlocRawFieldsTest(unittest.TestCase):
                 closed.append(reader.in_dir_path)
                 original(reader)
 
-            with patch.object(ccl_leveldb.RawLevelDb, 'close', close):
+            # The reader skips and reports a damaged log instead of raising, so the
+            # failure is made directly.
+            with patch.object(ccl_leveldb.RawLevelDb, 'close', close), \
+                    patch.object(ccl_leveldb.RawLevelDb, 'iterate_records_raw',
+                                 side_effect=ValueError('constructed failure')):
                 with self.assertRaises(ValueError):
                     module.get_appSemloc.__wrapped__(Context(folder, [path]))
             self.assertEqual(closed, [path.parent])

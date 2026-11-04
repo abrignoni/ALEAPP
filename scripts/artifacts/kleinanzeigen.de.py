@@ -105,7 +105,7 @@ import json
 
 import xmltodict
 
-from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly, is_sqlite_sidecar
 
 
 def _ms_to_utc(value):
@@ -135,7 +135,7 @@ def _recent_searches(files_found, marker):
     source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
-        if file_found.endswith(('-wal', '-shm', '-journal')):
+        if is_sqlite_sidecar(file_found):
             continue
         if marker not in file_found:
             continue
@@ -175,7 +175,7 @@ def get_kleinanzeigenaccount(context):
     source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
-        if file_found.endswith(('-wal', '-shm', '-journal')):
+        if is_sqlite_sidecar(file_found):
             continue
         if 'com.ebay.kleinanzeigen_preferences.xml' not in file_found:
             continue

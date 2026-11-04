@@ -1,0 +1,256 @@
+{
+  "metadata": {
+    "module_name": "bugreportLogsCrash",
+    "artifact_name": "Bug Report - Vendor Service Lines",
+    "function_name": "bugreport_vendor_services",
+    "case_number": "casesynthetic_l16",
+    "number_of_columns": 8,
+    "number_of_rows": 22,
+    "total_data_size_bytes": 2156,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportLogsCrash/testdata.bugreportLogsCrash.bugreport_vendor_services.casesynthetic_l16.zip",
+    "start_time": "2026-10-26T20:04:46.993436+00:00",
+    "end_time": "2026-10-26T20:04:47.292302+00:00",
+    "run_time_seconds": 0.163346529006958,
+    "last_commit": {
+      "hash": "d1aa88ec6597139a2e6c891969cef84a01cd6a2c",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T14:15:20-04:00",
+      "message": "Give each bug report topic group its own ALEAPP category"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Time Note",
+    "Service",
+    "Text",
+    "Indent",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      null,
+      "",
+      "",
+      "SveService",
+      "Dump of SecVideoEngineImpl:",
+      0,
+      241,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1770084306,
+      "02/03/2026 03:05:06.789",
+      "",
+      "SveService",
+      "02/03/2026 03:05:06.789   > Created (pid: 3333, binary: EXAMPLEBUILD1)",
+      2,
+      242,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1778328976,
+      "05/09/2026 14:16:16.768",
+      "",
+      "SveService",
+      "05/09/2026 14:16:16.768   > Created (pid: 2222, binary: EXAMPLEBUILD1)",
+      2,
+      243,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      null,
+      "",
+      "",
+      "secims",
+      "EventLog(ImsServiceStub):",
+      0,
+      250,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      null,
+      "02/03/*026 02:54:29.863",
+      "year masked in the report: no UTC value",
+      "secims",
+      "02/03/*026 02:54:29.863   > Created (pid: *489, binary: EXAMPLEBUILD1)",
+      2,
+      251,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      null,
+      "02/03/*026 09:54:11.369",
+      "year masked in the report: no UTC value",
+      "secims",
+      "02/03/*026 09:54:11.369   Link to Phone Binder Death",
+      2,
+      252,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      null,
+      "",
+      "",
+      "sec_location",
+      "SLocation ver : 1.0.0.1",
+      0,
+      259,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      null,
+      "",
+      "",
+      "sec_location",
+      "***** C-Loc history *****",
+      1,
+      260,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793344530,
+      "2026-10-30 08:15:30.111",
+      "",
+      "sec_location",
+      "[2026-10-30 08:15:30.111] L/ab12/example.user.chat/0/10300/Bg/{Prm:Fn/Bg}/AcLmt:true",
+      0,
+      261,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793344533,
+      "2026-10-30 08:15:33.222",
+      "",
+      "sec_location",
+      "[2026-10-30 08:15:33.222] L/ab12/example.user.chat/REM",
+      0,
+      262,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      null,
+      "",
+      "",
+      "sem_wifi",
+      "Wi-Fi api call history:",
+      0,
+      269,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      null,
+      "",
+      "",
+      "sem_wifi",
+      "[]",
+      0,
+      270,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      null,
+      "",
+      "",
+      "sem_wifi",
+      "Wi-Fi control history from provider:",
+      0,
+      271,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1786724430,
+      "2026/08/14 18:20:30",
+      "",
+      "sem_wifi",
+      "lastControlTime: 2026/08/14 18:20:30 , packageName: example.user.chat, lastControl: true",
+      0,
+      272,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      null,
+      "",
+      "",
+      "nfc SamsungExtension",
+      "Example NCI Version: Major 0x09 Minor 0x09",
+      0,
+      276,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      null,
+      "",
+      "",
+      "nfc SamsungExtension",
+      "DEBUG LOG START",
+      0,
+      280,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1778308872,
+      "05-09 08:41:12.345",
+      "printed without a year, the year is taken from the report time",
+      "nfc SamsungExtension",
+      "05-09 08:41:12.345 D [NFC_SE]SamsungExtension invented state line",
+      0,
+      281,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1763639939,
+      "11-20 12:58:59.973",
+      "printed without a year, the year is taken from the report time",
+      "nfc SamsungExtension",
+      "11-20 12:58:59.973 D [NFC_SE]SamsungExtension a line of the previous year",
+      0,
+      282,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      null,
+      "",
+      "",
+      "persona",
+      "Last removed user:",
+      0,
+      291,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      null,
+      "",
+      "",
+      "persona",
+      "====================",
+      0,
+      292,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      null,
+      "",
+      "",
+      "persona",
+      "UID : 1000",
+      1,
+      293,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      null,
+      "",
+      "",
+      "persona",
+      "2010.01.01.00.01.22",
+      0,
+      294,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

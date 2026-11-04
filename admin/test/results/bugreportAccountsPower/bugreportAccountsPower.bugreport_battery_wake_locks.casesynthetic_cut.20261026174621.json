@@ -1,0 +1,98 @@
+{
+  "metadata": {
+    "module_name": "bugreportAccountsPower",
+    "artifact_name": "Bug Report - Battery Wake Locks",
+    "function_name": "bugreport_battery_wake_locks",
+    "case_number": "casesynthetic_cut",
+    "number_of_columns": 7,
+    "number_of_rows": 7,
+    "total_data_size_bytes": 811,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportAccountsPower/testdata.bugreportAccountsPower.bugreport_battery_wake_locks.casesynthetic_cut.zip",
+    "start_time": "2026-10-26T17:46:21.442820+00:00",
+    "end_time": "2026-10-26T17:46:21.559390+00:00",
+    "run_time_seconds": 0.013254642486572266,
+    "last_commit": {
+      "hash": "7450687ec1476569021e50b0cfc221c1d2c13a09",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:45:32-04:00",
+      "message": "Bug report accounts, sync, backup, users, battery, power and memory: readers, 33 artifacts, synthetic fixture and tests"
+    }
+  },
+  "headers": [
+    "Kind",
+    "UID",
+    "Packages In UID Block",
+    "Wake Lock",
+    "Usage (as printed)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Kernel",
+      "",
+      "",
+      "PowerManagerService.WakeLocks",
+      "55m 24s 16ms (1254 times) realtime",
+      385,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Kernel",
+      "",
+      "",
+      "Active resource: example_wakelock",
+      "4d 11h 26m 40s 329ms (1292017 times) realtime",
+      386,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "UID",
+      "u0a300",
+      "com.example.user.chat, com.example.user.chat.lite",
+      "NotificationManagerService:post:com.example.user.chat",
+      "",
+      393,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "UID",
+      "u0a300",
+      "com.example.user.chat, com.example.user.chat.lite",
+      "*alarm*",
+      "14ms partial (4 times) max=8 actual=27, 27ms background partial (4 times) max=8 realtime",
+      394,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "UID",
+      "u0a300",
+      "com.example.user.chat, com.example.user.chat.lite",
+      "WindowManager/displayId:0",
+      "3h 7m 3s 919ms full (497 times) realtime",
+      395,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "UID",
+      "1000",
+      "android",
+      "Prevent Sleep",
+      "2s 5ms partial (3 times) max=900 realtime",
+      402,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "UID",
+      "u0a301",
+      "",
+      "lonely-lock",
+      "1ms partial (1 times) max=1 realtime",
+      405,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

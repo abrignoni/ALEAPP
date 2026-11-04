@@ -29,7 +29,7 @@ __artifacts_v2__ = {
 }
 
 from datetime import datetime, timezone as dtimezone
-from scripts.ilapfuncs import decode_protobuf
+from scripts.ilapfuncs import decode_protobuf, is_sqlite_sidecar
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
@@ -72,7 +72,7 @@ def get_googleTasks(context):
     source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
-        if file_found.endswith(('-wal', '-shm', '-journal')):
+        if is_sqlite_sidecar(file_found):
             continue
         source_path = file_found
 

@@ -1,0 +1,42 @@
+{
+  "metadata": {
+    "module_name": "bugreportNetwork",
+    "artifact_name": "Bug Report - Socket Details",
+    "function_name": "bugreport_socket_details",
+    "case_number": "casesynthetic_not_a_report",
+    "number_of_columns": 15,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportNetwork/testdata.bugreportNetwork.bugreport_socket_details.casesynthetic_not_a_report.zip",
+    "start_time": "2026-10-26T17:22:21.957179+00:00",
+    "end_time": "2026-10-26T17:22:22.070150+00:00",
+    "run_time_seconds": 0.003046751022338867,
+    "last_commit": {
+      "hash": "35ad867ff7da9d4bd9ac2bb41cca31cb5a49f8b2",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:21:50-04:00",
+      "message": "Bug report network: Wi-Fi, network usage, policy, connectivity, DNS, interface, socket and tethering artifacts"
+    }
+  },
+  "headers": [
+    "Netid",
+    "State",
+    "Receive Queue",
+    "Send Queue",
+    "Local Address",
+    "Peer Address",
+    "UID",
+    "Inode",
+    "Socket",
+    "Timer",
+    "Users",
+    "Extended Fields",
+    "Info",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

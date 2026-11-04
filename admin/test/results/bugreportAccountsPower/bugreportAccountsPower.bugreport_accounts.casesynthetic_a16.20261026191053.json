@@ -1,0 +1,80 @@
+{
+  "metadata": {
+    "module_name": "bugreportAccountsPower",
+    "artifact_name": "Bug Report - Accounts",
+    "function_name": "bugreport_accounts",
+    "case_number": "casesynthetic_a16",
+    "number_of_columns": 7,
+    "number_of_rows": 5,
+    "total_data_size_bytes": 373,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportAccountsPower/testdata.bugreportAccountsPower.bugreport_accounts.casesynthetic_a16.zip",
+    "start_time": "2026-10-26T19:10:53.145877+00:00",
+    "end_time": "2026-10-26T19:10:53.436507+00:00",
+    "run_time_seconds": 0.16866230964660645,
+    "last_commit": {
+      "hash": "d1aa88ec6597139a2e6c891969cef84a01cd6a2c",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T14:15:20-04:00",
+      "message": "Give each bug report topic group its own ALEAPP category"
+    }
+  },
+  "headers": [
+    "User",
+    "User Name",
+    "User Flags (as stored)",
+    "Account Name",
+    "Account Type",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      0,
+      "Example Owner",
+      "4c13",
+      "person.one@example.test",
+      "com.example.auth",
+      187,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      0,
+      "Example Owner",
+      "4c13",
+      "Example Chat",
+      "com.example.chat",
+      188,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      0,
+      "Example Owner",
+      "4c13",
+      "person.two@example.test",
+      "com.example.auth",
+      189,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      0,
+      "Example Owner",
+      "4c13",
+      "My application",
+      "com.example.sync",
+      190,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      10,
+      "Work Profile",
+      "8671931",
+      "person.one@example.test",
+      "com.example.auth",
+      217,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

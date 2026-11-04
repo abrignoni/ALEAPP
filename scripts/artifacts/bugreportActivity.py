@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report",
+        "category": "Android Bug Report - App Usage",
         "notes": "One row per event line of the Last 24 hour events list of each Android user, in the usagestats service dump "
                  "(DUMP OF SERVICE usagestats) and in the CHECKIN USAGESTATS command section. Source Section says which one "
                  "printed the row. Event Type, Package and Class are as printed, Flags (as stored) is the flags= text, not decoded (printed as a hexadecimal number in the tested reports) and Extras holds the other key=value pairs of the line in the order printed "
@@ -50,7 +50,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report",
+        "category": "Android Bug Report - Processes and Memory",
         "notes": "One row per ApplicationExitInfo entry in the ACTIVITY MANAGER PROCESS EXIT INFO part of the activity service "
                  "dump. Package is the package: heading the entry is listed under. Process, PID, Real UID, Package UID, User, "
                  "Status and Importance are the values printed on the entry; Reason and Sub-reason are the number and the name "
@@ -90,7 +90,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report",
+        "category": "Android Bug Report - Settings and Config",
         "notes": "One row per _id: entry of the GLOBAL SETTINGS, SECURE SETTINGS and SYSTEM SETTINGS tables of each Android user "
                  "in the settings service dump. Name is name:, Written By is pkg:, Setting ID is _id:. Value is the text after "
                  "value: up to the first trailing token (default:, defaultSystemSet:, isValuePreservedInRestore: or "
@@ -124,7 +124,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report",
+        "category": "Android Bug Report - Settings and Config",
         "notes": "One row per time: entry under a History (name) line of the global, secure and system tables in the settings "
                  "service dump. Mode, Old Value (oldValue:), New Value (newValue:), Package (package:) and Caller (caller:, "
                  "cut at 200 characters) are as printed, the values cut at 400 characters. An update row can carry the same "
@@ -157,7 +157,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report",
+        "category": "Android Bug Report - Boot, Crash and Dropbox",
         "notes": "One row per line of the persist.sys.boot.reason.history property in the SYSTEM PROPERTIES (getprop) section, "
                  "in the order printed with Position 0 for the first one printed. Entry is the line, Reason the text before the first comma, Sub-reason the text between the first comma and the last number, and the last number is read as seconds since the Unix epoch (this tool's reading, which gives dates near the report on every tested text), shown as Time As Printed and, when it falls between 2009 and 2100, as Time (UTC). An entry "
                  "whose last item is not a number has no time. The reason words are the platform's own and are not decoded or "

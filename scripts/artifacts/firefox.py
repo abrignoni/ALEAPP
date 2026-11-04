@@ -129,7 +129,7 @@ import os
 import re
 import sqlite3
 
-from scripts.ilapfuncs import artifact_processor, does_table_exist_in_db, logfunc, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, does_table_exist_in_db, logfunc, open_sqlite_db_readonly, is_sqlite_sidecar
 from scripts.artifacts.storagePathViews import unique_files
 
 
@@ -151,7 +151,7 @@ def _dbs(context):
     found = []
     for file_found in unique_files(context):
         file_found = str(file_found).replace('\\', '/')
-        if file_found.endswith(('-wal', '-shm', '-journal')):
+        if is_sqlite_sidecar(file_found):
             continue
         if os.path.basename(file_found) == 'places.sqlite':
             found.append(file_found)

@@ -1,0 +1,78 @@
+{
+  "metadata": {
+    "module_name": "bugreportLogsCrash",
+    "artifact_name": "Bug Report - Event Log",
+    "function_name": "bugreport_event_log",
+    "case_number": "casesynthetic_zip_on_device",
+    "number_of_columns": 11,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 745,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportLogsCrash/testdata.bugreportLogsCrash.bugreport_event_log.casesynthetic_zip_on_device.zip",
+    "start_time": "2026-10-26T17:38:13.385445+00:00",
+    "end_time": "2026-10-26T17:38:13.568280+00:00",
+    "run_time_seconds": 0.01079559326171875,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-26T17:38:13.534148",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "UID",
+    "PID",
+    "TID",
+    "Level",
+    "Tag",
+    "Message",
+    "Buffer",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1793547310,
+      "11-01 21:05:10.100",
+      "1000",
+      1500,
+      1520,
+      "I",
+      "am_proc_bound",
+      "[0,4321,com.example.user.chat]",
+      "events",
+      74,
+      "Dump/data/user_de/0/com.android.shell/files/bugreports/bugreport-example-2026-11-02-10-15-30.zip!/bugreport-example-EXAMPLE-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793547310,
+      "11-01 21:05:10.200",
+      "1000",
+      1500,
+      1520,
+      "I",
+      "notification_enqueue",
+      "[10300,1,com.example.user.chat,1,invented-key",
+      "events",
+      75,
+      "Dump/data/user_de/0/com.android.shell/files/bugreports/bugreport-example-2026-11-02-10-15-30.zip!/bugreport-example-EXAMPLE-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793547311,
+      "11-01 21:05:11.000",
+      "1000",
+      1500,
+      1520,
+      "I",
+      "power_partial_wake_state",
+      "[REL,408,*job*r/@example]",
+      "events",
+      77,
+      "Dump/data/user_de/0/com.android.shell/files/bugreports/bugreport-example-2026-11-02-10-15-30.zip!/bugreport-example-EXAMPLE-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

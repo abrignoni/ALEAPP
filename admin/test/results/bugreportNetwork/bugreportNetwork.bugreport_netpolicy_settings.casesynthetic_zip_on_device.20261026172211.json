@@ -1,0 +1,110 @@
+{
+  "metadata": {
+    "module_name": "bugreportNetwork",
+    "artifact_name": "Bug Report - Network Policy Settings",
+    "function_name": "bugreport_netpolicy_settings",
+    "case_number": "casesynthetic_zip_on_device",
+    "number_of_columns": 5,
+    "number_of_rows": 11,
+    "total_data_size_bytes": 2157,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportNetwork/testdata.bugreportNetwork.bugreport_netpolicy_settings.casesynthetic_zip_on_device.zip",
+    "start_time": "2026-10-26T17:22:11.224437+00:00",
+    "end_time": "2026-10-26T17:22:11.329667+00:00",
+    "run_time_seconds": 0.004568815231323242,
+    "last_commit": {
+      "hash": "35ad867ff7da9d4bd9ac2bb41cca31cb5a49f8b2",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:21:50-04:00",
+      "message": "Bug report network: Wi-Fi, network usage, policy, connectivity, DNS, interface, socket and tethering artifacts"
+    }
+  },
+  "headers": [
+    "Group",
+    "Name",
+    "Value (as printed)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "",
+      "System ready",
+      "true",
+      317,
+      "Dump/data/user_de/0/com.android.shell/files/bugreports/bugreport-example-2026-11-02-10-15-30.zip!/bugreport-example-EXAMPLE-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "",
+      "Restrict background",
+      "false",
+      318,
+      "Dump/data/user_de/0/com.android.shell/files/bugreports/bugreport-example-2026-11-02-10-15-30.zip!/bugreport-example-EXAMPLE-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "",
+      "Restrict power",
+      "true",
+      319,
+      "Dump/data/user_de/0/com.android.shell/files/bugreports/bugreport-example-2026-11-02-10-15-30.zip!/bugreport-example-EXAMPLE-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "",
+      "Device idle",
+      "false",
+      320,
+      "Dump/data/user_de/0/com.android.shell/files/bugreports/bugreport-example-2026-11-02-10-15-30.zip!/bugreport-example-EXAMPLE-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "",
+      "com.example.net.use_metered_firewall_chains",
+      "true",
+      323,
+      "Dump/data/user_de/0/com.android.shell/files/bugreports/bugreport-example-2026-11-02-10-15-30.zip!/bugreport-example-EXAMPLE-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "",
+      "mRestrictBackgroundLowPowerMode",
+      "false",
+      324,
+      "Dump/data/user_de/0/com.android.shell/files/bugreports/bugreport-example-2026-11-02-10-15-30.zip!/bugreport-example-EXAMPLE-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Network policies",
+      "",
+      "NetworkPolicy{template=NetworkTemplate: matchRule=CARRIER, matchSubscriberIds=[999990...], metered=YES warningBytes=2000000000 limitBytes=-1}",
+      327,
+      "Dump/data/user_de/0/com.android.shell/files/bugreports/bugreport-example-2026-11-02-10-15-30.zip!/bugreport-example-EXAMPLE-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Active subscriptions",
+      "",
+      "1=999990...",
+      330,
+      "Dump/data/user_de/0/com.android.shell/files/bugreports/bugreport-example-2026-11-02-10-15-30.zip!/bugreport-example-EXAMPLE-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Network to interfaces",
+      "",
+      "101: {wlan0}",
+      347,
+      "Dump/data/user_de/0/com.android.shell/files/bugreports/bugreport-example-2026-11-02-10-15-30.zip!/bugreport-example-EXAMPLE-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Stats",
+      "updateNetworkEnabledNL()",
+      "count=74, total=17.6ms, avg=0.238ms, max calls/s=4",
+      350,
+      "Dump/data/user_de/0/com.android.shell/files/bugreports/bugreport-example-2026-11-02-10-15-30.zip!/bugreport-example-EXAMPLE-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "MultipathPolicyTracker",
+      "Network 101",
+      "quota 0, budget 0",
+      361,
+      "Dump/data/user_de/0/com.android.shell/files/bugreports/bugreport-example-2026-11-02-10-15-30.zip!/bugreport-example-EXAMPLE-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

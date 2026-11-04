@@ -1,0 +1,96 @@
+{
+  "metadata": {
+    "module_name": "bugreportSensorsMedia",
+    "artifact_name": "Bug Report - Location Usage",
+    "function_name": "bugreport_location_usage",
+    "case_number": "casesynthetic_two_reports",
+    "number_of_columns": 12,
+    "number_of_rows": 4,
+    "total_data_size_bytes": 756,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSensorsMedia/testdata.bugreportSensorsMedia.bugreport_location_usage.casesynthetic_two_reports.zip",
+    "start_time": "2026-10-26T17:35:11.226895+00:00",
+    "end_time": "2026-10-26T17:35:11.377177+00:00",
+    "run_time_seconds": 0.026335477828979492,
+    "last_commit": {
+      "hash": "e56d9fc859d2e83c7207c6514d3727ee6bf6a291",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:32:45-04:00",
+      "message": "Bug report sensors and media: location, sensors, camera, audio, media, accessibility, input method, display and window artifacts"
+    }
+  },
+  "headers": [
+    "List",
+    "Provider",
+    "Client",
+    "Min Interval",
+    "Max Interval",
+    "Total Duration",
+    "Active Duration",
+    "Foreground Duration",
+    "Locations",
+    "Detail (as printed)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Historical Aggregate Location Provider Data",
+      "passive",
+      "10300/com.example.user.chat[chat_location]",
+      "0s",
+      "3600s",
+      "+1h0m0s0ms",
+      "+59m0s0ms",
+      "+10m0s0ms",
+      7,
+      "",
+      546,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Historical Aggregate Location Provider Data",
+      "gps",
+      "1000/android[GnssService]",
+      "1s",
+      "passive",
+      "+2h0m0s0ms",
+      "+1h0m0s0ms",
+      "+2h0m0s0ms",
+      0,
+      "",
+      548,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "Historical Records by Provider",
+      "gps",
+      "com.example.user.chat",
+      "",
+      "",
+      "",
+      "",
+      "",
+      null,
+      "Interval 2 seconds: Duration requested 0 total, 0 foreground, out of the last 59 minutes: Last active 59 minutes ago",
+      411,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Historical Records by Provider",
+      "passive",
+      "android",
+      "",
+      "",
+      "",
+      "",
+      "",
+      null,
+      "Min interval 0 seconds: Max interval 1800 seconds: Duration requested 59 total, 59 foreground, out of the last 59 minutes: Currently active",
+      412,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

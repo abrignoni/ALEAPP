@@ -33,9 +33,10 @@ report a different version from the app. Windows and macOS take only numbers in 
 version fields, so a suffix such as -dev is left out there and kept everywhere else.
 ONEFILE reaches the spec through the ALEAPP_ONEFILE environment variable; the spec is
 never edited by a build. PyInstaller is pinned in packaging/requirements-build.txt,
-which phase 1 installs with requirements.txt, then requirements-msl-lock.txt over them
-with --no-deps, so a build carries the mister_skinnylegs chain that was tested rather
-than whatever its unversioned dependencies resolve to that day.
+which phase 1 installs, then requirements.txt and requirements-msl-lock.txt through
+admin/scripts/install_requirements.py, as CI does, so a build carries the
+mister_skinnylegs chain that was tested rather than whatever its unversioned
+dependencies resolve to that day, and refuses a Brotli older than 1.2.1.
 
 What goes into the bundle is decided here rather than in packaging/aleapp.spec, which
 loads this file and only wires the answers into PyInstaller, so it can be tested without
@@ -66,6 +67,7 @@ ENTRYPOINT = PACKAGING / "entrypoint.py"
 REQUIREMENTS = ROOT / "requirements.txt"
 BUILD_REQUIREMENTS = PACKAGING / "requirements-build.txt"
 MSL_LOCK = ROOT / "requirements-msl-lock.txt"
+INSTALL_SCRIPT = ROOT / "admin" / "scripts" / "install_requirements.py"
 ISS = PACKAGING / "installer.iss"
 ICO = PACKAGING / "aleapp.ico"
 ICNS = ROOT / "assets" / "icon.icns"
@@ -299,13 +301,13 @@ def install_commands(python: str) -> list[list[str]]:
 
     mister_skinnylegs declares its ccl_* readers as unversioned git URLs, so
     requirements.txt alone resolves them to whatever their master is that day, and pip
-    refuses a pin of them in requirements.txt as a conflicting URL. The lock is therefore
-    installed over the regular install with --no-deps, as requirements-msl-lock.txt
-    says, which replaces that chain with the one tested against the Android corpus.
+    refuses a pin of them in requirements.txt as a conflicting URL. INSTALL_SCRIPT
+    installs requirements.txt without its mister_skinnylegs line and then the lock with
+    --no-deps, which never resolves those URLs, and refuses a Brotli older than 1.2.1.
     """
-    pip = [python, "-m", "pip", "install", "-q", "--disable-pip-version-check"]
-    return [pip + ["-r", str(REQUIREMENTS), "-r", str(BUILD_REQUIREMENTS)],
-            pip + ["--no-deps", "-r", str(MSL_LOCK)]]
+    options = ["-q", "--disable-pip-version-check"]
+    return [[python, "-m", "pip", "install"] + options + ["-r", str(BUILD_REQUIREMENTS)],
+            [python, str(INSTALL_SCRIPT)] + options]
 
 
 def build_exe(onefile: bool, clean_first: bool) -> Path:

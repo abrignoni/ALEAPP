@@ -339,7 +339,7 @@ import sqlite3
 import xmltodict
 
 from scripts.ilapfuncs import artifact_processor, attach_sqlite_db_readonly, open_sqlite_db_readonly, check_in_media, \
-    logfunc
+    logfunc, is_sqlite_sidecar
 from scripts.artifacts.storagePathViews import unique_files
 
 # Re-used location columns shared by the one-to-one and group message queries.
@@ -374,7 +374,7 @@ def _str_to_utc(value):
 def _find(files_found, suffix):
     for file_found in files_found:
         file_found = str(file_found)
-        if file_found.endswith(('-wal', '-shm', '-journal')):
+        if is_sqlite_sidecar(file_found):
             continue
         if file_found.endswith(suffix):
             return file_found

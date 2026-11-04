@@ -1,0 +1,156 @@
+{
+  "metadata": {
+    "module_name": "bugreportRadios",
+    "artifact_name": "Bug Report - Telephony Service Logs",
+    "function_name": "bugreport_telephony_logs",
+    "case_number": "casesynthetic_a10",
+    "number_of_columns": 8,
+    "number_of_rows": 12,
+    "total_data_size_bytes": 2193,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportRadios/testdata.bugreportRadios.bugreport_telephony_logs.casesynthetic_a10.zip",
+    "start_time": "2026-10-26T18:24:39.562020+00:00",
+    "end_time": "2026-10-26T18:24:39.853766+00:00",
+    "run_time_seconds": 0.16575169563293457,
+    "last_commit": {
+      "hash": "f246f0856bad96283c9a62aa4f52d908f14298c7",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T14:24:13-04:00",
+      "message": "Radios artifacts show identifiers as printed: no withheld values, SIM subscription identifier columns, adapter address"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Service",
+    "Heading",
+    "Message",
+    "Time Note",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1793597617,
+      "2026-11-02T06:33:37.833",
+      "phone",
+      "======== Logs =========",
+      "VvmSimStateTracker: android.telephony.action.CARRIER_CONFIG_CHANGED",
+      "",
+      155,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793597617,
+      "2026-11-02T06:33:37.848",
+      "phone",
+      "======== Logs =========",
+      "VvmSimStateTracker: android.intent.action.SIM_STATE_CHANGED",
+      "",
+      156,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793595940,
+      "2026-11-02T06:05:40.308756",
+      "telephony.registry",
+      "local logs:",
+      "notifyServiceStateForSubscriber: subId=-1 phoneId=0 state={mVoiceRegState=0(IN_SERVICE)}",
+      "",
+      216,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793595947,
+      "2026-11-02T06:05:47.467786",
+      "telephony.registry",
+      "local logs:",
+      "notifyDataConnectionForSubscriber: phoneId=0 subId=1  state: CONNECTING, transport: WWAN",
+      "",
+      217,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793595947,
+      "2026-11-02T06:05:47.686650",
+      "telephony.registry",
+      "local logs:",
+      "onDataConnectionStateChanged(CONNECTED, LTE) subId=1, phoneId=0",
+      "",
+      218,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793595948,
+      "2026-11-02T06:05:48.100000",
+      "telephony.registry",
+      "listen logs:",
+      "listen subId=1 callback=ExampleCallback",
+      "",
+      220,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793600328,
+      "2026-11-02T07:18:48.444834",
+      "telecom",
+      "Call Focus History:",
+      "TC@1",
+      "",
+      231,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793600328,
+      "2026-11-02T07:18:48.468632",
+      "telecom",
+      "Call Focus History:",
+      "<none>",
+      "",
+      232,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793597613,
+      "2026-11-02T06:33:33.808",
+      "carrier_config",
+      "CarrierConfigLoadingLog=",
+      "mHandler: 23 phoneId: 0",
+      "",
+      270,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793597622,
+      "2026-11-02T06:33:42.677",
+      "carrier_config",
+      "CarrierConfigLoadingLog=",
+      "update config for phoneId: 0 simState: LOADED",
+      "",
+      271,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793615670,
+      "2026-11-02T11:34:30.759660",
+      "isms",
+      "mLocalLog:",
+      "Delivering SMS to: com.example.messages com.example.messages.SmsDeliverReceiver, {x-message-id:-1234567890123456789}",
+      "",
+      287,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793597622,
+      "2026-11-02T06:33:42.005",
+      "isub",
+      "{id=2, iccId=89990000000000000022 simSlotIndex=-1 carrierId=9002 displayName=Other Cell carrierName=",
+      "SubscriptionController: [getActiveSubscriptionInfo]- subId=0 imsi=001010000000001 mNumber=+15550101",
+      "",
+      308,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

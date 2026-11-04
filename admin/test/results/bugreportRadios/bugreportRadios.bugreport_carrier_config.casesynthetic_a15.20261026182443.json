@@ -1,0 +1,90 @@
+{
+  "metadata": {
+    "module_name": "bugreportRadios",
+    "artifact_name": "Bug Report - Carrier Config Values",
+    "function_name": "bugreport_carrier_config",
+    "case_number": "casesynthetic_a15",
+    "number_of_columns": 6,
+    "number_of_rows": 7,
+    "total_data_size_bytes": 617,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportRadios/testdata.bugreportRadios.bugreport_carrier_config.casesynthetic_a15.zip",
+    "start_time": "2026-10-26T18:24:43.763029+00:00",
+    "end_time": "2026-10-26T18:24:44.047840+00:00",
+    "run_time_seconds": 0.17276406288146973,
+    "last_commit": {
+      "hash": "f246f0856bad96283c9a62aa4f52d908f14298c7",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T14:24:13-04:00",
+      "message": "Radios artifacts show identifiers as printed: no withheld values, SIM subscription identifier columns, adapter address"
+    }
+  },
+  "headers": [
+    "Phone Id",
+    "Source",
+    "Key",
+    "Value",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "0",
+      "mConfigFromDefaultApp",
+      "carrier_name_string",
+      "Example Cell",
+      311,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "0",
+      "mConfigFromDefaultApp",
+      "carrier_volte_available_bool",
+      "true",
+      312,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "0",
+      "mConfigFromDefaultApp",
+      "example_array_int_array",
+      "[-110, -90]",
+      313,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "0",
+      "mConfigFromDefaultApp",
+      "example_number_string",
+      "+15550102",
+      314,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "1",
+      "mNoSimConfig",
+      "example_nosim_bool",
+      "false",
+      332,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "",
+      "Cached config files",
+      "carrierconfig-com.example.carrier-nosim.xml",
+      "modified time=2026-09-02 19:10:46",
+      342,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "",
+      "Cached config files",
+      "carrierconfig-com.example.carrier-89990000000000000011-9001-00101-FF.xml",
+      "modified time=2026-09-02 19:10:47",
+      343,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

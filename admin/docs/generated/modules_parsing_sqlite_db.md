@@ -257,6 +257,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | chromePaymentsCustomerData |
 | chromeShortcuts |
 | chromeTopSites |
+| chromiumFileSystem |
 | citymapper |
 | cmh |
 | cmhTags |
@@ -310,6 +311,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | installedappsLibrary |
 | installedappsVending |
 | intrusionDetectionStore |
+| ipMemoryStore |
 | keepNotes |
 | kijijiConversations |
 | kijijiRecentSearches |
@@ -348,6 +350,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | samsungSmartThings |
 | samsungWeatherClock |
 | samsung_honeyboard_clipboard |
+| sconeCallDataLogs |
 | scontextLog |
 | shareit |
 | siminfo |

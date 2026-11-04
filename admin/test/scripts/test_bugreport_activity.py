@@ -47,7 +47,7 @@ class EpochTests(unittest.TestCase):
         self.assertIsNone(reader.epoch_s_to_utc(10 ** 30))
         self.assertTrue(reader.plausible_epoch_ms(1787562005120))
         self.assertFalse(reader.plausible_epoch_ms(0))
-        self.assertFalse(reader.plausible_epoch_ms(115448427125))
+        self.assertFalse(reader.plausible_epoch_ms(892014384711))
         self.assertFalse(reader.plausible_epoch_ms(4102444800001))
 
 

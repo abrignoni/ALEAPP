@@ -1,0 +1,30 @@
+{
+    "casehickman_a13": {
+        "description": "Josh Hickman public Android 13 image (corpus key hickman_a13): times.json of the Firefox and Tor Browser profiles under both data/data and data/user/0",
+        "maker": "@AlexisBrignoni, Claude",
+        "make_data": {
+            "input_data_path": "android_13_data.tar",
+            "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+            "timestamp": "2026-10-30T09:53:16.700866",
+            "last_commit": {
+                "hash": "Uncommitted",
+                "author_name": "N/A",
+                "author_email": "N/A",
+                "date": "2026-10-30T09:53:16.688268",
+                "message": "File not yet committed to git"
+            }
+        },
+        "artifacts": {
+            "mozillaProfileTimes": {
+                "search_patterns": [
+                    "*/files/mozilla/*/times.json"
+                ],
+                "file_count": 4,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            }
+        }
+    }
+}
