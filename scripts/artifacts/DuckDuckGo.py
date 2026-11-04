@@ -224,7 +224,7 @@ import pathlib
 from pathlib import Path
 from scripts.ilapfuncs import (
     artifact_processor, check_in_media, does_column_exist_in_db, get_sqlite_db_records, get_file_path, logfunc, is_sqlite_sidecar)
-from scripts.ccl import ccl_leveldb
+from scripts.vendor.ccl import ccl_leveldb
 
 
 @artifact_processor

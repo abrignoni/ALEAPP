@@ -49,7 +49,7 @@ from scripts.artifacts.chrome import get_browser_name
 from scripts.artifacts.chromiumHttpCache import _HEADER, _read_entry, _split_key
 from scripts.artifacts.storagePathViews import android_user, unique_files
 from scripts.blackboxprotobuf import decode_message
-from scripts.ccl import ccl_leveldb
+from scripts.vendor.ccl import ccl_leveldb
 from scripts.ilapfuncs import artifact_processor, check_in_embedded_media, logfunc
 
 _STORE = 'Platform Notifications'

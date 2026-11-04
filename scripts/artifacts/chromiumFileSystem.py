@@ -310,7 +310,7 @@ import struct
 
 from scripts.artifacts.chrome import get_browser_name
 from scripts.artifacts.storagePathViews import android_user, unique_files
-from scripts.ccl import ccl_leveldb
+from scripts.vendor.ccl import ccl_leveldb
 from scripts.ilapfuncs import artifact_processor, check_in_media, logfunc, open_sqlite_db_readonly
 
 _FS = 'File System'
