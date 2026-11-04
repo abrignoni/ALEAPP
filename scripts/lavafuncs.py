@@ -279,7 +279,7 @@ def _restore_lava_value(value, column_type=None):
     return value
 
 
-def initialize_lava(input_path, output_path, input_type, profile_filename=None):
+def initialize_lava(input_path, output_path, input_type, profile_filename=None, case_data=None):
     '''
     Initialize the LAVA data.
     Args:
@@ -287,9 +287,17 @@ def initialize_lava(input_path, output_path, input_type, profile_filename=None):
         output_path: The path to the output file.
         input_type: The type of input file.
         profile_filename: The profile file used for module selection, if any.
+        case_data: Optional dictionary of user-supplied case information.
     '''
 
     global lava_data, lava_db, lava_db_path
+
+    # The logo's path on the examiner's machine is not case information, so it stays out
+    # of the LAVA output. The logo itself (mimetype and base64) is kept.
+    if isinstance(case_data, dict):
+        case_data = {key: value for key, value in case_data.items() if key != 'Agency Logo Path'}
+    else:
+        case_data = {}
 
     lava_data = {
         "lava_schema_version": LAVA_SCHEMA_VERSION,
@@ -311,6 +319,7 @@ def initialize_lava(input_path, output_path, input_type, profile_filename=None):
         "param_type": input_type,
         "param_profile": profile_filename,
         "profile_used": profile_filename is not None,
+        "case_data": case_data,
         "processing_status": "In Progress",
         "lava_db_name": lava_db_name,
         "modules": [],
@@ -325,6 +334,14 @@ def initialize_lava(input_path, output_path, input_type, profile_filename=None):
     _invalid_media_refs_logged.clear()
 
     cursor = lava_db.cursor()
+    cursor.execute('''CREATE TABLE _lava_case_data (
+                        key TEXT PRIMARY KEY,
+                        value TEXT)''')
+    if case_data:
+        cursor.executemany(
+            'INSERT INTO _lava_case_data ("key", "value") VALUES (?, ?)',
+            [(str(k), str(v) if v is not None else '') for k, v in case_data.items()]
+        )
     cursor.execute('''CREATE TABLE _artifact_search_patterns (
                         id INTEGER PRIMARY KEY,
                         module_name TEXT NOT NULL,
@@ -375,6 +392,7 @@ def initialize_lava(input_path, output_path, input_type, profile_filename=None):
                             lmi.is_embedded
                         FROM _lava_media_references as lmr
                         LEFT JOIN _lava_media_items as lmi ON lmr.media_item_id = lmi.id''')
+    lava_db.commit()
 
 
 # Conversation view keys whose value is data rather than a column name. LAVA reads these two

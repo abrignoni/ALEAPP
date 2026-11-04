@@ -422,7 +422,7 @@ def main():
     selected_plugins = plugins_parsed_first + selected_plugins
     
     initialize_lava(input_text(input_path, found_members),
-                    out_params.output_folder_base, extracttype, profile_filename)
+                    out_params.output_folder_base, extracttype, profile_filename, casedata)
 
     # Record history if enabled
     if isinstance(input_path, list):
