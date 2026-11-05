@@ -94,5 +94,5 @@ def get_installedappsGass(context):
         for row in all_rows:
             data_list.append((usernum, row[0], row[1], row[2]))
 
-    data_headers = ('User', 'Bundle ID', 'Version Code', 'SHA-256 Hash')
+    data_headers = ('User', 'Bundle ID', 'Version Code', ('SHA-256 Hash', 'hash'))
     return data_headers, data_list, '\n'.join(source_paths)
