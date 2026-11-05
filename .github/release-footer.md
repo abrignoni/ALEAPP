@@ -11,6 +11,11 @@
 | macOS, Intel | `-macos-x64.dmg` |
 | Linux, 64-bit Intel or AMD | `-linux-x64.AppImage` |
 | Linux on ARM | `-linux-arm64.AppImage` |
+| Linux (Debian/Ubuntu), 64-bit Intel or AMD | `-linux-x64.deb` |
+| Linux (Debian/Ubuntu) on ARM | `-linux-arm64.deb` |
+| Linux (Fedora/RHEL/openSUSE), 64-bit Intel or AMD | `-linux-x64.rpm` |
+| Linux (Fedora/RHEL/openSUSE) on ARM | `-linux-arm64.rpm` |
+| Arch Linux | AUR `aleapp-git` (see below) |
 
 Every download holds one program, `aleapp`. Started without arguments, from the
 Applications folder or a double-click, it opens the window. Given arguments in a terminal,
@@ -65,7 +70,25 @@ and compare it with the line in `SHA256SUMS.txt`, which is lower case.
 ## Linux
 
 The build is made on Ubuntu 22.04, so it needs glibc 2.35 or newer and will not start on
-an older distribution.
+an older distribution. That covers the AppImage and the `.deb`/`.rpm` packages alike:
+all three wrap the same build.
+
+The `.deb` installs with `sudo dpkg -i ALEAPP-*-linux-*.deb` on Debian/Ubuntu and the
+`.rpm` with `sudo dnf install ALEAPP-*-linux-*.rpm` (or `sudo rpm -Uvh` it) on
+Fedora/RHEL/openSUSE. Either puts `aleapp` on PATH with a desktop entry.
+
+On Arch Linux, install `aleapp-git` from the AUR, which builds the latest commit:
+
+```bash
+yay -S aleapp-git
+```
+
+One-line install of the latest release (picks the `.deb`, `.rpm`, AUR package or
+AppImage for the machine it runs on, and checks `SHA256SUMS.txt` first):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/abrignoni/ALEAPP/main/scripts/install.sh | bash
+```
 
 ## Code signing policy
 

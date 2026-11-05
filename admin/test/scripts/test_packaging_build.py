@@ -535,5 +535,74 @@ class TestAppImage(unittest.TestCase):
             self.assertEqual((appdir / '.DirIcon').resolve(), (appdir / 'aleapp.png').resolve())
 
 
+class TestLinuxPackages(unittest.TestCase):
+    """The native .deb/.rpm wrap the same folder build the AppImage wraps."""
+
+    def setUp(self):
+        self.driver = _load_driver()
+
+    def test_help_lists_the_native_package_phases(self):
+        result = _run_driver('--help')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        for word in ('deb', 'rpm', 'linux-packages'):
+            self.assertIn(word, result.stdout)
+
+    def test_the_debian_architecture_names_are_debian_s(self):
+        for machine, arch in (('x86_64', 'amd64'), ('AMD64', 'amd64'),
+                              ('aarch64', 'arm64'), ('arm64', 'arm64')):
+            with self.subTest(machine=machine):
+                self.assertEqual(self.driver.deb_arch(machine), arch)
+        with self.assertRaises(SystemExit):
+            self.driver.deb_arch('riscv64')
+
+    def test_a_dev_suffix_is_a_tilde_in_native_package_versions(self):
+        """A hyphen separates the Debian revision and is forbidden in an RPM
+        Version, so -dev becomes ~dev, which sorts before the release."""
+        self.assertEqual(self.driver.deb_version('2026.4.6-dev'), '2026.4.6~dev')
+        self.assertEqual(self.driver.rpm_version('2026.4.6-dev'), '2026.4.6~dev')
+        self.assertEqual(self.driver.deb_version('2026.4.6'), '2026.4.6')
+        self.assertNotIn('-', self.driver.deb_version('2026.4.6-dev'))
+        self.assertNotIn('-', self.driver.rpm_version('2026.4.6-dev'))
+
+    def test_the_debian_control_names_the_package(self):
+        control = self.driver.debian_control('2026.4.6~dev', 'amd64')
+        for line in ('Package: aleapp', 'Version: 2026.4.6~dev', 'Architecture: amd64',
+                     'Maintainer: ', 'Homepage: https://github.com/abrignoni/ALEAPP',
+                     'Description: Android Logs, Events, and Protobuf Parser'):
+            self.assertIn(line, control)
+
+    def test_the_rpm_spec_names_the_package(self):
+        spec = self.driver.rpm_spec_text('2026.4.6~dev', 'x86_64')
+        for line in ('Name: aleapp', 'Version: 2026.4.6~dev', 'BuildArch: x86_64',
+                     'License: MIT', '/usr/lib/aleapp/', '/usr/bin/aleapp'):
+            self.assertIn(line, spec)
+        self.assertNotIn('-dev', spec.splitlines()[1])
+
+    @unittest.skipIf(sys.platform == 'win32', 'staging uses symlinks')
+    def test_the_staging_lays_out_a_filesystem_root(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = pathlib.Path(tmp) / 'ALEAPP'
+            (folder / '_internal').mkdir(parents=True)
+            (folder / 'aleapp').write_text('the executable')
+            (folder / '_internal' / 'lib').write_text('its libraries')
+            root = self.driver.linux_staging(folder, pathlib.Path(tmp) / 'root')
+            link = root / 'usr' / 'bin' / 'aleapp'
+            self.assertTrue(link.is_symlink())
+            self.assertEqual(os.readlink(link), '../lib/aleapp/aleapp')
+            self.assertTrue((root / 'usr' / 'lib' / 'aleapp' / '_internal' / 'lib').is_file())
+            self.assertTrue(os.access(root / 'usr' / 'lib' / 'aleapp' / 'aleapp', os.X_OK))
+            self.assertTrue((root / 'usr' / 'share' / 'applications' / 'aleapp.desktop').is_file())
+            self.assertTrue((root / 'usr' / 'share' / 'pixmaps' / 'aleapp.png').is_file())
+            self.assertTrue((root / 'usr' / 'share' / 'doc' / 'aleapp' / 'copyright').is_file())
+
+    def test_native_packages_need_the_folder_build_from_phase_one(self):
+        with tempfile.TemporaryDirectory() as tmp, \
+                mock.patch.object(self.driver, 'DIST', pathlib.Path(tmp) / 'dist'):
+            for build in ('build_deb', 'build_rpm'):
+                with self.subTest(package=build), self.assertRaises(SystemExit) as caught:
+                    getattr(self.driver, build)()
+                self.assertIn("run 'exe' first", str(caught.exception))
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -19,8 +19,27 @@ or [LEAPPs Releases](https://leapps.org/releases) for the whole LEAPP family.
 | macOS (Intel) | `ALEAPP-*-macos-x64.dmg` |
 | Linux (Intel/AMD) | `ALEAPP-*-linux-x64.AppImage` |
 | Linux (ARM) | `ALEAPP-*-linux-arm64.AppImage` |
+| Linux, Debian/Ubuntu (Intel/AMD) | `ALEAPP-*-linux-x64.deb` |
+| Linux, Debian/Ubuntu (ARM) | `ALEAPP-*-linux-arm64.deb` |
+| Linux, Fedora/RHEL/openSUSE (Intel/AMD) | `ALEAPP-*-linux-x64.rpm` |
+| Linux, Fedora/RHEL/openSUSE (ARM) | `ALEAPP-*-linux-arm64.rpm` |
+| Arch Linux | AUR `aleapp-git` (see below) |
 
 Each download holds one program, `aleapp`. `SHA256SUMS.txt` in each release lets you check a download.
+
+**One-line install** (latest release: picks the `.deb`, `.rpm`, AUR package or
+AppImage for the machine it runs on, and checks `SHA256SUMS.txt` first):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/abrignoni/ALEAPP/main/scripts/install.sh | bash
+```
+
+**Arch Linux**: `aleapp-git` in the AUR builds the latest commit, so every
+reinstall tracks `main`. The packaging source lives in `packaging/aur/`:
+
+```bash
+yay -S aleapp-git
+```
 
 **GUI**: open ALEAPP the usual way: by double-clicking `aleapp.exe` from the zip on
 Windows, ALEAPP in Applications on macOS, or the AppImage on Linux. Started without
@@ -74,6 +93,7 @@ same virtual environment. It installs the pinned build tools, then `requirements
 python packaging/build.py exe          # dist/ALEAPP/, and dist/ALEAPP.app on macOS
 python packaging/build.py smoke        # run what it built, without opening a window
 python packaging/build.py installer    # Windows: Inno Setup installer; macOS: .dmg; Linux: AppImage
+python packaging/build.py linux-packages  # Linux: .deb and .rpm from the folder build
 ```
 
 `exe --onefile` makes `dist/aleapp` (`dist\aleapp.exe` on Windows) as a single file

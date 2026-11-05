@@ -11,6 +11,11 @@
     python packaging/build.py installer           phase 2: Windows -> dist/ALEAPP-Setup-<version>.exe (Inno Setup);
                                                   macOS -> dist/ALEAPP-<version>.dmg around dist/ALEAPP.app (dmgbuild);
                                                   Linux -> dist/ALEAPP-<version>.AppImage (appimagetool)
+    python packaging/build.py deb                 Linux native package from the folder build:
+                                                  dist/aleapp_<version>_<arch>.deb (needs dpkg-deb)
+    python packaging/build.py rpm                 Linux native package from the folder build:
+                                                  dist/aleapp-<version>-1.<arch>.rpm (needs rpmbuild)
+    python packaging/build.py linux-packages      both native Linux packages
     python packaging/build.py installer --sign-tool NAME
                                                   phase 2, with Inno Setup signing the installer and the
                                                   uninstaller using the Sign Tool configured under NAME
@@ -84,6 +89,21 @@ CONTENTS = "_internal"
 BUNDLE_ID = "org.leapps.ALEAPP"
 PUBLISHER = "Alexis Brignoni"
 COPYRIGHT = "Result of a collaborative effort in the DFIR community."
+HOMEPAGE = "https://github.com/abrignoni/ALEAPP"
+# Native Linux packages (.deb/.rpm) wrap the same PyInstaller folder build the AppImage
+# wraps, so a system install reports the same version and runs the same binary. Layout:
+# the folder goes to /usr/lib/aleapp/, /usr/bin/aleapp is a symlink to its executable,
+# plus a .desktop entry, its icon, and the license. Nothing is compiled per distribution.
+LINUX_PKG = "aleapp"
+LINUX_MAINTAINER = "Alexis Brignoni <https://github.com/abrignoni/ALEAPP>"
+LINUX_SECTION = "utils"
+LINUX_SUMMARY = "Android Logs, Events, and Protobuf Parser"
+LINUX_DESCRIPTION = (
+    "Triage Android full system extractions: ALEAPP parses application data, logs, "
+    "events and protobuf payloads and writes an HTML report with TSV, timeline, KML "
+    "and LAVA output. One executable, aleapp, is both the window (started without "
+    "arguments) and the command line (started with arguments)."
+)
 RAW_FIXTURE = ROOT / "admin" / "test" / "data" / "raw_images" / "ntfs-fixture.img.gz"
 ISCC_DEFAULT = r"C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
 
@@ -508,6 +528,183 @@ def _build_appimage() -> Path:
     return out
 
 
+# -- native Linux packages (.deb/.rpm) -------------------------------------------------
+
+def deb_arch(machine: str | None = None) -> str:
+    """The Debian architecture name for this machine."""
+    machine = (machine or platform.machine()).lower()
+    if machine in ("x86_64", "amd64"):
+        return "amd64"
+    if machine in ("aarch64", "arm64"):
+        return "arm64"
+    sys.exit(f"build: no Debian architecture mapping for {machine}")
+
+
+def deb_version(version: str) -> str:
+    """The version for a .deb's Version field.
+
+    A hyphen separates the Debian revision, so a suffix such as -dev is written with a
+    tilde instead, which sorts before the release, as Debian pre-releases do.
+    """
+    return version.replace("-", "~")
+
+
+def rpm_version(version: str) -> str:
+    """The version for an .rpm's Version tag, which likewise cannot hold a hyphen."""
+    return version.replace("-", "~")
+
+
+def linux_staging(folder: Path, root: Path) -> Path:
+    """Lay the one-folder build out as a filesystem root for a native package.
+
+    The folder goes to usr/lib/aleapp/ whole, usr/bin/aleapp is a symlink to the
+    executable in it, and the .desktop entry, its icon and the license go where the
+    desktop and the package managers expect them. Returns the root.
+    """
+    if root.exists():
+        shutil.rmtree(root)
+    libdir = root / "usr" / "lib" / LINUX_PKG
+    shutil.copytree(folder, libdir, symlinks=True, copy_function=shutil.copy2)
+    exe = libdir / EXE
+    exe.chmod(0o755)
+    bindir = root / "usr" / "bin"
+    bindir.mkdir(parents=True)
+    (bindir / EXE).symlink_to(Path("..") / "lib" / LINUX_PKG / EXE)
+    applications = root / "usr" / "share" / "applications"
+    applications.mkdir(parents=True)
+    (applications / f"{LINUX_PKG}.desktop").write_text(
+        appimage_desktop_entry(), encoding="utf-8")
+    pixmaps = root / "usr" / "share" / "pixmaps"
+    pixmaps.mkdir(parents=True)
+    shutil.copyfile(ICON_PNG, pixmaps / f"{LINUX_PKG}.png")
+    doc = root / "usr" / "share" / "doc" / LINUX_PKG
+    doc.mkdir(parents=True)
+    shutil.copyfile(ROOT / "LICENSE", doc / "copyright")
+    return root
+
+
+def debian_control(version: str, arch: str) -> str:
+    """The text of a .deb's DEBIAN/control file."""
+    return "\n".join((
+        f"Package: {LINUX_PKG}",
+        f"Version: {version}",
+        f"Architecture: {arch}",
+        f"Maintainer: {LINUX_MAINTAINER}",
+        f"Section: {LINUX_SECTION}",
+        "Priority: optional",
+        f"Homepage: {HOMEPAGE}",
+        f"Description: {LINUX_SUMMARY}",
+        f" {LINUX_DESCRIPTION}",
+        "",
+    ))
+
+
+def debian_md5sums(root: Path) -> str:
+    """md5sums lines for every staged file below root, as DEBIAN/md5sums holds them."""
+    lines = []
+    for path in sorted(p for p in root.rglob("*") if p.is_file() and "DEBIAN" not in p.parts):
+        lines.append(f"{hashlib.md5(path.read_bytes()).hexdigest()}  {path.relative_to(root).as_posix()}")
+    return "\n".join(lines) + "\n" if lines else ""
+
+
+def find_dpkg_deb() -> str:
+    """The dpkg-deb program, or a stop telling a non-Debian machine what it misses."""
+    found = shutil.which("dpkg-deb")
+    if found:
+        return found
+    sys.exit("build: dpkg-deb not found; native .deb packages are built on Debian or "
+             "Ubuntu (sudo apt-get install dpkg)")
+
+
+def find_rpmbuild() -> str:
+    """The rpmbuild program, or a stop telling the machine what to install."""
+    found = shutil.which("rpmbuild")
+    if found:
+        return found
+    sys.exit("build: rpmbuild not found; install it first (sudo apt-get install rpm on "
+             "Debian/Ubuntu, sudo dnf install rpm-build on Fedora)")
+
+
+def build_deb() -> Path:
+    """A .deb around the one-folder build, named as Debian names one."""
+    folder = DIST / APP
+    if not (folder / EXE).is_file():
+        sys.exit(f"build: {folder / EXE} not found; run 'exe' first, the one-folder build "
+                 f"rather than --onefile, because the .deb packages {folder}")
+    version, arch = deb_version(read_version()), deb_arch()
+    stage = linux_staging(folder, BUILD / f"deb-root-{arch}")
+    debian = stage / "DEBIAN"
+    debian.mkdir(parents=True)
+    (debian / "control").write_text(debian_control(version, arch), encoding="utf-8")
+    (debian / "md5sums").write_text(debian_md5sums(stage), encoding="utf-8")
+    out = DIST / f"{LINUX_PKG}_{version}_{arch}.deb"
+    if out.exists():
+        out.unlink()
+    run([find_dpkg_deb(), "--root-owner-group", "--build", str(stage), str(out)])
+    assert_artifact(out, "Debian package")
+    return out
+
+
+def rpm_spec_text(version: str, arch: str) -> str:
+    """The .spec file rpmbuild builds the native .rpm from."""
+    return "\n".join((
+        f"Name: {LINUX_PKG}",
+        f"Version: {version}",
+        "Release: 1",
+        f"Summary: {LINUX_SUMMARY}",
+        "License: MIT",
+        f"URL: {HOMEPAGE}",
+        f"BuildArch: {arch}",
+        "",
+        "%description",
+        LINUX_DESCRIPTION,
+        "",
+        "%install",
+        "cp -a %{_sourcedir}/root/* %{buildroot}/",
+        "",
+        "%files",
+        f"/usr/lib/{LINUX_PKG}/",
+        f"/usr/bin/{EXE}",
+        f"/usr/share/applications/{LINUX_PKG}.desktop",
+        f"/usr/share/pixmaps/{LINUX_PKG}.png",
+        f"/usr/share/doc/{LINUX_PKG}/copyright",
+        "",
+    ))
+
+
+def build_rpm() -> Path:
+    """An .rpm around the one-folder build, via the platform's rpmbuild."""
+    folder = DIST / APP
+    if not (folder / EXE).is_file():
+        sys.exit(f"build: {folder / EXE} not found; run 'exe' first, the one-folder build "
+                 f"rather than --onefile, because the .rpm packages {folder}")
+    version, arch = rpm_version(read_version()), appimage_arch()
+    topdir = BUILD / f"rpmbuild-{arch}"
+    if topdir.exists():
+        shutil.rmtree(topdir)
+    for sub in ("BUILD", "RPMS", "SOURCES", "SPECS", "SRPMS"):
+        (topdir / sub).mkdir(parents=True)
+    sources = topdir / "SOURCES"
+    linux_staging(folder, sources / "root")
+    spec = topdir / "SPECS" / f"{LINUX_PKG}.spec"
+    spec.write_text(rpm_spec_text(version, arch), encoding="utf-8")
+    run([find_rpmbuild(), "-bb", "--define", f"_topdir {topdir}", str(spec)])
+    found = sorted((topdir / "RPMS").rglob(f"{LINUX_PKG}-{version}-1.{arch}.rpm"))
+    if not found:
+        sys.exit(f"build: rpmbuild left no {LINUX_PKG}-{version}-1.{arch}.rpm under {topdir / 'RPMS'}")
+    out = DIST / found[0].name
+    if out.exists():
+        out.unlink()
+    shutil.copyfile(found[0], out)
+    assert_artifact(out, "RPM package")
+    return out
+
+
+def build_linux_packages() -> list[Path]:
+    """Both native Linux packages from the same folder build."""
+    return [build_deb(), build_rpm()]
+
+
 # -- verify ------------------------------------------------------------------------------
 
 def _signature(path: Path) -> tuple[bool, str, bool, str]:
@@ -717,6 +914,9 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--sign-tool", metavar="NAME", help=argparse.SUPPRESS)
     p.add_argument("--clean", action="store_true",
                    help="remove build/ and the previous phase 1 output in dist/ first")
+    p = sub.add_parser("deb", help="native Linux .deb from the folder build (needs dpkg-deb)")
+    p = sub.add_parser("rpm", help="native Linux .rpm from the folder build (needs rpmbuild)")
+    p = sub.add_parser("linux-packages", help="both native Linux packages from the folder build")
     p = sub.add_parser("verify", help="check code signatures on built files")
     p.add_argument("paths", nargs="+")
     p.add_argument("--subject", metavar="TEXT", help="require the signer subject to contain TEXT")
@@ -738,6 +938,12 @@ def main(argv: list[str] | None = None) -> int:
     elif args.cmd == "all":
         build_exe(False, args.clean)
         build_installer(None)
+    elif args.cmd == "deb":
+        build_deb()
+    elif args.cmd == "rpm":
+        build_rpm()
+    elif args.cmd == "linux-packages":
+        build_linux_packages()
     elif args.cmd == "verify":
         return verify(args.paths, args.subject)
     return 0

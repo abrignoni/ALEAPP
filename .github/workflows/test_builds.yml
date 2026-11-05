@@ -124,6 +124,47 @@ jobs:
           python packaging/build.py installer
           ls -l dist/ALEAPP-*.AppImage
 
+      # The same folder build the AppImage wraps, as native packages. The .deb is
+      # installed and run, so the shipped layout (symlink, .desktop, icon) is tested,
+      # not just archived; the .rpm is metadata-checked (rpm has no install db here).
+      - name: Phase 2, native Linux packages (Linux)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          sudo apt-get install -y -q desktop-file-utils rpm
+          python packaging/build.py linux-packages
+          ls -l dist/*.deb dist/*.rpm
+          dpkg-deb --info dist/*.deb
+          desktop-file-validate build/deb-root-*/usr/share/applications/aleapp.desktop
+          rpm -qip dist/*.rpm
+          sudo dpkg -i dist/*.deb
+          aleapp --version
+          sudo dpkg -r aleapp
+
+      # AUR + one-liner installer: syntax and metadata only (makepkg runs on Arch).
+      - name: Validate the AUR package and the install script
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          bash -n packaging/aur/aleapp-git/PKGBUILD
+          bash -n scripts/install.sh
+          bash scripts/install.sh --help
+          python - <<'EOF'
+          import re
+          from pathlib import Path
+          pkgbuild = Path('packaging/aur/aleapp-git/PKGBUILD').read_text()
+          srcinfo = Path('packaging/aur/aleapp-git/.SRCINFO').read_text()
+          for key in ('pkgname=aleapp-git',
+                      'git+https://github.com/abrignoni/ALEAPP.git',
+                      'packaging/build.py exe',
+                      '/usr/lib/aleapp',
+                      '/usr/bin/aleapp',
+                      'appimage_desktop_entry'):
+              assert key in pkgbuild, key
+          assert 'pkgbase = aleapp-git' in srcinfo
+          assert 'pkgname = aleapp-git' in srcinfo
+          EOF
+
       # The one-folder build, with Windows' single-file executable and Linux's AppImage.
       - name: Upload the build (Windows, Linux)
         if: runner.os != 'macOS'
@@ -134,6 +175,8 @@ jobs:
             dist/ALEAPP/
             dist/aleapp.exe
             dist/ALEAPP-*.AppImage
+            dist/*.deb
+            dist/*.rpm
           retention-days: 14
           if-no-files-found: error
 

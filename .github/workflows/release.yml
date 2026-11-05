@@ -319,6 +319,15 @@ jobs:
         shell: bash
         run: python packaging/build.py installer
 
+      # Native Linux packages wrap the same folder build the AppImage wraps.
+      - name: Phase 2, native Linux packages (Linux)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          sudo apt-get install -y -q rpm
+          python packaging/build.py linux-packages
+          ls -l dist/*.deb dist/*.rpm
+
       # Notarising the .dmg covers the signed .app inside it, and the stapled ticket lets
       # Gatekeeper accept it offline. A rejection prints Apple's log, which names the file.
       - name: macOS, sign, notarise and staple the disk image
@@ -355,7 +364,8 @@ jobs:
           security delete-keychain "$RUNNER_TEMP/signing.keychain-db" 2>/dev/null || true
           rm -f "$RUNNER_TEMP/notary.p8" "$RUNNER_TEMP/cert.p12"
 
-      # Release assets are single files: a disk image on macOS, the AppImage on Linux, and
+      # Release assets are single files: a disk image on macOS, the AppImage and native
+      # .deb/.rpm packages on Linux, and
       # on Windows a portable zip holding the single-file aleapp.exe, under the name the
       # docs and the tools that run it use. The names carry the platform and the
       # architecture, because a reader cannot tell from "ALEAPP-2026.5.0.dmg" whether it
@@ -378,6 +388,11 @@ jobs:
               ;;
             Linux)
               mv "dist/ALEAPP-$VERSION.AppImage" "release-assets/$STEM.AppImage"
+              # One .deb and one .rpm per leg; the file name follows the release
+              # convention (platform + RUNNER_ARCH, as the AppImage beside it) while
+              # the Architecture/BuildArch inside stays the distro's own.
+              mv dist/*.deb "release-assets/$STEM.deb"
+              mv dist/*.rpm "release-assets/$STEM.rpm"
               ;;
           esac
           ls -l release-assets/

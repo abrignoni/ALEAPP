@@ -1,0 +1,45 @@
+# Maintainer: Alexis Brignoni <https://github.com/abrignoni/ALEAPP>
+# Canonical source of this file is packaging/aur/aleapp-git/ in
+# https://github.com/abrignoni/ALEAPP (see packaging/aur/README.md).
+# It is published to https://aur.archlinux.org/packages/aleapp-git separately:
+# the AUR has no pull-request mechanism, so changes land here first.
+pkgname=aleapp-git
+pkgver=2026.4.6.dev.r5129.g5fb9e3de
+pkgrel=1
+pkgdesc='Android Logs, Events, and Protobuf Parser (latest git commit)'
+arch=('x86_64' 'aarch64')
+url='https://github.com/abrignoni/ALEAPP'
+license=('MIT')
+depends=('glibc' 'zlib' 'hicolor-icon-theme')
+makedepends=('git' 'python' 'python-pip' 'tk')
+provides=('aleapp')
+conflicts=('aleapp')
+source=("$pkgname::git+https://github.com/abrignoni/ALEAPP.git")
+sha256sums=('SKIP')
+
+pkgver() {
+  cd "$srcdir/$pkgname"
+  local ver count sha
+  ver=$(python -c "import re; print(re.search(r'''^leapp_version\s*=\s*['\"]([^'\"]+)['\"]''', open('scripts/version_info.py').read(), re.M).group(1).replace('-', '.'))")
+  count=$(git rev-list --count HEAD)
+  sha=$(git rev-parse --short HEAD)
+  printf '%s.r%s.g%s' "$ver" "$count" "$sha"
+}
+
+build() {
+  cd "$srcdir/$pkgname"
+  python packaging/build.py exe
+}
+
+package() {
+  cd "$srcdir/$pkgname"
+  install -dm755 "$pkgdir/usr/lib/aleapp"
+  cp -a dist/ALEAPP/. "$pkgdir/usr/lib/aleapp/"
+  chmod 755 "$pkgdir/usr/lib/aleapp/aleapp"
+  install -dm755 "$pkgdir/usr/bin"
+  ln -s ../lib/aleapp/aleapp "$pkgdir/usr/bin/aleapp"
+  install -dm755 "$pkgdir/usr/share/applications"
+  python -c "import sys; sys.path.insert(0, 'packaging'); import build; print(build.appimage_desktop_entry(), end='')" > "$pkgdir/usr/share/applications/aleapp.desktop"
+  install -Dm644 assets/icon.png "$pkgdir/usr/share/pixmaps/aleapp.png"
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

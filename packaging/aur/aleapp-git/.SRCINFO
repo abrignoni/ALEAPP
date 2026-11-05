@@ -1,0 +1,21 @@
+pkgbase = aleapp-git
+	pkgdesc = Android Logs, Events, and Protobuf Parser (latest git commit)
+	pkgver = 2026.4.6.dev.r5129.g5fb9e3de
+	pkgrel = 1
+	url = https://github.com/abrignoni/ALEAPP
+	arch = x86_64
+	arch = aarch64
+	license = MIT
+	makedepends = git
+	makedepends = python
+	makedepends = python-pip
+	makedepends = tk
+	depends = glibc
+	depends = zlib
+	depends = hicolor-icon-theme
+	provides = aleapp
+	conflicts = aleapp
+	source = aleapp-git::git+https://github.com/abrignoni/ALEAPP.git
+	sha256sums = SKIP
+
+pkgname = aleapp-git
