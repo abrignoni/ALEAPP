@@ -265,7 +265,7 @@ class HelperTest(PrivateNotepadCase):
 class KeyResolutionTest(PrivateNotepadCase):
     def key_source(self):
         rows, _ = self.run_artifact(parser.private_notepad_settings)
-        return rows[0][5]
+        return rows[0][6]
 
     def titles(self):
         rows, _ = self.run_artifact(parser.private_notepad_notes)
@@ -562,16 +562,67 @@ class SettingsTest(PrivateNotepadCase):
 
     def test_full_row(self):
         digest = bytes(range(20))
+        fake_digest = bytes(range(20, 40))
         self.extraction.database(dek=wrap(DATA_KEY), notes=[note()])
         path = self.extraction.preferences(
             strings={'password_hint': 'first pet', 'protection_type': '1',
-                     'password_hash': base64.b64encode(digest).decode('ascii')},
+                     'password_hash': base64.b64encode(digest).decode('ascii'),
+                     'fake_password_hash': base64.b64encode(fake_digest).decode('ascii')},
             typed={'last_app_usage_time': ('long', str(MS_1)),
                    'show_lock_screen': ('boolean', 'true')})
         rows, sources = self.run_artifact(parser.private_notepad_settings)
-        self.assertEqual(rows, [(UTC_1, 'true', 'PIN (1)', 'first pet', digest.hex(),
-                                 'service_data.dek', '0', f'{USER_0}/{PREFERENCES}')])
+        self.assertEqual(rows, [(UTC_1, 'true', 'PIN (1)', 'first pet', digest.hex(), fake_digest.hex(),
+                                 'service_data.dek', '0', None, None, f'{USER_0}/{PREFERENCES}')])
         self.assertEqual(sources, [str(path)])
+
+    def service_database(self, *rows, **database):
+        path = self.extraction.database(**database)
+        db = sqlite3.connect(path)
+        db.execute('CREATE TABLE service (_id INTEGER PRIMARY KEY, protection_type INTEGER DEFAULT -1, '
+                   'password_hash TEXT)')
+        db.executemany('INSERT INTO service (protection_type, password_hash) VALUES (?, ?)', rows)
+        db.commit()
+        db.close()
+        return path
+
+    def test_service_table_is_reported_beside_the_preferences_not_in_place_of_them(self):
+        database = self.service_database((1, 'old-hash'), dek=wrap(DATA_KEY), notes=[note()])
+        current = base64.b64encode(bytes(range(20))).decode('ascii')
+        preferences = self.extraction.preferences(strings={'password_hash': current},
+                                                  typed={'protection_type': ('int', '2')})
+        rows, sources = self.run_artifact(parser.private_notepad_settings)
+        row = rows[0]
+        self.assertEqual((row[2], row[4]), ('Pattern (2)', bytes(range(20)).hex()))
+        self.assertEqual((row[8], row[9]), ('PIN (1)', 'old-hash'))
+        self.assertEqual(sources, [str(preferences), str(database)])
+
+    def test_service_hash_stays_as_stored_because_its_encoding_is_not_established(self):
+        self.service_database((0, 'AAEC'))
+        self.extraction.preferences()
+        self.assertEqual(self.row()[9], 'AAEC')
+
+    def test_empty_service_table_leaves_its_columns_blank(self):
+        self.service_database(dek=wrap(DATA_KEY), notes=[note()])
+        self.extraction.preferences(typed={'protection_type': ('int', '-1')})
+        row = self.row()
+        self.assertEqual((row[2], row[8], row[9]), ('Disabled (-1)', None, None))
+
+    def test_service_values_give_a_row_without_preferences_or_a_data_key(self):
+        database = self.service_database((1, 'old-hash'), notes=[note()])
+        rows, sources = self.run_artifact(parser.private_notepad_settings)
+        self.assertEqual(rows, [(None, None, None, None, None, None, '', '0', 'PIN (1)', 'old-hash',
+                                 f'{USER_0}/{DATABASE}')])
+        self.assertEqual(sources, [str(database)])
+
+    def test_service_values_keep_a_row_when_the_preferences_do_not_parse(self):
+        self.service_database((1, 'old-hash'))
+        self.extraction.preferences(raw='<map><string')
+        self.assertEqual(self.row()[8:10], ('PIN (1)', 'old-hash'))
+
+    def test_only_the_first_service_row_is_read_as_the_app_reads_it(self):
+        self.service_database((1, 'first'), (2, 'second'))
+        self.extraction.preferences()
+        self.assertEqual(self.row()[8:10], ('PIN (1)', 'first'))
 
     def test_protection_types_keep_the_stored_number(self):
         cases = {'-1': 'Disabled (-1)', '0': 'Password (0)', '1': 'PIN (1)', '2': 'Pattern (2)',
@@ -584,13 +635,14 @@ class SettingsTest(PrivateNotepadCase):
 
     def test_absent_keys_are_blank_and_no_database_leaves_the_key_source_blank(self):
         self.extraction.preferences()
-        self.assertEqual(self.row(), (None, None, None, None, None, '', '0',
+        self.assertEqual(self.row(), (None, None, None, None, None, None, '', '0', None, None,
                                       f'{USER_0}/{PREFERENCES}'))
 
     def test_values_that_do_not_convert_are_kept_as_stored(self):
-        self.extraction.preferences(strings={'last_app_usage_time': 'soon', 'password_hash': 'a'})
+        self.extraction.preferences(strings={'last_app_usage_time': 'soon', 'password_hash': 'a',
+                                             'fake_password_hash': 'b'})
         row = self.row()
-        self.assertEqual((row[0], row[4]), ('soon', 'a'))
+        self.assertEqual((row[0], row[4], row[5]), ('soon', 'a', 'b'))
 
     def test_database_without_preferences_gives_no_row(self):
         self.extraction.database(dek=wrap(DATA_KEY), notes=[note()])
@@ -614,7 +666,7 @@ class ContainersTest(PrivateNotepadCase):
         self.assertEqual([(r[3], r[7]) for r in rows], [('Owner', f'{USER_0}/{DATABASE}'),
                                                         ('Second user', f'{USER_10}/{DATABASE}')])
         rows, _ = self.run_artifact(parser.private_notepad_settings)
-        self.assertEqual([(r[2], r[5], r[6]) for r in rows], [
+        self.assertEqual([(r[2], r[6], r[7]) for r in rows], [
             ('PIN (1)', 'service_data.dek', '0'),
             ('Pattern (2)', 'encryption_key preference', '10')])
 
@@ -626,7 +678,7 @@ class ContainersTest(PrivateNotepadCase):
         rows, _ = self.run_artifact(parser.private_notepad_notes)
         self.assertEqual([r[7] for r in rows], [f'{USER_0}/{DATABASE}'])
         rows, _ = self.run_artifact(parser.private_notepad_settings)
-        self.assertEqual([r[7] for r in rows], [f'{USER_0}/{PREFERENCES}'])
+        self.assertEqual([r[-1] for r in rows], [f'{USER_0}/{PREFERENCES}'])
 
     def test_files_outside_the_app_folder_are_ignored(self):
         self.extraction.add('elsewhere/databases/notes.db', b'not this app')

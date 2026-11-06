@@ -29,17 +29,19 @@ __artifacts_v2__ = {
                        "attachments decrypted",
         "author": "Jens Grønhøj Stigaard, Claude",
         "creation_date": "2026-11-03",
-        "last_update_date": "2026-11-03",
+        "last_update_date": "2026-11-06",
         "requirements": "none",
         "category": "Private Notepad",
         "notes": "One row per row of the notes table in "
                  "ru.alexandermalikov.protectednotes/databases/notes.db. Date, Created and Delete "
                  "Date are the date, date_created and date_delete columns as stored; which events "
                  "set them was not established from the app's code. A column the database does "
-                 "not have, such as date_created in 6.9.1 if absent there, is blank. Attachments "
-                 "shows the decrypted image and audio files the note's images and audio_files "
-                 "columns name; see Private Notepad - Note Attachments for how they are found "
-                 "and for the ones that were not. "
+                 "not have is blank. Attachments shows the decrypted image and audio files the "
+                 "note's images and audio_files columns name; see Private Notepad - Note "
+                 "Attachments for how they are found and for the ones that were not. "
+                 "Attachments is blank when a note names no attachment or no named file decrypts. "
+                 "In the real extraction 13 notes decrypted and Attachments was blank on all 13 "
+                 "rows, because no note named an attachment. "
                  "The data key is AES-128-CBC encrypted (zero IV, PKCS7) under a key built into "
                  "the app, the XOR of two 16-byte constants, and is read from the dek column of "
                  "the service_data table in notes.db or from the encryption_key string in "
@@ -51,8 +53,10 @@ __artifacts_v2__ = {
                  "user. A field that does not decrypt is reported as stored (base64) and the "
                  "failure is logged. Only live rows are read: records in freed database pages "
                  "are not recovered. Times are stored in milliseconds and reported in UTC; a "
-                 "time stored as NULL or 0 is blank. Tested only on synthetic data built with "
-                 "the scheme of app versions 6.9.1 and 6.11.1.",
+                 "time stored as NULL or 0 is blank. Run on one real extraction (app 6.9.1, "
+                 "versionCode 108, Android 14), whose database has no service_data table; the "
+                 "6.9.1 APK does not name that table either. service_data.dek and app version "
+                 "6.11.1 were exercised only on synthetic data.",
         "paths": ("*/ru.alexandermalikov.protectednotes/*",),
         "output_types": "standard",
         "artifact_icon": "file-text",
@@ -62,7 +66,7 @@ __artifacts_v2__ = {
         "description": "Image and audio attachments of Private Notepad notes, decrypted",
         "author": "Jens Grønhøj Stigaard, Claude",
         "creation_date": "2026-11-03",
-        "last_update_date": "2026-11-03",
+        "last_update_date": "2026-11-06",
         "requirements": "none",
         "category": "Private Notepad",
         "notes": "One row per attachment id in the images and audio_files columns of the notes "
@@ -78,7 +82,9 @@ __artifacts_v2__ = {
                  "attachment never existed) or Not named by a note. A file is reported as Not "
                  "named by a note only when it decrypts under the data key and its bytes are a "
                  "recognised media type; other files in the app's folders are not reported. "
-                 "Attachment Type is the column the id came from. "
+                 "Attachment Type is the column the id came from. The real extraction had no rows "
+                 "here: its 13 notes named no attachment and no file decrypted to media, so "
+                 "attachment decryption was exercised only on synthetic data. "
                  "The data key is AES-128-CBC encrypted (zero IV, PKCS7) under a key built into "
                  "the app, the XOR of two 16-byte constants, and is read from the dek column of "
                  "the service_data table in notes.db or from the encryption_key string in "
@@ -90,8 +96,10 @@ __artifacts_v2__ = {
                  "user. A field that does not decrypt is reported as stored (base64) and the "
                  "failure is logged. Only live rows are read: records in freed database pages "
                  "are not recovered. Times are stored in milliseconds and reported in UTC; a "
-                 "time stored as NULL or 0 is blank. Tested only on synthetic data built with "
-                 "the scheme of app versions 6.9.1 and 6.11.1.",
+                 "time stored as NULL or 0 is blank. Run on one real extraction (app 6.9.1, "
+                 "versionCode 108, Android 14), whose database has no service_data table; the "
+                 "6.9.1 APK does not name that table either. service_data.dek and app version "
+                 "6.11.1 were exercised only on synthetic data.",
         "paths": ("*/ru.alexandermalikov.protectednotes/*",),
         "output_types": "standard",
         "artifact_icon": "paperclip",
@@ -101,14 +109,15 @@ __artifacts_v2__ = {
         "description": "Password entries stored in Private Notepad, decrypted",
         "author": "Jens Grønhøj Stigaard, Claude",
         "creation_date": "2026-11-03",
-        "last_update_date": "2026-11-03",
+        "last_update_date": "2026-11-06",
         "requirements": "none",
         "category": "Private Notepad",
         "notes": "One row per row of the passwords table in notes.db; a database without the "
                  "table yields no rows and logs it. Name, Login, Password, Site Address and "
                  "Comment are the password_name, password_login, password_password, "
                  "password_site_address and password_comment columns decrypted. Created is "
-                 "date_created as stored. "
+                 "date_created as stored. The table held no rows in the real extraction, so "
+                 "password decryption was exercised only on synthetic data. "
                  "The data key is AES-128-CBC encrypted (zero IV, PKCS7) under a key built into "
                  "the app, the XOR of two 16-byte constants, and is read from the dek column of "
                  "the service_data table in notes.db or from the encryption_key string in "
@@ -120,8 +129,10 @@ __artifacts_v2__ = {
                  "user. A field that does not decrypt is reported as stored (base64) and the "
                  "failure is logged. Only live rows are read: records in freed database pages "
                  "are not recovered. Times are stored in milliseconds and reported in UTC; a "
-                 "time stored as NULL or 0 is blank. Tested only on synthetic data built with "
-                 "the scheme of app versions 6.9.1 and 6.11.1.",
+                 "time stored as NULL or 0 is blank. Run on one real extraction (app 6.9.1, "
+                 "versionCode 108, Android 14), whose database has no service_data table; the "
+                 "6.9.1 APK does not name that table either. service_data.dek and app version "
+                 "6.11.1 were exercised only on synthetic data.",
         "paths": (
             "*/ru.alexandermalikov.protectednotes/databases/notes.db*",
             "*/ru.alexandermalikov.protectednotes/shared_prefs/protected_notes_preferences.xml",
@@ -134,19 +145,43 @@ __artifacts_v2__ = {
         "description": "Lock screen settings and last usage time recorded by Private Notepad",
         "author": "Jens Grønhøj Stigaard, Claude",
         "creation_date": "2026-11-03",
-        "last_update_date": "2026-11-03",
+        "last_update_date": "2026-11-06",
         "requirements": "none",
         "category": "Private Notepad",
-        "notes": "One row per protected_notes_preferences.xml. Values are the preference keys "
-                 "last_app_usage_time, show_lock_screen, protection_type, password_hint and "
-                 "password_hash. A key the file does not hold is blank; the app's default then "
-                 "applies, and what that default is was not established. Protection Type labels "
-                 "(-1 Disabled, 0 Password, 1 PIN, 2 Pattern) were not verified here; any other "
-                 "value reads Unknown. The stored number is kept in brackets. Password Hash is "
-                 "the base64 value decoded to hex; the hash algorithm and whether it is salted "
-                 "were not established. Key Source names where the data key that decrypts this "
-                 "app data folder's notes was read from, blank when no notes.db was found "
-                 "beside it. "
+        "notes": "One row per protected_notes_preferences.xml, or per notes.db whose service table "
+                 "has a row when there is no readable preferences file. Values are the preference "
+                 "keys last_app_usage_time, show_lock_screen, protection_type, password_hint and "
+                 "password_hash. A key the file does not hold is blank. What follows about the "
+                 "app's behaviour was read from the code of the 6.9.1 APK and was not exercised "
+                 "with a lock set. The app reads an absent protection_type as -1 and an absent "
+                 "show_lock_screen as false. Protection Type labels (-1 Disabled, 0 Password, "
+                 "1 PIN, 2 Pattern) are the strings the app's own analytics code gives those "
+                 "values (class h7.b, method l); any other value reads Unknown. The stored number "
+                 "is kept in brackets. Password Hash (hex) is the base64 value decoded to hex. The "
+                 "app's hash function (class h7.q, method b) stores base64 of the SHA-1 digest of "
+                 "the text it is given and adds no salt of its own. Password Hash (hex) is blank "
+                 "when the key is absent; the app also clears the key when called with no "
+                 "password, so a blank does not show that no password was ever set. Fake Password "
+                 "Hash (hex) is the fake_password_hash key decoded the same way, and is blank when "
+                 "the key is absent. The three code paths that set that key (f8.c.x, g8.c.B and "
+                 "w7.c.f) call the same hash function first, h7.b0.f clears it, and what entering "
+                 "that password does was not established. Password Hint "
+                 "is blank when the key is absent or empty; what clears it was not established, so "
+                 "a hint does not show that a lock is set. Service Table Protection Type and "
+                 "Service Table Password Hash are the first row of the service table in notes.db, "
+                 "as stored, and are blank when the table is absent or has no rows. In 6.9.1 the "
+                 "only code naming that table reads it on an upgrade and moves the values to the "
+                 "preferences; none of it writes to the table, so a value there can be older than "
+                 "the preferences and need not be current. The encoding of a stored service hash "
+                 "was not established. The is_password_hint_enabled, is_in_fake_password_mode_now "
+                 "and incorrect_password_entry_amount preferences are not reported. In the real "
+                 "extraction protection_type was -1, show_lock_screen was false, none of "
+                 "password_hint, password_hash and fake_password_hash was present and the service "
+                 "table had no rows, so Password Hint, Password Hash (hex), Fake Password Hash "
+                 "(hex), Service Table Protection Type and Service Table Password Hash were blank "
+                 "on its 1 row. Key Source names where the data key "
+                 "that decrypts this app data folder's notes was read from, blank when no notes.db "
+                 "was found beside it. "
                  "The data key is AES-128-CBC encrypted (zero IV, PKCS7) under a key built into "
                  "the app, the XOR of two 16-byte constants, and is read from the dek column of "
                  "the service_data table in notes.db or from the encryption_key string in "
@@ -158,8 +193,10 @@ __artifacts_v2__ = {
                  "user. A field that does not decrypt is reported as stored (base64) and the "
                  "failure is logged. Only live rows are read: records in freed database pages "
                  "are not recovered. Times are stored in milliseconds and reported in UTC; a "
-                 "time stored as NULL or 0 is blank. Tested only on synthetic data built with "
-                 "the scheme of app versions 6.9.1 and 6.11.1.",
+                 "time stored as NULL or 0 is blank. Run on one real extraction (app 6.9.1, "
+                 "versionCode 108, Android 14), whose database has no service_data table; the "
+                 "6.9.1 APK does not name that table either. service_data.dek and app version "
+                 "6.11.1 were exercised only on synthetic data.",
         "paths": (
             "*/ru.alexandermalikov.protectednotes/databases/notes.db*",
             "*/ru.alexandermalikov.protectednotes/shared_prefs/protected_notes_preferences.xml",
@@ -271,6 +308,11 @@ def get_preferences(prefs_path):
         if name is not None:
             values[name] = (element.tag, element.get('value', element.text))
     return values
+
+
+def preference(prefs, name):
+    """The stored value of a preference, or None when the file does not hold it."""
+    return prefs.get(name, (None, None))[1]
 
 
 def table_columns(db, table):
@@ -391,6 +433,42 @@ def open_container(container, static_key):
         db.close()
         return None
     return db
+
+
+def read_service_table(db_path):
+    """(protection_type, password_hash) of the first row of the service table, as stored.
+
+    Opened apart from the data key: these values are not encrypted, so they are read even
+    when no key is found. (None, None) without a database, a table or a row.
+    """
+    db = open_sqlite_db_readonly(db_path) if db_path else None
+    if db is None:
+        return None, None
+    try:
+        rows = select_columns(db, 'service', ('protection_type', 'password_hash'))
+    except sqlite3.Error as e:
+        logfunc(f'Private Notepad: unable to read the service table of {db_path}: {e}')
+        return None, None
+    finally:
+        db.close()
+    return rows[0] if rows else (None, None)
+
+
+def protection_label(stored):
+    """A stored protection type as its label with the number in brackets, or None."""
+    if stored is None:
+        return None
+    return f'{PROTECTION_TYPES.get(str(stored), "Unknown")} ({stored})'
+
+
+def hash_as_hex(stored):
+    """A stored base64 hash as hex, or as stored when it is not base64."""
+    if not stored:
+        return stored
+    try:
+        return b64decode(stored.strip()).hex()
+    except Base64Error:
+        return stored
 
 
 def attachment_ids(stored):
@@ -598,39 +676,37 @@ def private_notepad_settings(context):
     containers, _candidates = get_containers(context)
 
     for container in containers:
-        if container.prefs_path is None:
+        service_type, service_hash = read_service_table(container.db_path)
+        has_service_values = service_type is not None or service_hash is not None
+        prefs = get_preferences(container.prefs_path) if container.prefs_path else None
+        if prefs is None and not has_service_values:
             continue
-        prefs = get_preferences(container.prefs_path)
-        if prefs is None:
-            continue
+        prefs = prefs or {}
         if container.db_path:
             db = open_container(container, static_key)
             if db is not None:
                 db.close()
 
-        def value(name, prefs=prefs):
-            return prefs.get(name, (None, None))[1]
-
-        last_usage = value('last_app_usage_time')
+        last_usage = preference(prefs, 'last_app_usage_time')
         try:
             last_usage = convert_ms_to_utc(last_usage)
         except ValueError:
             pass
-        protection_type = value('protection_type')
-        if protection_type is not None:
-            protection_type = f'{PROTECTION_TYPES.get(protection_type, "Unknown")} ({protection_type})'
-        password_hash = value('password_hash')
-        if password_hash:
-            try:
-                password_hash = b64decode(password_hash.strip()).hex()
-            except Base64Error:
-                pass
 
-        sources.append(container.prefs_path)
-        data_list.append((last_usage, value('show_lock_screen'), protection_type, value('password_hint'),
-                          password_hash, container.key_source, container.user,
-                          context.get_relative_path(container.prefs_path)))
+        if container.prefs_path:
+            sources.append(container.prefs_path)
+        if has_service_values:
+            sources.append(container.db_path)
+        data_list.append((last_usage, preference(prefs, 'show_lock_screen'),
+                          protection_label(preference(prefs, 'protection_type')),
+                          preference(prefs, 'password_hint'), hash_as_hex(preference(prefs, 'password_hash')),
+                          hash_as_hex(preference(prefs, 'fake_password_hash')),
+                          container.key_source, container.user,
+                          protection_label(service_type), service_hash,
+                          context.get_relative_path(container.prefs_path or container.db_path)))
 
     data_headers = (('Last App Usage Time', 'datetime'), 'Show Lock Screen (as stored)', 'Protection Type',
-                    'Password Hint', 'Password Hash (hex)', 'Key Source', 'Android User', 'Source File')
+                    'Password Hint', 'Password Hash (hex)', 'Fake Password Hash (hex)', 'Key Source',
+                    'Android User',
+                    'Service Table Protection Type', 'Service Table Password Hash (as stored)', 'Source File')
     return data_headers, data_list, '\n'.join(sources)
