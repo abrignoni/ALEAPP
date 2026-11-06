@@ -329,12 +329,55 @@ __artifacts_v2__ = {
             "sharon_a14": "Android 14 | com.whatsapp vc 241676004 | 1 row",
             "russell_pixel6a_a13": "Android 13 | com.whatsapp vc 231278007 | 1 row",
         },
-    }
+    },
+    "get_whatsapp_disappearing_mode": {
+        "name": "WhatsApp - Default Disappearing Messages Timer",
+        "description": "disappearing_mode_duration_int and disappearing_mode_timestamp from WhatsApp's "
+                       "shared_prefs disappearing_mode_prefs.xml, one row per shared_prefs folder",
+        "author": "@charpy4n6, Claude",
+        "creation_date": "2026-11-05",
+        "last_update_date": "2026-11-06",
+        "requirements": "none",
+        "category": "WhatsApp",
+        "notes": "One row per com.whatsapp shared_prefs folder holding disappearing_mode_prefs.xml; "
+                 "the data/data, data/user/0 and data_mirror views of one folder are read once. "
+                 "Duration (seconds) is disappearing_mode_duration_int as stored; the seconds unit is "
+                 "taken from the match between the help center's timer options and the counts 86400, "
+                 "604800 and 7776000. Timer names that value as one of the durations WhatsApp's help "
+                 "center lists for its Default message timer, which applies to new individual chats: "
+                 "0 Off, 86400 24 hours, 604800 7 days, 7776000 90 days; any other whole number reads "
+                 "Unrecognised with the seconds shown, and a value that is not a whole number leaves "
+                 "Timer blank. "
+                 "Timestamp is disappearing_mode_timestamp read as milliseconds since 1970-01-01 UTC "
+                 "and is shown blank when 0. On every image listed in sample_data both keys held 0, "
+                 "so on each row Timestamp is blank, Duration (seconds) is 0 and Timer reads Off; "
+                 "the labels other than Off, the seconds unit of Duration, the millisecond unit of "
+                 "Timestamp and what the timestamp records "
+                 "were not exercised on them. That this file holds the Default message timer is read "
+                 "from the key names and the help center, not shown on a listed image. Other keys in "
+                 "the file and per-chat timer settings are not reported here. A file that cannot be "
+                 "parsed, or holds neither key, is logged and gives no row; a missing key is shown "
+                 "blank and does not show the timer was off.",
+        "paths": ('*/com.whatsapp/shared_prefs/disappearing_mode_prefs.xml',),
+        "output_types": "standard",
+        "artifact_icon": "clock",
+        "sample_data": {
+            "anne_a15": "Android 15 | com.whatsapp | 1 row (duration 0)",
+            "hc_pixel8pro_a16": "Android 16 | com.whatsapp | 1 row (duration 0)",
+            "hc_pixel8pro_a17": "Android 17 | com.whatsapp | 1 row (duration 0)",
+            "kevin_pocox7_a15": "Android 15 | com.whatsapp | 1 row (duration 0)",
+            "pixel7a_a14": "Android 14 | com.whatsapp | 1 row (duration 0)",
+            "russell_pixel6a_a13": "Android 13 | com.whatsapp | 1 row (duration 0)",
+            "samsungs20_a13": "Android 13 | com.whatsapp | 1 row (duration 0)",
+            "sharon_a14": "Android 14 | com.whatsapp | 1 row (duration 0)",
+        },
+    },
 }
 
 import datetime
 import os
 import sqlite3
+from xml.parsers.expat import ExpatError
 
 import xmltodict
 
@@ -894,4 +937,59 @@ def get_whatsapp_user_profile(context):
                               data['ph'], ', '.join(context.get_relative_path(p) for p in read)))
 
     data_headers = ('Version', 'Name', 'User Status', 'Country Code', 'Mobile Number', 'Source Files')
+    return data_headers, data_list, '\n'.join(sources)
+
+
+_DISAPPEARING_TIMER_LABELS = {0: 'Off', 86400: '24 hours', 604800: '7 days', 7776000: '90 days'}
+
+
+def _duration_text(seconds):
+    """The WhatsApp timer option a stored duration matches; any other value is left to the seconds column."""
+    if not isinstance(seconds, int):
+        return ''
+    return _DISAPPEARING_TIMER_LABELS.get(seconds, f'Unrecognised ({seconds} seconds)')
+
+
+@artifact_processor
+def get_whatsapp_disappearing_mode(context):
+    data_list = []
+    sources = []
+    for file_found in unique_files(context):
+        file_found = str(file_found)
+        if os.path.basename(file_found) != 'disappearing_mode_prefs.xml':
+            continue
+        sources.append(file_found)
+        try:
+            with open(file_found, encoding='utf-8') as fd:
+                xml_dict = xmltodict.parse(fd.read())
+        except (OSError, ValueError, ExpatError) as ex:
+            # One unreadable copy must not cost the rows of the other folders.
+            logfunc(f'WhatsApp disappearing mode: could not parse {context.get_relative_path(file_found)}: '
+                    f'{type(ex).__name__}')
+            continue
+        values = {}
+        prefs = xml_dict.get('map') if isinstance(xml_dict.get('map'), dict) else {}
+        for kind in ('int', 'long'):
+            entries = prefs.get(kind) or []
+            if isinstance(entries, dict):
+                entries = [entries]
+            for entry in entries:
+                if not isinstance(entry, dict):
+                    continue
+                try:
+                    values[entry.get('@name')] = int(entry.get('@value'))
+                except (TypeError, ValueError):
+                    values[entry.get('@name')] = entry.get('@value', '')
+        if 'disappearing_mode_duration_int' not in values and 'disappearing_mode_timestamp' not in values:
+            logfunc(f'WhatsApp disappearing mode: no timer keys in {context.get_relative_path(file_found)}')
+            continue
+        duration = values.get('disappearing_mode_duration_int', '')
+        data_list.append((
+            _ms_to_utc(values.get('disappearing_mode_timestamp')) or '',
+            duration,
+            _duration_text(duration),
+            context.get_relative_path(file_found),
+        ))
+
+    data_headers = (('Timestamp', 'datetime'), 'Duration (seconds)', 'Timer', 'Source File')
     return data_headers, data_list, '\n'.join(sources)
