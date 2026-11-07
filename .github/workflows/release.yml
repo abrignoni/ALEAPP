@@ -389,7 +389,7 @@ jobs:
           STEM="ALEAPP-$VERSION-${{ matrix.platform }}-$ARCH"
           case "$RUNNER_OS" in
             Windows)
-              powershell -NoProfile -Command "Compress-Archive -Path 'dist/aleapp.exe' -DestinationPath 'release-assets/$STEM-portable.zip'"
+              powershell -NoProfile -Command "Compress-Archive -Path 'dist/aleapp.exe','LICENSES' -DestinationPath 'release-assets/$STEM-portable.zip'"
               ;;
             macOS)
               mv "dist/ALEAPP-$VERSION.dmg" "release-assets/$STEM.dmg"
@@ -499,6 +499,13 @@ jobs:
         if: needs.linux-packages.result != 'success'
         shell: bash
         run: echo "::warning::the .deb and .rpm jobs ended '${{ needs.linux-packages.result }}'; this draft release has no native Linux packages, or not all of them"
+
+      # The packaged programs bundle LGPL and GPL libraries through pillow-heif, so each
+      # release carries their source at the versions LICENSES/sources.json names, each
+      # checked against its SHA-256 there (LICENSES/THIRD-PARTY-NOTICES.md).
+      - name: Attach the third-party source archives
+        shell: bash
+        run: python3 packaging/licenses.py fetch-sources release-assets
 
       # An examiner who downloads a forensic tool should be able to check that what they
       # got is what was built. The file is generated here, over the assets as they will be

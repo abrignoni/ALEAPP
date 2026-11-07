@@ -27,6 +27,7 @@ on:
     paths:
       - 'packaging/**'
       - 'requirements.txt'
+      - 'LICENSES/**'
       - 'requirements-msl-lock.txt'
       - '.github/workflows/test_builds.yml'
 
