@@ -1,0 +1,41 @@
+{
+  "metadata": {
+    "module_name": "telephonyTrafficStats",
+    "artifact_name": "Telephony Network Lookups (trafficstats)",
+    "function_name": "get_telephony_trafficstats",
+    "case_number": "casesynthetic_trafficstats_empty",
+    "number_of_columns": 14,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/telephonyTrafficStats/testdata.telephonyTrafficStats.get_telephony_trafficstats.casesynthetic_trafficstats_empty.zip",
+    "start_time": "2026-10-25T17:49:31.994864+00:00",
+    "end_time": "2026-10-25T17:49:32.010784+00:00",
+    "run_time_seconds": 0.00048422813415527344,
+    "last_commit": {
+      "hash": "1ff92b971cf3f355271aeafef96d6759926d33a5",
+      "author_name": "danjethh",
+      "author_email": "danjethh@gmail.com",
+      "date": "2026-10-25T12:34:43-04:00",
+      "message": "Add UICC log, SIM subscriptions and telephony network lookup artifacts"
+    }
+  },
+  "headers": [
+    "Timestamp",
+    "ID",
+    "Cell ID (as stored)",
+    "RSRP (as stored)",
+    "Technology (as stored)",
+    "Network Detail (as stored)",
+    "Band (as stored)",
+    "Transaction ID (as stored)",
+    "DNS Type (as stored)",
+    "Address Items",
+    "Response Time (as stored)",
+    "Response Code (as stored)",
+    "Consumed (as stored)",
+    "Android User"
+  ],
+  "data": []
+}

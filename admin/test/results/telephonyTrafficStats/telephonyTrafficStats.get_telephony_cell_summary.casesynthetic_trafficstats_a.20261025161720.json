@@ -1,0 +1,122 @@
+{
+  "metadata": {
+    "module_name": "telephonyTrafficStats",
+    "artifact_name": "Telephony Network Lookups, Cells Seen",
+    "function_name": "get_telephony_cell_summary",
+    "case_number": "casesynthetic_trafficstats_a",
+    "number_of_columns": 10,
+    "number_of_rows": 7,
+    "total_data_size_bytes": 351,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/telephonyTrafficStats/testdata.telephonyTrafficStats.get_telephony_cell_summary.casesynthetic_trafficstats_a.zip",
+    "start_time": "2026-10-25T16:17:20.657451+00:00",
+    "end_time": "2026-10-25T16:17:20.926602+00:00",
+    "run_time_seconds": 0.0044956207275390625,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-25T16:17:20.887819",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "First Seen",
+    "Last Seen",
+    "Cell ID (as stored)",
+    "Technology (as stored)",
+    "Network Detail (as stored)",
+    "Band (as stored)",
+    "Rows",
+    "RSRP Min (excluding -999)",
+    "RSRP Max (excluding -999)",
+    "Android User"
+  ],
+  "data": [
+    [
+      1788000052,
+      1788001507,
+      1100000002,
+      "NR",
+      "SA",
+      "n25",
+      9,
+      -119.0,
+      -80.0,
+      "0"
+    ],
+    [
+      1788000121,
+      1788001921,
+      22000003,
+      "LTE",
+      "LTE",
+      "66",
+      10,
+      -116.0,
+      -77.0,
+      "0"
+    ],
+    [
+      1788000161,
+      1788001293,
+      22000004,
+      "LTE",
+      "NSA",
+      "12",
+      7,
+      -116.0,
+      -84.0,
+      "0"
+    ],
+    [
+      1788000191,
+      1788001843,
+      1100000001,
+      "NR",
+      "SA",
+      "n41",
+      9,
+      -115.0,
+      -82.0,
+      "0"
+    ],
+    [
+      1788000415,
+      1788000415,
+      -2,
+      "-1",
+      "02:00:5e:00:53:32",
+      "-1",
+      1,
+      -91.0,
+      -91.0,
+      "0"
+    ],
+    [
+      1788001035,
+      1788001035,
+      -2,
+      "-1",
+      "02:00:5e:00:53:2b",
+      "-1",
+      1,
+      -100.0,
+      -100.0,
+      "0"
+    ],
+    [
+      1788001143,
+      1788001556,
+      -2,
+      "-2",
+      "-2",
+      "-1",
+      3,
+      -95.0,
+      -95.0,
+      "0"
+    ]
+  ]
+}
