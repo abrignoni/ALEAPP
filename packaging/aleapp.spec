@@ -50,7 +50,7 @@ datas = driver.bundle_datas() + [
 a = Analysis(
     [str(driver.ENTRYPOINT)],
     pathex=[str(driver.ROOT)],
-    binaries=[],
+    binaries=driver.licenses.heicreader_binaries(),
     datas=datas,
     hiddenimports=hiddenimports,
     hookspath=[],

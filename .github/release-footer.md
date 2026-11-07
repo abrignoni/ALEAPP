@@ -81,13 +81,11 @@ sudo dnf install ./ALEAPP-<version>-linux-x64.rpm
 Before a release is made, the `.deb` is installed and run on Ubuntu 22.04 and the `.rpm` on
 the current Fedora. Remove them with `sudo apt remove aleapp` or `sudo dnf remove aleapp`.
 
-## Third-party licences and source
+## Third-party licences
 
-ALEAPP's own code is MIT. The packaged programs also include libraries under the LGPL and
-the GPL (through pillow-heif, which reads HEIC images), so each one as a whole is shared
-under the GPL version 3. Their licence texts are in the `LICENSES` folder inside every
-download, and the `source-*.tar.gz` files in this release are the source of those libraries
-at the versions shipped. `LICENSES/THIRD-PARTY-NOTICES.md` in the repository has the details.
+ALEAPP's own code is MIT. To show HEIC images the packaged programs include heicreader, which is
+MIT and built from MIT and BSD-3-Clause code. The licence texts are in the `LICENSES` folder
+inside every download and in `LICENSES/THIRD-PARTY-NOTICES.md` in the repository.
 
 ## Code signing policy
 
