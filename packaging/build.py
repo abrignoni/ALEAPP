@@ -62,6 +62,7 @@ import sys
 import tempfile
 import urllib.request
 from pathlib import Path
+import importlib.util
 
 ROOT = Path(__file__).resolve().parent.parent
 PACKAGING = ROOT / "packaging"
@@ -79,6 +80,18 @@ DMG_SETTINGS = PACKAGING / "dmg_settings.py"
 DMG_BACKGROUND = PACKAGING / "dmg_background.png"
 DIST = ROOT / "dist"
 BUILD = ROOT / "build"
+
+
+def _load_licenses():
+    """packaging/licenses.py, loaded by path: the spec loads this file the same way, so
+    packaging/ is not on sys.path."""
+    spec = importlib.util.spec_from_file_location("leapp_licenses", PACKAGING / "licenses.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+licenses = _load_licenses()
 APP = "ALEAPP"
 EXE = "aleapp"
 # PyInstaller's default, named so the smoke test and the spec agree on where the
@@ -135,6 +148,7 @@ FIXED_HIDDEN_IMPORTS = (
     "uuid",
     "xmltodict",
     "zoneinfo",
+    "pillow_heif",
 )
 
 # appimagetool and the AppImage runtime it prepends, pinned to releases and checked
@@ -221,6 +235,13 @@ def bundled_root() -> Path:
     return DIST / APP / CONTENTS
 
 
+def bundled_data_dir() -> Path:
+    """Where a one-folder build keeps its data files: sys._MEIPASS at run time."""
+    if sys.platform == "darwin":
+        return macos_app() / "Contents" / "Resources"
+    return DIST / APP / CONTENTS
+
+
 def run(cmd: list[str], **kwargs) -> None:
     print("==>", " ".join(str(part) for part in cmd), flush=True)
     result = subprocess.run(cmd, check=False, **kwargs)
@@ -256,6 +277,8 @@ def bundle_datas() -> list[tuple[str, str]]:
     entries = []
     for tree in DATA_TREES:
         entries += _tree(ROOT / tree, tree)
+    # The third-party licence texts, in LICENSES/ inside every build (packaging/licenses.py).
+    entries += licenses.bundle_datas()
     return entries
 
 
@@ -331,6 +354,8 @@ def build_exe(onefile: bool, clean_first: bool) -> Path:
     refuse_collision(onefile)
     for cmd in install_commands(sys.executable):
         run(cmd)
+    # pillow-heif bundles LGPL and GPL libraries; LICENSES/ describes one version of it.
+    licenses.check()
     env = dict(os.environ, ALEAPP_ONEFILE="1" if onefile else "0")
     run([sys.executable, "-m", "PyInstaller", str(SPEC), "--noconfirm",
          "--distpath", str(DIST), "--workpath", str(BUILD)], env=env)
@@ -564,6 +589,8 @@ def linux_staging(folder: Path, root: Path) -> Path:
     doc = root / "usr" / "share" / "doc" / LINUX_PKG
     doc.mkdir(parents=True)
     shutil.copyfile(ROOT / "LICENSE", doc / "copyright")
+    # The third-party licence texts, where Debian and Fedora look for a package's licences.
+    shutil.copytree(licenses.LICENSES, doc / "LICENSES")
     return root
 
 
@@ -632,6 +659,7 @@ def rpm_spec(version: str, arch: str) -> str:
         f"/usr/share/applications/{LINUX_PKG}.desktop",
         f"/usr/share/pixmaps/{LINUX_PKG}.png",
         f"/usr/share/doc/{LINUX_PKG}/copyright",
+        f"/usr/share/doc/{LINUX_PKG}/LICENSES/",
         "",
     ))
 
@@ -860,6 +888,16 @@ def smoke(onefile: bool) -> int:
     detail = f" (missing: {', '.join(missing)})" if missing else ""
     check(bool(wanted) and not missing,
           f"all {len(wanted)} mister_skinnylegs plugins ship as files{detail}")
+
+    # The third-party licence texts ship in every build, LICENSES/ beside the bundle's data.
+    wanted = licenses.bundled_names()
+    if onefile:
+        held = _onefile_members(exe)
+        missing = [name for name in wanted if name not in held]
+    else:
+        missing = [name for name in wanted if not (bundled_data_dir() / name).is_file()]
+    detail = f" (missing: {', '.join(missing)})" if missing else ""
+    check(not missing, f"the third-party licences are inside the build{detail}")
 
     # The window is built with Tk, so on Linux it needs a display, which CI gets from
     # xvfb-run. Skipping it without one would pass a build nobody has tested.
