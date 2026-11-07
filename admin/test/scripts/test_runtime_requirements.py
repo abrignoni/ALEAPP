@@ -13,7 +13,7 @@ class TestRuntimeRequirements(unittest.TestCase):
 
     def test_requirements_pin_latest_pillow(self):
         requirement_lines = (REPO_ROOT / "requirements.txt").read_text(encoding="utf-8").splitlines()
-        # Pillow itself, not packages whose names start with it (pillow-heif).
+        # Pillow itself, not other packages whose names start with "pillow".
         pillow_lines = [line.strip() for line in requirement_lines
                         if re.match(r"pillow\s*(==|>=|<|$)", line.strip(), re.I)]
         self.assertEqual(pillow_lines, ["pillow==13.0.0"])

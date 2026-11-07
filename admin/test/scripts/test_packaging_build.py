@@ -134,7 +134,7 @@ class TestSpec(unittest.TestCase):
 
     def test_what_is_bundled_comes_from_the_driver(self):
         analysis = _run_spec('linux', onefile=False)[0]['Analysis'].kwargs
-        self.assertEqual(analysis['binaries'], [])
+        self.assertEqual(analysis['binaries'], self.driver.licenses.heicreader_binaries())
         for entry in self.driver.bundle_datas():
             self.assertIn(entry, analysis['datas'])
         hidden = analysis['hiddenimports']
