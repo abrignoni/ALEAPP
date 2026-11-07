@@ -13,6 +13,8 @@ not ship.
                                                 Linux dist/ALEAPP-<v>.AppImage
     python packaging/build.py installer --sign-tool NAME
                                                 Windows: Inno Setup signs the installer and the uninstaller
+    python packaging/build.py linux-packages    Linux: dist/aleapp_<v>_<arch>.deb and dist/aleapp-<v>-1.<arch>.rpm
+                                                around dist/ALEAPP/ (dpkg-deb, rpmbuild)
     python packaging/build.py all               both phases, unsigned; refuses --sign-tool and --onefile
     python packaging/build.py verify PATH ...   a signature is present and valid; --subject checks the signer
 
@@ -152,7 +154,7 @@ requests that touch packaging or the requirements.
 
 `release.yml` runs the same steps when a `v*` tag is pushed, refuses a tag that is not
 `v` + `leapp_version`, names the assets `ALEAPP-<version>-<platform>-<arch>` (portable.zip
-on Windows, .dmg on macOS, .AppImage on Linux; no Linux .tar.gz), gathers them
+on Windows, .dmg on macOS, .AppImage, .deb and .rpm on Linux; no Linux .tar.gz), gathers them
 in `release-assets/` (never `assets/`, which holds the window's images), adds
 `SHA256SUMS.txt`, and creates a **draft** release. `.github/release-footer.md` is appended
 to the notes. macOS is signed with a Developer ID, smoke-tested again as signed, notarised
@@ -191,3 +193,23 @@ These names replaced the per-program downloads (`aleappGUI-v*-Windows_x86_64.zip
 like). Tools that run `aleapp` from a release are told in the footer what changed for them:
 the Windows zip holds one file and there is no Windows installer, the macOS executable
 needs its folder, and `aleappGUI` is gone.
+
+## Native Linux packages
+
+`build.py linux-packages` wraps the folder build each Linux leg made, unchanged: it goes to
+`/usr/lib/aleapp/`, `/usr/bin/aleapp` is a relative symlink, plus the AppImage's `.desktop`
+entry, the icon and the licence. No Depends or Requires: the build carries its libraries,
+and its glibc floor is stated in the footer. A `-dev` version becomes `~dev` in both.
+
+rpmbuild strips ELF files, makes a debuginfo package and scans for automatic Requires and
+Provides by default. A CI build of 2026-11-07 (abrignoni/ALEAPP#1885) ran `brp-strip` over
+the bundle and listed bundled libraries such as `libX11.so.6` under Provides. The spec turns
+all of that off (`AutoReqProv: no`, `debug_package`, `__os_install_post`, `_build_id_links`),
+and `packaging/check_linux_packages.sh` fails a `.rpm` that lists any `.so` under Provides.
+
+In both workflows the packages are their own `linux-packages` job, fed the folder build as a
+tar (an artifact zip drops the executable bit and the symlinks). The check script installs
+the `.deb` on the Ubuntu 22.04 runner with apt and the `.rpm` with dnf in a `fedora:latest`
+container, requires `aleapp --version` to match, and removes both. In `release.yml` the
+release job needs `linux-packages` but runs when only `build` succeeded, with a warning, so a
+packaging failure leaves the two files out and never stops a release.
