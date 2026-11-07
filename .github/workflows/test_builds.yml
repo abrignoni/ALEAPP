@@ -124,6 +124,23 @@ jobs:
           python packaging/build.py installer
           ls -l dist/ALEAPP-*.AppImage
 
+      # The .deb and the .rpm are made in their own job from this folder build, as in
+      # release.yml. A tar keeps the executable bit and the symlinks, which an artifact
+      # zip drops.
+      - name: Linux, hand the folder build to the native packages job
+        if: runner.os == 'Linux'
+        shell: bash
+        run: tar -C dist -cf linux-folder.tar ALEAPP
+
+      - name: Linux, upload the folder build
+        if: runner.os == 'Linux'
+        uses: actions/upload-artifact@v7
+        with:
+          name: linux-folder-${{ matrix.name }}
+          path: linux-folder.tar
+          retention-days: 1
+          if-no-files-found: error
+
       # The one-folder build, with Windows' single-file executable and Linux's AppImage.
       - name: Upload the build (Windows, Linux)
         if: runner.os != 'macOS'
@@ -147,5 +164,61 @@ jobs:
         with:
           name: aleapp-${{ matrix.name }}-test
           path: dist/ALEAPP-*.dmg
+          retention-days: 14
+          if-no-files-found: error
+
+  # The steps release.yml's linux-packages job runs: build both packages from the folder
+  # build above, install each where its users would (the .deb on Ubuntu 22.04, the .rpm in
+  # a Fedora container), run it, and remove it.
+  linux-packages:
+    needs: build
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            name: ubuntu-22.04-x64
+          - os: ubuntu-22.04-arm
+            name: ubuntu-22.04-arm
+    name: linux packages (${{ matrix.name }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.14'
+
+      - name: Packaging tools
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q rpm desktop-file-utils
+
+      - name: Download the folder build
+        uses: actions/download-artifact@v8
+        with:
+          name: linux-folder-${{ matrix.name }}
+
+      - name: Build the .deb and the .rpm
+        shell: bash
+        run: |
+          mkdir -p dist
+          tar -C dist -xf linux-folder.tar
+          python packaging/build.py linux-packages
+          VERSION="$(python -c "import sys; sys.path.insert(0, 'packaging'); import build; print(build.read_version())")"
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+
+      - name: Install and run both packages
+        shell: bash
+        run: bash packaging/check_linux_packages.sh "$VERSION"
+
+      - name: Upload the packages
+        uses: actions/upload-artifact@v7
+        with:
+          name: aleapp-linux-packages-${{ matrix.name }}-test
+          path: |
+            dist/aleapp_*.deb
+            dist/aleapp-*.rpm
           retention-days: 14
           if-no-files-found: error

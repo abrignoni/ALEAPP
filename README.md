@@ -19,8 +19,18 @@ or [LEAPPs Releases](https://leapps.org/releases) for the whole LEAPP family.
 | macOS (Intel) | `ALEAPP-*-macos-x64.dmg` |
 | Linux (Intel/AMD) | `ALEAPP-*-linux-x64.AppImage` |
 | Linux (ARM) | `ALEAPP-*-linux-arm64.AppImage` |
+| Debian, Ubuntu (Intel/AMD, ARM) | `ALEAPP-*-linux-x64.deb`, `ALEAPP-*-linux-arm64.deb` |
+| Fedora and other RPM-based Linux (Intel/AMD, ARM) | `ALEAPP-*-linux-x64.rpm`, `ALEAPP-*-linux-arm64.rpm` |
 
 Each download holds one program, `aleapp`. `SHA256SUMS.txt` in each release lets you check a download.
+
+The `.deb` and `.rpm` hold the same build as the AppImage and put `aleapp` on the PATH,
+with a menu entry. Install one with your package manager, from the folder you downloaded it to:
+
+```
+sudo apt install ./ALEAPP-<version>-linux-x64.deb
+sudo dnf install ./ALEAPP-<version>-linux-x64.rpm
+```
 
 **GUI**: open ALEAPP the usual way: by double-clicking `aleapp.exe` from the zip on
 Windows, ALEAPP in Applications on macOS, or the AppImage on Linux. Started without
@@ -33,7 +43,7 @@ output folder must already exist. On Windows, use `aleapp.exe` from the zip.
 aleapp.exe -t zip -i C:\path\to\extraction.zip -o C:\path\to\output\
 ```
 
-On Linux, run the AppImage with the same arguments. On macOS it is inside the app; to
+On Linux, run the AppImage with the same arguments, or `aleapp` itself once the `.deb` or `.rpm` is installed. On macOS it is inside the app; to
 type just `aleapp` in a terminal, link it onto your PATH once:
 
 ```
@@ -74,6 +84,7 @@ same virtual environment. It installs the pinned build tools, then `requirements
 python packaging/build.py exe          # dist/ALEAPP/, and dist/ALEAPP.app on macOS
 python packaging/build.py smoke        # run what it built, without opening a window
 python packaging/build.py installer    # Windows: Inno Setup installer; macOS: .dmg; Linux: AppImage
+python packaging/build.py linux-packages  # Linux: .deb and .rpm around dist/ALEAPP/ (dpkg-deb, rpmbuild)
 ```
 
 `exe --onefile` makes `dist/aleapp` (`dist\aleapp.exe` on Windows) as a single file

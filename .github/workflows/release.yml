@@ -319,6 +319,23 @@ jobs:
         shell: bash
         run: python packaging/build.py installer
 
+      # The .deb and the .rpm are made in their own job from this same folder build, so a
+      # packaging failure cannot stop the AppImage or any other platform from shipping.
+      # A tar keeps the executable bit and the symlinks, which an artifact zip drops.
+      - name: Linux, hand the folder build to the native packages job
+        if: runner.os == 'Linux'
+        shell: bash
+        run: tar -C dist -cf linux-folder.tar ALEAPP
+
+      - name: Linux, upload the folder build
+        if: runner.os == 'Linux'
+        uses: actions/upload-artifact@v7
+        with:
+          name: linux-folder-${{ matrix.name }}
+          path: linux-folder.tar
+          retention-days: 1
+          if-no-files-found: error
+
       # Notarising the .dmg covers the signed .app inside it, and the stapled ticket lets
       # Gatekeeper accept it offline. A rejection prints Apple's log, which names the file.
       - name: macOS, sign, notarise and staple the disk image
@@ -355,7 +372,8 @@ jobs:
           security delete-keychain "$RUNNER_TEMP/signing.keychain-db" 2>/dev/null || true
           rm -f "$RUNNER_TEMP/notary.p8" "$RUNNER_TEMP/cert.p12"
 
-      # Release assets are single files: a disk image on macOS, the AppImage on Linux, and
+      # Release assets are single files: a disk image on macOS, the AppImage on Linux (the
+      # .deb and the .rpm are named in the linux-packages job), and
       # on Windows a portable zip holding the single-file aleapp.exe, under the name the
       # docs and the tools that run it use. The names carry the platform and the
       # architecture, because a reader cannot tell from "ALEAPP-2026.5.0.dmg" whether it
@@ -389,9 +407,80 @@ jobs:
           path: release-assets/*
           if-no-files-found: error
 
-  release:
+  # The .deb and the .rpm wrap the folder build each Linux leg made and smoke-tested, then
+  # are installed and run (the .deb on the runner, the .rpm in a Fedora container) before
+  # they become assets. A failure here leaves them out of the release; it does not stop it.
+  linux-packages:
     needs: build
-    if: github.ref_type == 'tag'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            name: ubuntu-22.04-x64
+          - os: ubuntu-22.04-arm
+            name: ubuntu-22.04-arm
+    name: linux packages (${{ matrix.name }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.14'
+
+      - name: Packaging tools
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q rpm desktop-file-utils
+
+      - name: Download the folder build
+        uses: actions/download-artifact@v8
+        with:
+          name: linux-folder-${{ matrix.name }}
+
+      - name: Build the .deb and the .rpm
+        shell: bash
+        run: |
+          mkdir -p dist
+          tar -C dist -xf linux-folder.tar
+          python packaging/build.py linux-packages
+          VERSION="$(python -c "import sys; sys.path.insert(0, 'packaging'); import build; print(build.read_version())")"
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+
+      - name: Install and run both packages
+        shell: bash
+        run: bash packaging/check_linux_packages.sh "$VERSION"
+
+      # Named as the AppImage beside them, so the file name says the platform and the
+      # architecture; the Architecture field inside stays the distribution's own.
+      - name: Name the assets
+        shell: bash
+        run: |
+          mkdir -p release-assets
+          ARCH="$(echo "$RUNNER_ARCH" | tr '[:upper:]' '[:lower:]')"
+          STEM="ALEAPP-$VERSION-linux-$ARCH"
+          mv dist/aleapp_*.deb "release-assets/$STEM.deb"
+          mv dist/aleapp-*.rpm "release-assets/$STEM.rpm"
+          ls -l release-assets/
+
+      - name: Upload the assets
+        uses: actions/upload-artifact@v7
+        with:
+          name: assets-linux-packages-${{ matrix.name }}
+          path: release-assets/*
+          if-no-files-found: error
+
+  # Waits for the native packages but needs only the build: without the packages the
+  # release is still made, and says so.
+  release:
+    needs: [build, linux-packages]
+    if: always() && github.ref_type == 'tag' && needs.build.result == 'success'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -405,6 +494,11 @@ jobs:
           path: release-assets
           pattern: assets-*
           merge-multiple: true
+
+      - name: Say when the native Linux packages are missing
+        if: needs.linux-packages.result != 'success'
+        shell: bash
+        run: echo "::warning::the .deb and .rpm jobs ended '${{ needs.linux-packages.result }}'; this draft release has no native Linux packages, or not all of them"
 
       # An examiner who downloads a forensic tool should be able to check that what they
       # got is what was built. The file is generated here, over the assets as they will be
