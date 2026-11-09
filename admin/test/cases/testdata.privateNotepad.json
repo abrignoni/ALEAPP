@@ -1,0 +1,78 @@
+{
+  "casejens": {
+    "description": "",
+    "maker": "",
+    "make_data": {
+      "input_data_path": "test_data.zip",
+      "os": "Windows-11-10.0.26300-SP0",
+      "timestamp": "2026-11-09T09:08:50.285582",
+      "last_commit": {
+        "hash": "18b94cc753a71604fd0df2a2ab6c8a3cd48c57cc",
+        "author_name": "Jens Gr\u00c3\u00b8nh\u00c3\u00b8j Stigaard",
+        "author_email": "jst046@politi.dk",
+        "date": "2026-11-09T09:05:43+01:00",
+        "message": "Private Notepad: drop zlib header and Claude from author field"
+      }
+    },
+    "artifacts": {
+      "private_notepad_notes": {
+        "search_patterns": [
+          "*/ru.alexandermalikov.protectednotes/databases/notes.db*",
+          "*/ru.alexandermalikov.protectednotes/shared_prefs/protected_notes_preferences.xml",
+          "*/ru.alexandermalikov.protectednotes/files/images/*",
+          "*/ru.alexandermalikov.protectednotes/files/recordings/*"
+        ],
+        "file_count": 10,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "private_notepad_attachments": {
+        "search_patterns": [
+          "*/ru.alexandermalikov.protectednotes/databases/notes.db*",
+          "*/ru.alexandermalikov.protectednotes/shared_prefs/protected_notes_preferences.xml",
+          "*/ru.alexandermalikov.protectednotes/files/images/*",
+          "*/ru.alexandermalikov.protectednotes/files/recordings/*"
+        ],
+        "file_count": 10,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "private_notepad_intruder_photos": {
+        "search_patterns": [
+          "*/ru.alexandermalikov.protectednotes/files/intruder_photos/*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "private_notepad_passwords": {
+        "search_patterns": [
+          "*/ru.alexandermalikov.protectednotes/databases/notes.db*",
+          "*/ru.alexandermalikov.protectednotes/shared_prefs/protected_notes_preferences.xml"
+        ],
+        "file_count": 4,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "private_notepad_settings": {
+        "search_patterns": [
+          "*/ru.alexandermalikov.protectednotes/databases/notes.db*",
+          "*/ru.alexandermalikov.protectednotes/shared_prefs/protected_notes_preferences.xml"
+        ],
+        "file_count": 4,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  }
+}
