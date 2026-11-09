@@ -307,7 +307,7 @@ class NotesTest(PrivateNotepadCase):
         rows, sources = self.run_artifact(parser.private_notepad_notes)
 
         self.assertEqual(rows, [(UTC_1, UTC_2, None, 'Indkøb æøå', 'Тайная заметка',
-                                 ['ref:img-1', 'ref:aud-1'], 7, f'{USER_0}/{DATABASE}')])
+                                 ['ref:img-1', 'ref:aud-1'], 7, '0', f'{USER_0}/{DATABASE}')])
         self.assertEqual(sources, [str(database), str(preferences)])
         self.assertEqual([m.data for m in self.media], [PNG, MP3])
 
@@ -315,7 +315,7 @@ class NotesTest(PrivateNotepadCase):
         self.extraction.database(dek=wrap(DATA_KEY), notes=[note(date=MS_1)],
                                  note_columns=('_id', 'date', 'title', 'note'))
         rows, _ = self.run_artifact(parser.private_notepad_notes)
-        self.assertEqual(rows, [(UTC_1, None, None, 'Title', 'Body', None, 1,
+        self.assertEqual(rows, [(UTC_1, None, None, 'Title', 'Body', None, 1, '0',
                                  f'{USER_0}/{DATABASE}')])
 
     def test_field_that_does_not_decrypt_is_reported_as_stored_beside_those_that_do(self):
@@ -366,7 +366,7 @@ class AttachmentsTest(PrivateNotepadCase):
         path = self.extraction.attachment('img-1')
         rows, sources = self.run_artifact(parser.private_notepad_attachments)
         self.assertEqual(rows, [(UTC_1, 'ref:img-1', 'Decrypted', 'Image', 'img-1', 3, 'Holiday',
-                                 f'{USER_0}/files/images/img-1', f'{USER_0}/{DATABASE}')])
+                                 f'{USER_0}/files/images/img-1', '0', f'{USER_0}/{DATABASE}')])
         self.assertIn(str(path), sources)
 
     def test_type_comes_from_the_decrypted_bytes_not_the_name(self):
@@ -401,7 +401,7 @@ class AttachmentsTest(PrivateNotepadCase):
         self.extraction.database(dek=wrap(DATA_KEY), notes=[note(5, 'Trip', date=MS_1,
                                                                  images=ids('gone'))])
         rows, _ = self.run_artifact(parser.private_notepad_attachments)
-        self.assertEqual(rows, [(UTC_1, None, 'File not found', 'Image', 'gone', 5, 'Trip', '',
+        self.assertEqual(rows, [(UTC_1, None, 'File not found', 'Image', 'gone', 5, 'Trip', '', '0',
                                  f'{USER_0}/{DATABASE}')])
 
     def test_only_a_file_of_exactly_the_id_is_matched(self):
@@ -428,11 +428,11 @@ class AttachmentsTest(PrivateNotepadCase):
         database = f'{USER_0}/{DATABASE}'
         self.assertEqual(rows[1:], [
             (None, 'ref:orphan', 'Not named by a note', 'Image', 'orphan', '', '',
-             f'{USER_0}/files/images/orphan', database),
+             f'{USER_0}/files/images/orphan', '0', database),
             (None, None, 'Not named by a note', 'Image', 'another-key', '', '',
-             f'{USER_0}/files/images/another-key', database),
+             f'{USER_0}/files/images/another-key', '0', database),
             (None, 'ref:recording', 'Not named by a note', 'Audio', 'recording', '', '',
-             f'{USER_0}/files/recordings/recording', database)])
+             f'{USER_0}/files/recordings/recording', '0', database)])
         self.assertEqual(len(sources), 5)
 
     def test_other_folders_are_not_attachments(self):
@@ -528,7 +528,7 @@ class PasswordsTest(PrivateNotepadCase):
         preferences = self.extraction.preferences(strings={'encryption_key': wrap(DATA_KEY)})
         rows, sources = self.run_artifact(parser.private_notepad_passwords)
         self.assertEqual(rows, [(UTC_1, 'Bank', 'jens@example.invalid', 'hunter2',
-                                 'https://example.invalid', 'Kommentar æøå', 4,
+                                 'https://example.invalid', 'Kommentar æøå', 4, '0',
                                  f'{USER_0}/{DATABASE}')])
         self.assertEqual(sources, [str(database), str(preferences)])
 
@@ -624,11 +624,19 @@ class SettingsTest(PrivateNotepadCase):
         self.assertEqual(self.row(), (None, None, None, None, None, None, '', '0', None, None,
                                       f'{USER_0}/{PREFERENCES}'))
 
-    def test_values_that_do_not_convert_are_kept_as_stored(self):
-        self.extraction.preferences(strings={'last_app_usage_time': 'soon', 'password_hash': 'a',
-                                             'fake_password_hash': 'b'})
+    def test_hashes_that_are_not_base64_are_kept_as_stored(self):
+        # 'AAEC!' would decode to 000102 if the stray character were dropped
+        self.extraction.preferences(strings={'password_hash': 'a', 'fake_password_hash': 'AAEC!'})
         row = self.row()
-        self.assertEqual((row[0], row[4], row[5]), ('soon', 'a', 'b'))
+        self.assertEqual((row[4], row[5]), ('a', 'AAEC!'))
+
+    def test_last_usage_that_is_no_time_is_blank_and_logged(self):
+        for stored in ('soon', '9' * 40):
+            with self.subTest(stored=stored):
+                self.setUp()
+                self.extraction.preferences(typed={'last_app_usage_time': ('long', stored)})
+                self.assertIsNone(self.row()[0])
+                self.assertIn(f"last_app_usage_time '{stored}'", self.logged())
 
     def test_database_without_preferences_gives_no_row(self):
         self.extraction.database(dek=wrap(DATA_KEY), notes=[note()])
@@ -649,8 +657,8 @@ class ContainersTest(PrivateNotepadCase):
                                     typed={'protection_type': ('int', '2')})
 
         rows, _ = self.run_artifact(parser.private_notepad_notes)
-        self.assertEqual([(r[3], r[7]) for r in rows], [('Owner', f'{USER_0}/{DATABASE}'),
-                                                        ('Second user', f'{USER_10}/{DATABASE}')])
+        self.assertEqual([(r[3], r[7], r[8]) for r in rows], [
+            ('Owner', '0', f'{USER_0}/{DATABASE}'), ('Second user', '10', f'{USER_10}/{DATABASE}')])
         rows, _ = self.run_artifact(parser.private_notepad_settings)
         self.assertEqual([(r[2], r[6], r[7]) for r in rows], [
             ('PIN (1)', 'service_data.dek', '0'),
@@ -662,7 +670,7 @@ class ContainersTest(PrivateNotepadCase):
             self.extraction.database(app=view, dek=wrap(DATA_KEY), notes=[note()])
             self.extraction.preferences(app=view)
         rows, _ = self.run_artifact(parser.private_notepad_notes)
-        self.assertEqual([r[7] for r in rows], [f'{USER_0}/{DATABASE}'])
+        self.assertEqual([r[8] for r in rows], [f'{USER_0}/{DATABASE}'])
         rows, _ = self.run_artifact(parser.private_notepad_settings)
         self.assertEqual([r[-1] for r in rows], [f'{USER_0}/{PREFERENCES}'])
 

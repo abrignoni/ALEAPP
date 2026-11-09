@@ -146,13 +146,16 @@ __artifacts_v2__ = {
         "notes": "One row per protected_notes_preferences.xml, or per notes.db whose service table "
                  "has a row when there is no readable preferences file. Values are the preference "
                  "keys last_app_usage_time, show_lock_screen, protection_type, password_hint and "
-                 "password_hash. A key the file does not hold is blank. What follows about the "
+                 "password_hash. A key the file does not hold is blank. A last_app_usage_time that "
+                 "is not a time in milliseconds is left blank and its stored value logged. "
+                 "What follows about the "
                  "app's behaviour was read from the code of the 6.9.1 APK and was not exercised "
                  "with a lock set. The app reads an absent protection_type as -1 and an absent "
                  "show_lock_screen as false. Protection Type labels (-1 Disabled, 0 Password, "
                  "1 PIN, 2 Pattern) are the strings the app's own analytics code gives those "
                  "values (class h7.b, method l); any other value reads Unknown. The stored number "
-                 "is kept in brackets. Password Hash (hex) is the base64 value decoded to hex. The "
+                 "is kept in brackets. Password Hash (hex) is the base64 value decoded to hex; a "
+                 "value that is not valid base64 is reported as stored. The "
                  "app's hash function (class h7.q, method b) stores base64 of the SHA-1 digest of "
                  "the text it is given and adds no salt of its own. Password Hash (hex) is blank "
                  "when the key is absent; the app also clears the key when called with no "
@@ -465,11 +468,12 @@ def protection_label(stored):
 
 
 def hash_as_hex(stored):
-    """A stored base64 hash as hex, or as stored when it is not base64."""
+    """A stored base64 hash as hex, or as stored when it is not strictly base64."""
     if not stored:
         return stored
     try:
-        return b64decode(stored.strip()).hex()
+        # validate=True refuses characters outside the alphabet instead of dropping them
+        return b64decode(stored.strip(), validate=True).hex()
     except Base64Error:
         return stored
 
@@ -573,11 +577,12 @@ def private_notepad_notes(context):
                 decrypt_field(container.key, note, 'body', f'note {pk}'),
                 media or None,
                 pk,
+                container.user,
                 source,
             ))
 
     data_headers = (('Date', 'datetime'), ('Created', 'datetime'), ('Delete Date', 'datetime'), 'Title',
-                    'Body', ('Attachments', 'media'), 'Note ID', 'Source File')
+                    'Body', ('Attachments', 'media'), 'Note ID', 'Android User', 'Source File')
     return data_headers, data_list, '\n'.join(sources)
 
 
@@ -607,7 +612,7 @@ def private_notepad_attachments(context):
             for attachment_type, attachment_id, path in attachments:
                 if path is None:
                     data_list.append((convert_ms_to_utc(date), None, 'File not found', attachment_type,
-                                      attachment_id, pk, title, '', source))
+                                      attachment_id, pk, title, '', container.user, source))
                     continue
                 named.add(path)
                 sources.append(path)
@@ -615,7 +620,7 @@ def private_notepad_attachments(context):
                 media = check_in_attachment(path, data) if data else None
                 status = 'Decrypted' if data else 'Not decrypted'
                 data_list.append((convert_ms_to_utc(date), media, status, attachment_type, attachment_id,
-                                  pk, title, context.get_relative_path(path), source))
+                                  pk, title, context.get_relative_path(path), container.user, source))
 
         for attachment_type, files in container.attachment_files.items():
             for name, path in files.items():
@@ -625,10 +630,11 @@ def private_notepad_attachments(context):
                 data = decrypt_attachment(container.key, path)
                 media = check_in_attachment(path, data) if data else None
                 data_list.append((None, media, 'Not named by a note', attachment_type, name, '', '',
-                                  context.get_relative_path(path), source))
+                                  context.get_relative_path(path), container.user, source))
 
     data_headers = (('Note Date', 'datetime'), ('Attachment', 'media'), 'Status', 'Attachment Type',
-                    'Attachment ID', 'Note ID', 'Note Title', 'Attachment File', 'Source File')
+                    'Attachment ID', 'Note ID', 'Note Title', 'Attachment File', 'Android User',
+                    'Source File')
     return data_headers, data_list, '\n'.join(sources)
 
 
@@ -693,10 +699,11 @@ def private_notepad_passwords(context):
             name, login, password, site, comment = (
                 decrypt_field(container.key, value, label, f'password {pk}')
                 for value, label in zip(fields, ('name', 'login', 'password', 'site address', 'comment')))
-            data_list.append((convert_ms_to_utc(date_created), name, login, password, site, comment, pk, source))
+            data_list.append((convert_ms_to_utc(date_created), name, login, password, site, comment, pk,
+                              container.user, source))
 
     data_headers = (('Created', 'datetime'), 'Name', 'Login', 'Password', 'Site Address', 'Comment',
-                    'Password ID', 'Source File')
+                    'Password ID', 'Android User', 'Source File')
     return data_headers, data_list, '\n'.join(sources)
 
 
@@ -718,11 +725,13 @@ def private_notepad_settings(context):
             if db is not None:
                 db.close()
 
-        last_usage = preference(prefs, 'last_app_usage_time')
+        stored_usage = preference(prefs, 'last_app_usage_time')
         try:
-            last_usage = convert_ms_to_utc(last_usage)
-        except ValueError:
-            pass
+            last_usage = convert_ms_to_utc(stored_usage)
+        except (ValueError, OverflowError):
+            logfunc(f'Private Notepad: last_app_usage_time {stored_usage!r} in {container.prefs_path} '
+                    f'is not a time in milliseconds; left blank')
+            last_usage = None
 
         if container.prefs_path:
             sources.append(container.prefs_path)
