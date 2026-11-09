@@ -1,0 +1,62 @@
+{
+  "metadata": {
+    "module_name": "knownDataLogger",
+    "artifact_name": "KDL Exports",
+    "function_name": "kdl_exports",
+    "case_number": "case1",
+    "number_of_columns": 10,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 474,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/knownDataLogger/testdata.knownDataLogger.kdl_exports.case1.zip",
+    "start_time": "2026-11-09T07:02:05.008692+00:00",
+    "end_time": "2026-11-09T07:02:05.075404+00:00",
+    "run_time_seconds": 0.0023076534271240234,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-11-09T02:02:05.063909",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Export Time",
+    "Folder",
+    "Scenario",
+    "Device Label",
+    "Rows",
+    "actions.jsonl Check",
+    "Hash Chain",
+    "Screenshots",
+    "KDL Version",
+    "Android User"
+  ],
+  "data": [
+    [
+      1794200842,
+      "data/media/0/Documents/kdl_clock_locate_01_phoneA_20261109T050722Z",
+      "clock_locate_01",
+      "phoneA",
+      41,
+      "matches the manifest",
+      "intact, 41 rows, last hash cedf8aa3bb07e2aa69fed58b291d795be6840fad11326f74e4b539b947d83e74",
+      "4 of 4 listed present",
+      "0.3.0",
+      "0"
+    ],
+    [
+      1794201870,
+      "data/media/0/Documents/kdl_clock_locate_01_phoneA_20261109T052430Z",
+      "clock_locate_01",
+      "phoneA",
+      68,
+      "matches the manifest",
+      "intact, 68 rows, last hash 00b5eddc9710c162da82574d98dc76a6e6d3e247ae0ff01aa2adc24e377108ad",
+      "6 of 6 listed present",
+      "0.3.0",
+      "0"
+    ]
+  ]
+}
