@@ -1,0 +1,138 @@
+{
+  "metadata": {
+    "module_name": "knownDataLogger",
+    "artifact_name": "KDL Setup",
+    "function_name": "kdl_setup",
+    "case_number": "case1",
+    "number_of_columns": 6,
+    "number_of_rows": 13,
+    "total_data_size_bytes": 1439,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/knownDataLogger/testdata.knownDataLogger.kdl_setup.case1.zip",
+    "start_time": "2026-11-09T07:02:04.770069+00:00",
+    "end_time": "2026-11-09T07:02:04.836577+00:00",
+    "run_time_seconds": 0.0044100284576416016,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-11-09T02:02:04.823280",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Time",
+    "Item",
+    "Name",
+    "Value",
+    "Detail",
+    "Android User"
+  ],
+  "data": [
+    [
+      "",
+      "Hash chain",
+      "kl.db",
+      "intact, 68 rows, last hash 00b5eddc9710c162da82574d98dc76a6e6d3e247ae0ff01aa2adc24e377108ad",
+      "",
+      "0"
+    ],
+    [
+      "",
+      "Hash chain",
+      "actions-live.jsonl",
+      "intact, 68 rows, last hash 00b5eddc9710c162da82574d98dc76a6e6d3e247ae0ff01aa2adc24e377108ad",
+      "",
+      "0"
+    ],
+    [
+      "",
+      "Log read from",
+      "kl.db",
+      "68 rows",
+      "",
+      "0"
+    ],
+    [
+      "",
+      "Setting",
+      "capture_session_active",
+      "0",
+      "",
+      "0"
+    ],
+    [
+      "",
+      "Setting",
+      "device_label",
+      "phoneA",
+      "",
+      "0"
+    ],
+    [
+      "",
+      "Setting",
+      "known_version:com.google.android.apps.messaging",
+      "messages.android_20240528_00_RC01_alldpi.arm64-v8a.phone",
+      "",
+      "0"
+    ],
+    [
+      "",
+      "Setting",
+      "known_version:com.google.android.deskclock",
+      "7.5 (563137996)",
+      "",
+      "0"
+    ],
+    [
+      "",
+      "Setting",
+      "onboarded",
+      "1",
+      "",
+      "0"
+    ],
+    [
+      "",
+      "Setting",
+      "scenario_id",
+      "clock_locate_01",
+      "",
+      "0"
+    ],
+    [
+      1794201672,
+      "Setting",
+      "session_start",
+      "{\"utc_ms\":1794201672452,\"tz_id\":\"America\\/New_York\",\"tz_offset_min\":-300,\"elapsed_ms\":1602009,\"boot_count\":1,\"network_time_ms\":1794201672277,\"gnss_time_ms\":null}",
+      "",
+      "0"
+    ],
+    [
+      1794200350,
+      "App to capture",
+      "com.google.android.deskclock",
+      "Clock 7.5 (563137996)",
+      "version code 76002074; first install 2026-11-09 04:54:38.977 UTC; last update 2026-11-09 04:54:38.977 UTC",
+      "0"
+    ],
+    [
+      1794201660,
+      "App to capture",
+      "com.google.android.apps.messaging",
+      "Messages messages.android_20240528_00_RC01_alldpi.arm64-v8a.phone",
+      "version code 235003840; first install 2026-11-09 04:54:38.852 UTC; last update 2026-11-09 04:54:38.852 UTC",
+      "0"
+    ],
+    [
+      1794200410,
+      "Device snapshot",
+      "profile 1",
+      "Google sdk_gphone64_arm64",
+      "Android 15; SDK 35; build 12960925; security patch 2024-09-05; fingerprint google/sdk_gphone64_arm64/emu64a:15/AE3A.240806.043/12960925:userdebug/dev-keys; kernel 6.6.30-android15-8-gdd9c02ccfe27-ab11987101-4k; baseband 1.0.0.0; boot count 1",
+      "0"
+    ]
+  ]
+}
