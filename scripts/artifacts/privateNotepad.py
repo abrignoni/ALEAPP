@@ -1,33 +1,10 @@
-# Script for parsing ru.alexandermalikov.protectednotes
-# version 1.0, distributed under the notice below.
-# This is an altered version: it was rewritten for ALEAPP and is not the original software.
-#
-# This software is provided 'as-is', without any express or implied
-# warranty. In no event will the authors be held liable for any damages
-# arising from the use of this software.
-#
-# Permission is granted to anyone to use this software for any purpose,
-# including commercial applications, and to alter it and redistribute it
-# freely, subject to the following restrictions:
-#
-#    1. The origin of this software must not be misrepresented; you must not
-#    claim that you wrote the original software. If you use this software
-#    in a product, an acknowledgment in the product documentation would be
-#    appreciated but is not required.
-#
-#    2. Altered source versions must be plainly marked as such, and must not be
-#    misrepresented as being the original software.
-#
-#    3. This notice may not be removed or altered from any source
-#    distribution.
-
 __artifacts_v2__ = {
     "private_notepad_notes": {
         "name": "Private Notepad - Notes",
         "description": "Notes from Private Notepad - safe notes "
                        "(ru.alexandermalikov.protectednotes), with the title, body and "
                        "attachments decrypted",
-        "author": "Jens Grønhøj Stigaard, Claude",
+        "author": "Jens Grønhøj Stigaard",
         "creation_date": "2026-11-03",
         "last_update_date": "2026-11-06",
         "requirements": "none",
@@ -69,7 +46,7 @@ __artifacts_v2__ = {
     "private_notepad_attachments": {
         "name": "Private Notepad - Note Attachments",
         "description": "Image and audio attachments of Private Notepad notes, decrypted",
-        "author": "Jens Grønhøj Stigaard, Claude",
+        "author": "Jens Grønhøj Stigaard",
         "creation_date": "2026-11-03",
         "last_update_date": "2026-11-06",
         "requirements": "none",
@@ -120,7 +97,7 @@ __artifacts_v2__ = {
     "private_notepad_intruder_photos": {
         "name": "Private Notepad - Intruder Photos",
         "description": "Photos in the intruder_photos folder of Private Notepad",
-        "author": "Jens Grønhøj Stigaard, Claude",
+        "author": "Jens Grønhøj Stigaard",
         "creation_date": "2026-11-06",
         "last_update_date": "2026-11-06",
         "requirements": "none",
@@ -146,7 +123,7 @@ __artifacts_v2__ = {
     "private_notepad_passwords": {
         "name": "Private Notepad - Passwords",
         "description": "Password entries stored in Private Notepad, decrypted",
-        "author": "Jens Grønhøj Stigaard, Claude",
+        "author": "Jens Grønhøj Stigaard",
         "creation_date": "2026-11-03",
         "last_update_date": "2026-11-06",
         "requirements": "none",
@@ -182,7 +159,7 @@ __artifacts_v2__ = {
     "private_notepad_settings": {
         "name": "Private Notepad - App Settings",
         "description": "Lock screen settings and last usage time recorded by Private Notepad",
-        "author": "Jens Grønhøj Stigaard, Claude",
+        "author": "Jens Grønhøj Stigaard",
         "creation_date": "2026-11-03",
         "last_update_date": "2026-11-06",
         "requirements": "none",
