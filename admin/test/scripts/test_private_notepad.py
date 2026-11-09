@@ -1,133 +1,40 @@
-"""Private Notepad on synthetic data built by running the app's encryption chain in reverse.
+"""Private Notepad on synthetic data (see private_notepad_fixture.py).
 
-Each test writes a real notes.db, preferences file and attachment files to a temporary folder:
-a data key is wrapped under the static key, and text and files are encrypted under the data key.
-The schema is the one the parser queries, not one observed on a device, so these tests prove
-the parser handles this scheme and say nothing about what an installed app writes.
-
-The fixture encrypts on its own and holds the static key as a known answer. Taking the key from
-get_static_key() would let a wrong key pass, since both sides would then agree on it.
+Each test writes a real notes.db, preferences file and attachment files to a temporary folder,
+built by running the app's encryption chain in reverse. The schema is the one the parser queries,
+not one observed on a device, so these tests prove the parser handles this scheme and say nothing
+about what an installed app writes.
 """
 import ast
 import base64
 import fnmatch
 import hashlib
-import json
 import pathlib
-import sqlite3
 import sys
 import tempfile
 import unittest
 from datetime import datetime, timezone
 from types import SimpleNamespace
 from unittest.mock import patch
-from xml.sax.saxutils import escape, quoteattr
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[3]))
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from Crypto.Cipher import AES  # pylint: disable=wrong-import-position
 from Crypto.Util.Padding import pad  # pylint: disable=wrong-import-position
+import private_notepad_fixture as fixture  # pylint: disable=wrong-import-position
+from private_notepad_fixture import (  # pylint: disable=wrong-import-position
+    DATA_KEY, DATABASE, INTRUDER, JPEG, MP3, MS_1, MS_2, OTHER_KEY, PACKAGE, PNG, PREFERENCES,
+    STATIC_KEY, USER_0, USER_10, encrypt, ids, note, text, wrap)
 from scripts.artifacts import privateNotepad as parser  # pylint: disable=wrong-import-position
 
 MODULE = 'scripts.artifacts.privateNotepad'
-PACKAGE = 'ru.alexandermalikov.protectednotes'
-USER_0 = f'data/data/{PACKAGE}'
-USER_10 = f'data/user/10/{PACKAGE}'
-DATABASE = 'databases/notes.db'
-PREFERENCES = 'shared_prefs/protected_notes_preferences.xml'
 
-STATIC_KEY = bytes.fromhex('e16245b64c30509a931ddf9d24db406b')
-DATA_KEY = bytes(range(16))
-OTHER_KEY = bytes(range(16, 32))
-ZERO_IV = b'\x00' * 16
-
-PNG = base64.b64decode(
-    'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=')
-MP3 = b'ID3\x03\x00\x00\x00\x00\x00\x00' + b'\x00' * 32
-JPEG = b'\xff\xd8\xff\xe0\x00\x10JFIF\x00' + b'\x00' * 32
-INTRUDER = f'{USER_0}/files/intruder_photos'
-
-NOTE_COLUMNS = ('_id', 'date', 'date_created', 'date_delete', 'title', 'note', 'images',
-                'audio_files')
-PASSWORD_COLUMNS = ('_id', 'date_created', 'password_name', 'password_login', 'password_password',
-                    'password_site_address', 'password_comment')
-
-MS_1 = 1700000000000
 UTC_1 = datetime(2023, 11, 14, 22, 13, 20, tzinfo=timezone.utc)
-MS_2 = 1600000000123
 UTC_2 = datetime(2020, 9, 13, 12, 26, 40, 123000, tzinfo=timezone.utc)
 
 
-def encrypt(key, plain):
-    return AES.new(key, AES.MODE_CBC, ZERO_IV).encrypt(pad(plain, AES.block_size))
-
-
-def wrap(data_key, under=STATIC_KEY):
-    """A data key as service_data.dek and the encryption_key preference hold it."""
-    return base64.b64encode(encrypt(under, data_key)).decode('ascii')
-
-
-def text(value, key=DATA_KEY):
-    """A text field as the notes and passwords tables hold it."""
-    return base64.b64encode(encrypt(key, value.encode('utf-8'))).decode('ascii')
-
-
-def note(pk=1, title='Title', body='Body', key=DATA_KEY, **columns):
-    return {'_id': pk, 'title': text(title, key), 'note': text(body, key), **columns}
-
-
-def ids(*values, name='image_ids'):
-    return json.dumps({name: list(values)})
-
-
-class Extraction:
-    """A temporary folder holding the app's files at the paths an extraction would."""
-
-    def __init__(self, root):
-        self.root = pathlib.Path(root)
-        self.files = []
-
-    def add(self, relative, data=b''):
-        path = self.root / relative
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_bytes(data)
-        self.files.append(path)
-        return path
-
-    def attachment(self, name, plain=PNG, key=DATA_KEY, app=USER_0, folder='images'):
-        return self.add(f'{app}/files/{folder}/{name}', encrypt(key, plain))
-
-    def database(self, app=USER_0, notes=(), passwords=None, dek=None, note_columns=NOTE_COLUMNS):
-        path = self.add(f'{app}/{DATABASE}')
-        db = sqlite3.connect(path)
-        try:
-            if note_columns:
-                db.execute(f'CREATE TABLE notes ({", ".join(note_columns)})')
-                self._insert(db, 'notes', note_columns, notes)
-            if passwords is not None:
-                db.execute(f'CREATE TABLE passwords ({", ".join(PASSWORD_COLUMNS)})')
-                self._insert(db, 'passwords', PASSWORD_COLUMNS, passwords)
-            if dek is not None:
-                db.execute('CREATE TABLE service_data (dek TEXT)')
-                db.execute('INSERT INTO service_data VALUES (?)', (dek,))
-            db.commit()
-        finally:
-            db.close()
-        return path
-
-    @staticmethod
-    def _insert(db, table, columns, rows):
-        marks = ', '.join('?' for _ in columns)
-        for row in rows:
-            db.execute(f'INSERT INTO {table} VALUES ({marks})', [row.get(c) for c in columns])
-
-    def preferences(self, app=USER_0, strings=None, typed=None, raw=None):
-        """strings become <string> elements; typed {name: (tag, value)} carry a value attribute."""
-        elements = [f'<string name={quoteattr(k)}>{escape(v)}</string>'
-                    for k, v in (strings or {}).items()]
-        elements += [f'<{tag} name={quoteattr(k)} value={quoteattr(v)} />'
-                     for k, (tag, v) in (typed or {}).items()]
-        body = raw if raw is not None else f'<map>{"".join(elements)}</map>'
-        return self.add(f'{app}/{PREFERENCES}', body.encode('utf-8'))
+class Extraction(fixture.Extraction):
+    """The fixture's extraction, seen through a stand-in for the seeker's context."""
 
     def context(self):
         return SimpleNamespace(
@@ -630,14 +537,7 @@ class SettingsTest(PrivateNotepadCase):
         self.assertEqual(sources, [str(path)])
 
     def service_database(self, *rows, **database):
-        path = self.extraction.database(**database)
-        db = sqlite3.connect(path)
-        db.execute('CREATE TABLE service (_id INTEGER PRIMARY KEY, protection_type INTEGER DEFAULT -1, '
-                   'password_hash TEXT)')
-        db.executemany('INSERT INTO service (protection_type, password_hash) VALUES (?, ?)', rows)
-        db.commit()
-        db.close()
-        return path
+        return self.extraction.database(service=rows, **database)
 
     def test_service_table_is_reported_beside_the_preferences_not_in_place_of_them(self):
         database = self.service_database((1, 'old-hash'), dek=wrap(DATA_KEY), notes=[note()])
