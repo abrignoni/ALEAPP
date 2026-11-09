@@ -85,6 +85,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | keepassDX |
 | kikMessenger |
 | kiwix |
+| knownDataLogger |
 | knuddels |
 | kwai |
 | linkbox |
