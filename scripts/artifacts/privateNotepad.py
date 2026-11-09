@@ -6,7 +6,7 @@ __artifacts_v2__ = {
                        "attachments decrypted",
         "author": "Jens Grønhøj Stigaard",
         "creation_date": "2026-11-03",
-        "last_update_date": "2026-11-06",
+        "last_update_date": "2026-11-09",
         "requirements": "none",
         "category": "Private Notepad",
         "notes": "One row per row of the notes table in "
@@ -22,18 +22,21 @@ __artifacts_v2__ = {
                  "The data key is AES-128-CBC encrypted (zero IV, PKCS7) under a key built into "
                  "the app, the XOR of two 16-byte constants, and is read from the dek column of "
                  "the service_data table in notes.db or from the encryption_key string in "
-                 "shared_prefs/protected_notes_preferences.xml. Where both exist, the one that "
-                 "decrypts the container's own notes or passwords is used; see Key Source in "
-                 "Private Notepad - App Settings. Text fields are base64 of AES-128-CBC "
-                 "ciphertext under the data key with a zero IV and PKCS7 padding. Each database "
-                 "is read with the preferences file from the same app data folder and Android "
-                 "user. A field that does not decrypt is reported as stored (base64) and the "
-                 "failure is logged. Only live rows are read: records in freed database pages "
-                 "are not recovered. Times are stored in milliseconds and reported in UTC; a "
-                 "time stored as NULL or 0 is blank. Run on one real extraction (app 6.9.1, "
-                 "versionCode 108, Android 14), whose database has no service_data table; the "
-                 "6.9.1 APK does not name that table either. service_data.dek and app version "
-                 "6.11.1 were exercised only on synthetic data.",
+                 "shared_prefs/protected_notes_preferences.xml. Each one that unwraps is tested on "
+                 "up to 8 stored text fields of the notes and passwords tables, and the one that "
+                 "decrypts the most is used, service_data.dek first on a tie. When none decrypts a "
+                 "tested field, the first is still used, so the rows are reported with their fields "
+                 "as stored rather than left out. Key Source in Private Notepad - App Settings "
+                 "names the key used and, when it did not decrypt every tested field, how many it "
+                 "did. Text fields are base64 of AES-128-CBC ciphertext under the data key with a "
+                 "zero IV and PKCS7 padding. Each database is read with the preferences file from "
+                 "the same app data folder and Android user. A field that does not decrypt is "
+                 "reported as stored (base64) and the failure is logged. Only live rows are read: "
+                 "records in freed database pages are not recovered. Times are stored in "
+                 "milliseconds and reported in UTC; a time stored as NULL or 0 is blank. Run on one "
+                 "real extraction (app 6.9.1, versionCode 108, Android 14), whose database has no "
+                 "service_data table; the 6.9.1 APK does not name that table either. "
+                 "service_data.dek and app version 6.11.1 were exercised only on synthetic data.",
         "paths": (
             "*/ru.alexandermalikov.protectednotes/databases/notes.db*",
             "*/ru.alexandermalikov.protectednotes/shared_prefs/protected_notes_preferences.xml",
@@ -48,7 +51,7 @@ __artifacts_v2__ = {
         "description": "Image and audio attachments of Private Notepad notes, decrypted",
         "author": "Jens Grønhøj Stigaard",
         "creation_date": "2026-11-03",
-        "last_update_date": "2026-11-06",
+        "last_update_date": "2026-11-09",
         "requirements": "none",
         "category": "Private Notepad",
         "notes": "One row per attachment id in the images and audio_files columns of the notes "
@@ -70,21 +73,9 @@ __artifacts_v2__ = {
                  "extraction had no rows here: its 13 notes named no attachment, files/images was "
                  "empty and files/recordings was absent, so attachment decryption was exercised "
                  "only on synthetic data. "
-                 "The data key is AES-128-CBC encrypted (zero IV, PKCS7) under a key built into "
-                 "the app, the XOR of two 16-byte constants, and is read from the dek column of "
-                 "the service_data table in notes.db or from the encryption_key string in "
-                 "shared_prefs/protected_notes_preferences.xml. Where both exist, the one that "
-                 "decrypts the container's own notes or passwords is used; see Key Source in "
-                 "Private Notepad - App Settings. Text fields are base64 of AES-128-CBC "
-                 "ciphertext under the data key with a zero IV and PKCS7 padding. Each database "
-                 "is read with the preferences file from the same app data folder and Android "
-                 "user. A field that does not decrypt is reported as stored (base64) and the "
-                 "failure is logged. Only live rows are read: records in freed database pages "
-                 "are not recovered. Times are stored in milliseconds and reported in UTC; a "
-                 "time stored as NULL or 0 is blank. Run on one real extraction (app 6.9.1, "
-                 "versionCode 108, Android 14), whose database has no service_data table; the "
-                 "6.9.1 APK does not name that table either. service_data.dek and app version "
-                 "6.11.1 were exercised only on synthetic data.",
+                 "Decrypted with the data key of the same app data folder; a field that does not "
+                 "decrypt is reported as stored (base64) and logged. How the key is found, how "
+                 "times are reported and what this was run on are in Private Notepad - Notes.",
         "paths": (
             "*/ru.alexandermalikov.protectednotes/databases/notes.db*",
             "*/ru.alexandermalikov.protectednotes/shared_prefs/protected_notes_preferences.xml",
@@ -125,7 +116,7 @@ __artifacts_v2__ = {
         "description": "Password entries stored in Private Notepad, decrypted",
         "author": "Jens Grønhøj Stigaard",
         "creation_date": "2026-11-03",
-        "last_update_date": "2026-11-06",
+        "last_update_date": "2026-11-09",
         "requirements": "none",
         "category": "Private Notepad",
         "notes": "One row per row of the passwords table in notes.db; a database without the "
@@ -134,21 +125,9 @@ __artifacts_v2__ = {
                  "password_site_address and password_comment columns decrypted. Created is "
                  "date_created as stored. The table held no rows in the real extraction, so "
                  "password decryption was exercised only on synthetic data. "
-                 "The data key is AES-128-CBC encrypted (zero IV, PKCS7) under a key built into "
-                 "the app, the XOR of two 16-byte constants, and is read from the dek column of "
-                 "the service_data table in notes.db or from the encryption_key string in "
-                 "shared_prefs/protected_notes_preferences.xml. Where both exist, the one that "
-                 "decrypts the container's own notes or passwords is used; see Key Source in "
-                 "Private Notepad - App Settings. Text fields are base64 of AES-128-CBC "
-                 "ciphertext under the data key with a zero IV and PKCS7 padding. Each database "
-                 "is read with the preferences file from the same app data folder and Android "
-                 "user. A field that does not decrypt is reported as stored (base64) and the "
-                 "failure is logged. Only live rows are read: records in freed database pages "
-                 "are not recovered. Times are stored in milliseconds and reported in UTC; a "
-                 "time stored as NULL or 0 is blank. Run on one real extraction (app 6.9.1, "
-                 "versionCode 108, Android 14), whose database has no service_data table; the "
-                 "6.9.1 APK does not name that table either. service_data.dek and app version "
-                 "6.11.1 were exercised only on synthetic data.",
+                 "Decrypted with the data key of the same app data folder; a field that does not "
+                 "decrypt is reported as stored (base64) and logged. How the key is found, how "
+                 "times are reported and what this was run on are in Private Notepad - Notes.",
         "paths": (
             "*/ru.alexandermalikov.protectednotes/databases/notes.db*",
             "*/ru.alexandermalikov.protectednotes/shared_prefs/protected_notes_preferences.xml",
@@ -161,7 +140,7 @@ __artifacts_v2__ = {
         "description": "Lock screen settings and last usage time recorded by Private Notepad",
         "author": "Jens Grønhøj Stigaard",
         "creation_date": "2026-11-03",
-        "last_update_date": "2026-11-06",
+        "last_update_date": "2026-11-09",
         "requirements": "none",
         "category": "Private Notepad",
         "notes": "One row per protected_notes_preferences.xml, or per notes.db whose service table "
@@ -195,24 +174,12 @@ __artifacts_v2__ = {
                  "password_hint, password_hash and fake_password_hash was present and the service "
                  "table had no rows, so Password Hint, Password Hash (hex), Fake Password Hash "
                  "(hex), Service Table Protection Type and Service Table Password Hash were blank "
-                 "on its 1 row. Key Source names where the data key "
-                 "that decrypts this app data folder's notes was read from, blank when no notes.db "
-                 "was found beside it. "
-                 "The data key is AES-128-CBC encrypted (zero IV, PKCS7) under a key built into "
-                 "the app, the XOR of two 16-byte constants, and is read from the dek column of "
-                 "the service_data table in notes.db or from the encryption_key string in "
-                 "shared_prefs/protected_notes_preferences.xml. Where both exist, the one that "
-                 "decrypts the container's own notes or passwords is used; see Key Source in "
-                 "Private Notepad - App Settings. Text fields are base64 of AES-128-CBC "
-                 "ciphertext under the data key with a zero IV and PKCS7 padding. Each database "
-                 "is read with the preferences file from the same app data folder and Android "
-                 "user. A field that does not decrypt is reported as stored (base64) and the "
-                 "failure is logged. Only live rows are read: records in freed database pages "
-                 "are not recovered. Times are stored in milliseconds and reported in UTC; a "
-                 "time stored as NULL or 0 is blank. Run on one real extraction (app 6.9.1, "
-                 "versionCode 108, Android 14), whose database has no service_data table; the "
-                 "6.9.1 APK does not name that table either. service_data.dek and app version "
-                 "6.11.1 were exercised only on synthetic data.",
+                 "on its 1 row. Key Source names where the data key used "
+                 "for this app data folder was read from and, when it did not decrypt every stored "
+                 "field it was tested on, how many it did. It is blank when no notes.db was found "
+                 "beside the preferences or no key unwrapped. "
+                 "How the data key is found, how times are reported and what this was run on are "
+                 "in Private Notepad - Notes.",
         "paths": (
             "*/ru.alexandermalikov.protectednotes/databases/notes.db*",
             "*/ru.alexandermalikov.protectednotes/shared_prefs/protected_notes_preferences.xml",
@@ -251,6 +218,9 @@ IV = b'\x00' * 16
 
 # Attachments larger than this are not read into memory
 MAX_ATTACHMENT_SIZE = 200 * 1024 * 1024  # 200 MB
+
+# Stored text fields a candidate data key is tested on
+MAX_KEY_SAMPLES = 8
 
 PROTECTION_TYPES = {'-1': 'Disabled', '0': 'Password', '1': 'PIN', '2': 'Pattern'}
 
@@ -379,20 +349,40 @@ def get_containers(context):
     return list(containers.values())
 
 
-def sample_ciphertext(db):
-    """A stored encrypted text field to test a candidate data key on, or None."""
+def sample_ciphertexts(db, limit=MAX_KEY_SAMPLES):
+    """Up to limit stored encrypted text fields to test a candidate data key on."""
+    samples = []
     for table, columns in (('notes', ('title', 'note')),
                            ('passwords', ('password_name', 'password_login', 'password_password'))):
         rows = select_columns(db, table, columns) or []
         for row in rows:
             for value in row:
                 if value:
-                    return value
-    return None
+                    samples.append(value)
+                    if len(samples) == limit:
+                        return samples
+    return samples
+
+
+def decrypted_count(key, samples):
+    """How many of the samples decrypt under key to UTF-8 text."""
+    count = 0
+    for sample in samples:
+        try:
+            aes_cbc_decrypt(key, b64decode(sample)).decode('utf-8')
+        except (Base64Error, ValueError):
+            continue
+        count += 1
+    return count
 
 
 def resolve_key(container, db, static_key):
-    """Set the container's data key from the first candidate that decrypts its data."""
+    """Set the container's data key from the candidate that decrypts the most of its stored fields.
+
+    A tie goes to the earlier candidate, service_data.dek before the preference. When keys unwrap
+    but none decrypts a tested field, the first is still used, so the rows are reported with their
+    fields as stored rather than not at all, and Key Source says how few decrypted.
+    """
     candidates = []
     if db is not None:
         try:
@@ -406,8 +396,8 @@ def resolve_key(container, db, static_key):
         if stored:
             candidates.append(('encryption_key preference', stored))
 
-    sample = sample_ciphertext(db) if db is not None else None
-    unwrapped = []
+    samples = sample_ciphertexts(db) if db is not None else []
+    best = None  # (decrypted count, source, key)
     for source, stored in candidates:
         try:
             key = aes_cbc_decrypt(static_key, b64decode(str(stored).strip()))
@@ -417,21 +407,20 @@ def resolve_key(container, db, static_key):
         if len(key) not in (16, 24, 32):
             logfunc(f'Private Notepad: data key from {source} is {len(key)} bytes; not used')
             continue
-        unwrapped.append((source, key))
-        if sample is None:
-            continue
-        try:
-            aes_cbc_decrypt(key, b64decode(sample)).decode('utf-8')
-        except (Base64Error, ValueError):
-            logfunc(f'Private Notepad: data key from {source} does not decrypt the notes; trying the next')
-            continue
-        container.key_source, container.key = source, key
+        count = decrypted_count(key, samples)
+        if count < len(samples):
+            logfunc(f'Private Notepad: data key from {source} decrypts {count} of {len(samples)} '
+                    f'tested fields')
+        if best is None or count > best[0]:
+            best = (count, source, key)
+    if best is None:
+        logfunc(f'Private Notepad: no data key found for {container.db_path or container.prefs_path}')
         return
-    if unwrapped and sample is None:
-        # Nothing stored to test against; the first key that unwraps is all there is
-        container.key_source, container.key = unwrapped[0]
-        return
-    logfunc(f'Private Notepad: no data key found for {container.db_path or container.prefs_path}')
+    count, source, key = best
+    if count < len(samples):
+        # Not confirmed on every tested field; say so where the examiner reads the source
+        source = f'{source} (decrypted {count} of {len(samples)} tested fields)'
+    container.key_source, container.key = source, key
 
 
 def open_container(container, static_key):

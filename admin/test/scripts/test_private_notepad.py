@@ -10,6 +10,7 @@ import base64
 import fnmatch
 import hashlib
 import pathlib
+import sqlite3
 import sys
 import tempfile
 import unittest
@@ -203,7 +204,7 @@ class KeyResolutionTest(PrivateNotepadCase):
         self.extraction.preferences(strings={'encryption_key': wrap(DATA_KEY)})
         self.assertEqual(self.key_source(), 'encryption_key preference')
         self.assertEqual(self.titles(), ['Title'])
-        self.assertIn('service_data.dek does not decrypt the notes', self.logged())
+        self.assertIn('data key from service_data.dek decrypts 0 of 2 tested fields', self.logged())
 
     def test_preference_key_that_does_not_decrypt_the_notes_is_not_used(self):
         self.extraction.database(dek=wrap(DATA_KEY), notes=[note()])
@@ -253,8 +254,39 @@ class KeyResolutionTest(PrivateNotepadCase):
                 self.extraction.database(dek=wrap(key), notes=[note(key=key)])
                 self.assertEqual(self.titles(), ['Title'])
 
-    def test_no_usable_key_gives_no_rows_and_says_so(self):
-        self.extraction.database(dek=wrap(OTHER_KEY), notes=[note()])
+    def test_damaged_first_field_does_not_reject_the_right_key(self):
+        damaged = base64.b64encode(b'not ciphertext!!').decode('ascii')
+        self.extraction.database(dek=wrap(DATA_KEY), notes=[
+            {'_id': 1, 'title': damaged, 'note': text('Body')}, note(2)])
+        self.extraction.preferences()
+        self.assertEqual(self.titles(), [damaged, 'Title'])
+        self.assertEqual(self.key_source(), 'service_data.dek (decrypted 3 of 4 tested fields)')
+
+    def test_key_that_decrypts_more_fields_wins_over_the_earlier_one(self):
+        self.extraction.database(dek=wrap(OTHER_KEY), notes=[
+            note(1, key=OTHER_KEY), note(2), note(3)])
+        self.extraction.preferences(strings={'encryption_key': wrap(DATA_KEY)})
+        self.assertEqual(self.key_source(), 'encryption_key preference (decrypted 4 of 6 tested fields)')
+        self.assertEqual(self.titles()[1:], ['Title', 'Title'])
+
+    def test_keys_are_tested_on_at_most_the_sample_limit(self):
+        self.extraction.database(notes=[note(pk) for pk in range(1, 11)])
+        db = sqlite3.connect(self.extraction.root / USER_0 / DATABASE)
+        self.addCleanup(db.close)
+        self.assertEqual(len(parser.sample_ciphertexts(db)), parser.MAX_KEY_SAMPLES)
+
+    def test_key_that_decrypts_no_tested_field_is_used_and_fields_are_reported_as_stored(self):
+        self.extraction.database(dek=wrap(OTHER_KEY), notes=[note(images=ids('img'))])
+        self.extraction.preferences()
+        self.extraction.attachment('img')
+        self.assertEqual(self.titles(), [text('Title')])
+        self.assertEqual(self.key_source(), 'service_data.dek (decrypted 0 of 2 tested fields)')
+        rows, _ = self.run_artifact(parser.private_notepad_attachments)
+        self.assertEqual([r[2] for r in rows], ['Not decrypted'])
+
+    def test_no_key_that_unwraps_gives_no_rows_and_says_so(self):
+        self.extraction.database(dek='not base64!!', notes=[note()], passwords=[
+            {'_id': 1, 'password_name': text('Bank')}])
         self.extraction.preferences()
         self.assertEqual(self.titles(), [])
         self.assertEqual(self.run_artifact(parser.private_notepad_passwords)[0], [])

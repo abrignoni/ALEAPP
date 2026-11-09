@@ -29,6 +29,7 @@ from Crypto.Util.Padding import pad
 PACKAGE = 'ru.alexandermalikov.protectednotes'
 USER_0 = f'data/data/{PACKAGE}'
 USER_10 = f'data/user/10/{PACKAGE}'
+USER_11 = f'data/user/11/{PACKAGE}'
 DATABASE = 'databases/notes.db'
 PREFERENCES = 'shared_prefs/protected_notes_preferences.xml'
 INTRUDER = f'{USER_0}/files/intruder_photos'
@@ -173,6 +174,13 @@ def build_dump(root):
                                                  date=MS_2)])
     extraction.preferences(app=USER_10, strings={'encryption_key': wrap(OTHER_KEY)},
                            typed={'protection_type': ('int', '2')})
+
+    # Android user 11: the first stored field is damaged, so the key is confirmed on the others
+    damaged = base64.b64encode(b'not ciphertext!!').decode('ascii')
+    extraction.database(app=USER_11, dek=wrap(DATA_KEY), notes=[
+        {'_id': 1, 'date': MS_1, 'title': damaged, 'note': text('Body after a damaged title')},
+        note(2, 'Intact note', 'Body', date=MS_2)])
+    extraction.preferences(app=USER_11)
     return extraction
 
 
@@ -181,7 +189,7 @@ def main(output):
     if root.exists() and any(root.iterdir()):
         sys.exit(f'{root} is not empty; give an empty or new folder')
     extraction = build_dump(root)
-    print(f'Data key, user 0: {DATA_KEY.hex()}')
+    print(f'Data key, users 0 and 11: {DATA_KEY.hex()}')
     print(f'Data key, user 10: {OTHER_KEY.hex()}')
     for path in extraction.files:
         print(path.relative_to(root).as_posix(), path.stat().st_size)
