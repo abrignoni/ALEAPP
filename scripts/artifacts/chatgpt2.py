@@ -144,9 +144,9 @@ def get_chatpgt2(context):
                 role = role or ''
                 text = '' if chunkdata is None else str(chunkdata)
 
-                data_list.append((mdt, cdt, conversation_title, role, text, references, message_id, conversation_id))
-                data_list_html.append((mdt, cdt, conversation_title, role, safe_source(chunkdata), references, message_id, conversation_id))
+                data_list.append((cdt, mdt, role, conversation_title, text, references, message_id, conversation_id))
+                data_list_html.append((cdt, mdt, role, conversation_title, safe_source(chunkdata), references, message_id, conversation_id))
 
-    data_headers = (('Modified Time', 'datetime'), ('Creation Time', 'datetime'), 'Conversation Title', 'Role', 'Content', 'Content References','Message ID','Conversation ID')
+    data_headers = (('Creation Time', 'datetime'), ('Modified Time', 'datetime'), 'Role', 'Conversation Title', 'Content', 'Content References', 'Message ID', 'Conversation ID')
 
     return data_headers, (data_list, data_list_html), source
