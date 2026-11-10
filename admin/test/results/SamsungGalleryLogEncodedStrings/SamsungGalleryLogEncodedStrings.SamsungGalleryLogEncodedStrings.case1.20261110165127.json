@@ -1,0 +1,70 @@
+{
+  "metadata": {
+    "module_name": "SamsungGalleryLogEncodedStrings",
+    "artifact_name": "Samsung Gallery encoded strings (EncV1/V2/V3)",
+    "function_name": "SamsungGalleryLogEncodedStrings",
+    "case_number": "case1",
+    "number_of_columns": 8,
+    "number_of_rows": 4,
+    "total_data_size_bytes": 4422,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\SamsungGalleryLogEncodedStrings\\testdata.SamsungGalleryLogEncodedStrings.SamsungGalleryLogEncodedStrings.case1.zip",
+    "start_time": "2026-11-10T16:51:27.782006+00:00",
+    "end_time": "2026-11-10T16:51:27.841933+00:00",
+    "run_time_seconds": 0.006070852279663086,
+    "last_commit": null
+  },
+  "headers": [
+    "Table",
+    "Column",
+    "Row ID",
+    "Decoded (in context)",
+    "Raw (obfuscated)",
+    "Scheme/key",
+    "Note",
+    "Android User"
+  ],
+  "data": [
+    [
+      "log",
+      "__log",
+      147,
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ /storage/emulated/0/DCIM/Camera/20250712_110700.jpg(1000000299)  ] PP[ /storage/emulated/0/DCIM/Camera  ] LD[1] CD[0] MF[0] AB[0] ABS[0] TU[1] ABR[false] RSS[0] [location://quickView/fileList/viewer?disableRealRatio=true&ids=-1739773001%2C-1309874308%2C-2131734286%2C1321611798%2C-461199447&quick_view=true&disableTimeline=true&position=0&fromNow=true]",
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ #G$E55UCw4JwLy7Sl4cVqzHQvBYdY+Xtm4J3SYc9NXW2sb2iOhdzndqU0DLMjT5SI+1gmO2HO2YWAJm0lcW1iu0vl  ] PP[ #G$E4wjU4ZrXkSXA/M7APDmdvHCBUqUq3c0Utl/cs79viRQ==  ] LD[1] CD[0] MF[0] AB[0] ABS[0] TU[1] ABR[false] RSS[0] [location://quickView/fileList/viewer?disableRealRatio=true&ids=-1739773001%2C-1309874308%2C-2131734286%2C1321611798%2C-461199447&quick_view=true&disableTimeline=true&position=0&fromNow=true]",
+      "V3[5], V3[4]",
+      "",
+      ""
+    ],
+    [
+      "log",
+      "__log",
+      177,
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ /storage/emulated/0/DCIM/Camera/20250830_181335.jpg(1000000396)  ] PP[ /storage/emulated/0/DCIM/Camera  ] LD[1] CD[0] MF[0] AB[0] ABS[0] TU[1] ABR[false] RSS[0] [location://quickView/fileList/viewer?disableRealRatio=true&ids=-1739773001%2C-1309874308%2C-2131734286%2C1321611798%2C-461199447&quick_view=true&disableTimeline=true&position=0&fromNow=true]",
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ #G$E6pF+oRhpIubl93+l96474pheGz9cT7FA8yGWsQofXGILltJZP+tZiPDvUw4ZUEJjaW3rymjuOQHKCp44r2j0H  ] PP[ #G$E55UCw4JwLy7Sl4cVqzHQvBYdY+Xtm4J3SYc9NXW2sbw==  ] LD[1] CD[0] MF[0] AB[0] ABS[0] TU[1] ABR[false] RSS[0] [location://quickView/fileList/viewer?disableRealRatio=true&ids=-1739773001%2C-1309874308%2C-2131734286%2C1321611798%2C-461199447&quick_view=true&disableTimeline=true&position=0&fromNow=true]",
+      "V3[6], V3[5]",
+      "",
+      ""
+    ],
+    [
+      "log",
+      "__log",
+      206,
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[0] CI[0] LCI[0] LV[1] CV[0] LCV[0] Success LI[0] CI[0] LCI[0] LV[1] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ /storage/emulated/0/DCIM/Camera/20250914_201712.mp4(1000000448)  ] PP[ /storage/emulated/0/DCIM/Camera  ] LD[1] CD[0] MF[0] AB[0] ABS[0] TU[1] ABR[false] RSS[0] [location://quickView/fileList/viewer?disableRealRatio=true&ids=-1739773001%2C-1309874308%2C-2131734286%2C1321611798%2C-461199447&quick_view=true&disableTimeline=true&position=0&fromNow=true]",
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[0] CI[0] LCI[0] LV[1] CV[0] LCV[0] Success LI[0] CI[0] LCI[0] LV[1] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ #G$E6pF+oRhpIubl93+l96474pheGz9cT7FA8yGWsQofXGILltJZP+tdgODvXy4ZQEp/aXHqhmjuOQHKCp44s1zMH  ] PP[ #G$E55UCw4JwLy7Sl4cVqzHQvBYdY+Xtm4J3SYc9NXW2sbw==  ] LD[1] CD[0] MF[0] AB[0] ABS[0] TU[1] ABR[false] RSS[0] [location://quickView/fileList/viewer?disableRealRatio=true&ids=-1739773001%2C-1309874308%2C-2131734286%2C1321611798%2C-461199447&quick_view=true&disableTimeline=true&position=0&fromNow=true]",
+      "V3[6], V3[5]",
+      "",
+      ""
+    ],
+    [
+      "log",
+      "__log",
+      277,
+      "[MOVE_TO_TRASH_MULTIPLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ /storage/emulated/0/DCIM/Camera/20250927_171418_010.jpg(1000000571)  ] PP[ /storage/emulated/0/DCIM/Camera  ] LD[1] CD[0] MF[0] AB[0] ABS[0] ABPP[0] TU[0] ABR[false] RVT[0] RSS[0] [location://quickView/fileList/viewerviewer?disableRealRatio=true&ids=-1739773001%2C-2131734286%2C512633743&quick_view=true&disableTimeline=true&position=0&fromNow=true]",
+      "[MOVE_TO_TRASH_MULTIPLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ #G$E4wjU4ZrXkSXA/M7APDmdvHCBUqUq3c0Utl/cs79viRYCfZQ5RSSPB29JFo2klGgDWTTCwpmd/Ce5t5srhwTpj4QUqIw==  ] PP[ #G$E55UCw4JwLy7Sl4cVqzHQvBYdY+Xtm4J3SYc9NXW2sbw==  ] LD[1] CD[0] MF[0] AB[0] ABS[0] ABPP[0] TU[0] ABR[false] RVT[0] RSS[0] [location://quickView/fileList/viewerviewer?disableRealRatio=true&ids=-1739773001%2C-2131734286%2C512633743&quick_view=true&disableTimeline=true&position=0&fromNow=true]",
+      "V3[4], V3[5]",
+      "",
+      ""
+    ]
+  ]
+}
