@@ -27,7 +27,6 @@ def bureauDesPlaintes(context):
         SELECT
             p.id,
             p.plainte,
-            datetime(p.horodatage / 1000, 'unixepoch', 'localtime') AS date_readable,
             o.outil,
             p.horodatage
         FROM Plaintes p
@@ -37,17 +36,17 @@ def bureauDesPlaintes(context):
     data_list = []
     db_records = get_sqlite_db_records(source_path, query)
     for record in db_records:
-        
-        # Convert the timestamp to UTC and append the record to the data list
-        record[4] = convert_unix_ts_to_utc(record[4])
-        
-        data_list.append((record[2], record[0], record[1], record[3], record[4]))
+        data_list.append((
+            record[0],
+            record[1],
+            record[2],
+            convert_unix_ts_to_utc(record[3]),
+        ))
 
     data_headers = (
-        
         "Complaint ID",
         "Complaint",
         "Tool",
-        ("date_lisible","datetime")
+        ("Date", "datetime"),
     )
     return data_headers, data_list, source_path
