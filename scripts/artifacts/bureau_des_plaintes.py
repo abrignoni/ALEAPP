@@ -27,7 +27,7 @@ def bureauDesPlaintes(context):
         SELECT
             p.id,
             p.plainte,
-            datetime(p.horodatage / 1000, 'unixepoch', 'localtime') AS date_lisible,
+            datetime(p.horodatage / 1000, 'unixepoch', 'localtime') AS date_readable,
             o.outil,
             p.horodatage
         FROM Plaintes p
@@ -44,10 +44,10 @@ def bureauDesPlaintes(context):
         data_list.append((record[2], record[0], record[1], record[3], record[4]))
 
     data_headers = (
-        ("Date", "datetime"),
+        
         "Complaint ID",
         "Complaint",
         "Tool",
-        "date_lisible"
+        ("date_lisible","datetime")
     )
     return data_headers, data_list, source_path
