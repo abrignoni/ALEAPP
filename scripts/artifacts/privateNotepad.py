@@ -400,7 +400,8 @@ def resolve_key(container, db, static_key):
             candidates.append(('encryption_key preference', stored))
 
     samples = sample_ciphertexts(db) if db is not None else []
-    best = None  # (decrypted count, source, key)
+    best = None  # (source, key)
+    best_count = -1
     for source, stored in candidates:
         try:
             key = aes_cbc_decrypt(static_key, b64decode(str(stored).strip()))
@@ -414,12 +415,13 @@ def resolve_key(container, db, static_key):
         if count < len(samples):
             logfunc(f'Private Notepad: data key from {source} decrypts {count} of {len(samples)} '
                     f'tested fields')
-        if best is None or count > best[0]:
-            best = (count, source, key)
+        if count > best_count:
+            best, best_count = (source, key), count
     if best is None:
         logfunc(f'Private Notepad: no data key found for {container.db_path or container.prefs_path}')
         return
-    count, source, key = best
+    source, key = best
+    count = best_count
     if count < len(samples):
         # Not confirmed on every tested field; say so where the examiner reads the source
         source = f'{source} (decrypted {count} of {len(samples)} tested fields)'
