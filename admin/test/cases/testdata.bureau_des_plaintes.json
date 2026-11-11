@@ -1,0 +1,30 @@
+{
+  "case1901": {
+    "description": "Bureau des Plaintes data from the Pixel 9a G4 extraction.",
+    "maker": "Thibault-Cart",
+    "make_data": {
+      "input_data_path": "Pixel 9a_G4.zip",
+      "os": "Windows-11-10.0.26300-SP0",
+      "timestamp": "2026-11-11T13:32:20.646206",
+      "last_commit": {
+        "hash": "a76d7b9ae21e4fef530e1dd4eb521ea07d2e0e2b",
+        "author_name": "Thibault",
+        "author_email": "thibaultcart@hotmail.com",
+        "date": "2026-11-11T13:25:11+01:00",
+        "message": "ca marche"
+      }
+    },
+    "artifacts": {
+      "bureauDesPlaintes": {
+        "search_patterns": [
+          "*/com.scotch.singlecelie30ansdage/databases/BureauDesPlaintes*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  }
+}

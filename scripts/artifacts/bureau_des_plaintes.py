@@ -1,6 +1,6 @@
 __artifacts_v2__ = {
     "bureauDesPlaintes": {
-        "name": "Bureau des Plaintes",
+        "name": "Bureau_des_Plaintes",
         "description": "Parses complaint records stored in the Bureau des Plaintes database.",
         "author": "@ThibaultCart",
         "creation_date": "2026-11-12",
