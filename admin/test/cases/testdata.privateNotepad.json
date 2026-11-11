@@ -9,7 +9,7 @@
       "last_commit": {
         "hash": "18b94cc753a71604fd0df2a2ab6c8a3cd48c57cc",
         "author_name": "Jens Gr\u00c3\u00b8nh\u00c3\u00b8j Stigaard",
-        "author_email": "jst046@politi.dk",
+        "author_email": "jens@stigaard.info",
         "date": "2026-11-09T09:05:43+01:00",
         "message": "Private Notepad: drop zlib header and Claude from author field"
       }

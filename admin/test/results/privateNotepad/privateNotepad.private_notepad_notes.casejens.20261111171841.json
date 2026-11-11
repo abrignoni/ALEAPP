@@ -1,0 +1,95 @@
+{
+  "metadata": {
+    "module_name": "privateNotepad",
+    "artifact_name": "Private Notepad - Notes",
+    "function_name": "private_notepad_notes",
+    "case_number": "casejens",
+    "number_of_columns": 9,
+    "number_of_rows": 5,
+    "total_data_size_bytes": 748,
+    "media_checkins": 0,
+    "media_embedded_checkins": 2,
+    "input_zip_path": "admin\\test\\cases\\data\\privateNotepad\\testdata.privateNotepad.private_notepad_notes.casejens.zip",
+    "start_time": "2026-11-11T17:18:41.436261+00:00",
+    "end_time": "2026-11-11T17:18:41.544565+00:00",
+    "run_time_seconds": 0.0060062408447265625,
+    "last_commit": {
+      "hash": "1c6b34a4401753a340e12a7b33d1a484bf570f2d",
+      "author_name": "Jens Gr\u00c3\u00b8nh\u00c3\u00b8j Stigaard",
+      "author_email": "jens@stigaard.info",
+      "date": "2026-11-09T09:23:46+01:00",
+      "message": "Private Notepad: add Android User column, stricter hash and time parsing"
+    }
+  },
+  "headers": [
+    "Date",
+    "Created",
+    "Delete Date",
+    "Title",
+    "Body",
+    "Attachments",
+    "Note ID",
+    "Android User",
+    "Source File"
+  ],
+  "data": [
+    [
+      1700000000,
+      1600000000,
+      null,
+      "Indk\u00f8b \u00e6\u00f8\u00e5",
+      "M\u00e6lk, br\u00f8d, \u00e6g",
+      [
+        "mock_embedded_html_path",
+        "mock_embedded_html_path"
+      ],
+      1,
+      "0",
+      "test_data\\data\\data\\ru.alexandermalikov.protectednotes\\databases\\notes.db"
+    ],
+    [
+      1600000000,
+      1600000000,
+      null,
+      "\u0422\u0430\u0439\u043d\u0430\u044f \u0437\u0430\u043c\u0435\u0442\u043a\u0430",
+      "\u65e5\u672c\u8a9e\u306e\u30e1\u30e2",
+      null,
+      2,
+      "0",
+      "test_data\\data\\data\\ru.alexandermalikov.protectednotes\\databases\\notes.db"
+    ],
+    [
+      1700000000,
+      null,
+      null,
+      "Readable title",
+      "s8YJn63Cn1O53rYBnm9QcbY6j+G3qejSv9Q2iBF32Bs=",
+      null,
+      3,
+      "0",
+      "test_data\\data\\data\\ru.alexandermalikov.protectednotes\\databases\\notes.db"
+    ],
+    [
+      1700000000,
+      null,
+      null,
+      "Missing attachment",
+      "Names a file that is not there",
+      null,
+      4,
+      "0",
+      "test_data\\data\\data\\ru.alexandermalikov.protectednotes\\databases\\notes.db"
+    ],
+    [
+      1600000000,
+      null,
+      null,
+      "Second user",
+      "Body",
+      null,
+      1,
+      "10",
+      "test_data\\data\\user\\10\\ru.alexandermalikov.protectednotes\\databases\\notes.db"
+    ]
+  ]
+}

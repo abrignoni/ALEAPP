@@ -1,0 +1,65 @@
+{
+  "metadata": {
+    "module_name": "privateNotepad",
+    "artifact_name": "Private Notepad - App Settings",
+    "function_name": "private_notepad_settings",
+    "case_number": "casejens",
+    "number_of_columns": 11,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 442,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\privateNotepad\\testdata.privateNotepad.private_notepad_settings.casejens.zip",
+    "start_time": "2026-11-11T17:18:41.236438+00:00",
+    "end_time": "2026-11-11T17:18:41.334333+00:00",
+    "run_time_seconds": 0.00800180435180664,
+    "last_commit": {
+      "hash": "1c6b34a4401753a340e12a7b33d1a484bf570f2d",
+      "author_name": "Jens Gr\u00c3\u00b8nh\u00c3\u00b8j Stigaard",
+      "author_email": "jens@stigaard.info",
+      "date": "2026-11-09T09:23:46+01:00",
+      "message": "Private Notepad: add Android User column, stricter hash and time parsing"
+    }
+  },
+  "headers": [
+    "Last App Usage Time",
+    "Show Lock Screen (as stored)",
+    "Protection Type",
+    "Password Hint",
+    "Password Hash (hex)",
+    "Fake Password Hash (hex)",
+    "Key Source",
+    "Android User",
+    "Service Table Protection Type",
+    "Service Table Password Hash (as stored)",
+    "Source File"
+  ],
+  "data": [
+    [
+      1700000000,
+      "true",
+      "PIN (1)",
+      "first pet",
+      "000102030405060708090a0b0c0d0e0f10111213",
+      "1415161718191a1b1c1d1e1f2021222324252627",
+      "service_data.dek (decrypted 7 of 8 tested fields)",
+      "0",
+      "PIN (1)",
+      "old-hash",
+      "test_data\\data\\data\\ru.alexandermalikov.protectednotes\\shared_prefs\\protected_notes_preferences.xml"
+    ],
+    [
+      null,
+      null,
+      "Pattern (2)",
+      null,
+      null,
+      null,
+      "encryption_key preference",
+      "10",
+      null,
+      null,
+      "test_data\\data\\user\\10\\ru.alexandermalikov.protectednotes\\shared_prefs\\protected_notes_preferences.xml"
+    ]
+  ]
+}

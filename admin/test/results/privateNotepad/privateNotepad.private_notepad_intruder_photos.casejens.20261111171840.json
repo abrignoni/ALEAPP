@@ -1,0 +1,42 @@
+{
+  "metadata": {
+    "module_name": "privateNotepad",
+    "artifact_name": "Private Notepad - Intruder Photos",
+    "function_name": "private_notepad_intruder_photos",
+    "case_number": "casejens",
+    "number_of_columns": 6,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 158,
+    "media_checkins": 1,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\privateNotepad\\testdata.privateNotepad.private_notepad_intruder_photos.casejens.zip",
+    "start_time": "2026-11-11T17:18:40.961561+00:00",
+    "end_time": "2026-11-11T17:18:41.071561+00:00",
+    "run_time_seconds": 0.0009946823120117188,
+    "last_commit": {
+      "hash": "1c6b34a4401753a340e12a7b33d1a484bf570f2d",
+      "author_name": "Jens Gr\u00c3\u00b8nh\u00c3\u00b8j Stigaard",
+      "author_email": "jens@stigaard.info",
+      "date": "2026-11-09T09:23:46+01:00",
+      "message": "Private Notepad: add Android User column, stricter hash and time parsing"
+    }
+  },
+  "headers": [
+    "File Name Time",
+    "Photo",
+    "Status",
+    "File Name",
+    "Android User",
+    "Source File"
+  ],
+  "data": [
+    [
+      1700000000,
+      "mock_hash_for_1700000000000.jpg",
+      "Image",
+      "1700000000000.jpg",
+      "0",
+      "test_data\\data\\data\\ru.alexandermalikov.protectednotes\\files\\intruder_photos\\1700000000000.jpg"
+    ]
+  ]
+}
