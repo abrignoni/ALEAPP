@@ -9,6 +9,7 @@ import os
 import sys
 import tempfile
 import unittest
+import zipfile
 from pathlib import Path
 
 sys.path.append(os.path.dirname(__file__))
@@ -100,6 +101,85 @@ class BaselineJsonRoundTripTests(unittest.TestCase):
         fresh = [[ts, b"bytes-value"]]
         recorded = json.loads(json.dumps({"data": fresh}, default=str))["data"]
         self.assertEqual(rtc.normalize_rows(fresh), rtc.normalize_rows(recorded))
+
+
+class FreeUserIdTests(unittest.TestCase):
+    def test_default_is_user_10(self):
+        names = ["Dump/data/data/pkg/databases/a.db", "Dump/data/user/0/pkg/databases/a.db"]
+        self.assertEqual(rtc.free_user_id(names), 10)
+
+    def test_skips_users_the_fixture_already_holds(self):
+        names = ["test_data/data/data/pkg/databases/a.db",
+                 "test_data/data/user/10/pkg/databases/a.db",
+                 "test_data/data/user_de/11/pkg/files/b",
+                 "test_data/data/media/12/Download/c.jpg"]
+        self.assertEqual(rtc.free_user_id(names), 13)
+
+    def test_user_id_must_be_a_whole_path_segment(self):
+        names = ["Dump/data/user/100/pkg/a.db", "Dump/notdata/user/10/pkg/a.db"]
+        self.assertEqual(rtc.free_user_id(names), 10)
+
+
+class TenantVariantTests(unittest.TestCase):
+    def variant_names(self, names):
+        with tempfile.TemporaryDirectory() as tmp:
+            src, dst = Path(tmp) / "src.zip", Path(tmp) / "dst.zip"
+            with zipfile.ZipFile(src, "w") as zout:
+                for name in names:
+                    zout.writestr(name, name)
+            added, mapping = rtc.make_tenant_variant(src, dst)
+            with zipfile.ZipFile(dst) as zin:
+                return added, mapping, zin.namelist(), {n: zin.read(n) for n in zin.namelist()}
+
+    def test_single_user_fixture_gets_user_10(self):
+        added, mapping, names, _ = self.variant_names(
+            ["Dump/data/data/pkg/databases/a.db"])
+        self.assertEqual(mapping, {0: 10})
+        self.assertEqual(added, 1)
+        self.assertIn("Dump/data/user/10/pkg/databases/a.db", names)
+
+    def test_every_app_data_user_is_copied_to_a_free_id(self):
+        src = ["t/data/data/pkg/databases/a.db",
+               "t/data/user/0/pkg/databases/a.db",
+               "t/data/user/10/pkg/databases/a.db",
+               "t/data/media/11/Pictures/p.jpg",
+               "t/system/build.prop"]
+        added, mapping, names, payloads = self.variant_names(src)
+        # 11 is taken under data/media, so the new ids are 12 and 13.
+        self.assertEqual(mapping, {0: 12, 10: 13})
+        self.assertEqual(added, 2)
+        self.assertEqual(len(names), len(set(names)))
+        self.assertEqual(payloads["t/data/user/12/pkg/databases/a.db"],
+                         b"t/data/data/pkg/databases/a.db")
+        self.assertEqual(payloads["t/data/user/13/pkg/databases/a.db"],
+                         b"t/data/user/10/pkg/databases/a.db")
+        self.assertEqual(sorted(set(names) - set(src)),
+                         ["t/data/user/12/pkg/databases/a.db",
+                          "t/data/user/13/pkg/databases/a.db"])
+
+    def test_variant_members_keep_their_bytes(self):
+        # A member written to the variant must not move the source's offsets.
+        with tempfile.TemporaryDirectory() as tmp:
+            src, dst = Path(tmp) / "src.zip", Path(tmp) / "dst.zip"
+            members = {"Dump/system/big.bin": bytes(range(256)) * 400,
+                       "Dump/data/data/pkg/a.db": b"A" * 5000,
+                       "Dump/data/user/10/pkg/a.db": b"B" * 7000}
+            with zipfile.ZipFile(src, "w", zipfile.ZIP_STORED) as zout:
+                zout.comment = b"x" * 64
+                for name, payload in members.items():
+                    zout.writestr(name, payload)
+            # Leading bytes shift every source offset away from the variant's.
+            src.write_bytes(b"\0" * 4096 + src.read_bytes())
+            rtc.make_tenant_variant(src, dst)
+            with zipfile.ZipFile(dst) as zin:
+                self.assertIsNone(zin.testzip())
+                self.assertEqual(zin.read("Dump/data/user/11/pkg/a.db"), b"A" * 5000)
+                self.assertEqual(zin.read("Dump/data/user/12/pkg/a.db"), b"B" * 7000)
+
+    def test_nothing_per_user_adds_nothing(self):
+        added, mapping, names, _ = self.variant_names(["Dump/system/build.prop"])
+        self.assertEqual((added, mapping), (0, {}))
+        self.assertEqual(names, ["Dump/system/build.prop"])
 
 
 class CommitInfoTests(unittest.TestCase):
