@@ -141,7 +141,7 @@ __artifacts_v2__ = {
         "description": "Rows of the locked_app table in GalleryVault's AppLock.db: package name and whether disguise_lock is set. No tested image held a row.",
         "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-06",
-        "last_update_date": "2026-08-06",
+        "last_update_date": "2026-11-12",
         "requirements": "none",
         "category": "GalleryVault",
         "notes": "",
@@ -158,7 +158,7 @@ __artifacts_v2__ = {
         "description": "Rows of the break_in_report_in_applock table in GalleryVault's AppLock.db: timestamp, package name, the wrongly_attempt_code and is_new values and the photo path, as stored. What wrongly_attempt_code and is_new mean is not established. No tested image held a row.",
         "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-06",
-        "last_update_date": "2026-10-09",
+        "last_update_date": "2026-11-12",
         "requirements": "none",
         "category": "GalleryVault",
         "notes": "",
@@ -270,10 +270,19 @@ __artifacts_v2__ = {
                        "file paths and the time each action was carried out",
         "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-06",
-        "last_update_date": "2026-08-06",
+        "last_update_date": "2026-11-12",
         "requirements": "none",
         "category": "GalleryVault",
-        "notes": "This log lives on external storage outside the app sandbox.",
+        "notes": "The log read is the file_action_log.db in the backup folder of the vault on "
+                 "shared storage (data/media/<user>). Every one found is read, so a second "
+                 "Android user's log is reported too; this was tested on synthetic databases and "
+                 "on a two-user input built from pixel7a_a14, and no tested extraction held the "
+                 "vault under more than one user. Rows do not say which user's log they came "
+                 "from; the source path lists every log read. The file_action_log.db.tmp beside "
+                 "the log is not read. On hc_pixel8pro_a17 it is byte-identical to the log. On "
+                 "pixel7a_a14 it holds 4 rows where the log holds 2, as does a "
+                 "file_action_log.db in the app's own databases folder, which this artifact does "
+                 "not read either; those 2 extra rows are not reported.",
         "paths": ('*/.galleryvault_*/backup/file_action_log.db*',),
         "output_types": "standard",
         "artifact_icon": "list",
@@ -373,12 +382,12 @@ __artifacts_v2__ = {
     "galleryvault_cloud_account": {
         "name": "GalleryVault - Cloud Account",
         "description": (
-            "Cloud backup account bound to the vault, including provider, account "
+            "Cloud backup accounts recorded in cloud_cache.db, including provider, account "
             "identifier, drive status and monthly usage/quota."
         ),
         "author": "@segumarc, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-11-12",
         "requirements": "none",
         "category": "GalleryVault",
         "notes": (
@@ -386,7 +395,9 @@ __artifacts_v2__ = {
             "as stored. What the identifier refers to was not sourced. Whether any vault "
             "content reached a cloud account is "
             "not established by this table (see the Cloud Files and Cloud Upload Tasks "
-            "artifacts)."
+            "artifacts). Each cloud_cache.db contributes its own block of rows, and the rows "
+            "do not say which database they came from; the source path lists every database "
+            "read."
         ),
         "paths": ('*/com.thinkyeah.galleryvault/databases/cloud_cache.db*',),
         "output_types": "standard",
@@ -397,7 +408,7 @@ __artifacts_v2__ = {
         "description": "Rows of the cloud_folders table in the app's local cloud_cache.db, with parent paths resolved from the same table",
         "author": "@segumarc, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-11-12",
         "requirements": "none",
         "category": "GalleryVault",
         "notes": "Rows are the cloud_folders table entries with parent paths resolved from the "
@@ -414,7 +425,7 @@ __artifacts_v2__ = {
         ),
         "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-10-07",
+        "last_update_date": "2026-11-12",
         "requirements": "none",
         "category": "GalleryVault",
         "notes": (
@@ -423,8 +434,10 @@ __artifacts_v2__ = {
             " stored) directly retains the selected is_complete value and native SQLite storage type;"
             " NULL, zero and empty values are not converted to Yes/No. No enum, completion, upload, "
             "user-action or ownership meaning is established. All other fields, existing has_thumb "
-            "truthiness rendering, dates, first cloud_cache.db selection, folder resolution and "
-            "source indication are unchanged. Positive real cloud_files coverage has not been "
+            "truthiness rendering and dates are unchanged. Each cloud_cache.db is read once per app data "
+            "directory (duplicate storage views of one file are collapsed), and folder paths are"
+            " resolved within the database each row came from. Reading more than one database "
+            "was tested on synthetic databases only. Positive real cloud_files coverage has not been "
             "established. Original contribution credited to @segumarc. Other original module research"
             " credits are preserved."
         ),
@@ -440,7 +453,7 @@ __artifacts_v2__ = {
         ),
         "author": "@segumarc, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-11-12",
         "requirements": "none",
         "category": "GalleryVault",
         "notes": (
@@ -448,7 +461,7 @@ __artifacts_v2__ = {
             "app; the meaning of the codes was not sourced. Entry Type shows 1 as 'Folder' "
             "and 2 as 'File'; no tested image is recorded for that reading. Entry Name is "
             "blank when no row in "
-            "cloud_files or cloud_folders carries the entry's uuid."
+            "cloud_files or cloud_folders in the same cloud_cache.db carries the entry's uuid."
         ),
         "paths": ('*/com.thinkyeah.galleryvault/databases/cloud_cache.db*',),
         "output_types": "standard",
@@ -462,7 +475,7 @@ __artifacts_v2__ = {
         ),
         "author": "@segumarc, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-11-12",
         "requirements": "none",
         "category": "GalleryVault",
         "notes": (
@@ -492,7 +505,6 @@ from scripts.ilapfuncs import (
     check_in_embedded_media,
     check_in_media,
     convert_unix_ts_to_utc,
-    get_file_path,
     get_sqlite_db_records,
     null_absent_columns,
     logfunc,
@@ -682,8 +694,16 @@ def _query_all_drift(db_paths, table, query):
         yield from _query(db_path, table, null_absent_columns(db_path, query))
 
 
-def _cloud_cache_db(files_found):
-    return get_file_path(files_found, 'cloud_cache.db')
+def _dbs_named(files_found, name):
+    """Every database with this exact basename, sorted. The basename is compared in
+    full, so a -wal/-shm/-journal sidecar or the file_action_log.db.tmp found beside
+    file_action_log.db is never read as the database."""
+    return sorted(str(f) for f in files_found
+                  if str(f).replace('\\', '/').rsplit('/', 1)[-1] == name)
+
+
+def _cloud_cache_dbs(context):
+    return _dbs_named(unique_files(context), 'cloud_cache.db')
 
 
 def _cloud_folder_map(db_path):
@@ -991,27 +1011,27 @@ def galleryvault_break_in_images(context):
 
 @artifact_processor
 def galleryvault_locked_apps(context):
-    source_path = get_file_path(context.get_files_found(), 'AppLock.db')
+    source_paths = _dbs_named(unique_files(context), 'AppLock.db')
     data_list = []
-    for record in _query(
-            source_path, 'locked_app',
+    for record in _query_all(
+            source_paths, 'locked_app',
             'SELECT package_name, disguise_lock, _id FROM locked_app ORDER BY package_name'):
         data_list.append((record[0], 'Yes' if record[1] else 'No', record[2]))
 
     data_headers = ('Package Name', 'Disguise Lock', 'Row ID')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
 def galleryvault_applock_break_ins(context):
-    source_path = get_file_path(context.get_files_found(), 'AppLock.db')
+    source_paths = _dbs_named(unique_files(context), 'AppLock.db')
     data_list = []
     query = '''
     SELECT timestamp, package_name, wrongly_attempt_code, locking_type, photo_path, is_new
     FROM break_in_report_in_applock
     ORDER BY timestamp
     '''
-    for record in _query(source_path, 'break_in_report_in_applock', query):
+    for record in _query_all(source_paths, 'break_in_report_in_applock', query):
         media = check_in_media(record[4], os.path.basename(record[4] or '')) or '' if record[4] else ''
         data_list.append((_ms(record[0]), record[1], record[2], record[3], media, record[4], record[5]))
 
@@ -1024,7 +1044,7 @@ def galleryvault_applock_break_ins(context):
         'Photo Path',
         'is_new (as stored)',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
@@ -1164,10 +1184,11 @@ def galleryvault_recycle_bin(context):
 
 @artifact_processor
 def galleryvault_file_actions(context):
-    source_path = get_file_path(context.get_files_found(), 'file_action_log.db')
+    # One log per Android user's shared storage (data/media/<n>), so read them all.
+    source_paths = _dbs_named(unique_files(context), 'file_action_log.db')
     data_list = []
     query = 'SELECT action_time, action_type, file_path, _id FROM file_action ORDER BY action_time'
-    for record in _query(source_path, 'file_action', query):
+    for record in _query_all(source_paths, 'file_action', query):
         data_list.append((_ms(record[0]), record[1], record[2], record[3]))
 
     data_headers = (
@@ -1176,7 +1197,7 @@ def galleryvault_file_actions(context):
         'Vault File Path',
         'Row ID',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
@@ -1369,8 +1390,7 @@ def galleryvault_account_profile(context):
 
 @artifact_processor
 def galleryvault_cloud_account(context):
-    files_found = context.get_files_found()
-    source_path = _cloud_cache_db(files_found)
+    source_paths = _cloud_cache_dbs(context)
     data_list = []
 
     drive_query = '''
@@ -1379,47 +1399,45 @@ def galleryvault_cloud_account(context):
     FROM user_cloud_drive
     ORDER BY is_primary DESC
     '''
-    for record in _query(source_path, 'user_cloud_drive', drive_query):
-        data_list.extend([
-            ('Cloud Provider', record[0]),
-            ('Cloud Account', record[1]),
-            ('Drive ID', record[2]),
-            ('Drive Identity ID', record[3]),
-            ('Primary Drive', 'Yes' if record[4] else 'No'),
-            ('Drive Status', record[5]),
-            ('Space Used (bytes)', record[6]),
-            ('Drive Storage Size (bytes)', record[7]),
-            ('Root Folder Internal ID', record[8]),
-        ])
+    for source_path in source_paths:
+        for record in _query(source_path, 'user_cloud_drive', drive_query):
+            data_list.extend([
+                ('Cloud Provider', record[0]),
+                ('Cloud Account', record[1]),
+                ('Drive ID', record[2]),
+                ('Drive Identity ID', record[3]),
+                ('Primary Drive', 'Yes' if record[4] else 'No'),
+                ('Drive Status', record[5]),
+                ('Space Used (bytes)', record[6]),
+                ('Drive Storage Size (bytes)', record[7]),
+                ('Root Folder Internal ID', record[8]),
+            ])
 
-    for record in _query(
-            source_path, 'user_cloud_storage_property',
-            'SELECT storage_level_type, status FROM user_cloud_storage_property'):
-        data_list.extend([
-            ('Storage Level Type', record[0]),
-            ('Storage Property Status', record[1]),
-        ])
+        for record in _query(
+                source_path, 'user_cloud_storage_property',
+                'SELECT storage_level_type, status FROM user_cloud_storage_property'):
+            data_list.extend([
+                ('Storage Level Type', record[0]),
+                ('Storage Property Status', record[1]),
+            ])
 
-    for record in _query(
-            source_path, 'user_cloud_monthly_usage',
-            'SELECT added_file_count, add_file_quota, is_upload_exceed_max '
-            'FROM user_cloud_monthly_usage'):
-        data_list.extend([
-            ('Files Added This Month', record[0]),
-            ('Monthly File Quota', record[1]),
-            ('Quota Exceeded', 'Yes' if record[2] else 'No'),
-        ])
+        for record in _query(
+                source_path, 'user_cloud_monthly_usage',
+                'SELECT added_file_count, add_file_quota, is_upload_exceed_max '
+                'FROM user_cloud_monthly_usage'):
+            data_list.extend([
+                ('Files Added This Month', record[0]),
+                ('Monthly File Quota', record[1]),
+                ('Quota Exceeded', 'Yes' if record[2] else 'No'),
+            ])
 
     data_headers = ('Name', 'Value')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
 def galleryvault_cloud_folders(context):
-    files_found = context.get_files_found()
-    source_path = _cloud_cache_db(files_found)
-    folder_map = _cloud_folder_map(source_path)
-    path_cache = {}
+    source_paths = _cloud_cache_dbs(context)
     data_list = []
 
     query = '''
@@ -1428,12 +1446,16 @@ def galleryvault_cloud_folders(context):
     FROM cloud_folders
     ORDER BY create_date_utc
     '''
-    for record in _query(source_path, 'cloud_folders', query):
-        parent_path = _cloud_folder_path(record[5], folder_map, path_cache)
-        data_list.append((
-            _ms(record[0]), record[1], parent_path or '/', record[2], record[3],
-            record[4], record[6], record[7],
-        ))
+    for source_path in source_paths:
+        # Parent ids resolve only within the database that holds them.
+        folder_map = _cloud_folder_map(source_path)
+        path_cache = {}
+        for record in _query(source_path, 'cloud_folders', query):
+            parent_path = _cloud_folder_path(record[5], folder_map, path_cache)
+            data_list.append((
+                _ms(record[0]), record[1], parent_path or '/', record[2], record[3],
+                record[4], record[6], record[7],
+            ))
 
     data_headers = (
         ('Create Time', 'datetime'),
@@ -1445,15 +1467,12 @@ def galleryvault_cloud_folders(context):
         'Entry ID',
         'Cloud Drive ID',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
 def galleryvault_cloud_files(context):
-    files_found = context.get_files_found()
-    source_path = _cloud_cache_db(files_found)
-    folder_map = _cloud_folder_map(source_path)
-    path_cache = {}
+    source_paths = _cloud_cache_dbs(context)
     data_list = []
 
     query = '''
@@ -1464,16 +1483,20 @@ def galleryvault_cloud_files(context):
     FROM cloud_files
     ORDER BY file_add_time_utc
     '''
-    for record in _query(source_path, 'cloud_files', query):
-        folder_path = _cloud_folder_path(record[8], folder_map, path_cache) or '/'
-        dimensions = f'{record[6]} x {record[7]}' if record[6] or record[7] else ''
-        encryption_key = record[12].hex() if record[12] else ''
-        data_list.append((
-            _ms(record[0]), _ms(record[1]), record[2], folder_path, record[3],
-            record[4], record[5], dimensions, record[9],
-            'Yes' if record[10] else 'No', _ms(record[13]), record[11],
-            encryption_key, record[14], record[15],
-        ))
+    for source_path in source_paths:
+        # Parent ids resolve only within the database that holds them.
+        folder_map = _cloud_folder_map(source_path)
+        path_cache = {}
+        for record in _query(source_path, 'cloud_files', query):
+            folder_path = _cloud_folder_path(record[8], folder_map, path_cache) or '/'
+            dimensions = f'{record[6]} x {record[7]}' if record[6] or record[7] else ''
+            encryption_key = record[12].hex() if record[12] else ''
+            data_list.append((
+                _ms(record[0]), _ms(record[1]), record[2], folder_path, record[3],
+                record[4], record[5], dimensions, record[9],
+                'Yes' if record[10] else 'No', _ms(record[13]), record[11],
+                encryption_key, record[14], record[15],
+            ))
 
     data_headers = (
         ('Cloud Add Time', 'datetime'),
@@ -1492,24 +1515,13 @@ def galleryvault_cloud_files(context):
         'File Content Hash',
         'Cloud Drive ID',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
 def galleryvault_cloud_change_history(context):
-    files_found = context.get_files_found()
-    source_path = _cloud_cache_db(files_found)
+    source_paths = _cloud_cache_dbs(context)
     data_list = []
-
-    name_by_uuid = {}
-    for record in _query(
-            source_path, 'cloud_folders', 'SELECT folder_uuid, name FROM cloud_folders'):
-        if record[0]:
-            name_by_uuid[record[0]] = record[1]
-    for record in _query(
-            source_path, 'cloud_files', 'SELECT file_uuid, name FROM cloud_files'):
-        if record[0]:
-            name_by_uuid[record[0]] = record[1]
 
     query = '''
     SELECT modify_date_utc, entry_type, entry_uuid, change_action, revision_id,
@@ -1517,12 +1529,23 @@ def galleryvault_cloud_change_history(context):
     FROM entry_change_history
     ORDER BY modify_date_utc
     '''
-    for record in _query(source_path, 'entry_change_history', query):
-        data_list.append((
-            _ms(record[0]), CLOUD_ENTRY_TYPES.get(record[1], record[1]),
-            name_by_uuid.get(record[2], ''), record[2], record[3], record[4],
-            record[5], record[6],
-        ))
+    for source_path in source_paths:
+        # Entry names resolve only within the database that holds the entry.
+        name_by_uuid = {}
+        for record in _query(
+                source_path, 'cloud_folders', 'SELECT folder_uuid, name FROM cloud_folders'):
+            if record[0]:
+                name_by_uuid[record[0]] = record[1]
+        for record in _query(
+                source_path, 'cloud_files', 'SELECT file_uuid, name FROM cloud_files'):
+            if record[0]:
+                name_by_uuid[record[0]] = record[1]
+        for record in _query(source_path, 'entry_change_history', query):
+            data_list.append((
+                _ms(record[0]), CLOUD_ENTRY_TYPES.get(record[1], record[1]),
+                name_by_uuid.get(record[2], ''), record[2], record[3], record[4],
+                record[5], record[6],
+            ))
 
     data_headers = (
         ('Modify Time', 'datetime'),
@@ -1534,13 +1557,12 @@ def galleryvault_cloud_change_history(context):
         'Entry ID',
         'Cloud Drive ID',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
 def galleryvault_cloud_upload_tasks(context):
-    files_found = context.get_files_found()
-    source_path = _cloud_cache_db(files_found)
+    source_paths = _cloud_cache_dbs(context)
     data_list = []
 
     query = '''
@@ -1558,7 +1580,7 @@ def galleryvault_cloud_upload_tasks(context):
            ON cloud_upload_part_tasks.cloud_file_transfer_task_id = cloud_file_upload_tasks._id
     ORDER BY cloud_file_upload_tasks.begin_time
     '''
-    for record in _query(source_path, 'cloud_file_upload_tasks', query):
+    for record in _query_all(source_paths, 'cloud_file_upload_tasks', query):
         percent = ''
         if record[8]:
             percent = f'{(record[7] or 0) / record[8] * 100:.1f}%'
@@ -1585,4 +1607,4 @@ def galleryvault_cloud_upload_tasks(context):
         'File Encryption Key (hex)',
         'Task ID',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)

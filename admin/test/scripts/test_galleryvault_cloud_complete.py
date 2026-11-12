@@ -30,7 +30,8 @@ def make_db(path, affinity='', wal=False):
 
 
 def parse(paths):
-    context = SimpleNamespace(get_files_found=lambda: paths)
+    context = SimpleNamespace(get_files_found=lambda: paths,
+                              get_relative_path=str)
     return galleryVault.galleryvault_cloud_files.__wrapped__(context)
 
 
@@ -58,13 +59,13 @@ class TestGalleryVaultCloudComplete(unittest.TestCase):
                     self.assertEqual([type(row[8]) for row in rows],
                                      [type(row[0]) for row in expected])
                     self.assertEqual(len(rows), len(values))
-                    self.assertEqual(source, path)
+                    self.assertEqual(source, str(path))
                     self.assertTrue(all(len(row) == 15 for row in rows))
                     self.assertTrue(all(row[9] == 'Yes' for row in rows))
                 finally:
                     db.close()
 
-    def test_wal_rows_and_current_first_main_scope(self):
+    def test_wal_rows_and_every_main_database(self):
         with tempfile.TemporaryDirectory() as tmp:
             first = Path(tmp) / 'first/cloud_cache.db'
             second = Path(tmp) / 'second/cloud_cache.db'
@@ -77,12 +78,15 @@ class TestGalleryVaultCloudComplete(unittest.TestCase):
                     self.assertEqual(control.execute('SELECT COUNT(*) FROM cloud_files').fetchone()[0], 0)
                 finally:
                     control.close()
+                # Every main database is read (a second Android user has their own),
+                # whatever order the seeker returned them in; the -wal is not a database.
+                both = '\n'.join(sorted((str(first), str(second))))
                 _, rows, source = parse([first.with_name('cloud_cache.db-wal'), first, second])
                 self.assertEqual([row[8] for row in rows], [0])
-                self.assertEqual(source, first)
+                self.assertEqual(source, both)
                 _, rows, source = parse([second, first])
-                self.assertEqual(rows, [])
-                self.assertEqual(source, second)
+                self.assertEqual([row[8] for row in rows], [0])
+                self.assertEqual(source, both)
             finally:
                 writer.close()
                 empty.close()
