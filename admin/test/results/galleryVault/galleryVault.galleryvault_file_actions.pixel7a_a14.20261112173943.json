@@ -1,0 +1,82 @@
+{
+  "metadata": {
+    "module_name": "galleryVault",
+    "artifact_name": "GalleryVault - File Action Log",
+    "function_name": "galleryvault_file_actions",
+    "case_number": "pixel7a_a14",
+    "number_of_columns": 6,
+    "number_of_rows": 6,
+    "total_data_size_bytes": 597,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/galleryVault/testdata.galleryVault.galleryvault_file_actions.pixel7a_a14.zip",
+    "start_time": "2026-11-12T17:39:43.681471+00:00",
+    "end_time": "2026-11-12T17:39:43.713024+00:00",
+    "run_time_seconds": 0.0008840560913085938,
+    "last_commit": {
+      "hash": "ccf522fc06b634d1a00c98921408736596c94588",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-11-12T11:39:33-05:00",
+      "message": "fix(galleryVault): read every Android user's file action log, AppLock.db and cloud_cache.db"
+    }
+  },
+  "headers": [
+    "Action Time",
+    "Android User",
+    "Store",
+    "Action Type Value",
+    "Vault File Path",
+    "Row ID"
+  ],
+  "data": [
+    [
+      1707418462,
+      "0",
+      "App database",
+      "1",
+      "/storage/emulated/0/download/imgur/vod8pal.jpeg",
+      1
+    ],
+    [
+      1707418462,
+      "0",
+      "App database",
+      "2",
+      "/storage/emulated/0/.galleryvault_donotdelete_1707411051/files/5a/5a58c5e3-55ad-4f4d-b891-d7feb7246339",
+      2
+    ],
+    [
+      1707418749,
+      "0",
+      "App database",
+      "2",
+      "/storage/emulated/0/.galleryvault_donotdelete_1707411051/files/42/42e219d1-79cb-422d-b13b-f2b8e4fb69d4",
+      3
+    ],
+    [
+      1707418749,
+      "0",
+      "App database",
+      "1",
+      "/storage/emulated/0/download/imgur/akqawwb.jpeg",
+      4
+    ],
+    [
+      1707418462,
+      "0",
+      "Vault backup",
+      "1",
+      "/storage/emulated/0/download/imgur/vod8pal.jpeg",
+      1
+    ],
+    [
+      1707418462,
+      "0",
+      "Vault backup",
+      "2",
+      "/storage/emulated/0/.galleryvault_donotdelete_1707411051/files/5a/5a58c5e3-55ad-4f4d-b891-d7feb7246339",
+      2
+    ]
+  ]
+}

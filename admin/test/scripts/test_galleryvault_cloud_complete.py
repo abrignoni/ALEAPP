@@ -55,13 +55,13 @@ class TestGalleryVaultCloudComplete(unittest.TestCase):
                         insert(db, value)
                     expected = db.execute('SELECT is_complete FROM cloud_files').fetchall()
                     _, rows, source = parse([path])
-                    self.assertEqual([row[8] for row in rows], [row[0] for row in expected])
-                    self.assertEqual([type(row[8]) for row in rows],
+                    self.assertEqual([row[9] for row in rows], [row[0] for row in expected])
+                    self.assertEqual([type(row[9]) for row in rows],
                                      [type(row[0]) for row in expected])
                     self.assertEqual(len(rows), len(values))
                     self.assertEqual(source, str(path))
-                    self.assertTrue(all(len(row) == 15 for row in rows))
-                    self.assertTrue(all(row[9] == 'Yes' for row in rows))
+                    self.assertTrue(all(len(row) == 16 for row in rows))
+                    self.assertTrue(all(row[10] == 'Yes' for row in rows))
                 finally:
                     db.close()
 
@@ -82,10 +82,10 @@ class TestGalleryVaultCloudComplete(unittest.TestCase):
                 # whatever order the seeker returned them in; the -wal is not a database.
                 both = '\n'.join(sorted((str(first), str(second))))
                 _, rows, source = parse([first.with_name('cloud_cache.db-wal'), first, second])
-                self.assertEqual([row[8] for row in rows], [0])
+                self.assertEqual([row[9] for row in rows], [0])
                 self.assertEqual(source, both)
                 _, rows, source = parse([second, first])
-                self.assertEqual([row[8] for row in rows], [0])
+                self.assertEqual([row[9] for row in rows], [0])
                 self.assertEqual(source, both)
             finally:
                 writer.close()
