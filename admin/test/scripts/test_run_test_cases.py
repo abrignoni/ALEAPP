@@ -145,17 +145,35 @@ class TenantVariantTests(unittest.TestCase):
                "t/data/media/11/Pictures/p.jpg",
                "t/system/build.prop"]
         added, mapping, names, payloads = self.variant_names(src)
-        # 11 is taken under data/media, so the new ids are 12 and 13.
-        self.assertEqual(mapping, {0: 12, 10: 13})
-        self.assertEqual(added, 2)
+        # User 11 holds only shared storage and is a user all the same, so the
+        # new ids are 12, 13 and 14.
+        self.assertEqual(mapping, {0: 12, 10: 13, 11: 14})
+        self.assertEqual(added, 3)
         self.assertEqual(len(names), len(set(names)))
         self.assertEqual(payloads["t/data/user/12/pkg/databases/a.db"],
                          b"t/data/data/pkg/databases/a.db")
         self.assertEqual(payloads["t/data/user/13/pkg/databases/a.db"],
                          b"t/data/user/10/pkg/databases/a.db")
+        self.assertEqual(payloads["t/data/media/14/Pictures/p.jpg"],
+                         b"t/data/media/11/Pictures/p.jpg")
         self.assertEqual(sorted(set(names) - set(src)),
-                         ["t/data/user/12/pkg/databases/a.db",
+                         ["t/data/media/14/Pictures/p.jpg",
+                          "t/data/user/12/pkg/databases/a.db",
                           "t/data/user/13/pkg/databases/a.db"])
+
+    def test_shared_storage_gets_the_same_new_id_as_app_data(self):
+        src = ["Dump/data/data/pkg/databases/a.db",
+               "Dump/data/media/0/.vault/backup/log.db",
+               "Dump/data/media/obb/pkg/main.obb"]
+        added, mapping, names, payloads = self.variant_names(src)
+        self.assertEqual(mapping, {0: 10})
+        self.assertEqual(added, 2)
+        # data/media/obb is not a user folder and is not copied.
+        self.assertEqual(sorted(set(names) - set(src)),
+                         ["Dump/data/media/10/.vault/backup/log.db",
+                          "Dump/data/user/10/pkg/databases/a.db"])
+        self.assertEqual(payloads["Dump/data/media/10/.vault/backup/log.db"],
+                         b"Dump/data/media/0/.vault/backup/log.db")
 
     def test_variant_members_keep_their_bytes(self):
         # A member written to the variant must not move the source's offsets.
