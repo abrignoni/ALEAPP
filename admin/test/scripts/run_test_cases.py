@@ -49,11 +49,13 @@ and checks the arithmetic per artifact:
   data/user/<n>) is copied under data/user/<new id>, the lowest id at or above
   10 that no member uses, and the row count must exactly double. An unchanged
   or short count means a user's data is read into files_found and then
-  silently dropped, which is what a first-match-wins accessor does. For a
-  fixture holding only user 0 this is data/data copied to data/user/10; a
-  fixture that already holds a second user has that user copied too, so the
-  doubling still holds. Other per-user roots (data/user_de, data/media, ...)
-  are not copied.
+  silently dropped, which is what a first-match-wins accessor does. Each
+  user's shared storage (data/media/<n>) is copied under data/media/<new id>
+  with the same new id. For a fixture holding only user 0 this is data/data
+  copied to data/user/10 and data/media/0 to data/media/10; a fixture that
+  already holds a second user has that user copied too, so the doubling
+  still holds. Other per-user roots (data/user_de, data/misc_ce, ...) are
+  not copied.
 
 Counts are the comparison, not row contents: the two runs extract into
 different temp directories and restage mtimes, so content equality would fail
@@ -91,10 +93,12 @@ USER_ROOTS = ("data/user", "data/user_de", "data/media", "data/misc_ce", "data/m
               "data/system_ce", "data/system_de", "data_mirror/data_ce/null",
               "data_mirror/data_de/null")
 USER_ID_DIR_RE = re.compile("/(?:" + "|".join(map(re.escape, USER_ROOTS)) + r")/(\d+)/")
-# App data the second-tenant leg copies: data/data (user 0's legacy spelling)
-# and data/user/<n>.
+# Per-user data the second-tenant leg copies: app data under data/data (user
+# 0's legacy spelling) and data/user/<n>, and shared storage under
+# data/media/<n>.
 APP_DATA_MEMBER_RE = re.compile(
-    r"^(?P<prefix>.*?/)?(?:(?P<legacy>data/data)|data/user/(?P<uid>\d+))/(?P<rest>.+)$")
+    r"^(?P<prefix>.*?/)?(?:(?P<legacy>data/data)|data/user/(?P<uid>\d+)"
+    r"|data/media/(?P<media>\d+))/(?P<rest>.+)$")
 COMPLETION_MARKER = "Test case comparison complete"
 
 
@@ -170,15 +174,17 @@ def make_view_variant(src_zip, dst_zip, view):
 
 
 def make_tenant_variant(src_zip, dst_zip):
-    """Copy the case zip, adding each user's app data again under a new user id.
+    """Copy the case zip, adding each user's data again under a new user id.
 
-    App data is data/data (user 0) and data/user/<n>. Each user id found there
-    is given the lowest id >= 10 that no member uses under any per-user root,
-    and that user's members are written again under data/user/<new id>.
-    data/data and data/user/0 land on the same new name; the first one written
-    is kept. For a fixture holding only user 0 this is data/data copied to
-    data/user/10, as before; a fixture that already holds a second user gets
-    that user copied too, so the count still doubles.
+    Copied are app data, data/data (user 0) and data/user/<n>, and shared
+    storage, data/media/<n>. Each user id found there is given the lowest id
+    >= 10 that no member uses under any per-user root, and that user's app
+    data is written again under data/user/<new id> and its shared storage
+    under data/media/<new id>. data/data and data/user/0 land on the same new
+    name; the first one written is kept. For a fixture holding only user 0
+    this is data/data copied to data/user/10 and data/media/0 to
+    data/media/10; a fixture that already holds a second user gets that user
+    copied too, so the count still doubles.
 
     Returns (members added, {old user id: new user id}).
     """
@@ -189,11 +195,15 @@ def make_tenant_variant(src_zip, dst_zip):
         for name in names:
             match = APP_DATA_MEMBER_RE.match(name)
             if match and not name.endswith('/'):
-                uid = 0 if match.group('legacy') else int(match.group('uid'))
-                parsed[name] = (match.group('prefix') or '', uid, match.group('rest'))
+                if match.group('media') is not None:
+                    root, uid = 'data/media', int(match.group('media'))
+                else:
+                    root = 'data/user'
+                    uid = 0 if match.group('legacy') else int(match.group('uid'))
+                parsed[name] = (match.group('prefix') or '', root, uid, match.group('rest'))
         mapping = {}
         taken = {int(m.group(1)) for name in names for m in USER_ID_DIR_RE.finditer('/' + name)}
-        for uid in sorted({entry[1] for entry in parsed.values()}):
+        for uid in sorted({entry[2] for entry in parsed.values()}):
             new_id = free_user_id([], start=10, taken=taken)
             mapping[uid] = new_id
             taken.add(new_id)
@@ -207,8 +217,8 @@ def make_tenant_variant(src_zip, dst_zip):
                 zout.writestr(info, payload)
                 if info.filename not in parsed:
                     continue
-                prefix, uid, rest = parsed[info.filename]
-                alt = f"{prefix}data/user/{mapping[uid]}/{rest}"
+                prefix, root, uid, rest = parsed[info.filename]
+                alt = f"{prefix}{root}/{mapping[uid]}/{rest}"
                 if alt in written:
                     continue
                 written.add(alt)
@@ -271,7 +281,7 @@ def run_storage_views(test_module, module, artifact, case, case_data):
                 empty = "no data/data members to restage"
             else:
                 added, mapping = make_tenant_variant(zip_path, variant)
-                empty = "no data/data or data/user members to copy"
+                empty = "no data/data, data/user or data/media members to copy"
                 users = " (users " + ", ".join(
                     f"{old}->{new}" for old, new in sorted(mapping.items())) + ")"
             if not added:
