@@ -9,7 +9,7 @@
     "total_data_size_bytes": 748,
     "media_checkins": 0,
     "media_embedded_checkins": 2,
-    "input_zip_path": "admin\\test\\cases\\data\\privateNotepad\\testdata.privateNotepad.private_notepad_notes.casejens.zip",
+    "input_zip_path": "admin/test/cases/data/privateNotepad/testdata.privateNotepad.private_notepad_notes.casejens.zip",
     "start_time": "2026-11-11T17:18:41.436261+00:00",
     "end_time": "2026-11-11T17:18:41.544565+00:00",
     "run_time_seconds": 0.0060062408447265625,
@@ -45,7 +45,7 @@
       ],
       1,
       "0",
-      "test_data\\data\\data\\ru.alexandermalikov.protectednotes\\databases\\notes.db"
+      "test_data/data/data/ru.alexandermalikov.protectednotes/databases/notes.db"
     ],
     [
       1600000000,
@@ -56,7 +56,7 @@
       null,
       2,
       "0",
-      "test_data\\data\\data\\ru.alexandermalikov.protectednotes\\databases\\notes.db"
+      "test_data/data/data/ru.alexandermalikov.protectednotes/databases/notes.db"
     ],
     [
       1700000000,
@@ -67,7 +67,7 @@
       null,
       3,
       "0",
-      "test_data\\data\\data\\ru.alexandermalikov.protectednotes\\databases\\notes.db"
+      "test_data/data/data/ru.alexandermalikov.protectednotes/databases/notes.db"
     ],
     [
       1700000000,
@@ -78,7 +78,7 @@
       null,
       4,
       "0",
-      "test_data\\data\\data\\ru.alexandermalikov.protectednotes\\databases\\notes.db"
+      "test_data/data/data/ru.alexandermalikov.protectednotes/databases/notes.db"
     ],
     [
       1600000000,
@@ -89,7 +89,7 @@
       null,
       1,
       "10",
-      "test_data\\data\\user\\10\\ru.alexandermalikov.protectednotes\\databases\\notes.db"
+      "test_data/data/user/10/ru.alexandermalikov.protectednotes/databases/notes.db"
     ]
   ]
 }

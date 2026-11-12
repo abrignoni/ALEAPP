@@ -9,7 +9,7 @@
     "total_data_size_bytes": 158,
     "media_checkins": 1,
     "media_embedded_checkins": 0,
-    "input_zip_path": "admin\\test\\cases\\data\\privateNotepad\\testdata.privateNotepad.private_notepad_intruder_photos.casejens.zip",
+    "input_zip_path": "admin/test/cases/data/privateNotepad/testdata.privateNotepad.private_notepad_intruder_photos.casejens.zip",
     "start_time": "2026-11-11T17:18:40.961561+00:00",
     "end_time": "2026-11-11T17:18:41.071561+00:00",
     "run_time_seconds": 0.0009946823120117188,
@@ -36,7 +36,7 @@
       "Image",
       "1700000000000.jpg",
       "0",
-      "test_data\\data\\data\\ru.alexandermalikov.protectednotes\\files\\intruder_photos\\1700000000000.jpg"
+      "test_data/data/data/ru.alexandermalikov.protectednotes/files/intruder_photos/1700000000000.jpg"
     ]
   ]
 }

@@ -9,7 +9,7 @@
     "total_data_size_bytes": 442,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
-    "input_zip_path": "admin\\test\\cases\\data\\privateNotepad\\testdata.privateNotepad.private_notepad_settings.casejens.zip",
+    "input_zip_path": "admin/test/cases/data/privateNotepad/testdata.privateNotepad.private_notepad_settings.casejens.zip",
     "start_time": "2026-11-11T17:18:41.236438+00:00",
     "end_time": "2026-11-11T17:18:41.334333+00:00",
     "run_time_seconds": 0.00800180435180664,
@@ -46,7 +46,7 @@
       "0",
       "PIN (1)",
       "old-hash",
-      "test_data\\data\\data\\ru.alexandermalikov.protectednotes\\shared_prefs\\protected_notes_preferences.xml"
+      "test_data/data/data/ru.alexandermalikov.protectednotes/shared_prefs/protected_notes_preferences.xml"
     ],
     [
       null,
@@ -59,7 +59,7 @@
       "10",
       null,
       null,
-      "test_data\\data\\user\\10\\ru.alexandermalikov.protectednotes\\shared_prefs\\protected_notes_preferences.xml"
+      "test_data/data/user/10/ru.alexandermalikov.protectednotes/shared_prefs/protected_notes_preferences.xml"
     ]
   ]
 }
