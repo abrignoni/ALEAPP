@@ -77,9 +77,11 @@ class GalleryVaultEveryUserTest(unittest.TestCase):
         self._file_action_log(0, ['/tmp/x'], suffix='.tmp')
         headers, rows, source_path = self._run(galleryVault.galleryvault_file_actions)
 
-        self.assertEqual(len(headers), 4)
+        self.assertEqual(headers[1:3], ('Android User', 'Store'))
         self.assertEqual(len(rows), 4)
-        self.assertEqual({r[2] for r in rows}, {'/u0/a', '/u0/b', '/u10/a', '/u10/b'})
+        self.assertEqual({(r[1], r[2], r[4]) for r in rows},
+                         {('0', 'Vault backup', '/u0/a'), ('0', 'Vault backup', '/u0/b'),
+                          ('10', 'Vault backup', '/u10/a'), ('10', 'Vault backup', '/u10/b')})
         cited = source_path.split('\n')
         self.assertEqual(len(cited), 2)
         for path in cited:
@@ -88,9 +90,47 @@ class GalleryVaultEveryUserTest(unittest.TestCase):
     def test_file_actions_single_user_unchanged(self):
         self._file_action_log(0, ['/u0/a'])
         _headers, rows, source_path = self._run(galleryVault.galleryvault_file_actions)
-        self.assertEqual([r[2] for r in rows], ['/u0/a'])
+        self.assertEqual([r[4] for r in rows], ['/u0/a'])
         self.assertTrue(source_path.endswith('data/media/0/.galleryvault_DoNotDelete_1/'
                                              'backup/file_action_log.db'))
+
+    def test_file_actions_reads_backup_and_app_database(self):
+        self._file_action_log(0, ['/both/a', '/both/b'])
+        self._db(f'data/data/{PKG}/databases/file_action_log.db',
+                 self._file_action_sql(['/both/a', '/both/b', '/app/c', '/app/d']))
+        self._file_action_log(0, ['/tmp/x'], suffix='.tmp')
+        _headers, rows, source_path = self._run(galleryVault.galleryvault_file_actions)
+        # Every row from both stores is kept, labelled with its store; the .tmp is not read.
+        stores = sorted((r[2], r[4]) for r in rows)
+        self.assertEqual(stores, [('App database', '/app/c'), ('App database', '/app/d'),
+                                  ('App database', '/both/a'), ('App database', '/both/b'),
+                                  ('Vault backup', '/both/a'), ('Vault backup', '/both/b')])
+        self.assertEqual({r[1] for r in rows}, {'0'})
+        self.assertEqual(len(source_path.split('\n')), 2)
+
+    def test_galleryvault_db_artifacts_and_preferences_name_the_user(self):
+        for view, url in (('data/data', 'https://zero.test/'), ('data/user/10', 'https://ten.test/')):
+            self._db(f'{view}/{PKG}/databases/galleryvault.db',
+                     'CREATE TABLE browser_history (last_visit_time_utc INTEGER, title TEXT, '
+                     'url TEXT, host TEXT);'
+                     f"INSERT INTO browser_history VALUES (1700000000000, 't', '{url}', 'h');")
+            prefs = os.path.join(self.data_folder, f'{view}/{PKG}/shared_prefs/Kidd.xml')
+            os.makedirs(os.path.dirname(prefs), exist_ok=True)
+            with open(prefs, 'w', encoding='utf-8') as handle:
+                handle.write("<?xml version='1.0' encoding='utf-8' standalone='yes' ?>\n"
+                             f'<map><string name="launch_times">{len(url)}</string></map>')
+            self.files.append(prefs)
+
+        headers, rows, _s = self._run(galleryVault.galleryvault_browser_history)
+        self.assertEqual(headers[1], 'Android User')
+        self.assertEqual(sorted((r[1], r[3]) for r in rows),
+                         [('0', 'https://zero.test/'), ('10', 'https://ten.test/')])
+
+        headers, rows, source_path = self._run(galleryVault.galleryvault_preferences)
+        self.assertEqual(headers[0], 'Android User')
+        launches = sorted((r[0], r[2]) for r in rows if r[1] == 'Launch Count')
+        self.assertEqual(launches, [('0', '18'), ('10', '17')])
+        self.assertEqual(len(source_path.split('\n')), 2)
 
     # AppLock.db
 
@@ -113,11 +153,11 @@ class GalleryVaultEveryUserTest(unittest.TestCase):
         self._applock('data/user/0', 'pkg.zero')
 
         _h, rows, source_path = self._run(galleryVault.galleryvault_locked_apps)
-        self.assertEqual(sorted(r[0] for r in rows), ['pkg.ten', 'pkg.zero'])
+        self.assertEqual(sorted((r[0], r[1]) for r in rows), [('0', 'pkg.zero'), ('10', 'pkg.ten')])
         self.assertEqual(len(source_path.split('\n')), 2)
 
         _h, rows, _s = self._run(galleryVault.galleryvault_applock_break_ins)
-        self.assertEqual(sorted(r[1] for r in rows), ['pkg.ten', 'pkg.zero'])
+        self.assertEqual(sorted((r[1], r[2]) for r in rows), [('0', 'pkg.zero'), ('10', 'pkg.ten')])
 
     # cloud_cache.db
 
@@ -161,25 +201,27 @@ class GalleryVaultEveryUserTest(unittest.TestCase):
 
         _h, rows, source_path = self._run(galleryVault.galleryvault_cloud_folders)
         self.assertEqual(len(source_path.split('\n')), 2)
-        parents = {r[1]: r[2] for r in rows}
+        self.assertEqual({r[2]: r[1] for r in rows if r[2].endswith('child')},
+                         {'zero-child': '0', 'ten-child': '10'})
+        parents = {r[2]: r[3] for r in rows}
         # The drive root (parent 0) is left out of paths by _cloud_folder_path.
         self.assertEqual(parents, {'zero-root': '/', 'zero-top': '/', 'zero-child': 'zero-top',
                                    'ten-root': '/', 'ten-top': '/', 'ten-child': 'ten-top'})
 
         _h, rows, _s = self._run(galleryVault.galleryvault_cloud_files)
-        self.assertEqual({r[2]: r[3] for r in rows},
-                         {'zero-file': 'zero-top/zero-child',
-                          'ten-file': 'ten-top/ten-child'})
+        self.assertEqual({r[3]: (r[2], r[4]) for r in rows},
+                         {'zero-file': ('0', 'zero-top/zero-child'),
+                          'ten-file': ('10', 'ten-top/ten-child')})
 
         _h, rows, _s = self._run(galleryVault.galleryvault_cloud_change_history)
-        self.assertEqual(sorted(r[2] for r in rows), ['ten-file', 'zero-file'])
+        self.assertEqual(sorted((r[1], r[3]) for r in rows), [('0', 'zero-file'), ('10', 'ten-file')])
 
         _h, rows, _s = self._run(galleryVault.galleryvault_cloud_account)
-        accounts = sorted(v for n, v in rows if n == 'Cloud Account')
-        self.assertEqual(accounts, ['ten-acct', 'zero-acct'])
+        accounts = sorted((u, v) for u, n, v in rows if n == 'Cloud Account')
+        self.assertEqual(accounts, [('0', 'zero-acct'), ('10', 'ten-acct')])
 
         _h, rows, _s = self._run(galleryVault.galleryvault_cloud_upload_tasks)
-        self.assertEqual(sorted(r[1] for r in rows), ['ten-file', 'zero-file'])
+        self.assertEqual(sorted((r[1], r[2]) for r in rows), [('0', 'zero-file'), ('10', 'ten-file')])
 
 
 if __name__ == '__main__':
