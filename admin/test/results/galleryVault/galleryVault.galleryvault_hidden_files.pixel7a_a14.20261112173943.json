@@ -4,26 +4,27 @@
     "artifact_name": "GalleryVault - Hidden Files (database)",
     "function_name": "galleryvault_hidden_files",
     "case_number": "pixel7a_a14",
-    "number_of_columns": 16,
+    "number_of_columns": 17,
     "number_of_rows": 2,
-    "total_data_size_bytes": 323,
+    "total_data_size_bytes": 325,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/galleryVault/testdata.galleryVault.galleryvault_hidden_files.pixel7a_a14.zip",
-    "start_time": "2026-08-25T04:48:38.903388+00:00",
-    "end_time": "2026-08-25T04:48:38.949913+00:00",
-    "run_time_seconds": 0.001107931137084961,
+    "start_time": "2026-11-12T17:39:43.815155+00:00",
+    "end_time": "2026-11-12T17:39:43.841516+00:00",
+    "run_time_seconds": 0.0012240409851074219,
     "last_commit": {
-      "hash": "9dd6f0ba89c1734104074ca53e08c99302197700",
+      "hash": "ccf522fc06b634d1a00c98921408736596c94588",
       "author_name": "Brigs",
       "author_email": "abrignoni@gmail.com",
-      "date": "2026-08-07T23:27:07-04:00",
-      "message": "fix: fill in the artifact author field left empty on 27 artifacts"
+      "date": "2026-11-12T11:39:33-05:00",
+      "message": "fix(galleryVault): read every Android user's file action log, AppLock.db and cloud_cache.db"
     }
   },
   "headers": [
     "Added Time",
     "File Last Modified Time",
+    "Android User",
     "File Name",
     "Folder",
     "Original Path",
@@ -43,6 +44,7 @@
     [
       1707418462,
       1707061466,
+      "0",
       "Vod8pal.jpeg",
       "My Pictures",
       "/storage/emulated/0/Download/Imgur/Vod8pal.jpeg",
@@ -61,6 +63,7 @@
     [
       1707418749,
       1707061873,
+      "0",
       "aKqaWwB.jpeg",
       "My Secret Folder",
       "/storage/emulated/0/Download/Imgur/aKqaWwB.jpeg",
