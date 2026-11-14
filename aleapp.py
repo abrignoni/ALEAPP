@@ -431,8 +431,12 @@ def main():
         history.record_input_path(input_path)
     history.record_output_path(output_path)
 
+    custom_artifacts = None
+    if args.custom_artifacts_path:
+        custom_artifacts = (args.custom_artifacts_path, custom_artifact_files(args.custom_artifacts_path))
     crunch_successful = crunch_artifacts(selected_plugins, extracttype, input_path, out_params, wrap_text, loader, casedata, profile_filename,
-        image_password=image_password, found_members=found_members, hash_files=args.hash)
+        image_password=image_password, found_members=found_members, hash_files=args.hash,
+        custom_artifacts=custom_artifacts)
 
     lava_finalize_output(out_params.output_folder_base)
     if crunch_successful:
@@ -467,12 +471,37 @@ def staged_file_record(seeker, staged, file_info, hash_files):
 
 
 @screen_log_session
+def custom_artifact_files(path):
+    '''The artifacts a custom artifacts folder defines, {artifact key: file name}. The
+    folder is loaded on its own, so artifacts overriding a built-in one of the same key
+    are among them.'''
+    custom_loader = plugin_loader.PluginLoader(plugin_paths=[pathlib.Path(path)])
+    return {plugin.name: f'{plugin.module_name}.py' for plugin in custom_loader.plugins}
+
+
+def log_custom_artifacts(custom_artifacts, plugins):
+    '''Log the custom artifacts identified, file by file, and which of them will run.
+    custom_artifacts is (folder, {artifact key: file name}).'''
+    folder, artifact_files = custom_artifacts
+    to_run = {plugin.name for plugin in plugins}
+    by_file = {}
+    for name, file_name in artifact_files.items():
+        by_file.setdefault(file_name, []).append(name)
+    logfunc(f'Custom artifacts folder: {folder}')
+    logfunc(f'Custom artifacts identified: {len(artifact_files)} in {len(by_file)} file(s), '
+            f'of which {len(to_run.intersection(artifact_files))} will be run')
+    for file_name, names in sorted(by_file.items(), key=lambda item: item[0].lower()):
+        logfunc(f'    {file_name}: ' + ', '.join(
+            name if name in to_run else f'{name} (not selected)' for name in sorted(names)))
+
+
 def crunch_artifacts(
         plugins: typing.Sequence[plugin_loader.PluginSpec], extracttype, input_path, out_params, wrap_text,
         loader: plugin_loader.PluginLoader, casedata, profile_filename, image_password=None,
-        found_members=None, hash_files=False):
+        found_members=None, hash_files=False, custom_artifacts=None):
     # input_path is one path, or for -t raw the list of images read together; then
     # found_members says what was found beside the image given (a RawInput, a MemberSearch, or paths)
+    # custom_artifacts is (folder, {artifact key: file name}) when a custom artifacts folder is used
     start = process_time()
     start_wall = perf_counter()
  
@@ -517,6 +546,8 @@ def crunch_artifacts(
         if profile_filename:
             logfunc(f'Loaded profile: {profile_filename}')
         logfunc(f'Artifact categories to parse: {len(plugins) - 1}') # excluding usagestatsVersion always executed first
+        if custom_artifacts:
+            log_custom_artifacts(custom_artifacts, plugins)
         input_path = input_text(input_path, found_members)
         logfunc(f'File/Directory selected: {input_path}')
         hashes = None
