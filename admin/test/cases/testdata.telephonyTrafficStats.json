@@ -1,0 +1,202 @@
+{
+  "casesynthetic_trafficstats_a": {
+    "description": "Synthetic echolocate_system_network_db with networkDetail as the fifth column (NOT NULL), 40 invented rows including no-cell and Wi-Fi-like rows and invented 32-digit address items; contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_trafficstats_a.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-25T16:17:10.510449",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-25T16:17:10.128016",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "get_telephony_trafficstats": {
+        "search_patterns": [
+          "*/com.android.phone/databases/echolocate_system_network_db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_telephony_cell_summary": {
+        "search_patterns": [
+          "*/com.android.phone/databases/echolocate_system_network_db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    },
+    "os_name": "Android",
+    "os_version": "16"
+  },
+  "casesynthetic_trafficstats_b": {
+    "description": "Synthetic echolocate_system_network_db with networkDetail as the last, nullable column, 30 invented rows plus a seconds-valued timestamp, a non-numeric timestamp, a zero timestamp, an unparsable address text and an empty one; contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_trafficstats_b.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-25T16:17:11.723406",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-25T16:17:11.334635",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "get_telephony_trafficstats": {
+        "search_patterns": [
+          "*/com.android.phone/databases/echolocate_system_network_db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_telephony_cell_summary": {
+        "search_patterns": [
+          "*/com.android.phone/databases/echolocate_system_network_db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    },
+    "os_name": "Android",
+    "os_version": "16"
+  },
+  "casesynthetic_trafficstats_empty": {
+    "description": "Synthetic echolocate_system_network_db with an empty trafficstats table; no rows expected; contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_trafficstats_empty.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-25T16:17:12.794149",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-25T16:17:12.529451",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "get_telephony_trafficstats": {
+        "search_patterns": [
+          "*/com.android.phone/databases/echolocate_system_network_db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_telephony_cell_summary": {
+        "search_patterns": [
+          "*/com.android.phone/databases/echolocate_system_network_db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    },
+    "os_name": "Android",
+    "os_version": "16"
+  },
+  "casesynthetic_trafficstats_users": {
+    "description": "Synthetic echolocate_system_network_db for Android user 0 plus a second storage view of user 0 (data_mirror) and a smaller copy for user 150, invented values; contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_trafficstats_users.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-25T16:17:13.891944",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-25T16:17:13.583406",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "get_telephony_trafficstats": {
+        "search_patterns": [
+          "*/com.android.phone/databases/echolocate_system_network_db*"
+        ],
+        "file_count": 3,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_telephony_cell_summary": {
+        "search_patterns": [
+          "*/com.android.phone/databases/echolocate_system_network_db*"
+        ],
+        "file_count": 3,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    },
+    "os_name": "Android",
+    "os_version": "16"
+  },
+  "casesynthetic_trafficstats_data_data": {
+    "description": "Synthetic echolocate_system_network_db under data/data, the layout the storage-views run restages to check that a second storage view of one file is read once and a second Android user is read as well, invented values; contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_trafficstats_data_data.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-25T16:17:15.001160",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-25T16:17:14.698617",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "get_telephony_trafficstats": {
+        "search_patterns": [
+          "*/com.android.phone/databases/echolocate_system_network_db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_telephony_cell_summary": {
+        "search_patterns": [
+          "*/com.android.phone/databases/echolocate_system_network_db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    },
+    "os_name": "Android",
+    "os_version": "16"
+  }
+}
