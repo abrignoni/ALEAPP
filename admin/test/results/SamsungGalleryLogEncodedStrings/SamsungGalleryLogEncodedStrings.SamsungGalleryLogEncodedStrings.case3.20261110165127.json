@@ -1,0 +1,70 @@
+{
+  "metadata": {
+    "module_name": "SamsungGalleryLogEncodedStrings",
+    "artifact_name": "Samsung Gallery encoded strings (EncV1/V2/V3)",
+    "function_name": "SamsungGalleryLogEncodedStrings",
+    "case_number": "case3",
+    "number_of_columns": 8,
+    "number_of_rows": 4,
+    "total_data_size_bytes": 723,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\SamsungGalleryLogEncodedStrings\\testdata.SamsungGalleryLogEncodedStrings.SamsungGalleryLogEncodedStrings.case3.zip",
+    "start_time": "2026-11-10T16:51:27.889411+00:00",
+    "end_time": "2026-11-10T16:51:27.937265+00:00",
+    "run_time_seconds": 0.004472017288208008,
+    "last_commit": null
+  },
+  "headers": [
+    "Table",
+    "Column",
+    "Row ID",
+    "Decoded (in context)",
+    "Raw (obfuscated)",
+    "Scheme/key",
+    "Note",
+    "Android User"
+  ],
+  "data": [
+    [
+      "log",
+      "__log",
+      1,
+      "moveToTrash album= Brighton Pier  from= DCIM/Camera  done",
+      "moveToTrash album= #G$E6yV61TgBdsbJy6u1t9Q==  from= #G$E5jnCNwsEpzbzv9sk=  done",
+      "V3[6], V3[5]",
+      "",
+      ""
+    ],
+    [
+      "log",
+      "__log",
+      3,
+      "moveToTrash [Old Holiday 2016] [DCIM/Camera/20160704_101112.jpg] done",
+      "moveToTrash [pNh0C0T+KXj2zimIVk4piFIOKYhUhvbOKYhWnimIVk4piFYeKXj3nimIUg4piFMuKYhTDil48x4piFNg==RRnq+7Z] [zH2K+G4piFROKYhUPimIVJTeKYhS/il49DYeKYhW3imIVl4pePcuKXj2Hil48vMuKYhTDimIUx4piFNuKYhTDil483MOKYhTTil49f4pePMeKXjzDil48xMeKXjzHimIUy4piFLuKXj2pw4pePZw==ZKX09HQ] done",
+      "V1, V1",
+      "V1 (prefix=6) | V1 (prefix=6)",
+      ""
+    ],
+    [
+      "log",
+      "__log",
+      4,
+      "[Screenshots]",
+      "[T9+qz/4piFU+KYhWPil49y4pePZWXil49uc2jimIVv4piFdOKXj3M=JPSZzm1]",
+      "V1",
+      "V1 (prefix=6)",
+      ""
+    ],
+    [
+      "log",
+      "__log",
+      6,
+      "restore album= WAL only row  ok",
+      "restore album= #G$E75K0nSQZEpEkfHe5N  ok",
+      "V3[7]",
+      "",
+      ""
+    ]
+  ]
+}

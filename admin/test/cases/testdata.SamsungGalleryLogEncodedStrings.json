@@ -1,0 +1,90 @@
+{
+  "case1": {
+    "description": "Real data: local.db (with -wal and -shm) cut from a publicly available Samsung Galaxy S23 Android 15 extraction (Sample data key in public_corpus_images: anne_a15). 4 log rows in the __log column hold V3 #G$E strings (file and parent paths of items moved to trash), each decoded in context.",
+    "maker": "@dantitto",
+    "make_data": {
+      "input_data_path": "samsungs23_a15.zip",
+      "os": "Windows-11-10.0.26300-SP0",
+      "timestamp": "2026-11-10T16:47:28.510005",
+      "last_commit": null
+    },
+    "artifacts": {
+      "SamsungGalleryLogEncodedStrings": {
+        "search_patterns": [
+          "*/com.sec.android.gallery3d/databases/local.db*"
+        ],
+        "file_count": 3,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "case2": {
+    "description": "Real data: local.db (with -wal and -shm) cut from a publicly available Samsung Galaxy S21 Android 14 extraction (Sample data key in public_corpus_images: sharon_a14). 24 log rows in the __log column hold V3 #G$E strings (file and parent paths of items moved to trash), each decoded in context.",
+    "maker": "@dantitto",
+    "make_data": {
+      "input_data_path": "samsungs21_a14.zip",
+      "os": "Windows-11-10.0.26300-SP0",
+      "timestamp": "2026-11-10T16:48:25.500921",
+      "last_commit": null
+    },
+    "artifacts": {
+      "SamsungGalleryLogEncodedStrings": {
+        "search_patterns": [
+          "*/com.sec.android.gallery3d/databases/local.db*"
+        ],
+        "file_count": 3,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "case3": {
+    "description": "SYNTHETIC, built by hand with no personal data, as no shareable image was available holding V1 values. The log table's __log column in local.db for user 0 at data/data: a V3 cell holding two #G$E strings; a V1 cell holding two bracketed values within log text; a cell that is a single bracketed V1 value; a cell with no encoded content; a log line of Base64-like words that must not decode; and a V3 row present only in the uncheckpointed -wal.",
+    "maker": "@dantitto",
+    "make_data": {
+      "input_data_path": "SamsungGallery_synthetic_v1_v3_wal.zip",
+      "os": "Windows-11-10.0.26300-SP0",
+      "timestamp": "2026-11-10T16:48:58.878012",
+      "last_commit": null
+    },
+    "artifacts": {
+      "SamsungGalleryLogEncodedStrings": {
+        "search_patterns": [
+          "*/com.sec.android.gallery3d/databases/local.db*"
+        ],
+        "file_count": 3,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "case4": {
+    "description": "SYNTHETIC, built by hand with no personal data (reasons as per case 3). Testing multiple users; a V3 log row and a WAL-only row in local.db for user 0 at data/user/0, plus a Secure Folder (user 150) copy. Checks the Android User column labels each user's rows in the output.",
+    "maker": "@dantitto",
+    "make_data": {
+      "input_data_path": "SamsungGallery_synthetic_user0_user150.zip",
+      "os": "Windows-11-10.0.26300-SP0",
+      "timestamp": "2026-11-10T16:49:17.975139",
+      "last_commit": null
+    },
+    "artifacts": {
+      "SamsungGalleryLogEncodedStrings": {
+        "search_patterns": [
+          "*/com.sec.android.gallery3d/databases/local.db*"
+        ],
+        "file_count": 6,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  }
+}

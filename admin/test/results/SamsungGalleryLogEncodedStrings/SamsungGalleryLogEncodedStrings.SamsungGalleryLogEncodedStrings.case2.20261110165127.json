@@ -1,0 +1,270 @@
+{
+  "metadata": {
+    "module_name": "SamsungGalleryLogEncodedStrings",
+    "artifact_name": "Samsung Gallery encoded strings (EncV1/V2/V3)",
+    "function_name": "SamsungGalleryLogEncodedStrings",
+    "case_number": "case2",
+    "number_of_columns": 8,
+    "number_of_rows": 24,
+    "total_data_size_bytes": 21117,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\SamsungGalleryLogEncodedStrings\\testdata.SamsungGalleryLogEncodedStrings.SamsungGalleryLogEncodedStrings.case2.zip",
+    "start_time": "2026-11-10T16:51:27.841933+00:00",
+    "end_time": "2026-11-10T16:51:27.889411+00:00",
+    "run_time_seconds": 0.01563739776611328,
+    "last_commit": null
+  },
+  "headers": [
+    "Table",
+    "Column",
+    "Row ID",
+    "Decoded (in context)",
+    "Raw (obfuscated)",
+    "Scheme/key",
+    "Note",
+    "Android User"
+  ],
+  "data": [
+    [
+      "log",
+      "__log",
+      124,
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ /storage/emulated/0/DCIM/Camera/20240502_122746.jpg(1000003175)  ] PP[ /storage/emulated/0/DCIM/Camera  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F1959286864&position=102]",
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ #G$E7nJ8fBhtLr1UQCuxPi0rI6mrJUTyQlhJ/8YbuhDiBGH+p2VM++3tAkILiVPLF7ulICKmSSyOPI0vfRVqLmUkw  ] PP[ #G$E6pF+oRhpIubl93+l96474pheGz9cT7FA8yGWsQofXGA==  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F1959286864&position=102]",
+      "V3[7], V3[6]",
+      "",
+      ""
+    ],
+    [
+      "log",
+      "__log",
+      125,
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ /storage/emulated/0/DCIM/Camera/20240502_122736.jpg(1000003174)  ] PP[ /storage/emulated/0/DCIM/Camera  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F1959286864&position=102]",
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ #G$E4wjU4ZrXkSXA/M7APDmdvHCBUqUq3c0Utl/cs79viRYCfZQ5QSS/D3tJFpmomGA6nF3HnoDw/XvZs5sngxj56  ] PP[ #G$E55UCw4JwLy7Sl4cVqzHQvBYdY+Xtm4J3SYc9NXW2sbw==  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F1959286864&position=102]",
+      "V3[4], V3[5]",
+      "",
+      ""
+    ],
+    [
+      "log",
+      "__log",
+      126,
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ /storage/emulated/0/DCIM/Camera/20240502_122732.jpg(1000003173)  ] PP[ /storage/emulated/0/DCIM/Camera  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F1959286864&position=102]",
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ #G$E4wjU4ZrXkSXA/M7APDmdvHCBUqUq3c0Utl/cs79viRYCfZQ5QSS/D3tJFpmomGAqnF3HnoDw/XvZs5sngxjl6  ] PP[ #G$E4wjU4ZrXkSXA/M7APDmdvHCBUqUq3c0Utl/cs79viRQ==  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F1959286864&position=102]",
+      "V3[4], V3[4]",
+      "",
+      ""
+    ],
+    [
+      "log",
+      "__log",
+      127,
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ /storage/emulated/0/Download/image0000.JPG(1000003180)  ] PP[ /storage/emulated/0/Download  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-701597544&position=97]",
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ #G$E4wjU4ZrXkSXA/M7APDmdvHCBUqUq3X3sO1Nss5pH5Sc7KMAxUSSrdpt0zvGkhGwi5TTKxsD0m  ] PP[ #G$E7nJ8fBhtLr1UQCuxPi0rI6mrJUTyQuixcsqrujQ==  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-701597544&position=97]",
+      "V3[4], V3[7]",
+      "",
+      ""
+    ],
+    [
+      "log",
+      "__log",
+      128,
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ /storage/emulated/0/Download/IMG_2280.jpg(1000003179)  ] PP[ /storage/emulated/0/Download  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-701597544&position=97]",
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ #G$E6pF+oRhpIubl93+l96474pheGz9cTwG4fi0msS83sNOqItpZC+sA7fAPNyodXE53EAjuiiyM=  ] PP[ #G$E4wjU4ZrXkSXA/M7APDmdvHCBUqUq3X3sO1Nss5g==  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-701597544&position=97]",
+      "V3[6], V3[4]",
+      "",
+      ""
+    ],
+    [
+      "log",
+      "__log",
+      129,
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ /storage/emulated/0/Download/IMG_2644.jpg(1000003178)  ] PP[ /storage/emulated/0/Download  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-701597544&position=97]",
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ #G$E55UCw4JwLy7Sl4cVqzHQvBYdY+XtmzKPxIuNNVCeXQwDjh9jmcrxvTos6T5SP+1g4YiCeyZ0=  ] PP[ #G$E55UCw4JwLy7Sl4cVqzHQvBYdY+XtmzKPxIuNNVA==  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-701597544&position=97]",
+      "V3[5], V3[5]",
+      "",
+      ""
+    ],
+    [
+      "log",
+      "__log",
+      130,
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ /storage/emulated/0/Download/imagejpeg_0.jpg(1000003177)  ] PP[ /storage/emulated/0/Download  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-701597544&position=97]",
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ #G$E7nJ8fBhtLr1UQCuxPi0rI6mrJUTyQuixcsqrujXKaFDH8jAt6rikvkvO5Fqfa6+9WUunFUCOIJFI=  ] PP[ #G$E55UCw4JwLy7Sl4cVqzHQvBYdY+XtmzKPxIuNNVA==  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-701597544&position=97]",
+      "V3[7], V3[5]",
+      "",
+      ""
+    ],
+    [
+      "log",
+      "__log",
+      131,
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ /storage/emulated/0/DCIM/Camera/20240502_122756.jpg(1000003176)  ] PP[ /storage/emulated/0/DCIM/Camera  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-701597544&position=97]",
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ #G$E7nJ8fBhtLr1UQCuxPi0rI6mrJUTyQlhJ/8YbuhDiBGH+p2VM++3tAkILiVPLF7+lICKmSSyOPI0vfRVqLmUow  ] PP[ #G$E4wjU4ZrXkSXA/M7APDmdvHCBUqUq3c0Utl/cs79viRQ==  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-701597544&position=97]",
+      "V3[7], V3[4]",
+      "",
+      ""
+    ],
+    [
+      "log",
+      "__log",
+      132,
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ /storage/emulated/0/Download/IMG_1588.jpg(1000003181)  ] PP[ /storage/emulated/0/Download  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-701597544&position=97]",
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ #G$E4wjU4ZrXkSXA/M7APDmdvHCBUqUq3X3sO1Nss5pHZaejyZAlcQTSZnOpcpWghGwi5TjC4uSQ=  ] PP[ #G$E4wjU4ZrXkSXA/M7APDmdvHCBUqUq3X3sO1Nss5g==  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-701597544&position=97]",
+      "V3[4], V3[4]",
+      "",
+      ""
+    ],
+    [
+      "log",
+      "__log",
+      133,
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ /storage/emulated/0/Download/IMG_1529.jpg(1000003182)  ] PP[ /storage/emulated/0/Download  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-701597544&position=97]",
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ #G$E4wjU4ZrXkSXA/M7APDmdvHCBUqUq3X3sO1Nss5pHZaejyZAlWQDSZnOpcpWghGwi5TjC4uiQ=  ] PP[ #G$E7nJ8fBhtLr1UQCuxPi0rI6mrJUTyQuixcsqrujQ==  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-701597544&position=97]",
+      "V3[4], V3[7]",
+      "",
+      ""
+    ],
+    [
+      "log",
+      "__log",
+      134,
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ /storage/emulated/0/Download/IMG_1426.jpg(1000003183)  ] PP[ /storage/emulated/0/Download  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-701597544&position=97]",
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ #G$E55UCw4JwLy7Sl4cVqzHQvBYdY+XtmzKPxIuNNVCeXQwDjhNrgcLxvTos6T5SP+1g4YiCRwp0=  ] PP[ #G$E4wjU4ZrXkSXA/M7APDmdvHCBUqUq3X3sO1Nss5g==  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-701597544&position=97]",
+      "V3[5], V3[4]",
+      "",
+      ""
+    ],
+    [
+      "log",
+      "__log",
+      135,
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ /storage/emulated/0/Download/IMG_1407.jpg(1000003184)  ] PP[ /storage/emulated/0/Download  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-701597544&position=97]",
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ #G$E6pF+oRhpIubl93+l96474pheGz9cTwG4fi0msS83sNOqItZBK/cA7fAPNyodXE53EAjuthiM=  ] PP[ #G$E6pF+oRhpIubl93+l96474pheGz9cTwG4fi0msSw==  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-701597544&position=97]",
+      "V3[6], V3[6]",
+      "",
+      ""
+    ],
+    [
+      "log",
+      "__log",
+      136,
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ /storage/emulated/0/Download/IMG_1377.jpg(1000003185)  ] PP[ /storage/emulated/0/Download  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-701597544&position=97]",
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ #G$E4wjU4ZrXkSXA/M7APDmdvHCBUqUq3X3sO1Nss5pHZaejyZA9TTjSZnOpcpWghGwi5TjC4vSQ=  ] PP[ #G$E55UCw4JwLy7Sl4cVqzHQvBYdY+XtmzKPxIuNNVA==  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-701597544&position=97]",
+      "V3[4], V3[5]",
+      "",
+      ""
+    ],
+    [
+      "log",
+      "__log",
+      137,
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ /storage/emulated/0/Download/IMG_2715.jpg(1000003186)  ] PP[ /storage/emulated/0/Download  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-701597544&position=97]",
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ #G$E4wjU4ZrXkSXA/M7APDmdvHCBUqUq3X3sO1Nss5pHZaejyZwtVTDSZnOpcpWghGwi5TjC4viQ=  ] PP[ #G$E55UCw4JwLy7Sl4cVqzHQvBYdY+XtmzKPxIuNNVA==  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-701597544&position=97]",
+      "V3[4], V3[5]",
+      "",
+      ""
+    ],
+    [
+      "log",
+      "__log",
+      138,
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ /storage/emulated/0/Download/IMG_2650.jpg(1000003187)  ] PP[ /storage/emulated/0/Download  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-701597544&position=97]",
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ #G$E4wjU4ZrXkSXA/M7APDmdvHCBUqUq3X3sO1Nss5pHZaejyZwpRSTSZnOpcpWghGwi5TjC4vyQ=  ] PP[ #G$E4wjU4ZrXkSXA/M7APDmdvHCBUqUq3X3sO1Nss5g==  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-701597544&position=97]",
+      "V3[4], V3[4]",
+      "",
+      ""
+    ],
+    [
+      "log",
+      "__log",
+      139,
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ /storage/emulated/0/Download/IMG_2626.jpg(1000003188)  ] PP[ /storage/emulated/0/Download  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-701597544&position=97]",
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ #G$E55UCw4JwLy7Sl4cVqzHQvBYdY+XtmzKPxIuNNVCeXQwDjh9jgcLxvTos6T5SP+1g4YiCRyZ0=  ] PP[ #G$E4wjU4ZrXkSXA/M7APDmdvHCBUqUq3X3sO1Nss5g==  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-701597544&position=97]",
+      "V3[5], V3[4]",
+      "",
+      ""
+    ],
+    [
+      "log",
+      "__log",
+      140,
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ /storage/emulated/0/Download/IMG_5243.png(1000003189)  ] PP[ /storage/emulated/0/Download  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-701597544&position=97]",
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ #G$E4wjU4ZrXkSXA/M7APDmdvHCBUqUq3X3sO1Nss5pHZaejyYA5QSjSDgupcpWghGwi5TjC4sSQ=  ] PP[ #G$E6pF+oRhpIubl93+l96474pheGz9cTwG4fi0msSw==  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-701597544&position=97]",
+      "V3[4], V3[6]",
+      "",
+      ""
+    ],
+    [
+      "log",
+      "__log",
+      141,
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ /storage/emulated/0/Download/IMG_1250.jpg(1000003190)  ] PP[ /storage/emulated/0/Download  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-701597544&position=97]",
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ #G$E7nJ8fBhtLr1UQCuxPi0rI6mrJUTyQuixcsqrujXK6NBfE2FM/+2Aa0rr7V/DC6u9WUejMUzs=  ] PP[ #G$E4wjU4ZrXkSXA/M7APDmdvHCBUqUq3X3sO1Nss5g==  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-701597544&position=97]",
+      "V3[7], V3[4]",
+      "",
+      ""
+    ],
+    [
+      "log",
+      "__log",
+      142,
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ /storage/emulated/0/Download/IMG_0567.jpg(1000003191)  ] PP[ /storage/emulated/0/Download  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-701597544&position=97]",
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ #G$E6pF+oRhpIubl93+l96474pheGz9cTwG4fi0msS83sNOqItJFM/cA7fAPNyodXE53EAjusgyM=  ] PP[ #G$E7nJ8fBhtLr1UQCuxPi0rI6mrJUTyQuixcsqrujQ==  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-701597544&position=97]",
+      "V3[6], V3[7]",
+      "",
+      ""
+    ],
+    [
+      "log",
+      "__log",
+      143,
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ /storage/emulated/0/Download/IMG_2129.jpg(1000003192)  ] PP[ /storage/emulated/0/Download  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-701597544&position=97]",
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ #G$E7nJ8fBhtLr1UQCuxPi0rI6mrJUTyQuixcsqrujXK6NBfE21A48mAa0rr7V/DC6u9WUejMUTs=  ] PP[ #G$E6pF+oRhpIubl93+l96474pheGz9cTwG4fi0msSw==  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-701597544&position=97]",
+      "V3[7], V3[6]",
+      "",
+      ""
+    ],
+    [
+      "log",
+      "__log",
+      144,
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ /storage/emulated/0/Download/IMG_9886.jpg(1000003193)  ] PP[ /storage/emulated/0/Download  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-701597544&position=97]",
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ #G$E7nJ8fBhtLr1UQCuxPi0rI6mrJUTyQuixcsqrujXK6NBfE0Fky/WAa0rr7V/DC6u9WUejMUDs=  ] PP[ #G$E4wjU4ZrXkSXA/M7APDmdvHCBUqUq3X3sO1Nss5g==  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-701597544&position=97]",
+      "V3[7], V3[4]",
+      "",
+      ""
+    ],
+    [
+      "log",
+      "__log",
+      145,
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ /storage/emulated/0/Download/f02055c3-.jpg(1000003194)  ] PP[ /storage/emulated/0/Download  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-701597544&position=97]",
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ #G$E7nJ8fBhtLr1UQCuxPi0rI6mrJUTyQuixcsqrujXKVSWKr3FRp+GNeyK20TvHC6u9WUurEWiaW  ] PP[ #G$E4wjU4ZrXkSXA/M7APDmdvHCBUqUq3X3sO1Nss5g==  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-701597544&position=97]",
+      "V3[7], V3[4]",
+      "",
+      ""
+    ],
+    [
+      "log",
+      "__log",
+      146,
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ /storage/emulated/0/DCIM/Camera/20230829_134706.jpg(1000002397)  ] PP[ /storage/emulated/0/DCIM/Camera  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-241077965&position=115]",
+      "[MOVE_TO_TRASH_SINGLE] Req Total[1] LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[1] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ #G$E55UCw4JwLy7Sl4cVqzHQvBYdY+Xtm4J3SYc9NXW2sb2iOhdzhdqo3B7MjTZCI+14mO2HO2YWAJm0lcW9ju0Xl  ] PP[ #G$E6pF+oRhpIubl93+l96474pheGz9cT7FA8yGWsQofXGA==  ] LD[1] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline/viewer?media_item=data%3A%2F%2FmediaItem%2F-241077965&position=115]",
+      "V3[5], V3[6]",
+      "",
+      ""
+    ],
+    [
+      "log",
+      "__log",
+      147,
+      "[MOVE_TO_TRASH_MULTIPLE] Req Total[6] LI[6] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[6] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ /storage/emulated/0/DCIM/Camera/20240617_122606(0).jpg(1000003370)   /storage/emulated/0/DCIM/Camera/20240617_122606.jpg(1000003369)   /storage/emulated/0/DCIM/Camera/20240617_122605(0).jpg(1000003368)   /storage/emulated/0/DCIM/Camera/20240617_122605.jpg(1000003367)   /storage/emulated/0/DCIM/Camera/20240617_122604(0).jpg(1000003366)   /storage/emulated/0/DCIM/Camera/20240617_122604.jpg(1000003365)  ] PP[ /storage/emulated/0/DCIM/Camera  ] LD[6] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline]",
+      "[MOVE_TO_TRASH_MULTIPLE] Req Total[6] LI[6] CI[0] LCI[0] LV[0] CV[0] LCV[0] Success LI[6] CI[0] LCI[0] LV[0] CV[0] LCV[0] Fail LI[0] CI[0] LCI[0] LV[0] CV[0] LCV[0] FP[ #G$E4wjU4ZrXkSXA/M7APDmdvHCBUqUq3c0Utl/cs79viRYCfZQ5QSSzC29JFpmonGw6hTSiu4n1oRvds5srhwTlg4wIy   #G$E4wjU4ZrXkSXA/M7APDmdvHCBUqUq3c0Utl/cs79viRYCfZQ5QSSzC29JFpmonGw6nF3HnoDw/XvZs5snixzN6   #G$E7nJ8fBhtLr1UQCuxPi0rI6mrJUTyQlhJ/8YbuhDiBGH+p2VM++3hBlYLiVPLE6upOUvDbCWLYO0rfRVmKnk8qBXaB   #G$E6pF+oRhpIubl93+l96474pheGz9cT7FA8yGWsQofXGILltJZO+thgOzvUyYVRE5jaW3rymjuOQHKCp40r1TwH   #G$E4wjU4ZrXkSXA/M7APDmdvHCBUqUq3c0Utl/cs79viRYCfZQ5QSSzC29JFpmonGwyhTSiu4n1oRvds5srhwTlg4gQy   #G$E6pF+oRhpIubl93+l96474pheGz9cT7FA8yGWsQofXGILltJZO+thgOzvUyYVRE5naW3rymjuOQHKCp40r1T4H  ] PP[ #G$E6pF+oRhpIubl93+l96474pheGz9cT7FA8yGWsQofXGA==  ] LD[6] CD[0] MF[0] AB[0] ABR[false] RSS[0] [location://timeline]",
+      "V3[4], V3[4], V3[7], V3[6], V3[4], V3[6], V3[6]",
+      "",
+      ""
+    ]
+  ]
+}
