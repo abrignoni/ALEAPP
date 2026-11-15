@@ -9,32 +9,56 @@ __artifacts_v2__ = {
         "last_update_date": "2026-11-15",
         "requirements": "none",
         "category": "Signal",
-        "notes": ("Requires the SQLCipher key from extra/Secrets/secrets.json; the write-ahead log "
-                  "is replayed. Direction, Status and Event Type are decoded from the message type "
-                  "after MessageTypes.java. Event Type names rows that record an event rather than "
-                  "a message (calls, group updates, identity changes and similar). A call row has "
-                  "no body; its Message shows the call's name in square brackets, written by this "
-                  "parser. No call duration is stored. Conversation is the thread's recipient "
-                  "(group title, story list name or person) and labels LAVA's conversation view. "
-                  "Quoted Message ID is resolved from quote_id and quote_author, as Signal does; "
-                  "several matches are all listed. Reactions shows emoji, reacting recipient and "
-                  "time in UTC. Each revision of an edited message is its own row, linked by "
-                  "Latest Revision ID and Original Message ID. Not read: signal-logs.db, the "
-                  "encryption state, the sticker and emoji catalogues, mention and group_receipts. "
-                  "On pixel7a_a14 Remote Deleted, View Once and Quoted Original Missing held 'No' "
-                  "on all 34 rows, and Disappearing Timer (Seconds), Parent Story ID, Revision "
-                  "Number, Latest Revision ID and Original Message ID had no value on any row. "
-                  "Reference: Signal-Android, 'MessageTypes.java', "
+        "notes": ("Requires the SQLCipher key from Secrets/secrets.json (extra/Secrets/ in the "
+                  "extraction); the write-ahead log is replayed. One key is read and applied to "
+                  "every Signal database found; a database it does not open is skipped and named "
+                  "in the log. On russell_a14 a second Android user's databases did not open with"
+                  " the one key the extraction holds and gave no rows. Direction, Status and "
+                  "Event Type are decoded from the message type after MessageTypes.java: "
+                  "Direction is Incoming for base type 20 and for the incoming call types 1 and "
+                  "10, Outgoing for the types in OUTGOING_MESSAGE_TYPES (L65-70) and Draft for "
+                  "27; any other row, such as a missed call (3 or 8) or a group call (12), shows "
+                  "Unknown, since MessageTypes.java gives those no direction. Status is named for"
+                  " base types 21 to 24 and 27 only. Event Type names rows that record an event "
+                  "rather than a message (calls, group updates, identity changes and similar), "
+                  "each base type compared as MessageTypes.java compares it, on the whole type or"
+                  " on the base type. Where a call row has no body, Message shows the call's name"
+                  " in square brackets, written by this parser; a group call row stores a body, "
+                  "which is shown as stored, and no tested image held one. The message and call "
+                  "tables of the tested databases have no call duration column. Conversation is "
+                  "the thread's recipient: the group title, the distribution list name as stored,"
+                  " or the person. It labels LAVA's conversation view. No tested message belonged"
+                  " to a distribution list thread, and Signal stores the My Story list name as a "
+                  "UUID. Quoted Message ID is resolved from quote_id and quote_author, as Signal "
+                  "does (MessageTable.kt L5124); several matches are all listed, and every tested"
+                  " quote had one. Reactions shows emoji, reacting recipient and time in UTC. "
+                  "Parent Story ID is the story a reply belongs to, with group reply or direct "
+                  "reply, read as ParentStoryId.kt (L16-43) reads the stored sign; no tested row "
+                  "held one. Each revision of an edited message is its own row, linked by Latest "
+                  "Revision ID and Original Message ID (2 rows on russell_a14). Not read: "
+                  "signal-logs.db, the encryption state, the sticker and emoji catalogues, "
+                  "mention and group_receipts. On pixel7a_a14 Remote Deleted, View Once and "
+                  "Quoted Original Missing held 'No' on all 34 rows, and Disappearing Timer "
+                  "(Seconds), Parent Story ID, Revision Number, Latest Revision ID and Original "
+                  "Message ID had no value on any row. Quoted Message Sent, Quoted Message, "
+                  "Quoted Author and Quoted Message ID had no value on any row on "
+                  "hc_pixel8pro_a16, russell_pixel6a_a13, sharon_a14 and russell_a14. Event Type "
+                  "had no value on any row on russell_pixel6a_a13. Read held one value, Yes, on "
+                  "all rows on sharon_a14 and sharon_a13. Reference: Signal-Android, "
+                  "'MessageTypes.java', "
                   "https://github.com/signalapp/Signal-Android/blob/ad141bb6af88ef67aea05d3d0e55cf9760fe56eb/app/src/main/java/org/thoughtcrime/securesms/database/MessageTypes.java"),
         "paths": ('*/org.thoughtcrime.securesms/databases/signal.db*',
-                  '*/org.thoughtcrime.securesms/app_parts/*',),
+                  '*/org.thoughtcrime.securesms/app_parts/*',
+                  '*/Secrets/secrets.json',),
         "output_types": "standard",
         "artifact_icon": "message-circle",
         "sample_data": {
-            "hc_pixel8pro_a16": "20 rows",
-            "pixel7a_a14": "Signal 7.11.4 | 34 rows",
-            "russell_pixel6a_a13": "61 rows",
-            "sharon_a14": "45 rows",
+            "hc_pixel8pro_a16": "Android 16 | 20 rows",
+            "pixel7a_a14": "Android 14 | 34 rows",
+            "russell_pixel6a_a13": "Android 13 | 61 rows",
+            "sharon_a14": "Android 14 | 45 rows",
+            "russell_a14": "Android 14 | 119 rows",
+            "sharon_a13": "Android 13 | 127 rows",
         },
         "data_views": {
             "conversation": {
@@ -54,64 +78,89 @@ __artifacts_v2__ = {
         "description": "Parses the Signal call log, including call type, direction and outcome.",
         "author": "Alexis Brignoni",
         "creation_date": "2026-07-25",
-        "last_update_date": "2026-08-15",
+        "last_update_date": "2026-11-15",
         "requirements": "none",
         "category": "Signal",
-        "notes": ("Requires the SQLCipher key from extra/Secrets/secrets.json. Call type, "
-                  "direction and outcome are the Type, Direction and Event values defined by "
-                  "CallTable, which lists call types 0 Audio, 1 Video, 3 Group and 4 Ad hoc with "
-                  "no type 2; codes outside those sets are reported with their raw value. "
-                  "Reference: Signal-Android, 'CallTable.kt (Type, Direction and Event values)', "
+        "notes": ("Requires the SQLCipher key from Secrets/secrets.json (extra/Secrets/ in the "
+                  "extraction); the write-ahead log is replayed. One key is read and applied to "
+                  "every Signal database found; a database it does not open is skipped and named "
+                  "in the log. On russell_a14 a second Android user's databases did not open with"
+                  " the one key the extraction holds and gave no rows. Call type, direction and "
+                  "outcome are the Type, Direction and Event values defined by CallTable, which "
+                  "lists call types 0 Audio, 1 Video, 3 Group and 4 Ad hoc with no type 2; codes "
+                  "outside those sets are reported with their raw value. Deleted Timestamp had no"
+                  " value on any row on pixel7a_a14, hc_pixel8pro_a16, sharon_a14 and sharon_a13;"
+                  " Contact, Phone Number and Outcome (Accepted) each held one value on all rows "
+                  "on pixel7a_a14 and hc_pixel8pro_a16, which hold calls with one contact; Call "
+                  "Type held one value, Audio, on all 3 rows on sharon_a14; and Read held one "
+                  "value, Yes, on pixel7a_a14, hc_pixel8pro_a16 and sharon_a14. Reference: "
+                  "Signal-Android, 'CallTable.kt (Type, Direction and Event values)', "
                   "https://github.com/signalapp/Signal-Android/blob/ad141bb6af88ef67aea05d3d0e55cf9760fe56eb/app/src/main/java/org/thoughtcrime/securesms/database/CallTable.kt"),
-        "paths": ('*/org.thoughtcrime.securesms/databases/signal.db*',),
+        "paths": ('*/org.thoughtcrime.securesms/databases/signal.db*',
+                  '*/Secrets/secrets.json',),
         "output_types": "standard",
         "artifact_icon": "phone",
         "sample_data": {
-            "hc_pixel8pro_a16": "3 rows",
-            "pixel7a_a14": "4 rows",
-            "russell_pixel6a_a13": "0 rows",
-            "sharon_a14": "3 rows",
+            "hc_pixel8pro_a16": "Android 16 | 3 rows",
+            "pixel7a_a14": "Android 14 | 4 rows",
+            "russell_pixel6a_a13": "Android 13 | 0 rows",
+            "sharon_a14": "Android 14 | 3 rows",
+            "sharon_a13": "Android 13 | 1 row",
         },
     },
     "get_signalContacts": {
         "name": "Signal - Contacts",
-        "description": ("Parses Signal recipients, including phone numbers, ACI/PNI identifiers, "
-                        "usernames and profile names."),
+        "description": ("Parses Signal recipients: phone numbers, ACI and PNI identifiers, "
+                        "usernames and names."),
         "author": "Alexis Brignoni, @kalink0",
         "creation_date": "2026-07-25",
         "last_update_date": "2026-11-15",
         "requirements": "none",
         "category": "Signal",
-        "notes": ("Requires the SQLCipher key from extra/Secrets/secrets.json. Recipient Type "
-                  "names the stored type after RecipientType in RecipientTable.kt at commit "
+        "notes": ("Requires the SQLCipher key from Secrets/secrets.json (extra/Secrets/ in the "
+                  "extraction); the write-ahead log is replayed. One key is read and applied to "
+                  "every Signal database found; a database it does not open is skipped and named "
+                  "in the log. On russell_a14 a second Android user's databases did not open with"
+                  " the one key the extraction holds and gave no rows. Recipient Type names the "
+                  "stored type after RecipientType in RecipientTable.kt at commit "
                   "ad141bb6af88ef67aea05d3d0e55cf9760fe56eb (L5158-5164), which defines "
-                  "INDIVIDUAL(0), MMS(1), GV1(2), GV2(3), DISTRIBUTION_LIST(4) and CALL_LINK(5): 0 "
-                  "Individual, 1 MMS, 2 Group V1, 3 Group V2, 4 Distribution list, 5 Call link, "
-                  "and Unknown with the stored number for any other value. That commit is one "
+                  "INDIVIDUAL(0), MMS(1), GV1(2), GV2(3), DISTRIBUTION_LIST(4) and CALL_LINK(5): "
+                  "0 Individual, 1 MMS, 2 Group V1, 3 Group V2, 4 Distribution list, 5 Call link,"
+                  " and Unknown with the stored number for any other value. That commit is one "
                   "version of the app's source; the app versions that wrote the tested databases "
-                  "were not compared with it. On pixel7a_a14 (15 rows), hc_pixel8pro_a16 (4 rows) "
-                  "and sharon_a14 (25 rows) the stored type was 0 on 14, 3 and 23 rows, 4 on one "
-                  "row of each image, and 3 on one row of sharon_a14. No tested row stored 1, 2 or "
-                  "5. On russell_pixel6a_a13 (6 rows) no type value was read and the column shows "
-                  "Unknown (None). The rows of type 3 and 4 were not compared with the groups or "
-                  "distribution list tables. Avatar and Sync Avatar are the pictures in "
-                  "app_avatars named after the recipient _id and <_id>-sync, decrypted with the "
-                  "attachment key; which one the app showed depends on a setting and is not "
-                  "established here. On pixel7a_a14 Blocked and Hidden held 'No' on all 15 rows, "
-                  "and Username, Note and Sync Avatar had no value on any row. Reference: "
-                  "Signal-Android, RecipientTable.kt, "
-                  "https://github.com/signalapp/Signal-Android/blob/ad141bb6af88ef67aea05d3d0e55cf9760fe56eb/app/src/main/java/org/thoughtcrime/securesms/database/RecipientTable.kt#L5158-L5164. "
-                  "Reference: Signal-Android, 'AvatarHelper.java', "
+                  "were not compared with it. On pixel7a_a14 (15 rows), hc_pixel8pro_a16 (4 rows)"
+                  " and sharon_a14 (25 rows) the stored type was 0 on 14, 3 and 23 rows, 4 on one"
+                  " row of each image, and 3 on one row of sharon_a14; on russell_a14 (12 rows) "
+                  "it was 0 on 11 rows and 4 on one. No tested row stored 1, 2 or 5. On "
+                  "russell_pixel6a_a13 (6 rows) and sharon_a13 (17 rows) the recipient table uses"
+                  " older column names: Phone Number, Name and ACI are read from phone, "
+                  "system_display_name and uuid (renamed to aci by V200_ResetPniColumn.kt L18). "
+                  "That table has group_type and no type column, and group_type is not reported, "
+                  "so Recipient Type held one value, Unknown (None), on all rows. The rows of "
+                  "type 3 and 4 were not compared with the groups or distribution list tables. "
+                  "Avatar and Sync Avatar are the pictures in app_avatars named after the "
+                  "recipient _id and <_id>-sync, decrypted with the attachment key; which one the"
+                  " app showed depends on a setting and is not established here. No tested image "
+                  "held a -sync file, so Sync Avatar is not exercised, and Username had no value "
+                  "on any row of any tested image. On pixel7a_a14 Blocked and Hidden held 'No' on"
+                  " all 15 rows, and Username, Note and Sync Avatar had no value on any row; "
+                  "About had no value on any row on hc_pixel8pro_a16 and russell_pixel6a_a13. "
+                  "Reference: Signal-Android, RecipientTable.kt, "
+                  "https://github.com/signalapp/Signal-Android/blob/ad141bb6af88ef67aea05d3d0e55cf9760fe56eb/app/src/main/java/org/thoughtcrime/securesms/database/RecipientTable.kt#L5158-L5164."
+                  " Reference: Signal-Android, 'AvatarHelper.java', "
                   "https://github.com/signalapp/Signal-Android/blob/ad141bb6af88ef67aea05d3d0e55cf9760fe56eb/app/src/main/java/org/thoughtcrime/securesms/profiles/AvatarHelper.java"),
         "paths": ('*/org.thoughtcrime.securesms/databases/signal.db*',
-                  '*/org.thoughtcrime.securesms/app_avatars/*',),
+                  '*/org.thoughtcrime.securesms/app_avatars/*',
+                  '*/Secrets/secrets.json',),
         "output_types": "standard",
         "artifact_icon": "users",
         "sample_data": {
-            "hc_pixel8pro_a16": "4 rows",
-            "pixel7a_a14": "Signal 7.11.4 | 15 rows",
-            "russell_pixel6a_a13": "6 rows",
-            "sharon_a14": "25 rows",
+            "hc_pixel8pro_a16": "Android 16 | 4 rows",
+            "pixel7a_a14": "Android 14 | 15 rows",
+            "russell_pixel6a_a13": "Android 13 | 6 rows",
+            "sharon_a14": "Android 14 | 25 rows",
+            "russell_a14": "Android 14 | 12 rows",
+            "sharon_a13": "Android 13 | 17 rows",
         },
     },
     "get_signalGroups": {
@@ -125,20 +174,27 @@ __artifacts_v2__ = {
         "last_update_date": "2026-11-15",
         "requirements": "none",
         "category": "Signal",
-        "notes": ("Requires the SQLCipher key from extra/Secrets/secrets.json. Avatar is the group "
+        "notes": ("Requires the SQLCipher key from Secrets/secrets.json (extra/Secrets/ in the "
+                  "extraction); the write-ahead log is replayed. One key is read and applied to "
+                  "every Signal database found; a database it does not open is skipped and named "
+                  "in the log. On russell_a14 a second Android user's databases did not open with"
+                  " the one key the extraction holds and gave no rows. Avatar is the group "
                   "picture from app_avatars, matched by the group's recipient _id and decrypted "
-                  "with the attachment key. No group was present on the public test image, so the "
-                  "avatar column is unverified there. Reference: Signal-Android, "
-                  "'AvatarHelper.java', "
+                  "with the attachment key. pixel7a_a14 holds no group; the one group on "
+                  "sharon_a14 and the one on sharon_a13 have no avatar file, so the Avatar column"
+                  " has not produced a value on any tested image, and on sharon_a14 Last Forced "
+                  "Update had no value. Reference: Signal-Android, 'AvatarHelper.java', "
                   "https://github.com/signalapp/Signal-Android/blob/ad141bb6af88ef67aea05d3d0e55cf9760fe56eb/app/src/main/java/org/thoughtcrime/securesms/profiles/AvatarHelper.java"),
         "paths": ('*/org.thoughtcrime.securesms/databases/signal.db*',
-                  '*/org.thoughtcrime.securesms/app_avatars/*',),
+                  '*/org.thoughtcrime.securesms/app_avatars/*',
+                  '*/Secrets/secrets.json',),
         "output_types": "standard",
         "artifact_icon": "users",
         "sample_data": {
-            "pixel7a_a14": "Signal 7.11.4 | 0 rows",
-            "russell_pixel6a_a13": "0 rows",
-            "sharon_a14": "1 row",
+            "pixel7a_a14": "Android 14 | 0 rows",
+            "russell_pixel6a_a13": "Android 13 | 0 rows",
+            "sharon_a14": "Android 14 | 1 row",
+            "sharon_a13": "Android 13 | 1 row",
         },
     },
     "get_signalAttachments": {
@@ -150,27 +206,45 @@ __artifacts_v2__ = {
         "last_update_date": "2026-11-15",
         "requirements": "none",
         "category": "Signal",
-        "notes": ("Attachment files are decrypted with the modernKey from secrets.json and each "
-                  "attachment's data_random; the format is detected from the content. Rows come "
-                  "from the attachment table, or the part table on older releases, joined to their "
-                  "message. A file in app_parts that no record names is listed with Database "
-                  "Record 'No'; it cannot be decrypted because its random is kept only in the "
-                  "record. app_parts files of a data directory whose database was not read are not "
-                  "listed. File Modified is the time the extraction recorded for the file. On "
-                  "pixel7a_a14 Detected Content Type held 'image/jpeg', Transfer State '0', Voice "
-                  "Note and Video GIF 'No' and Database Record 'Yes' on all 9 rows, and Thumbnail "
-                  "and Caption had no value on any row. Reference: Signal-Android, "
-                  "'MessageTypes.java', "
+        "notes": ("Attachment files are decrypted with the modernKey from Secrets/secrets.json "
+                  "and each attachment's data_random; rows need the database key as well, and "
+                  "without it nothing is listed. The format is detected from the leading bytes "
+                  "for JPEG, PNG, GIF, OGG, PDF, WebP, EBML (shown as video/webm), MP3 with an "
+                  "ID3 tag, and ISO media files with an ftyp box, shown as audio/mp4 for the M4A,"
+                  " M4B and M4P brands (1 row on sharon_a13, recorded as audio/aac) and as "
+                  "video/mp4 otherwise. Other content shows the recorded type, or 'unknown' when "
+                  "that type has no known extension; Detected Content Type is blank when the file"
+                  " is not in the extraction (1 row on sharon_a13). Rows come from the attachment"
+                  " table, or the part table on older releases (russell_pixel6a_a13 and "
+                  "sharon_a13), joined to their message. A file in app_parts that no record names"
+                  " is listed with Database Record 'No'; it is not decrypted here, because Signal"
+                  " keeps its random in the attachment record and not in the file. One such file "
+                  "is listed on hc_pixel8pro_a16. app_parts files of a data directory whose "
+                  "database was not read are not listed. File Modified is the member time "
+                  "recorded in the zip or tar; for a folder input it is the copy's time on the "
+                  "examiner's disk. On hc_pixel8pro_a16 Upload Timestamp and Message Date Sent "
+                  "show the same second on all 7 attachment rows; the stored millisecond values "
+                  "are equal on 5 and differ on 2, and both are blank on the unreferenced file. "
+                  "Voice Note and Video GIF are identical on all 8 rows (No on the 7 attachment "
+                  "rows, blank on the unreferenced file). On pixel7a_a14 Detected Content Type "
+                  "held 'image/jpeg', Transfer State '0', Voice Note and Video GIF 'No' and "
+                  "Database Record 'Yes' on all 9 rows, and Thumbnail and Caption had no value on"
+                  " any row of any tested image, so the thumbnail decryption is not exercised; on"
+                  " sharon_a13 Direction held one value, Incoming, on all 30 rows. Reference: "
+                  "Signal-Android, 'MessageTypes.java', "
                   "https://github.com/signalapp/Signal-Android/blob/ad141bb6af88ef67aea05d3d0e55cf9760fe56eb/app/src/main/java/org/thoughtcrime/securesms/database/MessageTypes.java"),
         "paths": ('*/org.thoughtcrime.securesms/databases/signal.db*',
-                  '*/org.thoughtcrime.securesms/app_parts/*',),
+                  '*/org.thoughtcrime.securesms/app_parts/*',
+                  '*/Secrets/secrets.json',),
         "output_types": "standard",
         "artifact_icon": "paperclip",
         "sample_data": {
-            "hc_pixel8pro_a16": "7 rows",
-            "pixel7a_a14": "Signal 7.11.4 | 9 rows",
-            "russell_pixel6a_a13": "8 rows",
-            "sharon_a14": "10 rows",
+            "hc_pixel8pro_a16": "Android 16 | 8 rows",
+            "pixel7a_a14": "Android 14 | 9 rows",
+            "russell_pixel6a_a13": "Android 13 | 8 rows",
+            "sharon_a14": "Android 14 | 10 rows",
+            "russell_a14": "Android 14 | 20 rows",
+            "sharon_a13": "Android 13 | 30 rows",
         },
     },
     "get_signalAccount": {
@@ -182,48 +256,73 @@ __artifacts_v2__ = {
         "last_update_date": "2026-11-15",
         "requirements": "none",
         "category": "Signal",
-        "notes": ("Requires the SQLCipher key from extra/Secrets/secrets.json. One row per listed "
-                  "key the store holds; an absent key is not listed and Signal uses its default. "
+        "notes": ("Requires the SQLCipher key from Secrets/secrets.json (extra/Secrets/ in the "
+                  "extraction); the write-ahead log is replayed. One key is read and applied to "
+                  "every Signal database found; a database it does not open is skipped and named "
+                  "in the log. On russell_a14 a second Android user's databases did not open with"
+                  " the one key the extraction holds and gave no rows. One row per listed key the"
+                  " store holds; an absent key is not listed and Signal uses its default. "
                   "Encryption keys stored there are not reported. PIN is the PIN as stored by "
                   "Signal. PIN Last Successful Entry is also written when Signal resets its PIN "
-                  "reminders, so it does not on its own prove a PIN entry. Last Foreground Time is "
-                  "set each time the app comes to the foreground. Server Time Offset (ms) is "
+                  "reminders, so it does not on its own prove a PIN entry. Last Foreground Time "
+                  "is set each time the app comes to the foreground. Server Time Offset (ms) is "
                   "device clock minus server time, measured at Server Time Offset Updated; "
-                  "positive means the device clock was ahead. Linked Devices Present is reported "
-                  "as stored; the key is not defined in the source cited, so its meaning is taken "
-                  "from its name. Times are UTC; a stored 0 or -1 is shown with '(not set)'. "
-                  "Reference: Signal-Android, keyvalue package, "
+                  "positive means the device clock was ahead. Linked Devices Present is a stored "
+                  "boolean shown as Yes or No; the key is not defined in the source cited, so "
+                  "what it records is not established. Times are UTC. A stored value of 0 or less"
+                  " is shown with '(not set)', a label written by this parser; no tested image "
+                  "held one. Reference: Signal-Android, keyvalue package, "
                   "https://github.com/signalapp/Signal-Android/blob/ad141bb6af88ef67aea05d3d0e55cf9760fe56eb/app/src/main/java/org/thoughtcrime/securesms/keyvalue/AccountValues.kt"),
-        "paths": ('*/org.thoughtcrime.securesms/databases/signal-key-value.db*',),
+        "paths": ('*/org.thoughtcrime.securesms/databases/signal-key-value.db*',
+                  '*/Secrets/secrets.json',),
         "output_types": "standard",
         "artifact_icon": "user",
         "sample_data": {
-            "pixel7a_a14": "Signal 7.11.4 | 18 rows",
+            "pixel7a_a14": "Android 14 | 18 rows",
+            "hc_pixel8pro_a16": "Android 16 | 19 rows",
+            "russell_pixel6a_a13": "Android 13 | 15 rows",
+            "sharon_a14": "Android 14 | 15 rows",
+            "russell_a14": "Android 14 | 18 rows",
+            "sharon_a13": "Android 13 | 14 rows",
         },
     },
     "get_signalImageCache": {
         "name": "Signal - Image Cache",
-        "description": ("Decrypts the images in Signal's Glide disk cache "
-                        "(cache/image_manager_disk_cache)."),
+        "description": ("Decrypts the files in Signal's Glide disk cache "
+                        "(cache/image_manager_disk_cache) and shows them."),
         "author": "@kalink0",
         "creation_date": "2026-11-15",
         "last_update_date": "2026-11-15",
         "requirements": "none",
         "category": "Signal",
         "notes": ("Signal encrypts its Glide image cache with the attachment modernKey from "
-                  "secrets.json. A file counts as Decrypted only when Signal's encrypted check "
-                  "value matches; otherwise Status says why and the file is still listed. Without "
-                  "the key nothing is listed. Cached images are not linked to a message or "
-                  "contact: the file name is only the cache key and the journal is not read. File "
-                  "Modified is the time the extraction recorded for the file. On pixel7a_a14 "
-                  "Status held 'Decrypted' on all 85 rows. Reference: Signal-Android, "
+                  "Secrets/secrets.json. A file counts as Decrypted only when Signal's encrypted "
+                  "check value matches; otherwise Status says why and the file is still listed. "
+                  "Without the key nothing is listed. A decrypted file of no recognised format "
+                  "has Status 'Decrypted, format not recognised' and Detected Content Type "
+                  "'unknown', and is still exported and linked: 117 of 439 rows on russell_a14, "
+                  "115 of 242 on russell_pixel6a_a13 and 1 of 96 on sharon_a13. Most of them are "
+                  "2 bytes long after decryption (66 bytes as stored, which is what Size (Bytes) "
+                  "shows) and hold GIF block bytes but no GIF header; why the cache holds them "
+                  "that way is not established. Cached files are not linked to a message or "
+                  "contact here: the file name is a hash Glide makes from its cache key, and the "
+                  "journal is not read. File Modified is the member time recorded in the zip or "
+                  "tar; for a folder input it is the copy's time on the examiner's disk. On "
+                  "pixel7a_a14 Status held 'Decrypted' on all 85 rows; on sharon_a14 Detected "
+                  "Content Type held 'image/jpeg' on all 13 rows. Reference: Signal-Android, "
                   "'EncryptedCoder.java', "
                   "https://github.com/signalapp/Signal-Android/blob/ad141bb6af88ef67aea05d3d0e55cf9760fe56eb/app/src/main/java/org/thoughtcrime/securesms/glide/cache/EncryptedCoder.java"),
-        "paths": ('*/org.thoughtcrime.securesms/cache/image_manager_disk_cache/*',),
+        "paths": ('*/org.thoughtcrime.securesms/cache/image_manager_disk_cache/*',
+                  '*/Secrets/secrets.json',),
         "output_types": "standard",
         "artifact_icon": "image",
         "sample_data": {
-            "pixel7a_a14": "Signal 7.11.4 | 85 rows",
+            "pixel7a_a14": "Android 14 | 85 rows",
+            "hc_pixel8pro_a16": "Android 16 | 2 rows",
+            "russell_pixel6a_a13": "Android 13 | 242 rows",
+            "sharon_a14": "Android 14 | 13 rows",
+            "russell_a14": "Android 14 | 439 rows",
+            "sharon_a13": "Android 13 | 96 rows",
         },
     },
 }
@@ -246,7 +345,6 @@ from scripts.artifacts.storagePathViews import canonical_path, unique_files
 from scripts.ilapfuncs import (artifact_processor, logfunc, convert_unix_ts_to_utc,
                                check_in_embedded_media)
 
-SECRETS_GLOB = '*/Secrets/secrets.json'
 SIGNAL_PACKAGE = 'org.thoughtcrime.securesms'
 
 # Signal keys the database with the hex string as a passphrase and skips key
@@ -280,8 +378,9 @@ CALL_MESSAGE_TYPES = {1, 2, 3, 8, 10, 11, 12}
 # (MessageTypes.java L307-313 at ad141bb6), which compare the whole type.
 INCOMING_CALL_TYPES = {1: 'Incoming', 10: 'Incoming'}
 
-# Event rows, named after the MessageTypes.java constants at ad141bb6.
-# Base types 1-18 (L36-53), compared on the base type.
+# Event rows, named after the MessageTypes.java constants at ad141bb6 (L36-53).
+# Signal tests most of them against the whole type (L307-333, L356-374) and the
+# rest against the base type (L229-251); MESSAGE_EVENT_MASKED_TYPES are the latter.
 MESSAGE_EVENT_BASE_TYPES = {
     1: 'Incoming audio call', 2: 'Outgoing audio call', 3: 'Missed audio call',
     4: 'Joined', 5: 'Unsupported message', 6: 'Invalid message', 7: 'Profile change',
@@ -290,6 +389,7 @@ MESSAGE_EVENT_BASE_TYPES = {
     15: 'Release channel donation request', 16: 'Thread merge', 17: 'SMS export',
     18: 'Session switchover',
 }
+MESSAGE_EVENT_MASKED_TYPES = {4, 5, 6, 13, 16, 18}
 # Flag bits (L80-111), each tested with (type & bit) != 0 as Signal does.
 MESSAGE_EVENT_BITS = (
     (0x10000, 'Group update'),               # GROUP_UPDATE_BIT
@@ -302,7 +402,7 @@ MESSAGE_EVENT_BITS = (
 GROUP_LEAVE_BIT = 0x20000
 GROUP_V2_BIT = 0x80000
 # isChatSessionRefresh (L347-354) bundles these encryption error bits
-CHAT_SESSION_REFRESH_BITS = 0x10000000 | 0x08000000 | 0x04000000 | 0x02000000
+CHAT_SESSION_REFRESH_BITS = 0x20000000 | 0x10000000 | 0x08000000 | 0x04000000 | 0x02000000
 # Special types (L114-126), compared on (type & SPECIAL_TYPES_MASK)
 SPECIAL_TYPES_MASK = 0xF00000000
 MESSAGE_SPECIAL_TYPES = {
@@ -360,15 +460,21 @@ def _read_signal_keys(secrets_path):
     return database_key, attachment_key
 
 
+def _is_secrets_file(path):
+    path = str(path)
+    return (os.path.basename(path) == 'secrets.json'
+            and os.path.basename(os.path.dirname(path)) == 'Secrets')
+
+
 def _signal_secrets(context):
     """Find and cache Signal's keys from the extraction's secrets.json.
 
-    The cache is keyed on the secrets files found, so a second case processed
-    in the same process (the GUI) never reuses the first case's keys.
+    The file comes from the artifact's own paths. The cache is keyed on the
+    secrets files found, so a second case processed in the same process (the
+    GUI) never reuses the first case's keys.
     """
-    seeker = context.get_seeker()
-    secrets_files = tuple(sorted(str(path) for path in seeker.search(SECRETS_GLOB)
-                                 if os.path.basename(str(path)) == 'secrets.json'))
+    secrets_files = tuple(sorted(str(path) for path in context.get_files_found()
+                                 if _is_secrets_file(path)))
     if secrets_files in _secrets_cache:
         return _secrets_cache[secrets_files]
 
@@ -394,7 +500,8 @@ def _decrypted_database(context, database_path):
 
     database_key, _ = _signal_secrets(context)
     if not database_key:
-        logfunc('Signal: secrets.json has no "sqlite db key" entry for Signal')
+        logfunc(f'Signal: no "sqlite db key" for Signal in a Secrets/secrets.json, so '
+                f'{database_path} stays encrypted')
         return None
 
     digest = hashlib.sha1(database_path.encode('utf-8', 'replace')).hexdigest()[:12]
@@ -409,8 +516,9 @@ def _decrypted_database(context, database_path):
         return None
 
     if not pages or not verified:
-        logfunc('Signal: the key did not authenticate the database, it may belong to another '
-                'extraction or the app data was updated after the key was captured')
+        logfunc(f'Signal: the key from secrets.json did not authenticate {database_path}. It may '
+                'belong to another Android user whose key was not captured, to another '
+                'extraction, or the app data was updated after the key was captured')
         return None
     if verified != pages:
         logfunc(f'Signal: {pages - verified} of {pages} decrypted pages failed HMAC '
@@ -475,6 +583,9 @@ def _detect_format(data, recorded_type=None):
     if data[:4] == b'RIFF' and data[8:12] == b'WEBP':
         return 'webp', 'image/webp'
     if data[4:8] == b'ftyp':
+        # The major brand names the file kind; M4A, M4B and M4P are audio.
+        if data[8:12] in (b'M4A ', b'M4B ', b'M4P '):
+            return 'm4a', 'audio/mp4'
         return 'mp4', 'video/mp4'
 
     # ZIP container: Office documents and similar, so trust the recorded type
@@ -504,18 +615,27 @@ def _container(context, path):
     return '/'.join(parts[:len(parts) - parts[::-1].index(SIGNAL_PACKAGE)])
 
 
-def _attachment_files(context):
-    """Map (container, app_parts file name) to the extracted path.
+def _data_directory_files(context, folder):
+    """Map (container, file name) to the extracted path for files directly in
+    <package>/<folder>/, from the artifact's own paths.
 
-    Keyed on the container as well as the name, so the app_parts of a second
-    user or profile are never joined to another container's database.
+    Keyed on the container as well as the name, so the files of a second user
+    or profile are never joined to another container's database.
     """
     found = {}
-    for path in context.get_seeker().search(f'*/{SIGNAL_PACKAGE}/app_parts/*'):
+    for path in unique_files(context):
         path = str(path)
+        parts = path.replace('\\', '/').split('/')
+        if len(parts) < 3 or parts[-2] != folder or parts[-3] != SIGNAL_PACKAGE:
+            continue
         if os.path.isfile(path):
-            found[(_container(context, path), os.path.basename(path))] = path
+            found[(_container(context, path), parts[-1])] = path
     return found
+
+
+def _attachment_files(context):
+    """Map (container, app_parts file name) to the extracted path."""
+    return _data_directory_files(context, 'app_parts')
 
 
 def _avatar_files(context):
@@ -524,12 +644,7 @@ def _avatar_files(context):
     AvatarHelper names each file after the recipient's _id, with '-sync' appended
     for the copy taken from the system contacts.
     """
-    found = {}
-    for path in context.get_seeker().search(f'*/{SIGNAL_PACKAGE}/app_avatars/*'):
-        path = str(path)
-        if os.path.isfile(path):
-            found[(_container(context, path), os.path.basename(path))] = path
-    return found
+    return _data_directory_files(context, 'app_avatars')
 
 
 def _avatar_references(modern_key, avatar_files, container):
@@ -716,6 +831,8 @@ def _expires_in_seconds(value):
 RECIPIENT_COLUMN_ALIASES = {
     'e164': ('e164', 'phone'),
     'system_joined_name': ('system_joined_name', 'system_display_name'),
+    # V200_ResetPniColumn.kt L18 at ad141bb6 renames uuid to aci.
+    'aci': ('aci', 'uuid'),
 }
 
 
@@ -823,8 +940,10 @@ def _message_event(message_type):
         return ''
     events = []
     base_type = message_type & MESSAGE_BASE_TYPE_MASK
-    if base_type in MESSAGE_EVENT_BASE_TYPES:
+    if base_type in MESSAGE_EVENT_MASKED_TYPES:
         events.append(MESSAGE_EVENT_BASE_TYPES[base_type])
+    elif message_type in MESSAGE_EVENT_BASE_TYPES:
+        events.append(MESSAGE_EVENT_BASE_TYPES[message_type])
     for bit, name in MESSAGE_EVENT_BITS:
         if message_type & bit:
             events.append(name)
@@ -836,6 +955,14 @@ def _message_event(message_type):
     if special:
         events.append(MESSAGE_SPECIAL_TYPES.get(special, f'Special type {special:#x}'))
     return ', '.join(events)
+
+
+def _parent_story(value):
+    """parent_story_id as ParentStoryId.kt (L16-43 at ad141bb6) reads it: a positive
+    value is a group reply to that story, a negative one a direct reply."""
+    if not value:
+        return ''
+    return f'{abs(value)} ({"group reply" if value > 0 else "direct reply"})'
 
 
 def _quoted_ids(message_ids):
@@ -851,10 +978,12 @@ def _quoted_ids(message_ids):
 def get_signalMessages(context):
     data_list = []
     source_path = ''
+    sources = []
     modern_key = _modern_key(context)
     stored_files = _attachment_files(context) if modern_key else {}
 
     for connection, source_path in _open_signal_database(context):
+        sources.append(source_path)
         recipient_columns = _table_columns(connection, 'recipient')
         message_columns = _table_columns(connection, 'message')
         attachments_by_message, _, _, _ = _checked_in_attachments(
@@ -864,7 +993,7 @@ def get_signalMessages(context):
         reactions = _reactions_by_message(connection, recipient_names)
 
         # Signal stores the quoted message's send time in quote_id and its author
-        # in quote_author, and finds the original by both (MessageTable.kt L5139
+        # in quote_author, and finds the original by both (MessageTable.kt L5124
         # at ad141bb6). More than one message can still match, so every match is
         # kept.
         original_by_quote = {}
@@ -934,7 +1063,7 @@ def get_signalMessages(context):
                 row[5],
                 _message_event(message_type),
                 STORY_TYPES.get(story_type, f'Unknown ({story_type})') if story_type else '',
-                parent_story_id if parent_story_id and parent_story_id > 0 else '',
+                _parent_story(parent_story_id),
                 '\n'.join(reactions.get(row[5], [])),
                 revision_number if in_revision_chain else '',
                 latest_revision_id if latest_revision_id is not None else '',
@@ -975,14 +1104,16 @@ def get_signalMessages(context):
         'Latest Revision ID',
         'Original Message ID',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(sources)
 
 
 @artifact_processor
 def get_signalCalls(context):
     data_list = []
     source_path = ''
+    sources = []
     for connection, source_path in _open_signal_database(context):
+        sources.append(source_path)
         recipient_columns = _table_columns(connection, 'recipient')
         cursor = connection.cursor()
         call_columns = _table_columns(connection, 'call')
@@ -1021,16 +1152,18 @@ def get_signalCalls(context):
         ('Deleted Timestamp', 'datetime'),
         'Call ID',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(sources)
 
 
 @artifact_processor
 def get_signalGroups(context):
     data_list = []
     source_path = ''
+    sources = []
     modern_key = _modern_key(context)
     avatar_files = _avatar_files(context) if modern_key else {}
     for connection, source_path in _open_signal_database(context):
+        sources.append(source_path)
         recipient_columns = _table_columns(connection, 'recipient')
         group_columns = _table_columns(connection, 'groups')
         if not group_columns:
@@ -1092,27 +1225,29 @@ def get_signalGroups(context):
         'Group ID',
         ('Avatar', 'media'),
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(sources)
 
 
 @artifact_processor
 def get_signalContacts(context):
     data_list = []
     source_path = ''
+    sources = []
     modern_key = _modern_key(context)
     avatar_files = _avatar_files(context) if modern_key else {}
     for connection, source_path in _open_signal_database(context):
+        sources.append(source_path)
         avatars = _avatar_references(
             modern_key, avatar_files, _container(context, source_path))
         cursor = connection.cursor()
         recipient_columns = _table_columns(connection, 'recipient')
         cursor.execute(f'''
         SELECT
-            {_select_list(recipient_columns, 'recipient',
-                          ['_id', 'type', 'e164', 'username', 'aci', 'pni',
-                           'profile_joined_name', 'system_joined_name', 'profile_given_name',
-                           'profile_family_name', 'registered', 'blocked', 'hidden', 'about',
-                           'note', 'last_profile_fetch'])}
+            {', '.join(_recipient_column(recipient_columns, 'recipient', column) for column in (
+                '_id', 'type', 'e164', 'username', 'aci', 'pni',
+                'profile_joined_name', 'system_joined_name', 'profile_given_name',
+                'profile_family_name', 'registered', 'blocked', 'hidden', 'about',
+                'note', 'last_profile_fetch'))}
         FROM recipient
         ORDER BY recipient._id
         ''')
@@ -1151,16 +1286,17 @@ def get_signalContacts(context):
         ('Avatar', 'media'),
         ('Sync Avatar', 'media'),
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(sources)
 
 
 @artifact_processor
 def get_signalAttachments(context):
     data_list = []
     source_path = ''
+    sources = []
     modern_key = _modern_key(context)
     if not modern_key:
-        logfunc('Signal: no attachment modernKey available, reporting metadata only')
+        logfunc('Signal: no attachment modernKey available, attachment files stay encrypted')
     # Indexed whether or not the key is known, so files no record points at are
     # still listed
     stored_files = _attachment_files(context)
@@ -1169,6 +1305,7 @@ def get_signalAttachments(context):
     read_containers = set()
 
     for connection, source_path in _open_signal_database(context):
+        sources.append(source_path)
         recipient_columns = _table_columns(connection, 'recipient')
         container = _container(context, source_path)
         read_containers.add(container)
@@ -1216,6 +1353,8 @@ def get_signalAttachments(context):
 
             data_list.append((
                 convert_unix_ts_to_utc(row[0]) if row[0] else '',
+                convert_unix_ts_to_utc(row[12]) if row[12] else '',
+                _file_modified(context, stored_path) if stored_path else '',
                 own_media,
                 thumbnails.get(attachment_id, ''),
                 row[2] or '',
@@ -1228,13 +1367,11 @@ def get_signalAttachments(context):
                 'Yes' if row[8] else 'No',
                 f'{row[9]}x{row[10]}' if row[9] and row[10] else '',
                 row[11] or '',
-                convert_unix_ts_to_utc(row[12]) if row[12] else '',
                 _display_name(row[17], row[18], row[16], row[19]),
                 MESSAGE_DIRECTIONS.get(base_type, ''),
                 row[14],
                 message_id,
                 'Yes',
-                _file_modified(context, stored_path) if stored_path else '',
             ))
         connection.close()
 
@@ -1247,12 +1384,9 @@ def get_signalAttachments(context):
         if container not in read_containers:
             unread += 1
             continue
-        if not source_path:
-            source_path = path
         data_list.append((
-            '', '', '', '', '', '', os.path.getsize(path),
-            context.get_relative_path(path), '', '', '', '', '', '', '', '', '', '',
-            'No', _file_modified(context, path),
+            '', '', _file_modified(context, path), '', '', '', '', '', os.path.getsize(path),
+            context.get_relative_path(path), '', '', '', '', '', '', '', '', '', 'No',
         ))
     if unread:
         logfunc(f'Signal: {unread} app_parts file(s) belong to a data directory whose database '
@@ -1264,6 +1398,8 @@ def get_signalAttachments(context):
 
     data_headers = (
         ('Message Date Sent', 'datetime'),
+        ('Upload Timestamp', 'datetime'),
+        ('File Modified', 'datetime'),
         ('Attachment', 'media'),
         ('Thumbnail', 'media'),
         'File Name',
@@ -1276,15 +1412,13 @@ def get_signalAttachments(context):
         'Video GIF',
         'Dimensions',
         'Caption',
-        ('Upload Timestamp', 'datetime'),
         'Sender',
         'Direction',
         'Thread ID',
         'Message ID',
         'Database Record',
-        ('File Modified', 'datetime'),
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(sources)
 
 
 # EncryptedCoder.java at ad141bb6 (L30-33): the magic Signal writes in clear
@@ -1312,18 +1446,19 @@ def _decrypt_cache_file(modern_key, stored):
 @artifact_processor
 def get_signalImageCache(context):
     data_list = []
-    source_path = ''
     modern_key = _modern_key(context)
     if not modern_key:
         logfunc('Signal: no attachment modernKey available, so the image cache stays encrypted '
                 'and is not listed')
         return (('File Modified', 'datetime'), ('Image', 'media'), 'Detected Content Type',
-                'Status', 'Size (Bytes)', 'Cache File', 'Source File'), [], ''
+                'Status', 'Size (Bytes)', 'Cache File'), [], ''
+    sources = []
     for file_found in unique_files(context):
         file_found = str(file_found)
-        if not os.path.isfile(file_found) or os.path.basename(file_found) == 'journal':
+        if (not os.path.isfile(file_found) or os.path.basename(file_found) == 'journal'
+                or os.path.basename(os.path.dirname(file_found)) != 'image_manager_disk_cache'):
             continue
-        source_path = os.path.dirname(file_found)
+        sources.append(file_found)
         media, detected = '', ''
         try:
             with open(file_found, 'rb') as cache_file:
@@ -1332,6 +1467,8 @@ def get_signalImageCache(context):
             if plaintext is not None:
                 extension, mime = _detect_format(plaintext)
                 detected = mime or 'unknown'
+                if mime is None:
+                    status = 'Decrypted, format not recognised'
                 media = check_in_embedded_media(
                     file_found, plaintext, name=f'signal_cache_{os.path.basename(file_found)}.{extension}',
                     force_type=mime, force_extension=extension)
@@ -1344,7 +1481,6 @@ def get_signalImageCache(context):
             status,
             os.path.getsize(file_found),
             os.path.basename(file_found),
-            context.get_relative_path(file_found),
         ))
 
     data_headers = (
@@ -1354,9 +1490,8 @@ def get_signalImageCache(context):
         'Status',
         'Size (Bytes)',
         'Cache File',
-        'Source File',
     )
-    return data_headers, data_list, context.get_relative_path(source_path) if source_path else ''
+    return data_headers, data_list, '\n'.join(sources)
 
 
 # SignalStore keys reported by Signal - Account, in report order: key, setting
@@ -1422,7 +1557,9 @@ def _account_value(value, decoder):
 def get_signalAccount(context):
     data_list = []
     source_path = ''
+    sources = []
     for connection, source_path in _open_signal_database(context, 'signal-key-value.db'):
+        sources.append(source_path)
         if not {'key', 'value'} <= _table_columns(connection, 'key_value'):
             logfunc(f'Signal: {source_path} has no key_value table')
             connection.close()
@@ -1431,8 +1568,7 @@ def get_signalAccount(context):
         connection.close()
         for key, setting, decoder in ACCOUNT_KEYS:
             if key in stored:
-                data_list.append((setting, _account_value(stored[key], decoder), key,
-                                  context.get_relative_path(source_path)))
+                data_list.append((setting, _account_value(stored[key], decoder), key))
 
-    data_headers = ('Setting', 'Value', 'Key', 'Source File')
-    return data_headers, data_list, source_path
+    data_headers = ('Setting', 'Value', 'Key')
+    return data_headers, data_list, '\n'.join(sources)
