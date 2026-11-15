@@ -1,0 +1,86 @@
+{
+  "metadata": {
+    "module_name": "Threema",
+    "artifact_name": "Threema - Media",
+    "function_name": "threema_media",
+    "case_number": "casesynthetic_v2",
+    "number_of_columns": 8,
+    "number_of_rows": 5,
+    "total_data_size_bytes": 773,
+    "media_checkins": 0,
+    "media_embedded_checkins": 5,
+    "input_zip_path": "admin/test/cases/data/Threema/testdata.Threema.threema_media.casesynthetic_v2.zip",
+    "start_time": "2026-11-15T10:40:25.430389+00:00",
+    "end_time": "2026-11-15T10:40:25.441209+00:00",
+    "run_time_seconds": 0.0025696754455566406,
+    "last_commit": {
+      "hash": "d80731efc7038a4c0edcf5dea3a030e5c2e31a01",
+      "author_name": "kalink0",
+      "author_email": "kalinko@be-binary.de",
+      "date": "2026-11-15T08:29:56+01:00",
+      "message": "Threema: rework account, contacts and messages; add media artifact"
+    }
+  },
+  "headers": [
+    "Message Created",
+    "Media",
+    "Kind",
+    "Belongs To",
+    "Message",
+    "Stored File Name",
+    "Storage",
+    "Status"
+  ],
+  "data": [
+    [
+      1793523780,
+      "mock_embedded_html_path",
+      "Message file",
+      "Fixture Contact (FIXTCON1)",
+      "A constructed picture",
+      ".0f1e2d3c4b5a49688776a5b4c3d2e1f0",
+      "External storage",
+      "Decrypted"
+    ],
+    [
+      1793523780,
+      "mock_embedded_html_path",
+      "Message thumbnail",
+      "Fixture Contact (FIXTCON1)",
+      "A constructed picture",
+      ".0f1e2d3c4b5a49688776a5b4c3d2e1f0_T",
+      "External storage",
+      "Decrypted"
+    ],
+    [
+      null,
+      "mock_embedded_html_path",
+      "Message file",
+      "Not referenced by the database",
+      "",
+      ".11112222333344445555666677778888",
+      "External storage",
+      "Decrypted"
+    ],
+    [
+      null,
+      "mock_embedded_html_path",
+      "Profile picture (from contact)",
+      "Fixture Contact (FIXTCON1)",
+      "",
+      ".p-DGCN22ITPN2MW4DYQQLYFTK77VMTBJOOLS42CVRJNQG6Q6BZ4FGQ",
+      "External storage",
+      "Decrypted"
+    ],
+    [
+      null,
+      "mock_embedded_html_path",
+      "Profile picture (set locally)",
+      "Fixture Owner (FIXTOWN1) - local account",
+      "",
+      ".c-HXUA7ZH5QYLPLVMOTQHGFQJ3VTTWWFAZPBANRSZAEFBEOM3DUO6Q",
+      "External storage",
+      "Decrypted"
+    ]
+  ]
+}

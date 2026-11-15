@@ -83,5 +83,84 @@
       "os_version": "14",
       "device_model": "Google Pixel 7a"
     }
+  },
+  "casesynthetic_v2": {
+    "description": "Constructed Threema install with an unprotected version 2 master_key.dat, built by admin/test/scripts/threema_fixture.py. Structure taken from the real files of an install with a master_key.dat that is not a registered test image: file layout, key file layers, table definitions of schema version 114. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "threema_fixture.py",
+      "os": "any",
+      "timestamp": "2026-11-15T12:00:00.000000",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-11-15T12:00:00.000000",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "threema_account": {
+        "search_patterns": [
+          "*/ch.threema.app*/shared_prefs/ch.threema.app*_preferences.xml",
+          "*/ch.threema.app*/files/key.dat",
+          "*/ch.threema.app*/files/master_key.dat",
+          "*/ch.threema.app*/files/user-data/.profile-pictures/.c-*",
+          "*/Android/data/ch.threema.app*/files/data/.avatar/.c-*"
+        ],
+        "file_count": 3,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "threema_contacts": {
+        "search_patterns": [
+          "*/ch.threema.app*/files/key.dat",
+          "*/ch.threema.app*/files/master_key.dat",
+          "*/ch.threema.app*/files/enc_master_key_v2.dat",
+          "*/ch.threema.app*/databases/threema4.db*",
+          "*/ch.threema.app*/files/user-data/.profile-pictures/.[acp]-*",
+          "*/Android/data/ch.threema.app*/files/data/.avatar/.[acp]-*"
+        ],
+        "file_count": 4,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "threema_messages": {
+        "search_patterns": [
+          "*/ch.threema.app*/files/key.dat",
+          "*/ch.threema.app*/files/master_key.dat",
+          "*/ch.threema.app*/files/enc_master_key_v2.dat",
+          "*/ch.threema.app*/databases/threema4.db*",
+          "*/ch.threema.app*/shared_prefs/ch.threema.app*_preferences.xml",
+          "*/ch.threema.app*/files/user-data/.message-files/.*",
+          "*/Android/data/ch.threema.app*/files/data/.*"
+        ],
+        "file_count": 9,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "threema_media": {
+        "search_patterns": [
+          "*/ch.threema.app*/files/key.dat",
+          "*/ch.threema.app*/files/master_key.dat",
+          "*/ch.threema.app*/files/enc_master_key_v2.dat",
+          "*/ch.threema.app*/databases/threema4.db*",
+          "*/ch.threema.app*/shared_prefs/ch.threema.app*_preferences.xml",
+          "*/ch.threema.app*/files/user-data/*",
+          "*/Android/data/ch.threema.app*/files/data/*"
+        ],
+        "file_count": 9,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
   }
 }

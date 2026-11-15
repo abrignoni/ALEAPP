@@ -1,0 +1,40 @@
+{
+  "metadata": {
+    "module_name": "Threema",
+    "artifact_name": "Threema - Account",
+    "function_name": "threema_account",
+    "case_number": "casesynthetic_v2",
+    "number_of_columns": 5,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 70,
+    "media_checkins": 0,
+    "media_embedded_checkins": 1,
+    "input_zip_path": "admin/test/cases/data/Threema/testdata.Threema.threema_account.casesynthetic_v2.zip",
+    "start_time": "2026-11-15T10:40:24.698097+00:00",
+    "end_time": "2026-11-15T10:40:24.716771+00:00",
+    "run_time_seconds": 0.0028264522552490234,
+    "last_commit": {
+      "hash": "d80731efc7038a4c0edcf5dea3a030e5c2e31a01",
+      "author_name": "kalink0",
+      "author_email": "kalinko@be-binary.de",
+      "date": "2026-11-15T08:29:56+01:00",
+      "message": "Threema: rework account, contacts and messages; add media artifact"
+    }
+  },
+  "headers": [
+    "Threema ID",
+    "Nickname",
+    "Linked Mobile Number",
+    "Package",
+    "Profile Picture"
+  ],
+  "data": [
+    [
+      "FIXTOWN1",
+      "Fixture Owner",
+      "+10000000000",
+      "ch.threema.app",
+      "mock_embedded_html_path"
+    ]
+  ]
+}
