@@ -1,21 +1,52 @@
 __artifacts_v2__ = {
     "get_signalMessages": {
         "name": "Signal - Messages",
-        "description": "Parses messages from the encrypted Signal database, including sender, recipient, direction and body.",
-        "author": "Alexis Brignoni",
+        "description": ("Parses messages from the encrypted Signal database, including sender, "
+                        "recipient, conversation, direction, body, attachments, reactions, story "
+                        "rows and edit revisions."),
+        "author": "Alexis Brignoni, @kalink0",
         "creation_date": "2026-07-25",
-        "last_update_date": "2026-10-09",
+        "last_update_date": "2026-11-15",
         "requirements": "none",
         "category": "Signal",
-        "notes": "Requires the SQLCipher key from extra/Secrets/secrets.json, produced by the extraction tool. Without it the database cannot be read. Signal stores expires_in in milliseconds, so the disappearing-message timer is divided by 1000 and reported in seconds. Direction and status are decoded from the MessageTypes base type, the low five bits of the message type column. Base type 20 is shown as Incoming and 27 as Draft. Direction is Outgoing for every base type in OUTGOING_MESSAGE_TYPES (MessageTypes.java L65-70 at the commit linked below): 21 to 26, 28, and the outgoing audio and video call types 2 and 11. Status is named for 21 to 24 and 27 only. Any other base type, including incoming and missed call rows and other event rows, is shown with Direction 'Unknown' and an empty Status. Whether a tested image holds rows of types 2, 11, 25, 26 or 28 was not measured. Quoted Message ID is derived by this parser, not stored: it is the ID of the message whose date_sent equals the stored quote_id, and where more than one message shares that date_sent every matching ID is listed, separated by commas, because which of them was quoted is not established here. Sender and Recipient show the profile name, else the contact name, else the phone number, else the username. Reference: Signal-Android, 'MessageTable.kt (expires_in stored in milliseconds)', https://github.com/signalapp/Signal-Android/blob/ad141bb6af88ef67aea05d3d0e55cf9760fe56eb/app/src/main/java/org/thoughtcrime/securesms/database/MessageTable.kt. Reference: Signal-Android, 'MessageTypes.java (base type mask and base types)', https://github.com/signalapp/Signal-Android/blob/ad141bb6af88ef67aea05d3d0e55cf9760fe56eb/app/src/main/java/org/thoughtcrime/securesms/database/MessageTypes.java",
-        "paths": ('*/org.thoughtcrime.securesms/databases/signal.db*',),
+        "notes": ("Requires the SQLCipher key from extra/Secrets/secrets.json; the write-ahead log "
+                  "is replayed. Direction, Status and Event Type are decoded from the message type "
+                  "after MessageTypes.java. Event Type names rows that record an event rather than "
+                  "a message (calls, group updates, identity changes and similar). A call row has "
+                  "no body; its Message shows the call's name in square brackets, written by this "
+                  "parser. No call duration is stored. Conversation is the thread's recipient "
+                  "(group title, story list name or person) and labels LAVA's conversation view. "
+                  "Quoted Message ID is resolved from quote_id and quote_author, as Signal does; "
+                  "several matches are all listed. Reactions shows emoji, reacting recipient and "
+                  "time in UTC. Each revision of an edited message is its own row, linked by "
+                  "Latest Revision ID and Original Message ID. Not read: signal-logs.db, the "
+                  "encryption state, the sticker and emoji catalogues, mention and group_receipts. "
+                  "On pixel7a_a14 Remote Deleted, View Once and Quoted Original Missing held 'No' "
+                  "on all 34 rows, and Disappearing Timer (Seconds), Parent Story ID, Revision "
+                  "Number, Latest Revision ID and Original Message ID had no value on any row. "
+                  "Reference: Signal-Android, 'MessageTypes.java', "
+                  "https://github.com/signalapp/Signal-Android/blob/ad141bb6af88ef67aea05d3d0e55cf9760fe56eb/app/src/main/java/org/thoughtcrime/securesms/database/MessageTypes.java"),
+        "paths": ('*/org.thoughtcrime.securesms/databases/signal.db*',
+                  '*/org.thoughtcrime.securesms/app_parts/*',),
         "output_types": "standard",
         "artifact_icon": "message-circle",
         "sample_data": {
             "hc_pixel8pro_a16": "20 rows",
-            "pixel7a_a14": "34 rows",
+            "pixel7a_a14": "Signal 7.11.4 | 34 rows",
             "russell_pixel6a_a13": "61 rows",
             "sharon_a14": "45 rows",
+        },
+        "data_views": {
+            "conversation": {
+                "conversationDiscriminatorColumn": "Thread ID",
+                "conversationLabelColumn": "Conversation",
+                "textColumn": "Message",
+                "directionColumn": "Direction",
+                "directionSentValue": "Outgoing",
+                "timeColumn": "Date Sent",
+                "senderColumn": "Sender",
+                "mediaColumn": "Attachments",
+            }
         },
     },
     "get_signalCalls": {
@@ -26,7 +57,12 @@ __artifacts_v2__ = {
         "last_update_date": "2026-08-15",
         "requirements": "none",
         "category": "Signal",
-        "notes": "Requires the SQLCipher key from extra/Secrets/secrets.json. Call type, direction and outcome are the Type, Direction and Event values defined by CallTable, which lists call types 0 Audio, 1 Video, 3 Group and 4 Ad hoc with no type 2; codes outside those sets are reported with their raw value. Reference: Signal-Android, 'CallTable.kt (Type, Direction and Event values)', https://github.com/signalapp/Signal-Android/blob/ad141bb6af88ef67aea05d3d0e55cf9760fe56eb/app/src/main/java/org/thoughtcrime/securesms/database/CallTable.kt",
+        "notes": ("Requires the SQLCipher key from extra/Secrets/secrets.json. Call type, "
+                  "direction and outcome are the Type, Direction and Event values defined by "
+                  "CallTable, which lists call types 0 Audio, 1 Video, 3 Group and 4 Ad hoc with "
+                  "no type 2; codes outside those sets are reported with their raw value. "
+                  "Reference: Signal-Android, 'CallTable.kt (Type, Direction and Event values)', "
+                  "https://github.com/signalapp/Signal-Android/blob/ad141bb6af88ef67aea05d3d0e55cf9760fe56eb/app/src/main/java/org/thoughtcrime/securesms/database/CallTable.kt"),
         "paths": ('*/org.thoughtcrime.securesms/databases/signal.db*',),
         "output_types": "standard",
         "artifact_icon": "phone",
@@ -39,63 +75,161 @@ __artifacts_v2__ = {
     },
     "get_signalContacts": {
         "name": "Signal - Contacts",
-        "description": "Parses Signal recipients, including phone numbers, ACI/PNI identifiers, usernames and profile names.",
-        "author": "Alexis Brignoni",
+        "description": ("Parses Signal recipients, including phone numbers, ACI/PNI identifiers, "
+                        "usernames and profile names."),
+        "author": "Alexis Brignoni, @kalink0",
         "creation_date": "2026-07-25",
-        "last_update_date": "2026-10-09",
+        "last_update_date": "2026-11-15",
         "requirements": "none",
         "category": "Signal",
-        "notes": "Requires the SQLCipher key from extra/Secrets/secrets.json. Recipient Type names the stored type after RecipientType in RecipientTable.kt at commit ad141bb6af88ef67aea05d3d0e55cf9760fe56eb (L5158-5164), which defines INDIVIDUAL(0), MMS(1), GV1(2), GV2(3), DISTRIBUTION_LIST(4) and CALL_LINK(5): 0 Individual, 1 MMS, 2 Group V1, 3 Group V2, 4 Distribution list, 5 Call link, and Unknown with the stored number for any other value. That commit is one version of the app's source; the app versions that wrote the tested databases were not compared with it. On pixel7a_a14 (15 rows), hc_pixel8pro_a16 (4 rows) and sharon_a14 (25 rows) the stored type was 0 on 14, 3 and 23 rows, 4 on one row of each image, and 3 on one row of sharon_a14. No tested row stored 1, 2 or 5. On russell_pixel6a_a13 (6 rows) no type value was read and the column shows Unknown (None). The rows of type 3 and 4 were not compared with the groups or distribution list tables. Reference: Signal-Android, RecipientTable.kt, https://github.com/signalapp/Signal-Android/blob/ad141bb6af88ef67aea05d3d0e55cf9760fe56eb/app/src/main/java/org/thoughtcrime/securesms/database/RecipientTable.kt#L5158-L5164",
-        "paths": ('*/org.thoughtcrime.securesms/databases/signal.db*',),
+        "notes": ("Requires the SQLCipher key from extra/Secrets/secrets.json. Recipient Type "
+                  "names the stored type after RecipientType in RecipientTable.kt at commit "
+                  "ad141bb6af88ef67aea05d3d0e55cf9760fe56eb (L5158-5164), which defines "
+                  "INDIVIDUAL(0), MMS(1), GV1(2), GV2(3), DISTRIBUTION_LIST(4) and CALL_LINK(5): 0 "
+                  "Individual, 1 MMS, 2 Group V1, 3 Group V2, 4 Distribution list, 5 Call link, "
+                  "and Unknown with the stored number for any other value. That commit is one "
+                  "version of the app's source; the app versions that wrote the tested databases "
+                  "were not compared with it. On pixel7a_a14 (15 rows), hc_pixel8pro_a16 (4 rows) "
+                  "and sharon_a14 (25 rows) the stored type was 0 on 14, 3 and 23 rows, 4 on one "
+                  "row of each image, and 3 on one row of sharon_a14. No tested row stored 1, 2 or "
+                  "5. On russell_pixel6a_a13 (6 rows) no type value was read and the column shows "
+                  "Unknown (None). The rows of type 3 and 4 were not compared with the groups or "
+                  "distribution list tables. Avatar and Sync Avatar are the pictures in "
+                  "app_avatars named after the recipient _id and <_id>-sync, decrypted with the "
+                  "attachment key; which one the app showed depends on a setting and is not "
+                  "established here. On pixel7a_a14 Blocked and Hidden held 'No' on all 15 rows, "
+                  "and Username, Note and Sync Avatar had no value on any row. Reference: "
+                  "Signal-Android, RecipientTable.kt, "
+                  "https://github.com/signalapp/Signal-Android/blob/ad141bb6af88ef67aea05d3d0e55cf9760fe56eb/app/src/main/java/org/thoughtcrime/securesms/database/RecipientTable.kt#L5158-L5164. "
+                  "Reference: Signal-Android, 'AvatarHelper.java', "
+                  "https://github.com/signalapp/Signal-Android/blob/ad141bb6af88ef67aea05d3d0e55cf9760fe56eb/app/src/main/java/org/thoughtcrime/securesms/profiles/AvatarHelper.java"),
+        "paths": ('*/org.thoughtcrime.securesms/databases/signal.db*',
+                  '*/org.thoughtcrime.securesms/app_avatars/*',),
         "output_types": "standard",
         "artifact_icon": "users",
         "sample_data": {
             "hc_pixel8pro_a16": "4 rows",
-            "pixel7a_a14": "15 rows",
+            "pixel7a_a14": "Signal 7.11.4 | 15 rows",
             "russell_pixel6a_a13": "6 rows",
             "sharon_a14": "25 rows",
         },
     },
     "get_signalGroups": {
         "name": "Signal - Groups",
-        "description": "Parses Signal groups and their membership, including group title, member names and the time the group row was created on this device (groups.timestamp, which GroupTable.kt create() sets from the device's clock at L722 of commit ad141bb6af88ef67aea05d3d0e55cf9760fe56eb).",
-        "author": "Alexis Brignoni",
+        "description": ("Parses Signal groups and their membership, including group title, member "
+                        "names and the time the group row was created on this device "
+                        "(groups.timestamp, which GroupTable.kt create() sets from the device's "
+                        "clock at L722 of commit ad141bb6af88ef67aea05d3d0e55cf9760fe56eb)."),
+        "author": "Alexis Brignoni, @kalink0",
         "creation_date": "2026-07-25",
-        "last_update_date": "2026-08-08",
+        "last_update_date": "2026-11-15",
         "requirements": "none",
         "category": "Signal",
-        "notes": "Requires the SQLCipher key from extra/Secrets/secrets.json.",
-        "paths": ('*/org.thoughtcrime.securesms/databases/signal.db*',),
+        "notes": ("Requires the SQLCipher key from extra/Secrets/secrets.json. Avatar is the group "
+                  "picture from app_avatars, matched by the group's recipient _id and decrypted "
+                  "with the attachment key. No group was present on the public test image, so the "
+                  "avatar column is unverified there. Reference: Signal-Android, "
+                  "'AvatarHelper.java', "
+                  "https://github.com/signalapp/Signal-Android/blob/ad141bb6af88ef67aea05d3d0e55cf9760fe56eb/app/src/main/java/org/thoughtcrime/securesms/profiles/AvatarHelper.java"),
+        "paths": ('*/org.thoughtcrime.securesms/databases/signal.db*',
+                  '*/org.thoughtcrime.securesms/app_avatars/*',),
         "output_types": "standard",
         "artifact_icon": "users",
         "sample_data": {
+            "pixel7a_a14": "Signal 7.11.4 | 0 rows",
             "russell_pixel6a_a13": "0 rows",
             "sharon_a14": "1 row",
         },
     },
     "get_signalAttachments": {
         "name": "Signal - Attachments",
-        "description": "Parses metadata for attachments referenced by Signal messages.",
-        "author": "Alexis Brignoni",
+        "description": ("Parses metadata for attachments referenced by Signal messages, and lists "
+                        "app_parts files no attachment record names."),
+        "author": "Alexis Brignoni, @kalink0",
         "creation_date": "2026-07-25",
-        "last_update_date": "2026-10-09",
+        "last_update_date": "2026-11-15",
         "requirements": "none",
         "category": "Signal",
-        "notes": "Attachment files are decrypted with the modernKey from secrets.json and each attachment's data_random. The stored file format is detected from its content, which can differ from the content type recorded in the database. The Direction column is decoded from the MessageTypes base type of the message the attachment belongs to. Attachments are read from the attachment table where a release has one and from the part table otherwise, whose equivalent columns are mid, ct and _data; both are joined to the message table on the message id, so each attachment carries the date, thread, sender and direction of the message it belongs to. The Attachment cell shows the row's own decrypted file and is empty where that file was not decrypted. The part schema has no transfer_state column, so Transfer State is empty for databases using it. Reference: Signal-Android, 'MessageTypes.java (base type mask and base types)', https://github.com/signalapp/Signal-Android/blob/ad141bb6af88ef67aea05d3d0e55cf9760fe56eb/app/src/main/java/org/thoughtcrime/securesms/database/MessageTypes.java",
+        "notes": ("Attachment files are decrypted with the modernKey from secrets.json and each "
+                  "attachment's data_random; the format is detected from the content. Rows come "
+                  "from the attachment table, or the part table on older releases, joined to their "
+                  "message. A file in app_parts that no record names is listed with Database "
+                  "Record 'No'; it cannot be decrypted because its random is kept only in the "
+                  "record. app_parts files of a data directory whose database was not read are not "
+                  "listed. File Modified is the time the extraction recorded for the file. On "
+                  "pixel7a_a14 Detected Content Type held 'image/jpeg', Transfer State '0', Voice "
+                  "Note and Video GIF 'No' and Database Record 'Yes' on all 9 rows, and Thumbnail "
+                  "and Caption had no value on any row. Reference: Signal-Android, "
+                  "'MessageTypes.java', "
+                  "https://github.com/signalapp/Signal-Android/blob/ad141bb6af88ef67aea05d3d0e55cf9760fe56eb/app/src/main/java/org/thoughtcrime/securesms/database/MessageTypes.java"),
         "paths": ('*/org.thoughtcrime.securesms/databases/signal.db*',
-                  '*/org.thoughtcrime.securesms/app_parts/*'),
+                  '*/org.thoughtcrime.securesms/app_parts/*',),
         "output_types": "standard",
         "artifact_icon": "paperclip",
         "sample_data": {
             "hc_pixel8pro_a16": "7 rows",
-            "pixel7a_a14": "9 rows",
+            "pixel7a_a14": "Signal 7.11.4 | 9 rows",
             "russell_pixel6a_a13": "8 rows",
             "sharon_a14": "10 rows",
+        },
+    },
+    "get_signalAccount": {
+        "name": "Signal - Account",
+        "description": ("Account values and selected settings from Signal's key-value store "
+                        "(signal-key-value.db)."),
+        "author": "@kalink0",
+        "creation_date": "2026-11-15",
+        "last_update_date": "2026-11-15",
+        "requirements": "none",
+        "category": "Signal",
+        "notes": ("Requires the SQLCipher key from extra/Secrets/secrets.json. One row per listed "
+                  "key the store holds; an absent key is not listed and Signal uses its default. "
+                  "Encryption keys stored there are not reported. PIN is the PIN as stored by "
+                  "Signal. PIN Last Successful Entry is also written when Signal resets its PIN "
+                  "reminders, so it does not on its own prove a PIN entry. Last Foreground Time is "
+                  "set each time the app comes to the foreground. Server Time Offset (ms) is "
+                  "device clock minus server time, measured at Server Time Offset Updated; "
+                  "positive means the device clock was ahead. Linked Devices Present is reported "
+                  "as stored; the key is not defined in the source cited, so its meaning is taken "
+                  "from its name. Times are UTC; a stored 0 or -1 is shown with '(not set)'. "
+                  "Reference: Signal-Android, keyvalue package, "
+                  "https://github.com/signalapp/Signal-Android/blob/ad141bb6af88ef67aea05d3d0e55cf9760fe56eb/app/src/main/java/org/thoughtcrime/securesms/keyvalue/AccountValues.kt"),
+        "paths": ('*/org.thoughtcrime.securesms/databases/signal-key-value.db*',),
+        "output_types": "standard",
+        "artifact_icon": "user",
+        "sample_data": {
+            "pixel7a_a14": "Signal 7.11.4 | 18 rows",
+        },
+    },
+    "get_signalImageCache": {
+        "name": "Signal - Image Cache",
+        "description": ("Decrypts the images in Signal's Glide disk cache "
+                        "(cache/image_manager_disk_cache)."),
+        "author": "@kalink0",
+        "creation_date": "2026-11-15",
+        "last_update_date": "2026-11-15",
+        "requirements": "none",
+        "category": "Signal",
+        "notes": ("Signal encrypts its Glide image cache with the attachment modernKey from "
+                  "secrets.json. A file counts as Decrypted only when Signal's encrypted check "
+                  "value matches; otherwise Status says why and the file is still listed. Without "
+                  "the key nothing is listed. Cached images are not linked to a message or "
+                  "contact: the file name is only the cache key and the journal is not read. File "
+                  "Modified is the time the extraction recorded for the file. On pixel7a_a14 "
+                  "Status held 'Decrypted' on all 85 rows. Reference: Signal-Android, "
+                  "'EncryptedCoder.java', "
+                  "https://github.com/signalapp/Signal-Android/blob/ad141bb6af88ef67aea05d3d0e55cf9760fe56eb/app/src/main/java/org/thoughtcrime/securesms/glide/cache/EncryptedCoder.java"),
+        "paths": ('*/org.thoughtcrime.securesms/cache/image_manager_disk_cache/*',),
+        "output_types": "standard",
+        "artifact_icon": "image",
+        "sample_data": {
+            "pixel7a_a14": "Signal 7.11.4 | 85 rows",
         },
     },
 }
 
 import base64
+import datetime
 import hashlib
 import hmac
 import json
@@ -108,6 +242,7 @@ from Crypto.Cipher import AES
 from Crypto.Util import Counter
 
 from scripts.sqlcipher_decrypt import decrypt_sqlcipher_db
+from scripts.artifacts.storagePathViews import canonical_path, unique_files
 from scripts.ilapfuncs import (artifact_processor, logfunc, convert_unix_ts_to_utc,
                                check_in_embedded_media)
 
@@ -138,6 +273,49 @@ MESSAGE_DIRECTIONS = {
     28: 'Outgoing',
 }
 MESSAGE_STATUS = {21: 'Outbox', 22: 'Sending', 23: 'Sent', 24: 'Failed', 27: 'Draft'}
+# Call rows, from isCallLog (MessageTypes.java L293-301 at ad141bb6), which
+# compares the whole type
+CALL_MESSAGE_TYPES = {1, 2, 3, 8, 10, 11, 12}
+# Incoming call rows, from isIncomingAudioCall and isIncomingVideoCall
+# (MessageTypes.java L307-313 at ad141bb6), which compare the whole type.
+INCOMING_CALL_TYPES = {1: 'Incoming', 10: 'Incoming'}
+
+# Event rows, named after the MessageTypes.java constants at ad141bb6.
+# Base types 1-18 (L36-53), compared on the base type.
+MESSAGE_EVENT_BASE_TYPES = {
+    1: 'Incoming audio call', 2: 'Outgoing audio call', 3: 'Missed audio call',
+    4: 'Joined', 5: 'Unsupported message', 6: 'Invalid message', 7: 'Profile change',
+    8: 'Missed video call', 9: 'GV1 migration', 10: 'Incoming video call',
+    11: 'Outgoing video call', 12: 'Group call', 13: 'Bad decrypt', 14: 'Change number',
+    15: 'Release channel donation request', 16: 'Thread merge', 17: 'SMS export',
+    18: 'Session switchover',
+}
+# Flag bits (L80-111), each tested with (type & bit) != 0 as Signal does.
+MESSAGE_EVENT_BITS = (
+    (0x10000, 'Group update'),               # GROUP_UPDATE_BIT
+    (0x40000, 'Expiration timer update'),    # EXPIRATION_TIMER_UPDATE_BIT
+    (0x400000, 'End session'),               # END_SESSION_BIT
+    (0x200, 'Identity update'),              # KEY_EXCHANGE_IDENTITY_UPDATE_BIT
+    (0x4000, 'Identity verified'),           # KEY_EXCHANGE_IDENTITY_VERIFIED_BIT
+    (0x2000, 'Identity default'),            # KEY_EXCHANGE_IDENTITY_DEFAULT_BIT
+)
+GROUP_LEAVE_BIT = 0x20000
+GROUP_V2_BIT = 0x80000
+# isChatSessionRefresh (L347-354) bundles these encryption error bits
+CHAT_SESSION_REFRESH_BITS = 0x10000000 | 0x08000000 | 0x04000000 | 0x02000000
+# Special types (L114-126), compared on (type & SPECIAL_TYPES_MASK)
+SPECIAL_TYPES_MASK = 0xF00000000
+MESSAGE_SPECIAL_TYPES = {
+    0x100000000: 'Story reaction', 0x200000000: 'Gift badge',
+    0x300000000: 'Payments notification', 0x400000000: 'Payments activate request',
+    0x500000000: 'Reported spam', 0x600000000: 'Message request accepted',
+    0x800000000: 'Payments activated', 0x900000000: 'Payments tombstone',
+    0xA00000000: 'Blocked', 0xB00000000: 'Unblocked', 0xC00000000: 'Poll terminate',
+    0xD00000000: 'Pinned message',
+}
+# StoryType.kt at ad141bb6 (L10-30)
+STORY_TYPES = {1: 'Story with replies', 2: 'Story without replies',
+               3: 'Text story with replies', 4: 'Text story without replies'}
 
 # RecipientTable.kt RecipientType at ad141bb6 (L5158-5164)
 RECIPIENT_TYPES = {0: 'Individual', 1: 'MMS', 2: 'Group V1', 3: 'Group V2',
@@ -183,24 +361,28 @@ def _read_signal_keys(secrets_path):
 
 
 def _signal_secrets(context):
-    """Find and cache Signal's keys from the extraction's secrets.json."""
-    if 'keys' in _secrets_cache:
-        return _secrets_cache['keys']
+    """Find and cache Signal's keys from the extraction's secrets.json.
 
-    _secrets_cache['keys'] = (None, None)
+    The cache is keyed on the secrets files found, so a second case processed
+    in the same process (the GUI) never reuses the first case's keys.
+    """
     seeker = context.get_seeker()
-    secrets_files = [str(path) for path in seeker.search(SECRETS_GLOB)
-                     if os.path.basename(str(path)) == 'secrets.json']
+    secrets_files = tuple(sorted(str(path) for path in seeker.search(SECRETS_GLOB)
+                                 if os.path.basename(str(path)) == 'secrets.json'))
+    if secrets_files in _secrets_cache:
+        return _secrets_cache[secrets_files]
+
+    _secrets_cache[secrets_files] = (None, None)
     if not secrets_files:
         logfunc('Signal: no Secrets/secrets.json found, the data stays encrypted')
-        return _secrets_cache['keys']
+        return _secrets_cache[secrets_files]
 
     for secrets_path in secrets_files:
         database_key, attachment_key = _read_signal_keys(secrets_path)
         if database_key or attachment_key:
-            _secrets_cache['keys'] = (database_key, attachment_key)
+            _secrets_cache[secrets_files] = (database_key, attachment_key)
             break
-    return _secrets_cache['keys']
+    return _secrets_cache[secrets_files]
 
 
 def _decrypted_database(context, database_path):
@@ -238,11 +420,16 @@ def _decrypted_database(context, database_path):
     return output_path
 
 
-def _open_signal_database(context):
-    """Yield (connection, source_path) for each decryptable Signal database."""
-    for file_found in context.get_files_found():
+def _open_signal_database(context, database_name='signal.db'):
+    """Yield (connection, source_path) for each decryptable Signal database.
+
+    The storage views of one database (/data/data, /data/user/0, /data_mirror)
+    are read once; a second Android user's database is read on its own. Signal
+    keys all of its databases with the same SQLCipher key.
+    """
+    for file_found in unique_files(context):
         file_found = str(file_found)
-        if os.path.basename(file_found) != 'signal.db':
+        if os.path.basename(file_found) != database_name:
             continue
         decrypted = _decrypted_database(context, file_found)
         if not decrypted:
@@ -302,15 +489,89 @@ def _detect_format(data, recorded_type=None):
     return 'bin', None
 
 
+def _container(context, path):
+    """Key for the Signal data directory a file belongs to, or ''.
+
+    Built from the storage-view independent form of the path, so /data/data,
+    /data/user/0 and /data_mirror spellings of one directory share a key and a
+    second Android user's directory does not. Matched on a whole path segment,
+    so a decoy package whose name merely contains Signal's never counts.
+    """
+    key, _ = canonical_path(context.get_relative_path(path))
+    parts = str(key).replace('\\', '/').split('/')
+    if SIGNAL_PACKAGE not in parts:
+        return ''
+    return '/'.join(parts[:len(parts) - parts[::-1].index(SIGNAL_PACKAGE)])
+
+
 def _attachment_files(context):
-    """Map app_parts file names to their extracted paths."""
-    seeker = context.get_seeker()
+    """Map (container, app_parts file name) to the extracted path.
+
+    Keyed on the container as well as the name, so the app_parts of a second
+    user or profile are never joined to another container's database.
+    """
     found = {}
-    for path in seeker.search(f'*/{SIGNAL_PACKAGE}/app_parts/*'):
+    for path in context.get_seeker().search(f'*/{SIGNAL_PACKAGE}/app_parts/*'):
         path = str(path)
         if os.path.isfile(path):
-            found[os.path.basename(path)] = path
+            found[(_container(context, path), os.path.basename(path))] = path
     return found
+
+
+def _avatar_files(context):
+    """Map (container, app_avatars file name) to the extracted path.
+
+    AvatarHelper names each file after the recipient's _id, with '-sync' appended
+    for the copy taken from the system contacts.
+    """
+    found = {}
+    for path in context.get_seeker().search(f'*/{SIGNAL_PACKAGE}/app_avatars/*'):
+        path = str(path)
+        if os.path.isfile(path):
+            found[(_container(context, path), os.path.basename(path))] = path
+    return found
+
+
+def _avatar_references(modern_key, avatar_files, container):
+    """Decrypt this container's avatars; map file name to a media reference.
+
+    ModernEncryptingPartOutputStream.createFor with inline set writes its 32 byte
+    random at the start of the file, then the AES-CTR ciphertext, keyed as an
+    attachment is but with the random taken from the file instead of the database.
+    """
+    references = {}
+    if not modern_key:
+        return references
+    for (avatar_container, name), path in avatar_files.items():
+        if avatar_container != container or name.endswith('.tmp'):
+            continue
+        try:
+            with open(path, 'rb') as avatar_file:
+                stored = avatar_file.read()
+            if len(stored) <= 32:
+                continue
+            plaintext = _decrypt_attachment(modern_key, stored[:32], stored[32:])
+            extension, mime = _detect_format(plaintext)
+            if mime is None:
+                logfunc(f'Signal: avatar {name} did not decrypt to a known image format')
+                continue
+            references[name] = check_in_embedded_media(
+                path, plaintext, name=f'signal_avatar_{name}.{extension}',
+                force_type=mime, force_extension=extension)
+        except (OSError, ValueError, TypeError) as error:
+            logfunc(f'Signal: could not decrypt avatar {name}: {error}')
+    return references
+
+
+def _file_modified(context, path):
+    """The modification time the extraction recorded for a file, as UTC, or ''."""
+    info = context.get_seeker().file_infos.get(path)
+    if not info or not info.modification_date:
+        return ''
+    try:
+        return datetime.datetime.fromtimestamp(int(info.modification_date), datetime.timezone.utc)
+    except (TypeError, ValueError, OverflowError, OSError):
+        return ''
 
 
 def _modern_key(context):
@@ -364,7 +625,7 @@ def _attachment_select(columns, table, names):
     return ', '.join(_attachment_column(columns, table, name) for name in names)
 
 
-def _checked_in_attachments(connection, modern_key, stored_files):
+def _checked_in_attachments(connection, modern_key, stored_files, container):
     """Decrypt every attachment and group the media references by message.
 
     check_in_embedded_media keys media on a hash of the content, so decrypting
@@ -405,7 +666,7 @@ def _checked_in_attachments(connection, modern_key, stored_files):
                 (thumbnail_file, thumbnail_random, True)):
             if not blob_name or not blob_random:
                 continue
-            path = stored_files.get(os.path.basename(blob_name))
+            path = stored_files.get((container, os.path.basename(blob_name)))
             if not path:
                 continue
             try:
@@ -481,6 +742,102 @@ def _select_list(available, table_alias, columns):
     return ', '.join(expressions)
 
 
+def _recipient_names(connection, recipient_columns):
+    """Map recipient _id to its display name: profile, contact, number, username."""
+    names = {}
+    if not recipient_columns:
+        return names
+    for row in connection.execute(f'''
+        SELECT recipient._id,
+               {_recipient_column(recipient_columns, 'recipient', 'profile_joined_name')},
+               {_recipient_column(recipient_columns, 'recipient', 'system_joined_name')},
+               {_recipient_column(recipient_columns, 'recipient', 'e164')},
+               {_recipient_column(recipient_columns, 'recipient', 'username')}
+        FROM recipient'''):
+        names[row[0]] = _display_name(row[1], row[2], row[3], row[4])
+    return names
+
+
+def _conversation_labels(connection, recipient_names):
+    """Map thread _id to the name of the thread's recipient.
+
+    A thread belongs to one recipient (thread.recipient_id): a person, a group or
+    a story distribution list. A group is named by groups.title and a list by
+    distribution_list.name, both as stored, and a person by their display name.
+    """
+    titles = {}
+    for table, column in (('groups', 'title'), ('distribution_list', 'name')):
+        columns = _table_columns(connection, table)
+        if 'recipient_id' in columns and column in columns:
+            for recipient_id, title in connection.execute(
+                    f'SELECT recipient_id, {column} FROM {table}'):
+                if title:
+                    titles[recipient_id] = title
+
+    labels = {}
+    if 'recipient_id' not in _table_columns(connection, 'thread'):
+        return labels
+    for thread_id, recipient_id in connection.execute('SELECT _id, recipient_id FROM thread'):
+        labels[thread_id] = titles.get(recipient_id) or recipient_names.get(recipient_id, '')
+    return labels
+
+
+def _reactions_by_message(connection, recipient_names):
+    """Each message's reactions as 'emoji reactor (time)', in the order sent."""
+    reactions = {}
+    columns = _table_columns(connection, 'reaction')
+    if not {'message_id', 'author_id', 'emoji'} <= columns:
+        return reactions
+    sent = 'date_sent' if 'date_sent' in columns else 'NULL'
+    for message_id, author_id, emoji, date_sent in connection.execute(
+            f'SELECT message_id, author_id, emoji, {sent} FROM reaction '
+            f'ORDER BY message_id, {sent}'):
+        entry = f'{emoji} {recipient_names.get(author_id, "") or author_id}'
+        if date_sent:
+            entry += f' ({convert_unix_ts_to_utc(date_sent):%Y-%m-%d %H:%M:%S} UTC)'
+        reactions.setdefault(message_id, []).append(entry)
+    return reactions
+
+
+def _message_text(body, message_type):
+    """The body as stored, or for a call row without one its name in square brackets.
+
+    The name is written by this parser, never by Signal, and is taken from the
+    row's own message type, so a call shows in the conversation instead of an
+    empty message.
+    """
+    if body:
+        return body
+    if message_type not in CALL_MESSAGE_TYPES:
+        return ''
+    return f'[{MESSAGE_EVENT_BASE_TYPES[message_type]}]'
+
+
+def _message_event(message_type):
+    """Name the event a non-message row records, or '' for an ordinary message.
+
+    Every name that applies is listed, comma separated, because the base type,
+    the flag bits and the special type are independent parts of one value.
+    """
+    if message_type is None:
+        return ''
+    events = []
+    base_type = message_type & MESSAGE_BASE_TYPE_MASK
+    if base_type in MESSAGE_EVENT_BASE_TYPES:
+        events.append(MESSAGE_EVENT_BASE_TYPES[base_type])
+    for bit, name in MESSAGE_EVENT_BITS:
+        if message_type & bit:
+            events.append(name)
+    if message_type & GROUP_LEAVE_BIT and not message_type & GROUP_V2_BIT:
+        events.append('Group quit')
+    if message_type & CHAT_SESSION_REFRESH_BITS:
+        events.append('Chat session refresh')
+    special = message_type & SPECIAL_TYPES_MASK
+    if special:
+        events.append(MESSAGE_SPECIAL_TYPES.get(special, f'Special type {special:#x}'))
+    return ', '.join(events)
+
+
 def _quoted_ids(message_ids):
     """One ID as stored, several as a comma separated list, none as empty."""
     if not message_ids:
@@ -499,19 +856,24 @@ def get_signalMessages(context):
 
     for connection, source_path in _open_signal_database(context):
         recipient_columns = _table_columns(connection, 'recipient')
+        message_columns = _table_columns(connection, 'message')
         attachments_by_message, _, _, _ = _checked_in_attachments(
-            connection, modern_key, stored_files)
+            connection, modern_key, stored_files, _container(context, source_path))
+        recipient_names = _recipient_names(connection, recipient_columns)
+        conversations = _conversation_labels(connection, recipient_names)
+        reactions = _reactions_by_message(connection, recipient_names)
 
-        # More than one message can share a date_sent, so every match is kept.
-        # Signal stores the quoted message's send time in quote_id, so the
-        # original can be resolved back to its own row
-        original_by_sent_time = {}
-        for sent, message_id in connection.execute(
-                'SELECT date_sent, _id FROM message WHERE date_sent IS NOT NULL ORDER BY _id'):
-            original_by_sent_time.setdefault(sent, []).append(message_id)
+        # Signal stores the quoted message's send time in quote_id and its author
+        # in quote_author, and finds the original by both (MessageTable.kt L5139
+        # at ad141bb6). More than one message can still match, so every match is
+        # kept.
+        original_by_quote = {}
+        for sent, author, message_id in connection.execute(
+                'SELECT date_sent, from_recipient_id, _id FROM message '
+                'WHERE date_sent IS NOT NULL ORDER BY _id'):
+            original_by_quote.setdefault((sent, author), []).append(message_id)
 
         cursor = connection.cursor()
-        message_columns = _table_columns(connection, 'message')
         cursor.execute(f'''
         SELECT
             {_select_list(message_columns, 'message',
@@ -523,7 +885,10 @@ def get_signalMessages(context):
                            'quote_id', 'quote_missing'])},
             COALESCE(NULLIF({_recipient_column(recipient_columns, 'quoted', 'profile_joined_name')}, ''),
                      NULLIF({_recipient_column(recipient_columns, 'quoted', 'system_joined_name')}, ''),
-                     NULLIF({_recipient_column(recipient_columns, 'quoted', 'e164')}, ''), NULLIF({_recipient_column(recipient_columns, 'quoted', 'username')}, ''), '')
+                     NULLIF({_recipient_column(recipient_columns, 'quoted', 'e164')}, ''), NULLIF({_recipient_column(recipient_columns, 'quoted', 'username')}, ''), ''),
+            {_select_list(message_columns, 'message',
+                          ['quote_author', 'date_server', 'story_type', 'parent_story_id',
+                           'revision_number', 'latest_revision_id', 'original_message_id'])}
         FROM message
         LEFT JOIN recipient AS sender ON message.from_recipient_id = sender._id
         LEFT JOIN recipient AS receiver ON message.to_recipient_id = receiver._id
@@ -531,58 +896,84 @@ def get_signalMessages(context):
         ORDER BY message.date_sent
         ''')
         for row in cursor:
-            base_type = row[3] & MESSAGE_BASE_TYPE_MASK if row[3] is not None else None
+            message_type = row[3]
+            base_type = message_type & MESSAGE_BASE_TYPE_MASK if message_type is not None else None
+            direction = MESSAGE_DIRECTIONS.get(base_type) \
+                or INCOMING_CALL_TYPES.get(message_type, 'Unknown')
             # A message can carry several attachments, so the media cell takes a list
             attachments = attachments_by_message.get(row[5], [])
+            quote_id, quote_author = row[19], row[22]
+            date_server = row[23]
+            story_type, parent_story_id = row[24], row[25]
+            revision_number, latest_revision_id, original_message_id = row[26], row[27], row[28]
+            in_revision_chain = latest_revision_id is not None or original_message_id is not None
             data_list.append((
                 convert_unix_ts_to_utc(row[0]),
                 convert_unix_ts_to_utc(row[1]),
-                row[2],
-                MESSAGE_DIRECTIONS.get(base_type, 'Unknown'),
-                MESSAGE_STATUS.get(base_type, ''),
+                convert_unix_ts_to_utc(quote_id) if quote_id else '',
+                convert_unix_ts_to_utc(date_server) if date_server and date_server > 0 else '',
+                direction,
                 _display_name(row[7], row[8], row[6], row[9]),
+                conversations.get(row[2], ''),
+                _message_text(row[4], message_type),
+                attachments,
+                row[2],
+                MESSAGE_STATUS.get(base_type, ''),
                 row[6] or '',
                 _display_name(row[11], row[12], row[10], row[13]),
                 row[10] or '',
-                row[4] or '',
-                attachments,
                 len(attachments),
                 'Yes' if row[14] else 'No',
                 'Yes' if row[15] else 'No',
                 'Yes' if row[16] else 'No',
                 row[17] or '',
                 row[21] or '',
-                convert_unix_ts_to_utc(row[19]) if row[19] else '',
-                _quoted_ids(original_by_sent_time.get(row[19])) if row[19] else '',
+                _quoted_ids(original_by_quote.get((quote_id, quote_author))) if quote_id else '',
                 'Yes' if row[20] else 'No',
                 _expires_in_seconds(row[18]),
                 row[5],
+                _message_event(message_type),
+                STORY_TYPES.get(story_type, f'Unknown ({story_type})') if story_type else '',
+                parent_story_id if parent_story_id and parent_story_id > 0 else '',
+                '\n'.join(reactions.get(row[5], [])),
+                revision_number if in_revision_chain else '',
+                latest_revision_id if latest_revision_id is not None else '',
+                original_message_id if original_message_id is not None else '',
             ))
         connection.close()
 
     data_headers = (
         ('Date Sent', 'datetime'),
         ('Date Received', 'datetime'),
-        'Thread ID',
+        ('Quoted Message Sent', 'datetime'),
+        ('Date Server', 'datetime'),
         'Direction',
-        'Status',
         'Sender',
+        'Conversation',
+        'Message',
+        ('Attachments', 'media'),
+        'Thread ID',
+        'Status',
         'Sender Phone Number',
         'Recipient',
         'Recipient Phone Number',
-        'Message',
-        ('Attachments', 'media'),
         'Attachment Count',
         'Read',
         'Remote Deleted',
         'View Once',
         'Quoted Message',
         'Quoted Author',
-        ('Quoted Message Sent', 'datetime'),
         'Quoted Message ID',
         'Quoted Original Missing',
         'Disappearing Timer (Seconds)',
         'Message ID',
+        'Event Type',
+        'Story Type',
+        'Parent Story ID',
+        'Reactions',
+        'Revision Number',
+        'Latest Revision ID',
+        'Original Message ID',
     )
     return data_headers, data_list, source_path
 
@@ -637,12 +1028,16 @@ def get_signalCalls(context):
 def get_signalGroups(context):
     data_list = []
     source_path = ''
+    modern_key = _modern_key(context)
+    avatar_files = _avatar_files(context) if modern_key else {}
     for connection, source_path in _open_signal_database(context):
         recipient_columns = _table_columns(connection, 'recipient')
         group_columns = _table_columns(connection, 'groups')
         if not group_columns:
             connection.close()
             continue
+        avatars = _avatar_references(
+            modern_key, avatar_files, _container(context, source_path))
 
         # Membership lives in its own table, keyed by the textual group id
         members_by_group = {}
@@ -662,7 +1057,7 @@ def get_signalGroups(context):
         cursor.execute(f'''
         SELECT {_select_list(group_columns, 'groups',
                              ['_id', 'group_id', 'title', 'timestamp', 'active', 'mms',
-                              'revision', 'last_force_update_timestamp'])},
+                              'revision', 'last_force_update_timestamp', 'recipient_id'])},
                COALESCE(NULLIF({_recipient_column(recipient_columns, 'recipient', 'profile_joined_name')}, ''),
                         NULLIF({_recipient_column(recipient_columns, 'recipient', 'system_joined_name')}, ''), '')
         FROM groups
@@ -673,7 +1068,7 @@ def get_signalGroups(context):
             members = members_by_group.get(row[1], [])
             data_list.append((
                 convert_unix_ts_to_utc(row[3]) if row[3] else '',
-                row[2] or row[8] or '',
+                row[2] or row[9] or '',
                 len(members),
                 ', '.join(members),
                 'Yes' if row[4] else 'No',
@@ -681,6 +1076,7 @@ def get_signalGroups(context):
                 row[6],
                 convert_unix_ts_to_utc(row[7]) if row[7] else '',
                 row[1] or '',
+                avatars.get(str(row[8]), '') if row[8] is not None else '',
             ))
         connection.close()
 
@@ -694,6 +1090,7 @@ def get_signalGroups(context):
         'Revision',
         ('Last Forced Update', 'datetime'),
         'Group ID',
+        ('Avatar', 'media'),
     )
     return data_headers, data_list, source_path
 
@@ -702,8 +1099,11 @@ def get_signalGroups(context):
 def get_signalContacts(context):
     data_list = []
     source_path = ''
+    modern_key = _modern_key(context)
+    avatar_files = _avatar_files(context) if modern_key else {}
     for connection, source_path in _open_signal_database(context):
-        recipient_columns = _table_columns(connection, 'recipient')
+        avatars = _avatar_references(
+            modern_key, avatar_files, _container(context, source_path))
         cursor = connection.cursor()
         recipient_columns = _table_columns(connection, 'recipient')
         cursor.execute(f'''
@@ -730,6 +1130,8 @@ def get_signalContacts(context):
                 row[14] or '',
                 convert_unix_ts_to_utc(row[15]) if row[15] else '',
                 row[0],
+                avatars.get(str(row[0]), ''),
+                avatars.get(f'{row[0]}-sync', ''),
             ))
         connection.close()
 
@@ -746,6 +1148,8 @@ def get_signalContacts(context):
         'Note',
         ('Last Profile Fetch', 'datetime'),
         'Recipient ID',
+        ('Avatar', 'media'),
+        ('Sync Avatar', 'media'),
     )
     return data_headers, data_list, source_path
 
@@ -757,13 +1161,19 @@ def get_signalAttachments(context):
     modern_key = _modern_key(context)
     if not modern_key:
         logfunc('Signal: no attachment modernKey available, reporting metadata only')
-    stored_files = _attachment_files(context) if modern_key else {}
+    # Indexed whether or not the key is known, so files no record points at are
+    # still listed
+    stored_files = _attachment_files(context)
     decrypted_count = 0
+    referenced = set()
+    read_containers = set()
 
     for connection, source_path in _open_signal_database(context):
         recipient_columns = _table_columns(connection, 'recipient')
+        container = _container(context, source_path)
+        read_containers.add(container)
         _, detected_types, thumbnails, own_references = _checked_in_attachments(
-            connection, modern_key, stored_files)
+            connection, modern_key, stored_files, container)
         decrypted_count += len(detected_types)
 
         cursor = connection.cursor()
@@ -775,6 +1185,12 @@ def get_signalAttachments(context):
             continue
         message_id_column = _attachment_column(
             attachment_columns, attachment_table, 'message_id')
+        for name in ('data_file', 'thumbnail_file'):
+            column = _attachment_name(attachment_columns, name)
+            if column:
+                referenced.update(
+                    (container, os.path.basename(stored)) for (stored,) in connection.execute(
+                        f'SELECT {column} FROM {attachment_table} WHERE {column} IS NOT NULL'))
         cursor.execute(f'''
         SELECT
             message.date_sent,
@@ -796,6 +1212,7 @@ def get_signalAttachments(context):
             # The row's own file. It is the same media reference the message row uses,
             # so both views point at one copy.
             own_media = own_references.get(attachment_id, '')
+            stored_path = stored_files.get((container, os.path.basename(row[5]))) if row[5] else None
 
             data_list.append((
                 convert_unix_ts_to_utc(row[0]) if row[0] else '',
@@ -816,8 +1233,30 @@ def get_signalAttachments(context):
                 MESSAGE_DIRECTIONS.get(base_type, ''),
                 row[14],
                 message_id,
+                'Yes',
+                _file_modified(context, stored_path) if stored_path else '',
             ))
         connection.close()
+
+    # Files in app_parts that no attachment record names. Their per-file random
+    # is kept in the record, so without one they cannot be decrypted.
+    unread = 0
+    for (container, name), path in sorted(stored_files.items()):
+        if (container, name) in referenced:
+            continue
+        if container not in read_containers:
+            unread += 1
+            continue
+        if not source_path:
+            source_path = path
+        data_list.append((
+            '', '', '', '', '', '', os.path.getsize(path),
+            context.get_relative_path(path), '', '', '', '', '', '', '', '', '', '',
+            'No', _file_modified(context, path),
+        ))
+    if unread:
+        logfunc(f'Signal: {unread} app_parts file(s) belong to a data directory whose database '
+                'was not read; they stay encrypted and are not listed')
 
     if decrypted_count:
         logfunc(f'Signal: decrypted {decrypted_count} attachment'
@@ -842,5 +1281,158 @@ def get_signalAttachments(context):
         'Direction',
         'Thread ID',
         'Message ID',
+        'Database Record',
+        ('File Modified', 'datetime'),
     )
+    return data_headers, data_list, source_path
+
+
+# EncryptedCoder.java at ad141bb6 (L30-33): the magic Signal writes in clear
+# before the random, and again as the first encrypted bytes
+GLIDE_CACHE_MAGIC = bytes.fromhex('915e6db409a668bee5b11bd729e504cc')
+
+
+def _decrypt_cache_file(modern_key, stored):
+    """Return (plaintext, status) for one of Signal's encrypted Glide cache files.
+
+    The file is magic, a 32 byte random, then AES-CTR over the magic and the
+    data, keyed with HMAC-SHA256(modernKey, random). The encrypted magic is what
+    Signal itself checks to tell the key is right.
+    """
+    if stored[:16] != GLIDE_CACHE_MAGIC or len(stored) < 64:
+        return None, 'Not an encrypted cache file'
+    if not modern_key:
+        return None, 'Not decrypted, no key'
+    plaintext = _decrypt_attachment(modern_key, stored[16:48], stored[48:])
+    if plaintext[:16] != GLIDE_CACHE_MAGIC:
+        return None, 'Not decrypted, key did not match'
+    return plaintext[16:], 'Decrypted'
+
+
+@artifact_processor
+def get_signalImageCache(context):
+    data_list = []
+    source_path = ''
+    modern_key = _modern_key(context)
+    if not modern_key:
+        logfunc('Signal: no attachment modernKey available, so the image cache stays encrypted '
+                'and is not listed')
+        return (('File Modified', 'datetime'), ('Image', 'media'), 'Detected Content Type',
+                'Status', 'Size (Bytes)', 'Cache File', 'Source File'), [], ''
+    for file_found in unique_files(context):
+        file_found = str(file_found)
+        if not os.path.isfile(file_found) or os.path.basename(file_found) == 'journal':
+            continue
+        source_path = os.path.dirname(file_found)
+        media, detected = '', ''
+        try:
+            with open(file_found, 'rb') as cache_file:
+                stored = cache_file.read()
+            plaintext, status = _decrypt_cache_file(modern_key, stored)
+            if plaintext is not None:
+                extension, mime = _detect_format(plaintext)
+                detected = mime or 'unknown'
+                media = check_in_embedded_media(
+                    file_found, plaintext, name=f'signal_cache_{os.path.basename(file_found)}.{extension}',
+                    force_type=mime, force_extension=extension)
+        except (OSError, ValueError, TypeError) as error:
+            status = f'Not decrypted: {error}'
+        data_list.append((
+            _file_modified(context, file_found),
+            media,
+            detected,
+            status,
+            os.path.getsize(file_found),
+            os.path.basename(file_found),
+            context.get_relative_path(file_found),
+        ))
+
+    data_headers = (
+        ('File Modified', 'datetime'),
+        ('Image', 'media'),
+        'Detected Content Type',
+        'Status',
+        'Size (Bytes)',
+        'Cache File',
+        'Source File',
+    )
+    return data_headers, data_list, context.get_relative_path(source_path) if source_path else ''
+
+
+# SignalStore keys reported by Signal - Account, in report order: key, setting
+# name, decoder. Names follow the constants in the keyvalue package at ad141bb6.
+KEY_VALUE_TYPES = {0: 'blob', 1: 'boolean', 2: 'float', 3: 'integer', 4: 'long', 5: 'string'}
+PHONE_NUMBER_SHARING = {0: 'Default', 1: 'Everybody', 2: 'Nobody'}
+PHONE_NUMBER_DISCOVERABILITY = {0: 'Discoverable', 1: 'Not discoverable', 2: 'Undecided'}
+ACCOUNT_KEYS = (
+    ('account.e164', 'Phone Number', 'text'),
+    ('account.username', 'Username', 'text'),
+    ('account.aci', 'ACI', 'text'),
+    ('account.pni', 'PNI', 'text'),
+    ('account.is_registered', 'Registered', 'bool'),
+    ('account.registered_at', 'Registered At', 'time'),
+    ('registration.complete', 'Registration Complete', 'bool'),
+    ('account.device_id', 'Device ID', 'text'),
+    ('account.device_name', 'Device Name', 'text'),
+    ('account.has_linked_devices', 'Has Linked Devices', 'bool'),
+    ('misc.linked_devices_present', 'Linked Devices Present', 'bool'),
+    ('account.fcm_enabled', 'FCM Enabled', 'bool'),
+    ('kbs.pin', 'PIN', 'text'),
+    ('kbs.opted_out', 'PIN Opted Out', 'bool'),
+    ('kbs.v2_lock_enabled', 'Registration Lock Enabled', 'bool'),
+    ('pin.last_successful_entry', 'PIN Last Successful Entry', 'time'),
+    ('misc.last_foreground_time', 'Last Foreground Time', 'time'),
+    ('misc.last_profile_refresh_time', 'Last Profile Refresh Time', 'time'),
+    ('storage.last_sync_time', 'Storage Service Last Sync Time', 'time'),
+    ('misc.server_time_offset', 'Server Time Offset (ms)', 'text'),
+    ('misc.last_server_time_offset_update', 'Server Time Offset Updated', 'time'),
+    ('phoneNumberPrivacy.sharingMode', 'Phone Number Sharing', PHONE_NUMBER_SHARING),
+    ('phoneNumberPrivacy.listingMode', 'Phone Number Discoverability', PHONE_NUMBER_DISCOVERABILITY),
+    ('settings.link_previews', 'Link Previews', 'bool'),
+    ('stories.disable', 'Stories Disabled', 'bool'),
+    ('stories.viewed.receipts', 'Story View Receipts', 'bool'),
+)
+
+
+def _account_value(value, decoder):
+    """Render one stored key-value entry for the report."""
+    if value is None:
+        return ''
+    if decoder == 'bool':
+        return {1: 'Yes', 0: 'No', '1': 'Yes', '0': 'No'}.get(value, f'Unknown ({value})')
+    if decoder == 'time':
+        try:
+            milliseconds = int(value)
+        except (TypeError, ValueError):
+            return str(value)
+        if milliseconds <= 0:
+            return f'{milliseconds} (not set)'
+        return f'{convert_unix_ts_to_utc(milliseconds):%Y-%m-%d %H:%M:%S} UTC'
+    if isinstance(decoder, dict):
+        try:
+            return decoder.get(int(value), f'Unknown ({value})')
+        except (TypeError, ValueError):
+            return f'Unknown ({value})'
+    if isinstance(value, bytes):
+        return value.hex()
+    return str(value)
+
+
+@artifact_processor
+def get_signalAccount(context):
+    data_list = []
+    source_path = ''
+    for connection, source_path in _open_signal_database(context, 'signal-key-value.db'):
+        if not {'key', 'value'} <= _table_columns(connection, 'key_value'):
+            logfunc(f'Signal: {source_path} has no key_value table')
+            connection.close()
+            continue
+        stored = {key: value for key, value in connection.execute('SELECT key, value FROM key_value')}
+        connection.close()
+        for key, setting, decoder in ACCOUNT_KEYS:
+            if key in stored:
+                data_list.append((setting, _account_value(stored[key], decoder), key,
+                                  context.get_relative_path(source_path)))
+
+    data_headers = ('Setting', 'Value', 'Key', 'Source File')
     return data_headers, data_list, source_path
