@@ -4,21 +4,21 @@
     "artifact_name": "Threema - Media",
     "function_name": "threema_media",
     "case_number": "casesynthetic_v2",
-    "number_of_columns": 8,
-    "number_of_rows": 5,
-    "total_data_size_bytes": 773,
+    "number_of_columns": 9,
+    "number_of_rows": 7,
+    "total_data_size_bytes": 1076,
     "media_checkins": 0,
-    "media_embedded_checkins": 5,
+    "media_embedded_checkins": 7,
     "input_zip_path": "admin/test/cases/data/Threema/testdata.Threema.threema_media.casesynthetic_v2.zip",
-    "start_time": "2026-11-15T10:40:25.430389+00:00",
-    "end_time": "2026-11-15T10:40:25.441209+00:00",
-    "run_time_seconds": 0.0025696754455566406,
+    "start_time": "2026-11-15T19:36:34.714046+00:00",
+    "end_time": "2026-11-15T19:36:34.741851+00:00",
+    "run_time_seconds": 0.002004861831665039,
     "last_commit": {
-      "hash": "d80731efc7038a4c0edcf5dea3a030e5c2e31a01",
-      "author_name": "kalink0",
-      "author_email": "kalinko@be-binary.de",
-      "date": "2026-11-15T08:29:56+01:00",
-      "message": "Threema: rework account, contacts and messages; add media artifact"
+      "hash": "1d90ecc6f371ba2dadade871abdca5df99dca949",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-11-15T13:42:48-05:00",
+      "message": "Threema: sample_data for two more images, notes corrections"
     }
   },
   "headers": [
@@ -29,9 +29,21 @@
     "Message",
     "Stored File Name",
     "Storage",
-    "Status"
+    "Status",
+    "Gallery Link"
   ],
   "data": [
+    [
+      1793523780,
+      "mock_embedded_html_path",
+      "Gallery copy",
+      "Fixture Contact (FIXTCON1)",
+      "A constructed picture",
+      "fixture-photo.jpg",
+      "Shared storage (Pictures/Threema)",
+      "Not encrypted",
+      "Identical to the message file"
+    ],
     [
       1793523780,
       "mock_embedded_html_path",
@@ -40,7 +52,8 @@
       "A constructed picture",
       ".0f1e2d3c4b5a49688776a5b4c3d2e1f0",
       "External storage",
-      "Decrypted"
+      "Decrypted",
+      ""
     ],
     [
       1793523780,
@@ -50,7 +63,19 @@
       "A constructed picture",
       ".0f1e2d3c4b5a49688776a5b4c3d2e1f0_T",
       "External storage",
-      "Decrypted"
+      "Decrypted",
+      ""
+    ],
+    [
+      null,
+      "mock_embedded_html_path",
+      "Gallery copy",
+      "No message link found",
+      "",
+      "unrelated.jpg",
+      "Shared storage (Pictures/Threema)",
+      "Not encrypted",
+      ""
     ],
     [
       null,
@@ -60,7 +85,8 @@
       "",
       ".11112222333344445555666677778888",
       "External storage",
-      "Decrypted"
+      "Decrypted",
+      ""
     ],
     [
       null,
@@ -70,7 +96,8 @@
       "",
       ".p-DGCN22ITPN2MW4DYQQLYFTK77VMTBJOOLS42CVRJNQG6Q6BZ4FGQ",
       "External storage",
-      "Decrypted"
+      "Decrypted",
+      ""
     ],
     [
       null,
@@ -80,7 +107,8 @@
       "",
       ".c-HXUA7ZH5QYLPLVMOTQHGFQJ3VTTWWFAZPBANRSZAEFBEOM3DUO6Q",
       "External storage",
-      "Decrypted"
+      "Decrypted",
+      ""
     ]
   ]
 }

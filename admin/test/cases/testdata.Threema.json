@@ -4,14 +4,14 @@
     "maker": "",
     "make_data": {
       "input_data_path": "EXTRACTION_FFS.zip",
-      "os": "Linux-7.2.9-1-MANJARO-x86_64-with-glibc2.44",
-      "timestamp": "2026-11-14T22:12:13.338017",
+      "os": "macOS-27.2.1-arm64-arm-64bit-Mach-O",
+      "timestamp": "2026-11-15T14:35:56.930346",
       "last_commit": {
-        "hash": "692bc23cca21649ac8775370e35edffe6c192e82",
+        "hash": "1d90ecc6f371ba2dadade871abdca5df99dca949",
         "author_name": "Brigs",
         "author_email": "abrignoni@gmail.com",
-        "date": "2026-10-06T17:20:02-04:00",
-        "message": "Report Threema file messages with adjacent message dates"
+        "date": "2026-11-15T13:42:48-05:00",
+        "message": "Threema: sample_data for two more images, notes corrections"
       }
     },
     "artifacts": {
@@ -52,9 +52,17 @@
           "*/ch.threema.app*/databases/threema4.db*",
           "*/ch.threema.app*/shared_prefs/ch.threema.app*_preferences.xml",
           "*/ch.threema.app*/files/user-data/.message-files/.*",
-          "*/Android/data/ch.threema.app*/files/data/.*"
+          "*/Android/data/ch.threema.app*/files/data/.*",
+          "*/Pictures/Threema*/*",
+          "*/Movies/Threema*/*",
+          "*/Music/Threema*/*",
+          "*/Documents/Threema*/*",
+          "*/Download/Threema*/*",
+          "*/Threema*/Threema Pictures/*",
+          "*/Threema*/Threema Videos/*",
+          "*/Threema*/Threema Audio/*"
         ],
-        "file_count": 9,
+        "file_count": 18,
         "expected_output": {
           "headers": [],
           "data": []
@@ -68,9 +76,17 @@
           "*/ch.threema.app*/databases/threema4.db*",
           "*/ch.threema.app*/shared_prefs/ch.threema.app*_preferences.xml",
           "*/ch.threema.app*/files/user-data/*",
-          "*/Android/data/ch.threema.app*/files/data/*"
+          "*/Android/data/ch.threema.app*/files/data/*",
+          "*/Pictures/Threema*/*",
+          "*/Movies/Threema*/*",
+          "*/Music/Threema*/*",
+          "*/Documents/Threema*/*",
+          "*/Download/Threema*/*",
+          "*/Threema*/Threema Pictures/*",
+          "*/Threema*/Threema Videos/*",
+          "*/Threema*/Threema Audio/*"
         ],
-        "file_count": 13,
+        "file_count": 19,
         "expected_output": {
           "headers": [],
           "data": []
@@ -137,9 +153,17 @@
           "*/ch.threema.app*/databases/threema4.db*",
           "*/ch.threema.app*/shared_prefs/ch.threema.app*_preferences.xml",
           "*/ch.threema.app*/files/user-data/.message-files/.*",
-          "*/Android/data/ch.threema.app*/files/data/.*"
+          "*/Android/data/ch.threema.app*/files/data/.*",
+          "*/Pictures/Threema*/*",
+          "*/Movies/Threema*/*",
+          "*/Music/Threema*/*",
+          "*/Documents/Threema*/*",
+          "*/Download/Threema*/*",
+          "*/Threema*/Threema Pictures/*",
+          "*/Threema*/Threema Videos/*",
+          "*/Threema*/Threema Audio/*"
         ],
-        "file_count": 9,
+        "file_count": 11,
         "expected_output": {
           "headers": [],
           "data": []
@@ -153,9 +177,17 @@
           "*/ch.threema.app*/databases/threema4.db*",
           "*/ch.threema.app*/shared_prefs/ch.threema.app*_preferences.xml",
           "*/ch.threema.app*/files/user-data/*",
-          "*/Android/data/ch.threema.app*/files/data/*"
+          "*/Android/data/ch.threema.app*/files/data/*",
+          "*/Pictures/Threema*/*",
+          "*/Movies/Threema*/*",
+          "*/Music/Threema*/*",
+          "*/Documents/Threema*/*",
+          "*/Download/Threema*/*",
+          "*/Threema*/Threema Pictures/*",
+          "*/Threema*/Threema Videos/*",
+          "*/Threema*/Threema Audio/*"
         ],
-        "file_count": 9,
+        "file_count": 11,
         "expected_output": {
           "headers": [],
           "data": []

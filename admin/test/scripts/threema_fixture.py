@@ -28,6 +28,7 @@ CASE = 'casesynthetic_v2'
 MASTER_KEY = hashlib.sha256(b'invented Threema fixture master key').digest()
 APP = 'Dump/data/data/ch.threema.app'
 EXTERNAL = 'Dump/data/media/0/Android/data/ch.threema.app/files/data'
+GALLERY = 'Dump/data/media/0/Pictures/Threema'
 OWN, CONTACT, NICK_ONLY, GROUP_ONLY = 'FIXTOWN1', 'FIXTCON1', 'FIXTCON2', 'FIXTGRP1'
 PHOTO_UID = '0f1e2d3c-4b5a-4968-8776-a5b4c3d2e1f0'
 ORPHAN_UID = '11112222-3333-4444-5555-666677778888'
@@ -201,6 +202,10 @@ def files():
         (f'{EXTERNAL}/.avatar/{_picture_name(".p-", CONTACT)}.nomedia', _encrypt(_jpeg((90, 90, 90), (8, 8)), 5)),
         # Not a user file name of the client, and not encrypted: not reported.
         (f'{EXTERNAL}/.nomedia', b''),
+        # Gallery copies: the photo as copyMediaFileToGallery writes it (decrypted, under the
+        # message's file name), and a picture no message is tied to.
+        (f'{GALLERY}/fixture-photo.jpg', photo),
+        (f'{GALLERY}/unrelated.jpg', _jpeg((5, 5, 5), (8, 8))),
     ]
 
 

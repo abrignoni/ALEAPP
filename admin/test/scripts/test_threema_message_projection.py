@@ -331,5 +331,103 @@ class ThreemaKeyAndContainerTest(unittest.TestCase):
             self.assertEqual(Threema._profile_picture(container, 'T4UFS63T', '.c-'), '')
 
 
+class ThreemaGalleryTest(unittest.TestCase):
+    def test_gallery_folders_are_located_per_user_and_flavour(self):
+        locate = Threema._locate_gallery
+        self.assertEqual(locate('/x/data/media/0/Pictures/Threema/a.jpg'),
+                         ('0', 'Threema', 'Pictures/Threema', 'a.jpg'))
+        self.assertEqual(locate('/x/storage/emulated/10/Movies/ThreemaWork/v.mp4'),
+                         ('10', 'ThreemaWork', 'Movies/ThreemaWork', 'v.mp4'))
+        self.assertEqual(locate('/x/sdcard/Threema/Threema Pictures/b.jpg'),
+                         ('0', 'Threema', 'Threema/Threema Pictures', 'b.jpg'))
+        # Not a flavour's folder, a deeper file, and no user readable off the path.
+        self.assertIsNone(locate('/x/data/media/0/Pictures/ThreemaX/a.jpg'))
+        self.assertIsNone(locate('/x/data/media/0/Pictures/Threema/sub/a.jpg'))
+        self.assertIsNone(locate('/x/elsewhere/Pictures/Threema/a.jpg'))
+
+    def test_gallery_copies_join_only_their_users_matching_install(self):
+        files = ['/x/data/data/ch.threema.app/databases/threema4.db',
+                 '/x/data/user/10/ch.threema.app/databases/threema4.db',
+                 '/x/data/user/0/ch.threema.app.work/databases/threema4.db',
+                 '/x/data/media/0/Pictures/Threema/a.jpg',
+                 '/x/data/media/10/Pictures/Threema/b.jpg',
+                 '/x/data/media/0/Pictures/ThreemaWork/c.jpg']
+        containers = Threema._containers(files)
+        self.assertEqual(containers[('0', 'ch.threema.app')]['gallery'],
+                         [('a.jpg', 'Pictures/Threema', '/x/data/media/0/Pictures/Threema/a.jpg')])
+        self.assertEqual([g[0] for g in containers[('10', 'ch.threema.app')]['gallery']], ['b.jpg'])
+        self.assertEqual([g[0] for g in containers[('0', 'ch.threema.app.work')]['gallery']],
+                         ['c.jpg'])
+
+    def test_gallery_links_by_bytes_then_api_id_then_unique_file_name(self):
+        def body(name):
+            return json.dumps([None, None, 'image/jpeg', 1, name, 1, True, None, None, {}])
+        rows = [{'uid': dashed(UID_A), 'apiMessageId': 'aa11', 'type': 8, 'body': body('x.jpg')},
+                {'uid': dashed(UID_B), 'apiMessageId': 'BB22', 'type': 8, 'body': body('y.jpg')},
+                {'uid': dashed(UID_C), 'apiMessageId': 'cc33', 'type': 8, 'body': body('z.jpg')},
+                {'uid': dashed(UID_D), 'apiMessageId': 'dd44', 'type': 8, 'body': body('z.jpg')}]
+        with tempfile.TemporaryDirectory() as tmp:
+            def put(name, data, encrypt=False):
+                path = os.path.join(tmp, name)
+                if encrypt:
+                    iv = bytes(16)
+                    data = iv + AES.new(KEY, AES.MODE_CBC, iv).encrypt(pad(data, 16))
+                with open(path, 'wb') as f:
+                    f.write(data)
+                return path
+            photo, thumb = JPEG + b'full', JPEG + b'thumb'
+            gallery = [('x.jpg', 'Pictures/Threema', put('g1', photo)),
+                       ('t.jpg', 'Pictures/Threema', put('g2', thumb)),
+                       ('threema-20240101-120000-bb22.jpg', 'Pictures/Threema', put('g3', b'other')),
+                       ('y (1).jpg', 'Pictures/Threema', put('g4', b'other2')),
+                       ('z.jpg', 'Pictures/Threema', put('g5', b'other3')),
+                       ('w.jpg', 'Pictures/Threema', put('g6', b'other4'))]
+            container = {'gallery': gallery, 'keys': [KEY],
+                         'media': {f'.{UID_A}': put('m1', photo, True),
+                                   f'.{UID_C}_T': put('m2', thumb, True)}}
+            links = Threema._gallery_links(container, rows)
+        self.assertEqual([links[g[2]] for g in gallery], [
+            (UID_A, 'Identical to the message file'),
+            (UID_C, 'Identical to the message thumbnail'),
+            (UID_B, 'apiMessageId in the name'),
+            (UID_B, 'File name of one message'),
+            (None, ''),   # two messages carry this file name, so neither is taken
+            (None, ''),
+        ])
+        self.assertEqual(Threema._gallery_links({'gallery': []}, rows), {})
+
+    def test_gallery_links_tie_only_one_message(self):
+        def body(name):
+            return json.dumps([None, None, 'application/pdf', 1, name, 1, True, None, None, {}])
+        # A stored name that itself ends in ' (1)', beside a message without the suffix;
+        # two messages with byte-identical files; two rows sharing one apiMessageId.
+        rows = [{'uid': dashed(UID_A), 'apiMessageId': 'ee55', 'type': 8, 'body': body('r (1).pdf')},
+                {'uid': dashed(UID_B), 'apiMessageId': 'ee55', 'type': 8, 'body': body('r.pdf')},
+                {'uid': dashed(UID_C), 'apiMessageId': 'ff66', 'type': 8, 'body': body('s.pdf')},
+                {'uid': dashed(UID_D), 'apiMessageId': 'ff77', 'type': 8, 'body': body('s2.pdf')}]
+        same = b'%PDF-1.4 the same bytes'
+        with tempfile.TemporaryDirectory() as tmp:
+            def put(name, data, encrypt=False):
+                path = os.path.join(tmp, name)
+                if encrypt:
+                    iv = bytes(16)
+                    data = iv + AES.new(KEY, AES.MODE_CBC, iv).encrypt(pad(data, 16))
+                with open(path, 'wb') as f:
+                    f.write(data)
+                return path
+            gallery = [('r (1).pdf', 'Documents/Threema', put('g1', b'one')),
+                       ('copy.pdf', 'Documents/Threema', put('g2', same)),
+                       ('threema-20240101-120000-ee55.pdf', 'Documents/Threema', put('g3', b'two'))]
+            container = {'gallery': gallery, 'keys': [KEY],
+                         'media': {f'.{UID_C}': put('m1', same, True),
+                                   f'.{UID_D}': put('m2', same, True)}}
+            links = Threema._gallery_links(container, rows)
+        self.assertEqual([links[g[2]] for g in gallery], [
+            (UID_A, 'File name of one message'),        # the exact name wins over the stripped one
+            (None, 'Identical to the files of 2 messages'),
+            (None, ''),                                 # the apiMessageId is on two rows
+        ])
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -4,21 +4,21 @@
     "artifact_name": "Threema - Messages",
     "function_name": "threema_messages",
     "case_number": "pixel7a_a14",
-    "number_of_columns": 27,
+    "number_of_columns": 28,
     "number_of_rows": 33,
-    "total_data_size_bytes": 6486,
+    "total_data_size_bytes": 6583,
     "media_checkins": 0,
     "media_embedded_checkins": 2,
     "input_zip_path": "admin/test/cases/data/Threema/testdata.Threema.threema_messages.pixel7a_a14.zip",
-    "start_time": "2026-11-15T06:49:09.760427+00:00",
-    "end_time": "2026-11-15T06:49:09.781236+00:00",
-    "run_time_seconds": 0.004182577133178711,
+    "start_time": "2026-11-15T19:59:03.881763+00:00",
+    "end_time": "2026-11-15T19:59:03.920121+00:00",
+    "run_time_seconds": 0.007336854934692383,
     "last_commit": {
-      "hash": "692bc23cca21649ac8775370e35edffe6c192e82",
+      "hash": "bde4675f61825218ed56dfc8a2c8c45e9c5ea497",
       "author_name": "Brigs",
       "author_email": "abrignoni@gmail.com",
-      "date": "2026-10-06T17:20:02-04:00",
-      "message": "Report Threema file messages with adjacent message dates"
+      "date": "2026-11-15T14:51:37-05:00",
+      "message": "Threema: tie gallery copies to their messages"
     }
   },
   "headers": [
@@ -48,7 +48,8 @@
     "Conversation",
     "Media Status",
     "Media Duration (s)",
-    "Reactions"
+    "Reactions",
+    "Gallery Copy"
   ],
   "data": [
     [
@@ -78,6 +79,7 @@
       "ThisIs DFIR (83XD7K4F)",
       "",
       null,
+      "",
       ""
     ],
     [
@@ -107,6 +109,7 @@
       "ThisIs DFIR (83XD7K4F)",
       "",
       null,
+      "",
       ""
     ],
     [
@@ -136,6 +139,7 @@
       "ThisIs DFIR (83XD7K4F)",
       "",
       null,
+      "",
       ""
     ],
     [
@@ -165,6 +169,7 @@
       "ThisIs DFIR (83XD7K4F)",
       "",
       null,
+      "",
       ""
     ],
     [
@@ -194,6 +199,7 @@
       "ThisIs DFIR (83XD7K4F)",
       "",
       null,
+      "",
       ""
     ],
     [
@@ -223,6 +229,7 @@
       "ThisIs DFIR (83XD7K4F)",
       "",
       null,
+      "",
       ""
     ],
     [
@@ -252,6 +259,7 @@
       "ThisIs DFIR (83XD7K4F)",
       "",
       null,
+      "",
       ""
     ],
     [
@@ -281,6 +289,7 @@
       "ThisIs DFIR (83XD7K4F)",
       "",
       null,
+      "",
       ""
     ],
     [
@@ -310,7 +319,8 @@
       "ThisIs DFIR (83XD7K4F)",
       "",
       null,
-      "\ud83d\udc4d Liz D (T4UFS63T)"
+      "\ud83d\udc4d Liz D (T4UFS63T)",
+      ""
     ],
     [
       1715436046,
@@ -339,6 +349,7 @@
       "ThisIs DFIR (83XD7K4F)",
       "",
       null,
+      "",
       ""
     ],
     [
@@ -368,6 +379,7 @@
       "ThisIs DFIR (83XD7K4F)",
       "",
       null,
+      "",
       ""
     ],
     [
@@ -397,6 +409,7 @@
       "ThisIs DFIR (83XD7K4F)",
       "",
       null,
+      "",
       ""
     ],
     [
@@ -426,6 +439,7 @@
       "ThisIs DFIR (83XD7K4F)",
       "",
       null,
+      "",
       ""
     ],
     [
@@ -455,6 +469,7 @@
       "ThisIs DFIR (83XD7K4F)",
       "File",
       null,
+      "",
       ""
     ],
     [
@@ -484,6 +499,7 @@
       "ThisIs DFIR (83XD7K4F)",
       "",
       null,
+      "",
       ""
     ],
     [
@@ -513,6 +529,7 @@
       "ThisIs DFIR (83XD7K4F)",
       "",
       null,
+      "",
       ""
     ],
     [
@@ -542,6 +559,7 @@
       "ThisIs DFIR (83XD7K4F)",
       "",
       null,
+      "",
       ""
     ],
     [
@@ -571,6 +589,7 @@
       "ThisIs DFIR (83XD7K4F)",
       "",
       null,
+      "",
       ""
     ],
     [
@@ -600,7 +619,8 @@
       "ThisIs DFIR (83XD7K4F)",
       "File",
       null,
-      ""
+      "",
+      "Dump/data/media/0/Pictures/Threema/image-20240511-102339-564.jpeg (Identical to the message file)"
     ],
     [
       1715437582,
@@ -629,6 +649,7 @@
       "ThisIs DFIR (83XD7K4F)",
       "",
       null,
+      "",
       ""
     ],
     [
@@ -658,6 +679,7 @@
       "ThisIs DFIR (83XD7K4F)",
       "",
       null,
+      "",
       ""
     ],
     [
@@ -687,6 +709,7 @@
       "ThisIs DFIR (83XD7K4F)",
       "",
       null,
+      "",
       ""
     ],
     [
@@ -716,6 +739,7 @@
       "ThisIs DFIR (83XD7K4F)",
       "",
       null,
+      "",
       ""
     ],
     [
@@ -745,6 +769,7 @@
       "ThisIs DFIR (83XD7K4F)",
       "",
       null,
+      "",
       ""
     ],
     [
@@ -774,6 +799,7 @@
       "ThisIs DFIR (83XD7K4F)",
       "",
       null,
+      "",
       ""
     ],
     [
@@ -803,6 +829,7 @@
       "ThisIs DFIR (83XD7K4F)",
       "",
       null,
+      "",
       ""
     ],
     [
@@ -832,6 +859,7 @@
       "ThisIs DFIR (83XD7K4F)",
       "",
       null,
+      "",
       ""
     ],
     [
@@ -861,6 +889,7 @@
       "ThisIs DFIR (83XD7K4F)",
       "",
       null,
+      "",
       ""
     ],
     [
@@ -890,6 +919,7 @@
       "ThisIs DFIR (83XD7K4F)",
       "",
       null,
+      "",
       ""
     ],
     [
@@ -919,6 +949,7 @@
       "ThisIs DFIR (83XD7K4F)",
       "",
       null,
+      "",
       ""
     ],
     [
@@ -948,6 +979,7 @@
       "ThisIs DFIR (83XD7K4F)",
       "",
       null,
+      "",
       ""
     ],
     [
@@ -977,6 +1009,7 @@
       "ThisIs DFIR (83XD7K4F)",
       "",
       null,
+      "",
       ""
     ],
     [
@@ -1006,6 +1039,7 @@
       "ThisIs DFIR (83XD7K4F)",
       "",
       null,
+      "",
       ""
     ]
   ]

@@ -4,21 +4,21 @@
     "artifact_name": "Threema - Media",
     "function_name": "threema_media",
     "case_number": "pixel7a_a14",
-    "number_of_columns": 8,
-    "number_of_rows": 8,
-    "total_data_size_bytes": 1279,
+    "number_of_columns": 9,
+    "number_of_rows": 9,
+    "total_data_size_bytes": 1481,
     "media_checkins": 0,
-    "media_embedded_checkins": 8,
+    "media_embedded_checkins": 9,
     "input_zip_path": "admin/test/cases/data/Threema/testdata.Threema.threema_media.pixel7a_a14.zip",
-    "start_time": "2026-11-15T06:49:09.953871+00:00",
-    "end_time": "2026-11-15T06:49:09.979920+00:00",
-    "run_time_seconds": 0.007615327835083008,
+    "start_time": "2026-11-15T19:36:34.584720+00:00",
+    "end_time": "2026-11-15T19:36:34.635855+00:00",
+    "run_time_seconds": 0.01253509521484375,
     "last_commit": {
-      "hash": "692bc23cca21649ac8775370e35edffe6c192e82",
+      "hash": "1d90ecc6f371ba2dadade871abdca5df99dca949",
       "author_name": "Brigs",
       "author_email": "abrignoni@gmail.com",
-      "date": "2026-10-06T17:20:02-04:00",
-      "message": "Report Threema file messages with adjacent message dates"
+      "date": "2026-11-15T13:42:48-05:00",
+      "message": "Threema: sample_data for two more images, notes corrections"
     }
   },
   "headers": [
@@ -29,7 +29,8 @@
     "Message",
     "Stored File Name",
     "Storage",
-    "Status"
+    "Status",
+    "Gallery Link"
   ],
   "data": [
     [
@@ -40,7 +41,8 @@
       "threema-20240511-101308087.jpg",
       ".a264096ffd784c189a56ee8b2b56fc9f",
       "External storage",
-      "Decrypted"
+      "Decrypted",
+      ""
     ],
     [
       1715436788,
@@ -50,7 +52,19 @@
       "threema-20240511-101308087.jpg",
       ".a264096ffd784c189a56ee8b2b56fc9f_T",
       "External storage",
-      "Decrypted"
+      "Decrypted",
+      ""
+    ],
+    [
+      1715437440,
+      "mock_embedded_html_path",
+      "Gallery copy",
+      "ThisIs DFIR (83XD7K4F)",
+      "image-20240511-102339-564.jpeg",
+      "image-20240511-102339-564.jpeg",
+      "Shared storage (Pictures/Threema)",
+      "Not encrypted",
+      "Identical to the message file"
     ],
     [
       1715437440,
@@ -60,7 +74,8 @@
       "image-20240511-102339-564.jpeg",
       ".f598d6c2baaa41adaa7c52987d05bc33",
       "External storage",
-      "Decrypted"
+      "Decrypted",
+      ""
     ],
     [
       1715437440,
@@ -70,7 +85,8 @@
       "image-20240511-102339-564.jpeg",
       ".f598d6c2baaa41adaa7c52987d05bc33_T",
       "External storage",
-      "Decrypted"
+      "Decrypted",
+      ""
     ],
     [
       null,
@@ -80,7 +96,8 @@
       "",
       ".a-35NAD4G2WX56ECYNNMAFU6NQGDSOSJ2VQD2M7DKCAV3KOHPQMMKQ",
       "External storage",
-      "Decrypted"
+      "Decrypted",
+      ""
     ],
     [
       null,
@@ -90,7 +107,8 @@
       "",
       ".a-K63FV7DJWIWFTZIWD6RMJU3B2F4FLKKGCP7DNZLJA45Q4NB4OEOQ",
       "External storage",
-      "Decrypted"
+      "Decrypted",
+      ""
     ],
     [
       null,
@@ -100,7 +118,8 @@
       "",
       ".p-35NAD4G2WX56ECYNNMAFU6NQGDSOSJ2VQD2M7DKCAV3KOHPQMMKQ",
       "External storage",
-      "Decrypted"
+      "Decrypted",
+      ""
     ],
     [
       null,
@@ -110,7 +129,8 @@
       "",
       ".c-NCX35SCHUDRMKV2DPADHLJUTNCVUW7TSJPVCGFBQCLUTKBLQRPYQ",
       "External storage",
-      "Decrypted"
+      "Decrypted",
+      ""
     ]
   ]
 }

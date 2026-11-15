@@ -198,15 +198,18 @@ __artifacts_v2__ = {
                  "restore (RestoreService.java L1797-L1828), so a stored reaction time can be"
                  " the restore's guess; this is not exercised. 'Media' is the message's file,"
                  " else its thumbnail, decrypted in memory as described for Threema - Media. "
-                 "'Media Status' is File or Thumbnail only, with '(type not recognised)' "
-                 "where no file type was recognised in the decrypted bytes, Not on device "
-                 "where neither file is in the extraction (a file can be missing for reasons "
-                 "the database does not record), or Decryption failed. Not reported: whether "
-                 "a chat is archived, distribution lists and polls (tables empty on every "
-                 "test image), and deletion inferred from a gap in the numbering. File "
-                 "references are to Threema for Android at commit d44a2b53 (see Threema - "
-                 "Contacts) unless stated. Only text, location, file and call rows are "
-                 "exercised by the test images in sample_data; the constructed case "
+                 "'Gallery Copy' lists each gallery copy tied to the message, by its path in "
+                 "the extraction and, in brackets, the 'Gallery Link' value of Threema - "
+                 "Media; on pixel7a_a14, pixel3_a12 and hickman_a13 one row each holds one, "
+                 "tied by identical bytes. 'Media Status' is File or Thumbnail only, with "
+                 "'(type not recognised)' where no file type was recognised in the decrypted "
+                 "bytes, Not on device where neither file is in the extraction (a file can be"
+                 " missing for reasons the database does not record), or Decryption failed. "
+                 "Not reported: whether a chat is archived, distribution lists and polls "
+                 "(tables empty on every test image), and deletion inferred from a gap in the"
+                 " numbering. File references are to Threema for Android at commit d44a2b53 "
+                 "(see Threema - Contacts) unless stated. Only text, location, file and call "
+                 "rows are exercised by the test images in sample_data; the constructed case "
                  "casesynthetic_v2 (see Threema - Contacts; 12 rows) also exercises a forward"
                  " security and a text status row, group rows, former image and voice rows, "
                  "reactions from the reaction tables and edited and deleted dates; video, "
@@ -234,6 +237,12 @@ __artifacts_v2__ = {
             # for a thumbnail), so pictures beside them are not used.
             '*/ch.threema.app*/files/user-data/.message-files/.*',
             '*/Android/data/ch.threema.app*/files/data/.*',
+            # Gallery copies (FileServiceImpl.kt copyMediaFileToGallery): the public
+            # directories hold one folder per MEDIA_PATH value, older Android one of its own.
+            '*/Pictures/Threema*/*', '*/Movies/Threema*/*', '*/Music/Threema*/*',
+            '*/Documents/Threema*/*', '*/Download/Threema*/*',
+            '*/Threema*/Threema Pictures/*', '*/Threema*/Threema Videos/*',
+            '*/Threema*/Threema Audio/*',
         ),
         "output_types": ["standard", "timeline"],
         "artifact_icon": "message-circle",
@@ -259,7 +268,9 @@ __artifacts_v2__ = {
         "description": "Media files Threema keeps encrypted on the device, decrypted: message"
                        " files and thumbnails, profile pictures, group pictures and "
                        "wallpapers, with what the app's database says each belongs to, "
-                       "including files the database does not refer to.",
+                       "including files the database does not refer to, and the files in the "
+                       "app's shared storage gallery folders, each tied to a message where a "
+                       "link is found.",
         "author": "@kalink0",
         "creation_date": "2026-11-14",
         "last_update_date": "2026-11-15",
@@ -303,12 +314,54 @@ __artifacts_v2__ = {
                  "not exercised, an unreferenced message file only in the constructed case "
                  "casesynthetic_v2 (see Threema - Contacts; 5 rows); the case with no key "
                  "file was run on pixel7a_a14 with key.dat removed (8 files, none decrypted),"
-                 " the case with no database on constructed paths only. On pixel7a_a14 "
-                 "'Storage' holds one value, External storage, on all 8 rows, and 'Status' "
-                 "holds one value, Decrypted, on all 8 rows. On pixel3_a12 (4 rows) and "
-                 "hickman_a13 (6 rows) every file is in external storage and Decrypted, and "
-                 "on pixel3_a12 'Belongs To' holds one value on all 4 rows, the one "
-                 "conversation the files belong to.",
+                 " the case with no database on constructed paths only. Gallery copies: when "
+                 "a message's media is saved to the gallery, by the user or automatically for"
+                 " a received picture or video when the save-media setting is on and the chat"
+                 " is not private (MessageServiceImpl.java L2608-L2634), the client copies "
+                 "the decrypted message file, or its thumbnail where the file is gone, "
+                 "unchanged into a shared storage folder named by the build's MEDIA_PATH (for"
+                 " example Threema, ThreemaWork, ThreemaLibre; app/build.gradle.kts): "
+                 "Pictures, Movies, Music, Documents or Download/<folder> from Android 10, "
+                 "<folder>/Threema Pictures, Videos or Audio before it (FileServiceImpl.kt "
+                 "L235-L345). The copy is requested under the message's stored file name, or "
+                 "else threema-<local time>-<apiMessageId> plus an extension (FileUtil.java "
+                 "L503-L517); before Android 10 the client adds ' (n)' to a name already "
+                 "taken (common FileExtensions.kt L111-L122), and a type other than picture, "
+                 "video or audio goes to the Download folder itself, which is not read. With "
+                 "the same setting, pictures and videos taken in the app's own camera for "
+                 "sending are saved there as threema-<local time>, without an apiMessageId "
+                 "and from the source file (FileServiceImpl.kt L347-L355, "
+                 "MessageServiceImpl.java L4368-L4379), so a blank 'Gallery Link' does not "
+                 "show that a file did not come from Threema. These references describe "
+                 "client 6.5.3 (commit d44a2b53); the test images run 4.59, 4.83 and 5.4.1. "
+                 "Each file in those folders is listed for every install of the same Android "
+                 "user whose package uses that folder, as Kind 'Gallery copy', Storage "
+                 "'Shared storage (<folder>)' and Status 'Not encrypted'. It is not listed "
+                 "when the extraction holds no database or user files of such an install, or "
+                 "when the Android user cannot be read off its path. 'Gallery Link' says how "
+                 "it is tied to a message, the rules tried in this order and each taken only "
+                 "when it points at a single message: 'Identical to the message file' or "
+                 "'Identical to the message thumbnail' (the same SHA-256 as the decrypted "
+                 "file), 'apiMessageId in the name', or 'File name of one message' (the "
+                 "copy's name, or its name without a ' (n)' suffix, is the stored file name "
+                 "of exactly one file message). A copy whose bytes the files of several "
+                 "messages share shows 'Identical to the files of <n> messages' with Belongs "
+                 "To 'Several messages'. When no rule holds the link is blank and Belongs To "
+                 "is 'No message link found'. Where the database was not opened Belongs To is"
+                 " 'Database not opened', and a copy can still be shown as identical to a "
+                 "message file when a key was read; without a key no copy is compared by "
+                 "content. A copy identical to a message file whose message is not in the "
+                 "database shows 'Not referenced by the database', and a copy whose message "
+                 "and file are both gone is not tied. On a tied gallery row 'Message Created'"
+                 " and 'Message' are the tied message's. On pixel7a_a14, pixel3_a12 and "
+                 "hickman_a13 the one copy on each is identical to a message file and also "
+                 "carries that message's file name; the thumbnail, apiMessageId, file name "
+                 "only, several messages and no link cases are exercised only by unit tests "
+                 "and casesynthetic_v2, which holds a copy and an unrelated picture. On "
+                 "pixel7a_a14 (9 rows), pixel3_a12 (5 rows) and hickman_a13 (7 rows) every "
+                 "file except the gallery copy is in external storage and Decrypted, and on "
+                 "pixel3_a12 'Belongs To' holds one value on all 5 rows, the one conversation"
+                 " the files belong to.",
         "paths": (
             '*/ch.threema.app*/files/key.dat',
             '*/ch.threema.app*/files/master_key.dat',
@@ -318,13 +371,19 @@ __artifacts_v2__ = {
             # The two user files directories; the code sorts their files by name.
             '*/ch.threema.app*/files/user-data/*',
             '*/Android/data/ch.threema.app*/files/data/*',
+            # Gallery copies (FileServiceImpl.kt copyMediaFileToGallery): the public
+            # directories hold one folder per MEDIA_PATH value, older Android one of its own.
+            '*/Pictures/Threema*/*', '*/Movies/Threema*/*', '*/Music/Threema*/*',
+            '*/Documents/Threema*/*', '*/Download/Threema*/*',
+            '*/Threema*/Threema Pictures/*', '*/Threema*/Threema Videos/*',
+            '*/Threema*/Threema Audio/*',
         ),
         "output_types": ["standard"],
         "artifact_icon": "image",
         "sample_data": {
-            "pixel7a_a14": "Android 14 | Threema 5.4.1 (ch.threema.app) | 8 rows",
-            "pixel3_a12": "Android 12 | Threema 4.59 (ch.threema.app) | 4 rows",
-            "hickman_a13": "Android 13 | Threema 4.83 (ch.threema.app) | 6 rows",
+            "pixel7a_a14": "Android 14 | Threema 5.4.1 (ch.threema.app) | 9 rows",
+            "pixel3_a12": "Android 12 | Threema 4.59 (ch.threema.app) | 5 rows",
+            "hickman_a13": "Android 13 | Threema 4.83 (ch.threema.app) | 7 rows",
         },
     },
 }
@@ -388,6 +447,32 @@ _EXTERNAL_USER = (
 # '.' + the message uid, a UUID, with every non-alphanumeric character
 # removed, '_T' for the thumbnail (MessageFileHandleProvider.kt).
 _MEDIA_NAME = re.compile(r'^\.([0-9A-Fa-f]{32})(_T)?$')
+# The gallery folder each flavour writes to (MEDIA_PATH, app/build.gradle.kts L97, L242,
+# L273, L308, L362, L412, L462, L492) and the packages that use it.
+_GALLERY_PACKAGES = {
+    'Threema': ('ch.threema.app', 'ch.threema.app.hms'),
+    'ThreemaWork': ('ch.threema.app.work', 'ch.threema.app.work.hms'),
+    'ThreemaGreen': ('ch.threema.app.green',),
+    'ThreemaWorkSandbox': ('ch.threema.app.sandbox.work',),
+    'ThreemaOnPrem': ('ch.threema.app.onprem',),
+    'ThreemaBlue': ('ch.threema.app.red',),
+    'ThreemaLibre': ('ch.threema.app.libre',),
+}
+# copyMediaFileIntoPublicDirectory (FileServiceImpl.kt L235-L300): Android 10 and later
+# put the copy in <public directory>/<MEDIA_PATH>/ (L254-L276), older Android
+# (getPublicDirectory, L303-L312) in <storage>/<MEDIA_PATH>/Threema Pictures, Videos or
+# Audio, and any other type in the Download folder itself, which is not read here.
+_GALLERY_PUBLIC_DIRS = ('Pictures', 'Movies', 'Music', 'Documents', 'Download')
+_GALLERY_LEGACY_DIRS = ('Threema Pictures', 'Threema Videos', 'Threema Audio')
+_SHARED_STORAGE_USER = (
+    (re.compile(r'(?:^|/)data/media/(\d+)$'), 1),
+    (re.compile(r'(?:^|/)storage/emulated/(\d+)$'), 1),
+    (re.compile(r'(?:^|/)(?:sdcard|storage/self/primary)$'), None),
+)
+# FileUtil.getMediaFilenamePrefix (FileUtil.java L503-L507): a copy of a message without a
+# file name is named threema-<local time>-<apiMessageId>; the form without a message
+# (L509-L512, used for camera media) carries no id.
+_GALLERY_API_NAME = re.compile(r'^threema-\d{8}-\d{6}-([0-9A-Za-z]+)')
 
 
 def _strip_invalid_numeric_refs(text):
@@ -531,7 +616,27 @@ def _new_container(key):
     user, package = key
     if user == '?':
         package = package.rsplit('/', 1)[-1]
-    return {'user': user, 'package': package, 'files': []} | {c: {} for c in _MEDIA_CATEGORIES}
+    return ({'user': user, 'package': package, 'files': [], 'gallery': []}
+            | {c: {} for c in _MEDIA_CATEGORIES})
+
+
+def _locate_gallery(path):
+    """(Android user, gallery folder, its label, file name) for a file in a Threema
+    gallery folder of shared storage, or None."""
+    parts = str(path).replace('\\', '/').split('/')
+    if len(parts) < 4:
+        return None
+    above, folder, name = parts[:-3], parts[-3:-1], parts[-1]
+    if folder[0] in _GALLERY_PUBLIC_DIRS and folder[1] in _GALLERY_PACKAGES:
+        flavour = folder[1]
+    elif folder[0] in _GALLERY_PACKAGES and folder[1] in _GALLERY_LEGACY_DIRS:
+        flavour = folder[0]
+    else:
+        return None
+    user = _android_user('/'.join(above), _SHARED_STORAGE_USER)
+    if user is None:
+        return None
+    return user, flavour, '/'.join(folder), name
 
 
 def _containers(files_found):
@@ -543,12 +648,16 @@ def _containers(files_found):
     """
     containers = {}
     external = []
+    gallery = []
     for file_found in files_found:
         # The user files globs also match the directories inside them.
         if os.path.isdir(file_found):
             continue
         located = _locate(file_found)
         if located is None:
+            in_gallery = _locate_gallery(file_found)
+            if in_gallery:
+                gallery.append((in_gallery, str(file_found)))
             continue
         key, kind, name = located
         entry = containers.setdefault(key, _new_container(key))
@@ -562,6 +671,12 @@ def _containers(files_found):
     for key, category, name, path in external:
         containers[key][category].setdefault(name, path)
         containers[key]['files'].append((category, name, path, 'external'))
+    # A gallery copy goes to the installs of its Android user that write to its folder;
+    # _gallery_links decides which message, if any, it is a copy of.
+    for (user, flavour, label, name), path in sorted(gallery, key=lambda g: g[1]):
+        for container in containers.values():
+            if container['user'] == user and container['package'] in _GALLERY_PACKAGES[flavour]:
+                container['gallery'].append((name, label, path))
     return containers
 
 
@@ -1119,6 +1234,67 @@ def _media_for(uid, container, filename):
     return '', 'Decryption failed' if found else 'Not on device'
 
 
+def _gallery_links(container, rows):
+    """{gallery file path: (message stem or None, how it was tied)} for the container's
+    gallery copies. The rules are tried in this order, and each ties a copy only to a
+    single message: the copy is byte identical to one message's decrypted file or
+    thumbnail (copyMediaFileToGallery copies either unchanged), the apiMessageId of one
+    message is in its name, or its name, as it is or without a ' (n)' suffix, is the
+    stored file name of exactly one file message. A copy whose bytes several messages
+    share is reported as such and tied to none. rows are message rows with uid,
+    apiMessageId, type and body."""
+    if not container.get('gallery'):
+        return {}
+    by_api, by_file_name = {}, {}
+    for row in rows:
+        if not row.get('uid'):
+            continue
+        stem = re.sub(r'[^A-Za-z0-9]', '', row['uid'])
+        if row.get('apiMessageId'):
+            by_api.setdefault(str(row['apiMessageId']).lower(), set()).add(stem)
+        if row.get('type') == 8:
+            file_name = _file_info(row.get('body'))[0]
+            if file_name:
+                by_file_name.setdefault(file_name, set()).add(stem)
+    hashes = {}
+    keys = _keys(container)
+    for name, path in sorted(container['media'].items()):
+        match = _MEDIA_NAME.match(name)
+        data, _ = _decrypt_file(path, keys) if match else (None, None)
+        if data is not None:
+            hashes.setdefault(hashlib.sha256(data).digest(), set()).add(
+                (match.group(1), bool(match.group(2))))
+    links = {}
+    for name, _label, path in container['gallery']:
+        try:
+            with open(path, 'rb') as f:
+                digest = hashlib.sha256(f.read()).digest()
+        except OSError as ex:
+            logfunc(f"Threema: could not read gallery file {path}: {ex}")
+            digest = None
+        found = hashes.get(digest, set())
+        found_stems = {stem for stem, _thumb in found}
+        api = _GALLERY_API_NAME.match(name)
+        api_stems = by_api.get(api.group(1).lower(), set()) if api else set()
+        # getUniqueFile (common FileExtensions.kt L111-L122) adds ' (n)' before Android 10.
+        plain_name = re.sub(r' \(\d+\)(?=\.[^.]*$|$)', '', name)
+        name_stems = by_file_name.get(name) or by_file_name.get(plain_name, set())
+        if len(found_stems) == 1:
+            stem = next(iter(found_stems))
+            thumb_only = all(thumb for _stem, thumb in found)
+            links[path] = (stem, 'Identical to the message thumbnail' if thumb_only
+                           else 'Identical to the message file')
+        elif found_stems:
+            links[path] = (None, f'Identical to the files of {len(found_stems)} messages')
+        elif len(api_stems) == 1:
+            links[path] = (next(iter(api_stems)), 'apiMessageId in the name')
+        elif len(name_stems) == 1:
+            links[path] = (next(iter(name_stems)), 'File name of one message')
+        else:
+            links[path] = (None, '')
+    return links
+
+
 def _name_of(identity, own_identity, own, contacts):
     """How an identity is shown: the local account's label for its own
     Threema ID, else the contact's name, else the identity itself."""
@@ -1231,7 +1407,7 @@ def threema_messages(context):
         "Latitude", "Longitude", "Location Accuracy (m)",
         "Call Status", "Call ID", "Call Duration (s)", "State", "Read",
         "Quoted Message",
-        "Conversation", "Media Status", "Media Duration (s)", "Reactions",
+        "Conversation", "Media Status", "Media Duration (s)", "Reactions", "Gallery Copy",
     )
 
     files_found = unique_files(context)
@@ -1259,6 +1435,12 @@ def threema_messages(context):
                             _MESSAGE_COLUMNS + ('groupId', 'groupMessageStates'),
                             order_by='createdAtUtc')
             reactions = _reactions(cur, single, group, name_of)
+
+            copies = {}
+            for copy_path, (stem, how) in _gallery_links(container, single + group).items():
+                if stem:
+                    copies.setdefault(stem, []).append(
+                        f"{context.get_relative_path(copy_path)} ({how})")
 
             quotable = {}
             for row in single + group:
@@ -1324,6 +1506,7 @@ def threema_messages(context):
                     media_status,
                     content['media_duration'],
                     '; '.join(row_reactions),
+                    '\n'.join(copies.get(re.sub(r'[^A-Za-z0-9]', '', row['uid'] or ''), [])),
                 ))
         finally:
             con.close()
@@ -1346,9 +1529,11 @@ def _media_owners(cur, container):
                     'identity', 'firstName', 'lastName', 'publicNickName'))}
     groups = {row['id']: row['name'] or '' for row in _select(cur, 'm_group', ('id', 'name'))}
     messages = {}
-    columns = ('uid', 'identity', 'type', 'body', 'caption', 'createdAtUtc')
+    rows = []
+    columns = ('uid', 'identity', 'type', 'body', 'caption', 'createdAtUtc', 'apiMessageId')
     for table, extra in (('message', ()), ('m_group_message', ('groupId',))):
         for row in _select(cur, table, columns + extra):
+            rows.append(row)
             if row['uid']:
                 content = _decode(row['type'], row['body'], row['caption'])
                 messages[re.sub(r'[^A-Za-z0-9]', '', row['uid'])] = (
@@ -1361,7 +1546,7 @@ def _media_owners(cur, container):
     if own_identity:
         identities[own_identity] = f"{own} - local account"
     by_hash = {_profile_picture_name('', i): label for i, label in identities.items()}
-    return messages, by_hash, groups
+    return messages, by_hash, groups, rows
 
 
 def _describe_media(category, name, owners):
@@ -1371,7 +1556,7 @@ def _describe_media(category, name, owners):
     if owners is None:
         (messages, by_hash, groups), unresolved = ({}, {}, {}), 'Database not opened'
     else:
-        (messages, by_hash, groups), unresolved = owners, 'Not referenced by the database'
+        (messages, by_hash, groups), unresolved = owners[:3], 'Not referenced by the database'
     if category == 'media':
         match = _MEDIA_NAME.match(name)
         kind = 'Message thumbnail' if match and match.group(2) else 'Message file'
@@ -1399,11 +1584,12 @@ def _describe_media(category, name, owners):
 def threema_media(context):
     data_headers = (
         ("Message Created", "datetime"), ("Media", "media"), "Kind", "Belongs To", "Message",
-        "Stored File Name", "Storage", "Status",
+        "Stored File Name", "Storage", "Status", "Gallery Link",
     )
 
     files_found = unique_files(context)
     stores = _decrypted_connections(files_found, include_without_db=True)
+    gallery_files = sum(len(store.container.get('gallery', [])) for store in stores)
     if not stores:
         return data_headers, [], ""
 
@@ -1436,12 +1622,32 @@ def threema_media(context):
                 media = check_in_embedded_media(path, data, name.lstrip('.')) or ''
             created, kind, belongs, text = _describe_media(category, name, owners)
             data_list.append((created, media, kind, belongs, text, name,
-                              _STORAGE_LABELS[storage], status))
+                              _STORAGE_LABELS[storage], status, ''))
+        links = _gallery_links(container, owners[3] if owners else [])
+        messages = owners[0] if owners else {}
+        for name, label, path in container.get('gallery', []):
+            stem, how = links.get(path, (None, ''))
+            try:
+                with open(path, 'rb') as f:
+                    data = f.read()
+            except OSError:
+                data = None
+            media = check_in_embedded_media(path, data, name) or '' if data is not None else ''
+            if stem in messages:
+                created, belongs, text = messages[stem]
+            else:
+                created, text = None, ''
+                belongs = ('Database not opened' if owners is None else
+                           'Not referenced by the database' if stem else
+                           'Several messages' if how else 'No message link found')
+            data_list.append((created, media, 'Gallery copy', belongs, text, name,
+                              f"Shared storage ({label})", 'Not encrypted', how))
 
     data_list.sort(key=lambda row: (row[0] is None, row[0] or datetime.min.replace(tzinfo=timezone.utc),
                                     row[2], row[5]))
     if skipped:
         logfunc(f"Threema Media: {skipped} other file(s) in the user files directories did not "
                 f"decrypt and are not listed.")
-    logfunc(f"Threema Media: {len(data_list)} stored media file(s) found.")
+    logfunc(f"Threema Media: {len(data_list)} stored media file(s) found, "
+            f"{gallery_files} of them gallery copies.")
     return data_headers, data_list, _source_paths(stores)
