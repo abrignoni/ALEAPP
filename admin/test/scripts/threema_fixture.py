@@ -1,7 +1,7 @@
 """Builds a constructed Threema install with a version 2 master_key.dat, for the Threema artifacts.
 
-Every value is invented: the master key, Threema IDs, names, texts, times and pictures. Only the structure is taken
-from the real files of an install with a master_key.dat (not a registered test image): the master_key.dat layers of key-storage.proto (2-byte version, one length-delimited field per layer), a
+Every value is invented: the master key, Threema IDs, names, texts, times and pictures. The structure follows
+the client: the master_key.dat layers of key-storage.proto (2-byte version, one length-delimited field per layer), a
 SQLCipher 4 database keyed with the passphrase x"<master key hex>" and one key derivation iteration, the table definitions of
 database schema version 114, the message body shapes the client writes, and the user files in the legacy external
 directory, encrypted as AES-CBC with the IV in front.
@@ -33,7 +33,7 @@ PHOTO_UID = '0f1e2d3c-4b5a-4968-8776-a5b4c3d2e1f0'
 ORPHAN_UID = '11112222-3333-4444-5555-666677778888'
 T0 = base.epoch_ms('2026-11-01 09:00:00')
 
-# The client's table definitions at schema version 114, as stored in sqlite_master.
+# The client's table columns at schema version 114.
 SCHEMA = (
     "CREATE TABLE `contacts` (`identity` VARCHAR ,`publicKey` BLOB ,`firstName` VARCHAR ,`lastName` VARCHAR ,"
     "`publicNickName` VARCHAR ,`verificationLevel` INTEGER ,`state` VARCHAR DEFAULT 'ACTIVE' NOT NULL ,"
@@ -210,9 +210,8 @@ def write_case(repo_root='.'):
     members = files()
     folder = os.path.join(repo_root, 'admin', 'test', 'cases', 'data', 'Threema')
     case = {'description': 'Constructed Threema install with an unprotected version 2 master_key.dat, built by '
-                           'admin/test/scripts/threema_fixture.py. Structure taken from the real files of an install '
-                           'with a master_key.dat that is not a registered test image: file layout, key file layers, '
-                           'table definitions of schema version 114. Invented values, contains no real evidence.',
+                           'admin/test/scripts/threema_fixture.py, in the file layout, key file layers and table '
+                           'definitions of schema version 114. Invented values, contains no real evidence.',
             'maker': 'synthetic',
             'make_data': {'input_data_path': 'threema_fixture.py', 'os': 'any',
                           'timestamp': '2026-11-15T12:00:00.000000',

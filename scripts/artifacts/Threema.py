@@ -1,32 +1,34 @@
 __artifacts_v2__ = {
     "threema_account": {
         "name": "Threema - Account",
-        "description": "The signed-in Threema account's own Threema ID, display "
-                       "nickname, and any mobile number linked to it, read from the "
-                       "app's main preferences file.",
+        "description": "The local Threema account's own Threema ID, nickname and any mobile "
+                       "number linked to it, read from the app's default preferences file.",
         "author": "@Gear-I & Claude, @AlexisBrignoni, Codex, @kalink0",
         "creation_date": "2026-08-17",
         "last_update_date": "2026-11-15",
         "requirements": "none",
         "category": "Threema",
-        "notes": "Read from the client's default preferences file, which Android names after the "
-                 "package. 'Linked Mobile Number' is blank when the file carries none; absence is "
-                 "not evidence that no number was ever linked. 'Package' is the app package the "
-                 "file belongs to: Threema (ch.threema.app), Threema Work (ch.threema.app.work), "
-                 "Threema OnPrem (ch.threema.app.onprem) and Threema Libre "
-                 "(ch.threema.app.libre) are build flavours of one source (build.gradle.kts L74, "
-                 "L232-L236, L346-L351, L483-L489); the paths cover every package beginning "
-                 "ch.threema.app. 'Profile Picture' is the account's own "
-                 "picture, which the client stores as the user-defined ('.c-') picture of its "
-                 "own identity (UserServiceImpl.java L577-L598), encrypted with the master key. "
-                 "It is decrypted with each key read from key.dat or master_key.dat beside it "
-                 "(see Threema - Contacts) and taken only when it decrypts to an image, so it "
-                 "is blank where no key file could be read as well as where no picture was "
-                 "set. File references are to Threema for Android at "
-                 "commit d44a2b53 (github.com/threema-ch/threema-android/tree/"
-                 "d44a2b53b2ea2c0bf1065bdaa96987570e5b4e6d). Only ch.threema.app is exercised "
-                 "by a registered test image; on pixel7a_a14 the picture was found and "
-                 "decrypted.",
+        "notes": "Read from the client's default preferences file, which Android names after "
+                 "the package. 'Linked Mobile Number' is blank when the file carries none; "
+                 "absence is not evidence that no number was ever linked. 'Package' is the "
+                 "app package the file belongs to: Threema (ch.threema.app), Threema Work "
+                 "(ch.threema.app.work), Threema OnPrem (ch.threema.app.onprem) and Threema "
+                 "Libre (ch.threema.app.libre) are among the build flavours of one source "
+                 "(app/build.gradle.kts L74, L232-L236, L346-L351, L483-L489). The paths "
+                 "match every folder beginning ch.threema.app; the code keeps ch.threema.app "
+                 "and names that add dot-separated parts to it. 'Profile Picture' is the "
+                 "account's own picture, which the client stores as the user-defined ('.c-') "
+                 "picture of its own identity (UserServiceImpl.java L577-L598), encrypted "
+                 "with the master key. It is decrypted with each key read from key.dat or "
+                 "master_key.dat beside it (see Threema - Contacts) and taken only when it "
+                 "decrypts to an image, so it is blank where no key file could be read, where"
+                 " the file is not in the extraction, and where no picture was set. File "
+                 "references are to Threema for Android at commit d44a2b53 "
+                 "(github.com/threema-ch/threema-android/tree/d44a2b53b2ea2c0bf1065bdaa96987570e5b4e6d)."
+                 " Only ch.threema.app is present on the test images in sample_data. Whether "
+                 "the linked number was verified is not reported. The picture was found and "
+                 "decrypted on pixel7a_a14 and hickman_a13; on pixel3_a12 'Profile Picture' "
+                 "held no value.",
         "paths": (
             '*/ch.threema.app*/shared_prefs/ch.threema.app*_preferences.xml',
             '*/ch.threema.app*/files/key.dat',
@@ -38,63 +40,81 @@ __artifacts_v2__ = {
         "artifact_icon": "user",
         "sample_data": {
             "pixel7a_a14": "Android 14 | Threema 5.4.1 (ch.threema.app) | 1 row",
+            "pixel3_a12": "Android 12 | Threema 4.59 (ch.threema.app) | 1 row",
+            "hickman_a13": "Android 13 | Threema 4.83 (ch.threema.app) | 1 row",
         },
     },
     "threema_contacts": {
         "name": "Threema - Contacts",
-        "description": "Contacts recorded in Threema's local, SQLCipher-encrypted database, with each one's stored verification level and the date the contact record was created locally.",
+        "description": "Contacts recorded in Threema's local, SQLCipher-encrypted database, "
+                       "with each one's stored verification level and the date the contact "
+                       "record was created locally.",
         "author": "@Gear-I & Claude, @AlexisBrignoni, Codex, @kalink0",
         "creation_date": "2026-08-17",
         "last_update_date": "2026-11-15",
         "requirements": "sqlcipher3",
         "category": "Threema",
         "notes": "threema4.db is SQLCipher-encrypted and is opened read-only with its "
-                 "write-ahead log (on pixel7a_a14 the main file alone was weeks stale), with "
-                 "the master key from key.dat, version 1, read when unprotected and its "
-                 "checksum verifies (Version1MasterKeyFileManager.kt L18-L43; proven on "
-                 "pixel7a_a14), or from master_key.dat, version 2, read when no layer is "
-                 "passphrase- or remote-secret-protected (Version2MasterKeyStorageDecoder.kt "
-                 "L24-L123; no registered test image carries one, the constructed case "
-                 "casesynthetic_v2 does). Not read: "
-                 "enc_master_key_v2.dat, which the Android key store protects "
-                 "(Version2MasterKeyFileManagerImpl.kt L31-L69), and passphrase-protected keys; "
-                 "such an install gives no rows and the log names the key file found "
-                 "(exercised on pixel7a_a14 with key.dat removed). By client version: key.dat "
-                 "up to 6.1.x, master_key.dat from 6.2.0 (MasterKeyFileProvider.kt L35-L36 at "
-                 "commit 0437b046), enc_master_key_v2.dat from 6.4.0 (same file L18-L20 at "
-                 "commit 65acf422), so an install of 6.4.0 or later is not decrypted; "
-                 "pixel7a_a14 runs 5.4.1. A column a schema lacks is "
-                 "blank. 'Verification Level' maps "
-                 "verificationLevel 0=Unverified, 1=Server-verified, 2=Fully verified "
-                 "(VerificationLevel.java L10-L12); how a level was reached is not stored. "
-                 "'Group-Only / Removed' is Yes when acquaintanceLevel (isHidden before schema "
-                 "version 94, same values; DatabaseUpdateToVersion94.kt L18-L23) is set: the "
-                 "client's GROUP_OR_DELETED covers a contact known only through a group, one "
-                 "removed from all common groups, and one explicitly removed (Contact.kt "
-                 "L213-L231), which the field cannot tell apart. 'Date Created' is dateCreated "
-                 "in Unix milliseconds, the date the record was created locally "
-                 "(ContactModel.java L57). 'Archived' is Yes when the one-to-one chat is "
-                 "archived: isArchived until schema version 126, conversationVisibility 1 from "
-                 "it (DatabaseUpdateToVersion126.kt L95-L128; pinned, 2, is not reported). "
-                 "The three profile picture columns are the three pictures the client can store "
-                 "per contact (see Threema - Media for their names and locations), each taken "
-                 "only when it decrypts to an image; which one the app displays is not "
+                 "write-ahead log, with the master key from key.dat, version 1, read when "
+                 "unprotected and its checksum verifies (Version1MasterKeyFileManager.kt "
+                 "L18-L43; the checksum verified on pixel7a_a14, pixel3_a12 and hickman_a13),"
+                 " or from master_key.dat, version 2, read when no layer is passphrase- or "
+                 "remote-secret-protected (Version2MasterKeyStorageDecoder.kt L24-L123; no "
+                 "test image in sample_data carries one, the constructed case "
+                 "casesynthetic_v2 does). On pixel7a_a14 the database file without its "
+                 "write-ahead log held 30 of the 33 messages and 2 of the 3 contacts; none of"
+                 " the log's 36 committed states holds a message or contact the current "
+                 "tables do not. Not read: enc_master_key_v2.dat, which the Android key store"
+                 " protects (Version2MasterKeyFileManagerImpl.kt L31-L69), and "
+                 "passphrase-protected keys. Such an install gives no rows and the log says "
+                 "why; the case with no key file was run on pixel7a_a14 with key.dat removed,"
+                 " and the key store and passphrase cases are not exercised. By client "
+                 "version: key.dat up to 6.1.x, master_key.dat from 6.2.0 "
+                 "(MasterKeyFileProvider.kt L35-L36 at commit 0437b046), "
+                 "enc_master_key_v2.dat from 6.4.0 (same file L18-L20 at commit 65acf422), "
+                 "except below Android 8.0, where the client keeps master_key.dat "
+                 "(LocalCryptoFeatureModule.kt L43-L57). Once a 6.4.0 or later client has run"
+                 " on Android 8.0 or later, it moves the key to enc_master_key_v2.dat and "
+                 "deletes master_key.dat (Version2MasterKeyFileManagerImpl.kt L33-L66), and "
+                 "such an install is not decrypted. A column a schema lacks is blank. "
+                 "'Verification Level' maps verificationLevel 0=Unverified, "
+                 "1=Server-verified, 2=Fully verified (VerificationLevel.java L10-L12); how a"
+                 " level was reached is not reported. 'Group-Only / Removed' is Yes when "
+                 "acquaintanceLevel (isHidden before schema version 94, same values; "
+                 "DatabaseUpdateToVersion94.kt L18-L23) is set: the client's GROUP_OR_DELETED"
+                 " covers a contact known only through a group, one removed from all common "
+                 "groups, and one explicitly removed (Contact.kt L213-L231), which the field "
+                 "cannot tell apart. The three cases are the current client's definition; "
+                 "what an older client set isHidden for is not established beyond 'visible in"
+                 " the contact list' (ContactModel.java L55 at tag 4.59). 'Date Created' is "
+                 "dateCreated, written in Unix milliseconds (ContactModelFactory.java L405), "
+                 "the date the record was created locally (ContactModel.java L57). 'Archived'"
+                 " is Yes when the one-to-one chat is archived: isArchived until schema "
+                 "version 126, conversationVisibility 1 from it "
+                 "(DatabaseUpdateToVersion126.kt L95-L128; pinned, 2, is not reported). The "
+                 "three profile picture columns are the three pictures the client can store "
+                 "per contact (see Threema - Media for their names and locations), each taken"
+                 " only when it decrypts to an image; which one the app displays is not "
                  "reported, and a blank means no such file was extracted or none decrypted. "
-                 "The paths cover every package beginning ch.threema.app. "
-                 "File references are to Threema for Android at commit d44a2b53 (github.com/"
-                 "threema-ch/threema-android/tree/d44a2b53b2ea2c0bf1065bdaa96987570e5b4e6d). "
-                 "Only ch.threema.app is exercised by a registered test image; the isHidden and "
-                 "conversationVisibility schemas follow the cited source. casesynthetic_v2 is a "
-                 "constructed install built by admin/test/scripts/threema_fixture.py with "
-                 "invented values; its structure (file layout, key file layers, table "
-                 "definitions of schema version 114, message body shapes, database passphrase "
-                 "form) is taken from a real install with a master_key.dat that is not a "
-                 "registered test image. It exercises master_key.dat, a group-only and an "
-                 "archived contact (3 rows). On "
-                 "pixel7a_a14 (3 rows) the one level 2 contact is the one with a documented 'via "
-                 "QR scan' verification; 'Group-Only / Removed' held no value on any row, "
-                 "'Archived' held no value on any row, and 'Profile Picture (set locally)' held "
-                 "no value on any row.",
+                 "The paths match every folder beginning ch.threema.app; the code keeps "
+                 "ch.threema.app and names that add dot-separated parts to it. File "
+                 "references are to Threema for Android at commit d44a2b53 "
+                 "(github.com/threema-ch/threema-android/tree/d44a2b53b2ea2c0bf1065bdaa96987570e5b4e6d)."
+                 " Only ch.threema.app is present on the test images in sample_data. isHidden"
+                 " is read on pixel3_a12 (schema version 66) and hickman_a13 (72), with no "
+                 "row set; acquaintanceLevel on pixel7a_a14 (97); conversationVisibility "
+                 "follows the cited source. casesynthetic_v2 is a constructed install built "
+                 "by admin/test/scripts/threema_fixture.py with invented values, in the file "
+                 "layout, key file layers, table definitions of schema version 114, message "
+                 "body shapes and database passphrase form the client uses. It exercises "
+                 "master_key.dat, a group-only and an archived contact (3 rows). On "
+                 "pixel7a_a14 (3 rows) one contact is level 2, and 'Group-Only / Removed', "
+                 "'Archived' and 'Profile Picture (set locally)' held no value on any row. On"
+                 " pixel3_a12 (2 rows) 'Profile Picture (from contact)' and 'Profile Picture "
+                 "(Android contact)' held no value on any row; on hickman_a13 (2 rows) "
+                 "'Profile Picture (Android contact)' held no value on any row. 'Profile "
+                 "Picture (set locally)' and 'Archived' held no value on any row of any test "
+                 "image; they are exercised only by casesynthetic_v2.",
         "paths": (
             '*/ch.threema.app*/files/key.dat',
             '*/ch.threema.app*/files/master_key.dat',
@@ -107,73 +127,103 @@ __artifacts_v2__ = {
         "artifact_icon": "address-book",
         "sample_data": {
             "pixel7a_a14": "Android 14 | Threema 5.4.1 (ch.threema.app) | 3 rows",
+            "pixel3_a12": "Android 12 | Threema 4.59 (ch.threema.app) | 2 rows",
+            "hickman_a13": "Android 13 | Threema 4.83 (ch.threema.app) | 2 rows",
         },
     },
     "threema_messages": {
         "name": "Threema - Messages",
-        "description": "One-to-one and group messages recorded in Threema's local, SQLCipher-encrypted database: text, files and media, static locations, calls and status messages, with direction, delivery/read status, any quote-reply relationship between messages, and the attached media where its file is on the device.",
+        "description": "One-to-one and group messages recorded in Threema's local, "
+                       "SQLCipher-encrypted database: text, files and media, static "
+                       "locations, calls and status messages, with direction, delivery/read "
+                       "status, any quote-reply relationship between messages, and the "
+                       "attached media where its file is in the extraction.",
         "author": "@Gear-I & Claude, @AlexisBrignoni, Codex, @kalink0",
         "creation_date": "2026-08-17",
         "last_update_date": "2026-11-15",
         "requirements": "sqlcipher3",
         "category": "Threema",
-        "notes": "The database is opened as for Threema - Contacts, with the same key files and "
-                 "limits. Rows come from the message table (one-to-one chats) and "
-                 "m_group_message (groups); a column a schema lacks is blank. 'Conversation' is "
-                 "the contact's name and Threema ID, or 'Group:' with the group's name and local "
-                 "id. 'Direction' is Sent or Received from outbox, or Status for a row with "
-                 "isStatusMessage set, a notice the client writes into the chat (a group created, "
-                 "forward security established). 'Sender' is the local account from the "
-                 "preferences file for a sent row, the stored member for a received group row, "
-                 "blank for a status row; 'Contact' is the conversation partner, or the member "
-                 "for a group row. Content is decoded by message type (MessageType.kt L3-L33): "
-                 "text; location, by position as latitude, longitude, accuracy in metres and "
-                 "address, the shape of every location on pixel7a_a14; file "
+        "notes": "The database is opened as for Threema - Contacts, with the same key files "
+                 "and limits. Rows come from the message table (one-to-one chats) and "
+                 "m_group_message (groups); a column a schema lacks is blank. 'Created', "
+                 "'Delivered' and 'Read At' are createdAtUtc, deliveredAtUtc and readAtUtc, "
+                 "written as Unix milliseconds (DatabaseUtil.java L21-L23); 'Edited' and "
+                 "'Deleted' are editedAtUtc and deletedAtUtc. 'Read' is Yes when isRead is "
+                 "set; what it means on a sent row is not established. 'Conversation' is the "
+                 "contact's name and Threema ID, or 'Group:' with the group's name and local "
+                 "id ('Group #id' when the group has no name). 'Direction' is Sent or "
+                 "Received from outbox, or Status for a row with isStatusMessage set, a "
+                 "notice the client writes into the chat (a group created, forward security "
+                 "established). 'Sender' is the local account from the preferences file for a"
+                 " sent row ('Local account' without that file), the contact for a received "
+                 "one-to-one row, the stored member for a received group row, and blank for a"
+                 " status row; 'Contact' is the conversation partner, or the stored identity "
+                 "for a group row: on a received group row that is the sending member, and "
+                 "what a sent group row holds there is not established. Content is decoded by"
+                 " message type (MessageType.kt L3-L33): text; location, by the positions "
+                 "LocationDataModel.kt L44-L51 writes: latitude, longitude, accuracy and "
+                 "address (the place name after them is not reported; accuracy is in metres "
+                 "per the protocol message, LocationMessage.kt L15); file "
                  "(FileDataModelSerializer.kt L29-L45; a body from before the rendering type "
-                 "existed is read as the 5.8.2 reader read it, FileDataModel.java L327-L335 at "
-                 "commit ab243097, unexercised); call, group call, forward security and group "
-                 "status (StatusDataModel.kt L35-L57, names from VoipStatusDataModel.kt "
-                 "L53-L56, GroupCallStatusDataModel.kt L31-L32, ForwardSecurityStatusDataModel.kt "
-                 "L34-L51 and GroupStatusDataModel.kt L22-L61); and the former image, video and "
-                 "voice types still held for old messages (VideoDataModel.java L105-L116, "
-                 "AudioDataModel.java L83-L91 at commit ab243097). Other types are Unrecognized "
-                 "with the stored body. 'Call Status' is the stored number, 'Message' its name; "
-                 "the stored call parameters hold no audio/video distinction, so none is "
-                 "reported. 'Message' is what the chat shows: the text, a file's "
-                 "caption, a location's address, or the call or status notice. 'Media Duration "
-                 "(s)' is a video or voice message's stored duration or a file's metadata key "
-                 "'d' (FileDataModel.java L21). 'Quoted Message' resolves quotedMessageId "
-                 "against apiMessageId across both tables, not by row order. 'Reactions' lists "
-                 "emoji, reacting account and time from contact_reactions and group_reactions "
-                 "(schema version 106; the version 105 tables contact_emoji_reactions and "
-                 "group_emoji_reactions are read by message uid; DatabaseUpdateToVersion106.kt "
-                 "L73-L114). Older databases keep a thumbs up or down as the message's state "
-                 "USERACK or USERDEC, sent by the recipient (MessageState.java L54-L64), or per "
-                 "member in groupMessageStates; these are reported as the client reads them "
-                 "(EmojiReactionsRepository.kt L110-L168): on a sent one-to-one message as the "
-                 "contact's, on a received one as the local account's, without a time; a "
-                 "reaction whose stored time equals the message's creation time is 'no reaction "
-                 "time stored', since the client's conversion assigns that time. 'Media' is the "
-                 "message's file, else its thumbnail, decrypted in memory as described for "
-                 "Threema - Media. 'Media Status' is File or Thumbnail only, with '(type not "
-                 "recognised)' where no file type was recognised in the decrypted bytes, Not on "
-                 "device (a file can be missing for reasons the database does not record), or "
-                 "Decryption failed. 'Edited' and 'Deleted' are editedAtUtc and deletedAtUtc. "
-                 "Not reported: whether a chat is archived, distribution lists and polls "
-                 "(tables empty on pixel7a_a14), and deletion inferred from a gap in the "
-                 "numbering. File references are to Threema for Android at commit d44a2b53 "
-                 "(see Threema - Contacts) unless stated. Only text, location, file and call "
-                 "rows are exercised by a "
-                 "registered test image; the constructed case casesynthetic_v2 (see Threema - "
-                 "Contacts; 12 rows) also exercises status, group, former image and voice rows, "
-                 "reactions from the reaction tables and edited and deleted dates; the older "
-                 "schemas follow the cited source. On pixel7a_a14 (33 rows, one contact) a pair "
-                 "of location messages existed only in the write-ahead log and the one USERACK "
-                 "row is the received message the image's documentation records a thumbs up "
-                 "for; 'Contact' holds one value on all 33 rows, 'Conversation' holds one value "
-                 "on all 33 rows, 'Read' holds one value, Yes, on all 33 rows, 'Edited' held no "
-                 "value on any row, 'Deleted' held no value on any row, and 'Media Duration (s)' "
-                 "held no value on any row.",
+                 "existed is read as the 5.8.2 reader read it, FileDataModel.java L327-L335 "
+                 "at commit ab243097, unexercised); call, group call, forward security and "
+                 "group status (StatusDataModel.kt L35-L57, names from VoipStatusDataModel.kt"
+                 " L53-L56, GroupCallStatusDataModel.kt L31-L32, "
+                 "ForwardSecurityStatusDataModel.kt L34-L51 and GroupStatusDataModel.kt "
+                 "L22-L61); and the former image, video and voice types still held for old "
+                 "messages (VideoDataModel.java L105-L116, AudioDataModel.java L83-L91 at "
+                 "commit ab243097). Types 5, 6, 7 and 10 are not decoded and show as "
+                 "Unrecognized with the stored body. 'Call Status' is the stored number, "
+                 "'Message' its name; the stored call parameters hold no audio/video "
+                 "distinction (VoipStatusDataModel.kt L38-L45), and the stored reason is not "
+                 "reported. 'Message' is the text, a file's caption (blank when it has none),"
+                 " a location's address, or the call or status notice. 'Media Duration (s)' "
+                 "is a video or voice message's stored duration or a file's metadata key 'd' "
+                 "(FileDataModel.java L21), a decimal number of seconds "
+                 "(MessageServiceImpl.java L3686), rounded to whole seconds. 'Quoted Message'"
+                 " resolves quotedMessageId against apiMessageId across both tables, not by "
+                 "row order, and is blank when the quoted message is not a text message in "
+                 "the database. 'Reactions' lists emoji, reacting account and time from "
+                 "contact_reactions and group_reactions (schema version 106; the version 105 "
+                 "tables contact_emoji_reactions and group_emoji_reactions are read by "
+                 "message uid; DatabaseUpdateToVersion106.kt L73-L114). Older databases keep "
+                 "a thumbs up or down as the message's state USERACK or USERDEC, sent by the "
+                 "recipient (MessageState.java L54-L64), or per member in groupMessageStates;"
+                 " these are reported as the client reads them (EmojiReactionsRepository.kt "
+                 "L110-L168): on a sent one-to-one message as the contact's, on a received "
+                 "one as the local account's, without a time. A reaction time equal to the "
+                 "message's creation time is marked 'no reaction time stored'; this mark is "
+                 "not exercised. A backup restore stores such a converted reaction with the "
+                 "message's modified time, else its creation time, else the time of the "
+                 "restore (RestoreService.java L1797-L1828), so a stored reaction time can be"
+                 " the restore's guess; this is not exercised. 'Media' is the message's file,"
+                 " else its thumbnail, decrypted in memory as described for Threema - Media. "
+                 "'Media Status' is File or Thumbnail only, with '(type not recognised)' "
+                 "where no file type was recognised in the decrypted bytes, Not on device "
+                 "where neither file is in the extraction (a file can be missing for reasons "
+                 "the database does not record), or Decryption failed. Not reported: whether "
+                 "a chat is archived, distribution lists and polls (tables empty on every "
+                 "test image), and deletion inferred from a gap in the numbering. File "
+                 "references are to Threema for Android at commit d44a2b53 (see Threema - "
+                 "Contacts) unless stated. Only text, location, file and call rows are "
+                 "exercised by the test images in sample_data; the constructed case "
+                 "casesynthetic_v2 (see Threema - Contacts; 12 rows) also exercises a forward"
+                 " security and a text status row, group rows, former image and voice rows, "
+                 "reactions from the reaction tables and edited and deleted dates; video, "
+                 "group call status and group status rows are not exercised. On pixel7a_a14 "
+                 "(33 rows, one conversation) 3 messages, 2 location and 1 text, existed only"
+                 " in the write-ahead log, and one received row holds state USERACK; "
+                 "'Contact' holds one value on all 33 rows, 'Conversation' holds one value on"
+                 " all 33 rows, 'Read' holds one value, Yes, on all 33 rows, 'Edited' held no"
+                 " value on any row, 'Deleted' held no value on any row, and 'Media Duration "
+                 "(s)' held no value on any row. On pixel3_a12 (18 rows, schema version 66) "
+                 "'Delivered' and 'Read At' held no value on any row (the schema has neither "
+                 "column), and 'Call ID', 'Quoted Message' and 'Reactions' held no value on "
+                 "any row. On hickman_a13 (25 rows, schema version 72) 'Call ID' and "
+                 "'Reactions' held no value on any row. 'Edited', 'Deleted' and 'Media "
+                 "Duration (s)' held no value on any row of any test image (schema versions "
+                 "66 and 72 have no editedAtUtc or deletedAtUtc), and 'Read' is Yes on every "
+                 "row of all three.",
         "paths": (
             '*/ch.threema.app*/files/key.dat',
             '*/ch.threema.app*/files/master_key.dat',
@@ -189,6 +239,8 @@ __artifacts_v2__ = {
         "artifact_icon": "message-circle",
         "sample_data": {
             "pixel7a_a14": "Android 14 | Threema 5.4.1 (ch.threema.app) | 33 rows",
+            "pixel3_a12": "Android 12 | Threema 4.59 (ch.threema.app) | 18 rows",
+            "hickman_a13": "Android 13 | Threema 4.83 (ch.threema.app) | 25 rows",
         },
         "data_views": {
             "conversation": {
@@ -204,47 +256,59 @@ __artifacts_v2__ = {
     },
     "threema_media": {
         "name": "Threema - Media",
-        "description": "Media files Threema keeps encrypted on the device, decrypted: message files and thumbnails, profile pictures, group pictures and wallpapers, with what the app's database says each belongs to, including files the database no longer refers to.",
+        "description": "Media files Threema keeps encrypted on the device, decrypted: message"
+                       " files and thumbnails, profile pictures, group pictures and "
+                       "wallpapers, with what the app's database says each belongs to, "
+                       "including files the database does not refer to.",
         "author": "@kalink0",
         "creation_date": "2026-11-14",
         "last_update_date": "2026-11-15",
         "requirements": "sqlcipher3",
         "category": "Threema",
-        "notes": "One row per file in the client's two user files directories, files/user-data/ "
-                 "in the app data directory and files/data/ in external storage "
-                 "(AppDirectoryProvider.kt); an external directory is paired with an app data "
-                 "directory only when both name the same Android user and package. Every file "
-                 "is decrypted in memory with every master key read beside it (key.dat or "
-                 "master_key.dat, see Threema - Contacts), independently of the database, as "
-                 "AES-CBC with a 16-byte IV (MasterKeyImpl.kt L31-L79), and its type is read "
-                 "from the decrypted bytes. The name gives the kind: '.' + 32 hex digits, the "
-                 "message uid without dashes, a message file, with '_T' its thumbnail "
+        "notes": "One row per file in the client's two user files directories, "
+                 "files/user-data/ in the app data directory and files/data/ in external "
+                 "storage (AppDirectoryProvider.kt L18-L22, L36-L38); an external directory "
+                 "is paired with an app data directory only when both name the same Android "
+                 "user and package. Every file is decrypted in memory with every master key "
+                 "read beside it (key.dat or master_key.dat, see Threema - Contacts), "
+                 "independently of the database, as AES-CBC with a 16-byte IV "
+                 "(MasterKeyImpl.kt L31-L79), and its type is read from the decrypted bytes; "
+                 "the sqlcipher3 module is still required, and without it no row is listed. "
+                 "The name gives the kind: '.' + 32 hex digits, the message uid without "
+                 "dashes, a message file, with '_T' its thumbnail "
                  "(MessageFileHandleProvider.kt L11-L39); '.p-', '.c-' or '.a-' + "
                  "Base32(SHA-256('c-' + Threema ID)) a profile picture from the contact, set "
-                 "locally (for the account's own identity, its own picture) or from the Android "
-                 "contact (ProfilePictureFileHandleProvider.kt L17-L54); '.gpp-' or "
+                 "locally (for the account's own identity, its own picture) or from the "
+                 "Android contact (ProfilePictureFileHandleProvider.kt L17-L54); '.gpp-' or "
                  "'.grp-avatar-' + a group's local id a group picture "
                  "(GroupProfilePictureFileHandleProvider.kt L11-L27); '.w-' + an obfuscated "
-                 "conversation id, or wallpaper.jpg, a wallpaper (WallpaperFileHandleProvider.kt "
-                 "L15-L45). A file with any other name is listed as Other file only when it "
-                 "decrypts. 'Belongs To' is resolved against the database: the message's "
-                 "conversation, the contact or local account whose identity hashes to the name, "
-                 "or the group; 'Not referenced by the database' when nothing matches (for "
-                 "example a message no longer stored; why is not asserted), 'Database not "
-                 "opened' when it could not be opened or was not extracted. Wallpapers are not "
-                 "resolved, the id being obfuscated. 'Message Created' and 'Message' are the "
-                 "message's createdAtUtc and its caption, file name or text. A file in both "
-                 "directories is listed once per directory. 'Status' is Decrypted; Decrypted, "
-                 "type not recognised (a type the sniffer does not know, or bytes a wrong key "
-                 "unpadded by chance); Did not decrypt; or Not decrypted when no master key "
-                 "could be read. File references are to Threema for Android at commit d44a2b53 "
-                 "(see Threema - Contacts). Only ch.threema.app is exercised by a registered "
-                 "test image; group pictures, wallpapers and other files are not, an "
-                 "unreferenced message file only in the constructed case casesynthetic_v2 (see "
-                 "Threema - Contacts; 5 rows); the no-key case was run on pixel7a_a14 with key.dat removed (8 files, "
-                 "none decrypted), the no-database case on constructed paths only. On "
-                 "pixel7a_a14 'Storage' holds one value, External storage, on all 8 rows, and "
-                 "'Status' holds one value, Decrypted, on all 8 rows.",
+                 "conversation id, or wallpaper.jpg, a wallpaper "
+                 "(WallpaperFileHandleProvider.kt L15-L45). In the external directory, "
+                 "profile picture and wallpaper names end in '.nomedia' "
+                 "(ProfilePictureFileHandleProvider.kt L32-L37), which 'Stored File Name' "
+                 "leaves out. A file with any other name is listed as Other file only when it"
+                 " decrypts. 'Belongs To' is resolved against the database: the message's "
+                 "conversation, the contact or local account whose identity hashes to the "
+                 "name, or the group; 'Not referenced by the database' when nothing matches "
+                 "(for example a message no longer stored; why is not asserted), 'Database "
+                 "not opened' when it could not be opened or was not extracted. Wallpapers "
+                 "are not resolved, the id being obfuscated. 'Message Created' and 'Message' "
+                 "are the message's createdAtUtc and its caption, file name or text. A file "
+                 "in both directories is listed once per directory. 'Status' is Decrypted; "
+                 "Decrypted, type not recognised (a type the sniffer does not know, or bytes "
+                 "a wrong key unpadded by chance); Did not decrypt; or Not decrypted (no "
+                 "usable master key). File references are to Threema for Android at commit "
+                 "d44a2b53 (see Threema - Contacts). Only ch.threema.app is present on the "
+                 "test images in sample_data; group pictures, wallpapers and other files are "
+                 "not exercised, an unreferenced message file only in the constructed case "
+                 "casesynthetic_v2 (see Threema - Contacts; 5 rows); the case with no key "
+                 "file was run on pixel7a_a14 with key.dat removed (8 files, none decrypted),"
+                 " the case with no database on constructed paths only. On pixel7a_a14 "
+                 "'Storage' holds one value, External storage, on all 8 rows, and 'Status' "
+                 "holds one value, Decrypted, on all 8 rows. On pixel3_a12 (4 rows) and "
+                 "hickman_a13 (6 rows) every file is in external storage and Decrypted, and "
+                 "on pixel3_a12 'Belongs To' holds one value on all 4 rows, the one "
+                 "conversation the files belong to.",
         "paths": (
             '*/ch.threema.app*/files/key.dat',
             '*/ch.threema.app*/files/master_key.dat',
@@ -259,6 +323,8 @@ __artifacts_v2__ = {
         "artifact_icon": "image",
         "sample_data": {
             "pixel7a_a14": "Android 14 | Threema 5.4.1 (ch.threema.app) | 8 rows",
+            "pixel3_a12": "Android 12 | Threema 4.59 (ch.threema.app) | 4 rows",
+            "hickman_a13": "Android 13 | Threema 4.83 (ch.threema.app) | 6 rows",
         },
     },
 }

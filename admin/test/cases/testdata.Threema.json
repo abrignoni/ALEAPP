@@ -85,7 +85,7 @@
     }
   },
   "casesynthetic_v2": {
-    "description": "Constructed Threema install with an unprotected version 2 master_key.dat, built by admin/test/scripts/threema_fixture.py. Structure taken from the real files of an install with a master_key.dat that is not a registered test image: file layout, key file layers, table definitions of schema version 114. Invented values, contains no real evidence.",
+    "description": "Constructed Threema install with an unprotected version 2 master_key.dat, built by admin/test/scripts/threema_fixture.py, in the file layout, key file layers and table definitions of schema version 114. Invented values, contains no real evidence.",
     "maker": "synthetic",
     "make_data": {
       "input_data_path": "threema_fixture.py",
