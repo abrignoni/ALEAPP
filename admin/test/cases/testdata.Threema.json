@@ -4,22 +4,26 @@
     "maker": "",
     "make_data": {
       "input_data_path": "EXTRACTION_FFS.zip",
-      "os": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
-      "timestamp": "2026-08-24T23:47:18.997832",
+      "os": "Linux-7.2.9-1-MANJARO-x86_64-with-glibc2.44",
+      "timestamp": "2026-11-14T22:12:13.338017",
       "last_commit": {
-        "hash": "Uncommitted",
-        "author_name": "N/A",
-        "author_email": "N/A",
-        "date": "2026-08-24T23:47:18.988346",
-        "message": "File not yet committed to git"
+        "hash": "692bc23cca21649ac8775370e35edffe6c192e82",
+        "author_name": "Brigs",
+        "author_email": "abrignoni@gmail.com",
+        "date": "2026-10-06T17:20:02-04:00",
+        "message": "Report Threema file messages with adjacent message dates"
       }
     },
     "artifacts": {
       "threema_account": {
         "search_patterns": [
-          "*/ch.threema.app/shared_prefs/ch.threema.app_preferences.xml"
+          "*/ch.threema.app*/shared_prefs/ch.threema.app*_preferences.xml",
+          "*/ch.threema.app*/files/key.dat",
+          "*/ch.threema.app*/files/master_key.dat",
+          "*/ch.threema.app*/files/user-data/.profile-pictures/.c-*",
+          "*/Android/data/ch.threema.app*/files/data/.avatar/.c-*"
         ],
-        "file_count": 1,
+        "file_count": 3,
         "expected_output": {
           "headers": [],
           "data": []
@@ -27,10 +31,14 @@
       },
       "threema_contacts": {
         "search_patterns": [
-          "*/ch.threema.app/files/key.dat",
-          "*/ch.threema.app/databases/threema4.db*"
+          "*/ch.threema.app*/files/key.dat",
+          "*/ch.threema.app*/files/master_key.dat",
+          "*/ch.threema.app*/files/enc_master_key_v2.dat",
+          "*/ch.threema.app*/databases/threema4.db*",
+          "*/ch.threema.app*/files/user-data/.profile-pictures/.[acp]-*",
+          "*/Android/data/ch.threema.app*/files/data/.avatar/.[acp]-*"
         ],
-        "file_count": 4,
+        "file_count": 8,
         "expected_output": {
           "headers": [],
           "data": []
@@ -38,10 +46,31 @@
       },
       "threema_messages": {
         "search_patterns": [
-          "*/ch.threema.app/files/key.dat",
-          "*/ch.threema.app/databases/threema4.db*"
+          "*/ch.threema.app*/files/key.dat",
+          "*/ch.threema.app*/files/master_key.dat",
+          "*/ch.threema.app*/files/enc_master_key_v2.dat",
+          "*/ch.threema.app*/databases/threema4.db*",
+          "*/ch.threema.app*/shared_prefs/ch.threema.app*_preferences.xml",
+          "*/ch.threema.app*/files/user-data/.message-files/.*",
+          "*/Android/data/ch.threema.app*/files/data/.*"
         ],
-        "file_count": 4,
+        "file_count": 9,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "threema_media": {
+        "search_patterns": [
+          "*/ch.threema.app*/files/key.dat",
+          "*/ch.threema.app*/files/master_key.dat",
+          "*/ch.threema.app*/files/enc_master_key_v2.dat",
+          "*/ch.threema.app*/databases/threema4.db*",
+          "*/ch.threema.app*/shared_prefs/ch.threema.app*_preferences.xml",
+          "*/ch.threema.app*/files/user-data/*",
+          "*/Android/data/ch.threema.app*/files/data/*"
+        ],
+        "file_count": 13,
         "expected_output": {
           "headers": [],
           "data": []
