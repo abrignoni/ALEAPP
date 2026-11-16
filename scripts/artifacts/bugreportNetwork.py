@@ -81,33 +81,7 @@ __artifacts_v2__ = {
         "last_update_date": "2026-10-26",
         "requirements": "none",
         "category": "Android Bug Report - Wi-Fi",
-        "notes": "One row per startTime= line under mConnectionEvents in the WifiMetrics part of the wifi service dump. SSID, BSSID, "
-                 "Duration (ms), Roam Type, Connection Result, Level 2 Failure Code, Connectivity Failure Code, Signal Strength, "
-                 "Wi-Fi State, Screen On, Network Type, Connection Nominator and Network Creator are the key=value pairs of the line "
-                 "as printed; Connection Result and Channel Info are shown as stored (no meaning is given to the numbers), Other "
-                 "Fields holds the remaining pairs in the order printed, cut at 1,500 characters. The Android 10 builds print fewer "
-                 "pairs, so Network Type and Network Creator are empty on those two reports. Start Time As Printed is month, day and "
-                 "clock time without a year and with unpadded hours, minutes and seconds; Start Time (UTC) uses the year rule of "
-                 "Bug Report - Wi-Fi Saved Networks and the zone of Bug Report - Device Facts. The fraction after the seconds is "
-                 "printed unpadded on some builds (.45 was seen), so the UTC value is given to the whole second and the fraction is "
-                 "kept only in the printed text.\n"
-                 "The platform keeps a short list: the tested reports held 0 to 6 lines. A row records that the Wi-Fi metrics noted a "
-                 "connection attempt with that outcome; it does not say who started it. The wifip2p service prints a list of the same "
-                 "name that was empty on the three reports that print it and is not read.\n"
-                 "All rows of the Samsung A-series, Huawei, Transsion-brand and Motorola reports held ROAM_UNRELATED in Roam Type, "
-                 "1 in Connection Result, NONE in both failure code columns and WIFI_DISCONNECTED in Wi-Fi State; the Samsung "
-                 "A-series, Huawei and Transsion-brand reports hold one row each, so the other columns are uniform there too. "
-                 "Channel Info held 0 on the Huawei row. "
-                 "On the Motorola report, whose six rows are the same network, SSID, BSSID, Level 2 Failure Code, "
-                 "Connectivity Failure Code, Channel Info, Network Type, Connection Nominator and Network Creator held "
-                 "one value on all rows.\n"
-                 "Evidence tiers. Data-proven on five real bug reports (Samsung A-series and S-series on Android 16, Huawei and a "
-                 "Transsion-brand phone on Android 10, Motorola on Android 15): 1, 0, 1, 1 and 6 rows, each equal to a count of "
-                 "startTime= lines in the raw text made by a separate script and to an independent parser on SSID, BSSID, duration, "
-                 "roam type, result, signal strength, state and screen flag; the Samsung S-series report printed none (its Wi-Fi was "
-                 "off at the dump). The zone of all five is UTC+0, so the conversion was the identity on the real rows. Not "
-                 "examined: Android 11, 12 and 14, other vendors, and failed attempts (every tested row reports result 1)."
-                 " In a value read from the report text, ASCII control characters other than a tab are shown as spaces, and values longer than the limits named here are cut.\nOn the corpus only the full Samsung dumpState text of s20fe_a13 (Android 13) prints this section; the error dumps of s20fe_a13, samsungs20_a13 and sharon_a14 and the partial texts of userb2_a13 do not. s20fe_a13 gave no rows: its mConnectionEvents list is empty. The known data emu_a15_bugreport_known_20261116 (Android 15 emulator) gave this artifact's first rows: one connection to the emulator's network after the reboot; the Wi-Fi off and on cycle before the reboot is not listed.",
+        "notes": "One row per startTime= line under mConnectionEvents in the WifiMetrics part of the wifi service dump. SSID, BSSID, Duration (ms), Roam Type, Connection Result, Level 2 Failure Code, Connectivity Failure Code, Signal Strength, Wi-Fi State, Screen On, Network Type, Connection Nominator and Network Creator are the key=value pairs of the line as printed; Connection Result and Channel Info are shown as stored (no meaning is given to the numbers), Other Fields holds the remaining pairs in the order printed, cut at 1,500 characters. The Android 10 builds print fewer pairs, so Network Type and Network Creator are empty on those two reports. Start Time As Printed is month, day and clock time without a year and with unpadded hours, minutes and seconds; Start Time (UTC) uses the year rule of Bug Report - Wi-Fi Saved Networks and the zone of Bug Report - Device Facts. The fraction after the seconds is printed unpadded on some builds (.45 was seen), so the UTC value is given to the whole second and the fraction is kept only in the printed text.\nThe platform keeps a short list: the tested reports held 0 to 6 lines. A row records that the Wi-Fi metrics noted a connection attempt with that outcome; it does not say who started it. The wifip2p service prints a list of the same name that was empty on the three reports that print it and is not read.\nAll rows of the Samsung A-series, Huawei, Transsion-brand and Motorola reports held ROAM_UNRELATED in Roam Type, 1 in Connection Result, NONE in both failure code columns and WIFI_DISCONNECTED in Wi-Fi State; the Samsung A-series, Huawei and Transsion-brand reports hold one row each, so the other columns are uniform there too. Channel Info held 0 on the Huawei row. On the Motorola report, whose six rows are the same network, SSID, BSSID, Level 2 Failure Code, Connectivity Failure Code, Channel Info, Network Type, Connection Nominator and Network Creator held one value on all rows.\nEvidence tiers. Data-proven on five real bug reports (Samsung A-series and S-series on Android 16, Huawei and a Transsion-brand phone on Android 10, Motorola on Android 15): 1, 0, 1, 1 and 6 rows, each equal to a count of startTime= lines in the raw text made by a separate script and to an independent parser on SSID, BSSID, duration, roam type, result, signal strength, state and screen flag; the Samsung S-series report printed none (its Wi-Fi was off at the dump). The zone of all five is UTC+0, so the conversion was the identity on the rows of these five. Not examined: Android 11, 12 and 14, other vendors, and failed attempts (every tested row reports result 1). In a value read from the report text, ASCII control characters other than a tab are shown as spaces, and values longer than the limits named here are cut.\nOn the corpus only the full Samsung dumpState text of s20fe_a13 (Android 13) prints this section; the error dumps of s20fe_a13, samsungs20_a13 and sharon_a14 and the partial texts of userb2_a13 do not. s20fe_a13 gave no rows: its mConnectionEvents list is empty. The known data emu_a15_bugreport_known_20261116 (Android 15 emulator, America/New_York) gave the first rows from a registered corpus key: one row, result 1, starting at 02:12:24 UTC, 20 seconds after the reboot in the mint record, converted from a printed local time 5 hours earlier. The mint record lists svc wifi disable and svc wifi enable commands about 50 and 35 seconds before that reboot. No row carries those times, and no Wi-Fi table of the report holds anything from before the reboot, so the report does not show whether they took effect.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": "standard",
@@ -118,7 +92,7 @@ __artifacts_v2__ = {
             "sharon_a14": "Android 14 | Samsung error dumpstate zip | 0 rows",
             "userb2_a13": "Android 13 | two partial Shell bug report texts (.tmp) | 0 rows",
             "emu_a15_bugreport_known_20261116": "Android 15 | emulator adb bugreport zip (known data) | 1 row",
-            "emu_a15_bugreport_adbreboot_known_20261116": "Android 15 | emulator adb bugreport zip (known data), adb reboot | 1 row",
+            "emu_a15_bugreport_adbreboot_known_20261116": "Android 15 | emulator adb bugreport zip (known data), rebooted with adb reboot | 1 row",
         }
     },
     "bugreport_wifi_current_state": {
