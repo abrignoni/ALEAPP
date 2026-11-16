@@ -41,7 +41,7 @@ __artifacts_v2__ = {
             "sharon_a14": "Android 14 | 1 row",
             "russell_pixel6a_a13": "Android 13 | 1 row",
             "userb2_a13": "Android 13 | 1 row",
-            "emu_a15_reset_known_20261116": "Android 15 | 1 row (known data: the boot after a wipe)",
+            "emu_a15_reset_known_20261116": "Android 15 | 1 row (known data; same second as the boot completion in the mint record, after a wipe by that record)",
         },
     }
 }

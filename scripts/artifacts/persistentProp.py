@@ -66,7 +66,7 @@ __artifacts_v2__ = {
             "sharon_a13": "Android 13 | 3 rows",
             "sharon_a14": "Android 14 | 3 rows",
             "userb2_a13": "Android 13 | 2 rows",
-            "emu_a15_reset_known_20261116": "Android 15 | 2 rows (known data; reboot,factory_reset at the boot after a wipe)",
+            "emu_a15_reset_known_20261116": "Android 15 | 2 rows (known data; one reboot,factory_reset entry in the same second as the factory_reset file; wipe by the mint record)",
         },
     }
 }

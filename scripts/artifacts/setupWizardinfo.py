@@ -7,11 +7,7 @@ __artifacts_v2__ = {
         "last_update_date": "2026-11-16",
         "requirements": "none",
         "category": "Wipe & Setup",
-        "notes": "Name is the key as stored. On the known data emu_a15_reset_known_20261116 (an Android 15 "
-                 "emulator booted with its user data wiped; the emulator image shows no setup wizard and "
-                 "reports setup complete), suw_finished_time_ms was 3.8 seconds after the boot that followed "
-                 "the wipe, the time the factory_reset file records. On a device that runs the setup wizard it "
-                 "was not tested against a known time.",
+        "notes": "Name is the key as stored. What the value marks is not established here. On the known data emu_a15_reset_known_20261116 (an Android 15 emulator; by the mint record it was booted with its user data wiped, no setup wizard was shown and the device reported setup complete), suw_finished_time_ms was present and was 3.8 seconds later than the time the factory_reset bootstat file records. That file time is kept in whole seconds, so the gap is between 2.8 and 3.8 seconds. On a device that runs the setup wizard the value was not compared with a known time.",
         "paths": ('*/com.google.android.settings.intelligence/shared_prefs/setup_wizard_info.xml',),
         "output_types": "standard",
         "artifact_icon": "info-circle",
