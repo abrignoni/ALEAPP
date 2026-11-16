@@ -198,10 +198,12 @@ __artifacts_v2__ = {
                  "restore (RestoreService.java L1797-L1828), so a stored reaction time can be"
                  " the restore's guess; this is not exercised. 'Media' is the message's file,"
                  " else its thumbnail, decrypted in memory as described for Threema - Media. "
-                 "'Gallery Copy' lists each gallery copy tied to the message, by its path in "
+                 "'Gallery Copy' lists each file in a Threema gallery folder whose bytes are "
+                 "identical to the message's decrypted file or thumbnail and to no other "
+                 "message's (see Threema - Media; a name alone ties nothing), by its path in "
                  "the extraction and, in brackets, the 'Gallery Link' value of Threema - "
-                 "Media; on pixel7a_a14, pixel3_a12 and hickman_a13 one row each holds one, "
-                 "tied by identical bytes. 'Media Status' is File or Thumbnail only, with "
+                 "Media; on pixel7a_a14, pixel3_a12 and hickman_a13 one row each holds one. "
+                 "'Media Status' is File or Thumbnail only, with "
                  "'(type not recognised)' where no file type was recognised in the decrypted "
                  "bytes, Not on device where neither file is in the extraction (a file can be"
                  " missing for reasons the database does not record), or Decryption failed. "
@@ -269,11 +271,11 @@ __artifacts_v2__ = {
                        " files and thumbnails, profile pictures, group pictures and "
                        "wallpapers, with what the app's database says each belongs to, "
                        "including files the database does not refer to, and the files in the "
-                       "app's shared storage gallery folders, each tied to a message where a "
-                       "link is found.",
+                       "app's shared storage gallery folders, each tied to a message where its"
+                       " bytes are identical to that message's file.",
         "author": "@kalink0",
         "creation_date": "2026-11-14",
-        "last_update_date": "2026-11-15",
+        "last_update_date": "2026-11-16",
         "requirements": "sqlcipher3",
         "category": "Threema",
         "notes": "One row per file in the client's two user files directories, "
@@ -314,7 +316,7 @@ __artifacts_v2__ = {
                  "not exercised, an unreferenced message file only in the constructed case "
                  "casesynthetic_v2 (see Threema - Contacts; 5 rows); the case with no key "
                  "file was run on pixel7a_a14 with key.dat removed (8 files, none decrypted),"
-                 " the case with no database on constructed paths only. Gallery copies: when "
+                 " the case with no database on constructed paths only. Gallery folders: when "
                  "a message's media is saved to the gallery, by the user or automatically for"
                  " a received picture or video when the save-media setting is on and the chat"
                  " is not private (MessageServiceImpl.java L2608-L2634), the client copies "
@@ -334,32 +336,40 @@ __artifacts_v2__ = {
                  "MessageServiceImpl.java L4368-L4379), so a blank 'Gallery Link' does not "
                  "show that a file did not come from Threema. These references describe "
                  "client 6.5.3 (commit d44a2b53); the test images run 4.59, 4.83 and 5.4.1. "
-                 "Each file in those folders is listed for every install of the same Android "
-                 "user whose package uses that folder, as Kind 'Gallery copy', Storage "
-                 "'Shared storage (<folder>)' and Status 'Not encrypted'. It is not listed "
-                 "when the extraction holds no database or user files of such an install, or "
-                 "when the Android user cannot be read off its path. 'Gallery Link' says how "
-                 "it is tied to a message, the rules tried in this order and each taken only "
-                 "when it points at a single message: 'Identical to the message file' or "
-                 "'Identical to the message thumbnail' (the same SHA-256 as the decrypted "
-                 "file), 'apiMessageId in the name', or 'File name of one message' (the "
-                 "copy's name, or its name without a ' (n)' suffix, is the stored file name "
-                 "of exactly one file message). A copy whose bytes the files of several "
-                 "messages share shows 'Identical to the files of <n> messages' with Belongs "
-                 "To 'Several messages'. When no rule holds the link is blank and Belongs To "
-                 "is 'No message link found'. Where the database was not opened Belongs To is"
-                 " 'Database not opened', and a copy can still be shown as identical to a "
-                 "message file when a key was read; without a key no copy is compared by "
-                 "content. A copy identical to a message file whose message is not in the "
-                 "database shows 'Not referenced by the database', and a copy whose message "
-                 "and file are both gone is not tied. On a tied gallery row 'Message Created'"
-                 " and 'Message' are the tied message's. On pixel7a_a14, pixel3_a12 and "
-                 "hickman_a13 the one copy on each is identical to a message file and also "
-                 "carries that message's file name; the thumbnail, apiMessageId, file name "
-                 "only, several messages and no link cases are exercised only by unit tests "
-                 "and casesynthetic_v2, which holds a copy and an unrelated picture. On "
+                 "The folders are shared storage: the user, a file manager or any app with "
+                 "storage access can write to them, so a file there is not by itself a file "
+                 "Threema wrote; which app wrote it is for the MediaStore artifacts "
+                 "(owner_package_name in external.db), not this one. Each file in those "
+                 "folders is listed for every install of the same Android user whose package"
+                 " uses that folder, as Kind 'File in gallery folder', Storage 'Shared "
+                 "storage (<folder>)' and Status 'Not encrypted'. It is not listed when the "
+                 "extraction holds no database or user files of such an install, or when the "
+                 "Android user cannot be read off its path. Only content ties such a file to "
+                 "a message: 'Gallery Link' is 'Identical to the message file' or 'Identical "
+                 "to the message thumbnail' when its SHA-256 equals that of exactly one "
+                 "message's decrypted file or thumbnail, and only then are 'Belongs To', "
+                 "'Message Created' and 'Message' the message's. A match shows that the bytes"
+                 " are the same, not who copied them or when. A file whose bytes the files "
+                 "of several messages share shows 'Identical to the files of <n> messages' "
+                 "with Belongs To 'Several messages'. A name is not taken as a tie: the "
+                 "stored file name comes from the sender's client, and the generic name has "
+                 "the same shape as that of a picture from the app's camera. When an untied "
+                 "file's name has the form threema-<date>-<time>-<id>, 'Gallery Link' gives "
+                 "the id and how many messages in the database carry it as apiMessageId, as "
+                 "a pointer only; the file is still not tied. Otherwise Belongs To is 'No "
+                 "identical message file', or 'Not compared (no usable master key)' when no "
+                 "key was read, and 'Database not opened' where the database was not opened "
+                 "(a file can still be shown as identical to a message file when a key was "
+                 "read). A file identical to a message file whose message is not in the "
+                 "database shows 'Not referenced by the database', and a file whose message "
+                 "file and thumbnail are both gone cannot be tied. On pixel7a_a14, "
+                 "pixel3_a12 and hickman_a13 the one file in Pictures/Threema on each is "
+                 "identical to a message file; the thumbnail, several messages, apiMessageId "
+                 "pointer and untied cases are exercised only by unit tests, and "
+                 "casesynthetic_v2 holds one identical file and one unrelated picture. On "
                  "pixel7a_a14 (9 rows), pixel3_a12 (5 rows) and hickman_a13 (7 rows) every "
-                 "file except the gallery copy is in external storage and Decrypted, and on "
+                 "file except the one in the gallery folder is in external storage and "
+                 "Decrypted, and on "
                  "pixel3_a12 'Belongs To' holds one value on all 5 rows, the one conversation"
                  " the files belong to.",
         "paths": (
@@ -1235,27 +1245,20 @@ def _media_for(uid, container, filename):
 
 
 def _gallery_links(container, rows):
-    """{gallery file path: (message stem or None, how it was tied)} for the container's
-    gallery copies. The rules are tried in this order, and each ties a copy only to a
-    single message: the copy is byte identical to one message's decrypted file or
-    thumbnail (copyMediaFileToGallery copies either unchanged), the apiMessageId of one
-    message is in its name, or its name, as it is or without a ' (n)' suffix, is the
-    stored file name of exactly one file message. A copy whose bytes several messages
-    share is reported as such and tied to none. rows are message rows with uid,
-    apiMessageId, type and body."""
+    """{gallery file path: (message stem or None, link text, shared by several)} for the
+    container's files in gallery folders. Only content ties a file to a message: it is
+    byte identical to one message's decrypted file or thumbnail (copyMediaFileToGallery
+    copies either unchanged). A file whose bytes several messages share is reported as
+    such and tied to none. A name is never taken as a tie, since anything with access to
+    shared storage can write one; an apiMessageId in an untied file's name is only
+    reported, with how many messages carry it. rows are message rows with uid and
+    apiMessageId, or None when the database was not opened."""
     if not container.get('gallery'):
         return {}
-    by_api, by_file_name = {}, {}
-    for row in rows:
-        if not row.get('uid'):
-            continue
-        stem = re.sub(r'[^A-Za-z0-9]', '', row['uid'])
-        if row.get('apiMessageId'):
-            by_api.setdefault(str(row['apiMessageId']).lower(), set()).add(stem)
-        if row.get('type') == 8:
-            file_name = _file_info(row.get('body'))[0]
-            if file_name:
-                by_file_name.setdefault(file_name, set()).add(stem)
+    by_api = {}
+    for row in rows or []:
+        if row.get('uid') and row.get('apiMessageId'):
+            by_api.setdefault(str(row['apiMessageId']).lower(), set()).add(row['uid'])
     hashes = {}
     keys = _keys(container)
     for name, path in sorted(container['media'].items()):
@@ -1275,23 +1278,23 @@ def _gallery_links(container, rows):
         found = hashes.get(digest, set())
         found_stems = {stem for stem, _thumb in found}
         api = _GALLERY_API_NAME.match(name)
-        api_stems = by_api.get(api.group(1).lower(), set()) if api else set()
-        # getUniqueFile (common FileExtensions.kt L111-L122) adds ' (n)' before Android 10.
-        plain_name = re.sub(r' \(\d+\)(?=\.[^.]*$|$)', '', name)
-        name_stems = by_file_name.get(name) or by_file_name.get(plain_name, set())
         if len(found_stems) == 1:
             stem = next(iter(found_stems))
             thumb_only = all(thumb for _stem, thumb in found)
             links[path] = (stem, 'Identical to the message thumbnail' if thumb_only
-                           else 'Identical to the message file')
+                           else 'Identical to the message file', False)
         elif found_stems:
-            links[path] = (None, f'Identical to the files of {len(found_stems)} messages')
-        elif len(api_stems) == 1:
-            links[path] = (next(iter(api_stems)), 'apiMessageId in the name')
-        elif len(name_stems) == 1:
-            links[path] = (next(iter(name_stems)), 'File name of one message')
+            links[path] = (None, f'Identical to the files of {len(found_stems)} messages',
+                           True)
+        elif api:
+            text = f'Name carries apiMessageId {api.group(1)}'
+            if rows is not None:
+                carriers = len(by_api.get(api.group(1).lower(), ()))
+                text += (f', that of {carriers} message' + ('s' if carriers > 1 else '')
+                         if carriers else ', that of no message in the database')
+            links[path] = (None, text + '; not tied', False)
         else:
-            links[path] = (None, '')
+            links[path] = (None, '', False)
     return links
 
 
@@ -1437,7 +1440,8 @@ def threema_messages(context):
             reactions = _reactions(cur, single, group, name_of)
 
             copies = {}
-            for copy_path, (stem, how) in _gallery_links(container, single + group).items():
+            for copy_path, (stem, how, _several) in _gallery_links(
+                    container, single + group).items():
                 if stem:
                     copies.setdefault(stem, []).append(
                         f"{context.get_relative_path(copy_path)} ({how})")
@@ -1623,10 +1627,10 @@ def threema_media(context):
             created, kind, belongs, text = _describe_media(category, name, owners)
             data_list.append((created, media, kind, belongs, text, name,
                               _STORAGE_LABELS[storage], status, ''))
-        links = _gallery_links(container, owners[3] if owners else [])
+        links = _gallery_links(container, owners[3] if owners else None)
         messages = owners[0] if owners else {}
         for name, label, path in container.get('gallery', []):
-            stem, how = links.get(path, (None, ''))
+            stem, how, several = links.get(path, (None, '', False))
             try:
                 with open(path, 'rb') as f:
                     data = f.read()
@@ -1639,8 +1643,10 @@ def threema_media(context):
                 created, text = None, ''
                 belongs = ('Database not opened' if owners is None else
                            'Not referenced by the database' if stem else
-                           'Several messages' if how else 'No message link found')
-            data_list.append((created, media, 'Gallery copy', belongs, text, name,
+                           'Several messages' if several else
+                           'No identical message file' if keys else
+                           'Not compared (no usable master key)')
+            data_list.append((created, media, 'File in gallery folder', belongs, text, name,
                               f"Shared storage ({label})", 'Not encrypted', how))
 
     data_list.sort(key=lambda row: (row[0] is None, row[0] or datetime.min.replace(tzinfo=timezone.utc),
@@ -1649,5 +1655,5 @@ def threema_media(context):
         logfunc(f"Threema Media: {skipped} other file(s) in the user files directories did not "
                 f"decrypt and are not listed.")
     logfunc(f"Threema Media: {len(data_list)} stored media file(s) found, "
-            f"{gallery_files} of them gallery copies.")
+            f"{gallery_files} of them in gallery folders.")
     return data_headers, data_list, _source_paths(stores)
