@@ -1436,3 +1436,6 @@ def say_once(log, message):
 
 # usagejobs readers (scripts/dumpstate_usagejobs.py): the module adds its readers to READERS and READ_BY when imported
 from scripts import dumpstate_usagejobs  # noqa: E402  pylint: disable=wrong-import-position,unused-import,cyclic-import
+
+# Shortcuts (scripts/dumpstate_shortcuts.py): the module registers its reader when imported
+from scripts import dumpstate_shortcuts  # noqa: E402  pylint: disable=wrong-import-position,unused-import,cyclic-import
