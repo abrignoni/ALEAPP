@@ -5,12 +5,18 @@ __artifacts_v2__ = {
                        "preferences file, each with its value read as Unix milliseconds in UTC.",
         "author": "@abrignoni",
         "creation_date": "2021-08-15",
-        "last_update_date": "2021-08-15",
+        "last_update_date": "2026-11-16",
         "requirements": "none",
         "category": "Wipe & Setup",
         "notes": "Only the three keys ending _setup_time that the module lists are reported; every "
                  "other entry of the file is ignored. Name is the key as stored. What each time "
-                 "marks is not established here.",
+                 "marks is established only for one key on one build: on the known data "
+                 "emu_a15_reset_known_20261116 (an Android 15 emulator booted with its user data wiped), "
+                 "suggestions.xml did not exist until the Settings app was first opened, about 21 seconds "
+                 "after the boot by the mint record, and com.android.settings.suggested.category."
+                 "DEFERRED_SETUP_setup_time then held a time 22 seconds after the boot and 18 seconds after "
+                 "the suw_finished_time_ms that setup_wizard_info.xml holds. On that build the key's time "
+                 "followed the first opening of Settings, not the end of setup. Other builds and the other two keys were not tested.",
         "paths": ('*/com.google.android.settings.intelligence/shared_prefs/suggestions.xml',),
         "output_types": "standard",
         "artifact_icon": "clock",
@@ -19,6 +25,7 @@ __artifacts_v2__ = {
             "pixel7a_a14": "Android 14 | com.google.android.settings.intelligence vc 1000230247 | 3 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.settings.intelligence vc 1000217934 | 5 rows",
             "userb2_a13": "Android 13 | com.google.android.settings.intelligence vc 1000232695 | 3 rows",
+            "emu_a15_reset_known_20261116": "Android 15 | 1 row (known data)",
         },
     }
 }
