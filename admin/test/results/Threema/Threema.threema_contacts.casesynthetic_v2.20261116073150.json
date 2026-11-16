@@ -10,22 +10,22 @@
     "media_checkins": 0,
     "media_embedded_checkins": 1,
     "input_zip_path": "admin/test/cases/data/Threema/testdata.Threema.threema_contacts.casesynthetic_v2.zip",
-    "start_time": "2026-11-15T10:40:24.984704+00:00",
-    "end_time": "2026-11-15T10:40:25.007507+00:00",
-    "run_time_seconds": 0.0073549747467041016,
+    "start_time": "2026-11-16T07:31:50.488192+00:00",
+    "end_time": "2026-11-16T07:31:50.494747+00:00",
+    "run_time_seconds": 0.0008766651153564453,
     "last_commit": {
-      "hash": "d80731efc7038a4c0edcf5dea3a030e5c2e31a01",
-      "author_name": "kalink0",
-      "author_email": "kalinko@be-binary.de",
-      "date": "2026-11-15T08:29:56+01:00",
-      "message": "Threema: rework account, contacts and messages; add media artifact"
+      "hash": "9339be5ae5eb146da8c4c0585d8817d45141a820",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-11-15T14:51:37-05:00",
+      "message": "Threema: tie gallery copies to their messages"
     }
   },
   "headers": [
+    "Date Created",
     "Threema ID",
     "Display Name",
     "Verification Level",
-    "Date Created",
     "Group-Only / Removed",
     "Archived",
     "Profile Picture (from contact)",
@@ -34,10 +34,10 @@
   ],
   "data": [
     [
+      1793437200,
       "FIXTCON1",
       "Fixture Contact",
       "Fully verified",
-      1793437200,
       "",
       "",
       "mock_embedded_html_path",
@@ -45,10 +45,10 @@
       ""
     ],
     [
+      1793520000,
       "FIXTCON2",
       "Nick Only",
       "Server-verified",
-      1793520000,
       "",
       "Yes",
       "",
@@ -56,10 +56,10 @@
       ""
     ],
     [
+      1793523540,
       "FIXTGRP1",
       "Group Member",
       "Unverified",
-      1793523540,
       "Yes",
       "",
       "",

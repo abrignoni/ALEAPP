@@ -10,22 +10,22 @@
     "media_checkins": 0,
     "media_embedded_checkins": 3,
     "input_zip_path": "admin/test/cases/data/Threema/testdata.Threema.threema_contacts.pixel7a_a14.zip",
-    "start_time": "2026-11-15T06:49:09.589982+00:00",
-    "end_time": "2026-11-15T06:49:09.611852+00:00",
-    "run_time_seconds": 0.0047283172607421875,
+    "start_time": "2026-11-16T07:31:50.471844+00:00",
+    "end_time": "2026-11-16T07:31:50.487639+00:00",
+    "run_time_seconds": 0.00449681282043457,
     "last_commit": {
-      "hash": "692bc23cca21649ac8775370e35edffe6c192e82",
+      "hash": "9339be5ae5eb146da8c4c0585d8817d45141a820",
       "author_name": "Brigs",
       "author_email": "abrignoni@gmail.com",
-      "date": "2026-10-06T17:20:02-04:00",
-      "message": "Report Threema file messages with adjacent message dates"
+      "date": "2026-11-15T14:51:37-05:00",
+      "message": "Threema: tie gallery copies to their messages"
     }
   },
   "headers": [
+    "Date Created",
     "Threema ID",
     "Display Name",
     "Verification Level",
-    "Date Created",
     "Group-Only / Removed",
     "Archived",
     "Profile Picture (from contact)",
@@ -34,10 +34,10 @@
   ],
   "data": [
     [
+      1714662546,
       "ECHOECHO",
       "Echo Test",
       "Unverified",
-      1714662546,
       "",
       "",
       "",
@@ -45,10 +45,10 @@
       ""
     ],
     [
+      1714662779,
       "83XD7K4F",
       "ThisIs DFIR",
       "Fully verified",
-      1714662779,
       "",
       "",
       "mock_embedded_html_path",
@@ -56,10 +56,10 @@
       "mock_embedded_html_path"
     ],
     [
+      1718802775,
       "DX8X8X4S",
       "Hubbs",
       "Server-verified",
-      1718802775,
       "",
       "",
       "",

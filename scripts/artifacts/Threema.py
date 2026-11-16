@@ -51,7 +51,7 @@ __artifacts_v2__ = {
                        "record was created locally.",
         "author": "@Gear-I & Claude, @AlexisBrignoni, Codex, @kalink0",
         "creation_date": "2026-08-17",
-        "last_update_date": "2026-11-15",
+        "last_update_date": "2026-11-16",
         "requirements": "sqlcipher3",
         "category": "Threema",
         "notes": "threema4.db is SQLCipher-encrypted and is opened read-only with its "
@@ -974,8 +974,8 @@ def threema_account(context):
 @artifact_processor
 def threema_contacts(context):
     data_headers = (
-        "Threema ID", "Display Name", "Verification Level",
-        ("Date Created", "datetime"), "Group-Only / Removed", "Archived",
+        ("Date Created", "datetime"), "Threema ID", "Display Name", "Verification Level",
+        "Group-Only / Removed", "Archived",
         ("Profile Picture (from contact)", "media"), ("Profile Picture (set locally)", "media"),
         ("Profile Picture (Android contact)", "media"),
     )
@@ -1008,10 +1008,10 @@ def threema_contacts(context):
                 archived = (row[archived_column] == 1 if archived_column == 'conversationVisibility'
                             else bool(row[archived_column]))
                 data_list.append((
+                    _epoch_ms_to_utc(row['dateCreated']),
                     row['identity'],
                     _display_name(row),
                     _VERIFICATION_LEVELS.get(level, str(level)),
-                    _epoch_ms_to_utc(row['dateCreated']),
                     "Yes" if acquaintance else "",
                     "Yes" if archived else "",
                     _profile_picture(container, row['identity'], '.p-'),
@@ -1021,7 +1021,7 @@ def threema_contacts(context):
         finally:
             con.close()
 
-    data_list.sort(key=lambda row: (row[3] is None, row[3]))
+    data_list.sort(key=lambda row: (row[0] is None, row[0]))
     logfunc(f"Threema Contacts: {len(data_list)} contact(s) recovered from "
             f"the decrypted database.")
     return data_headers, data_list, _source_paths(stores)
