@@ -39,7 +39,7 @@ class SmsClockGapTest(unittest.TestCase):
             root = pathlib.Path(directory)
             paths = fixture(root)
             headers, rows, source = parser.get_sms_clock_gap.__wrapped__(context(root, paths))
-        self.assertEqual(len(headers), 6)
+        self.assertEqual(len(headers), 7)
         self.assertEqual([r[5] for r in rows], [1, 2])          # ordered by service-centre time
         self.assertEqual([r[2] for r in rows], [1200.7, -5.0])   # signed seconds
         self.assertTrue(all(len(r) == len(headers) for r in rows))
