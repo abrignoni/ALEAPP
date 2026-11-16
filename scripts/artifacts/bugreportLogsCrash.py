@@ -49,6 +49,8 @@ __artifacts_v2__ = {
             "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 207,204 rows",
             "sharon_a14": "Android 14 | Samsung error dumpstate zip | 224,821 rows",
             "userb2_a13": "Android 13 | two partial Shell bug report texts (.tmp) | 29,276 rows",
+            "emu_a15_bugreport_known_20261116": "Android 15 | emulator adb bugreport zip (known data) | 35,924 rows",
+            "emu_a15_bugreport_adbreboot_known_20261116": "Android 15 | emulator adb bugreport zip (known data), adb reboot | 36,294 rows",
         }
     },
     "bugreport_event_log": {
@@ -76,7 +78,7 @@ __artifacts_v2__ = {
                  "lines in the raw section and to an independent split, field by field. The conversion to UTC was the identity "
                  "on every real row (UTC+0 zone on all five). Constructed only: a continuation of a value list on a line of its "
                  "own, zones with an offset, and the layout without a uid column. Not examined: Android 11 and 12 and other vendors."
-                 "\nOn the corpus the run gave s20fe_a13 15,635 rows (4,225 from the dumpState text, 1,224 from an automatically generated dump, 10,186 from an automatically generated dump), samsungs20_a13 6,988 rows, sharon_a14 12,938 rows and userb2_a13 3,460 rows (2,811 from a partial text, 649 from a partial text). An independent count of the raw text gave the same numbers. Time (UTC) is empty on every userb2_a13 row (the partial texts record no usable time zone).",
+                 "\nOn the corpus the run gave s20fe_a13 15,635 rows (4,225 from the dumpState text, 1,224 from an automatically generated dump, 10,186 from an automatically generated dump), samsungs20_a13 6,988 rows, sharon_a14 12,938 rows and userb2_a13 3,460 rows (2,811 from a partial text, 649 from a partial text). An independent count of the raw text gave the same numbers. Time (UTC) is empty on every userb2_a13 row (the partial texts record no usable time zone). On the known data emu_a15_bugreport_known_20261116 (an Android 15 emulator in America/New_York), the conversion moved the printed local times 5 hours to UTC, which matched the host times in the mint record; one auditd line printed 12-31 19:00:00.020, written before the device clock was set, was given its year by the year rule and shows as 2026-01-01 00:00:00.020 UTC, not a real date.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": "standard",
@@ -86,6 +88,8 @@ __artifacts_v2__ = {
             "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 6,988 rows",
             "sharon_a14": "Android 14 | Samsung error dumpstate zip | 12,938 rows",
             "userb2_a13": "Android 13 | two partial Shell bug report texts (.tmp) | 3,460 rows",
+            "emu_a15_bugreport_known_20261116": "Android 15 | emulator adb bugreport zip (known data) | 722 rows",
+            "emu_a15_bugreport_adbreboot_known_20261116": "Android 15 | emulator adb bugreport zip (known data), adb reboot | 730 rows",
         }
     },
     "bugreport_kernel_log": {

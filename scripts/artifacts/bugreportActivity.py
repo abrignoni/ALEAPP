@@ -33,13 +33,15 @@ __artifacts_v2__ = {
                  "UTC was the identity on every real row; offsets and daylight saving were tested on constructed text only. Only "
                  "user 0 had events in the tested reports, so User held one value, 0, on all rows of every tested report; a "
                  "second user's list was built on constructed text. Source Section held one value, CHECKIN USAGESTATS, on all "
-                 "rows of the two Samsung reports, and Flags held one value, 0x0, on all rows of the Huawei and Transsion-brand reports. Also run on the corpus Samsung Android 13 report of s20fe_a13: 1,008 rows, equal to the event lines counted in its raw text; it prints the list in both sections, as wall-clock text in the service dump (510 rows) and as epoch milliseconds in the CHECKIN section (498 rows), the events span about eight minutes and end within a minute after the printed report time, and its zone is UTC+0. User held one value, 0, and Flags one value, 0x0, on all its rows.",
+                 "rows of the two Samsung reports, and Flags held one value, 0x0, on all rows of the Huawei and Transsion-brand reports. Also run on the corpus Samsung Android 13 report of s20fe_a13: 1,008 rows, equal to the event lines counted in its raw text; it prints the list in both sections, as wall-clock text in the service dump (510 rows) and as epoch milliseconds in the CHECKIN section (498 rows), the events span about eight minutes and end within a minute after the printed report time, and its zone is UTC+0. User held one value, 0, and Flags one value, 0x0, on all its rows. On the known data emu_a15_bugreport_known_20261116 (Android 15 emulator, America/New_York), Settings opened at a recorded time showed as ACTIVITY_RESUMED in the same second, and a reboot through the framework (svc power reboot) as DEVICE_SHUTDOWN in the same second. On emu_a15_bugreport_adbreboot_known_20261116, made the same way but rebooted with adb reboot, no event was listed between the earlier boot and that reboot, so the Settings opening in that interval is absent: an event that is not listed says nothing about use before a reboot that skipped the framework's shutdown, on that emulator.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": "standard",
         "artifact_icon": "activity",
         "sample_data": {
             "s20fe_a13": "Android 13 | Samsung dumpState zip and two automatically generated dumpstate zips | 1,008 rows",
+            "emu_a15_bugreport_known_20261116": "Android 15 | emulator adb bugreport zip (known data) | 2,912 rows",
+            "emu_a15_bugreport_adbreboot_known_20261116": "Android 15 | emulator adb bugreport zip (known data), adb reboot | 1,922 rows",
         }
     },
     "bugreport_process_exits": {
@@ -180,6 +182,8 @@ __artifacts_v2__ = {
             "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 3 rows",
             "sharon_a14": "Android 14 | Samsung error dumpstate zip | 2 rows",
             "userb2_a13": "Android 13 | two partial Shell bug report texts (.tmp) | 0 rows",
+            "emu_a15_bugreport_known_20261116": "Android 15 | emulator adb bugreport zip (known data) | 4 rows",
+            "emu_a15_bugreport_adbreboot_known_20261116": "Android 15 | emulator adb bugreport zip (known data), adb reboot | 4 rows",
         }
     },
 }

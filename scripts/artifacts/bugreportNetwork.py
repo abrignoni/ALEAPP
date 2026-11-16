@@ -107,7 +107,7 @@ __artifacts_v2__ = {
                  "roam type, result, signal strength, state and screen flag; the Samsung S-series report printed none (its Wi-Fi was "
                  "off at the dump). The zone of all five is UTC+0, so the conversion was the identity on the real rows. Not "
                  "examined: Android 11, 12 and 14, other vendors, and failed attempts (every tested row reports result 1)."
-                 " In a value read from the report text, ASCII control characters other than a tab are shown as spaces, and values longer than the limits named here are cut.\nOn the corpus only the full Samsung dumpState text of s20fe_a13 (Android 13) prints this section; the error dumps of s20fe_a13, samsungs20_a13 and sharon_a14 and the partial texts of userb2_a13 do not. s20fe_a13 gave no rows: its mConnectionEvents list is empty.",
+                 " In a value read from the report text, ASCII control characters other than a tab are shown as spaces, and values longer than the limits named here are cut.\nOn the corpus only the full Samsung dumpState text of s20fe_a13 (Android 13) prints this section; the error dumps of s20fe_a13, samsungs20_a13 and sharon_a14 and the partial texts of userb2_a13 do not. s20fe_a13 gave no rows: its mConnectionEvents list is empty. The known data emu_a15_bugreport_known_20261116 (Android 15 emulator) gave this artifact's first rows: one connection to the emulator's network after the reboot; the Wi-Fi off and on cycle before the reboot is not listed.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
         "output_types": "standard",
@@ -117,6 +117,8 @@ __artifacts_v2__ = {
             "samsungs20_a13": "Android 13 | Samsung error dumpstate zip | 0 rows",
             "sharon_a14": "Android 14 | Samsung error dumpstate zip | 0 rows",
             "userb2_a13": "Android 13 | two partial Shell bug report texts (.tmp) | 0 rows",
+            "emu_a15_bugreport_known_20261116": "Android 15 | emulator adb bugreport zip (known data) | 1 row",
+            "emu_a15_bugreport_adbreboot_known_20261116": "Android 15 | emulator adb bugreport zip (known data), adb reboot | 1 row",
         }
     },
     "bugreport_wifi_current_state": {
