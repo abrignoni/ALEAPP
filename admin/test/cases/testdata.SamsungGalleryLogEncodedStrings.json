@@ -66,7 +66,7 @@
     }
   },
   "case4": {
-    "description": "SYNTHETIC, built by hand with no personal data (reasons as per case 3), on the same log table schema with synthetic timestamps. Testing multiple users: a V3 log row and a WAL-only row in local.db for user 0 at data/user/0, plus a copy for user 150. Checks the Android User column labels each user's rows in the output.",
+    "description": "SYNTHETIC, built by hand with no personal data (reasons as per case 3), on the same log table schema with synthetic timestamps. Testing multiple users: a V3 log row and a WAL-only row in local.db for user 0 at data/user/0, plus a separate one-row local.db for user 150. Checks the Android User column labels each user's rows in the output.",
     "maker": "@dantitto",
     "make_data": {
       "input_data_path": "SamsungGallery_synthetic_user0_user150.zip",
