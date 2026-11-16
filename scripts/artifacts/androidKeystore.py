@@ -12,8 +12,8 @@ __artifacts_v2__ = {
         "description": "Key entries of the Android Keystore 2.0 database (persistent.sqlite in "
                        "misc/keystore): per key its alias, the app user ID or SELinux namespace "
                        "it belongs to, its type and lifecycle state, the creation time Keystore "
-                       "recorded, the key's stored characteristics and any grants of it to other "
-                       "user IDs. Key material is not read.",
+                       "recorded, selected stored characteristics of the key and any grants of it to other "
+                       "user IDs. Key blobs are not parsed or reported.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-11-15",
         "last_update_date": "2026-11-15",
@@ -27,9 +27,12 @@ __artifacts_v2__ = {
                  "Keystore writes it when a key is generated or imported (security_level.rs#159 and #185 in the "
                  "same source), when a certificate-only entry is stored (database.rs#1855) and, with the time of "
                  "the move, when its legacy importer moves a key from the pre-Keystore 2.0 files into the "
-                 "database (legacy_importer.rs#664). On a device upgraded from Android 11 or earlier, Created can "
-                 "therefore be the upgrade time rather than the time the key was made; no tested image showed "
-                 "this (pixel3_a11 and pixel3_a12 shared no owner and alias). Created was blank on all 171 Super "
+                 "database (legacy_importer.rs#664). On a device that still held legacy files after an upgrade, "
+                 "Created can therefore be the time Keystore imported the key, which happens when the key is "
+                 "first requested (legacy_importer.rs#288), and not the time the key was made. Unexercised: no "
+                 "tested image showed this (pixel3_a11 and pixel3_a12 shared no owner and alias). Created is the "
+                 "device clock reading when it was written (database.rs#418); 3 rows on hickman_a13 carry a date "
+                 "in 1970. Created was blank on all 171 Super "
                  "and 90 Attestation rows of the tested images. Generating a key under an alias that already has "
                  "one unbinds the old entry and sets it Unreferenced (database.rs#1640) for later removal, and "
                  "deleting a key deletes its keyentry, keymetadata, keyparameter and grant rows "
@@ -40,33 +43,40 @@ __artifacts_v2__ = {
                  "from the Android 13 source (https://android.googlesource.com/platform/system/security/+/1301fdbce765a71ca8d84f26285aba4312e0c1b4/keystore2/src/database.rs#251), which describes it as a "
                  "key created by the remote provisioning mechanism; Attestation rows were seen on russell_a14 "
                  "(13), russell_pixel6a_a13 (34) and userb2_a13 (43). Domain is domain named from Domain.aidl "
-                 "(https://android.googlesource.com/platform/system/hardware/interfaces/+/34d76c29fff78058183215ab8d57fa8ea7944db0/keystore2/aidl/android/system/keystore2/Domain.aidl#22). Namespace is namespace as stored: for APP the owning Linux UID, for "
+                 "(https://android.googlesource.com/platform/system/hardware/interfaces/+/34d76c29fff78058183215ab8d57fa8ea7944db0/keystore2/aidl/android/system/keystore2/Domain.aidl#22). Namespace is namespace as stored: for APP the owning Linux UID ("
+                 "legacy_importer.rs#602), for "
                  "SELINUX a namespace of keystore2_key_contexts, and for a super key the Android user ID "
                  "(database.rs#1313). Android User is the UID divided by 100000 (AID_USER_OFFSET, "
-                 "https://android.googlesource.com/platform/system/core/+/32bd7a7dd5190626302b661d818f1d23d9be7b0b/libcutils/include/private/android_filesystem_config.h#231), or the namespace for a super key. Owner is the fixed AID name of an app ID below "
+                 "https://android.googlesource.com/platform/system/core/+/32bd7a7dd5190626302b661d818f1d23d9be7b0b/libcutils/include/private/android_filesystem_config.h#232), or the namespace for a super key. Owner is the fixed AID name of an app ID below "
                  "10000 (from the AID list in android_filesystem_config.h, https://android.googlesource.com/platform/system/core/+/32bd7a7dd5190626302b661d818f1d23d9be7b0b/libcutils/include/private/android_filesystem_config.h#43), else the packages that "
-                 "data/system/packages.list under the same data root lists for that UID, else blank; for SELINUX it "
+                 "data/system/packages.list under the same data root lists for that app ID (UID modulo 100000), else blank; for SELINUX it "
                  "is the namespace's context name (https://android.googlesource.com/platform/system/sepolicy/+/ad1c4255c49d57fe885894a8b690c0dfd542100b/private/keystore2_key_contexts#8), and namespace 1250, "
-                 "not in that file, was blank (33 rows on seven Samsung images). packages.list lists installed "
-                 "packages only, so a key of a removed app has a blank Owner. samsunga53_a14 holds no "
-                 "packages.list, and its 118 app keys have a blank Owner; the run log says so. State is state "
+                 "not in that file, was blank (33 rows on seven Samsung images). An app ID that packages.list does "
+                 "not list has a blank Owner; no tested image with a packages.list showed this. No packages.list "
+                 "was found on samsunga53_a14, and its 118 app keys have a blank Owner; the run log says so. "
+                 "Super keys show Owner as Keystore super key, a label of this module. 78 of the 90 Attestation "
+                 "rows have no domain or namespace and 29 have no alias, so Domain, Namespace, Android User and "
+                 "Owner are blank on them. State is state "
                  "named from KeyLifeCycle (database.rs#484); State held Live (1) on all 3,201 rows of the tested "
                  "images and all 18 known-data rows. Algorithm, Key Size, Purposes, Origin, No Auth Required, "
                  "Auth Timeout (s) and Unlocked Device Required are the keyparameter rows of the KeyMint tags "
                  "ALGORITHM, KEY_SIZE, PURPOSE, ORIGIN, NO_AUTH_REQUIRED, AUTH_TIMEOUT and UNLOCKED_DEVICE_REQUIRED "
                  "(https://android.googlesource.com/platform/hardware/interfaces/+/488942f82bd1bc9ad1cb65a02c71421dc3a6a3d6/security/keymint/aidl/android/hardware/security/keymint/Tag.aidl#46), with enum names from Algorithm.aidl, KeyPurpose.aidl and KeyOrigin.aidl in "
                  "the same folder; Yes means the boolean tag is stored and blank that it is not. Security Level is "
-                 "the security_level of the ALGORITHM row, named from SecurityLevel.aidl. These columns were blank "
+                 "the security_level stored on the ALGORITHM parameter row, named from SecurityLevel.aidl; other "
+                 "parameter rows of the same key can carry a different level. These columns were blank "
                  "on the 280 rows that had no key parameters (super keys, attestation keys and certificate-only "
-                 "entries)Auth Timeout (s) held a value on 83 of the 3,201 rows of the tested images and had no "
+                 "entries). Auth Timeout (s) held a value on 83 of the 3,201 rows of the tested images and had no "
                  "value on any of the 18 known-data rows. Stored Blobs lists the blobentry subcomponent types present (database.rs#734: "
                  "KEY_BLOB, CERT, CERT_CHAIN); the blobs themselves, which hold the key material and certificates, "
-                 "are not read. Grants lists each grant row's grantee UID, with its Owner, and access_vector as "
-                 "stored (94 rows on 35 images). Not reported: blob contents, blobmetadata, keymetadata tags other "
+                 "are not parsed or reported. Grants lists each grant row's grantee UID, with its Owner when one resolves, and access_vector as "
+                 "stored (94 rows on 35 images). Not reported: blob contents, blobmetadata, the version table (one row on every tested image), keymetadata tags other "
                  "than CreationDate, keyparameter tags other than those named, the slotentry, slotmetadata and "
-                 "pqc_keyparameter tables on anne_a15 (no rows), and vpnprofilestore.sqlite beside the database "
-                 "(no rows on any of 15 real-device images). Byte-identical copies of persistent.sqlite are read "
-                 "once. On each of the 37 tested images the row count equalled the keyentry row count.",
+                 "pqc_keyparameter tables on anne_a15 (no rows), and vpnprofilestore.sqlite beside the database, which is "
+                 "not read. Labels never seen on a tested image (states Existing and "
+                 "Unreferenced, domains GRANT, BLOB and KEY_ID, TRIPLE_DES, ATTEST_KEY, origins DERIVED, RESERVED "
+                 "and SECURELY_IMPORTED, security level KEYSTORE) are from the source only. Byte-identical copies "
+                 "of persistent.sqlite are read once. On each of the 37 tested images the row count equalled the keyentry row count.",
         "paths": ('*/misc/keystore/persistent.sqlite*', '*/system/packages.list'),
         "output_types": "standard",
         "artifact_icon": "key",
@@ -100,7 +110,7 @@ __artifacts_v2__ = {
     "androidKeystoreLegacyEntries": {
         "name": "Keystore Legacy Entry Files",
         "description": "Entries of the Keystore files used before Keystore 2.0 "
-                       "(misc/keystore/user_<n>/), one row per owner user ID and alias, decoded "
+                       "(misc/keystore/user_<n>/), one row per user folder, owner UID and alias, decoded "
                        "from the file names, with the kinds of file present for the entry and "
                        "the newest modified time the extraction recorded for them. File contents "
                        "are not read.",
@@ -115,15 +125,15 @@ __artifacts_v2__ = {
                  "(https://android.googlesource.com/platform/system/security/+/5a37034a3a97492cca75928193363c4f13bce5d3/keystore2/src/legacy_blob.rs#935); the prefixes are USRPKEY, USRSKEY, USRCERT and CACERT "
                  "(legacy_blob.rs#741). One row per user folder, owner UID and alias, and one row for each "
                  ".masterkey file. Alias is decoded as decode_alias does (legacy_blob.rs#336); a name that does "
-                 "not decode is reported as stored and logged. Kinds lists the prefixes present for the entry, "
-                 "with characteristics for a .chr file. Files are the names as the extraction records them in "
+                 "not decode is reported as stored and logged (unexercised). Kinds lists the prefixes present for the entry, "
+                 "with characteristics for a characteristics file. Files are the names as the extraction records them in "
                  "the evidence: a tar seeker stages a name holding ':' with '_', and the recorded name is used "
                  "(four files on pixel3_a11). Modified (UTC) is the newest modified time the extraction recorded "
                  "for the row's files, a file system time, not a time Keystore stored. Owner UID and Owner are "
                  "resolved as in Keystore Key Entries (fixed AID name, else packages.list under the same data "
-                 "root). File contents are not read. Four files on galaxys10_a10 and four on cookbook_a11 carry "
-                 "six extra characters before the prefix; their names are not in the AOSP form, so they are "
-                 "reported as stored with no Owner UID. Measured: cookbook_a11 188 rows from 427 files (users 0 "
+                 "root). File contents are not read. Four files on galaxys10_a10 and four on cookbook_a11 have a "
+                 "10-character alphanumeric token where the AOSP form has the numeric UID; they are reported as "
+                 "stored with no Owner UID or Alias, and logged. Measured: cookbook_a11 188 rows from 427 files (users 0 "
                  "and 150), galaxys10_a10 112 from 291, pixel3_a11 85 from 256 (users 0 and 10); every file under "
                  "user_<n> on those images is in a row. No known data was made: the Android 15 emulator used for "
                  "the Keystore 2.0 known data has no legacy files.",
@@ -134,9 +144,9 @@ __artifacts_v2__ = {
             "cookbook_a11": "Android 11 | 188 rows",
             "galaxys10_a10": "Android 10 | 112 rows",
             "pixel3_a11": "Android 11 | 85 rows",
-            "pixel3_a12": "Android 12 | 0 rows (no user_<n> folder)",
-            "hickman_a13": "Android 13 | 0 rows (no user_<n> folder)",
-            "emu_a15_keystore_known_20261115": "Android 15 | 0 rows (no user_<n> folder)",
+            "pixel3_a12": "Android 12 | 0 rows (no files under user_<n>)",
+            "hickman_a13": "Android 13 | 0 rows (no files under user_<n>)",
+            "emu_a15_keystore_known_20261115": "Android 15 | 0 rows (no files under user_<n>)",
         },
     },
 }
