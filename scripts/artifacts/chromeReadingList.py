@@ -16,26 +16,30 @@ __artifacts_v2__ = {
                   'newest version of each key and skips a key whose newest version is a deletion. The '
                   'storage views one Android extraction can hold for an app data directory are collapsed so'
                   " a store is read once, and a second Android user's store is read as its own. The reading"
-                  ' list is kept in this store whether or not sync is on: ReadingListModelStorageImpl '
-                  "writes each entry under the reading_list type, keyed by the entry's URL, as a "
-                  'ReadingListLocal message '
+                  ' list model writes its entries to this store: ReadingListModelStorageImpl writes each '
+                  "entry keyed by the entry's URL as a ReadingListLocal message "
                   '(https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/reading_list/core/reading_list_model_storage_impl.cc#L33-L36),'
-                  ' decoded with the field numbers of reading_list.proto '
+                  ' found under the reading_list type in the emulator known data, and decoded with the '
+                  'field numbers of reading_list.proto '
                   '(https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/reading_list/core/proto/reading_list.proto#L16-L50).'
-                  ' One row per live entry. Title and URL are title and url as stored. Added, First Read '
-                  'and Updated are creation_time_us, first_read_time_us and update_time_us, microseconds '
-                  'since 1970-01-01 UTC '
+                  ' In the emulator known data the entry was added with sync on and remained after '
+                  'sign-out; an entry added with sync off was not tested. One row per live entry. Title and'
+                  ' URL are title and url as stored. Added, First Read and Updated are creation_time_us, '
+                  'first_read_time_us and update_time_us, microseconds since 1970-01-01 UTC '
                   '(https://github.com/chromium/chromium/blob/5926523bcfedb77ba2533ace1dd93b477673f72a/components/reading_list/core/reading_list_entry.cc#L23-L25);'
                   ' a zero is shown blank, as First Read is on an entry not yet read. Status is status '
                   'named with ReadingListEntryStatus, UNREAD (0), READ (1) or UNSEEN (2); the proto says an'
-                  ' absent status means UNSEEN, and an absent status is shown blank. Not read: '
-                  'distillation_state, distilled_path, update_title_time_us and '
-                  'estimated_read_time_seconds. No live reading_list record was in the Sync Data folders of'
-                  ' any of the 57 corpus images checked; the artifact is exercised only by the emulator '
-                  'known data from one Android 15 emulator with Chrome 124.0.6367.219, where an entry added'
-                  " from a link's Add to reading list at 15:16:45 UTC had Added 15:16:45 and Status UNSEEN "
-                  '(2), and after it was opened from the reading list at 15:22:48 UTC had First Read and '
-                  'Updated 15:22:48 and Status READ (1); the entry remained after Chrome was signed out.'),
+                  ' absent status means UNSEEN, and an absent status is shown blank. Not read: entry_id, '
+                  'update_title_time_us, estimated_read_time_seconds and the distillation fields of the '
+                  'message (distillation_state, distilled_path, distilled_url, failed_download_counter, '
+                  'backoff, distillation_time_us, distillation_size). Of the 53 corpus images listed in '
+                  'sample_data, 37 had a Sync Data folder and none held a live reading_list record; 16 had '
+                  'no such folder. The artifact is exercised only by the emulator known data from one '
+                  "Android 15 emulator with Chrome 124.0.6367.219, where an entry added from a link's Add "
+                  'to reading list at 15:16:45 UTC had Added 15:16:45 and Status UNSEEN (2), and after it '
+                  'was opened from the reading list at 15:22:48 UTC had First Read and Updated 15:22:48 and'
+                  ' Status READ (1); the entry remained after Chrome was signed out with Also clear your '
+                  'Chrome data left unchecked.'),
         "paths": ('*/app_chrome/*/Sync Data/LevelDB/*', '*/app_opera/Sync Data/LevelDB/*'),
         "output_types": "standard",
         "artifact_icon": "book",
