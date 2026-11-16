@@ -4,25 +4,29 @@ __artifacts_v2__ = {
         "description": "Parses the call log (date, number, type, duration, the geocoded location stored for the number and transcription) from the contacts provider calllog.db, with the ICCID of the SIM account each call was placed or received on, where the extraction records the link.",
         "author": "@abrignoni, @AlexisBrignoni, Codex, Claude",
         "creation_date": "2020-03-02",
-        "last_update_date": "2026-10-29",
+        "last_update_date": "2026-11-16",
         "requirements": "none",
         "category": "Call Logs",
-        "notes": "The Android reference documents the DATE column as milliseconds since epoch and DURATION as seconds, and this parser decodes them that way, so the Call Date column is a converted millisecond timestamp and Duration in Secs is the stored value unchanged. The Type column decodes the AOSP CallLog.Calls codes 1 Incoming, 2 Outgoing, 3 Missed, 4 Voicemail, 5 Rejected, 6 Blocked and 7 Answered Externally. Any other stored value is shown as Unknown. Raw Call Type (as stored) preserves the source value beside the interpreted label. The same codes are applied to the Samsung contacts provider's calllog.db; whether Samsung stores other type values there is not established. Reference: Android Developers, 'CallLog.Calls' API reference, https://developer.android.com/reference/android/provider/CallLog.Calls (read 2026-10-03)\n\nSIM ICCID and Phone Account Package. SIM ICCID is the ICCID of the SIM account the call was placed or received on, filled only where the extraction records the link (the stored phone account id equals a siminfo icc_id, equals one once a trailing F is removed from both, or is a subscription id under com.android.phone's TelephonyConnectionService that equals a siminfo _id); otherwise it is blank, and a blank means no recorded link was found, not that no SIM was used. Phone Account Package is the package part (before the slash) of subscription_component_name, the component of the account used to place or receive the call; In AOSP this is the ConnectionService that handles calls for the account (PhoneAccountHandle). On the Samsung images in sample_data the stored component is an activity of com.samsung.android.messaging; what Samsung records there is not established. The package is not necessarily the app the user dialled from. A NULL is shown blank. How each ICCID was resolved, with the stored id, the full component and the first and last call per account, is in the Call Log Phone Accounts artifact.",
+        "notes": "The Android reference documents the DATE column as milliseconds since epoch and DURATION as seconds, and this parser decodes them that way, so the Call Date column is a converted millisecond timestamp and Duration in Secs is the stored value unchanged. The Type column decodes the AOSP CallLog.Calls codes 1 Incoming, 2 Outgoing, 3 Missed, 4 Voicemail, 5 Rejected, 6 Blocked and 7 Answered Externally. Any other stored value is shown as Unknown. Raw Call Type (as stored) preserves the source value beside the interpreted label. The same codes are applied to the Samsung contacts provider's calllog.db; whether Samsung stores other type values there is not established. That provider's calls table also holds SMS and MMS log rows, logtype 300 and 200, each carrying a telephony provider message id in messageid; in a calllog.db under com.samsung.android.providers.contacts they are left out here and reported by the Samsung Message Logs artifact. Rows with any other logtype (1000 and 100 on the images in sample_data; what 100 records is not established) or no logtype column are kept as calls. Versions of this artifact before 2026-11-16 listed those message rows as calls: 324 of 397 rows on sharon_a14. Reference: Android Developers, 'CallLog.Calls' API reference, https://developer.android.com/reference/android/provider/CallLog.Calls (read 2026-10-03)\n\nSIM ICCID and Phone Account Package. SIM ICCID is the ICCID of the SIM account the call was placed or received on, filled only where the extraction records the link (the stored phone account id equals a siminfo icc_id, equals one once a trailing F is removed from both, or is a subscription id under com.android.phone's TelephonyConnectionService that equals a siminfo _id); otherwise it is blank, and a blank means no recorded link was found, not that no SIM was used. Phone Account Package is the package part (before the slash) of subscription_component_name, the component of the account used to place or receive the call; In AOSP this is the ConnectionService that handles calls for the account (PhoneAccountHandle). The package is not necessarily the app the user dialled from. Phone Account Package held com.android.phone on all 73 rows of sharon_a14. A NULL is shown blank. How each ICCID was resolved, with the stored id, the full component and the first and last call per account, is in the Call Log Phone Accounts artifact.",
         "paths": ('*/com.android.providers.contacts/databases/calllog.db*', '*/com.samsung.android.providers.contacts/databases/calllog.db*',
                   '*/user_de/*/com.android.providers.telephony/databases/telephony.db*'),
         "output_types": "standard",
         "artifact_icon": "phone",
         "sample_data": {
             "anne_a15": "Android 15 | com.samsung.android.providers.contacts | 11 rows",
-            "galaxys10_a10": "Android 10 | com.samsung.android.providers.contacts | 24 rows",
+            "galaxys10_a10": "Android 10 | com.samsung.android.providers.contacts | 5 rows",
             "hc_pixel8pro_a16": "Android 16 | com.android.providers.contacts | 705 rows",
             "kevin_pocox7_a15": "Android 15 | com.android.providers.contacts | 12 rows",
             "pixel7a_a14": "Android 14 | com.android.providers.contacts | 2655 rows",
             "samsunga53_a14": "Android 14 | com.samsung.android.providers.contacts | 23 rows",
-            "samsungs20_a13": "Android 13 | com.samsung.android.providers.contacts | 12 rows",
-            "sharon_a14": "Android 14 | com.samsung.android.providers.contacts | 397 rows",
+            "samsungs20_a13": "Android 13 | com.samsung.android.providers.contacts | 2 rows",
+            "sharon_a14": "Android 14 | com.samsung.android.providers.contacts | 73 rows",
             "russell_pixel6a_a13": "Android 13 | com.android.providers.contacts | 42 rows",
             "userb2_a13": "Android 13 | com.android.providers.contacts | 0 rows",
+            "cookbook_a11": "Android 11 | com.samsung.android.providers.contacts | 1 row",
+            "falken_a326u_a13": "Android 13 | com.samsung.android.providers.contacts | 1 row",
+            "sharon_a13": "Android 13 | com.samsung.android.providers.contacts | 56 rows",
+            "samsung_a166u_a16_known_20261116": "Android 16 | com.samsung.android.providers.contacts | 2 rows",
         },
         "html_columns": ['Type'],
     },
@@ -31,25 +35,29 @@ __artifacts_v2__ = {
         "description": "One row per phone account in the contacts provider call log, with the ICCID of the SIM where the extraction records the link, how it was resolved, and the first and last call on the account.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-10-29",
-        "last_update_date": "2026-10-29",
+        "last_update_date": "2026-11-16",
         "requirements": "none",
         "category": "Call Logs",
-        "notes": "One row per distinct phone account recorded in the call log, keyed on the stored subscription_id and subscription_component_name, over every calllog.db read (all Android users together). First Call and Last Call are the earliest and latest call DATE for that account, converted from milliseconds since epoch to UTC. A call row with no DATE is counted but does not set either. Calls is the number of call rows for it. Rows are ordered by First Call. A change in the stored account id or component starts a new row. The same SIM can appear on more than one row: on pixel7a_a14 and sharon_a14 two rows resolve to one ICCID. CallLog.Calls keeps the call's phone account id in subscription_id and the account's component name in subscription_component_name. Both are shown as stored in Phone Account ID (as stored) and Phone Account Component; a NULL is shown blank, and call rows with no account recorded are counted together on one row. In AOSP the SIM phone account id is built by PhoneUtils.makePstnPhoneAccountHandleWithPrefix, which uses the full ICC serial number on the android12-release branch and the subscription id on the android13-release branch. The Android version alone does not tell which form a device stores: the pixel7a_a14 call log holds both forms across the same months, and why is not established. SIM ICCID is filled only from a link the extraction records, and ICCID Resolved Via names it. 'Stored value (matches siminfo)': the stored id equals an icc_id in the siminfo table of the telephony provider's telephony.db. 'Stored value, trailing F removed (matches siminfo)': where the stored id ends in F, it equals a siminfo icc_id once trailing F characters are removed from both values, and only one siminfo value matches that way. AOSP's getFullIccSerialNumber returns the ICC ID including hex digits; on pixel7a_a14 the ICCID-form stored ids carried a trailing F and the siminfo icc_id did not. 'siminfo subscription id': the component is com.android.phone's TelephonyConnectionService and the stored id equals a siminfo _id, which the Telephony provider defines as the subscription id. A subscription id under any other component, an id siminfo does not hold, an _id that maps to two different ICCIDs across telephony.db copies, and an extraction without telephony.db all leave SIM ICCID blank. A blank SIM ICCID means no recorded link was found, not that no SIM was used. On the corpora listed in sample_data every call under the TelephonyConnectionService component resolved. Rows under the com.samsung.android.messaging component (sharon_a14, samsungs20_a13) whose stored id does not match a siminfo icc_id are left blank; the sharon_a14 rows under that component that store a value matching a siminfo icc_id are filled from the stored value. References: Telephony PhoneUtils.java at android12-release commit 7be6599cbdfecbe0c01438478492deb015846fa8 and android13-release commit 838fd09d2f8ddbce1330bfceae8ea24d85cc9182 (https://android.googlesource.com/platform/packages/services/Telephony/+/7be6599cbdfecbe0c01438478492deb015846fa8/src/com/android/phone/PhoneUtils.java, https://android.googlesource.com/platform/packages/services/Telephony/+/838fd09d2f8ddbce1330bfceae8ea24d85cc9182/src/com/android/phone/PhoneUtils.java); frameworks/opt/telephony GsmCdmaPhone.java and uicc/IccRecords.java at android12-release commit 51302ef5e1a2f5c13b4db2650a1c52735ccca992; frameworks/base core/java/android/provider/CallLog.java and Telephony.java (SimInfo) at android14-release commit 6e47c7075b91983ae501114425ea25e6df7690c8 (all read 2026-10-29)",
+        "notes": "One row per distinct phone account recorded in the call log, keyed on the stored subscription_id and subscription_component_name, over every calllog.db read (all Android users together). First Call and Last Call are the earliest and latest call DATE for that account, converted from milliseconds since epoch to UTC. A call row with no DATE is counted but does not set either. Calls is the number of call rows for it. Rows are ordered by First Call. A change in the stored account id or component starts a new row. The same SIM can appear on more than one row: on pixel7a_a14 two rows resolve to one ICCID. CallLog.Calls keeps the call's phone account id in subscription_id and the account's component name in subscription_component_name. Both are shown as stored in Phone Account ID (as stored) and Phone Account Component; a NULL is shown blank, and call rows with no account recorded are counted together on one row. In AOSP the SIM phone account id is built by PhoneUtils.makePstnPhoneAccountHandleWithPrefix, which uses the full ICC serial number on the android12-release branch and the subscription id on the android13-release branch. The Android version alone does not tell which form a device stores: the pixel7a_a14 call log holds both forms across the same months, and why is not established. SIM ICCID is filled only from a link the extraction records, and ICCID Resolved Via names it. 'Stored value (matches siminfo)': the stored id equals an icc_id in the siminfo table of the telephony provider's telephony.db. 'Stored value, trailing F removed (matches siminfo)': where the stored id ends in F, it equals a siminfo icc_id once trailing F characters are removed from both values, and only one siminfo value matches that way. AOSP's getFullIccSerialNumber returns the ICC ID including hex digits; on pixel7a_a14 the ICCID-form stored ids carried a trailing F and the siminfo icc_id did not. 'siminfo subscription id': the component is com.android.phone's TelephonyConnectionService and the stored id equals a siminfo _id, which the Telephony provider defines as the subscription id. A subscription id under any other component, an id siminfo does not hold, an _id that maps to two different ICCIDs across telephony.db copies, and an extraction without telephony.db all leave SIM ICCID blank. A blank SIM ICCID means no recorded link was found, not that no SIM was used. On the corpora listed in sample_data every call under the TelephonyConnectionService component resolved. The Samsung contacts provider's SMS and MMS log rows (logtype 300 and 200) are not calls and are not counted here; with them left out, every call on the Samsung images in sample_data was under the TelephonyConnectionService component and every account row resolved a SIM ICCID. References: Telephony PhoneUtils.java at android12-release commit 7be6599cbdfecbe0c01438478492deb015846fa8 and android13-release commit 838fd09d2f8ddbce1330bfceae8ea24d85cc9182 (https://android.googlesource.com/platform/packages/services/Telephony/+/7be6599cbdfecbe0c01438478492deb015846fa8/src/com/android/phone/PhoneUtils.java, https://android.googlesource.com/platform/packages/services/Telephony/+/838fd09d2f8ddbce1330bfceae8ea24d85cc9182/src/com/android/phone/PhoneUtils.java); frameworks/opt/telephony GsmCdmaPhone.java and uicc/IccRecords.java at android12-release commit 51302ef5e1a2f5c13b4db2650a1c52735ccca992; frameworks/base core/java/android/provider/CallLog.java and Telephony.java (SimInfo) at android14-release commit 6e47c7075b91983ae501114425ea25e6df7690c8 (all read 2026-10-29)",
         "paths": ('*/com.android.providers.contacts/databases/calllog.db*', '*/com.samsung.android.providers.contacts/databases/calllog.db*',
                   '*/user_de/*/com.android.providers.telephony/databases/telephony.db*'),
         "output_types": "standard",
         "artifact_icon": "phone",
         "sample_data": {
             "anne_a15": "Android 15 | com.samsung.android.providers.contacts | 1 row",
-            "galaxys10_a10": "Android 10 | com.samsung.android.providers.contacts | 2 rows",
+            "galaxys10_a10": "Android 10 | com.samsung.android.providers.contacts | 1 row",
             "hc_pixel8pro_a16": "Android 16 | com.android.providers.contacts | 1 row",
             "kevin_pocox7_a15": "Android 15 | com.android.providers.contacts | 2 rows",
             "pixel7a_a14": "Android 14 | com.android.providers.contacts | 3 rows",
             "samsunga53_a14": "Android 14 | com.samsung.android.providers.contacts | 2 rows",
-            "samsungs20_a13": "Android 13 | com.samsung.android.providers.contacts | 2 rows",
-            "sharon_a14": "Android 14 | com.samsung.android.providers.contacts | 5 rows",
+            "samsungs20_a13": "Android 13 | com.samsung.android.providers.contacts | 1 row",
+            "sharon_a14": "Android 14 | com.samsung.android.providers.contacts | 2 rows",
             "russell_pixel6a_a13": "Android 13 | com.android.providers.contacts | 1 row",
             "userb2_a13": "Android 13 | com.android.providers.contacts | 0 rows",
+            "cookbook_a11": "Android 11 | com.samsung.android.providers.contacts | 1 row",
+            "falken_a326u_a13": "Android 13 | com.samsung.android.providers.contacts | 1 row",
+            "sharon_a13": "Android 13 | com.samsung.android.providers.contacts | 1 row",
+            "samsung_a166u_a16_known_20261116": "Android 16 | com.samsung.android.providers.contacts | 1 row",
         },
     }
 }
@@ -60,6 +68,10 @@ from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readon
 from scripts.artifacts.storagePathViews import unique_files
 
 TELEPHONY_COMPONENT = 'com.android.phone/com.android.services.telephony.TelephonyConnectionService'
+# Samsung's contacts provider keeps SMS (300) and MMS (200) log rows in the calls table; the
+# Samsung Message Logs artifact reports them, so they are not calls here
+MESSAGE_LOGTYPES = (200, 300)
+SAMSUNG_PROVIDER = '/com.samsung.android.providers.contacts/'
 
 CALL_TYPE_ICONS = {
     'Incoming': ' <i data-feather="phone-incoming" stroke="green"></i>',
@@ -132,6 +144,7 @@ def read_calls(context):
         columns = {row[1] for row in cursor.execute('PRAGMA table_info(calls)')}
         account_id = 'subscription_id' if 'subscription_id' in columns else 'NULL'
         component = 'subscription_component_name' if 'subscription_component_name' in columns else 'NULL'
+        logtype = 'logtype' if 'logtype' in columns else 'NULL'
         cursor.execute(f'''
             SELECT
             date,
@@ -156,10 +169,14 @@ def read_calls(context):
             deleted,
             type,
             {account_id} as subscription_id,
-            {component} as subscription_component_name
+            {component} as subscription_component_name,
+            {logtype} as logtype
             FROM calls
         ''')
+        samsung = SAMSUNG_PROVIDER in file_found.replace('\\', '/')
         for row in cursor.fetchall():
+            if samsung and row[14] in MESSAGE_LOGTYPES:
+                continue
             calls.append((row, resolve_iccid(row[12], row[13], iccids)))
         db.close()
 
