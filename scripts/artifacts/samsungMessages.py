@@ -1,68 +1,89 @@
 __artifacts_v2__ = {
     "get_samsung_messages": {
         "name": "Samsung Messages",
-        "description": "SMS and MMS messages from the Samsung Messages app database (message_content.db), "
-                       "with MMS attachments shown on the message row",
+        "description": "Messages from the Samsung Messages app database (message_content.db): SMS, MMS "
+                       "and any other stored message type, with MMS attachments shown on the message row",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-11-16",
         "last_update_date": "2026-11-16",
         "requirements": "none",
         "category": "SMS & MMS",
         "notes": "One row per message in the messages table of com.samsung.android.messaging/databases/"
-                 "message_content.db, or one row per attachment part for a message with more than one. "
-                 "Body is the text of the message's text/plain parts in part order; it was blank on MMS rows "
+                 "message_content.db, or one row per attachment part for a message with more than one; no "
+                 "message with more than one attachment part was present on the images checked, so that "
+                 "path is code-present but unexercised. Body is the text of the message's text/ parts in "
+                 "part order (only text/plain was present on the images checked); it was blank on MMS rows "
                  "that carried an image and no text part. Created Time and Sent Time are "
                  "messages.created_timestamp and sent_timestamp read as Unix milliseconds; Sent Time is "
-                 "blank when the stored value is 0. On samsung_a166u_a16_known_20261116 created_timestamp "
-                 "equalled sms.date of the joined provider row on 162 of 162 SMS rows. "
-                 "Direction maps message_box_type 100, 101 and 102 to Received, Failed and Sent, and "
-                 "Message Type maps message_type 10 and 12 to SMS and MMS. No Samsung source for these "
-                 "values is cited. They are data-proven by a recorded join: remote_message_uri names the "
-                 "telephony provider row (content://sms/<id> or content://mms/<id>), and on the six images "
-                 "with SMS or MMS rows (galaxys10_a10, samsungs20_a13, sharon_a13, sharon_a14, "
-                 "falken_a326u_a13, samsung_a166u_a16_known_20261116; 690 rows of type 10 or 12) every row "
-                 "joined to a mmssms.db row, every 100 row to an inbox row (sms.type or pdu.msg_box 1), "
-                 "every 102 row to a sent row (2), and the 2 rows holding 101 (one each on sharon_a14 and "
-                 "falken_a326u_a13) to sms.type 5 (failed). Any other value is shown as stored. On "
-                 "falken_a326u_a13, message_type 13 rows named content://im/chat/ or content://bin_im/ and "
-                 "the message_type 14 row content://im/ft/, URIs of the RCS provider rather than mmssms.db; "
-                 "those 24 rows are shown with their stored type, and 23 of them carried text that the SMS "
-                 "and MMS artifacts do not report. "
+                 "blank when the stored value is 0 or not a positive integer. On the six images with SMS or "
+                 "MMS rows created_timestamp equalled sms.date on 660 of 660 SMS rows and pdu.date times "
+                 "1000 on 30 of 30 MMS rows, and sent_timestamp equalled sms.date_sent on 660 of 660 SMS "
+                 "rows; Sent Time was 0 on every Sent and Failed SMS and MMS row (196) and set on every "
+                 "Received one (494). "
+                 "Box maps message_box_type 100, 101 and 102 to Received, Failed and Sent, Direction maps "
+                 "100 to Incoming and 101 and 102 to Outgoing, and Message Type maps message_type 10 and 12 "
+                 "to SMS and MMS; any other value is shown as stored. No Samsung source for these values is "
+                 "cited. They are data-proven by a recorded join: remote_message_uri names the telephony "
+                 "provider row (content://sms/<id> or content://mms/<id>), and on the six images with SMS or "
+                 "MMS rows (galaxys10_a10, samsungs20_a13, sharon_a13, sharon_a14, falken_a326u_a13, "
+                 "samsung_a166u_a16_known_20261116; 690 rows of type 10 or 12) every row joined to a "
+                 "mmssms.db row, every 100 row (494) to sms.type or pdu.msg_box 1, every 102 row (194) to 2, "
+                 "and the 2 rows holding 101 (one each on sharon_a14 and falken_a326u_a13) to sms.type 5. "
+                 "AOSP defines those values as inbox (1), sent (2) and failed outgoing message (5) for SMS, "
+                 "and inbox, sent and failed message boxes for MMS (https://github.com/aosp-mirror/platform_frameworks_base/blob/299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/core/java/android/provider/Telephony.java#L139-L157, https://github.com/aosp-mirror/platform_frameworks_base/blob/299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/core/java/android/provider/Telephony.java#L1477-L1487). The "
+                 "same Box and Direction labels are applied to rows of other message types (24 on "
+                 "falken_a326u_a13, 2 of them 101), where no provider join supports them. On "
+                 "falken_a326u_a13, 22 of the 23 message_type 13 rows named content://im/chat/ (21) or "
+                 "content://bin_im/ (1) and one had no URI, and the message_type 14 row named "
+                 "content://im/ft/: URIs outside the sms and mms authorities. What message_type 13 and 14 "
+                 "denote is not established; the URI names suggest RCS chat and file transfer. Those 24 "
+                 "rows are shown with their stored type, and 23 of them carried text that mmssms.db did not "
+                 "hold (0 of 23 matched an sms body), so artifacts that read only mmssms.db do not show it. "
                  "Address is messages.recipients, or the addresses of the conversation's recipients when "
-                 "that column is empty; Contact Name is the recipients.cache_name the app cached for the "
-                 "conversation (the column is absent on the Android 10 image). Creator (as stored) is "
-                 "messages.creator. On the known-data image it held tpsync on the 165 rows that were "
-                 "already in the telephony provider when Samsung Messages was installed and made the "
-                 "default SMS app, and was empty on the 3 messages sent from Samsung Messages itself; what "
-                 "tpsync stands for is not established, and a row here does not by itself show that the "
-                 "message was sent or read in Samsung Messages. Creator (as stored) had no value on any row of "
-                 "falken_a326u_a13, sharon_a13 and sharon_a14, and held tpsync on 13 of 32 rows of "
-                 "galaxys10_a10 and 32 of 41 of samsungs20_a13. Read is messages.is_read as stored. Read held "
-                 "1 on all 40 rows of falken_a326u_a13. "
+                 "that column is empty (8 rows, all outgoing); no conversation with more than one "
+                 "recipient was present on the images checked. Contact Name is the recipients.cache_name "
+                 "the app cached for the conversation (the column is absent on the Android 10 image). "
+                 "Creator (as stored) is messages.creator. On the known-data image it held tpsync on the "
+                 "165 rows that were already in the telephony provider when Samsung Messages was installed "
+                 "and made the default SMS app, and was empty on the 3 messages sent from Samsung Messages "
+                 "itself; what tpsync stands for is not established, and a row here does not by itself show "
+                 "that the message was sent or read in Samsung Messages. Creator (as stored) had no value "
+                 "on any row of falken_a326u_a13, sharon_a13 and sharon_a14, and held tpsync on 13 of 32 "
+                 "rows of galaxys10_a10 and 32 of 41 of samsungs20_a13. Read is messages.is_read as stored. "
+                 "Read held 1 on all 40 rows of falken_a326u_a13. Message Type held SMS on all 32 rows of "
+                 "galaxys10_a10. "
                  "Media renders the attachment file the part's _data column records, matched on that "
                  "recorded path (storage class, Android user, package and file name) to "
-                 "com.android.providers.telephony/app_parts, never on the file name alone; every MMS "
-                 "attachment part with a _data path resolved on the images listed (24 of 24). An RCS file "
-                 "part records a content://im/ft_original/ URI and no _data path, so it keeps Attachment "
-                 "Name and a blank Media. "
+                 "com.android.providers.telephony/app_parts, never on the file name alone. Every MMS "
+                 "attachment part with a _data path resolved: 6 on samsung_a166u_a16_known_20261116, 1 on "
+                 "sharon_a13 and 17 on sharon_a14 (24 of 24). The one message_type 14 part "
+                 "(falken_a326u_a13) recorded a content://im/ft_original/ URI and no _data path; its row "
+                 "has an Attachment Name and a blank Media. "
                  "Flags lists the messages columns is_spam, is_bin, is_locked, is_favorite, is_hidden and "
-                 "is_secret that are not 0, with bin_timestamp and scheduled_timestamp when set. Flags had no "
+                 "is_secret that are not 0, with bin_timestamp and scheduled_timestamp when set, read as "
+                 "Unix milliseconds (one bin_timestamp value seen; the unit is not sourced). Flags had no "
                  "value on any of the 168 rows of the known-data image or the 325 of sharon_a14. On the "
-                 "eleven images checked Flags held a value on 2 rows, both on falken_a326u_a13: one RCS "
-                 "row with is_bin and its bin_timestamp, and one with is_hidden. What Samsung Messages does "
-                 "when is_hidden is set is not established. The spam, locked, favorite, secret and scheduled "
-                 "paths are code-present but unexercised. "
-                 "Not reported: message_status (no source), delivered_timestamp and sim_slot (0 on every "
-                 "row of the known-data image), the conversations table beyond its recipients (name and "
-                 "from_address were empty on all 10 rows of the known-data image), the RCS sessions and bot "
-                 "tables (sessions, bots, bot_menus, bot_related_bots, bot_service_id_sms_number), cmas "
-                 "(emergency alerts; 0 rows on the known-data image), block_filter and mcs_block_sync "
-                 "(block rules; 0 rows on the known-data image), suggestions and "
-                 "suggest_conversation_categories, plugin and sim_imsi (app configuration), with_app.db "
-                 "(quick reply templates and per-SIM settings) and messageservice.db (service requests). "
-                 "The DE-storage copy under user_de held the schema and no messages on every image, and on "
-                 "the known-data image in all 7 states of its write-ahead log. The image, thumbnail and "
-                 "avatar caches under cache/ record no link to a message and are not reported.",
+                 "eleven images checked Flags held a value on 2 rows, both message_type 13 rows on "
+                 "falken_a326u_a13: one with is_bin and its bin_timestamp, and one with is_hidden. What "
+                 "Samsung Messages does when is_hidden is set is not established. The spam, locked, "
+                 "favorite, secret and scheduled paths are code-present but unexercised. "
+                 "Not reported: messages.subject (empty on the known-data image), message_status (no "
+                 "source), delivered_timestamp and sim_slot (0 on every row of the known-data image), the "
+                 "conversations table beyond its recipients (name and from_address were empty on all 10 "
+                 "rows of the known-data image), the sessions and bot tables (sessions, bots, bot_menus, "
+                 "bot_related_bots, bot_service_id_sms_number; sessions held 2 rows on falken_a326u_a13), "
+                 "cmas, block_filter and mcs_block_sync (0 rows on the known-data image), suggestions, "
+                 "suggest_conversation_categories (rows on falken_a326u_a13 and samsungs20_a13), "
+                 "categories, conversation_categories, cmc_commands, mms_addr, my_channels, plugin (18 "
+                 "rows on the known-data image) and sim_imsi, with_app.db (tables quick_responses, "
+                 "user_setting_by_sim, recent_search and recent_search_bot; the two search tables held 0 "
+                 "rows on every image checked), messageservice.db (one table, request_details, holding a "
+                 "transaction id and a package name) and useful_cards.db (0 rows in every table on the four "
+                 "images that have it). The DE-storage copy under user_de held the schema and no messages "
+                 "on each of the eleven images; on the known-data image none of the 7 committed states of "
+                 "its write-ahead log held a message (3 of them predate the messages table). The image and "
+                 "avatar caches under cache/ are keyed by hex digests; no message id or URI was readable in "
+                 "their journals on the known-data image, and they are not reported.",
         "paths": (
             '*/com.samsung.android.messaging/databases/message_content.db*',
             '*/com.android.providers.telephony/app_parts/*',
@@ -87,7 +108,7 @@ __artifacts_v2__ = {
                 "conversationDiscriminatorColumn": "Conversation ID",
                 "textColumn": "Body",
                 "directionColumn": "Direction",
-                "directionSentValue": "Sent",
+                "directionSentValue": "Outgoing",
                 "timeColumn": "Created Time",
                 "senderColumn": "Address",
                 "sentMessageStaticLabel": "Local User",
@@ -105,6 +126,7 @@ from scripts.ilapfuncs import artifact_processor, check_in_media, logfunc, open_
 from scripts.artifacts.storagePathViews import canonical_path, unique_files
 
 _BOX = {100: 'Received', 101: 'Failed', 102: 'Sent'}
+_DIRECTION = {100: 'Incoming', 101: 'Outgoing', 102: 'Outgoing'}
 _TYPE = {10: 'SMS', 12: 'MMS'}
 _FLAG_COLUMNS = ('is_spam', 'is_bin', 'is_locked', 'is_favorite', 'is_hidden', 'is_secret')
 
@@ -217,12 +239,13 @@ def _read_db(db_path, part_files):
         common = (
             _ms_to_utc(msg['created_timestamp']),
             _ms_to_utc(msg['sent_timestamp']),
-            _BOX.get(msg['message_box_type'], msg['message_box_type']),
+            _DIRECTION.get(msg['message_box_type'], msg['message_box_type']),
             msg['recipients'] or ', '.join(addresses.get(conv, [])),
             body,
         )
         contact = ', '.join(names.get(conv, []))
         tail = (
+            _BOX.get(msg['message_box_type'], msg['message_box_type']),
             _TYPE.get(msg['message_type'], msg['message_type']),
             msg['is_read'],
             msg['creator'] or '',
@@ -261,7 +284,7 @@ def get_samsung_messages(context):
 
     data_headers = (
         ('Created Time', 'datetime'), ('Sent Time', 'datetime'), 'Direction', 'Address', 'Body',
-        ('Media', 'media'), 'Contact Name', 'Attachment Name', 'Message Type', 'Read', 'Creator (as stored)',
+        ('Media', 'media'), 'Contact Name', 'Attachment Name', 'Box', 'Message Type', 'Read', 'Creator (as stored)',
         'Flags', 'Conversation ID', 'Message ID', 'Provider URI',
     )
     return data_headers, data_list, '\n'.join(source_paths)
