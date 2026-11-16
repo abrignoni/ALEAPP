@@ -224,6 +224,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | adobeReader |
 | airGuard |
 | amazonShopping |
+| androidKeystore |
 | androidauto |
 | appicons |
 | battery_usage_v4 |
