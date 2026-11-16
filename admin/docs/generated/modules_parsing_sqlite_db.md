@@ -289,6 +289,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | gboard |
 | gmailEmails |
 | gmailIMAPEmails |
+| googleAccounts |
 | googleCalendar |
 | googleCallScreen |
 | googleCast |
