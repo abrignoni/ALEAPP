@@ -4,25 +4,26 @@
     "artifact_name": "GalleryVault - Folders",
     "function_name": "galleryvault_folders",
     "case_number": "pixel7a_a14",
-    "number_of_columns": 9,
+    "number_of_columns": 10,
     "number_of_rows": 15,
-    "total_data_size_bytes": 1130,
+    "total_data_size_bytes": 1145,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/galleryVault/testdata.galleryVault.galleryvault_folders.pixel7a_a14.zip",
-    "start_time": "2026-08-25T04:48:38.489314+00:00",
-    "end_time": "2026-08-25T04:48:38.535834+00:00",
-    "run_time_seconds": 0.0008668899536132812,
+    "start_time": "2026-11-12T17:39:44.075017+00:00",
+    "end_time": "2026-11-12T17:39:44.100290+00:00",
+    "run_time_seconds": 0.0033528804779052734,
     "last_commit": {
-      "hash": "9dd6f0ba89c1734104074ca53e08c99302197700",
+      "hash": "ccf522fc06b634d1a00c98921408736596c94588",
       "author_name": "Brigs",
       "author_email": "abrignoni@gmail.com",
-      "date": "2026-08-07T23:27:07-04:00",
-      "message": "fix: fill in the artifact author field left empty on 27 artifacts"
+      "date": "2026-11-12T11:39:33-05:00",
+      "message": "fix(galleryVault): read every Android user's file action log, AppLock.db and cloud_cache.db"
     }
   },
   "headers": [
     "Create Time",
+    "Android User",
     "Folder Name",
     "Folder Type",
     "Child File Count",
@@ -35,6 +36,7 @@
   "data": [
     [
       1707411111,
+      "0",
       "Recycle Bin",
       "Recycle Bin",
       0,
@@ -46,6 +48,7 @@
     ],
     [
       1707411111,
+      "0",
       "From Camera",
       "From Camera",
       0,
@@ -57,6 +60,7 @@
     ],
     [
       1707411111,
+      "0",
       "From Download",
       "From Download",
       0,
@@ -68,6 +72,7 @@
     ],
     [
       1707411111,
+      "0",
       "From Restore",
       "From Restore",
       0,
@@ -79,6 +84,7 @@
     ],
     [
       1707411111,
+      "0",
       "From Share",
       "From Share",
       0,
@@ -90,6 +96,7 @@
     ],
     [
       1707411111,
+      "0",
       "Recycle Bin",
       "Recycle Bin",
       0,
@@ -101,6 +108,7 @@
     ],
     [
       1707411111,
+      "0",
       "My Pictures",
       "User created",
       1,
@@ -112,6 +120,7 @@
     ],
     [
       1707411111,
+      "0",
       "My Videos",
       "User created",
       0,
@@ -123,6 +132,7 @@
     ],
     [
       1707411111,
+      "0",
       "Cards and IDs",
       "User created",
       0,
@@ -134,6 +144,7 @@
     ],
     [
       1707411111,
+      "0",
       "Documents",
       "User created",
       0,
@@ -145,6 +156,7 @@
     ],
     [
       1707411111,
+      "0",
       "My Pictures",
       "User created",
       0,
@@ -156,6 +168,7 @@
     ],
     [
       1707411111,
+      "0",
       "My Videos",
       "User created",
       0,
@@ -167,6 +180,7 @@
     ],
     [
       1707411111,
+      "0",
       "Cards and IDs",
       "User created",
       0,
@@ -178,6 +192,7 @@
     ],
     [
       1707411111,
+      "0",
       "Documents",
       "User created",
       0,
@@ -189,6 +204,7 @@
     ],
     [
       1707418656,
+      "0",
       "My Secret Folder",
       "User created",
       1,

@@ -46,11 +46,12 @@ __artifacts_v2__ = {
                        "the path each file was taken from",
         "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-06",
-        "last_update_date": "2026-08-06",
+        "last_update_date": "2026-11-12",
         "requirements": "none",
         "category": "GalleryVault",
         "notes": "The file_v1 table can be empty while encrypted objects remain on external "
-                 "storage; compare against the GalleryVault - Vault Files artifact.",
+                 "storage; compare against the GalleryVault - Vault Files artifact."
+                 " Android User is read from the path of the database the row came from: data/data is user 0 and data/user/<n> is user <n>; it is blank when the path names no user.",
         "paths": ('*/com.thinkyeah.galleryvault/databases/galleryvault.db*',),
         "output_types": "standard",
         "artifact_icon": "eye-off",
@@ -64,14 +65,15 @@ __artifacts_v2__ = {
         "description": "GalleryVault folders, their child counts and creation times",
         "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-06",
-        "last_update_date": "2026-10-09",
+        "last_update_date": "2026-11-12",
         "requirements": "none",
         "category": "GalleryVault",
         "notes": "The folder type labels come from the names the app gives its own default "
                  "folders in this table; a type of 0 matched no default folder name and is "
                  "labelled 'User created', a reading that is not sourced. A column the store "
                  "version does not have is reported empty; the pixel3_a12 store has no "
-                 "child_folder_count column.",
+                 "child_folder_count column."
+                 " Android User is read from the path of the database the row came from: data/data is user 0 and data/user/<n> is user <n>; it is blank when the path names no user.",
         "paths": ('*/com.thinkyeah.galleryvault/databases/galleryvault.db*',),
         "output_types": "standard",
         "artifact_icon": "folder",
@@ -88,7 +90,7 @@ __artifacts_v2__ = {
                        "photo_path.",
         "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-06",
-        "last_update_date": "2026-10-07",
+        "last_update_date": "2026-11-12",
         "requirements": "none",
         "category": "GalleryVault",
         "notes": "One row per selected break_in_report query result, ordered by timestamp within each "
@@ -96,13 +98,13 @@ __artifacts_v2__ = {
                  "(as stored) and is_new (as stored) retain their selected values and types without "
                  "establishing an entered-code, unread, attempt, or user-action meaning. Timestamp retains"
                  " the existing conversion and blank policy. Photo is the existing optional media "
-                 "reference resolved from photo_path; the remaining stored fields and current "
-                 "source-selection policy are unchanged. The historically recorded hc_pixel8pro_a17 and "
+                 "reference resolved from photo_path. The historically recorded hc_pixel8pro_a17 and "
                  "pixel7a_a14 samples each had zero rows; those observations are not fresh measurements or"
                  " positive event/photo coverage. A row does not establish who operated the app or what "
-                 "caused its creation. Source association across selected databases, alias-state "
-                 "equivalence, locking_type, location fields, and other app meanings require separate "
-                 "review. Original contribution credited to @AlexisBrignoni and Claude.",
+                 "caused its creation. Android User names the user whose database a row came from. "
+                 "Alias-state equivalence, locking_type, location fields, and other app meanings "
+                 "require separate review. Original contribution credited to @AlexisBrignoni and Claude."
+                 " Android User is read from the path of the database the row came from: data/data is user 0 and data/user/<n> is user <n>; it is blank when the path names no user.",
         "paths": ('*/com.thinkyeah.galleryvault/databases/galleryvault.db*',),
         "output_types": "standard",
         "artifact_icon": "user-x",
@@ -141,10 +143,10 @@ __artifacts_v2__ = {
         "description": "Rows of the locked_app table in GalleryVault's AppLock.db: package name and whether disguise_lock is set. No tested image held a row.",
         "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-06",
-        "last_update_date": "2026-08-06",
+        "last_update_date": "2026-11-12",
         "requirements": "none",
         "category": "GalleryVault",
-        "notes": "",
+        "notes": "Android User is read from the path of the database the row came from: data/data is user 0 and data/user/<n> is user <n>; it is blank when the path names no user.",
         "paths": ('*/com.thinkyeah.galleryvault/databases/AppLock.db*',),
         "output_types": "standard",
         "artifact_icon": "shield",
@@ -158,10 +160,10 @@ __artifacts_v2__ = {
         "description": "Rows of the break_in_report_in_applock table in GalleryVault's AppLock.db: timestamp, package name, the wrongly_attempt_code and is_new values and the photo path, as stored. What wrongly_attempt_code and is_new mean is not established. No tested image held a row.",
         "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-06",
-        "last_update_date": "2026-10-09",
+        "last_update_date": "2026-11-12",
         "requirements": "none",
         "category": "GalleryVault",
-        "notes": "",
+        "notes": "Android User is read from the path of the database the row came from: data/data is user 0 and data/user/<n> is user <n>; it is blank when the path names no user.",
         "paths": ('*/com.thinkyeah.galleryvault/databases/AppLock.db*',),
         "output_types": "standard",
         "artifact_icon": "user-x",
@@ -177,10 +179,10 @@ __artifacts_v2__ = {
                        "recorded",
         "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-06",
-        "last_update_date": "2026-08-06",
+        "last_update_date": "2026-11-12",
         "requirements": "none",
         "category": "GalleryVault",
-        "notes": "",
+        "notes": "Android User is read from the path of the database the row came from: data/data is user 0 and data/user/<n> is user <n>; it is blank when the path names no user.",
         "paths": ('*/com.thinkyeah.galleryvault/databases/galleryvault.db*',),
         "output_types": "standard",
         "artifact_icon": "globe",
@@ -194,12 +196,13 @@ __artifacts_v2__ = {
         "description": "Entries in the web_url table used by the built-in browser start page",
         "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-06",
-        "last_update_date": "2026-08-06",
+        "last_update_date": "2026-11-12",
         "requirements": "none",
         "category": "GalleryVault",
         "notes": "Visit Count and the timestamps are reported as stored. Whether the table holds "
                  "entries the app ships with was not sourced, so a row is not by itself evidence "
-                 "that the page was opened on the device.",
+                 "that the page was opened on the device."
+                 " Android User is read from the path of the database the row came from: data/data is user 0 and data/user/<n> is user <n>; it is blank when the path names no user.",
         "paths": ('*/com.thinkyeah.galleryvault/databases/galleryvault.db*',),
         "output_types": "standard",
         "artifact_icon": "bookmark",
@@ -213,10 +216,11 @@ __artifacts_v2__ = {
         "description": "Rows of the download_task table in galleryvault.db: begin and end time, name, URLs, local path, sizes, state and error code as stored. No tested image held a row.",
         "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-06",
-        "last_update_date": "2026-10-09",
+        "last_update_date": "2026-11-12",
         "requirements": "none",
         "category": "GalleryVault",
-        "notes": "A column the store version does not have is reported empty.",
+        "notes": "A column the store version does not have is reported empty."
+                 " Android User is read from the path of the database the row came from: data/data is user 0 and data/user/<n> is user <n>; it is blank when the path names no user.",
         "paths": ('*/com.thinkyeah.galleryvault/databases/galleryvault.db*',),
         "output_types": "standard",
         "artifact_icon": "download",
@@ -232,11 +236,12 @@ __artifacts_v2__ = {
                        "tested image held a row.",
         "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-06",
-        "last_update_date": "2026-08-06",
+        "last_update_date": "2026-11-12",
         "requirements": "none",
         "category": "GalleryVault",
         "notes": "The export_unhidden_history table can be absent; when it is, no rows are "
-                 "reported.",
+                 "reported."
+                 " Android User is read from the path of the database the row came from: data/data is user 0 and data/user/<n> is user <n>; it is blank when the path names no user.",
         "paths": ('*/com.thinkyeah.galleryvault/databases/galleryvault.db*',),
         "output_types": "standard",
         "artifact_icon": "upload",
@@ -252,10 +257,10 @@ __artifacts_v2__ = {
                        "and size. No tested image held a row.",
         "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-06",
-        "last_update_date": "2026-08-06",
+        "last_update_date": "2026-11-12",
         "requirements": "none",
         "category": "GalleryVault",
-        "notes": "",
+        "notes": "Android User is read from the path of the database the row came from: data/data is user 0 and data/user/<n> is user <n>; it is blank when the path names no user.",
         "paths": ('*/com.thinkyeah.galleryvault/databases/galleryvault.db*',),
         "output_types": "standard",
         "artifact_icon": "trash-2",
@@ -266,20 +271,38 @@ __artifacts_v2__ = {
     },
     "galleryvault_file_actions": {
         "name": "GalleryVault - File Action Log",
-        "description": "Action log kept next to the vault on external storage, recording vault "
-                       "file paths and the time each action was carried out",
+        "description": "Rows of the file_action table in GalleryVault's file_action_log.db, read "
+                       "from the vault backup folder on shared storage and from the app's "
+                       "databases folder: action time, action type value and file path.",
         "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-06",
-        "last_update_date": "2026-08-06",
+        "last_update_date": "2026-11-12",
         "requirements": "none",
         "category": "GalleryVault",
-        "notes": "This log lives on external storage outside the app sandbox.",
-        "paths": ('*/.galleryvault_*/backup/file_action_log.db*',),
+        "notes": "Two copies of file_action_log.db are read: the one in the backup folder of "
+                 "the vault on shared storage (Store: Vault backup) and the one in the app's own "
+                 "databases folder (Store: App database). Every row of both is reported, so a row "
+                 "present in both appears twice, once per store. On pixel7a_a14 the backup holds "
+                 "2 rows and the app database 4, the 2 backup rows among them; hc_pixel8pro_a17 "
+                 "has no app database copy, and why was not established. The "
+                 "file_action_log.db.tmp beside the backup is not read. On pixel7a_a14 it is "
+                 "byte-identical to the app database copy, and on hc_pixel8pro_a17 to the backup "
+                 "copy; on another image it could differ, and its rows would not be reported. Android User is read from the "
+                 "path of the database the row came from: data/data is user 0, data/user/<n> and "
+                 "data/media/<n> are user <n>, and it is blank when the path names no user. "
+                 "Reading more than one user's copy was tested on synthetic databases and on a "
+                 "two-user input built from pixel7a_a14, which gave 12 rows, 6 for each user. "
+                 "Neither pixel7a_a14 nor hc_pixel8pro_a17 holds the vault under more than one "
+                 "user.",
+        "paths": (
+            '*/.galleryvault_*/backup/file_action_log.db*',
+            '*/com.thinkyeah.galleryvault/databases/file_action_log.db*',
+        ),
         "output_types": "standard",
         "artifact_icon": "list",
         "sample_data": {
             "hc_pixel8pro_a17": "Android 17 | com.thinkyeah.galleryvault vc 406018 | 3 rows",
-            "pixel7a_a14": "Android 14 | com.thinkyeah.galleryvault vc 40309 | 2 rows",
+            "pixel7a_a14": "Android 14 | com.thinkyeah.galleryvault vc 40309 | 6 rows",
         },
     },
     "galleryvault_preferences": {
@@ -290,7 +313,7 @@ __artifacts_v2__ = {
         ),
         "author": "@segumarc, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-13",
-        "last_update_date": "2026-10-04",
+        "last_update_date": "2026-11-12",
         "requirements": "none",
         "category": "GalleryVault",
         "notes": (
@@ -309,7 +332,11 @@ __artifacts_v2__ = {
             "elsewhere in this parser "
             "to derive the DES key for AccountProfile.xml. Cloud Storage Type should "
             "be cross-referenced against galleryvault_cloud_account when cloud_cache.db "
-            "is present. Reference: S-RM, 'Cracking the Vault: Exposing the weaknesses of "
+            "is present. Android User is read from the path of the Kidd.xml the row came "
+            "from: data/data is user 0 and data/user/<n> is user <n>; it is blank when the "
+            "path names no user. Each Kidd.xml is read once per app data directory, and every "
+            "one that parsed is named in the source path. "
+            "Reference: S-RM, 'Cracking the Vault: Exposing the weaknesses of "
             "encrypted apps', "
             "https://www.s-rminform.com/latest-thinking/cracking-the-vault-exposing-the-weaknesses-of-encrypted-apps"
         ),
@@ -373,12 +400,12 @@ __artifacts_v2__ = {
     "galleryvault_cloud_account": {
         "name": "GalleryVault - Cloud Account",
         "description": (
-            "Cloud backup account bound to the vault, including provider, account "
+            "Cloud backup accounts recorded in cloud_cache.db, including provider, account "
             "identifier, drive status and monthly usage/quota."
         ),
         "author": "@segumarc, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-11-12",
         "requirements": "none",
         "category": "GalleryVault",
         "notes": (
@@ -386,7 +413,8 @@ __artifacts_v2__ = {
             "as stored. What the identifier refers to was not sourced. Whether any vault "
             "content reached a cloud account is "
             "not established by this table (see the Cloud Files and Cloud Upload Tasks "
-            "artifacts)."
+            "artifacts). Each cloud_cache.db contributes its own block of rows."
+                 " Android User is read from the path of the database the row came from: data/data is user 0 and data/user/<n> is user <n>; it is blank when the path names no user."
         ),
         "paths": ('*/com.thinkyeah.galleryvault/databases/cloud_cache.db*',),
         "output_types": "standard",
@@ -397,11 +425,12 @@ __artifacts_v2__ = {
         "description": "Rows of the cloud_folders table in the app's local cloud_cache.db, with parent paths resolved from the same table",
         "author": "@segumarc, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-11-12",
         "requirements": "none",
         "category": "GalleryVault",
         "notes": "Rows are the cloud_folders table entries with parent paths resolved from the "
-                 "same table.",
+                 "same table."
+                 " Android User is read from the path of the database the row came from: data/data is user 0 and data/user/<n> is user <n>; it is blank when the path names no user.",
         "paths": ('*/com.thinkyeah.galleryvault/databases/cloud_cache.db*',),
         "output_types": "standard",
         "artifact_icon": "folder",
@@ -414,7 +443,7 @@ __artifacts_v2__ = {
         ),
         "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-10-07",
+        "last_update_date": "2026-11-12",
         "requirements": "none",
         "category": "GalleryVault",
         "notes": (
@@ -422,11 +451,13 @@ __artifacts_v2__ = {
             "key used elsewhere in this parser, and what it encrypts was not sourced. is_complete (as"
             " stored) directly retains the selected is_complete value and native SQLite storage type;"
             " NULL, zero and empty values are not converted to Yes/No. No enum, completion, upload, "
-            "user-action or ownership meaning is established. All other fields, existing has_thumb "
-            "truthiness rendering, dates, first cloud_cache.db selection, folder resolution and "
-            "source indication are unchanged. Positive real cloud_files coverage has not been "
+            "user-action or ownership meaning is established. Each cloud_cache.db is read once per app data "
+            "directory (duplicate storage views of one file are collapsed), and folder paths are"
+            " resolved within the database each row came from. Reading more than one database "
+            "was tested on synthetic databases only. Positive real cloud_files coverage has not been "
             "established. Original contribution credited to @segumarc. Other original module research"
             " credits are preserved."
+                 " Android User is read from the path of the database the row came from: data/data is user 0 and data/user/<n> is user <n>; it is blank when the path names no user."
         ),
         "paths": ('*/com.thinkyeah.galleryvault/databases/cloud_cache.db*',),
         "output_types": "standard",
@@ -440,7 +471,7 @@ __artifacts_v2__ = {
         ),
         "author": "@segumarc, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-11-12",
         "requirements": "none",
         "category": "GalleryVault",
         "notes": (
@@ -448,7 +479,8 @@ __artifacts_v2__ = {
             "app; the meaning of the codes was not sourced. Entry Type shows 1 as 'Folder' "
             "and 2 as 'File'; no tested image is recorded for that reading. Entry Name is "
             "blank when no row in "
-            "cloud_files or cloud_folders carries the entry's uuid."
+            "cloud_files or cloud_folders in the same cloud_cache.db carries the entry's uuid."
+                 " Android User is read from the path of the database the row came from: data/data is user 0 and data/user/<n> is user <n>; it is blank when the path names no user."
         ),
         "paths": ('*/com.thinkyeah.galleryvault/databases/cloud_cache.db*',),
         "output_types": "standard",
@@ -462,13 +494,14 @@ __artifacts_v2__ = {
         ),
         "author": "@segumarc, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-18",
-        "last_update_date": "2026-08-18",
+        "last_update_date": "2026-11-12",
         "requirements": "none",
         "category": "GalleryVault",
         "notes": (
             "Task State, Task Error Code, File Bytes Uploaded and File Bytes Total are reported "
             "as stored; the meaning of the state and error codes was not sourced, and a row here "
             "is a queued task record rather than a completed upload."
+                 " Android User is read from the path of the database the row came from: data/data is user 0 and data/user/<n> is user <n>; it is blank when the path names no user."
         ),
         "paths": ('*/com.thinkyeah.galleryvault/databases/cloud_cache.db*',),
         "output_types": "standard",
@@ -485,14 +518,13 @@ import xml.etree.ElementTree as ET
 
 from Crypto.Cipher import DES
 
-from scripts.artifacts.storagePathViews import canonical_path, unique_files
+from scripts.artifacts.storagePathViews import android_user, canonical_path, unique_files
 
 from scripts.ilapfuncs import (
     artifact_processor,
     check_in_embedded_media,
     check_in_media,
     convert_unix_ts_to_utc,
-    get_file_path,
     get_sqlite_db_records,
     null_absent_columns,
     logfunc,
@@ -670,20 +702,53 @@ def _galleryvault_dbs(files_found):
                   if str(f).endswith('galleryvault.db'))
 
 
-def _query_all(db_paths, table, query):
-    """Rows of the query from every database, in db path order."""
+# The Android user of a shared storage path: data/media/<n> and its
+# storage/emulated/<n> spelling. App data directories are read by android_user.
+_SHARED_STORAGE_USER = re.compile(r'(?:^|/)(?:data/media|storage/emulated)/(\d+)/')
+
+
+def _store_user(context, path):
+    """The Android user whose storage holds path, read from the evidence relative path,
+    or '' when its layout names no user."""
+    relative = str(context.get_relative_path(path)).replace('\\', '/')
+    user = android_user(relative)
+    if user:
+        return user
+    match = _SHARED_STORAGE_USER.search(relative)
+    return match.group(1) if match else ''
+
+
+def _file_action_store(relative_path):
+    """Which copy of file_action_log.db a path is: the one in the vault backup folder on
+    shared storage, or the one in the app's own databases folder."""
+    path = str(relative_path).replace('\\', '/')
+    if '/.galleryvault_' in path and '/backup/' in path:
+        return 'Vault backup'
+    if '/com.thinkyeah.galleryvault/databases/' in path:
+        return 'App database'
+    return ''
+
+
+def _user_rows(context, db_paths, table, query, drift=False):
+    """(Android user, record) for the query's rows from every database, in db path order.
+    With drift, columns a store version lacks are read as NULL."""
     for db_path in db_paths:
-        yield from _query(db_path, table, query)
+        user = _store_user(context, db_path)
+        db_query = null_absent_columns(db_path, query) if drift else query
+        for record in _query(db_path, table, db_query):
+            yield user, record
 
 
-def _query_all_drift(db_paths, table, query):
-    """As _query_all, with columns a store version lacks read as NULL."""
-    for db_path in db_paths:
-        yield from _query(db_path, table, null_absent_columns(db_path, query))
+def _dbs_named(files_found, name):
+    """Every database with this exact basename, sorted. The basename is compared in
+    full, so a -wal/-shm/-journal sidecar or the file_action_log.db.tmp found beside
+    file_action_log.db is never read as the database."""
+    return sorted(str(f) for f in files_found
+                  if str(f).replace('\\', '/').rsplit('/', 1)[-1] == name)
 
 
-def _cloud_cache_db(files_found):
-    return get_file_path(files_found, 'cloud_cache.db')
+def _cloud_cache_dbs(context):
+    return _dbs_named(unique_files(context), 'cloud_cache.db')
 
 
 def _cloud_folder_map(db_path):
@@ -854,6 +919,7 @@ def galleryvault_hidden_files(context):
     # The query is built per database: each Android user's copy can carry a
     # different schema generation, so delete_state is resolved per store.
     for source_path in source_paths:
+        user = _store_user(context, source_path)
         columns = _columns(source_path, 'file_v1')
         delete_state = 'file_v1.delete_state' if 'delete_state' in columns else "''"
 
@@ -870,14 +936,15 @@ def galleryvault_hidden_files(context):
         for record in _query(source_path, 'file_v1', query):
             dimensions = f'{record[7]} x {record[8]}' if record[7] or record[8] else ''
             data_list.append((
-                _ms(record[0]), _ms(record[1]), record[2], record[3], record[4], record[5],
-                record[6], dimensions, record[9], record[10], record[11], record[12],
-                record[13], record[14], record[15], record[16],
+                _ms(record[0]), _ms(record[1]), user, record[2], record[3], record[4],
+                record[5], record[6], dimensions, record[9], record[10], record[11],
+                record[12], record[13], record[14], record[15], record[16],
             ))
 
     data_headers = (
         ('Added Time', 'datetime'),
         ('File Last Modified Time', 'datetime'),
+        'Android User',
         'File Name',
         'Folder',
         'Original Path',
@@ -907,14 +974,16 @@ def galleryvault_folders(context):
     ORDER BY create_time_utc, folder_v1.rowid
     '''
     # Older stores lack child_folder_count; an absent column is reported empty.
-    for record in _query_all_drift(source_paths, 'folder_v1', query):
+    for user, record in _user_rows(context, source_paths, 'folder_v1', query, drift=True):
         data_list.append((
-            _ms(record[0]), record[1], FOLDER_TYPES.get(record[2], record[2]), record[3],
-            record[4], record[5], 'Yes' if record[6] else 'No', record[7], record[8],
+            _ms(record[0]), user, record[1], FOLDER_TYPES.get(record[2], record[2]),
+            record[3], record[4], record[5], 'Yes' if record[6] else 'No', record[7],
+            record[8],
         ))
 
     data_headers = (
         ('Create Time', 'datetime'),
+        'Android User',
         'Folder Name',
         'Folder Type',
         'Child File Count',
@@ -937,15 +1006,16 @@ def galleryvault_break_in_reports(context):
     FROM break_in_report
     ORDER BY timestamp
     '''
-    for record in _query_all(source_paths, 'break_in_report', query):
+    for user, record in _user_rows(context, source_paths, 'break_in_report', query):
         media = check_in_media(record[3], os.path.basename(record[3] or '')) or '' if record[3] else ''
         data_list.append((
-            _ms(record[0]), record[1], record[2], media, record[3], record[4], record[5],
-            record[6], record[7],
+            _ms(record[0]), user, record[1], record[2], media, record[3], record[4],
+            record[5], record[6], record[7],
         ))
 
     data_headers = (
         ('Timestamp', 'datetime'),
+        'Android User',
         'wrongly_attempt_code (as stored)',
         'Locking Type',
         ('Photo', 'media'),
@@ -991,32 +1061,34 @@ def galleryvault_break_in_images(context):
 
 @artifact_processor
 def galleryvault_locked_apps(context):
-    source_path = get_file_path(context.get_files_found(), 'AppLock.db')
+    source_paths = _dbs_named(unique_files(context), 'AppLock.db')
     data_list = []
-    for record in _query(
-            source_path, 'locked_app',
+    for user, record in _user_rows(
+            context, source_paths, 'locked_app',
             'SELECT package_name, disguise_lock, _id FROM locked_app ORDER BY package_name'):
-        data_list.append((record[0], 'Yes' if record[1] else 'No', record[2]))
+        data_list.append((user, record[0], 'Yes' if record[1] else 'No', record[2]))
 
-    data_headers = ('Package Name', 'Disguise Lock', 'Row ID')
-    return data_headers, data_list, source_path
+    data_headers = ('Android User', 'Package Name', 'Disguise Lock', 'Row ID')
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
 def galleryvault_applock_break_ins(context):
-    source_path = get_file_path(context.get_files_found(), 'AppLock.db')
+    source_paths = _dbs_named(unique_files(context), 'AppLock.db')
     data_list = []
     query = '''
     SELECT timestamp, package_name, wrongly_attempt_code, locking_type, photo_path, is_new
     FROM break_in_report_in_applock
     ORDER BY timestamp
     '''
-    for record in _query(source_path, 'break_in_report_in_applock', query):
+    for user, record in _user_rows(context, source_paths, 'break_in_report_in_applock', query):
         media = check_in_media(record[4], os.path.basename(record[4] or '')) or '' if record[4] else ''
-        data_list.append((_ms(record[0]), record[1], record[2], record[3], media, record[4], record[5]))
+        data_list.append((_ms(record[0]), user, record[1], record[2], record[3], media,
+                          record[4], record[5]))
 
     data_headers = (
         ('Timestamp', 'datetime'),
+        'Android User',
         'Package Name',
         'wrongly_attempt_code (as stored)',
         'Locking Type',
@@ -1024,7 +1096,7 @@ def galleryvault_applock_break_ins(context):
         'Photo Path',
         'is_new (as stored)',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
@@ -1032,11 +1104,12 @@ def galleryvault_browser_history(context):
     source_paths = _galleryvault_dbs(unique_files(context))
     data_list = []
     query = 'SELECT last_visit_time_utc, title, url, host FROM browser_history ORDER BY last_visit_time_utc'
-    for record in _query_all(source_paths, 'browser_history', query):
-        data_list.append((_ms(record[0]), record[1], record[2], record[3]))
+    for user, record in _user_rows(context, source_paths, 'browser_history', query):
+        data_list.append((_ms(record[0]), user, record[1], record[2], record[3]))
 
     data_headers = (
         ('Last Visit Time', 'datetime'),
+        'Android User',
         'Title',
         'URL',
         'Host',
@@ -1053,12 +1126,14 @@ def galleryvault_browser_urls(context):
     FROM web_url
     ORDER BY _id
     '''
-    for record in _query_all(source_paths, 'web_url', query):
-        data_list.append((_ms(record[0]), _ms(record[1]), record[2], record[3], record[4], record[5]))
+    for user, record in _user_rows(context, source_paths, 'web_url', query):
+        data_list.append((_ms(record[0]), _ms(record[1]), user, record[2], record[3], record[4],
+                          record[5]))
 
     data_headers = (
         ('Last Visit Time', 'datetime'),
         ('Create Time', 'datetime'),
+        'Android User',
         'Title',
         'URL',
         'Visit Count',
@@ -1078,15 +1153,16 @@ def galleryvault_downloads(context):
     ORDER BY begin_time
     '''
     # Older stores lack web_url and download_percentage; an absent column is reported empty.
-    for record in _query_all_drift(source_paths, 'download_task', query):
+    for user, record in _user_rows(context, source_paths, 'download_task', query, drift=True):
         data_list.append((
-            _ms(record[0]), _ms(record[1]), record[2], record[3], record[4], record[5],
+            _ms(record[0]), _ms(record[1]), user, record[2], record[3], record[4], record[5],
             record[6], record[7], record[8], record[9], record[10], record[11], record[12],
         ))
 
     data_headers = (
         ('Begin Time', 'datetime'),
         ('End Time', 'datetime'),
+        'Android User',
         'Name',
         'Download URL',
         'Page URL',
@@ -1112,15 +1188,16 @@ def galleryvault_unhide_history(context):
         FROM export_unhidden_history
         ORDER BY action_time
         '''
-    for record in _query_all(source_paths, 'export_unhidden_history', query):
+    for user, record in _user_rows(context, source_paths, 'export_unhidden_history', query):
         data_list.append((
-            _ms(record[0]), _ms(record[1]), record[2], record[3], record[4], record[5],
+            _ms(record[0]), _ms(record[1]), user, record[2], record[3], record[4], record[5],
             record[6], record[7], record[8], record[9], record[10], record[11],
         ))
 
     data_headers = (
         ('Action Time', 'datetime'),
         ('Create Time', 'datetime'),
+        'Android User',
         'File Name',
         'Action Type Value',
         'File Type Value',
@@ -1146,12 +1223,13 @@ def galleryvault_recycle_bin(context):
     LEFT JOIN file_v1 ON recycle_bin_v1.file_id = file_v1._id
     ORDER BY recycle_bin_v1.delete_time
     '''
-    for record in _query_all(source_paths, 'recycle_bin_v1', query):
-        data_list.append((_ms(record[0]), record[1], record[2], record[3], record[4],
+    for user, record in _user_rows(context, source_paths, 'recycle_bin_v1', query):
+        data_list.append((_ms(record[0]), user, record[1], record[2], record[3], record[4],
                           record[5], record[6]))
 
     data_headers = (
         ('Delete Time', 'datetime'),
+        'Android User',
         'File Name',
         'Original Path',
         'MIME Type',
@@ -1164,19 +1242,26 @@ def galleryvault_recycle_bin(context):
 
 @artifact_processor
 def galleryvault_file_actions(context):
-    source_path = get_file_path(context.get_files_found(), 'file_action_log.db')
+    # The log is read from the vault backup folder on each user's shared storage and from
+    # the app's own databases folder. Both are kept, so a row held by only one is reported.
+    source_paths = _dbs_named(unique_files(context), 'file_action_log.db')
     data_list = []
     query = 'SELECT action_time, action_type, file_path, _id FROM file_action ORDER BY action_time'
-    for record in _query(source_path, 'file_action', query):
-        data_list.append((_ms(record[0]), record[1], record[2], record[3]))
+    for source_path in source_paths:
+        user = _store_user(context, source_path)
+        store = _file_action_store(context.get_relative_path(source_path))
+        for record in _query(source_path, 'file_action', query):
+            data_list.append((_ms(record[0]), user, store, record[1], record[2], record[3]))
 
     data_headers = (
         ('Action Time', 'datetime'),
+        'Android User',
+        'Store',
         'Action Type Value',
         'Vault File Path',
         'Row ID',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
@@ -1186,7 +1271,7 @@ def galleryvault_preferences(context):
     files_found = unique_files(context)
 
     data_list = []
-    source_path = ''
+    source_paths = []
 
     # (friendly label, raw shared_prefs key, is a millisecond timestamp)
     preference_fields = (
@@ -1216,8 +1301,6 @@ def galleryvault_preferences(context):
         if os.path.basename(file_found) != 'Kidd.xml':
             continue
 
-        source_path = file_found
-
         try:
             root = ET.parse(file_found).getroot()
         except (ET.ParseError, OSError) as error:
@@ -1226,6 +1309,10 @@ def galleryvault_preferences(context):
                 f'{file_found}: {error}'
             )
             continue
+
+        source_paths.append(file_found)
+        user = _store_user(context, file_found)
+        first_row = len(data_list)
 
         for label, raw_key, is_timestamp in preference_fields:
             value = _get_xml_value(root, raw_key)
@@ -1268,14 +1355,16 @@ def galleryvault_preferences(context):
                 'LockPin',
             ),
         ])
+        data_list[first_row:] = [(user,) + row for row in data_list[first_row:]]
 
     data_headers = (
+        'Android User',
         'Preference',
         'Value',
         'Original Key',
     )
 
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
@@ -1369,8 +1458,7 @@ def galleryvault_account_profile(context):
 
 @artifact_processor
 def galleryvault_cloud_account(context):
-    files_found = context.get_files_found()
-    source_path = _cloud_cache_db(files_found)
+    source_paths = _cloud_cache_dbs(context)
     data_list = []
 
     drive_query = '''
@@ -1379,47 +1467,48 @@ def galleryvault_cloud_account(context):
     FROM user_cloud_drive
     ORDER BY is_primary DESC
     '''
-    for record in _query(source_path, 'user_cloud_drive', drive_query):
-        data_list.extend([
-            ('Cloud Provider', record[0]),
-            ('Cloud Account', record[1]),
-            ('Drive ID', record[2]),
-            ('Drive Identity ID', record[3]),
-            ('Primary Drive', 'Yes' if record[4] else 'No'),
-            ('Drive Status', record[5]),
-            ('Space Used (bytes)', record[6]),
-            ('Drive Storage Size (bytes)', record[7]),
-            ('Root Folder Internal ID', record[8]),
-        ])
+    for source_path in source_paths:
+        user = _store_user(context, source_path)
+        rows = []
+        for record in _query(source_path, 'user_cloud_drive', drive_query):
+            rows.extend([
+                ('Cloud Provider', record[0]),
+                ('Cloud Account', record[1]),
+                ('Drive ID', record[2]),
+                ('Drive Identity ID', record[3]),
+                ('Primary Drive', 'Yes' if record[4] else 'No'),
+                ('Drive Status', record[5]),
+                ('Space Used (bytes)', record[6]),
+                ('Drive Storage Size (bytes)', record[7]),
+                ('Root Folder Internal ID', record[8]),
+            ])
 
-    for record in _query(
-            source_path, 'user_cloud_storage_property',
-            'SELECT storage_level_type, status FROM user_cloud_storage_property'):
-        data_list.extend([
-            ('Storage Level Type', record[0]),
-            ('Storage Property Status', record[1]),
-        ])
+        for record in _query(
+                source_path, 'user_cloud_storage_property',
+                'SELECT storage_level_type, status FROM user_cloud_storage_property'):
+            rows.extend([
+                ('Storage Level Type', record[0]),
+                ('Storage Property Status', record[1]),
+            ])
 
-    for record in _query(
-            source_path, 'user_cloud_monthly_usage',
-            'SELECT added_file_count, add_file_quota, is_upload_exceed_max '
-            'FROM user_cloud_monthly_usage'):
-        data_list.extend([
-            ('Files Added This Month', record[0]),
-            ('Monthly File Quota', record[1]),
-            ('Quota Exceeded', 'Yes' if record[2] else 'No'),
-        ])
+        for record in _query(
+                source_path, 'user_cloud_monthly_usage',
+                'SELECT added_file_count, add_file_quota, is_upload_exceed_max '
+                'FROM user_cloud_monthly_usage'):
+            rows.extend([
+                ('Files Added This Month', record[0]),
+                ('Monthly File Quota', record[1]),
+                ('Quota Exceeded', 'Yes' if record[2] else 'No'),
+            ])
+        data_list.extend((user, name, value) for name, value in rows)
 
-    data_headers = ('Name', 'Value')
-    return data_headers, data_list, source_path
+    data_headers = ('Android User', 'Name', 'Value')
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
 def galleryvault_cloud_folders(context):
-    files_found = context.get_files_found()
-    source_path = _cloud_cache_db(files_found)
-    folder_map = _cloud_folder_map(source_path)
-    path_cache = {}
+    source_paths = _cloud_cache_dbs(context)
     data_list = []
 
     query = '''
@@ -1428,15 +1517,21 @@ def galleryvault_cloud_folders(context):
     FROM cloud_folders
     ORDER BY create_date_utc
     '''
-    for record in _query(source_path, 'cloud_folders', query):
-        parent_path = _cloud_folder_path(record[5], folder_map, path_cache)
-        data_list.append((
-            _ms(record[0]), record[1], parent_path or '/', record[2], record[3],
-            record[4], record[6], record[7],
-        ))
+    for source_path in source_paths:
+        # Parent ids resolve only within the database that holds them.
+        folder_map = _cloud_folder_map(source_path)
+        path_cache = {}
+        user = _store_user(context, source_path)
+        for record in _query(source_path, 'cloud_folders', query):
+            parent_path = _cloud_folder_path(record[5], folder_map, path_cache)
+            data_list.append((
+                _ms(record[0]), user, record[1], parent_path or '/', record[2], record[3],
+                record[4], record[6], record[7],
+            ))
 
     data_headers = (
         ('Create Time', 'datetime'),
+        'Android User',
         'Folder Name',
         'Parent Path',
         'Folder UUID',
@@ -1445,15 +1540,12 @@ def galleryvault_cloud_folders(context):
         'Entry ID',
         'Cloud Drive ID',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
 def galleryvault_cloud_files(context):
-    files_found = context.get_files_found()
-    source_path = _cloud_cache_db(files_found)
-    folder_map = _cloud_folder_map(source_path)
-    path_cache = {}
+    source_paths = _cloud_cache_dbs(context)
     data_list = []
 
     query = '''
@@ -1464,20 +1556,26 @@ def galleryvault_cloud_files(context):
     FROM cloud_files
     ORDER BY file_add_time_utc
     '''
-    for record in _query(source_path, 'cloud_files', query):
-        folder_path = _cloud_folder_path(record[8], folder_map, path_cache) or '/'
-        dimensions = f'{record[6]} x {record[7]}' if record[6] or record[7] else ''
-        encryption_key = record[12].hex() if record[12] else ''
-        data_list.append((
-            _ms(record[0]), _ms(record[1]), record[2], folder_path, record[3],
-            record[4], record[5], dimensions, record[9],
-            'Yes' if record[10] else 'No', _ms(record[13]), record[11],
-            encryption_key, record[14], record[15],
-        ))
+    for source_path in source_paths:
+        # Parent ids resolve only within the database that holds them.
+        folder_map = _cloud_folder_map(source_path)
+        path_cache = {}
+        user = _store_user(context, source_path)
+        for record in _query(source_path, 'cloud_files', query):
+            folder_path = _cloud_folder_path(record[8], folder_map, path_cache) or '/'
+            dimensions = f'{record[6]} x {record[7]}' if record[6] or record[7] else ''
+            encryption_key = record[12].hex() if record[12] else ''
+            data_list.append((
+                _ms(record[0]), _ms(record[1]), user, record[2], folder_path, record[3],
+                record[4], record[5], dimensions, record[9],
+                'Yes' if record[10] else 'No', _ms(record[13]), record[11],
+                encryption_key, record[14], record[15],
+            ))
 
     data_headers = (
         ('Cloud Add Time', 'datetime'),
         ('Original Create Time', 'datetime'),
+        'Android User',
         'File Name',
         'Cloud Folder Path',
         'File UUID',
@@ -1492,24 +1590,13 @@ def galleryvault_cloud_files(context):
         'File Content Hash',
         'Cloud Drive ID',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
 def galleryvault_cloud_change_history(context):
-    files_found = context.get_files_found()
-    source_path = _cloud_cache_db(files_found)
+    source_paths = _cloud_cache_dbs(context)
     data_list = []
-
-    name_by_uuid = {}
-    for record in _query(
-            source_path, 'cloud_folders', 'SELECT folder_uuid, name FROM cloud_folders'):
-        if record[0]:
-            name_by_uuid[record[0]] = record[1]
-    for record in _query(
-            source_path, 'cloud_files', 'SELECT file_uuid, name FROM cloud_files'):
-        if record[0]:
-            name_by_uuid[record[0]] = record[1]
 
     query = '''
     SELECT modify_date_utc, entry_type, entry_uuid, change_action, revision_id,
@@ -1517,15 +1604,28 @@ def galleryvault_cloud_change_history(context):
     FROM entry_change_history
     ORDER BY modify_date_utc
     '''
-    for record in _query(source_path, 'entry_change_history', query):
-        data_list.append((
-            _ms(record[0]), CLOUD_ENTRY_TYPES.get(record[1], record[1]),
-            name_by_uuid.get(record[2], ''), record[2], record[3], record[4],
-            record[5], record[6],
-        ))
+    for source_path in source_paths:
+        # Entry names resolve only within the database that holds the entry.
+        name_by_uuid = {}
+        for record in _query(
+                source_path, 'cloud_folders', 'SELECT folder_uuid, name FROM cloud_folders'):
+            if record[0]:
+                name_by_uuid[record[0]] = record[1]
+        for record in _query(
+                source_path, 'cloud_files', 'SELECT file_uuid, name FROM cloud_files'):
+            if record[0]:
+                name_by_uuid[record[0]] = record[1]
+        user = _store_user(context, source_path)
+        for record in _query(source_path, 'entry_change_history', query):
+            data_list.append((
+                _ms(record[0]), user, CLOUD_ENTRY_TYPES.get(record[1], record[1]),
+                name_by_uuid.get(record[2], ''), record[2], record[3], record[4],
+                record[5], record[6],
+            ))
 
     data_headers = (
         ('Modify Time', 'datetime'),
+        'Android User',
         'Entry Type',
         'Entry Name',
         'Entry UUID',
@@ -1534,13 +1634,12 @@ def galleryvault_cloud_change_history(context):
         'Entry ID',
         'Cloud Drive ID',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor
 def galleryvault_cloud_upload_tasks(context):
-    files_found = context.get_files_found()
-    source_path = _cloud_cache_db(files_found)
+    source_paths = _cloud_cache_dbs(context)
     data_list = []
 
     query = '''
@@ -1558,19 +1657,20 @@ def galleryvault_cloud_upload_tasks(context):
            ON cloud_upload_part_tasks.cloud_file_transfer_task_id = cloud_file_upload_tasks._id
     ORDER BY cloud_file_upload_tasks.begin_time
     '''
-    for record in _query(source_path, 'cloud_file_upload_tasks', query):
+    for user, record in _user_rows(context, source_paths, 'cloud_file_upload_tasks', query):
         percent = ''
         if record[8]:
             percent = f'{(record[7] or 0) / record[8] * 100:.1f}%'
         encryption_key = record[11].hex() if record[11] else ''
         data_list.append((
-            _ms(record[0]), record[1], record[2], record[3], record[4], record[5],
+            _ms(record[0]), user, record[1], record[2], record[3], record[4], record[5],
             record[6], record[7], record[8], percent, record[9], record[10],
             encryption_key, record[12],
         ))
 
     data_headers = (
         ('Begin Time', 'datetime'),
+        'Android User',
         'File Name',
         'File Bytes Uploaded',
         'File Bytes Total',
@@ -1585,4 +1685,4 @@ def galleryvault_cloud_upload_tasks(context):
         'File Encryption Key (hex)',
         'Task ID',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)

@@ -131,6 +131,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | slack |
 | sleepAsAndroid |
 | smartSidebarFileDock |
+| smartselect |
 | snapseed |
 | solidExplorer |
 | swellbeing |
@@ -220,9 +221,13 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | WordsWithFriends |
 | Xender |
 | Zapya |
+| adServices |
 | adobeReader |
 | airGuard |
 | amazonShopping |
+| androidBrowser |
+| androidEmail |
+| androidKeystore |
 | androidauto |
 | appicons |
 | battery_usage_v4 |
@@ -258,6 +263,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | chromePaymentsCustomerData |
 | chromeShortcuts |
 | chromeTopSites |
+| chromiumFavicons |
 | chromiumFileSystem |
 | citymapper |
 | cmh |
@@ -286,6 +292,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | gboard |
 | gmailEmails |
 | gmailIMAPEmails |
+| googleAccounts |
 | googleCalendar |
 | googleCallScreen |
 | googleCast |
@@ -335,13 +342,16 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | novaMediaCandidates |
 | pSettings |
 | payPal |
+| photoPickerSyntheticFiles |
 | pikpakCloudlist |
 | pikpakDownloads |
 | pikpakPlay |
 | pkgPredictions |
 | playDataUsage |
 | playInstallSource |
+| playServicesSmsIndex |
 | primeVideo |
+| privateNotepad |
 | protonVPN |
 | protonmail |
 | reddit |
@@ -362,6 +372,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | smanagerLow |
 | smembersAppInv |
 | smembersEvents |
+| smsClockGap |
 | smsmms |
 | smyFiles |
 | smyFiles2 |

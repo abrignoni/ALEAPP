@@ -38,16 +38,24 @@ failure that passes again is flagged so the entry gets removed.
 full file system extraction carries the same app data directory under several
 spellings (data/data/<pkg>, data/user/0/<pkg>, ...) and can carry a second
 Android user at data/user/<n>/<pkg>. A single-view fixture cannot detect the
-two defects that follow, so this mode synthesizes them by restaging the zip's
-data/data members and checks the arithmetic per artifact:
+two defects that follow, so this mode synthesizes them from the zip's members
+and checks the arithmetic per artifact:
 
-- duplicate view (data/user/0): the same file under a second spelling must not
-  change the row count. A doubled count means the storage views are not being
-  collapsed (storagePathViews.unique_files is the shared fix).
-- second tenant (data/user/10): a second Android user's copy must exactly
-  double the row count. An unchanged count means the second user's data is
-  read into files_found and then silently dropped, which is what a
-  first-match-wins accessor does.
+- duplicate view (data/user/0): each data/data member restaged under its
+  data/user/0 spelling must not change the row count. A doubled count means
+  the storage views are not being collapsed (storagePathViews.unique_files is
+  the shared fix).
+- second tenant: each user's app data (data/data, which is user 0, and any
+  data/user/<n>) is copied under data/user/<new id>, the lowest id at or above
+  10 that no member uses, and the row count must exactly double. An unchanged
+  or short count means a user's data is read into files_found and then
+  silently dropped, which is what a first-match-wins accessor does. Each
+  user's shared storage (data/media/<n>) is copied under data/media/<new id>
+  with the same new id. For a fixture holding only user 0 this is data/data
+  copied to data/user/10 and data/media/0 to data/media/10; a fixture that
+  already holds a second user has that user copied too, so the doubling
+  still holds. Other per-user roots (data/user_de, data/misc_ce, ...) are
+  not copied.
 
 Counts are the comparison, not row contents: the two runs extract into
 different temp directories and restage mtimes, so content equality would fail
@@ -79,6 +87,18 @@ TEMP_EXTRACT_RE = re.compile(r"admin/test/temp/extract_[A-Za-z0-9_]+_\d+")
 TEMP_TOKEN = "<extract-dir>"
 NATIVE_BACKSLASH_PATHS = os.sep == "\\"
 KNOWN_FAILURES_PATH = CASES_DIR / "known_failures.json"
+# Per-user folders an Android extraction can hold, each with the user id as its
+# next path segment. A new user id must be free in all of them.
+USER_ROOTS = ("data/user", "data/user_de", "data/media", "data/misc_ce", "data/misc_de",
+              "data/system_ce", "data/system_de", "data_mirror/data_ce/null",
+              "data_mirror/data_de/null")
+USER_ID_DIR_RE = re.compile("/(?:" + "|".join(map(re.escape, USER_ROOTS)) + r")/(\d+)/")
+# Per-user data the second-tenant leg copies: app data under data/data (user
+# 0's legacy spelling) and data/user/<n>, and shared storage under
+# data/media/<n>.
+APP_DATA_MEMBER_RE = re.compile(
+    r"^(?P<prefix>.*?/)?(?:(?P<legacy>data/data)|data/user/(?P<uid>\d+)"
+    r"|data/media/(?P<media>\d+))/(?P<rest>.+)$")
 COMPLETION_MARKER = "Test case comparison complete"
 
 
@@ -153,6 +173,70 @@ def make_view_variant(src_zip, dst_zip, view):
     return added
 
 
+def make_tenant_variant(src_zip, dst_zip):
+    """Copy the case zip, adding each user's data again under a new user id.
+
+    Copied are app data, data/data (user 0) and data/user/<n>, and shared
+    storage, data/media/<n>. Each user id found there is given the lowest id
+    >= 10 that no member uses under any per-user root, and that user's app
+    data is written again under data/user/<new id> and its shared storage
+    under data/media/<new id>. data/data and data/user/0 land on the same new
+    name; the first one written is kept. For a fixture holding only user 0
+    this is data/data copied to data/user/10 and data/media/0 to
+    data/media/10; a fixture that already holds a second user gets that user
+    copied too, so the count still doubles.
+
+    Returns (members added, {old user id: new user id}).
+    """
+    with zipfile.ZipFile(src_zip) as zin:
+        infos = zin.infolist()
+        names = [info.filename for info in infos]
+        parsed = {}
+        for name in names:
+            match = APP_DATA_MEMBER_RE.match(name)
+            if match and not name.endswith('/'):
+                if match.group('media') is not None:
+                    root, uid = 'data/media', int(match.group('media'))
+                else:
+                    root = 'data/user'
+                    uid = 0 if match.group('legacy') else int(match.group('uid'))
+                parsed[name] = (match.group('prefix') or '', root, uid, match.group('rest'))
+        mapping = {}
+        taken = {int(m.group(1)) for name in names for m in USER_ID_DIR_RE.finditer('/' + name)}
+        for uid in sorted({entry[2] for entry in parsed.values()}):
+            new_id = free_user_id([], start=10, taken=taken)
+            mapping[uid] = new_id
+            taken.add(new_id)
+        written = set(names)
+        added = 0
+        with zipfile.ZipFile(dst_zip, 'w', zipfile.ZIP_DEFLATED) as zout:
+            for info in infos:
+                payload = zin.read(info.filename)
+                # writestr() updates the ZipInfo it is given, so read before
+                # writing: the source's offsets would no longer be valid after.
+                zout.writestr(info, payload)
+                if info.filename not in parsed:
+                    continue
+                prefix, root, uid, rest = parsed[info.filename]
+                alt = f"{prefix}{root}/{mapping[uid]}/{rest}"
+                if alt in written:
+                    continue
+                written.add(alt)
+                zout.writestr(alt, payload)
+                added += 1
+    return added, mapping
+
+
+def free_user_id(names, start=10, taken=None):
+    """Lowest Android user id >= start that no member path already uses."""
+    taken = set(taken or ()) | {int(m.group(1)) for name in names
+                                for m in USER_ID_DIR_RE.finditer('/' + name)}
+    user_id = start
+    while user_id in taken:
+        user_id += 1
+    return user_id
+
+
 def count_rows(test_module, zip_path, module, artifact, case_data):
     """Fresh row count for one artifact against one zip."""
     os_version = case_data.get("image_info", {}).get("os_version")
@@ -181,19 +265,27 @@ def run_storage_views(test_module, module, artifact, case, case_data):
 
     (CASES_DIR.parent / 'temp').mkdir(parents=True, exist_ok=True)
     results = []
-    legs = (("[duplicate-view]", '/data/user/0/', base,
+    legs = (("[duplicate-view]", base,
              "a duplicate storage view of the same container must not change the count"),
-            ("[second-tenant]", '/data/user/10/', 2 * base,
-             "a second Android user's copy must exactly double the count"))
-    for suffix, view, expected, rule in legs:
+            ("[second-tenant]", 2 * base,
+             "a copy of each user's app data under a new user id must exactly double the count"))
+    for suffix, expected, rule in legs:
         handle = tempfile.NamedTemporaryFile(
             suffix='.zip', dir=str(CASES_DIR.parent / 'temp'), delete=False)
         variant = Path(handle.name)
         handle.close()
         try:
-            added = make_view_variant(zip_path, variant, view)
+            users = ""
+            if suffix == "[duplicate-view]":
+                added = make_view_variant(zip_path, variant, '/data/user/0/')
+                empty = "no data/data members to restage"
+            else:
+                added, mapping = make_tenant_variant(zip_path, variant)
+                empty = "no data/data, data/user or data/media members to copy"
+                users = " (users " + ", ".join(
+                    f"{old}->{new}" for old, new in sorted(mapping.items())) + ")"
             if not added:
-                results.append((suffix, "SKIP", "no data/data members to restage"))
+                results.append((suffix, "SKIP", empty))
                 continue
             got = count_rows(test_module, variant, module, artifact, case_data)
         except Exception as ex:  # pylint: disable=broad-except
@@ -202,10 +294,10 @@ def run_storage_views(test_module, module, artifact, case, case_data):
         finally:
             variant.unlink(missing_ok=True)
         if got == expected:
-            results.append((suffix, "PASS", f"{base} rows -> {got} rows"))
+            results.append((suffix, "PASS", f"{base} rows -> {got} rows{users}"))
         else:
             results.append((suffix, "FAIL",
-                            f"{base} rows -> {got} rows, expected {expected}: {rule}"))
+                            f"{base} rows -> {got} rows{users}, expected {expected}: {rule}"))
     return results
 
 

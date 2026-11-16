@@ -128,9 +128,10 @@
       },
       "galleryvault_file_actions": {
         "search_patterns": [
-          "*/.galleryvault_*/backup/file_action_log.db*"
+          "*/.galleryvault_*/backup/file_action_log.db*",
+          "*/com.thinkyeah.galleryvault/databases/file_action_log.db*"
         ],
-        "file_count": 2,
+        "file_count": 4,
         "expected_output": {
           "headers": [],
           "data": []

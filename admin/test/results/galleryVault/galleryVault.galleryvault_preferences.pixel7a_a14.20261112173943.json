@@ -4,130 +4,152 @@
     "artifact_name": "GalleryVault - Preferences",
     "function_name": "galleryvault_preferences",
     "case_number": "pixel7a_a14",
-    "number_of_columns": 3,
+    "number_of_columns": 4,
     "number_of_rows": 21,
-    "total_data_size_bytes": 1109,
+    "total_data_size_bytes": 1130,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/galleryVault/testdata.galleryVault.galleryvault_preferences.pixel7a_a14.zip",
-    "start_time": "2026-10-04T19:54:14.048298+00:00",
-    "end_time": "2026-10-04T19:54:14.080244+00:00",
-    "run_time_seconds": 0.0002968311309814453,
+    "start_time": "2026-11-12T17:39:43.990146+00:00",
+    "end_time": "2026-11-12T17:39:44.012820+00:00",
+    "run_time_seconds": 0.00039386749267578125,
     "last_commit": {
-      "hash": "1ec9b7c22e14aa96e25717842aab5186d9dc82ee",
+      "hash": "ccf522fc06b634d1a00c98921408736596c94588",
       "author_name": "Brigs",
       "author_email": "abrignoni@gmail.com",
-      "date": "2026-10-04T08:49:26-04:00",
-      "message": "WIP: time handling fixes from the notes audit, not validated"
+      "date": "2026-11-12T11:39:33-05:00",
+      "message": "fix(galleryVault): read every Android user's file action log, AppLock.db and cloud_cache.db"
     }
   },
   "headers": [
+    "Android User",
     "Preference",
     "Value",
     "Original Key"
   ],
   "data": [
     [
+      "0",
       "Authentication Email",
       "lizdehner505@gmail.com",
       "AuthenticationEmail"
     ],
     [
+      "0",
       "Gallery Vault Folder",
       ".galleryvault_DoNotDelete_1707411051",
       "gallery_vault_folder"
     ],
     [
+      "0",
       "First Open Time",
       1707411035,
       "first_open_time"
     ],
     [
+      "0",
       "Last Recycle Bin Cleanup Time",
       1707411113,
       "last_clear_expire_recycle_bin_file_time"
     ],
     [
+      "0",
       "Cloud Storage Type",
       "",
       "use_cloud_storage_type"
     ],
     [
+      "0",
       "Icon Disguise Enabled",
       "",
       "icon_disguise_enabled"
     ],
     [
+      "0",
       "Calculator Disguise Shortcut ID",
       "",
       "calculator_short_cut_id"
     ],
     [
+      "0",
       "Icon Disguise Enabled Time",
       "",
       "last_enable_icon_disguise_time"
     ],
     [
+      "0",
       "App Fresh Installer",
       "com.android.vending",
       "app_fresh_installer"
     ],
     [
+      "0",
       "Signature",
       "e907ac33-bb4b-4583-a959-527359a94549",
       "signature"
     ],
     [
+      "0",
       "Is Unlocked",
       "false",
       "is_unlocked"
     ],
     [
+      "0",
       "Active Time",
       1707418524,
       "ActiveTimeMS"
     ],
     [
+      "0",
       "App Version Code",
       "40309",
       "VersionCode"
     ],
     [
+      "0",
       "Fresh Install Version Code",
       "40309",
       "FreshInstallVersionCode"
     ],
     [
+      "0",
       "Launch Count",
       "2",
       "launch_times"
     ],
     [
+      "0",
       "Add File Count",
       "2",
       "add_file_times"
     ],
     [
+      "0",
       "Unlock Successfully Profile ID",
       "1",
       "unlock_successfully_profile_id"
     ],
     [
+      "0",
       "Last Android ID (DES key source)",
       "875ad176ffb951ac",
       "last_android_id"
     ],
     [
+      "0",
       "LockPin",
       "7110EDA4D09E062AA5E4A390B0A572AC0D2C022081DC9BDB52D04DC20036DBD8313ED055",
       "LockPin"
     ],
     [
+      "0",
       "LockPin Part 1 SHA1 (40 hex)",
       "7110EDA4D09E062AA5E4A390B0A572AC0D2C0220",
       "LockPin"
     ],
     [
+      "0",
       "LockPin Part 2 MD5 (32 hex)",
       "81DC9BDB52D04DC20036DBD8313ED055",
       "LockPin"

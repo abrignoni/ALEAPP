@@ -4,25 +4,26 @@
     "artifact_name": "GalleryVault - Browser History",
     "function_name": "galleryvault_browser_history",
     "case_number": "pixel7a_a14",
-    "number_of_columns": 4,
+    "number_of_columns": 5,
     "number_of_rows": 0,
     "total_data_size_bytes": 0,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/galleryVault/testdata.galleryVault.galleryvault_browser_history.pixel7a_a14.zip",
-    "start_time": "2026-08-25T04:48:38.713203+00:00",
-    "end_time": "2026-08-25T04:48:38.762870+00:00",
-    "run_time_seconds": 0.0007348060607910156,
+    "start_time": "2026-11-12T17:39:44.013649+00:00",
+    "end_time": "2026-11-12T17:39:44.032759+00:00",
+    "run_time_seconds": 0.0009319782257080078,
     "last_commit": {
-      "hash": "9dd6f0ba89c1734104074ca53e08c99302197700",
+      "hash": "ccf522fc06b634d1a00c98921408736596c94588",
       "author_name": "Brigs",
       "author_email": "abrignoni@gmail.com",
-      "date": "2026-08-07T23:27:07-04:00",
-      "message": "fix: fill in the artifact author field left empty on 27 artifacts"
+      "date": "2026-11-12T11:39:33-05:00",
+      "message": "fix(galleryVault): read every Android user's file action log, AppLock.db and cloud_cache.db"
     }
   },
   "headers": [
     "Last Visit Time",
+    "Android User",
     "Title",
     "URL",
     "Host"
