@@ -252,5 +252,6 @@
   "*/app_webview/*/History*": "deliberate cross-app sweep whose rows attribute the owning app: an app's embedded WebView, named by its package; matched no file on the 10 corpus images run 2026-11-13, unexercised (read for the In History cross-check)",
   "*/misc/keystore/persistent.sqlite*": "shared or system location: no app data container in the path; the platform Keystore 2.0 database, measured 2026-11-15 on 37 Android corpora (one copy each; samsungs20_a13 under Volumes/userdata/misc)",
   "*/misc/keystore/user_*/*": "shared or system location: no app data container in the path; the pre-Keystore 2.0 per-entry files, measured 2026-11-15 on cookbook_a11, galaxys10_a10 and pixel3_a11",
-  "*/system/users/*/wallpaper*": "shared or system location: no app data container in the path; the platform wallpaper store per Android user, measured 2026-11-16 on 22 Android corpora and emu_a15_wallpaper_known_20261116"
+  "*/system/users/*/wallpaper*": "shared or system location: no app data container in the path; the platform wallpaper store per Android user, measured 2026-11-16 on 22 Android corpora and emu_a15_wallpaper_known_20261116",
+  "*/system/adservices/*/consent/ConsentManagerStorageIdentifier.xml": "shared or system location: no app data container in the path; the AdServices system service's per-user consent store, measured 2026-11-16 on 16 Android corpora including emu_a15_adservices_on_known_20261116"
 }
