@@ -75,7 +75,8 @@ def _ms_to_utc(value):
 
 
 def _android_user(path):
-    norm = path.replace(os.sep, '/')
+    '''n for a path under data/user/<n>, 0 under data/data, else blank; path is evidence-relative.'''
+    norm = '/' + path.replace(os.sep, '/').lstrip('/')
     match = _USER.search(norm)
     if match:
         return int(match.group(1))
@@ -114,7 +115,7 @@ def _rows(context, label, table, query):
                 logfunc(f'{label}: no {table} table in {path}')
                 continue
             for row in db.execute(query):
-                data_list.append((_android_user(path), row))
+                data_list.append((_android_user(context.get_relative_path(path)), row))
         except sqlite3.Error as ex:
             logfunc(f'{label}: could not read {path}: {ex}')
         finally:
