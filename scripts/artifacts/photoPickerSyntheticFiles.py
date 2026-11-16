@@ -1,20 +1,29 @@
 __artifacts_v2__ = {
-    "get_photo_picker_copies": {
-        "name": "Photo Picker Cached Copies",
-        "description": "Files the system Photo Picker wrote under .transforms/synthetic when it handed a photo "
-                       "or video to an app, with their recorded file times, and the original's MediaStore or "
-                       "picker.db record and, when the extraction holds it, the original file.",
+    "get_photo_picker_synthetic_files": {
+        "name": "Photo Picker Synthetic Files",
+        "description": "Placeholder files MediaProvider creates under .transforms/synthetic when the file path "
+                       "of a Photo Picker item is looked up, with their recorded file times, the matching "
+                       "MediaStore or picker.db record and, when the extraction holds one, the file at the path "
+                       "MediaStore records.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-11-16",
         "last_update_date": "2026-11-16",
         "requirements": "none",
         "category": "Media",
-        "notes": "One row per file under .transforms/synthetic/picker*/<user>/<provider>/media/ on primary"
-                 " shared storage. MediaProvider names the folder from the picker session: "
-                 "picker_get_content when the picker was opened with ACTION_GET_CONTENT, picker otherwise "
-                 "( "
+        "notes": "One row per file under .transforms/synthetic/picker*/<user>/<provider>/media/. "
+                 "MediaProvider creates each one when its path is looked up: it queries the picker item's "
+                 "size and sets the file's length to it ( "
+                 "https://android.googlesource.com/platform/packages/providers/MediaProvider/+/a183e2b92c71d86ec7b104c116ef3f4dbcbb523f/src/com/android/providers/media/MediaProvider.java#2668"
+                 " , "
+                 "https://android.googlesource.com/platform/packages/providers/MediaProvider/+/a183e2b92c71d86ec7b104c116ef3f4dbcbb523f/src/com/android/providers/media/util/SyntheticPathUtils.java#114"
+                 " ). The file therefore does not hold the picture; File Content says what its bytes are. "
+                 "The folder comes from the picker session: picker_get_content for ACTION_GET_CONTENT, "
+                 "picker for any other session ( "
                  "https://android.googlesource.com/platform/packages/providers/MediaProvider/+/a183e2b92c71d86ec7b104c116ef3f4dbcbb523f/src/com/android/providers/media/PickerUriResolver.java#339"
-                 " ). Media ID is the file's name without its extension. For the on-device provider "
+                 " ). A third folder, picker_transcoded ( "
+                 "https://android.googlesource.com/platform/packages/providers/MediaProvider/+/a183e2b92c71d86ec7b104c116ef3f4dbcbb523f/src/com/android/providers/media/PickerUriResolver.java#86"
+                 " ), is matched too; its file takes the transcoded size; it was not seen in the samples. "
+                 "Media ID is the file's name without its extension. For the on-device provider "
                  "(com.android.providers.media.photopicker) it is looked up as _id in the files table of "
                  "the same Android user's external.db and, when absent there, as old_id in its "
                  "deleted_media table; for any other provider (Google Photos' cloudpicker in the samples) "
@@ -23,38 +32,42 @@ __artifacts_v2__ = {
                  "no files row has it; what writes deleted_media was not established (deleting a picked "
                  "photo's file on a test emulator added no row). The same file reached through several "
                  "storage views (data/media/<n> and mnt/pass_through/<n>/emulated/<n>) is reported once. "
-                 "Rollback snapshots of external.db and picker.db are not read. Copy Content is what the "
-                 "file's bytes are. It was 'all zero bytes' on all 42 corpus rows, at the original's size,"
-                 " and on the test emulator, where the file read as root on the device was also "
-                 "zero-filled, so the file is not a source for the picture. Original Media shows the "
-                 "original instead: the file at the path MediaStore records (_data, "
-                 "/storage/emulated/<n>/... searched as media/<n>/... in the extraction), shown only when "
-                 "its bytes are an image or video. Original File says whether that file was found and what"
-                 " it is. Copy Modified and Copy Accessed are the times the extraction records for the "
+                 "Rollback snapshots of external.db and picker.db are not read. Original Media shows the "
+                 "file now at the path MediaStore records (_data, /storage/emulated/<n>/... searched as "
+                 "media/<n>/... in the extraction), only when its bytes are an image or video. It is "
+                 "matched by path, not by content. Original File says whether that file was found and what"
+                 " it is. File Modified and File Accessed are the times the extraction records for the "
                  "file; neither is taken from the staged file. Known data (Android 15 emulator, a Chrome "
-                 "file input, one photo picked three times): each confirmed pick rewrote the file, so Copy"
-                 " Modified was the most recent pick (17:25:19.96 UTC for a pick logged at 17:25:20.25), "
-                 "while Copy Accessed stayed at the first pick through both re-picks; /data was mounted "
-                 "noatime on that emulator. Not tested: the picker folder (apps that request the picker "
-                 "directly), cloud picks and real devices. On the 6 corpus images in sample_data (Android "
-                 "13 to 17, 42 rows): 33 matched external.db files, 4 matched picker.db media, 4 were "
-                 "listed only in deleted_media, and 1 Google Photos copy on kevin_pocox7_a15 matched "
-                 "nothing. Original Media showed the original on 32 of the 33 files rows; on the other the"
-                 " extraction held no file at the recorded path. Copy Size equalled Original Size on all "
-                 "37 matched rows. Original Date Taken was blank on 30 of the 37 because the matched row "
-                 "held no value. Copy Accessed was recorded only on hc_pixel8pro_a17, where it was at or "
-                 "before Copy Modified on all 8 rows. Copy Accessed had no value on any row of "
+                 "file input, one photo picked three times, host clock for the log): each confirmed pick "
+                 "moved the file's modified time, so it matched the most recent pick (17:25:19.96 UTC for "
+                 "a pick logged at 17:25:20.25), while the file's accessed time on the device (stat) "
+                 "stayed at the first pick through both re-picks; /data was mounted noatime on that "
+                 "emulator. That emulator's archive records no accessed time, so File Accessed was blank "
+                 "in a run on it. Not tested: the picker folder (any session other than "
+                 "ACTION_GET_CONTENT), picker_transcoded, cloud picks, real devices, and whether a later "
+                 "open of the file by the receiving app moves its modified time. On the 6 corpus images in"
+                 " sample_data (Android 13 to 17, 42 rows): 33 matched external.db files, 4 matched "
+                 "picker.db media, 4 were listed only in deleted_media, and 1 Google Photos file on "
+                 "kevin_pocox7_a15 matched nothing. File Content was 'all zero bytes' on all 42 rows, and "
+                 "on the test emulator the file read as root from /data/media/0 was also zero-filled. On "
+                 "the 37 matched rows File Size equalled Original Size. Original Media showed the file at "
+                 "the recorded path on 32 of the 33 files rows; on the other the extraction held no file "
+                 "at that path. Original Date Taken was blank on 30 of the 37 matched rows because the "
+                 "matched row held no value. File Accessed was recorded only on hc_pixel8pro_a17, where it"
+                 " was at or before File Modified on all 8 rows. File Accessed had no value on any row of "
                  "hc_pixel8pro_a16, kevin_pocox7_a15, pixel7a_a14, russell_a14 and russell_pixel6a_a13: "
-                 "those extractions record no accessed time. On pixel7a_a14 Provider (as stored) held one "
-                 "value on all 19 rows, and Original Date Added and Original Date Modified were identical "
-                 "on all 19 rows as stored. On russell_a14 and russell_pixel6a_a13 the one row is listed "
-                 "only in deleted_media, so Original Date Added, Original Date Modified, Original Size, "
-                 "Original Name, Original Path, Original File, Original Media and Original Owner Package "
-                 "have no value on it. Copy Content held 'all zero bytes' on every row of every image. "
-                 "Android User held 0 on all 42 rows; it is kept because it selects which user's "
-                 "external.db is used. Not read: media_grants (empty on hc_pixel8pro_a16; it is in "
-                 "external.db on Android 15 and picker.db on Android 16) and the Google Keep and Files by "
-                 "Google caches. Suggested by an examiner on a mailing list.",
+                 "those archives store 0 in the accessed-time field of every file, which is read as no "
+                 "value. On pixel7a_a14 Provider (as stored) held one value on all 19 rows, and Original "
+                 "Date Added and Original Date Modified were identical as stored on the 17 rows that have "
+                 "them. On russell_a14 and russell_pixel6a_a13 the one row is listed only in "
+                 "deleted_media, so Original Date Taken, Original Date Added, Original Date Modified, "
+                 "Original Size, Original Name, Original Path, Original File, Original Media and Original "
+                 "Owner Package have no value on it. File Content held 'all zero bytes' on every row of "
+                 "every image. Android User held 0 on all 42 rows; it is kept because it selects which "
+                 "user's external.db is used. date_added and date_modified are read as seconds, datetaken "
+                 "and date_taken_ms as milliseconds. Not read: media_grants. It held no rows on any of the"
+                 " 6 images or the emulator; it is in external.db on all of them, and also in picker.db on"
+                 " hc_pixel8pro_a16 and hc_pixel8pro_a17. Suggested by an examiner on a mailing list.",
         "paths": ('*/.transforms/synthetic/picker*/*/media/*',
                   '*/com.google.android.providers.media.module/databases/external.db*',
                   '*/com.android.providers.media.module/databases/external.db*',
@@ -67,8 +80,8 @@ __artifacts_v2__ = {
             "hc_pixel8pro_a17": "Android 17 | com.google.android.providers.media.module | 8 rows",
             "kevin_pocox7_a15": "Android 15 | com.google.android.providers.media.module | 5 rows",
             "pixel7a_a14": "Android 14 | com.google.android.providers.media.module | 19 rows",
-            "russell_a14": "Android 14 | com.google.android.providers.media.module | 1 rows",
-            "russell_pixel6a_a13": "Android 13 | com.google.android.providers.media.module | 1 rows",
+            "russell_a14": "Android 14 | com.google.android.providers.media.module | 1 row",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.providers.media.module | 1 row",
         },
     },
 }
@@ -150,7 +163,7 @@ def _external_rows(db_path):
                               'datetaken', 'owner_package_name', '_size') if c in cols]
         rows = db.execute(f'SELECT {", ".join(wanted)} FROM files').fetchall()
     except sqlite3.Error as error:
-        logfunc(f'Photo Picker Cached Copies: could not read {db_path}: {error}')
+        logfunc(f'Photo Picker Synthetic Files: could not read {db_path}: {error}')
         rows = []
     finally:
         db.close()
@@ -162,7 +175,7 @@ def _external_rows(db_path):
                 for (old_id,) in db.execute('SELECT old_id FROM deleted_media WHERE old_id IS NOT NULL'):
                     found.setdefault(str(old_id), {_DELETED_ONLY: True})
             except sqlite3.Error as error:
-                logfunc(f'Photo Picker Cached Copies: could not read deleted_media in {db_path}: {error}')
+                logfunc(f'Photo Picker Synthetic Files: could not read deleted_media in {db_path}: {error}')
             finally:
                 db.close()
     return found
@@ -180,7 +193,7 @@ def _picker_cloud_rows(db_path):
         rows = db.execute('SELECT cloud_id, date_taken_ms, size_bytes, mime_type FROM media '
                           'WHERE cloud_id IS NOT NULL').fetchall()
     except sqlite3.Error as error:
-        logfunc(f'Photo Picker Cached Copies: could not read {db_path}: {error}')
+        logfunc(f'Photo Picker Synthetic Files: could not read {db_path}: {error}')
         rows = []
     finally:
         db.close()
@@ -192,7 +205,7 @@ def _ms(value):
 
 
 @artifact_processor
-def get_photo_picker_copies(context):
+def get_photo_picker_synthetic_files(context):
     seeker = Context.get_seeker()
     files = sorted(unique_files(context), key=str)
     copies = {}
@@ -269,8 +282,8 @@ def get_photo_picker_copies(context):
         ))
 
     data_headers = (
-        ('Copy Modified', 'datetime'),
-        ('Copy Accessed', 'datetime'),
+        ('File Modified', 'datetime'),
+        ('File Accessed', 'datetime'),
         ('Original Date Taken', 'datetime'),
         ('Original Date Added', 'datetime'),
         ('Original Date Modified', 'datetime'),
@@ -279,8 +292,8 @@ def get_photo_picker_copies(context):
         'Provider (as stored)',
         'Android User',
         'Media ID',
-        ('Copy Size', 'number'),
-        'Copy Content',
+        ('File Size', 'number'),
+        'File Content',
         ('Original Size', 'number'),
         'Original Name',
         'Original Path',

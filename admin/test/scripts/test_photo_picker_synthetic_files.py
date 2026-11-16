@@ -1,4 +1,4 @@
-"""Photo Picker Cached Copies on a synthetic tree (values invented for the test)."""
+"""Photo Picker Synthetic Files on a synthetic tree (values invented for the test)."""
 import pathlib
 import sqlite3
 import sys
@@ -7,7 +7,7 @@ import unittest
 from types import SimpleNamespace
 from unittest.mock import patch
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[3]))
-from scripts.artifacts import photoPickerCopies as parser  # noqa: E402
+from scripts.artifacts import photoPickerSyntheticFiles as parser  # noqa: E402
 
 LOCAL = 'com.android.providers.media.photopicker'
 CLOUD = 'com.google.android.apps.photos.cloudpicker'
@@ -65,14 +65,14 @@ def context(root, paths):
                            get_relative_path=lambda p: str(pathlib.Path(p).relative_to(root)))
 
 
-class PhotoPickerCopiesTest(unittest.TestCase):
+class PhotoPickerSyntheticFilesTest(unittest.TestCase):
     def test_joins_and_views(self):
         with tempfile.TemporaryDirectory() as directory:
             root = pathlib.Path(directory)
             paths = fixture(root)
             with patch.object(parser, 'check_in_media', side_effect=lambda p, *_: 'media'), \
                     patch.object(parser.Context, 'get_seeker', return_value=None):
-                headers, rows, source = parser.get_photo_picker_copies.__wrapped__(context(root, paths))
+                headers, rows, source = parser.get_photo_picker_synthetic_files.__wrapped__(context(root, paths))
         self.assertTrue(all(len(r) == len(headers) for r in rows))
         by_id = {r[9]: r for r in rows}
         self.assertEqual(sorted(by_id), ['11', '12', '13', 'abc-1_all_2'])  # two views of 11 collapse
