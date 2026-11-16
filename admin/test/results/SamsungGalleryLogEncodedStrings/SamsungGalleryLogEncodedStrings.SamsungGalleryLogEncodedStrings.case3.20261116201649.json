@@ -1,0 +1,80 @@
+{
+  "metadata": {
+    "module_name": "SamsungGalleryLogEncodedStrings",
+    "artifact_name": "Samsung Gallery Log Encoded Strings",
+    "function_name": "SamsungGalleryLogEncodedStrings",
+    "case_number": "case3",
+    "number_of_columns": 10,
+    "number_of_rows": 4,
+    "total_data_size_bytes": 819,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/SamsungGalleryLogEncodedStrings/testdata.SamsungGalleryLogEncodedStrings.SamsungGalleryLogEncodedStrings.case3.zip",
+    "start_time": "2026-11-16T20:16:49.415553+00:00",
+    "end_time": "2026-11-16T20:16:49.463246+00:00",
+    "run_time_seconds": 0.015845060348510742,
+    "last_commit": null
+  },
+  "headers": [
+    "Timestamp (as stored)",
+    "Category (as stored)",
+    "Table",
+    "Column",
+    "Row ID",
+    "Decoded (in context)",
+    "Raw (obfuscated)",
+    "Scheme/key",
+    "Note",
+    "Android User"
+  ],
+  "data": [
+    [
+      "2026-01-05 09:12:31.104",
+      2,
+      "log",
+      "__log",
+      1,
+      "moveToTrash album= Brighton Pier  from= DCIM/Camera  done",
+      "moveToTrash album= #G$E6yV61TgBdsbJy6u1t9Q==  from= #G$E5jnCNwsEpzbzv9sk=  done",
+      "V3[6], V3[5]",
+      "",
+      ""
+    ],
+    [
+      "2026-01-05 09:15:02.517",
+      2,
+      "log",
+      "__log",
+      3,
+      "moveToTrash [Old Holiday 2016] [DCIM/Camera/20160704_101112.jpg] done",
+      "moveToTrash [pNh0C0T+KXj2zimIVk4piFIOKYhUhvbOKYhWnimIVk4piFYeKXj3nimIUg4piFMuKYhTDil48x4piFNg==RRnq+7Z] [zH2K+G4piFROKYhUPimIVJTeKYhS/il49DYeKYhW3imIVl4pePcuKXj2Hil48vMuKYhTDimIUx4piFNuKYhTDil483MOKYhTTil49f4pePMeKXjzDil48xMeKXjzHimIUy4piFLuKXj2pw4pePZw==ZKX09HQ] done",
+      "V1, V1",
+      "V1 (prefix=6) | V1 (prefix=6)",
+      ""
+    ],
+    [
+      "2026-01-05 09:15:09.860",
+      2,
+      "log",
+      "__log",
+      4,
+      "[Screenshots]",
+      "[T9+qz/4piFU+KYhWPil49y4pePZWXil49uc2jimIVv4piFdOKXj3M=JPSZzm1]",
+      "V1",
+      "V1 (prefix=6)",
+      ""
+    ],
+    [
+      "2026-01-05 09:21:13.025",
+      2,
+      "log",
+      "__log",
+      6,
+      "restore album= WAL only row  ok",
+      "restore album= #G$E75K0nSQZEpEkfHe5N  ok",
+      "V3[7]",
+      "",
+      ""
+    ]
+  ]
+}
