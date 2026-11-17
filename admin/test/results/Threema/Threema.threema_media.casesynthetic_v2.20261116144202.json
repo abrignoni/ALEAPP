@@ -1,0 +1,114 @@
+{
+  "metadata": {
+    "module_name": "Threema",
+    "artifact_name": "Threema - Media",
+    "function_name": "threema_media",
+    "case_number": "casesynthetic_v2",
+    "number_of_columns": 9,
+    "number_of_rows": 7,
+    "total_data_size_bytes": 1100,
+    "media_checkins": 0,
+    "media_embedded_checkins": 7,
+    "input_zip_path": "admin/test/cases/data/Threema/testdata.Threema.threema_media.casesynthetic_v2.zip",
+    "start_time": "2026-11-16T14:42:02.320633+00:00",
+    "end_time": "2026-11-16T14:42:02.329404+00:00",
+    "run_time_seconds": 0.001432180404663086,
+    "last_commit": {
+      "hash": "172075b9fa1cf79c962b71cde3330bce3514db5c",
+      "author_name": "kalink0",
+      "author_email": "kalinko@be-binary.de",
+      "date": "2026-11-16T12:43:58+01:00",
+      "message": "Threema: Date Created first in Contacts"
+    }
+  },
+  "headers": [
+    "Message Created",
+    "Media",
+    "Kind",
+    "Belongs To",
+    "Message",
+    "Stored File Name",
+    "Storage",
+    "Status",
+    "Gallery Link"
+  ],
+  "data": [
+    [
+      1793523780,
+      "mock_embedded_html_path",
+      "File in gallery folder",
+      "Fixture Contact (FIXTCON1)",
+      "A constructed picture",
+      "fixture-photo.jpg",
+      "Shared storage (Pictures/Threema)",
+      "Not encrypted",
+      "Identical to the message file"
+    ],
+    [
+      1793523780,
+      "mock_embedded_html_path",
+      "Message file",
+      "Fixture Contact (FIXTCON1)",
+      "A constructed picture",
+      ".0f1e2d3c4b5a49688776a5b4c3d2e1f0",
+      "External storage",
+      "Decrypted",
+      ""
+    ],
+    [
+      1793523780,
+      "mock_embedded_html_path",
+      "Message thumbnail",
+      "Fixture Contact (FIXTCON1)",
+      "A constructed picture",
+      ".0f1e2d3c4b5a49688776a5b4c3d2e1f0_T",
+      "External storage",
+      "Decrypted",
+      ""
+    ],
+    [
+      null,
+      "mock_embedded_html_path",
+      "File in gallery folder",
+      "No identical message file",
+      "",
+      "unrelated.jpg",
+      "Shared storage (Pictures/Threema)",
+      "Not encrypted",
+      ""
+    ],
+    [
+      null,
+      "mock_embedded_html_path",
+      "Message file",
+      "Not referenced by the database",
+      "",
+      ".11112222333344445555666677778888",
+      "External storage",
+      "Decrypted",
+      ""
+    ],
+    [
+      null,
+      "mock_embedded_html_path",
+      "Profile picture (from contact)",
+      "Fixture Contact (FIXTCON1)",
+      "",
+      ".p-DGCN22ITPN2MW4DYQQLYFTK77VMTBJOOLS42CVRJNQG6Q6BZ4FGQ",
+      "External storage",
+      "Decrypted",
+      ""
+    ],
+    [
+      null,
+      "mock_embedded_html_path",
+      "Profile picture (set locally)",
+      "Fixture Owner (FIXTOWN1) - local account",
+      "",
+      ".c-HXUA7ZH5QYLPLVMOTQHGFQJ3VTTWWFAZPBANRSZAEFBEOM3DUO6Q",
+      "External storage",
+      "Decrypted",
+      ""
+    ]
+  ]
+}

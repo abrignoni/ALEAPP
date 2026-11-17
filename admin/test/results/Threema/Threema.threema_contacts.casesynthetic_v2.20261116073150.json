@@ -1,0 +1,70 @@
+{
+  "metadata": {
+    "module_name": "Threema",
+    "artifact_name": "Threema - Contacts",
+    "function_name": "threema_contacts",
+    "case_number": "casesynthetic_v2",
+    "number_of_columns": 9,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 158,
+    "media_checkins": 0,
+    "media_embedded_checkins": 1,
+    "input_zip_path": "admin/test/cases/data/Threema/testdata.Threema.threema_contacts.casesynthetic_v2.zip",
+    "start_time": "2026-11-16T07:31:50.488192+00:00",
+    "end_time": "2026-11-16T07:31:50.494747+00:00",
+    "run_time_seconds": 0.0008766651153564453,
+    "last_commit": {
+      "hash": "9339be5ae5eb146da8c4c0585d8817d45141a820",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-11-15T14:51:37-05:00",
+      "message": "Threema: tie gallery copies to their messages"
+    }
+  },
+  "headers": [
+    "Date Created",
+    "Threema ID",
+    "Display Name",
+    "Verification Level",
+    "Group-Only / Removed",
+    "Archived",
+    "Profile Picture (from contact)",
+    "Profile Picture (set locally)",
+    "Profile Picture (Android contact)"
+  ],
+  "data": [
+    [
+      1793437200,
+      "FIXTCON1",
+      "Fixture Contact",
+      "Fully verified",
+      "",
+      "",
+      "mock_embedded_html_path",
+      "",
+      ""
+    ],
+    [
+      1793520000,
+      "FIXTCON2",
+      "Nick Only",
+      "Server-verified",
+      "",
+      "Yes",
+      "",
+      "",
+      ""
+    ],
+    [
+      1793523540,
+      "FIXTGRP1",
+      "Group Member",
+      "Unverified",
+      "Yes",
+      "",
+      "",
+      "",
+      ""
+    ]
+  ]
+}
