@@ -120,10 +120,10 @@ __artifacts_v2__ = {
             'most of the items were made between 15:19 and 15:41 UTC (mint log); those four columns do not by '
             'themselves record when the item was made. TAB_ACTIVATE (as stored) held true on one row (TAB_ID '
             '1_6) on the known-data image. IS_DELETED (as stored) and IS_INCOGNITO (as stored) held 0 and '
-            'Group Name had no value on every row of the images checked. Not reported: the per-tab files '
-            'files/<w>_tab<n> and <w>tab_state, whose format is not parsed here (on the known-data image the '
-            'file for tab 1_5 contained the URLs of the three pages that tab had loaded, per the mint log), '
-            'the TAB_FAV_ICON blob, TAB_GROUP_COLOR, TAB_USAGE and the sync, device and account columns.'
+            'Group Name had no value on every row of the images checked. The per-tab files files/<w>_tab<n> '
+            'hold the back and forward navigation list of each tab; the Tab Navigation History artifact reads '
+            'them. Not reported here: the <w>tab_state file, whose format is not parsed, the TAB_FAV_ICON '
+            'blob, TAB_GROUP_COLOR, TAB_USAGE and the sync, device and account columns.'
         ),
         "paths": ('*/com.sec.android.app.sbrowser/databases/SBrowser.db*',
                   '*/com.sec.android.app.sbrowser/cache/Bitmap/Thumbnail/*'),
@@ -178,11 +178,73 @@ __artifacts_v2__ = {
             "falken_a326u_a13": "Android 13 | com.sec.android.app.sbrowser | 0 rows",
         },
     },
+    "samsung_internet_tab_navigation": {
+        "name": "Samsung Internet - Tab Navigation History",
+        "description": "Per-tab back and forward navigation entries from the files/<w>_tab<n> tab-state files of "
+                       "Samsung Internet, stored in the Chromium WebContentsState format. One row per navigation "
+                       "entry.",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-11-17",
+        "last_update_date": "2026-11-17",
+        "requirements": "none",
+        "category": "Samsung Internet",
+        "notes": (
+            'One row per navigation entry in each files/<w>_tab<n> file, in the app private data folder '
+            '(data/data/com.sec.android.app.sbrowser/files/). Source File names the file; its name holds two '
+            'numbers, the same pair the Tabs artifact shows as TAB_ID, and what the first number denotes is '
+            'not established. On samsung_a166u_a16_known_20261116 each file held, after a short header and a '
+            '4-byte big-endian content size, the tab WebContentsState as a base::Pickle, then a trailer; the '
+            'size at offset 8 is used to locate and length-check the pickle, and the other header bytes and the '
+            'trailer are not interpreted (the trailer on this image did not match the field order of the '
+            'Chromium Android tab-state writer, so it is read as Samsung-specific and left alone). The pickle '
+            'holds the is_off_the_record flag, the entry count, the current-entry index and then one '
+            'length-prefixed SerializedNavigationEntry per entry. URL is virtual_url and Title is the stored '
+            'title. Current Entry is Yes on the entry whose stored index equals the current-entry index in the '
+            'pickle. Navigation Index is the index stored in the entry (0 to n-1 on this image). Navigation '
+            'Timestamp is the entry timestamp, microseconds since 1601-01-01 UTC; a 0, a negative value or an '
+            'entry that ends before the field is shown blank. Transition names the core type from the low byte '
+            'and, in parentheses, the qualifier bits named in page_transition_types.h; other set bits are not '
+            'shown and a core value outside 0 to 10 is shown as its number. HTTP Status, Referrer and Original '
+            'URL (original_request_url) are shown as stored; Referrer and Original URL are blank when the '
+            'stored string is empty, and all three are blank when the entry ends before them. Off The Record '
+            'is Yes when is_off_the_record is set. On samsung_a166u_a16_known_20261116 the 6 files gave 11 '
+            'entries; HTTP Status held 200 on all 11 rows and Off The Record was No on all 11 rows (no image '
+            'checked had it set, so the Yes path is from source and a built test file only). Referrer was blank on 10 of '
+            '11, set on the one row whose Transition is LINK (CLIENT_REDIRECT); Original URL was populated on '
+            'all 11, equal to URL on 10 and equal to Referrer on that one row. The 11 timestamps fell on 16 '
+            'November 2026 between 15:19 and 17:37 UTC. Not read: the encoded page state, the has-post-data '
+            'mask, the referrer policy, the search terms, the user-agent override, the task ids, the extended '
+            'info map, and the file header and trailer. A file is skipped and named in the run log when its '
+            'size field and the pickle length disagree, the pickle runs past the file, or an entry cannot be '
+            'read; an entry that ends early is still shown, with the missing columns blank. Format from '
+            'Chromium (current source; Samsung Internet\'s own source was not read): '
+            "'web_contents_state.cc (WriteStateHeaderToPickle, WriteSerializedNavigationsIntoPickle, "
+            "ExtractNavigationEntries)', "
+            'https://github.com/chromium/chromium/blob/0889dbff0b08355e11f0f6aac36ae65713f8f33f/chrome/browser/tab/web_contents_state.cc#L70-L105 '
+            'and '
+            'https://github.com/chromium/chromium/blob/0889dbff0b08355e11f0f6aac36ae65713f8f33f/chrome/browser/tab/web_contents_state.cc#L349-L399; '
+            "'serialized_navigation_entry.cc (ReadFromPickle)', "
+            'https://github.com/chromium/chromium/blob/0889dbff0b08355e11f0f6aac36ae65713f8f33f/components/sessions/core/serialized_navigation_entry.cc#L173-L278; '
+            "transition types 'page_transition_types.h', "
+            'https://github.com/chromium/chromium/blob/0889dbff0b08355e11f0f6aac36ae65713f8f33f/ui/base/page_transition_types.h#L29-L155; '
+            "the timestamp epoch 'base/time/time.h', "
+            'https://github.com/chromium/chromium/blob/0889dbff0b08355e11f0f6aac36ae65713f8f33f/base/time/time.h#L542. '
+            'Checked on samsung_a166u_a16_known_20261116 only.'
+        ),
+        "paths": ('*/com.sec.android.app.sbrowser/files/*_tab[0-9]*',),
+        "output_types": "standard",
+        "artifact_icon": "globe",
+        "sample_data": {
+            "samsung_a166u_a16_known_20261116": "Android 16 | com.sec.android.app.sbrowser 28.0.4.71 | 11 rows (6 tab files)",
+        },
+    },
 }
 
 import datetime
 import os
+import re
 import sqlite3
+import struct
 
 from scripts.ilapfuncs import artifact_processor, check_in_media, logfunc, open_sqlite_db_readonly
 from scripts.artifacts.storagePathViews import canonical_path, unique_files
@@ -422,4 +484,191 @@ def samsung_internet_tab_records(context):
                     ('TAB_CLOSING_TIME', 'datetime'), 'TAB_URL (as stored)', 'TAB_ID', 'TAB_CLOSED_STATUS (as stored)',
                     'TAB_LAUNCHED_TYPE (as stored)', 'CUMULATIVE_COUNT (as stored)', 'TAB_CUMULATIVE_TIME (as stored)',
                     'AUTO_CLOSE_KEY')
+    return data_headers, data_list, '\n'.join(source_paths)
+
+
+# --- Tab navigation history (Chromium WebContentsState) -------------------------
+#
+# A files/<window>_tab<n> file is an Android tab-state file: a short header, then
+# the tab's WebContentsState as a base::Pickle, then a trailer. The pickle holds
+# the tab's back/forward navigation list. base::Pickle stores 32-bit
+# little-endian values, each padded to the next 4-byte boundary; a string is a
+# length (bytes for 8-bit, units for 16-bit) then the bytes, padded the same way.
+
+_WEBKIT_EPOCH = datetime.datetime(1601, 1, 1, tzinfo=datetime.timezone.utc)
+_TAB_FILE_NAME = re.compile(r'\d+_tab\d+$')
+
+_TRANSITION_CORE = {
+    0: 'LINK', 1: 'TYPED', 2: 'AUTO_BOOKMARK', 3: 'AUTO_SUBFRAME',
+    4: 'MANUAL_SUBFRAME', 5: 'GENERATED', 6: 'AUTO_TOPLEVEL',
+    7: 'FORM_SUBMIT', 8: 'RELOAD', 9: 'KEYWORD', 10: 'KEYWORD_GENERATED',
+}
+_TRANSITION_QUALIFIERS = (
+    (0x00800000, 'BLOCKED'), (0x01000000, 'FORWARD_BACK'),
+    (0x02000000, 'FROM_ADDRESS_BAR'), (0x04000000, 'HOME_PAGE'),
+    (0x08000000, 'FROM_API'), (0x10000000, 'CHAIN_START'),
+    (0x20000000, 'CHAIN_END'), (0x40000000, 'CLIENT_REDIRECT'),
+    (0x80000000, 'SERVER_REDIRECT'),
+)
+
+
+def _webkit_to_utc(value):
+    if not isinstance(value, int) or value <= 0:
+        return ''
+    try:
+        return _WEBKIT_EPOCH + datetime.timedelta(microseconds=value)
+    except OverflowError:
+        return ''
+
+
+def _name_transition(value):
+    core = _TRANSITION_CORE.get(value & 0xFF, str(value & 0xFF))
+    bits = value & 0xFFFFFFFF
+    quals = [name for mask, name in _TRANSITION_QUALIFIERS if bits & mask]
+    return f'{core} ({", ".join(quals)})' if quals else core
+
+
+class _PickleReader:
+    """Read the little-endian, 4-byte-aligned payload of a base::Pickle."""
+
+    def __init__(self, data, payload_start, payload_end):
+        self._data = data
+        self._base = payload_start
+        self._pos = payload_start
+        self._end = payload_end
+
+    def _take(self, length):
+        end = self._pos + length
+        if length < 0 or end > self._end:
+            raise ValueError('read past end of pickle')
+        chunk = self._data[self._pos:end]
+        self._pos = end
+        remainder = (self._pos - self._base) % 4
+        if remainder:
+            self._pos += 4 - remainder
+        return chunk
+
+    def read_int(self):
+        return struct.unpack('<i', self._take(4))[0]
+
+    def read_int64(self):
+        return struct.unpack('<q', self._take(8))[0]
+
+    def read_bool(self):
+        return self.read_int() != 0
+
+    def read_string(self):
+        return self._take(self.read_int()).decode('utf-8', 'replace')
+
+    def read_string16(self):
+        return self._take(self.read_int() * 2).decode('utf-16-le', 'replace')
+
+    def read_sub_pickle(self):
+        """A length-prefixed nested pickle: its own length header, then payload."""
+        length = self.read_int()
+        start = self._pos
+        self._take(length)
+        sub_len = struct.unpack_from('<I', self._data, start)[0]
+        return start + 4, min(start + 4 + sub_len, start + length)
+
+
+def _decode_navigation_entry(data, payload_start, payload_end):
+    reader = _PickleReader(data, payload_start, payload_end)
+    entry = {
+        'index': reader.read_int(),
+        'url': reader.read_string(),
+        'title': reader.read_string16(),
+    }
+    reader.read_string()                       # encoded_page_state, not reported
+    entry['transition'] = reader.read_int()
+    try:                                       # the tail did not always exist
+        reader.read_int()                      # type_mask
+        entry['referrer'] = reader.read_string()
+        reader.read_int()                      # referrer policy, ignored by Chromium
+        entry['original_url'] = reader.read_string()
+        reader.read_bool()                     # is_overriding_user_agent
+        entry['timestamp'] = reader.read_int64()
+        reader.read_string16()                 # search terms, removed but still written
+        entry['http_status'] = reader.read_int()
+    except (ValueError, struct.error, IndexError):
+        pass
+    return entry
+
+
+def _parse_tab_file(path):
+    """(off_the_record, current_index, [entries]) for a tab file, or None."""
+    try:
+        with open(path, 'rb') as handle:
+            data = handle.read()
+    except OSError:
+        return None
+    if len(data) < 16:
+        return None
+    contents_size = struct.unpack_from('>I', data, 8)[0]   # WebContentsState size, big-endian
+    pickle_at = 12
+    payload_len = struct.unpack_from('<I', data, pickle_at)[0]
+    # The outer size and the pickle's own length header must agree, and fit.
+    if payload_len + 4 != contents_size or pickle_at + contents_size > len(data):
+        return None
+    payload_start = pickle_at + 4
+    payload_end = payload_start + payload_len
+    reader = _PickleReader(data, payload_start, payload_end)
+    try:
+        off_the_record = reader.read_bool()
+        entry_count = reader.read_int()
+        current_index = reader.read_int()
+        if entry_count < 0 or entry_count > 100000:
+            return None
+        entries = []
+        for _ in range(entry_count):
+            start, end = reader.read_sub_pickle()
+            entries.append(_decode_navigation_entry(data, start, end))
+    except (ValueError, struct.error, IndexError):
+        return None
+    return off_the_record, current_index, entries
+
+
+@artifact_processor
+def samsung_internet_tab_navigation(context):
+    data_list = []
+    source_paths = []
+    for file_found in unique_files(context):
+        file_found = str(file_found)
+        normalized = file_found.replace('\\', '/')
+        if _PACKAGE not in normalized or not _TAB_FILE_NAME.search(normalized.rsplit('/', 1)[-1]):
+            continue
+        parsed = _parse_tab_file(file_found)
+        if parsed is None:
+            logfunc(f'Samsung Internet: tab file not read as WebContentsState: {file_found}')
+            continue
+        off_the_record, current_index, entries = parsed
+        source_paths.append(file_found)
+        relative = context.get_relative_path(file_found)
+        for entry in entries:
+            data_list.append((
+                _webkit_to_utc(entry.get('timestamp', 0)),
+                entry.get('url', ''),
+                entry.get('title', ''),
+                'Yes' if entry.get('index') == current_index else 'No',
+                entry.get('index', ''),
+                _name_transition(entry['transition']) if 'transition' in entry else '',
+                entry.get('http_status', ''),
+                entry.get('referrer', ''),
+                entry.get('original_url', ''),
+                'Yes' if off_the_record else 'No',
+                relative,
+            ))
+    data_headers = (
+        ('Navigation Timestamp', 'datetime'),
+        'URL',
+        'Title',
+        'Current Entry',
+        'Navigation Index',
+        'Transition',
+        'HTTP Status',
+        'Referrer',
+        'Original URL',
+        'Off The Record',
+        'Source File',
+    )
     return data_headers, data_list, '\n'.join(source_paths)
