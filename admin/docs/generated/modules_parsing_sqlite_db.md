@@ -359,6 +359,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | revolut |
 | ryanair |
 | sChats |
+| samsungHealthCache |
 | samsungMessageLogs |
 | samsungMessages |
 | samsungSmartThings |
