@@ -28,21 +28,20 @@ __artifacts_v2__ = {
             'HealthFramework.db, HealthSharing.db, HealthSharingLogs.db, Permission.db, SdkPolicy.db and '
             'SportTracker.db have no SQLite header and byte entropy of 7.99 to 8.00 bits per byte on the '
             'known-data image, each with a <name>-se file beside it. SecureHealthData.db-wal has a WAL header '
-            'and entropy of 8.00. None of them is read. No database key was identified: '
-            'permanent_sharedpreferences_main.xml holds two AndroidX security-crypto keyset entries and '
-            'files/ holds aks, aks_verify and aks_verify_iv, and what they protect is not established. The '
-            'profile nickname and the text of the walking workout note made in the known-data session were '
-            "not found by a byte search (UTF-8 and UTF-16) of the app's files outside those seven databases "
-            'on the known-data image; whether the note was saved was not checked. Other plaintext stores hold '
-            'values from the known-data session and are not reported: shared_prefs/sleep_card_cache.xml holds '
-            'a period marked MANUAL from 04:00 to 12:00 UTC on 2026-11-16, and '
-            'files/caches/preferences/sleep.watch_summary.*.pref (gzip) holds the same start and end; these '
-            'match the manual sleep entry made in the session (11:00 PM to 7:00 AM local); '
-            'shared_prefs/tracker_sport_recently_retrieved_workout_result_pref.xml holds a workout result of '
-            'exercise type 1001 with times 17:00:37 and 17:01:07 UTC, which fits the walking workout ended at '
-            "about 17:01:10 UTC; and the app's text logs (files/logs/m_*.txt and r_*.txt, app debug lines "
-            'with local times and no zone) include exercise session lines. The other readable databases, '
-            'shared_prefs files and files/caches/preferences files are not reported.'
+            "and entropy of 8.00. This module reads none of them. When the extraction's Secrets/secrets.json "
+            'carries a key, the Samsung Health (Secure) artifacts read SecureHealthData.db; the other six are '
+            'not read. The profile nickname and the text of the walking workout note made in the known-data '
+            "session were not found by a byte search (UTF-8 and UTF-16) of the app's files outside those "
+            'seven databases on the known-data image; the note text is in SecureHealthData.db (Samsung Health '
+            '- Exercise (Secure), Comment). Other plaintext stores hold values from the known-data session '
+            'and are not reported: shared_prefs/sleep_card_cache.xml holds a period marked MANUAL from 04:00 '
+            'to 12:00 UTC on 2026-11-16, and files/caches/preferences/sleep.watch_summary.*.pref (gzip) holds '
+            'the same start and end; these match the manual sleep entry made in the session (11:00 PM to 7:00 '
+            'AM local); shared_prefs/tracker_sport_recently_retrieved_workout_result_pref.xml holds a workout '
+            'result of exercise type 1001 with times 17:00:37 and 17:01:07 UTC, which fits the walking '
+            "workout ended at about 17:01:10 UTC; and the app's text logs (files/logs/m_*.txt and r_*.txt, "
+            'app debug lines with local times and no zone) include exercise session lines. The other readable '
+            'databases, shared_prefs files and files/caches/preferences files are not reported.'
         ),
         "paths": (
             '*/com.sec.android.app.shealth/shared_prefs/temporary_sharedpreferences_main.xml',
@@ -89,14 +88,14 @@ __artifacts_v2__ = {
             'SecureHealthData.db, HealthFramework.db, HealthSharing.db, HealthSharingLogs.db, Permission.db, '
             'SdkPolicy.db and SportTracker.db have no SQLite header and byte entropy of 7.99 to 8.00 bits per '
             'byte on the known-data image, each with a <name>-se file beside it. SecureHealthData.db-wal has '
-            'a WAL header and entropy of 8.00. None of them is read. No database key was identified: '
-            'permanent_sharedpreferences_main.xml holds two AndroidX security-crypto keyset entries and '
-            'files/ holds aks, aks_verify and aks_verify_iv, and what they protect is not established. The '
-            'profile nickname and the text of the walking workout note made in the known-data session were '
-            "not found by a byte search (UTF-8 and UTF-16) of the app's files outside those seven databases "
-            'on the known-data image; whether the note was saved was not checked. Other plaintext stores hold '
-            'values from the known-data session and are not reported: shared_prefs/sleep_card_cache.xml holds '
-            'a period marked MANUAL from 04:00 to 12:00 UTC on 2026-11-16, and '
+            "a WAL header and entropy of 8.00. This module reads none of them. When the extraction's "
+            'Secrets/secrets.json carries a key, the Samsung Health (Secure) artifacts read '
+            'SecureHealthData.db; the other six are not read. The profile nickname and the text of the '
+            'walking workout note made in the known-data session were not found by a byte search (UTF-8 and '
+            "UTF-16) of the app's files outside those seven databases on the known-data image; the note text "
+            'is in SecureHealthData.db (Samsung Health - Exercise (Secure), Comment). Other plaintext stores '
+            'hold values from the known-data session and are not reported: shared_prefs/sleep_card_cache.xml '
+            'holds a period marked MANUAL from 04:00 to 12:00 UTC on 2026-11-16, and '
             'files/caches/preferences/sleep.watch_summary.*.pref (gzip) holds the same start and end; these '
             'match the manual sleep entry made in the session (11:00 PM to 7:00 AM local); '
             'shared_prefs/tracker_sport_recently_retrieved_workout_result_pref.xml holds a workout result of '
@@ -139,16 +138,16 @@ __artifacts_v2__ = {
             'the user. SecureHealthData.db, HealthFramework.db, HealthSharing.db, HealthSharingLogs.db, '
             'Permission.db, SdkPolicy.db and SportTracker.db have no SQLite header and byte entropy of 7.99 '
             'to 8.00 bits per byte on the known-data image, each with a <name>-se file beside it. '
-            'SecureHealthData.db-wal has a WAL header and entropy of 8.00. None of them is read. No database '
-            'key was identified: permanent_sharedpreferences_main.xml holds two AndroidX security-crypto '
-            'keyset entries and files/ holds aks, aks_verify and aks_verify_iv, and what they protect is not '
-            'established. The profile nickname and the text of the walking workout note made in the '
-            "known-data session were not found by a byte search (UTF-8 and UTF-16) of the app's files outside "
-            'those seven databases on the known-data image; whether the note was saved was not checked. Other '
-            'plaintext stores hold values from the known-data session and are not reported: '
-            'shared_prefs/sleep_card_cache.xml holds a period marked MANUAL from 04:00 to 12:00 UTC on '
-            '2026-11-16, and files/caches/preferences/sleep.watch_summary.*.pref (gzip) holds the same start '
-            'and end; these match the manual sleep entry made in the session (11:00 PM to 7:00 AM local); '
+            'SecureHealthData.db-wal has a WAL header and entropy of 8.00. This module reads none of them. '
+            "When the extraction's Secrets/secrets.json carries a key, the Samsung Health (Secure) artifacts "
+            'read SecureHealthData.db; the other six are not read. The profile nickname and the text of the '
+            'walking workout note made in the known-data session were not found by a byte search (UTF-8 and '
+            "UTF-16) of the app's files outside those seven databases on the known-data image; the note text "
+            'is in SecureHealthData.db (Samsung Health - Exercise (Secure), Comment). Other plaintext stores '
+            'hold values from the known-data session and are not reported: shared_prefs/sleep_card_cache.xml '
+            'holds a period marked MANUAL from 04:00 to 12:00 UTC on 2026-11-16, and '
+            'files/caches/preferences/sleep.watch_summary.*.pref (gzip) holds the same start and end; these '
+            'match the manual sleep entry made in the session (11:00 PM to 7:00 AM local); '
             'shared_prefs/tracker_sport_recently_retrieved_workout_result_pref.xml holds a workout result of '
             'exercise type 1001 with times 17:00:37 and 17:01:07 UTC, which fits the walking workout ended at '
             "about 17:01:10 UTC; and the app's text logs (files/logs/m_*.txt and r_*.txt, app debug lines "
