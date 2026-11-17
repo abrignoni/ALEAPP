@@ -222,7 +222,6 @@ from scripts.artifacts.storagePathViews import canonical_path, unique_files
 from scripts.ilapfuncs import (
     artifact_processor,
     check_in_media,
-    get_sqlite_db_path,
     logfunc,
     open_sqlite_db_readonly,
 )
@@ -307,7 +306,7 @@ def _databases(paths):
         if os.path.basename(path) != _DATABASE:
             continue
         try:
-            database = open_sqlite_db_readonly(get_sqlite_db_path(path))
+            database = open_sqlite_db_readonly(path)
         except sqlite3.Error as ex:
             logfunc(f'Hinge: could not open {_DATABASE}: {ex}')
             continue
