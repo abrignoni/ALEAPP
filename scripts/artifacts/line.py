@@ -5,7 +5,7 @@ __artifacts_v2__ = {
         "description": "Parses LINE contacts (user ID and name) from the LINE databases.",
         "author": "@markmckinnon",
         "creation_date": "2021-03-15",
-        "last_update_date": "2026-10-04",
+        "last_update_date": "2026-11-16",
         "requirements": "none",
         "category": "Line",
         "notes": ("One row per row of the contacts table in each naver_line database. The "
@@ -22,7 +22,11 @@ __artifacts_v2__ = {
                   "It can be empty on a device that has messages: on the tested Android 14 "
                   "image it held no rows while chat_history held 30, so zero rows here is not "
                   "evidence that the account had no contacts. The tested images held 6, 5 and "
-                  "0 rows."),
+                  "0 rows. LINE 26.17.1 on samsung_a166u_a16_known_20261116 has no contacts "
+                  "table in naver_line, so this artifact reports nothing there and logs the "
+                  "missing table. A separate database named contact in the same folder holds a "
+                  "contacts table (2 rows on that image); this artifact does not read it, and its "
+                  "columns are not mapped here."),
         "paths": ('*/jp.naver.line.android/databases/**',),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "users",
@@ -31,6 +35,8 @@ __artifacts_v2__ = {
             "pixel3_a12": "Android 12 | jp.naver.line.android | 5 rows",
             "pixel7a_a14": "Android 14 | jp.naver.line.android vc 141220285 | 0 rows, "
                            "contacts table empty while chat_history holds rows",
+            "samsung_a166u_a16_known_20261116": "Android 16 | jp.naver.line.android 26.17.1 vc 261710173 | "
+                                                "0 rows, no contacts table in naver_line",
         },
     },
     "get_line_messages": {
@@ -40,7 +46,7 @@ __artifacts_v2__ = {
                        "store records them.",
         "author": "@markmckinnon",
         "creation_date": "2021-03-15",
-        "last_update_date": "2026-10-04",
+        "last_update_date": "2026-11-16",
         "requirements": "none",
         "category": "Line",
         "notes": ("Direction is decoded from the chat_history 'status' column, 1 read as "
@@ -56,7 +62,7 @@ __artifacts_v2__ = {
                   "(membership is keyed on id and m_id). On every other row it is blank; a "
                   "chat id is not reported as a recipient. Whether the member list includes "
                   "the account itself was not established. No tested row was Outgoing and "
-                  "the membership table was empty on all three tested images, so both were "
+                  "the membership table was empty on the three earlier tested images, so both were "
                   "checked on a database built by hand from the pixel3_a12 one, with "
                   "membership rows and Outgoing rows added: the three rows whose chat id "
                   "matched membership carried their chat id in Thread ID where the code "
@@ -64,7 +70,7 @@ __artifacts_v2__ = {
                   "membership rows carried the member list in To ID, and an Outgoing row in "
                   "a chat with no membership rows had a blank To ID where the code before "
                   "this change put the chat id.\n"
-                  "Nothing in the tested images exercises the Direction mapping. On all three, "
+                  "Nothing in the tested images exercises the Direction mapping. On the three earlier images, "
                   "chat_history.status held 3 on every one of the 64 "
                   "reported rows, so no row was labelled Incoming or Outgoing, To ID was "
                   "empty on every row, and the membership table was empty, which means the "
@@ -74,7 +80,13 @@ __artifacts_v2__ = {
                   "that distinguishes direction was not established either.\n"
                   "Messages are reported even when the contacts and membership tables are "
                   "empty; on a tested Android 14 image both were empty while chat_history "
-                  "held rows, and the previous inner join dropped every message.\n"
+                  "held rows, and the previous inner join dropped every message. "
+                  "On samsung_a166u_a16_known_20261116 (LINE 26.17.1) naver_line has no "
+                  "contacts table, and the query that named it failed and reported no messages; the "
+                  "contacts branch of the chat-id lookup is now left out where the table is "
+                  "absent. That image then reported its 23 chat_history rows in 2 threads, "
+                  "including the Keep Memo note the known-data record logs at 15:50:45 UTC "
+                  "(created_time stored 15:50:42 UTC); every row held status 3.\n"
                   "Attachment shows the file the app kept for that message, on the message's "
                   "own row. The link is one the app recorded rather than a match on size or "
                   "time: the app writes the file to files/chats/<chat id>/messages/<message "
@@ -131,6 +143,7 @@ __artifacts_v2__ = {
             "pixel3_a11": "Android 11 | jp.naver.line.android | 12 rows",
             "pixel3_a12": "Android 12 | jp.naver.line.android | 26 rows",
             "pixel7a_a14": "Android 14 | jp.naver.line.android vc 141220285 | 26 rows",
+            "samsung_a166u_a16_known_20261116": "Android 16 | jp.naver.line.android 26.17.1 vc 261710173 | 23 rows",
         },
         "data_views": {
             "conversation": {
@@ -149,7 +162,7 @@ __artifacts_v2__ = {
         "description": "Parses LINE call logs (start and end time, participant IDs, direction and call type) from the LINE databases.",
         "author": "@markmckinnon",
         "creation_date": "2021-03-15",
-        "last_update_date": "2026-10-04",
+        "last_update_date": "2026-11-16",
         "requirements": "none",
         "category": "Line",
         "notes": ("Direction is decoded from the last character of the call_history 'call_type' "
@@ -180,6 +193,11 @@ __artifacts_v2__ = {
                   "removed: it returned four rows under user 0 and three under user 10, "
                   "where the code before this change returned four rows from one "
                   "database. "
+                  "Where the naver_line database has no contacts table (seen on "
+                  "samsung_a166u_a16_known_20261116, LINE 26.17.1) the contacts branch of the "
+                  "lookup is left out rather than failing the query. On that image the query then "
+                  "ran without error against a call_history table that held no rows, so the path is "
+                  "exercised for the query and not for any call row. "
                   "Calls are reported even when the contacts and membership tables are empty; "
                   "on a tested Android 14 image both were empty while call_history held rows, "
                   "and the previous inner join dropped every call."),
@@ -190,6 +208,8 @@ __artifacts_v2__ = {
             "pixel3_a11": "Android 11 | jp.naver.line.android | 4 rows",
             "pixel3_a12": "Android 12 | jp.naver.line.android | 4 rows",
             "pixel7a_a14": "Android 14 | jp.naver.line.android vc 141220285 | 4 rows",
+            "samsung_a166u_a16_known_20261116": "Android 16 | jp.naver.line.android 26.17.1 vc 261710173 | "
+                                                "0 rows, call_history table empty",
         },
     }
 }
@@ -286,6 +306,17 @@ def _attachment(pair):
     return reference or '', name, kind.mime
 
 
+def _contacts_union(cursor, schema=''):
+    """The contacts branch of the chat-id lookup, or '' where the database has no contacts table.
+
+    naver_line from LINE 26.17.1 (samsung_a166u_a16_known_20261116) has no contacts table, and a query that
+    names it fails as a whole, which reported no messages from a chat_history of 23 rows.
+    """
+    prefix = f'{schema}.' if schema else ''
+    rows = cursor.execute(f"SELECT 1 FROM {prefix}sqlite_master WHERE type='table' AND name='contacts'").fetchall()
+    return f'UNION SELECT m_id, NULL FROM {prefix}contacts' if rows else ''
+
+
 def _message_dbs(files_found):
     """Every naver_line the extraction carries, one per Android user after the views collapse.
 
@@ -364,7 +395,8 @@ def get_line_messages(context):
             # and an inner join against that empty contact book dropped every
             # message. COALESCE keeps the chat id for rows with no match, and
             # guards the type filter against a NULL attachement_type.
-            cursor.execute('''
+            contacts_union = _contacts_union(cursor)
+            cursor.execute(f'''
                 SELECT COALESCE(contact_book_w_groups.id, messages.chat_id),
                        contact_book_w_groups.members, messages.from_mid,
                        messages.content, messages.created_time/1000, messages.attachement_type,
@@ -374,8 +406,7 @@ def get_line_messages(context):
                 FROM   chat_history AS messages
                        LEFT JOIN (SELECT id, Group_concat(M.m_id) AS members
                                   FROM   membership AS M GROUP BY id
-                                  UNION
-                                  SELECT m_id, NULL FROM contacts) AS contact_book_w_groups
+                                  {contacts_union}) AS contact_book_w_groups
                               ON messages.chat_id = contact_book_w_groups.id
                 WHERE  COALESCE(messages.attachement_type, -1) != 6
             ''')
@@ -425,7 +456,8 @@ def get_line_calls(context):
         cursor = db.cursor()
         cursor.execute(attach_sqlite_db_readonly(msg_db, 'naver_line'))
         try:
-            cursor.execute('''
+            contacts_union = _contacts_union(cursor, 'naver_line')
+            cursor.execute(f'''
                 SELECT case Substr(calls.call_type, -1) when "O" then "Outgoing" when "I" then "Incoming" else Substr(calls.call_type, -1) end AS direction,
                        calls.start_time/1000 AS start_time, calls.end_time/1000 AS end_time,
                        case when Substr(calls.call_type, -1) = "O" then contact_book_w_groups.members else null end AS group_members,
@@ -434,8 +466,7 @@ def get_line_calls(context):
                 FROM   call_history AS calls
                        LEFT JOIN (SELECT id, Group_concat(M.m_id) AS members
                                   FROM   membership AS M GROUP BY id
-                                  UNION
-                                  SELECT m_id, NULL FROM naver_line.contacts) AS contact_book_w_groups
+                                  {contacts_union}) AS contact_book_w_groups
                               ON calls.caller_mid = contact_book_w_groups.id
             ''')
             all_rows = cursor.fetchall()
