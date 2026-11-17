@@ -45,6 +45,12 @@ jobs:
       - name: Open SQLite read-only on special-character and WAL-mode paths
         run: python admin/test/scripts/test_sqlite_readonly_open.py
 
+      # get_sqlite_db_path puts the extended-length prefix in front of every database
+      # path here, which needs an absolute path, so the test harness must stage a case
+      # into an absolute folder for an artifact to open its database.
+      - name: Open a database the test harness staged
+        run: python admin/test/scripts/test_harness_absolute_temp.py
+
       # Pre-1970 timestamps are converted by adding a timedelta to the epoch rather than
       # through datetime.fromtimestamp, which can raise OSError where the platform C
       # gmtime() cannot represent the value. Running here proves that on Windows.
