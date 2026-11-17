@@ -15,7 +15,7 @@ __artifacts_v2__ = {
         ),
         "author": "Alexis Brignoni, John Hyla, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-03",
-        "last_update_date": "2026-10-26",
+        "last_update_date": "2026-11-16",
         "requirements": "none",
         "category": "Telegram",
         "notes": (
@@ -26,7 +26,9 @@ __artifacts_v2__ = {
             " File column names the database of each row, and names are resolved inside the row's own "
             'database. The account folder is a location in the extraction and is not by itself proof of '
             'which account the rows belong to. Reading more than one database was checked on constructed '
-            'databases only (2026-10-09). The client keeps the databases of account slots 1 to 3 under '
+            'databases and, on samsung_a166u_a16_known_20261116, on an image: four databases were read, '
+            'the Source File column was present, and all 138 rows came from files/cache4.db. The client '
+            'keeps the databases of account slots 1 to 3 under '
             "files/account1 to files/account3. Reference: Telegram-Android, 'MessagesStorage.java "
             "(database directory per account)', "
             'https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java#L309-L313.'
@@ -34,9 +36,11 @@ __artifacts_v2__ = {
             'Android client; constructors from layer 179 onward read a second flags integer before the '
             'message id, which this parser accounts for. The constructors 0x3ae56482, 0x95ef6f2b and '
             '0x7600b9d3 can carry a sender rank string ahead of the dialog peer, and the last two a '
-            'further peer ahead of the reply header; both are stepped over. No image listed in '
-            'sample_data holds a message stored under any of those three constructors, so that handling '
-            'is exercised by round-trip tests only. Six older constructors differ in fields that sit '
+            'further peer ahead of the reply header; both are stepped over. On '
+            'samsung_a166u_a16_known_20261116 134 of the 138 rows are stored under 0x7600b9d3 and none '
+            'was logged as a walk that could not be completed; no image listed in sample_data holds a '
+            'message stored under 0x3ae56482 or 0x95ef6f2b, so those two are exercised by round-trip '
+            'tests only. Six older constructors differ in fields that sit '
             "ahead of the text, and are read as the client's own readers read them. 0xbce383d2, "
             '0x58ae39c9 and 0xf52e6b7f read via_bot_id as a 32-bit integer where the newer constructors '
             'this parser covers read 64 bits. 0xf52e6b7f also reads from_id as a bare 32-bit user id and '
@@ -65,9 +69,12 @@ __artifacts_v2__ = {
             '0x2bebfa86, 0xf07814c8, 0xc3060325, 0xa7ab1991, 0x567699b3, 0x22eb6aba, 0xa367e716, '
             '0x05f46804); and the three secret chat classes (0x555555fa, 0x555555f9, 0x555555f8), which '
             'read a ttl integer after the message id. The two TL_messageEmpty constructors (0x90a6ca84, '
-            "0x83e5de54) are reported as '[Empty message record]'. No image listed in sample_data holds a"
-            ' record under any of those nineteen constructors, so they are verified against the client '
-            "source and by round-trip tests, not against an image. Where a record's media object carries "
+            "0x83e5de54) are reported as '[Empty message record]'. On samsung_a166u_a16_known_20261116 2 "
+            'records are stored under the secret chat class 0x555555fa; each was read and carried a '
+            "service action, 0x555555f7, that this parser has no reader for, reported as '[Unrecognised "
+            "action 0x555555f7]'. No image listed in sample_data holds a record under the other eighteen "
+            'of those constructors, so they are verified against the client source and by round-trip '
+            "tests, not against an image. Where a record's media object carries "
             'its own caption the client uses that caption as the message text; this parser does not read '
             "media objects, so for such a record the Message column holds the record's text field only. "
             "Reference: Telegram-Android, 'TLRPC.java (Message.fromConstructor, the classes it names)', "
@@ -89,7 +96,7 @@ __artifacts_v2__ = {
             'expects or the record ends early, is still reported: the timestamp, dialog, direction, read '
             "state and message id are the table's own columns, the text is looked for after the row's "
             "date value as above, and where that finds nothing the Message column reads '[Message not "
-            "decoded]'. Each such record is named in the run log. No record on the ten images listed in "
+            "decoded]'. Each such record is named in the run log. No record on the eleven images listed in "
             'sample_data ended its walk that way, so this handling is exercised by tests on constructed '
             'records, not on an image. Sender ID is the from_id read from the record, for a service '
             'message as for a message. Every from_id on the nine images listed in sample_data before hickman_a13 was added is a user '
@@ -143,21 +150,47 @@ __artifacts_v2__ = {
             "only after the last commit it names the log's frames after the last commit. Recovery "
             'Method is WAL committed states, or WAL uncommitted frames for a key read only after the '
             'last commit. The previous-generation and uncommitted-frame paths were not exercised on '
-            'the ten images listed in sample_data or by the unit test. Recovered rows '
+            'the eleven images listed in sample_data or by the unit test. Recovered rows '
             'were returned on kevin_pocox7_a15 (4), hc_pixel8pro_a16 (4), hc_pixel8pro_a17 (4), '
             'hickman_a13 (2) and pixel3_a12 (2), every one from committed states of the current '
             'generation; one on kevin_pocox7_a15 was read in state 0 only. The 4 on hickman_a13 and '
             'pixel3_a12 have an empty Message and no Recorded Media Path, as 5 and 18 Live rows on '
             'those images do. On the other images Record Origin held Live on every row and Recovery '
-            "Method and Recovery Location were empty on every row. On every image tested, the one "
+            "Method and Recovery Location were empty on every row. On every image tested, each "
             "database whose log held left-over frames of a previous generation had none of those "
-            'commits read; the reader reported that the database file may already hold part of the '
-            'current log.'
+            'commits read; on samsung_a166u_a16_known_20261116 that database held 830 such frames, '
+            'none of its 125 commits read, and the reader reported that the database file may already '
+            'hold part of the current log.'
+            ' Chat is the name the users or chats table of the same database holds for an id '
+            'equal to the dialog id as stored; a dialog id with no equal id there, a group or '
+            'channel id among them, which is stored negative, has a blank Chat. The dialog whose '
+            "id equals the account owner's own user id is the chat with the owner, which the "
+            'client titles Saved Messages; this parser writes Saved Messages in the Chat column '
+            'for it, a label and not a stored value. The own user id is read from the user record '
+            'under the user key of the userconf* preference file in the same package folder as the '
+            'database (userconfing.xml for the first account, userconfig1.xml to userconfig3.xml '
+            'for slots 1 to 3); with no such file in that folder, or a user record this parser does '
+            'not decode, the chat keeps the users-table name. Labelling a row of account slots 1 to '
+            '3 was not exercised on an image: on samsung_a166u_a16_known_20261116 userconfig1.xml to '
+            'userconfig3.xml held no user record, and the slot mapping is covered by a unit test on '
+            'constructed paths. Direction is Outgoing when the out column is nonzero and Incoming '
+            'otherwise, and does not establish who wrote a Saved Messages row: on '
+            'samsung_a166u_a16_known_20261116 the one row in that chat had out 0 and so showed '
+            "Incoming. Reference: Telegram-Android, 'MessageObject.java (isOutOwner: a dialog id "
+            "equal to the client user id is owned without the out value)', "
+            'https://github.com/DrKLO/Telegram/blob/21f7d109da6ab3506c9e9577f98c6a38771ab335/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java#L9892-L9898.'
+            " Reference: Telegram-Android, 'DialogObject.java (SavedMessages title for the self "
+            "user)', "
+            'https://github.com/DrKLO/Telegram/blob/21f7d109da6ab3506c9e9577f98c6a38771ab335/TMessagesProj/src/main/java/org/telegram/messenger/DialogObject.java#L151-L152.'
+            " Reference: Telegram-Android, 'UserConfig.java (user key decoded to clientUserId; "
+            "getPreferences names userconfing and userconfig+account)', "
+            'https://github.com/DrKLO/Telegram/blob/21f7d109da6ab3506c9e9577f98c6a38771ab335/TMessagesProj/src/main/java/org/telegram/messenger/UserConfig.java#L366-L416.'
         ),
         "paths": ('*/org.telegram.messenger*/files/cache4.db*',
                   '*/org.telegram.messenger*/files/account1/cache4.db*',
                   '*/org.telegram.messenger*/files/account2/cache4.db*',
                   '*/org.telegram.messenger*/files/account3/cache4.db*',
+                  '*/org.telegram.messenger*/shared_prefs/userconf*.xml',
                   '*/org.telegram.messenger*/cache/**',
                   '*/org.telegram.messenger*/files/Telegram/**'),
         "output_types": "standard",
@@ -172,6 +205,7 @@ __artifacts_v2__ = {
             "pixel7a_a14": "34 rows",
             "russell_a14": "51 rows",
             "russell_pixel6a_a13": "3 rows",
+            "samsung_a166u_a16_known_20261116": "16 | 138 rows, 1 in Saved Messages",
             "sharon_a14": "1 row",
         },
     },
@@ -425,7 +459,7 @@ __artifacts_v2__ = {
         ),
         "author": "Alexis Brignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-03",
-        "last_update_date": "2026-10-09",
+        "last_update_date": "2026-11-16",
         "requirements": "none",
         "category": "Telegram",
         "notes": (
@@ -443,13 +477,23 @@ __artifacts_v2__ = {
             'one database is read, a Source File column names the database of each row, and names are '
             "resolved inside the row's own database. The account folder is a location in the extraction "
             'and is not by itself proof of which account the rows belong to. Reading more than one '
-            'database was checked on constructed databases only (2026-10-09).'
+            'database was checked on constructed databases and, on samsung_a166u_a16_known_20261116, on '
+            'an image: four databases were read, the Source File column was present, and three of them '
+            'added no rows, so all 3 rows came from files/cache4.db. The dialog whose id equals the '
+            "account owner's own user id is the chat with the owner, which the client titles Saved "
+            'Messages; this parser writes Saved Messages in the Chat column for it, read from the user '
+            'record of the userconf* preference file in the same package folder. On '
+            'samsung_a166u_a16_known_20261116 one of the 3 rows is that dialog and reads Saved Messages; '
+            'with no such file the dialog keeps the users-table name. Reference: Telegram-Android, '
+            "'DialogObject.java (SavedMessages title for the self user)', "
+            'https://github.com/DrKLO/Telegram/blob/21f7d109da6ab3506c9e9577f98c6a38771ab335/TMessagesProj/src/main/java/org/telegram/messenger/DialogObject.java#L151-L152.'
         ),
         "paths": (
             '*/org.telegram.messenger*/files/cache4.db*',
             '*/org.telegram.messenger*/files/account1/cache4.db*',
             '*/org.telegram.messenger*/files/account2/cache4.db*',
             '*/org.telegram.messenger*/files/account3/cache4.db*',
+            '*/org.telegram.messenger*/shared_prefs/userconf*.xml',
         ),
         "output_types": "standard",
         "artifact_icon": "messages",
@@ -460,6 +504,7 @@ __artifacts_v2__ = {
             "kevin_pocox7_a15": "42 rows",
             "pixel7a_a14": "4 rows",
             "russell_pixel6a_a13": "1 row",
+            "samsung_a166u_a16_known_20261116": "16 | 3 rows, 1 Saved Messages",
             "sharon_a14": "1 row",
         },
     },
@@ -473,14 +518,19 @@ __artifacts_v2__ = {
         ),
         "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-04",
-        "last_update_date": "2026-10-09",
+        "last_update_date": "2026-11-16",
         "requirements": "none",
         "category": "Telegram",
         "notes": (
             'Telegram supports several accounts on one device; slot 0 is stored in userconfing.xml, '
             'spelled that way by the client, and slots 1 to 3 in userconfig1.xml through userconfig3.xml.'
             ' The user key holds a base64-encoded TL user record, decoded here for the account id, names,'
-            ' username and phone number. Two record constructors are read (0x215C4438 and 0x31774388). A '
+            ' username and phone number. Three record constructors are read (0x215C4438, 0x31774388 and '
+            '0xB1B8CC83, the current base TL_user, read on samsung_a166u_a16_known_20261116). Reference: '
+            "Telegram-Android, 'TLRPC.java (TL_user readParams: flags, flags2, id:long, access_hash, "
+            "names)', "
+            'https://github.com/DrKLO/Telegram/blob/21f7d109da6ab3506c9e9577f98c6a38771ab335/TMessagesProj/src/main/java/org/telegram/tgnet/TLRPC.java#L22059-L22111.'
+            ' A '
             'slot whose record uses another constructor is reported with those fields blank, or not '
             'reported at all when it also holds no passcode hash and no last_call_phone_number value. A '
             'passcode is in use when passcodeHash1 holds a value; passcodeType 0 is a PIN and 1 is a '
@@ -525,6 +575,7 @@ __artifacts_v2__ = {
             "kevin_pocox7_a15": "1 row",
             "pixel7a_a14": "1 row",
             "russell_pixel6a_a13": "1 row",
+            "samsung_a166u_a16_known_20261116": "16 | 1 row, User ID decoded from a 0xB1B8CC83 user record",
             "samsungs20_a13": "1 row",
             "sharon_a14": "1 row",
         },
@@ -1673,6 +1724,62 @@ def _cache4_mains(context):
     return mains
 
 
+def _own_user_ids(context):
+    """Own user id per Telegram account, read from the userconf* preference files.
+
+    The client stores the signed-in user's own TL user record under the 'user'
+    key of a shared-preferences file: userconfing.xml for account slot 0 and
+    userconfig1.xml to userconfig3.xml for slots 1 to 3. The record is decoded
+    by the same reader the Accounts artifact uses. The result is keyed by the
+    package root and the account slot, so a database is matched to the file in
+    its own container. Reference: Telegram-Android, 'UserConfig.java
+    (getPreferences, "userconfing" for account 0, "userconfig" + account
+    otherwise)',
+    https://github.com/DrKLO/Telegram/blob/21f7d109da6ab3506c9e9577f98c6a38771ab335/TMessagesProj/src/main/java/org/telegram/messenger/UserConfig.java#L412-L416.
+    """
+    own = {}
+    for found in context.get_files_found():
+        path = str(found).replace('\\', '/')
+        base = path.rsplit('/', 1)[-1]
+        if not (base.startswith('userconf') and base.endswith('.xml')):
+            continue
+        marker = '/shared_prefs/' + base
+        if not path.endswith(marker):
+            continue
+        root = path[:-len(marker)]
+        digits = ''.join(ch for ch in base if ch.isdigit())
+        slot = int(digits) if digits else 0
+        try:
+            xml_root = ET.parse(str(found)).getroot()
+        except ET.ParseError:
+            continue
+        values = {element.get('name'): (element.get('value') or element.text or '')
+                  for element in xml_root}
+        uid = _decode_account_user(values.get('user', '')).get('id')
+        if uid:
+            own.setdefault(root, {})[slot] = uid
+    return own
+
+
+def _own_id_for_db(db_file, own_ids):
+    """The account owner's own user id for a cache4.db, or None when unknown.
+
+    The database's own container and account folder decide which userconf* file
+    holds the owner: files/cache4.db is slot 0, files/account1 to
+    files/account3 are slots 1 to 3.
+    """
+    parts = str(db_file).replace('\\', '/').split('/')
+    if parts[-1] != 'cache4.db':
+        return None
+    if len(parts) >= 3 and parts[-2] == 'files':
+        slot, root = 0, '/'.join(parts[:-2])
+    elif len(parts) >= 4 and parts[-2] in _ACCOUNT_DIRS and parts[-3] == 'files':
+        slot, root = _ACCOUNT_DIRS.index(parts[-2]) + 1, '/'.join(parts[:-3])
+    else:
+        return None
+    return own_ids.get(root, {}).get(slot)
+
+
 def _rows_per_main(context, data_headers, rows_of):
     """Run rows_of(db_file) over each cache4.db; name the database when several are read."""
     mains = _cache4_mains(context)
@@ -1776,9 +1883,11 @@ def get_telegramMessages(context):
         'Recovery Method',
         'Recovery Location',
     )
+    own_ids = _own_user_ids(context)
     def rows_of(db_file):
         data_list = []
         names = _name_lookup(db_file)
+        own_id = _own_id_for_db(db_file, own_ids)
 
         # Basename index of whatever media directories the extraction carried.
         media_index = {}
@@ -1838,10 +1947,12 @@ def get_telegramMessages(context):
                 if local:
                     media_ref = check_in_media(file_path=local)
 
+            chat_name = ('Saved Messages' if own_id is not None and uid == own_id
+                         else names.get(uid, ''))
             data_list.append((
                 convert_unix_ts_to_utc(date),
                 uid,
-                names.get(uid, ''),
+                chat_name,
                 'Outgoing' if out else 'Incoming',
                 sender_id if sender_id is not None else '',
                 names.get(sender_id, '') if sender_id is not None else '',
@@ -2023,9 +2134,11 @@ def get_telegramChats(context):
         'Pinned',
         'Folder',
     )
+    own_ids = _own_user_ids(context)
     def rows_of(db_file):
         data_list = []
         names = _name_lookup(db_file)
+        own_id = _own_id_for_db(db_file, own_ids)
         counts = {}
         for uid, total in get_sqlite_db_records(
                 db_file, 'SELECT uid, count(*) FROM messages_v2 GROUP BY uid') or []:
@@ -2034,10 +2147,12 @@ def get_telegramChats(context):
         query = '''SELECT did, date, unread_count, pinned, folder_id
                    FROM dialogs ORDER BY date DESC'''
         for did, date, unread, pinned, folder_id in get_sqlite_db_records(db_file, query) or []:
+            chat_name = ('Saved Messages' if own_id is not None and did == own_id
+                         else names.get(did, ''))
             data_list.append((
                 convert_unix_ts_to_utc(date),
                 did,
-                names.get(did, ''),
+                chat_name,
                 counts.get(did, 0),
                 unread,
                 'Yes' if pinned else '',
@@ -2049,8 +2164,11 @@ def get_telegramChats(context):
 
 
 # TL_user constructors whose prefix is flags, flags2, id, then the optional
-# access hash, names, username and phone. TL_user_layer184 and _layer227.
-_USER_RECORDS = {0x215C4438, 0x31774388}
+# access hash, names, username and phone. TL_user_layer184, TL_user_layer218 and the
+# current base TL_user. Reference: Telegram-Android, 'TLRPC.java (class TL_user,
+# constructor 0xB1B8CC83, readParams flags, flags2, id:long, access_hash, names)',
+# https://github.com/DrKLO/Telegram/blob/21f7d109da6ab3506c9e9577f98c6a38771ab335/TMessagesProj/src/main/java/org/telegram/tgnet/TLRPC.java#L22059-L22111.
+_USER_RECORDS = {0x215C4438, 0x31774388, 0xB1B8CC83}
 
 _PASSCODE_TYPES = {0: 'PIN', 1: 'Password'}
 
