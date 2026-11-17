@@ -49,6 +49,12 @@ class NormalizeRowsTests(unittest.TestCase):
         self.assertEqual(rtc.normalize_rows(rows, backslash_paths=True),
                          rtc.normalize_rows(rows, backslash_paths=False))
 
+    def test_windows_temp_extract_path_is_tokenized(self):
+        windows = [["admin\\test\\temp\\extract_case_1_123\\x.db"]]
+        recorded = [["admin/test/temp/extract_case_1_999/x.db"]]
+        self.assertEqual(rtc.normalize_rows(windows, backslash_paths=True),
+                         rtc.normalize_rows(recorded, backslash_paths=False))
+
 
 class CompareTests(unittest.TestCase):
     BASE = {"headers": ["A", "B"], "data": [[1, "x"], [2, "y"]]}
