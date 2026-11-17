@@ -10,15 +10,15 @@
     "media_checkins": 0,
     "media_embedded_checkins": 1,
     "input_zip_path": "admin/test/cases/data/Threema/testdata.Threema.threema_messages.casesynthetic_v2.zip",
-    "start_time": "2026-11-15T19:59:03.920911+00:00",
-    "end_time": "2026-11-15T19:59:03.947116+00:00",
-    "run_time_seconds": 0.0017468929290771484,
+    "start_time": "2026-11-17T02:58:15.302284+00:00",
+    "end_time": "2026-11-17T02:58:15.330120+00:00",
+    "run_time_seconds": 0.001728057861328125,
     "last_commit": {
-      "hash": "bde4675f61825218ed56dfc8a2c8c45e9c5ea497",
-      "author_name": "Brigs",
-      "author_email": "abrignoni@gmail.com",
-      "date": "2026-11-15T14:51:37-05:00",
-      "message": "Threema: tie gallery copies to their messages"
+      "hash": "a60d9ae736afe53bdc18ffb953ca0f49b065e10a",
+      "author_name": "kalink0",
+      "author_email": "kalinko@be-binary.de",
+      "date": "2026-11-16T16:05:55+01:00",
+      "message": "Threema: tie gallery files to messages by identical bytes only"
     }
   },
   "headers": [
@@ -49,7 +49,7 @@
     "Media Status",
     "Media Duration (s)",
     "Reactions",
-    "Gallery Copy"
+    "Identical File in Gallery Folder"
   ],
   "data": [
     [

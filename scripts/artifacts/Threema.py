@@ -140,7 +140,7 @@ __artifacts_v2__ = {
                        "attached media where its file is in the extraction.",
         "author": "@Gear-I & Claude, @AlexisBrignoni, Codex, @kalink0",
         "creation_date": "2026-08-17",
-        "last_update_date": "2026-11-15",
+        "last_update_date": "2026-11-16",
         "requirements": "sqlcipher3",
         "category": "Threema",
         "notes": "The database is opened as for Threema - Contacts, with the same key files "
@@ -198,20 +198,21 @@ __artifacts_v2__ = {
                  "restore (RestoreService.java L1797-L1828), so a stored reaction time can be"
                  " the restore's guess; this is not exercised. 'Media' is the message's file,"
                  " else its thumbnail, decrypted in memory as described for Threema - Media. "
-                 "'Gallery Copy' lists each file in a Threema gallery folder whose bytes are "
-                 "identical to the message's decrypted file or thumbnail and to no other "
-                 "message's (see Threema - Media; a name alone ties nothing), by its path in "
-                 "the extraction and, in brackets, the 'Gallery Link' value of Threema - "
-                 "Media; on pixel7a_a14, pixel3_a12 and hickman_a13 one row each holds one. "
-                 "'Media Status' is File or Thumbnail only, with "
-                 "'(type not recognised)' where no file type was recognised in the decrypted "
-                 "bytes, Not on device where neither file is in the extraction (a file can be"
-                 " missing for reasons the database does not record), or Decryption failed. "
-                 "Not reported: whether a chat is archived, distribution lists and polls "
-                 "(tables empty on every test image), and deletion inferred from a gap in the"
-                 " numbering. File references are to Threema for Android at commit d44a2b53 "
-                 "(see Threema - Contacts) unless stated. Only text, location, file and call "
-                 "rows are exercised by the test images in sample_data; the constructed case "
+                 "'Identical File in Gallery Folder' lists each file in a Threema gallery "
+                 "folder whose bytes are identical to the message's decrypted file or "
+                 "thumbnail and to no other message's (see Threema - Media; a name alone ties"
+                 " nothing), by its path in the extraction and, in brackets, the 'Gallery "
+                 "Link' value of Threema - Media; it does not show that Threema made the "
+                 "file; on pixel7a_a14, pixel3_a12 and hickman_a13 one row each holds one. "
+                 "'Media Status' is File or Thumbnail only, with '(type not recognised)' "
+                 "where no file type was recognised in the decrypted bytes, Not on device "
+                 "where neither file is in the extraction (a file can be missing for reasons "
+                 "the database does not record), or Decryption failed. Not reported: whether "
+                 "a chat is archived, distribution lists and polls (tables empty on every "
+                 "test image), and deletion inferred from a gap in the numbering. File "
+                 "references are to Threema for Android at commit d44a2b53 (see Threema - "
+                 "Contacts) unless stated. Only text, location, file and call rows are "
+                 "exercised by the test images in sample_data; the constructed case "
                  "casesynthetic_v2 (see Threema - Contacts; 12 rows) also exercises a forward"
                  " security and a text status row, group rows, former image and voice rows, "
                  "reactions from the reaction tables and edited and deleted dates; video, "
@@ -271,8 +272,9 @@ __artifacts_v2__ = {
                        " files and thumbnails, profile pictures, group pictures and "
                        "wallpapers, with what the app's database says each belongs to, "
                        "including files the database does not refer to, and the files in the "
-                       "app's shared storage gallery folders, each tied to a message where its"
-                       " bytes are identical to that message's file.",
+                       "app's shared storage gallery folders, each tied to a message where "
+                       "its bytes are identical to the decrypted file or thumbnail of exactly"
+                       " one message.",
         "author": "@kalink0",
         "creation_date": "2026-11-14",
         "last_update_date": "2026-11-16",
@@ -315,61 +317,74 @@ __artifacts_v2__ = {
                  "test images in sample_data; group pictures, wallpapers and other files are "
                  "not exercised, an unreferenced message file only in the constructed case "
                  "casesynthetic_v2 (see Threema - Contacts; 5 rows); the case with no key "
-                 "file was run on pixel7a_a14 with key.dat removed (8 files, none decrypted),"
-                 " the case with no database on constructed paths only. Gallery folders: when "
-                 "a message's media is saved to the gallery, by the user or automatically for"
-                 " a received picture or video when the save-media setting is on and the chat"
-                 " is not private (MessageServiceImpl.java L2608-L2634), the client copies "
-                 "the decrypted message file, or its thumbnail where the file is gone, "
-                 "unchanged into a shared storage folder named by the build's MEDIA_PATH (for"
-                 " example Threema, ThreemaWork, ThreemaLibre; app/build.gradle.kts): "
-                 "Pictures, Movies, Music, Documents or Download/<folder> from Android 10, "
-                 "<folder>/Threema Pictures, Videos or Audio before it (FileServiceImpl.kt "
-                 "L235-L345). The copy is requested under the message's stored file name, or "
-                 "else threema-<local time>-<apiMessageId> plus an extension (FileUtil.java "
-                 "L503-L517); before Android 10 the client adds ' (n)' to a name already "
-                 "taken (common FileExtensions.kt L111-L122), and a type other than picture, "
-                 "video or audio goes to the Download folder itself, which is not read. With "
-                 "the same setting, pictures and videos taken in the app's own camera for "
-                 "sending are saved there as threema-<local time>, without an apiMessageId "
-                 "and from the source file (FileServiceImpl.kt L347-L355, "
-                 "MessageServiceImpl.java L4368-L4379), so a blank 'Gallery Link' does not "
-                 "show that a file did not come from Threema. These references describe "
-                 "client 6.5.3 (commit d44a2b53); the test images run 4.59, 4.83 and 5.4.1. "
-                 "The folders are shared storage: the user, a file manager or any app with "
-                 "storage access can write to them, so a file there is not by itself a file "
-                 "Threema wrote; which app wrote it is for the MediaStore artifacts "
-                 "(owner_package_name in external.db), not this one. Each file in those "
-                 "folders is listed for every install of the same Android user whose package"
-                 " uses that folder, as Kind 'File in gallery folder', Storage 'Shared "
-                 "storage (<folder>)' and Status 'Not encrypted'. It is not listed when the "
-                 "extraction holds no database or user files of such an install, or when the "
-                 "Android user cannot be read off its path. Only content ties such a file to "
-                 "a message: 'Gallery Link' is 'Identical to the message file' or 'Identical "
-                 "to the message thumbnail' when its SHA-256 equals that of exactly one "
-                 "message's decrypted file or thumbnail, and only then are 'Belongs To', "
-                 "'Message Created' and 'Message' the message's. A match shows that the bytes"
-                 " are the same, not who copied them or when. A file whose bytes the files "
-                 "of several messages share shows 'Identical to the files of <n> messages' "
-                 "with Belongs To 'Several messages'. A name is not taken as a tie: the "
-                 "stored file name comes from the sender's client, and the generic name has "
-                 "the same shape as that of a picture from the app's camera. When an untied "
-                 "file's name has the form threema-<date>-<time>-<id>, 'Gallery Link' gives "
-                 "the id and how many messages in the database carry it as apiMessageId, as "
-                 "a pointer only; the file is still not tied. Otherwise Belongs To is 'No "
-                 "identical message file', or 'Not compared (no usable master key)' when no "
-                 "key was read, and 'Database not opened' where the database was not opened "
-                 "(a file can still be shown as identical to a message file when a key was "
-                 "read). A file identical to a message file whose message is not in the "
-                 "database shows 'Not referenced by the database', and a file whose message "
-                 "file and thumbnail are both gone cannot be tied. On pixel7a_a14, "
-                 "pixel3_a12 and hickman_a13 the one file in Pictures/Threema on each is "
-                 "identical to a message file; the thumbnail, several messages, apiMessageId "
-                 "pointer and untied cases are exercised only by unit tests, and "
-                 "casesynthetic_v2 holds one identical file and one unrelated picture. On "
-                 "pixel7a_a14 (9 rows), pixel3_a12 (5 rows) and hickman_a13 (7 rows) every "
-                 "file except the one in the gallery folder is in external storage and "
-                 "Decrypted, and on "
+                 "file was run on pixel7a_a14 with key.dat removed (9 rows: the 8 files, none"
+                 " decrypted, with Belongs To 'Database not opened', and the file in "
+                 "Pictures/Threema with Belongs To 'Not compared (no usable master key)'), "
+                 "the case with no database on constructed paths only. Gallery folders: when "
+                 "a message's media is saved to the gallery, by the user or automatically "
+                 "after a picture or video file message is downloaded, when the save-media "
+                 "setting is on and the chat is not private (MessageServiceImpl.java "
+                 "L2519-L2535, L2608-L2634), the client copies the decrypted message file, or"
+                 " its thumbnail where the file is gone, unchanged into a shared storage "
+                 "folder named by the build's MEDIA_PATH (for example Threema, ThreemaWork, "
+                 "ThreemaLibre; app/build.gradle.kts): Pictures, Movies, Music, Documents or "
+                 "Download/<folder> from Android 10, <folder>/Threema Pictures, Videos or "
+                 "Audio before it (FileServiceImpl.kt L235-L345). The copy is requested under"
+                 " the message's stored file name, or else threema-<local "
+                 "time>-<apiMessageId> plus an extension (FileUtil.java L503-L517); before "
+                 "Android 10 the client adds ' (n)' to a name already taken (common "
+                 "FileExtensions.kt L111-L122), and a type other than picture, video or audio"
+                 " goes to the Download folder itself, which is not read. With the same "
+                 "setting, pictures and videos taken in the app's own camera for sending are "
+                 "saved there as threema-<local time>, without an apiMessageId and from the "
+                 "source file (FileServiceImpl.kt L347-L355, MessageServiceImpl.java "
+                 "L4368-L4379), so a blank 'Gallery Link' does not show that a file did not "
+                 "come from Threema. These references describe client 6.5.3 (commit "
+                 "d44a2b53); the test images run 4.59, 4.83 and 5.4.1. The folders are shared"
+                 " storage: the user, a file manager or any app with storage access can write"
+                 " to them, so a file there is not by itself a file Threema wrote. This "
+                 "artifact does not report which app wrote a file; MediaStore's external.db "
+                 "has an owner_package_name column, which the Emulated Storage Metadata "
+                 "artifacts report as stored. Each file in those folders is listed for every "
+                 "install of the same Android user whose package uses that folder, as Kind "
+                 "'File in gallery folder', Storage 'Shared storage (<directory>/<folder>)', "
+                 "for example Pictures/Threema, and Status 'Not encrypted'. It is not listed "
+                 "when the extraction holds no database or user files of such an install, or "
+                 "when the Android user cannot be read off the file's path or the install's "
+                 "path. Only content ties such a file to a message: 'Gallery Link' is "
+                 "'Identical to the message file' or 'Identical to the message thumbnail' "
+                 "when its SHA-256 equals that of exactly one message's decrypted file or "
+                 "thumbnail, and only then are 'Belongs To', 'Message Created' and 'Message' "
+                 "the message's. A match shows that the bytes are the same, not who copied "
+                 "them or when. A file whose bytes the files of several messages share shows "
+                 "'Identical to the files of <n> messages' with Belongs To 'Several messages'"
+                 " (where the database was opened). A name is not taken as a tie: the stored "
+                 "file name comes from the sender's client, the generic name starts like the "
+                 "name of a picture from the app's camera (threema-<local time>), and "
+                 "anything that writes to shared storage can choose a name. When a file "
+                 "identical to no message file has a name of the form threema-<8 digits>-<6 "
+                 "digits>-<id>, 'Gallery Link' gives the id and, where the database was "
+                 "opened, how many messages carry it as apiMessageId; this is a pointer only,"
+                 " and the file is not tied. Otherwise Belongs To is 'No identical message "
+                 "file': none of the message files and thumbnails in the extraction that "
+                 "decrypted has the same bytes (where a message file is in both user files "
+                 "directories only the app data copy is compared, and a gallery folder file "
+                 "that could not be read is shown the same way). Without a usable master key "
+                 "no file is compared and Belongs To is 'Not compared (no usable master "
+                 "key)'; with a key whose database did not open it is 'Database not opened', "
+                 "and 'Gallery Link' can still show a file identical to a message file. A "
+                 "file identical to a message file whose message is not in the database shows"
+                 " 'Not referenced by the database', and a file whose message file and "
+                 "thumbnail are both gone cannot be tied. On pixel7a_a14, pixel3_a12 and "
+                 "hickman_a13 the one file in Pictures/Threema on each is identical to a "
+                 "message file; the thumbnail, several messages and apiMessageId pointer link"
+                 " values are exercised only by unit tests of the linking function, and "
+                 "casesynthetic_v2 holds one identical file and one unrelated picture, which "
+                 "shows 'No identical message file'. On a gallery folder row the Belongs To "
+                 "values 'Several messages', 'Not referenced by the database' and 'Database "
+                 "not opened' are not exercised by a test or an image. On pixel7a_a14 (9 "
+                 "rows), pixel3_a12 (5 rows) and hickman_a13 (7 rows) every file except the "
+                 "one in the gallery folder is in external storage and Decrypted, and on "
                  "pixel3_a12 'Belongs To' holds one value on all 5 rows, the one conversation"
                  " the files belong to.",
         "paths": (
@@ -1287,11 +1302,11 @@ def _gallery_links(container, rows):
             links[path] = (None, f'Identical to the files of {len(found_stems)} messages',
                            True)
         elif api:
-            text = f'Name carries apiMessageId {api.group(1)}'
+            text = f'Name carries {api.group(1)}'
             if rows is not None:
                 carriers = len(by_api.get(api.group(1).lower(), ()))
-                text += (f', that of {carriers} message' + ('s' if carriers > 1 else '')
-                         if carriers else ', that of no message in the database')
+                text += (f', the apiMessageId of {carriers} message' + ('s' if carriers > 1 else '')
+                         if carriers else ', the apiMessageId of no message in the database')
             links[path] = (None, text + '; not tied', False)
         else:
             links[path] = (None, '', False)
@@ -1410,7 +1425,7 @@ def threema_messages(context):
         "Latitude", "Longitude", "Location Accuracy (m)",
         "Call Status", "Call ID", "Call Duration (s)", "State", "Read",
         "Quoted Message",
-        "Conversation", "Media Status", "Media Duration (s)", "Reactions", "Gallery Copy",
+        "Conversation", "Media Status", "Media Duration (s)", "Reactions", "Identical File in Gallery Folder",
     )
 
     files_found = unique_files(context)
@@ -1641,11 +1656,13 @@ def threema_media(context):
                 created, belongs, text = messages[stem]
             else:
                 created, text = None, ''
-                belongs = ('Database not opened' if owners is None else
+                # The database opens only through a master key, so without one no
+                # file was compared and the database was not opened either.
+                belongs = ('Not compared (no usable master key)' if not keys else
+                           'Database not opened' if owners is None else
                            'Not referenced by the database' if stem else
                            'Several messages' if several else
-                           'No identical message file' if keys else
-                           'Not compared (no usable master key)')
+                           'No identical message file')
             data_list.append((created, media, 'File in gallery folder', belongs, text, name,
                               f"Shared storage ({label})", 'Not encrypted', how))
 

@@ -393,9 +393,9 @@ class ThreemaGalleryTest(unittest.TestCase):
         self.assertEqual([links[g[2]] for g in gallery], [
             (UID_A, 'Identical to the message file', False),
             (UID_C, 'Identical to the message thumbnail', False),
-            (None, 'Name carries apiMessageId bb22, that of 1 message; not tied', False),
-            (None, 'Name carries apiMessageId cc33, that of 2 messages; not tied', False),
-            (None, 'Name carries apiMessageId ff00, that of no message in the database; '
+            (None, 'Name carries bb22, the apiMessageId of 1 message; not tied', False),
+            (None, 'Name carries cc33, the apiMessageId of 2 messages; not tied', False),
+            (None, 'Name carries ff00, the apiMessageId of no message in the database; '
                    'not tied', False),
             (None, '', False),    # the stored file name of one message is not a tie
             (None, '', False),    # nor is it with a ' (n)' suffix
@@ -404,7 +404,7 @@ class ThreemaGalleryTest(unittest.TestCase):
         # Without the database the bytes still decide, and the pointer gives no count.
         self.assertEqual(without_db[gallery[0][2]], (UID_A, 'Identical to the message file', False))
         self.assertEqual(without_db[gallery[2][2]],
-                         (None, 'Name carries apiMessageId bb22; not tied', False))
+                         (None, 'Name carries bb22; not tied', False))
         self.assertEqual(Threema._gallery_links({'gallery': []}, rows), {})
 
     def test_gallery_links_tie_only_one_message(self):
