@@ -178,6 +178,75 @@ __artifacts_v2__ = {
             "falken_a326u_a13": "Android 13 | com.sec.android.app.sbrowser | 0 rows",
         },
     },
+    "samsung_internet_search_history": {
+        "name": "Samsung Internet - Search History",
+        "description": "Entries in the history table of Samsung Internet's SearchHistory.db: the stored "
+                       "keyword and the stored date and time.",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-11-17",
+        "last_update_date": "2026-11-17",
+        "requirements": "none",
+        "category": "Samsung Internet",
+        "notes": (
+            'One row per history row in com.sec.android.app.sbrowser/databases/SearchHistory.db. Keyword is '
+            'the KEYWORD column as stored; it is what was committed in the address bar, which can be a '
+            'search term, a selected suggestion or a typed web address, not necessarily text that was '
+            'typed. On samsung_a166u_a16_known_20261116 the 2 rows came from two address bar entries in the '
+            'known-data session (mint log): the earlier row held the search suggestion that was selected, '
+            'not the shorter text that was typed, and the later row held a typed web address. KEYWORD has a '
+            'unique index, so the table holds one row per distinct keyword; which entry the time belongs to '
+            'when a keyword is entered again was not tested. DATETIME is shown as stored, a '
+            '"YYYY-MM-DD HH:MM:SS" string with no time zone, and this parser does not convert it. On that '
+            'image the two values were 2026-11-16 10:39:41 and 10:40:07, 5 hours and 1 second behind the UTC '
+            'times in the mint log, on a device set 5 hours behind UTC, which matches local time there; what '
+            'writes the value is not sourced, so the zone is not established for other devices. On this app '
+            'version (28.0.4.71) the history table has only the _ID, KEYWORD and DATETIME columns, with no '
+            'result URL and no count. Android User is the user of the app data folder the database is in, '
+            'taken from its path (data/data is user 0).'
+        ),
+        "paths": ('*/com.sec.android.app.sbrowser/databases/SearchHistory.db*',),
+        "output_types": ["html", "tsv", "lava"],
+        "artifact_icon": "search",
+        "sample_data": {
+            "samsung_a166u_a16_known_20261116": "Android 16 | com.sec.android.app.sbrowser 28.0.4.71 | 2 rows",
+        },
+    },
+    "samsung_internet_quick_access": {
+        "name": "Samsung Internet - Quick Access",
+        "description": "Rows of the quickaccess_item table of Samsung Internet's quickaccess.db, the store "
+                       "behind the Quick access tiles. A row is not by itself a user-added site.",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-11-17",
+        "last_update_date": "2026-11-17",
+        "requirements": "none",
+        "category": "Samsung Internet",
+        "notes": (
+            'One row per quickaccess_item row in com.sec.android.app.sbrowser/databases/quickaccess.db. Title '
+            'and URL are as stored, Position is the position column as stored, and Type, Deleted and Dirty '
+            'are shown as stored, their meanings not sourced. On samsung_a166u_a16_known_20261116 one site '
+            'was added to Quick access in the known-data session (mint log) and its row was the only one '
+            'with Type 0; the other 15 rows, Type 1, were present without being added in that session, their '
+            'origin not established. Of the Type 1 rows, 13 shared one URL host and the other 2 were on two '
+            'other hosts. Whether Type separates user-added rows from the rest on other devices or versions '
+            'is not established. Deleted held 0 on all 16 rows, Dirty held 1 on all 16 rows, and Device '
+            'Name, Device ID, Account Name and Account Type held one value each on all 16 rows; what those '
+            'four columns identify is not sourced. On this app version (28.0.4.71) the table has no column '
+            'named for a created or modified time. Android User is the user of the app data folder the database is in, '
+            'taken from its path (data/data is user 0). In the app\'s code (28.0.4.71) Quick access entries have '
+            'two stores: quickaccess.db (QuickAccessDatabase) and pintab.db (QuickAccessDbHelper, behind the '
+            'app\'s quickaccesspinned content provider and read when restoring an older backup). The site '
+            'added in the known-data session was written to quickaccess.db; pintab.db is not read here, and '
+            'its pintab table held no rows on samsung_a166u_a16_known_20261117. Not '
+            'reported: touchIcon (a blob), touchIconUrl, dominant, itemId, titleState and sync1 to sync5; id '
+            'is used only to order rows.'
+        ),
+        "paths": ('*/com.sec.android.app.sbrowser/databases/quickaccess.db*',),
+        "output_types": ["html", "tsv", "lava"],
+        "artifact_icon": "layout-grid",
+        "sample_data": {
+            "samsung_a166u_a16_known_20261116": "Android 16 | com.sec.android.app.sbrowser 28.0.4.71 | 16 rows (1 added in the known-data session)",
+        },
+    },
     "samsung_internet_tab_navigation": {
         "name": "Samsung Internet - Tab Navigation History",
         "description": "Per-tab back and forward navigation entries from the files/<w>_tab<n> tab-state files of "
@@ -875,3 +944,78 @@ def samsung_internet_tab_state(context):
         'Android User',
     )
     return data_headers, data_list, '\n'.join(source_paths)
+
+
+_SEARCH_HISTORY_COLUMNS = ('_ID', 'KEYWORD', 'DATETIME')
+
+
+def _android_user(context, file_found):
+    """The Android user of the app data folder a file is in, from its path (data/data is user 0)."""
+    parts = canonical_path(context.get_relative_path(file_found))[0].split('\x00')
+    return parts[1].rsplit(':', 1)[-1] if len(parts) >= 3 else ''
+
+
+@artifact_processor
+def samsung_internet_search_history(context):
+    data_list = []
+    source_paths = []
+    for file_found in unique_files(context):
+        file_found = str(file_found)
+        if not file_found.replace('\\', '/').endswith('/databases/SearchHistory.db'):
+            continue
+        rows = _read_table(file_found, 'history', _SEARCH_HISTORY_COLUMNS)
+        if rows is None:
+            continue
+        source_paths.append(file_found)
+        user = _android_user(context, file_found)
+        for row in sorted(rows, key=lambda r: (str(r['DATETIME'] or ''), r['_ID'] or 0)):
+            data_list.append((
+                row['DATETIME'] or '',
+                row['KEYWORD'] or '',
+                row['_ID'],
+                user,
+            ))
+    data_headers = ('DATETIME (as stored)', 'Keyword', '_ID', 'Android User')
+    return data_headers, data_list, '\n'.join(source_paths)
+
+
+_QUICK_ACCESS_COLUMNS = ('id', 'title', 'url', 'position', 'type', 'deleted', 'dirty',
+                         'deviceName', 'deviceId', 'accountName', 'accountType')
+
+
+@artifact_processor
+def samsung_internet_quick_access(context):
+    data_list = []
+    source_paths = []
+    for file_found in unique_files(context):
+        file_found = str(file_found)
+        if not file_found.replace('\\', '/').endswith('/databases/quickaccess.db'):
+            continue
+        rows = _read_table(file_found, 'quickaccess_item', _QUICK_ACCESS_COLUMNS)
+        if rows is None:
+            continue
+        source_paths.append(file_found)
+        user = _android_user(context, file_found)
+        for row in sorted(rows, key=lambda r: (row_position(r), r['id'] or 0)):
+            data_list.append((
+                row['title'] or '',
+                row['url'] or '',
+                row['position'],
+                row['type'],
+                row['deleted'],
+                row['dirty'],
+                row['deviceName'] or '',
+                row['deviceId'] or '',
+                row['accountName'] or '',
+                row['accountType'] or '',
+                user,
+            ))
+    data_headers = ('Title', 'URL', 'Position', 'Type (as stored)', 'Deleted (as stored)',
+                    'Dirty (as stored)', 'Device Name', 'Device ID', 'Account Name', 'Account Type',
+                    'Android User')
+    return data_headers, data_list, '\n'.join(source_paths)
+
+
+def row_position(row):
+    value = row['position']
+    return value if isinstance(value, int) else 0
