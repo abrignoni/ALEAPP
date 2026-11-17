@@ -74,7 +74,6 @@ from datetime import datetime, timedelta, timezone
 from scripts.artifacts.storagePathViews import canonical_path, unique_files
 from scripts.ilapfuncs import (
     artifact_processor,
-    get_sqlite_db_path,
     logfunc,
     open_sqlite_db_readonly,
 )
@@ -152,7 +151,7 @@ def _open(paths, name):
     for path in paths:
         if os.path.basename(path) == name:
             try:
-                return path, open_sqlite_db_readonly(get_sqlite_db_path(path))
+                return path, open_sqlite_db_readonly(path)
             except sqlite3.Error as ex:
                 logfunc(f'CapCut: could not open {name}: {ex}')
     return None, None

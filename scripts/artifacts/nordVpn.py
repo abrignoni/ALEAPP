@@ -116,7 +116,6 @@ from datetime import datetime, timedelta, timezone
 from scripts.artifacts.storagePathViews import canonical_path, unique_files
 from scripts.ilapfuncs import (
     artifact_processor,
-    get_sqlite_db_path,
     logfunc,
     open_sqlite_db_readonly,
 )
@@ -222,7 +221,7 @@ def _open(paths, name):
     '''The named database in one container, opened read only, or None.'''
     for path in _named(paths, name):
         try:
-            return path, open_sqlite_db_readonly(get_sqlite_db_path(path))
+            return path, open_sqlite_db_readonly(path)
         except sqlite3.Error as ex:
             logfunc(f'NordVPN: could not open {name}: {ex}')
     return None, None

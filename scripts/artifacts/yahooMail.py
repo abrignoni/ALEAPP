@@ -176,7 +176,6 @@ from datetime import datetime, timedelta, timezone
 from scripts.artifacts.storagePathViews import canonical_path, unique_files
 from scripts.ilapfuncs import (
     artifact_processor,
-    get_sqlite_db_path,
     logfunc,
     open_sqlite_db_readonly,
 )
@@ -349,7 +348,7 @@ def _databases(paths):
     opened = []
     for path in _named(paths, _DATABASE):
         try:
-            database = open_sqlite_db_readonly(get_sqlite_db_path(path))
+            database = open_sqlite_db_readonly(path)
         except sqlite3.Error as ex:
             logfunc(f'Yahoo Mail: could not open {_DATABASE}: {ex}')
             continue

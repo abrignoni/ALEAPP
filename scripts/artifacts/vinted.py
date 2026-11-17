@@ -119,7 +119,6 @@ from datetime import datetime, timedelta, timezone
 from scripts.artifacts.storagePathViews import canonical_path, unique_files
 from scripts.ilapfuncs import (
     artifact_processor,
-    get_sqlite_db_path,
     logfunc,
     open_sqlite_db_readonly,
 )
@@ -190,7 +189,7 @@ def _databases(context, paths):
             continue
         try:
             opened.append((context.get_relative_path(path),
-                           open_sqlite_db_readonly(get_sqlite_db_path(path))))
+                           open_sqlite_db_readonly(path)))
         except sqlite3.Error as ex:
             logfunc(f'Vinted: could not open {_DATABASE}: {ex}')
     return opened

@@ -54,6 +54,9 @@ jobs:
       - name: Open SQLite on a relative path
         run: python admin/test/scripts/test_sqlite_relative_path.py
 
+      - name: Open SQLite through each artifact's opener
+        run: python admin/test/scripts/test_sqlite_open_not_double_encoded.py
+
       # Pre-1970 timestamps are converted by adding a timedelta to the epoch rather than
       # through datetime.fromtimestamp, which can raise OSError where the platform C
       # gmtime() cannot represent the value. Running here proves that on Windows.
