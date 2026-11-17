@@ -51,6 +51,9 @@ jobs:
       - name: Open a database the test harness staged
         run: python admin/test/scripts/test_harness_absolute_temp.py
 
+      - name: Open SQLite on a relative path
+        run: python admin/test/scripts/test_sqlite_relative_path.py
+
       # Pre-1970 timestamps are converted by adding a timedelta to the epoch rather than
       # through datetime.fromtimestamp, which can raise OSError where the platform C
       # gmtime() cannot represent the value. Running here proves that on Windows.
