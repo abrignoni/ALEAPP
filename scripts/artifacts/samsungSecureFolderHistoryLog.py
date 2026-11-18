@@ -33,22 +33,25 @@ __artifacts_v2__ = {
             "reads the same column and also shows it as stored. Known data "
             "(samsung_a166u_a16_known_20261117, phone zone UTC-5 on that date): one file was "
             "moved from Android user 0's Download folder into the Secure Folder with My Files "
-            "between 14:59:49 and 15:00:46 UTC, per the session record, and the Secure Folder "
-            "was created at about 14:53:57 UTC. The HistoryLog held a request record stored as "
-            "10:00:32 and a result record stored as 10:00:36, both naming [0 -> 150]. Read as "
-            "phone local time these are 15:00:32 and 15:00:36 UTC, inside the move window; read "
-            "as UTC they would fall before the Secure Folder existed. On this known data the "
-            "stored text is phone local time. One device and one move: other devices and app "
-            "versions are not exercised. That move gave one Paired Event: source app MyFiles, "
-            "direction [0 -> 150], requested and moved count 1, Transferred Path the user-150 "
-            "Download folder, and Source Path derived from it as the user-0 Download folder, "
-            "which matches the folder the file was moved from. A move out of the Secure Folder, "
-            "an unpaired record and a count mismatch are not exercised. Of the registered zip "
-            "images, only samsung_a166u_a16_known_20261117 holds history_log_database (in "
-            "Android user 0's com.samsung.knox.securefolder container); registered tar images "
-            "were not checked. galaxys10_a10 and samsungs20_a13 carry other databases in the "
-            "package's databases folder, and anne_a15, samsunga53_a14 and sharon_a14 carry no "
-            "file in it."
+            "between 14:59:49 and 15:00:46 UTC, per the session record, The session record puts "
+            "the creation of the Secure Folder at about 14:53:57 UTC. The HistoryLog held a "
+            "request record stored as 10:00:32 and a result record stored as 10:00:36, both "
+            "naming [0 -> 150]. Read as phone local time these are 15:00:32 and 15:00:36 UTC, "
+            "inside the move window; read as UTC they would fall before the Secure Folder "
+            "existed. On this known data the stored text agrees with phone local time and does "
+            "not agree with UTC. The app's code was not read. One device and one move: other "
+            "devices and app versions are not exercised. That move gave one Paired Event: "
+            "source app MyFiles, direction [0 -> 150], requested and moved count 1, Transferred "
+            "Path the user-150 Download folder, and Source Path derived from it as the user-0 "
+            "Download folder, which matches the folder the file was moved from. Not exercised "
+            "on a registered image: a move out of the Secure Folder, an unpaired record, a "
+            "count mismatch, a choice between several candidate requests, the 30 minute limit, "
+            "a record that matches neither pattern, and a request that carries its own path. Of "
+            "the registered zip images, only samsung_a166u_a16_known_20261117 holds "
+            "history_log_database (under data/data, the user 0 path, not under user 150); "
+            "registered tar images were not checked. galaxys10_a10 and samsungs20_a13 carry "
+            "other databases in the package's databases folder, and anne_a15, samsunga53_a14 "
+            "and sharon_a14 carry no file in it."
         ),
         "paths": (
             "*/com.samsung.knox.securefolder/databases/*",
@@ -66,6 +69,7 @@ __artifacts_v2__ = {
     }
 }
 
+import os
 import re
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
@@ -515,7 +519,7 @@ def samsungSecureFolderHistoryLog(context):
         # The glob matches every file in the databases directory, so skip the
         # SQLite sidecars before probing; opening a -wal/-shm/-journal file
         # logs "file is not a database" without ever holding the table.
-        if is_sqlite_sidecar(file_found):
+        if is_sqlite_sidecar(file_found) or not os.path.isfile(file_found):
             continue
         if not does_table_exist_in_db(file_found, HISTORY_TABLE):
             continue
