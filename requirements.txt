@@ -27,6 +27,8 @@ bcrypt==5.0.0
 beautifulsoup4==4.8.2
 bencoding
 fitdecode==0.10.0
+# dulwich reads the git repositories Jami keeps for each conversation (jami.py).
+dulwich==1.2.21
 folium==0.14.0
 # The zip seeker reads a CLBX zip's file times from its metadata.msgpack.
 msgpack==1.2.3
