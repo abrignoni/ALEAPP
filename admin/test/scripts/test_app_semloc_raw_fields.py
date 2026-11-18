@@ -140,6 +140,13 @@ class AppSemlocRawSignalsTest(unittest.TestCase):
             self.assertEqual(rows[0][1], 2)
             self.assertEqual(rows[0][2], '00:11:22:33:44:55 -40, aa:bb:cc:dd:ee:ff -85')
 
+    def test_wifi_mac_wider_than_48_bits_is_shown_as_stored(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path = write_log(Path(folder) / f'data/data/{STORE}/000001.log',
+                             [(key(1700000001000, 1), wifi(macs=(2 ** 50,), levels=(-60,)), 1)])
+            _, rows, _ = module.get_appSemlocWifiScans.__wrapped__(Context(folder, [path]))
+            self.assertEqual(rows[0][2], f'{2 ** 50} (as stored) -60')
+
     def test_activity_record_names_and_top_candidate(self):
         with tempfile.TemporaryDirectory() as folder:
             path = write_log(Path(folder) / f'data/data/{STORE}/000001.log')
