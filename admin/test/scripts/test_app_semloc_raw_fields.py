@@ -1,16 +1,16 @@
-"""Actual LevelDB log/table and protobuf fixtures test structure, not field meanings."""
-import collections
+"""Real LevelDB log and table fixtures holding raw signal records, read by all three artifacts."""
 import datetime
 import hashlib
 from pathlib import Path
 import struct
 import tempfile
 import unittest
-from unittest.mock import patch
 
 from scripts.artifacts import appSemloc as module
 from scripts.vendor.ccl import ccl_leveldb
 from admin.test.scripts.test_fcm_skype_raw_events import varint, field, checksum
+
+STORE = 'com.google.android.gms/app_semanticlocation_rawsignal_db'
 
 
 class Context:
@@ -28,165 +28,174 @@ class Context:
 
 
 def number(index, value):
-    return varint(index << 3) + varint(value)
+    return varint(index << 3) + varint(value & 0xFFFFFFFFFFFFFFFF)
 
 
-def payload(one=123456789, two=987654321, three=1234, six=1700000000123):
-    return field(1, field(1, number(1, one) + number(2, two) + number(3, three) + number(6, six)))
+def single(index, value):
+    return varint(index << 3 | 5) + struct.pack('<f', value)
 
 
-def write_log(path):
-    """Valid write batches include repeats, old versions, zeros and undecodable values."""
+def zigzag(value):
+    return (value << 1) ^ (value >> 63)
+
+
+def position(lat=407128000, lng=-740060000, accuracy=12345, altitude=10.5, source=1,
+             time=1700000000123, speed=1.5):
+    body = (number(1, lat) + number(2, lng) + number(3, accuracy) + single(4, altitude)
+            + number(5, source) + number(6, time) + single(7, speed))
+    return field(1, field(1, body)) + number(2, time)
+
+
+def wifi(time=1700000001000, macs=(0x001122334455, 0xAABBCCDDEEFF), levels=(-40, -85)):
+    packed_macs = b''.join(varint(mac) for mac in macs)
+    packed_levels = b''.join(varint(zigzag(level)) for level in levels)
+    body = number(1, time) + field(3, packed_macs) + field(4, packed_levels) + number(6, 2)
+    return field(1, field(2, body))
+
+
+def activity(time=1700000002000, types=(3, 7), confidences=(0.75, 0.25)):
+    body = (number(2, time) + field(3, b''.join(varint(t) for t in types))
+            + field(4, b''.join(struct.pack('<f', c) for c in confidences)))
+    return field(1, field(3, body))
+
+
+def key(time, kind):
+    return struct.pack('>Q', time) + bytes([kind])
+
+
+RECORDS = [(key(1700000000123, 0), position(), 1),
+           (key(1700000000123, 0), position(source=9), 1),  # a later version of one key
+           (key(1700000001000, 1), wifi(), 1),
+           (key(1700000002000, 2), activity(), 1),
+           (key(1700000003000, 0), b'', 0),                  # a deletion
+           (b'invalid', b'\x80', 1)]
+
+
+def write_log(path, records=None):
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    records = [(b'\xff\0key', payload(), 1), (b'\xff\0key', payload(one=456), 1),
-               (b'zero', payload(0, 0, 0, 0), 1),
-               (b'huge-time', payload(six=2**63-1), 1),
-               (b'deleted', b'', 0), (b'invalid', b'\x80', 1),
-               (b'missing', field(1, field(1, number(1, 5))), 1),
-               (b'wrong-type', field(1, field(1, field(1, b'text') + number(2, 2)
-                                                 + number(3, 3) + number(6, 4))), 1)]
+    records = RECORDS if records is None else records
     batch = struct.pack('<QI', 0, len(records))
-    for key, value, state in records:
-        batch += bytes([state]) + varint(len(key)) + key
+    for rec_key, value, state in records:
+        batch += bytes([state]) + varint(len(rec_key)) + rec_key
         if state:
             batch += varint(len(value)) + value
-    block = struct.pack('<IHB', checksum(b'\x01'+batch), len(batch), 1) + batch
-    path.write_bytes(block + block)  # Exact duplicate observations remain visible.
+    block = struct.pack('<IHB', checksum(b'\x01' + batch), len(batch), 1) + batch
+    path.write_bytes(block)
     return path
 
 
 def write_table(path):
-    """Minimal uncompressed LevelDB table with genuine block/footer encoding."""
+    """Minimal uncompressed LevelDB table with genuine block and footer encoding."""
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    keys = [struct.pack('<Q', 14 << 8 | 1), b'a'+struct.pack('<Q', 11 << 8 | 1),
-            b'b'+struct.pack('<Q', 12 << 8 | 1), b'c'+struct.pack('<Q', 13 << 8)]
-    entries = list(zip(keys, [payload(one=789), payload(), payload(one=456), b'']))
+    entries = [(key(1700000005000, 0) + struct.pack('<Q', 21 << 8 | 1), position(time=1700000005000))]
 
     def block(items):
         data = b''
-        for key, value in items:
-            data += varint(0) + varint(len(key)) + varint(len(value)) + key + value
+        for item_key, value in items:
+            data += varint(0) + varint(len(item_key)) + varint(len(value)) + item_key + value
         data += struct.pack('<II', 0, 1)
-        return data + b'\0' + struct.pack('<I', checksum(data+b'\0')), len(data)
+        return data + b'\0' + struct.pack('<I', checksum(data + b'\0')), len(data)
 
     data, size = block(entries)
     meta, meta_size = block([])
-    index, index_size = block([(keys[-1], varint(0)+varint(size))])
-    footer = varint(len(data))+varint(meta_size)+varint(len(data)+len(meta))+varint(index_size)
+    index, index_size = block([(entries[-1][0], varint(0) + varint(size))])
+    footer = (varint(len(data)) + varint(meta_size) + varint(len(data) + len(meta))
+              + varint(index_size))
     footer = footer.ljust(40, b'\0') + struct.pack('<Q', ccl_leveldb.LdbFile.MAGIC)
     path.write_bytes(data + meta + index + footer)
     return path
 
 
-class AppSemlocRawFieldsTest(unittest.TestCase):
-    def test_actual_log_all_versions_raw_values_and_zero_dates(self):
+class AppSemlocRawSignalsTest(unittest.TestCase):
+    def test_positions_decode_sourced_fields_and_keep_every_version(self):
         with tempfile.TemporaryDirectory() as folder:
-            path = write_log(Path(folder)/'data/user/0/com.google.android.gms/app_semanticlocation_rawsignal_db/000001.log')
+            path = write_log(Path(folder) / f'data/data/{STORE}/000001.log')
             before = hashlib.sha256(path.read_bytes()).hexdigest()
             headers, rows, source = module.get_appSemloc.__wrapped__(Context(folder, [path]))
-            self.assertEqual(len(headers), 13)
-            self.assertEqual(len(rows), 8)
+            self.assertEqual(len(headers), 11)
             self.assertEqual(source, str(path.parent))
-            self.assertEqual(rows[:4], rows[4:])
-            self.assertEqual(rows[0][1:9], (1700000000123, 0, b'\xff\0key'.hex(), 'Live', 'Log',
-                                          123456789, 987654321, 1234))
-            self.assertEqual(rows[1][3], rows[0][3])
-            self.assertEqual(rows[1][2], 1)
-            self.assertEqual(rows[1][6], 456)
-            self.assertEqual(rows[0][0], datetime.datetime(2023, 11, 14, 22, 13, 20, 123000,
+            self.assertEqual(len(rows), 2)
+            first = rows[0]
+            self.assertEqual(first[0], datetime.datetime(2023, 11, 14, 22, 13, 20, 123000,
                                                          tzinfo=datetime.timezone.utc))
-            self.assertEqual(rows[0][9:12], (123456789/1e7, 987654321/1e7, 1234/1000))
-            self.assertEqual(rows[2][:2], ('', 0))
-            self.assertEqual(rows[2][6:12], (0, 0, 0, 0.0, 0.0, 0.0))
-            self.assertEqual(rows[3][:2], ('', 2**63-1))
+            self.assertEqual(first[1:4], (40.7128, -74.006, 12.345))
+            self.assertAlmostEqual(first[4], 10.5)
+            self.assertEqual(first[5], 'GPS')
+            self.assertAlmostEqual(first[6], 1.5)
+            self.assertEqual(first[8], key(1700000000123, 0).hex())
+            self.assertEqual(first[9], 'Log')
+            self.assertEqual(rows[1][5], 'Unknown (9)')
             self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), before)
-            with ccl_leveldb.RawLevelDb(path.parent) as db:
-                records = list(db.iterate_records_raw())
-            self.assertEqual(len(records), 16)
-            self.assertEqual(collections.Counter(r.state.name for r in records), {'Live': 14, 'Deleted': 2})
 
-    def test_actual_table_raw_internal_key_state_and_origin(self):
+    def test_wifi_scan_macs_and_signed_levels(self):
         with tempfile.TemporaryDirectory() as folder:
-            path = write_table(Path(folder)/'db/000002.ldb')
-            before = path.read_bytes()
-            with ccl_leveldb.RawLevelDb(path.parent) as db:
-                records = list(db.iterate_records_raw())
-            self.assertEqual([r.state.name for r in records], ['Unknown', 'Live', 'Live', 'Deleted'])
-            self.assertEqual([r.seq for r in records], [14, 11, 12, 13])
-            headers, rows, _ = module.get_appSemloc.__wrapped__(Context(folder, [path]))
-            self.assertEqual(len(headers), 13)
+            path = write_log(Path(folder) / f'data/data/{STORE}/000001.log')
+            headers, rows, _ = module.get_appSemlocWifiScans.__wrapped__(Context(folder, [path]))
+            self.assertEqual(len(headers), 7)
+            self.assertEqual(len(rows), 1)
+            self.assertEqual(rows[0][0], datetime.datetime(2023, 11, 14, 22, 13, 21,
+                                                         tzinfo=datetime.timezone.utc))
+            self.assertEqual(rows[0][1], 2)
+            self.assertEqual(rows[0][2], '00:11:22:33:44:55 -40, aa:bb:cc:dd:ee:ff -85')
+
+    def test_wifi_mac_wider_than_48_bits_is_shown_as_stored(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path = write_log(Path(folder) / f'data/data/{STORE}/000001.log',
+                             [(key(1700000001000, 1), wifi(macs=(2 ** 50,), levels=(-60,)), 1)])
+            _, rows, _ = module.get_appSemlocWifiScans.__wrapped__(Context(folder, [path]))
+            self.assertEqual(rows[0][2], f'{2 ** 50} (as stored) -60')
+
+    def test_activity_record_names_and_top_candidate(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path = write_log(Path(folder) / f'data/data/{STORE}/000001.log')
+            headers, rows, _ = module.get_appSemlocActivityRecords.__wrapped__(
+                Context(folder, [path]))
+            self.assertEqual(len(headers), 8)
+            self.assertEqual(len(rows), 1)
+            self.assertEqual(rows[0][1:4], ('STILL', 0.75, 'STILL 0.75, WALKING 0.25'))
+
+    def test_unreadable_table_file_is_skipped_and_the_rest_is_read(self):
+        with tempfile.TemporaryDirectory() as folder:
+            store = Path(folder) / f'data/data/{STORE}'
+            table = write_table(store / '000002.ldb')
+            log = write_log(store / '000003.log')
+            broken = store / '000004.ldb'
+            broken.write_bytes(table.read_bytes()[:-8])  # no footer magic, as a cut-off write
+            headers, rows, _ = module.get_appSemloc.__wrapped__(
+                Context(folder, [table, log, broken]))
             self.assertEqual(len(rows), 3)
-            self.assertEqual([r[4] for r in rows], ['Unknown', 'Live', 'Live'])
-            self.assertTrue(all(r[5] == 'Ldb' for r in rows))
-            self.assertEqual([r[3] for r in rows], [r.key.hex() for r in records if r.value])
-            self.assertTrue(all(r[-1] == 'db/000002.ldb' for r in rows))
-            self.assertEqual(path.read_bytes(), before)
+            self.assertEqual([row[9] for row in rows], ['Ldb', 'Log', 'Log'])
+            self.assertEqual(len(headers), 11)
 
-    def test_combined_directories_only_and_file_order_keep_all_rows(self):
+    def test_storage_views_read_once_and_other_users_get_a_source_column(self):
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder)
-            files = [write_table(root/'prefix/data/user/10/com.google.android.gms/app_semanticlocation_rawsignal_db/000002.ldb'),
-                     write_log(root/'data/user/0/com.google.android.gms/app_semanticlocation_rawsignal_db/000001.log')]
-            headers, rows, source = module.get_appSemloc.__wrapped__(Context(root, [*files, files[0]]))
-            self.assertEqual(len(headers), 14)
+            first = write_log(root / f'data/data/{STORE}/000001.log')
+            view = write_log(root / f'data/user/0/{STORE}/000001.log')
+            other = write_log(root / f'data/user/10/{STORE}/000001.log')
+            headers, rows, source = module.get_appSemloc.__wrapped__(
+                Context(root, [first, view]))
+            self.assertEqual(len(rows), 2)
+            self.assertEqual(len(headers), 11)
+            headers, rows, source = module.get_appSemloc.__wrapped__(
+                Context(root, [first, view, other]))
+            self.assertEqual(len(rows), 4)
             self.assertEqual(headers[-1], 'Source File')
-            self.assertEqual(len(rows), 11)
-            self.assertEqual(source.splitlines(), [str(p.parent) for p in files])
-            self.assertEqual([r[-1] for r in rows[:3]], [str(files[0].relative_to(root))]*3)
-            self.assertEqual([r[-1] for r in rows[3:]], [str(files[1].relative_to(root))]*8)
-            self.assertTrue(all(not Path(r[-1]).is_absolute() for r in rows))
+            self.assertEqual(len(source.splitlines()), 2)
+            self.assertTrue(all(not Path(row[-1]).is_absolute() for row in rows))
 
-    def test_multiple_files_one_directory_preserve_library_order_without_source_column(self):
+    def test_non_data_files_and_empty_store_give_no_rows(self):
         with tempfile.TemporaryDirectory() as folder:
-            parent = Path(folder)/'db'
-            table = write_table(parent/'000002.ldb')
-            log = write_log(parent/'000001.log')
-            headers, rows, source = module.get_appSemloc.__wrapped__(Context(folder, [table, log]))
-            self.assertEqual(len(headers), 13)
-            self.assertEqual(len(rows), 11)
-            self.assertEqual([r[5] for r in rows], ['Log']*8 + ['Ldb']*3)
-            self.assertEqual(source, str(parent))
-
-    def test_unexpected_iteration_failure_propagates_and_closes_actual_reader(self):
-        with tempfile.TemporaryDirectory() as folder:
-            path = write_log(Path(folder)/'db/000001.log')
-            original = ccl_leveldb.RawLevelDb.close
-            closed = []
-
-            def close(reader):
-                closed.append(reader.in_dir_path)
-                original(reader)
-
-            # The reader skips and reports a damaged log instead of raising, so the
-            # failure is made directly.
-            with patch.object(ccl_leveldb.RawLevelDb, 'close', close), \
-                    patch.object(ccl_leveldb.RawLevelDb, 'iterate_records_raw',
-                                 side_effect=ValueError('constructed failure')):
-                with self.assertRaises(ValueError):
-                    module.get_appSemloc.__wrapped__(Context(folder, [path]))
-            self.assertEqual(closed, [path.parent])
-
-    def test_empty_failed_directory_does_not_add_source_and_reader_closes(self):
-        with tempfile.TemporaryDirectory() as folder:
-            root = Path(folder)
-            path = write_log(root/'good/000001.log')
-            empty = root/'empty/LOG';empty.parent.mkdir();empty.write_bytes(b'')
-            missing = root/'missing/LOG'
-            original = ccl_leveldb.RawLevelDb.close
-            closed = []
-
-            def close(reader):
-                closed.append(reader.in_dir_path)
-                original(reader)
-
-            with patch.object(ccl_leveldb.RawLevelDb, 'close', close):
-                headers, rows, source = module.get_appSemloc.__wrapped__(Context(root, [missing,empty,path]))
-            self.assertEqual(len(headers), 13)
-            self.assertEqual(len(rows), 8)
-            self.assertEqual(source, str(path.parent))
-            self.assertEqual(closed, [empty.parent, path.parent])
+            store = Path(folder) / f'data/data/{STORE}'
+            store.mkdir(parents=True)
+            current = store / 'CURRENT'
+            current.write_text('MANIFEST-000001\n')
+            headers, rows, source = module.get_appSemloc.__wrapped__(Context(folder, [current]))
+            self.assertEqual(rows, [])
+            self.assertEqual(source, '')
+            self.assertEqual(len(headers), 11)
 
 
 if __name__ == '__main__':
