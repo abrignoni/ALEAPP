@@ -15,7 +15,7 @@ __artifacts_v2__ = {
         ),
         "author": "Alexis Brignoni, John Hyla, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-03",
-        "last_update_date": "2026-11-16",
+        "last_update_date": "2026-11-17",
         "requirements": "none",
         "category": "Telegram",
         "notes": (
@@ -122,8 +122,50 @@ __artifacts_v2__ = {
             'a known location it appends that path to the record as a trailing string, which is reported '
             'as the recorded media path; it is the path the app wrote, and the file is linked only when '
             'it is still present in the extraction. On the nine images listed in sample_data before hickman_a13 was added Recorded '
-            "Media Path held a value on some rows; no file of the recorded name is in those images' "
-            'archives; and Media File had no value on any row. Reference: Telegram-Android, '
+            "Media Path held a value on some rows and no file of the recorded name is in those images' "
+            "archives. Media File is also filled, when the recorded media path linked no file, from "
+            "file_to_path.db beside the cache4.db (files/ for the first account, files/account1 to "
+            "account3 for slots 1 to 3; no image tested holds rows under account1 to account3, so the "
+            "slot folders are taken from the client source and were not exercised). The client writes its"
+            " paths_by_dialog_id table twice for a download: the temp file and the parts file when the "
+            "download starts, and the final file when it finishes, each with the dialog id and the "
+            "message id its getId() returns, which for a message with an ephemeral anchor is the anchor's"
+            " id (no image tested was checked for that case). Reference: Telegram-Android, "
+            "'FilePathDatabase.java (saveFileDialogId)', "
+            "https://github.com/DrKLO/Telegram/blob/21f7d109da6ab3506c9e9577f98c6a38771ab335/TMessagesProj/src/main/java/org/telegram/messenger/FilePathDatabase.java#L394-L416;"
+            " 'FileLoader.java (getFileMetadataFromParent, didFinishLoadingFile)', "
+            "https://github.com/DrKLO/Telegram/blob/21f7d109da6ab3506c9e9577f98c6a38771ab335/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java#L45-L83"
+            " and "
+            "https://github.com/DrKLO/Telegram/blob/21f7d109da6ab3506c9e9577f98c6a38771ab335/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java#L1004-L1012;"
+            " 'FileLoadOperation.java (start)', "
+            "https://github.com/DrKLO/Telegram/blob/21f7d109da6ab3506c9e9577f98c6a38771ab335/TMessagesProj/src/main/java/org/telegram/messenger/FileLoadOperation.java#L1208-L1211."
+            " A recorded file is linked to the row whose dialog id and message id are the same, a "
+            "recorded link and not a match on name, and is found by the device path it was given: "
+            "/storage/emulated/<user>/ is the extraction's data/media/<user>/ or "
+            "mnt/pass_through/<n>/emulated/<user>/, and /data/user/<user>/ its data/user/<user>/, or "
+            "data/data for user 0. Every recorded path on the images tested is under /storage/emulated/0 "
+            "or /storage/emulated/10 and was found under data/media; the pass_through view was checked on"
+            " a constructed copy only, and no image holds a recorded /data/user path. Only files under "
+            "the package's cache and files/Telegram folders and the public "
+            "Android/media/org.telegram.messenger/Telegram folder are looked for, so an empty cell does "
+            "not show the file is absent. Entries with message id 0, which the client writes for stories,"
+            " are not read, and a recorded file whose dialog and message id match no message row is not "
+            "reported (11 present files on dragna_pixel9a_a16). Downloaded Files on Device lists every "
+            "recorded file found in the extraction for the row: names not ending in .temp first, files "
+            "outside cache/ before those in it, then path order, with a 0-byte file marked '(0 bytes)'. "
+            "Media File shows the first listed file that is not empty and whose first bytes are an image,"
+            " a video or audio (scripts/filetype.py); the others are only listed, and a file that is none"
+            " of those is listed and not shown, as the .tgs files on 1 row of kevin_pocox7_a15 and 1 of "
+            "pixel7a_a14 are. On dragna_pixel9a_a16 the table holds 937 paths, 917 with a message id "
+            "other than 0; they name 448 dialog and message pairs, 136 of which are among the 554 message"
+            " rows, and 25 of those rows have a recorded file in the extraction: 23 show it, 2 list only "
+            "0-byte .temp files. Media File was filled on 2 rows of hc_pixel8pro_a16, 2 of "
+            "hc_pixel8pro_a17, 5 of anne_a15, 2 of pixel7a_a14, 1 of russell_a14 and 28 of "
+            "kevin_pocox7_a15, and on 1 row of kevin_pocox7_a15 and 1 of pixel7a_a14 it holds a file "
+            "whose name is not the recorded media path's. On hickman_a13 file_to_path.db has no "
+            "paths_by_dialog_id table (an older client), so nothing is linked there and the run log says "
+            "so. "
+            'Reference: Telegram-Android, '
             "'TL_legacy_message.java (TL_message layer constructors)', "
             'https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/tgnet/tl/legacy/TL_legacy_message.java.'
             " Reference: Telegram-Android, 'generated TlGen_MessageReplyHeader.kt, "
@@ -190,13 +232,17 @@ __artifacts_v2__ = {
                   '*/org.telegram.messenger*/files/account1/cache4.db*',
                   '*/org.telegram.messenger*/files/account2/cache4.db*',
                   '*/org.telegram.messenger*/files/account3/cache4.db*',
+                  '*/org.telegram.messenger*/files/file_to_path.db*',
+                  '*/org.telegram.messenger*/files/account[123]/file_to_path.db*',
                   '*/org.telegram.messenger*/shared_prefs/userconf*.xml',
                   '*/org.telegram.messenger*/cache/**',
-                  '*/org.telegram.messenger*/files/Telegram/**'),
+                  '*/org.telegram.messenger*/files/Telegram/**',
+                  '*/Android/media/org.telegram.messenger*/Telegram/**'),
         "output_types": "standard",
         "artifact_icon": "message-circle",
         "sample_data": {
             "anne_a15": "240 rows",
+            "dragna_pixel9a_a16": "554 rows",
             "hc_pixel8pro_a16": "10 rows (4 Recovered)",
             "hickman_a13": "29 rows (2 Recovered)",
             "hc_pixel8pro_a17": "17 | 10 rows (4 Recovered)",
@@ -936,7 +982,8 @@ import struct
 import xml.etree.ElementTree as ET
 
 from scripts.ilapfuncs import artifact_processor, logfunc, convert_unix_ts_to_utc, \
-    get_sqlite_db_records, get_file_path, check_in_media
+    get_sqlite_db_records, get_file_path, check_in_media, does_table_exist_in_db
+from scripts.filetype import guess_mime
 from scripts.sqlite_wal import (KIND_COMMITTED, KIND_EARLIER, KIND_UNCOMMITTED,
                                 rows_not_in_current)
 
@@ -1882,12 +1929,16 @@ def get_telegramMessages(context):
         'Message ID',
         'Recovery Method',
         'Recovery Location',
+        'Downloaded Files on Device',
     )
     own_ids = _own_user_ids(context)
+    device_index = _device_path_index(context)
+    _FILE_TO_PATH_READ.clear()
     def rows_of(db_file):
         data_list = []
         names = _name_lookup(db_file)
         own_id = _own_id_for_db(db_file, own_ids)
+        downloads = _downloads_by_message(db_file, device_index, context)
 
         # Basename index of whatever media directories the extraction carried.
         media_index = {}
@@ -1946,6 +1997,12 @@ def get_telegramMessages(context):
                 local = media_index.get(attach.replace('\\', '/').rsplit('/', 1)[-1])
                 if local:
                     media_ref = check_in_media(file_path=local)
+            downloaded = downloads.get((uid, mid), [])
+            if not media_ref:
+                renderable = next((local for local, _, size in downloaded
+                                   if size and _is_playable_media(local)), None)
+                if renderable:
+                    media_ref = check_in_media(file_path=renderable) or ''
 
             chat_name = ('Saved Messages' if own_id is not None and uid == own_id
                          else names.get(uid, ''))
@@ -1964,10 +2021,101 @@ def get_telegramMessages(context):
                 mid,
                 method,
                 location,
+                '\n'.join(relative + ('' if size else ' (0 bytes)')
+                          for _, relative, size in downloaded),
             ))
         return data_list
 
-    return _rows_per_main(context, data_headers, rows_of)
+    headers, data_list, sources = _rows_per_main(context, data_headers, rows_of)
+    if _FILE_TO_PATH_READ:
+        sources = '\n'.join([sources] + sorted(_FILE_TO_PATH_READ)) if sources else \
+            '\n'.join(sorted(_FILE_TO_PATH_READ))
+    return headers, data_list, sources
+
+
+# /mnt/pass_through/<n>/emulated/<user>/ is another view of /data/media/<user>/ (as in
+# exoplayerCachedMedia.py).
+_FILE_TO_PATH_READ = set()
+_PASS_THROUGH_VIEW = re.compile(r'(^|/)mnt/pass_through/\d+/emulated/(\d+)/')
+_SHARED_STORAGE = re.compile(r'(?:^|/)data/media/(\d+)/(.+)$')
+_APP_STORAGE = re.compile(r'(?:^|/)data/(?:data|user/(\d+))/(org\.telegram\.messenger[^/]*/.+)$')
+
+
+def _is_playable_media(path):
+    """Whether a file's own bytes are an image, a video or audio (scripts/filetype.py)."""
+    try:
+        with open(path, 'rb') as handle:
+            head = handle.read(8192)
+    except OSError:
+        return False
+    mime = guess_mime(head) or ''
+    return mime.split('/', 1)[0] in ('image', 'video', 'audio')
+
+
+def _device_path(relative):
+    """The path the device itself gave a file found in the extraction, or None."""
+    path = _PASS_THROUGH_VIEW.sub(lambda m: f'{m.group(1)}data/media/{m.group(2)}/',
+                                  str(relative).replace('\\', '/'))
+    match = _SHARED_STORAGE.search(path)
+    if match:
+        return f'/storage/emulated/{match.group(1)}/{match.group(2)}'
+    match = _APP_STORAGE.search(path)
+    if match:
+        return f'/data/user/{match.group(1) or 0}/{match.group(2)}'
+    return None
+
+
+def _device_path_index(context):
+    """{device path: staged path} for the files this artifact found."""
+    index = {}
+    for found in context.get_files_found():
+        path = str(found)
+        if not os.path.isfile(path):
+            continue
+        device = _device_path(context.get_relative_path(path))
+        if device:
+            index.setdefault(device, path)
+    return index
+
+
+def _downloads_by_message(db_file, device_index, context):
+    """{(dialog id, message id): [(staged path, extraction path, size)]} from the
+    file_to_path.db beside a cache4.db, for the recorded files that are present.
+
+    The client writes paths_by_dialog_id for a download twice: the temp and
+    parts files when it starts (FileLoadOperation.java start) and the final
+    file when it finishes (FileLoader.java didFinishLoadingFile), each with
+    MessageObject.getDialogId() and getId() (FilePathDatabase.java
+    saveFileDialogId, FileLoader.java getFileMetadataFromParent). A story is
+    written with message id 0 and is not a message. Files whose name does not
+    end in .temp come first, files outside cache/ before those in it.
+    """
+    path = os.path.join(os.path.dirname(str(db_file)), 'file_to_path.db')
+    if not os.path.isfile(path):
+        return {}
+    if not does_table_exist_in_db(path, 'paths_by_dialog_id'):
+        logfunc('Telegram - Messages: file_to_path.db has no paths_by_dialog_id table '
+                '(an older client), so no download is linked to a message from it')
+        return {}
+    rows = get_sqlite_db_records(
+        path, 'SELECT path, dialog_id, message_id FROM paths_by_dialog_id '
+              'WHERE message_id != 0') or []
+    found = {}
+    for recorded, dialog_id, message_id in rows:
+        recorded = str(recorded or '')
+        if recorded.startswith('/sdcard/'):
+            recorded = '/storage/emulated/0/' + recorded[len('/sdcard/'):]
+        elif recorded.startswith('/data/data/'):
+            recorded = '/data/user/0/' + recorded[len('/data/data/'):]
+        local = device_index.get(recorded)
+        if local:
+            found.setdefault((dialog_id, message_id), []).append(
+                (local, str(context.get_relative_path(local)).replace('\\', '/'),
+                 os.path.getsize(local)))
+    for files in found.values():
+        files.sort(key=lambda item: (item[1].endswith('.temp'), '/cache/' in item[1], item[1]))
+    _FILE_TO_PATH_READ.add(path)
+    return found
 
 
 # unread_push_messages is keyed on PRIMARY KEY(uid, mid). topicId and is_reaction were added
