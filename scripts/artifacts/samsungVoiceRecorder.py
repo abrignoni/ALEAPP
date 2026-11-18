@@ -23,35 +23,45 @@ __artifacts_v2__ = {
             "com.sec.android.app.voicenote/databases/label.db with its -wal. Rows without a "
             "stored PATH are left out: label.db held one on "
             "samsung_a166u_a16_known_20261116 and on samsung_a166u_a16_known_20261117 "
-            "(MEDIA_ID 17, every other column empty), and what it is is not established. "
+            "(MEDIA_ID 17, with PATH, CATEGORY_NAME and timestamp NULL, recordingtype and "
+            "recording_mode -1 and the flags 0), and what it is is not established. "
             "Observed on known data (samsung_a166u_a16_known_20261116 and "
             "samsung_a166u_a16_known_20261117, Voice Recorder actions logged with times "
-            "during the sessions): Saved is the timestamp column, milliseconds since the "
-            "Unix epoch converted to UTC and cut to the whole second; on both recordings it "
-            "fell within one second of the logged save, not at the start of recording (the "
-            "file name the app gives a new recording carries the local start time). "
-            "Audio is the file at the stored PATH, found in the extraction by its full path "
-            "under that Android user's shared storage (data/media/<user>/ or "
-            "storage/emulated/<user>/); File In Extraction says whether it was found. "
-            "Category is CATEGORY_NAME as stored; the default category is stored as the "
-            "text None. "
+            "during the sessions): Timestamp is the timestamp column, milliseconds since "
+            "the Unix epoch converted to UTC and cut to the whole second. On the 2026-11-16 "
+            "recording it fell within one second of the logged save, about 60 s after the "
+            "logged start. On the 2026-11-17 recording the log has no save time: the value "
+            "equals the MediaStore date_modified logged for the file, about 42 s after the "
+            "logged start of a 13 s recording. Whether a later change to a recording moves "
+            "it is not established. The file name the app gives a new recording carries the "
+            "local start time. "
+            "Audio is the file at the stored PATH, matched by its full path under the "
+            "shared storage of the user named in that path (data/media/<user>/ or "
+            "storage/emulated/<user>/), skipping copies under Android/.Trash/. Audio File "
+            "Found says whether it was found there. Only files under Recordings/ in "
+            "internal shared storage are searched, so No does not show the file is absent "
+            "from the extraction. Category is CATEGORY_NAME as stored; the default category "
+            "is stored as the text None. "
             "Favorite (as stored), Has Bookmark (as stored), Recording Type (as stored), "
             "Recording Mode (as stored) and Is Trash (as stored) are not decoded. On the "
             "2026-11-17 recording, which had one bookmark added while recording, "
             "HAS_BOOKMARK held 0, so the column does not show bookmarks on the known data. "
             "IS_FAVORITE held 1 on that recording although the session log records no "
             "favourite being set; what sets it is not established. "
-            "Recordings moved to the app's trash are not here: on "
-            "samsung_a166u_a16_known_20261117 the trashed recording's row was removed from "
-            "recording_items and label.db's own trash table stayed empty, while the Samsung "
-            "trash provider recorded the deletion and the file under "
+            "On samsung_a166u_a16_known_20261117 the recording moved to the app's trash is "
+            "not here: the trashed recording's row was removed from recording_items and "
+            "label.db's own trash table stayed empty, while the Samsung trash provider "
+            "recorded the deletion and the file under "
             "Android/.Trash/com.sec.android.app.voicenote/. That record is reported by the "
             "Samsung Trash artifact. "
             "Left out: labels (category names, with the default None; a category added on "
             "the known data remains after its only recording was trashed) and the ai_* "
             "tables (transcripts, summaries, keywords and speakers), which were empty on "
-            "every registered image that holds label.db (sharon_a14's label.db has no ai_* "
-            "tables). A recording with an AI transcript is not in the known data. "
+            "samsung_a166u_a16_known_20261116, samsung_a166u_a16_known_20261117 and "
+            "anne_a15 (sharon_a14's label.db has no ai_* tables). On sharon_a14's schema "
+            "recording_items has no timestamp or is_trash column, so a row there would have "
+            "an empty Timestamp; it holds no rows. A recording with an AI transcript is not "
+            "in the known data. "
             "anne_a15 and sharon_a14 hold label.db with no recording that has a stored "
             "path."
         ),
@@ -83,11 +93,13 @@ __artifacts_v2__ = {
         "notes": (
             "Read from the recent_search table (LABEL, TIME) of "
             "com.sec.android.app.voicenote/databases/label.db. On "
-            "samsung_a166u_a16_known_20261117 the one row matches the search for 'KD' "
-            "logged at the same second; Saved is TIME, milliseconds since the Unix epoch "
-            "converted to UTC. LABEL is the table's primary key, so a term searched again "
-            "keeps one row; whether TIME then moves to the later search is not established. "
-            "No other registered image holds a row."
+            "samsung_a166u_a16_known_20261117 the one row matches the search logged at the "
+            "same second; Saved is TIME, milliseconds since the Unix epoch converted to UTC "
+            "and cut to the whole second. LABEL is the table's primary key, so a term "
+            "searched again keeps one row; the log also records a reported second search "
+            "for the same term about eight hours later, and TIME kept the first time; with "
+            "one reported repeat, whether TIME ever moves is not established. recent_search "
+            "held no row on samsung_a166u_a16_known_20261116, anne_a15 and sharon_a14."
         ),
         "paths": ("*/com.sec.android.app.voicenote/databases/label.db*",),
         "output_types": "standard",
@@ -169,6 +181,8 @@ def _find_audio(files_found, stored_path, user):
     suffixes = (f"/media/{path_user}/{relative}", f"/emulated/{path_user}/{relative}")
     for candidate in files_found:
         norm = str(candidate).replace("\\", "/")
+        if "/.Trash/" in norm:
+            continue
         if norm.endswith(suffixes):
             return str(candidate)
     return None
@@ -205,10 +219,10 @@ def get_samsung_voice_recorder_recordings(context):
             ))
 
     data_headers = (
-        ("Saved", "datetime"),
+        ("Timestamp", "datetime"),
         "File Name",
         ("Audio", "media"),
-        "File In Extraction",
+        "Audio File Found",
         "Category",
         "Favorite (as stored)",
         "Has Bookmark (as stored)",
