@@ -71,6 +71,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | gettr |
 | gmailEmails |
 | googleAccountHistory |
+| googleCalculator |
 | googleCalendar |
 | googleConstellation |
 | googleDialer |
@@ -143,6 +144,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | smartSidebarFileDock |
 | smartselect |
 | snapchatClientNotifications |
+| snapchatTurnEvents |
 | snapseed |
 | solidExplorer |
 | swellbeing |
