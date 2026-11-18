@@ -16,7 +16,7 @@ __artifacts_v2__ = {
         ),
         "author": "4n6Wizard, @AlexisBrignoni, Codex",
         "creation_date": "2026-06-30",
-        "last_update_date": "2026-11-17",
+        "last_update_date": "2026-11-18",
         "requirements": "none",
         "category": "Knox Secure Folder",
         "notes": (
@@ -26,7 +26,8 @@ __artifacts_v2__ = {
             "carving and file names come from the upstream tool's README. Triage tool: it "
             "reports live HistoryLog records only and performs no carving or deleted-record "
             "recovery. The HistoryLog stores the folders and the number of files moved, NOT the "
-            "individual file names. The timestamp column is text with no zone recorded. It is "
+            "individual file names; on samsung_a166u_a16_known_20261117 the Samsung Secure Folder - File "
+            "Operation Log artifact named the moved file. The timestamp column is text with no zone recorded. It is "
             "reported as stored and no conversion is applied. Request Time and Result Time are "
             "that stored text. Duration and the pairing compare the two stored readings as they "
             "are, with no zone applied. The Samsung Knox History Log artifact (shistorylog.py) "
