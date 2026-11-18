@@ -39,16 +39,19 @@ __artifacts_v2__ = {
         "description": "Parses and extracts session information",
         "author": "@djangofaiola",
         "creation_date": "2026-06-27",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-11-17",
         "requirements": "none",
         "category": "Waze",
-        "notes": "Reference: Django Faiola, 'Comprehensive Waze Forensic Parsing for Android', "
+        "notes": "A stored 0,0 position is shown as 0.000000, 0.000000; the module does not establish "
+                 "whether it is a position or an unset value. Reference: Django Faiola, 'Comprehensive "
+                 "Waze Forensic Parsing for Android', "
                  "https://djangofaiola.blogspot.com/2026/07/comprehensive-waze-forensic-parsing-for.html "
-                 "(written by this parser's author). Friendly Name is this parser's label for the "
-                 "stored key and is not taken from Waze; read the Field column for the key as "
-                 "stored. No test count, image or source for the labels is recorded here. Only the "
-                 "keys this parser lists are reported. Timestamps are read as Unix seconds and "
-                 "positions as millionths of a degree; neither unit is sourced here.",
+                 "(written by this parser's author). Friendly Name is this parser's label for the stored "
+                 "key and is not taken from Waze; read the Field column for the key as stored. No test "
+                 "count, image or source for the labels is recorded here. Only the keys this parser lists "
+                 "are reported. Timestamps are read as Unix time, and a value of more than ten digits is "
+                 "scaled to seconds by its size; positions are read as millionths of a degree. Neither "
+                 "unit is sourced here. A stored 0 leaves Timestamp empty and is kept in Value.",
         "paths": ("*/com.waze/session"),
         "output_types": ["all"],
         "artifact_icon": "navigation",
@@ -67,15 +70,17 @@ __artifacts_v2__ = {
         "category": "Waze",
         "notes": "Reference: Django Faiola, 'Comprehensive Waze Forensic Parsing for Android', "
                  "https://djangofaiola.blogspot.com/2026/07/comprehensive-waze-forensic-parsing-for.html "
-                 "(written by this parser's author). Log field mappings are the parser's own; no "
-                 "test count, image or source for them is recorded here. A legacy GPS_QUALITY line "
-                 "followed by a newer block whose timestamp is within 250 ms is treated as the "
-                 "same sample and only the newer record is reported; the pairing rests on the time "
-                 "difference alone. Neither listed image produced rows, so this artifact is not "
-                 "exercised by the listed data. The accuracy columns combine the "
-                 "ACC_MIN/ACC_AVG/ACC_MAX fields, which carry no unit in the log, with the "
-                 "accuracy_min_meters/accuracy_avg_meters/accuracy_max_meters fields, whose names "
-                 "carry a unit of meters.",
+                 "(written by this parser's author). Log field mappings are the parser's own; no test "
+                 "count, image or source for them is recorded here. A legacy GPS_QUALITY line followed by "
+                 "a newer block whose timestamp is within 250 ms is treated as the same sample and only "
+                 "the newer record is reported; the pairing rests on the time difference alone. Position "
+                 "Provider is the logged value. On the newer layout the text LOCATION_PROVIDER_ is removed "
+                 "from it. Duplicate Sample Count is read from a dup_sample_count or "
+                 "duplicate_sample_count line. Neither listed image produced rows, so this artifact is not "
+                 "exercised by the listed data. The accuracy columns combine the ACC_MIN/ACC_AVG/ACC_MAX "
+                 "fields, which carry no unit in the log, with the "
+                 "accuracy_min_meters/accuracy_avg_meters/accuracy_max_meters fields, whose names carry a "
+                 "unit of meters.",
         "paths": ("*/com.waze/spdlog.*logdata",
                   "*/com.waze/waze_log.txt",
                   "*/com.waze/*spdlog.logdata.gz"),
@@ -116,17 +121,17 @@ __artifacts_v2__ = {
         "description": "Parses and extracts recent locations information",
         "author": "@djangofaiola",
         "creation_date": "2026-06-27",
-        "last_update_date": "2026-10-09",
+        "last_update_date": "2026-11-17",
         "requirements": "none",
         "category": "Waze",
-        "notes": "Reference: Django Faiola, 'Comprehensive Waze Forensic Parsing for Android', "
+        "notes": "A stored 0 in Last Waypoint Access leaves it empty. Reference: Django Faiola, "
+                 "'Comprehensive Waze Forensic Parsing for Android', "
                  "https://djangofaiola.blogspot.com/2026/07/comprehensive-waze-forensic-parsing-for.html "
                  "(written by this parser's author). Type shows this parser's label for the stored "
-                 "RECENTS.type integer, with the stored integer in parentheses after it: -1 N/A, 0 "
-                 "User Search, 1 Advertising, 2 Map Interaction, 3 Shared, 4 Navigation History; "
-                 "any other value is shown as stored with no label. No test count, "
-                 "image or source for these labels is recorded here, so a label does not establish "
-                 "how the entry came to be stored.",
+                 "RECENTS.type integer, with the stored integer in parentheses after it: -1 N/A, 0 User "
+                 "Search, 1 Advertising, 2 Map Interaction, 3 Shared, 4 Navigation History; any other "
+                 "value is shown as stored with no label. No test count, image or source for these labels "
+                 "is recorded here, so a label does not establish how the entry came to be stored.",
         "paths": ("*/com.waze/user.db*"),
         "output_types": ["all"],
         "artifact_icon": "map-pin",
@@ -146,11 +151,14 @@ __artifacts_v2__ = {
         "notes": "Reference: Django Faiola, 'Comprehensive Waze Forensic Parsing for Android', "
                  "https://djangofaiola.blogspot.com/2026/07/comprehensive-waze-forensic-parsing-for.html "
                  "(written by this parser's author). Type shows this parser's label for the stored "
-                 "favourite type, with the stored integer in parentheses after it: -1 N/A, 0 "
-                 "Custom, 1 Home, 2 Work, 3 Events, 4 Saved POI; any other value is shown with the "
-                 "stored value and no label of that list. No test count, image or source for "
-                 "these labels is recorded here. Neither listed image produced rows, so this "
-                 "artifact is not exercised by the listed data.",
+                 "favourite type, with the stored integer in parentheses after it: -1 N/A, 0 Custom, 1 "
+                 "Home, 2 Work, 3 Events, 4 Saved POI; any other value is shown as Unknown (value) on rows "
+                 "read from user.db and as the stored value alone on rows read from cached_data. Modified "
+                 "is FAVORITES.modified_time on rows read from user.db. On rows read from cached_data it "
+                 "is field 10 of the place message, which the author's iOS research describes as the last "
+                 "modification time; no Waze source for that is cited. No test count, image or source for "
+                 "these labels is recorded here. Neither listed image produced rows, so this artifact is "
+                 "not exercised by the listed data.",
         "paths": ("*/com.waze/user.db*",
                   "*/com.waze/waze/cached_data*"),
         "output_types": ["all"],
@@ -251,7 +259,7 @@ from scripts.ilapfuncs import (
 
 # Constants
 COMMA_SEP = ', '
-SOURCE_FILE_NAME = 'Source File Name'
+SOURCE_FILE_NAME = 'Source File Path'
 # The staged files each artifact read, by run and artifact, in first-seen order.
 # get_device_file_path records every file it converts, including a file that
 # then gave no row, and the artifact returns them as its source paths.
@@ -324,9 +332,9 @@ WAZE_EVENT_RE = re.compile(r"WCEWazeAppEvent")
 GPS_BLOCK_RE = re.compile(r"^\s*gps_quality\s*\{")
 SWIFT_LAT_RE = re.compile(r"latitude:\s*([+-]?[0-9.]+)")
 SWIFT_LON_RE = re.compile(r"longitude:\s*([+-]?[0-9.]+)")
-SWIFT_SAM_CNT_RE = re.compile(r"sample_count:\s*([0-9]+)")
-SWIFT_BAD_CNT_RE = re.compile(r"bad_sample_count:\s*([0-9]+)")
-SWIFT_DUP_CNT_RE = re.compile(r"dup_sample_count:\s*([0-9]+)")
+SWIFT_SAM_CNT_RE = re.compile(r"(?<![A-Za-z0-9_])sample_count:\s*([0-9]+)")
+SWIFT_BAD_CNT_RE = re.compile(r"(?<![A-Za-z0-9_])bad_sample_count:\s*([0-9]+)")
+SWIFT_DUP_CNT_RE = re.compile(r"(?<![A-Za-z0-9_])(?:dup|duplicate)_sample_count:\s*([0-9]+)")
 SWIFT_ACC_AVG_RE = re.compile(r"accuracy_avg_meters:\s*([0-9]+)")
 SWIFT_ACC_MIN_RE = re.compile(r"accuracy_min_meters:\s*([0-9]+)")
 SWIFT_ACC_MAX_RE = re.compile(r"accuracy_max_meters:\s*([0-9]+)")
@@ -404,65 +412,17 @@ F_ORIGIN_PLACE = 'origin_place_id'
 
 def get_device_file_path(file_path: str, context) -> str:
     """
-    Converts a local report file path back to the original Android device path.
-    Strips the local extraction base directory and reconstructs canonical
-    Android paths such as /data/data/, /data/user/0/, and /sdcard/.
-    Version 1.0
+    The path of a staged file inside the extraction, as get_relative_path reports
+    it, for the Source File Name column. No device path is rebuilt from it, so the
+    column shows what the extraction holds. Records the file as one the running
+    artifact read.
     """
 
     if not file_path:
         return ''
 
     _note_row_source(file_path, context)
-
-    seeker = context.get_seeker()
-    base_folder = getattr(seeker, 'data_folder', '')
-
-    # Normalize separators
-    norm_file_path = file_path.replace('\\', '/')
-    norm_base_folder = base_folder.replace('\\', '/')
-
-    # If the file is inside the extraction folder
-    if norm_base_folder and norm_file_path.startswith(norm_base_folder):
-        relative_path = norm_file_path[len(norm_base_folder):].lstrip('/')
-
-        # Sandbox paths: Typical Android sandbox roots
-        android_sandbox_roots = (
-            'data/data/',
-            'data/user/0/',
-            'data/user/10/',
-            'data/user_de/0/',
-        )
-
-        for root in android_sandbox_roots:
-            if relative_path.startswith(root):
-                return '/' + relative_path
-
-        # External storage canonical paths
-        # Convert extraction paths to canonical Android device paths
-        # Example: storage/emulated/0/DCIM -> /sdcard/DCIM
-        if relative_path.startswith('storage/emulated/0/'):
-            return '/sdcard/' + relative_path[len('storage/emulated/0/'):]
-
-        if relative_path.startswith('sdcard/'):
-            return '/' + relative_path
-
-        # Scoped Storage (Android 11+)
-        # Example: Android/media/com.whatsapp/WhatsApp ->
-        #   /sdcard/Android/media/com.whatsapp/WhatsApp
-        if relative_path.startswith('Android/'):
-            return '/sdcard/' + relative_path
-
-        # App-specific external paths
-        # Example: Android/data/com.whatsapp -> /sdcard/Android/data/com.whatsapp
-        if relative_path.startswith('Android/data/'):
-            return '/sdcard/' + relative_path
-
-        # Fallback: return relative path as-is
-        return '/' + relative_path
-
-    # If outside extraction folder, return cleaned input
-    return norm_file_path.lstrip('/')
+    return context.get_relative_path(str(file_path))
 
 
 def format_url(str_url: str | None, html_format: bool = False, label: str | None = None) -> str:
@@ -1168,7 +1128,7 @@ def waze_session_info(context):
             # Timestamp processing
             if key in ts_keys:
                 friendly_name = ts_keys[key]
-                val_utc = convert_unix_ts_to_utc(float(value) if value != '0' else 0)
+                val_utc = convert_unix_ts_to_utc(float(value)) if value != '0' else None
                 data_list.append(
                     (val_utc, friendly_name, key, value, None, None, fmt_loc(line_num))
                 )
@@ -1767,7 +1727,8 @@ def waze_recent_locations(context):
             # Convert timestamps to UTC
             fields[F_LAST_ACCESS] = convert_unix_ts_to_utc(record[2])
             fields[F_CREATED] = convert_unix_ts_to_utc(record[12])
-            fields[F_LAST_WAYPOINT_ACCESS] = convert_unix_ts_to_utc(record[13])
+            fields[F_LAST_WAYPOINT_ACCESS] = (convert_unix_ts_to_utc(record[13])
+                                              if record[13] not in (0, '0') else None)
 
             # Location Type
             fields[F_LOCATION_TYPE] = record[3]
