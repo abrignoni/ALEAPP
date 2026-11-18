@@ -36,12 +36,16 @@ __artifacts_v2__ = {
             "at 06:37:01. The page's display button was tapped at 06:37:13 and one notification "
             "was posted. The one row is that notification, at 06:37:14, with Read 1, Clicked 0 "
             "and Seen 0. Whether a row stays after the notification is dismissed is not "
-            "established. The Chromium Web Notifications artifact reads the Platform Notifications "
-            "LevelDB in app_sbrowser/Default, which on the known data held one record whose "
-            "notification id equals this row's persid, with its own created, click and close "
-            "values; the Chromium Site Permissions artifact reads the site's notification "
-            "permission from the Preferences file. On the 11 other corpus images where the file was "
-            "found the table is empty. Images with no member listing were not scanned."
+            "established. The Chromium Web Notifications artifact reads the Platform "
+            "Notifications LevelDB in app_sbrowser/Default. On the known data it held one "
+            "record for the same notification: its key ends with this row's persid and its "
+            "Created time falls in the same second as this row's Time. That artifact does not "
+            "show the notification id, so match the two on Site, Title and Created. The record "
+            "held click counts of 0, no click or close time and Closed Reason Unknown. The "
+            "Chromium Site Permissions artifact reads the site's notification permission from "
+            "the Preferences file. On the 11 other corpus images where webNotificationDB.db was "
+            "found the notifications table is empty. Images with no member listing were not "
+            "scanned."
         ),
         "paths": ("*/com.sec.android.app.sbrowser/databases/webNotificationDB.db*",),
         "output_types": "standard",
