@@ -16,25 +16,39 @@ __artifacts_v2__ = {
         ),
         "author": "4n6Wizard, @AlexisBrignoni, Codex",
         "creation_date": "2026-06-30",
-        "last_update_date": "2026-10-04",
+        "last_update_date": "2026-11-17",
         "requirements": "none",
         "category": "Knox Secure Folder",
         "notes": (
             "Ported from the Samsung Secure Folder History Log Parser by 4n6Wizard: "
-            "https://github.com/4n6Wizard/Samsung-HistoryLog-Parser (its README was read at commit "
-            "8d60793652bb8708173ffd4ae4fbbb605676b900). None of the five registered images in "
-            "sample_data holds a HistoryLog table: galaxys10_a10 and samsungs20_a13 carry other "
-            "databases in the package's databases folder, and anne_a15, samsunga53_a14 and "
-            "sharon_a14 carry no file in it. The record patterns, the pairing and the timestamp "
-            "handling are therefore not exercised on a registered image. The statements below about carving and file names come from the upstream tool's "
-            "README. Triage tool: it reports live HistoryLog records only and performs no carving "
-            "or deleted-record recovery. The HistoryLog stores the folders and the number of files "
-            "moved, NOT the individual file names. The timestamp column is text with no zone "
-            "recorded. It is reported as stored and no conversion is applied. Which zone the app "
-            "writes it in is not established. Request Time and Result Time are that stored text. "
-            "Duration and the pairing compare the two stored readings as they are, with no zone "
-            "applied. The Samsung Knox History Log artifact (shistorylog.py) reads the same column "
-            "and presents it as UTC, which is also not established."
+            "https://github.com/4n6Wizard/Samsung-HistoryLog-Parser (its README was read at "
+            "commit 8d60793652bb8708173ffd4ae4fbbb605676b900). The statements below about "
+            "carving and file names come from the upstream tool's README. Triage tool: it "
+            "reports live HistoryLog records only and performs no carving or deleted-record "
+            "recovery. The HistoryLog stores the folders and the number of files moved, NOT the "
+            "individual file names. The timestamp column is text with no zone recorded. It is "
+            "reported as stored and no conversion is applied. Request Time and Result Time are "
+            "that stored text. Duration and the pairing compare the two stored readings as they "
+            "are, with no zone applied. The Samsung Knox History Log artifact (shistorylog.py) "
+            "reads the same column and also shows it as stored. Known data "
+            "(samsung_a166u_a16_known_20261117, phone zone UTC-5 on that date): one file was "
+            "moved from Android user 0's Download folder into the Secure Folder with My Files "
+            "between 14:59:49 and 15:00:46 UTC, per the session record, and the Secure Folder "
+            "was created at about 14:53:57 UTC. The HistoryLog held a request record stored as "
+            "10:00:32 and a result record stored as 10:00:36, both naming [0 -> 150]. Read as "
+            "phone local time these are 15:00:32 and 15:00:36 UTC, inside the move window; read "
+            "as UTC they would fall before the Secure Folder existed. On this known data the "
+            "stored text is phone local time. One device and one move: other devices and app "
+            "versions are not exercised. That move gave one Paired Event: source app MyFiles, "
+            "direction [0 -> 150], requested and moved count 1, Transferred Path the user-150 "
+            "Download folder, and Source Path derived from it as the user-0 Download folder, "
+            "which matches the folder the file was moved from. A move out of the Secure Folder, "
+            "an unpaired record and a count mismatch are not exercised. Of the registered zip "
+            "images, only samsung_a166u_a16_known_20261117 holds history_log_database (in "
+            "Android user 0's com.samsung.knox.securefolder container); registered tar images "
+            "were not checked. galaxys10_a10 and samsungs20_a13 carry other databases in the "
+            "package's databases folder, and anne_a15, samsunga53_a14 and sharon_a14 carry no "
+            "file in it."
         ),
         "paths": (
             "*/com.samsung.knox.securefolder/databases/*",
@@ -42,6 +56,7 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "lock",
         "sample_data": {
+            "samsung_a166u_a16_known_20261117": "Android 16 | com.samsung.knox.securefolder | history_log_database, 2 records | 1 row",
             "anne_a15": "Android 15 | com.samsung.knox.securefolder vc 192100000 | no file in the databases folder | 0 rows",
             "galaxys10_a10": "Android 10 | com.samsung.knox.securefolder | no HistoryLog table | 0 rows",
             "samsunga53_a14": "Android 14 | com.samsung.knox.securefolder | no file in the databases folder | 0 rows",

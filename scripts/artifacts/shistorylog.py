@@ -5,26 +5,36 @@ __artifacts_v2__ = {
         "description": 'Entries from the Samsung Knox Secure Folder HistoryLog table (history_log_database), with the stored timestamp text, tag and message.',
         "author": "Alexis Brignoni {linqapp.com/abrignoni}, @AlexisBrignoni, Codex",
         "creation_date": "2026-02-27",
-        "last_update_date": "2026-10-04",
+        "last_update_date": "2026-11-17",
         "requirements": "sqlite",
         "category": "Samsung History Log",
         "notes": (
             "The timestamp column is text with no zone recorded. Timestamp shows that text as "
-            "stored, with no conversion, and it is not typed as a date and time. Which zone the "
-            "app writes it in is not established. Every matched history_log_database is read, "
-            "with one copy kept where the extraction holds the same file under more than one "
-            "storage path, and Source File names the database each row came from. A database "
-            "with no HistoryLog table is skipped and named in the run log. The write-ahead log "
-            "and journal beside the database are matched so the database is read with them. "
-            "No registered image was found to hold a HistoryLog table: the five images listed "
-            "in the sample data of the Samsung Secure Folder - History Log artifact "
-            "(samsungSecureFolderHistoryLog.py) hold none, and other registered images were "
-            "not checked for this artifact. The reading of more than one database and the "
-            "stored text output were exercised on constructed databases only."
+            "stored, with no conversion, and it is not typed as a date and time. Known data "
+            "(samsung_a166u_a16_known_20261117, phone zone UTC-5 on that date): one file was "
+            "moved from Android user 0's Download folder into the Secure Folder with My Files "
+            "between 14:59:49 and 15:00:46 UTC, per the session record, and the Secure Folder "
+            "was created at about 14:53:57 UTC. The HistoryLog held a request record stored as "
+            "10:00:32 and a result record stored as 10:00:36, both naming [0 -> 150]. Read as "
+            "phone local time these are 15:00:32 and 15:00:36 UTC, inside the move window; read "
+            "as UTC they would fall before the Secure Folder existed. On this known data the "
+            "stored text is phone local time. One device and one move: other devices and app "
+            "versions are not exercised. Every matched history_log_database is read, with one "
+            "copy kept where the extraction holds the same file under more than one storage "
+            "path, and Source File names the database each row came from. A database with no "
+            "HistoryLog table is skipped and named in the run log. The write-ahead log and "
+            "journal beside the database are matched so the database is read with them; on the "
+            "known data both records were in the -wal. Of the registered zip images, only "
+            "samsung_a166u_a16_known_20261117 holds history_log_database (in Android user 0's "
+            "com.samsung.knox.securefolder container); registered tar images were not checked. "
+            "The reading of more than one database was exercised on constructed databases only."
         ),
         "paths": ('*/com.samsung.knox.securefolder/databases/history_log_database*',),
         "output_types": ["standard"],
-        "artifact_icon": "database"
+        "artifact_icon": "database",
+        "sample_data": {
+            "samsung_a166u_a16_known_20261117": "Android 16 | com.samsung.knox.securefolder | history_log_database | 2 rows",
+        },
     }
 }
 
