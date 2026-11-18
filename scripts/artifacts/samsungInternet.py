@@ -122,7 +122,7 @@ __artifacts_v2__ = {
             '1_6) on the known-data image. IS_DELETED (as stored) and IS_INCOGNITO (as stored) held 0 and '
             'Group Name had no value on every row of the images checked. The per-tab files files/<w>_tab<n> '
             'hold the back and forward navigation list of each tab; the Tab Navigation History artifact reads '
-            'them. Not reported here: the <w>tab_state file, whose format is not parsed, the TAB_FAV_ICON '
+            'them, and the Saved Tab State artifact reads the <w>tab_state file. Not reported here: the TAB_FAV_ICON '
             'blob, TAB_GROUP_COLOR, TAB_USAGE and the sync, device and account columns.'
         ),
         "paths": ('*/com.sec.android.app.sbrowser/databases/SBrowser.db*',
@@ -236,6 +236,68 @@ __artifacts_v2__ = {
         "artifact_icon": "globe",
         "sample_data": {
             "samsung_a166u_a16_known_20261116": "Android 16 | com.sec.android.app.sbrowser 28.0.4.71 | 11 rows (6 tab files)",
+        },
+    },
+    "samsung_internet_tab_state": {
+        "name": "Samsung Internet - Saved Tab State",
+        "description": "Tabs listed in Samsung Internet's files/<n>tab_state file, the saved list of open tabs: URL, "
+                       "title, the locked flag, whether the tab was a Secret mode tab, visit count and active seconds.",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-11-18",
+        "last_update_date": "2026-11-18",
+        "requirements": "none",
+        "category": "Samsung Internet",
+        "notes": (
+            'One row per tab in each files/<n>tab_state file in the app private data folder '
+            '(data/data/com.sec.android.app.sbrowser/files/), the list of open tabs Samsung Internet '
+            'saves and reads back on start. Format from the app\'s own code, decompiled with jadx from the '
+            'base.apk on samsung_a166u_a16_known_20261117 (Samsung Internet 30.0.5.27 per the session '
+            'record): TabStateWriter.serialize writes a version, the Secret mode tab count, the tab '
+            'count, two active-tab indexes and, from version 8, a content page index, then the Secret '
+            'mode tabs followed by the normal tabs; TabState.write writes each tab\'s id, URL, title, '
+            'locked flag, group name and colour, two user agent options, two zoom values with their '
+            'flags, visit count, active time and, for a normal tab, a group id; TabStateVersion gates '
+            'each field by the file\'s version (3 to 15 are read). A file is read only when its fields end '
+            'exactly at its last byte; otherwise it is skipped and named in the run log. Tab ID is the '
+            'stored tab id. URL and Title are stored text; Title is blank in files older than version 14. '
+            'Locked is the stored locked flag (version 7 and later). Secret Mode Tab is Yes for the tabs '
+            'written before the normal ones, as many as the stored Secret mode count. Current Tab is Yes '
+            'on the tab at the stored active index of its kind. Visit Count is stored from version 12. '
+            'Active Seconds (as stored) is stored from version 13: in the app\'s code it is the sum of the '
+            'times the tab was in the foreground, taken from System.currentTimeMillis and divided by '
+            '1000, so seconds. Known data (samsung_a166u_a16_known_20261117, compared with '
+            'samsung_a166u_a16_known_20261116, taken the day before): one tab was locked from the tab '
+            'manager at 06:34:58 UTC and a Secret mode tab was opened at 06:35:30, then the app was '
+            'force-stopped and relaunched at 06:37:24 to 06:37:27, per the session record. The file held '
+            '7 tabs with Locked Yes on that tab only, and a Secret mode count of 0: the Secret mode tab '
+            'was not restored on relaunch and is not in the file. The day before, the same tab was not '
+            'locked. One tab held 20 active seconds on the earlier image and 0 after the restart, so the '
+            'value is not a lifetime total. Secret Mode Tab was No on every row of the tested images; no '
+            'file held a Secret mode tab, so the Yes path follows the code and is not exercised. Not '
+            'shown: the group name, colour and id (empty or 0 on every tested tab), the user agent and '
+            'zoom values, and the content page index. The <n> in the file name is the instance id the '
+            'writer is given; it was 1 on every tested image. Android User is the user of the app data '
+            'folder the file is in, taken from its path (data/data is user 0). On the tested images: 11 '
+            'files on 10 images, versions 11, 13, 14 and 15, 28 rows; falken_a326u_a13 held a file with '
+            'no tabs. Locked held No on every row but that one tab. Android User held 0 on every row of 8 '
+            'of the 9 images with rows; cookbook_a11 also had user 150. Visit Count and Active Seconds '
+            '(as stored) were blank on every row of cookbook_a11 and sharon_a13, whose files are version '
+            '11. The pintab.db database held no rows on samsung_a166u_a16_known_20261117 after the lock.'
+        ),
+        "paths": ('*/com.sec.android.app.sbrowser/files/*tab_state',),
+        "output_types": ["html", "tsv", "lava"],
+        "artifact_icon": "globe",
+        "sample_data": {
+            "samsung_a166u_a16_known_20261117": "Android 16 | com.sec.android.app.sbrowser | 7 rows (1 locked)",
+            "samsung_a166u_a16_known_20261116": "Android 16 | com.sec.android.app.sbrowser | 6 rows",
+            "sharon_a14": "Android 14 | com.sec.android.app.sbrowser | 4 rows",
+            "sharon_a13": "Android 13 | com.sec.android.app.sbrowser | 5 rows",
+            "cookbook_a11": "Android 11 | com.sec.android.app.sbrowser | 2 rows (1 user 0, 1 user 150)",
+            "anne_a15": "Android 15 | com.sec.android.app.sbrowser | 1 row",
+            "hc_pixel8pro_a16": "Android 16 | com.sec.android.app.sbrowser | 1 row",
+            "hc_pixel8pro_a17": "Android 17 | com.sec.android.app.sbrowser | 1 row",
+            "s20fe_a13": "Android 13 | com.sec.android.app.sbrowser | 1 row",
+            "falken_a326u_a13": "Android 13 | com.sec.android.app.sbrowser | file with no tabs | 0 rows",
         },
     },
 }
@@ -670,5 +732,135 @@ def samsung_internet_tab_navigation(context):
         'Original URL',
         'Off The Record',
         'Source File',
+    )
+    return data_headers, data_list, '\n'.join(source_paths)
+
+
+_TAB_STATE_NAME = re.compile(r'^(\d+)tab_state$')
+
+
+class _TabStateReader:
+    """Big-endian reader for java.io.DataOutputStream output."""
+
+    def __init__(self, data):
+        self.data = data
+        self.pos = 0
+
+    def take(self, size):
+        if self.pos + size > len(self.data):
+            raise ValueError('short tab_state')
+        chunk = self.data[self.pos:self.pos + size]
+        self.pos += size
+        return chunk
+
+    def int(self):
+        return struct.unpack('>i', self.take(4))[0]
+
+    def long(self):
+        return struct.unpack('>q', self.take(8))[0]
+
+    def double(self):
+        return struct.unpack('>d', self.take(8))[0]
+
+    def boolean(self):
+        return self.take(1) != b'\x00'
+
+    def utf(self):
+        raw = self.take(struct.unpack('>H', self.take(2))[0])
+        # Java modified UTF-8: NUL as C0 80 and characters outside the BMP as surrogate pairs.
+        text = raw.replace(b'\xc0\x80', b'\x00').decode('utf-8', 'surrogatepass')
+        return text.encode('utf-16', 'surrogatepass').decode('utf-16', 'replace')
+
+
+def _parse_tab_state(data):
+    """(version, secret count, tabs) from a <n>tab_state file, or None when it does not parse to its end.
+
+    Field order and version gates follow Samsung Internet's TabStateReader.readMetadata, TabState(...)
+    and TabStateVersion (see the artifact notes).
+    """
+    reader = _TabStateReader(data)
+    try:
+        version = reader.int()
+        if not 3 <= version <= 15:
+            return None
+        secret = reader.int() if version >= 4 else 0
+        total = reader.int()
+        secret_active = reader.int()
+        normal_active = reader.int() - secret
+        if total < 0 or secret < 0 or secret > total:
+            return None
+        if version >= 8:
+            reader.int()  # content page tab index
+        tabs = []
+        for index in range(total):
+            is_secret = index < secret
+            tab = {'index': index, 'secret': is_secret, 'tab_id': reader.int()}
+            tab['url'] = reader.utf() if version >= 5 else ''
+            tab['title'] = reader.utf() if version >= 14 else ''
+            tab['locked'] = reader.boolean() if version >= 7 else None
+            tab['group_name'] = reader.utf() if version >= 9 else ''
+            tab['group_color'] = reader.int() if version >= 11 else ''
+            if version >= 6:
+                reader.int()  # phone user agent option
+                reader.int()  # DeX user agent option
+            if version >= 10:
+                reader.double()
+                reader.boolean()
+                reader.double()
+                reader.boolean()
+            tab['visit_count'] = reader.int() if version >= 12 else ''
+            tab['active_seconds'] = reader.long() if version >= 13 else ''
+            tab['group_id'] = reader.int() if version >= 15 and not is_secret else ''
+            tab['active'] = (index == secret_active) if is_secret else (index - secret == normal_active)
+            tabs.append(tab)
+    except (ValueError, struct.error, UnicodeDecodeError):
+        return None
+    if reader.pos != len(data):
+        return None
+    return version, secret, tabs
+
+
+@artifact_processor
+def samsung_internet_tab_state(context):
+    data_list = []
+    source_paths = []
+    for file_found in unique_files(context):
+        file_found = str(file_found)
+        normalized = file_found.replace('\\', '/')
+        if _PACKAGE not in normalized or not _TAB_STATE_NAME.match(normalized.rsplit('/', 1)[-1]):
+            continue
+        if not os.path.isfile(file_found):
+            continue
+        with open(file_found, 'rb') as handle:
+            parsed = _parse_tab_state(handle.read())
+        if parsed is None:
+            logfunc(f'Samsung Internet: tab_state file not read: {file_found}')
+            continue
+        source_paths.append(file_found)
+        key, _rank = canonical_path(context.get_relative_path(file_found))
+        parts = key.split('\x00')
+        user = parts[1].rsplit(':', 1)[-1] if len(parts) >= 3 else ''
+        for tab in parsed[2]:
+            data_list.append((
+                tab['tab_id'],
+                tab['url'],
+                tab['title'],
+                '' if tab['locked'] is None else ('Yes' if tab['locked'] else 'No'),
+                'Yes' if tab['secret'] else 'No',
+                'Yes' if tab['active'] else 'No',
+                tab['visit_count'],
+                tab['active_seconds'],
+                user,
+            ))
+    data_headers = (
+        'Tab ID',
+        'URL',
+        'Title',
+        'Locked',
+        'Secret Mode Tab',
+        'Current Tab',
+        'Visit Count',
+        'Active Seconds (as stored)',
+        'Android User',
     )
     return data_headers, data_list, '\n'.join(source_paths)
