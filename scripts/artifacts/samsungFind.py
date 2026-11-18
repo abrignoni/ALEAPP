@@ -1,17 +1,17 @@
 """Samsung Find (com.samsung.android.app.find): devices, locations and the address cache.
 
-The Samsung Find app keeps the devices on the signed-in account, their last reported
-locations and battery levels, and a cache of addresses it looked up, in
-databases/app-database.db, a Room database.
+The Samsung Find app keeps a devices table, a location table, battery readings and an
+address cache in databases/app-database.db, a Room database.
 """
 
 __artifacts_v2__ = {
     "get_samsung_find_devices": {
         "name": "Samsung Find - Devices",
         "description": (
-            "Parses the devices listed by the Samsung Find app in app-database.db, one row per "
-            "device, with the registration time stored for it, the model, owner type and "
-            "device type, the favourite flag and the last stored battery reading."
+            "Parses the devices table of the Samsung Find app's app-database.db, one row "
+            "per device and Android user, with the regDate time stored for it, the model, "
+            "owner type and device type, the favorite flag and the last stored battery "
+            "reading."
         ),
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-11-17",
@@ -20,42 +20,53 @@ __artifacts_v2__ = {
         "category": "Samsung Find",
         "notes": (
             "Read from com.samsung.android.app.find/databases/app-database.db with its "
-            "-wal. Known data: samsung_a166u_a16_known_20261117, where the Samsung Find app "
-            "was opened for the first time, its consent accepted and this phone located "
-            "between about 14:18 and 14:22 UTC (logged during the session); no other device "
-            "or tag is on the account. samsung_a166u_a16_known_20261116 holds the database "
-            "with every table empty (the app had not been opened), and no other registered "
-            "image holds it. "
-            "Registered is devices.regDate, milliseconds since the Unix epoch stored as "
-            "text, converted to UTC; it was 14:19:14 on the known data, inside the logged "
-            "window after the consent was accepted. Battery (%) and Battery Updated are the "
-            "newest battery row for the device (battery.hashId equals devices.hashId), "
-            "timeUpdated converted the same way; 100 at 14:20:45 on the known data. Model "
-            "Name, Model Code, Brand Name, Device Type and Owner Type are stored text "
+            "-wal; on the known data every row was in the -wal. Known data: "
+            "samsung_a166u_a16_known_20261117. The log has the app opened at 06:38 UTC with "
+            "its consent screen left unaccepted, then the consent accepted and this phone "
+            "located between about 14:18 and 14:22 UTC. The devices table held one row, "
+            "this phone, and the item tables were empty. samsung_a166u_a16_known_20261116 "
+            "holds the database with every app table empty, and no Find session is logged "
+            "before that extraction; no other image in the Android registry holds it (83 "
+            "listed). Rows were exercised at schema version 43 only. "
+            "Reg Date is devices.regDate, stored as text and read as milliseconds since the "
+            "Unix epoch, converted to UTC in whole seconds. It was 14:19:14 on the known "
+            "data, inside the logged 14:18 to 14:21 window in which the consent was "
+            "accepted; what the app registers at that time is not established. "
+            "Battery (%) and Battery Updated come from the battery row with the highest "
+            "timeUpdated for the device (battery.hashId equals devices.hashId); timeUpdated "
+            "is an integer read as milliseconds since the Unix epoch. On the known data "
+            "there was one battery row: 100 at 14:20:45, and the app's device sheet showed "
+            "100% (logged). battery.units was NULL, so the percent unit comes from the "
+            "screen, not the store. "
+            "Model Name, Model Code, Brand Name, Device Type and Owner Type are stored text "
             "(Owner Type ME for this phone). Favorite (as stored) is managed_data.favorite, "
-            "1 on the one device; it is not decoded. "
-            "Left out: subType (empty on the known data), saDeviceId, hashId and userId "
-            "(identifiers), product_info (one entry per model with image and download fields), user_order, notice (five app notices with their own dates, not device "
-            "data), and the users, item, tag, sharing, safe-place, geofencing, family-share "
-            "and history tables, which were empty on the known data, so tags, shared "
-            "devices, safe places and location history are not exercised. The app showed no "
-            "device location history screen during the session. "
-            "On the known data the one device row held Android User 0."
+            "1 on the one device; it is not decoded. Android User is taken from the "
+            "container path; it was 0 on the known data. "
+            "Left out: subType (empty on the known data), saDeviceId, hashId, userId and "
+            "modelId (identifiers), parentId (empty), supportFeatures (an integer, not "
+            "decoded), managed_data.order, product_info (one row on the known data, with "
+            "model, image and download fields), user_order, notice (five app notices with "
+            "their own dates, not device data), and the users, sa_users, item_*, "
+            "*_share_data, lba_*, recommended_safe_place_location, geofencing, "
+            "family_share, history, remote_consent and tracking_session tables, which were "
+            "empty on the known data. These tables are not parsed, and what they hold when "
+            "populated is not established. The app showed no device location history screen "
+            "during the session."
         ),
         "paths": ("*/com.samsung.android.app.find/databases/app-database.db*",),
         "output_types": "standard",
         "artifact_icon": "smartphone",
         "sample_data": {
             "samsung_a166u_a16_known_20261117": "Android 16 | com.samsung.android.app.find | 1 row",
-            "samsung_a166u_a16_known_20261116": "Android 16 | com.samsung.android.app.find | tables empty | 0 rows",
+            "samsung_a166u_a16_known_20261116": "Android 16 | com.samsung.android.app.find | app tables empty | 0 rows",
         },
     },
     "get_samsung_find_locations": {
         "name": "Samsung Find - Locations",
         "description": (
-            "Parses the device locations stored by the Samsung Find app in the location table "
-            "of app-database.db, with the time, coordinates, address and source stored for "
-            "each, and the model of the device they belong to."
+            "Parses the device locations stored by the Samsung Find app in the location "
+            "table of app-database.db, with the time, coordinates, address and source "
+            "stored for each, and the model of the device they belong to."
         ),
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-11-17",
@@ -64,27 +75,36 @@ __artifacts_v2__ = {
         "category": "Samsung Find",
         "notes": (
             "Read from com.samsung.android.app.find/databases/app-database.db with its "
-            "-wal. Known data: samsung_a166u_a16_known_20261117, where the Samsung Find app "
-            "was opened for the first time, its consent accepted and this phone located "
-            "between about 14:18 and 14:22 UTC (logged during the session); no other device "
-            "or tag is on the account. samsung_a166u_a16_known_20261116 holds the database "
-            "with every table empty (the app had not been opened), and no other registered "
-            "image holds it. "
-            "Timestamp is location.timestamp, milliseconds since the Unix epoch stored as "
-            "text, converted to UTC; Latitude and Longitude are stored as text and "
-            "converted to numbers; Address is stored text. On the known data the one row "
-            "(14:22:29) is the phone's own position: Device Model joins location.deviceId "
-            "to devices.deviceId. Source (as stored) held FUSED and Is Encrypted (as "
-            "stored) held 0; neither is decoded, and a row with Is Encrypted other than 0 "
-            "is not exercised, so its coordinates may not be readable as numbers. One position was present; whether the app keeps more than one per device is not established. Output includes KML. "
-            "The units column was empty on the known data and is not reported."
+            "-wal; on the known data every row was in the -wal. Known data: "
+            "samsung_a166u_a16_known_20261117. The log has the app opened at 06:38 UTC with "
+            "its consent screen left unaccepted, then the consent accepted and this phone "
+            "located between about 14:18 and 14:22 UTC. The devices table held one row, "
+            "this phone, and the item tables were empty. samsung_a166u_a16_known_20261116 "
+            "holds the database with every app table empty, and no Find session is logged "
+            "before that extraction; no other image in the Android registry holds it (83 "
+            "listed). Rows were exercised at schema version 43 only. "
+            "Timestamp is location.timestamp, stored as text and read as milliseconds since "
+            "the Unix epoch, converted to UTC in whole seconds; whether it is the time of "
+            "the fix or of the fetch is not established. Latitude and Longitude are stored "
+            "as text and converted to numbers; Address is stored text. "
+            "On the known data the one row (14:22:29) belongs to this phone's device row: "
+            "location.deviceId equals devices.deviceId, which is how Device Model is "
+            "filled. The coordinates were not compared with an independent record of the "
+            "phone's position. Source (as stored) held FUSED and Is Encrypted (as stored) "
+            "held 0; neither is decoded. A row with Is Encrypted other than 0 is not "
+            "exercised; if its coordinates do not parse as numbers, Latitude and Longitude "
+            "are left empty and the stored text is not shown. One position was present; "
+            "whether the app keeps more than one per device is not established. Output "
+            "includes KML. "
+            "The units and unitId columns were empty on the known data and are not "
+            "reported."
         ),
         "paths": ("*/com.samsung.android.app.find/databases/app-database.db*",),
         "output_types": "all",
         "artifact_icon": "map-pin",
         "sample_data": {
             "samsung_a166u_a16_known_20261117": "Android 16 | com.samsung.android.app.find | 1 row",
-            "samsung_a166u_a16_known_20261116": "Android 16 | com.samsung.android.app.find | tables empty | 0 rows",
+            "samsung_a166u_a16_known_20261116": "Android 16 | com.samsung.android.app.find | app tables empty | 0 rows",
         },
     },
     "get_samsung_find_address_cache": {
@@ -100,28 +120,36 @@ __artifacts_v2__ = {
         "category": "Samsung Find",
         "notes": (
             "Read from com.samsung.android.app.find/databases/app-database.db with its "
-            "-wal. Known data: samsung_a166u_a16_known_20261117, where the Samsung Find app "
-            "was opened for the first time, its consent accepted and this phone located "
-            "between about 14:18 and 14:22 UTC (logged during the session); no other device "
-            "or tag is on the account. samsung_a166u_a16_known_20261116 holds the database "
-            "with every table empty (the app had not been opened), and no other registered "
-            "image holds it. "
-            "address_cache holds coordinates with the address returned for them. Expires is "
-            "expire, milliseconds since the Unix epoch, converted to UTC; it is not the "
-            "time of the lookup. On the known data each of the five Expires values was "
-            "exactly 7 days after a time inside the logged Find session (14:19:21 to "
-            "14:22:29), and the last equalled the location row's timestamp to the second, "
-            "so the coordinates here are positions the app looked up during the session; "
-            "whether every cached position was this phone's own is not established. Output "
-            "includes KML. "
-            "On the known data Language held US and Android User held 0 on all five rows."
+            "-wal; on the known data every row was in the -wal. Known data: "
+            "samsung_a166u_a16_known_20261117. The log has the app opened at 06:38 UTC with "
+            "its consent screen left unaccepted, then the consent accepted and this phone "
+            "located between about 14:18 and 14:22 UTC. The devices table held one row, "
+            "this phone, and the item tables were empty. samsung_a166u_a16_known_20261116 "
+            "holds the database with every app table empty, and no Find session is logged "
+            "before that extraction; no other image in the Android registry holds it (83 "
+            "listed). Rows were exercised at schema version 43 only. "
+            "address_cache holds coordinates with an address stored for each. Expires is "
+            "expire, milliseconds since the Unix epoch, converted to UTC in whole seconds; "
+            "it is not the time of a lookup. On the known data each of the five Expires "
+            "values, less 7 days, falls between 14:19:21 and 14:22:29, after the logged "
+            "start of the Find session (14:18) and before the next logged action on another "
+            "app (14:23:07); the 7 day lifetime is inferred from this, not sourced. The "
+            "last, less 7 days, is 5 ms before the location row's timestamp, and its "
+            "coordinates and address equal that row's. This is consistent with addresses "
+            "cached during the session; it does not establish it, and whether every cached "
+            "position was this phone's own is not established. "
+            "Output includes KML, whose point names carry the Expires time, not a time the "
+            "position was recorded. The rows are not written to the timeline, since Expires "
+            "is a future time. "
+            "On the known data Language (as stored) held US and Android User held 0 on all "
+            "five rows."
         ),
         "paths": ("*/com.samsung.android.app.find/databases/app-database.db*",),
-        "output_types": "all",
+        "output_types": ["html", "tsv", "lava", "kml"],
         "artifact_icon": "map",
         "sample_data": {
             "samsung_a166u_a16_known_20261117": "Android 16 | com.samsung.android.app.find | 5 rows",
-            "samsung_a166u_a16_known_20261116": "Android 16 | com.samsung.android.app.find | tables empty | 0 rows",
+            "samsung_a166u_a16_known_20261116": "Android 16 | com.samsung.android.app.find | app tables empty | 0 rows",
         },
     },
 }
@@ -230,7 +258,7 @@ def get_samsung_find_devices(context):
             ))
 
     data_headers = (
-        ("Registered", "datetime"),
+        ("Reg Date", "datetime"),
         ("Battery Updated", "datetime"),
         "Model Name",
         "Model Code",
@@ -311,7 +339,7 @@ def get_samsung_find_address_cache(context):
         ("Latitude", "latitude"),
         ("Longitude", "longitude"),
         "Address",
-        "Language",
+        "Language (as stored)",
         "Android User",
     )
     return data_headers, data_list, "\n".join(sorted(set(source_paths)))
