@@ -2,7 +2,8 @@
 
 NSDate.distantPast (Cocoa -63114076800) is 0000-12-30 in Python's proleptic Gregorian calendar,
 two days before datetime.min, and raised ValueError. datetime.fromtimestamp fails on Windows before
-1970 and after the year 3000; FailingFromtimestamp simulates that on any platform.
+1970 and after the year 3000, so timestampsconv now adds every value to the epoch. FailingFromtimestamp
+makes fromtimestamp always fail, so the test fails on any platform if timestampsconv still calls it.
 """
 import pathlib
 import sys
@@ -49,7 +50,8 @@ class TimestampsconvContract(unittest.TestCase):
 
 
 class FailingFromtimestamp(datetime):
-    """datetime whose fromtimestamp fails the way Windows' gmtime does outside 1970 to 3000."""
+    """datetime whose fromtimestamp always fails (OSError 22, as Windows' gmtime gives outside 1970
+    to 3000). A helper that still calls it fails for every value; one that does not is unaffected."""
 
     @classmethod
     def fromtimestamp(cls, *args, **kwargs):
