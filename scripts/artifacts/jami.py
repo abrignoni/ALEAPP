@@ -71,9 +71,10 @@ __artifacts_v2__ = {
                  'conversation_data/<conversation id>/status, convRequests, '
                  'incomingTrustRequests and syncingMetadatas (empty maps or delivery '
                  'state on the test image), and archive.gz (the account archive, not '
-                 'opened). Source references are to jami-daemon at commit 25fadf1 (gi'
-                 'thub.com/savoirfairelinux/jami-daemon/tree/25fadf1a1245259c6e7f33e6'
-                 '9c0a917f81d6201f), dated after the last commit on the test image, '
+                 'opened). Source references are to jami-daemon at commit 25fadf1 '
+                 '(github.com/savoirfairelinux/jami-daemon/tree/'
+                 '25fadf1a1245259c6e7f33e69c0a917f81d6201f), dated after the last '
+                 'commit on the test image, '
                  'whose stores show an older writer (legacy knownDevices layout, no '
                  'millisecond contact keys). Needs the dulwich package; without it '
                  'the artifact logs that and returns no rows.',
