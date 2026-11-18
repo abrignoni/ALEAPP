@@ -4,8 +4,9 @@ __artifacts_v2__ = {
     "samsungSecureFolderFileOperationLog": {
         "name": "Samsung Secure Folder - File Operation Log",
         "description": (
-            "File operation lines from the Secure Folder's SecureFolderDumpLog text files: the provider call, "
-            "the paths named, the result message and the launch application, one row per logged line."
+            "Selected file operation lines from the Secure Folder's SecureFolderDumpLog text files: the "
+            "provider call, the paths named, the result message, the destination container, the launch "
+            "application and the operation result, one row per distinct logged line."
         ),
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-11-18",
@@ -14,24 +15,31 @@ __artifacts_v2__ = {
         "category": "Knox Secure Folder",
         "notes": (
             "Read from the SecureFolderDumpLog_<kind><yyyymmddHHMMSS>.xml files in "
-            "com.samsung.knox.securefolder/cache/dump/ of each Android user that has them. Despite "
-            "the .xml name each file is plain text, one log line per line: month-day and time, three "
-            "numbers, a level letter, the logging Android user in brackets, a tag and a message. Only "
-            "lines tagged RemoteContentHistoryImpl are read, and of those only the lines whose "
-            "message names a path (filePath, scannedPath or directoryPath), a provider call method "
-            "other than dumpStart, a result message, a destination container, the launch application "
-            "or a file operation result. Other tags in these files (application, provisioning, "
-            "launcher, shortcut, backup and managed configuration history) are not reported. The same "
-            "line is often written to more than one dump file; it is shown once, keyed on its time, "
-            "the two process numbers, the logging user and the message. Log Time is the line's "
-            "month-day and time as logged, with the year taken from the dump file's name, plus one "
-            "when the line's month is earlier than the month in the name. No zone is recorded. "
-            "Component and Function are the bracketed class name and the function name that start the "
-            "message. Path is the text inside filePath[...], scannedPath[...] or directoryPath[...]. "
+            "com.samsung.knox.securefolder/cache/dump/ of each Android user that has them. On the "
+            "tested images each file is plain text despite the .xml name. Each entry starts on its "
+            "own line with month-day and time, three numbers, a level letter, a number in brackets, a "
+            "tag and a message; some messages continue on the following lines, and those continuation "
+            "lines are not read. On every parsed line of the tested images the bracketed number "
+            "equals the Android user whose folder holds the file. Only entries tagged "
+            "RemoteContentHistoryImpl are read, and of those only the ones whose message names a path "
+            "(filePath, scannedPath or directoryPath), a provider call method, a result message, a "
+            "destination container, the launch application or a file operation result. Other tags "
+            "seen in these files (ApplicationHistoryImpl, ProvisioningHistoryImpl, "
+            "LauncherHistoryImpl, ShortcutHistoryImpl, BackupRestoreHistoryImpl) are not reported. On "
+            "the known data every reported line was in two dump files of the same user, the "
+            "RemoteContent file and an Application file. A line is shown once, keyed on its "
+            "month-day, time, the second and third numbers, the bracketed number and the message. Log "
+            "Time is the month-day and time as logged. The lines carry no year and no zone. Dump File "
+            "Started is the date and time in the dump file's name; a dump file keeps being appended "
+            "after it is named, and on tested images one file held lines from more than one year, so "
+            "it does not give the year of a line. Rows are ordered by Log Time, which puts lines from "
+            "different years together. Component is the bracketed name that starts the message. "
+            "Function is the text after it up to the opening parenthesis. Path is the text inside "
+            "filePath[...], scannedPath[...] or directoryPath[...], up to the first closing bracket. "
             "Detail is the text inside method[...], resultMessage[...], destContainerId[...], "
-            "launchApplication[...] or fileOperationResult[...]. Message is the whole message as "
-            "logged. Logging User is the number in brackets on the line. The app's code was not read "
-            "(no Secure Folder APK is in the tested extraction), so what each function does is not "
+            "launchApplication[...] or fileOperationResult[...]. Message is the first line of the "
+            "message as logged. Logging User is the bracketed number. The app's code was not read (no "
+            "Secure Folder APK is in the tested extraction), so what each function does is not "
             "established beyond its name and the known data below. Known data "
             "(samsung_a166u_a16_known_20261117, phone zone UTC-5 on that date): one file was moved "
             "from Android user 0's Download folder into the Secure Folder with My Files between "
@@ -41,11 +49,14 @@ __artifacts_v2__ = {
             "file in the user 0 Download folder, an updateLastModified line and a scan line naming it "
             "in the user 150 Download folder, the result message 1 item moved., destination container "
             "150, the user 150 Download folder, launch application MyFiles and result SUCCESS. This "
-            "is the only record found that names the file moved: the Secure Folder History Log "
-            "artifact gives the folders and the count. A move out of the Secure Folder, a failed move "
-            "and more than one file are not exercised. On the other tested images that hold dump "
+            "log names the file moved and the folder it came from. The user 150 MediaStore also holds "
+            "a row for the file at its destination path (Emulated Storage Metadata artifacts), and "
+            "the Secure Folder History Log artifact gives the folders and the count. A move out of "
+            "the Secure Folder, a failed move, more than one file, a copy and a message that "
+            "continues on a second line are not exercised. On the other tested images that hold dump "
             "files (anne_a15, falken_a326u_a13, s20fe_a13, samsung_a166u_a16_known_20261116, "
-            "samsunga53_a14, samsungs20_a13, sharon_a13, sharon_a14) no line matched."
+            "samsunga53_a14, samsungs20_a13, sharon_a13, sharon_a14) no line matched: seven hold no "
+            "line with this tag, and samsungs20_a13 holds 8, none naming a path or result."
         ),
         "paths": ("*/com.samsung.knox.securefolder/cache/dump/SecureFolderDumpLog_*",),
         "output_types": ["html", "tsv", "lava"],
@@ -66,18 +77,14 @@ import re
 
 from scripts.ilapfuncs import artifact_processor, logfunc
 
-_FILE_NAME = re.compile(r"SecureFolderDumpLog_[A-Za-z]+(\d{4})(\d{2})\d{8}\.xml$")
+_FILE_NAME = re.compile(r"SecureFolderDumpLog_[A-Za-z]+(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})\.xml$")
 _LINE = re.compile(
     r"^(\d{2})-(\d{2}) (\d{2}:\d{2}:\d{2}\.\d{3}) (\d+) (\d+) (\d+) [VDIWEF] \[(\d+)\](\w+?): ?(.*)$")
 _TAG = "RemoteContentHistoryImpl"
-_HEAD = re.compile(r"^\[(\w+)\] ([\w:]+)")
+_HEAD = re.compile(r"^\[(\w+)\] ([^(\s]+)")
 _PATH = re.compile(r"\b(?:filePath|scannedPath|directoryPath)\[([^\]]*)\]")
 _DETAIL = re.compile(
     r"\b(?:method|resultMessage|destContainerId|launchApplication|fileOperationResult)\[([^\]]*)\]")
-
-
-def _year(line_month, file_year, file_month):
-    return file_year + 1 if line_month < file_month else file_year
 
 
 @artifact_processor
@@ -90,7 +97,7 @@ def samsungSecureFolderFileOperationLog(context):
         match = _FILE_NAME.search(name)
         if not match or not os.path.isfile(file_found):
             continue
-        file_year, file_month = int(match.group(1)), int(match.group(2))
+        started = "{}-{}-{} {}:{}:{}".format(*match.groups())
         try:
             with open(file_found, "r", encoding="utf-8", errors="replace") as handle:
                 lines = handle.read().split("\n")
@@ -107,8 +114,6 @@ def samsungSecureFolderFileOperationLog(context):
             details = _DETAIL.findall(message)
             if not paths and not details:
                 continue
-            if "method[dumpStart]" in message:
-                continue
             key = (parsed.group(1), parsed.group(2), parsed.group(3), parsed.group(5), parsed.group(6),
                    parsed.group(7), message)
             if key in seen:
@@ -116,23 +121,23 @@ def samsungSecureFolderFileOperationLog(context):
                 continue
             seen.add(key)
             found_here = True
-            month = int(parsed.group(1))
-            year = _year(month, file_year, file_month)
             head = _HEAD.match(message)
             data_list.append((
-                f"{year}-{parsed.group(1)}-{parsed.group(2)} {parsed.group(3)}",
+                f"{parsed.group(1)}-{parsed.group(2)} {parsed.group(3)}",
+                started,
                 parsed.group(7),
                 head.group(1) if head else "",
-                head.group(2).split("::")[0] if head else "",
+                head.group(2) if head else "",
                 "; ".join(paths),
                 "; ".join(details),
                 message,
             ))
         if found_here:
             source_paths.append(file_found)
-    data_list.sort(key=lambda row: row[0])
+    data_list.sort(key=lambda row: (row[0], row[1]))
     data_headers = (
-        "Log Time (as logged, year from file name)",
+        "Log Time (month-day, as logged)",
+        "Dump File Started",
         "Logging User",
         "Component",
         "Function",
