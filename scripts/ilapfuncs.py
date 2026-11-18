@@ -1640,21 +1640,21 @@ def convert_utc_human_to_timezone(utc_time, time_offset):
 
 # NSDate.distantPast and NSDate.distantFuture as Cocoa seconds, read from Foundation on macOS.
 # timestampsconv reports the exact values blank like an absent date, as iLEAPP's Cocoa
-# converters do. distantPast is year one, which datetime.fromtimestamp cannot return, so it
-# raised ValueError. Any other value, year 4001 included, converts.
+# converters do. A real date stored as exactly 4001-01-01 00:00:00 UTC is the same value as
+# distantFuture and is blanked too. distantPast is 0000-12-30 in Python's proleptic Gregorian
+# calendar (Foundation calls it 0001-01-01), two days before datetime.min, so it used to raise
+# ValueError.
 COCOA_DISTANT_PAST = -63114076800
 COCOA_DISTANT_FUTURE = 63113904000
 
 def timestampsconv(webkittime):
     if webkittime in (COCOA_DISTANT_PAST, COCOA_DISTANT_FUTURE):
         return ''
-    unix_timestamp = webkittime + 978307200
-    if unix_timestamp >= 0:
-        return datetime.fromtimestamp(unix_timestamp, tz=timezone.utc)
-    # datetime.fromtimestamp is platform dependent before 1970 (it fails on Windows), so add to
-    # the epoch. Out of range stays a ValueError, as fromtimestamp raised it.
+    # Added to the epoch rather than passed to datetime.fromtimestamp, which depends on the
+    # platform's gmtime (on Windows it fails before 1970 and after the year 3000). Every other
+    # value Python can hold converts; one outside that range, or not finite, raises ValueError.
     try:
-        return _UNIX_EPOCH_UTC + timedelta(seconds=unix_timestamp)
+        return _UNIX_EPOCH_UTC + timedelta(seconds=webkittime + 978307200)
     except OverflowError as exc:
         raise ValueError(str(exc)) from exc
 

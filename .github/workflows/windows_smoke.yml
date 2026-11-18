@@ -63,6 +63,11 @@ jobs:
       - name: Convert pre-1970 Unix timestamps
         run: python admin/test/scripts/test_unix_timestamp_conversion.py
 
+      # timestampsconv before 1970 and after the year 3000, where Windows' gmtime() fails, and
+      # the NSDate sentinels.
+      - name: Convert Cocoa timestamps outside 1970 to 3000
+        run: python admin/test/scripts/test_timestampsconv_year_one.py
+
       # The seeker's paths carry backslashes here; Opera's source columns must keep them
       # so the core can strip the data folder.
       - name: Keep the seeker's paths in Opera's source columns
