@@ -1,9 +1,8 @@
-"""Samsung Internet (com.sec.android.app.sbrowser): web notifications and notification permissions.
+"""Samsung Internet (com.sec.android.app.sbrowser): web notifications.
 
 Samsung Internet records notifications websites posted in databases/webNotificationDB.db
-(notifications), and the per-site notification permissions in the Chromium profile's
-app_sbrowser/Default/Preferences (profile.content_settings.exceptions.notifications). The
-Chromium Platform Notifications LevelDB in the profile also holds a record and is not read here.
+(notifications). The Chromium Platform Notifications LevelDB and the Preferences file of the
+same profile are read by the Chromium Web Notifications and Chromium Site Permissions artifacts.
 """
 
 __artifacts_v2__ = {
@@ -16,7 +15,7 @@ __artifacts_v2__ = {
         ),
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-11-17",
-        "last_update_date": "2026-11-17",
+        "last_update_date": "2026-11-18",
         "requirements": "none",
         "category": "Samsung Internet",
         "notes": (
@@ -37,10 +36,16 @@ __artifacts_v2__ = {
             "at 06:37:01. The page's display button was tapped at 06:37:13 and one notification "
             "was posted. The one row is that notification, at 06:37:14, with Read 1, Clicked 0 "
             "and Seen 0. Whether a row stays after the notification is dismissed is not "
-            "established. Not read: the Chromium Platform Notifications LevelDB in "
-            "app_sbrowser/Default, which on the known data held one record whose notification "
-            "id equals this row's persid. On the 11 other corpus images where the file was "
-            "found the table is empty. Images with no member listing were not scanned."
+            "established. The Chromium Web Notifications artifact reads the Platform "
+            "Notifications LevelDB in app_sbrowser/Default. On the known data it held one "
+            "record for the same notification: its key ends with this row's persid and its "
+            "Created time falls in the same second as this row's Time. That artifact does not "
+            "show the notification id, so match the two on Site, Title and Created. The record "
+            "held click counts of 0, no click or close time and Closed Reason Unknown. The "
+            "Chromium Site Permissions artifact reads the site's notification permission from "
+            "the Preferences file. On the 11 other corpus images where webNotificationDB.db was "
+            "found the notifications table is empty. Images with no member listing were not "
+            "scanned."
         ),
         "paths": ("*/com.sec.android.app.sbrowser/databases/webNotificationDB.db*",),
         "output_types": "standard",
@@ -60,55 +65,8 @@ __artifacts_v2__ = {
             "sharon_a14": "Android 14 | notifications empty | 0 rows",
         },
     },
-    "get_samsung_internet_notification_permissions": {
-        "name": "Samsung Internet - Notification Permissions",
-        "description": (
-            "Parses the per-site notification permissions in Samsung Internet's Chromium "
-            "Preferences file (profile.content_settings.exceptions.notifications): one row "
-            "per site pattern with the stored setting value."
-        ),
-        "author": "@AlexisBrignoni, Claude",
-        "creation_date": "2026-11-17",
-        "last_update_date": "2026-11-17",
-        "requirements": "none",
-        "category": "Samsung Internet",
-        "notes": (
-            "Read from the profile.content_settings.exceptions.notifications object of "
-            "com.sec.android.app.sbrowser/app_sbrowser/Default/Preferences, a JSON file. One "
-            "row per site pattern and Android user. Setting (as stored) is the stored setting "
-            "value and is not decoded. On the known data the entry held only a setting key. "
-            "Other keys an entry can hold, such as last_modified, are not read. Android User is "
-            "taken from the container path (/data/data is user 0). It is not a stored value. "
-            "Known data (samsung_a166u_a16_known_20261117, Samsung Internet 30.0.5.27 per the "
-            "session record): on 2026-11-17 the permission request of a public notification "
-            "test site was tapped at 06:36:52 UTC and Allow was tapped at 06:37:01. The page's "
-            "display button was tapped at 06:37:13 and one notification was posted. The one row "
-            "is that site's pattern with setting 1. The entry is absent from "
-            "samsung_a166u_a16_known_20261116, taken before these actions. On the 10 other "
-            "corpus images where the file was found the object holds no entries. Images with no "
-            "member listing were not scanned."
-        ),
-        "paths": ("*/com.sec.android.app.sbrowser/app_sbrowser/Default/Preferences",),
-        "output_types": ["html", "tsv", "lava"],
-        "artifact_icon": "settings",
-        "sample_data": {
-            "samsung_a166u_a16_known_20261117": "Android 16 | com.sec.android.app.sbrowser | 1 row",
-            "anne_a15": "Android 15 | no notification permission entry | 0 rows",
-            "cookbook_a11": "Android 11 | no notification permission entry | 0 rows",
-            "falken_a326u_a13": "Android 13 | no notification permission entry | 0 rows",
-            "hc_pixel8pro_a16": "Android 16 | no notification permission entry | 0 rows",
-            "hc_pixel8pro_a17": "Android 17 | no notification permission entry | 0 rows",
-            "s20fe_a13": "Android 13 | no notification permission entry | 0 rows",
-            "samsung_a166u_a16_known_20261116": "Android 16 | no notification permission entry | 0 rows",
-            "samsunga53_a14": "Android 14 | no notification permission entry | 0 rows",
-            "sharon_a13": "Android 13 | no notification permission entry | 0 rows",
-            "sharon_a14": "Android 14 | no notification permission entry | 0 rows",
-            "adams_ss135dl_a13": "Android 13 | no Preferences file | 0 rows",
-        },
-    },
 }
 
-import json
 import re
 
 from scripts.ilapfuncs import (
@@ -117,7 +75,6 @@ from scripts.ilapfuncs import (
     does_table_exist_in_db,
     get_sqlite_db_records,
     is_sqlite_sidecar,
-    logfunc,
 )
 
 PACKAGE = "com.sec.android.app.sbrowser"
@@ -194,48 +151,6 @@ def get_samsung_internet_web_notifications(context):
         "Clicked (as stored)",
         "Seen (as stored)",
         "Row ID",
-        "Android User",
-    )
-    return data_headers, data_list, "\n".join(sorted(source_paths))
-
-
-@artifact_processor
-def get_samsung_internet_notification_permissions(context):
-    data_list = []
-    source_paths = set()
-    seen_rows = set()
-    for path in context.get_files_found():
-        path = str(path)
-        if not path.replace("\\", "/").endswith("/app_sbrowser/Default/Preferences"):
-            continue
-        container = _container(path, "app_sbrowser/")
-        if container is None:
-            continue
-        source_paths.add(path)
-        try:
-            with open(path, "r", encoding="utf-8", errors="replace") as handle:
-                prefs = json.load(handle)
-        except (OSError, ValueError) as error:
-            logfunc(f"Samsung Internet Preferences not read: {path}: {error}")
-            continue
-        exceptions = prefs.get("profile", {}).get("content_settings", {}).get("exceptions", {})
-        notifications = exceptions.get("notifications", {}) if isinstance(exceptions, dict) else {}
-        if not isinstance(notifications, dict):
-            continue
-        for pattern, entry in sorted(notifications.items()):
-            entry = entry if isinstance(entry, dict) else {}
-            key = (container[0], pattern)
-            if key in seen_rows:
-                continue
-            seen_rows.add(key)
-            data_list.append((
-                pattern, "" if entry.get("setting") is None else entry.get("setting"),
-                container[0],
-            ))
-
-    data_headers = (
-        "Site Pattern",
-        "Setting (as stored)",
         "Android User",
     )
     return data_headers, data_list, "\n".join(sorted(source_paths))
