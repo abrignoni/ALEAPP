@@ -225,7 +225,7 @@ __artifacts_v2__ = {
             'although three apps were opened at 17:38 UTC in the known-data session; the mint log records the '
             'service as already On at 17:36 UTC and does not record when it was turned on. A row records what '
             'the service logged, not by itself that a person used the app. Not reported from '
-            'inferenceengine_logging.db: screen_state_log, setting_change, api_call_log, profile (account '
+            'inferenceengine_logging.db: setting_change, api_call_log, profile (account '
             'fields), cpp_path_history_log, country_app_count, cmh_tag_log, keyboard_lang, '
             'general_real_time_collection_log, general_batch_collection_log, sa_raw_data, '
             'sa_personalized_log, screen_log, the Bluetooth, Wi-Fi, headset, gear, watch, notification, '
@@ -282,7 +282,7 @@ __artifacts_v2__ = {
             'then. place_id (as stored) held -1 on all 10 rows and Time Zone held America/New_York on all 10. '
             'plugged held 0, 1, 2 and 4 across the images. sharon_a13 had 30 rows and sharon_a14 24; Time '
             'Zone held America/New_York on all 30 rows of sharon_a13. Not reported from '
-            'inferenceengine_logging.db: screen_state_log, setting_change, api_call_log, profile (account '
+            'inferenceengine_logging.db: setting_change, api_call_log, profile (account '
             'fields), cpp_path_history_log, country_app_count, cmh_tag_log, keyboard_lang, '
             'general_real_time_collection_log, general_batch_collection_log, sa_raw_data, '
             'sa_personalized_log, screen_log, the Bluetooth, Wi-Fi, headset, gear, watch, notification, '
@@ -316,6 +316,59 @@ __artifacts_v2__ = {
             "falken_a326u_a13": "Android 13 | com.samsung.android.rubin.app | 0 rows, no key in secrets.json",
         },
     },
+    "samsung_customization_screen_state": {
+        "name": "Samsung Customization Service - Screen State Log",
+        "description": "The screen_state_log table of the encrypted Customization Service inferenceengine_logging.db, "
+                       "decrypted with the key in the extraction's Secrets/secrets.json: one row per stored screen "
+                       "state entry with its screen_state, user_present and use_keyguard values.",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-11-17",
+        "last_update_date": "2026-11-17",
+        "requirements": "none",
+        "category": "Samsung Customization Service",
+        "notes": (
+            'One row per screen_state_log row. screen_state, user_present and '
+            'use_keyguard are shown as stored; their meanings are not sourced. Time is '
+            'the table\'s time column, milliseconds read as UTC; Time String (as stored) '
+            'is the text time beside it, and on every row of the four images in '
+            'sample_data with rows it equals Time in the row\'s timezone_id (157, 106, 757 '
+            'and 2,050 rows). '
+            'Known data (samsung_a166u_a16_known_20261117, lock tests timed by an adb '
+            'watcher and from the phone\'s own power state): a wake of the locked screen '
+            'logged at about 14:03:02 UTC has a row at 14:03:02 holding 1, 0, 1, and the '
+            'unlock that followed (the watcher saw the phone unlocked by 14:03:12) has a '
+            'row at 14:03:09 holding 1, 1, 0. The timeout lock, logged as a screen-off at '
+            'about 14:02:49, has a row at 14:01:39 holding 0, 0, 0; which moment of the '
+            'timeout each records is not established. Four side-button locks, wakes and '
+            'an unlock logged between 13:47:56 and 13:50:10 have no rows of their own: '
+            'the only row in that window is at 13:50:11, holding 1, 0, 0. So the table '
+            'does not hold every screen change, and a missing row does not show that the '
+            'screen did not change. '
+            'Value combinations seen (screen_state, user_present, use_keyguard): 1,0,0; 0,0,0; 1,1,0; 1,0,1; 0,0,1 on the two A166U images and on sharon_a14; only 1,0,0; 0,0,0; 1,1,0 on sharon_a13. Time Zone held America/New_York on every row except 252 rows of sharon_a14, which held America/Denver. '
+            'inferenceengine_logging.db in com.samsung.android.rubin.app/databases is not '
+            'a plaintext SQLite file. It is read as SQLCipher with AES-256-CBC, 4096-byte '
+            'pages, a 48-byte reserve and HMAC-SHA1, through '
+            'scripts/sqlcipher_decrypt.py, with the key from the extraction tool\'s '
+            'Secrets/secrets.json entry for com.samsung.android.rubin.app whose '
+            'script_output payload is named Logging, as described for the other '
+            'Customization Service artifacts; with no such key the database is not read '
+            'and a line is logged. The decrypted copy is written under the report folder '
+            '(samsung_secure_decrypted) and read from there; the evidence file is only '
+            'read. Android User is the user the database\'s path names, and held 0 on '
+            'every row of the images in sample_data.'
+        ),
+        "paths": ('*/com.samsung.android.rubin.app/databases/inferenceengine_logging.db*', '*/Secrets/secrets.json'),
+        "output_types": "standard",
+        "artifact_icon": "smartphone",
+        "sample_data": {
+            "samsung_a166u_a16_known_20261117": "Android 16 | com.samsung.android.rubin.app | 157 rows",
+            "samsung_a166u_a16_known_20261116": "Android 16 | com.samsung.android.rubin.app | 106 rows",
+            "sharon_a13": "Android 13 | com.samsung.android.rubin.app | 757 rows",
+            "sharon_a14": "Android 14 | com.samsung.android.rubin.app | 2050 rows",
+            "anne_a15": "Android 15 | com.samsung.android.rubin.app | 0 rows, no key in secrets.json",
+            "falken_a326u_a13": "Android 13 | com.samsung.android.rubin.app | 0 rows, no key in secrets.json",
+        },
+    },
     "samsung_customization_location": {
         "name": "Samsung Customization Service - Location Log",
         "description": "The location_log table of the encrypted Customization Service inferenceengine_logging.db, "
@@ -343,7 +396,7 @@ __artifacts_v2__ = {
             'America/New_York on all 2318 rows of sharon_a13. No known-data record for these images was used. '
             'On samsung_a166u_a16_known_20261116 the table held no rows. A row records a fix the service '
             'logged, not by itself where a person was. Not reported from inferenceengine_logging.db: '
-            'screen_state_log, setting_change, api_call_log, profile (account fields), cpp_path_history_log, '
+            'setting_change, api_call_log, profile (account fields), cpp_path_history_log, '
             'country_app_count, cmh_tag_log, keyboard_lang, general_real_time_collection_log, '
             'general_batch_collection_log, sa_raw_data, sa_personalized_log, screen_log, the Bluetooth, '
             'Wi-Fi, headset, gear, watch, notification, music, calendar and keyword tables. '
@@ -397,7 +450,7 @@ __artifacts_v2__ = {
             "UTC within the same minutes, so a motion_type is the service's classification and not "
             'established as what the person did. Time Zone held America/New_York on all 39 rows. Types seen '
             'across the images: LOGGING_START, STATIONARY, WALK, VEHICLE and RUN. sharon_a13 had 1476 rows '
-            'and sharon_a14 524. Not reported from inferenceengine_logging.db: screen_state_log, '
+            'and sharon_a14 524. Not reported from inferenceengine_logging.db: '
             'setting_change, api_call_log, profile (account fields), cpp_path_history_log, country_app_count, '
             'cmh_tag_log, keyboard_lang, general_real_time_collection_log, general_batch_collection_log, '
             'sa_raw_data, sa_personalized_log, screen_log, the Bluetooth, Wi-Fi, headset, gear, watch, '
@@ -453,7 +506,7 @@ __artifacts_v2__ = {
             'known-data record for these images was used. On samsung_a166u_a16_known_20261116 the table held '
             'no rows, although two pages were opened in Samsung Internet at 17:37 UTC in the known-data '
             'session, while the service showed On (mint log, 17:36 UTC); which visits the service records is '
-            'not established. Not reported from inferenceengine_logging.db: screen_state_log, setting_change, '
+            'not established. Not reported from inferenceengine_logging.db: setting_change, '
             'api_call_log, profile (account fields), cpp_path_history_log, country_app_count, cmh_tag_log, '
             'keyboard_lang, general_real_time_collection_log, general_batch_collection_log, sa_raw_data, '
             'sa_personalized_log, screen_log, the Bluetooth, Wi-Fi, headset, gear, watch, notification, '
@@ -816,6 +869,18 @@ def samsung_customization_charging(context):
              r['_user']) for r in rows]
     data_headers = (('Time', 'datetime'), 'connected (as stored)', 'plugged (as stored)', 'level (as stored)',
                'place_id (as stored)', 'Time Zone', 'Row ID', 'Android User')
+    return data_headers, data, '\n'.join(sources)
+
+
+@artifact_processor
+def samsung_customization_screen_state(context):
+    rows, sources = _rubin(context, 'inferenceengine_logging.db', 'screen_state_log',
+                           ['time', 'screen_state', 'user_present', 'use_keyguard', 'time_string', 'timezone_id',
+                            '_id'], 'time')
+    data = [(_ms(r['time']), r['screen_state'], r['user_present'], r['use_keyguard'], r['time_string'] or '',
+             r['timezone_id'] or '', r['_id'], r['_user']) for r in rows]
+    data_headers = (('Time', 'datetime'), 'screen_state (as stored)', 'user_present (as stored)',
+                    'use_keyguard (as stored)', 'Time String (as stored)', 'Time Zone', 'Row ID', 'Android User')
     return data_headers, data, '\n'.join(sources)
 
 
