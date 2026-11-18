@@ -1638,10 +1638,25 @@ def convert_utc_human_to_timezone(utc_time, time_offset):
     #return the converted value
     return timezone_time
 
+# NSDate.distantPast and NSDate.distantFuture as Cocoa seconds, read from Foundation on macOS.
+# timestampsconv reports the exact values blank like an absent date, as iLEAPP's Cocoa
+# converters do. distantPast is year one, which datetime.fromtimestamp cannot return, so it
+# raised ValueError. Any other value, year 4001 included, converts.
+COCOA_DISTANT_PAST = -63114076800
+COCOA_DISTANT_FUTURE = 63113904000
+
 def timestampsconv(webkittime):
+    if webkittime in (COCOA_DISTANT_PAST, COCOA_DISTANT_FUTURE):
+        return ''
     unix_timestamp = webkittime + 978307200
-    finaltime = datetime.fromtimestamp(unix_timestamp, tz=timezone.utc)
-    return(finaltime)
+    if unix_timestamp >= 0:
+        return datetime.fromtimestamp(unix_timestamp, tz=timezone.utc)
+    # datetime.fromtimestamp is platform dependent before 1970 (it fails on Windows), so add to
+    # the epoch. Out of range stays a ValueError, as fromtimestamp raised it.
+    try:
+        return _UNIX_EPOCH_UTC + timedelta(seconds=unix_timestamp)
+    except OverflowError as exc:
+        raise ValueError(str(exc)) from exc
 
 def convert_ts_human_to_utc(ts): #This is for timestamp in human form
     if '.' in ts:
