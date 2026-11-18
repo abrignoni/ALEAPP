@@ -113,6 +113,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | samsungBadgeProvider |
 | samsungBatteryStats |
 | samsungBixbyRoutines |
+| samsungFind |
 | samsungLauncher |
 | samsungMediaProvider |
 | samsungPrivacyDashboard |
@@ -124,6 +125,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | samsungSleepDetection |
 | samsungSmartSwitch |
 | samsungStoryService |
+| samsungVoiceRecorder |
 | samsungWifiDatabases |
 | sbbmobile |
 | seal |
