@@ -9,38 +9,46 @@ __artifacts_v2__ = {
         "last_update_date": "2026-11-18",
         "requirements": "none",
         "category": "Google Find My Device",
-        "notes": "Read from com.google.android.apps.adm/files/datastore/"
-                 "com.google:<account>_devices_store.pb, a DataStore file the app registers as "
-                 "devices_store. It holds one protobuf message with a repeated device record, "
-                 "decoded with the vendored blackboxprotobuf and field types from the app's own "
-                 "message classes. Field meanings come from the decompiled app (Find My Device "
-                 "versionName 3.1.763-04, versionCode 20014429, the base APK installed on "
-                 "dragna_pixel9a_a16, decompiled with jadx; the code is obfuscated). The app "
-                 "builds its device list model from this record: Device Name, Device Type (the "
-                 "app's own enum names, such as ANDROID_DEVICE, SPOT_DEVICE and "
-                 "FASTPAIR_DEVICE), Device Category (the names the app gives the stored value, "
-                 "such as PHONE, BEACON and EARBUDS), Manufacturer and Model. For an Android "
-                 "device the app's device details screen shows IMEI as 'IMEI' and Activated as "
-                 "'Activated', from a time it keeps in seconds. For a tracker (SPOT_DEVICE) "
-                 "Manufacturer and Model come from the tracker's own record, Model falling back "
-                 "to the manufacturer and model strings joined, as the app does. For a Fast Pair "
-                 "device the app's list leaves Manufacturer and Model empty; here they are read "
-                 "from the nested record of the same class the tracker branch reads, so those "
-                 "two values are not ones the app shows for that device type. IMEI and "
-                 "Activated are only kept for Android devices. Account is the part of the file "
-                 "name between 'com.google:' and '_devices_store.pb'. The store also has paths "
-                 "for a last known location (per device, per tracker and a separate location "
-                 "list); none held data on the tested image, so they are not read. Several "
-                 "other fields (a second timestamp, an integer the app compares with 28 and "
-                 "30, a string it clears when the location response says location is off) "
-                 "have no reader in the app that names them and are not reported. The record "
-                 "is the app's cached copy of the account's device list as the server last "
-                 "sent it; a row does not establish that the device was ever near this phone. "
-                 "Tested on one image (dragna_pixel9a_a16): 3 records, one each of "
-                 "ANDROID_DEVICE, SPOT_DEVICE and FASTPAIR_DEVICE. Account held one value on "
-                 "all 3 rows. Activated leads the table and is filled on 1 of 3 rows, as is "
-                 "IMEI: only the Android row carries them. The other 11 tested images have "
-                 "no devices store.",
+        "notes": "Read from "
+                 "com.google.android.apps.adm/files/datastore/com.google:<account>_devices_store.pb, "
+                 "a DataStore file the app registers as devices_store. It holds one protobuf "
+                 "message: a repeated device record (field 1), a timestamp (field 2, present on the "
+                 "tested file, meaning not established, not reported) and a second list (field 3, "
+                 "absent on the tested file). It is decoded with the vendored blackboxprotobuf and "
+                 "field types from the app's own message classes. Field meanings come from the "
+                 "decompiled app (Find My Device versionName 3.1.763-04, versionCode 20014429, "
+                 "decompiled with jadx; the code is obfuscated). The app builds a DeviceModel from "
+                 "each record for its listDevices app function: deviceName, deviceType, "
+                 "deviceCategory, manufacturer and model. Device Type uses the app's own enum names "
+                 "(such as ANDROID_DEVICE, SPOT_DEVICE and FASTPAIR_DEVICE) and Device Category the "
+                 "names the app gives the stored value (such as PHONE, BEACON and EARBUDS). The same "
+                 "model also carries a device id, a current-device flag, a ringable flag and a "
+                 "tracker type, which are not reported. For an Android device record, Manufacturer "
+                 "and Model are the ones DeviceModel carries. IMEI and Activated are the values the "
+                 "app shows under its strings 'IMEI: ...' and 'Activated: ...'. Activated is a time "
+                 "kept in seconds, which the app shows as a date only. For a tracker (SPOT_DEVICE) "
+                 "and a Fast Pair (FASTPAIR_DEVICE) device the app reads a nested device record. Its "
+                 "own accessors return the tracker's record, or for Fast Pair the record in field "
+                 "11 of the device record's field 10. From that record the app's device details code takes the model (field "
+                 "34, falling back to the manufacturer and model strings joined) and the time it "
+                 "shows under 'Activated: ...' (field 33). Manufacturer is that record's field 20, "
+                 "which DeviceModel carries for trackers. For Fast Pair, DeviceModel leaves "
+                 "manufacturer and model empty, so for that record they are the device details "
+                 "values, not DeviceModel's. IMEI is reported only for Android device records. "
+                 "Account is the part of the file name between 'com.google:' and "
+                 "'_devices_store.pb'. The message classes also have fields that look like location "
+                 "data (on the device record, on the tracker record and in a separate list). None "
+                 "was present in the tested file, so they are not read. Several other fields (a "
+                 "second timestamp on the device record, an integer the app compares with 28 and 30, "
+                 "a string it clears when the location response says location is off) had no reader "
+                 "found in the app that names them, and they are not reported. The tested records "
+                 "also carry fields 2, 6 and 11 of the device record, which are not read. The app "
+                 "keeps this list locally and merges incoming records into the stored ones, so a "
+                 "record can mix values from more than one update. A row does not establish that the "
+                 "device was ever near this phone. Tested on one image (dragna_pixel9a_a16): 3 "
+                 "records, one each of ANDROID_DEVICE, SPOT_DEVICE and FASTPAIR_DEVICE. Account held "
+                 "one value on all 3 rows. IMEI is filled on 1 of 3 rows, the Android one. On the "
+                 "other 11 tested images no file matched this artifact's path pattern.",
         "paths": ('*/com.google.android.apps.adm/files/datastore/*_devices_store.pb',),
         "output_types": "standard",
         "artifact_icon": "smartphone",
@@ -69,9 +77,10 @@ from scripts.blackboxprotobuf import decode_message
 from scripts.ilapfuncs import artifact_processor, logfunc
 
 _TIMESTAMP = {'1': {'type': 'int', 'name': ''}, '2': {'type': 'int', 'name': ''}}
-# ssq: the tracker record (manufacturer 20, model parts 21 and 34)
+# ssq: the tracker record (manufacturer 20, model parts 21 and 34, activation time 33)
 _TRACKER_RECORD = {
     '20': {'type': 'bytes', 'name': ''},
+    '33': {'type': 'message', 'name': '', 'message_typedef': _TIMESTAMP},
     '21': {'type': 'bytes', 'name': ''},
     '34': {'type': 'bytes', 'name': ''},
 }
@@ -147,11 +156,12 @@ def _seconds_utc(timestamp):
         return ''
 
 
-def _tracker_names(tracker):
+def _tracker_values(tracker):
+    """(activated, manufacturer, model) from a tracker or Fast Pair device's nested record."""
     record = _as_dict(_as_dict(tracker).get('1'))
     manufacturer = _text(record.get('20'))
     model = _text(record.get('34')) or f"{manufacturer} {_text(record.get('21'))}".strip()
-    return manufacturer, model
+    return _seconds_utc(record.get('33')), manufacturer, model
 
 
 def _account(path):
@@ -196,9 +206,10 @@ def google_find_my_device_devices(context):
                 model = _text(android.get('3'))
                 imei = _text(android.get('7'))
             elif device.get('4') is not None:
-                manufacturer, model = _tracker_names(device.get('4'))
+                activated, manufacturer, model = _tracker_values(device.get('4'))
             elif device.get('10') is not None:
-                manufacturer, model = _tracker_names(_as_dict(device.get('10')).get('11'))
+                activated, manufacturer, model = _tracker_values(
+                    _as_dict(device.get('10')).get('11'))
             device_type = _as_dict(device.get('1')).get('2', 0)
             data_list.append((
                 activated, _text(device.get('5')), _enum_name(_DEVICE_TYPES, device_type),

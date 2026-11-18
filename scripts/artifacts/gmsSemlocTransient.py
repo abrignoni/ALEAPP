@@ -10,48 +10,63 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Semantic Location",
         "notes": "Read from Google Play services' semloc_transient_database (Room database, table "
-                 "TransientDataEntity, under com.google.android.gms/databases/ and, on the older "
-                 "images tested, com.google.android.gms/cache/). Each row has a type and a protobuf "
-                 "data blob, decoded with the vendored blackboxprotobuf and field types from the app's "
-                 "own message classes. Sources are the decompiled Google Play services APK installed "
-                 "on dragna_pixel9a_a16 (com.google.android.gms 26.39.33, versionCode 263933035, "
-                 "decompiled with jadx; the code is obfuscated). The type values come from the code "
-                 "that writes the rows: 1 is a visit segment, 2 an activity segment, 3 a frequent "
-                 "places list, 4 a path segment and 5 a raw signal record; a segment with none of "
-                 "those payloads is written as type 0. Field names come from Play services' own "
-                 "Timeline export code, which writes the same records to JSON under names such as "
-                 "startTime, hierarchyLevel, topCandidate, placeLocation, distanceMeters, "
-                 "frequentPlaces, label, position, accuracyMeters and activityRecord; the code that "
-                 "fills the transient rows copies those fields one to one. Coordinates are stored as "
-                 "integers in units of 1e-7 degree, the scale the export code divides by. Row Written "
-                 "is the row's creation_time_seconds, which the writing code sets from the device "
-                 "clock when it stores the row. The code that reads the table back asks only for rows "
-                 "written in the last 2 days. What removes older rows was not traced, so how far back "
-                 "a store reaches is not established. Field meaning was read from one Play services "
-                 "version; the images listed in sample_data carry other versions, which were not "
-                 "decompiled, though their rows decode to the same fields. On dragna_pixel9a_a16 the "
-                 "visits and activities chain: all 7 activity end times equal a visit start time and 6 "
-                 "of 7 activity start times equal a visit end time. Not reported: type 0 rows (start, "
-                 "end and offsets only, seen on older images), type 4 path rows and Wi-Fi scan records "
-                 "(none on any tested image), the part of the place identifier the store keeps, and "
-                 "the segment_id, obfuscated_gaia_id and finalization_status columns (the last is "
-                 "written as 0 by the current code; each segment carries its own status). "
-                 "Rows of type 1. Start Time and End Time are the segment's startTime and "
-                 "endTime; the UTC offsets are startTimeTimezoneUtcOffsetMinutes and "
-                 "endTimeTimezoneUtcOffsetMinutes as stored. Latitude and Longitude are the top "
-                 "candidate's placeLocation. Semantic Type uses the names of Play services' own "
-                 "enum (UNKNOWN, HOME, WORK, INFERRED_HOME, INFERRED_WORK, SEARCHED_ADDRESS, "
-                 "ALIASED_LOCATION). Place Probability is the top candidate's probability and "
-                 "Visit Probability the visit's probability; Hierarchy Level is hierarchyLevel. "
-                 "Finalization Status uses the names of Play services' enum for the segment "
-                 "(UNSPECIFIED_FINALIZATION_STATUS, STABILIZED, FINALIZED). The store keeps "
-                 "only part of the place identifier, so no place id is reported. A visit is "
-                 "the location service's inference from the device's signals, not a record "
-                 "of where the user said they were. Start UTC Offset (min) and End UTC Offset "
-                 "(min) held one value on every row of each tested image, and were identical "
-                 "on all rows of anne_a15. Semantic Type held one value, UNKNOWN, on all rows "
-                 "of every tested image. Hierarchy Level held 0 on all rows of "
-                 "dragna_pixel9a_a16.",
+                 "TransientDataEntity, under com.google.android.gms/databases/). Two tested images "
+                 "(anne_a15, kevin_pocox7_a15) also have a copy under com.google.android.gms/cache/. "
+                 "Each row has a type and a protobuf data blob, decoded with the vendored "
+                 "blackboxprotobuf and field types from the app's own message classes. Sources are "
+                 "the decompiled Google Play services APK from dragna_pixel9a_a16 "
+                 "(com.google.android.gms 26.39.33, versionCode 263933035, decompiled with jadx; the "
+                 "code is obfuscated). The type values come from the code that writes the rows: 1 is "
+                 "a visit segment, 2 an activity segment, 3 a frequent places list, 4 a path segment "
+                 "and 5 a raw signal record; a segment with none of those payloads is written as "
+                 "type 0. Field names come from Play services' location history export code, which "
+                 "writes Timeline segments, the user location profile and raw signals to JSON under "
+                 "names such as startTime, hierarchyLevel, topCandidate, placeLocation, "
+                 "distanceMeters, frequentPlaces, label, position, accuracyMeters and "
+                 "activityRecord. A converter in Play services fills the transient segment and "
+                 "frequent place records from those Timeline records field by field. It does not "
+                 "copy everything unchanged: see Activity Type and Finalization Status. Raw signal "
+                 "records are the same message class the export writes. Coordinates are stored as "
+                 "integers in units of 1e-7 degree, the scale the export code divides by. Row "
+                 "Written is the row's creation_time_seconds, which the writing code sets from the "
+                 "device clock when it stores the row. The code that reads the table back asks only "
+                 "for rows written in the last 2 days. A cleanup job in the same code deletes rows "
+                 "written more than 2 days before it runs, and rewritten segments and lists replace "
+                 "earlier rows. When the job runs was not traced. On the tested images the rows span "
+                 "up to 2.3 days. Field meaning was read from one Play services version. The other "
+                 "images' versions were not decompiled. Their rows of types 1, 2, 3 and 5 use the "
+                 "same field numbers; rows on anne_a15 and kevin_pocox7_a15 also carry a segment id "
+                 "string in wrapper field 3, which is not read. On dragna_pixel9a_a16 the visits and "
+                 "activities chain: all 7 activity end times equal a visit start time and 6 of 7 "
+                 "activity start times equal a visit end time. Not reported: type 0 rows (start, "
+                 "end, offsets and status only; seen on anne_a15 and kevin_pocox7_a15), type 4 path "
+                 "rows and Wi-Fi scan records (none on any tested image), the part of the place "
+                 "identifier the store keeps, and the segment_id, segment_start_time_seconds, "
+                 "obfuscated_gaia_id and finalization_status columns. The decompiled version has two "
+                 "writers for the last: one stores status 0 and an empty segment_id, the other "
+                 "derives both from the segment. The Pixel images hold 0 on every row; anne_a15 and "
+                 "kevin_pocox7_a15 hold 0 and 1. Each segment carries its own status, which is what "
+                 "is reported. Rows are not deduplicated, so a segment written to both copies of the "
+                 "database, or twice to one, appears on more than one row. When rows come from more "
+                 "than one database, a Source File column names the database. Rows of type 1. Start "
+                 "Time and End Time are the segment's startTime and endTime; the UTC offsets are "
+                 "startTimeTimezoneUtcOffsetMinutes and endTimeTimezoneUtcOffsetMinutes as stored. "
+                 "Latitude and Longitude are the top candidate's placeLocation. Semantic Type uses "
+                 "the names of Play services' own enum (UNKNOWN, HOME, WORK, INFERRED_HOME, "
+                 "INFERRED_WORK, SEARCHED_ADDRESS, ALIASED_LOCATION). Place Probability is the top "
+                 "candidate's probability and Visit Probability the visit's probability; Hierarchy "
+                 "Level is hierarchyLevel. Finalization Status uses the names of Play services' enum "
+                 "for the segment (UNSPECIFIED_FINALIZATION_STATUS, STABILIZED, FINALIZED). The "
+                 "converter stores the Timeline statuses USER_EDITED and BACKFILLED as 0, so "
+                 "UNSPECIFIED_FINALIZATION_STATUS here can also be one of those. The store keeps "
+                 "only part of the place identifier, so no place id is reported. A visit row comes "
+                 "from the location service's Timeline segments. It is not a record of where the "
+                 "user said they were, and the store does not show whether a segment was edited by "
+                 "the user. Start UTC Offset (min) and End UTC Offset (min) held one value on all "
+                 "rows of dragna_pixel9a_a16, hc_pixel8pro_a16, hc_pixel8pro_a17 and "
+                 "kevin_pocox7_a15. anne_a15 held two values, and Start UTC Offset (min) and End UTC Offset (min) were identical on each row. "
+                 "Semantic Type held one value, UNKNOWN, on all rows of every tested image with "
+                 "rows. Hierarchy Level held 0 on all rows of dragna_pixel9a_a16.",
         "paths": ('*/com.google.android.gms/*/semloc_transient_database*',),
         "output_types": "all",
         "artifact_icon": "map-pin",
@@ -81,47 +96,67 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Semantic Location",
         "notes": "Read from Google Play services' semloc_transient_database (Room database, table "
-                 "TransientDataEntity, under com.google.android.gms/databases/ and, on the older "
-                 "images tested, com.google.android.gms/cache/). Each row has a type and a protobuf "
-                 "data blob, decoded with the vendored blackboxprotobuf and field types from the app's "
-                 "own message classes. Sources are the decompiled Google Play services APK installed "
-                 "on dragna_pixel9a_a16 (com.google.android.gms 26.39.33, versionCode 263933035, "
-                 "decompiled with jadx; the code is obfuscated). The type values come from the code "
-                 "that writes the rows: 1 is a visit segment, 2 an activity segment, 3 a frequent "
-                 "places list, 4 a path segment and 5 a raw signal record; a segment with none of "
-                 "those payloads is written as type 0. Field names come from Play services' own "
-                 "Timeline export code, which writes the same records to JSON under names such as "
-                 "startTime, hierarchyLevel, topCandidate, placeLocation, distanceMeters, "
-                 "frequentPlaces, label, position, accuracyMeters and activityRecord; the code that "
-                 "fills the transient rows copies those fields one to one. Coordinates are stored as "
-                 "integers in units of 1e-7 degree, the scale the export code divides by. Row Written "
-                 "is the row's creation_time_seconds, which the writing code sets from the device "
-                 "clock when it stores the row. The code that reads the table back asks only for rows "
-                 "written in the last 2 days. What removes older rows was not traced, so how far back "
-                 "a store reaches is not established. Field meaning was read from one Play services "
-                 "version; the images listed in sample_data carry other versions, which were not "
-                 "decompiled, though their rows decode to the same fields. On dragna_pixel9a_a16 the "
-                 "visits and activities chain: all 7 activity end times equal a visit start time and 6 "
-                 "of 7 activity start times equal a visit end time. Not reported: type 0 rows (start, "
-                 "end and offsets only, seen on older images), type 4 path rows and Wi-Fi scan records "
-                 "(none on any tested image), the part of the place identifier the store keeps, and "
-                 "the segment_id, obfuscated_gaia_id and finalization_status columns (the last is "
-                 "written as 0 by the current code; each segment carries its own status). "
-                 "Rows of type 2. Start Time and End Time are the segment's startTime and "
-                 "endTime; the UTC offsets are as stored in minutes. Start and End Latitude and "
-                 "Longitude are the activity's start and end; Parking Latitude and Longitude "
-                 "the parking location the export writes under parking. Distance (m) is "
-                 "distanceMeters and Segment Probability the activity's probability. Activity "
-                 "Type uses the names of Play services' own activity enum (for example "
-                 "WALKING, CYCLING, IN_PASSENGER_VEHICLE, IN_BUS, IN_TRAIN); Activity Type "
-                 "Probability is the top candidate's probability. Finalization Status as for "
-                 "visits. An activity is the location service's inference, not a record of how "
-                 "the user travelled. Start UTC Offset (min) and End UTC Offset (min) held one "
-                 "value on every row of each tested image. Activity Type held one value on all "
-                 "rows of hc_pixel8pro_a16 and kevin_pocox7_a15. Finalization Status held one "
-                 "value on all rows of anne_a15 and hc_pixel8pro_a16. Parking Latitude and "
-                 "Parking Longitude had no value on any row of anne_a15 and kevin_pocox7_a15, "
-                 "whose records carry no parking field.",
+                 "TransientDataEntity, under com.google.android.gms/databases/). Two tested images "
+                 "(anne_a15, kevin_pocox7_a15) also have a copy under com.google.android.gms/cache/. "
+                 "Each row has a type and a protobuf data blob, decoded with the vendored "
+                 "blackboxprotobuf and field types from the app's own message classes. Sources are "
+                 "the decompiled Google Play services APK from dragna_pixel9a_a16 "
+                 "(com.google.android.gms 26.39.33, versionCode 263933035, decompiled with jadx; the "
+                 "code is obfuscated). The type values come from the code that writes the rows: 1 is "
+                 "a visit segment, 2 an activity segment, 3 a frequent places list, 4 a path segment "
+                 "and 5 a raw signal record; a segment with none of those payloads is written as "
+                 "type 0. Field names come from Play services' location history export code, which "
+                 "writes Timeline segments, the user location profile and raw signals to JSON under "
+                 "names such as startTime, hierarchyLevel, topCandidate, placeLocation, "
+                 "distanceMeters, frequentPlaces, label, position, accuracyMeters and "
+                 "activityRecord. A converter in Play services fills the transient segment and "
+                 "frequent place records from those Timeline records field by field. It does not "
+                 "copy everything unchanged: see Activity Type and Finalization Status. Raw signal "
+                 "records are the same message class the export writes. Coordinates are stored as "
+                 "integers in units of 1e-7 degree, the scale the export code divides by. Row "
+                 "Written is the row's creation_time_seconds, which the writing code sets from the "
+                 "device clock when it stores the row. The code that reads the table back asks only "
+                 "for rows written in the last 2 days. A cleanup job in the same code deletes rows "
+                 "written more than 2 days before it runs, and rewritten segments and lists replace "
+                 "earlier rows. When the job runs was not traced. On the tested images the rows span "
+                 "up to 2.3 days. Field meaning was read from one Play services version. The other "
+                 "images' versions were not decompiled. Their rows of types 1, 2, 3 and 5 use the "
+                 "same field numbers; rows on anne_a15 and kevin_pocox7_a15 also carry a segment id "
+                 "string in wrapper field 3, which is not read. On dragna_pixel9a_a16 the visits and "
+                 "activities chain: all 7 activity end times equal a visit start time and 6 of 7 "
+                 "activity start times equal a visit end time. Not reported: type 0 rows (start, "
+                 "end, offsets and status only; seen on anne_a15 and kevin_pocox7_a15), type 4 path "
+                 "rows and Wi-Fi scan records (none on any tested image), the part of the place "
+                 "identifier the store keeps, and the segment_id, segment_start_time_seconds, "
+                 "obfuscated_gaia_id and finalization_status columns. The decompiled version has two "
+                 "writers for the last: one stores status 0 and an empty segment_id, the other "
+                 "derives both from the segment. The Pixel images hold 0 on every row; anne_a15 and "
+                 "kevin_pocox7_a15 hold 0 and 1. Each segment carries its own status, which is what "
+                 "is reported. Rows are not deduplicated, so a segment written to both copies of the "
+                 "database, or twice to one, appears on more than one row. When rows come from more "
+                 "than one database, a Source File column names the database. Rows of type 2. Start "
+                 "Time and End Time are the segment's startTime and endTime; the UTC offsets are as "
+                 "stored in minutes. Start and End Latitude and Longitude are the activity's start "
+                 "and end; Parking Latitude and Longitude the parking location the export writes "
+                 "under parking. Distance (m) is distanceMeters and Segment Probability the "
+                 "activity's probability. Activity Type uses the names of Play services' own "
+                 "activity enum (for example WALKING, CYCLING, IN_PASSENGER_VEHICLE, IN_BUS, "
+                 "IN_TRAIN); Activity Type Probability is the top candidate's probability. The "
+                 "converter stores any Timeline activity type outside that 15-value enum as 0, so "
+                 "UNKNOWN_ACTIVITY_TYPE here can be a type the Timeline names. Finalization Status "
+                 "uses the names of Play services' enum for the segment "
+                 "(UNSPECIFIED_FINALIZATION_STATUS, STABILIZED, FINALIZED). The converter stores the "
+                 "Timeline statuses USER_EDITED and BACKFILLED as 0, so "
+                 "UNSPECIFIED_FINALIZATION_STATUS here can also be one of those. An activity row "
+                 "comes from the location service's Timeline segments. It is not a record of how the "
+                 "user said they travelled, and the store does not show whether a segment was edited "
+                 "by the user. Start UTC Offset (min) and End UTC Offset (min) held one value on all "
+                 "rows of dragna_pixel9a_a16, hc_pixel8pro_a16 and kevin_pocox7_a15. On anne_a15 the "
+                 "End UTC Offset (min) held two values. Activity Type held one value on all rows of "
+                 "hc_pixel8pro_a16 and kevin_pocox7_a15. Finalization Status held one value on all "
+                 "rows of anne_a15 and hc_pixel8pro_a16. Parking Latitude and Parking Longitude had "
+                 "no value on any row of anne_a15 and kevin_pocox7_a15, whose records carry no "
+                 "parking field.",
         "paths": ('*/com.google.android.gms/*/semloc_transient_database*',),
         "output_types": "standard",
         "artifact_icon": "navigation",
@@ -151,38 +186,51 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Semantic Location",
         "notes": "Read from Google Play services' semloc_transient_database (Room database, table "
-                 "TransientDataEntity, under com.google.android.gms/databases/ and, on the older "
-                 "images tested, com.google.android.gms/cache/). Each row has a type and a protobuf "
-                 "data blob, decoded with the vendored blackboxprotobuf and field types from the app's "
-                 "own message classes. Sources are the decompiled Google Play services APK installed "
-                 "on dragna_pixel9a_a16 (com.google.android.gms 26.39.33, versionCode 263933035, "
-                 "decompiled with jadx; the code is obfuscated). The type values come from the code "
-                 "that writes the rows: 1 is a visit segment, 2 an activity segment, 3 a frequent "
-                 "places list, 4 a path segment and 5 a raw signal record; a segment with none of "
-                 "those payloads is written as type 0. Field names come from Play services' own "
-                 "Timeline export code, which writes the same records to JSON under names such as "
-                 "startTime, hierarchyLevel, topCandidate, placeLocation, distanceMeters, "
-                 "frequentPlaces, label, position, accuracyMeters and activityRecord; the code that "
-                 "fills the transient rows copies those fields one to one. Coordinates are stored as "
-                 "integers in units of 1e-7 degree, the scale the export code divides by. Row Written "
-                 "is the row's creation_time_seconds, which the writing code sets from the device "
-                 "clock when it stores the row. The code that reads the table back asks only for rows "
-                 "written in the last 2 days. What removes older rows was not traced, so how far back "
-                 "a store reaches is not established. Field meaning was read from one Play services "
-                 "version; the images listed in sample_data carry other versions, which were not "
-                 "decompiled, though their rows decode to the same fields. On dragna_pixel9a_a16 the "
-                 "visits and activities chain: all 7 activity end times equal a visit start time and 6 "
-                 "of 7 activity start times equal a visit end time. Not reported: type 0 rows (start, "
-                 "end and offsets only, seen on older images), type 4 path rows and Wi-Fi scan records "
-                 "(none on any tested image), the part of the place identifier the store keeps, and "
-                 "the segment_id, obfuscated_gaia_id and finalization_status columns (the last is "
-                 "written as 0 by the current code; each segment carries its own status). "
-                 "Rows of type 3, one output row per place in the list. The list is built from "
-                 "the user location profile's frequentPlaces, which the Timeline export writes "
-                 "with placeLocation and label. Label uses the export's names: UNKNOWN_TYPE, "
-                 "HOME and WORK. A place labelled HOME or WORK is the location service's label, "
-                 "not one the user is shown to have set. Row Written held one value on all rows "
-                 "of each tested image, because each image had one list row.",
+                 "TransientDataEntity, under com.google.android.gms/databases/). Two tested images "
+                 "(anne_a15, kevin_pocox7_a15) also have a copy under com.google.android.gms/cache/. "
+                 "Each row has a type and a protobuf data blob, decoded with the vendored "
+                 "blackboxprotobuf and field types from the app's own message classes. Sources are "
+                 "the decompiled Google Play services APK from dragna_pixel9a_a16 "
+                 "(com.google.android.gms 26.39.33, versionCode 263933035, decompiled with jadx; the "
+                 "code is obfuscated). The type values come from the code that writes the rows: 1 is "
+                 "a visit segment, 2 an activity segment, 3 a frequent places list, 4 a path segment "
+                 "and 5 a raw signal record; a segment with none of those payloads is written as "
+                 "type 0. Field names come from Play services' location history export code, which "
+                 "writes Timeline segments, the user location profile and raw signals to JSON under "
+                 "names such as startTime, hierarchyLevel, topCandidate, placeLocation, "
+                 "distanceMeters, frequentPlaces, label, position, accuracyMeters and "
+                 "activityRecord. A converter in Play services fills the transient segment and "
+                 "frequent place records from those Timeline records field by field. It does not "
+                 "copy everything unchanged: see Activity Type and Finalization Status. Raw signal "
+                 "records are the same message class the export writes. Coordinates are stored as "
+                 "integers in units of 1e-7 degree, the scale the export code divides by. Row "
+                 "Written is the row's creation_time_seconds, which the writing code sets from the "
+                 "device clock when it stores the row. The code that reads the table back asks only "
+                 "for rows written in the last 2 days. A cleanup job in the same code deletes rows "
+                 "written more than 2 days before it runs, and rewritten segments and lists replace "
+                 "earlier rows. When the job runs was not traced. On the tested images the rows span "
+                 "up to 2.3 days. Field meaning was read from one Play services version. The other "
+                 "images' versions were not decompiled. Their rows of types 1, 2, 3 and 5 use the "
+                 "same field numbers; rows on anne_a15 and kevin_pocox7_a15 also carry a segment id "
+                 "string in wrapper field 3, which is not read. On dragna_pixel9a_a16 the visits and "
+                 "activities chain: all 7 activity end times equal a visit start time and 6 of 7 "
+                 "activity start times equal a visit end time. Not reported: type 0 rows (start, "
+                 "end, offsets and status only; seen on anne_a15 and kevin_pocox7_a15), type 4 path "
+                 "rows and Wi-Fi scan records (none on any tested image), the part of the place "
+                 "identifier the store keeps, and the segment_id, segment_start_time_seconds, "
+                 "obfuscated_gaia_id and finalization_status columns. The decompiled version has two "
+                 "writers for the last: one stores status 0 and an empty segment_id, the other "
+                 "derives both from the segment. The Pixel images hold 0 on every row; anne_a15 and "
+                 "kevin_pocox7_a15 hold 0 and 1. Each segment carries its own status, which is what "
+                 "is reported. Rows are not deduplicated, so a segment written to both copies of the "
+                 "database, or twice to one, appears on more than one row. When rows come from more "
+                 "than one database, a Source File column names the database. Rows of type 3, one "
+                 "output row per place in the list. The list is built from the user location "
+                 "profile's frequentPlaces, which the export writes with placeLocation and label. "
+                 "Label uses the export's names: UNKNOWN_TYPE, HOME and WORK. The store does not "
+                 "show whether a HOME or WORK label was inferred by the location service or set by "
+                 "the user. Row Written held one value on all rows of each tested image, because "
+                 "each image had one list row.",
         "paths": ('*/com.google.android.gms/*/semloc_transient_database*',),
         "output_types": "all",
         "artifact_icon": "home",
@@ -212,39 +260,53 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Semantic Location",
         "notes": "Read from Google Play services' semloc_transient_database (Room database, table "
-                 "TransientDataEntity, under com.google.android.gms/databases/ and, on the older "
-                 "images tested, com.google.android.gms/cache/). Each row has a type and a protobuf "
-                 "data blob, decoded with the vendored blackboxprotobuf and field types from the app's "
-                 "own message classes. Sources are the decompiled Google Play services APK installed "
-                 "on dragna_pixel9a_a16 (com.google.android.gms 26.39.33, versionCode 263933035, "
-                 "decompiled with jadx; the code is obfuscated). The type values come from the code "
-                 "that writes the rows: 1 is a visit segment, 2 an activity segment, 3 a frequent "
-                 "places list, 4 a path segment and 5 a raw signal record; a segment with none of "
-                 "those payloads is written as type 0. Field names come from Play services' own "
-                 "Timeline export code, which writes the same records to JSON under names such as "
-                 "startTime, hierarchyLevel, topCandidate, placeLocation, distanceMeters, "
-                 "frequentPlaces, label, position, accuracyMeters and activityRecord; the code that "
-                 "fills the transient rows copies those fields one to one. Coordinates are stored as "
-                 "integers in units of 1e-7 degree, the scale the export code divides by. Row Written "
-                 "is the row's creation_time_seconds, which the writing code sets from the device "
-                 "clock when it stores the row. The code that reads the table back asks only for rows "
-                 "written in the last 2 days. What removes older rows was not traced, so how far back "
-                 "a store reaches is not established. Field meaning was read from one Play services "
-                 "version; the images listed in sample_data carry other versions, which were not "
-                 "decompiled, though their rows decode to the same fields. On dragna_pixel9a_a16 the "
-                 "visits and activities chain: all 7 activity end times equal a visit start time and 6 "
-                 "of 7 activity start times equal a visit end time. Not reported: type 0 rows (start, "
-                 "end and offsets only, seen on older images), type 4 path rows and Wi-Fi scan records "
-                 "(none on any tested image), the part of the place identifier the store keeps, and "
-                 "the segment_id, obfuscated_gaia_id and finalization_status columns (the last is "
-                 "written as 0 by the current code; each segment carries its own status). "
-                 "Rows of type 5 that hold a position. Field names are those the Timeline "
-                 "export writes under rawSignals/position: Timestamp (milliseconds, shown in "
-                 "UTC), LatLng, accuracyMeters (the stored integer divided by 1000, as the "
-                 "export does), altitudeMeters, source and speedMetersPerSecond. Source uses "
-                 "the names of Play services' enum (UNKNOWN, GPS, CELL, WIFI, WIFI_ONLY). "
-                 "Altitude and speed are not present on every record and are blank where "
-                 "absent.",
+                 "TransientDataEntity, under com.google.android.gms/databases/). Two tested images "
+                 "(anne_a15, kevin_pocox7_a15) also have a copy under com.google.android.gms/cache/. "
+                 "Each row has a type and a protobuf data blob, decoded with the vendored "
+                 "blackboxprotobuf and field types from the app's own message classes. Sources are "
+                 "the decompiled Google Play services APK from dragna_pixel9a_a16 "
+                 "(com.google.android.gms 26.39.33, versionCode 263933035, decompiled with jadx; the "
+                 "code is obfuscated). The type values come from the code that writes the rows: 1 is "
+                 "a visit segment, 2 an activity segment, 3 a frequent places list, 4 a path segment "
+                 "and 5 a raw signal record; a segment with none of those payloads is written as "
+                 "type 0. Field names come from Play services' location history export code, which "
+                 "writes Timeline segments, the user location profile and raw signals to JSON under "
+                 "names such as startTime, hierarchyLevel, topCandidate, placeLocation, "
+                 "distanceMeters, frequentPlaces, label, position, accuracyMeters and "
+                 "activityRecord. A converter in Play services fills the transient segment and "
+                 "frequent place records from those Timeline records field by field. It does not "
+                 "copy everything unchanged: see Activity Type and Finalization Status. Raw signal "
+                 "records are the same message class the export writes. Coordinates are stored as "
+                 "integers in units of 1e-7 degree, the scale the export code divides by. Row "
+                 "Written is the row's creation_time_seconds, which the writing code sets from the "
+                 "device clock when it stores the row. The code that reads the table back asks only "
+                 "for rows written in the last 2 days. A cleanup job in the same code deletes rows "
+                 "written more than 2 days before it runs, and rewritten segments and lists replace "
+                 "earlier rows. When the job runs was not traced. On the tested images the rows span "
+                 "up to 2.3 days. Field meaning was read from one Play services version. The other "
+                 "images' versions were not decompiled. Their rows of types 1, 2, 3 and 5 use the "
+                 "same field numbers; rows on anne_a15 and kevin_pocox7_a15 also carry a segment id "
+                 "string in wrapper field 3, which is not read. On dragna_pixel9a_a16 the visits and "
+                 "activities chain: all 7 activity end times equal a visit start time and 6 of 7 "
+                 "activity start times equal a visit end time. Not reported: type 0 rows (start, "
+                 "end, offsets and status only; seen on anne_a15 and kevin_pocox7_a15), type 4 path "
+                 "rows and Wi-Fi scan records (none on any tested image), the part of the place "
+                 "identifier the store keeps, and the segment_id, segment_start_time_seconds, "
+                 "obfuscated_gaia_id and finalization_status columns. The decompiled version has two "
+                 "writers for the last: one stores status 0 and an empty segment_id, the other "
+                 "derives both from the segment. The Pixel images hold 0 on every row; anne_a15 and "
+                 "kevin_pocox7_a15 hold 0 and 1. Each segment carries its own status, which is what "
+                 "is reported. Rows are not deduplicated, so a segment written to both copies of the "
+                 "database, or twice to one, appears on more than one row. When rows come from more "
+                 "than one database, a Source File column names the database. Rows of type 5 that "
+                 "hold a position. Field names are those the export writes under "
+                 "rawSignals/position: timestamp (milliseconds, shown in UTC), LatLng, "
+                 "accuracyMeters (the stored integer divided by 1000, the divisor the export uses; "
+                 "the export keeps whole metres, this column keeps the fraction), altitudeMeters, "
+                 "source and speedMetersPerSecond. Source uses the names of Play services' enum "
+                 "(UNKNOWN, GPS, CELL, WIFI, WIFI_ONLY). Altitude and speed are not present on every "
+                 "record and are blank where absent. Position rows also carry an integer in field 2 "
+                 "of the raw signal message. Its meaning is not established and it is not reported.",
         "paths": ('*/com.google.android.gms/*/semloc_transient_database*',),
         "output_types": "all",
         "artifact_icon": "map-pin",
@@ -274,41 +336,54 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Semantic Location",
         "notes": "Read from Google Play services' semloc_transient_database (Room database, table "
-                 "TransientDataEntity, under com.google.android.gms/databases/ and, on the older "
-                 "images tested, com.google.android.gms/cache/). Each row has a type and a protobuf "
-                 "data blob, decoded with the vendored blackboxprotobuf and field types from the app's "
-                 "own message classes. Sources are the decompiled Google Play services APK installed "
-                 "on dragna_pixel9a_a16 (com.google.android.gms 26.39.33, versionCode 263933035, "
-                 "decompiled with jadx; the code is obfuscated). The type values come from the code "
-                 "that writes the rows: 1 is a visit segment, 2 an activity segment, 3 a frequent "
-                 "places list, 4 a path segment and 5 a raw signal record; a segment with none of "
-                 "those payloads is written as type 0. Field names come from Play services' own "
-                 "Timeline export code, which writes the same records to JSON under names such as "
-                 "startTime, hierarchyLevel, topCandidate, placeLocation, distanceMeters, "
-                 "frequentPlaces, label, position, accuracyMeters and activityRecord; the code that "
-                 "fills the transient rows copies those fields one to one. Coordinates are stored as "
-                 "integers in units of 1e-7 degree, the scale the export code divides by. Row Written "
-                 "is the row's creation_time_seconds, which the writing code sets from the device "
-                 "clock when it stores the row. The code that reads the table back asks only for rows "
-                 "written in the last 2 days. What removes older rows was not traced, so how far back "
-                 "a store reaches is not established. Field meaning was read from one Play services "
-                 "version; the images listed in sample_data carry other versions, which were not "
-                 "decompiled, though their rows decode to the same fields. On dragna_pixel9a_a16 the "
-                 "visits and activities chain: all 7 activity end times equal a visit start time and 6 "
-                 "of 7 activity start times equal a visit end time. Not reported: type 0 rows (start, "
-                 "end and offsets only, seen on older images), type 4 path rows and Wi-Fi scan records "
-                 "(none on any tested image), the part of the place identifier the store keeps, and "
-                 "the segment_id, obfuscated_gaia_id and finalization_status columns (the last is "
-                 "written as 0 by the current code; each segment carries its own status). "
-                 "Rows of type 5 that hold an activity record. Field names are those the "
-                 "Timeline export writes under rawSignals/activityRecord: timestamp "
-                 "(milliseconds, shown in UTC) and probableActivities, each a type and a "
-                 "confidence. Types use the names of Play services' enum (IN_VEHICLE, "
-                 "ON_BICYCLE, ON_FOOT, STILL, UNKNOWN, TILTING, EXITING_VEHICLE, WALKING, "
-                 "RUNNING, IN_ROAD_VEHICLE, IN_RAIL_VEHICLE, IN_TWO_WHEELER_VEHICLE). Top "
-                 "Activity is the type with the highest confidence; Probable Activities lists "
-                 "every pair in stored order. A record is the activity classifier's output, "
-                 "not a record of what the user did.",
+                 "TransientDataEntity, under com.google.android.gms/databases/). Two tested images "
+                 "(anne_a15, kevin_pocox7_a15) also have a copy under com.google.android.gms/cache/. "
+                 "Each row has a type and a protobuf data blob, decoded with the vendored "
+                 "blackboxprotobuf and field types from the app's own message classes. Sources are "
+                 "the decompiled Google Play services APK from dragna_pixel9a_a16 "
+                 "(com.google.android.gms 26.39.33, versionCode 263933035, decompiled with jadx; the "
+                 "code is obfuscated). The type values come from the code that writes the rows: 1 is "
+                 "a visit segment, 2 an activity segment, 3 a frequent places list, 4 a path segment "
+                 "and 5 a raw signal record; a segment with none of those payloads is written as "
+                 "type 0. Field names come from Play services' location history export code, which "
+                 "writes Timeline segments, the user location profile and raw signals to JSON under "
+                 "names such as startTime, hierarchyLevel, topCandidate, placeLocation, "
+                 "distanceMeters, frequentPlaces, label, position, accuracyMeters and "
+                 "activityRecord. A converter in Play services fills the transient segment and "
+                 "frequent place records from those Timeline records field by field. It does not "
+                 "copy everything unchanged: see Activity Type and Finalization Status. Raw signal "
+                 "records are the same message class the export writes. Coordinates are stored as "
+                 "integers in units of 1e-7 degree, the scale the export code divides by. Row "
+                 "Written is the row's creation_time_seconds, which the writing code sets from the "
+                 "device clock when it stores the row. The code that reads the table back asks only "
+                 "for rows written in the last 2 days. A cleanup job in the same code deletes rows "
+                 "written more than 2 days before it runs, and rewritten segments and lists replace "
+                 "earlier rows. When the job runs was not traced. On the tested images the rows span "
+                 "up to 2.3 days. Field meaning was read from one Play services version. The other "
+                 "images' versions were not decompiled. Their rows of types 1, 2, 3 and 5 use the "
+                 "same field numbers; rows on anne_a15 and kevin_pocox7_a15 also carry a segment id "
+                 "string in wrapper field 3, which is not read. On dragna_pixel9a_a16 the visits and "
+                 "activities chain: all 7 activity end times equal a visit start time and 6 of 7 "
+                 "activity start times equal a visit end time. Not reported: type 0 rows (start, "
+                 "end, offsets and status only; seen on anne_a15 and kevin_pocox7_a15), type 4 path "
+                 "rows and Wi-Fi scan records (none on any tested image), the part of the place "
+                 "identifier the store keeps, and the segment_id, segment_start_time_seconds, "
+                 "obfuscated_gaia_id and finalization_status columns. The decompiled version has two "
+                 "writers for the last: one stores status 0 and an empty segment_id, the other "
+                 "derives both from the segment. The Pixel images hold 0 on every row; anne_a15 and "
+                 "kevin_pocox7_a15 hold 0 and 1. Each segment carries its own status, which is what "
+                 "is reported. Rows are not deduplicated, so a segment written to both copies of the "
+                 "database, or twice to one, appears on more than one row. When rows come from more "
+                 "than one database, a Source File column names the database. Rows of type 5 that "
+                 "hold an activity record. Field names are those the export writes under "
+                 "rawSignals/activityRecord: timestamp (milliseconds, shown in UTC) and "
+                 "probableActivities, each a type and a confidence. Types use the names of Play "
+                 "services' enum (IN_VEHICLE, ON_BICYCLE, ON_FOOT, STILL, UNKNOWN, TILTING, "
+                 "EXITING_VEHICLE, WALKING, RUNNING, IN_ROAD_VEHICLE, IN_RAIL_VEHICLE, "
+                 "IN_TWO_WHEELER_VEHICLE). Top Activity is the type with the highest confidence; "
+                 "Probable Activities lists every pair in stored order, with each confidence rounded "
+                 "to 3 significant digits. A record is the activity classifier's output, not a "
+                 "record of what the user did.",
         "paths": ('*/com.google.android.gms/*/semloc_transient_database*',),
         "output_types": "standard",
         "artifact_icon": "activity",
@@ -441,15 +516,17 @@ def _num(value):
     return value if isinstance(value, (int, float)) else ''
 
 
-def _db_rows(context):
-    """Yield (relative source, row type, row written, decoded data or None) per row."""
-    for file_found in unique_files(context):
-        path = str(file_found)
-        if os.path.basename(path) != _DB_NAME:
-            continue
-        rel = context.get_relative_path(path)
+def _databases(context):
+    """Every staged copy of the database, as (path, relative path)."""
+    return [(str(found), context.get_relative_path(str(found))) for found in unique_files(context)
+            if os.path.basename(str(found)) == _DB_NAME]
+
+
+def _db_rows(databases):
+    """Yield (relative source, row type, row written, data) for every row of every database."""
+    for path, rel in databases:
         for row in get_sqlite_db_records(path, _QUERY):
-            yield path, rel, row[1], row[2], row[3]
+            yield rel, row[1], row[2], row[3]
 
 
 def _decode(data, typedef, label, counts):
@@ -466,10 +543,9 @@ def _decode(data, typedef, label, counts):
 
 
 def _segments(context, wanted):
-    sources, rows, counts = [], [], {}
-    for path, rel, row_type, written, data in _db_rows(context):
-        if path not in sources:
-            sources.append(path)
+    databases = _databases(context)
+    sources, rows, counts = [path for path, _ in databases], [], {}
+    for rel, row_type, written, data in _db_rows(databases):
         if row_type != wanted:
             continue
         message = _decode(data, _WRAPPER, wanted, counts)
@@ -481,7 +557,8 @@ def _segments(context, wanted):
 
 
 def _finish(headers, data_list, sources):
-    if len(sources) > 1:
+    """Add Source File only when this artifact's rows come from more than one database."""
+    if len({row[-1] for row in data_list}) > 1:
         headers = headers + ('Source File',)
     else:
         data_list = [row[:-1] for row in data_list]
@@ -540,10 +617,9 @@ def gms_semloc_transient_activities(context):
 def gms_semloc_transient_frequent_places(context):
     headers = (('Row Written', 'datetime'), 'Label', ('Latitude', 'latitude'),
                ('Longitude', 'longitude'))
-    sources, data_list, counts = [], [], {}
-    for path, rel, row_type, written, data in _db_rows(context):
-        if path not in sources:
-            sources.append(path)
+    databases = _databases(context)
+    sources, data_list, counts = [path for path, _ in databases], [], {}
+    for rel, row_type, written, data in _db_rows(databases):
         if row_type != 3:
             continue
         message = _decode(data, _WRAPPER, 3, counts)
@@ -558,10 +634,9 @@ def gms_semloc_transient_frequent_places(context):
 
 
 def _raw_signals(context, kind):
-    sources, rows, counts = [], [], {}
-    for path, rel, row_type, written, data in _db_rows(context):
-        if path not in sources:
-            sources.append(path)
+    databases = _databases(context)
+    sources, rows, counts = [path for path, _ in databases], [], {}
+    for rel, row_type, written, data in _db_rows(databases):
         if row_type != 5:
             continue
         message = _decode(data, _RAW_SIGNAL, 5, counts)
