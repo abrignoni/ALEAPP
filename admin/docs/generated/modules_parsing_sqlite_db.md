@@ -148,6 +148,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | tasksOrg |
 | telegramAndroid |
 | thunderbird |
+| tiktokPlayRecords |
 | trailSense |
 | uber |
 | untappd |
