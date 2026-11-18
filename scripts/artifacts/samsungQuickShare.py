@@ -94,7 +94,8 @@ __artifacts_v2__ = {
             "linkShare.db exists only in user 0's container, and the Secure Folder user's "
             "container holds none), and Files Failed and Files Cancelled were identical on "
             "every row: 0 on each outgoing row and blank on each incoming row, where "
-            "request_accept has no such counts."
+            "request_accept has no such counts. Transfer Started leads the table and was "
+            "filled on 2 of 5 rows there (the two sent files); the incoming rows hold no time."
         ),
         "paths": ("*/com.samsung.android.app.sharelive/databases/linkShare.db*",),
         "output_types": "standard",
