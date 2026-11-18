@@ -1,8 +1,9 @@
 """Samsung Internet (com.sec.android.app.sbrowser): web notifications and notification permissions.
 
-Samsung Internet keeps the notifications websites posted in databases/webNotificationDB.db
-(notifications) and the per-site notification permissions in the Chromium profile's
-app_sbrowser/Default/Preferences (profile.content_settings.exceptions.notifications).
+Samsung Internet records notifications websites posted in databases/webNotificationDB.db
+(notifications), and the per-site notification permissions in the Chromium profile's
+app_sbrowser/Default/Preferences (profile.content_settings.exceptions.notifications). The
+Chromium Platform Notifications LevelDB in the profile also holds a record and is not read here.
 """
 
 __artifacts_v2__ = {
@@ -20,25 +21,32 @@ __artifacts_v2__ = {
         "category": "Samsung Internet",
         "notes": (
             "Read from the notifications table of "
-            "com.sec.android.app.sbrowser/databases/webNotificationDB.db with its -wal. "
-            "Time is the time column, milliseconds since the Unix epoch converted to UTC in "
-            "whole seconds. Title, Text (the descreption column, spelled that way in the "
-            "schema), Domain and URL are stored text. Notification ID (as stored) is "
-            "the persid column. Read, Clicked and Seen are shown as stored and not decoded; the "
-            "tag column was empty and is not shown, and the icon blob is not shown. "
-            "Known data (samsung_a166u_a16_known_20261117, Samsung Internet 30.0.5.27, "
-            "actions logged during the session): notifications were allowed for a public "
-            "notification test site at 06:36:52 to 06:37:01 UTC and one notification was "
-            "displayed at 06:37:13. The one row is that notification, at 06:37:14, with "
-            "Read 1, Clicked 0 and Seen 0. Whether a row stays after the notification is "
-            "dismissed is not established. On the 11 other registered images whose listing "
-            "holds webNotificationDB.db the table is empty."
+            "com.sec.android.app.sbrowser/databases/webNotificationDB.db with its -wal. Time is "
+            "the time column. On the known data it is a 13-digit integer that reads as "
+            "milliseconds since the Unix epoch and falls one second after the logged action. It "
+            "is shown in UTC, cut to whole seconds. A zero or negative value is shown blank. "
+            "Title, Text (the descreption column, spelled that way in the schema), Domain and "
+            "URL are stored text. Notification ID (as stored) is the persid column. Read, "
+            "Clicked and Seen are shown as stored and not decoded. Row ID is the _id column. "
+            "Android User is taken from the container path (/data/data is user 0). It is not a "
+            "stored value. A row found under more than one path of the same user is shown once. "
+            "The tag column held an empty string on the one known-data row. It is not shown. "
+            "The icon blob is not shown. Known data (samsung_a166u_a16_known_20261117, Samsung "
+            "Internet 30.0.5.27 per the session record): on 2026-11-17 the permission request "
+            "of a public notification test site was tapped at 06:36:52 UTC and Allow was tapped "
+            "at 06:37:01. The page's display button was tapped at 06:37:13 and one notification "
+            "was posted. The one row is that notification, at 06:37:14, with Read 1, Clicked 0 "
+            "and Seen 0. Whether a row stays after the notification is dismissed is not "
+            "established. Not read: the Chromium Platform Notifications LevelDB in "
+            "app_sbrowser/Default, which on the known data held one record whose notification "
+            "id equals this row's persid. On the 11 other corpus images where the file was "
+            "found the table is empty. Images with no member listing were not scanned."
         ),
         "paths": ("*/com.sec.android.app.sbrowser/databases/webNotificationDB.db*",),
         "output_types": "standard",
         "artifact_icon": "bell",
         "sample_data": {
-            "samsung_a166u_a16_known_20261117": "Android 16 | com.sec.android.app.sbrowser 30.0.5.27 | 1 row",
+            "samsung_a166u_a16_known_20261117": "Android 16 | com.sec.android.app.sbrowser | 1 row",
             "adams_ss135dl_a13": "Android 13 | notifications empty | 0 rows",
             "anne_a15": "Android 15 | notifications empty | 0 rows",
             "cookbook_a11": "Android 11 | notifications empty | 0 rows",
@@ -66,25 +74,25 @@ __artifacts_v2__ = {
         "category": "Samsung Internet",
         "notes": (
             "Read from the profile.content_settings.exceptions.notifications object of "
-            "com.sec.android.app.sbrowser/app_sbrowser/Default/Preferences, a JSON file. "
-            "One row per site pattern. Setting (as stored) is the stored setting value and "
-            "is not decoded; Samsung's file held no last_modified value for the entry. "
-            "Known data (samsung_a166u_a16_known_20261117, Samsung Internet 30.0.5.27, "
-            "actions logged during the session): notifications were allowed for a public "
-            "notification test site at 06:36:52 to 06:37:01 UTC and one notification was "
-            "displayed at 06:37:13. The one row is that site's pattern with setting 1. "
-            "On the 10 other registered images whose listing holds this Preferences file "
-            "the object is empty. "
-            "Not found in the browser's stores on the known data: the tab lock applied to "
-            "one tab (pintab.db stayed empty and no other database or preference read here "
-            "holds it) and the Secret mode tab, which was not restored after the app was "
-            "force-stopped."
+            "com.sec.android.app.sbrowser/app_sbrowser/Default/Preferences, a JSON file. One "
+            "row per site pattern and Android user. Setting (as stored) is the stored setting "
+            "value and is not decoded. On the known data the entry held only a setting key. "
+            "Other keys an entry can hold, such as last_modified, are not read. Android User is "
+            "taken from the container path (/data/data is user 0). It is not a stored value. "
+            "Known data (samsung_a166u_a16_known_20261117, Samsung Internet 30.0.5.27 per the "
+            "session record): on 2026-11-17 the permission request of a public notification "
+            "test site was tapped at 06:36:52 UTC and Allow was tapped at 06:37:01. The page's "
+            "display button was tapped at 06:37:13 and one notification was posted. The one row "
+            "is that site's pattern with setting 1. The entry is absent from "
+            "samsung_a166u_a16_known_20261116, taken before these actions. On the 10 other "
+            "corpus images where the file was found the object holds no entries. Images with no "
+            "member listing were not scanned."
         ),
         "paths": ("*/com.sec.android.app.sbrowser/app_sbrowser/Default/Preferences",),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "settings",
         "sample_data": {
-            "samsung_a166u_a16_known_20261117": "Android 16 | com.sec.android.app.sbrowser 30.0.5.27 | 1 row",
+            "samsung_a166u_a16_known_20261117": "Android 16 | com.sec.android.app.sbrowser | 1 row",
             "anne_a15": "Android 15 | no notification permission entry | 0 rows",
             "cookbook_a11": "Android 11 | no notification permission entry | 0 rows",
             "falken_a326u_a13": "Android 13 | no notification permission entry | 0 rows",
