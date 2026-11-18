@@ -10,9 +10,9 @@ __artifacts_v2__ = {
         "name": "Samsung Visual Voicemail - Messages",
         "description": (
             "Parses the messages in Samsung visual voicemail's VmailProvider.db, from the "
-            "Message table and from Message_Deletes where it holds rows, with the message time, "
-            "the mailbox it is in, the sender value, the stored duration, read flag and "
-            "transcription, and the audio file stored for it."
+            "Message table and from Message_Deletes where it holds rows, with the message "
+            "time, the mailbox it is in, the stored from value (fromList), the stored "
+            "duration, read flag and transcription, and the audio file stored for it."
         ),
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-11-17",
@@ -21,28 +21,41 @@ __artifacts_v2__ = {
         "category": "Voicemail",
         "notes": (
             "Read from com.samsung.vvm/databases/VmailProvider.db with its -wal. Timestamp "
-            "is Message.timeStamp, milliseconds since the Unix epoch converted to UTC in "
-            "whole seconds. Mailbox is the displayName of the Mailbox row the message's "
-            "mailboxKey points to (Greetings, INBOX and Archived on the known data). Audio "
-            "is the file databases/<accountKey>.db_att/<Attachment _id> for the message's "
-            "Attachment row, matched on the account and attachment ids in that file name; "
-            "Audio File Found says whether it was in the extraction. From (as stored), "
-            "Duration (as stored), Read (as stored) and Type (as stored) are fromList, "
-            "duration, flagRead and type, not decoded. Transcription is the stored "
-            "transcription text. "
-            "Known data (samsung_a166u_a16_known_20261117): the mailbox was set up during a "
-            "logged call at 14:24:39 UTC lasting 116 seconds, and a voicemail was then left "
-            "from a second phone at about 14:27. The one row is in the Greetings mailbox at "
-            "14:26:04, inside the setup call, with an AMR audio file of 3,206 bytes (its "
-            "header reads #!AMR), so on the known data it is the recorded greeting, not a "
-            "voicemail. INBOX held no message: the voicemail left afterwards never reached "
-            "the app before the extraction. A received voicemail, a transcription, an "
+            "is the timeStamp column, read as milliseconds since the Unix epoch (on the "
+            "known data that reading falls inside the logged setup window) and converted to "
+            "UTC in whole seconds. Mailbox is the displayName of the Mailbox row the "
+            "message's mailboxKey points to (Greetings, INBOX and Archived on the known "
+            "data); when no Mailbox row matches, the mailboxKey number is shown. "
+            "Audio is the file databases/<Attachment accountKey>.db_att/<Attachment _id> "
+            "for the message's first Attachment row, matched on the two numbers in that "
+            "path. The layout is the AOSP Email provider's "
+            "(AttachmentUtilities.getAttachmentFilename, platform/packages/apps/Email "
+            "commit 9822725da07cc150f2410ad5360549018c3fbb1c); on the known data every id "
+            "is 1, so the data does not tell the account id from the attachment id. Rows "
+            "from Message_Deletes get no audio lookup. Audio File Found is Yes when the "
+            "Attachment row's file was in the extraction; No also covers a message with no "
+            "Attachment row. Audio MIME Type and Audio Size (bytes) are Attachment.mimeType "
+            "and size as stored; on the known data the stored size equals the file's size. "
+            "From (as stored), Duration (as stored), Read (as stored) and Type (as stored) "
+            "are fromList, duration, flagRead and type, not decoded. Transcription is the "
+            "stored transcription text. Message Row ID is Message._id, not the messageId "
+            "column. Android User is taken from the database's path. "
+            "Known data (samsung_a166u_a16_known_20261117): the mailbox was set up from the "
+            "phone between 14:24 and 14:27:04 UTC (logged), and a voicemail was then left "
+            "from a second phone between about 14:27 and 14:31 (reported, not measured). "
+            "The one row is in the Greetings mailbox at 14:26:04, inside the logged setup "
+            "window, with an AMR audio file of 3,206 bytes (its header reads #!AMR). The "
+            "mailbox name and the time are consistent with the greeting recorded at setup; "
+            "no stored field links the row to the account's greeting. INBOX held no "
+            "message, and no Message row was ever created for the voicemail left afterwards "
+            "(the Message id sequence is 1). A received voicemail, a transcription, an "
             "archived or deleted message and the Message_Deletes table (empty on every "
             "image run) are not exercised. "
-            "Left out: Account and HostAuth (account and server login fields), Contact, "
-            "QuickResponse, CdgGroup and the *_Updates tables. "
+            "Tables left out: Account and HostAuth (account and server login fields), "
+            "Contact, QuickResponse, CdgGroup and the *_Updates tables. "
             "samsung_a166u_a16_known_20261116 and cookbook_a11 hold the database with no "
-            "message. No other registered image holds it."
+            "message. No other image registered on 2026-11-17 lists it (member listings of "
+            "83 keys)."
         ),
         "paths": (
             "*/com.samsung.vvm/databases/VmailProvider.db*",
@@ -51,7 +64,7 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "voicemail",
         "sample_data": {
-            "samsung_a166u_a16_known_20261117": "Android 16 | com.samsung.vvm | 1 row (setup greeting)",
+            "samsung_a166u_a16_known_20261117": "Android 16 | com.samsung.vvm | 1 row (Greetings mailbox)",
             "samsung_a166u_a16_known_20261116": "Android 16 | com.samsung.vvm | Message empty | 0 rows",
             "cookbook_a11": "Android 11 | com.samsung.vvm | Message empty | 0 rows",
         },
@@ -188,7 +201,7 @@ def get_samsung_visual_voicemail(context):
         ("Audio Size (bytes)", "number"),
         "Table",
         "Type (as stored)",
-        "Message ID",
+        "Message Row ID",
         "Android User",
     )
     return data_headers, data_list, "\n".join(sorted(set(source_paths)))
