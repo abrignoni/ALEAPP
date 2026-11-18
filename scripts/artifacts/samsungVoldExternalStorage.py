@@ -1,7 +1,8 @@
 """External storage events from the vold dump logs Samsung keeps under data/log.
 
 Samsung devices write rotating text dumps of the volume daemon's log as
-data/log/vold-dump_NN. Each line is "YYYY/MM/DD-HH:MM:SS(ZONE)  pid:tid tag message".
+data/log/vold-dump_NN.
+Most lines are "YYYY/MM/DD-HH:MM:SS(ZONE)  N:N tag message"; other lines are skipped.
 This artifact keeps the lines about removable disks: the disk vold creates for a card or
 stick, the filesystem it finds, the mount, the unmount and the removal.
 """
@@ -10,10 +11,11 @@ __artifacts_v2__ = {
     "get_samsung_vold_external_storage": {
         "name": "Samsung vold - External Storage Events",
         "description": (
-            "Parses Samsung's vold-dump logs under data/log for removable-storage events: "
-            "disk created, filesystem found, volume mounted, public volume unmount, volume "
-            "removed and block device added or removed for a disk vold created, one row per "
-            "distinct log line, with the time and zone as stored."
+            "Parses Samsung's vold-dump logs (data/log; any log folder holding vold-dump "
+            "files is read) for removable-storage lines: disk created, filesystem found, "
+            "volume mounted, public volume unmount, volume destroyed and block device "
+            "events (action number as stored) for a disk vold created, one row per distinct "
+            "log line, with the time and zone as stored."
         ),
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-11-17",
@@ -21,33 +23,48 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Device Events",
         "notes": (
-            "Read from the text files data/log/vold-dump_NN. Each kept line is reported "
-            "once, even when the rotating dumps repeat it; Dump File names the first file "
-            "it was read from. Time (as stored) and Zone (as stored) are the line's own "
-            "time and zone abbreviation, not converted: the dumps on one image mix zones "
-            "(EST and UTC on samsung_a166u_a16_known_20261117, up to nine abbreviations on "
-            "anne_a15). "
+            "Read from the text files vold-dump_NN in data/log; on s20fe_a13 three more "
+            "were read from data/media/0/log, so Dump File gives the path. Lines with "
+            "identical text, time included, are reported once (two identical events in the "
+            "same second give one row), and rows keep the order of the files and of the "
+            "lines in them; Dump File names the first file holding the line. Lines that are "
+            "not in the 'YYYY/MM/DD-HH:MM:SS(ZONE) N:N tag message' shape are skipped. "
+            "Time (as stored) and Zone (as stored) are the line's own time and zone "
+            "abbreviation, not converted: the dumps on one image mix zones (EST and UTC on "
+            "samsung_a166u_a16_known_20261117, up to nine abbreviations on anne_a15). IDs "
+            "(as stored) are the two numbers after the zone, not decoded. "
             "Kept lines: 'Disk::Disk create' (Disk created, with the disk label and "
-            "major:minor numbers as stored), a 'public:M,m: UUID=... TYPE=...' line "
+            "major:minor numbers from the line), a 'public:M,m: UUID=... TYPE=...' line "
             "(Filesystem found), '<fs>::Mount() ... to <path>' (Volume mounted), "
             "'PublicVolume::doUnmount()++' (Public volume unmount; the line names no "
-            "volume), 'VolumeBase::destroy()++ mPath=/storage/...' outside "
-            "/storage/emulated (Volume removed), and 'handleBlockEvent with action=N' only "
-            "for the major:minor numbers of a disk vold created in the same dumps (Block "
-            "device event, action as stored). Log Line (as stored) keeps the whole line. "
+            "volume), 'VolumeBase::destroy()++' with an mPath under /storage outside "
+            "/storage/emulated, written 'mPath=' or 'mPath:' (Volume destroyed; vold also "
+            "destroys a volume at shutdown, reset, partition re-read and format, so this "
+            "row alone does not show the card was pulled), and 'handleBlockEvent with "
+            "action=N' only for the major:minor numbers of a disk vold created in the same "
+            "dumps. Log Line keeps the whole line with leading and trailing whitespace "
+            "removed. "
             "Known data (samsung_a166u_a16_known_20261117, a microSD card inserted, "
-            "unmounted from Settings and removed, with UTC times logged): the seven rows "
-            "match the logged times to the second once EST (UTC-5) is applied: disk created "
-            "and block event action=1 at the insert, filesystem vfat found, volume mounted "
-            "6 seconds later, public volume unmount at the logged unmount, and volume "
-            "removed with block event action=2 at the logged removal. action=1 and action=2 "
-            "are reported as stored; their meaning rests on these two logged events. "
-            "On the ten other registered images that hold vold-dump files no line about an "
-            "external disk was found, so they give no rows; their dumps hold the emulated "
-            "internal volume's unmount and destroy lines at shutdown, which are not "
-            "reported. A USB stick, an adoptable (internal-formatted) card and an encrypted "
-            "card are not exercised. The dumps rotate, so older events can be gone; an "
-            "empty result does not show that no card was used."
+            "unmounted from Settings and removed, with UTC times logged): five rows match "
+            "the UTC times read from the phone's logcat during the session, to the second, "
+            "once EST (UTC-5) is applied: block event action=1 at the insert, volume "
+            "mounted 6 seconds later, public volume unmount at the logged unmount, and "
+            "volume destroyed and block event action=2 at the logged removal. Disk created "
+            "and Filesystem found (vfat) fall in the same second as the insert and have no "
+            "logged time of their own. Action numbers are reported as stored; on the known "
+            "data action=1 was the insert and action=2 the removal. AOSP's "
+            "NetlinkEvent::Action has 1 add, 2 remove and 3 change (platform/system/core "
+            "libsysutils/include/sysutils/NetlinkEvent.h at android-16.0.0_r1, commit "
+            "68be0c2c0006a0740d0b1809abe4717308f90d15); Samsung's vold source is not "
+            "public. "
+            "On the ten other images in sample_data no line about an external disk was "
+            "found, so they give no rows; their dumps hold the emulated internal volume's "
+            "unmount and destroy lines, most right after a 'VolumeManager::shutdown()++' "
+            "line, which are not reported. A USB stick, an adoptable (internal-formatted) "
+            "card, an encrypted card, a shutdown or reboot with the card in, a format and a "
+            "pull without unmount are not exercised. The line patterns were mapped on "
+            "Android 16 only. The dumps rotate, so older events can be gone; an empty "
+            "result does not show that no card was used."
         ),
         "paths": ("*/log/vold-dump*",),
         "output_types": ["html", "tsv", "lava"],
@@ -56,9 +73,9 @@ __artifacts_v2__ = {
             "samsung_a166u_a16_known_20261117": "Android 16 | data/log/vold-dump | 7 rows",
             "adams_ss135dl_a13": "Android 13 | no external disk lines in vold-dump | 0 rows",
             "anne_a15": "Android 15 | no external disk lines in vold-dump | 0 rows",
-            "cookbook_a11": "Android 11 | no external disk lines in vold-dump | 0 rows",
+            "cookbook_a11": "Android 11 | vold-dump present, no external disk line found | 0 rows",
             "falken_a326u_a13": "Android 13 | no external disk lines in vold-dump | 0 rows",
-            "galaxys10_a10": "Android 10 | no external disk lines in vold-dump | 0 rows",
+            "galaxys10_a10": "Android 10 | vold-dump present, no external disk line found | 0 rows",
             "s20fe_a13": "Android 13 | no external disk lines in vold-dump | 0 rows",
             "samsung_a166u_a16_known_20261116": "Android 16 | no external disk lines in vold-dump | 0 rows",
             "samsungs20_a13": "Android 13 | no external disk lines in vold-dump | 0 rows",
@@ -80,7 +97,7 @@ DISK_RE = re.compile(r"Disk::Disk create\((?P<syspath>[^,]*), (?P<label>\w+):(?P
                      r"flags:(?P<flags>\d+)\)")
 FS_RE = re.compile(r"(?P<vol>public:\d+,\d+): UUID=\"(?P<uuid>[^\"]*)\" TYPE=\"(?P<type>[^\"]*)\"")
 MOUNT_RE = re.compile(r"(?P<fs>\w+)::Mount\(\) /dev/block/vold/(?P<vol>public:\d+,\d+) to (?P<path>\S+)")
-DESTROY_RE = re.compile(r"VolumeBase::destroy\(\)\+\+ mPath=(?P<path>/storage/(?!emulated)\S+)")
+DESTROY_RE = re.compile(r"VolumeBase::destroy\(\)\+\+ mPath[=:] ?(?P<path>/storage/(?!emulated)\S+)")
 BLOCK_RE = re.compile(r"handleBlockEvent with action=(?P<action>\d+) major=(?P<maj>\d+) minor=(?P<min>\d+)")
 
 
@@ -130,7 +147,7 @@ def get_samsung_vold_external_storage(context):
         elif "PublicVolume::doUnmount()++" in msg:
             event = "Public volume unmount"
         elif DESTROY_RE.search(msg):
-            event, mount_path = "Volume removed", DESTROY_RE.search(msg).group("path")
+            event, mount_path = "Volume destroyed", DESTROY_RE.search(msg).group("path")
         else:
             block = BLOCK_RE.search(msg)
             if block and (block.group("maj"), block.group("min")) in disks:
@@ -146,10 +163,9 @@ def get_samsung_vold_external_storage(context):
         data_list.append((
             match.group("time"), match.group("zone"), event, volume, fs_type, uuid,
             mount_path, f"{match.group('pid')}:{match.group('tid')}", line.strip(),
-            os.path.basename(path),
+            context.get_relative_path(path),
         ))
 
-    data_list.sort(key=lambda row: (row[0], row[8]))
     data_headers = (
         "Time (as stored)",
         "Zone (as stored)",
@@ -158,8 +174,8 @@ def get_samsung_vold_external_storage(context):
         "Filesystem",
         "Volume UUID",
         "Path",
-        "PID:TID",
-        "Log Line (as stored)",
+        "IDs (as stored)",
+        "Log Line",
         "Dump File",
     )
     return data_headers, data_list, "\n".join(sorted(source_paths))
