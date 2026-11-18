@@ -2,7 +2,7 @@
 
 Samsung Gallery keeps, in databases/local.db, the searches it remembers (search_history)
 and a short history of operations on media items (operation_history), whose media_id
-values are MediaStore ids on the tested images. The ids are resolved to file names
+values on P, E and S rows are MediaStore ids on the tested images. The ids are resolved to file names
 through the media provider's external.db where that database is in the extraction.
 """
 
@@ -10,9 +10,7 @@ __artifacts_v2__ = {
     "get_samsung_gallery_search_history": {
         "name": "Samsung Gallery - Search History",
         "description": (
-            "Parses the search_history table of Samsung Gallery's local.db: each stored "
-            "search with its date_added time, the search kind and term split from the stored "
-            "title, and the stored search target."
+            "Parses the search_history table of Samsung Gallery's local.db: each stored search with its date_added time, the stored title, the search kind and term split from the title where it holds a slash, and the stored search target."
         ),
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-11-17",
@@ -23,17 +21,10 @@ __artifacts_v2__ = {
             "Read from the search_history table (title, date_added, search_target) of "
             "com.sec.android.gallery3d/databases/local.db with its -wal. Date Added is "
             "date_added, milliseconds since the Unix epoch converted to UTC and cut to the "
-            "whole second. Search Kind and Search Term are the stored title split at its "
-            "first slash (key_word and the typed term on every row seen); Title (as stored) "
-            "keeps the whole value, and Search Target is the stored search URI. "
-            "On samsung_a166u_a16_known_20261117 the one row matches the one logged Gallery search, within one second of the logged time. sharon_a14 holds one row. On "
-            "the other registered images that hold local.db the table is empty. Whether the "
+            "whole second. Search Kind and Search Term are the stored title split at its first slash. Two rows were seen: on samsung_a166u_a16_known_20261117 the title is key_word, a slash and the logged search term; on sharon_a14 the title holds no slash, so Search Kind is blank and Search Term is the whole title. Title (as stored) keeps the whole value, and Search Target is the stored search URI. "
+            "On samsung_a166u_a16_known_20261117 the one row matches the one logged Gallery search; the stored time is within two seconds of the logged time. sharon_a14 holds one row. On the other ten images run the table is empty. Whether the "
             "app keeps every search or only recent ones is not established. "
-            "Left out from local.db: the log table (reported, decoded, by the Samsung "
-            "Gallery Log Encoded Strings artifact), mxalbum (the album and folder list "
-            "Gallery shows, which holds folder paths and counts rather than actions), cache "
-            "(cached query results) and the operation_history table, reported by Samsung "
-            "Gallery - Operation History."
+            "Left out from local.db: the log table (its cells that hold encoded strings are reported by the Samsung Gallery Log Encoded Strings artifact), mxalbum (album and folder records: paths, names and counts, with no action column), cache (key and data columns, meaning not established) and the operation_history table, reported by Samsung Gallery - Operation History. The other tables in local.db are not reported; count_history holds rows on seven of the images run and its meaning is not established."
         ),
         "paths": ("*/com.sec.android.gallery3d/databases/local.db*",),
         "output_types": "standard",
@@ -74,19 +65,14 @@ __artifacts_v2__ = {
             "Each id is looked up as _id in the files table of the media provider's "
             "external.db (com.google.android.providers.media.module or "
             "com.android.providers.media) for the same Android user, and File Names and "
-            "Folders give its _display_name and relative_path there, one per line in the "
-            "stored order. Media Resolved counts the ids found. The lookup is against the "
-            "media provider as extracted, so a file renamed, moved or deleted since the "
-            "operation shows its later state or nothing. "
+            "Folders give its _display_name and relative_path there, one per line in the stored order; when _display_name is empty the name is taken from the end of _data (no row on the images run needed that). Every lookup on the images run went through com.google.android.providers.media.module; the com.android.providers.media path was not exercised. Media Resolved counts the ids found. The lookup is against the media provider as extracted: a file renamed or moved since the operation would show the name and folder it has at extraction, and a deleted one would show nothing. This was not tested. "
             "Action (as stored) is not decoded. On samsung_a166u_a16_known_20261117 "
             "(Gallery actions logged during the session): P named the three screenshots "
             "that were then copied into a new album, E named the album copy that was "
             "cropped, and S named the file that was then shared with Quick Share; each "
-            "stored time came before the logged action, by 11 to about 80 seconds. On the ten images run that hold operation_history rows, every id on a P, E or S row resolved through external.db, and V rows held ids of 2147483649 and above, none of which is an _id in external.db, so their files are not resolved and what V records is not "
+            "stored time came before the logged action, by about 10 to about 80 seconds. On the eight images run that hold P, E or S rows, every id on those rows (19 ids on 17 rows) resolved through external.db; only on samsung_a166u_a16_known_20261117 was the resolved file checked against a logged action. V rows held ids of 2147483649 and above, none of which is an _id in external.db, so their files are not resolved and what V records is not "
             "established. "
-            "Rows with no resolved id leave File Names and Folders blank. A media provider "
-            "database for user 150 (Secure Folder) is read for user 150 rows (cookbook_a11 "
-            "has one E row there, resolved)."
+            "Rows with no resolved id leave File Names and Folders blank. A media provider database for another Android user is read for that user's rows (cookbook_a11 has one E row under user 150, resolved)."
         ),
         "paths": (
             "*/com.sec.android.gallery3d/databases/local.db*",
@@ -181,7 +167,7 @@ def get_samsung_gallery_search_history(context):
         if "title" not in cols:
             continue
         select = ", ".join(c if c in cols else f"NULL AS {c}"
-                           for c in ("date_added", "title", "search_target", "rowid"))
+                           for c in ("date_added", "title", "search_target")) + ", rowid"
         for added, title, target, row_id in get_sqlite_db_records(
                 path, f"SELECT {select} FROM search_history ORDER BY date_added"):
             key = (container[0], row_id, title, added)
@@ -196,7 +182,7 @@ def get_samsung_gallery_search_history(context):
     data_headers = (
         ("Date Added", "datetime"),
         "Search Term",
-        "Search Kind (as stored)",
+        "Search Kind",
         "Title (as stored)",
         "Search Target (as stored)",
         "Android User",
