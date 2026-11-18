@@ -49,7 +49,8 @@ __artifacts_v2__ = {
             "user's storage, and it is the only such row; when two or more different rows "
             "share that time the columns are left blank. The Android user comes from the "
             "path (user_de/N, user/N and data_mirror/data_de or data_ce/<volume>/N give "
-            "user N, data/data gives user 0). Copies of one storage area read under more "
+            "user N; a package folder directly inside a folder named data, as in data/data "
+            "or userdata/data, gives user 0). Copies of one storage area read under more "
             "than one of these spellings are reported once. "
             "When Number, Name, Call Type and Call Duration (sec) are all blank, no single "
             "call log row with that start time was found for that user in the calllog.db "
@@ -149,7 +150,8 @@ def _android_user(path, package):
         pass
     if match and head.endswith(f"/{match.group(1)}/"):
         return int(match.group(1))
-    if head.endswith("/data/data/"):
+    if head.rstrip("/").rsplit("/", 1)[-1] == "data":
+        # /data/data/<pkg>, and layouts such as userdata/data/<pkg> that keep user 0 there
         return 0
     return None
 
