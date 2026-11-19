@@ -1,6 +1,6 @@
 {
   "casesynthetic_mediastore": {
-    "description": "Synthetic Chromium and MediaStore databases for Android users 0 and 10, with the same row ID but different file paths. No acquired device data.",
+    "description": "Synthetic Chromium and MediaStore databases for Android users 0 and 10, with the same row ID but different file paths. Includes distinct red and blue acquired JPEGs at those full shared-storage paths to exercise dynamic media lookup and per-row attachment. No acquired device data.",
     "maker": "ALEAPP Contributors",
     "make_data": {
       "input_data_path": "synthetic_mediastore_fixture.zip",

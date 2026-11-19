@@ -16,17 +16,22 @@ sys.path.insert(0, str(REPO_ROOT))
 from scripts.artifacts import chromeDownloadMediaStore as parser
 from scripts.context import Context
 from scripts import ilapfuncs, lavafuncs
+from scripts.search_files import FileSeekerDir
 
 
 class EvidenceContext:
-    def __init__(self, root):
+    def __init__(self, root, seeker=None):
         self.root = root
+        self.seeker = seeker
 
     def get_files_found(self):
         return [str(path) for path in sorted(self.root.rglob("*")) if path.is_file()]
 
     def get_relative_path(self, path):
         return str(Path(path).relative_to(self.root))
+
+    def get_seeker(self):
+        return self.seeker
 
 
 def history(root, relative="data/user/0/org.example.browser/app_chrome/Default/History", **changes):
@@ -67,6 +72,13 @@ def media(root, relative="data/user/0/com.google.android.providers.media.module/
     return path
 
 
+def acquired(root, relative="data/media/0/Download/fixture.jpg", data=b"acquired image"):
+    path = root / relative
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(data)
+    return path
+
+
 class CorrelationTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
@@ -76,10 +88,121 @@ class CorrelationTests(unittest.TestCase):
         self.temp.cleanup()
 
     def parse(self):
-        with patch.object(parser, "logfunc"):
-            headers, rows, _ = parser.get_chromeDownloadMediaStore.__wrapped__(EvidenceContext(self.root))
+        with tempfile.TemporaryDirectory() as staging:
+            seeker = FileSeekerDir(str(self.root), staging)
+            with patch.object(parser, "logfunc"), patch.object(
+                    parser, "check_in_media", side_effect=lambda path, _name: 'media:' + seeker.file_infos[path].source_path):
+                headers, rows, _ = parser.get_chromeDownloadMediaStore.__wrapped__(EvidenceContext(self.root, seeker))
         names = [header[0] if isinstance(header, tuple) else header for header in headers]
         return [dict(zip(names, row)) for row in rows]
+
+    def test_acquired_file_is_paired_by_full_path(self):
+        history(self.root)
+        media(self.root)
+        acquired(self.root)
+        acquired(self.root, "data/media/0/DCIM/fixture.jpg", b"unrelated same name")
+        row, = self.parse()
+        self.assertEqual(row["Media"], "media:data/media/0/Download/fixture.jpg")
+        self.assertEqual(row["Media Source Path"], "data/media/0/Download/fixture.jpg")
+        self.assertEqual(row["Media Status"], "Acquired file attached")
+
+    def test_acquired_files_do_not_cross_users_or_evidence_roots(self):
+        history(self.root, "device_a/data/user/10/org.example.browser/app_chrome/Default/History")
+        media(self.root, "device_a/data/user/10/com.android.providers.media/databases/external.db",
+              _data="/storage/emulated/10/Download/fixture.jpg")
+        acquired(self.root, "device_a/data/media/0/Download/fixture.jpg")
+        acquired(self.root, "device_b/data/media/10/Download/fixture.jpg")
+        row, = self.parse()
+        self.assertEqual(row["Media"], "")
+        self.assertEqual(row["Media Status"], "File not found in acquisition")
+        acquired(self.root, "device_a/data/media/10/Download/fixture.jpg")
+        row, = self.parse()
+        self.assertEqual(row["Media"], "media:device_a/data/media/10/Download/fixture.jpg")
+
+    def test_explicit_uri_user_controls_acquired_file_resolution(self):
+        uri = "content://10@media/external/downloads/7001"
+        history(self.root, current_path=uri, target_path=uri)
+        media(self.root, "data/user/10/com.android.providers.media/databases/external.db",
+              _data="/storage/emulated/10/Download/fixture.jpg")
+        acquired(self.root)
+        acquired(self.root, "data/media/10/Download/fixture.jpg", b"user 10")
+        row, = self.parse()
+        self.assertEqual(row["Media"], "media:data/media/10/Download/fixture.jpg")
+
+    def test_recorded_file_path_cannot_override_resolved_android_user(self):
+        history(self.root)
+        media(self.root, _data="/storage/emulated/10/Download/fixture.jpg")
+        acquired(self.root, "data/media/10/Download/fixture.jpg")
+        row, = self.parse()
+        self.assertEqual(row["Media"], "")
+        self.assertIn("another Android user", row["Media Status"])
+
+    def test_missing_acquired_file_keeps_download_metadata(self):
+        history(self.root)
+        media(self.root)
+        acquired(self.root, "data/media/0/DCIM/fixture.jpg")
+        row, = self.parse()
+        self.assertEqual(row["File Name"], "fixture.jpg")
+        self.assertEqual(row["Correlation Status"], "MediaStore row found")
+        self.assertEqual(row["Media Status"], "File not found in acquisition")
+        self.assertEqual(row["Media"], "")
+
+    def test_literal_glob_characters_in_file_names(self):
+        name = "photo[1]*?.jpg"
+        history(self.root)
+        media(self.root, _data=f"/storage/emulated/0/Download/{name}")
+        acquired(self.root, f"data/media/0/Download/{name}")
+        acquired(self.root, "data/media/0/Download/photo1oops.jpg", b"glob decoy")
+        row, = self.parse()
+        self.assertEqual(row["Media"], f"media:data/media/0/Download/{name}")
+
+    def test_identical_storage_views_attach_once_but_different_copies_are_ambiguous(self):
+        history(self.root)
+        media(self.root)
+        acquired(self.root)
+        other = acquired(self.root, "storage/emulated/0/Download/fixture.jpg")
+        row, = self.parse()
+        self.assertEqual(row["Media Status"], "Acquired file attached")
+        other.write_bytes(b"different content")
+        row, = self.parse()
+        self.assertEqual(row["Media"], "")
+        self.assertIn("Ambiguous acquired files", row["Media Status"])
+
+    def test_ambiguous_mediastore_rows_do_not_attach_a_file(self):
+        history(self.root)
+        media(self.root)
+        media(self.root, "data/user/0/com.android.providers.media/databases/external.db")
+        acquired(self.root)
+        row, = self.parse()
+        self.assertEqual(row["Media"], "")
+        self.assertEqual(row["Media Status"], "MediaStore row not uniquely resolved")
+
+    def test_shared_storage_layouts_and_removable_storage(self):
+        for recorded, relative in (
+                ("/storage/emulated/0/Download/f.jpg", "userdata/media/0/Download/f.jpg"),
+                ("/storage/emulated/0/Download/f.jpg", "storage/emulated/0/Download/f.jpg"),
+                ("/sdcard/Download/f.jpg", "data/media/0/Download/f.jpg"),
+                ("/mnt/sdcard/Download/f.jpg", "sdcard/Download/f.jpg"),
+                ("/storage/self/primary/Download/f.jpg", "mnt/sdcard/Download/f.jpg"),
+                ("/storage/1234-abcd/Download/f.jpg", "mnt/media_rw/1234-abcd/Download/f.jpg")):
+            with self.subTest(recorded=recorded, relative=relative), tempfile.TemporaryDirectory() as folder:
+                previous, self.root = self.root, Path(folder)
+                try:
+                    history(self.root)
+                    media(self.root, _data=recorded)
+                    acquired(self.root, relative)
+                    row, = self.parse()
+                    self.assertEqual(row["Media"], "media:" + relative)
+                finally:
+                    self.root = previous
+
+    def test_unsafe_or_unsupported_recorded_paths_are_not_searched(self):
+        for recorded in (None, "", "/data/local/tmp/f.jpg", "/storage/emulated/0/../f.jpg",
+                         "/storage/emulated/0/Download//f.jpg", "/storage/emulated/0/f\x00.jpg"):
+            with self.subTest(recorded=recorded):
+                paths, status = parser._acquisition_paths(recorded, "", 0)  # pylint: disable=protected-access
+                self.assertEqual(paths, ())
+                self.assertEqual(status, "Unsupported recorded file path")
 
     def test_resolves_media_id_instead_of_browser_id_or_guid(self):
         history(self.root)
@@ -266,21 +389,24 @@ class CorrelationTests(unittest.TestCase):
     def test_decorated_artifact_writes_lava_timeline_and_reports(self):
         history(self.root)
         media(self.root)
+        payload = b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR' + b'\x00' * 64
+        acquired(self.root, data=payload)
         output = self.root / "output"
         # OutputParameters stores the log paths on the class, so put them back afterwards
         # or every later test logs into this test's removed folder.
-        log_paths = (ilapfuncs.OutputParameters.screen_output_file_path,
-                     ilapfuncs.OutputParameters.screen_output_file_path_devinfo)
+        log_path = ilapfuncs.OutputParameters.screen_output_file_path
+        device_log_path = getattr(ilapfuncs.OutputParameters, 'screen_output_file_path_devinfo', None)
         params = ilapfuncs.OutputParameters(str(output), "integration")
         Context.set_output_params(params)
-        Context.set_data_folder(str(self.root))
         report = Path(params.output_folder_base) / "_HTML" / "Chromium"
         report.mkdir(parents=True)
-        files = EvidenceContext(self.root).get_files_found()
+        seeker = FileSeekerDir(str(self.root), params.data_folder)
+        files = [path for pattern in parser.__artifacts_v2__["get_chromeDownloadMediaStore"]["paths"]
+                 for path in seeker.search(pattern)]
         lavafuncs.initialize_lava(str(self.root), params.output_folder_base, "fs")
         try:
-            _, rows, _ = parser.get_chromeDownloadMediaStore(  # pylint: disable=too-many-function-args
-                files, str(report), object(), False)
+            headers, rows, _ = parser.get_chromeDownloadMediaStore(  # pylint: disable=too-many-function-args
+                files, str(report), seeker, False)
             self.assertEqual(len(rows), 1)
             lavafuncs.lava_db.commit()
             tables = lavafuncs.lava_db.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()
@@ -289,17 +415,30 @@ class CorrelationTests(unittest.TestCase):
             stored = lavafuncs.lava_db.execute('SELECT * FROM "' + artifact_tables[0] + '"').fetchall()
             self.assertEqual(len(stored), 1)
             self.assertIn("fixture.jpg", stored[0])
+            reference = rows[0][[h[0] if isinstance(h, tuple) else h for h in headers].index("Media")]
+            self.assertIn(reference, stored[0])
+            item, = lavafuncs.lava_db.execute(
+                'SELECT i.source_path, i.extraction_path FROM _lava_media_references r '
+                'JOIN _lava_media_items i ON i.id = r.media_item_id WHERE r.id = ?', (reference,)).fetchall()
+            self.assertEqual(item[0], "data/media/0/Download/fixture.jpg")
+            self.assertEqual((Path(params.output_folder_base) / item[1]).read_bytes(), payload)
             with sqlite3.connect(Path(params.output_folder_base) / "_Timeline" / "tl.db") as db:
                 timeline, = db.execute("SELECT datalist FROM data").fetchall()
                 self.assertEqual(json.loads(timeline[0])["File Name"], "fixture.jpg")
-            self.assertTrue(list(Path(params.output_folder_base).rglob("*.html")))
+                self.assertIn("media/", json.loads(timeline[0])["Media"])
+            pages = list(report.glob("*.temphtml"))
+            self.assertTrue(pages)
+            self.assertTrue(any('<img ' in page.read_text() and 'fixture.jpg' in page.read_text() for page in pages))
             self.assertTrue(list(Path(params.output_folder_base).rglob("*.tsv")))
         finally:
             lavafuncs.lava_db.close()
             lavafuncs.lava_db = None
             ilapfuncs.close_screen_log()
-            (ilapfuncs.OutputParameters.screen_output_file_path,
-             ilapfuncs.OutputParameters.screen_output_file_path_devinfo) = log_paths
+            ilapfuncs.OutputParameters.screen_output_file_path = log_path
+            if device_log_path is None:
+                del ilapfuncs.OutputParameters.screen_output_file_path_devinfo
+            else:
+                ilapfuncs.OutputParameters.screen_output_file_path_devinfo = device_log_path
             Context.clear()
             Context.set_output_params(None)
             Context.set_data_folder(None)

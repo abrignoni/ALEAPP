@@ -1,12 +1,12 @@
-"""Resolve Chromium download MediaStore URIs to recorded Android file metadata."""
+"""Resolve Chromium download MediaStore URIs and attach files at their recorded paths."""
 
 __artifacts_v2__ = {
     "get_chromeDownloadMediaStore": {
         "name": "Chromium Downloads - MediaStore Correlation",
-        "description": "Links Chromium download records to MediaStore file metadata by content URI and row ID.",
-        "author": "@ForensikITGmbH",
+        "description": "Links Chromium download records to MediaStore metadata by content URI and row ID, with the acquired file where its recorded shared-storage path resolves uniquely.",
+        "author": "@ForensikITGmbH, @AlexisBrignoni, Codex",
         "creation_date": "2026-10-12",
-        "last_update_date": "2026-10-12",
+        "last_update_date": "2026-11-19",
         "requirements": "none",
         "category": "Chromium",
         "notes": (
@@ -24,6 +24,20 @@ __artifacts_v2__ = {
             "resolve it. The Downloads artifact reports every row of the downloads table in those "
             "History files without this filter. A URI with no "
             "matching MediaStore row is retained with its Correlation Status. "
+            "Media attaches the file currently acquired at that MediaStore row's full _data path, "
+            "using ALEAPP's seeker and check_in_media. Media Source Path names its evidence path. "
+            "Shared-storage views under data/media, userdata/media and storage/emulated are supported; "
+            "user-0 aliases sdcard, mnt/sdcard and storage/self/primary and removable storage under "
+            "storage/<volume> or mnt/media_rw/<volume> are also searched. Extraction root and user "
+            "must match. No filename-only lookup is used. Byte-identical storage views are attached "
+            "once; differing copies are ambiguous and are not attached. Missing files, unsupported "
+            "paths and unresolved or ambiguous MediaStore rows retain their metadata with a Media "
+            "Status and an empty Media cell. The attached file is the content at acquisition, not "
+            "proof that its bytes are unchanged since download. "
+            "A focused run on sharon_a14 attached all 105 files to their rows (images, PDFs and "
+            "Office documents); each exported file matched the acquired bytes. The additional "
+            "storage layouts, literal glob characters, missing files and ambiguous storage views "
+            "were exercised with synthetic files. "
             "On the sample_data images 110 rows were reported. All 110 had one MediaStore row, with "
             "File Size equal to Received Bytes and Owner Package equal to Browser Package. Current "
             "Path, Target Path and MediaStore URI were identical on all 110 rows and every URI "
@@ -65,13 +79,14 @@ __artifacts_v2__ = {
 }
 
 import datetime
+import filecmp
 import os
 import re
 import sqlite3
 from collections import defaultdict
 from urllib.parse import urlsplit
 
-from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, check_in_media, logfunc, open_sqlite_db_readonly
 from scripts.artifacts.storagePathViews import canonical_path, unique_files
 
 
@@ -94,7 +109,8 @@ _HEADERS = (
     "Browser Package", "Android User ID", "Download ID", "Download GUID", "Tab URL",
     "Referrer", "Download URL Chain", "Current Path", "Target Path", "URI Field",
     "MediaStore URI", "MediaStore Volume", "MediaStore ID", "MediaStore User ID",
-    "Correlation Status", "Candidate Count", "File Name", "File Path", "File Size",
+    "Correlation Status", "Candidate Count", "File Name", "File Path", ("Media", "media"),
+    "Media Status", "Media Source Path", "File Size",
     "Size Comparison", "Owner Package", "MediaStore MIME Type",
     "State (as stored)", "Received Bytes", "Total Bytes", "Download MIME Type",
     "History DB Path", "MediaStore DB Path", "Notes",
@@ -248,7 +264,71 @@ def _size_comparison(download, record):
     return "Matches received bytes" if size == received else "Differs from received bytes"
 
 
-def _output(download, chain, source, scope, ref, candidates, status):
+def _acquisition_paths(recorded, root, user):
+    """Exact evidence-relative spellings of a recorded shared-storage file path."""
+    if not isinstance(recorded, str) or not recorded.startswith('/') or '\\' in recorded:
+        return (), "Unsupported recorded file path"
+    if any(part in ('', '.', '..') for part in recorded[1:].split('/')) or '\x00' in recorded:
+        return (), "Unsupported recorded file path"
+    shared = re.fullmatch(r'/(?:storage/emulated|data/media)/(\d+)/(.+)', recorded)
+    alias = re.fullmatch(r'/(?:sdcard|mnt/sdcard|storage/self/primary)/(.+)', recorded)
+    removable = re.fullmatch(r'/(?:storage|mnt/media_rw)/([0-9a-fA-F-]+)/(.+)', recorded)
+    if shared or alias:
+        if shared and int(shared[1]) != user:
+            return (), "Recorded file path belongs to another Android user"
+        tail = shared[2] if shared else alias[1]
+        paths = [f'{layout}/{user}/{tail}' for layout in
+                 ('data/media', 'userdata/media', 'storage/emulated')]
+        if user == 0:
+            paths.extend(f'{layout}/{tail}' for layout in
+                         ('sdcard', 'mnt/sdcard', 'storage/self/primary'))
+    elif removable:
+        volume, tail = removable.groups()
+        paths = [f'{layout}/{volume}/{tail}' for layout in ('storage', 'mnt/media_rw')]
+    else:
+        return (), "Unsupported recorded file path"
+    return tuple(f'{root}/{path}' if root else path for path in paths), ''
+
+
+def _acquired_media(context, record, root, user):
+    """Attach a uniquely identified acquired file; never fall back to its basename."""
+    paths, status = _acquisition_paths(record['_data'], root, user)
+    if not paths:
+        return '', status, ''
+    seeker = context.get_seeker()
+    # Another artifact (or the case harness) may already have staged the file.
+    found = {info.source_path.lstrip('/'): str(staged)
+             for staged, info in seeker.file_infos.items()
+             if info.source_path.lstrip('/') in paths and os.path.isfile(staged)}
+    for source in paths:
+        if source in found:
+            continue
+        # Search patterns are globs, while evidence names (including [, * and ?) are literal.
+        escaped = ''.join(f'[{char}]' if char in '[*?' else char for char in source)
+        for staged in seeker.search('*/' + escaped):
+            staged = str(staged)
+            info = seeker.file_infos.get(staged)
+            # The seeker also matches nested suffixes. Require the complete evidence path,
+            # including the extraction root, before handing a staged file to check_in_media.
+            if info and info.source_path.lstrip('/') == source and os.path.isfile(staged):
+                found[source] = staged
+    if not found:
+        return '', 'File not found in acquisition', ''
+    copies = sorted(found.items())
+    source, staged = copies[0]
+    try:
+        if any(not filecmp.cmp(staged, other, shallow=False) for _, other in copies[1:]):
+            return '', 'Ambiguous acquired files at storage views', ''
+        reference = check_in_media(staged, os.path.basename(record['_data']))
+    except OSError as error:
+        logfunc(f'Unable to attach Chromium download at {source}: {error}')
+        return '', 'Acquired file could not be attached', source
+    if not reference:
+        return '', 'Acquired file could not be attached', source
+    return reference, 'Acquired file attached', source
+
+
+def _output(download, chain, source, scope, ref, candidates, status, attachment):
     parsed, uri, field = ref
     volume, record_id, explicit_user = parsed
     user = scope[1] if scope else ""
@@ -274,7 +354,7 @@ def _output(download, chain, source, scope, ref, candidates, status):
         scope[2] if scope else "", user, download["id"], download["guid"], download["tab_url"],
         download["referrer"], chain, download["current_path"], download["target_path"], field,
         uri, volume, record_id, media_user, status, len(candidates),
-        media.get("_display_name", ""), media.get("_data", ""), media.get("_size", ""),
+        media.get("_display_name", ""), media.get("_data", ""), *attachment, media.get("_size", ""),
         _size_comparison(download, record), media.get("owner_package_name", ""), media.get("mime_type", ""),
         download["state"],
         download["received_bytes"], download["total_bytes"], download["mime_type"], source,
@@ -325,6 +405,7 @@ def get_chromeDownloadMediaStore(context):
             index[key + (record["_id"],)].append(record)
 
     data = []
+    attachments = {}
     for download, chain, source, scope, refs in entries:
         for ref in refs:
             (volume, record_id, explicit_user), _, _ = ref
@@ -343,5 +424,11 @@ def get_chromeDownloadMediaStore(context):
                     status = "Ambiguous MediaStore rows"
                 else:
                     status = "MediaStore row found"
-            data.append(_output(download, chain, source, scope, ref, candidates, status))
+            attachment = ('', 'MediaStore row not uniquely resolved', '')
+            if len(candidates) == 1:
+                cache_key = (scope[0], user, candidates[0]['_data'])
+                if cache_key not in attachments:
+                    attachments[cache_key] = _acquired_media(context, candidates[0], scope[0], user)
+                attachment = attachments[cache_key]
+            data.append(_output(download, chain, source, scope, ref, candidates, status, attachment))
     return _HEADERS, data, "\n".join(dict.fromkeys(sources))
