@@ -189,19 +189,26 @@ __artifacts_v2__ = {
         "category": "Samsung Internet",
         "notes": (
             'One row per history row in com.sec.android.app.sbrowser/databases/SearchHistory.db. Keyword is '
-            'the KEYWORD column as stored; it is what was committed in the address bar, which can be a '
-            'search term, a selected suggestion or a typed web address, not necessarily text that was '
-            'typed. On samsung_a166u_a16_known_20261116 the 2 rows came from two address bar entries in the '
-            'known-data session (mint log): the earlier row held the search suggestion that was selected, '
-            'not the shorter text that was typed, and the later row held a typed web address. KEYWORD has a '
-            'unique index, so the table holds one row per distinct keyword; which entry the time belongs to '
-            'when a keyword is entered again was not tested. DATETIME is shown as stored, a '
-            '"YYYY-MM-DD HH:MM:SS" string with no time zone, and this parser does not convert it. On that '
-            'image the two values were 2026-11-16 10:39:41 and 10:40:07, 5 hours and 1 second behind the UTC '
-            'times in the mint log, on a device set 5 hours behind UTC, which matches local time there; what '
-            'writes the value is not sourced, so the zone is not established for other devices. On this app '
-            'version (28.0.4.71) the history table has only the _ID, KEYWORD and DATETIME columns, with no '
-            'result URL and no count. Android User is the user of the app data folder the database is in, '
+            'the KEYWORD column as stored. In the app\'s code (30.0.5.27, decompiled from '
+            'samsung_a166u_a16_known_20261117) a row is written when Enter is pressed in the address bar (the '
+            'text in the bar), when an address bar suggestion is selected (the suggestion\'s display text), '
+            'and from the search widget\'s search screen; the address bar does not write a row in Secret mode. '
+            'Keyword is therefore not necessarily text that was typed. The search widget and Secret mode '
+            'paths were not exercised. On samsung_a166u_a16_known_20261116 the 2 rows came from two address '
+            'bar entries in the known-data session (mint log): the earlier row held the search suggestion '
+            'that was selected, not the shorter text that was typed, and the later row held a typed web '
+            'address. KEYWORD has a unique index, so the table holds one row per distinct keyword. In the '
+            'same code the insert is INSERT OR REPLACE, so entering a keyword again replaces its row with a '
+            'new _ID and the time of the latest entry; this was not exercised on the images. DATETIME is '
+            'shown as stored, a "YYYY-MM-DD HH:MM:SS" string with no time zone, and this parser does not '
+            'convert it. In the same code the value is the current time formatted in the device\'s default '
+            'time zone when the row is written; the offset is not stored, so the zone in force at that moment '
+            'has to come from elsewhere. The 28.0.4.71 code was not read. On samsung_a166u_a16_known_20261116 '
+            'the two values were 2026-11-16 10:39:41 and 10:40:07, 5 hours and 1 second behind the UTC times '
+            'in the mint log, on a device set 5 hours behind UTC; all 6 rows on '
+            'samsung_a166u_a16_known_20261117 were 5 hours behind the mint log UTC times, within 1 second. On '
+            '28.0.4.71 and 30.0.5.27 the history table has only the _ID, KEYWORD and DATETIME columns, with '
+            'no result URL and no count. Android User is the user of the app data folder the database is in, '
             'taken from its path (data/data is user 0).'
         ),
         "paths": ('*/com.sec.android.app.sbrowser/databases/SearchHistory.db*',),
@@ -209,7 +216,7 @@ __artifacts_v2__ = {
         "artifact_icon": "search",
         "sample_data": {
             "samsung_a166u_a16_known_20261116": "Android 16 | com.sec.android.app.sbrowser 28.0.4.71 | 2 rows",
-            "samsung_a166u_a16_known_20261117": "Android 16 | com.sec.android.app.sbrowser | 6 rows",
+            "samsung_a166u_a16_known_20261117": "Android 16 | com.sec.android.app.sbrowser 30.0.5.27 | 6 rows",
         },
     },
     "samsung_internet_quick_access": {
@@ -224,31 +231,36 @@ __artifacts_v2__ = {
         "notes": (
             'One row per quickaccess_item row in com.sec.android.app.sbrowser/databases/quickaccess.db. Title '
             'and URL are as stored, Position is the position column as stored, and Type, Deleted and Dirty '
-            'are shown as stored, their meanings not sourced. On samsung_a166u_a16_known_20261116 one site '
-            'was added to Quick access in the known-data session (mint log) and its row was the only one '
-            'with Type 0; the other 15 rows, Type 1, were present without being added in that session, their '
-            'origin not established. Of the Type 1 rows, 13 shared one URL host and the other 2 were on two '
-            'other hosts. Whether Type separates user-added rows from the rest on other devices or versions '
-            'is not established. Deleted held 0 on all 16 rows, Dirty held 1 on all 16 rows, and Device '
-            'Name, Device ID, Account Name and Account Type held one value each on all 16 rows; what those '
-            'four columns identify is not sourced. On this app version (28.0.4.71) the table has no column '
-            'named for a created or modified time. Android User is the user of the app data folder the database is in, '
-            'taken from its path (data/data is user 0). In the app\'s code (30.0.5.27, decompiled from '
-            'samsung_a166u_a16_known_20261117) Quick access entries have '
-            'two stores: quickaccess.db (QuickAccessDatabase) and pintab.db (QuickAccessDbHelper, behind the '
-            'app\'s quickaccesspinned content provider and read when restoring an older backup). The site '
-            'added in the known-data session was written to quickaccess.db; pintab.db is not read here, and '
-            'its pintab table held no rows on samsung_a166u_a16_known_20261116 or '
-            'samsung_a166u_a16_known_20261117. Not '
-            'reported: touchIcon (a blob), touchIconUrl, dominant, itemId, titleState and sync1 to sync5; id '
-            'is used only to order rows.'
+            'are shown as stored. In the app\'s code (30.0.5.27, decompiled from '
+            'samsung_a166u_a16_known_20261117) Type is stored as 0 USER, 1 DEFAULT_SERVER, 2 DEFAULT_LOCAL, 3 '
+            'RESERVED; the code sets Dirty to 1 when it updates a row\'s sync fields, and on delete sets '
+            'Deleted to 1 and rewrites URL to the URL with a random suffix. What clears Dirty was not read, '
+            'and other versions were not read. On samsung_a166u_a16_known_20261116 one site was added to '
+            'Quick access in the known-data session (mint log) and its row was the only one with Type 0; the '
+            'other 15 rows, Type 1, were present without being added in that session. Of the Type 1 rows, 13 '
+            'shared one URL host and the other 2 were on two other hosts. Deleted held 0 on all 16 rows, '
+            'Dirty held 1 on all 16 rows, and Device Name, Device ID, Account Name and Account Type held one '
+            'value each on all 16 rows; what those four columns identify is not sourced. The table has no '
+            'column named for a created or modified time. sync5, not reported here, held a 13-digit number on '
+            'all 16 rows; in the same code it is set to the current time in Unix milliseconds whenever a '
+            'row\'s sync fields are updated. On samsung_a166u_a16_known_20261116 all 16 rows shared one sync5 '
+            'value, later than the logged add, so it is not the time a site was added. Android User is the '
+            'user of the app data folder the database is in, taken from its path (data/data is user 0). In '
+            'the same code Quick access entries are kept in quickaccess.db (QuickAccessDatabase). The code '
+            'also carries pintab.db (QuickAccessDbHelper), behind the app\'s quickaccesspinned content '
+            'provider, which is used by a migration into quickaccess.db, by sync code, and when restoring a '
+            'backup that holds pintab.db and no quickaccess.db. The site added in the known-data session was '
+            'written to quickaccess.db. pintab.db is not read here; its pintab table held no rows on '
+            'samsung_a166u_a16_known_20261116 or samsung_a166u_a16_known_20261117. Not reported: touchIcon (a '
+            'blob), touchIconUrl, dominant, itemId, titleState and sync1 to sync5; id is used only to order '
+            'rows.'
         ),
         "paths": ('*/com.sec.android.app.sbrowser/databases/quickaccess.db*',),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "layout-grid",
         "sample_data": {
             "samsung_a166u_a16_known_20261116": "Android 16 | com.sec.android.app.sbrowser 28.0.4.71 | 16 rows (1 added in the known-data session)",
-            "samsung_a166u_a16_known_20261117": "Android 16 | com.sec.android.app.sbrowser | 16 rows",
+            "samsung_a166u_a16_known_20261117": "Android 16 | com.sec.android.app.sbrowser 30.0.5.27 | 16 rows",
         },
     },
     "samsung_internet_tab_navigation": {
