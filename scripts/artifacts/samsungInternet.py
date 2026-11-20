@@ -209,6 +209,7 @@ __artifacts_v2__ = {
         "artifact_icon": "search",
         "sample_data": {
             "samsung_a166u_a16_known_20261116": "Android 16 | com.sec.android.app.sbrowser 28.0.4.71 | 2 rows",
+            "samsung_a166u_a16_known_20261117": "Android 16 | com.sec.android.app.sbrowser | 6 rows",
         },
     },
     "samsung_internet_quick_access": {
@@ -232,11 +233,13 @@ __artifacts_v2__ = {
             'Name, Device ID, Account Name and Account Type held one value each on all 16 rows; what those '
             'four columns identify is not sourced. On this app version (28.0.4.71) the table has no column '
             'named for a created or modified time. Android User is the user of the app data folder the database is in, '
-            'taken from its path (data/data is user 0). In the app\'s code (28.0.4.71) Quick access entries have '
+            'taken from its path (data/data is user 0). In the app\'s code (30.0.5.27, decompiled from '
+            'samsung_a166u_a16_known_20261117) Quick access entries have '
             'two stores: quickaccess.db (QuickAccessDatabase) and pintab.db (QuickAccessDbHelper, behind the '
             'app\'s quickaccesspinned content provider and read when restoring an older backup). The site '
             'added in the known-data session was written to quickaccess.db; pintab.db is not read here, and '
-            'its pintab table held no rows on samsung_a166u_a16_known_20261117. Not '
+            'its pintab table held no rows on samsung_a166u_a16_known_20261116 or '
+            'samsung_a166u_a16_known_20261117. Not '
             'reported: touchIcon (a blob), touchIconUrl, dominant, itemId, titleState and sync1 to sync5; id '
             'is used only to order rows.'
         ),
@@ -245,6 +248,7 @@ __artifacts_v2__ = {
         "artifact_icon": "layout-grid",
         "sample_data": {
             "samsung_a166u_a16_known_20261116": "Android 16 | com.sec.android.app.sbrowser 28.0.4.71 | 16 rows (1 added in the known-data session)",
+            "samsung_a166u_a16_known_20261117": "Android 16 | com.sec.android.app.sbrowser | 16 rows",
         },
     },
     "samsung_internet_tab_navigation": {
