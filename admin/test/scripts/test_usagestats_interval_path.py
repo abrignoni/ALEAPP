@@ -71,7 +71,7 @@ class IntervalPathTest(unittest.TestCase):
                     with patch.object(mod, 'logfunc'):
                         rows = mod.process_usagestats(str(root), '10', 2 if kind == 'V2' else 1)
                     self.assertEqual(len(rows), 3 * len(CASES))
-                    self.assertTrue(all(len(row) == 26 and row[0] == '10' for row in rows))
+                    self.assertTrue(all(len(row) == 27 and row[0] == '10' for row in rows))
                     self.assertEqual(collections.Counter(row[25] for row in rows), collections.Counter(label for label in CASES.values() for _ in range(3)))
                     self.assertEqual(collections.Counter(row[2] for row in rows), {'packages': 10, 'configurations': 10, 'event-log': 10})
                     for row in rows:
@@ -103,7 +103,7 @@ class IntervalPathTest(unittest.TestCase):
             with patch.object(mod, 'logfunc'):
                 rows = mod.process_usagestats(str(root), '0', 1)
             self.assertEqual(len(rows), 6)
-            self.assertEqual(collections.Counter(row[-1] for row in rows), {'weekly': 3, '': 3})
+            self.assertEqual(collections.Counter(row[25] for row in rows), {'weekly': 3, '': 3})
             self.assertEqual(len([row for row in rows if row[2] == 'event-log']), 2)
 
 
