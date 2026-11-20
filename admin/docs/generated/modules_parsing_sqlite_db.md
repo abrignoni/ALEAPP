@@ -116,6 +116,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | samsungBadgeProvider |
 | samsungBatteryStats |
 | samsungBixbyRoutines |
+| samsungClock |
 | samsungFind |
 | samsungGalleryHistory |
 | samsungHealthMedication |
