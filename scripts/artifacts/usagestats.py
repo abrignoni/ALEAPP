@@ -41,18 +41,30 @@ __artifacts_v2__ = {
             "stored standbyBucket value; that split is applied by this parser and is not "
             "labelled in the file. Event Flags is the stored numeric 'flags' bitmask, "
             "undecoded. "
-            "Configuration is filled on 'configurations' rows and on CONFIGURATION_CHANGE events: "
-            "for protobuf stores it lists the configuration fields that are set, by their "
-            "ConfigurationProto names, with ui_mode's night bits (mask 0x30: 0x10 night no, 0x20 "
-            "night yes) and orientation (1 portrait, 2 landscape) named from the constants of "
-            "android.content.res.Configuration "
-            "(https://developer.android.com/reference/android/content/res/Configuration); for XML "
-            "stores it is the record's attributes as stored. On "
-            "samsung_a166u_a16_known_20261117 the CONFIGURATION_CHANGE events carried only the "
-            "fields that changed: light mode was selected at 06:40:04 UTC on 2026-11-17 and dark "
-            "mode at 06:40:32, per the session record, and the events at 06:39:58 and 06:40:26 "
-            "held ui_mode 0x10 (night no) and 0x20 (night yes). The orientation values were not "
-            "compared with a recorded rotation. "
+            "Configuration is shown only on 'configurations' rows and on CONFIGURATION_CHANGE "
+            "events. For protobuf stores it lists the fields that are set, by the names the "
+            "bundled ConfigurationProto definition gives them (fields 1 to 20); nested messages "
+            "are printed in protobuf text format. Fields the definition does not name are shown "
+            "as field <number>=<value> and are not decoded: on samsung_a166u_a16_known_20261117 "
+            "every event configuration also held field 21=2147483647 and field 22=4294967295, "
+            "and their meaning is not established. A 'configurations' row starts with "
+            "active=<value> when the record stores its active flag. A CONFIGURATION_CHANGE "
+            "event with no stored configuration has an empty cell. The night bits of ui_mode "
+            "(mask 0x30: 0x10 night no, 0x20 night yes) and orientation (1 portrait, 2 "
+            "landscape) are named from the constants of android.content.res.Configuration "
+            "(https://developer.android.com/reference/android/content/res/Configuration); other "
+            "values and the rest of ui_mode are shown as stored numbers. For XML stores it is a "
+            "JSON object of the record's XML attributes, with no values named; the XML and "
+            "version 1 protobuf paths were not run for this change. On "
+            "samsung_a166u_a16_known_20261117 most CONFIGURATION_CHANGE events listed a subset "
+            "of the named fields (19 listed ui_mode alone) and 2 listed a full set. Per the "
+            "session record, light mode was selected at 06:40:04 UTC on 2026-11-17 and dark "
+            "mode at 06:40:32. Events at 06:39:58 and 06:40:26 held ui_mode 0x10 (night no) and "
+            "0x20 (night yes), each 6 seconds earlier than the logged action; the two clocks "
+            "were not reconciled. The orientation values were not compared with a recorded "
+            "rotation; in samsung_a166u_a16_known_20261117 and sharon_a14 every orientation 1 "
+            "row has stored width less than height and every orientation 2 row has width "
+            "greater than height. "
             "Reference: Google, 'UsageEvents.Event', "
             "https://developer.android.com/reference/android/app/usage/UsageEvents.Event"
         ),
@@ -60,6 +72,7 @@ __artifacts_v2__ = {
         "output_types": "standard",
         "artifact_icon": "battery",
         "sample_data": {
+            "samsung_a166u_a16_known_20261117": "Android 16 | 13885 rows",
             "anne_a15": "Android 15 | 15346 rows",
             "galaxys10_a10": "Android 10 | 11333 rows",
             "hc_pixel8pro_a16": "Android 16 | 6843 rows",
@@ -160,14 +173,36 @@ _NIGHT = {0x10: 'night no', 0x20: 'night yes'}
 _ORIENTATION = {1: 'portrait', 2: 'landscape'}
 
 
-def _config_text(config):
-    """The fields set in a ConfigurationProto, one line, ui_mode night bits and orientation named."""
+def _unknown_fields(message):
+    """Fields of a message that its bundled definition does not name, as number=value."""
+    try:
+        from google.protobuf.unknown_fields import UnknownFieldSet  # pylint: disable=import-outside-toplevel
+        fields = UnknownFieldSet(message)
+    except (ImportError, TypeError, ValueError):
+        return []
     parts = []
+    for field in fields:
+        value = field.data
+        if isinstance(value, (bytes, bytearray)):
+            value = value.hex()
+        elif not isinstance(value, (int, float)):
+            value = '<group>'
+        parts.append(f"field {field.field_number}={value}")
+    return parts
+
+
+def _config_text(config, active=None):
+    """The fields set in a ConfigurationProto, one line, ui_mode night bits and orientation named.
+
+    Fields the bundled definition does not name are added as 'field <number>=<value>'.
+    """
+    parts = [] if active is None else [f"active={active}"]
     for descriptor, value in config.ListFields():
         values = value if descriptor.label == descriptor.LABEL_REPEATED else [value]
         for item in values:
             if descriptor.message_type is not None:
-                parts.append(f"{descriptor.name}={{{text_format.MessageToString(item, as_one_line=True)}}}")
+                text = text_format.MessageToString(item, as_one_line=True, print_unknown_fields=True)
+                parts.append(f"{descriptor.name}={{{text}}}")
             elif descriptor.name == 'ui_mode':
                 night = _NIGHT.get(item & 0x30)
                 parts.append(f"ui_mode={item:#x}" + (f" ({night})" if night else ''))
@@ -176,6 +211,7 @@ def _config_text(config):
                 parts.append(f"orientation={item}" + (f" ({name})" if name else ''))
             else:
                 parts.append(f"{descriptor.name}={item}")
+    parts.extend(_unknown_fields(config))
     return '; '.join(parts)
 
 
@@ -322,7 +358,8 @@ def AddV2EntriesToDb(sourced, file_name_int, stats_ob, db, packages):
         tac = ''
         if conf.HasField('total_time_active_ms'):
             tac = abs(conf.total_time_active_ms)
-        fullatti_str = _config_text(conf.config)
+        fullatti_str = _config_text(
+            conf.config, conf.active if conf.HasField('active') else None)
         _insert_data(cursor, usage_type=usagetype, lastime=finalt, timeactive=tac,
                      source=sourced, fullatt=fullatti_str)
     #event-log
@@ -429,7 +466,8 @@ def AddEntriesToDb(sourced, file_name_int, stats, db):
         tac = ''
         if conf.HasField('total_time_active_ms'):
             tac = abs(conf.total_time_active_ms)
-        fullatti_str = _config_text(conf.config)
+        fullatti_str = _config_text(
+            conf.config, conf.active if conf.HasField('active') else None)
         _insert_data(cursor, usage_type=usagetype, lastime=finalt, timeactive=tac,
                      source=sourced, fullatt=fullatti_str)
     #event-log
