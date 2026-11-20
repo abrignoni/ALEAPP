@@ -842,8 +842,6 @@ GarminNotifications,get_garmin_notifications,"""Message""",message,
 GarminNotifications,get_garmin_notifications,"""Type""",type,
 GarminNotifications,get_garmin_notifications,"""Category""",category,
 GarminNotifications,get_garmin_notifications,"""Package Name""",package_name,
-walStrings,get_walStrings,"""Report""",report,
-walStrings,get_walStrings,"""Location""",location,
 burnerSubscription,get_burnerSubscription,"""User ID""",user_id,
 burnerSubscription,get_burnerSubscription,"""Timestamp""",timestamp,datetime
 burnerSubscription,get_burnerSubscription,"""Renewal Date""",renewal_date,datetime

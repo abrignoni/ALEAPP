@@ -13279,7 +13279,6 @@ SQL-safe name: `location`
 - torThumbs.get_torThumbs
 - vlcthumbsADB.get_vlcthumbsADB
 - vlcthumbsADB.get_vlcthumbsADB_medialib
-- walStrings.get_walStrings
 - waze.waze_planned_events
 - waze.waze_recent_locations
 - waze.waze_search_history
@@ -19709,7 +19708,6 @@ SQL-safe name: `report`
 <details>
 <summary>Used in 1 artifact</summary>
 
-- walStrings.get_walStrings
 
 </details>
 

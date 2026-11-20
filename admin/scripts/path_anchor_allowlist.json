@@ -21,8 +21,6 @@
   "*.[tT][iI][fF][fF]": "cross-app by design: whole-image media sweep for provenance metadata, rows carry the Source File; matched nothing on these images, measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
   "*.[wW][eE][bB][pP]": "cross-app by design: whole-image media sweep for provenance metadata, rows carry the Source File; matched 12 app package(s) and shared storage, measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
   "*.realm": "deliberate cross-app sweep: flags Realm stores the bundled parser could not decode, so it must not be anchored to one package; every row names the file and its source path, which identifies the owning app. Measured 2026-09-01 on galaxys10_a10, which returns one row",
-  "*/*-journal": "cross-app by design: rows attribute the owning app or browser; matched 141 package(s), measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
-  "*/*-wal": "cross-app by design: rows attribute the owning app or browser; matched 238 package(s), measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
   "*/*.cnt": "cross-app by design: rows attribute the owning app or browser; matched 8 package(s), measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
   "*/*.mht": "cross-app by design: rows attribute the owning app or browser; matched 0 package(s), measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
   "*/*.mhtml": "cross-app by design: rows attribute the owning app or browser; matched 3 package(s), measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
