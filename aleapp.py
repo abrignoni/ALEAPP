@@ -470,7 +470,6 @@ def staged_file_record(seeker, staged, file_info, hash_files):
     return file_info.sha256, kind
 
 
-@screen_log_session
 def custom_artifact_files(path):
     '''The artifacts a custom artifacts folder defines, {artifact key: file name}. The
     folder is loaded on its own, so artifacts overriding a built-in one of the same key
@@ -495,6 +494,7 @@ def log_custom_artifacts(custom_artifacts, plugins):
             name if name in to_run else f'{name} (not selected)' for name in sorted(names)))
 
 
+@screen_log_session
 def crunch_artifacts(
         plugins: typing.Sequence[plugin_loader.PluginSpec], extracttype, input_path, out_params, wrap_text,
         loader: plugin_loader.PluginLoader, casedata, profile_filename, image_password=None,
