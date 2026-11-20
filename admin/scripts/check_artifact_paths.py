@@ -40,8 +40,7 @@ container, so it can match the same-named file inside a different app and
 attribute one app's data to another. Measured on 2026-08-28 across three corpora:
 735 of 927 declared patterns carry a package anchor; of the rest, most are either
 distinctive markers (only one app writes an `app_opera/` directory), deliberate
-cross-app sweeps whose rows attribute the owning app (walStrings, the chromium
-family), or shared/system locations with no app container in the path. Each of
+cross-app sweeps whose rows attribute the owning app (the chromium family), or shared/system locations with no app container in the path. Each of
 those is recorded with its reason in path_anchor_allowlist.json, keyed by the
 pattern. A NEW pattern with no package anchor fails this check unless the glob is
 given an anchor or an allowlist entry states the reason it does not need one.
