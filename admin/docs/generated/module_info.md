@@ -11,10 +11,10 @@ Total number of modules: 614
 Total number of artifacts: 1668  
 Number of v1 artifacts: 0  
 Number of v2 artifacts: 1668  
-Number of artifacts with 'lava output': 1669  
-Number of artifacts using 'artifact_icon': 1669  
-Number of artifacts using 'last_update_date': 1669  
-Number of artifacts using context parameter: 1669  
+Number of artifacts with 'lava output': 1668  
+Number of artifacts using 'artifact_icon': 1668  
+Number of artifacts using 'last_update_date': 1668  
+Number of artifacts using context parameter: 1668  
 Number of artifacts with errors or no recognized artifacts: 5  
 Number of modules with artifact metadata issues: 0  
 Number of artifacts using **deprecated** 'version' key: 15  
