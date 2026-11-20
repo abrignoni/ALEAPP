@@ -4,8 +4,8 @@ __artifacts_v2__ = {
     "samsungClockAlarms": {
         "name": "Samsung Clock - Alarms",
         "description": (
-            "Alarms in the Samsung Clock app's alarm.db: name, when the alarm was created, its time, the "
-            "repeat days, whether it is on, the next alert time and any stored location."
+            "Alarms in the Samsung Clock app's alarm.db: name, the stored create time, the alarm time, the "
+            "repeat days, the stored active value, alarm type flags and the stored alert time."
         ),
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-11-20",
@@ -14,39 +14,55 @@ __artifacts_v2__ = {
         "category": "Samsung Clock",
         "notes": (
             "Read from the alarm table of com.sec.android.app.clockpackage/databases/alarm.db with "
-            "its -wal; on the tested images the file is in the app's device-encrypted (user_de) "
-            "folder, and samsunga53_a14 also holds one in the credential-encrypted folder. Field "
-            "meanings come from the Clock app's own code, decompiled with jadx from the base.apk on "
-            "samsung_a166u_a16_known_20261117 (com.sec.android.app.clockpackage 12.5.07.13 per the "
-            "session record), and are checked against the known data below. Created is createtime and "
-            "Alert Time is alerttime, both milliseconds since the Unix epoch shown in UTC. Alert Time "
-            "is the next time the app computed for the alarm to ring; it is kept on alarms that are "
-            "off. Alarm Time is alarmtime, stored as hours times 100 plus minutes in the phone's "
-            "local time, and shown as HH:MM. Active is the stored active value: 1 was on and 0 off on "
-            "the known data. Repeat is decoded from repeattype (shown as stored in Repeat Type): in "
-            "AlarmItemBase the low four bits are 1 for a one-time alarm (isOneTimeAlarm) and 5 for a "
-            "weekly one (isWeeklyAlarm), and each of the next seven four-bit groups is one day, "
-            "Saturday in the lowest through Sunday in the highest (clearRepeatDay). A weekly alarm "
-            "lists its days; on the known data the one day set on a one-time alarm was the day it was "
-            "due to ring. Another low value is shown as Other with the days. Location Alarm is "
-            "locationactive as stored, and Latitude, Longitude and Location Text are the stored "
-            "values; no tested alarm had a location set, so those columns were 0 or empty on every "
-            "row and the path is not exercised. Known data (samsung_a166u_a16_known_20261117 and "
-            "samsung_a166u_a16_known_20261116): an alarm named KD was saved for 4:44 AM one time at "
-            "15:31:39 UTC on 2026-11-16 and turned off; KD_weekday_alarm (7:30 AM, Monday to Friday, "
-            "then turned off) and KD_onetime_alarm (2:30 PM that day, left on) were saved at 06:15:43 "
-            "and 06:16:33 UTC on 2026-11-17, per the session record. Created was 15:31:37, 06:15:43 "
-            "and 06:16:33 for the three, Alarm Time 04:44, 07:30 and 14:30, KD_onetime_alarm had "
-            "Active 1 and Alert Time 19:30 UTC, and both one-time alarms showed Tuesday, the day each "
-            "was due. The fourth row is an unnamed 6:00 weekday alarm that was on the phone before "
-            "the session, created on 2026-02-13. The other tested images each hold one or two unnamed "
-            "weekly alarms, all off. Not reported: the sound, volume, vibration, snooze, briefing, "
-            "background and group columns, and the groupAlarm table (empty on the tested images). "
-            "Other Clock databases are named in the World Clock Cities notes. Android User is the "
-            "user of the app data folder the file is in, taken from its path (data/data and user_de/0 "
-            "are user 0). Rows found in more than one copy of the same user's database are shown "
-            "once. On every row of the tested images Location Alarm (as stored), Latitude and "
-            "Longitude held 0, Location Text was empty, and Android User held 0."
+            "its -wal. On the 11 tested images the file is in the app's device-encrypted (user_de) "
+            "folder. samsunga53_a14 also holds the same file under data_mirror/data_de, and it is "
+            "read once. Field meanings come from the code of Clock 12.5.07.13, decompiled with jadx "
+            "from the base.apk on samsung_a166u_a16_known_20261117. The other tested images were "
+            "written by other versions, whose code was not read. The time, repeat and active fields "
+            "are compared with the known data below. Create Time is createtime and Alert Time is "
+            "alerttime, both milliseconds since the Unix epoch shown in UTC. In the code createtime "
+            "is set to the current time when the alarm is saved from the edit screen, including when "
+            "an existing alarm is edited and saved (not tested); on the known data it matched the "
+            "save time and did not change when an alarm was turned off. Alert Time is alerttime as "
+            "stored: on the three known-data alarms it was the next time the alarm was due; on alarms "
+            "that are off the value stays and can be old, and on two tested images it is earlier than "
+            "createtime. Alarm Time is alarmtime, stored as hours times 100 plus minutes in the "
+            "phone's local time, and shown as HH:MM. Active is the stored active value: 1 was on and "
+            "0 off on the known data. The code also tests for 2, whose meaning was not established. "
+            "Repeat is decoded from repeattype (shown as stored in Repeat Type): in AlarmItemBase the "
+            "low four bits are 1 for a one-time alarm (isOneTimeAlarm) and 5 for a weekly one "
+            "(isWeeklyAlarm), and each of the next seven four-bit groups is one day, Saturday in the "
+            "lowest through Sunday in the highest (clearRepeatDay). A weekly alarm lists its days; on "
+            "the known data the one day set on a one-time alarm was the day it was due to ring. "
+            "Another low value is shown as Other with the days; no tested row had one. Alarm Flags "
+            "names the bits of dailybrief (shown as stored in Daily Brief) that AlarmItemBase defines "
+            "as specific date (1), holiday (4), working day (8), bedtime (131072) and wake-up time "
+            "(262144); other bits there concern sound and briefing and are not named. A one-time "
+            "alarm for a specific date has the specific date bit, and its date is in Alert Time. On "
+            "the tested images only one anne_a15 row had a named bit (bedtime). On "
+            "samsung_a166u_a16_known_20261117 Alarm Flags was empty and Daily Brief held 0 on every "
+            "row, and Name was empty on every row of the images other than the two known-data ones. "
+            "Known data (samsung_a166u_a16_known_20261117 and samsung_a166u_a16_known_20261116): an "
+            "alarm named KD was saved for 4:44 AM one time at 15:31:39 UTC on 2026-11-16 and turned "
+            "off; KD_weekday_alarm (7:30 AM, Monday to Friday, then turned off) and KD_onetime_alarm "
+            "(2:30 PM that day, left on) were saved at 06:15:43 and 06:16:33 UTC on 2026-11-17, per "
+            "the session record. Create Time was 15:31:37, 06:15:43 and 06:16:33 for the three, Alarm "
+            "Time 04:44, 07:30 and 14:30, KD_onetime_alarm had Active 1 and Alert Time 19:30 UTC, and "
+            "both one-time alarms showed Tuesday, the day each was due. Every tested image holds an "
+            "unnamed 06:00 Monday to Friday alarm that is off; on the known data its createtime is "
+            "2026-02-13, before the session. The app's code names a preset alarm (Const.java), so "
+            "this row need not come from the user. anne_a15 holds one more unnamed weekly alarm, off. "
+            "Not reported: the sound, volume, vibration, snooze, background, group, notitype, sbd, "
+            "bedalarmtime and map columns (map holds the alarm's UUID in the 12.5.07.13 code), and "
+            "locationactive, latitude, longitude and locationtext: the first three held 0 on every "
+            "tested row and have no writer in that code beyond the database read, and that code uses "
+            "locationtext for a Spotify music path; it was empty on every tested row. The groupAlarm "
+            "table is present only on the two samsung_a166u images and is empty there. Other Clock "
+            "databases are named in the World Clock Cities notes. Android User is the user of the app "
+            "data folder the file is in, taken from its path (data/data and user_de/0 are user 0); it "
+            "held 0 on every row of the tested images. A row with the same user, _id, createtime and "
+            "name in a second copy of the database is shown once, from the copy read first; this was "
+            "tested on a built layout, not on a corpus image."
         ),
         "paths": ("*/com.sec.android.app.clockpackage/databases/alarm.db*",),
         "output_types": "standard",
@@ -59,7 +75,7 @@ __artifacts_v2__ = {
             "falken_a326u_a13": "Android 13 | com.sec.android.app.clockpackage | 1 row",
             "galaxys10_a10": "Android 10 | com.sec.android.app.clockpackage | 1 row",
             "s20fe_a13": "Android 13 | com.sec.android.app.clockpackage | 1 row",
-            "samsunga53_a14": "Android 14 | com.sec.android.app.clockpackage | 1 row (same alarm in both folders)",
+            "samsunga53_a14": "Android 14 | com.sec.android.app.clockpackage | 1 row (file also under data_mirror/data_de)",
             "samsungs20_a13": "Android 13 | com.sec.android.app.clockpackage | 1 row",
             "sharon_a13": "Android 13 | com.sec.android.app.clockpackage | 1 row",
             "sharon_a14": "Android 14 | com.sec.android.app.clockpackage | 1 row",
@@ -68,8 +84,8 @@ __artifacts_v2__ = {
     "samsungClockWorldClock": {
         "name": "Samsung Clock - World Clock Cities",
         "description": (
-            "Cities in the Samsung Clock app's world clock list (worldclock.db) and dual clock widget "
-            "(dualclock), with the stored time zone."
+            "Cities in the Samsung Clock app's worldclock.db and dualclock databases, with the stored "
+            "time zone value."
         ),
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-11-20",
@@ -78,25 +94,33 @@ __artifacts_v2__ = {
         "category": "Samsung Clock",
         "notes": (
             "Read from two tables in com.sec.android.app.clockpackage/databases/: worldclock in "
-            "worldclock.db (the Clock app's World clock list) and dualclock in dualclock (in the "
-            "app's code, the data of the dual clock widget, "
-            "com.sec.android.widgetapp.dualclockdigital). One row per city; Store names the table. "
-            "Field meanings come from the Clock app's own code, decompiled with jadx from the "
-            "base.apk on samsung_a166u_a16_known_20261117 (com.sec.android.app.clockpackage "
-            "12.5.07.13 per the session record), and are checked against the known data below. City "
-            "and Time Zone are city and gmt as stored: on the known data worldclock held a time zone "
-            "name in gmt and dualclock held an offset in milliseconds. Order is _id. Known data "
-            "(samsung_a166u_a16_known_20261117, compared with samsung_a166u_a16_known_20261116): "
-            "before the session the World clock tab showed London and New York, and the earlier image "
-            "held those two cities only in dualclock, with no worldclock.db. After Tokyo was added at "
-            "06:18:02 UTC on 2026-11-17 (per the session record), worldclock held New York, London "
-            "and Tokyo and dualclock was unchanged. The rows hold no time of when a city was added. "
-            "On the other tested images dualclock held no rows and worldclock was absent or empty. "
-            "Not reported from the Clock app: the timerlife table of timer.db (the same three preset "
-            "timers on every tested image), the MultiTimer and timerWidget tables of timer.db, "
-            "lapHistory in Stopwatch.db, watchinfo.db, alertbg.db, spotifydb and celebvoicepkgs.db, "
-            "all empty on the tested images. Android User is the user of the app data folder the file "
-            "is in, taken from its path. Android User held 0 on every row of the tested images."
+            "worldclock.db and dualclock in dualclock. The worldclock table holds the Clock app's "
+            "World clock list. The dualclock table is served by the content provider in "
+            "com.sec.android.widgetapp.dualclockdigital; the app's code names the widget, the "
+            "always-on display, the cover screen and a watch as sources of its cities, and which one "
+            "wrote the tested rows was not established. One row per city; Store names the table. "
+            "Field meanings come from the code of Clock 12.5.07.13, decompiled with jadx from the "
+            "base.apk on samsung_a166u_a16_known_20261117. The other tested images were written by "
+            "other versions, whose code was not read. City and Time Zone are city and gmt as stored: "
+            "on the known data worldclock held a time zone name in gmt, and dualclock held a number "
+            "that fits an offset from UTC in milliseconds (-18000000 for New York in November); the "
+            "code's City.getLocalOffset returns the offset in force when called, so the value can "
+            "change with daylight saving. Row ID is _id; on the known data the app listed the cities "
+            "in a different order. Known data (samsung_a166u_a16_known_20261117, compared with "
+            "samsung_a166u_a16_known_20261116): before the session the World clock tab showed London "
+            "and New York, and the earlier image held those two cities only in dualclock, with no "
+            "worldclock.db. Whether a user added these two cities was not established; London has the "
+            "unique id that the code names DEFAULT_CITY (44). After Tokyo was added at 06:18:02 UTC "
+            "on 2026-11-17 (per the session record), worldclock held New York, London and Tokyo and "
+            "dualclock was unchanged. The rows hold no time of when a city was added. On the other "
+            "nine tested images dualclock was absent, 0 bytes, had no dualclock table, or held no "
+            "rows, and worldclock.db was absent or empty. Not reported from the Clock app: the "
+            "timerlife table of timer.db (the same three unnamed 10, 15 and 30 minute timers on the "
+            "nine tested images that hold timer.db), and the MultiTimer and timerWidget tables of "
+            "timer.db, lapHistory in Stopwatch.db, watchinfo.db, alertbg.db, spotifydb and "
+            "celebvoicepkgs.db, all empty where present on the tested images. Android User is the "
+            "user of the app data folder the file is in, taken from its path. Android User held 0 on "
+            "every row of the tested images."
         ),
         "paths": (
             "*/com.sec.android.app.clockpackage/databases/worldclock.db*",
@@ -126,7 +150,10 @@ PACKAGE = "/com.sec.android.app.clockpackage/databases/"
 # AlarmItemBase.clearRepeatDay: day group n (bits 4n..4n+3) is Calendar day 8 - n.
 DAY_GROUPS = ((7, "Sun"), (6, "Mon"), (5, "Tue"), (4, "Wed"), (3, "Thu"), (2, "Fri"), (1, "Sat"))
 ALARM_COLUMNS = ("_id", "active", "createtime", "alerttime", "alarmtime", "repeattype", "name",
-                 "locationactive", "latitude", "longitude", "locationtext")
+                 "dailybrief")
+# AlarmItemBase: dailybrief bits named here.
+FLAG_BITS = ((1, "Specific date"), (4, "Holiday"), (8, "Working day"), (131072, "Bedtime"),
+             (262144, "Wake-up time"))
 
 
 def _user(context, path):
@@ -165,6 +192,14 @@ def _repeat(value):
     return f"{label}: {', '.join(days)}" if days else label
 
 
+def _flags(value):
+    try:
+        value = int(value)
+    except (TypeError, ValueError):
+        return ""
+    return ", ".join(name for bit, name in FLAG_BITS if value & bit)
+
+
 def _select(path, table, wanted):
     present = {row[1] for row in get_sqlite_db_records(path, f'PRAGMA table_info("{table}")')}
     return ", ".join(column if column in present else f"NULL AS {column}" for column in wanted)
@@ -186,28 +221,25 @@ def samsungClockAlarms(context):
         user = _user(context, path)
         query = f"SELECT {_select(path, 'alarm', ALARM_COLUMNS)} FROM alarm ORDER BY createtime, _id"
         for row in get_sqlite_db_records(path, query):
-            (row_id, active, created, alert, alarm_time, repeat, name, location_active, latitude,
-             longitude, location_text) = row
+            (row_id, active, created, alert, alarm_time, repeat, name, daily_brief) = row
             key = (user, row_id, created, name)
             if key in seen:
                 continue
             seen.add(key)
             data_list.append((
                 _ms(created), _ms(alert), _clock(alarm_time), name or "", _repeat(repeat), active,
-                location_active, latitude, longitude, location_text or "", repeat, user,
+                _flags(daily_brief), repeat, daily_brief, user,
             ))
     data_headers = (
-        ("Created", "datetime"),
+        ("Create Time", "datetime"),
         ("Alert Time", "datetime"),
         "Alarm Time (local)",
         "Name",
         "Repeat",
         "Active (as stored)",
-        "Location Alarm (as stored)",
-        "Latitude",
-        "Longitude",
-        "Location Text",
+        "Alarm Flags",
         "Repeat Type (as stored)",
+        "Daily Brief (as stored)",
         "Android User",
     )
     return data_headers, data_list, "\n".join(source_paths)
@@ -236,5 +268,5 @@ def samsungClockWorldClock(context):
                 continue
             seen.add(key)
             data_list.append((city or "", "" if gmt is None else gmt, row_id, table, user))
-    data_headers = ("City", "Time Zone (as stored)", "Order", "Store", "Android User")
+    data_headers = ("City", "Time Zone (as stored)", "Row ID", "Store", "Android User")
     return data_headers, data_list, "\n".join(source_paths)
