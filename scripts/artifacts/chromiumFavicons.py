@@ -1,4 +1,5 @@
 import datetime
+import filecmp
 import hashlib
 import os
 import shutil
@@ -90,10 +91,7 @@ __artifacts_v2__ = {
                  "own rows when its bytes differ, as on russell_a14 and cookbook_a11; the "
                  "comparison covers the Favicons file only, not its journal. A Favicons or History "
                  "database with a pending rollback journal is read from a temporary copy, where "
-                 "SQLite rolls the journal back, so its rows show the database as SQLite restores it "
-                 "from the journal, which is its state before the unfinished write. A journal "
-                 "that is not rolled back is logged and that database is not read. The evidence files are not changed and the run log says "
-                 "when this happened. It was exercised on Favicons databases on dragna_pixel9a_a16 "
+                 "SQLite rolls the journal back, so its rows show the database with the journal's pages restored. That is the state before the unfinished write when the journal belongs to the file's last write, and the integrity check does not establish that. The rolled-back copy is used only if it passes SQLite's integrity check. Otherwise the file as found is used if it passes, with the journal ignored and the run log saying so. A file read this way can hold part of an unfinished write, and its rows are not marked in the report. The database is not read if neither passes, and the run log says so. Those two branches were exercised on constructed test databases, not on a corpus image. The artifact does not write to the evidence files, and the run log names each database read this way. The rollback read was exercised on Favicons databases on dragna_pixel9a_a16 "
                  "(Chrome, 32 rows) and russell_a14 (Brave, a second user, 14 rows); a History "
                  "database with a pending journal was not exercised. "
                  "Source File is the extraction path of the Favicons file the rows came from and is the column that "
@@ -184,13 +182,42 @@ def _needs_rollback(error, journal):
     return matches and os.path.isfile(journal) and os.path.getsize(journal) > 0
 
 
+def _integrity_ok(db):
+    '''True when SQLite's integrity check passes on an open database.'''
+    try:
+        row = db.execute('PRAGMA integrity_check(1)').fetchone()
+    except sqlite3.DatabaseError:
+        return False
+    return bool(row) and row[0] == 'ok'
+
+
+def _read_rolled_back(copy, path, reader):
+    '''(True, reader(db)) when SQLite restored pages to the copy and the result is sound.
+
+    SQLite can delete a journal it decides not to play back, so a rollback is established by
+    the copy's bytes differing from the evidence file after the read.
+    '''
+    db = sqlite3.connect(copy)
+    try:
+        if not _integrity_ok(db):
+            return False, None
+        result = reader(db)
+    except sqlite3.DatabaseError:
+        return False, None
+    finally:
+        db.close()
+    return not filecmp.cmp(copy, path, shallow=False), result
+
+
 def _read_database(path, reader, label):
     '''(reader(db), the journal path if one was rolled back) for the database at path.
 
     SQLite must roll a hot journal back before it can read, which a read-only open
     cannot do. In that case the database and its journal are copied to a temporary
     folder and read there, so SQLite rolls back the copy and the evidence is not changed.
-    A journal that survives the read was not rolled back, and that read is refused.
+    A stale journal can damage a sound database, so the rolled-back copy is used only if
+    it passes SQLite's integrity check. Otherwise the file as found is used if it passes,
+    and the read is refused if neither does.
     '''
     db = open_sqlite_db_readonly(path)
     if db is None:
@@ -207,16 +234,24 @@ def _read_database(path, reader, label):
         copy = os.path.join(folder, 'database')
         shutil.copyfile(path, copy)
         shutil.copyfile(journal, f'{copy}-journal')
-        db = sqlite3.connect(copy)
+        rolled_back, result = _read_rolled_back(copy, path, reader)
+        if rolled_back:
+            logfunc(f'Chromium Favicons: {label} had a pending rollback journal; read from a '
+                    'temporary copy after SQLite rolled it back')
+            return result, journal
+        as_found = os.path.join(folder, 'as_found')
+        shutil.copyfile(path, as_found)
+        db = sqlite3.connect(as_found)
         try:
+            if not _integrity_ok(db):
+                raise sqlite3.DatabaseError('neither the rolled-back copy nor the file as found '
+                                            'passed the integrity check')
             result = reader(db)
         finally:
             db.close()
-        if os.path.exists(f'{copy}-journal') and os.path.getsize(f'{copy}-journal') > 0:
-            raise sqlite3.OperationalError('the pending journal was not rolled back')
-    logfunc(f'Chromium Favicons: {label} had a pending rollback journal; read from a temporary '
-            'copy after SQLite rolled it back')
-    return result, journal
+    logfunc(f'Chromium Favicons: {label} had a pending rollback journal that did not give a sound '
+            'database; read as found, with the journal ignored')
+    return result, None
 
 
 def _read_urls(db):
