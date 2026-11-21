@@ -1716,7 +1716,7 @@ Number of artifacts using **deprecated** 'function' key: 0
 | Module | Error/Issue |
 |--------|-------------|
 | artGlobals.py | No recognized artifacts found |
-| chromiumFavicons.py | Error evaluating __artifacts_v2__: malformed node or string on line 31: JoinedStr(values=[Constant(value="One row per icon_mapping row, which Chromium |
+| chromiumFavicons.py | Error evaluating __artifacts_v2__: malformed node or string on line 34: JoinedStr(values=[Constant(value="One row per icon_mapping row, which Chromium |
 | hiveReader.py | No recognized artifacts found |
 | novaMediaCandidates.py | No recognized artifacts found |
 | storagePathViews.py | No recognized artifacts found |
