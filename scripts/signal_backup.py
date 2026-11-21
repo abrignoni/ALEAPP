@@ -64,7 +64,7 @@ def key_from_env(name):
     """The normalised key read from an environment variable."""
     value = os.environ.get(name)
     if not value:
-        raise ValueError(f'The environment variable {name} is not set.')
+        raise ValueError('The environment variable named by --signal_recovery_key_env is not set.')
     return normalise_recovery_key(value)
 
 

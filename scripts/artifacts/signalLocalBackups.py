@@ -15,59 +15,68 @@ __artifacts_v2__ = {
         "category": "Signal",
         "notes": (
             "Layout from Signal-Android tag v8.35.4 (commit b330f4efcf49a0cec87807d18504f07f5df12bf2); "
-            "other versions were not checked. File names below are under app/src/main/java/org/"
-            "thoughtcrime/securesms/ unless a path is given. The app writes the backup into a folder the "
-            "user picks (backup/v2/local/ArchiveFileSystem.kt L65), inside a folder it creates named "
-            "SignalBackups (L54, L234). Its own comment says that folder may be renamed or restored under "
-            "another name (L113-118), so the folder name is not required here: any folder named "
-            "signal-backup- and a time formatted yyyy-MM-dd-HH-mm-ss in UTC (createSnapshot, L274-276), "
-            "holding the members main, metadata or files (L384-386), is read as one snapshot. A "
-            "signal-backup- folder whose name does not carry that time is skipped and named in the run "
-            "log, as is one whose digits are not a real date. The time is taken from the phone's clock when the snapshot folder is created, before "
-            "its members are written (L275, L283-284): it is when the backup started, not when it "
-            "finished. The snapshot is written under the same name ending in -tmp (L283) and renamed "
-            "when the backup has been written (finalize, L428-430, called at jobs/LocalArchiveJob.kt "
-            "L120). When the job ends, whether or not the backup finished, it deletes that snapshot's "
-            "-tmp folder if one is still there (LocalArchiveJob.kt L133-138), and it deletes any -tmp "
-            "folder left over before its next backup (L88; deleteOldTemporaryBackups, "
-            "ArchiveFileSystem.kt L245-257). After a backup that did not fail it deletes all but the two "
-            "snapshots with the newest names (LocalArchiveJob.kt L141; deleteOldBackups, "
-            "ArchiveFileSystem.kt L263-268, limit 2). The retention and the -tmp handling are "
-            "source-verified only. The one backup folder tested held one snapshot and no -tmp folder.\n"
+            "other versions were not checked. File names below are under "
+            "app/src/main/java/org/thoughtcrime/securesms/ unless a path is given. The app writes the "
+            "backup into a folder it is given as a tree URI (backup/v2/local/ArchiveFileSystem.kt "
+            "L65-66; on the test phone a folder chosen in the backup setup), inside a folder it creates "
+            "named SignalBackups (L54, L234). Its own comment says that folder may be renamed or "
+            "restored under another name (L113-118), so the folder name is not required here: any folder "
+            "named signal-backup- and a time formatted yyyy-MM-dd-HH-mm-ss in UTC (createSnapshot, "
+            "L274-276), holding the members main, metadata or files (L384-386), is read as one snapshot. "
+            "A signal-backup- folder whose name does not carry that time is skipped and named in the run "
+            "log, as is one whose digits are not a real date. The time is taken from the phone's clock "
+            "when the snapshot folder is created, before its members are written (L275, L283-284): it is "
+            "when the backup started, not when it finished. The snapshot is written under the same name "
+            "ending in -tmp (L283) and renamed when the backup has been written (finalize, L428-430, "
+            "called at jobs/LocalArchiveJob.kt L120). When the job ends, whether or not the backup "
+            "finished, it deletes that snapshot's -tmp folder if one is still there (LocalArchiveJob.kt "
+            "L133-138), and it deletes any -tmp folder left over before its next backup (L88; "
+            "deleteOldTemporaryBackups, ArchiveFileSystem.kt L245-257). After a backup that did not fail "
+            "it deletes all but the two snapshots with the newest names (LocalArchiveJob.kt L141; "
+            "deleteOldBackups, ArchiveFileSystem.kt L263-268, limit 2). The retention and the -tmp "
+            "handling are source-verified only. The one backup folder tested held one snapshot and no "
+            "-tmp folder.\n"
             "Snapshot Time is the time in the folder name, read as UTC as the app writes it. Temporary "
             "Name is Yes for a folder whose name ends in -tmp, one the app had neither renamed nor "
-            "deleted. Backup Time is backupTimeMs from the backup itself and Recovery Key says whether a "
-            "key was given and whether it opened the snapshot, shown as Not given, Opened, Did not open or "
-            "Not readable; the key is never reported. Main Size is the size of the main file in bytes. main is written through an "
-            "encrypting writer with the account's message backup key (backup/v2/BackupRepository.kt "
-            "L695-702, called at backup/v2/local/LocalArchiver.kt L85). The app derives that key from "
-            "the Account Entropy Pool, a 64-character value (LENGTH = 64, "
+            "deleted. Backup Time is backupTimeMs from the backup itself and Recovery Key Result says "
+            "whether a key was given and whether it opened the snapshot, shown as Not given, Opened, Did "
+            "not open or Not readable; the key is never reported. Not readable means main or metadata is "
+            "missing, or the snapshot did not decode. Did not open means the HMAC over main did not "
+            "verify, which a wrong key or a changed main file both cause. On the tested backup the "
+            "column held Opened with the key, Not given without one and Did not open with a wrong key, "
+            "and Backup Time was 1 second after Snapshot Time. Not readable was not run. Main Size is "
+            "the size of the main file in bytes. main is written through an encrypting writer with the "
+            "account's message backup key (backup/v2/BackupRepository.kt L695-702, called at "
+            "backup/v2/local/LocalArchiver.kt L85). The app derives that key from the Account Entropy "
+            "Pool, a 64-character value (LENGTH = 64, "
             "core/util-jvm/src/main/java/org/signal/core/models/AccountEntropyPool.kt L21; "
-            "deriveMessageBackupKey, L102-103) that the app's backup screen showed as the recovery key on "
-            "the test phone. Without that key its messages are not read. Metadata Version (as stored) is field 1 of "
-            "the metadata file, a Metadata protobuf message (lib/archive/src/main/protowire/"
-            "LocalArchive.proto L8-18, same commit); its field 2 is the encrypted backup ID and is not "
-            "reported. A metadata file that does not decode as that message, or has no field 1, leaves "
-            "the column empty and is named in the run log (constructed files only). Media Listed is the "
+            "deriveMessageBackupKey, L102-103) that the app's backup screen showed as the recovery key "
+            "on the test phone. Without that key its messages are not read. Metadata Version (as stored) "
+            "is field 1 of the metadata file, a Metadata protobuf message "
+            "(lib/archive/src/main/protowire/LocalArchive.proto L8-18, same commit); its field 2 is the "
+            "encrypted backup ID and is not reported. A metadata file that does not decode as that "
+            "message, or has no field 1, leaves the column empty and is named in the run log (the empty "
+            "column was tested on constructed files; the log line was not checked). Media Listed is the "
             "number of media names in the snapshot's files member, which the app writes as "
             "length-prefixed FilesFrame messages, each holding one media name (LocalArchive.proto "
             "L20-24; written at backup/v2/local/LocalArchiver.kt L126-129, read by "
-            "lib/archive/src/main/java/org/signal/archive/local/ArchivedFilesReader.kt L36-41). "
-            "A files member that does not decode to its last byte leaves the column empty and is named in "
-            "the run log (the reader is tested on constructed bytes; the artifact's empty column and log "
+            "lib/archive/src/main/java/org/signal/archive/local/ArchivedFilesReader.kt L36-41). A files "
+            "member that does not decode to its last byte leaves the column empty and is named in the "
+            "run log (the reader is tested on constructed bytes; the artifact's empty column and log "
             "line for this case were not run). A snapshot folder missing a member still gets a row, with "
-            "that member's column empty. The media themselves are kept, encrypted, in a files "
-            "folder beside the snapshots (ArchiveFileSystem.kt L236; backup/v2/local/LocalArchiver.kt "
-            "L108), shared by all snapshots, and are not read here. After a backup that did not fail the "
-            "job deletes the "
-            "media files no current snapshot lists (LocalArchiveJob.kt L144; ArchiveFileSystem.kt "
-            "L324-341), so Media Listed is the snapshot's own list, not a count of the files on disk.\n"
+            "that member's column empty (not run). With a key given, a snapshot missing main or metadata "
+            "shows Not readable. The media themselves are kept, encrypted, in a files folder beside the "
+            "snapshots (ArchiveFileSystem.kt L236; backup/v2/local/LocalArchiver.kt L108), shared by all "
+            "snapshots, and are not read by this artifact. Signal - On-Device Backup Attachments reads "
+            "them. After a backup that did not fail the job deletes the media files no current snapshot "
+            "lists (LocalArchiveJob.kt L144; ArchiveFileSystem.kt L324-341), so Media Listed is the "
+            "snapshot's own list, not a count of the files on disk.\n"
             "Backup Location is the path from the shared storage root to the folder holding the "
             "snapshot, or the whole path inside the extraction where no storage root is recognised. "
             "Android User is the number that follows the shared storage root in the path "
             "(data/media/<N>, userdata/media/<N>, storage/emulated/<N>, mnt/user/<U>/emulated/<N>, "
-            "mnt/pass_through/<U>/emulated/<N>). It is empty for a path that starts with sdcard/, as in a "
-            "pull of /sdcard, which names no user, and for a folder outside those roots, such as on a "
+            "mnt/pass_through/<U>/emulated/<N>). It is empty for a path that starts with sdcard/, as in "
+            "a pull of /sdcard, which names no user, and for a folder outside those roots, such as on a "
             "removable card. The same snapshot seen under several spellings that name the same Android "
             "user is one row; a copy under sdcard/ names no user and is a separate row.\n"
             "Known data (samsung_a166u_signal_backup_pull_known_20261120: an adb pull of the backup "
@@ -77,13 +86,13 @@ __artifacts_v2__ = {
             "snapshot folder. The run gave one row with the time in that folder name in Snapshot Time, "
             "Temporary Name No, Main Size 65,600, Metadata Version 1, Media Listed 7 and Backup Location "
             "holding the two folder names below sdcard/; the 7 listed names equal the 7 file names in "
-            "its files folder. Temporary Name held No, Metadata "
-            "Version held 1 and Android User held an empty value on every row of that run. No full "
-            "extraction holding a backup was available, so the seeker is proven on the pull only. Tested "
-            "only on constructed files: -tmp folders, several snapshots, a renamed backup folder, one "
-            "snapshot seen under two spellings, every storage root spelling above, a folder outside a "
-            "storage root, a name whose digits are not a real date, and metadata and files members that "
-            "do not decode."
+            "its files folder. Temporary Name held No, Metadata Version held 1 and Android User held an "
+            "empty value on every row of that run. No full extraction holding a backup was available, so "
+            "the seeker is proven on the pull only. Tested only on constructed files: -tmp folders, "
+            "several snapshots, a renamed backup folder, one snapshot seen under two spellings, every "
+            "storage root spelling above, a folder outside a storage root, a name whose digits are not a "
+            "real date, a metadata member that does not decode, and the files reader on bytes that do "
+            "not decode."
         ),
         "paths": ("*/signal-backup-*/main", "*/signal-backup-*/metadata", "*/signal-backup-*/files"),
         "output_types": "standard",
@@ -103,27 +112,51 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Signal",
         "notes": (
-            "Needs the recovery key (--signal_recovery_key_file, --signal_recovery_key_env or the window's "
-            "Signal backup recovery key button). See Signal - On-Device Backups for the layout and sources. "
-            "Each snapshot is read and its rows are kept apart by Snapshot Time, so the same message in two "
-            "snapshots is two rows. A snapshot is the state Signal exported when the backup ran: it says "
-            "nothing about messages removed before then. The HMAC over the main file is checked before "
-            "anything is decrypted; a key that fails it gives no rows and is named in the run log. Fields "
-            "are read from ChatItem in Backup.proto at Signal-Android commit "
-            "b330f4efcf49a0cec87807d18504f07f5df12bf2. Each earlier version of an edited message is its own "
-            "row, with Revision showing its place. Text in square brackets is written by this parser for an "
-            "item with no text of its own, using the enum names in Backup.proto. Sender uses the contact's "
-            "system name, then profile name, username or number. Known data "
-            "(samsung_a166u_signal_backup_pull_known_20261120, Signal 8.35.4): 135 chat items, all standard "
-            "messages, 68 outgoing and 67 incoming, in two chats. The one Note to Self item matched the "
-            "session record's text and fell 1.7 seconds before its logged time. The other 134 items were not "
-            "compared with a log. Source-verified only, with no item in the tested backup: every kind other "
-            "than a standard message, reactions, quotes, link previews, long text, revisions and groups. On "
-            "that backup these held no value on any row: Quoted Message Sent, Expire Start, Reactions, Quoted "
-            "Author, Quoted Text, Link Preview, Expires In (ms), Revision and Android User (a pull of /sdcard "
-            "names no user). Snapshot Time and Kind held one value on every row. Read and Sealed Sender are "
-            "identical on that backup: Yes on all 67 incoming rows and blank on outgoing rows, where they do "
-            "not apply."
+            "Needs the recovery key (--signal_recovery_key_file, --signal_recovery_key_env or the "
+            "window's Signal backup recovery key button). See Signal - On-Device Backups for the layout "
+            "and sources. Each snapshot is read and its rows are kept apart by Snapshot Time, so the "
+            "same message in two snapshots is two rows. A snapshot is the state Signal exported when the "
+            "backup ran: it says nothing about messages removed before then. The HMAC over the main file "
+            "is checked before any of main is decrypted. When it does not verify, the snapshot gives no "
+            "rows and the run log names the snapshot. The key is never logged. Fields are read from "
+            "ChatItem in Backup.proto at Signal-Android commit b330f4efcf49a0cec87807d18504f07f5df12bf2.\n"
+            "Times are read as milliseconds since 1970 UTC and shown in whole seconds. On the tested "
+            "backup that reading put Backup Time 1 second after the folder-name time and the Note to "
+            "Self item within 2 seconds of its logged time. Date Received and Date Server Sent fell 0 to "
+            "1 second after Date Sent on the 67 incoming rows. Date Received on an outgoing row is "
+            "OutgoingMessageDetails.dateReceived, and it equalled Date Sent on all 68 outgoing rows. "
+            "Date Server Sent is filled on incoming rows only. The times in Send Status were not "
+            "compared with anything.\n"
+            "Sender is the label of the item's author: for a contact the system name, then system "
+            "nickname, profile name, username, number, then Recipient and its ID. The account's own "
+            "entry is shown as Self, which is the Sender of outgoing rows. Send Status has one line per "
+            "recipient: label, state, time; an unset state is shown as pending, as Backup.proto says "
+            "(L576-577). Each earlier version of an edited message is its own row, with Revision showing its "
+            "place. Whether an earlier version carries its own chat and author ids in a real backup was "
+            "not run; if it does not, its Conversation is blank. Text in square brackets is written by "
+            "this parser for an item with no text of its own. For simple chat updates and one-to-one "
+            "calls it is the enum name from Backup.proto. For contact cards, stickers without an emoji, "
+            "viewed view-once items and deleted items it is this parser's own label. Payment, gift "
+            "badge, group change and the other update kinds get a Kind and no text. Contact card "
+            "contents, poll votes and call times are not reported. When a long text file is missing or "
+            "does not verify, Message keeps the short body; the Long text row of Signal - On-Device "
+            "Backup Attachments gives its status. Chat Key is the Android user, the snapshot time and "
+            "the backup's chat id joined, so chats from different snapshots stay apart. Its last part is "
+            "the Chat ID of Signal - On-Device Backup Chats. Sticker packs, ad hoc calls, notification "
+            "profiles, chat folders and the favourite sticker list are counted in the run log and not "
+            "reported.\n"
+            "Known data (samsung_a166u_signal_backup_pull_known_20261120, Signal 8.35.4): 135 chat "
+            "items, all standard messages, 68 outgoing and 67 incoming, in two chats. The one Note to "
+            "Self item had the session record's text. Its Date Sent is 2 seconds before the logged time "
+            "at the whole seconds the report shows (1.7 seconds by the stored milliseconds). The "
+            "record's time is to the second. The other 134 items were not compared with a log. "
+            "Source-verified only, with no item in the tested backup: every kind other than a standard "
+            "message, reactions, quotes, link previews, long text, revisions and groups. On that backup "
+            "these held no value on any row: Quoted Message Sent, Expire Start, Reactions, Quoted "
+            "Author, Quoted Text, Link Preview, Expires In (ms), Revision and Android User (a pull of "
+            "/sdcard names no user). Snapshot Time and Kind held one value on every row. Read and Sealed "
+            "Sender are identical on that backup: Yes on all 67 incoming rows and blank on outgoing "
+            "rows, where they do not apply."
         ),
         "paths": ("*/signal-backup-*/main", "*/signal-backup-*/metadata", "*/signal-backup-*/files"),
         "output_types": "standard",
@@ -133,7 +166,7 @@ __artifacts_v2__ = {
         },
         "data_views": {
             "conversation": {
-                "conversationDiscriminatorColumn": "Chat ID",
+                "conversationDiscriminatorColumn": "Chat Key",
                 "conversationLabelColumn": "Conversation",
                 "textColumn": "Message",
                 "directionColumn": "Direction",
@@ -156,17 +189,30 @@ __artifacts_v2__ = {
         "category": "Signal",
         "notes": (
             "Needs the recovery key. An attachment's file in the backup's files folder is named from the "
-            "SHA-256 of its plaintext hash and its local key (MediaName.forLocalBackupFilename). It is shown "
-            "only when its HMAC and the SHA-256 of the decrypted bytes both match what the backup records "
-            "(AttachmentCipherOutputStream.kt L37-48). Status says when a pointer has no local key, its file "
-            "is missing or it does not verify. Status Listed, no chat item points to it is a name in the "
-            "snapshot's files list with no pointer in the frames read here. The app lists every attachment "
-            "it holds a local key for (AttachmentTable.getLocalArchivableAttachments, L620-638), and the key "
-            "to such a file is not in the frames read, so it is not decrypted and what it holds is not "
-            "established. Known data (samsung_a166u_signal_backup_pull_known_20261120): 2 image attachments "
-            "verified and 5 listed names with no pointer. Date Sent is blank on those 5 rows, since no chat item "
-            "gives them a time. On that backup Caption and Android User held no value on any row, and Snapshot "
-            "Time held one value on every row."
+            "SHA-256 of its plaintext hash and its local key "
+            "(core/util-jvm/src/main/java/org/signal/core/models/backup/MediaName.kt L21, Signal-Android "
+            "commit b330f4efcf49a0cec87807d18504f07f5df12bf2); Media Name is that file name. It is shown "
+            "only when the HMAC at the end of the file verifies under the local key and the SHA-256 of "
+            "the decrypted bytes equals the pointer's plaintextHash "
+            "(lib/libsignal-service/src/main/java/org/whispersystems/signalservice/api/crypto/AttachmentCipherOutputStream.kt "
+            "L33-48, same commit). File Name is the name the pointer carries. Status No local key or "
+            "plaintext hash, File missing and Did not verify say why a pointer is not shown. "
+            "Backup.proto says a missing local key means the attachment was not on the phone when the "
+            "backup was made (L849-854). These three values were not seen on the tested backup; Did not "
+            "verify was tested on a constructed file.\n"
+            "Status Listed, no pointer read is a name in the snapshot's files list that none of the "
+            "pointers read here names. Read here are message attachments, long text, link preview "
+            "images, stickers, view-once media and story reply long text. Quote thumbnails, contact card "
+            "avatars and chat wallpapers are not read. The app lists every attachment that has a file, a "
+            "plaintext hash and a local backup key "
+            "(app/src/main/java/org/thoughtcrime/securesms/database/AttachmentTable.kt L620-638; "
+            "LocalArchiver.kt L85-91). No pointer read here carries the key to such a file, so it is not "
+            "decrypted and what it holds is not established. On the tested backup a walk of every frame "
+            "with the full schema found only the 2 pointers reported.\n"
+            "Known data (samsung_a166u_signal_backup_pull_known_20261120): 2 image attachments verified "
+            "and 5 listed names with no pointer read. Date Sent is blank on those 5 rows, since no chat "
+            "item gives them a time. On that backup File Name, Caption and Android User held no value on any row, "
+            "and Snapshot Time held one value on every row."
         ),
         "paths": ("*/signal-backup-*/main", "*/signal-backup-*/metadata", "*/signal-backup-*/files"),
         "output_types": "standard",
@@ -186,14 +232,15 @@ __artifacts_v2__ = {
         "category": "Signal",
         "notes": (
             "Needs the recovery key. One row per Recipient frame per snapshot, from Backup.proto at "
-            "Signal-Android commit b330f4efcf49a0cec87807d18504f07f5df12bf2. Recipient ID is generated for "
-            "that backup file only and does not carry across snapshots. Visibility (as stored) is 0 visible, "
-            "1 hidden, 2 hidden message request (Contact.Visibility). A contact's presence here does not "
-            "establish that the account exchanged messages with it. Known data "
-            "(samsung_a166u_signal_backup_pull_known_20261120): 7 recipients: 4 contacts, 1 self, 1 release "
-            "notes, 1 distribution list. No group was in the tested backup. On it Blocked At, Username, Nickname, "
-            "Note, Group Members and Android User held no value on any row, and Snapshot Time and Blocked held "
-            "one value on every row."
+            "Signal-Android commit b330f4efcf49a0cec87807d18504f07f5df12bf2. Backup.proto calls "
+            "Recipient ID a generated id for reference only within this file (L210), so it should not be "
+            "matched across snapshots. Visibility (as stored) is 0 visible, 1 hidden, 2 hidden message "
+            "request (Contact.Visibility). A contact's presence here does not establish that the account "
+            "exchanged messages with it. Known data (samsung_a166u_signal_backup_pull_known_20261120): 7 "
+            "recipients: 4 contacts, 1 self, 1 release notes, 1 distribution list. No group was in the "
+            "tested backup. On it Blocked At, Username, Nickname, Note, Group Members and Android User "
+            "held no value on any row, and Snapshot Time held one value on every row. Blocked held No on "
+            "the 4 contact rows and is blank on kinds that have no blocked field."
         ),
         "paths": ("*/signal-backup-*/main", "*/signal-backup-*/metadata", "*/signal-backup-*/files"),
         "output_types": "standard",
@@ -497,7 +544,7 @@ class _Media:
         """(bytes or None, status, path) of a FilePointer."""
         info = pointer.locatorInfo
         if not info.localKey or not info.plaintextHash:
-            return None, 'No local key: not in this backup', ''
+            return None, 'No local key or plaintext hash', ''
         name = sb.media_file_name(info.plaintextHash, info.localKey)
         if name not in self.results:
             path = self.files.get(name)
@@ -678,7 +725,7 @@ def signalLocalBackups(context):
         data_list.append((snapshot['when'], backup_time, 'Yes' if snapshot['tmp'] else 'No', state, main_size,
                           version, listed, snapshot['location'], snapshot['user']))
 
-    data_headers = (('Snapshot Time', 'datetime'), ('Backup Time', 'datetime'), 'Temporary Name', 'Recovery Key',
+    data_headers = (('Snapshot Time', 'datetime'), ('Backup Time', 'datetime'), 'Temporary Name', 'Recovery Key Result',
                     ('Main Size', 'number'), 'Metadata Version (as stored)', ('Media Listed', 'number'),
                     'Backup Location', 'Android User')
     return data_headers, data_list, '\n'.join(source_paths)
@@ -717,7 +764,7 @@ def signalBackupMessages(context):
         ('Quoted Message Sent', 'datetime'), ('Expire Start', 'datetime'), ('Snapshot Time', 'datetime'),
         'Direction', 'Sender', 'Conversation', 'Message', ('Attachments', 'media'), 'Kind', 'Send Status', 'Read',
         'Sealed Sender', 'Reactions', 'Quoted Author', 'Quoted Text', 'Link Preview',
-        ('Expires In (ms)', 'number'), 'Revision', 'Chat ID', 'Android User')
+        ('Expires In (ms)', 'number'), 'Revision', 'Chat Key', 'Android User')
     return data_headers, data_list, '\n'.join(source_paths)
 
 
@@ -734,7 +781,9 @@ def _attachment_rows(item, revision_note, snapshot, labels, chats, media, pointe
             _time(item.dateSent), snapshot['when'], labels.get(chat.recipientId, '') if chat else '',
             labels.get(item.authorId, item.authorId), _join(role, revision_note), reference,
             pointer.contentType, pointer.fileName, pointer.caption, info.size if info.size else '',
-            info.plaintextHash.hex(), status, snapshot['user']))
+            info.plaintextHash.hex(), status,
+            sb.media_file_name(info.plaintextHash, info.localKey) if info.localKey and info.plaintextHash else '',
+            snapshot['user']))
     return rows
 
 
@@ -764,11 +813,11 @@ def signalBackupAttachments(context):
                 names = media_names(handle.read()) or []
             for name in names:
                 if name not in pointed:
-                    data_list.append(('', snapshot['when'], '', '', '', None, '', name, '', '', '',
-                                      'Listed, no chat item points to it', snapshot['user']))
+                    data_list.append(('', snapshot['when'], '', '', '', None, '', '', '', '', '',
+                                      'Listed, no pointer read', name, snapshot['user']))
     data_headers = (('Date Sent', 'datetime'), ('Snapshot Time', 'datetime'), 'Conversation', 'Sender', 'Role',
                     ('Attachment', 'media'), 'Content Type', 'File Name', 'Caption', ('Size', 'number'),
-                    ('Plaintext SHA-256', 'hash'), 'Status', 'Android User')
+                    ('Plaintext SHA-256', 'hash'), 'Status', ('Media Name', 'hash'), 'Android User')
     return data_headers, data_list, '\n'.join(source_paths)
 
 
@@ -786,7 +835,8 @@ def signalBackupRecipients(context):
             contact = recipient.contact if kind == 'contact' else None
             group = recipient.group if kind == 'group' else None
             blocked_at = contact.blockedAtTimestamp if contact else group.blockedAtTimestamp if group else 0
-            blocked = (contact.blocked if contact else group.blocked if group else False)
+            # only contacts and groups have a blocked field
+            blocked = ('Yes' if (contact or group).blocked else 'No') if contact or group else ''
             data_list.append((
                 snapshot['when'], _time(blocked_at),
                 _time(contact.notRegistered.unregisteredTimestamp) if contact else '',
@@ -796,7 +846,7 @@ def signalBackupRecipients(context):
                 _join(contact.profileGivenName, contact.profileFamilyName) if contact else '',
                 _join(contact.systemGivenName, contact.systemFamilyName) if contact else '',
                 _join(contact.nickname.given, contact.nickname.family) if contact else '',
-                contact.note if contact else '', 'Yes' if blocked else 'No',
+                contact.note if contact else '', blocked,
                 contact.visibility if contact else '',
                 len(group.snapshot.members) if group else '', snapshot['user']))
     data_headers = (('Snapshot Time', 'datetime'), ('Blocked At', 'datetime'), ('Unregistered At', 'datetime'),

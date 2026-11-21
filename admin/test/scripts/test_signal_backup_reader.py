@@ -183,6 +183,11 @@ class KeyTests(unittest.TestCase):
         self.assertEqual(sb.normalise_recovery_key(spaced), KEY)
         self.assertEqual(sb.normalise_recovery_key('#' + 'a' * 62 + '='), 'o' + 'a' * 62 + '0')
 
+    def test_a_key_given_as_the_variable_name_is_not_in_the_error(self):
+        with self.assertRaises(ValueError) as caught:
+            sb.key_from_env(KEY)
+        self.assertNotIn(KEY, str(caught.exception))
+
     def test_a_bad_value_is_not_in_the_error(self):
         with self.assertRaises(ValueError) as caught:
             sb.normalise_recovery_key('secretvalue123')
@@ -218,14 +223,14 @@ class ArtifactTests(unittest.TestCase):
 
     def test_no_key_lists_and_reads_nothing(self):
         rows, _ = self.table(slb.signalLocalBackups, self.context)
-        self.assertEqual(rows[0]['Recovery Key'], 'Not given')
+        self.assertEqual(rows[0]['Recovery Key Result'], 'Not given')
         self.assertEqual(rows[0]['Backup Time'], '')
         self.assertEqual(self.table(slb.signalBackupMessages, self.context)[0], [])
 
     def test_wrong_key_gives_no_content(self):
         sb.set_recovery_key(OTHER_KEY)
         rows, _ = self.table(slb.signalLocalBackups, self.context)
-        self.assertEqual(rows[0]['Recovery Key'], 'Did not open')
+        self.assertEqual(rows[0]['Recovery Key Result'], 'Did not open')
         self.assertEqual(self.table(slb.signalBackupMessages, self.context)[0], [])
         with self.assertRaises(sb.BackupKeyError):
             sb.open_snapshot(str(self.files[0]), str(self.files[1]), OTHER_KEY)
@@ -256,7 +261,7 @@ class ArtifactTests(unittest.TestCase):
         sb.set_recovery_key(KEY)
         rows, _ = self.table(slb.signalBackupAttachments, self.context)
         status = sorted(row['Status'] for row in rows)
-        self.assertEqual(status, ['Listed, no chat item points to it', 'Verified', 'Verified'])
+        self.assertEqual(status, ['Listed, no pointer read', 'Verified', 'Verified'])
         name = sb.media_file_name(hashlib.sha256(IMAGE).digest(), LOCAL_KEY)
         blob = self.files[0].parent.parent / 'files' / name[:2] / name
         data = bytearray(blob.read_bytes())
@@ -271,6 +276,7 @@ class ArtifactTests(unittest.TestCase):
         rows, _ = self.table(slb.signalBackupRecipients, self.context)
         self.assertEqual({row['Kind']: row['Display Name'] for row in rows},
                          {'self': 'Self', 'contact': 'Pat', 'group': 'Team'})
+        self.assertEqual({row['Kind']: row['Blocked'] for row in rows}, {'self': '', 'contact': 'No', 'group': 'No'})
         rows, _ = self.table(slb.signalBackupChats, self.context)
         self.assertEqual((rows[0]['Conversation'], rows[0]['Items']), ('Pat', 3))
         rows, _ = self.table(slb.signalBackupAccount, self.context)
