@@ -123,6 +123,11 @@ password or personal recovery key, and a LUKS container with its passphrase, eac
 the same way. At a terminal whatever is missing is asked for, and the GUI asks in dialogs;
 a BitLocker, APFS or LUKS volume nothing opens is reported and not searched.
 
+A Signal on-device backup is listed without a key. Its messages, recipients and
+attachments open with the account's 64-character recovery key, given with
+`--signal_recovery_key_file` or `--signal_recovery_key_env`, or in the GUI with the
+Signal backup recovery key button. The key is held in memory for the run and is not saved.
+
 The disk images of a Linux software RAID set (md, or LVM2 across disks) are read
 together: give them all to `-i` with `-t raw`, or pick them together in the GUI's file
 dialog. Given one image that holds a member, the other members are looked for in its
