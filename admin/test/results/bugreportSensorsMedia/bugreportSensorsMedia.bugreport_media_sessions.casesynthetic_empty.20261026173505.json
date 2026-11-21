@@ -1,0 +1,42 @@
+{
+  "metadata": {
+    "module_name": "bugreportSensorsMedia",
+    "artifact_name": "Bug Report - Media Sessions",
+    "function_name": "bugreport_media_sessions",
+    "case_number": "casesynthetic_empty",
+    "number_of_columns": 15,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSensorsMedia/testdata.bugreportSensorsMedia.bugreport_media_sessions.casesynthetic_empty.zip",
+    "start_time": "2026-10-26T17:35:05.306788+00:00",
+    "end_time": "2026-10-26T17:35:05.424625+00:00",
+    "run_time_seconds": 0.0023598670959472656,
+    "last_commit": {
+      "hash": "e56d9fc859d2e83c7207c6514d3727ee6bf6a291",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:32:45-04:00",
+      "message": "Bug report sensors and media: location, sensors, camera, audio, media, accessibility, input method, display and window artifacts"
+    }
+  },
+  "headers": [
+    "Session",
+    "Key",
+    "Role",
+    "User",
+    "Owner PID",
+    "Owner UID",
+    "Package",
+    "Active",
+    "Flags (as stored)",
+    "Playback State (as printed)",
+    "Audio Attributes",
+    "Volume (as printed)",
+    "Metadata (as printed)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

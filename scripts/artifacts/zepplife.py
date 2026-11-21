@@ -17,7 +17,7 @@ __artifacts_v2__ = {
 }
 
 from scripts.artifacts.storagePathViews import unique_files
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, is_sqlite_sidecar
 
 @artifact_processor
 def extract_zepplife_heartrate(context):
@@ -27,7 +27,7 @@ def extract_zepplife_heartrate(context):
     sources = []
 
     for db_path in files_found:
-        if str(db_path).endswith(("-wal", "-shm", "-journal")):
+        if is_sqlite_sidecar(db_path):
             continue
         db = open_sqlite_db_readonly(db_path)
         if not db:

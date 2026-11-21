@@ -1,0 +1,46 @@
+{
+  "metadata": {
+    "module_name": "chromiumFileSystem",
+    "artifact_name": "Chromium File System API - Sites",
+    "function_name": "chromiumFileSystemSites",
+    "case_number": "caseknowndata_s2_history_cleared",
+    "number_of_columns": 8,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 58,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/chromiumFileSystem/testdata.chromiumFileSystem.chromiumFileSystemSites.caseknowndata_s2_history_cleared.zip",
+    "start_time": "2026-11-01T22:25:00.595885+00:00",
+    "end_time": "2026-11-01T22:25:00.626205+00:00",
+    "run_time_seconds": 0.0012462139129638672,
+    "last_commit": {
+      "hash": "6beb23e1705346b54e8a134f732331f077370764",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-10-29T19:15:23-04:00",
+      "message": "Chromium File System API bucket notes: tighten wording and citations"
+    }
+  },
+  "headers": [
+    "State",
+    "Site",
+    "Site Key (as stored)",
+    "Folder",
+    "Folder Present",
+    "Saved Entries",
+    "Browser",
+    "Android User"
+  ],
+  "data": [
+    [
+      "Live",
+      "http://localhost:8765",
+      "http_localhost_8765",
+      "000",
+      "Yes",
+      4,
+      "Chrome",
+      "0"
+    ]
+  ]
+}

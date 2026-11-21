@@ -1,0 +1,98 @@
+{
+  "metadata": {
+    "module_name": "privateNotepad",
+    "artifact_name": "Private Notepad - Note Attachments",
+    "function_name": "private_notepad_attachments",
+    "case_number": "casejens",
+    "number_of_columns": 10,
+    "number_of_rows": 5,
+    "total_data_size_bytes": 963,
+    "media_checkins": 0,
+    "media_embedded_checkins": 3,
+    "input_zip_path": "admin/test/cases/data/privateNotepad/testdata.privateNotepad.private_notepad_attachments.casejens.zip",
+    "start_time": "2026-11-11T17:18:41.073560+00:00",
+    "end_time": "2026-11-11T17:18:41.228436+00:00",
+    "run_time_seconds": 0.05551552772521973,
+    "last_commit": {
+      "hash": "1c6b34a4401753a340e12a7b33d1a484bf570f2d",
+      "author_name": "Jens Gr\u00c3\u00b8nh\u00c3\u00b8j Stigaard",
+      "author_email": "jens@stigaard.info",
+      "date": "2026-11-09T09:23:46+01:00",
+      "message": "Private Notepad: add Android User column, stricter hash and time parsing"
+    }
+  },
+  "headers": [
+    "Note Date",
+    "Attachment",
+    "Status",
+    "Attachment Type",
+    "Attachment ID",
+    "Note ID",
+    "Note Title",
+    "Attachment File",
+    "Android User",
+    "Source File"
+  ],
+  "data": [
+    [
+      1700000000,
+      "mock_embedded_html_path",
+      "Decrypted",
+      "Image",
+      "img-1",
+      1,
+      "Indk\u00f8b \u00e6\u00f8\u00e5",
+      "test_data/data/data/ru.alexandermalikov.protectednotes/files/images/img-1",
+      "0",
+      "test_data/data/data/ru.alexandermalikov.protectednotes/databases/notes.db"
+    ],
+    [
+      1700000000,
+      "mock_embedded_html_path",
+      "Decrypted",
+      "Audio",
+      "aud-1",
+      1,
+      "Indk\u00f8b \u00e6\u00f8\u00e5",
+      "test_data/data/data/ru.alexandermalikov.protectednotes/files/recordings/aud-1",
+      "0",
+      "test_data/data/data/ru.alexandermalikov.protectednotes/databases/notes.db"
+    ],
+    [
+      1700000000,
+      null,
+      "File not found",
+      "Image",
+      "gone",
+      4,
+      "Missing attachment",
+      "",
+      "0",
+      "test_data/data/data/ru.alexandermalikov.protectednotes/databases/notes.db"
+    ],
+    [
+      null,
+      null,
+      "Not named by a note",
+      "Image",
+      "another-key",
+      "",
+      "",
+      "test_data/data/data/ru.alexandermalikov.protectednotes/files/images/another-key",
+      "0",
+      "test_data/data/data/ru.alexandermalikov.protectednotes/databases/notes.db"
+    ],
+    [
+      null,
+      "mock_embedded_html_path",
+      "Not named by a note",
+      "Image",
+      "orphan",
+      "",
+      "",
+      "test_data/data/data/ru.alexandermalikov.protectednotes/files/images/orphan",
+      "0",
+      "test_data/data/data/ru.alexandermalikov.protectednotes/databases/notes.db"
+    ]
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "case1": {
+    "description": "Android 15 emulator (emu_a15_kdl_v1, a public corpus key made for parser testing with invented data) with KDL 0.3.0: kl.db with 68 rows and 6 screenshots, the live copy actions-live.jsonl, and two export folders under Documents. Exercises all five KDL artifacts, the hash chain check, screenshot hash checks and the export manifest checks.",
+    "maker": "@AlexisBrignoni",
+    "make_data": {
+      "input_data_path": "emu_a15_kdl_v1.tar",
+      "os": "macOS-27.2-arm64-arm-64bit-Mach-O",
+      "timestamp": "2026-11-09T02:01:32.750847",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-11-09T02:01:32.740932",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "kdl_known_data": {
+        "search_patterns": [
+          "*/com.abrignoni.knowndatalogger/databases/kl.db*",
+          "*/com.abrignoni.knowndatalogger/files/screens/*",
+          "*/Android/data/com.abrignoni.knowndatalogger/files/actions-live.jsonl",
+          "*/kdl_*/manifest.json",
+          "*/kdl_*/actions.jsonl",
+          "*/kdl_*/screens/*"
+        ],
+        "file_count": 22,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "kdl_captured_events": {
+        "search_patterns": [
+          "*/com.abrignoni.knowndatalogger/databases/kl.db*",
+          "*/com.abrignoni.knowndatalogger/files/screens/*",
+          "*/Android/data/com.abrignoni.knowndatalogger/files/actions-live.jsonl",
+          "*/kdl_*/manifest.json",
+          "*/kdl_*/actions.jsonl",
+          "*/kdl_*/screens/*"
+        ],
+        "file_count": 22,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "kdl_edit_history": {
+        "search_patterns": [
+          "*/com.abrignoni.knowndatalogger/databases/kl.db*",
+          "*/Android/data/com.abrignoni.knowndatalogger/files/actions-live.jsonl",
+          "*/kdl_*/manifest.json",
+          "*/kdl_*/actions.jsonl"
+        ],
+        "file_count": 6,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "kdl_setup": {
+        "search_patterns": [
+          "*/com.abrignoni.knowndatalogger/databases/kl.db*",
+          "*/Android/data/com.abrignoni.knowndatalogger/files/actions-live.jsonl",
+          "*/kdl_*/manifest.json",
+          "*/kdl_*/actions.jsonl"
+        ],
+        "file_count": 6,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "kdl_exports": {
+        "search_patterns": [
+          "*/kdl_*/manifest.json",
+          "*/kdl_*/actions.jsonl",
+          "*/kdl_*/screens/*"
+        ],
+        "file_count": 14,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  }
+}

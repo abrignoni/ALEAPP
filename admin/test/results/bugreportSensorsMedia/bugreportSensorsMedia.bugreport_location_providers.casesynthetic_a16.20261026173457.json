@@ -1,0 +1,90 @@
+{
+  "metadata": {
+    "module_name": "bugreportSensorsMedia",
+    "artifact_name": "Bug Report - Location Providers",
+    "function_name": "bugreport_location_providers",
+    "case_number": "casesynthetic_a16",
+    "number_of_columns": 14,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 413,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSensorsMedia/testdata.bugreportSensorsMedia.bugreport_location_providers.casesynthetic_a16.zip",
+    "start_time": "2026-10-26T17:34:57.225544+00:00",
+    "end_time": "2026-10-26T17:34:57.361647+00:00",
+    "run_time_seconds": 0.012761592864990234,
+    "last_commit": {
+      "hash": "e56d9fc859d2e83c7207c6514d3727ee6bf6a291",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:32:45-04:00",
+      "message": "Bug report sensors and media: location, sensors, camera, audio, media, accessibility, input method, display and window artifacts"
+    }
+  },
+  "headers": [
+    "Provider",
+    "Service State",
+    "Allowed",
+    "Useable",
+    "Enabled",
+    "Identity",
+    "Properties",
+    "Listeners",
+    "Target Service",
+    "Connected",
+    "Stationary Throttled",
+    "Started",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "passive",
+      "registered",
+      "true",
+      "",
+      "",
+      "1000/android[LocationService]",
+      "ProviderProperties[powerUsage=Low, accuracy=Fine]",
+      2,
+      "",
+      "",
+      "",
+      "",
+      614,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "network",
+      "ProviderRequest[OFF]",
+      "true",
+      "",
+      "",
+      "10301/com.example.user.sideloaded[network_provider]",
+      "",
+      0,
+      "10301/com.example.user.sideloaded/.NetService@2",
+      "true",
+      "false (not idle) (not stationary)",
+      "",
+      628,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "gps",
+      "ProviderRequest[OFF]",
+      "true",
+      "",
+      "",
+      "1000/android[GnssService]",
+      "",
+      0,
+      "",
+      "",
+      "",
+      "false   (changed +3m0s0ms ago)",
+      637,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

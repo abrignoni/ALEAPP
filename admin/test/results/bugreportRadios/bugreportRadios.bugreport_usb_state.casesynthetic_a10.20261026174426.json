@@ -1,0 +1,89 @@
+{
+  "metadata": {
+    "module_name": "bugreportRadios",
+    "artifact_name": "Bug Report - USB Manager State",
+    "function_name": "bugreport_usb_state",
+    "case_number": "casesynthetic_a10",
+    "number_of_columns": 7,
+    "number_of_rows": 6,
+    "total_data_size_bytes": 581,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportRadios/testdata.bugreportRadios.bugreport_usb_state.casesynthetic_a10.zip",
+    "start_time": "2026-10-26T17:44:26.936306+00:00",
+    "end_time": "2026-10-26T17:44:27.081540+00:00",
+    "run_time_seconds": 0.012702465057373047,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-26T17:44:27.056395",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Path",
+    "Value",
+    "Time As Printed",
+    "Time (UTC)",
+    "Time Note",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "device_manager.handler.current_functions_applied",
+      "true",
+      "",
+      null,
+      "",
+      164,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "device_manager.handler.connected",
+      "false",
+      "",
+      null,
+      "",
+      165,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "device_manager.handler.kernel_state",
+      "DISCONNECTED",
+      "",
+      null,
+      "",
+      166,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "host_manager.num_connects",
+      "0",
+      "",
+      null,
+      "",
+      170,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "port_manager.is_simulation_active",
+      "false",
+      "",
+      null,
+      "",
+      173,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "alsa_manager.cards_parser",
+      "-1",
+      "",
+      null,
+      "",
+      176,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

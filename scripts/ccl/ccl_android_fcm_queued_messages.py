@@ -27,7 +27,7 @@ import os
 import datetime
 import typing
 import dataclasses
-from scripts.ccl import ccl_leveldb
+from scripts.vendor.ccl import ccl_leveldb
 from scripts.ccl import ccl_protobuff
 
 

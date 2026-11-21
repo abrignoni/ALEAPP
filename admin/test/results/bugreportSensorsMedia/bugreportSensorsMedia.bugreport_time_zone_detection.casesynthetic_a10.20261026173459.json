@@ -1,0 +1,34 @@
+{
+  "metadata": {
+    "module_name": "bugreportSensorsMedia",
+    "artifact_name": "Bug Report - Time Zone Detection State",
+    "function_name": "bugreport_time_zone_detection",
+    "case_number": "casesynthetic_a10",
+    "number_of_columns": 7,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSensorsMedia/testdata.bugreportSensorsMedia.bugreport_time_zone_detection.casesynthetic_a10.zip",
+    "start_time": "2026-10-26T17:34:59.615566+00:00",
+    "end_time": "2026-10-26T17:34:59.742626+00:00",
+    "run_time_seconds": 0.013021469116210938,
+    "last_commit": {
+      "hash": "e56d9fc859d2e83c7207c6514d3727ee6bf6a291",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:32:45-04:00",
+      "message": "Bug report sensors and media: location, sensors, camera, audio, media, accessibility, input method, display and window artifacts"
+    }
+  },
+  "headers": [
+    "Component",
+    "Item",
+    "Index",
+    "Elapsed (as printed)",
+    "Value (as printed)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

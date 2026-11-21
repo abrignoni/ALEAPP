@@ -1,0 +1,41 @@
+{
+  "metadata": {
+    "module_name": "bugreportAccountsPower",
+    "artifact_name": "Bug Report - Sync Adapter Last Syncs",
+    "function_name": "bugreport_sync_adapter_last_syncs",
+    "case_number": "casesynthetic_not_a_report",
+    "number_of_columns": 14,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportAccountsPower/testdata.bugreportAccountsPower.bugreport_sync_adapter_last_syncs.casesynthetic_not_a_report.zip",
+    "start_time": "2026-10-26T17:46:28.390311+00:00",
+    "end_time": "2026-10-26T17:46:28.484609+00:00",
+    "run_time_seconds": 0.0027129650115966797,
+    "last_commit": {
+      "hash": "7450687ec1476569021e50b0cfc221c1d2c13a09",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:45:32-04:00",
+      "message": "Bug report accounts, sync, backup, users, battery, power and memory: readers, 33 artifacts, synthetic fixture and tests"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Result",
+    "Source",
+    "Elapsed (as printed)",
+    "Reason",
+    "Exemption",
+    "Extras",
+    "User",
+    "Account",
+    "Account Type",
+    "Authority",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

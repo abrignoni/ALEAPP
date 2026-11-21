@@ -1,0 +1,38 @@
+{
+  "metadata": {
+    "module_name": "bugreportActivity",
+    "artifact_name": "Bug Report - Usage Events",
+    "function_name": "bugreport_usage_events",
+    "case_number": "casesynthetic_cut",
+    "number_of_columns": 11,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportActivity/testdata.bugreportActivity.bugreport_usage_events.casesynthetic_cut.zip",
+    "start_time": "2026-10-26T04:29:12.327356+00:00",
+    "end_time": "2026-10-26T04:29:12.568320+00:00",
+    "run_time_seconds": 0.017926692962646484,
+    "last_commit": {
+      "hash": "60feb0e6464e0ea58cdcb61c032c78fc0cafae3a",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T00:28:02-04:00",
+      "message": "Bug report activity: boot reason properties are Device Facts rows, the cut dump holding the rows is logged, notes name the uniform columns"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "User",
+    "Event Type",
+    "Package",
+    "Class",
+    "Flags (as stored)",
+    "Extras",
+    "Source Section",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

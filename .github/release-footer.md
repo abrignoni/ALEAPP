@@ -11,6 +11,8 @@
 | macOS, Intel | `-macos-x64.dmg` |
 | Linux, 64-bit Intel or AMD | `-linux-x64.AppImage` |
 | Linux on ARM | `-linux-arm64.AppImage` |
+| Debian or Ubuntu, 64-bit Intel or AMD / ARM | `-linux-x64.deb` / `-linux-arm64.deb` |
+| Fedora or another RPM-based Linux, 64-bit Intel or AMD / ARM | `-linux-x64.rpm` / `-linux-arm64.rpm` |
 
 Every download holds one program, `aleapp`. Started without arguments, from the
 Applications folder or a double-click, it opens the window. Given arguments in a terminal,
@@ -65,7 +67,28 @@ and compare it with the line in `SHA256SUMS.txt`, which is lower case.
 ## Linux
 
 The build is made on Ubuntu 22.04, so it needs glibc 2.35 or newer and will not start on
-an older distribution.
+an older distribution. That holds for the AppImage, the `.deb` and the `.rpm`, which are
+the same build.
+
+The `.deb` and the `.rpm` put `aleapp` on the PATH and add a menu entry. Install one from
+the folder you downloaded it to:
+
+```bash
+sudo apt install ./ALEAPP-<version>-linux-x64.deb
+sudo dnf install ./ALEAPP-<version>-linux-x64.rpm
+```
+
+Before a release is made, the `.deb` is installed and run on Ubuntu 22.04 and the `.rpm` on
+the current Fedora. Remove them with `sudo apt remove aleapp` or `sudo dnf remove aleapp`.
+
+## Third-party licences
+
+ALEAPP's own code is MIT. To show HEIC images the packaged programs include heicreader, which is
+MIT and built from MIT and BSD-3-Clause code. The licence texts are in the `LICENSES` folder
+inside every download and in `LICENSES/THIRD-PARTY-NOTICES.md` in the repository.
+`LICENSES/bundled/` in every download holds the licence of each Python package the program
+carries and of each library it takes from the build machine, and its index names the ones under copyleft terms, such as simplekml (LGPL), with a
+link to their source.
 
 ## Code signing policy
 

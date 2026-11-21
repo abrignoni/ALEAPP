@@ -1,0 +1,89 @@
+{
+  "metadata": {
+    "module_name": "bugreportNetwork",
+    "artifact_name": "Bug Report - Network Policy UID Entries",
+    "function_name": "bugreport_netpolicy_uid_entries",
+    "case_number": "casesynthetic_cut",
+    "number_of_columns": 5,
+    "number_of_rows": 8,
+    "total_data_size_bytes": 716,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportNetwork/testdata.bugreportNetwork.bugreport_netpolicy_uid_entries.casesynthetic_cut.zip",
+    "start_time": "2026-10-26T17:22:16.003196+00:00",
+    "end_time": "2026-10-26T17:22:16.116500+00:00",
+    "run_time_seconds": 0.01254582405090332,
+    "last_commit": {
+      "hash": "35ad867ff7da9d4bd9ac2bb41cca31cb5a49f8b2",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:21:50-04:00",
+      "message": "Bug report network: Wi-Fi, network usage, policy, connectivity, DNS, interface, socket and tethering artifacts"
+    }
+  },
+  "headers": [
+    "List",
+    "UID",
+    "Value (as printed)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Policy for UIDs",
+      1000,
+      "policy=4 (ALLOW_METERED_BACKGROUND)",
+      333,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Policy for UIDs",
+      10300,
+      "policy=4 (ALLOW_METERED_BACKGROUND)",
+      334,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Power save whitelist (except idle) app ids",
+      1000,
+      "true",
+      336,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Power save whitelist (except idle) app ids",
+      10120,
+      "true",
+      337,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Default restrict background allowlist uids",
+      10300,
+      "",
+      339,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Uids transitioning to background",
+      10300,
+      "+3s400ms",
+      341,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Status for all known UIDs",
+      -1,
+      "state=null blocked_state={blocked=NONE,allowed=NONE,effective=NONE}",
+      343,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Status for all known UIDs",
+      10300,
+      "state={procState=TOP ,seq=55,cap=LCMNFUAT} blocked_state={blocked=NONE,allowed=RESTRICTED_MODE_PERMISSIONS,effective=NONE}",
+      345,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

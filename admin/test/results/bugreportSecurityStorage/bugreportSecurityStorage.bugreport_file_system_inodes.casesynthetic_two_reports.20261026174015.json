@@ -1,0 +1,66 @@
+{
+  "metadata": {
+    "module_name": "bugreportSecurityStorage",
+    "artifact_name": "Bug Report - File System Inodes",
+    "function_name": "bugreport_file_system_inodes",
+    "case_number": "casesynthetic_two_reports",
+    "number_of_columns": 8,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 201,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSecurityStorage/testdata.bugreportSecurityStorage.bugreport_file_system_inodes.casesynthetic_two_reports.zip",
+    "start_time": "2026-10-26T17:40:15.616668+00:00",
+    "end_time": "2026-10-26T17:40:15.786727+00:00",
+    "run_time_seconds": 0.03270530700683594,
+    "last_commit": {
+      "hash": "702ca90825fbb296e5cc429838c511eb52a44af6",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:39:47-04:00",
+      "message": "Bug report security and storage: readers and 30 artifacts for device policy, lock settings, biometrics, trust, ADB, vendor services, storage, dbinfo and flags"
+    }
+  },
+  "headers": [
+    "Filesystem",
+    "Inodes",
+    "IUsed",
+    "IFree",
+    "IUse%",
+    "Mounted On",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "/dev/block/dm-8",
+      "18446744073709551615",
+      "5120",
+      "18446744073709546495",
+      "1%",
+      "/",
+      1823,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "tmpfs",
+      "375050",
+      "1310",
+      "373740",
+      "1%",
+      "/dev",
+      1824,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      "/dev/block/dm-63",
+      "3815424",
+      "120210",
+      "3695214",
+      "3%",
+      "/data",
+      1825,
+      "Dump1/dumpstate.txt"
+    ]
+  ]
+}

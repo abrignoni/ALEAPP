@@ -1,0 +1,68 @@
+{
+  "metadata": {
+    "module_name": "bugreportAccountsPower",
+    "artifact_name": "Bug Report - Memory Summary",
+    "function_name": "bugreport_memory_summary",
+    "case_number": "casesynthetic_a16",
+    "number_of_columns": 4,
+    "number_of_rows": 6,
+    "total_data_size_bytes": 390,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportAccountsPower/testdata.bugreportAccountsPower.bugreport_memory_summary.casesynthetic_a16.zip",
+    "start_time": "2026-10-26T19:10:57.259359+00:00",
+    "end_time": "2026-10-26T19:10:57.544307+00:00",
+    "run_time_seconds": 0.16835904121398926,
+    "last_commit": {
+      "hash": "d1aa88ec6597139a2e6c891969cef84a01cd6a2c",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T14:15:20-04:00",
+      "message": "Give each bug report topic group its own ALEAPP category"
+    }
+  },
+  "headers": [
+    "Name",
+    "Value",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Uptime",
+      "88359925",
+      118,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Realtime",
+      "17712157",
+      118,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Total RAM",
+      "3,725,764K (status moderate)",
+      171,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Free RAM",
+      "728,284K (  305,764K cached pss +   338,428K cached kernel +    84,092K free)",
+      172,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "GPU",
+      "559,584K (  144,592K dmabuf +   414,992K private)",
+      173,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Used RAM",
+      "4,412,606K (3,098,582K used pss + 1,314,024K kernel)",
+      174,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

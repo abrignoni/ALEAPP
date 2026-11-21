@@ -129,10 +129,9 @@ from scripts.ilapfuncs import (
     artifact_processor,
     convert_unix_ts_to_utc,
     get_sqlite_db_records,
-    logfunc,
+    logfunc, is_sqlite_sidecar,
 )
 
-SIDECARS = ('-wal', '-shm', '-journal')
 
 # The two parties in an object cache directory are joined by an underscore, three
 # colons and an underscore. The seeker replaces a colon when it stages a file, so
@@ -145,7 +144,7 @@ def _files(context, keep):
     found = []
     for file_found in unique_files(context):
         file_found = str(file_found)
-        if os.path.isdir(file_found) or file_found.endswith(SIDECARS):
+        if os.path.isdir(file_found) or is_sqlite_sidecar(file_found):
             continue
         if keep(file_found):
             found.append(file_found)

@@ -56,7 +56,7 @@ import datetime
 import hashlib
 import sqlite3
 
-from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly, does_table_exist_in_db
+from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly, does_table_exist_in_db, is_sqlite_sidecar
 
 
 def _ms_to_utc(value):
@@ -83,7 +83,7 @@ def get_cmh(context):
     seen_hashes = set()
     for file_found in files_found:
         file_found = str(file_found)
-        if file_found.endswith(('-wal', '-shm', '-journal')):
+        if is_sqlite_sidecar(file_found):
             continue
         if file_found.find('.magisk') >= 0 and file_found.find('mirror') >= 0:
             continue  # Skip mirror, it should be duplicate data

@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "description": "Account settings from the preferences_storage table of each matched Thunderbird preferences database, one row per account UUID. Username and Password are those of the incoming server settings.",
         "author": "Marco Neumann {kalinko@be-binary.de}, @AlexisBrignoni, Codex",
         "creation_date": "2025-11-18",
-        "last_update_date": "2026-10-09",
+        "last_update_date": "2026-10-31",
         "requirements": "re, json",
         "category": "Thunderbird App",
         "notes": "Every matched preferences_storage file is read. A copy of the same Android "
@@ -23,7 +23,6 @@ __artifacts_v2__ = {
                  "more than one file was checked on constructed databases only.",
         "paths": ('*/data/net.thunderbird.android/databases/preferences_storage'),
         "output_types": ["standard"],
-        "html_columns": ["Signature"],
         "artifact_icon": "inbox"
     },
      "thunderbird_messages": {

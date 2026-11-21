@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Extracts account info, decoded Firebase JWT data, device identifiers, and usage metrics.",
         "author": "Guilherme Guilherme",
         "creation_date": "2026-05-30",
-        "last_update_date": "2026-09-19",
+        "last_update_date": "2026-10-31",
         "requirements": "none",
         "category": "AI Chatbot - Nova",
         "notes": (
@@ -19,7 +19,7 @@ __artifacts_v2__ = {
             "the app's private data directory."
         ),
         "paths": ("*/com.scaleup.chatai/shared_prefs/MOMO_PREF_FILE.xml",),
-        "output_types": "all",
+        "output_types": "standard",
         "artifact_icon": "settings",
     },
     "get_nova_adapty_prefs": {
@@ -27,7 +27,7 @@ __artifacts_v2__ = {
         "description": "Extracts payment profile and installation metadata from AdaptySDKPrefs.xml.",
         "author": "Guilherme Guilherme, @AlexisBrignoni, Codex",
         "creation_date": "2026-05-30",
-        "last_update_date": "2026-10-09",
+        "last_update_date": "2026-10-31",
         "requirements": "none",
         "category": "AI Chatbot - Nova",
         "notes": (
@@ -42,7 +42,7 @@ __artifacts_v2__ = {
             "the app's private data directory."
         ),
         "paths": ("*/com.scaleup.chatai/shared_prefs/AdaptySDKPrefs.xml",),
-        "output_types": "all",
+        "output_types": "standard",
         "artifact_icon": "credit-card",
     },
 }

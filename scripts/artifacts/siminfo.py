@@ -28,7 +28,7 @@ __artifacts_v2__ = {
 
 import sqlite3
 
-from scripts.ilapfuncs import artifact_processor, logdevinfo, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, logdevinfo, open_sqlite_db_readonly, is_sqlite_sidecar
 
 PRIMARY_SQL = '''
     SELECT number, imsi, display_name, carrier_name, iso_country_code, carrier_id, icc_id
@@ -50,7 +50,7 @@ def get_siminfo(context):
         file_found = str(file_found).replace('\\', '/')
         # The glob collects the database's -wal/-shm sidecars so SQLite can apply
         # them; they are not databases themselves and must not be opened as one.
-        if file_found.endswith(('-wal', '-shm', '-journal')):
+        if is_sqlite_sidecar(file_found):
             continue
         # Skip mirrored copies (e.g. magisk mirror) which duplicate the data
         if '/mirror/' in file_found:

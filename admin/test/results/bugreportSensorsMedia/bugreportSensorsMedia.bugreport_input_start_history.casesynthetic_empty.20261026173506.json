@@ -1,0 +1,41 @@
+{
+  "metadata": {
+    "module_name": "bugreportSensorsMedia",
+    "artifact_name": "Bug Report - Input Start History",
+    "function_name": "bugreport_input_start_history",
+    "case_number": "casesynthetic_empty",
+    "number_of_columns": 14,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSensorsMedia/testdata.bugreportSensorsMedia.bugreport_input_start_history.casesynthetic_empty.zip",
+    "start_time": "2026-10-26T17:35:06.652544+00:00",
+    "end_time": "2026-10-26T17:35:06.747789+00:00",
+    "run_time_seconds": 0.0021953582763671875,
+    "last_commit": {
+      "hash": "e56d9fc859d2e83c7207c6514d3727ee6bf6a291",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:32:45-04:00",
+      "message": "Bug report sensors and media: location, sensors, camera, audio, media, accessibility, input method, display and window artifacts"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Entry",
+    "Reason",
+    "Restarting",
+    "Input Method",
+    "Target Window",
+    "Soft Input Mode",
+    "Input Type",
+    "IME Options",
+    "Field ID",
+    "Field Name",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

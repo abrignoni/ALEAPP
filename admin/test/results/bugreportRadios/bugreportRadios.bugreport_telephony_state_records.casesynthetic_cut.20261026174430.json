@@ -1,0 +1,96 @@
+{
+  "metadata": {
+    "module_name": "bugreportRadios",
+    "artifact_name": "Bug Report - Telephony State Machine Records",
+    "function_name": "bugreport_telephony_state_records",
+    "case_number": "casesynthetic_cut",
+    "number_of_columns": 12,
+    "number_of_rows": 4,
+    "total_data_size_bytes": 489,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportRadios/testdata.bugreportRadios.bugreport_telephony_state_records.casesynthetic_cut.zip",
+    "start_time": "2026-10-26T17:44:30.025656+00:00",
+    "end_time": "2026-10-26T17:44:30.197903+00:00",
+    "run_time_seconds": 0.011413812637329102,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-26T17:44:30.172049",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Service",
+    "State Machine",
+    "Position",
+    "Processed In",
+    "From",
+    "To",
+    "Message",
+    "Time Note",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1793595937,
+      "11-02 06:05:37.133",
+      "isms",
+      "GsmInboundSmsHandler",
+      0,
+      "StartupState",
+      "StartupState",
+      "IdleState",
+      "EVENT_START_ACCEPTING_SMS",
+      "",
+      249,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793615668,
+      "11-02 11:34:28.460",
+      "isms",
+      "GsmInboundSmsHandler",
+      1,
+      "IdleState",
+      "IdleState",
+      "DeliveringState",
+      "EVENT_NEW_SMS",
+      "",
+      250,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793615668,
+      "11-02 11:34:28.505",
+      "isms",
+      "GsmInboundSmsHandler",
+      2,
+      "DeliveringState",
+      "DeliveringState",
+      "IdleState",
+      "EVENT_RETURN_TO_IDLE",
+      "",
+      251,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793595938,
+      "11-02 06:05:38.858",
+      "isms",
+      "CellBroadcastHandler",
+      0,
+      "IdleState",
+      "IdleState",
+      "<null>",
+      "3(0x3)",
+      "",
+      257,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

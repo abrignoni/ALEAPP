@@ -1,0 +1,626 @@
+{
+  "casesynthetic_a16": {
+    "description": "Synthetic Android 16 style bug report text (dumpstate.txt) with two Android users: 22 image packages that carry a first-scan time burst and a placeholder timeStamp, an updated system app with a hidden system copy, user apps, a sideloaded app, packages with the 1970-01-01 and 1969-12-31 23:59:59 times, and 22 user-installed apps updated within two seconds (not marked as factory stamps); usage events as epoch milliseconds, process exit info, settings with change history and a boot reason history. Device zone Europe/Paris. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_a16.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-26T04:28:56.949173",
+      "last_commit": {
+        "hash": "60feb0e6464e0ea58cdcb61c032c78fc0cafae3a",
+        "author_name": "danjethh",
+        "author_email": "danjethh@users.noreply.github.com",
+        "date": "2026-10-26T00:28:02-04:00",
+        "message": "Bug report activity: boot reason properties are Device Facts rows, the cut dump holding the rows is logged, notes name the uniform columns"
+      }
+    },
+    "artifacts": {
+      "bugreport_usage_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_process_exits": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_settings": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_settings_changes": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_boot_reasons": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_a10": {
+    "description": "Synthetic Android 10 style bug report text (bugreport-*.txt, CRLF line endings): userId instead of appId, package-level firstInstallTime, no installer line when none is set, 2009-01-01 00:00:00 placeholder stamps, usage events as wall-clock text in the service dump and again in the checkin section, plain settings, no exit info. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_a10.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-26T04:28:58.427497",
+      "last_commit": {
+        "hash": "60feb0e6464e0ea58cdcb61c032c78fc0cafae3a",
+        "author_name": "danjethh",
+        "author_email": "danjethh@users.noreply.github.com",
+        "date": "2026-10-26T00:28:02-04:00",
+        "message": "Bug report activity: boot reason properties are Device Facts rows, the cut dump holding the rows is logged, notes name the uniform columns"
+      }
+    },
+    "artifacts": {
+      "bugreport_usage_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_process_exits": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_settings": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_settings_changes": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_boot_reasons": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_zip_on_device": {
+    "description": "Synthetic bug report zip as the Shell app keeps it on the device (data/user_de/0/com.android.shell/files/bugreports/bugreport-*.zip), with main_entry.txt and the main text inside; device zone Asia/Kolkata. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_zip_on_device.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-26T04:28:59.735614",
+      "last_commit": {
+        "hash": "60feb0e6464e0ea58cdcb61c032c78fc0cafae3a",
+        "author_name": "danjethh",
+        "author_email": "danjethh@users.noreply.github.com",
+        "date": "2026-10-26T00:28:02-04:00",
+        "message": "Bug report activity: boot reason properties are Device Facts rows, the cut dump holding the rows is logged, notes name the uniform columns"
+      }
+    },
+    "artifacts": {
+      "bugreport_usage_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_process_exits": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_settings": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_settings_changes": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_boot_reasons": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_two_reports": {
+    "description": "Two synthetic bug report texts in two folders (Android 16 style in Asia/Kolkata and Android 10 style in America/Sao_Paulo): both are read and the Source File column tells their rows apart. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_two_reports.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-26T04:29:01.188428",
+      "last_commit": {
+        "hash": "60feb0e6464e0ea58cdcb61c032c78fc0cafae3a",
+        "author_name": "danjethh",
+        "author_email": "danjethh@users.noreply.github.com",
+        "date": "2026-10-26T00:28:02-04:00",
+        "message": "Bug report activity: boot reason properties are Device Facts rows, the cut dump holding the rows is logged, notes name the uniform columns"
+      }
+    },
+    "artifacts": {
+      "bugreport_usage_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_process_exits": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_settings": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_settings_changes": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_boot_reasons": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_cut": {
+    "description": "Synthetic bug report text cut inside the package service dump, which ends with the DUMP TIMEOUT marker and has no trailer, and no later section. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_cut.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-26T04:29:02.748413",
+      "last_commit": {
+        "hash": "60feb0e6464e0ea58cdcb61c032c78fc0cafae3a",
+        "author_name": "danjethh",
+        "author_email": "danjethh@users.noreply.github.com",
+        "date": "2026-10-26T00:28:02-04:00",
+        "message": "Bug report activity: boot reason properties are Device Facts rows, the cut dump holding the rows is logged, notes name the uniform columns"
+      }
+    },
+    "artifacts": {
+      "bugreport_usage_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_process_exits": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_settings": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_settings_changes": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_boot_reasons": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_empty": {
+    "description": "Synthetic bug report text with the banner and no sections. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_empty.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-26T04:29:04.086231",
+      "last_commit": {
+        "hash": "60feb0e6464e0ea58cdcb61c032c78fc0cafae3a",
+        "author_name": "danjethh",
+        "author_email": "danjethh@users.noreply.github.com",
+        "date": "2026-10-26T00:28:02-04:00",
+        "message": "Bug report activity: boot reason properties are Device Facts rows, the cut dump holding the rows is logged, notes name the uniform columns"
+      }
+    },
+    "artifacts": {
+      "bugreport_usage_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_process_exits": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_settings": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_settings_changes": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_boot_reasons": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_not_a_report": {
+    "description": "Two files that match the path patterns but carry no dumpstate banner (a text and a block of arbitrary bytes): neither is read and no rows are reported. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_not_a_report.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-26T04:29:05.428106",
+      "last_commit": {
+        "hash": "60feb0e6464e0ea58cdcb61c032c78fc0cafae3a",
+        "author_name": "danjethh",
+        "author_email": "danjethh@users.noreply.github.com",
+        "date": "2026-10-26T00:28:02-04:00",
+        "message": "Bug report activity: boot reason properties are Device Facts rows, the cut dump holding the rows is logged, notes name the uniform columns"
+      }
+    },
+    "artifacts": {
+      "bugreport_usage_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_process_exits": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_settings": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_settings_changes": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_boot_reasons": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_odd_bytes": {
+    "description": "Synthetic bug report text with a byte order mark, invalid UTF-8 bytes, a NUL, a lone carriage return and a form feed inside values, and no time zone property: control characters are shown as spaces and no UTC is given. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_odd_bytes.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-26T04:29:06.719452",
+      "last_commit": {
+        "hash": "60feb0e6464e0ea58cdcb61c032c78fc0cafae3a",
+        "author_name": "danjethh",
+        "author_email": "danjethh@users.noreply.github.com",
+        "date": "2026-10-26T00:28:02-04:00",
+        "message": "Bug report activity: boot reason properties are Device Facts rows, the cut dump holding the rows is logged, notes name the uniform columns"
+      }
+    },
+    "artifacts": {
+      "bugreport_usage_events": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_process_exits": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_settings": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_settings_changes": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "bugreport_boot_reasons": {
+        "search_patterns": [
+          "*/dumpstate.txt",
+          "*/bugreport-*.txt",
+          "*/bugreport-*.zip"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  }
+}

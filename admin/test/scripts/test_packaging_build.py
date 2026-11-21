@@ -24,6 +24,7 @@ names stubbed out, and what it passed to them inspected.
 """
 import functools
 import hashlib
+import importlib.metadata
 import importlib.util
 import os
 import pathlib
@@ -102,6 +103,19 @@ def _pyinstaller_stubs():
             'PyInstaller.utils.win32': win32, 'PyInstaller.utils.win32.versioninfo': versioninfo}
 
 
+def _pyinstaller_dist(folder):
+    """PyInstaller's distribution as the spec's licence collector reads it. The
+    runtime-contract job runs these tests without PyInstaller installed, and the collector
+    stops a build that cannot bundle PyInstaller's licence."""
+    path = pathlib.Path(folder) / 'pyinstaller-0.dist-info' / 'licenses' / 'COPYING.txt'
+    path.parent.mkdir(parents=True)
+    path.write_text('stand-in for PyInstaller\'s licence\n', encoding='utf-8')
+    return types.SimpleNamespace(
+        files=[pathlib.PurePosixPath('pyinstaller-0.dist-info/licenses/COPYING.txt')],
+        locate_file=lambda entry: pathlib.Path(folder) / str(entry),
+        metadata={'Name': 'pyinstaller'}, version='0')
+
+
 def _run_spec(platform, onefile):
     """Execute the spec as PyInstaller would on `platform`, returning the calls it made."""
     calls = []
@@ -109,7 +123,12 @@ def _run_spec(platform, onefile):
                  for kind in ('Analysis', 'PYZ', 'EXE', 'COLLECT', 'BUNDLE')}
     namespace.update(SPECPATH=str(PACKAGING), __file__=str(SPEC))
     env = {'ALEAPP_ONEFILE': '1' if onefile else '0'}
-    with mock.patch.dict(sys.modules, _pyinstaller_stubs()), \
+    real_distribution = importlib.metadata.distribution
+    with tempfile.TemporaryDirectory() as folder, \
+            mock.patch('importlib.metadata.distribution',
+                       side_effect=lambda name, stand_in=_pyinstaller_dist(folder):
+                       stand_in if name.lower() == 'pyinstaller' else real_distribution(name)), \
+            mock.patch.dict(sys.modules, _pyinstaller_stubs()), \
             mock.patch.dict('os.environ', env), \
             mock.patch.object(sys, 'platform', platform):
         exec(compile(SPEC.read_text(encoding='utf-8'), str(SPEC), 'exec'),  # pylint: disable=exec-used
@@ -123,6 +142,15 @@ class TestSpec(unittest.TestCase):
     def setUpClass(cls):
         cls.driver = _load_driver()
 
+    def _assert_datas_carry_the_licences(self, args):
+        # The spec appends the licences it collected (packaging/licenses.py) to a.datas.
+        datas = [arg for arg in args if isinstance(arg, list) and arg[:1] == ['<a.datas>']]
+        self.assertEqual(len(datas), 1, args)
+        added = datas[0][1:]
+        self.assertIn('LICENSES/bundled/INDEX.md', [dest for dest, _, _ in added])
+        self.assertTrue(all(dest.startswith('LICENSES/bundled/') and kind == 'DATA'
+                            for dest, _, kind in added))
+
     def test_one_executable_starts_from_the_entry_point(self):
         calls, _ = _run_spec('linux', onefile=False)
         analysis = calls['Analysis']
@@ -134,7 +162,7 @@ class TestSpec(unittest.TestCase):
 
     def test_what_is_bundled_comes_from_the_driver(self):
         analysis = _run_spec('linux', onefile=False)[0]['Analysis'].kwargs
-        self.assertEqual(analysis['binaries'], [])
+        self.assertEqual(analysis['binaries'], self.driver.licenses.heicreader_binaries())
         for entry in self.driver.bundle_datas():
             self.assertIn(entry, analysis['datas'])
         hidden = analysis['hiddenimports']
@@ -164,7 +192,7 @@ class TestSpec(unittest.TestCase):
         collect = calls['COLLECT']
         self.assertEqual(collect.kwargs['name'], 'ALEAPP')
         self.assertIn(['<a.binaries>'], collect.args)
-        self.assertIn(['<a.datas>'], collect.args)
+        self._assert_datas_carry_the_licences(collect.args)
         self.assertNotIn('BUNDLE', calls)
 
     def test_the_onefile_build_carries_everything_in_the_executable(self):
@@ -172,7 +200,7 @@ class TestSpec(unittest.TestCase):
             with self.subTest(platform=platform):
                 calls, _ = _run_spec(platform, onefile=True)
                 self.assertIn(['<a.binaries>'], calls['EXE'].args)
-                self.assertIn(['<a.datas>'], calls['EXE'].args)
+                self._assert_datas_carry_the_licences(calls['EXE'].args)
                 self.assertNotIn('COLLECT', calls)
                 self.assertNotIn('BUNDLE', calls)
 
@@ -242,12 +270,14 @@ class TestDriver(unittest.TestCase):
 
     def test_the_msl_lock_goes_over_the_regular_install_without_dependencies(self):
         """requirements-msl-lock.txt says how it is installed: after requirements.txt,
-        with --no-deps, or pip resolves the ccl_* readers to their master again."""
-        regular, lock = self.driver.install_commands('python')
-        self.assertIn(str(REPO_ROOT / 'requirements.txt'), regular)
-        self.assertIn(str(PACKAGING / 'requirements-build.txt'), regular)
-        self.assertNotIn('--no-deps', regular)
-        self.assertEqual(lock[-3:], ['--no-deps', '-r', str(REPO_ROOT / 'requirements-msl-lock.txt')])
+        with --no-deps, or pip resolves the ccl_* readers to their master again. Phase 1
+        does that through the same script CI uses."""
+        build, runtime = self.driver.install_commands('python')
+        self.assertEqual(build[-2:], ['-r', str(PACKAGING / 'requirements-build.txt')])
+        self.assertEqual(runtime[:2], ['python', str(REPO_ROOT / 'admin' / 'scripts' / 'install_requirements.py')])
+        script = (REPO_ROOT / 'admin' / 'scripts' / 'install_requirements.py').read_text(encoding='utf-8')
+        self.assertIn("'--no-deps'", script)
+        self.assertIn('MSL_LOCK', script)
         self.assertIn('pip install --no-deps -r requirements-msl-lock.txt',
                       (REPO_ROOT / 'requirements-msl-lock.txt').read_text(encoding='utf-8'))
 
@@ -531,6 +561,82 @@ class TestAppImage(unittest.TestCase):
             self.assertTrue((appdir / 'aleapp.desktop').is_file())
             self.assertTrue((appdir / 'aleapp.png').is_file())
             self.assertEqual((appdir / '.DirIcon').resolve(), (appdir / 'aleapp.png').resolve())
+
+
+class TestLinuxPackages(unittest.TestCase):
+    """The .deb and the .rpm wrap the folder build the AppImage wraps, unchanged."""
+
+    def setUp(self):
+        self.driver = _load_driver()
+
+    def test_help_lists_the_phase(self):
+        result = _run_driver('--help')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn('linux-packages', result.stdout)
+
+    def test_debian_architecture_names(self):
+        for machine, arch in (('x86_64', 'amd64'), ('AMD64', 'amd64'),
+                              ('aarch64', 'arm64'), ('arm64', 'arm64')):
+            with self.subTest(machine=machine):
+                self.assertEqual(self.driver.deb_arch(machine), arch)
+        with self.assertRaises(SystemExit):
+            self.driver.deb_arch('riscv64')
+
+    def test_a_dev_suffix_becomes_a_tilde(self):
+        """A hyphen is the Debian revision separator and is not allowed in an RPM
+        Version; a tilde sorts before the release in both."""
+        self.assertEqual(self.driver.package_version('2026.4.6-dev'), '2026.4.6~dev')
+        self.assertEqual(self.driver.package_version('2026.4.6'), '2026.4.6')
+
+    def test_debian_control(self):
+        control = self.driver.debian_control('2026.4.6~dev', 'amd64', 123)
+        for line in ('Package: aleapp', 'Version: 2026.4.6~dev', 'Architecture: amd64',
+                     'Installed-Size: 123', f'Homepage: {self.driver.HOMEPAGE}'):
+            self.assertIn(line + '\n', control)
+        self.assertNotIn('Depends:', control)
+        # Every continuation line of the description starts with a space.
+        description = control.split('Description: ', 1)[1].splitlines()[1:]
+        self.assertTrue(description and all(line.startswith(' ') for line in description))
+
+    def test_the_rpm_keeps_the_build_as_tested(self):
+        """No stripping, no debuginfo, no automatic Requires/Provides from bundled libraries."""
+        spec = self.driver.rpm_spec('2026.4.6~dev', 'x86_64')
+        lines = spec.splitlines()
+        for line in ('Name: aleapp', 'Version: 2026.4.6~dev', 'BuildArch: x86_64',
+                     'License: MIT', 'AutoReqProv: no', '%global debug_package %{nil}',
+                     '%global __os_install_post %{nil}', '/usr/lib/aleapp/', '/usr/bin/aleapp'):
+            self.assertIn(line, lines)
+
+    @unittest.skipIf(sys.platform == 'win32', 'the staging makes a symlink')
+    def test_staging_lays_out_a_filesystem_root(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = pathlib.Path(tmp) / 'ALEAPP'
+            (folder / '_internal').mkdir(parents=True)
+            (folder / 'aleapp').write_text('the executable')
+            (folder / '_internal' / 'lib.so').write_text('a library')
+            root = self.driver.linux_staging(folder, pathlib.Path(tmp) / 'root')
+            link = root / 'usr' / 'bin' / 'aleapp'
+            self.assertTrue(link.is_symlink())
+            self.assertEqual(os.readlink(link), '../lib/aleapp/aleapp')
+            self.assertEqual(link.resolve(), (root / 'usr' / 'lib' / 'aleapp' / 'aleapp').resolve())
+            self.assertTrue(os.access(root / 'usr' / 'lib' / 'aleapp' / 'aleapp', os.X_OK))
+            self.assertTrue((root / 'usr' / 'lib' / 'aleapp' / '_internal' / 'lib.so').is_file())
+            desktop = root / 'usr' / 'share' / 'applications' / 'aleapp.desktop'
+            self.assertEqual(desktop.read_text(encoding='utf-8'), self.driver.appimage_desktop_entry())
+            self.assertTrue((root / 'usr' / 'share' / 'pixmaps' / 'aleapp.png').is_file())
+            self.assertTrue((root / 'usr' / 'share' / 'doc' / 'aleapp' / 'copyright').is_file())
+            # md5sums lists files, not the symlink.
+            sums = self.driver.debian_md5sums(root).splitlines()
+            self.assertIn('usr/lib/aleapp/aleapp', {line.split('  ', 1)[1] for line in sums})
+            self.assertNotIn('usr/bin/aleapp', {line.split('  ', 1)[1] for line in sums})
+
+    def test_the_packages_need_the_folder_build(self):
+        with tempfile.TemporaryDirectory() as tmp, \
+                mock.patch.object(self.driver, 'DIST', pathlib.Path(tmp) / 'dist'):
+            for build in ('build_deb', 'build_rpm'):
+                with self.subTest(package=build), self.assertRaises(SystemExit) as caught:
+                    getattr(self.driver, build)()
+                self.assertIn("run 'exe' first", str(caught.exception))
 
 
 if __name__ == '__main__':

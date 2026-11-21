@@ -1,0 +1,48 @@
+{
+  "metadata": {
+    "module_name": "bugreportUsageJobs",
+    "artifact_name": "Bug Report - Pending Alarms",
+    "function_name": "bugreport_pending_alarms",
+    "case_number": "casesynthetic_not_a_report",
+    "number_of_columns": 21,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportUsageJobs/testdata.bugreportUsageJobs.bugreport_pending_alarms.casesynthetic_not_a_report.zip",
+    "start_time": "2026-10-26T17:40:21.719051+00:00",
+    "end_time": "2026-10-26T17:40:21.860907+00:00",
+    "run_time_seconds": 0.0022611618041992188,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-26T17:40:21.846042",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Trigger Time (UTC)",
+    "Trigger As Printed",
+    "Latest Trigger Time (UTC)",
+    "Latest Trigger As Printed",
+    "List",
+    "Alarm Type",
+    "Package (as printed)",
+    "Tag",
+    "Original When (as printed)",
+    "Window",
+    "Repeat Interval (ms)",
+    "Count",
+    "Flags",
+    "Exact Allow Reason",
+    "Operation",
+    "Listener",
+    "Batch",
+    "Index",
+    "Time Note",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

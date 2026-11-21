@@ -201,7 +201,7 @@ from datetime import datetime, timedelta, timezone
 
 from PIL import ExifTags, Image, UnidentifiedImageError
 
-from scripts.ccl import ccl_leveldb
+from scripts.vendor.ccl import ccl_leveldb
 from scripts.ilapfuncs import artifact_processor, check_in_media, logfunc, open_sqlite_db_readonly
 
 # ---------------------------------------------------------------------------

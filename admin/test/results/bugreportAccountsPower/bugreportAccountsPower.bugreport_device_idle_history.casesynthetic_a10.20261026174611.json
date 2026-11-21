@@ -1,0 +1,66 @@
+{
+  "metadata": {
+    "module_name": "bugreportAccountsPower",
+    "artifact_name": "Bug Report - Device Idle History",
+    "function_name": "bugreport_device_idle_history",
+    "case_number": "casesynthetic_a10",
+    "number_of_columns": 6,
+    "number_of_rows": 4,
+    "total_data_size_bytes": 320,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportAccountsPower/testdata.bugreportAccountsPower.bugreport_device_idle_history.casesynthetic_a10.zip",
+    "start_time": "2026-10-26T17:46:11.727849+00:00",
+    "end_time": "2026-10-26T17:46:11.846619+00:00",
+    "run_time_seconds": 0.015919208526611328,
+    "last_commit": {
+      "hash": "7450687ec1476569021e50b0cfc221c1d2c13a09",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:45:32-04:00",
+      "message": "Bug report accounts, sync, backup, users, battery, power and memory: readers, 33 artifacts, synthetic fixture and tests"
+    }
+  },
+  "headers": [
+    "Position",
+    "State",
+    "Time Ago (as printed)",
+    "Reason",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      0,
+      "light-idle",
+      "-7h28m15s23ms",
+      "",
+      425,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1,
+      "light-maint",
+      "-7h12m14s687ms",
+      "",
+      426,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      2,
+      "normal",
+      "-6h17m7s310ms",
+      "motion",
+      427,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      3,
+      "deep-idle",
+      "-3h50m49s292ms",
+      "",
+      428,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

@@ -101,7 +101,6 @@ from datetime import datetime, timedelta, timezone
 from scripts.artifacts.storagePathViews import canonical_path, unique_files
 from scripts.ilapfuncs import (
     artifact_processor,
-    get_sqlite_db_path,
     logfunc,
     open_sqlite_db_readonly,
 )
@@ -179,7 +178,7 @@ def _prefs(source_path):
 def _open(path):
     '''One database opened read only, or None.'''
     try:
-        return open_sqlite_db_readonly(get_sqlite_db_path(path))
+        return open_sqlite_db_readonly(path)
     except sqlite3.Error as ex:
         logfunc(f'Threads: could not open {os.path.basename(path)}: {ex}')
         return None

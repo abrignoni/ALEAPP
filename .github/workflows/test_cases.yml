@@ -47,7 +47,7 @@ jobs:
           python-version: '3.x'
 
       - name: Install runtime dependencies
-        run: python -m pip install -r requirements.txt
+        run: python admin/scripts/install_requirements.py
 
       - name: Run test cases against recorded baselines
         run: python admin/test/scripts/run_test_cases.py

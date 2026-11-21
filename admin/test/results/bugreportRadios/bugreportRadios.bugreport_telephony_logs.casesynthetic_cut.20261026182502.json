@@ -1,0 +1,96 @@
+{
+  "metadata": {
+    "module_name": "bugreportRadios",
+    "artifact_name": "Bug Report - Telephony Service Logs",
+    "function_name": "bugreport_telephony_logs",
+    "case_number": "casesynthetic_cut",
+    "number_of_columns": 8,
+    "number_of_rows": 6,
+    "total_data_size_bytes": 1100,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportRadios/testdata.bugreportRadios.bugreport_telephony_logs.casesynthetic_cut.zip",
+    "start_time": "2026-10-26T18:25:02.998876+00:00",
+    "end_time": "2026-10-26T18:25:03.306736+00:00",
+    "run_time_seconds": 0.1765153408050537,
+    "last_commit": {
+      "hash": "f246f0856bad96283c9a62aa4f52d908f14298c7",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T14:24:13-04:00",
+      "message": "Radios artifacts show identifiers as printed: no withheld values, SIM subscription identifier columns, adapter address"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Service",
+    "Heading",
+    "Message",
+    "Time Note",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1793615654,
+      "2026-11-02T11:34:14.480813",
+      "phone",
+      "mDataRoamingNotifLog:",
+      "updateDataRoamingStatus dataAllowed=true, disallowReasons=[], dataIsNowRoaming=false, RoamingNumeric=00101, CallingReason=3",
+      "",
+      185,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793615658,
+      "2026-11-02T11:34:18.792141",
+      "phone",
+      "mDataRoamingNotifLog:",
+      "updateDataRoamingStatus dataAllowed=false, disallowReasons=[DATA_DISABLED], dataIsNowRoaming=false, RoamingNumeric=00101, CallingReason=3",
+      "",
+      186,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793595943,
+      "2026-11-02T06:05:43.952898",
+      "carrier_config",
+      "CarrierConfigLoader local log=",
+      "Update config for phoneId=1 simState=NOT_READY",
+      "",
+      232,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793595946,
+      "2026-11-02T06:05:46.041134",
+      "carrier_config",
+      "CarrierConfigLoader local log=",
+      "Restored carrier config from cache. phoneId=0, xml=carrierconfig-com.example.carrier-89990000000000000011-9001-00101-FF.xml",
+      "",
+      233,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793600511,
+      "2026-11-02T07:21:51.052455",
+      "carrier_config",
+      "CarrierConfigLoader local log=",
+      "System unlocked",
+      "",
+      234,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793615670,
+      "2026-11-02T11:34:30.759660",
+      "isms",
+      "mLocalLog:",
+      "Delivering SMS to: com.example.messages com.example.messages.SmsDeliverReceiver, {x-message-id:-1234567890123456789}",
+      "",
+      254,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

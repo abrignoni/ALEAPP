@@ -48,7 +48,7 @@ class PersistentPropertyTimeTest(unittest.TestCase):
             content = b'ignored\r\npersist.sys.boot.reason.historyDreboot,0\r\nreboot,factory_reset,-1\nreboot,+001700000000\nreboot,bad\nreboot,\nreboot,999999999999999999999999999999999\nreboot,extra,123\nreboot,1700000001\nreboot,1700000001\n'
             path = write(root, 'data/property/persistent_properties', content)
             headers, rows, source = persistentProp.get_persistentProp.__wrapped__(context(root, [path]))
-            self.assertEqual(len(headers), 6)
+            self.assertEqual(len(headers), 11)
             self.assertEqual(len(rows), 8)
             self.assertEqual(source, 'data/property/persistent_properties')
             self.assertEqual([r[4] for r in rows], [2, 3, 4, 5, 6, 7, 9, 10])
@@ -82,7 +82,7 @@ class PersistentPropertyTimeTest(unittest.TestCase):
             self.assertEqual(source, 'data/property/persistent_properties\nother/property/persistent_properties')
             self.assertEqual([r[-1] for r in rows], ['data/property/persistent_properties', 'other/property/persistent_properties', 'data/property/persistent_properties'])
             headers, rows, _ = persistentProp.get_persistentProp.__wrapped__(context(root, [first, empty, first]))
-            self.assertEqual(len(headers), 6)
+            self.assertEqual(len(headers), 11)
             self.assertEqual(len(rows), 2)
             bad = write(root, 'bad/property/persistent_properties', b'reboot,bad\n')
             ctx = context(root, [bad]);ctx.get_relative_path = lambda p: 'line\n"'+'x'*1000

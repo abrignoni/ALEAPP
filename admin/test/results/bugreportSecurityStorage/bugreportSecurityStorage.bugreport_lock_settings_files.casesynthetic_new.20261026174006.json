@@ -1,0 +1,81 @@
+{
+  "metadata": {
+    "module_name": "bugreportSecurityStorage",
+    "artifact_name": "Bug Report - Lock Settings Files",
+    "function_name": "bugreport_lock_settings_files",
+    "case_number": "casesynthetic_new",
+    "number_of_columns": 9,
+    "number_of_rows": 4,
+    "total_data_size_bytes": 429,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSecurityStorage/testdata.bugreportSecurityStorage.bugreport_lock_settings_files.casesynthetic_new.zip",
+    "start_time": "2026-10-26T17:40:06.095658+00:00",
+    "end_time": "2026-10-26T17:40:06.213213+00:00",
+    "run_time_seconds": 0.015588521957397461,
+    "last_commit": {
+      "hash": "702ca90825fbb296e5cc429838c511eb52a44af6",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:39:47-04:00",
+      "message": "Bug report security and storage: readers and 30 artifacts for device policy, lock settings, biometrics, trust, ADB, vendor services, storage, dbinfo and flags"
+    }
+  },
+  "headers": [
+    "Modified (UTC)",
+    "Modified As Printed",
+    "Time Note",
+    "Location",
+    "Directory",
+    "Size (bytes)",
+    "File Name",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1781023327,
+      "2026-06-09 18:42:07",
+      "",
+      "User 0",
+      "/data/system_de/0/spblob",
+      91,
+      "0000000000000000.e0.bku",
+      1586,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1781023325,
+      "2026-06-09 18:42:05",
+      "",
+      "User 0",
+      "/data/system_de/0/spblob",
+      57,
+      "0000000000000000.handle",
+      1587,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1781023325,
+      "2026-06-09 18:42:05",
+      "",
+      "User 0",
+      "/data/system_de/0/spblob",
+      193,
+      "0123456789abcdef.spblob",
+      1588,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1781023327,
+      "2026-06-09 18:42:07",
+      "",
+      "Backup",
+      "/data/sec_backup_de/0/spblob",
+      57,
+      "0000000000000000.handle",
+      1590,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

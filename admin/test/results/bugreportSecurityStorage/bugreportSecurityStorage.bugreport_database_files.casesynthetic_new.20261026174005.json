@@ -1,0 +1,86 @@
+{
+  "metadata": {
+    "module_name": "bugreportSecurityStorage",
+    "artifact_name": "Bug Report - Database Files",
+    "function_name": "bugreport_database_files",
+    "case_number": "casesynthetic_new",
+    "number_of_columns": 13,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 639,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSecurityStorage/testdata.bugreportSecurityStorage.bugreport_database_files.casesynthetic_new.zip",
+    "start_time": "2026-10-26T17:40:05.315593+00:00",
+    "end_time": "2026-10-26T17:40:05.447836+00:00",
+    "run_time_seconds": 0.017451763153076172,
+    "last_commit": {
+      "hash": "702ca90825fbb296e5cc429838c511eb52a44af6",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:39:47-04:00",
+      "message": "Bug report security and storage: readers and 30 artifacts for device policy, lock settings, biometrics, trust, ADB, vendor services, storage, dbinfo and flags"
+    }
+  },
+  "headers": [
+    "mtime (UTC)",
+    "mtime As Printed",
+    "ctime (UTC)",
+    "ctime As Printed",
+    "atime (UTC)",
+    "atime As Printed",
+    "Process",
+    "PID",
+    "Directory",
+    "File Name",
+    "Size (bytes)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1779005529,
+      "2026-05-17T08:12:09.114233Z",
+      1779005529,
+      "2026-05-17T08:12:09.114233Z",
+      1779005529,
+      "2026-05-17T08:12:09.109233Z",
+      "com.example.settings",
+      4321,
+      "/data/user_de/0/com.example.settings/databases",
+      "example-db-v1",
+      8192,
+      1941,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793542951,
+      "2026-11-01T14:22:31.001858Z",
+      1793542951,
+      "2026-11-01T14:22:31.001858Z",
+      1779005529,
+      "2026-05-17T08:12:09.121233Z",
+      "com.example.settings",
+      4321,
+      "/data/user_de/0/com.example.settings/databases",
+      "example-db-v1-wal",
+      524288,
+      1942,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1772448067,
+      "2026-03-02T10:41:07.512Z",
+      1772448067,
+      "2026-03-02T10:41:07.512Z",
+      0,
+      "1970-01-01T00:00:00Z",
+      "com.example.settings",
+      4321,
+      "/data/user_de/0/com.example.settings/databases",
+      "odd name.db",
+      0,
+      1943,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

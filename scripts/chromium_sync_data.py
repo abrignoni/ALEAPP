@@ -40,7 +40,7 @@ import datetime
 import re
 import struct
 
-from scripts.ccl import ccl_leveldb
+from scripts.vendor.ccl import ccl_leveldb
 
 CHROMIUM_COMMIT = '5926523bcfedb77ba2533ace1dd93b477673f72a'
 
@@ -247,6 +247,21 @@ SCHEMAS = {
         13: ('received_time_windows_epoch_micros', 'int64', False),
         14: ('opened_time_windows_epoch_micros', 'int64', False),
         16: ('activated_time_windows_epoch_micros', 'int64', False),
+    },
+    # reading_list.proto (components/reading_list/core/proto), the value of a
+    # reading_list-dt- key, written under the entry's URL by
+    # components/reading_list/core/reading_list_model_storage_impl.cc
+    'ReadingListLocal': {
+        1: ('entry_id', 'string', False),
+        2: ('title', 'string', False),
+        3: ('url', 'string', False),
+        4: ('creation_time_us', 'int64', False),
+        5: ('update_time_us', 'int64', False),
+        6: ('status', 'enum', False),
+        7: ('distillation_state', 'enum', False),
+        11: ('first_read_time_us', 'int64', False),
+        12: ('update_title_time_us', 'int64', False),
+        17: ('estimated_read_time_seconds', 'int32', False),
     },
     # data_type_state.proto, the value of a -GlobalMetadata key
     'DataTypeState': {

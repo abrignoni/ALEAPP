@@ -285,7 +285,7 @@ from scripts.ilapfuncs import (
     check_in_media,
     get_sqlite_db_path,
     get_sqlite_db_records,
-    logfunc,
+    logfunc, is_sqlite_sidecar,
 )
 
 _EPOCH = datetime(1970, 1, 1, tzinfo=timezone.utc)
@@ -898,7 +898,7 @@ def pinterest_cached_videos(context):
                 response_entries.setdefault(stem, {})[suffix] = file_found
         elif 'media_cache' in parent.replace('\\', '/').split('/'):
             fragment_roots.add(file_found)
-        elif name.startswith('exoplayer_internal.db') and not name.endswith(('-wal', '-shm', '-journal')):
+        elif name.startswith('exoplayer_internal.db') and not is_sqlite_sidecar(name):
             databases.append(file_found)
 
     for stem in sorted(response_entries):
@@ -1050,7 +1050,7 @@ def pinterest_idea_pin_drafts(context):
 
     for file_found in unique_files(context):
         name = os.path.basename(file_found)
-        if not name.startswith('pinterest-db') or name.endswith(('-wal', '-shm', '-journal')):
+        if not name.startswith('pinterest-db') or is_sqlite_sidecar(name):
             continue
         source_path = file_found
         sql = _select_present(file_found, 'idea_pin_drafts', _DRAFT_COLUMNS)

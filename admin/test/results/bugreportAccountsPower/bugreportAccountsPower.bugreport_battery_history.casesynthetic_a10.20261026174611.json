@@ -1,0 +1,158 @@
+{
+  "metadata": {
+    "module_name": "bugreportAccountsPower",
+    "artifact_name": "Bug Report - Battery History",
+    "function_name": "bugreport_battery_history",
+    "case_number": "casesynthetic_a10",
+    "number_of_columns": 9,
+    "number_of_rows": 11,
+    "total_data_size_bytes": 1451,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportAccountsPower/testdata.bugreportAccountsPower.bugreport_battery_history.casesynthetic_a10.zip",
+    "start_time": "2026-10-26T17:46:11.124116+00:00",
+    "end_time": "2026-10-26T17:46:11.242542+00:00",
+    "run_time_seconds": 0.01692819595336914,
+    "last_commit": {
+      "hash": "7450687ec1476569021e50b0cfc221c1d2c13a09",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:45:32-04:00",
+      "message": "Bug report accounts, sync, backup, users, battery, power and memory: readers, 33 artifacts, synthetic fixture and tests"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Clock Record Used (as printed)",
+    "Level (%)",
+    "State Bits (hex as printed)",
+    "Marker",
+    "Changes (as printed)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1793563200,
+      "0",
+      "2026-11-01 21:00:00",
+      null,
+      "",
+      "Reset",
+      "RESET:TIME: 2026-11-01-21-00-00",
+      245,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793563200,
+      "0",
+      "2026-11-01 21:00:00",
+      96,
+      "c0100010",
+      "",
+      "status=discharging health=good plug=none temp=360 volt=4328 +running +wake_lock +screen",
+      246,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793563200,
+      "0",
+      "2026-11-01 21:00:00",
+      96,
+      "c0100010",
+      "",
+      "user=0:\"0\"",
+      247,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793563200,
+      "+6ms",
+      "2026-11-01 21:00:00",
+      96,
+      "c0000010",
+      "",
+      "-screen stats=0:\"wakelock-change\"",
+      248,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793563200,
+      "+884ms",
+      "2026-11-01 21:00:00",
+      96,
+      "c0000010",
+      "",
+      "volt=4267",
+      249,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793592498,
+      "+8h08m38s434ms",
+      "2026-11-02 05:08:18",
+      null,
+      "",
+      "Clock",
+      "TIME: 2026-11-02-05-08-18",
+      250,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793592498,
+      "+8h08m39s000ms",
+      "2026-11-02 05:08:18",
+      95,
+      "c8000008",
+      "",
+      "+wake_lock=1000:\"*alarm*:TIME_TICK\" +top=u0a300:\"com.example.user.chat\"",
+      254,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793610884,
+      "+13h15m04s479ms",
+      "2026-11-02 05:08:18",
+      null,
+      "",
+      "Shutdown",
+      "SHUTDOWN",
+      255,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793610884,
+      "+13h15m04s480ms",
+      "2026-11-02 05:08:18",
+      null,
+      "",
+      "Start",
+      "START",
+      256,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793610904,
+      "+13h15m04s480ms",
+      "2026-11-02 10:15:04",
+      null,
+      "",
+      "Clock",
+      "TIME: 2026-11-02-10-15-04",
+      257,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793610909,
+      "+13h15m10s000ms",
+      "2026-11-02 10:15:04",
+      89,
+      "c0000008",
+      "",
+      "stats=0:\"dump\"",
+      258,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

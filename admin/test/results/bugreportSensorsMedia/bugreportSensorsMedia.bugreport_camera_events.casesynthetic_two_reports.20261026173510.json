@@ -1,0 +1,146 @@
+{
+  "metadata": {
+    "module_name": "bugreportSensorsMedia",
+    "artifact_name": "Bug Report - Camera Service Events",
+    "function_name": "bugreport_camera_events",
+    "case_number": "casesynthetic_two_reports",
+    "number_of_columns": 10,
+    "number_of_rows": 9,
+    "total_data_size_bytes": 1264,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSensorsMedia/testdata.bugreportSensorsMedia.bugreport_camera_events.casesynthetic_two_reports.zip",
+    "start_time": "2026-10-26T17:35:10.440963+00:00",
+    "end_time": "2026-10-26T17:35:10.585849+00:00",
+    "run_time_seconds": 0.0238039493560791,
+    "last_commit": {
+      "hash": "e56d9fc859d2e83c7207c6514d3727ee6bf6a291",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:32:45-04:00",
+      "message": "Bug report sensors and media: location, sensors, camera, audio, media, accessibility, input method, display and window artifacts"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Event",
+    "Device",
+    "Package",
+    "PID",
+    "Priority",
+    "Detail",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1793592035,
+      "11-02 09:30:35",
+      "DISCONNECT",
+      "0",
+      "com.example.user.chat",
+      4321,
+      null,
+      "device 0 client for package com.example.user.chat (PID 4321)",
+      660,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      1793592030,
+      "11-02 09:30:30",
+      "CONNECT",
+      "0",
+      "com.example.user.chat",
+      4321,
+      0,
+      "device 0 client for package com.example.user.chat (PID 4321, priority 0)",
+      661,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      1793586600,
+      "11-02 08:00:00",
+      "USER_SWITCH",
+      "",
+      "",
+      null,
+      null,
+      "previous allowed user IDs: <None>, current allowed user IDs: 0",
+      662,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      1793586599,
+      "11-02 07:59:59",
+      "ADD",
+      "0",
+      "",
+      null,
+      null,
+      "device 0, reason: (Device added)",
+      663,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      1793586590,
+      "11-02 07:59:50",
+      "Device",
+      "",
+      "",
+      null,
+      null,
+      "State was changed from FOLDED(0x6) to OPEN(0x1)",
+      664,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      1793622635,
+      "11-02 09:30:35",
+      "DISCONNECT",
+      "0",
+      "com.example.user.chat",
+      4321,
+      null,
+      "device 0 client for package com.example.user.chat (PID 4321)",
+      499,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793622630,
+      "11-02 09:30:30",
+      "CONNECT",
+      "0",
+      "com.example.user.chat",
+      4321,
+      null,
+      "device 0 client for package com.example.user.chat (PID 4321)",
+      500,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793617200,
+      "11-02 08:00:00",
+      "USER_SWITCH",
+      "",
+      "",
+      null,
+      null,
+      "previous allowed user IDs: <None>, current allowed user IDs: 0",
+      501,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793617199,
+      "11-02 07:59:59",
+      "ADD",
+      "0",
+      "",
+      null,
+      null,
+      "device 0, reason: (Device added)",
+      502,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

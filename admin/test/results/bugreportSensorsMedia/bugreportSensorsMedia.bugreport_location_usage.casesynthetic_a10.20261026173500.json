@@ -1,0 +1,68 @@
+{
+  "metadata": {
+    "module_name": "bugreportSensorsMedia",
+    "artifact_name": "Bug Report - Location Usage",
+    "function_name": "bugreport_location_usage",
+    "case_number": "casesynthetic_a10",
+    "number_of_columns": 12,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 471,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSensorsMedia/testdata.bugreportSensorsMedia.bugreport_location_usage.casesynthetic_a10.zip",
+    "start_time": "2026-10-26T17:35:00.663359+00:00",
+    "end_time": "2026-10-26T17:35:00.800346+00:00",
+    "run_time_seconds": 0.011355400085449219,
+    "last_commit": {
+      "hash": "e56d9fc859d2e83c7207c6514d3727ee6bf6a291",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:32:45-04:00",
+      "message": "Bug report sensors and media: location, sensors, camera, audio, media, accessibility, input method, display and window artifacts"
+    }
+  },
+  "headers": [
+    "List",
+    "Provider",
+    "Client",
+    "Min Interval",
+    "Max Interval",
+    "Total Duration",
+    "Active Duration",
+    "Foreground Duration",
+    "Locations",
+    "Detail (as printed)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Historical Records by Provider",
+      "gps",
+      "com.example.user.chat",
+      "",
+      "",
+      "",
+      "",
+      "",
+      null,
+      "Interval 2 seconds: Duration requested 0 total, 0 foreground, out of the last 59 minutes: Last active 59 minutes ago",
+      411,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Historical Records by Provider",
+      "passive",
+      "android",
+      "",
+      "",
+      "",
+      "",
+      "",
+      null,
+      "Min interval 0 seconds: Max interval 1800 seconds: Duration requested 59 total, 59 foreground, out of the last 59 minutes: Currently active",
+      412,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

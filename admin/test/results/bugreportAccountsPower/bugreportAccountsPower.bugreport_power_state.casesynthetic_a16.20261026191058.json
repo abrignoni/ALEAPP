@@ -1,0 +1,117 @@
+{
+  "metadata": {
+    "module_name": "bugreportAccountsPower",
+    "artifact_name": "Bug Report - Power Manager State",
+    "function_name": "bugreport_power_state",
+    "case_number": "casesynthetic_a16",
+    "number_of_columns": 5,
+    "number_of_rows": 12,
+    "total_data_size_bytes": 769,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportAccountsPower/testdata.bugreportAccountsPower.bugreport_power_state.casesynthetic_a16.zip",
+    "start_time": "2026-10-26T19:10:58.562907+00:00",
+    "end_time": "2026-10-26T19:10:58.849922+00:00",
+    "run_time_seconds": 0.16244792938232422,
+    "last_commit": {
+      "hash": "d1aa88ec6597139a2e6c891969cef84a01cd6a2c",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T14:15:20-04:00",
+      "message": "Give each bug report topic group its own ALEAPP category"
+    }
+  },
+  "headers": [
+    "Block",
+    "Name",
+    "Value",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Power Manager State",
+      "Settings power_manager_constants.no_cached_wake_locks",
+      "true",
+      67,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Power Manager State",
+      "mDirty",
+      "0x0",
+      68,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Power Manager State",
+      "mWakefulness",
+      "Awake",
+      69,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Power Manager State",
+      "mIsPowered",
+      "false",
+      70,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Power Manager State",
+      "mBatteryLevel",
+      "15",
+      71,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Power Manager State",
+      "mLastWakeTime",
+      "85435552 (315377 ms ago)",
+      72,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Settings and Configuration",
+      "mDreamsSupportedConfig",
+      "true",
+      75,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Settings and Configuration",
+      "mScreenOffTimeoutSetting",
+      "60000",
+      76,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Settings and Configuration",
+      "mLastWakeUpReason",
+      "1",
+      77,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Settings and Configuration",
+      "SEC_FEATURE_EXAMPLE",
+      "false",
+      78,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Timeouts",
+      "Attentive timeout",
+      "-1 ms",
+      80,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Timeouts",
+      "Screen off timeout",
+      "60000 ms",
+      81,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

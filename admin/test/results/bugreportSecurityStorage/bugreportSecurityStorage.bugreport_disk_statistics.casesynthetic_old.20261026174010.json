@@ -1,0 +1,96 @@
+{
+  "metadata": {
+    "module_name": "bugreportSecurityStorage",
+    "artifact_name": "Bug Report - Disk Statistics",
+    "function_name": "bugreport_disk_statistics",
+    "case_number": "casesynthetic_old",
+    "number_of_columns": 5,
+    "number_of_rows": 9,
+    "total_data_size_bytes": 961,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSecurityStorage/testdata.bugreportSecurityStorage.bugreport_disk_statistics.casesynthetic_old.zip",
+    "start_time": "2026-10-26T17:40:10.139551+00:00",
+    "end_time": "2026-10-26T17:40:10.260305+00:00",
+    "run_time_seconds": 0.016949176788330078,
+    "last_commit": {
+      "hash": "702ca90825fbb296e5cc429838c511eb52a44af6",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:39:47-04:00",
+      "message": "Bug report security and storage: readers and 30 artifacts for device policy, lock settings, biometrics, trust, ADB, vendor services, storage, dbinfo and flags"
+    }
+  },
+  "headers": [
+    "Source Section",
+    "Item",
+    "Value",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "storaged -u -p",
+      "I/O perf history (KB/s, most recent first): last 24 hours",
+      "4410 9120 12050",
+      1195,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "storaged -u -p",
+      "I/O perf history (KB/s, most recent first): last 7 days",
+      "8800 9100 9350",
+      1196,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "mount",
+      "Primary storage UUID",
+      "null",
+      1210,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "mount",
+      "Internal storage (null) total size",
+      "16000000000 (15258 MiB)",
+      1212,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "diskstats",
+      "Latency",
+      "1ms [512B Data Write]",
+      1218,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "diskstats",
+      "Recent Disk Write Speed (kB/s)",
+      "30110",
+      1219,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "diskstats",
+      "Data-Free",
+      "9100200K / 24000100K total = 37% free",
+      1220,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "diskstats",
+      "File-based Encryption",
+      "true",
+      1221,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "diskstats",
+      "App Size",
+      "4100200000",
+      1222,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

@@ -1,0 +1,176 @@
+{
+  "metadata": {
+    "module_name": "bugreportSensorsMedia",
+    "artifact_name": "Bug Report - Audio Events",
+    "function_name": "bugreport_audio_events",
+    "case_number": "casesynthetic_two_reports",
+    "number_of_columns": 8,
+    "number_of_rows": 14,
+    "total_data_size_bytes": 2662,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSensorsMedia/testdata.bugreportSensorsMedia.bugreport_audio_events.casesynthetic_two_reports.zip",
+    "start_time": "2026-10-26T19:11:37.960799+00:00",
+    "end_time": "2026-10-26T19:11:38.274327+00:00",
+    "run_time_seconds": 0.18365883827209473,
+    "last_commit": {
+      "hash": "d1aa88ec6597139a2e6c891969cef84a01cd6a2c",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T14:15:20-04:00",
+      "message": "Give each bug report topic group its own ALEAPP category"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Log",
+    "UID",
+    "PID",
+    "Event",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1793579400,
+      "11-02 06:00:00.375",
+      "audio services lifecycle",
+      null,
+      null,
+      "AudioService()",
+      687,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      1793589639,
+      "11-02 08:50:39.133",
+      "focus commands as seen by MediaFocusControl",
+      10300,
+      4321,
+      "abandonAudioFocus() from uid/pid:10300/4321 clientId=android.media.AudioManager@b49d003",
+      693,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      1793589639,
+      "11-02 08:50:39.732",
+      "focus commands as seen by MediaFocusControl",
+      10300,
+      4321,
+      "requestAudioFocus() from uid/pid:10300/4321 AA=USAGE_MEDIA/CONTENT_TYPE_UNKNOWN clientId=android.media.AudioManager@b49d003",
+      694,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      1793589667,
+      "11-02 08:51:07.591",
+      "playback activity as reported through PlayerBase",
+      10300,
+      4321,
+      "new player piid:4223 uid/pid:10300/4321 type:android.media.MediaPlayer",
+      700,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      1793589668,
+      "11-02 08:51:08.028",
+      "playback activity as reported through PlayerBase",
+      null,
+      null,
+      "player piid:4223 event:stopped",
+      701,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      1793589776,
+      "11-02 08:52:56.782",
+      "recording activity received by AudioService",
+      10301,
+      null,
+      "rec start riid:-1 uid:10301 session:137 src:HOTWORD not silenced pack:",
+      704,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      1793590117,
+      "2026-11-02 08:58:37.840",
+      "volume changes (logged when command received by AudioService)",
+      1000,
+      null,
+      "adjustSuggestedStreamVolume(sugg:STREAM_MUSIC dir:ADJUST_RAISE) from android/android uid:1000",
+      707,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      1793610000,
+      "11-02 06:00:00.375",
+      "audio services lifecycle",
+      null,
+      null,
+      "AudioService()",
+      515,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793620239,
+      "11-02 08:50:39.133",
+      "focus commands as seen by MediaFocusControl",
+      10300,
+      4321,
+      "abandonAudioFocus() from uid/pid 10300/4321 clientId=android.media.AudioManager@b49d003",
+      521,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793620239,
+      "11-02 08:50:39.732",
+      "focus commands as seen by MediaFocusControl",
+      10300,
+      4321,
+      "requestAudioFocus() from uid/pid 10300/4321 AA=USAGE_MEDIA/CONTENT_TYPE_UNKNOWN clientId=android.media.AudioManager@b49d003",
+      522,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793620267,
+      "11-02 08:51:07.591",
+      "playback activity as reported through PlayerBase",
+      10300,
+      4321,
+      "new player piid:4223 uid/pid:10300/4321 type:android.media.MediaPlayer",
+      528,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793620268,
+      "11-02 08:51:08.028",
+      "playback activity as reported through PlayerBase",
+      null,
+      null,
+      "player piid:4223 event:stopped",
+      529,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793620376,
+      "11-02 08:52:56.782",
+      "recording activity received by AudioService",
+      10301,
+      null,
+      "rec start riid:-1 uid:10301 session:137 src:HOTWORD not silenced pack:",
+      532,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793620717,
+      "2026-11-02 08:58:37.840",
+      "volume changes (logged when command received by AudioService)",
+      1000,
+      null,
+      "adjustSuggestedStreamVolume(sugg:STREAM_MUSIC dir:ADJUST_RAISE) from android/android uid:1000",
+      535,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

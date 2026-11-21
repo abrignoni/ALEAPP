@@ -1,0 +1,107 @@
+{
+  "metadata": {
+    "module_name": "galleryVault",
+    "artifact_name": "GalleryVault - Browser Start Pages",
+    "function_name": "galleryvault_browser_urls",
+    "case_number": "pixel7a_a14",
+    "number_of_columns": 7,
+    "number_of_rows": 8,
+    "total_data_size_bytes": 308,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/galleryVault/testdata.galleryVault.galleryvault_browser_urls.pixel7a_a14.zip",
+    "start_time": "2026-11-12T17:39:44.033464+00:00",
+    "end_time": "2026-11-12T17:39:44.053148+00:00",
+    "run_time_seconds": 0.0009081363677978516,
+    "last_commit": {
+      "hash": "ccf522fc06b634d1a00c98921408736596c94588",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-11-12T11:39:33-05:00",
+      "message": "fix(galleryVault): read every Android user's file action log, AppLock.db and cloud_cache.db"
+    }
+  },
+  "headers": [
+    "Last Visit Time",
+    "Create Time",
+    "Android User",
+    "Title",
+    "URL",
+    "Visit Count",
+    "Favicon URL"
+  ],
+  "data": [
+    [
+      "",
+      "",
+      "0",
+      "Facebook",
+      "https://m.facebook.com/",
+      0,
+      ""
+    ],
+    [
+      "",
+      "",
+      "0",
+      "Instagram",
+      "https://www.instagram.com/",
+      0,
+      ""
+    ],
+    [
+      "",
+      "",
+      "0",
+      "Tiktok",
+      "https://www.tiktok.com/",
+      0,
+      ""
+    ],
+    [
+      "",
+      "",
+      "0",
+      "X",
+      "https://x.com/",
+      0,
+      "https://abs.twimg.com/favicons/twitter.3.ico"
+    ],
+    [
+      "",
+      "",
+      "0",
+      "Vimeo",
+      "https://vimeo.com/watch",
+      0,
+      ""
+    ],
+    [
+      "",
+      "",
+      "0",
+      "DailyMonition",
+      "https://www.dailymotion.com/",
+      0,
+      ""
+    ],
+    [
+      "",
+      "",
+      "0",
+      "500px",
+      "https://www.500px.com/popular",
+      0,
+      ""
+    ],
+    [
+      "",
+      "",
+      "0",
+      "Pinterest",
+      "https://www.pinterest.com/",
+      0,
+      ""
+    ]
+  ]
+}

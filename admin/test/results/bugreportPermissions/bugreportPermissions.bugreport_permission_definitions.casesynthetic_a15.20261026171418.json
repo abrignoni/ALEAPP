@@ -1,0 +1,81 @@
+{
+  "metadata": {
+    "module_name": "bugreportPermissions",
+    "artifact_name": "Bug Report - Permission Definitions",
+    "function_name": "bugreport_permission_definitions",
+    "case_number": "casesynthetic_a15",
+    "number_of_columns": 9,
+    "number_of_rows": 4,
+    "total_data_size_bytes": 369,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportPermissions/testdata.bugreportPermissions.bugreport_permission_definitions.casesynthetic_a15.zip",
+    "start_time": "2026-10-26T17:14:18.111624+00:00",
+    "end_time": "2026-10-26T17:14:18.219571+00:00",
+    "run_time_seconds": 0.012215852737426758,
+    "last_commit": {
+      "hash": "dd21f4b8cfc9b79aac8fad2724e8f66cb9786d80",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:14:15-04:00",
+      "message": "Bug report permissions: bound the uid-level lines kept for one uid, name the 50,000-row HTML limit in the notes, test the section index"
+    }
+  },
+  "headers": [
+    "Permission",
+    "Source Package",
+    "Source Uid",
+    "Gids (as printed)",
+    "Type (as stored)",
+    "Protection (as printed)",
+    "Flags (as stored)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "android.permission.EXAMPLE_SIGNATURE",
+      "android",
+      "1000",
+      "[]",
+      "0",
+      "signature|privileged",
+      "0x0",
+      58,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "android.permission.EXAMPLE_DANGEROUS",
+      "android",
+      "1000",
+      "[]",
+      "0",
+      "dangerous",
+      "0x0",
+      63,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "com.example.user.chat.permission.SYNC",
+      "com.example.user.chat",
+      "10100",
+      "[]",
+      "0",
+      "signature",
+      "0x0",
+      68,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "android.permission.EXAMPLE_GROUPED",
+      "android",
+      "1000",
+      "[2001, 3003]",
+      "0",
+      "normal|instant",
+      "0x20",
+      73,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

@@ -1,0 +1,130 @@
+{
+  "metadata": {
+    "module_name": "bugreportNetwork",
+    "artifact_name": "Bug Report - Open Sockets",
+    "function_name": "bugreport_open_sockets",
+    "case_number": "casesynthetic_cut",
+    "number_of_columns": 11,
+    "number_of_rows": 7,
+    "total_data_size_bytes": 519,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportNetwork/testdata.bugreportNetwork.bugreport_open_sockets.casesynthetic_cut.zip",
+    "start_time": "2026-10-26T19:10:13.625333+00:00",
+    "end_time": "2026-10-26T19:10:13.902577+00:00",
+    "run_time_seconds": 0.1638050079345703,
+    "last_commit": {
+      "hash": "1867b8f203459f34a25f13dd49852b764f108ee2",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T14:24:14-04:00",
+      "message": "Network notes name the User Selected column without a claim; category tests accept the group categories"
+    }
+  },
+  "headers": [
+    "Protocol",
+    "Receive Queue",
+    "Send Queue",
+    "Local Address",
+    "Foreign Address",
+    "State",
+    "UID",
+    "Inode",
+    "Program",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "tcp",
+      0,
+      0,
+      "192.0.2.15:42676",
+      "203.0.113.4:443",
+      "ESTABLISHED",
+      86664,
+      67153498,
+      "-",
+      80,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "tcp",
+      130,
+      0,
+      "192.0.2.15:36384",
+      "203.0.113.9:443",
+      "CLOSE_WAIT",
+      10246,
+      67823827,
+      "-",
+      81,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "tcp",
+      0,
+      1,
+      "192.0.2.15:40346",
+      "203.0.113.11:443",
+      "FIN_WAIT1",
+      0,
+      0,
+      "-",
+      82,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "udp",
+      4352,
+      0,
+      "192.0.2.15:68",
+      "192.0.2.1:67",
+      "ESTABLISHED",
+      1073,
+      67804605,
+      "-",
+      83,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "udp",
+      0,
+      0,
+      "192.0.2.15:47000",
+      "203.0.113.4:443",
+      "",
+      86664,
+      67198007,
+      "-",
+      84,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "tcp6",
+      0,
+      0,
+      "[2001:db8::1]:41000",
+      "[2001:db8::2]:443",
+      "ESTABLISHED",
+      86664,
+      77880000,
+      "-",
+      85,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "raw6",
+      0,
+      0,
+      "[::]:58",
+      "[::]:*",
+      "7",
+      1000,
+      67224811,
+      "-",
+      86,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

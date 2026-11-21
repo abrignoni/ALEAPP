@@ -1,0 +1,152 @@
+"""Write-ahead log recovery in artifacts must find the log beside a path with a space.
+
+scripts/sqlite_wal.py takes a file system path and builds its own SQLite URI. A path that
+has already been turned into a URI fragment (get_sqlite_db_path percent-encodes spaces) is
+not a file name: the reader then sees no -wal and recovers nothing, without an error.
+Every database here sits in a folder whose name has a space, as a case folder often does.
+"""
+import os
+import shutil
+import sqlite3
+import sys
+import tempfile
+import unittest
+
+
+ROOT_DIR = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+)
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
+
+from scripts.artifacts import discordServers, googleChat, phoneLink, snapchat, telegramAndroid  # pylint: disable=wrong-import-position
+
+
+def _capture(folder, name, statements):
+    """Run statements in WAL mode and copy the database and its log out while the writer
+    is still open, since closing it checkpoints the log away."""
+    live = os.path.join(folder, 'live')
+    evidence = os.path.join(folder, 'case folder with space')
+    os.makedirs(live)
+    os.makedirs(evidence)
+    connection = sqlite3.connect(os.path.join(live, name), isolation_level=None)
+    connection.execute('PRAGMA journal_mode=WAL')
+    connection.execute('PRAGMA wal_autocheckpoint=0')
+    for statement in statements:
+        connection.execute(statement)
+    for suffix in ('', '-wal'):
+        shutil.copyfile(os.path.join(live, name + suffix), os.path.join(evidence, name + suffix))
+    connection.close()
+    return os.path.join(evidence, name)
+
+
+class WalRecoveryPathTest(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def test_snapchat_messages_found_beside_a_path_with_a_space(self):
+        path = _capture(self.tmp, 'arroyo.db', [
+            'CREATE TABLE m (conv TEXT, id INTEGER, txt TEXT)',
+            "INSERT INTO m VALUES ('c', 1, 'kept')",
+            "INSERT INTO m VALUES ('c', 2, 'removed')",
+            'DELETE FROM m WHERE id = 2'])
+        removed = snapchat._removed_in_log(  # pylint: disable=protected-access
+            path, 'SELECT conv, id, txt FROM m', (0, 1), {('c', 1)})
+        self.assertEqual([row for row, _spans in removed], [('c', 2, 'removed')])
+
+    def test_snapchat_conversations_found_beside_a_path_with_a_space(self):
+        path = _capture(self.tmp, 'arroyo.db', [
+            'CREATE TABLE conversation (client_conversation_id TEXT)',
+            'CREATE TABLE feed_entry (client_conversation_id TEXT)',
+            "INSERT INTO conversation VALUES ('kept')",
+            "INSERT INTO conversation VALUES ('gone')",
+            "DELETE FROM conversation WHERE client_conversation_id = 'gone'"])
+        removed = snapchat._removed_conversation_ids(path)  # pylint: disable=protected-access
+        self.assertEqual(set(removed), {'gone'})
+
+    def test_phone_link_events_found_beside_a_path_with_a_space(self):
+        path = _capture(self.tmp, 'eventstore', [
+            'CREATE TABLE content_access_event (uid INTEGER PRIMARY KEY, start_time INTEGER)',
+            'INSERT INTO content_access_event VALUES (1, 1)',
+            'INSERT INTO content_access_event VALUES (2, 2)',
+            'DELETE FROM content_access_event WHERE uid = 2'])
+        rows = phoneLink._read_states(  # pylint: disable=protected-access
+            path, 'SELECT uid, start_time FROM content_access_event', 0)
+        self.assertEqual({uid: label for uid, (_row, label, _location) in rows.items()},
+                         {1: phoneLink.CURRENT_STATE, 2: phoneLink.OTHER_STATE})
+
+    def test_discord_messages_found_beside_a_path_with_a_space(self):
+        # messages0 has no primary key, only a unique index on a..f. A row rewritten in
+        # place is the same message and must not come back; a removed key must.
+        path = _capture(self.tmp, 'a', [
+            'CREATE TABLE messages0 (a, b, c, d, e, f, data, generation)',
+            'CREATE UNIQUE INDEX messages0_by_key on messages0 (a, b, c, d, e, f)',
+            "INSERT INTO messages0 VALUES ('m', 'g', 'c', '1', '', '', 'one', 1)",
+            "INSERT INTO messages0 VALUES ('m', 'g', 'c', '2', '', '', 'two', 1)",
+            "INSERT OR REPLACE INTO messages0 VALUES ('m', 'g', 'c', '1', '', '', 'one again', 2)",
+            "DELETE FROM messages0 WHERE d = '2'"])
+        removed = discordServers.discord_removed_messages(path)
+        self.assertEqual([data for data, _method, _location in removed], ['two'])
+    def test_telegram_messages_found_beside_a_path_with_a_space(self):
+        # messages_v2 is keyed on (mid, uid): a row rewritten under its key is the same
+        # message and must not come back; a removed key must.
+        path = _capture(self.tmp, 'cache4.db', [
+            'CREATE TABLE messages_v2 (mid INTEGER, uid INTEGER, read_state INTEGER, '
+            'send_state INTEGER, date INTEGER, data BLOB, out INTEGER, PRIMARY KEY(mid, uid))',
+            "INSERT INTO messages_v2 VALUES (1, 7, 0, 0, 100, x'01', 0)",
+            "INSERT INTO messages_v2 VALUES (2, 7, 0, 0, 200, x'02', 0)",
+            'UPDATE messages_v2 SET read_state = 1 WHERE mid = 1',
+            'DELETE FROM messages_v2 WHERE mid = 2'])
+        removed = telegramAndroid._removed_messages(path, {(1, 7)})  # pylint: disable=protected-access
+        self.assertEqual([(row[0], row[1]) for row, _method, _location in removed], [(2, 7)])
+
+    def test_telegram_push_messages_found_beside_a_path_with_a_space(self):
+        # unread_push_messages is keyed on (uid, mid), and a table that predates topicId and
+        # is_reaction is read with NULL in their place.
+        path = _capture(self.tmp, 'cache4.db', [
+            'CREATE TABLE unread_push_messages(uid INTEGER, mid INTEGER, random INTEGER, '
+            'date INTEGER, data BLOB, fm TEXT, name TEXT, uname TEXT, flags INTEGER, '
+            'PRIMARY KEY(uid, mid))',
+            "INSERT INTO unread_push_messages VALUES (7, 1, 0, 100, x'01', 'a', 'n', NULL, 0)",
+            "INSERT INTO unread_push_messages VALUES (7, 2, 0, 200, x'02', 'b', 'n', NULL, 0)",
+            "UPDATE unread_push_messages SET fm = 'c' WHERE mid = 1",
+            'DELETE FROM unread_push_messages WHERE mid = 2'])
+        query = telegramAndroid._push_query(path)  # pylint: disable=protected-access
+        removed = telegramAndroid._removed_messages(  # pylint: disable=protected-access
+            path, {(7, 1)}, query, telegramAndroid._PUSH_KEY)  # pylint: disable=protected-access
+        self.assertEqual([(row[0], row[1], row[4], row[8], row[9]) for row, _method, _location
+                          in removed], [(7, 2, 'b', None, None)])
+
+    def test_google_chat_messages_found_beside_a_path_with_a_space(self):
+        # A message is (group_id, topic_id, id). A removed message comes back as Recovered, the
+        # text a message held before its current row emptied it as an Earlier version, even when
+        # the emptied row no longer joins to users, and a rewrite under a new row_id with the
+        # same text not at all.
+        path = _capture(self.tmp, 'dynamite.db', [
+            'CREATE TABLE users (user_id TEXT)',
+            "INSERT INTO users VALUES ('u')",
+            'CREATE TABLE topic_messages (row_id INTEGER PRIMARY KEY AUTOINCREMENT, id TEXT, '
+            'group_id TEXT, topic_id TEXT, creator_id TEXT, text_body TEXT)',
+            'CREATE UNIQUE INDEX u ON topic_messages (group_id, topic_id, id)',
+            "INSERT INTO topic_messages (id, group_id, topic_id, creator_id, text_body) "
+            "VALUES ('1', 'g', 't', 'u', 'a')",
+            "INSERT INTO topic_messages (id, group_id, topic_id, creator_id, text_body) "
+            "VALUES ('2', 'g', 't', 'u', 'b')",
+            "INSERT INTO topic_messages (id, group_id, topic_id, creator_id, text_body) "
+            "VALUES ('3', 'g', 't', 'u', 'c')",
+            "UPDATE topic_messages SET text_body = '', creator_id = 'gone' WHERE id = '1'",
+            "DELETE FROM topic_messages WHERE id = '2'",
+            "INSERT OR REPLACE INTO topic_messages (id, group_id, topic_id, creator_id, text_body) "
+            "VALUES ('3', 'g', 't', 'u', 'c')"])
+        query = ('SELECT text_body, group_id, topic_id, id FROM topic_messages '
+                 'JOIN users ON users.user_id = topic_messages.creator_id')
+        live = googleChat._current_texts(path)  # pylint: disable=protected-access
+        rows = googleChat._rows_in_log(path, query, 0, live)  # pylint: disable=protected-access
+        self.assertEqual(sorted((row[0], origin) for row, origin, _method, _location in rows),
+                         [('a', 'Earlier version'), ('b', 'Recovered')])
+
+if __name__ == '__main__':
+    unittest.main()

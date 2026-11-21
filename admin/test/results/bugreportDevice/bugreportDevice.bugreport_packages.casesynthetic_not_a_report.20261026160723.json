@@ -1,0 +1,45 @@
+{
+  "metadata": {
+    "module_name": "bugreportDevice",
+    "artifact_name": "Bug Report - Installed Packages",
+    "function_name": "bugreport_packages",
+    "case_number": "casesynthetic_not_a_report",
+    "number_of_columns": 18,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportDevice/testdata.bugreportDevice.bugreport_packages.casesynthetic_not_a_report.zip",
+    "start_time": "2026-10-26T16:07:23.033835+00:00",
+    "end_time": "2026-10-26T16:07:23.049578+00:00",
+    "run_time_seconds": 0.00017905235290527344,
+    "last_commit": {
+      "hash": "abeb545a0e559c0c512cc6164dc977a4965a493d",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T01:07:43-04:00",
+      "message": "Bug report notes: name the empty Timeout Marker column and the uniform Boot Reasons columns"
+    }
+  },
+  "headers": [
+    "Package",
+    "Block",
+    "App ID",
+    "Shared User",
+    "Version Code",
+    "Version Name",
+    "Min SDK",
+    "Target SDK",
+    "Code Path",
+    "Flags",
+    "Installer",
+    "Initiating Package",
+    "Originating Package",
+    "Package Source",
+    "Users Installed",
+    "User State",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

@@ -272,7 +272,7 @@ import re
 import sqlite3
 import xml.etree.ElementTree as ET
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, is_sqlite_sidecar
 from scripts.artifacts.storagePathViews import unique_files
 
 _ACCOUNT_DB_RE = re.compile(r'(\d+)_im\.db$')
@@ -328,7 +328,7 @@ def _contact_sources(context):
         if name == 'db_im_xx':
             simple_dbs.append(('SIMPLE_USER', file_found))
         elif name == 'db_im_contact' or (name.startswith('db_im_contact-')
-                                         and not name.endswith(('-wal', '-shm', '-journal'))):
+                                         and not is_sqlite_sidecar(name)):
             contact_dbs.append(('IM_USER_BASE_INFO', file_found))
     return sorted(contact_dbs, key=lambda item: item[1]) + sorted(
         simple_dbs, key=lambda item: item[1])

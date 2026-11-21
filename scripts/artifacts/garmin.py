@@ -105,7 +105,7 @@ import datetime
 import sqlite3
 import time
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, is_sqlite_sidecar
 
 
 def _str_to_utc(value):
@@ -139,7 +139,7 @@ def _add_seconds_str(ts_str, seconds):
 def _find(files_found, suffix):
     for file_found in files_found:
         file_found = str(file_found)
-        if file_found.endswith(('-wal', '-shm', '-journal')):
+        if is_sqlite_sidecar(file_found):
             continue
         if file_found.endswith(suffix):
             return file_found

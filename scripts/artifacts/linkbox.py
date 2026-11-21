@@ -46,9 +46,8 @@ import os
 import re
 
 from scripts.artifacts.storagePathViews import unique_files
-from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records
+from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records, is_sqlite_sidecar
 
-SIDECARS = ('-wal', '-shm', '-journal')
 
 # databases/upload_<account id>.db
 UPLOAD_DB = re.compile(r'^upload_(.+)\.db$')
@@ -59,7 +58,7 @@ def _upload_databases(context):
     found = []
     for file_found in unique_files(context):
         file_found = str(file_found)
-        if os.path.isdir(file_found) or file_found.endswith(SIDECARS):
+        if os.path.isdir(file_found) or is_sqlite_sidecar(file_found):
             continue
         match = UPLOAD_DB.match(os.path.basename(file_found))
         if match:

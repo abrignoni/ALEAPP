@@ -50,14 +50,21 @@ datas = driver.bundle_datas() + [
 a = Analysis(
     [str(driver.ENTRYPOINT)],
     pathex=[str(driver.ROOT)],
-    binaries=[],
+    binaries=driver.licenses.heicreader_binaries(),
     datas=datas,
     hiddenimports=hiddenimports,
     hookspath=[],
     runtime_hooks=[],
-    excludes=[],
+    excludes=driver.licenses.EXCLUDES,
     noarchive=False,
 )
+# Windows 10 and later always load the Universal C Runtime from the system, never a
+# bundled copy (packaging/licenses.py).
+a.binaries = driver.licenses.without_ucrt(a.binaries)
+# The licence files of everything the bundle holds, written to build/licences/ and
+# shipped in LICENSES/bundled/ (packaging/licenses.py).
+a.datas += driver.licenses.collect_bundled((a.pure, a.scripts, a.binaries, a.datas),
+                                           driver.APP, VERSION)
 pyz = PYZ(a.pure)
 
 exe_kwargs = dict(

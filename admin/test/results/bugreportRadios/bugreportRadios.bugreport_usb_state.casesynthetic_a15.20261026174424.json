@@ -1,0 +1,188 @@
+{
+  "metadata": {
+    "module_name": "bugreportRadios",
+    "artifact_name": "Bug Report - USB Manager State",
+    "function_name": "bugreport_usb_state",
+    "case_number": "casesynthetic_a15",
+    "number_of_columns": 7,
+    "number_of_rows": 17,
+    "total_data_size_bytes": 1338,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportRadios/testdata.bugreportRadios.bugreport_usb_state.casesynthetic_a15.zip",
+    "start_time": "2026-10-26T17:44:24.117856+00:00",
+    "end_time": "2026-10-26T17:44:24.282878+00:00",
+    "run_time_seconds": 0.013077259063720703,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-26T17:44:24.256151",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Path",
+    "Value",
+    "Time As Printed",
+    "Time (UTC)",
+    "Time Note",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "device_manager.handler.current_functions_applied",
+      "true",
+      "",
+      null,
+      "",
+      192,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "device_manager.handler.connected",
+      "false",
+      "",
+      null,
+      "",
+      193,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "device_manager.handler.kernel_state",
+      "DISCONNECTED",
+      "",
+      null,
+      "",
+      194,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "device_manager.USB Event Log",
+      "UsbDeviceManager activity",
+      "",
+      null,
+      "",
+      196,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "device_manager.USB Event",
+      "USB intent: Intent { act=android.hardware.usb.action.USB_STATE flg=0x31000000 (has extras) }",
+      "11-02 06:05:38:034",
+      1793579738,
+      "",
+      198,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "device_manager.USB Event",
+      "USB intent: Intent { act=android.hardware.usb.action.USB_STATE flg=0x31000000 (has extras) }",
+      "11-02 06:05:38:039",
+      1793579738,
+      "",
+      199,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "host_manager.num_connects",
+      "0",
+      "",
+      null,
+      "",
+      203,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "port_manager.is_simulation_active",
+      "false",
+      "",
+      null,
+      "",
+      206,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "port_manager.usb_ports.port.id",
+      "port0",
+      "",
+      null,
+      "",
+      209,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "port_manager.usb_ports.port.supported_modes",
+      "dual",
+      "",
+      null,
+      "",
+      210,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "port_manager.usb_ports.status.connected",
+      "false",
+      "",
+      null,
+      "",
+      213,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "port_manager.usb_ports.status.current_mode",
+      "none",
+      "",
+      null,
+      "",
+      214,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "port_manager.usb_ports.status.role_combinations.power_role",
+      "no-power",
+      "",
+      null,
+      "",
+      216,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "port_manager.usb_ports.can_change_mode",
+      "true",
+      "",
+      null,
+      "",
+      219,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "port_manager.usb_ports.connected_at_millis",
+      "0",
+      "",
+      null,
+      "",
+      220,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "port_manager.usb_hal_version",
+      "13",
+      "",
+      null,
+      "",
+      222,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "alsa_manager.cards_parser",
+      "-1",
+      "",
+      null,
+      "",
+      225,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "metadata": {
+    "module_name": "bugreportAccountsPower",
+    "artifact_name": "Bug Report - Battery Package Changes",
+    "function_name": "bugreport_battery_package_changes",
+    "case_number": "casesynthetic_two_reports",
+    "number_of_columns": 9,
+    "number_of_rows": 6,
+    "total_data_size_bytes": 744,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportAccountsPower/testdata.bugreportAccountsPower.bugreport_battery_package_changes.casesynthetic_two_reports.zip",
+    "start_time": "2026-10-26T17:46:15.178315+00:00",
+    "end_time": "2026-10-26T17:46:15.309328+00:00",
+    "run_time_seconds": 0.022357702255249023,
+    "last_commit": {
+      "hash": "7450687ec1476569021e50b0cfc221c1d2c13a09",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:45:32-04:00",
+      "message": "Bug report accounts, sync, backup, users, battery, power and memory: readers, 33 artifacts, synthetic fixture and tests"
+    }
+  },
+  "headers": [
+    "Period Start (UTC)",
+    "Period End (UTC)",
+    "Period Start As Printed",
+    "Period End As Printed",
+    "Change",
+    "Package",
+    "Version Code",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1793479408,
+      1793568600,
+      "2026-11-01-02-13-28",
+      "2026-11-02-03-00-00",
+      "Update",
+      "com.example.chat",
+      5120,
+      357,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      1793479408,
+      1793568600,
+      "2026-11-01-02-13-28",
+      "2026-11-02-03-00-00",
+      "Update",
+      "com.example.chat",
+      5120,
+      358,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      1793479408,
+      1793568600,
+      "2026-11-01-02-13-28",
+      "2026-11-02-03-00-00",
+      "Uninstall",
+      "com.example.gone",
+      null,
+      359,
+      "Dump1/dumpstate.txt"
+    ],
+    [
+      1793510008,
+      1793599200,
+      "2026-11-01-02-13-28",
+      "2026-11-02-03-00-00",
+      "Update",
+      "com.example.chat",
+      5120,
+      287,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793510008,
+      1793599200,
+      "2026-11-01-02-13-28",
+      "2026-11-02-03-00-00",
+      "Update",
+      "com.example.chat",
+      5120,
+      288,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793510008,
+      1793599200,
+      "2026-11-01-02-13-28",
+      "2026-11-02-03-00-00",
+      "Uninstall",
+      "com.example.gone",
+      null,
+      289,
+      "Dump2/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "metadata": {
+    "module_name": "bugreportSecurityStorage",
+    "artifact_name": "Bug Report - Trust Events",
+    "function_name": "bugreport_trust_events",
+    "case_number": "casesynthetic_old",
+    "number_of_columns": 10,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 139,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSecurityStorage/testdata.bugreportSecurityStorage.bugreport_trust_events.casesynthetic_old.zip",
+    "start_time": "2026-10-26T17:40:09.877678+00:00",
+    "end_time": "2026-10-26T17:40:10.008057+00:00",
+    "run_time_seconds": 0.01660466194152832,
+    "last_commit": {
+      "hash": "702ca90825fbb296e5cc429838c511eb52a44af6",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:39:47-04:00",
+      "message": "Bug report security and storage: readers and 30 artifacts for device policy, lock settings, biometrics, trust, ADB, vendor services, storage, dbinfo and flags"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Time Note",
+    "User ID",
+    "User Name",
+    "Sequence",
+    "Event",
+    "Detail",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1793245365,
+      "10-29 09:12:45.118",
+      "",
+      0,
+      "Example \u200fOwner",
+      0,
+      "AgentConnected",
+      "agent=ExampleTrustAgent",
+      1153,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

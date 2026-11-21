@@ -185,12 +185,11 @@ from scripts.ilapfuncs import (
     check_in_media,
     convert_unix_ts_to_utc,
     get_sqlite_db_records,
-    logfunc,
+    logfunc, is_sqlite_sidecar,
 )
 
 PACKAGE = 'com.gettr.gettr'
 
-SIDECARS = ('-wal', '-shm', '-journal')
 
 
 def _container(path):
@@ -212,7 +211,7 @@ def _stores(context, suffix_test):
     found = []
     for file_found in unique_files(context):
         file_found = str(file_found)
-        if os.path.isdir(file_found) or file_found.endswith(SIDECARS):
+        if os.path.isdir(file_found) or is_sqlite_sidecar(file_found):
             continue
         if suffix_test(os.path.basename(file_found)):
             found.append(file_found)

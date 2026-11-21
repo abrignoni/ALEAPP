@@ -1,0 +1,58 @@
+{
+  "metadata": {
+    "module_name": "bugreportPermissions",
+    "artifact_name": "Bug Report - Role Holders",
+    "function_name": "bugreport_role_holders",
+    "case_number": "casesynthetic_a10",
+    "number_of_columns": 6,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 275,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportPermissions/testdata.bugreportPermissions.bugreport_role_holders.casesynthetic_a10.zip",
+    "start_time": "2026-10-26T17:14:18.895971+00:00",
+    "end_time": "2026-10-26T17:14:19.016471+00:00",
+    "run_time_seconds": 0.01734614372253418,
+    "last_commit": {
+      "hash": "dd21f4b8cfc9b79aac8fad2724e8f66cb9786d80",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:14:15-04:00",
+      "message": "Bug report permissions: bound the uid-level lines kept for one uid, name the 50,000-row HTML limit in the notes, test the section index"
+    }
+  },
+  "headers": [
+    "User",
+    "Role",
+    "Holders (as printed)",
+    "Fallback Enabled (as printed)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      0,
+      "android.app.role.CALL_SCREENING",
+      "",
+      "",
+      246,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      0,
+      "android.app.role.SMS",
+      "com.example.sms",
+      "",
+      249,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      0,
+      "android.app.role.HOME",
+      "com.example.launcher",
+      "",
+      253,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

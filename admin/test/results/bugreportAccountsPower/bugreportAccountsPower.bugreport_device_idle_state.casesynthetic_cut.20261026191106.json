@@ -1,0 +1,124 @@
+{
+  "metadata": {
+    "module_name": "bugreportAccountsPower",
+    "artifact_name": "Bug Report - Device Idle State",
+    "function_name": "bugreport_device_idle_state",
+    "case_number": "casesynthetic_cut",
+    "number_of_columns": 5,
+    "number_of_rows": 13,
+    "total_data_size_bytes": 687,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportAccountsPower/testdata.bugreportAccountsPower.bugreport_device_idle_state.casesynthetic_cut.zip",
+    "start_time": "2026-10-26T19:11:06.629404+00:00",
+    "end_time": "2026-10-26T19:11:06.919578+00:00",
+    "run_time_seconds": 0.1697826385498047,
+    "last_commit": {
+      "hash": "d1aa88ec6597139a2e6c891969cef84a01cd6a2c",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T14:15:20-04:00",
+      "message": "Give each bug report topic group its own ALEAPP category"
+    }
+  },
+  "headers": [
+    "Block",
+    "Name",
+    "Value",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Settings",
+      "flex_time_short",
+      "+1m0s0ms",
+      497,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Settings",
+      "light_idle_to",
+      "+15m0s0ms",
+      498,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Settings",
+      "wait_for_unlock",
+      "true",
+      499,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "State",
+      "mLightEnabled",
+      "true",
+      510,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "State",
+      "mDeepEnabled",
+      "true",
+      510,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "State",
+      "mForceIdle",
+      "false",
+      511,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "State",
+      "mUseMotionSensor",
+      "true",
+      512,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "State",
+      "mMotionSensor",
+      "{Sensor name=\"significant\", vendor=\"example\", version=1, type=17}",
+      512,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "State",
+      "mScreenOn",
+      "true",
+      513,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "State",
+      "mMotionListener.activatedTimeElapsed",
+      "82380012",
+      514,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "State",
+      "mState",
+      "ACTIVE",
+      516,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "State",
+      "mLightState",
+      "ACTIVE",
+      516,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "State",
+      "mNextLightIdleDelay",
+      "+15m0s0ms (flex=+1m0s0ms)",
+      517,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

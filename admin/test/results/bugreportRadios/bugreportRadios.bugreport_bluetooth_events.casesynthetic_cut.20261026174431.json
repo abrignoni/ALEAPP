@@ -1,0 +1,81 @@
+{
+  "metadata": {
+    "module_name": "bugreportRadios",
+    "artifact_name": "Bug Report - Bluetooth Events",
+    "function_name": "bugreport_bluetooth_events",
+    "case_number": "casesynthetic_cut",
+    "number_of_columns": 9,
+    "number_of_rows": 4,
+    "total_data_size_bytes": 507,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportRadios/testdata.bugreportRadios.bugreport_bluetooth_events.casesynthetic_cut.zip",
+    "start_time": "2026-10-26T17:44:31.301234+00:00",
+    "end_time": "2026-10-26T17:44:31.458373+00:00",
+    "run_time_seconds": 0.014923810958862305,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-26T17:44:31.431146",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Event Source",
+    "Event",
+    "Address",
+    "Detail",
+    "Time Note",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1793600251,
+      "11-02 07:17:31.490",
+      "Enable log",
+      "Enable",
+      "",
+      "Package [android] requested to [Enable]. Reason is SYSTEM_BOOT",
+      "",
+      297,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793600254,
+      "11-02 07:17:34.872",
+      "Scan mode changes",
+      "",
+      "",
+      "processProfileServiceStateChanged: SCAN_MODE_CONNECTABLE",
+      "",
+      330,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793600254,
+      "11-02 07:17:34.003",
+      "Adapter state",
+      "BLE_TURN_ON",
+      "",
+      "processed=OffState org=OffState dest=TurningBleOnState",
+      "",
+      334,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793600254,
+      "11-02 07:17:34.903",
+      "Adapter state",
+      "BREDR_STARTED",
+      "",
+      "processed=TurningOnState org=TurningOnState dest=OnState",
+      "",
+      335,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

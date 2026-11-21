@@ -1,0 +1,71 @@
+{
+  "metadata": {
+    "module_name": "bugreportSensorsMedia",
+    "artifact_name": "Bug Report - Windows",
+    "function_name": "bugreport_windows",
+    "case_number": "casesynthetic_a10",
+    "number_of_columns": 13,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 279,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSensorsMedia/testdata.bugreportSensorsMedia.bugreport_windows.casesynthetic_a10.zip",
+    "start_time": "2026-10-26T19:11:27.058004+00:00",
+    "end_time": "2026-10-26T19:11:27.357529+00:00",
+    "run_time_seconds": 0.1609950065612793,
+    "last_commit": {
+      "hash": "d1aa88ec6597139a2e6c891969cef84a01cd6a2c",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T14:15:20-04:00",
+      "message": "Give each bug report topic group its own ALEAPP category"
+    }
+  },
+  "headers": [
+    "Number",
+    "Title",
+    "Display",
+    "Owner UID",
+    "Package",
+    "Session PID",
+    "View Visibility (as stored)",
+    "Has Surface",
+    "Ready For Display",
+    "On Screen",
+    "Visible",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      0,
+      "StatusBarOverlay",
+      "0",
+      86624,
+      "com.example.systemui",
+      2333,
+      "0x4",
+      "false",
+      "false",
+      "false",
+      "false",
+      631,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1,
+      "com.example.user.chat/com.example.user.chat.Main",
+      "0",
+      10300,
+      "com.example.user.chat",
+      4321,
+      "0x0",
+      "true",
+      "true",
+      "true",
+      "true",
+      638,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

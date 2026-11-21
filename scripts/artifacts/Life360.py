@@ -109,7 +109,7 @@ import json
 import os
 import sqlite3
 
-from scripts.ilapfuncs import artifact_processor, check_in_media, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, check_in_media, open_sqlite_db_readonly, is_sqlite_sidecar
 from scripts.context import Context
 from scripts.artifacts.storagePathViews import canonical_path, unique_files
 
@@ -142,7 +142,7 @@ def _sources(context, suffix):
     one; a second Android user's copy is its own source.
     """
     return [f for f in unique_files(context)
-            if str(f).endswith(suffix) and not str(f).endswith(('-wal', '-shm', '-journal'))
+            if str(f).endswith(suffix) and not is_sqlite_sidecar(f)
             and not os.path.isdir(f)]
 
 

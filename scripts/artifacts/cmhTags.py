@@ -125,7 +125,7 @@ import hashlib
 import sqlite3
 
 from scripts.ilapfuncs import (artifact_processor, does_column_exist_in_db,
-                               does_table_exist_in_db, logfunc, open_sqlite_db_readonly)
+                               does_table_exist_in_db, logfunc, open_sqlite_db_readonly, is_sqlite_sidecar)
 
 # The provider separates the text segments it read from an image with 0x1F.
 _OCR_SEPARATOR = '\x1f'
@@ -159,7 +159,7 @@ def _cmh_databases(files_found):
     seen_hashes = set()
     for file_found in files_found:
         file_found = str(file_found)
-        if file_found.endswith(('-wal', '-shm', '-journal')):
+        if is_sqlite_sidecar(file_found):
             continue
         if '.magisk' in file_found and 'mirror' in file_found:
             continue

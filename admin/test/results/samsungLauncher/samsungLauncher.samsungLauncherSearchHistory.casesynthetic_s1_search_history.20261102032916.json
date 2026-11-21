@@ -1,0 +1,46 @@
+{
+  "metadata": {
+    "module_name": "samsungLauncher",
+    "artifact_name": "Samsung Launcher Search History",
+    "function_name": "samsungLauncherSearchHistory",
+    "case_number": "casesynthetic_s1_search_history",
+    "number_of_columns": 3,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 46,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/samsungLauncher/testdata.samsungLauncher.samsungLauncherSearchHistory.casesynthetic_s1_search_history.zip",
+    "start_time": "2026-11-02T03:29:16.291863+00:00",
+    "end_time": "2026-11-02T03:29:16.324352+00:00",
+    "run_time_seconds": 0.00017595291137695312,
+    "last_commit": {
+      "hash": "c8ff1f1e064c4653d919a464eb8886135a2ac8ad",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-10-04T02:02:01-04:00",
+      "message": "Correct artifact descriptions and notes against the code and sources"
+    }
+  },
+  "headers": [
+    "Position",
+    "Search Keyword",
+    "Android User"
+  ],
+  "data": [
+    [
+      1,
+      "weather tomorrow",
+      "0"
+    ],
+    [
+      2,
+      "calculator",
+      "0"
+    ],
+    [
+      3,
+      "example search",
+      "0"
+    ]
+  ]
+}

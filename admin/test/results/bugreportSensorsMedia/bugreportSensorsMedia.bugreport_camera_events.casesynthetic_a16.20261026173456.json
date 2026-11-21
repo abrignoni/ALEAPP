@@ -1,0 +1,98 @@
+{
+  "metadata": {
+    "module_name": "bugreportSensorsMedia",
+    "artifact_name": "Bug Report - Camera Service Events",
+    "function_name": "bugreport_camera_events",
+    "case_number": "casesynthetic_a16",
+    "number_of_columns": 10,
+    "number_of_rows": 5,
+    "total_data_size_bytes": 617,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSensorsMedia/testdata.bugreportSensorsMedia.bugreport_camera_events.casesynthetic_a16.zip",
+    "start_time": "2026-10-26T17:34:56.421342+00:00",
+    "end_time": "2026-10-26T17:34:56.548156+00:00",
+    "run_time_seconds": 0.015479803085327148,
+    "last_commit": {
+      "hash": "e56d9fc859d2e83c7207c6514d3727ee6bf6a291",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:32:45-04:00",
+      "message": "Bug report sensors and media: location, sensors, camera, audio, media, accessibility, input method, display and window artifacts"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Event",
+    "Device",
+    "Package",
+    "PID",
+    "Priority",
+    "Detail",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1793608235,
+      "11-02 09:30:35",
+      "DISCONNECT",
+      "0",
+      "com.example.user.chat",
+      4321,
+      null,
+      "device 0 client for package com.example.user.chat (PID 4321)",
+      760,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793608230,
+      "11-02 09:30:30",
+      "CONNECT",
+      "0",
+      "com.example.user.chat",
+      4321,
+      0,
+      "device 0 client for package com.example.user.chat (PID 4321, priority 0)",
+      761,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793602800,
+      "11-02 08:00:00",
+      "USER_SWITCH",
+      "",
+      "",
+      null,
+      null,
+      "previous allowed user IDs: <None>, current allowed user IDs: 0",
+      762,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793602799,
+      "11-02 07:59:59",
+      "ADD",
+      "0",
+      "",
+      null,
+      null,
+      "device 0, reason: (Device added)",
+      763,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793602790,
+      "11-02 07:59:50",
+      "Device",
+      "",
+      "",
+      null,
+      null,
+      "State was changed from FOLDED(0x6) to OPEN(0x1)",
+      764,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

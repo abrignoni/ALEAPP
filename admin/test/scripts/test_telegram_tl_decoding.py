@@ -409,7 +409,7 @@ class TelegramMessageRowsTest(unittest.TestCase):
         self.assertEqual(source, self.db_path)
         self.assertEqual(len(data), len(rows))
         # Columns: 1 dialog id, 4 sender id, 6 message, 9 read state, 10 message id.
-        return {row[10]: row for row in data}, logged
+        return {row[11]: row for row in data}, logged
 
     def test_a_record_that_cannot_be_walked_is_still_reported(self):
         table, logged = self._run([
@@ -429,7 +429,7 @@ class TelegramMessageRowsTest(unittest.TestCase):
         self.assertEqual(table[4][6], '[Message not decoded]')
         self.assertEqual(table[4][4], '')
         for mid in (2, 3, 4):
-            self.assertEqual((table[mid][1], table[mid][3], table[mid][9]),
+            self.assertEqual((table[mid][1], table[mid][3], table[mid][10]),
                              (USER_DIALOG if mid != 3 else GROUP_DIALOG,
                               'Outgoing' if mid == 4 else 'Incoming', 3))
         # One log line per record that was not walked, and none for the others.

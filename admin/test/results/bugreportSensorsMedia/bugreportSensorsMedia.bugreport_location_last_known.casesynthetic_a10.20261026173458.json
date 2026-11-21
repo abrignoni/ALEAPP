@@ -1,0 +1,82 @@
+{
+  "metadata": {
+    "module_name": "bugreportSensorsMedia",
+    "artifact_name": "Bug Report - Location Last Known",
+    "function_name": "bugreport_location_last_known",
+    "case_number": "casesynthetic_a10",
+    "number_of_columns": 12,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 577,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSensorsMedia/testdata.bugreportSensorsMedia.bugreport_location_last_known.casesynthetic_a10.zip",
+    "start_time": "2026-10-26T17:34:58.903591+00:00",
+    "end_time": "2026-10-26T17:34:59.050659+00:00",
+    "run_time_seconds": 0.015591859817504883,
+    "last_commit": {
+      "hash": "e56d9fc859d2e83c7207c6514d3727ee6bf6a291",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:32:45-04:00",
+      "message": "Bug report sensors and media: location, sensors, camera, audio, media, accessibility, input method, display and window artifacts"
+    }
+  },
+  "headers": [
+    "List",
+    "Provider",
+    "User",
+    "Location Provider (as printed)",
+    "Latitude (as printed)",
+    "Longitude (as printed)",
+    "Accuracy (as printed)",
+    "Elapsed Time (as printed)",
+    "Enabled",
+    "Last Location (as printed)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Last Known Locations",
+      "fused",
+      null,
+      "fused",
+      "12******",
+      "-45******",
+      "30",
+      "+53m9s204ms",
+      "",
+      "Location[fused 12******,-45****** hAcc=30 et=+53m9s204ms alt=297.0 {Bundle[x]}]",
+      414,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Last Known Locations",
+      "network",
+      null,
+      "network",
+      "12******",
+      "-45******",
+      "68",
+      "+55m20s796ms]",
+      "",
+      "Location[network 12******,-45****** hAcc=68 et=+55m20s796ms]",
+      415,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Last Known Locations Coarse Intervals",
+      "fused",
+      null,
+      "fused",
+      "12******",
+      "-45******",
+      "40",
+      "+51m8s126ms]",
+      "",
+      "Location[fused 12******,-45****** hAcc=40 et=+51m8s126ms]",
+      417,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

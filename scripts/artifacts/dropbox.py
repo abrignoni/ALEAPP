@@ -81,7 +81,7 @@ import binascii
 import json
 import re
 
-from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records
+from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records, is_sqlite_sidecar
 from scripts.artifacts.storagePathViews import unique_files
 
 # Preference names whose value is an epoch milliseconds timestamp.
@@ -107,7 +107,7 @@ _DBID_RE = re.compile(r'dbid:[A-Za-z0-9_-]+')
 def _db_by_suffix(files_found, suffix):
     for file_found in files_found:
         file_found = str(file_found)
-        if file_found.endswith(('-wal', '-shm', '-journal')):
+        if is_sqlite_sidecar(file_found):
             continue
         if file_found.endswith(suffix):
             return file_found

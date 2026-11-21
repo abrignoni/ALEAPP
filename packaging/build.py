@@ -11,6 +11,9 @@
     python packaging/build.py installer           phase 2: Windows -> dist/ALEAPP-Setup-<version>.exe (Inno Setup);
                                                   macOS -> dist/ALEAPP-<version>.dmg around dist/ALEAPP.app (dmgbuild);
                                                   Linux -> dist/ALEAPP-<version>.AppImage (appimagetool)
+    python packaging/build.py linux-packages      Linux: dist/aleapp_<version>_<arch>.deb and
+                                                  dist/aleapp-<version>-1.<arch>.rpm around dist/ALEAPP/
+                                                  (dpkg-deb, rpmbuild)
     python packaging/build.py installer --sign-tool NAME
                                                   phase 2, with Inno Setup signing the installer and the
                                                   uninstaller using the Sign Tool configured under NAME
@@ -33,9 +36,10 @@ report a different version from the app. Windows and macOS take only numbers in 
 version fields, so a suffix such as -dev is left out there and kept everywhere else.
 ONEFILE reaches the spec through the ALEAPP_ONEFILE environment variable; the spec is
 never edited by a build. PyInstaller is pinned in packaging/requirements-build.txt,
-which phase 1 installs with requirements.txt, then requirements-msl-lock.txt over them
-with --no-deps, so a build carries the mister_skinnylegs chain that was tested rather
-than whatever its unversioned dependencies resolve to that day.
+which phase 1 installs, then requirements.txt and requirements-msl-lock.txt through
+admin/scripts/install_requirements.py, as CI does, so a build carries the
+mister_skinnylegs chain that was tested rather than whatever its unversioned
+dependencies resolve to that day, and refuses a Brotli older than 1.2.1.
 
 What goes into the bundle is decided here rather than in packaging/aleapp.spec, which
 loads this file and only wires the answers into PyInstaller, so it can be tested without
@@ -58,6 +62,7 @@ import sys
 import tempfile
 import urllib.request
 from pathlib import Path
+import importlib.util
 
 ROOT = Path(__file__).resolve().parent.parent
 PACKAGING = ROOT / "packaging"
@@ -66,6 +71,7 @@ ENTRYPOINT = PACKAGING / "entrypoint.py"
 REQUIREMENTS = ROOT / "requirements.txt"
 BUILD_REQUIREMENTS = PACKAGING / "requirements-build.txt"
 MSL_LOCK = ROOT / "requirements-msl-lock.txt"
+INSTALL_SCRIPT = ROOT / "admin" / "scripts" / "install_requirements.py"
 ISS = PACKAGING / "installer.iss"
 ICO = PACKAGING / "aleapp.ico"
 ICNS = ROOT / "assets" / "icon.icns"
@@ -74,6 +80,18 @@ DMG_SETTINGS = PACKAGING / "dmg_settings.py"
 DMG_BACKGROUND = PACKAGING / "dmg_background.png"
 DIST = ROOT / "dist"
 BUILD = ROOT / "build"
+
+
+def _load_licenses():
+    """packaging/licenses.py, loaded by path: the spec loads this file the same way, so
+    packaging/ is not on sys.path."""
+    spec = importlib.util.spec_from_file_location("leapp_licenses", PACKAGING / "licenses.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+licenses = _load_licenses()
 APP = "ALEAPP"
 EXE = "aleapp"
 # PyInstaller's default, named so the smoke test and the spec agree on where the
@@ -82,6 +100,18 @@ CONTENTS = "_internal"
 BUNDLE_ID = "org.leapps.ALEAPP"
 PUBLISHER = "Alexis Brignoni"
 COPYRIGHT = "Result of a collaborative effort in the DFIR community."
+HOMEPAGE = "https://github.com/abrignoni/ALEAPP"
+# The native Linux packages (.deb and .rpm) wrap the same one-folder build the AppImage
+# wraps: the folder goes to /usr/lib/aleapp/, /usr/bin/aleapp is a relative symlink to
+# its executable, and the .desktop entry, icon and licence go where desktops and package
+# managers look for them. Nothing is rebuilt per distribution.
+LINUX_PKG = "aleapp"
+LINUX_SUMMARY = "Android Logs, Events, and Protobuf Parser"
+LINUX_DESCRIPTION = (
+    "ALEAPP parses Android extractions and writes an HTML report with TSV, timeline, "
+    "KML and LAVA output. One executable, aleapp, opens the window when started "
+    "without arguments and is the command line when given some."
+)
 RAW_FIXTURE = ROOT / "admin" / "test" / "data" / "raw_images" / "ntfs-fixture.img.gz"
 ISCC_DEFAULT = r"C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
 
@@ -118,6 +148,7 @@ FIXED_HIDDEN_IMPORTS = (
     "uuid",
     "xmltodict",
     "zoneinfo",
+    "heicreader",
 )
 
 # appimagetool and the AppImage runtime it prepends, pinned to releases and checked
@@ -204,6 +235,13 @@ def bundled_root() -> Path:
     return DIST / APP / CONTENTS
 
 
+def bundled_data_dir() -> Path:
+    """Where a one-folder build keeps its data files: sys._MEIPASS at run time."""
+    if sys.platform == "darwin":
+        return macos_app() / "Contents" / "Resources"
+    return DIST / APP / CONTENTS
+
+
 def run(cmd: list[str], **kwargs) -> None:
     print("==>", " ".join(str(part) for part in cmd), flush=True)
     result = subprocess.run(cmd, check=False, **kwargs)
@@ -239,6 +277,8 @@ def bundle_datas() -> list[tuple[str, str]]:
     entries = []
     for tree in DATA_TREES:
         entries += _tree(ROOT / tree, tree)
+    # The third-party licence texts, in LICENSES/ inside every build (packaging/licenses.py).
+    entries += licenses.bundle_datas()
     return entries
 
 
@@ -299,13 +339,13 @@ def install_commands(python: str) -> list[list[str]]:
 
     mister_skinnylegs declares its ccl_* readers as unversioned git URLs, so
     requirements.txt alone resolves them to whatever their master is that day, and pip
-    refuses a pin of them in requirements.txt as a conflicting URL. The lock is therefore
-    installed over the regular install with --no-deps, as requirements-msl-lock.txt
-    says, which replaces that chain with the one tested against the Android corpus.
+    refuses a pin of them in requirements.txt as a conflicting URL. INSTALL_SCRIPT
+    installs requirements.txt without its mister_skinnylegs line and then the lock with
+    --no-deps, which never resolves those URLs, and refuses a Brotli older than 1.2.1.
     """
-    pip = [python, "-m", "pip", "install", "-q", "--disable-pip-version-check"]
-    return [pip + ["-r", str(REQUIREMENTS), "-r", str(BUILD_REQUIREMENTS)],
-            pip + ["--no-deps", "-r", str(MSL_LOCK)]]
+    options = ["-q", "--disable-pip-version-check"]
+    return [[python, "-m", "pip", "install"] + options + ["-r", str(BUILD_REQUIREMENTS)],
+            [python, str(INSTALL_SCRIPT)] + options]
 
 
 def build_exe(onefile: bool, clean_first: bool) -> Path:
@@ -314,6 +354,8 @@ def build_exe(onefile: bool, clean_first: bool) -> Path:
     refuse_collision(onefile)
     for cmd in install_commands(sys.executable):
         run(cmd)
+    # heicreader is pinned by requirements.txt and LICENSES/ carries its licence texts.
+    licenses.check()
     env = dict(os.environ, ALEAPP_ONEFILE="1" if onefile else "0")
     run([sys.executable, "-m", "PyInstaller", str(SPEC), "--noconfirm",
          "--distpath", str(DIST), "--workpath", str(BUILD)], env=env)
@@ -321,6 +363,11 @@ def build_exe(onefile: bool, clean_first: bool) -> Path:
         assert_artifact(DIST / APP / EXE, "one-folder executable")
     out = output(onefile)
     assert_artifact(out, "executable")
+    # The program is MIT: refuse to ship a file named like a GPL video codec, whatever brought it in.
+    if onefile:
+        licenses.refuse_gpl_codecs(_onefile_members(out))
+    else:
+        licenses.refuse_gpl_codecs(p.name for p in DIST.rglob("*") if p.is_file())
     return out
 
 
@@ -506,6 +553,186 @@ def _build_appimage() -> Path:
     return out
 
 
+# -- native Linux packages (.deb, .rpm) --------------------------------------------------
+
+def deb_arch(machine: str | None = None) -> str:
+    """The Debian architecture name for this machine."""
+    machine = (machine or platform.machine()).lower()
+    if machine in ("x86_64", "amd64"):
+        return "amd64"
+    if machine in ("aarch64", "arm64"):
+        return "arm64"
+    sys.exit(f"build: no Debian architecture name for {machine}")
+
+
+def package_version(version: str) -> str:
+    """The version as a .deb and an .rpm carry it.
+
+    A hyphen separates the Debian revision and is not allowed in an RPM Version, so a
+    suffix such as -dev is written with a tilde, which both formats sort before the
+    release it precedes.
+    """
+    return version.replace("-", "~")
+
+
+def linux_staging(folder: Path, root: Path) -> Path:
+    """Lay the one-folder build out as the filesystem root a package installs."""
+    if root.exists():
+        shutil.rmtree(root)
+    libdir = root / "usr" / "lib" / LINUX_PKG
+    shutil.copytree(folder, libdir, symlinks=True)
+    (libdir / EXE).chmod(0o755)
+    bindir = root / "usr" / "bin"
+    bindir.mkdir(parents=True)
+    (bindir / EXE).symlink_to(Path("..") / "lib" / LINUX_PKG / EXE)
+    applications = root / "usr" / "share" / "applications"
+    applications.mkdir(parents=True)
+    (applications / f"{LINUX_PKG}.desktop").write_text(appimage_desktop_entry(), encoding="utf-8")
+    pixmaps = root / "usr" / "share" / "pixmaps"
+    pixmaps.mkdir(parents=True)
+    shutil.copyfile(ICON_PNG, pixmaps / f"{LINUX_PKG}.png")
+    doc = root / "usr" / "share" / "doc" / LINUX_PKG
+    doc.mkdir(parents=True)
+    shutil.copyfile(ROOT / "LICENSE", doc / "copyright")
+    # The third-party licence texts, where Debian and Fedora look for a package's licences.
+    shutil.copytree(licenses.LICENSES, doc / "LICENSES")
+    return root
+
+
+def _staged_files(root: Path) -> list[Path]:
+    """Every regular file under root, in a stable order, outside DEBIAN/."""
+    return sorted(p for p in root.rglob("*")
+                  if p.is_file() and not p.is_symlink() and "DEBIAN" not in p.relative_to(root).parts)
+
+
+def debian_control(version: str, arch: str, installed_kib: int) -> str:
+    """The text of a .deb's DEBIAN/control. No Depends: the build carries its libraries,
+    and the glibc it needs is stated in the release notes."""
+    return "\n".join((
+        f"Package: {LINUX_PKG}",
+        f"Version: {version}",
+        f"Architecture: {arch}",
+        f"Maintainer: {PUBLISHER} <{HOMEPAGE}>",
+        f"Installed-Size: {installed_kib}",
+        "Section: utils",
+        "Priority: optional",
+        f"Homepage: {HOMEPAGE}",
+        f"Description: {LINUX_SUMMARY}",
+        f" {LINUX_DESCRIPTION}",
+        "",
+    ))
+
+
+def debian_md5sums(root: Path) -> str:
+    """DEBIAN/md5sums: one line per staged file, the way dpkg verifies an install."""
+    return "".join(f"{hashlib.md5(p.read_bytes()).hexdigest()}  {p.relative_to(root).as_posix()}\n"
+                   for p in _staged_files(root))
+
+
+def rpm_spec(version: str, arch: str) -> str:
+    """The .spec rpmbuild makes the .rpm from.
+
+    rpmbuild by default strips every ELF file, makes a debuginfo package, and scans the
+    files for automatic Requires and Provides. A PyInstaller build is tested unstripped,
+    and a CI build of 2026-11-07 listed the libraries it bundles, libX11.so.6 among them,
+    under Provides, so dnf could take the package as supplying them to other packages. The
+    four lines after BuildArch turn all of that off, so the .rpm carries the build as it
+    was tested, as the .deb and the AppImage do.
+    """
+    return "\n".join((
+        f"Name: {LINUX_PKG}",
+        f"Version: {version}",
+        "Release: 1",
+        f"Summary: {LINUX_SUMMARY}",
+        "License: MIT",
+        f"URL: {HOMEPAGE}",
+        f"BuildArch: {arch}",
+        "AutoReqProv: no",
+        "%global debug_package %{nil}",
+        "%global __os_install_post %{nil}",
+        "%global _build_id_links none",
+        "",
+        "%description",
+        LINUX_DESCRIPTION,
+        "",
+        "%install",
+        "cp -a %{_sourcedir}/root/. %{buildroot}/",
+        "",
+        "%files",
+        f"/usr/lib/{LINUX_PKG}/",
+        f"/usr/bin/{EXE}",
+        f"/usr/share/applications/{LINUX_PKG}.desktop",
+        f"/usr/share/pixmaps/{LINUX_PKG}.png",
+        f"/usr/share/doc/{LINUX_PKG}/copyright",
+        f"/usr/share/doc/{LINUX_PKG}/LICENSES/",
+        "",
+    ))
+
+
+def _require_folder_build() -> Path:
+    folder = DIST / APP
+    if not (folder / EXE).is_file():
+        sys.exit(f"build: {folder / EXE} not found; run 'exe' first (the one-folder build, "
+                 f"not --onefile): the native packages wrap {folder}")
+    return folder
+
+
+def _require_tool(name: str, hint: str) -> str:
+    found = shutil.which(name)
+    if not found:
+        sys.exit(f"build: {name} not found; {hint}")
+    return found
+
+
+def build_deb() -> Path:
+    """dist/aleapp_<version>_<arch>.deb around the one-folder build."""
+    folder = _require_folder_build()
+    dpkg_deb = _require_tool("dpkg-deb", "the .deb is built on Debian or Ubuntu")
+    version, arch = package_version(read_version()), deb_arch()
+    stage = linux_staging(folder, BUILD / f"deb-root-{arch}")
+    kib = (sum(p.stat().st_size for p in _staged_files(stage)) + 1023) // 1024
+    debian = stage / "DEBIAN"
+    debian.mkdir()
+    (debian / "control").write_text(debian_control(version, arch, kib), encoding="utf-8")
+    (debian / "md5sums").write_text(debian_md5sums(stage), encoding="utf-8")
+    out = DIST / f"{LINUX_PKG}_{version}_{arch}.deb"
+    out.unlink(missing_ok=True)
+    run([dpkg_deb, "--root-owner-group", "--build", str(stage), str(out)])
+    assert_artifact(out, "Debian package")
+    return out
+
+
+def build_rpm() -> Path:
+    """dist/aleapp-<version>-1.<arch>.rpm around the one-folder build."""
+    folder = _require_folder_build()
+    rpmbuild = _require_tool("rpmbuild", "install it first (sudo apt-get install rpm on "
+                                         "Ubuntu, sudo dnf install rpm-build on Fedora)")
+    version, arch = package_version(read_version()), appimage_arch()
+    topdir = BUILD / f"rpmbuild-{arch}"
+    if topdir.exists():
+        shutil.rmtree(topdir)
+    for sub in ("BUILD", "RPMS", "SOURCES", "SPECS", "SRPMS"):
+        (topdir / sub).mkdir(parents=True)
+    linux_staging(folder, topdir / "SOURCES" / "root")
+    spec = topdir / "SPECS" / f"{LINUX_PKG}.spec"
+    spec.write_text(rpm_spec(version, arch), encoding="utf-8")
+    run([rpmbuild, "-bb", "--define", f"_topdir {topdir}", str(spec)])
+    built = topdir / "RPMS" / arch / f"{LINUX_PKG}-{version}-1.{arch}.rpm"
+    assert_artifact(built, "rpmbuild output")
+    out = DIST / built.name
+    out.unlink(missing_ok=True)
+    shutil.copyfile(built, out)
+    assert_artifact(out, "RPM package")
+    return out
+
+
+def build_linux_packages() -> list[Path]:
+    """Both native packages from the same folder build."""
+    if not sys.platform.startswith("linux"):
+        sys.exit("build: the native Linux packages are built on Linux")
+    return [build_deb(), build_rpm()]
+
+
 # -- verify ------------------------------------------------------------------------------
 
 def _signature(path: Path) -> tuple[bool, str, bool, str]:
@@ -667,6 +894,28 @@ def smoke(onefile: bool) -> int:
     check(bool(wanted) and not missing,
           f"all {len(wanted)} mister_skinnylegs plugins ship as files{detail}")
 
+    # The third-party licence texts ship in every build, LICENSES/ beside the bundle's data.
+    wanted = licenses.bundled_names()
+    if onefile:
+        held = _onefile_members(exe)
+        missing = [name for name in wanted if name not in held]
+    else:
+        missing = [name for name in wanted if not (bundled_data_dir() / name).is_file()]
+    detail = f" (missing: {', '.join(missing)})" if missing else ""
+    check(not missing, f"the third-party licences are inside the build{detail}")
+
+    # The HEIC helper ships beside heicreader's package, where heicreader looks for it.
+    helper = f"heicreader/bin/{exe_name('heicreader')}"
+    if onefile:
+        check(helper in _onefile_members(exe), f"the HEIC helper is inside the executable ({helper})")
+    else:
+        bundled = (macos_app() / "Contents" / "Frameworks" if sys.platform == "darwin"
+                   else DIST / APP / CONTENTS) / helper
+        result = _run_built([str(bundled), "version"]) if bundled.is_file() else None
+        check(result is not None and result.returncode == 0
+              and result.stdout.strip() == licenses.pinned_version(),
+              f"the HEIC helper is bundled and runs ({bundled})", result)
+
     # The window is built with Tk, so on Linux it needs a display, which CI gets from
     # xvfb-run. Skipping it without one would pass a build nobody has tested.
     headless = sys.platform not in ("win32", "darwin")
@@ -715,6 +964,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--sign-tool", metavar="NAME", help=argparse.SUPPRESS)
     p.add_argument("--clean", action="store_true",
                    help="remove build/ and the previous phase 1 output in dist/ first")
+    sub.add_parser("linux-packages", help="Linux: .deb and .rpm around the one-folder build "
+                                          "(needs dpkg-deb and rpmbuild)")
     p = sub.add_parser("verify", help="check code signatures on built files")
     p.add_argument("paths", nargs="+")
     p.add_argument("--subject", metavar="TEXT", help="require the signer subject to contain TEXT")
@@ -736,6 +987,8 @@ def main(argv: list[str] | None = None) -> int:
     elif args.cmd == "all":
         build_exe(False, args.clean)
         build_installer(None)
+    elif args.cmd == "linux-packages":
+        build_linux_packages()
     elif args.cmd == "verify":
         return verify(args.paths, args.subject)
     return 0

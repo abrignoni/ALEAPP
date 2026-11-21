@@ -1,0 +1,86 @@
+{
+  "metadata": {
+    "module_name": "bugreportSensorsMedia",
+    "artifact_name": "Bug Report - Camera Service Events",
+    "function_name": "bugreport_camera_events",
+    "case_number": "casesynthetic_a10",
+    "number_of_columns": 10,
+    "number_of_rows": 4,
+    "total_data_size_bytes": 638,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSensorsMedia/testdata.bugreportSensorsMedia.bugreport_camera_events.casesynthetic_a10.zip",
+    "start_time": "2026-10-26T17:34:59.994626+00:00",
+    "end_time": "2026-10-26T17:35:00.119738+00:00",
+    "run_time_seconds": 0.014719724655151367,
+    "last_commit": {
+      "hash": "e56d9fc859d2e83c7207c6514d3727ee6bf6a291",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:32:45-04:00",
+      "message": "Bug report sensors and media: location, sensors, camera, audio, media, accessibility, input method, display and window artifacts"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Event",
+    "Device",
+    "Package",
+    "PID",
+    "Priority",
+    "Detail",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1793608235,
+      "11-02 09:30:35",
+      "DISCONNECT",
+      "0",
+      "com.example.user.chat",
+      4321,
+      null,
+      "device 0 client for package com.example.user.chat (PID 4321)",
+      499,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793608230,
+      "11-02 09:30:30",
+      "CONNECT",
+      "0",
+      "com.example.user.chat",
+      4321,
+      null,
+      "device 0 client for package com.example.user.chat (PID 4321)",
+      500,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793602800,
+      "11-02 08:00:00",
+      "USER_SWITCH",
+      "",
+      "",
+      null,
+      null,
+      "previous allowed user IDs: <None>, current allowed user IDs: 0",
+      501,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793602799,
+      "11-02 07:59:59",
+      "ADD",
+      "0",
+      "",
+      null,
+      null,
+      "device 0, reason: (Device added)",
+      502,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

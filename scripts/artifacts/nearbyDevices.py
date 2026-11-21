@@ -147,7 +147,7 @@ import os
 import pathlib
 
 from scripts.artifacts.storagePathViews import unique_files
-from scripts.ccl import ccl_leveldb
+from scripts.vendor.ccl import ccl_leveldb
 from scripts import blackboxprotobuf
 from scripts.ilapfuncs import artifact_processor, logfunc
 

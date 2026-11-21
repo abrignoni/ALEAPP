@@ -347,7 +347,7 @@ from scripts.ilapfuncs import (
     does_table_exist_in_db,
     get_sqlite_db_records,
     logfunc,
-    null_absent_columns,
+    null_absent_columns, is_sqlite_sidecar,
 )
 
 # Keys in the `preference` table observed across the tested extractions to hold
@@ -374,7 +374,7 @@ def _target_dbs(context):
     targets = []
     for file_found in unique_files(context):
         file_found = str(file_found)
-        if file_found.endswith(('-wal', '-shm', '-journal')):
+        if is_sqlite_sidecar(file_found):
             continue
         targets.append((file_found, context.get_relative_path(file_found)))
     return targets

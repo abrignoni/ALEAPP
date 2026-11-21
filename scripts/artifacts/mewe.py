@@ -287,7 +287,7 @@ import sqlite3
 import xml.etree.ElementTree as ET
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, logfunc, \
-    does_column_exist_in_db, does_table_exist_in_db, null_absent_columns
+    does_column_exist_in_db, does_table_exist_in_db, null_absent_columns, is_sqlite_sidecar
 from scripts.artifacts.storagePathViews import unique_files
 
 # Module-level constants (kept for backwards-compatibility; snapchat.py imports APP_NAME)
@@ -393,7 +393,7 @@ def get_mewe_chat(context):
     sources = []
     for file_found in files_found:
         file_found = str(file_found)
-        if file_found.endswith(('-wal', '-shm', '-journal')):
+        if is_sqlite_sidecar(file_found):
             continue
         if not file_found.endswith(DB_NAMES):
             continue
@@ -435,7 +435,7 @@ def get_mewe_session(context):
     source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
-        if file_found.endswith(('-wal', '-shm', '-journal')):
+        if is_sqlite_sidecar(file_found):
             continue
         if not file_found.endswith(SGSESSION_FILE):
             continue
@@ -461,7 +461,7 @@ def _chat_databases(files_found):
     """Yield MeWe chat databases, skipping the empty 'mewe_old' left by upgrades."""
     for file_found in files_found:
         file_found = str(file_found)
-        if file_found.endswith(('-wal', '-shm', '-journal')):
+        if is_sqlite_sidecar(file_found):
             continue
         if file_found.endswith(DB_NAMES):
             yield file_found

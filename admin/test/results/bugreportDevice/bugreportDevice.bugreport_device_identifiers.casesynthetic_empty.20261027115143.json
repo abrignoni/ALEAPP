@@ -1,0 +1,32 @@
+{
+  "metadata": {
+    "module_name": "bugreportDevice",
+    "artifact_name": "Bug Report - Device Identifiers",
+    "function_name": "bugreport_device_identifiers",
+    "case_number": "casesynthetic_empty",
+    "number_of_columns": 5,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportDevice/testdata.bugreportDevice.bugreport_device_identifiers.casesynthetic_empty.zip",
+    "start_time": "2026-10-27T11:51:43.366710+00:00",
+    "end_time": "2026-10-27T11:51:43.379466+00:00",
+    "run_time_seconds": 0.00022912025451660156,
+    "last_commit": {
+      "hash": "34925548575444782d88efa5d8a4d0028005ceb2",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T16:32:03-04:00",
+      "message": "Bug report artifacts: per-group categories, device identifiers as printed in Device Facts, invented fixture values"
+    }
+  },
+  "headers": [
+    "Name",
+    "Value",
+    "Origin",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

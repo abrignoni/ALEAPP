@@ -1,0 +1,30 @@
+{
+    "casepixel3_a12": {
+        "description": "Corpus key pixel3_a12 (Google Pixel 3, Android 12): the call_data_logs.db of com.google.android.apps.scone in user_de and its data_mirror view.",
+        "maker": "",
+        "make_data": {
+            "input_data_path": "pixel3_a12.zip",
+            "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+            "timestamp": "2026-10-29T22:13:15.832266",
+            "last_commit": {
+                "hash": "Uncommitted",
+                "author_name": "N/A",
+                "author_email": "N/A",
+                "date": "2026-10-29T22:13:15.822082",
+                "message": "File not yet committed to git"
+            }
+        },
+        "artifacts": {
+            "sconeCallDataLogs": {
+                "search_patterns": [
+                    "*/com.google.android.apps.scone/databases/call_data_logs.db*"
+                ],
+                "file_count": 2,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            }
+        }
+    }
+}

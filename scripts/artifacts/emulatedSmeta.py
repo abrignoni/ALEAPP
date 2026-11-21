@@ -5,17 +5,17 @@ __artifacts_v2__ = {
         "description": "Parses media store metadata (downloads)",
         "author": "@AlexisBrignoni",
         "creation_date": "2020-10-19",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-27",
         "requirements": "none",
         "category": "Emulated Storage Metadata",
-        "notes": "Reads each com.google.android.providers.media.module external.db found, including a second Android user's, and takes one copy where one user's database appears under more than one of the data/data, data/user/N and data_mirror paths. A copy under data/misc_ce/N/rollback/, where installd's snapshotAppData copies an app's credential encrypted data, is also read as a separate database: on hc_pixel8pro_a16 every path in the copy is also in the live database, while on pixel3_a12 the copy's files table lists 31 paths that the live database's files table does not. Reference: AOSP, 'InstalldNativeService::snapshotAppData', https://android.googlesource.com/platform/frameworks/native/+/2827a4a16b0340ecd07c2d5a6c89991799b362bb/cmds/installd/InstalldNativeService.cpp#1676 The Source DB Path column names the database each row came from, and the report's 'located at' line lists every database read, including any that returned no rows. MediaStore records DATE_ADDED and DATE_MODIFIED in seconds since epoch and DATE_TAKEN in milliseconds, and this parser decodes them that way. Key Timestamp is not a stored column: it shows Date Added, or Date Modified when Date Added is zero or absent. Date Taken is shown in UTC; the Android reference says an image must carry both the EXIF original time and its offset for this value to be reliably placed in relation to the epoch, so where the file had no offset the instant is not established. Reference: AOSP, 'MediaStore.MediaColumns', https://developer.android.com/reference/android/provider/MediaStore.MediaColumns",
+        "notes": "Reads each com.google.android.providers.media.module external.db found, including a second Android user's, and takes one copy where one user's database appears under more than one of the data/data, data/user/N and data_mirror paths. A copy under data/misc_ce/N/rollback/, where installd's snapshotAppData copies an app's credential encrypted data, is read too unless it is byte identical to the live database of the same user. A row from that copy is left out when the live database of the same user gave a row equal to it in every column but Source DB Path, each live row answering for one copy row, so what remains from the copy is what the live database does not hold in the same form, under the copy's path in Source DB Path. On the 7 tested images that hold rollback snapshots, 6 of them a copy of this database, this removed 1,826 of 4,555 rows across the Emulated Storage Metadata artifacts (the legacy Files artifact had no rows on these images) and kept 90 rows from copies, 88 of them in Files (pixel3_a12 54, russell_a14 15, hickman_a13 12, hc_pixel8pro_a16 7). Reference: AOSP, 'InstalldNativeService::snapshotAppData', https://android.googlesource.com/platform/frameworks/native/+/2827a4a16b0340ecd07c2d5a6c89991799b362bb/cmds/installd/InstalldNativeService.cpp#1676 The Source DB Path column names the database each row came from, and the report's 'located at' line lists every database read, including any that returned no rows. MediaStore records DATE_ADDED and DATE_MODIFIED in seconds since epoch and DATE_TAKEN in milliseconds, and this parser decodes them that way. Key Timestamp is not a stored column: it shows Date Added, or Date Modified when Date Added is zero or absent. Date Taken is shown in UTC; the Android reference says an image must carry both the EXIF original time and its offset for this value to be reliably placed in relation to the epoch, so where the file had no offset the instant is not established. Reference: AOSP, 'MediaStore.MediaColumns', https://developer.android.com/reference/android/provider/MediaStore.MediaColumns",
         "paths": ('*/com.google.android.providers.media.module/databases/external.db*', '*/com.android.providers.media/databases/external.db*'),
         "output_types": "standard",
         "artifact_icon": "download",
         "sample_data": {
             "anne_a15": "Android 15 | com.google.android.providers.media.module | 0 rows",
             "galaxys10_a10": "Android 10 | com.android.providers.media | 0 rows",
-            "hc_pixel8pro_a16": "Android 16 | com.google.android.providers.media.module | 24 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.providers.media.module | 12 rows",
             "kevin_pocox7_a15": "Android 15 | com.google.android.providers.media.module | 30 rows",
             "pixel7a_a14": "Android 14 | com.google.android.providers.media.module | 74 rows",
             "samsunga53_a14": "Android 14 | com.google.android.providers.media.module | 1 row",
@@ -24,8 +24,8 @@ __artifacts_v2__ = {
             "russell_pixel6a_a13": "Android 13 | com.google.android.providers.media.module | 1 row",
             "userb2_a13": "Android 13 | com.google.android.providers.media.module | 2 rows",
             "emu_a15_oss2_v3": "Android 15 | com.google.android.providers.media.module | 3 rows",
-            "pixel3_a12": "Android 12 | com.google.android.providers.media.module | 53 rows",
-            "russell_a14": "Android 14 | com.google.android.providers.media.module | 4 rows",
+            "pixel3_a12": "Android 12 | com.google.android.providers.media.module | 32 rows",
+            "russell_a14": "Android 14 | com.google.android.providers.media.module | 2 rows",
         },
     },
     "get_emulatedSmeta_images": {
@@ -33,17 +33,17 @@ __artifacts_v2__ = {
         "description": "Parses media store metadata (images)",
         "author": "@AlexisBrignoni, Codex",
         "creation_date": "2020-10-19",
-        "last_update_date": "2026-10-06",
+        "last_update_date": "2026-10-27",
         "requirements": "none",
         "category": "Emulated Storage Metadata",
-        "notes": "Reads each com.google.android.providers.media.module external.db found, including a second Android user's, and takes one copy where one user's database appears under more than one of the data/data, data/user/N and data_mirror paths. A copy under data/misc_ce/N/rollback/, where installd's snapshotAppData copies an app's credential encrypted data, is also read as a separate database: on hc_pixel8pro_a16 every path in the copy is also in the live database, while on pixel3_a12 the copy's files table lists 31 paths that the live database's files table does not. Reference: AOSP, 'InstalldNativeService::snapshotAppData', https://android.googlesource.com/platform/frameworks/native/+/2827a4a16b0340ecd07c2d5a6c89991799b362bb/cmds/installd/InstalldNativeService.cpp#1676 The Source DB Path column names the database each row came from, and the report's 'located at' line lists every database read, including any that returned no rows. Orientation (As Stored) reports the SQLite orientation value directly, including NULL and values outside the former parser mapping. It does not establish aspect ratio or displayed orientation. Original parser and research credit: @AlexisBrignoni. DATE_ADDED and DATE_MODIFIED are seconds since epoch and DATE_TAKEN is milliseconds, and this parser decodes them that way. Key Timestamp is not a stored column: it shows Date Added, or Date Modified when Date Added is zero or absent. Date Taken is shown in UTC; the Android reference says an image must carry both the EXIF original time and its offset for this value to be reliably placed in relation to the epoch, so where the file had no offset the instant is not established. Reference: AOSP, 'MediaStore.MediaColumns.ORIENTATION', https://developer.android.com/reference/android/provider/MediaStore.MediaColumns#ORIENTATION",
+        "notes": "Reads each com.google.android.providers.media.module external.db found, including a second Android user's, and takes one copy where one user's database appears under more than one of the data/data, data/user/N and data_mirror paths. A copy under data/misc_ce/N/rollback/, where installd's snapshotAppData copies an app's credential encrypted data, is read too unless it is byte identical to the live database of the same user. A row from that copy is left out when the live database of the same user gave a row equal to it in every column but Source DB Path, each live row answering for one copy row, so what remains from the copy is what the live database does not hold in the same form, under the copy's path in Source DB Path. On the 7 tested images that hold rollback snapshots, 6 of them a copy of this database, this removed 1,826 of 4,555 rows across the Emulated Storage Metadata artifacts (the legacy Files artifact had no rows on these images) and kept 90 rows from copies, 88 of them in Files (pixel3_a12 54, russell_a14 15, hickman_a13 12, hc_pixel8pro_a16 7). Reference: AOSP, 'InstalldNativeService::snapshotAppData', https://android.googlesource.com/platform/frameworks/native/+/2827a4a16b0340ecd07c2d5a6c89991799b362bb/cmds/installd/InstalldNativeService.cpp#1676 The Source DB Path column names the database each row came from, and the report's 'located at' line lists every database read, including any that returned no rows. Orientation (As Stored) reports the SQLite orientation value directly, including NULL and values outside the former parser mapping. It does not establish aspect ratio or displayed orientation. Original parser and research credit: @AlexisBrignoni. DATE_ADDED and DATE_MODIFIED are seconds since epoch and DATE_TAKEN is milliseconds, and this parser decodes them that way. Key Timestamp is not a stored column: it shows Date Added, or Date Modified when Date Added is zero or absent. Date Taken is shown in UTC; the Android reference says an image must carry both the EXIF original time and its offset for this value to be reliably placed in relation to the epoch, so where the file had no offset the instant is not established. Reference: AOSP, 'MediaStore.MediaColumns.ORIENTATION', https://developer.android.com/reference/android/provider/MediaStore.MediaColumns#ORIENTATION",
         "paths": ('*/com.google.android.providers.media.module/databases/external.db*', '*/com.android.providers.media/databases/external.db*'),
         "output_types": "standard",
         "artifact_icon": "photo",
         "sample_data": {
             "anne_a15": "Android 15 | com.google.android.providers.media.module | 212 rows",
             "galaxys10_a10": "Android 10 | com.android.providers.media | 0 rows",
-            "hc_pixel8pro_a16": "Android 16 | com.google.android.providers.media.module | 38 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.providers.media.module | 20 rows",
             "kevin_pocox7_a15": "Android 15 | com.google.android.providers.media.module | 330 rows",
             "pixel7a_a14": "Android 14 | com.google.android.providers.media.module | 193 rows",
             "samsunga53_a14": "Android 14 | com.google.android.providers.media.module | 2 rows",
@@ -52,8 +52,8 @@ __artifacts_v2__ = {
             "russell_pixel6a_a13": "Android 13 | com.google.android.providers.media.module | 96 rows",
             "userb2_a13": "Android 13 | com.google.android.providers.media.module | 4 rows",
             "emu_a15_oss2_v3": "Android 15 | com.google.android.providers.media.module | 15 rows",
-            "pixel3_a12": "Android 12 | com.google.android.providers.media.module | 143 rows",
-            "russell_a14": "Android 14 | com.google.android.providers.media.module | 622 rows",
+            "pixel3_a12": "Android 12 | com.google.android.providers.media.module | 86 rows",
+            "russell_a14": "Android 14 | com.google.android.providers.media.module | 315 rows",
         },
     },
     "get_emulatedSmeta_files": {
@@ -61,17 +61,17 @@ __artifacts_v2__ = {
         "description": "Parses media store metadata (files)",
         "author": "@AlexisBrignoni, Codex",
         "creation_date": "2020-10-19",
-        "last_update_date": "2026-10-06",
+        "last_update_date": "2026-10-27",
         "requirements": "none",
         "category": "Emulated Storage Metadata",
-        "notes": "Reads each com.google.android.providers.media.module external.db found, including a second Android user's, and takes one copy where one user's database appears under more than one of the data/data, data/user/N and data_mirror paths. A copy under data/misc_ce/N/rollback/, where installd's snapshotAppData copies an app's credential encrypted data, is also read as a separate database: on hc_pixel8pro_a16 every path in the copy is also in the live database, while on pixel3_a12 the copy's files table lists 31 paths that the live database's files table does not. Reference: AOSP, 'InstalldNativeService::snapshotAppData', https://android.googlesource.com/platform/frameworks/native/+/2827a4a16b0340ecd07c2d5a6c89991799b362bb/cmds/installd/InstalldNativeService.cpp#1676 The Source DB Path column names the database each row came from, and the report's 'located at' line lists every database read, including any that returned no rows. Orientation (As Stored) reports the SQLite orientation value directly, including NULL and values outside the former parser mapping. It does not establish aspect ratio or displayed orientation. Original parser and research credit: @AlexisBrignoni. DATE_ADDED and DATE_MODIFIED are seconds since epoch and DATE_TAKEN is milliseconds, and this parser decodes them that way. Key Timestamp is not a stored column: it shows Date Added, or Date Modified when Date Added is zero or absent. Date Taken is shown in UTC; the Android reference says an image must carry both the EXIF original time and its offset for this value to be reliably placed in relation to the epoch, so where the file had no offset the instant is not established. Reference: AOSP, 'MediaStore.MediaColumns.ORIENTATION', https://developer.android.com/reference/android/provider/MediaStore.MediaColumns#ORIENTATION",
+        "notes": "Reads each com.google.android.providers.media.module external.db found, including a second Android user's, and takes one copy where one user's database appears under more than one of the data/data, data/user/N and data_mirror paths. A copy under data/misc_ce/N/rollback/, where installd's snapshotAppData copies an app's credential encrypted data, is read too unless it is byte identical to the live database of the same user. A row from that copy is left out when the live database of the same user gave a row equal to it in every column but Source DB Path, each live row answering for one copy row, so what remains from the copy is what the live database does not hold in the same form, under the copy's path in Source DB Path. On the 7 tested images that hold rollback snapshots, 6 of them a copy of this database, this removed 1,826 of 4,555 rows across the Emulated Storage Metadata artifacts (the legacy Files artifact had no rows on these images) and kept 90 rows from copies, 88 of them in Files (pixel3_a12 54, russell_a14 15, hickman_a13 12, hc_pixel8pro_a16 7). Reference: AOSP, 'InstalldNativeService::snapshotAppData', https://android.googlesource.com/platform/frameworks/native/+/2827a4a16b0340ecd07c2d5a6c89991799b362bb/cmds/installd/InstalldNativeService.cpp#1676 The Source DB Path column names the database each row came from, and the report's 'located at' line lists every database read, including any that returned no rows. Orientation (As Stored) reports the SQLite orientation value directly, including NULL and values outside the former parser mapping. It does not establish aspect ratio or displayed orientation. Original parser and research credit: @AlexisBrignoni. DATE_ADDED and DATE_MODIFIED are seconds since epoch and DATE_TAKEN is milliseconds, and this parser decodes them that way. Key Timestamp is not a stored column: it shows Date Added, or Date Modified when Date Added is zero or absent. Date Taken is shown in UTC; the Android reference says an image must carry both the EXIF original time and its offset for this value to be reliably placed in relation to the epoch, so where the file had no offset the instant is not established. Reference: AOSP, 'MediaStore.MediaColumns.ORIENTATION', https://developer.android.com/reference/android/provider/MediaStore.MediaColumns#ORIENTATION",
         "paths": ('*/com.google.android.providers.media.module/databases/external.db*', '*/com.android.providers.media/databases/external.db*'),
         "output_types": "standard",
         "artifact_icon": "file",
         "sample_data": {
             "anne_a15": "Android 15 | com.google.android.providers.media.module | 369 rows",
             "galaxys10_a10": "Android 10 | com.android.providers.media | 0 rows",
-            "hc_pixel8pro_a16": "Android 16 | com.google.android.providers.media.module | 420 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.providers.media.module | 220 rows",
             "kevin_pocox7_a15": "Android 15 | com.google.android.providers.media.module | 660 rows",
             "pixel7a_a14": "Android 14 | com.google.android.providers.media.module | 364 rows",
             "samsunga53_a14": "Android 14 | com.google.android.providers.media.module | 26 rows",
@@ -80,8 +80,8 @@ __artifacts_v2__ = {
             "russell_pixel6a_a13": "Android 13 | com.google.android.providers.media.module | 226 rows",
             "userb2_a13": "Android 13 | com.google.android.providers.media.module | 26 rows",
             "emu_a15_oss2_v3": "Android 15 | com.google.android.providers.media.module | 197 rows",
-            "pixel3_a12": "Android 12 | com.google.android.providers.media.module | 461 rows",
-            "russell_a14": "Android 14 | com.google.android.providers.media.module | 1015 rows",
+            "pixel3_a12": "Android 12 | com.google.android.providers.media.module | 299 rows",
+            "russell_a14": "Android 14 | com.google.android.providers.media.module | 529 rows",
         },
     },
     "get_emulatedSmeta_videos": {
@@ -89,17 +89,17 @@ __artifacts_v2__ = {
         "description": "Parses media store metadata (videos)",
         "author": "@AlexisBrignoni, Codex",
         "creation_date": "2020-10-19",
-        "last_update_date": "2026-10-06",
+        "last_update_date": "2026-10-27",
         "requirements": "none",
         "category": "Emulated Storage Metadata",
-        "notes": "Reads each com.google.android.providers.media.module external.db found, including a second Android user's, and takes one copy where one user's database appears under more than one of the data/data, data/user/N and data_mirror paths. A copy under data/misc_ce/N/rollback/, where installd's snapshotAppData copies an app's credential encrypted data, is also read as a separate database: on hc_pixel8pro_a16 every path in the copy is also in the live database, while on pixel3_a12 the copy's files table lists 31 paths that the live database's files table does not. Reference: AOSP, 'InstalldNativeService::snapshotAppData', https://android.googlesource.com/platform/frameworks/native/+/2827a4a16b0340ecd07c2d5a6c89991799b362bb/cmds/installd/InstalldNativeService.cpp#1676 The Source DB Path column names the database each row came from, and the report's 'located at' line lists every database read, including any that returned no rows. Orientation (As Stored) reports the SQLite orientation value directly, including NULL and values outside the former parser mapping. It does not establish aspect ratio or displayed orientation. Original parser and research credit: @AlexisBrignoni. DATE_ADDED and DATE_MODIFIED are seconds since epoch and DATE_TAKEN is milliseconds, and this parser decodes them that way. Key Timestamp is not a stored column: it shows Date Added, or Date Modified when Date Added is zero or absent. Date Taken is shown in UTC; the Android reference says an image must carry both the EXIF original time and its offset for this value to be reliably placed in relation to the epoch, so where the file had no offset the instant is not established. Reference: AOSP, 'MediaStore.MediaColumns.ORIENTATION', https://developer.android.com/reference/android/provider/MediaStore.MediaColumns#ORIENTATION",
+        "notes": "Reads each com.google.android.providers.media.module external.db found, including a second Android user's, and takes one copy where one user's database appears under more than one of the data/data, data/user/N and data_mirror paths. A copy under data/misc_ce/N/rollback/, where installd's snapshotAppData copies an app's credential encrypted data, is read too unless it is byte identical to the live database of the same user. A row from that copy is left out when the live database of the same user gave a row equal to it in every column but Source DB Path, each live row answering for one copy row, so what remains from the copy is what the live database does not hold in the same form, under the copy's path in Source DB Path. On the 7 tested images that hold rollback snapshots, 6 of them a copy of this database, this removed 1,826 of 4,555 rows across the Emulated Storage Metadata artifacts (the legacy Files artifact had no rows on these images) and kept 90 rows from copies, 88 of them in Files (pixel3_a12 54, russell_a14 15, hickman_a13 12, hc_pixel8pro_a16 7). Reference: AOSP, 'InstalldNativeService::snapshotAppData', https://android.googlesource.com/platform/frameworks/native/+/2827a4a16b0340ecd07c2d5a6c89991799b362bb/cmds/installd/InstalldNativeService.cpp#1676 The Source DB Path column names the database each row came from, and the report's 'located at' line lists every database read, including any that returned no rows. Orientation (As Stored) reports the SQLite orientation value directly, including NULL and values outside the former parser mapping. It does not establish aspect ratio or displayed orientation. Original parser and research credit: @AlexisBrignoni. DATE_ADDED and DATE_MODIFIED are seconds since epoch and DATE_TAKEN is milliseconds, and this parser decodes them that way. Key Timestamp is not a stored column: it shows Date Added, or Date Modified when Date Added is zero or absent. Date Taken is shown in UTC; the Android reference says an image must carry both the EXIF original time and its offset for this value to be reliably placed in relation to the epoch, so where the file had no offset the instant is not established. Reference: AOSP, 'MediaStore.MediaColumns.ORIENTATION', https://developer.android.com/reference/android/provider/MediaStore.MediaColumns#ORIENTATION",
         "paths": ('*/com.google.android.providers.media.module/databases/external.db*', '*/com.android.providers.media/databases/external.db*'),
         "output_types": "standard",
         "artifact_icon": "video",
         "sample_data": {
             "anne_a15": "Android 15 | com.google.android.providers.media.module | 11 rows",
             "galaxys10_a10": "Android 10 | com.android.providers.media | 0 rows",
-            "hc_pixel8pro_a16": "Android 16 | com.google.android.providers.media.module | 6 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.providers.media.module | 3 rows",
             "kevin_pocox7_a15": "Android 15 | com.google.android.providers.media.module | 90 rows",
             "pixel7a_a14": "Android 14 | com.google.android.providers.media.module | 9 rows",
             "samsunga53_a14": "Android 14 | com.google.android.providers.media.module | 0 rows",
@@ -108,8 +108,8 @@ __artifacts_v2__ = {
             "russell_pixel6a_a13": "Android 13 | com.google.android.providers.media.module | 6 rows",
             "userb2_a13": "Android 13 | com.google.android.providers.media.module | 0 rows",
             "emu_a15_oss2_v3": "Android 15 | com.google.android.providers.media.module | 5 rows",
-            "pixel3_a12": "Android 12 | com.google.android.providers.media.module | 5 rows",
-            "russell_a14": "Android 14 | com.google.android.providers.media.module | 56 rows",
+            "pixel3_a12": "Android 12 | com.google.android.providers.media.module | 3 rows",
+            "russell_a14": "Android 14 | com.google.android.providers.media.module | 28 rows",
         },
     },
     "get_emulatedSmeta_audio": {
@@ -117,17 +117,17 @@ __artifacts_v2__ = {
         "description": "Parses media store metadata (audio)",
         "author": "@AlexisBrignoni",
         "creation_date": "2020-10-19",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-10-27",
         "requirements": "none",
         "category": "Emulated Storage Metadata",
-        "notes": "Reads each com.google.android.providers.media.module external.db found, including a second Android user's, and takes one copy where one user's database appears under more than one of the data/data, data/user/N and data_mirror paths. A copy under data/misc_ce/N/rollback/, where installd's snapshotAppData copies an app's credential encrypted data, is also read as a separate database: on hc_pixel8pro_a16 every path in the copy is also in the live database, while on pixel3_a12 the copy's files table lists 31 paths that the live database's files table does not. Reference: AOSP, 'InstalldNativeService::snapshotAppData', https://android.googlesource.com/platform/frameworks/native/+/2827a4a16b0340ecd07c2d5a6c89991799b362bb/cmds/installd/InstalldNativeService.cpp#1676 The Source DB Path column names the database each row came from, and the report's 'located at' line lists every database read, including any that returned no rows. MediaStore records DATE_ADDED and DATE_MODIFIED in seconds since epoch and DATE_TAKEN in milliseconds, and this parser decodes them that way. Key Timestamp is not a stored column: it shows Date Added, or Date Modified when Date Added is zero or absent. Date Taken is shown in UTC; the Android reference says an image must carry both the EXIF original time and its offset for this value to be reliably placed in relation to the epoch, so where the file had no offset the instant is not established. Reference: AOSP, 'MediaStore.MediaColumns', https://developer.android.com/reference/android/provider/MediaStore.MediaColumns",
+        "notes": "Reads each com.google.android.providers.media.module external.db found, including a second Android user's, and takes one copy where one user's database appears under more than one of the data/data, data/user/N and data_mirror paths. A copy under data/misc_ce/N/rollback/, where installd's snapshotAppData copies an app's credential encrypted data, is read too unless it is byte identical to the live database of the same user. A row from that copy is left out when the live database of the same user gave a row equal to it in every column but Source DB Path, each live row answering for one copy row, so what remains from the copy is what the live database does not hold in the same form, under the copy's path in Source DB Path. On the 7 tested images that hold rollback snapshots, 6 of them a copy of this database, this removed 1,826 of 4,555 rows across the Emulated Storage Metadata artifacts (the legacy Files artifact had no rows on these images) and kept 90 rows from copies, 88 of them in Files (pixel3_a12 54, russell_a14 15, hickman_a13 12, hc_pixel8pro_a16 7). Reference: AOSP, 'InstalldNativeService::snapshotAppData', https://android.googlesource.com/platform/frameworks/native/+/2827a4a16b0340ecd07c2d5a6c89991799b362bb/cmds/installd/InstalldNativeService.cpp#1676 The Source DB Path column names the database each row came from, and the report's 'located at' line lists every database read, including any that returned no rows. MediaStore records DATE_ADDED and DATE_MODIFIED in seconds since epoch and DATE_TAKEN in milliseconds, and this parser decodes them that way. Key Timestamp is not a stored column: it shows Date Added, or Date Modified when Date Added is zero or absent. Date Taken is shown in UTC; the Android reference says an image must carry both the EXIF original time and its offset for this value to be reliably placed in relation to the epoch, so where the file had no offset the instant is not established. Reference: AOSP, 'MediaStore.MediaColumns', https://developer.android.com/reference/android/provider/MediaStore.MediaColumns",
         "paths": ('*/com.google.android.providers.media.module/databases/external.db*', '*/com.android.providers.media/databases/external.db*'),
         "output_types": "standard",
         "artifact_icon": "music",
         "sample_data": {
             "anne_a15": "Android 15 | com.google.android.providers.media.module | 2 rows",
             "galaxys10_a10": "Android 10 | com.android.providers.media | 0 rows",
-            "hc_pixel8pro_a16": "Android 16 | com.google.android.providers.media.module | 2 rows",
+            "hc_pixel8pro_a16": "Android 16 | com.google.android.providers.media.module | 1 row",
             "kevin_pocox7_a15": "Android 15 | com.google.android.providers.media.module | 0 rows",
             "pixel7a_a14": "Android 14 | com.google.android.providers.media.module | 14 rows",
             "samsunga53_a14": "Android 14 | com.google.android.providers.media.module | 1 row",
@@ -136,7 +136,7 @@ __artifacts_v2__ = {
             "russell_pixel6a_a13": "Android 13 | com.google.android.providers.media.module | 0 rows",
             "userb2_a13": "Android 13 | com.google.android.providers.media.module | 0 rows",
             "emu_a15_oss2_v3": "Android 15 | com.google.android.providers.media.module | 8 rows",
-            "pixel3_a12": "Android 12 | com.google.android.providers.media.module | 3 rows",
+            "pixel3_a12": "Android 12 | com.google.android.providers.media.module | 2 rows",
             "russell_a14": "Android 14 | com.google.android.providers.media.module | 0 rows",
         },
     },
@@ -145,10 +145,10 @@ __artifacts_v2__ = {
         "description": "Parses media store metadata (files, older schema)",
         "author": "@AlexisBrignoni, Codex",
         "creation_date": "2020-10-19",
-        "last_update_date": "2026-10-06",
+        "last_update_date": "2026-10-27",
         "requirements": "none",
         "category": "Emulated Storage Metadata",
-        "notes": "Reads each com.android.providers.media external.db found and takes one copy where one user's database appears under more than one of the data/data, data/user/N and data_mirror paths. The Source DB Path column names the database each row came from, and the report's 'located at' line lists every database read, including any that returned no rows. Orientation (As Stored) reports the SQLite orientation value directly, including NULL and values outside the former parser mapping. It does not establish aspect ratio or displayed orientation. Original parser and research credit: @AlexisBrignoni. DATE_ADDED and DATE_MODIFIED are seconds since epoch and DATE_TAKEN is milliseconds, and this parser decodes them that way. Timestamp Taken is shown in UTC; the Android reference says an image must carry both the EXIF original time and its offset for this value to be reliably placed in relation to the epoch, so where the file had no offset the instant is not established. Reference: AOSP, 'MediaStore.MediaColumns.ORIENTATION', https://developer.android.com/reference/android/provider/MediaStore.MediaColumns#ORIENTATION",
+        "notes": "Reads each com.android.providers.media external.db found and takes one copy where one user's database appears under more than one of the data/data, data/user/N and data_mirror paths. A row from a copy of the database under data/misc_ce/N/rollback/ is left out when the live database of the same user gave a row equal to it in every column but Source DB Path; none of the 22 registered Android images (member listings, 2026-10-27) holds such a copy of this provider's database, so that path is unexercised. The Source DB Path column names the database each row came from, and the report's 'located at' line lists every database read, including any that returned no rows. Orientation (As Stored) reports the SQLite orientation value directly, including NULL and values outside the former parser mapping. It does not establish aspect ratio or displayed orientation. Original parser and research credit: @AlexisBrignoni. DATE_ADDED and DATE_MODIFIED are seconds since epoch and DATE_TAKEN is milliseconds, and this parser decodes them that way. Timestamp Taken is shown in UTC; the Android reference says an image must carry both the EXIF original time and its offset for this value to be reliably placed in relation to the epoch, so where the file had no offset the instant is not established. Reference: AOSP, 'MediaStore.MediaColumns.ORIENTATION', https://developer.android.com/reference/android/provider/MediaStore.MediaColumns#ORIENTATION",
         "paths": ('*/com.google.android.providers.media.module/databases/external.db*', '*/com.android.providers.media/databases/external.db*'),
         "output_types": "standard",
         "artifact_icon": "file",
@@ -173,7 +173,7 @@ __artifacts_v2__ = {
 import datetime
 
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
-from scripts.artifacts.storagePathViews import unique_files
+from scripts.artifacts.storagePathViews import unique_files, without_snapshot_repeats
 
 # Retain the SQLite orientation value without a parser interpretation.
 ORIENTATION = 'orientation'
@@ -253,7 +253,7 @@ def get_emulatedSmeta(context):
     data_headers = (('Key Timestamp', 'datetime'), ('Date Added', 'datetime'), ('Date Modified', 'datetime'), ('Date Taken', 'datetime'),
                     'Path', 'Title', 'Display Name', 'Size', 'Owner Package Name', 'Bucket Display Name', 'Referer URI', 'Download URI',
                     'Relative Path', 'Is Downloaded?', 'Is Favorited?', 'Is Trashed?', 'XMP', 'Source DB Path')
-    return data_headers, data_list, '\n'.join(source_paths)
+    return data_headers, without_snapshot_repeats(data_list), '\n'.join(source_paths)
 
 
 @artifact_processor
@@ -274,7 +274,7 @@ def get_emulatedSmeta_images(context):
     data_headers = (('Key Timestamp', 'datetime'), ('Date Added', 'datetime'), ('Date Modified', 'datetime'), ('Date Taken', 'datetime'),
                     'Path', 'Title', 'Display Name', 'Size', 'Latitude', 'Longitude', 'Orientation (As Stored)', 'Owner Package Name',
                     'Bucket Display Name', 'Relative Path', 'Is Downloaded?', 'Is Favorited?', 'Is Trashed?', 'Source DB Path')
-    return data_headers, data_list, '\n'.join(source_paths)
+    return data_headers, without_snapshot_repeats(data_list), '\n'.join(source_paths)
 
 
 @artifact_processor
@@ -295,7 +295,7 @@ def get_emulatedSmeta_files(context):
     data_headers = (('Key Timestamp', 'datetime'), ('Date Added', 'datetime'), ('Date Modified', 'datetime'), ('Date Taken', 'datetime'),
                     'Path', 'Title', 'Display Name', 'Size', 'Latitude', 'Longitude', 'Orientation (As Stored)', 'Owner Package Name',
                     'Bucket Display Name', 'Referer URI', 'Download URI', 'Relative Path', 'Is Downloaded?', 'Is Favorited?', 'Is Trashed?', 'Source DB Path')
-    return data_headers, data_list, '\n'.join(source_paths)
+    return data_headers, without_snapshot_repeats(data_list), '\n'.join(source_paths)
 
 
 @artifact_processor
@@ -316,7 +316,7 @@ def get_emulatedSmeta_videos(context):
     data_headers = (('Key Timestamp', 'datetime'), ('Date Added', 'datetime'), ('Date Modified', 'datetime'), ('Date Taken', 'datetime'),
                     'Path', 'Title', 'Display Name', 'Size', 'Latitude', 'Longitude', 'Orientation (As Stored)', 'Owner Package Name',
                     'Bucket Display Name', 'Relative Path', 'Is Downloaded?', 'Is Favorited?', 'Is Trashed?', 'Source DB Path')
-    return data_headers, data_list, '\n'.join(source_paths)
+    return data_headers, without_snapshot_repeats(data_list), '\n'.join(source_paths)
 
 
 @artifact_processor
@@ -337,7 +337,7 @@ def get_emulatedSmeta_audio(context):
     data_headers = (('Key Timestamp', 'datetime'), ('Date Added', 'datetime'), ('Date Modified', 'datetime'), ('Date Taken', 'datetime'),
                     'Path', 'Title', 'Display Name', 'Size', 'Owner Package Name', 'Bucket Display Name', 'Relative Path',
                     'Is Downloaded?', 'Is Favorited?', 'Is Trashed?', 'Source DB Path')
-    return data_headers, data_list, '\n'.join(source_paths)
+    return data_headers, without_snapshot_repeats(data_list), '\n'.join(source_paths)
 
 
 @artifact_processor
@@ -357,4 +357,4 @@ def get_emulatedSmeta_files_legacy(context):
     data_headers = (('Timestamp Added', 'datetime'), ('Timestamp Modified', 'datetime'), ('Timestamp Taken', 'datetime'),
                     'Path', 'Title', 'Display Name', 'Size', 'Latitude', 'Longitude', 'Orientation (As Stored)', 'Bucket Display Name',
                     'Width', 'Height', 'ID', 'Source DB Path')
-    return data_headers, data_list, '\n'.join(source_paths)
+    return data_headers, without_snapshot_repeats(data_list), '\n'.join(source_paths)

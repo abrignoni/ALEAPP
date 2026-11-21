@@ -1,0 +1,34 @@
+{
+  "metadata": {
+    "module_name": "bugreportAccountsPower",
+    "artifact_name": "Bug Report - Battery Wake Locks",
+    "function_name": "bugreport_battery_wake_locks",
+    "case_number": "casesynthetic_not_a_report",
+    "number_of_columns": 7,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportAccountsPower/testdata.bugreportAccountsPower.bugreport_battery_wake_locks.casesynthetic_not_a_report.zip",
+    "start_time": "2026-10-26T17:46:28.907421+00:00",
+    "end_time": "2026-10-26T17:46:29.008598+00:00",
+    "run_time_seconds": 0.0027256011962890625,
+    "last_commit": {
+      "hash": "7450687ec1476569021e50b0cfc221c1d2c13a09",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:45:32-04:00",
+      "message": "Bug report accounts, sync, backup, users, battery, power and memory: readers, 33 artifacts, synthetic fixture and tests"
+    }
+  },
+  "headers": [
+    "Kind",
+    "UID",
+    "Packages In UID Block",
+    "Wake Lock",
+    "Usage (as printed)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

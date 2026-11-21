@@ -79,10 +79,9 @@ from scripts.ilapfuncs import (
     artifact_processor,
     convert_unix_ts_to_utc,
     get_sqlite_db_records,
-    logfunc,
+    logfunc, is_sqlite_sidecar,
 )
 
-SIDECARS = ('-wal', '-shm', '-journal')
 
 # Columns the logs table has carried. The three at the end were added to the app's
 # SuLog entity after the schema in the tested extraction, so each is selected only
@@ -96,7 +95,7 @@ def _files(context, wanted):
     found = []
     for file_found in unique_files(context):
         file_found = str(file_found)
-        if os.path.isdir(file_found) or file_found.endswith(SIDECARS):
+        if os.path.isdir(file_found) or is_sqlite_sidecar(file_found):
             continue
         if wanted(os.path.basename(file_found)):
             found.append(file_found)

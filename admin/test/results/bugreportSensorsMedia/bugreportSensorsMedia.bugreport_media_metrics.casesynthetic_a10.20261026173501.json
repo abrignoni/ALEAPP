@@ -1,0 +1,65 @@
+{
+  "metadata": {
+    "module_name": "bugreportSensorsMedia",
+    "artifact_name": "Bug Report - Media Metrics",
+    "function_name": "bugreport_media_metrics",
+    "case_number": "casesynthetic_a10",
+    "number_of_columns": 11,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 393,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSensorsMedia/testdata.bugreportSensorsMedia.bugreport_media_metrics.casesynthetic_a10.zip",
+    "start_time": "2026-10-26T17:35:01.406112+00:00",
+    "end_time": "2026-10-26T17:35:01.538292+00:00",
+    "run_time_seconds": 0.01238560676574707,
+    "last_commit": {
+      "hash": "e56d9fc859d2e83c7207c6514d3727ee6bf6a291",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:32:45-04:00",
+      "message": "Bug report sensors and media: location, sensors, camera, audio, media, accessibility, input method, display and window artifacts"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Key",
+    "Package",
+    "PID",
+    "UID",
+    "Properties (as printed)",
+    "Record Form",
+    "Record No.",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1793000000,
+      "1793000000000000000",
+      "codec",
+      "com.example.user.chat",
+      4321,
+      10300,
+      "android.media.mediacodec.codec=c2.example.decoder:android.media.mediacodec.mode=audio:",
+      "colon separated",
+      0,
+      574,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793000060,
+      "1793000060000000000",
+      "extractor",
+      "media",
+      1048,
+      1013,
+      "android.media.mediaextractor.fmt=ExampleExtractor:",
+      "colon separated",
+      1,
+      575,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

@@ -88,7 +88,7 @@ import urllib.parse
 
 from scripts.artifacts.gmailEmails import body_text_and_links
 from scripts.artifacts.storagePathViews import canonical_path, unique_files
-from scripts.ilapfuncs import open_sqlite_db_readonly, artifact_processor, convert_unix_ts_to_utc, logfunc, check_in_media
+from scripts.ilapfuncs import open_sqlite_db_readonly, artifact_processor, convert_unix_ts_to_utc, logfunc, check_in_media, is_sqlite_sidecar
 from scripts.context import Context
 
 
@@ -120,7 +120,7 @@ def gmailIMAPEmails(context):
     for file_found in unique_files(context):
         file_found = str(file_found)
 
-        if file_found.endswith(('-wal','-shm','-journal')):
+        if is_sqlite_sidecar(file_found):
             continue
         elif os.path.basename(file_found).startswith('.'):
             continue
@@ -263,7 +263,7 @@ def gmailIMAPAccounts(context):
     for file_found in unique_files(context):
         file_found = str(file_found)
 
-        if file_found.endswith(('-wal','-shm','-journal')):
+        if is_sqlite_sidecar(file_found):
             continue
         elif os.path.basename(file_found).startswith('.'):
             continue

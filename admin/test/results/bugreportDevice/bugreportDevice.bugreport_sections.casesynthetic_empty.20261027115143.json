@@ -1,0 +1,48 @@
+{
+  "metadata": {
+    "module_name": "bugreportDevice",
+    "artifact_name": "Bug Report - Sections",
+    "function_name": "bugreport_sections",
+    "case_number": "casesynthetic_empty",
+    "number_of_columns": 9,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 75,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportDevice/testdata.bugreportDevice.bugreport_sections.casesynthetic_empty.zip",
+    "start_time": "2026-10-27T11:51:43.679587+00:00",
+    "end_time": "2026-10-27T11:51:43.692312+00:00",
+    "run_time_seconds": 0.0002281665802001953,
+    "last_commit": {
+      "hash": "34925548575444782d88efa5d8a4d0028005ceb2",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T16:32:03-04:00",
+      "message": "Bug report artifacts: per-group categories, device identifiers as printed in Device Facts, invented fixture values"
+    }
+  },
+  "headers": [
+    "Section",
+    "Kind",
+    "Start Line",
+    "Last Line",
+    "Lines",
+    "Printed Duration (s)",
+    "Timeout Marker (ms)",
+    "Read By",
+    "Source File"
+  ],
+  "data": [
+    [
+      "preamble",
+      "header",
+      1,
+      4,
+      4,
+      null,
+      null,
+      "Device Facts; Device Identifiers",
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

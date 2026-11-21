@@ -1,0 +1,258 @@
+{
+  "metadata": {
+    "module_name": "bugreportRadios",
+    "artifact_name": "Bug Report - Telephony State",
+    "function_name": "bugreport_telephony_state",
+    "case_number": "casesynthetic_a15",
+    "number_of_columns": 6,
+    "number_of_rows": 28,
+    "total_data_size_bytes": 1808,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportRadios/testdata.bugreportRadios.bugreport_telephony_state.casesynthetic_a15.zip",
+    "start_time": "2026-10-26T18:24:49.194724+00:00",
+    "end_time": "2026-10-26T18:24:49.513682+00:00",
+    "run_time_seconds": 0.18948650360107422,
+    "last_commit": {
+      "hash": "f246f0856bad96283c9a62aa4f52d908f14298c7",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T14:24:13-04:00",
+      "message": "Radios artifacts show identifiers as printed: no withheld values, SIM subscription identifier columns, adapter address"
+    }
+  },
+  "headers": [
+    "Service",
+    "Phone Id",
+    "Item",
+    "Value",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "phone",
+      "",
+      "mCurrentRoamingNotification",
+      "0",
+      175,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "phone",
+      "",
+      "mDefaultDataSubId",
+      "1",
+      176,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "phone",
+      "",
+      "isSmsCapable",
+      "true",
+      177,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "telephony.registry",
+      "0",
+      "mCallState",
+      "0",
+      249,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "telephony.registry",
+      "0",
+      "mCallIncomingNumber",
+      "+15550100",
+      250,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "telephony.registry",
+      "0",
+      "mServiceState",
+      "{mVoiceRegState=0(IN_SERVICE), mDataRegState=0(IN_SERVICE), mOperatorAlphaLong=ExampleCell, getRilVoiceRadioTechnology=14(LTE)}",
+      251,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "telephony.registry",
+      "0",
+      "mDataConnectionState",
+      "2",
+      252,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "telephony.registry",
+      "0",
+      "mCellIdentity",
+      "CellIdentityLte:{ mCi=1000 mPci=1 mTac=2 mMcc=001 mMnc=01 mAlphaLong=ExampleCell}",
+      253,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "telephony.registry",
+      "0",
+      "mTelephonyDisplayInfo",
+      "TelephonyDisplayInfo {network=LTE, overrideNetwork=NONE, isRoaming=false}",
+      254,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "telephony.registry",
+      "1",
+      "mCallState",
+      "0",
+      256,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "telephony.registry",
+      "1",
+      "mCellIdentity",
+      "null",
+      257,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "telephony.registry",
+      "",
+      "mPhoneCapability",
+      "mMaxActiveVoiceSubscriptions=1 mMaxActiveDataSubscriptions=1",
+      258,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "telephony.registry",
+      "",
+      "mActiveDataSubId",
+      "1",
+      259,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "telephony.registry",
+      "",
+      "mRadioPowerState",
+      "1",
+      260,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "telephony.registry",
+      "",
+      "mDefaultPhoneId",
+      "0",
+      262,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "telephony.registry",
+      "",
+      "mDefaultSubId",
+      "1",
+      263,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "carrier_config",
+      "",
+      "mNumPhones",
+      "2",
+      333,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "carrier_config",
+      "",
+      "mPlatformCarrierConfigPackage",
+      "com.example.carrier",
+      334,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "carrier_config",
+      "",
+      "mHasSentConfigChange",
+      "[true, true]",
+      335,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "isub",
+      "",
+      "Active modem count",
+      "2",
+      369,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "isub",
+      "",
+      "Logical SIM slot 0",
+      "subId=1",
+      371,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "isub",
+      "",
+      "defaultSubId",
+      "1",
+      375,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "isub",
+      "",
+      "defaultVoiceSubId",
+      "1",
+      376,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "isub",
+      "",
+      "defaultDataSubId",
+      "1",
+      377,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "isub",
+      "",
+      "activeDataSubId",
+      "1",
+      378,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "isub",
+      "",
+      "areAllSubscriptionsLoaded",
+      "true",
+      379,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "isub",
+      "",
+      "mSimState[0]",
+      "LOADED",
+      380,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "isub",
+      "",
+      "mSimState[1]",
+      "NOT_READY",
+      381,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

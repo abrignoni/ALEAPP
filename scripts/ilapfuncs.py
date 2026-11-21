@@ -3,8 +3,10 @@ import codecs
 import csv
 import atexit
 import hashlib
+import io
 import inspect
 import json
+import ntpath
 import os
 import re  # pylint: disable=unused-import
 import shutil
@@ -43,6 +45,7 @@ _console_write = sys.stdout.write
 import pytz
 import simplekml
 from scripts import blackboxprotobuf
+import heicreader
 from scripts.filetype import get_signature_bytes, guess_mime, guess_extension
 from functools import wraps
 
@@ -282,6 +285,41 @@ def _resolve_media_source(source_path):
         return extraction_path, file_info, file_info.source_path
     return extraction_path, None, Context.get_relative_path(source_path)
 
+# LAVA 2026.1.0 and 2026.1.1 show a media item of type image/heic as "This file could not be
+# shown" (media.cannot_display in RenderMedia.jsx): its viewer cannot decode HEIC.
+_HEIC_MIME_TYPES = ('image/heic', 'image/heif')
+_heic_unavailable_logged = False
+
+
+def _heic_to_viewable(source):
+    '''
+    Decode a HEIC or HEIF image with heicreader and encode it as JPEG, or as PNG when it has
+    transparency, which JPEG cannot hold.
+    Args:
+        source: A file path, or the image's bytes.
+    Returns:
+        (bytes, mime type, extension), or None when the image could not be decoded.
+    '''
+    global _heic_unavailable_logged  # pylint: disable=global-statement
+    try:
+        image = heicreader.to_pil(source)
+    except heicreader.Unavailable as ex:
+        # Said once per run, not once per image: every HEIC would fail the same way.
+        if not _heic_unavailable_logged:
+            logfunc(f'HEIC images are attached as they are: heicreader is not available ({ex})')
+            _heic_unavailable_logged = True
+        return None
+    except (heicreader.HeicReaderError, OSError, ValueError) as ex:
+        logfunc(f'HEIC image could not be converted for display, the original is attached instead: {ex}')
+        return None
+    buffer = io.BytesIO()
+    if image.mode == 'RGBA':
+        image.save(buffer, format='PNG')
+        return buffer.getvalue(), 'image/png', '.png'
+    image.save(buffer, format='JPEG', quality=90)
+    return buffer.getvalue(), 'image/jpeg', '.jpg'
+
+
 def _check_in_media(media_id, source_path, is_embedded, name, media_data=None, converted_file_path=None, force_type=None,
                     force_extension=None, force_creation_date=None, force_modification_date=None):
     '''
@@ -353,9 +391,22 @@ def _check_in_media(media_id, source_path, is_embedded, name, media_data=None, c
             else:
                 media_item.updated_at = 0
 
+        # An image sniffed as image/heic, or forced by the caller as image/heic or image/heif,
+        # is attached as a JPEG copy (PNG when it has transparency) so the report can show it.
+        # The original stays in the evidence copy, and the media's source path still names it.
+        # A caller that passed its own converted file, or forced another type, is left as it
+        # asked.
+        converted_data = None
+        if not converted_file_path and media_item.mimetype in _HEIC_MIME_TYPES:
+            converted = _heic_to_viewable(media_data if is_embedded else str(file_to_copy))
+            if converted is not None:
+                converted_data, media_item.mimetype, suffix = converted
+
         # 1. Create the canonical media file
         canonical_media_path = Path(output_params.media_folder).joinpath(media_id).with_suffix(suffix)
-        if is_embedded:
+        if converted_data is not None:
+            canonical_media_path.write_bytes(converted_data)
+        elif is_embedded:
             canonical_media_path.write_bytes(media_data)
         else:
             try:
@@ -735,7 +786,15 @@ def artifact_processor(func):
                 if media_header_info and needs_text_or_html_data:
                     html_columns.extend([data_headers[idx][0] for idx in media_header_info])
                     if not is_artifact_result:
-                        html_data_list, txt_data_list = get_data_list_with_media(media_header_info, data_list)
+                        if html_data_list is data_list:
+                            html_data_list, txt_data_list = get_data_list_with_media(media_header_info, data_list)
+                        else:
+                            # The module returned its own HTML rows (#1202). Build the HTML
+                            # output from those, so its formatting survives, and the text
+                            # outputs from the plain rows. Media cells resolve the same way
+                            # in both; a value that is not a reference leaves the cell empty.
+                            html_data_list, _ = get_data_list_with_media(media_header_info, html_data_list)
+                            _, txt_data_list = get_data_list_with_media(media_header_info, data_list)
 
                 table_name = None
                 object_columns = None
@@ -959,7 +1018,15 @@ def get_sqlite_db_path(path):
         elif path_str.startswith('\\\\'):       # UNC path
             remainder = '\\UNC' + path_str[1:]
         else:                                   # normal path
-            remainder = path_str
+            # \\?\ turns off Windows path parsing, so it only works in front of
+            # a full path with a drive. Resolve a relative one (admin\test\x.db,
+            # \x.db or C:x.db) against the current directory first, or SQLite
+            # cannot open it.
+            drive, rest = ntpath.splitdrive(path_str)
+            if drive and rest.startswith('\\'):
+                remainder = path_str
+            else:
+                remainder = ntpath.abspath(path_str)
         # Encode special URI characters (e.g. '#', space) so SQLite doesn't
         # treat them as fragment delimiters or query separators. Keep ':' safe
         # so the drive letter is preserved; separators are now all backslashes.
@@ -990,6 +1057,29 @@ def get_sqlite_db_uri_query(path):
                 'with immutable=1, which reads the database file alone.')
         return 'mode=ro&immutable=1'
     return 'mode=ro'
+
+SQLITE_SIDECAR_SUFFIXES = ('-wal', '-shm', '-journal')
+
+
+def is_sqlite_sidecar(path):
+    """True for the -wal, -shm or -journal file SQLite keeps beside a database.
+
+    A path pattern such as '*/Foo.sqlite*' also matches these files. A sidecar is not a
+    database: queried on its own it raises sqlite3.DatabaseError ('file is not a database').
+    open_sqlite_db_readonly reads the -wal and -shm through the database itself, and
+    sqlite_wal.WalStates finds the log at <database>-wal on disk, so neither needs the sidecar
+    in the list an artifact loops over.
+
+    Use it where an artifact picks the files it will open. Leave the 'paths' patterns
+    alone: the seeker stages a sidecar only because the pattern matches it.
+    """
+    return str(path).lower().endswith(SQLITE_SIDECAR_SUFFIXES)
+
+
+def sqlite_databases(files_found):
+    """The found files that are not SQLite sidecars, as strings, in their original order."""
+    return [str(f) for f in files_found if not is_sqlite_sidecar(f)]
+
 
 def open_sqlite_db_readonly(path):
     '''Opens a sqlite db in read-only mode, so original db (and -wal/journal are intact)'''
@@ -1548,10 +1638,28 @@ def convert_utc_human_to_timezone(utc_time, time_offset):
     #return the converted value
     return timezone_time
 
+# NSDate.distantPast and NSDate.distantFuture as Cocoa seconds, read from Foundation on macOS.
+# timestampsconv reports the exact values blank like an absent date, as iLEAPP's Cocoa
+# converters do. A real date stored as exactly 4001-01-01 00:00:00 UTC is the same value as
+# distantFuture and is blanked too. distantPast is 0000-12-30 in Python's proleptic Gregorian
+# calendar (Foundation calls it 0001-01-01), two days before datetime.min, so it used to raise
+# ValueError.
+COCOA_DISTANT_PAST = -63114076800
+COCOA_DISTANT_FUTURE = 63113904000
+
 def timestampsconv(webkittime):
-    unix_timestamp = webkittime + 978307200
-    finaltime = datetime.fromtimestamp(unix_timestamp, tz=timezone.utc)
-    return(finaltime)
+    if webkittime in (COCOA_DISTANT_PAST, COCOA_DISTANT_FUTURE):
+        return ''
+    # Accepts Cocoa seconds (since 2001-01-01 UTC) as an int or float; bool counts as an int.
+    # The value is added to the epoch rather than passed to datetime.fromtimestamp, which
+    # depends on the platform's gmtime (on Windows it fails before 1970 and after the year
+    # 3000), so every platform returns the same UTC-aware datetime. A finite number whose
+    # result datetime cannot hold, inf, -inf and nan raise ValueError. Other types, such as
+    # None, str and bytes, raise TypeError.
+    try:
+        return _UNIX_EPOCH_UTC + timedelta(seconds=webkittime + 978307200)
+    except OverflowError as exc:
+        raise ValueError(str(exc)) from exc
 
 def convert_ts_human_to_utc(ts): #This is for timestamp in human form
     if '.' in ts:

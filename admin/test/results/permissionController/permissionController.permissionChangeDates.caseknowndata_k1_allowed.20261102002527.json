@@ -1,0 +1,40 @@
+{
+  "metadata": {
+    "module_name": "permissionController",
+    "artifact_name": "Permission Change Dates",
+    "function_name": "permissionChangeDates",
+    "case_number": "caseknowndata_k1_allowed",
+    "number_of_columns": 5,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 37,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/permissionController/testdata.permissionController.permissionChangeDates.caseknowndata_k1_allowed.zip",
+    "start_time": "2026-11-02T00:25:27.824915+00:00",
+    "end_time": "2026-11-02T00:25:27.882785+00:00",
+    "run_time_seconds": 0.00021982192993164062,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-11-01T19:25:27.879284",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Last Permission Change (as stored)",
+    "Package",
+    "Position",
+    "Copy",
+    "Android User"
+  ],
+  "data": [
+    [
+      "2026-11-01",
+      "com.android.chrome",
+      1,
+      "Current",
+      "0"
+    ]
+  ]
+}

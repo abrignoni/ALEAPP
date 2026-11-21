@@ -1,0 +1,47 @@
+{
+  "metadata": {
+    "module_name": "healthConnect",
+    "artifact_name": "Health Connect - Permission First Grant Times",
+    "function_name": "healthconnect_first_grants",
+    "case_number": "synthetic_a16",
+    "number_of_columns": 5,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 145,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/healthConnect/testdata.healthConnect.healthconnect_first_grants.synthetic_a16.zip",
+    "start_time": "2026-10-25T15:40:44.724958+00:00",
+    "end_time": "2026-10-25T15:40:44.739975+00:00",
+    "run_time_seconds": 0.00017595291137695312,
+    "last_commit": {
+      "hash": "90c34b48487f051ea071cca88acc15631626a039",
+      "author_name": "danjethh",
+      "author_email": "danjethh@gmail.com",
+      "date": "2026-10-25T05:14:28-04:00",
+      "message": "Health Connect: read shared-user entries of the first-grant-times file, add sample_data, update the notes from four Android 16 extractions"
+    }
+  },
+  "headers": [
+    "First Grant Time",
+    "Android User",
+    "Package",
+    "First Grant Time (as stored)",
+    "Entry Type"
+  ],
+  "data": [
+    [
+      1767225601,
+      "0",
+      "com.example.syntheticfit",
+      "2026-01-01T00:00:01.500000Z",
+      "package"
+    ],
+    [
+      1767312000,
+      "0",
+      "example.shared.syntheticuid",
+      "2026-01-02T00:00:00.000000Z",
+      "shared-user"
+    ]
+  ]
+}

@@ -65,7 +65,7 @@ __artifacts_v2__ = {
 import datetime
 import os
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, check_in_media
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, check_in_media, is_sqlite_sidecar
 from scripts.artifacts.storagePathViews import unique_files
 
 # Media.type from videolan/medialibrary IMedia.h (Type enum): Unknown=0, Video=1, Audio=2.
@@ -96,7 +96,7 @@ def get_vlcThumbs(context):
     source_path = ''
     for file_found in files_found:
         file_found = str(file_found)
-        if file_found.endswith(('-wal', '-shm', '-journal')):
+        if is_sqlite_sidecar(file_found):
             continue
         if not file_found.endswith('.jpg'):
             continue

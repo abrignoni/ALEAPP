@@ -178,7 +178,7 @@ import datetime
 import os
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, check_in_media, \
-    does_column_exist_in_db, does_table_exist_in_db
+    does_column_exist_in_db, does_table_exist_in_db, is_sqlite_sidecar
 from scripts.artifacts.storagePathViews import unique_files
 
 
@@ -194,7 +194,7 @@ def _str_to_utc(value):
 def _gphotos_dbs(files_found):
     for file_found in files_found:
         file_found = str(file_found)
-        if file_found.lower().endswith(('-shm', '-wal')):
+        if is_sqlite_sidecar(file_found):
             continue
         if file_found.lower().endswith('.db') and os.path.basename(file_found).startswith('gphotos'):
             yield file_found

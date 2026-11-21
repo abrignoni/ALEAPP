@@ -1,0 +1,96 @@
+{
+  "metadata": {
+    "module_name": "bugreportSensorsMedia",
+    "artifact_name": "Bug Report - Location Last Known",
+    "function_name": "bugreport_location_last_known",
+    "case_number": "casesynthetic_cut",
+    "number_of_columns": 12,
+    "number_of_rows": 4,
+    "total_data_size_bytes": 512,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSensorsMedia/testdata.bugreportSensorsMedia.bugreport_location_last_known.casesynthetic_cut.zip",
+    "start_time": "2026-10-26T17:35:02.541264+00:00",
+    "end_time": "2026-10-26T17:35:02.671848+00:00",
+    "run_time_seconds": 0.013072490692138672,
+    "last_commit": {
+      "hash": "e56d9fc859d2e83c7207c6514d3727ee6bf6a291",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:32:45-04:00",
+      "message": "Bug report sensors and media: location, sensors, camera, audio, media, accessibility, input method, display and window artifacts"
+    }
+  },
+  "headers": [
+    "List",
+    "Provider",
+    "User",
+    "Location Provider (as printed)",
+    "Latitude (as printed)",
+    "Longitude (as printed)",
+    "Accuracy (as printed)",
+    "Elapsed Time (as printed)",
+    "Enabled",
+    "Last Location (as printed)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Location Providers",
+      "passive",
+      0,
+      "fused",
+      "12.345678",
+      "-45.678901",
+      "25.0",
+      "+2h3m4s500ms]",
+      "true",
+      "Location[fused 12.345678,-45.678901 hAcc=25.0 et=+2h3m4s500ms]",
+      520,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Location Providers",
+      "passive",
+      10,
+      "fused",
+      "12.345678",
+      "-45.678901",
+      "25.0",
+      "+2h3m4s500ms]",
+      "false",
+      "Location[fused 12.345678,-45.678901 hAcc=25.0 et=+2h3m4s500ms]",
+      523,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Location Providers",
+      "network",
+      0,
+      "",
+      "",
+      "",
+      "",
+      "",
+      "true",
+      "",
+      530,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Location Providers",
+      "gps",
+      null,
+      "gps",
+      "12.340000",
+      "-45.670000",
+      "4.5",
+      "+1h0m0s0ms",
+      "true",
+      "Location[gps 12.340000,-45.670000 hAcc=4.5 et=+1h0m0s0ms alt=10.0]",
+      539,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

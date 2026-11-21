@@ -160,7 +160,7 @@ from scripts.ilapfuncs import (
     check_in_media,
     convert_unix_ts_to_utc,
     get_sqlite_db_records,
-    null_absent_columns,
+    null_absent_columns, is_sqlite_sidecar,
 )
 from scripts.artifacts.storagePathViews import unique_files
 
@@ -201,7 +201,7 @@ def _main_db(files_found):
 def _db_ending_with(files_found, suffix):
     for file_found in files_found:
         file_found = str(file_found)
-        if file_found.endswith(('-wal', '-shm', '-journal')):
+        if is_sqlite_sidecar(file_found):
             continue
         if file_found.endswith(suffix):
             return file_found
@@ -228,7 +228,7 @@ def _media_index(files_found):
     unmatched = []
     for file_found in files_found:
         file_found = str(file_found)
-        if file_found.endswith(('-wal', '-shm', '-journal')):
+        if is_sqlite_sidecar(file_found):
             continue
         if not os.path.isfile(file_found):
             continue

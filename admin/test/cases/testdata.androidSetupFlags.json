@@ -1,0 +1,126 @@
+{
+  "casesynthetic_xml_two_users": {
+    "description": "Synthetic settings XML and history JSON of user 0, a second user with the flag set to 0, and a persistent property store with the setup properties. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_xml_two_users.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-27T12:00:00.000000",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-27T12:00:00.000000",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "android_setup_flags": {
+        "search_patterns": [
+          "*/system/users/*/settings_secure.xml",
+          "*/system/users/*/settings_history_secure.json",
+          "*/system/users/*/settings_history_global.json",
+          "*/property/persistent_properties"
+        ],
+        "file_count": 5,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_abx": {
+    "description": "Synthetic settings files of user 0 in the binary ABX form. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_abx.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-27T12:00:00.000000",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-27T12:00:00.000000",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "android_setup_flags": {
+        "search_patterns": [
+          "*/system/users/*/settings_secure.xml",
+          "*/system/users/*/settings_history_secure.json",
+          "*/system/users/*/settings_history_global.json",
+          "*/property/persistent_properties"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_no_flags": {
+    "description": "Synthetic settings files (XML and ABX) without any setup flag and a property store without setup properties. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_no_flags.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-27T12:00:00.000000",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-27T12:00:00.000000",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "android_setup_flags": {
+        "search_patterns": [
+          "*/system/users/*/settings_secure.xml",
+          "*/system/users/*/settings_history_secure.json",
+          "*/system/users/*/settings_history_global.json",
+          "*/property/persistent_properties"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  },
+  "casesynthetic_malformed_settings": {
+    "description": "Synthetic settings files that cannot be read: cut XML, cut ABX, cut JSON, JSON that is not an object, binary junk. Invented values, contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_malformed_settings.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-27T12:00:00.000000",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-27T12:00:00.000000",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "android_setup_flags": {
+        "search_patterns": [
+          "*/system/users/*/settings_secure.xml",
+          "*/system/users/*/settings_history_secure.json",
+          "*/system/users/*/settings_history_global.json",
+          "*/property/persistent_properties"
+        ],
+        "file_count": 5,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    }
+  }
+}

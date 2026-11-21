@@ -1,0 +1,71 @@
+{
+  "metadata": {
+    "module_name": "bugreportSecurityStorage",
+    "artifact_name": "Bug Report - Package Sizes",
+    "function_name": "bugreport_package_sizes",
+    "case_number": "casesynthetic_new",
+    "number_of_columns": 7,
+    "number_of_rows": 4,
+    "total_data_size_bytes": 213,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSecurityStorage/testdata.bugreportSecurityStorage.bugreport_package_sizes.casesynthetic_new.zip",
+    "start_time": "2026-10-26T17:40:06.799067+00:00",
+    "end_time": "2026-10-26T17:40:06.921420+00:00",
+    "run_time_seconds": 0.01766514778137207,
+    "last_commit": {
+      "hash": "702ca90825fbb296e5cc429838c511eb52a44af6",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:39:47-04:00",
+      "message": "Bug report security and storage: readers and 30 artifacts for device policy, lock settings, biometrics, trust, ADB, vendor services, storage, dbinfo and flags"
+    }
+  },
+  "headers": [
+    "Index",
+    "Package",
+    "App Size (as printed)",
+    "App Data Size (as printed)",
+    "Cache Size (as printed)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      0,
+      "com.example.pkg00",
+      0,
+      0,
+      0,
+      1885,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1,
+      "com.example.pkg01",
+      120832,
+      18432,
+      8192,
+      1885,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      2,
+      "com.example.pkg02",
+      9400320,
+      250880,
+      20480,
+      1885,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      3,
+      "com.example.pkg03",
+      5100544,
+      90112,
+      71680,
+      1885,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

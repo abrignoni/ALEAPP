@@ -180,7 +180,7 @@ import os
 from scripts.artifacts.storagePathViews import unique_files
 from scripts.ilapfuncs import (artifact_processor, check_in_media, convert_unix_ts_to_utc,
                                does_table_exist_in_db, get_file_path, get_sqlite_db_records,
-                               null_absent_columns)
+                               null_absent_columns, is_sqlite_sidecar)
 
 # The workspace store is named after the team id, so it cannot be matched by a
 # fixed name. These tables identify it.
@@ -196,7 +196,7 @@ def _org_db_paths(context):
         file_found = str(file_found)
         if '/databases/' not in file_found.replace(os.sep, '/') or os.path.isdir(file_found):
             continue
-        if os.path.basename(file_found).endswith(('-wal', '-shm', '-journal')):
+        if is_sqlite_sidecar(os.path.basename(file_found)):
             continue
         if all(does_table_exist_in_db(file_found, table) for table in ORG_DB_TABLES):
             stores.append(file_found)

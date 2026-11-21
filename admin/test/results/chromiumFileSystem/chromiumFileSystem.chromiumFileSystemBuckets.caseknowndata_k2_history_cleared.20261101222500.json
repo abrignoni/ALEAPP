@@ -1,0 +1,50 @@
+{
+  "metadata": {
+    "module_name": "chromiumFileSystem",
+    "artifact_name": "Chromium File System API - Bucket Storage",
+    "function_name": "chromiumFileSystemBuckets",
+    "case_number": "caseknowndata_k2_history_cleared",
+    "number_of_columns": 10,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 114,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/chromiumFileSystem/testdata.chromiumFileSystem.chromiumFileSystemBuckets.caseknowndata_k2_history_cleared.zip",
+    "start_time": "2026-11-01T22:25:00.732787+00:00",
+    "end_time": "2026-11-01T22:25:00.759448+00:00",
+    "run_time_seconds": 0.0011708736419677734,
+    "last_commit": {
+      "hash": "6beb23e1705346b54e8a134f732331f077370764",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-10-29T19:15:23-04:00",
+      "message": "Chromium File System API bucket notes: tighten wording and citations"
+    }
+  },
+  "headers": [
+    "Bucket Last Modified",
+    "Bucket Last Accessed",
+    "Site",
+    "Top-Level Site",
+    "Storage Key (as stored)",
+    "Bucket Name (as stored)",
+    "Bucket ID",
+    "Saved Entries",
+    "Browser",
+    "Android User"
+  ],
+  "data": [
+    [
+      1793314551,
+      1793314551,
+      "http://127.0.0.1:8766",
+      "http://localhost",
+      "http://127.0.0.1:8766/^0http://localhost",
+      "_default",
+      "1",
+      4,
+      "Chrome",
+      "0"
+    ]
+  ]
+}

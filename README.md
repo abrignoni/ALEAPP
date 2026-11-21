@@ -19,8 +19,18 @@ or [LEAPPs Releases](https://leapps.org/releases) for the whole LEAPP family.
 | macOS (Intel) | `ALEAPP-*-macos-x64.dmg` |
 | Linux (Intel/AMD) | `ALEAPP-*-linux-x64.AppImage` |
 | Linux (ARM) | `ALEAPP-*-linux-arm64.AppImage` |
+| Debian, Ubuntu (Intel/AMD, ARM) | `ALEAPP-*-linux-x64.deb`, `ALEAPP-*-linux-arm64.deb` |
+| Fedora and other RPM-based Linux (Intel/AMD, ARM) | `ALEAPP-*-linux-x64.rpm`, `ALEAPP-*-linux-arm64.rpm` |
 
 Each download holds one program, `aleapp`. `SHA256SUMS.txt` in each release lets you check a download.
+
+The `.deb` and `.rpm` hold the same build as the AppImage and put `aleapp` on the PATH,
+with a menu entry. Install one with your package manager, from the folder you downloaded it to:
+
+```
+sudo apt install ./ALEAPP-<version>-linux-x64.deb
+sudo dnf install ./ALEAPP-<version>-linux-x64.rpm
+```
 
 **GUI**: open ALEAPP the usual way: by double-clicking `aleapp.exe` from the zip on
 Windows, ALEAPP in Applications on macOS, or the AppImage on Linux. Started without
@@ -33,7 +43,7 @@ output folder must already exist. On Windows, use `aleapp.exe` from the zip.
 aleapp.exe -t zip -i C:\path\to\extraction.zip -o C:\path\to\output\
 ```
 
-On Linux, run the AppImage with the same arguments. On macOS it is inside the app; to
+On Linux, run the AppImage with the same arguments, or `aleapp` itself once the `.deb` or `.rpm` is installed. On macOS it is inside the app; to
 type just `aleapp` in a terminal, link it onto your PATH once:
 
 ```
@@ -53,10 +63,12 @@ the `py` part is correct for your environment, eg `py`, `python`, or `python3`, 
 or
 `pip3 install -r requirements.txt`
 
-For the exact mister_skinnylegs dependency chain the releases are built with, install
-`requirements-msl-lock.txt` over that, without dependencies:
+For the exact mister_skinnylegs dependency chain the releases are built with, use this
+instead. It installs `requirements.txt` without the mister_skinnylegs line, then
+`requirements-msl-lock.txt` without dependencies, and stops if Brotli is older than 1.2.1.
+It also works on a day when one of the ccl readers' default branches will not install:
 
-`pip3 install --no-deps -r requirements-msl-lock.txt`
+`python3 admin/scripts/install_requirements.py`
 
 To run on **Linux**, you will also need to install `tkinter` separately like so:
 
@@ -65,13 +77,14 @@ To run on **Linux**, you will also need to install `tkinter` separately like so:
 ## Building the binaries
 
 `packaging/build.py` builds `aleapp` with PyInstaller for the machine it runs on, from the
-same virtual environment. It installs `requirements.txt`, the pinned build tools and
-`requirements-msl-lock.txt` first.
+same virtual environment. It installs the pinned build tools, then `requirements.txt` and
+`requirements-msl-lock.txt` with `admin/scripts/install_requirements.py`, first.
 
 ```
 python packaging/build.py exe          # dist/ALEAPP/, and dist/ALEAPP.app on macOS
 python packaging/build.py smoke        # run what it built, without opening a window
 python packaging/build.py installer    # Windows: Inno Setup installer; macOS: .dmg; Linux: AppImage
+python packaging/build.py linux-packages  # Linux: .deb and .rpm around dist/ALEAPP/ (dpkg-deb, rpmbuild)
 ```
 
 `exe --onefile` makes `dist/aleapp` (`dist\aleapp.exe` on Windows) as a single file
@@ -109,6 +122,11 @@ password or recovery password, given the same way, or its startup key
 password or personal recovery key, and a LUKS container with its passphrase, each given
 the same way. At a terminal whatever is missing is asked for, and the GUI asks in dialogs;
 a BitLocker, APFS or LUKS volume nothing opens is reported and not searched.
+
+A Signal on-device backup is listed without a key. Its messages, recipients and
+attachments open with the account's 64-character recovery key, given with
+`--signal_recovery_key_file` or `--signal_recovery_key_env`, or in the GUI with the
+Signal backup recovery key button. The key is held in memory for the run and is not saved.
 
 The disk images of a Linux software RAID set (md, or LVM2 across disks) are read
 together: give them all to `-i` with `-t raw`, or pick them together in the GUI's file
@@ -307,6 +325,14 @@ user or the person installing or operating it.
 
 The same policy covers the other LEAPPs:
 [leapps.org/releases#code-signing-policy](https://leapps.org/releases#code-signing-policy).
+
+## Licence
+
+ALEAPP's code is under the MIT licence (`LICENSE`). To show HEIC images the packaged programs on
+the releases page include heicreader, which is MIT and built from MIT and BSD-3-Clause code. Its
+licence texts are in [`LICENSES/`](LICENSES/THIRD-PARTY-NOTICES.md). Every packaged program also
+carries, in `LICENSES/bundled/`, the licence of each Python package it holds and of each library it takes from the build machine, and names the ones
+under copyleft terms, such as simplekml (LGPL), with a link to their source.
 
 ## Acknowledgements
 

@@ -32,7 +32,7 @@ import json
 import sqlite3
 import sys
 import os
-from platform import platform
+from platform import machine, platform
 from collections import OrderedDict
 import math
 import re
@@ -98,17 +98,23 @@ def quote_sql_name(name):
 
 def get_sql_type(python_type):
     """
-    Convert Python type names to SQL type names for database schema creation.
+    Convert a header type name to the SQL column type used when creating the table.
     Args:
-        python_type (str): The name of the Python type as a string (e.g., 'datetime', 'date', 'str').
+        python_type (str): The header type as a string (e.g., 'datetime', 'date', 'number').
     Returns:
-        str: The corresponding SQL type name. Returns 'INTEGER' for datetime and date types,
-             and 'TEXT' as the default for all other types.
+        str: 'INTEGER' for datetime, 'NUMERIC' for number, latitude and longitude, and
+             'TEXT' for date and every other type. A NUMERIC column stores values that read
+             as numbers as INTEGER or REAL, so LAVA sorts them as numbers, and keeps anything
+             else as text. It also rewrites the written form of what it converts ('007' is
+             stored as 7, '37.7700' as 37.77).
     """
 
     type_map = {
         'datetime': 'INTEGER',
         'date': 'TEXT',
+        'number': 'NUMERIC',
+        'latitude': 'NUMERIC',
+        'longitude': 'NUMERIC',
     }
     return type_map.get(python_type, 'TEXT')
 
@@ -279,7 +285,7 @@ def _restore_lava_value(value, column_type=None):
     return value
 
 
-def initialize_lava(input_path, output_path, input_type, profile_filename=None):
+def initialize_lava(input_path, output_path, input_type, profile_filename=None, case_data=None):
     '''
     Initialize the LAVA data.
     Args:
@@ -287,9 +293,17 @@ def initialize_lava(input_path, output_path, input_type, profile_filename=None):
         output_path: The path to the output file.
         input_type: The type of input file.
         profile_filename: The profile file used for module selection, if any.
+        case_data: Optional dictionary of user-supplied case information.
     '''
 
     global lava_data, lava_db, lava_db_path
+
+    # The logo's path on the examiner's machine is not case information, so it stays out
+    # of the LAVA output. The logo itself (mimetype and base64) is kept.
+    if isinstance(case_data, dict):
+        case_data = {key: value for key, value in case_data.items() if key != 'Agency Logo Path'}
+    else:
+        case_data = {}
 
     lava_data = {
         "lava_schema_version": LAVA_SCHEMA_VERSION,
@@ -304,6 +318,10 @@ def initialize_lava(input_path, output_path, input_type, profile_filename=None):
                            else "CLI"),
             "package": "Source code" if not getattr(sys, 'frozen', False) else "Binary",
             "OS": platform(),
+            # The machine the Python process reports. platform() leaves it out on
+            # Windows. Under emulation (Rosetta, x64 on Windows ARM64) it can be the
+            # emulated architecture, not the host's.
+            "architecture": machine(),
             "start_timestamp": int(datetime.datetime.now(datetime.timezone.utc).timestamp())
         },
         "param_input": input_path,
@@ -311,6 +329,7 @@ def initialize_lava(input_path, output_path, input_type, profile_filename=None):
         "param_type": input_type,
         "param_profile": profile_filename,
         "profile_used": profile_filename is not None,
+        "case_data": case_data,
         "processing_status": "In Progress",
         "lava_db_name": lava_db_name,
         "modules": [],
@@ -375,6 +394,7 @@ def initialize_lava(input_path, output_path, input_type, profile_filename=None):
                             lmi.is_embedded
                         FROM _lava_media_references as lmr
                         LEFT JOIN _lava_media_items as lmi ON lmr.media_item_id = lmi.id''')
+    lava_db.commit()
 
 
 # Conversation view keys whose value is data rather than a column name. LAVA reads these two

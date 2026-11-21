@@ -21,6 +21,7 @@ from scripts.version_info import leapp_name, leapp_version, check_runtime_depend
 from time import process_time, gmtime, strftime, perf_counter
 from scripts.lavafuncs import *  # pylint: disable=wildcard-import,unused-wildcard-import
 from scripts.context import Context
+from scripts import signal_backup
 
 # How many of the slowest artifacts to list at the end of a run. Enough to show a
 # pattern, short enough that nobody has to scroll past it.
@@ -161,6 +162,17 @@ def create_casedata(path):
     print()
     return
 
+def profile_plugins_not_found(profile_plugins, available_plugins):
+    """Names a profile lists that match no available artifact, sorted.
+
+    Profiles select artifacts by exact name. A name that was later changed, even only in
+    case, selected nothing and said nothing, so a profile could run fewer artifacts than it
+    lists without the examiner knowing.
+    """
+    available = {plugin.name for plugin in available_plugins}
+    return sorted(name for name in profile_plugins if name not in available)
+
+
 def main():
     check_runtime_dependencies()
     parser = argparse.ArgumentParser(description='ALEAPP: Android Logs, Events, and Protobuf Parser.')
@@ -208,6 +220,12 @@ def main():
     parser.add_argument('--bitlocker_key', required=False, action="append", default=[],
                         help='For a BitLocker volume in an image (-t raw): its startup key '
                              '(.BEK) file. Repeatable')
+    parser.add_argument('--signal_recovery_key_file', required=False, action="store",
+                        help='For a Signal on-device backup: read its 64-character recovery key from '
+                             'this file. Without a key the backup is listed but not decrypted')
+    parser.add_argument('--signal_recovery_key_env', required=False, action="store",
+                        help='For a Signal on-device backup: take its recovery key from this '
+                             'environment variable')
     parser.add_argument('-w', '--wrap_text', required=False, action="store_false", default=True,
                         help='Do not wrap text for output of data files')
     parser.add_argument('-m', '--load_profile', required=False, action="store", help="Path to ALEAPP Profile file (.alprofile).")
@@ -364,6 +382,10 @@ def main():
                     profile_plugins = set(profile.get("plugins", []))
                     selected_plugins = [selected_plugin for selected_plugin in plugins 
                                         if selected_plugin.name in profile_plugins]
+                    unknown = profile_plugins_not_found(profile_plugins, plugins)
+                    if unknown:
+                        print(f"Warning: the profile names {len(unknown)} artifact(s) this version "
+                              f"does not have, which will not run: {', '.join(unknown)}")
             else:
                 profile_load_error = "File was not a valid profile file: invalid format"
                 print(profile_load_error)
@@ -401,13 +423,26 @@ def main():
         # what was found beside the image given, and any image given twice
         found_members = raw_input
 
+    # Held in memory for this run only; never written to a profile, the log or the report.
+    if args.signal_recovery_key_file and args.signal_recovery_key_env:
+        print('Give the Signal recovery key once: a file or an environment variable, not both.')
+        return
+    try:
+        if args.signal_recovery_key_file:
+            signal_backup.set_recovery_key(signal_backup.key_from_file(args.signal_recovery_key_file))
+        elif args.signal_recovery_key_env:
+            signal_backup.set_recovery_key(signal_backup.key_from_env(args.signal_recovery_key_env))
+    except ValueError as exc:
+        print(exc)
+        return
+
     out_params = OutputParameters(output_path, custom_output_folder)
     Context.set_output_params(out_params)
 
     selected_plugins = plugins_parsed_first + selected_plugins
     
     initialize_lava(input_text(input_path, found_members),
-                    out_params.output_folder_base, extracttype, profile_filename)
+                    out_params.output_folder_base, extracttype, profile_filename, casedata)
 
     # Record history if enabled
     if isinstance(input_path, list):
@@ -542,6 +577,7 @@ def crunch_artifacts(
             else:
                 search_regexes = [plugin.search]
             files_found = []
+            found_already = set()
             log.write(f'<b>For {plugin.name} module</b>')
             for artifact_search_regex in search_regexes:
                 artifact_search_pattern_id += 1
@@ -574,7 +610,9 @@ def crunch_artifacts(
                                 file_path_ids.add(file_path_id)
                             lava_insert_sqlite_artifact_link_pattern_to_file(artifact_search_pattern_id, file_path_id)
                     log.write('</li></ul>')
-                    files_found.extend(found)
+                    # a file two of the artifact's patterns match is handed to it once
+                    files_found.extend(path for path in found if path not in found_already)
+                    found_already.update(found)
             if files_found:
                 category_folder = os.path.join(out_params.output_folder_base, '_HTML',
                                                sanitize_report_name(plugin.category, 'category'))

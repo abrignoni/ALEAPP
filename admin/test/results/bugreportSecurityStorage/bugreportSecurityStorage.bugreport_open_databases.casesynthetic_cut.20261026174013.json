@@ -1,0 +1,83 @@
+{
+  "metadata": {
+    "module_name": "bugreportSecurityStorage",
+    "artifact_name": "Bug Report - Open Databases",
+    "function_name": "bugreport_open_databases",
+    "case_number": "casesynthetic_cut",
+    "number_of_columns": 17,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 359,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSecurityStorage/testdata.bugreportSecurityStorage.bugreport_open_databases.casesynthetic_cut.zip",
+    "start_time": "2026-10-26T17:40:13.752205+00:00",
+    "end_time": "2026-10-26T17:40:13.874203+00:00",
+    "run_time_seconds": 0.016315460205078125,
+    "last_commit": {
+      "hash": "702ca90825fbb296e5cc429838c511eb52a44af6",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:39:47-04:00",
+      "message": "Bug report security and storage: readers and 30 artifacts for device policy, lock settings, biometrics, trust, ADB, vendor services, storage, dbinfo and flags"
+    }
+  },
+  "headers": [
+    "Process",
+    "PID",
+    "Database Path",
+    "Open",
+    "Max Connections",
+    "Total Execution Time (as printed)",
+    "Total Statements",
+    "Average Time Per Statement",
+    "Configuration",
+    "Read Only",
+    "Secure",
+    "WAL",
+    "Connections",
+    "Operations Listed",
+    "Other",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "com.example.settings",
+      4321,
+      "/data/user_de/0/com.example.settings/databases/example-db-v1",
+      "true",
+      4,
+      31,
+      84,
+      0,
+      "openFlags=805306368, isLegacyCompatibilityWalEnabled=false, journalMode=WAL, syncMode=NORMAL",
+      "false",
+      "false",
+      "yes",
+      2,
+      8,
+      "",
+      1901,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "com.example.second",
+      4400,
+      "/data/user/0/com.example.second/databases/second.db",
+      "false",
+      1,
+      5,
+      "",
+      "",
+      "",
+      "true",
+      "",
+      "",
+      1,
+      0,
+      "Lookaside config: sz=0 cnt=0",
+      1946,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

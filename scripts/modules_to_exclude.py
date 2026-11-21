@@ -10,5 +10,4 @@ modules_to_exclude = [
     # a single localisation store on one tested image contributed 12,255 of that run's
     # 12,637 rows. The examiner opts in.
     'mmkvCarved',
-    'walStrings'
 ]

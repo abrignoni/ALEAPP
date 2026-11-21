@@ -326,7 +326,7 @@ import os
 import sqlite3
 
 from scripts.artifacts.storagePathViews import unique_files
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, is_sqlite_sidecar
 
 
 def _ms_to_utc(value):
@@ -370,19 +370,19 @@ def _matching(context, predicate):
 
 def _session_dbs(context):
     return _matching(context, lambda n: n.startswith('matrix_session_')
-                     and not n.endswith(('-wal', '-shm', '-journal')))
+                     and not is_sqlite_sidecar(n))
 
 
 def _reddit_dbs(context):
     return _matching(context, lambda n: n.startswith('reddit_db_')
-                     and not n.endswith(('-wal', '-shm', '-journal', '.lck')))
+                     and not is_sqlite_sidecar(n) and not n.endswith('.lck'))
 
 
 def _local_user_ids(context):
     '''{sessionId: userId} for every session_params row with a userId, from matrix_auth.'''
     by_session = {}
     for auth_db in _matching(context, lambda n: n.startswith('matrix_auth')
-                             and not n.endswith(('-wal', '-shm', '-journal'))):
+                             and not is_sqlite_sidecar(n)):
         for user_id, session_id in _rows(
                 auth_db, 'SELECT userId, sessionId FROM session_params'):
             if user_id:
@@ -554,7 +554,7 @@ def get_reddit_users(context):
     data_list = []
     source_path = ''
     for users_db in _matching(context, lambda n: n.startswith('matrix-users-db')
-                              and not n.endswith(('-wal', '-shm', '-journal'))):
+                              and not is_sqlite_sidecar(n)):
         source_path = source_path or users_db
         source_file = context.get_relative_path(users_db)
         for (inserted, name, reddit_id, matrix_id, karma, cakeday, is_nsfw, is_blocked,
@@ -611,7 +611,7 @@ def get_reddit_session(context):
     data_list = []
     source_path = ''
     for auth_db in _matching(context, lambda n: n.startswith('matrix_auth')
-                             and not n.endswith(('-wal', '-shm', '-journal'))):
+                             and not is_sqlite_sidecar(n)):
         source_path = source_path or auth_db
         source_file = context.get_relative_path(auth_db)
         for (date, user_id, session_id, home_server, token_valid) in _rows(auth_db, """

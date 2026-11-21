@@ -13,11 +13,25 @@ Alongside `_HTML/`, `_TSV Exports/`, `_Timeline/`, `data/` and `media/`:
 - **`_lava_data.lava`**: a JSON manifest. Top-level keys include `parser_info`,
   `lava_db_name`, `modules`, `artifacts` and `meta`. `artifacts` is keyed by category, and
   each entry carries `name`, `tablename`, `module`, `column_map`, `artifact_icon`,
-  `record_count`, `source_path` and `object_columns`.
+  `record_count`, `source_path` and `object_columns`. `case_data` holds the examiner's case
+  information as a flat object (`Case Number`, `Agency`, `Examiner`, and the logo as
+  `Agency Logo mimetype` plus `Agency Logo base64`). The LEAPP window and the CLI's case
+  data file writer produce string values, but `-d` copies a hand-editable `.lcasedata`
+  file's values unchanged, so a reader must not assume strings. It is empty when none
+  was given and absent from manifests written before it existed. The manifest is the
+  only copy: LAVA, its subsets and its reports read it from there. (Source runs of main
+  from 4 November 2026, before the table was removed, also wrote a `_lava_case_data`
+  table. No release carries it and nothing reads it.)
 - **`_lava_artifacts.db`**: SQLite, one table per artifact, named from the sanitized
   artifact function name. Column names are sanitized snake_case of the headers, so
   `Kind (as stored)` becomes `kind_as_stored`. A header typed `('X', 'datetime')` becomes
-  an INTEGER epoch column; everything else is TEXT. The database also carries bookkeeping
+  an INTEGER epoch column and one typed `('X', 'number')` a NUMERIC column, which LAVA
+  sorts as numbers and shows with a popover of other forms (hexadecimal, binary, digit
+  grouping). Headers typed `('X', 'latitude')` and `('X', 'longitude')` are NUMERIC too, and
+  LAVA shows them in degrees, minutes and seconds with the hemisphere. A header typed
+  `('X', 'hash')` (hex digests and UUIDs) stays TEXT, and LAVA sorts it as text ignoring
+  case instead of with UINT, which would compare its digit runs as numbers; everything
+  else is TEXT. The database also carries bookkeeping
   tables recording which glob matched which file.
 
 Writing is done by `scripts/lavafuncs.py`, which is meant to stay identical across the five

@@ -22,6 +22,14 @@ Arguments:
 - `--case <case_number>`: Case number for the test data
 - `--input <input_file>`: Path to the input file (zip, tar, or tar.gz)
 - `--image-prompt`: Prompt for image selection from the manifest
+- `--registry <samples.json>`: Optional. A corpus registry to check the input against (or set `ALEAPP_SAMPLES`)
+
+Given a registry, the script looks the input up in it, by path first and then by
+content, before it writes anything. If the input is a registered corpus whose entry has
+`allow_fixtures` set to false, or to null (terms not established), it stops with the
+entry's `privacy_basis`, because a test case commits the corpus's own bytes. An input the
+registry does not hold, or an entry without the field, is cut as before. Without a
+registry nothing is checked.
 
 ## Process
 
@@ -167,6 +175,11 @@ Every committed case runs in CI against a recorded snapshot. The workflow
 which re-runs each artifact against its case zip and fails when the output no
 longer matches the latest snapshot under `admin/test/results/<module>/`.
 
+`.github/workflows/windows_test_cases.yml` runs the same cases on Windows on
+pull requests that change shared code, weekly, and on demand. There the runner
+compares backslashes as forward slashes, so a baseline recorded on macOS or
+Linux also serves Windows.
+
 Baselines are ordinary committed files. When a PR deliberately changes a
 parser's output, re-record the affected snapshot in the same PR:
 
@@ -182,6 +195,11 @@ Units that cannot gate yet are listed with a reason per unit in
 `admin/test/cases/known_failures.json`. They still run and report, but do not
 fail CI. When one of them passes again, the run says so; remove its entry in
 the same PR that fixed it.
+
+A unit that fails on one platform only is listed as
+`"unit": {"reason": "...", "platforms": ["win32"]}`, with `sys.platform`
+values. It is excluded only there and keeps gating everywhere else. A plain
+reason applies on every platform.
 
 ## Requirements
 

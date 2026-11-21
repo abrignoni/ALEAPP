@@ -1,0 +1,71 @@
+{
+  "metadata": {
+    "module_name": "instagramPendingMedia",
+    "artifact_name": "Instagram - Pending Media",
+    "function_name": "instagramPendingMedia",
+    "case_number": "casesynthetic_s1_two_entries",
+    "number_of_columns": 13,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 210,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/instagramPendingMedia/testdata.instagramPendingMedia.instagramPendingMedia.casesynthetic_s1_two_entries.zip",
+    "start_time": "2026-11-02T04:28:18.894286+00:00",
+    "end_time": "2026-11-02T04:28:18.954327+00:00",
+    "run_time_seconds": 0.00042891502380371094,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-11-01T23:28:18.947859",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Created",
+    "Last User Interaction",
+    "Last Upload Attempt",
+    "Server Status (as stored)",
+    "Target Status (as stored)",
+    "Media Type",
+    "Share Type (as stored)",
+    "Instagram Media ID",
+    "Media",
+    "Media Shown From",
+    "Source Media Path",
+    "Account ID (file name)",
+    "Android User"
+  ],
+  "data": [
+    [
+      1767268800,
+      1767268805,
+      1767268820,
+      "UPLOADED",
+      "UPLOADED",
+      "photo",
+      "FOLLOWERS_SHARE",
+      "1111111111111111111",
+      "",
+      "",
+      "/storage/emulated/0/DCIM/Camera/IMG_20260101_120000.jpg",
+      "12345678901",
+      "0"
+    ],
+    [
+      1767355200,
+      "",
+      "",
+      "NOT_UPLOADED",
+      "NOT_UPLOADED",
+      "video",
+      "UNKNOWN",
+      "",
+      "",
+      "",
+      "",
+      "12345678901",
+      "0"
+    ]
+  ]
+}

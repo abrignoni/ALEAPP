@@ -1,0 +1,124 @@
+{
+  "metadata": {
+    "module_name": "bugreportAccountsPower",
+    "artifact_name": "Bug Report - Sync State",
+    "function_name": "bugreport_sync_state",
+    "case_number": "casesynthetic_a10",
+    "number_of_columns": 5,
+    "number_of_rows": 13,
+    "total_data_size_bytes": 1132,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportAccountsPower/testdata.bugreportAccountsPower.bugreport_sync_state.casesynthetic_a10.zip",
+    "start_time": "2026-10-26T19:10:51.848303+00:00",
+    "end_time": "2026-10-26T19:10:52.131149+00:00",
+    "run_time_seconds": 0.16690683364868164,
+    "last_commit": {
+      "hash": "d1aa88ec6597139a2e6c891969cef84a01cd6a2c",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T14:15:20-04:00",
+      "message": "Give each bug report topic group its own ALEAPP category"
+    }
+  },
+  "headers": [
+    "Name",
+    "Value",
+    "Time (UTC)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Data connected",
+      "true",
+      null,
+      338,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Battery saver",
+      "false",
+      null,
+      339,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Auto sync",
+      "u0=true",
+      null,
+      340,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Clock valid",
+      "true",
+      null,
+      341,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Accounts",
+      "4",
+      null,
+      342,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Now",
+      "293662481 (2026-11-02 10:12:56)",
+      1793610776,
+      343,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Uptime",
+      "1d02h03m04s",
+      null,
+      344,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Time spent syncing",
+      "37s, sync not in progress",
+      null,
+      345,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Active Syncs",
+      "0",
+      null,
+      347,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Pending Syncs",
+      "1",
+      null,
+      349,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Periodic Syncs",
+      "2",
+      null,
+      352,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Sync Statistics: Today",
+      "Success (5 for 23.5s avg=4.7s) Failure (0)",
+      null,
+      392,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Sync Statistics: Day-1",
+      "Success (21 for 68.2s avg=3.2s) Failure (1 for 1.0s avg=1.0s)",
+      null,
+      393,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

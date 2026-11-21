@@ -1,0 +1,104 @@
+{
+  "metadata": {
+    "module_name": "bugreportRadios",
+    "artifact_name": "Bug Report - Radio Log State Lines",
+    "function_name": "bugreport_radio_state_log",
+    "case_number": "casesynthetic_cut",
+    "number_of_columns": 11,
+    "number_of_rows": 5,
+    "total_data_size_bytes": 690,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportRadios/testdata.bugreportRadios.bugreport_radio_state_log.casesynthetic_cut.zip",
+    "start_time": "2026-10-26T18:25:00.218975+00:00",
+    "end_time": "2026-10-26T18:25:00.512144+00:00",
+    "run_time_seconds": 0.17757272720336914,
+    "last_commit": {
+      "hash": "f246f0856bad96283c9a62aa4f52d908f14298c7",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T14:24:13-04:00",
+      "message": "Radios artifacts show identifiers as printed: no withheld values, SIM subscription identifier columns, adapter address"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "UID",
+    "PID",
+    "TID",
+    "Level",
+    "Tag",
+    "Message",
+    "Time Note",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1793595947,
+      "11-02 06:05:47.082",
+      "radio",
+      "2529",
+      "2529",
+      "D",
+      "NetworkTypeController",
+      "[0] ServiceState updated: {mVoiceRegState=1(OUT_OF_SERVICE)}",
+      "",
+      50,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793595947,
+      "11-02 06:05:47.083",
+      "radio",
+      "2529",
+      "2529",
+      "D",
+      "DNC-0",
+      "onServiceStateChanged: changed to {mVoiceRegState=1(OUT_OF_SERVICE), mDataRegState=1(OUT_OF_SERVICE)}",
+      "",
+      51,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793595947,
+      "11-02 06:05:47.090",
+      "radio",
+      "2529",
+      "2529",
+      "D",
+      "SST",
+      "[0] pollState: modemTriggered=true, radioState=1",
+      "",
+      52,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793595947,
+      "11-02 06:05:47.100",
+      "radio",
+      "2529",
+      "2529",
+      "D",
+      "DefaultPhoneNotifier",
+      "notifyServiceStateForSubId: subId=1",
+      "",
+      53,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      1793595947,
+      "11-02 06:05:47.500",
+      "radio",
+      "2529",
+      "2529",
+      "D",
+      "SST",
+      "[0] subscriber info imsi=001010000000001 number=+15550101 iccid=89990000000000000011",
+      "",
+      57,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

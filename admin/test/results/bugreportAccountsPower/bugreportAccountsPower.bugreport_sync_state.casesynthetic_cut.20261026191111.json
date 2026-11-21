@@ -1,0 +1,124 @@
+{
+  "metadata": {
+    "module_name": "bugreportAccountsPower",
+    "artifact_name": "Bug Report - Sync State",
+    "function_name": "bugreport_sync_state",
+    "case_number": "casesynthetic_cut",
+    "number_of_columns": 5,
+    "number_of_rows": 13,
+    "total_data_size_bytes": 690,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportAccountsPower/testdata.bugreportAccountsPower.bugreport_sync_state.casesynthetic_cut.zip",
+    "start_time": "2026-10-26T19:11:11.993731+00:00",
+    "end_time": "2026-10-26T19:11:12.278100+00:00",
+    "run_time_seconds": 0.16934728622436523,
+    "last_commit": {
+      "hash": "d1aa88ec6597139a2e6c891969cef84a01cd6a2c",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T14:15:20-04:00",
+      "message": "Give each bug report topic group its own ALEAPP category"
+    }
+  },
+  "headers": [
+    "Name",
+    "Value",
+    "Time (UTC)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Data connected",
+      "true",
+      null,
+      414,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Battery saver",
+      "false",
+      null,
+      415,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Auto sync",
+      "u0=true",
+      null,
+      416,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Clock valid",
+      "true",
+      null,
+      417,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Accounts",
+      "4",
+      null,
+      418,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Now",
+      "293662481 (2026-11-02 10:12:56)",
+      1793610776,
+      419,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Uptime",
+      "1d02h03m04s",
+      null,
+      420,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Time spent syncing",
+      "37s, sync not in progress",
+      null,
+      421,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Active Syncs",
+      "0",
+      null,
+      423,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Pending Syncs",
+      "1",
+      null,
+      425,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Periodic Syncs",
+      "2",
+      null,
+      428,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Sync Statistics: Today",
+      "Success (5 for 23.5s avg=4.7s) Failure (0)",
+      null,
+      468,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Sync Statistics: Day-1",
+      "Success (21 for 68.2s avg=3.2s) Failure (1 for 1.0s avg=1.0s)",
+      null,
+      469,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

@@ -6,7 +6,10 @@ ROOT_DIR = Path(__file__).resolve().parents[3]
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
-from scripts.artifacts.storagePathViews import canonical_path, unique_files
+import tempfile
+
+from scripts.artifacts.storagePathViews import (android_user, canonical_path, snapshot_key, unique_files,
+                                                without_snapshot_repeats)
 
 
 class FakeContext:
@@ -214,6 +217,126 @@ class TestUniqueFiles(unittest.TestCase):
         kept = unique_files(FakeContext(files))
         self.assertTrue(all('/data/data/' in f for f in kept))
         self.assertEqual(len(kept), 2)
+
+
+class TestRollbackSnapshots(unittest.TestCase):
+    """Snapshots of an app's data kept for a rollback, under misc_ce or misc_de."""
+
+    SNAP = 'Dump/data/misc_ce/0/rollback/1731940472/com.foo/databases/x.db'
+    LIVE = 'Dump/data/data/com.foo/databases/x.db'
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.data = Path(self.tmp.name) / 'ALEAPP_Output' / 'data'
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def write(self, relative, content):
+        path = self.data / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(content)
+        return str(path)
+
+    def run_unique(self, files):
+        return unique_files(FakeContext(files, data_folder=str(self.data)))
+
+    def test_the_snapshot_key_is_the_live_files_key(self):
+        self.assertEqual(snapshot_key(self.SNAP), canonical_path(self.LIVE)[0])
+        self.assertEqual(snapshot_key('SamsungS20/Volumes/userdata/misc_ce/0/rollback/9/com.foo/x'),
+                         canonical_path('SamsungS20/Volumes/userdata/data/com.foo/x')[0])
+        self.assertEqual(snapshot_key('data/misc_de/10/rollback/9/com.foo/x'),
+                         canonical_path('data/user_de/10/com.foo/x')[0])
+
+    def test_other_paths_have_no_snapshot_key(self):
+        for path in (self.LIVE, 'Dump/data/misc_ce/0/apexrollback/9/com.android.foo/x',
+                     'Dump/data/misc/wifi/x.json', 'Dump/data/rollback/9/rollback.json'):
+            self.assertIsNone(snapshot_key(path))
+
+    def test_an_identical_snapshot_is_left_out(self):
+        live = self.write(self.LIVE, b'same')
+        snap = self.write(self.SNAP, b'same')
+        self.assertEqual(self.run_unique([snap, live]), [live])
+
+    def test_a_snapshot_that_differs_is_kept_in_its_place(self):
+        live = self.write(self.LIVE, b'now')
+        snap = self.write(self.SNAP, b'before the update')
+        self.assertEqual(self.run_unique([snap, live]), [snap, live])
+
+    def test_a_snapshot_of_the_same_size_that_differs_is_kept(self):
+        live = self.write(self.LIVE, b'abcd')
+        snap = self.write(self.SNAP, b'abce')
+        self.assertEqual(self.run_unique([live, snap]), [live, snap])
+
+    def test_a_snapshot_without_its_live_copy_is_kept(self):
+        snap = self.write(self.SNAP, b'only copy')
+        other = self.write('Dump/data/data/com.bar/databases/x.db', b'only copy')
+        self.assertEqual(self.run_unique([snap, other]), [snap, other])
+
+    def test_a_snapshot_is_compared_with_its_own_users_copy(self):
+        user10 = self.write('Dump/data/user/10/com.foo/databases/x.db', b'same')
+        snap = self.write(self.SNAP, b'same')
+        self.assertEqual(self.run_unique([user10, snap]), [user10, snap])
+        snap10 = self.write('Dump/data/misc_ce/10/rollback/5/com.foo/databases/x.db', b'same')
+        self.assertEqual(self.run_unique([user10, snap10]), [user10])
+
+    def test_device_encrypted_snapshots_compare_with_user_de(self):
+        live = self.write('Dump/data/user_de/0/com.foo/x.xml', b'same')
+        snap = self.write('Dump/data/misc_de/0/rollback/5/com.foo/x.xml', b'same')
+        ce_live = self.write('Dump/data/data/com.foo/x.xml', b'same')
+        self.assertEqual(self.run_unique([ce_live, live, snap]), [ce_live, live])
+
+    def test_live_views_still_collapse_beside_a_snapshot(self):
+        live = self.write(self.LIVE, b'same')
+        mirror = self.write('Dump/data_mirror/data_ce/null/0/com.foo/databases/x.db', b'same')
+        snap = self.write(self.SNAP, b'same')
+        self.assertEqual(self.run_unique([mirror, snap, live]), [live])
+
+    def test_a_snapshot_names_no_android_user(self):
+        """A kept snapshot must not share a (user, name) key with the live copy."""
+        self.assertEqual(android_user(self.SNAP), '')
+
+
+class TestWithoutSnapshotRepeats(unittest.TestCase):
+    LIVE = 'Dump/data/data/com.foo/databases/x.db'
+    LIVE10 = 'Dump/data/user/10/com.foo/databases/x.db'
+    SNAP = 'Dump/data/misc_ce/0/rollback/7/com.foo/databases/x.db'
+    SNAP10 = 'Dump/data/misc_ce/10/rollback/7/com.foo/databases/x.db'
+
+    def test_a_snapshot_row_the_live_copy_repeats_is_left_out(self):
+        rows = [('a', 1, self.LIVE), ('a', 1, self.SNAP)]
+        self.assertEqual(without_snapshot_repeats(rows), [('a', 1, self.LIVE)])
+
+    def test_a_row_only_the_snapshot_holds_is_kept(self):
+        rows = [('a', 1, self.LIVE), ('a', 1, self.SNAP), ('gone', 2, self.SNAP)]
+        self.assertEqual(without_snapshot_repeats(rows), [('a', 1, self.LIVE), ('gone', 2, self.SNAP)])
+
+    def test_a_changed_row_is_kept(self):
+        rows = [('a', 1, self.LIVE), ('a', 2, self.SNAP)]
+        self.assertEqual(without_snapshot_repeats(rows), rows)
+
+    def test_another_users_live_row_does_not_answer(self):
+        rows = [('a', 1, self.LIVE10), ('a', 1, self.SNAP)]
+        self.assertEqual(without_snapshot_repeats(rows), rows)
+        rows = [('a', 1, self.LIVE10), ('a', 1, self.SNAP10)]
+        self.assertEqual(without_snapshot_repeats(rows), [('a', 1, self.LIVE10)])
+
+    def test_each_live_row_answers_for_one_snapshot_row(self):
+        rows = [('a', 1, self.SNAP), ('a', 1, self.LIVE), ('a', 1, self.SNAP)]
+        self.assertEqual(without_snapshot_repeats(rows), [('a', 1, self.LIVE), ('a', 1, self.SNAP)])
+
+    def test_rows_from_live_sources_are_never_removed(self):
+        rows = [('a', 1, self.LIVE), ('a', 1, self.LIVE), ('a', 1, 'Dump/data/data/com.bar/x.db')]
+        self.assertEqual(without_snapshot_repeats(rows), rows)
+
+    def test_the_source_can_sit_at_any_position(self):
+        rows = [(self.LIVE, 'a'), (self.SNAP, 'a'), (self.SNAP, 'b')]
+        self.assertEqual(without_snapshot_repeats(rows, 0), [(self.LIVE, 'a'), (self.SNAP, 'b')])
+
+    def test_device_encrypted_snapshots_match_user_de(self):
+        rows = [('a', 'Dump/data/user_de/0/com.foo/x'), ('a', 'Dump/data/misc_de/0/rollback/7/com.foo/x'),
+                ('a', 'Dump/data/misc_ce/0/rollback/7/com.foo/x')]
+        self.assertEqual(without_snapshot_repeats(rows), [rows[0], rows[2]])
 
 
 if __name__ == '__main__':

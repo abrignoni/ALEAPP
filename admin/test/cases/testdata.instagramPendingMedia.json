@@ -1,0 +1,30 @@
+{
+    "casesynthetic_s1_two_entries": {
+        "description": "Synthetic: a <account id>_pending_media.json written by hand with the keys the tested Instagram files hold, made-up values and a made-up account ID: one UPLOADED photo entry with all three times and a media ID, and one NOT_UPLOADED video entry with no interaction or upload time. The photo's source path points to shared storage. Contains no device data.",
+        "maker": "synthetic",
+        "make_data": {
+            "input_data_path": "s1.zip",
+            "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+            "timestamp": "2026-11-01T23:28:06.629679",
+            "last_commit": {
+                "hash": "Uncommitted",
+                "author_name": "N/A",
+                "author_email": "N/A",
+                "date": "2026-11-01T23:28:06.617957",
+                "message": "File not yet committed to git"
+            }
+        },
+        "artifacts": {
+            "instagramPendingMedia": {
+                "search_patterns": [
+                    "*/com.instagram.android/files/*_pending_media.json"
+                ],
+                "file_count": 1,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            }
+        }
+    }
+}

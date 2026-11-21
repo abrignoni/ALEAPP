@@ -1,0 +1,143 @@
+{
+  "metadata": {
+    "module_name": "chromiumWebsiteUsage",
+    "artifact_name": "Chromium Website Usage Events",
+    "function_name": "chromiumWebsiteUsageEvents",
+    "case_number": "caseknowndata_u4_history_cleared_all",
+    "number_of_columns": 7,
+    "number_of_rows": 12,
+    "total_data_size_bytes": 672,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/chromiumWebsiteUsage/testdata.chromiumWebsiteUsage.chromiumWebsiteUsageEvents.caseknowndata_u4_history_cleared_all.zip",
+    "start_time": "2026-11-01T22:10:31.853976+00:00",
+    "end_time": "2026-11-01T22:10:31.942047+00:00",
+    "run_time_seconds": 0.0680687427520752,
+    "last_commit": {
+      "hash": "2bab3a376928120710b06009d516b16655d759e0",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-11-01T16:58:23-05:00",
+      "message": "Chromium website usage: apply notes audit, report a deleted share history key's last version"
+    }
+  },
+  "headers": [
+    "Event Time",
+    "Site",
+    "Event",
+    "Event Type (as stored)",
+    "State",
+    "Browser",
+    "Android User"
+  ],
+  "data": [
+    [
+      1793568358,
+      "10.0.2.2",
+      "Start browsing",
+      1,
+      "Deleted, value kept",
+      "Chrome",
+      "0"
+    ],
+    [
+      1793568414,
+      "10.0.2.2",
+      "Stop browsing",
+      2,
+      "Deleted, value kept",
+      "Chrome",
+      "0"
+    ],
+    [
+      1794259620,
+      "10.0.2.2",
+      "Start browsing",
+      1,
+      "Deleted, value kept",
+      "Chrome",
+      "0"
+    ],
+    [
+      1794259632,
+      "10.0.2.2",
+      "Stop browsing",
+      2,
+      "Deleted, value kept",
+      "Chrome",
+      "0"
+    ],
+    [
+      1794259648,
+      "10.0.2.2",
+      "Start browsing",
+      1,
+      "Deleted, value kept",
+      "Chrome",
+      "0"
+    ],
+    [
+      1794259718,
+      "10.0.2.2",
+      "Stop browsing",
+      2,
+      "Deleted, value kept",
+      "Chrome",
+      "0"
+    ],
+    [
+      1794259756,
+      "10.0.2.2",
+      "Start browsing",
+      1,
+      "Deleted, value kept",
+      "Chrome",
+      "0"
+    ],
+    [
+      1794259762,
+      "10.0.2.2",
+      "Stop browsing",
+      2,
+      "Deleted, value kept",
+      "Chrome",
+      "0"
+    ],
+    [
+      1794259810,
+      "10.0.2.2",
+      "Start browsing",
+      1,
+      "Deleted, value kept",
+      "Chrome",
+      "0"
+    ],
+    [
+      1794259837,
+      "10.0.2.2",
+      "Stop browsing",
+      2,
+      "Deleted, value kept",
+      "Chrome",
+      "0"
+    ],
+    [
+      1794259886,
+      "10.0.2.2",
+      "Start browsing",
+      1,
+      "Live",
+      "Chrome",
+      "0"
+    ],
+    [
+      1794259892,
+      "10.0.2.2",
+      "Stop browsing",
+      2,
+      "Live",
+      "Chrome",
+      "0"
+    ]
+  ]
+}

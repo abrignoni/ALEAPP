@@ -1,0 +1,68 @@
+{
+  "metadata": {
+    "module_name": "SamsungGalleryLogEncodedStrings",
+    "artifact_name": "Samsung Gallery Log Encoded Strings",
+    "function_name": "SamsungGalleryLogEncodedStrings",
+    "case_number": "case4",
+    "number_of_columns": 10,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 422,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/SamsungGalleryLogEncodedStrings/testdata.SamsungGalleryLogEncodedStrings.SamsungGalleryLogEncodedStrings.case4.zip",
+    "start_time": "2026-11-16T20:16:49.463246+00:00",
+    "end_time": "2026-11-16T20:16:49.526697+00:00",
+    "run_time_seconds": 0.03174996376037598,
+    "last_commit": null
+  },
+  "headers": [
+    "Timestamp (as stored)",
+    "Category (as stored)",
+    "Table",
+    "Column",
+    "Row ID",
+    "Decoded (in context)",
+    "Raw (obfuscated)",
+    "Scheme/key",
+    "Note",
+    "Android User"
+  ],
+  "data": [
+    [
+      "2026-01-06 14:02:11.640",
+      2,
+      "log",
+      "__log",
+      1,
+      "moveToTrash album= Brighton Pier  from= DCIM/Camera  done",
+      "moveToTrash album= #G$E6yV61TgBdsbJy6u1t9Q==  from= #G$E5jnCNwsEpzbzv9sk=  done",
+      "V3[6], V3[5]",
+      "",
+      "0"
+    ],
+    [
+      "2026-01-06 14:03:57.218",
+      2,
+      "log",
+      "__log",
+      2,
+      "restore album= WAL only row  ok",
+      "restore album= #G$E75K0nSQZEpEkfHe5N  ok",
+      "V3[7]",
+      "",
+      "0"
+    ],
+    [
+      "2026-01-06 14:10:05.932",
+      2,
+      "log",
+      "__log",
+      1,
+      "moveToTrash album= Secure Holiday  done",
+      "moveToTrash album= #G$E4viMvfLXgDl1/OrQeA38=  done",
+      "V3[4]",
+      "",
+      "150"
+    ]
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "metadata": {
+    "module_name": "bugreportRadios",
+    "artifact_name": "Bug Report - Bluetooth Link Key Types",
+    "function_name": "bugreport_bluetooth_link_keys",
+    "case_number": "casesynthetic_cut",
+    "number_of_columns": 5,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 100,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportRadios/testdata.bugreportRadios.bugreport_bluetooth_link_keys.casesynthetic_cut.zip",
+    "start_time": "2026-10-26T17:44:30.200964+00:00",
+    "end_time": "2026-10-26T17:44:30.351900+00:00",
+    "run_time_seconds": 0.017464160919189453,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-26T17:44:30.323148",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Address",
+    "BR/EDR Key Type",
+    "LE Key Types",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "xx:xx:xx:xx:bb:11",
+      "AUTH_COMB",
+      "",
+      345,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "xx:xx:xx:xx:bb:22",
+      "AUTH_COMB_P_256",
+      "",
+      348,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

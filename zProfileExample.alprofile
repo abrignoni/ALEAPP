@@ -1,1 +1,1 @@
-{"leapp": "aleapp", "format_version": 1, "plugins": ["AirGuard", "atrackerdetect", "BadooChat", "BadooConnections", "Call Logs", "Call logs "]}
+{"leapp": "aleapp", "format_version": 1, "plugins": ["get_airGuard", "get_airGuard_scans", "get_atrackerdetect", "get_badoo_chat", "get_badoo_messages", "get_badoo_conn", "get_calllogs", "get_calllog"]}

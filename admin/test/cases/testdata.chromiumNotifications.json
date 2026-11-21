@@ -1,0 +1,115 @@
+{
+    "caseknowndata_n1_shown": {
+        "description": "Known data: Chrome 124.0.6367.219 on an Android 15 emulator (no Google account), a local test page served at http://localhost:8765 through adb reverse, with a service worker that closes a notification when it is clicked. The page was allowed to show notifications and showed notification 1, still on screen. Test pages only, contains no personal data.",
+        "maker": "known data",
+        "make_data": {
+            "input_data_path": "n1_shown.zip",
+            "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+            "timestamp": "2026-11-01T18:06:41.320687",
+            "last_commit": {
+                "hash": "Uncommitted",
+                "author_name": "N/A",
+                "author_email": "N/A",
+                "date": "2026-11-01T18:06:41.309316",
+                "message": "File not yet committed to git"
+            }
+        },
+        "artifacts": {
+            "chromiumWebNotifications": {
+                "search_patterns": [
+                    "*/app_*/Default/Platform Notifications/*"
+                ],
+                "file_count": 6,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            }
+        }
+    },
+    "caseknowndata_n2_clicked": {
+        "description": "Known data: Chrome 124.0.6367.219 on an Android 15 emulator (no Google account), a local test page served at http://localhost:8765 through adb reverse, with a service worker that closes a notification when it is clicked. After n1, the page showed notification 2, which was clicked in the notification shade. Test pages only, contains no personal data.",
+        "maker": "known data",
+        "make_data": {
+            "input_data_path": "n2_clicked.zip",
+            "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+            "timestamp": "2026-11-01T18:06:41.510484",
+            "last_commit": {
+                "hash": "Uncommitted",
+                "author_name": "N/A",
+                "author_email": "N/A",
+                "date": "2026-11-01T18:06:41.499845",
+                "message": "File not yet committed to git"
+            }
+        },
+        "artifacts": {
+            "chromiumWebNotifications": {
+                "search_patterns": [
+                    "*/app_*/Default/Platform Notifications/*"
+                ],
+                "file_count": 6,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            }
+        }
+    },
+    "caseknowndata_n3_dismissed": {
+        "description": "Known data: Chrome 124.0.6367.219 on an Android 15 emulator (no Google account), a local test page served at http://localhost:8765 through adb reverse, with a service worker that closes a notification when it is clicked. After n2, notification 1 was swiped away in the notification shade. Test pages only, contains no personal data.",
+        "maker": "known data",
+        "make_data": {
+            "input_data_path": "n3_dismissed.zip",
+            "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+            "timestamp": "2026-11-01T18:06:41.699357",
+            "last_commit": {
+                "hash": "Uncommitted",
+                "author_name": "N/A",
+                "author_email": "N/A",
+                "date": "2026-11-01T18:06:41.689252",
+                "message": "File not yet committed to git"
+            }
+        },
+        "artifacts": {
+            "chromiumWebNotifications": {
+                "search_patterns": [
+                    "*/app_*/Default/Platform Notifications/*"
+                ],
+                "file_count": 6,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            }
+        }
+    },
+    "caseknowndata_n4_with_cache": {
+        "description": "Known data: Chrome 124.0.6367.219 on an Android 15 emulator (no Google account), a local test page served at http://localhost:8765 through adb reverse, in a fresh session of the same emulator. The page showed notification 4 with an icon and an image; the row read Live with Closed blank; the zip adds the Simple Cache entry files of Chrome's HTTP cache, which hold both pictures. Test pages only, contains no personal data.",
+        "maker": "known data",
+        "make_data": {
+            "input_data_path": "n4_with_cache.zip",
+            "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+            "timestamp": "2026-11-01T18:45:08.219044",
+            "last_commit": {
+                "hash": "f4d8b4e0e585e5205ac55cf1d1869561a54e7fb1",
+                "author_name": "Brigs",
+                "author_email": "abrignoni@gmail.com",
+                "date": "2026-11-01T18:18:56-05:00",
+                "message": "Chromium web notifications: apply notes audit, put timestamp columns after Created"
+            }
+        },
+        "artifacts": {
+            "chromiumWebNotifications": {
+                "search_patterns": [
+                    "*/app_*/Default/Platform Notifications/*",
+                    "*/cache/[Cc]ache/*_0"
+                ],
+                "file_count": 11,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            }
+        }
+    }
+}

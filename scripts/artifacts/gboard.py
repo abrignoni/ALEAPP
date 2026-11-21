@@ -66,7 +66,7 @@ import datetime
 import os
 import sqlite3
 
-from scripts.ilapfuncs import decode_protobuf
+from scripts.ilapfuncs import decode_protobuf, is_sqlite_sidecar
 
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly, \
     does_table_exist_in_db, check_in_media
@@ -231,7 +231,7 @@ def get_gboardCache(context):
             if file_key:
                 for match in files_found:
                     match = str(match)
-                    if match.endswith(('-wal', '-shm', '-journal')):
+                    if is_sqlite_sidecar(match):
                         continue
                     if file_key in match:
                         image = check_in_media(match, os.path.basename(match))

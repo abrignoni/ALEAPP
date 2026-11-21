@@ -1,0 +1,80 @@
+{
+  "metadata": {
+    "module_name": "bugreportSensorsMedia",
+    "artifact_name": "Bug Report - Location Requests",
+    "function_name": "bugreport_location_requests",
+    "case_number": "casesynthetic_cut",
+    "number_of_columns": 16,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 488,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportSensorsMedia/testdata.bugreportSensorsMedia.bugreport_location_requests.casesynthetic_cut.zip",
+    "start_time": "2026-10-26T17:35:02.119159+00:00",
+    "end_time": "2026-10-26T17:35:02.246860+00:00",
+    "run_time_seconds": 0.013402462005615234,
+    "last_commit": {
+      "hash": "e56d9fc859d2e83c7207c6514d3727ee6bf6a291",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:32:45-04:00",
+      "message": "Bug report sensors and media: location, sensors, camera, audio, media, accessibility, input method, display and window artifacts"
+    }
+  },
+  "headers": [
+    "List",
+    "Provider",
+    "UID",
+    "Package",
+    "Attribution Tag",
+    "Listener ID",
+    "Flags",
+    "Request (as printed)",
+    "Quality",
+    "Interval (as printed)",
+    "Min Update Interval",
+    "Min Update Distance",
+    "State",
+    "Work Source",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Location Providers",
+      "passive",
+      10300,
+      "com.example.user.chat",
+      "chat_location",
+      "AB12CD34",
+      "{bg}",
+      "Request[@+1h0m0s0ms BALANCED, minUpdateInterval=+30s0ms, minUpdateDistance=100.0, WorkSource{10300 com.example.user.chat}]",
+      "BALANCED",
+      "+1h0m0s0ms",
+      "+30s0ms",
+      "100.0",
+      "",
+      "WorkSource{10300 com.example.user.chat}",
+      517,
+      "Dump/dumpstate.txt"
+    ],
+    [
+      "Location Providers",
+      "passive",
+      1000,
+      "android",
+      "ExampleService",
+      "EF56AA11",
+      "(COARSE)",
+      "Request[PASSIVE, minUpdateInterval=0, hiddenFromAppOps, WorkSource{1000 android}]",
+      "PASSIVE",
+      "",
+      "0",
+      "",
+      "",
+      "WorkSource{1000 android}",
+      518,
+      "Dump/dumpstate.txt"
+    ]
+  ]
+}

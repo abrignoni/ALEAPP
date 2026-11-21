@@ -1,0 +1,91 @@
+{
+  "metadata": {
+    "module_name": "bugreportNetwork",
+    "artifact_name": "Bug Report - Open Sockets",
+    "function_name": "bugreport_open_sockets",
+    "case_number": "casesynthetic_a10",
+    "number_of_columns": 11,
+    "number_of_rows": 4,
+    "total_data_size_bytes": 419,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportNetwork/testdata.bugreportNetwork.bugreport_open_sockets.casesynthetic_a10.zip",
+    "start_time": "2026-10-26T17:22:10.319235+00:00",
+    "end_time": "2026-10-26T17:22:10.461017+00:00",
+    "run_time_seconds": 0.012857675552368164,
+    "last_commit": {
+      "hash": "35ad867ff7da9d4bd9ac2bb41cca31cb5a49f8b2",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:21:50-04:00",
+      "message": "Bug report network: Wi-Fi, network usage, policy, connectivity, DNS, interface, socket and tethering artifacts"
+    }
+  },
+  "headers": [
+    "Protocol",
+    "Receive Queue",
+    "Send Queue",
+    "Local Address",
+    "Foreign Address",
+    "State",
+    "UID",
+    "Inode",
+    "Program",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "tcp",
+      130,
+      0,
+      "198.51.100.20:39726",
+      "203.0.113.9:443",
+      "CLOSE_WAIT",
+      null,
+      null,
+      "",
+      64,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "tcp6",
+      0,
+      0,
+      "[2001:db8::1]:41000",
+      "[2001:db8::2]:443",
+      "ESTABLISHED",
+      null,
+      null,
+      "",
+      65,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "udp",
+      0,
+      0,
+      "198.51.100.20:68",
+      "198.51.100.1:67",
+      "ESTABLISHED",
+      null,
+      null,
+      "",
+      66,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "raw6",
+      0,
+      0,
+      "[::]:58",
+      "[::]:*",
+      "7",
+      null,
+      null,
+      "",
+      67,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

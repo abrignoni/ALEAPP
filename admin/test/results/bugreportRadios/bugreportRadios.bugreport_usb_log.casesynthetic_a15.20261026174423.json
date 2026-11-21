@@ -1,0 +1,38 @@
+{
+  "metadata": {
+    "module_name": "bugreportRadios",
+    "artifact_name": "Bug Report - USB Log",
+    "function_name": "bugreport_usb_log",
+    "case_number": "casesynthetic_a15",
+    "number_of_columns": 11,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportRadios/testdata.bugreportRadios.bugreport_usb_log.casesynthetic_a15.zip",
+    "start_time": "2026-10-26T17:44:23.473476+00:00",
+    "end_time": "2026-10-26T17:44:23.635727+00:00",
+    "run_time_seconds": 0.01341557502746582,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-26T17:44:23.606921",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Block",
+    "Kernel Time (as stored)",
+    "Time As Printed",
+    "Time (UTC)",
+    "Event",
+    "Vendor ID",
+    "Product ID",
+    "Message",
+    "Time Note",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

@@ -255,7 +255,7 @@ import re
 import sqlite3
 import xml.etree.ElementTree as ET
 
-from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
+from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly, is_sqlite_sidecar
 from scripts.artifacts.storagePathViews import unique_files
 
 _EPOCH = datetime.datetime(1970, 1, 1, tzinfo=datetime.timezone.utc)
@@ -639,7 +639,7 @@ def instagramContacts(context):
     sources = []
 
     for source_path in unique_files(context):
-        if source_path.endswith(('-wal', '-shm', '-journal')):
+        if is_sqlite_sidecar(source_path):
             continue
         rows = _rows(source_path, '''
             SELECT id, name, first_name, last_name, username, phone_number,

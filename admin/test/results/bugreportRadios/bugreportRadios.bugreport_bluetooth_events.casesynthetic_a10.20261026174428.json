@@ -1,0 +1,59 @@
+{
+  "metadata": {
+    "module_name": "bugreportRadios",
+    "artifact_name": "Bug Report - Bluetooth Events",
+    "function_name": "bugreport_bluetooth_events",
+    "case_number": "casesynthetic_a10",
+    "number_of_columns": 9,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 300,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportRadios/testdata.bugreportRadios.bugreport_bluetooth_events.casesynthetic_a10.zip",
+    "start_time": "2026-10-26T17:44:28.460255+00:00",
+    "end_time": "2026-10-26T17:44:28.635261+00:00",
+    "run_time_seconds": 0.01161646842956543,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-10-26T17:44:28.609456",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Time (UTC)",
+    "Time As Printed",
+    "Event Source",
+    "Event",
+    "Address",
+    "Detail",
+    "Time Note",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1793594662,
+      "11-02 05:44:22",
+      "Enable log",
+      "Enabled",
+      "",
+      "due to APPLICATION_REQUEST by com.example.gms",
+      "",
+      68,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      1793594663,
+      "11-02 05:44:23.085",
+      "Adapter state",
+      "BLE_TURN_ON",
+      "",
+      "processed=OffState org=OffState dest=TurningBleOnState",
+      "",
+      90,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

@@ -1,7 +1,8 @@
 # Vendored third-party readers
 
-Code copied in from another repository, unmodified, so the tool can read disk
-images and acquisitions without asking the examiner to install anything.
+Code copied in from another repository so the tool can read disk images and
+acquisitions without asking the examiner to install anything. Every file is
+unmodified except ccl/ccl_leveldb.py, whose section says what differs.
 
 ## qnxprobe.py
 
@@ -53,6 +54,17 @@ video held in its MP4 fragments, copying the sample bytes as stored.
 `scripts/artifacts/chromeCacheVideos.py` imports it. Standard library only;
 Brotli-compressed bodies are read when the optional brotli package is installed.
 
+## c2pareader.py
+
+| | |
+| --- | --- |
+| upstream | https://github.com/abrignoni/c2pareader (called c2paprobe up to v0.1.1) |
+| licence | MIT, kept beside it as LICENSE-c2pareader |
+
+Reads the Content Credentials (C2PA) manifest store and the XMP a picture or video
+holds, walking its container from the bytes. `scripts/artifacts/c2paProvenance.py`
+imports it. iLEAPP vendors the same file. Standard library only.
+
 The vendored version, upstream commit and sha256 of each file are recorded in
 `vendored.json` in this directory, which `admin/scripts/check_vendored.py`
 enforces in CI: it checks the hashes and fetches each upstream file at its
@@ -68,6 +80,7 @@ re-vendor, or the next sync silently reverts the change.
     cp ../qnxprobe/ewfprobe.py scripts/vendor/ewfprobe.py
     cp ../exoprobe/exoprobe.py scripts/vendor/exoprobe.py
     cp ../chromiumcacheprobe/chromiumcacheprobe.py scripts/vendor/chromiumcacheprobe.py
+    cp ../c2pareader/c2pareader/__init__.py scripts/vendor/c2pareader.py
     python3 admin/scripts/check_vendored.py --update
 
 `--update` rewrites the hashes only. The upstream commit and date in
@@ -87,3 +100,49 @@ fails when either differs. It runs in CI, so a local edit or a stale copy after 
 upstream release is caught rather than noticed later. Pass `--upstream <path>`
 (or `--upstream qnxprobe=<path>`) to compare against a checkout instead of
 fetching, and `--offline` to check the hashes alone.
+
+## ccl/ (CCL Forensics LevelDB reader)
+
+| | |
+| --- | --- |
+| upstream | https://github.com/cclgroupltd/ccl_chromium_reader and https://github.com/cclgroupltd/ccl_simplesnappy |
+| licence | MIT, kept beside them as LICENSE-ccl_chromium_reader and LICENSE-ccl_simplesnappy |
+
+Reads Chromium and Android LevelDB stores. The FCM, Chromium, DuckDuckGo, KeepSafe, semantic
+location, shared proto and Nearby artifacts import it from `scripts.vendor.ccl`, and so does
+`scripts/ccl/ccl_android_fcm_queued_messages.py`. Both files are the same as DLEAPP's
+`scripts/vendor/ccl` copies.
+
+- `ccl_simplesnappy.py`: ccl_simplesnappy 2161c40 (2024-07-29), verbatim, recorded in vendored.json.
+  That commit carried no LICENSE file; the MIT text kept here is the repository's later one, and
+  the file's own header holds the same licence.
+- `ccl_leveldb.py`: ccl_chromium_reader 7a01b07 (2026-11-16), with only its two
+  `ccl_simplesnappy` imports changed for the flat folder (`from . import ccl_simplesnappy` and
+  `from .ccl_simplesnappy import check_masked_crc`), so it is not in vendored.json. Upstream now
+  carries the two changes this copy used to add. The first bounds the open file handles: a
+  reader opens each .log, .ldb and manifest file only while a pass reads it, and each pass gets
+  its own handle (https://github.com/cclgroupltd/ccl_chromium_reader/pull/58, which replaced
+  https://github.com/cclgroupltd/ccl_chromium_reader/pull/56);
+  admin/test/scripts/test_leveldb_file_lifecycle.py pins it. A reader's `damage` now lists what
+  every pass skipped, not only the last one.
+  The second, from DLEAPP 0e4953a (2026-11-08), is upstream as
+  https://github.com/cclgroupltd/ccl_chromium_reader/pull/57: a data block of a table (.ldb)
+  file that cannot be read whole or whose snappy stream does not decompress is skipped, logged
+  (noting when its checksum does not match) and listed in the reader's `damage`, and reading goes
+  on with the next block and file. Upstream ad37443 raised there, so a caller gets nothing more
+  from that folder. Measured 2026-11-09 over the zip, tar and folder sources in the corpus
+  registries (disk images and other containers were not read): of 9,305 table files (six-digit .ldb and .sst
+  names) under 62 corpus keys, the reader before and after this change returns the same records
+  from 9,287, and both refuse the other 18
+  when the table is opened (footer magic), a check this change does not touch. A skipped block
+  can have held a newer version of a key, so a caller that keeps the newest record per key can
+  then see an older one. admin/test/scripts/test_leveldb_table_damage.py pins the decompression
+  cases and the read of the next file.
+  Measured 2026-11-16 over the zip, tar and folder sources in the corpus registries (disk images
+  and other containers were not read): of 10,658 LevelDB folders (9,308 table files) under 85
+  corpus keys, the copy before and after this re-vendor returns the same 7,588,177 records, and
+  both refuse the same 16 folders when they are opened.
+
+Before 2026-11-03 ALEAPP kept an older copy of this reader (closest to upstream 210b5c6, 2021) in `scripts/ccl`. The newer upstream
+code skips and reports a damaged or zero-filled .log block where the older one stopped reading
+(ccl_chromium_reader a321210 and 6e5dbe5).

@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "module_name": "bugreportAccountsPower",
+    "artifact_name": "Bug Report - Sync Jobs",
+    "function_name": "bugreport_sync_jobs",
+    "case_number": "casesynthetic_a10",
+    "number_of_columns": 10,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 665,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/bugreportAccountsPower/testdata.bugreportAccountsPower.bugreport_sync_jobs.casesynthetic_a10.zip",
+    "start_time": "2026-10-26T17:46:13.365377+00:00",
+    "end_time": "2026-10-26T17:46:13.480281+00:00",
+    "run_time_seconds": 0.01329493522644043,
+    "last_commit": {
+      "hash": "7450687ec1476569021e50b0cfc221c1d2c13a09",
+      "author_name": "danjethh",
+      "author_email": "danjethh@users.noreply.github.com",
+      "date": "2026-10-26T13:45:32-04:00",
+      "message": "Bug report accounts, sync, backup, users, battery, power and memory: readers, 33 artifacts, synthetic fixture and tests"
+    }
+  },
+  "headers": [
+    "List",
+    "Job ID",
+    "User",
+    "Account",
+    "Account Type",
+    "Authority",
+    "Source",
+    "Details (as printed)",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Pending",
+      429,
+      0,
+      "person.one@example.test",
+      "com.example.auth",
+      "example.mail",
+      "OTHER",
+      "ExpectedIn=-6h49m44s Reason=10267 Owner={u0a267 com.example.mail [20]} [sync_reason=7 ]",
+      350,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Periodic",
+      105655,
+      0,
+      "person.one@example.test",
+      "com.example.auth",
+      "example.calendar",
+      "PERIODIC",
+      "Reason=Periodic (period=1d00h00m00s flex=57m36s) Owner={u0a169 com.example.calendar [10]}",
+      353,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ],
+    [
+      "Periodic",
+      100462,
+      0,
+      "Example Chat",
+      "com.example.chat",
+      "example.contacts",
+      "PERIODIC",
+      "Reason=Periodic (period=1h00m00s flex=2m24s) Owner={u0a194 com.example.chat [10] [ACTIVE]} [periodic_sync=true ]",
+      354,
+      "Dump/bugreport-example-EXOLD-2026-11-02-10-15-30.txt"
+    ]
+  ]
+}

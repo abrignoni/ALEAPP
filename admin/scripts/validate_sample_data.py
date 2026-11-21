@@ -21,6 +21,9 @@ This script closes that gap in four escalating steps:
 2. Registry. With ``--registry``, checks that every key an artifact cites
    exists in the registry, that each registered corpus is present on disk, and
    with ``--verify-hashes`` that its SHA-256 still matches what was recorded.
+   A cited key whose entry has ``allow_public_metadata`` false is an error, and
+   one where it is null (terms not established) is a warning. An entry without
+   the field has no designation recorded and is not reported.
 
 3. Counts. With ``--run KEY``, parses that corpus end to end and compares the
    rows each artifact actually produced against the rows it declares. The run must
@@ -31,13 +34,16 @@ This script closes that gap in four escalating steps:
    LAVA is reported as uncheckable rather than as zero, and the run log is kept so
    a genuine zero can be explained.
 
-4. Emit. With ``--emit IMAGE``, parses that image (a zip, tar, gz, or an
-   extraction directory; no registry needed) and prints paste-ready
+4. Emit. With ``--emit IMAGE``, parses that image (a zip, tar, gz, an
+   extraction directory, or a disk image or evidence container whose extension
+   names only that, such as .E01 or .vhdx; no registry needed) and prints paste-ready
    ``sample_data`` values for the artifact modules changed on the current
    branch, or for the modules named with ``--modules``. The same run-integrity
    checks as ``--run`` apply before anything is printed, a zero is printed with
    a caveat rather than as a bare measurement, and nothing is written to any
-   module: the values are for a person to review and paste.
+   module: the values are for a person to review and paste. An extension that
+   can also name something no walker opens (.bin, .img, .dd, .raw) is never
+   read as a disk image unless ``--input-type raw`` says so.
 
 Usage::
 
@@ -47,6 +53,8 @@ Usage::
     python3 admin/scripts/validate_sample_data.py --registry /path/samples.json --run corpus_key
     python3 admin/scripts/validate_sample_data.py --emit /path/image.zip --key my_pixel6_a14
     python3 admin/scripts/validate_sample_data.py --emit /path/image.zip --modules myApp
+    python3 admin/scripts/validate_sample_data.py --emit /path/image.E01 --key my_image
+    python3 admin/scripts/validate_sample_data.py --emit /path/nand.bin --input-type raw --key my_device
 
 The registry path may also be supplied through the ``ALEAPP_SAMPLES``
 environment variable. Exit status is 1 if any error was reported; warnings
@@ -65,6 +73,10 @@ import tempfile
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+from admin.scripts import corpus_privacy  # noqa: E402  pylint: disable=wrong-import-position
+
 ARTIFACTS_DIR = REPO_ROOT / "scripts" / "artifacts"
 ROW_COUNT_RE = re.compile(r"(\d[\d,]*)\s+rows?\b", re.I)
 HASH_CHUNK = 1 << 22
@@ -232,6 +244,22 @@ def check_registry(artifacts, registry, registry_path, verify_hashes, report):
         if corpus not in samples:
             report.error(f"corpus '{corpus}' is cited by {len(users)} artifact(s) "
                          f"but is not in the registry (first: {users[0]})")
+            continue
+        # sample_data puts the key and a row count in repository text, which is what
+        # allow_public_metadata governs. An entry that does not carry the field has no
+        # designation recorded, and is left alone.
+        state = corpus_privacy.field_state(samples[corpus], "allow_public_metadata")
+        if state is False:
+            report.error(f"corpus '{corpus}' is cited by {len(users)} artifact(s) but its "
+                         f"key may not appear in repository text (first: {users[0]}): "
+                         + corpus_privacy.describe(corpus, samples[corpus],
+                                                   "allow_public_metadata"))
+        elif state is None:
+            report.warn(f"corpus '{corpus}' is cited by {len(users)} artifact(s) but whether "
+                        f"its key may appear in repository text is not established "
+                        f"(first: {users[0]}): "
+                        + corpus_privacy.describe(corpus, samples[corpus],
+                                                  "allow_public_metadata"))
 
     for name, entry in sorted(samples.items()):
         match = (entry or {}).get("match") or {}
@@ -263,6 +291,20 @@ def check_registry(artifacts, registry, registry_path, verify_hashes, report):
 
 
 RUNNABLE_TYPES = ("fs", "tar", "zip", "gz", "file", "raw")
+
+# Extensions of disk images and evidence containers that name nothing else, which --emit
+# reads as raw without being told. .bin, .img, .dd and .raw are left out: a .bin can be a
+# chip dump no walker opens, so those stay opt-in through --input-type raw.
+EMIT_RAW_SUFFIXES = ("e01", "ex01", "s01", "l01", "ad1", "aff", "afm", "aff4", "vhd", "vhdx",
+                     "vmdk", "qcow", "qcow2", "dmg", "sparseimage", "sparsebundle", "001")
+
+
+def emit_input_type(source, declared=None):
+    """input_type_for, plus raw for an extension in EMIT_RAW_SUFFIXES; --emit only."""
+    found = input_type_for(source, declared)
+    if found is None and not declared and source.suffix.lower().lstrip(".") in EMIT_RAW_SUFFIXES:
+        return "raw"
+    return found
 
 
 def input_type_for(source, declared=None):
@@ -333,8 +375,9 @@ def execute_tool(source, label, log_name, report, keep=False, declared_type=None
     if input_type is None:
         report.error(f"{label}: cannot pick a -t input type for {source.name}; "
                      "known inputs are a directory, .zip, .tar, .tar.gz, .tgz, "
-                     "or an entry-level \"input_type\" field (a raw disk image "
-                     "is never guessed from its extension)")
+                     "a disk image extension --emit knows (.E01, .vhdx and the like), "
+                     "or an entry-level \"input_type\" field or --input-type (a .bin, "
+                     ".img, .dd or .raw is never guessed to be a disk image)")
         return None, None, None
 
     output_root = tempfile.mkdtemp(prefix=RUN_PREFIX)
@@ -543,7 +586,7 @@ def resolve_emit_modules(modules_arg, artifacts, report):
     return picked
 
 
-def emit_counts(image, key, modules_arg, artifacts, report, keep=False):
+def emit_counts(image, key, modules_arg, artifacts, report, keep=False, input_type=None):
     """Step 4: parse one image and print paste-ready sample_data values.
 
     Prints, never writes: the values go through a person, who prefixes the app
@@ -566,7 +609,11 @@ def emit_counts(image, key, modules_arg, artifacts, report, keep=False):
                     "pick a name that identifies the image to you")
 
     errors_before = len(report.errors)
-    produced, _, _ = execute_tool(source, "--emit", key, report, keep=keep)
+    if input_type is not None and input_type not in RUNNABLE_TYPES:
+        report.error(f"--input-type {input_type} is not one of {', '.join(RUNNABLE_TYPES)}")
+        return
+    produced, _, _ = execute_tool(source, "--emit", key, report, keep=keep,
+                                  declared_type=emit_input_type(source, input_type))
     if produced is None:
         return
 
@@ -607,8 +654,12 @@ def main():
     parser.add_argument("--run", metavar="KEY",
                         help="parse this corpus and compare produced rows to declared rows")
     parser.add_argument("--emit", metavar="IMAGE",
-                        help="parse this image (zip, tar, gz, or extraction directory) and "
-                             "print paste-ready sample_data values; no registry needed")
+                        help="parse this image (zip, tar, gz, extraction directory, or a disk "
+                             "image such as .E01 or .vhdx) and print paste-ready sample_data "
+                             "values; no registry needed")
+    parser.add_argument("--input-type", metavar="TYPE",
+                        help="with --emit: the -t input type to use, for a disk image whose "
+                             "extension does not say so (raw for a .bin, .img, .dd or .raw)")
     parser.add_argument("--key", metavar="NAME",
                         help="image key to print in the emitted values (with --emit)")
     parser.add_argument("--modules", metavar="NAMES",
@@ -617,6 +668,9 @@ def main():
     parser.add_argument("--keep", action="store_true",
                         help="keep the run output folder instead of deleting it")
     args = parser.parse_args()
+
+    if args.input_type and not args.emit:
+        parser.error("--input-type only means something with --emit")
 
     report = Report()
     artifacts = read_artifacts()
@@ -631,7 +685,8 @@ def main():
         report.error("--run and --emit are separate steps; pass one at a time")
     elif args.emit:
         print("Emit")
-        emit_counts(args.emit, args.key, args.modules, artifacts, report, keep=args.keep)
+        emit_counts(args.emit, args.key, args.modules, artifacts, report, keep=args.keep,
+                    input_type=args.input_type)
     elif args.key or args.modules:
         report.error("--key and --modules only mean something with --emit")
 

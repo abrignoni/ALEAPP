@@ -1,0 +1,42 @@
+{
+  "metadata": {
+    "module_name": "galleryVault",
+    "artifact_name": "GalleryVault - Cloud Upload Tasks",
+    "function_name": "galleryvault_cloud_upload_tasks",
+    "case_number": "pixel7a_a14",
+    "number_of_columns": 15,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/galleryVault/testdata.galleryVault.galleryvault_cloud_upload_tasks.pixel7a_a14.zip",
+    "start_time": "2026-11-12T17:39:43.763067+00:00",
+    "end_time": "2026-11-12T17:39:43.789573+00:00",
+    "run_time_seconds": 0.0007760524749755859,
+    "last_commit": {
+      "hash": "ccf522fc06b634d1a00c98921408736596c94588",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-11-12T11:39:33-05:00",
+      "message": "fix(galleryVault): read every Android user's file action log, AppLock.db and cloud_cache.db"
+    }
+  },
+  "headers": [
+    "Begin Time",
+    "Android User",
+    "File Name",
+    "File Bytes Uploaded",
+    "File Bytes Total",
+    "Task State",
+    "Task Error Code",
+    "Part Type",
+    "Part Bytes Uploaded",
+    "Part Bytes Total",
+    "Part Percent Complete",
+    "Part Error Code",
+    "Cloud Storage Key",
+    "File Encryption Key (hex)",
+    "Task ID"
+  ],
+  "data": []
+}
