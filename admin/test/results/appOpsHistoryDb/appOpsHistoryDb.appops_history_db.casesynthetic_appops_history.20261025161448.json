@@ -23,6 +23,7 @@
   },
   "headers": [
     "Access Time",
+    "Access Time (ms As Stored)",
     "Package Name",
     "UID",
     "Android User",
@@ -39,13 +40,13 @@
     "Reject Count",
     "Device ID",
     "Interval",
-    "Access Time (ms As Stored)",
     "Row ID",
     "Source File"
   ],
   "data": [
     [
       1787185800,
+      1787185800000,
       "com.example.recorder",
       10101,
       0,
@@ -62,12 +63,12 @@
       0,
       "",
       "Long",
-      1787185800000,
       3,
       "Dump/data/system/appops/app_op_history_long_interval.db"
     ],
     [
       1787186700,
+      1787186700000,
       "com.example.maps",
       10103,
       0,
@@ -84,12 +85,12 @@
       0,
       "",
       "Long",
-      1787186700000,
       4,
       "Dump/data/system/appops/app_op_history_long_interval.db"
     ],
     [
       1787187600,
+      1787187600000,
       "com.example.recorder",
       15010101,
       150,
@@ -106,12 +107,12 @@
       4,
       "",
       "Long",
-      1787187600000,
       5,
       "Dump/data/system/appops/app_op_history_long_interval.db"
     ],
     [
       1787188500,
+      1787188500000,
       "com.example.camera",
       10102,
       0,
@@ -128,12 +129,12 @@
       17,
       "",
       "Long",
-      1787188500000,
       6,
       "Dump/data/system/appops/app_op_history_long_interval.db"
     ],
     [
       1787189400,
+      1787189400000,
       "com.example.mail",
       10107,
       0,
@@ -150,12 +151,12 @@
       0,
       "",
       "Long",
-      1787189400000,
       7,
       "Dump/data/system/appops/app_op_history_long_interval.db"
     ],
     [
       1787190300,
+      1787190300000,
       "com.example.mail",
       10107,
       0,
@@ -172,12 +173,12 @@
       0,
       "",
       "Long",
-      1787190300000,
       8,
       "Dump/data/system/appops/app_op_history_long_interval.db"
     ],
     [
       1787875201,
+      1787875201000,
       "com.example.recorder",
       10101,
       0,
@@ -194,12 +195,12 @@
       0,
       "",
       "Long",
-      1787875201000,
       9,
       "Dump/data/system/appops/app_op_history_long_interval.db"
     ],
     [
       1787876101,
+      1787876101000,
       "com.example.recorder",
       15010101,
       150,
@@ -216,12 +217,12 @@
       0,
       "",
       "Long",
-      1787876101000,
       10,
       "Dump/data/system/appops/app_op_history_long_interval.db"
     ],
     [
       1787562005,
+      1787562005120,
       "com.example.recorder",
       10101,
       0,
@@ -238,12 +239,12 @@
       0,
       "",
       "Short",
-      1787562005120,
       1,
       "Dump/data/system/appops/app_op_history_short_interval.db"
     ],
     [
       1787562005,
+      1787562005120,
       "com.example.recorder",
       10101,
       0,
@@ -260,12 +261,12 @@
       0,
       "",
       "Short",
-      1787562005120,
       2,
       "Dump/data/system/appops/app_op_history_short_interval.db"
     ],
     [
       1787563800,
+      1787563800005,
       "com.example.recorder",
       15010101,
       150,
@@ -282,12 +283,12 @@
       0,
       "",
       "Short",
-      1787563800005,
       3,
       "Dump/data/system/appops/app_op_history_short_interval.db"
     ],
     [
       1787566500,
+      1787566500900,
       "com.example.camera",
       10102,
       0,
@@ -304,12 +305,12 @@
       0,
       "",
       "Short",
-      1787566500900,
       4,
       "Dump/data/system/appops/app_op_history_short_interval.db"
     ],
     [
       1787569201,
+      1787569201001,
       "com.example.maps",
       10103,
       0,
@@ -326,12 +327,12 @@
       0,
       "",
       "Short",
-      1787569201001,
       5,
       "Dump/data/system/appops/app_op_history_short_interval.db"
     ],
     [
       1787569260,
+      1787569260000,
       "com.example.maps",
       10103,
       0,
@@ -348,12 +349,12 @@
       2,
       "",
       "Short",
-      1787569260000,
       6,
       "Dump/data/system/appops/app_op_history_short_interval.db"
     ],
     [
       1787572800,
+      1787572800077,
       "com.example.proxy",
       10104,
       0,
@@ -370,12 +371,12 @@
       0,
       "virtual:example-1",
       "Short",
-      1787572800077,
       7,
       "Dump/data/system/appops/app_op_history_short_interval.db"
     ],
     [
       1787572800,
+      1787572800078,
       "com.example.helper",
       10105,
       0,
@@ -392,12 +393,12 @@
       0,
       "",
       "Short",
-      1787572800078,
       8,
       "Dump/data/system/appops/app_op_history_short_interval.db"
     ],
     [
       1787616003,
+      1787616003003,
       "com.example.system",
       1000,
       0,
@@ -414,12 +415,12 @@
       0,
       "",
       "Short",
-      1787616003003,
       9,
       "Dump/data/system/appops/app_op_history_short_interval.db"
     ],
     [
       1787619600,
+      1787619600000,
       "",
       10106,
       0,
@@ -436,7 +437,6 @@
       0,
       "",
       "Short",
-      1787619600000,
       10,
       "Dump/data/system/appops/app_op_history_short_interval.db"
     ]

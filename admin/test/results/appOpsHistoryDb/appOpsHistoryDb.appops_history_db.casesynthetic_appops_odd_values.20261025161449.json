@@ -23,6 +23,7 @@
   },
   "headers": [
     "Access Time",
+    "Access Time (ms As Stored)",
     "Package Name",
     "UID",
     "Android User",
@@ -39,13 +40,13 @@
     "Reject Count",
     "Device ID",
     "Interval",
-    "Access Time (ms As Stored)",
     "Row ID",
     "Source File"
   ],
   "data": [
     [
       null,
+      null,
       "com.example.odd",
       10201,
       0,
@@ -62,12 +63,12 @@
       0,
       "",
       "Long",
-      null,
       4,
       "Dump/data/system/appops/app_op_history_long_interval.db"
     ],
     [
       null,
+      -86400000,
       "com.example.odd",
       10201,
       0,
@@ -84,12 +85,12 @@
       0,
       "",
       "Long",
-      -86400000,
       5,
       "Dump/data/system/appops/app_op_history_long_interval.db"
     ],
     [
       1787558,
+      1787558400,
       "com.example.odd",
       10201,
       0,
@@ -106,12 +107,12 @@
       0,
       "",
       "Long",
-      1787558400,
       6,
       "Dump/data/system/appops/app_op_history_long_interval.db"
     ],
     [
       1787558400,
+      1787558400000,
       "com.example.odd",
       10201,
       0,
@@ -128,12 +129,12 @@
       0,
       "",
       "Long",
-      1787558400000,
       1,
       "Dump/data/system/appops/app_op_history_long_interval.db"
     ],
     [
       1787558400,
+      1787558400001,
       "com.example.odd",
       "x",
       "",
@@ -150,12 +151,12 @@
       "q",
       "",
       "Long",
-      1787558400001,
       7,
       "Dump/data/system/appops/app_op_history_long_interval.db"
     ],
     [
       1787558400,
+      1787558400002,
       "",
       null,
       "",
@@ -172,12 +173,12 @@
       null,
       "",
       "Long",
-      1787558400002,
       8,
       "Dump/data/system/appops/app_op_history_long_interval.db"
     ],
     [
       1787558400,
+      1787558400003,
       "com.example.odd",
       10201,
       0,
@@ -194,12 +195,12 @@
       1099511627776,
       "",
       "Long",
-      1787558400003,
       9,
       "Dump/data/system/appops/app_op_history_long_interval.db"
     ],
     [
       1787558400,
+      1787558400004,
       "com.example.odd",
       10201,
       0,
@@ -216,12 +217,12 @@
       0,
       "",
       "Long",
-      1787558400004,
       10,
       "Dump/data/system/appops/app_op_history_long_interval.db"
     ],
     [
       null,
+      9223372036854775807,
       "com.example.odd",
       10201,
       0,
@@ -238,12 +239,12 @@
       0,
       "",
       "Long",
-      9223372036854775807,
       2,
       "Dump/data/system/appops/app_op_history_long_interval.db"
     ],
     [
       null,
+      "not a time",
       "com.example.odd",
       10201,
       0,
@@ -260,7 +261,6 @@
       0,
       "",
       "Long",
-      "not a time",
       3,
       "Dump/data/system/appops/app_op_history_long_interval.db"
     ]

@@ -23,6 +23,7 @@
   },
   "headers": [
     "Access Time",
+    "Access Time (ms As Stored)",
     "Package Name",
     "UID",
     "Android User",
@@ -39,13 +40,13 @@
     "Reject Count",
     "Device ID",
     "Interval",
-    "Access Time (ms As Stored)",
     "Row ID",
     "Source File"
   ],
   "data": [
     [
       1787576400,
+      1787576400000,
       "com.example.camera",
       10301,
       0,
@@ -62,12 +63,12 @@
       null,
       "default:0",
       "Not aggregated",
-      1787576400000,
       1,
       "Dump/data/system/appops/app_op_history.db"
     ],
     [
       1787576460,
+      1787576460000,
       "com.example.camera",
       10301,
       0,
@@ -84,12 +85,12 @@
       null,
       "default:0",
       "Not aggregated",
-      1787576460000,
       2,
       "Dump/data/system/appops/app_op_history.db"
     ],
     [
       1787576520,
+      1787576520000,
       "com.example.recorder",
       15010301,
       150,
@@ -106,12 +107,12 @@
       null,
       "default:0",
       "Not aggregated",
-      1787576520000,
       3,
       "Dump/data/system/appops/app_op_history.db"
     ],
     [
       1787576580,
+      1787576580000,
       "com.example.maps",
       10302,
       0,
@@ -128,7 +129,6 @@
       null,
       "virtual:example-2",
       "Not aggregated",
-      1787576580000,
       4,
       "Dump/data/system/appops/app_op_history.db"
     ]

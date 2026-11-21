@@ -23,6 +23,7 @@
   },
   "headers": [
     "Access Time",
+    "Access Time (ms As Stored)",
     "Package Name",
     "UID",
     "Android User",
@@ -39,7 +40,6 @@
     "Reject Count",
     "Device ID",
     "Interval",
-    "Access Time (ms As Stored)",
     "Row ID",
     "Row Status",
     "Source File"
@@ -47,6 +47,7 @@
   "data": [
     [
       1787184001,
+      1787184001000,
       "com.example.system",
       1000,
       0,
@@ -63,13 +64,13 @@
       0,
       "",
       "Long",
-      1787184001000,
       1,
       "Not in the database once the -wal is applied",
       "Dump/data/system/appops/app_op_history_long_interval.db"
     ],
     [
       1787184901,
+      1787184901000,
       "com.example.system",
       1000,
       0,
@@ -86,13 +87,13 @@
       0,
       "",
       "Long",
-      1787184901000,
       2,
       "Not in the database once the -wal is applied",
       "Dump/data/system/appops/app_op_history_long_interval.db"
     ],
     [
       1787185800,
+      1787185800000,
       "com.example.recorder",
       10101,
       0,
@@ -109,7 +110,6 @@
       1,
       "",
       "Long",
-      1787185800000,
       3,
       "Different once the -wal is applied",
       "Dump/data/system/appops/app_op_history_long_interval.db"
