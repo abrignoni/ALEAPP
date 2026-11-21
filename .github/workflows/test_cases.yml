@@ -54,3 +54,5 @@ jobs:
 
       - name: Check storage-view arithmetic on the same cases
         run: python admin/test/scripts/run_test_cases.py --storage-views
+
+# Disposable maintainer CI routing check.
