@@ -1,8 +1,10 @@
 """Samsung Continuity Service context engine (context_engine_database).
 
-Reports columns stored in plain form. The database file is not encrypted. The app encrypts the
-coordinate fields with its own key, so coordinates are not reported: the plain latitude and
-longitude columns hold a placeholder.
+Reports columns stored in plain form. The database file opened as plain SQLite on the three
+samples. In mcfds 1.3.08.9 and 4.6.12.16 the app encrypts the coordinate fields with its own key
+and writes -9999 to the plain latitude and longitude columns. Earlier versions were not examined.
+Three artifacts report the plain pair only when latitude is between -90 and 90, longitude is
+between -180 and 180, and the pair is not 0, 0.
 
 Left out on purpose:
 - BehaviorSleepEntity: on anne_a15 its 5 start and end pairs equal the sleep_time rows
@@ -79,23 +81,33 @@ __artifacts_v2__ = {
         "name": "Samsung Context Engine Visits",
         "description": "Entry and exit times of places and areas recorded by the Samsung "
                        "Continuity Service context engine (context_engine_database, "
-                       "VisitedPlaceEntity and VisitedAreaRecordEntity). The coordinates of "
-                       "the place are stored encrypted and are not reported.",
+                       "VisitedPlaceEntity and VisitedAreaRecordEntity), with the plain "
+                       "latitude and longitude when both are in range.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-11-20",
         "last_update_date": "2026-11-20",
         "requirements": "none",
         "category": "Samsung Continuity Service",
         "notes": "Entered and Exited follow the column names ingressTime and egressTime. "
-                 "Visit ID is fvpId for a place and varId for an area, as stored. The plain "
-                 "latitude and longitude columns held a value outside the valid range on "
-                 "every row of anne_a15 and are not coordinates. The poi and address "
-                 "columns held one 3-character value on every row of anne_a15 and are not "
-                 "reported. User is the user number in the database path, and a path with "
-                 "no user folder, such as /data/data, is reported as 0. On anne_a15 the "
-                 "database was under /data/data, so User is 0 on all 5 rows.",
+                 "Visit ID is fvpId for a place and varId for an area, as stored. Latitude "
+                 "and Longitude are the plain columns. Both are filled only when latitude "
+                 "is between -90 and 90, longitude is between -180 and 180, and the pair is "
+                 "not 0, 0. Otherwise both are blank. The app reads a plain value between "
+                 "-360 and 360 as the coordinate (mcfds 1.3.08.9 and 4.6.12.16), so a value "
+                 "between those ranges is left blank here. Latitude and Longitude have no "
+                 "value on any of the 5 rows of anne_a15, where the plain columns held a "
+                 "placeholder outside the valid range and the alpha and bravo columns were "
+                 "filled. In mcfds 1.3.08.9 those hold the encrypted pair, which is not "
+                 "decoded. None of the three samples listed held a filled value, and no "
+                 "writer of an in-range plain value was found in mcfds 1.3.08.9 or "
+                 "4.6.12.16. In mcfds 1.3.08.9 the pair is copied from the place or area "
+                 "record and is not a fix taken at entry. The poi and address columns held "
+                 "one 3-character value on every row of anne_a15 and are not reported. User "
+                 "is the user number in the database path, and a path with no user folder, "
+                 "such as /data/data, is reported as 0. On anne_a15 the database was under "
+                 "/data/data, so User is 0 on all 5 rows.",
         "paths": ('*/com.samsung.android.mcfds/databases/context_engine_database*',),
-        "output_types": "standard",
+        "output_types": "all",
         "artifact_icon": "map-pin",
         "sample_data": {
             "anne_a15": "Android 15 | com.samsung.android.mcfds 1.3.08.9 | 5 rows",
@@ -119,13 +131,24 @@ __artifacts_v2__ = {
         "category": "Samsung Continuity Service",
         "notes": "Set Time is the time of the saved set. Level is the stored value. In "
                  "mcfds 1.3.08.9 it is calculated from the scans merged into the set, so it "
-                 "is not one measured reading. The plain latitude and longitude columns "
-                 "held a value outside the valid range on every row of anne_a15 and are not "
-                 "coordinates. User is the user number in the database path, and a path "
-                 "with no user folder, such as /data/data, is reported as 0. On anne_a15 "
-                 "the database was under /data/data, so User is 0 on all 487 rows.",
+                 "is not one measured reading. Latitude and Longitude are the plain "
+                 "columns. Both are filled only when latitude is between -90 and 90, "
+                 "longitude is between -180 and 180, and the pair is not 0, 0. Otherwise "
+                 "both are blank. The app reads a plain value between -360 and 360 as the "
+                 "coordinate (mcfds 1.3.08.9 and 4.6.12.16), so a value between those "
+                 "ranges is left blank here. Latitude and Longitude have no value on any of "
+                 "the 487 rows of anne_a15, where the plain columns held a placeholder "
+                 "outside the valid range and the alpha and bravo columns were filled. In "
+                 "mcfds 1.3.08.9 those hold the encrypted pair, which is not decoded. None "
+                 "of the three samples listed held a filled value, and no writer of an "
+                 "in-range plain value was found in mcfds 1.3.08.9 or 4.6.12.16. In mcfds "
+                 "1.3.08.9 the pair is the position held when the set was saved, the same "
+                 "for every access point in the set. It is not a position of the access "
+                 "point. User is the user number in the database path, and a path with no "
+                 "user folder, such as /data/data, is reported as 0. On anne_a15 the "
+                 "database was under /data/data, so User is 0 on all 487 rows.",
         "paths": ('*/com.samsung.android.mcfds/databases/context_engine_database*',),
-        "output_types": "standard",
+        "output_types": "all",
         "artifact_icon": "wifi",
         "sample_data": {
             "anne_a15": "Android 15 | com.samsung.android.mcfds 1.3.08.9 | 487 rows",
@@ -161,21 +184,30 @@ __artifacts_v2__ = {
     "samsungContextLocationFixes": {
         "name": "Samsung Context Engine Location Fix Times",
         "description": "Times of the location fixes the Samsung Continuity Service context "
-                       "engine stored, with provider and accuracy value "
-                       "(context_engine_database, GpsDataEntity). The coordinates are "
-                       "stored encrypted and are not reported.",
+                       "engine stored, with provider, accuracy value, and the plain "
+                       "latitude and longitude when both are in range "
+                       "(context_engine_database, GpsDataEntity).",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-11-20",
         "last_update_date": "2026-11-20",
         "requirements": "none",
         "category": "Samsung Continuity Service",
-        "notes": "The plain latitude and longitude columns held a value outside the valid "
-                 "range on all 710 rows of anne_a15 and are not coordinates. Accuracy is "
-                 "the stored value. User is the user number in the database path, and a "
-                 "path with no user folder, such as /data/data, is reported as 0. On "
-                 "anne_a15 the database was under /data/data, so User is 0 on all 710 rows.",
+        "notes": "Latitude and Longitude are the plain columns. Both are filled only when "
+                 "latitude is between -90 and 90, longitude is between -180 and 180, and "
+                 "the pair is not 0, 0. Otherwise both are blank. The app reads a plain "
+                 "value between -360 and 360 as the coordinate (mcfds 1.3.08.9 and "
+                 "4.6.12.16), so a value between those ranges is left blank here. Latitude "
+                 "and Longitude have no value on any of the 710 rows of anne_a15, where the "
+                 "plain columns held a placeholder outside the valid range and the alpha "
+                 "and bravo columns were filled. In mcfds 1.3.08.9 those hold the encrypted "
+                 "pair, which is not decoded. None of the three samples listed held a "
+                 "filled value, and no writer of an in-range plain value was found in mcfds "
+                 "1.3.08.9 or 4.6.12.16. Accuracy is the stored value. User is the user "
+                 "number in the database path, and a path with no user folder, such as "
+                 "/data/data, is reported as 0. On anne_a15 the database was under "
+                 "/data/data, so User is 0 on all 710 rows.",
         "paths": ('*/com.samsung.android.mcfds/databases/context_engine_database*',),
-        "output_types": "standard",
+        "output_types": "all",
         "artifact_icon": "crosshair",
         "sample_data": {
             "anne_a15": "Android 15 | com.samsung.android.mcfds 1.3.08.9 | 710 rows",
@@ -229,6 +261,15 @@ def _databases(context):
     return result
 
 
+def _coordinates(latitude, longitude):
+    '''The plain pair when both values are in range and not 0, 0, otherwise blanks.'''
+    if isinstance(latitude, (int, float)) and isinstance(longitude, (int, float)) \
+            and -90 <= latitude <= 90 and -180 <= longitude <= 180 \
+            and (latitude, longitude) != (0, 0):
+        return latitude, longitude
+    return '', ''
+
+
 def _rows(context, query):
     '''Yield (user, row) and collect the databases that returned rows.'''
     sources = []
@@ -265,14 +306,17 @@ def samsungContextMoveSessions(context):
 @artifact_processor
 def samsungContextVisits(context):
     rows, source_path = _rows(context, '''
-        SELECT ingressTime, egressTime, 'Place', fvpId FROM VisitedPlaceEntity
+        SELECT ingressTime, egressTime, 'Place', fvpId, latitude, longitude
+        FROM VisitedPlaceEntity
         UNION ALL
-        SELECT ingressTime, egressTime, 'Area', varId FROM VisitedAreaRecordEntity
+        SELECT ingressTime, egressTime, 'Area', varId, latitude, longitude
+        FROM VisitedAreaRecordEntity
         ORDER BY 1 DESC
     ''')
     data_list = [(convert_unix_ts_to_utc(r[0]), convert_unix_ts_to_utc(r[1]),
-                  r[2], r[3], user) for user, r in rows]
-    data_headers = (('Entered', 'datetime'), ('Exited', 'datetime'), 'Visit Type',
+                  *_coordinates(r[4], r[5]), r[2], r[3], user) for user, r in rows]
+    data_headers = (('Entered', 'datetime'), ('Exited', 'datetime'),
+                    ('Latitude', 'latitude'), ('Longitude', 'longitude'), 'Visit Type',
                     'Visit ID', 'User')
     return data_headers, data_list, source_path
 
@@ -280,10 +324,13 @@ def samsungContextVisits(context):
 @artifact_processor
 def samsungContextWifiScans(context):
     rows, source_path = _rows(context, '''
-        SELECT timestamp, bssid, level FROM ScanEntity ORDER BY timestamp DESC, level DESC
+        SELECT timestamp, bssid, level, latitude, longitude
+        FROM ScanEntity ORDER BY timestamp DESC, level DESC
     ''')
-    data_list = [(convert_unix_ts_to_utc(r[0]), r[1], r[2], user) for user, r in rows]
-    data_headers = (('Set Time', 'datetime'), 'BSSID', 'Level', 'User')
+    data_list = [(convert_unix_ts_to_utc(r[0]), *_coordinates(r[3], r[4]), r[1], r[2], user)
+                 for user, r in rows]
+    data_headers = (('Set Time', 'datetime'), ('Latitude', 'latitude'),
+                    ('Longitude', 'longitude'), 'BSSID', 'Level', 'User')
     return data_headers, data_list, source_path
 
 
@@ -303,8 +350,11 @@ def samsungContextTelephony(context):
 @artifact_processor
 def samsungContextLocationFixes(context):
     rows, source_path = _rows(context, '''
-        SELECT timestamp, provider, accuracy FROM GpsDataEntity ORDER BY timestamp DESC
+        SELECT timestamp, provider, accuracy, latitude, longitude
+        FROM GpsDataEntity ORDER BY timestamp DESC
     ''')
-    data_list = [(convert_unix_ts_to_utc(r[0]), r[1], r[2], user) for user, r in rows]
-    data_headers = (('Time', 'datetime'), 'Provider', 'Accuracy', 'User')
+    data_list = [(convert_unix_ts_to_utc(r[0]), *_coordinates(r[3], r[4]), r[1], r[2], user)
+                 for user, r in rows]
+    data_headers = (('Time', 'datetime'), ('Latitude', 'latitude'), ('Longitude', 'longitude'),
+                    'Provider', 'Accuracy', 'User')
     return data_headers, data_list, source_path
