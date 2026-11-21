@@ -9,6 +9,7 @@ import traceback
 import aleapp
 import webbrowser
 import base64
+import pathlib
 
 import scripts.plugin_loader as plugin_loader
 import leapp_functions.app.history as history
@@ -43,6 +44,40 @@ CRUNCH_POLL_MS = 50
 # The files picked together in the file dialog (the member images of a RAID set); the
 # input field shows the first and how many more while it still stands for them.
 input_selection = []
+
+
+class TextTooltip(PathsTooltip):
+    '''A tooltip showing the same text whenever the pointer is over the widget.'''
+
+    def __init__(self, widget, tip_text):
+        super().__init__(widget, None)
+        self.tip_text = tip_text
+
+    def text(self):
+        return self.tip_text
+
+
+class Spinner(tk.Canvas):
+    '''A turning arc, drawn rather than loaded so it needs no image file.'''
+
+    def __init__(self, parent, background, foreground, size=16):
+        super().__init__(parent, width=size, height=size, background=background, highlightthickness=0)
+        self.arc = self.create_arc(2, 2, size - 2, size - 2, start=90, extent=270, style='arc',
+                                   outline=foreground, width=2)
+        self.job = None
+
+    def start(self):
+        if self.job is None:
+            self.turn()
+
+    def turn(self):
+        self.itemconfig(self.arc, start=(float(self.itemcget(self.arc, 'start')) - 30) % 360)
+        self.job = self.after(50, self.turn)
+
+    def stop(self):
+        if self.job is not None:
+            self.after_cancel(self.job)
+            self.job = None
 
 
 def allow_output_folder_name_chars(proposed):
@@ -116,6 +151,85 @@ def pickModules():
         plugin_enabled = tk.BooleanVar(value=False) if plugin.module_name in modules_to_exclude else tk.BooleanVar(value=True)
         plugin_module_name = plugin.artifact_info.get('name', plugin.name) if hasattr(plugin, 'artifact_info') else plugin.name
         mlist[plugin.name] = [plugin.category, plugin_module_name, plugin.module_name, plugin_enabled]
+
+
+def load_custom_artifacts(path, parent, on_done):
+    '''Reload the artifacts with those in path added, as the command line's
+    --custom_artifacts_path does; an empty path goes back to the built-in ones only.
+    The modules ticked before stay ticked.
+
+    Every artifact module is imported again, which takes seconds, so the loading is done
+    on a worker thread while the window keeps drawing. on_done(applied) is called on the
+    main thread once it is over, with True when the path was applied.'''
+    if GuiWindow.message_queue is not None:
+        tk_msgbox.showerror(title='Error', message='The custom artifacts folder cannot be changed during a run.',
+                            parent=parent)
+        on_done(False)
+        return
+    loader_paths = [plugin_loader.PLUGINPATH]
+    if path:
+        if not os.path.isdir(path):
+            tk_msgbox.showerror(title='Error', message=f'Custom artifacts folder does not exist:\n{path}',
+                                parent=parent)
+            on_done(False)
+            return
+        loader_paths.append(pathlib.Path(path))
+
+    result = {}
+
+    def load():
+        '''Touches no widget: Tk is not thread-safe.'''
+        try:
+            # the folder loaded on its own as well, for the artifacts it holds and their files
+            result['custom'] =aleapp.custom_artifact_files(path) if path else {}
+            result['loader'] = plugin_loader.PluginLoader(plugin_paths=loader_paths)
+        except Exception as ex:  # pylint: disable=broad-exception-caught
+            # a custom module that fails to import, or that repeats an artifact's key, must
+            # not take the window down with it: the artifacts loaded before stay in place
+            result['error'] = ex
+
+    def poll():
+        if worker.is_alive():
+            main_window.after(CRUNCH_POLL_MS, poll)
+        elif 'error' in result:
+            tk_msgbox.showerror(title='Error', message=f'Unable to load the custom artifacts:\n{result["error"]}',
+                                parent=parent)
+            on_done(False)
+        else:
+            apply_loaded_artifacts(path, result['loader'], result['custom'], parent)
+            on_done(True)
+
+    worker = threading.Thread(target=load, daemon=True)
+    worker.start()
+    main_window.after(CRUNCH_POLL_MS, poll)
+
+
+def apply_loaded_artifacts(path, new_loader, new_custom_artifacts, parent):
+    '''Put the artifacts load_custom_artifacts loaded in place. Runs on the main thread.'''
+    global loader, custom_artifacts_path, custom_artifacts  # pylint: disable=global-statement
+
+    ticked = {name: module_infos[-1].get() for name, module_infos in mlist.items()}
+    loader = new_loader
+    mlist.clear()
+    pickModules()
+    for name, module_infos in mlist.items():
+        if name in ticked:
+            module_infos[-1].set(ticked[name])
+    custom_artifacts_path = path
+    custom_artifacts = new_custom_artifacts
+    filter_modules()
+    get_selected_modules()
+    if path and not new_custom_artifacts:
+        tk_msgbox.showwarning(title='Custom artifacts',
+                              message=f'No artifacts were found in:\n{path}', parent=parent)
+
+
+def custom_artifacts_status():
+    '''What the settings window says about the custom artifacts folder applied.'''
+    if not custom_artifacts_path:
+        return 'No custom artifacts folder applied.'
+    return (f'{len(custom_artifacts)} custom artifact{"" if len(custom_artifacts) == 1 else "s"} '
+            f'applied ({len(loader)} artifacts loaded in all).')
 
 
 def get_selected_modules():
@@ -386,8 +500,8 @@ def open_settings_window():
     '''Open Settings modal window'''
     settings_window = tk.Toplevel(main_window)
     settings_window.transient(main_window)
-    settings_window_width = 400
-    settings_window_height = 260
+    settings_window_width = 540
+    settings_window_height = 350
 
     #### Places Case Data window in the center of the main window
     main_window.update_idletasks()
@@ -413,14 +527,31 @@ def open_settings_window():
 
     main_window.bind("<FocusIn>", on_main_focus)
 
-    def close_settings_window():
+    def destroy_settings_window():
         main_window.unbind("<FocusIn>")
         settings_window.destroy()
 
+    def close_settings_window():
+        if custom_artifacts_loading:
+            settings_window.bell()
+            return
+        # a folder typed but not applied is applied on closing, or the window stays open
+        typed_path = custom_artifacts_entry.get().strip()
+        if typed_path != custom_artifacts_path:
+            apply_custom_artifacts(typed_path, then=destroy_settings_window)
+            return
+        destroy_settings_window()
+
     settings_window.protocol("WM_DELETE_WINDOW", close_settings_window)
 
-    settings_title_label = ttk.Label(settings_window, text='Settings', font='Helvetica 18')
-    settings_title_label.grid(row=0, column=0, padx=14, pady=7, sticky='w')
+    settings_title_frame = ttk.Frame(settings_window)
+    settings_title_frame.grid(row=0, column=0, padx=14, pady=7, sticky='w')
+    settings_title_label = ttk.Label(settings_title_frame, text='Settings', font='Helvetica 18')
+    settings_title_label.pack(side='left')
+    settings_location_label = ttk.Label(settings_title_frame, text='?', font='Helvetica 12 bold',
+                                        cursor='question_arrow')
+    settings_location_label.pack(side='left', padx=(18, 0))
+    TextTooltip(settings_location_label, f'Settings are saved in: {history.get_shared_directory()}')
 
     history_enabled_var = tk.BooleanVar(value=history.is_history_enabled())
 
@@ -545,8 +676,75 @@ def open_settings_window():
     clear_history_btn.grid(row=2, column=0, padx=14, pady=10, sticky='w')
     update_clear_history_button()
 
+    custom_artifacts_loading = False
+
+    def apply_custom_artifacts(path, then=None):
+        '''Load the folder with the spinner turning; then() follows once it is applied.'''
+        nonlocal custom_artifacts_loading
+        custom_artifacts_loading = True
+        for widget in (custom_artifacts_entry, custom_artifacts_browse_btn, custom_artifacts_apply_btn,
+                       custom_artifacts_clear_btn, close_btn):
+            widget.config(state=tk.DISABLED)
+        custom_artifacts_spinner.pack(side='left', padx=(5, 0), before=custom_artifacts_status_label)
+        custom_artifacts_spinner.start()
+        custom_artifacts_status_label.config(text='Loading artifacts…')
+
+        def done(applied):
+            nonlocal custom_artifacts_loading
+            custom_artifacts_loading = False
+            custom_artifacts_spinner.stop()
+            custom_artifacts_spinner.pack_forget()
+            for widget in (custom_artifacts_entry, custom_artifacts_browse_btn, custom_artifacts_apply_btn,
+                           close_btn):
+                widget.config(state=tk.NORMAL)
+            custom_artifacts_clear_btn.config(state=tk.NORMAL if custom_artifacts_path else tk.DISABLED)
+            custom_artifacts_status_label.config(text=custom_artifacts_status())
+            if applied and then is not None:
+                then()
+
+        load_custom_artifacts(path, settings_window, done)
+
+    def browse_custom_artifacts():
+        folder = tk_filedialog.askdirectory(parent=settings_window, title='Select the custom artifacts folder')
+        if folder:
+            custom_artifacts_entry.delete(0, 'end')
+            custom_artifacts_entry.insert(0, folder)
+            apply_custom_artifacts(folder)
+
+    def clear_custom_artifacts():
+        custom_artifacts_entry.delete(0, 'end')
+        apply_custom_artifacts('')
+
+    # Not saved between sessions, like the command line's --custom_artifacts_path
+    custom_artifacts_frame = ttk.LabelFrame(settings_window, text=' Custom artifacts folder ')
+    custom_artifacts_frame.grid(row=3, column=0, padx=14, pady=5, sticky='we')
+    custom_artifacts_row = ttk.Frame(custom_artifacts_frame)
+    custom_artifacts_row.pack(fill='x')
+    custom_artifacts_entry = ttk.Entry(custom_artifacts_row)
+    custom_artifacts_entry.insert(0, custom_artifacts_path)
+    custom_artifacts_entry.pack(side='left', padx=5, pady=4, fill='x', expand=True)
+    custom_artifacts_entry.bind('<Return>', lambda e: apply_custom_artifacts(custom_artifacts_entry.get().strip()))
+    custom_artifacts_browse_btn = ttk.Button(custom_artifacts_row, text='Browse Folder',
+                                             command=browse_custom_artifacts)
+    custom_artifacts_browse_btn.pack(side='left', padx=5, pady=4)
+    custom_artifacts_apply_btn = ttk.Button(
+        custom_artifacts_row, text='Apply',
+        command=lambda: apply_custom_artifacts(custom_artifacts_entry.get().strip()))
+    custom_artifacts_apply_btn.pack(side='left', padx=5, pady=4)
+    custom_artifacts_clear_btn = ttk.Button(custom_artifacts_row, text='Clear', command=clear_custom_artifacts)
+    custom_artifacts_clear_btn.pack(side='left', padx=5, pady=4)
+    if not custom_artifacts_path:
+        custom_artifacts_clear_btn.config(state=tk.DISABLED)
+    custom_artifacts_status_row = ttk.Frame(custom_artifacts_frame)
+    custom_artifacts_status_row.pack(fill='x', pady=(0, 4))
+    # shown only while loading
+    custom_artifacts_spinner = Spinner(custom_artifacts_status_row, background=theme_bgcolor,
+                                       foreground=theme_fgcolor)
+    custom_artifacts_status_label = ttk.Label(custom_artifacts_status_row, text=custom_artifacts_status())
+    custom_artifacts_status_label.pack(side='left', padx=5)
+
     close_btn = ttk.Button(settings_window, text='Close', command=close_settings_window)
-    close_btn.grid(row=3, column=0, padx=14, pady=20, sticky='e')
+    close_btn.grid(row=4, column=0, padx=14, pady=20, sticky='e')
 
     if is_platform_macos():
         settings_window.grab_set_global()
@@ -629,14 +827,16 @@ def process(casedata):
             target=run_crunch,
             args=(GuiWindow.message_queue, selected_modules, extracttype, input_path,
                   out_params, wrap_text, casedata, image_password, found_members,
-                  hash_files_var.get()),
+                  hash_files_var.get(),
+                  (custom_artifacts_path, custom_artifacts) if custom_artifacts_path else None),
             daemon=True)
         worker.start()
         main_window.after(CRUNCH_POLL_MS, poll_crunch, GuiWindow.message_queue, out_params)
 
 
 def run_crunch(message_queue, selected_modules, extracttype, input_path, out_params, wrap_text,
-               case_info, image_password=None, found_members=None, hash_files=False):
+               case_info, image_password=None, found_members=None, hash_files=False,
+               custom_artifacts_used=None):
     '''Do the processing off the main thread. Touches no widget; reports on the queue.'''
     try:
         # LAVA's SQLite connection is opened here rather than in process(): a sqlite3
@@ -647,7 +847,7 @@ def run_crunch(message_queue, selected_modules, extracttype, input_path, out_par
         crunch_successful = aleapp.crunch_artifacts(
             selected_modules, extracttype, input_path, out_params, wrap_text, loader, 
             case_info, profile_filename, image_password=image_password,
-            found_members=found_members, hash_files=hash_files)
+            found_members=found_members, hash_files=hash_files, custom_artifacts=custom_artifacts_used)
         lava_finalize_output(out_params.output_folder_base)
     except Exception:  # pylint: disable=broad-exception-caught
         # Without this the GUI would poll an empty queue forever and look hung for real.
@@ -993,6 +1193,8 @@ icon = resource_path('icon.png')
 loader: typing.Optional[plugin_loader.PluginLoader] = None
 loader = plugin_loader.PluginLoader()
 mlist = {}
+custom_artifacts_path = ''
+custom_artifacts = {}  # {artifact key: file name} of the custom artifacts folder applied
 profile_filename = None
 casedata = {'Case Number': tk.StringVar(),
             'Agency': tk.StringVar(),
