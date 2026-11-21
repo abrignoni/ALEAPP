@@ -21,6 +21,7 @@ from scripts.version_info import leapp_name, leapp_version, check_runtime_depend
 from time import process_time, gmtime, strftime, perf_counter
 from scripts.lavafuncs import *  # pylint: disable=wildcard-import,unused-wildcard-import
 from scripts.context import Context
+from scripts import signal_backup
 
 # How many of the slowest artifacts to list at the end of a run. Enough to show a
 # pattern, short enough that nobody has to scroll past it.
@@ -219,6 +220,12 @@ def main():
     parser.add_argument('--bitlocker_key', required=False, action="append", default=[],
                         help='For a BitLocker volume in an image (-t raw): its startup key '
                              '(.BEK) file. Repeatable')
+    parser.add_argument('--signal_recovery_key_file', required=False, action="store",
+                        help='For a Signal on-device backup: read its 64-character recovery key from '
+                             'this file. Without a key the backup is listed but not decrypted')
+    parser.add_argument('--signal_recovery_key_env', required=False, action="store",
+                        help='For a Signal on-device backup: take its recovery key from this '
+                             'environment variable')
     parser.add_argument('-w', '--wrap_text', required=False, action="store_false", default=True,
                         help='Do not wrap text for output of data files')
     parser.add_argument('-m', '--load_profile', required=False, action="store", help="Path to ALEAPP Profile file (.alprofile).")
@@ -415,6 +422,19 @@ def main():
         input_path = raw_input.input_path
         # what was found beside the image given, and any image given twice
         found_members = raw_input
+
+    # Held in memory for this run only; never written to a profile, the log or the report.
+    if args.signal_recovery_key_file and args.signal_recovery_key_env:
+        print('Give the Signal recovery key once: a file or an environment variable, not both.')
+        return
+    try:
+        if args.signal_recovery_key_file:
+            signal_backup.set_recovery_key(signal_backup.key_from_file(args.signal_recovery_key_file))
+        elif args.signal_recovery_key_env:
+            signal_backup.set_recovery_key(signal_backup.key_from_env(args.signal_recovery_key_env))
+    except ValueError as exc:
+        print(exc)
+        return
 
     out_params = OutputParameters(output_path, custom_output_folder)
     Context.set_output_params(out_params)

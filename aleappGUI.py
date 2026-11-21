@@ -32,6 +32,7 @@ from leapp_functions.lava_launcher import (
 from leapp_functions.app.platform import sanitize_file_name
 from leapp_functions.app.output import default_output_folder_name, validate_output_folder_available
 from scripts.context import Context
+from scripts import signal_backup
 from scripts.lavafuncs import lava_json_name
 
 check_runtime_dependencies()
@@ -563,6 +564,76 @@ def resource_path(filename):
     return os.path.join(base_path, 'assets', filename)
 
 
+def ask_signal_recovery_key(parent):
+    '''The normalised Signal recovery key, '' to clear it, or None to leave it as it was.
+
+    Set before the run, because an artifact on the worker thread cannot open a window.
+    The value stays in memory until the next run ends and is never saved.
+    '''
+    dialog = tk.Toplevel(parent)
+    dialog.title('Signal on-device backup')
+    dialog.transient(parent)
+    dialog.resizable(False, False)
+    result = {'key': None}
+    ttk.Label(dialog, wraplength=460, justify='left', text=(
+        'If this input holds a Signal on-device backup, its messages open with the account\'s '
+        '64-character recovery key. Without it the backup is only listed. '
+        'The key is used for the next run and is not saved.')).grid(
+            row=0, column=0, columnspan=3, padx=12, pady=(12, 6), sticky='w')
+    value = tk.StringVar()
+    entry = ttk.Entry(dialog, textvariable=value, show='*', width=60)
+    entry.grid(row=1, column=0, columnspan=2, padx=(12, 6), pady=6, sticky='we')
+    status = ttk.Label(dialog, wraplength=460, justify='left')
+    status.grid(row=2, column=0, columnspan=3, padx=12, sticky='w')
+
+    def load_file():
+        path = tk_filedialog.askopenfilename(parent=dialog, title='Signal recovery key file')
+        if not path:
+            return
+        try:
+            value.set(signal_backup.key_from_file(path))
+            status.config(text='Key loaded from the file.')
+        except ValueError as error:
+            status.config(text=str(error))
+
+    def use_key():
+        try:
+            result['key'] = signal_backup.normalise_recovery_key(value.get())
+        except ValueError as error:
+            status.config(text=str(error))
+            return
+        dialog.destroy()
+
+    def clear_key():
+        result['key'] = ''
+        dialog.destroy()
+
+    ttk.Button(dialog, text='Load from file...', command=load_file).grid(row=1, column=2, padx=(0, 12), pady=6)
+    buttons = ttk.Frame(dialog)
+    buttons.grid(row=3, column=0, columnspan=3, padx=12, pady=12, sticky='e')
+    ttk.Button(buttons, text='Cancel', command=dialog.destroy).pack(side='right', padx=(6, 0))
+    ttk.Button(buttons, text='Clear key', command=clear_key).pack(side='right', padx=(6, 0))
+    ttk.Button(buttons, text='Use key', command=use_key).pack(side='right')
+    dialog.protocol('WM_DELETE_WINDOW', dialog.destroy)
+    entry.focus_set()
+    dialog.grab_set()
+    parent.wait_window(dialog)
+    return result['key']
+
+
+def set_signal_key():
+    '''Ask for the Signal recovery key and show whether one is set.'''
+    key = ask_signal_recovery_key(main_window)
+    if key is not None:
+        signal_backup.set_recovery_key(key or None)
+    show_signal_key_state()
+
+
+def show_signal_key_state():
+    '''Say whether a key is held, never any part of it.'''
+    signal_key_state.config(text='Set for the next run' if signal_backup.get_recovery_key() else 'Not set')
+
+
 def process(casedata):
     '''Execute selected modules and create reports'''
     # check if selections made properly; if not we will return to input form without exiting app altogether
@@ -654,6 +725,8 @@ def run_crunch(message_queue, selected_modules, extracttype, input_path, out_par
         message_queue.put(('failed', traceback.format_exc()))
     else:
         message_queue.put(('done', crunch_successful))
+    finally:
+        signal_backup.set_recovery_key(None)
 
 
 def poll_crunch(message_queue, out_params):
@@ -694,6 +767,7 @@ def poll_crunch(message_queue, out_params):
 
 def finish_crunch(crunch_successful, out_params):
     '''Report the outcome. Runs on the main thread once the worker is done.'''
+    show_signal_key_state()  # the worker cleared the key when it ended
     if crunch_successful:
         # Record the run in history
         report_path = os.path.join(out_params.output_folder_base, 'index.html')
@@ -1118,6 +1192,12 @@ output_folder_name_entry.pack(side='left', fill='x', expand=True)
 hash_files_var = tk.BooleanVar(value=False)
 ttk.Checkbutton(output_frame, text='Hash staged files (SHA-256) and record the times the evidence gives them',
                 variable=hash_files_var).pack(anchor='w', padx=5, pady=(0, 4))
+# Optional. Held in memory for one run and never saved (the command line's --signal_recovery_key_file)
+signal_key_row = ttk.Frame(output_frame)
+signal_key_row.pack(fill='x', padx=5, pady=(0, 4))
+ttk.Button(signal_key_row, text='Signal backup recovery key...', command=set_signal_key).pack(side='left')
+signal_key_state = ttk.Label(signal_key_row, text='Not set')
+signal_key_state.pack(side='left', padx=8)
 
 mlist_frame = ttk.LabelFrame(main_window, text=' Available Modules: ', name='f_list')
 mlist_frame.pack(padx=14, pady=5, expand=True, fill='both')

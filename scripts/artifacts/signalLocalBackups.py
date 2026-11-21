@@ -6,7 +6,8 @@ __artifacts_v2__ = {
         "description": "Snapshots of Signal's on-device backup, with the time in each snapshot's folder name, "
                        "whether the folder still has its temporary name, the size of the encrypted main file "
                        "and the number of media files the snapshot lists. The messages and media are "
-                       "encrypted and are not read here. The metadata version and the media list are read.",
+                       "encrypted; the Signal - On-Device Backup artifacts read them when the recovery key is given. "
+                       "The metadata version and the media list are read without it.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-11-20",
         "last_update_date": "2026-11-20",
@@ -35,13 +36,15 @@ __artifacts_v2__ = {
             "source-verified only. The one backup folder tested held one snapshot and no -tmp folder.\n"
             "Snapshot Time is the time in the folder name, read as UTC as the app writes it. Temporary "
             "Name is Yes for a folder whose name ends in -tmp, one the app had neither renamed nor "
-            "deleted. Main Size is the size of the main file in bytes. main is written through an "
+            "deleted. Backup Time is backupTimeMs from the backup itself and Recovery Key says whether a "
+            "key was given and whether it opened the snapshot, shown as Not given, Opened, Did not open or "
+            "Not readable; the key is never reported. Main Size is the size of the main file in bytes. main is written through an "
             "encrypting writer with the account's message backup key (backup/v2/BackupRepository.kt "
             "L695-702, called at backup/v2/local/LocalArchiver.kt L85). The app derives that key from "
             "the Account Entropy Pool, a 64-character value (LENGTH = 64, "
             "core/util-jvm/src/main/java/org/signal/core/models/AccountEntropyPool.kt L21; "
             "deriveMessageBackupKey, L102-103) that the app's backup screen showed as the recovery key on "
-            "the test phone. Its messages are not read here. Metadata Version (as stored) is field 1 of "
+            "the test phone. Without that key its messages are not read. Metadata Version (as stored) is field 1 of "
             "the metadata file, a Metadata protobuf message (lib/archive/src/main/protowire/"
             "LocalArchive.proto L8-18, same commit); its field 2 is the encrypted backup ID and is not "
             "reported. A metadata file that does not decode as that message, or has no field 1, leaves "
@@ -89,13 +92,175 @@ __artifacts_v2__ = {
             "samsung_a166u_signal_backup_pull_known_20261120": "Android 16 | Signal 8.35.4, adb pull of the backup folder | 1 row",
         },
     },
+    "signalBackupMessages": {
+        "name": "Signal - On-Device Backup Messages",
+        "description": "Chat items decrypted from Signal's on-device backup with the account's recovery key: "
+                       "times, conversation, direction, sender, text, attachments, delivery status, reactions, "
+                       "quotes and edits. Gives no rows without the key.",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-11-20",
+        "last_update_date": "2026-11-20",
+        "requirements": "none",
+        "category": "Signal",
+        "notes": (
+            "Needs the recovery key (--signal_recovery_key_file, --signal_recovery_key_env or the window's "
+            "Signal backup recovery key button). See Signal - On-Device Backups for the layout and sources. "
+            "Each snapshot is read and its rows are kept apart by Snapshot Time, so the same message in two "
+            "snapshots is two rows. A snapshot is the state Signal exported when the backup ran: it says "
+            "nothing about messages removed before then. The HMAC over the main file is checked before "
+            "anything is decrypted; a key that fails it gives no rows and is named in the run log. Fields "
+            "are read from ChatItem in Backup.proto at Signal-Android commit "
+            "b330f4efcf49a0cec87807d18504f07f5df12bf2. Each earlier version of an edited message is its own "
+            "row, with Revision showing its place. Text in square brackets is written by this parser for an "
+            "item with no text of its own, using the enum names in Backup.proto. Sender uses the contact's "
+            "system name, then profile name, username or number. Known data "
+            "(samsung_a166u_signal_backup_pull_known_20261120, Signal 8.35.4): 135 chat items, all standard "
+            "messages, 68 outgoing and 67 incoming, in two chats. The one Note to Self item matched the "
+            "session record's text and fell 1.7 seconds before its logged time. The other 134 items were not "
+            "compared with a log. Source-verified only, with no item in the tested backup: every kind other "
+            "than a standard message, reactions, quotes, link previews, long text, revisions and groups. On "
+            "that backup these held no value on any row: Quoted Message Sent, Expire Start, Reactions, Quoted "
+            "Author, Quoted Text, Link Preview, Expires In (ms), Revision and Android User (a pull of /sdcard "
+            "names no user). Snapshot Time and Kind held one value on every row. Read and Sealed Sender are "
+            "identical on that backup: Yes on all 67 incoming rows and blank on outgoing rows, where they do "
+            "not apply."
+        ),
+        "paths": ("*/signal-backup-*/main", "*/signal-backup-*/metadata", "*/signal-backup-*/files"),
+        "output_types": "standard",
+        "artifact_icon": "message-square",
+        "sample_data": {
+            "samsung_a166u_signal_backup_pull_known_20261120": "Android 16 | Signal 8.35.4, with the recovery key | 135 rows",
+        },
+        "data_views": {
+            "conversation": {
+                "conversationDiscriminatorColumn": "Chat ID",
+                "conversationLabelColumn": "Conversation",
+                "textColumn": "Message",
+                "directionColumn": "Direction",
+                "directionSentValue": "Outgoing",
+                "timeColumn": "Date Sent",
+                "senderColumn": "Sender",
+                "mediaColumn": "Attachments",
+            }
+        },
+    },
+    "signalBackupAttachments": {
+        "name": "Signal - On-Device Backup Attachments",
+        "description": "Attachments named by the chat items of Signal's on-device backup, decrypted with the "
+                       "recovery key and checked against the hash the backup records, and the listed media "
+                       "files no chat item points to. Gives no rows without the key.",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-11-20",
+        "last_update_date": "2026-11-20",
+        "requirements": "none",
+        "category": "Signal",
+        "notes": (
+            "Needs the recovery key. An attachment's file in the backup's files folder is named from the "
+            "SHA-256 of its plaintext hash and its local key (MediaName.forLocalBackupFilename). It is shown "
+            "only when its HMAC and the SHA-256 of the decrypted bytes both match what the backup records "
+            "(AttachmentCipherOutputStream.kt L37-48). Status says when a pointer has no local key, its file "
+            "is missing or it does not verify. Status Listed, no chat item points to it is a name in the "
+            "snapshot's files list with no pointer in the frames read here. The app lists every attachment "
+            "it holds a local key for (AttachmentTable.getLocalArchivableAttachments, L620-638), and the key "
+            "to such a file is not in the frames read, so it is not decrypted and what it holds is not "
+            "established. Known data (samsung_a166u_signal_backup_pull_known_20261120): 2 image attachments "
+            "verified and 5 listed names with no pointer. Date Sent is blank on those 5 rows, since no chat item "
+            "gives them a time. On that backup Caption and Android User held no value on any row, and Snapshot "
+            "Time held one value on every row."
+        ),
+        "paths": ("*/signal-backup-*/main", "*/signal-backup-*/metadata", "*/signal-backup-*/files"),
+        "output_types": "standard",
+        "artifact_icon": "paperclip",
+        "sample_data": {
+            "samsung_a166u_signal_backup_pull_known_20261120": "Android 16 | Signal 8.35.4, with the recovery key | 7 rows",
+        },
+    },
+    "signalBackupRecipients": {
+        "name": "Signal - On-Device Backup Recipients",
+        "description": "Contacts, groups, lists and the account's own entry from Signal's on-device backup, "
+                       "decrypted with the recovery key. Gives no rows without the key.",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-11-20",
+        "last_update_date": "2026-11-20",
+        "requirements": "none",
+        "category": "Signal",
+        "notes": (
+            "Needs the recovery key. One row per Recipient frame per snapshot, from Backup.proto at "
+            "Signal-Android commit b330f4efcf49a0cec87807d18504f07f5df12bf2. Recipient ID is generated for "
+            "that backup file only and does not carry across snapshots. Visibility (as stored) is 0 visible, "
+            "1 hidden, 2 hidden message request (Contact.Visibility). A contact's presence here does not "
+            "establish that the account exchanged messages with it. Known data "
+            "(samsung_a166u_signal_backup_pull_known_20261120): 7 recipients: 4 contacts, 1 self, 1 release "
+            "notes, 1 distribution list. No group was in the tested backup. On it Blocked At, Username, Nickname, "
+            "Note, Group Members and Android User held no value on any row, and Snapshot Time and Blocked held "
+            "one value on every row."
+        ),
+        "paths": ("*/signal-backup-*/main", "*/signal-backup-*/metadata", "*/signal-backup-*/files"),
+        "output_types": "standard",
+        "artifact_icon": "users",
+        "sample_data": {
+            "samsung_a166u_signal_backup_pull_known_20261120": "Android 16 | Signal 8.35.4, with the recovery key | 7 rows",
+        },
+    },
+    "signalBackupChats": {
+        "name": "Signal - On-Device Backup Chats",
+        "description": "Chats in Signal's on-device backup, with their disappearing message timer, archive, pin "
+                       "and mute state and the number of items and date range of each. Gives no rows without "
+                       "the key.",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-11-20",
+        "last_update_date": "2026-11-20",
+        "requirements": "none",
+        "category": "Signal",
+        "notes": (
+            "Needs the recovery key. One row per Chat frame per snapshot, from Backup.proto at Signal-Android "
+            "commit b330f4efcf49a0cec87807d18504f07f5df12bf2. Items, First Item and Last Item are counted here "
+            "from the chat items of that snapshot by their sent time. Mute Until shows Muted with no end for "
+            "the value Backup.proto defines as always muted. Known data "
+            "(samsung_a166u_signal_backup_pull_known_20261120): 2 chats holding 134 and 1 items. On it Disappearing "
+            "Timer (ms), Pinned Order, Mute Until and Android User held no value on any row."
+        ),
+        "paths": ("*/signal-backup-*/main", "*/signal-backup-*/metadata", "*/signal-backup-*/files"),
+        "output_types": "standard",
+        "artifact_icon": "message-circle",
+        "sample_data": {
+            "samsung_a166u_signal_backup_pull_known_20261120": "Android 16 | Signal 8.35.4, with the recovery key | 2 rows",
+        },
+    },
+    "signalBackupAccount": {
+        "name": "Signal - On-Device Backup Account",
+        "description": "The account record in Signal's on-device backup: username, profile name, bio and the "
+                       "PIN as stored. Gives no rows without the key.",
+        "author": "@AlexisBrignoni, Claude",
+        "creation_date": "2026-11-20",
+        "last_update_date": "2026-11-20",
+        "requirements": "none",
+        "category": "Signal",
+        "notes": (
+            "Needs the recovery key. One row per snapshot from AccountData in Backup.proto at Signal-Android "
+            "commit b330f4efcf49a0cec87807d18504f07f5df12bf2. PIN (as stored) is the svrPin field. Backup Time "
+            "is backupTimeMs from the backup's BackupInfo. The account's phone number is not a field of "
+            "AccountData. The profile key, username link, subscriber data and settings are not reported. "
+            "Known data (samsung_a166u_signal_backup_pull_known_20261120): 1 row, on which Username, Family Name, "
+            "Bio, Current App Version, First App Version and Android User held no value."
+        ),
+        "paths": ("*/signal-backup-*/main", "*/signal-backup-*/metadata", "*/signal-backup-*/files"),
+        "output_types": "standard",
+        "artifact_icon": "user",
+        "sample_data": {
+            "samsung_a166u_signal_backup_pull_known_20261120": "Android 16 | Signal 8.35.4, with the recovery key | 1 row",
+        },
+    },
 }
 
+import collections
 import datetime
 import os
 import re
+import uuid
 
-from scripts.ilapfuncs import artifact_processor, logfunc
+from scripts import signal_backup as sb
+from scripts.ilapfuncs import artifact_processor, check_in_embedded_media, logfunc
 
 # The roots a shared storage path can be seen under, with the Android user they name.
 _STORAGE_ROOTS = (
@@ -207,8 +372,8 @@ def _location(relative):
     return '', head.lstrip('/')
 
 
-@artifact_processor
-def signalLocalBackups(context):
+def _find_snapshots(context):
+    """The snapshots among the files found, oldest name first."""
     snapshots = {}
     skipped = set()
     for file_found in context.get_files_found():
@@ -217,7 +382,14 @@ def signalLocalBackups(context):
         if not os.path.isfile(file_found) or not _ANY_SNAPSHOT.search(relative):
             continue
         match = _SNAPSHOT.search(relative)
-        if not match:
+        when = None
+        if match:
+            try:
+                when = datetime.datetime(*(int(part) for part in match.groups()[:6]),
+                                         tzinfo=datetime.timezone.utc)
+            except ValueError:
+                when = None
+        if when is None:
             folder = relative.rsplit('/', 1)[0]
             if folder not in skipped:
                 skipped.add(folder)
@@ -225,22 +397,261 @@ def signalLocalBackups(context):
             continue
         user, location = _location(relative)
         name = relative.rsplit('/', 2)[-2]
-        key = (user, location, name)
-        entry = snapshots.setdefault(key, {'time': match.groups()[:6], 'tmp': bool(match.group(7)),
-                                           'members': {}})
+        entry = snapshots.setdefault((user, location, name), {
+            'name': name, 'user': user, 'location': location, 'when': when,
+            'tmp': bool(match.group(7)), 'members': {}})
         entry['members'].setdefault(match.group(8), (file_found, relative))
+    return [snapshots[key] for key in sorted(snapshots, key=lambda item: item[2])]
 
+
+def _member_sources(snapshot):
+    return [snapshot['members'][member][0] for member in ('main', 'metadata', 'files')
+            if member in snapshot['members']]
+
+
+def _open_snapshot(snapshot, key):
+    """(state, BackupInfo, frames). State is Opened, Did not open or Not readable."""
+    members = snapshot['members']
+    if 'main' not in members or 'metadata' not in members:
+        return 'Not readable', None, None
+    try:
+        info, frames = sb.open_snapshot(members['main'][0], members['metadata'][0], key)
+    except sb.BackupKeyError:
+        logfunc(f'Signal on-device backup: the recovery key did not open {snapshot["name"]}')
+        return 'Did not open', None, None
+    except (sb.BackupFormatError, OSError) as error:
+        logfunc(f'Signal on-device backup: {snapshot["name"]} not read: {error if isinstance(error, sb.BackupFormatError) else type(error).__name__}')
+        return 'Not readable', None, None
+    return 'Opened', info, frames
+
+
+def _opened_snapshots(context):
+    """(snapshot, BackupInfo, frames) of each snapshot the recovery key opens."""
+    key = sb.get_recovery_key()
+    snapshots = _find_snapshots(context)
+    if snapshots and not key:
+        logfunc('Signal on-device backup: no recovery key given, so its contents were not read')
+        return
+    for snapshot in snapshots:
+        state, info, frames = _open_snapshot(snapshot, key)
+        if state == 'Opened':
+            yield snapshot, info, frames
+
+
+def _time(milliseconds):
+    if not milliseconds:
+        return ''
+    try:
+        return datetime.datetime.fromtimestamp(milliseconds / 1000, datetime.timezone.utc)
+    except (OverflowError, OSError, ValueError):
+        return ''
+
+
+def _time_text(milliseconds):
+    value = _time(milliseconds)
+    return value.strftime('%Y-%m-%d %H:%M:%S UTC') if value else ''
+
+
+def _join(*parts):
+    return ' '.join(part for part in parts if part)
+
+
+def _uuid(value):
+    return str(uuid.UUID(bytes=value)) if len(value) == 16 else value.hex()
+
+
+def _recipient_kind(recipient):
+    return sb.which(recipient, ('contact', 'group', 'distributionList', 'self', 'releaseNotes', 'callLink'))
+
+
+def _recipient_label(recipient):
+    kind = _recipient_kind(recipient)
+    if kind == 'contact':
+        contact = recipient.contact
+        return (_join(contact.systemGivenName, contact.systemFamilyName) or contact.systemNickname
+                or _join(contact.profileGivenName, contact.profileFamilyName) or contact.username
+                or (f'+{contact.e164}' if contact.e164 else '') or f'Recipient {recipient.id}')
+    if kind == 'group':
+        return recipient.group.snapshot.title.title or f'Group {recipient.id}'
+    if kind == 'distributionList':
+        return recipient.distributionList.distributionList.name or f'Distribution list {recipient.id}'
+    return {'self': 'Self', 'releaseNotes': 'Release Notes', 'callLink': 'Call Link'}.get(kind, f'Recipient {recipient.id}')
+
+
+class _Media:
+    """The encrypted files of one backup folder, read once each."""
+
+    def __init__(self, context, snapshot):
+        self.files = {}
+        relative = next(iter(snapshot['members'].values()))[1]
+        folder = re.sub(r'([*?\[])', r'[\1]', relative.rsplit('/', 2)[0])
+        seeker = context.get_seeker()
+        found = seeker.search(f'*/{folder}/files/*/*') if seeker else []
+        for path in found or []:
+            path = str(path)
+            if os.path.isfile(path):
+                self.files.setdefault(os.path.basename(path), path)
+        self.results = {}
+
+    def read(self, pointer):
+        """(bytes or None, status, path) of a FilePointer."""
+        info = pointer.locatorInfo
+        if not info.localKey or not info.plaintextHash:
+            return None, 'No local key: not in this backup', ''
+        name = sb.media_file_name(info.plaintextHash, info.localKey)
+        if name not in self.results:
+            path = self.files.get(name)
+            if not path:
+                self.results[name] = (None, 'File missing', '')
+            else:
+                with open(path, 'rb') as handle:
+                    plain = sb.decrypt_media(handle.read(), info.localKey, info.size, info.plaintextHash)
+                self.results[name] = (plain, 'Verified' if plain is not None else 'Did not verify', path)
+        return self.results[name]
+
+    def check_in(self, pointer):
+        """(media reference or None, status)."""
+        plain, status, path = self.read(pointer)
+        if plain is None:
+            return None, status
+        return check_in_embedded_media(path, plain, name=pointer.fileName or ''), status
+
+
+_ITEM_KINDS = {
+    'standardMessage': 'Message', 'contactMessage': 'Contact Card', 'stickerMessage': 'Sticker',
+    'remoteDeletedMessage': 'Remote Deleted', 'updateMessage': 'Update', 'paymentNotification': 'Payment Notification',
+    'giftBadge': 'Gift Badge', 'viewOnceMessage': 'View Once', 'directStoryReplyMessage': 'Story Reply',
+    'poll': 'Poll', 'adminDeletedMessage': 'Admin Deleted',
+}
+# Enum names from Backup.proto (SimpleChatUpdate.Type, IndividualCall.Type, .Direction, .State)
+_SIMPLE_UPDATES = {
+    1: 'JOINED_SIGNAL', 2: 'IDENTITY_UPDATE', 3: 'IDENTITY_VERIFIED', 4: 'IDENTITY_DEFAULT', 5: 'CHANGE_NUMBER',
+    6: 'RELEASE_CHANNEL_DONATION_REQUEST', 7: 'END_SESSION', 8: 'CHAT_SESSION_REFRESH', 9: 'BAD_DECRYPT',
+    10: 'PAYMENTS_ACTIVATED', 11: 'PAYMENT_ACTIVATION_REQUEST', 12: 'UNSUPPORTED_PROTOCOL_MESSAGE',
+    13: 'REPORTED_SPAM', 14: 'BLOCKED', 15: 'UNBLOCKED', 16: 'MESSAGE_REQUEST_ACCEPTED',
+}
+_CALL_TYPES = {0: 'UNKNOWN_TYPE', 1: 'AUDIO_CALL', 2: 'VIDEO_CALL'}
+_CALL_DIRECTIONS = {0: 'UNKNOWN_DIRECTION', 1: 'INCOMING', 2: 'OUTGOING'}
+_CALL_STATES = {0: 'UNKNOWN_STATE', 1: 'ACCEPTED', 2: 'NOT_ACCEPTED', 3: 'MISSED', 4: 'MISSED_NOTIFICATION_PROFILE'}
+_SEND_STATES = ('pending', 'sent', 'delivered', 'read', 'viewed', 'skipped', 'failed')
+_UPDATES = ('simpleUpdate', 'groupChange', 'expirationTimerChange', 'profileChange', 'threadMerge',
+            'sessionSwitchover', 'individualCall', 'groupCall', 'learnedProfileChange', 'pollTerminate',
+            'pinMessage')
+
+
+def _item_content(item):
+    """(kind, text, [(role, FilePointer)], reactions, Quote or None, link preview text)."""
+    name = sb.which(item, tuple(_ITEM_KINDS))
+    kind = _ITEM_KINDS.get(name, 'Unknown')
+    text = ''
+    pointers = []
+    reactions = []
+    quote = None
+    links = ''
+    if name == 'standardMessage':
+        message = item.standardMessage
+        text = message.text.body
+        reactions = message.reactions
+        quote = message.quote if message.HasField('quote') else None
+        pointers = [('Attachment', attachment.pointer) for attachment in message.attachments]
+        if message.HasField('longText'):
+            pointers.append(('Long text', message.longText))
+        for preview in message.linkPreview:
+            if preview.HasField('image'):
+                pointers.append(('Link preview image', preview.image))
+        links = '\n'.join(_join(preview.url, preview.title) for preview in message.linkPreview)
+    elif name == 'contactMessage':
+        reactions = item.contactMessage.reactions
+        text = '[Contact card]'
+    elif name == 'stickerMessage':
+        reactions = item.stickerMessage.reactions
+        text = item.stickerMessage.sticker.emoji or '[Sticker]'
+        if item.stickerMessage.sticker.HasField('data'):
+            pointers = [('Sticker', item.stickerMessage.sticker.data)]
+    elif name == 'viewOnceMessage':
+        reactions = item.viewOnceMessage.reactions
+        if item.viewOnceMessage.HasField('attachment'):
+            pointers = [('View once', item.viewOnceMessage.attachment.pointer)]
+        else:
+            text = '[View once, no attachment]'
+    elif name == 'directStoryReplyMessage':
+        reply = item.directStoryReplyMessage
+        reactions = reply.reactions
+        text = reply.emoji or reply.textReply.text.body
+        if reply.textReply.HasField('longText'):
+            pointers = [('Long text', reply.textReply.longText)]
+    elif name == 'poll':
+        reactions = item.poll.reactions
+        text = _join(item.poll.question, '/'.join(option.option for option in item.poll.options))
+    elif name == 'updateMessage':
+        update = sb.which(item.updateMessage, _UPDATES)
+        kind = f'Update: {update}' if update else 'Update'
+        if update == 'simpleUpdate':
+            value = item.updateMessage.simpleUpdate.type
+            text = f'[{_SIMPLE_UPDATES.get(value, value)}]'
+        elif update == 'individualCall':
+            call = item.updateMessage.individualCall
+            text = (f'[{_CALL_TYPES.get(call.type, call.type)}, {_CALL_DIRECTIONS.get(call.direction, call.direction)}, '
+                    f'{_CALL_STATES.get(call.state, call.state)}]')
+    elif name in ('remoteDeletedMessage', 'adminDeletedMessage'):
+        text = f'[{kind}]'
+    return kind, text, pointers, reactions, quote, links
+
+
+def _direction(item):
+    name = sb.which(item, ('incoming', 'outgoing', 'directionless'))
+    return {'incoming': 'Incoming', 'outgoing': 'Outgoing', 'directionless': 'None'}.get(name, '')
+
+
+def _send_status(item, labels):
+    lines = []
+    for status in item.outgoing.sendStatus:
+        state = sb.which(status, _SEND_STATES) or 'pending'
+        lines.append(_join(f'{labels.get(status.recipientId, status.recipientId)}:', state,
+                           _time_text(status.timestamp)))
+    return '\n'.join(lines)
+
+
+def _message_row(item, snapshot, labels, chats, media, revision):
+    kind, text, pointers, reactions, quote, links = _item_content(item)
+    references = []
+    for role, pointer in pointers:
+        if role == 'Long text':
+            plain = media.read(pointer)[0]
+            if plain is not None:
+                try:
+                    text = plain.decode('utf-8')
+                except UnicodeDecodeError:
+                    logfunc('Signal on-device backup: a long text attachment is not UTF-8; kept the short text')
+            continue
+        reference = media.check_in(pointer)[0]
+        if reference:
+            references.append(reference)
+    incoming = item.incoming if item.HasField('incoming') else None
+    received = incoming.dateReceived if incoming else item.outgoing.dateReceived if item.HasField('outgoing') else 0
+    chat = chats.get(item.chatId)
+    stamp = snapshot['when'].strftime('%Y%m%d%H%M%S')
+    return (
+        _time(item.dateSent), _time(received), _time(incoming.dateServerSent) if incoming else '',
+        _time(quote.targetSentTimestamp) if quote else '', _time(item.expireStartDate), snapshot['when'],
+        _direction(item), labels.get(item.authorId, item.authorId), labels.get(chat.recipientId, '') if chat else '',
+        text, references or '', kind, _send_status(item, labels) if item.HasField('outgoing') else '',
+        ('Yes' if incoming.read else 'No') if incoming else '', ('Yes' if incoming.sealedSender else 'No') if incoming else '',
+        '\n'.join(_join(reaction.emoji, labels.get(reaction.authorId, str(reaction.authorId)),
+                        _time_text(reaction.sentTimestamp)) for reaction in reactions),
+        labels.get(quote.authorId, quote.authorId) if quote else '', quote.text.body if quote else '', links,
+        item.expiresInMs if item.HasField('expiresInMs') else '', revision,
+        f'{snapshot["user"]}/{stamp}/{item.chatId}', snapshot['user'],
+    )
+
+
+@artifact_processor
+def signalLocalBackups(context):
+    key = sb.get_recovery_key()
     data_list = []
     source_paths = []
-    for (user, location, name), entry in sorted(snapshots.items(), key=lambda item: item[0][2]):
-        members = entry['members']
-        year, month, day, hour, minute, second = (int(part) for part in entry['time'])
-        try:
-            when = datetime.datetime(year, month, day, hour, minute, second, tzinfo=datetime.timezone.utc)
-        except ValueError:
-            folder = next(iter(members.values()))[1].rsplit('/', 1)[0]
-            logfunc(f'Signal on-device backup: folder name carries no snapshot time, skipped: {folder}')
-            continue
+    for snapshot in _find_snapshots(context):
+        members = snapshot['members']
         main_size = os.path.getsize(members['main'][0]) if 'main' in members else ''
         version = ''
         if 'metadata' in members:
@@ -258,11 +669,189 @@ def signalLocalBackups(context):
                 logfunc(f'Signal on-device backup: files list not decoded: {members["files"][1]}')
             else:
                 listed = len(names)
-        source_paths.extend(members[member][0] for member in ('main', 'metadata', 'files') if member in members)
-        data_list.append((when, 'Yes' if entry['tmp'] else 'No', main_size, version, listed,
-                          location, user))
+        state, backup_time = 'Not given', ''
+        if key:
+            state, info, _frames = _open_snapshot(snapshot, key)
+            if info is not None:
+                backup_time = _time(info.backupTimeMs)
+        source_paths.extend(_member_sources(snapshot))
+        data_list.append((snapshot['when'], backup_time, 'Yes' if snapshot['tmp'] else 'No', state, main_size,
+                          version, listed, snapshot['location'], snapshot['user']))
 
-    data_headers = (('Snapshot Time', 'datetime'), 'Temporary Name', ('Main Size', 'number'),
-                    'Metadata Version (as stored)', ('Media Listed', 'number'), 'Backup Location',
-                    'Android User')
+    data_headers = (('Snapshot Time', 'datetime'), ('Backup Time', 'datetime'), 'Temporary Name', 'Recovery Key',
+                    ('Main Size', 'number'), 'Metadata Version (as stored)', ('Media Listed', 'number'),
+                    'Backup Location', 'Android User')
+    return data_headers, data_list, '\n'.join(source_paths)
+
+
+@artifact_processor
+def signalBackupMessages(context):
+    data_list = []
+    source_paths = []
+    for snapshot, _info, frames in _opened_snapshots(context):
+        source_paths.extend(_member_sources(snapshot))
+        media = _Media(context, snapshot)
+        labels = {}
+        chats = {}
+        unread = collections.Counter()
+        for frame in frames:
+            if frame.HasField('recipient'):
+                labels[frame.recipient.id] = _recipient_label(frame.recipient)
+            elif frame.HasField('chat'):
+                chats[frame.chat.id] = frame.chat
+            elif frame.HasField('chatItem'):
+                item = frame.chatItem
+                total = len(item.revisions)
+                for index, revision in enumerate(item.revisions, 1):
+                    data_list.append(_message_row(revision, snapshot, labels, chats, media,
+                                                  f'Earlier version {index} of {total}'))
+                data_list.append(_message_row(item, snapshot, labels, chats, media,
+                                              f'Latest of {total + 1}' if total else ''))
+            else:
+                unread[sb.which(frame, tuple(sb.frame_names())) or 'unset'] += 1
+        if unread:
+            logfunc('Signal on-device backup: frames not reported here: '
+                    + ', '.join(f'{name} {count}' for name, count in sorted(unread.items())))
+    data_headers = (
+        ('Date Sent', 'datetime'), ('Date Received', 'datetime'), ('Date Server Sent', 'datetime'),
+        ('Quoted Message Sent', 'datetime'), ('Expire Start', 'datetime'), ('Snapshot Time', 'datetime'),
+        'Direction', 'Sender', 'Conversation', 'Message', ('Attachments', 'media'), 'Kind', 'Send Status', 'Read',
+        'Sealed Sender', 'Reactions', 'Quoted Author', 'Quoted Text', 'Link Preview',
+        ('Expires In (ms)', 'number'), 'Revision', 'Chat ID', 'Android User')
+    return data_headers, data_list, '\n'.join(source_paths)
+
+
+def _attachment_rows(item, revision_note, snapshot, labels, chats, media, pointed):
+    """One row per FilePointer of a chat item. Adds the file names it points to to pointed."""
+    rows = []
+    chat = chats.get(item.chatId)
+    for role, pointer in _item_content(item)[2]:
+        info = pointer.locatorInfo
+        if info.localKey and info.plaintextHash:
+            pointed.add(sb.media_file_name(info.plaintextHash, info.localKey))
+        reference, status = media.check_in(pointer)
+        rows.append((
+            _time(item.dateSent), snapshot['when'], labels.get(chat.recipientId, '') if chat else '',
+            labels.get(item.authorId, item.authorId), _join(role, revision_note), reference,
+            pointer.contentType, pointer.fileName, pointer.caption, info.size if info.size else '',
+            info.plaintextHash.hex(), status, snapshot['user']))
+    return rows
+
+
+@artifact_processor
+def signalBackupAttachments(context):
+    data_list = []
+    source_paths = []
+    for snapshot, _info, frames in _opened_snapshots(context):
+        source_paths.extend(_member_sources(snapshot))
+        media = _Media(context, snapshot)
+        labels = {}
+        chats = {}
+        pointed = set()
+
+        for frame in frames:
+            if frame.HasField('recipient'):
+                labels[frame.recipient.id] = _recipient_label(frame.recipient)
+            elif frame.HasField('chat'):
+                chats[frame.chat.id] = frame.chat
+            elif frame.HasField('chatItem'):
+                for revision in frame.chatItem.revisions:
+                    data_list.extend(_attachment_rows(revision, '(earlier version)', snapshot, labels, chats,
+                                                      media, pointed))
+                data_list.extend(_attachment_rows(frame.chatItem, '', snapshot, labels, chats, media, pointed))
+        if 'files' in snapshot['members']:
+            with open(snapshot['members']['files'][0], 'rb') as handle:
+                names = media_names(handle.read()) or []
+            for name in names:
+                if name not in pointed:
+                    data_list.append(('', snapshot['when'], '', '', '', None, '', name, '', '', '',
+                                      'Listed, no chat item points to it', snapshot['user']))
+    data_headers = (('Date Sent', 'datetime'), ('Snapshot Time', 'datetime'), 'Conversation', 'Sender', 'Role',
+                    ('Attachment', 'media'), 'Content Type', 'File Name', 'Caption', ('Size', 'number'),
+                    ('Plaintext SHA-256', 'hash'), 'Status', 'Android User')
+    return data_headers, data_list, '\n'.join(source_paths)
+
+
+@artifact_processor
+def signalBackupRecipients(context):
+    data_list = []
+    source_paths = []
+    for snapshot, _info, frames in _opened_snapshots(context):
+        source_paths.extend(_member_sources(snapshot))
+        for frame in frames:
+            if not frame.HasField('recipient'):
+                continue
+            recipient = frame.recipient
+            kind = _recipient_kind(recipient)
+            contact = recipient.contact if kind == 'contact' else None
+            group = recipient.group if kind == 'group' else None
+            blocked_at = contact.blockedAtTimestamp if contact else group.blockedAtTimestamp if group else 0
+            blocked = (contact.blocked if contact else group.blocked if group else False)
+            data_list.append((
+                snapshot['when'], _time(blocked_at),
+                _time(contact.notRegistered.unregisteredTimestamp) if contact else '',
+                recipient.id, kind, _recipient_label(recipient),
+                f'+{contact.e164}' if contact and contact.e164 else '', contact.username if contact else '',
+                _uuid(contact.aci) if contact and contact.aci else '', _uuid(contact.pni) if contact and contact.pni else '',
+                _join(contact.profileGivenName, contact.profileFamilyName) if contact else '',
+                _join(contact.systemGivenName, contact.systemFamilyName) if contact else '',
+                _join(contact.nickname.given, contact.nickname.family) if contact else '',
+                contact.note if contact else '', 'Yes' if blocked else 'No',
+                contact.visibility if contact else '',
+                len(group.snapshot.members) if group else '', snapshot['user']))
+    data_headers = (('Snapshot Time', 'datetime'), ('Blocked At', 'datetime'), ('Unregistered At', 'datetime'),
+                    'Recipient ID', 'Kind', 'Display Name', ('Phone Number', 'phonenumber'), 'Username', 'ACI', 'PNI',
+                    'Profile Name', 'System Name', 'Nickname', 'Note', 'Blocked', 'Visibility (as stored)',
+                    ('Group Members', 'number'), 'Android User')
+    return data_headers, data_list, '\n'.join(source_paths)
+
+
+@artifact_processor
+def signalBackupChats(context):
+    data_list = []
+    source_paths = []
+    for snapshot, _info, frames in _opened_snapshots(context):
+        source_paths.extend(_member_sources(snapshot))
+        labels = {}
+        chats = {}
+        stats = {}
+        for frame in frames:
+            if frame.HasField('recipient'):
+                labels[frame.recipient.id] = _recipient_label(frame.recipient)
+            elif frame.HasField('chat'):
+                chats[frame.chat.id] = frame.chat
+            elif frame.HasField('chatItem'):
+                sent = frame.chatItem.dateSent
+                count, first, last = stats.get(frame.chatItem.chatId, (0, sent, sent))
+                stats[frame.chatItem.chatId] = (count + 1, min(first, sent), max(last, sent))
+        for chat_id, chat in chats.items():
+            count, first, last = stats.get(chat_id, (0, 0, 0))
+            mute = 'Muted with no end' if chat.muteUntilMs == 2 ** 63 - 1 else _time_text(chat.muteUntilMs)
+            data_list.append((
+                _time(first), _time(last), snapshot['when'], chat_id, labels.get(chat.recipientId, chat.recipientId),
+                count, chat.expirationTimerMs if chat.HasField('expirationTimerMs') else '',
+                'Yes' if chat.archived else 'No', chat.pinnedOrder if chat.HasField('pinnedOrder') else '',
+                mute, 'Yes' if chat.markedUnread else 'No', snapshot['user']))
+    data_headers = (('First Item', 'datetime'), ('Last Item', 'datetime'), ('Snapshot Time', 'datetime'), 'Chat ID',
+                    'Conversation', ('Items', 'number'), ('Disappearing Timer (ms)', 'number'), 'Archived',
+                    'Pinned Order', 'Mute Until', 'Marked Unread', 'Android User')
+    return data_headers, data_list, '\n'.join(source_paths)
+
+
+@artifact_processor
+def signalBackupAccount(context):
+    data_list = []
+    source_paths = []
+    for snapshot, info, frames in _opened_snapshots(context):
+        source_paths.extend(_member_sources(snapshot))
+        for frame in frames:
+            if frame.HasField('account'):
+                account = frame.account
+                data_list.append((
+                    _time(info.backupTimeMs), snapshot['when'], account.username, account.givenName, account.familyName,
+                    _join(account.bioEmoji, account.bioText), account.svrPin, info.currentAppVersion,
+                    info.firstAppVersion, snapshot['user']))
+                break
+    data_headers = (('Backup Time', 'datetime'), ('Snapshot Time', 'datetime'), 'Username', 'Given Name',
+                    'Family Name', 'Bio', 'PIN (as stored)', 'Current App Version', 'First App Version', 'Android User')
     return data_headers, data_list, '\n'.join(source_paths)
