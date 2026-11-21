@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "description": "Snapshots of Signal's on-device backup, with the time in each snapshot's folder name, "
                        "whether the folder still has its temporary name, the size of the encrypted main file "
                        "and the number of media files the snapshot lists. The messages and media are "
-                       "encrypted and are not read here; the metadata and the media list are read.",
+                       "encrypted and are not read here. The metadata version and the media list are read.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-11-20",
         "last_update_date": "2026-11-20",
@@ -22,7 +22,7 @@ __artifacts_v2__ = {
             "signal-backup- and a time formatted yyyy-MM-dd-HH-mm-ss in UTC (createSnapshot, L274-276), "
             "holding the members main, metadata or files (L384-386), is read as one snapshot. A "
             "signal-backup- folder whose name does not carry that time is skipped and named in the run "
-            "log. The time is taken from the phone's clock when the snapshot folder is created, before "
+            "log, as is one whose digits are not a real date. The time is taken from the phone's clock when the snapshot folder is created, before "
             "its members are written (L275, L283-284): it is when the backup started, not when it "
             "finished. The snapshot is written under the same name ending in -tmp (L283) and renamed "
             "when the backup has been written (finalize, L428-430, called at jobs/LocalArchiveJob.kt "
@@ -35,8 +35,10 @@ __artifacts_v2__ = {
             "source-verified only. The one backup folder tested held one snapshot and no -tmp folder.\n"
             "Snapshot Time is the time in the folder name, read as UTC as the app writes it. Temporary "
             "Name is Yes for a folder whose name ends in -tmp, one the app had neither renamed nor "
-            "deleted. Main Size is the size of the main file in bytes. main is encrypted with keys "
-            "derived from the Account Entropy Pool, a 64-character value (LENGTH = 64, "
+            "deleted. Main Size is the size of the main file in bytes. main is written through an "
+            "encrypting writer with the account's message backup key (backup/v2/BackupRepository.kt "
+            "L695-702, called at backup/v2/local/LocalArchiver.kt L85). The app derives that key from "
+            "the Account Entropy Pool, a 64-character value (LENGTH = 64, "
             "core/util-jvm/src/main/java/org/signal/core/models/AccountEntropyPool.kt L21; "
             "deriveMessageBackupKey, L102-103) that the app's backup screen showed as the recovery key on "
             "the test phone. Its messages are not read here. Metadata Version (as stored) is field 1 of "
@@ -46,33 +48,46 @@ __artifacts_v2__ = {
             "the column empty and is named in the run log (constructed files only). Media Listed is the "
             "number of media names in the snapshot's files member, which the app writes as "
             "length-prefixed FilesFrame messages, each holding one media name (LocalArchive.proto "
-            "L20-24; lib/archive/src/main/java/org/signal/archive/local/ArchivedFilesReader.kt L36-41). "
+            "L20-24; written at backup/v2/local/LocalArchiver.kt L126-129, read by "
+            "lib/archive/src/main/java/org/signal/archive/local/ArchivedFilesReader.kt L36-41). "
             "A files member that does not decode to its last byte leaves the column empty and is named in "
-            "the run log (constructed files only). The media themselves are kept, encrypted, in a files "
+            "the run log (the reader is tested on constructed bytes; the artifact's empty column and log "
+            "line for this case were not run). A snapshot folder missing a member still gets a row, with "
+            "that member's column empty. The media themselves are kept, encrypted, in a files "
             "folder beside the snapshots (ArchiveFileSystem.kt L236; backup/v2/local/LocalArchiver.kt "
-            "L108), shared by all snapshots, and are not read here. After a backup the job deletes the "
+            "L108), shared by all snapshots, and are not read here. After a backup that did not fail the "
+            "job deletes the "
             "media files no current snapshot lists (LocalArchiveJob.kt L144; ArchiveFileSystem.kt "
             "L324-341), so Media Listed is the snapshot's own list, not a count of the files on disk.\n"
             "Backup Location is the path from the shared storage root to the folder holding the "
             "snapshot, or the whole path inside the extraction where no storage root is recognised. "
             "Android User is the number that follows the shared storage root in the path "
             "(data/media/<N>, userdata/media/<N>, storage/emulated/<N>, mnt/user/<U>/emulated/<N>, "
-            "mnt/pass_through/<U>/emulated/<N>); it is empty for a folder outside those roots, such as on "
-            "a removable card. The same snapshot seen under several spellings of shared storage is one "
-            "row.\n"
-            "Known data (the Samsung SM-A166U test phone, Signal 8.35.4): on-device backups were turned on "
-            "on 2026-11-20 with the folder KD_signal_backup in shared storage. The session record places "
-            "the setup between 08:39 and 08:44 UTC and names one snapshot folder. An adb pull of that "
-            "folder, placed under data/media/0 for the run, gave one row with the time in that folder name "
-            "in Snapshot Time, Temporary Name No, Main Size 65,600, Metadata Version 1 and Media Listed 7; "
-            "the 7 listed names equal the 7 file names in its files folder. Tested only on constructed "
-            "files: -tmp folders, several snapshots, a renamed backup folder, one snapshot seen under two "
-            "spellings, every storage root spelling above, a folder outside a storage root, and metadata "
-            "and files members that do not decode."
+            "mnt/pass_through/<U>/emulated/<N>). It is empty for a path that starts with sdcard/, as in a "
+            "pull of /sdcard, which names no user, and for a folder outside those roots, such as on a "
+            "removable card. The same snapshot seen under several spellings that name the same Android "
+            "user is one row; a copy under sdcard/ names no user and is a separate row.\n"
+            "Known data (samsung_a166u_signal_backup_pull_known_20261120: an adb pull of the backup "
+            "folder from shared storage on the Samsung SM-A166U test phone, Signal 8.35.4, kept under "
+            "sdcard/ and not a full extraction): on-device backups were turned on on 2026-11-20 with a "
+            "new folder in shared storage. The session record gives the setup window and names one "
+            "snapshot folder. The run gave one row with the time in that folder name in Snapshot Time, "
+            "Temporary Name No, Main Size 65,600, Metadata Version 1, Media Listed 7 and Backup Location "
+            "holding the two folder names below sdcard/; the 7 listed names equal the 7 file names in "
+            "its files folder. Temporary Name held No, Metadata "
+            "Version held 1 and Android User held an empty value on every row of that run. No full "
+            "extraction holding a backup was available, so the seeker is proven on the pull only. Tested "
+            "only on constructed files: -tmp folders, several snapshots, a renamed backup folder, one "
+            "snapshot seen under two spellings, every storage root spelling above, a folder outside a "
+            "storage root, a name whose digits are not a real date, and metadata and files members that "
+            "do not decode."
         ),
         "paths": ("*/signal-backup-*/main", "*/signal-backup-*/metadata", "*/signal-backup-*/files"),
         "output_types": "standard",
         "artifact_icon": "archive",
+        "sample_data": {
+            "samsung_a166u_signal_backup_pull_known_20261120": "Android 16 | Signal 8.35.4, adb pull of the backup folder | 1 row",
+        },
     },
 }
 
@@ -88,6 +103,8 @@ _STORAGE_ROOTS = (
     re.compile(r'(?:^|/)mnt/pass_through/\d+/emulated/(\d+)/'),
     re.compile(r'(?:^|/)mnt/user/\d+/emulated/(\d+)/'),
     re.compile(r'(?:^|/)storage/emulated/(\d+)/'),
+    # a pull of /sdcard, at the start of the path, names no user
+    re.compile(r'^sdcard/()'),
 )
 _SNAPSHOT = re.compile(
     r'(?:^|/)signal-backup-(\d{4})-(\d{2})-(\d{2})-(\d{2})-(\d{2})-(\d{2})(-tmp)?/(main|metadata|files)$')
@@ -221,7 +238,9 @@ def signalLocalBackups(context):
         try:
             when = datetime.datetime(year, month, day, hour, minute, second, tzinfo=datetime.timezone.utc)
         except ValueError:
-            when = ''
+            folder = next(iter(members.values()))[1].rsplit('/', 1)[0]
+            logfunc(f'Signal on-device backup: folder name carries no snapshot time, skipped: {folder}')
+            continue
         main_size = os.path.getsize(members['main'][0]) if 'main' in members else ''
         version = ''
         if 'metadata' in members:

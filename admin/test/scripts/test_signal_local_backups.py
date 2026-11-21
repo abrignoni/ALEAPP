@@ -93,9 +93,9 @@ class ArtifactTests(unittest.TestCase):
 
     def test_rows(self):
         files = []
-        files += self.snapshot('data/media/0/Backup', 'signal-backup-2026-11-20-08-44-38', names=['a', 'b', 'c'])
+        files += self.snapshot('data/media/0/Backup', 'signal-backup-2026-01-02-03-04-05', names=['a', 'b', 'c'])
         # the same snapshot under a second spelling of user 0's shared storage is one row
-        files += self.snapshot('Dump/mnt/pass_through/0/emulated/0/Backup', 'signal-backup-2026-11-20-08-44-38')
+        files += self.snapshot('Dump/mnt/pass_through/0/emulated/0/Backup', 'signal-backup-2026-01-02-03-04-05')
         files += self.snapshot('data/media/10/Docs', 'signal-backup-2026-11-21-08-55-00-tmp', meta=b'\xff' * 8)
         files += self.snapshot('storage/1234-ABCD', 'signal-backup-2026-11-19-01-02-03')
         # not a snapshot member, and not a snapshot folder name
@@ -105,15 +105,19 @@ class ArtifactTests(unittest.TestCase):
         files += self.snapshot('storage/emulated/0', 'signal-backup-2026-11-18-00-00-01', folder='Moved')
         files += self.snapshot('mnt/user/0/emulated/11', 'signal-backup-2026-11-17-00-00-02')
         files += self.snapshot('userdata/media/12/X', 'signal-backup-2026-11-16-00-00-03')
+        files += self.snapshot('sdcard/Pulled', 'signal-backup-2026-11-15-00-00-04')
+        # digits that are not a real date are skipped; sdcard/ below a card root is not a root
+        files += self.snapshot('data/media/0/Bad', 'signal-backup-2026-13-01-00-00-00')
+        files += self.snapshot('storage/1234-ABCD/sdcard', 'signal-backup-2026-11-14-00-00-05')
         headers, rows, source = slb.signalLocalBackups.__wrapped__(Context(self.work, files))
         names = [h if isinstance(h, str) else h[0] for h in headers]
         self.assertEqual(len(names), len(rows[0]))
         index = {name: position for position, name in enumerate(names)}
         found = {(row[index['Android User']], row[index['Backup Location']],
                   row[index['Snapshot Time']]): row for row in rows}
-        self.assertEqual(len(rows), 6)
+        self.assertEqual(len(rows), 8)
         utc = datetime.timezone.utc
-        first = found[('0', 'Backup/SignalBackups', datetime.datetime(2026, 11, 20, 8, 44, 38, tzinfo=utc))]
+        first = found[('0', 'Backup/SignalBackups', datetime.datetime(2026, 1, 2, 3, 4, 5, tzinfo=utc))]
         self.assertEqual(first[index['Temporary Name']], 'No')
         self.assertEqual(first[index['Main Size']], 64)
         self.assertEqual(first[index['Metadata Version (as stored)']], 1)
@@ -126,6 +130,10 @@ class ArtifactTests(unittest.TestCase):
         self.assertIn(('0', 'Moved', datetime.datetime(2026, 11, 18, 0, 0, 1, tzinfo=utc)), found)
         self.assertIn(('11', 'SignalBackups', datetime.datetime(2026, 11, 17, 0, 0, 2, tzinfo=utc)), found)
         self.assertIn(('12', 'X/SignalBackups', datetime.datetime(2026, 11, 16, 0, 0, 3, tzinfo=utc)), found)
+        self.assertIn(('', 'Pulled/SignalBackups', datetime.datetime(2026, 11, 15, 0, 0, 4, tzinfo=utc)), found)
+        self.assertIn(('', 'storage/1234-ABCD/sdcard/SignalBackups',
+                       datetime.datetime(2026, 11, 14, 0, 0, 5, tzinfo=utc)), found)
+        self.assertNotIn('signal-backup-2026-13-01', source)
         self.assertNotIn('files/aa/aa11', source)
         self.assertNotIn('signal-backup-latest', source)
 
