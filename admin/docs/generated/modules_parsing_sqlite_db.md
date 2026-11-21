@@ -317,6 +317,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | googleCallScreen |
 | googleCast |
 | googleChat |
+| googleContactKeys |
 | googleDuo |
 | googleKeepNotes |
 | googleMapsGmm |
