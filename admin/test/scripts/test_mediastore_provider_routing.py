@@ -1,4 +1,5 @@
 """The provider of an external.db comes from its own package folder, never from the folders above it."""
+# pylint: disable=protected-access
 import pathlib
 import sys
 import unittest
