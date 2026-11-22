@@ -30,7 +30,7 @@ __artifacts_v2__ = {
         "description": "Messages from each Thunderbird account database: the date and internal_date columns read as Unix milliseconds and shown in UTC, addresses, subject, preview, full text and flags as stored. Rows flagged empty are not included.",
         "author": "Marco Neumann {kalinko@be-binary.de}, @AlexisBrignoni, Codex",
         "creation_date": "2025-11-20",
-        "last_update_date": "2026-10-09",
+        "last_update_date": "2026-11-22",
         "requirements": "re, json",
         "category": "Thunderbird App",
         "notes": "Date is the messages table's date column and Internal Date is its internal_date column, "
@@ -58,10 +58,16 @@ __artifacts_v2__ = {
                  "query result. The account UUIDs of every matched preferences_storage file are used, "
                  "and a copy of the same Android user's database under another storage path "
                  "(data/data, data/user/<n> or data_mirror/data_ce/<volume>/<n>) is read once; both "
-                 "were checked on constructed databases only.",
+                 "were checked on constructed databases only. Content is the text the app wrote to its "
+                 "search index (messages_fulltext). In the app's source at commit 9aee4a9 the index text "
+                 "comes from the first text part of the message, up to 200 KiB read, and a text/html "
+                 "part is converted to text before it is written "
+                 "(https://github.com/thunderbird/thunderbird-android/blob/9aee4a9adcb44ca084ca4e13ee3da564286b0af1/legacy/core/src/main/java/com/fsck/k9/message/extractors/MessageFulltextCreator.kt#L11-L21). "
+                 "For a message the app handles as encrypted the text comes from its encryption code "
+                 "instead. A message with no index row has a blank Content.",
         "paths": ('*data/net.thunderbird.android/databases/*',),
         "output_types": ["standard"],
-        "html_columns": ["Content"],
+        "multiline_columns": ["Content"],
         "artifact_icon": "mail"
     }
 
@@ -80,7 +86,6 @@ import json
 
 from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records, logfunc
 from scripts.context import Context
-from scripts.html_safe import safe_source
 
 _VIEW_PATTERNS = (
     (re.compile(r'(?:^|/)data_mirror/data_ce/[^/]+/(\d+)/'), None),
@@ -275,7 +280,7 @@ def thunderbird_messages(context):
             content = row[14]
 
 
-            data_list.append((date, internal_date, account, sender, receiver, cc, bcc, subject, preview, safe_source(content), attachments, read, flagged, answered, forwarded, folder, Context.get_relative_path(str(file))))
+            data_list.append((date, internal_date, account, sender, receiver, cc, bcc, subject, preview, content, attachments, read, flagged, answered, forwarded, folder, Context.get_relative_path(str(file))))
 
     data_headers = ( 'Date', 'Internal Date', 'Account', 'Sender', 'Receiver', 'CC', 'BCC', 'Subject', 'Preview', 'Content', 'Attachments', 'Read?', 'Flagged?', 'Answered?', 'Forwarded?', 'Folder Name', 'Source File')
 

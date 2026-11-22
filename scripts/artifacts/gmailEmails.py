@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Parses emails from Gmail",
         "author": "Alexis Brignoni, Patrick Dalla, @stark4n6; @AlexisBrignoni, Codex",
         "creation_date": "2023-01-04",
-        "last_update_date": "2026-10-09",
+        "last_update_date": "2026-11-22",
         "requirements": "BeautifulSoup",
         "category": "Email",
         "notes": "Recipient and Recipient Name are protobuf fields 1.2 and 1.3, Reply To and "
@@ -19,9 +19,19 @@ __artifacts_v2__ = {
                  "columns blank; an unrecognized field 11 type is logged and those columns "
                  "are blank while the otherwise decoded row is retained. The original protobuf "
                  "stays in the source database. Message is the readable text extracted from the stored "
-                 "HTML body (tags, styling and repeated whitespace removed). Each link's place in "
-                 "the text is marked [n], and Links lists the link targets by those numbers, as "
-                 "stored; a repeated target keeps its first number. A link with no words of its "
+                 "HTML body. Tags, comments and the text of title, style and script elements are "
+                 "removed; a style, script or title element that is never closed keeps its text. Text "
+                 "the message hides with styling is still reported. The removal was exercised on "
+                 "constructed bodies only: in five corpus runs (854 rows) no body held such text. A line "
+                 "break is placed at each br and at the start and end of each element in a fixed list of "
+                 "block tags (p, div, table rows, list items, headings and others). Blank lines are "
+                 "dropped, cells of one table row are separated by a space, and line breaks in the HTML "
+                 "source are not kept. Within a line, each run of whitespace, soft hyphens and zero-width "
+                 "characters becomes one space, so a word that stores one of those characters shows a "
+                 "space there. Each link's place in "
+                 "the text is marked [n], and Links lists the href of each a element by those numbers, as "
+                 "the HTML parser returns it (character references decoded). Other link elements are not "
+                 "listed. A repeated target keeps its first number. A link with no words of its "
                  "own, such as a linked image, still gets a marker, so the words just before a "
                  "marker are not always the link's text. The "
                  "unmodified body stays in the source database. The app keeps one "
@@ -45,6 +55,7 @@ __artifacts_v2__ = {
                  "without dropping the other accounts' rows.",
         "paths": ('*/com.google.android.gm/databases/bigTopDataDB.*','*/com.google.android.gm/files/downloads/*/attachments/*/*.*','*/com.google.android.gm/shared_prefs/Gmail.xml'),
         "output_types": "standard",
+        "multiline_columns": ["Message", "Links"],
         "artifact_icon": "inbox",
         "sample_data": {
             "anne_a15": "Android 15 | com.google.android.gm vc 65346694 | 200 rows",
@@ -138,7 +149,7 @@ import sqlite3
 import zlib
 from datetime import datetime, timezone
 
-from bs4 import BeautifulSoup, NavigableString
+from bs4 import BeautifulSoup, CData, NavigableString
 
 from scripts.artifacts.gmail import _parse_xml
 from scripts.artifacts.storagePathViews import canonical_path, unique_files
@@ -148,12 +159,25 @@ from scripts.ilapfuncs import open_sqlite_db_readonly, check_in_media, get_sqlit
 
 # whitespace plus the invisible padding characters observed in marketing preheaders
 _WHITESPACE_RUN = re.compile(r'[\s\u00ad\u034f\u200b\u200c\u200d\ufeff]+')
+_LINE_END = re.compile(r'\r\n|\r|\n')
+_NON_DISPLAY_TAGS = ('script', 'style', 'title')
+_CELL_TAGS = ('td', 'th')
+_BLOCK_TAGS = ('address', 'article', 'aside', 'blockquote', 'center', 'dd', 'details', 'div', 'dl',
+               'dt', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4',
+               'h5', 'h6', 'header', 'hr', 'li', 'main', 'nav', 'ol', 'p', 'pre', 'section',
+               'table', 'tr', 'ul')
+
+
+class _LineBreak(NavigableString):
+    """A marker placed in the parsed tree. It is not evidence text and is never emitted."""
 
 
 def body_text_and_links(html_body):
     """The readable text of an HTML body plus the link targets it carries.
 
-    Tags are dropped and whitespace runs (including the zero-width padding marketing
+    Tags and the contents of closed title, style and script elements are dropped. A br or block element
+    ends a line, table cells are separated by a space and text inside pre keeps its
+    lines. Within a line, whitespace runs (including the zero-width padding marketing
     mail hides its preheader behind) collapse to one space. Each link's place in the
     text is marked [n], and the second value lists the targets by those numbers, as
     stored. A repeated target keeps its first number. A link with no words of its own,
@@ -162,6 +186,15 @@ def body_text_and_links(html_body):
     if not html_body:
         return '', ''
     soup = BeautifulSoup(html_body, 'html.parser')
+    source = html_body.decode('utf-8', 'replace') if isinstance(html_body, bytes) else str(html_body)
+    source = source.lower()
+    for name in _NON_DISPLAY_TAGS:
+        found = soup.find_all(name)
+        # An element never closed holds the rest of the body as its text, so it is kept.
+        if found and source.rfind(f'<{name}') > source.rfind(f'</{name}'):
+            found.pop()
+        for hidden in found:
+            hidden.extract()
     targets = []
     numbers = {}
     for anchor in soup.find_all('a', href=True):
@@ -172,7 +205,27 @@ def body_text_and_links(html_body):
             targets.append(href)
             numbers[href] = len(targets)
         anchor.append(NavigableString(f' [{numbers[href]}]'))
-    text = _WHITESPACE_RUN.sub(' ', soup.get_text(separator=' ')).strip()
+    for tag in soup.find_all(_BLOCK_TAGS):
+        tag.insert(0, _LineBreak(''))
+        tag.append(_LineBreak(''))
+    for tag in soup.find_all('br'):
+        tag.append(_LineBreak(''))
+    for tag in soup.find_all(_CELL_TAGS):
+        tag.append(NavigableString(' '))
+    has_pre = soup.find('pre') is not None
+    lines = [[]]
+    for node in soup.descendants:
+        if isinstance(node, _LineBreak):
+            lines.append([])
+        elif type(node) in (NavigableString, CData):  # pylint: disable=unidiomatic-typecheck
+            if has_pre and node.find_parent('pre') is not None:
+                first, *rest = _LINE_END.split(str(node))
+                lines[-1].append(first)
+                lines.extend([line] for line in rest)
+            else:
+                lines[-1].append(str(node))
+    cleaned = (_WHITESPACE_RUN.sub(' ', ''.join(line)).strip() for line in lines)
+    text = '\n'.join(line for line in cleaned if line)
     links = '\n'.join(f'[{number}] {target}' for number, target in enumerate(targets, 1))
     return text, links
 
