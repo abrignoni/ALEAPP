@@ -6,13 +6,13 @@ __artifacts_v2__ = {
         "description": "FairEmail Accounts",
         "author": "Marco Neumann {kalinko@be-binary.de}, @AlexisBrignoni, Codex",
         "creation_date": "2025-03-08",
-        "last_update_date": "2026-10-05",
+        "last_update_date": "2026-11-22",
         "requirements": "none",
         "category": "FairCode FairEmail App",
         "notes": "Server Host (as stored) and Server Port (as stored) hold account.host and account.port. The stored fields do not establish a protocol or successful connection. The query does not limit rows to IMAP accounts. No sample_data is recorded for this artifact.",
         "paths": ('*/eu.faircode.email/databases/fairemail*'),
         "output_types": ["standard"],
-        "html_columns": ["Signature"],
+        "multiline_columns": ["Signature"],
         "artifact_icon": "inbox"
     },
     "get_fair_mail_contacts": {
@@ -34,7 +34,7 @@ __artifacts_v2__ = {
         "description": "FairEmail Messages",
         "author": "Marco Neumann {kalinko@be-binary.de}",
         "creation_date": "2025-11-16",
-        "last_update_date": "2026-10-04",
+        "last_update_date": "2026-11-22",
         "requirements": "os",
         "category": "FairCode FairEmail App",
         "notes": ("The Sender, Recipient, CC and BCC columns list every entry of the message's from, to, cc and bcc "
@@ -49,7 +49,6 @@ __artifacts_v2__ = {
                   "version 301, not on a device image. No sample_data is recorded for this artifact."),
         "paths": ('*/eu.faircode.email/databases/fairemail*', '*/eu.faircode.email/files/attachments/*', '*/eu.faircode.email/files/messages/*'),
         "output_types": ["standard"],
-        "html_columns": ["Content", "Attachments"],
         "artifact_icon": "mail"
     }
 }
@@ -65,7 +64,6 @@ import json
 import os
 
 from scripts.ilapfuncs import artifact_processor, convert_unix_ts_to_utc, get_sqlite_db_records, check_in_media
-from scripts.html_safe import safe_source
 
 
 def _address_parts(stored):
@@ -126,7 +124,7 @@ def get_fair_mail_accounts(context):
         creationdate = convert_unix_ts_to_utc(row[10]/1000)
         lastconnecteddate = convert_unix_ts_to_utc(row[11]/1000)
 
-        data_list.append(( creationdate, lastconnecteddate, account_id, name, email, display_name, safe_source(signature), server, port, username, password, account_name))
+        data_list.append(( creationdate, lastconnecteddate, account_id, name, email, display_name, signature, server, port, username, password, account_name))
 
     data_headers = ( 'Creation Date', 'Last Connected Date', 'Account ID', 'Name', 'E-Mail Address', 'Display Name', 'Signature', 'Server Host (as stored)', 'Server Port (as stored)', 'Username', 'Password', 'Account Name')
 

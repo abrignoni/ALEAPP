@@ -15,11 +15,11 @@ __artifacts_v2__ = {
     },
     "get_k9mail_messages": {
         "name": "K-9 Mail - Messages",
-        "description": "E-Mails from the K-9 Mail App. Content is one stored text part of each message, not the whole message.",
+        "description": "E-Mails from the K-9 Mail App. Content is taken from one stored text part of each message, not the whole message.",
         "author": "Marco Neumann {kalinko@be-binary.de}, @AlexisBrignoni, Codex",
         "creation_date": "2024-05-04",
-        "last_update_date": "2026-10-04",
-        "requirements": "none",
+        "last_update_date": "2026-11-22",
+        "requirements": "BeautifulSoup",
         "category": "K-9 Mail",
         "notes": "Based on https://bebinary4n6.blogspot.com/2024/05/app-k-9-mail-for-android.html"
                  ". Date is the messages.date column and Internal Date is the "
@@ -33,27 +33,64 @@ __artifacts_v2__ = {
                  "https://github.com/thunderbird/thunderbird-android/blob/9aee4a9adcb44ca084ca4e13ee3da564286b0af1/legacy/core/src/main/java/com/fsck/k9/mailstore/SaveMessageDataCreator.kt#L22-L24 , "
                  "https://github.com/thunderbird/thunderbird-android/blob/9aee4a9adcb44ca084ca4e13ee3da564286b0af1/mail/common/src/main/java/com/fsck/k9/mail/internet/MimeMessage.java#L144-L158 , "
                  "https://github.com/thunderbird/thunderbird-android/blob/9aee4a9adcb44ca084ca4e13ee3da564286b0af1/mail/protocols/imap/src/main/java/com/fsck/k9/mail/store/imap/RealImapFolder.kt#L797-L798 . "
-                 "Content is the data of the first part under the message, in the stored seq "
+                 "Content is taken from the data of the first part under the message, in the stored seq "
                  "order starting at the root part (seq 0), whose mime_type begins with text/ and "
                  "whose data column is filled. No other part is reported. In the same source the app keeps a "
                  "part's body in the data column when it is 16 KiB or smaller and writes a larger "
                  "body to a file, which this artifact does not read "
                  "(https://github.com/thunderbird/thunderbird-android/blob/9aee4a9adcb44ca084ca4e13ee3da564286b0af1/legacy/storage/src/main/java/com/fsck/k9/storage/messages/SaveMessageOperations.kt#L266-L276 ). "
-                 "Content is decoded when the part's encoding is base64 and is otherwise reported "
-                 "as stored. No registered corpus holds a K-9 Mail database (44 Android corpora "
-                 "listed on 2026-10-04), so the query was exercised only on a database built from "
-                 "the app's schema.",
+                 "A part whose mime_type is text/html is decoded from its base64 or quoted-printable "
+                 "transfer encoding using the charset in the part's stored header (UTF-8 when none "
+                 "is usable; bytes that do not decode show as the replacement character), and Content "
+                 "is text extracted from it as in the Gmail artifacts (body_text_and_links): tags and "
+                 "the text of closed title, style and script elements are removed, a line break is "
+                 "placed at each br and block tag, each link's place is marked [n], and Content Links lists each a element's href by those numbers, as the HTML parser returns it (character references decoded). Other link elements are not listed. "
+                 "The stored part stays in the source database. Any other "
+                 "text part is decoded when its encoding is base64, read as UTF-8 whatever charset the "
+                 "part names, and is otherwise reported as stored (a quoted-printable plain part stays "
+                 "encoded). When base64 decoding fails, Content shows the stored value in Python's text "
+                 "form. No registered Android corpus holds a K-9 Mail database (member lists of all 89 "
+                 "keys checked on 2026-11-22), so the query and the HTML decoding were exercised only on "
+                 "a constructed database holding the columns the query reads.",
         "paths": ('*/com.fsck.k9/databases/*',),
         "output_types": "standard",
+        "multiline_columns": ["Content", "Content Links"],
         "artifact_icon": "mail",
     }
 }
 
 import base64
+import binascii
+import codecs
 import datetime
+import email
 import json
+import quopri
 
+from scripts.artifacts.gmailEmails import body_text_and_links
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
+
+
+def _is_html(mime_type):
+    return str(mime_type or '').split(';')[0].strip().lower() == 'text/html'
+
+
+def _decoded_html(data, encoding, header):
+    """The part's HTML as text, from its transfer encoding and the charset its header names."""
+    raw = data.encode('utf-8', 'surrogateescape') if isinstance(data, str) else bytes(data)
+    transfer = str(encoding or '').strip().lower()
+    if transfer == 'base64':
+        raw = base64.b64decode(raw)
+    elif transfer == 'quoted-printable':
+        raw = quopri.decodestring(raw)
+    if isinstance(header, str):
+        header = header.encode('utf-8', 'replace')
+    charset = email.message_from_bytes(bytes(header or b'')).get_content_charset() or 'utf-8'
+    try:
+        codecs.lookup(charset)
+    except LookupError:
+        charset = 'utf-8'
+    return raw.decode(charset, 'replace')
 
 
 def _ms_to_utc(value):
@@ -145,16 +182,17 @@ def get_k9mail_messages(context):
         try:
             cursor.execute('''
                 SELECT deleted, subject, date, sender_list, to_list, cc_list, bcc_list, reply_to_list,
-                attachment_count, internal_date, preview, read, flagged, answered, forwarded, name, root, header,
-                (SELECT encoding FROM message_parts M_INNER WHERE M_INNER.root = M_OUTER.ROOT
-                    AND M_INNER.data IS NOT NULL AND M_INNER.mime_type LIKE 'text/%' ORDER BY M_INNER.seq LIMIT 1) AS encoding,
-                (SELECT data FROM message_parts M_INNER WHERE M_INNER.root = M_OUTER.ROOT
-                    AND M_INNER.data IS NOT NULL AND M_INNER.mime_type LIKE 'text/%' ORDER BY M_INNER.seq LIMIT 1) AS data,
-                data_location
+                attachment_count, internal_date, preview, read, flagged, answered, forwarded, name,
+                M_OUTER.root, M_OUTER.header, TEXT_PART.encoding, TEXT_PART.data, M_OUTER.data_location,
+                TEXT_PART.mime_type, TEXT_PART.header
                 FROM message_parts M_OUTER
                 JOIN messages ON messages.message_part_id = M_OUTER.root
                 JOIN folders ON folders.id = messages.folder_id
-                WHERE seq = 0
+                LEFT JOIN message_parts TEXT_PART ON TEXT_PART.id = (
+                    SELECT M_INNER.id FROM message_parts M_INNER WHERE M_INNER.root = M_OUTER.root
+                    AND M_INNER.data IS NOT NULL AND M_INNER.mime_type LIKE 'text/%'
+                    ORDER BY M_INNER.seq LIMIT 1)
+                WHERE M_OUTER.seq = 0
             ''')
             rows = cursor.fetchall()
         except Exception as e:
@@ -166,19 +204,21 @@ def get_k9mail_messages(context):
             source_path = file_found
         for row in rows:
             header = row[17].decode('UTF-8', 'replace') if isinstance(row[17], bytes) else (row[17] or '')
-            content = ''
+            content = links = ''
             try:
-                if row[18] == 'base64' and row[19]:
+                if _is_html(row[21]) and row[19]:
+                    content, links = body_text_and_links(_decoded_html(row[19], row[18], row[22]))
+                elif row[18] == 'base64' and row[19]:
                     content = base64.b64decode(row[19]).decode('UTF-8', 'replace')
                 elif row[19]:
                     content = row[19].decode('UTF-8', 'replace') if isinstance(row[19], bytes) else row[19]
-            except (ValueError, TypeError):
+            except (ValueError, TypeError, binascii.Error):
                 content = str(row[19])
             data_list.append((
                 account, _ms_to_utc(row[2]), row[15], row[1], row[10], row[3], row[4], row[5], row[6], row[7],
-                row[8], content, _ms_to_utc(row[9]),
+                row[8], content, links, _ms_to_utc(row[9]),
                 'Yes' if row[0] == 1 else 'No', 'Yes' if row[11] == 1 else 'No', 'Yes' if row[12] == 1 else 'No',
                 'Yes' if row[13] == 1 else 'No', 'Yes' if row[14] == 1 else 'No', header))
 
-    data_headers = ('Account', ('Date', 'datetime'), 'Folder', 'Subject', 'Message Preview', 'From Address', 'To Address', 'CC', 'BCC', 'Reply To', '# of Attachments', 'Content', ('Internal Date', 'datetime'), 'Deleted', 'Read', 'Flagged', 'Answered', 'Forwarded', 'Header')
+    data_headers = ('Account', ('Date', 'datetime'), 'Folder', 'Subject', 'Message Preview', 'From Address', 'To Address', 'CC', 'BCC', 'Reply To', '# of Attachments', 'Content', 'Content Links', ('Internal Date', 'datetime'), 'Deleted', 'Read', 'Flagged', 'Answered', 'Forwarded', 'Header')
     return data_headers, data_list, source_path

@@ -68,7 +68,8 @@ class ArtifactMetadataConsistencyTest(unittest.TestCase):
         unknown = []
         for name, tree, block in modules():
             for artifact, info in block.items():
-                columns = info.get('html_columns') if isinstance(info, dict) else None
+                columns = [*info.get('html_columns', []), *info.get('multiline_columns', [])] \
+                    if isinstance(info, dict) else None
                 if not columns:
                     continue
                 headers = literal_headers(tree, artifact)
