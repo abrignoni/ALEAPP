@@ -22,7 +22,20 @@ __artifacts_v2__ = {
                  "deletes usage rows dated 7 or more days earlier, so this is not a lifetime count. "
                  "Last Used is the latest usage_date still present, which the app writes as a yyyyMMdd "
                  "day in the phone's time zone at the time of use, and is shown as that local date. "
-                 "One known use gave 1 and the expected day.",
+                 "One known use gave 1 and the expected day. Source File is the database the row was "
+                 "read from. It stays beside Android User because a rollback copy under data/misc_ce "
+                 "or data/misc_de can hold different rows for the same user. Android User on a "
+                 "rollback copy is the user number in that path. A rollback row is left out when a row "
+                 "from the live database of the same user and storage class is equal to it in every "
+                 "other column. Each live row removes one rollback row. When two rollback copies hold "
+                 "the same row, one of them is still reported. A rollback copy whose main database "
+                 "file is byte identical to the live one of the same user and storage class is not "
+                 "read, even when its write-ahead log differs, so rows held only in that log are not "
+                 "reported. Rollback handling was run on a constructed tree made from the lab "
+                 "captures. A rollback copy identical to the live one was not read. Of the 2 rows in a "
+                 "rollback copy that differed, 1 equalled a live row and was left out and 1 was "
+                 "reported. A rollback copy for a user other than 0, a copy under data/misc_de and two "
+                 "differing rollback copies were not exercised.",
         "paths": ('*/com.whatsapp.w4b/databases/msgstore.db*', '*/com.whatsapp.w4b/databases/wa.db*',
                   '*/com.whatsapp.w4b/databases/smb.db*'),
         "output_types": ["html", "tsv", "lava"],
@@ -41,12 +54,24 @@ __artifacts_v2__ = {
                  "equals quick_reply_id. In the decompiled WhatsApp Business app (versionName "
                  "2.26.45.80), uri is written from the path of the attachment's Uri. The app makes it "
                  "relative to a base folder when the file is under that folder. Otherwise the full "
-                 "path is written. caption and media_type are written with it. In that source the base "
-                 "is the app's WhatsApp Business folder on shared storage. No stored value was "
+                 "path is written. caption and media_type are written with it. In that source (classes "
+                 "X.9Ta and X.0Jq, which jadx shows as C209479Ta and C04300Jq) the base is a folder "
+                 "named WhatsApp Business on shared storage, or a subfolder of it. No stored value was "
                  "observed, so the folder on a given device was not tested. No tested capture held an "
                  "attachment, so this artifact has not been run on real attachment rows. The attached "
                  "file is not shown, because where these paths resolve in an extraction was not "
-                 "tested. Media Type is shown as stored and its meaning is not established.",
+                 "tested. Media Type is shown as stored and its meaning is not established. Source "
+                 "File is the database the row was read from. It stays beside Android User because a "
+                 "rollback copy under data/misc_ce or data/misc_de can hold different rows for the "
+                 "same user. Android User on a rollback copy is the user number in that path. A "
+                 "rollback row is left out when a row from the live database of the same user and "
+                 "storage class is equal to it in every other column. Each live row removes one "
+                 "rollback row. When two rollback copies hold the same row, one of them is still "
+                 "reported. A rollback copy whose main database file is byte identical to the live one "
+                 "of the same user and storage class is not read, even when its write-ahead log "
+                 "differs, so rows held only in that log are not reported. Rollback handling was not "
+                 "run for this artifact. A rollback copy for a user other than 0, a copy under "
+                 "data/misc_de and two differing rollback copies were not exercised.",
         "paths": ('*/com.whatsapp.w4b/databases/msgstore.db*', '*/com.whatsapp.w4b/databases/wa.db*',
                   '*/com.whatsapp.w4b/databases/smb.db*'),
         "output_types": ["html", "tsv", "lava"],
@@ -71,12 +96,25 @@ __artifacts_v2__ = {
                  "meanings come from the decompiled WhatsApp Business app (versionName 2.26.45.80). "
                  "Tested on a lab test account capture of WhatsApp Business 2.26.45.80 that is not in "
                  "the corpus, against values entered in the app. A chat placed in 2 lists gave 2 rows. "
-                 "Lists with no chats are not reported. On the tested account 3 of the 5 lists were "
-                 "present before the tester used lists and held no chats. The 2 that held chats were "
-                 "not in that earlier copy. They store predefined_id 1 and 4, and the other 3 store 0. "
-                 "What predefined_id means was not established. A list does not establish that the "
-                 "user created it. The table has no time, so a row does not show when the chat was "
-                 "added.",
+                 "Lists with no chats are not reported. An earlier copy of the database, taken before "
+                 "the tester used lists and without its write-ahead log, held 3 of the 5 lists and no "
+                 "chats in them. The 2 lists that held chats were not in that copy. They store "
+                 "predefined_id 1 and 4, and the other 3 store 0. What predefined_id means was not "
+                 "established. A list does not establish that the user created it. The table has no "
+                 "time, so a row does not show when the chat was added. Source File is the database "
+                 "the row was read from. It stays beside Android User because a rollback copy under "
+                 "data/misc_ce or data/misc_de can hold different rows for the same user. Android User "
+                 "on a rollback copy is the user number in that path. A rollback row is left out when "
+                 "a row from the live database of the same user and storage class is equal to it in "
+                 "every other column. Each live row removes one rollback row. When two rollback copies "
+                 "hold the same row, one of them is still reported. A rollback copy whose main "
+                 "database file is byte identical to the live one of the same user and storage class "
+                 "is not read, even when its write-ahead log differs, so rows held only in that log "
+                 "are not reported. Rollback handling was run on a constructed tree made from the lab "
+                 "captures. A rollback copy identical to the live one was not read. Both rows of a "
+                 "rollback copy that differed equalled live rows and were left out. A rollback copy "
+                 "for a user other than 0, a copy under data/misc_de and two differing rollback copies "
+                 "were not exercised.",
         "paths": ('*/com.whatsapp.w4b/databases/msgstore.db*', '*/com.whatsapp.w4b/databases/wa.db*',
                   '*/com.whatsapp.w4b/databases/smb.db*'),
         "output_types": ["html", "tsv", "lava"],
@@ -92,20 +130,33 @@ __artifacts_v2__ = {
         "category": "WhatsApp Business",
         "notes": "Read from com.whatsapp.w4b/databases/smb.db: one row per wa_notes row. Created and "
                  "Modified are created_at and modified_at read as Unix milliseconds. The app keeps one "
-                 "note per chat and overwrites its text on an edit. The app has two code paths that "
-                 "change a note's chat id. One of them also rewrites modified_at, so Modified need not "
-                 "be a text edit. Neither was exercised. An edit was not exercised: Created and "
-                 "Modified were equal on the tested row. Chat is chat_jid. Chat Name comes from "
-                 "wa_contacts in the wa.db beside it. It is display_name, or wa_name when that is "
-                 "empty, and is blank when no wa_contacts row with the same id has a name. When the id "
-                 "has no name of its own and jid_map in the msgstore.db beside it links it (as "
-                 "lid_row_id) to another id, Chat Name is the wa_contacts name of that linked id. Chat "
-                 "still shows the stored id. The tested wa_notes row did not hold an @lid id, so that "
-                 "lookup was not run on capture data. Field meanings come from the decompiled WhatsApp "
-                 "Business app (versionName 2.26.45.80). Tested on a lab test account capture of "
-                 "WhatsApp Business 2.26.45.80 that is not in the corpus, against values entered in "
-                 "the app. One known note was read back. note_type and account_jid are not reported: "
-                 "note_type held 0 and account_jid was NULL on the tested row.",
+                 "note per chat and overwrites its text on an edit. In that app build, two code paths "
+                 "change a note's chat id (classes X.1Ae and X.CoV, which jadx shows as C25721Ae and "
+                 "C28817CoV). The X.1Ae path also rewrites modified_at, so Modified need not be a text "
+                 "edit. Neither was exercised. An edit was not exercised: Created and Modified were "
+                 "equal on the tested row. Chat is chat_jid. Chat Name comes from wa_contacts in the "
+                 "wa.db beside it. It is display_name, or wa_name when that is empty, and is blank "
+                 "when no wa_contacts row with the same id has a name. When the id has no name of its "
+                 "own and jid_map in the msgstore.db beside it links it (as lid_row_id) to another id, "
+                 "Chat Name is the wa_contacts name of that linked id. Chat still shows the stored id. "
+                 "The tested wa_notes row did not hold an @lid id, so that lookup was not run on "
+                 "capture data. Field meanings come from the decompiled WhatsApp Business app "
+                 "(versionName 2.26.45.80). Tested on a lab test account capture of WhatsApp Business "
+                 "2.26.45.80 that is not in the corpus, against values entered in the app. One known "
+                 "note was read back. note_type and account_jid are not reported: note_type held 0 and "
+                 "account_jid was NULL on the tested row. Source File is the database the row was read "
+                 "from. It stays beside Android User because a rollback copy under data/misc_ce or "
+                 "data/misc_de can hold different rows for the same user. Android User on a rollback "
+                 "copy is the user number in that path. A rollback row is left out when a row from the "
+                 "live database of the same user and storage class is equal to it in every other "
+                 "column. Each live row removes one rollback row. When two rollback copies hold the "
+                 "same row, one of them is still reported. A rollback copy whose main database file is "
+                 "byte identical to the live one of the same user and storage class is not read, even "
+                 "when its write-ahead log differs, so rows held only in that log are not reported. "
+                 "Rollback handling was run on a constructed tree made from the lab captures. Both "
+                 "rollback copies of smb.db were byte identical to the live one and were not read. A "
+                 "rollback copy that differs was not exercised. A rollback copy for a user other than "
+                 "0, a copy under data/misc_de and two differing rollback copies were not exercised.",
         "paths": ('*/com.whatsapp.w4b/databases/msgstore.db*', '*/com.whatsapp.w4b/databases/wa.db*',
                   '*/com.whatsapp.w4b/databases/smb.db*'),
         "output_types": "standard",
@@ -141,7 +192,20 @@ __artifacts_v2__ = {
                  "message was sent: two incoming messages received while Away was always_on got no "
                  "away reply. The app checks further conditions before it sends one. The away_messages "
                  "table, which the app uses to record who was already sent the away reply, held no "
-                 "rows on the tested captures and is not read.",
+                 "rows on the tested captures and is not read. Source File is the database the row was "
+                 "read from. It stays beside Android User because a rollback copy under data/misc_ce "
+                 "or data/misc_de can hold different rows for the same user. Android User on a "
+                 "rollback copy is the user number in that path. A rollback row is left out when a row "
+                 "from the live database of the same user and storage class is equal to it in every "
+                 "other column. Each live row removes one rollback row. When two rollback copies hold "
+                 "the same row, one of them is still reported. A rollback copy whose main database "
+                 "file is byte identical to the live one of the same user and storage class is not "
+                 "read, even when its write-ahead log differs, so rows held only in that log are not "
+                 "reported. Rollback handling was run on a constructed tree made from the lab "
+                 "captures. A rollback copy identical to the live one was not read. The 2 rows of a "
+                 "rollback copy that differed were not equal to the live rows and were reported. "
+                 "Leaving out an equal row was not exercised. A rollback copy for a user other than 0, "
+                 "a copy under data/misc_de and two differing rollback copies were not exercised.",
         "paths": ('*/com.whatsapp.w4b/databases/msgstore.db*', '*/com.whatsapp.w4b/databases/wa.db*',
                   '*/com.whatsapp.w4b/databases/smb.db*'),
         "output_types": ["html", "tsv", "lava"],
@@ -169,7 +233,21 @@ __artifacts_v2__ = {
                  "and were not exercised. The test account had a business hours setting, and it was "
                  "not found in hours_note or wa_biz_profiles_hours, which held no rows and is not "
                  "read. Time Zone is time_zone, which the app reads with the business hours. A stored "
-                 "0, 0 coordinate pair is shown blank. Other profile fields are not reported.",
+                 "0, 0 coordinate pair is shown blank. Other profile fields are not reported. Source "
+                 "File is the database the row was read from. It stays beside Android User because a "
+                 "rollback copy under data/misc_ce or data/misc_de can hold different rows for the "
+                 "same user. Android User on a rollback copy is the user number in that path. A "
+                 "rollback row is left out when a row from the live database of the same user and "
+                 "storage class is equal to it in every other column. Each live row removes one "
+                 "rollback row. When two rollback copies hold the same row, one of them is still "
+                 "reported. A rollback copy whose main database file is byte identical to the live one "
+                 "of the same user and storage class is not read, even when its write-ahead log "
+                 "differs, so rows held only in that log are not reported. Rollback handling was run "
+                 "on a constructed tree made from the lab captures. Both rollback copies of wa.db had "
+                 "a main file byte identical to the live one and were not read. One of them had a "
+                 "different write-ahead log. A rollback copy that differs was not exercised. A "
+                 "rollback copy for a user other than 0, a copy under data/misc_de and two differing "
+                 "rollback copies were not exercised.",
         "paths": ('*/com.whatsapp.w4b/databases/msgstore.db*', '*/com.whatsapp.w4b/databases/wa.db*',
                   '*/com.whatsapp.w4b/databases/smb.db*'),
         "output_types": ["html", "tsv", "lava", "kml"],
@@ -182,7 +260,7 @@ import re
 import sqlite3
 from datetime import datetime, timezone
 
-from scripts.artifacts.storagePathViews import android_user, unique_files
+from scripts.artifacts.storagePathViews import android_user, unique_files, without_snapshot_repeats
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
 
 # AwaySettingsActivity names 1 to 3. 'off' is this module's label for 0, which the app treats as not enabled.
@@ -203,6 +281,15 @@ def _local_day(value):
     """A yyyyMMdd integer as YYYY-MM-DD, the phone's local date."""
     digits = str(value or '')
     return f'{digits[:4]}-{digits[4:6]}-{digits[6:8]}' if re.fullmatch(r'\d{8}', digits) else digits
+
+
+def _user(relative_path):
+    """The Android user of a path, including the user number of a rollback copy."""
+    user = android_user(relative_path)
+    if user:
+        return user
+    match = re.search(r'(?:^|/)(?:user)?data/misc_(?:ce|de)/(\d+)/rollback/\d+/', str(relative_path).replace('\\', '/'))
+    return match.group(1) if match else ''
 
 
 def _tables(db):
@@ -283,14 +370,14 @@ def _named(names, value):
 @artifact_processor
 def whatsapp_business_quick_replies(context):
     data_headers = ('Shortcut', 'Reply Text', 'Linked Lists', 'Attachments', 'Times Used (kept rows)',
-                    'Last Used (local date)', 'Android User')
+                    'Last Used (local date)', 'Android User', 'Source File')
     data_list, sources = [], []
     for path in _stores(context, 'msgstore.db'):
         db = open_sqlite_db_readonly(path)
         if db is None:
             continue
         sources.append(path)
-        user = android_user(context.get_relative_path(path))
+        user = _user(context.get_relative_path(path))
         try:
             tables = _tables(db)
             if 'quick_replies' not in tables:
@@ -317,20 +404,21 @@ def whatsapp_business_quick_replies(context):
             linked = [labels.get(_int(part), part) for part in str(label_ids or '').replace(',', ' ').split()]
             total, last = usage.get(str(row_id), ('', ''))
             data_list.append((title or '', content or '', ', '.join(linked), attachments.get(str(row_id), 0),
-                              total, _local_day(last), user))
-    return data_headers, data_list, '\n'.join(sources)
+                              total, _local_day(last), user, context.get_relative_path(path)))
+    return data_headers, without_snapshot_repeats(data_list), '\n'.join(sources)
 
 
 @artifact_processor
 def whatsapp_business_quick_reply_attachments(context):
-    data_headers = ('Shortcut', 'Attachment Path (as stored)', 'Caption', 'Media Type (as stored)', 'Android User')
+    data_headers = ('Shortcut', 'Attachment Path (as stored)', 'Caption', 'Media Type (as stored)', 'Android User',
+                    'Source File')
     data_list, sources = [], []
     for path in _stores(context, 'msgstore.db'):
         db = open_sqlite_db_readonly(path)
         if db is None:
             continue
         sources.append(path)
-        user = android_user(context.get_relative_path(path))
+        user = _user(context.get_relative_path(path))
         try:
             tables = _tables(db)
             if 'quick_reply_attachments' not in tables:
@@ -346,20 +434,20 @@ def whatsapp_business_quick_reply_attachments(context):
             db.close()
         for reply, uri, caption, media_type in records:
             data_list.append((titles.get(str(reply)) or '', uri or '', caption or '',
-                              '' if media_type is None else media_type, user))
-    return data_headers, data_list, '\n'.join(sources)
+                              '' if media_type is None else media_type, user, context.get_relative_path(path)))
+    return data_headers, without_snapshot_repeats(data_list), '\n'.join(sources)
 
 
 @artifact_processor
 def whatsapp_business_chat_lists(context):
-    data_headers = ('List', 'Chat', 'Chat Name', 'Android User')
+    data_headers = ('List', 'Chat', 'Chat Name', 'Android User', 'Source File')
     data_list, sources = [], []
     for path in _stores(context, 'msgstore.db'):
         db = open_sqlite_db_readonly(path)
         if db is None:
             continue
         sources.append(path)
-        user = android_user(context.get_relative_path(path))
+        user = _user(context.get_relative_path(path))
         names = _contacts(os.path.dirname(path))
         links = _jid_links(os.path.dirname(path))
         try:
@@ -375,21 +463,22 @@ def whatsapp_business_chat_lists(context):
         finally:
             db.close()
         for label, jid in records:
-            data_list.append((label or '', jid or '', _chat_name(names, links, jid), user))
-    return data_headers, data_list, '\n'.join(sources)
+            data_list.append((label or '', jid or '', _chat_name(names, links, jid), user,
+                              context.get_relative_path(path)))
+    return data_headers, without_snapshot_repeats(data_list), '\n'.join(sources)
 
 
 @artifact_processor
 def whatsapp_business_customer_notes(context):
     data_headers = (('Created', 'datetime'), ('Modified', 'datetime'), 'Chat', 'Chat Name', 'Note',
-                    'Android User')
+                    'Android User', 'Source File')
     data_list, sources = [], []
     for path in _stores(context, 'smb.db'):
         db = open_sqlite_db_readonly(path)
         if db is None:
             continue
         sources.append(path)
-        user = android_user(context.get_relative_path(path))
+        user = _user(context.get_relative_path(path))
         names = _contacts(os.path.dirname(path))
         links = _jid_links(os.path.dirname(path))
         try:
@@ -404,22 +493,22 @@ def whatsapp_business_customer_notes(context):
             db.close()
         for created, modified, jid, note in records:
             data_list.append((_time(created), _time(modified), jid or '', _chat_name(names, links, jid), note or '',
-                              user))
-    return data_headers, data_list, '\n'.join(sources)
+                              user, context.get_relative_path(path)))
+    return data_headers, without_snapshot_repeats(data_list), '\n'.join(sources)
 
 
 @artifact_processor
 def whatsapp_business_automated_messages(context):
     data_headers = ('Message Type', 'Setting', 'Message', ('Schedule Start', 'datetime'),
                     ('Schedule End', 'datetime'), 'Recipients', 'Allow List', 'Block List',
-                    'Android User')
+                    'Android User', 'Source File')
     data_list, sources = [], []
     for path in _stores(context, 'msgstore.db'):
         db = open_sqlite_db_readonly(path)
         if db is None:
             continue
         sources.append(path)
-        user = android_user(context.get_relative_path(path))
+        user = _user(context.get_relative_path(path))
         try:
             if 'props' not in _tables(db):
                 continue
@@ -436,28 +525,29 @@ def whatsapp_business_automated_messages(context):
             data_list.append(('Greeting', setting, props.get('greeting_message') or '', '', '',
                               _named(_RECIPIENTS, props.get('greeting_distribution')),
                               props.get('greeting_white_list') or '', props.get('greeting_black_list') or '',
-                              user))
+                              user, context.get_relative_path(path)))
         if 'away_state' in props or 'away_message' in props:
             data_list.append(('Away', _named(_AWAY_STATES, props.get('away_state')),
                               props.get('away_message') or '', _time(_int(props.get('away_start_time'))),
                               _time(_int(props.get('away_end_time'))),
                               _named(_RECIPIENTS, props.get('away_distribution')),
-                              props.get('away_white_list') or '', props.get('away_black_list') or '', user))
-    return data_headers, data_list, '\n'.join(sources)
+                              props.get('away_white_list') or '', props.get('away_black_list') or '', user,
+                              context.get_relative_path(path)))
+    return data_headers, without_snapshot_repeats(data_list), '\n'.join(sources)
 
 
 @artifact_processor
 def whatsapp_business_profiles(context):
     data_headers = ('Account', 'Business Name', 'Categories', 'Description', 'Email', 'Address',
                     ('Latitude', 'latitude'), ('Longitude', 'longitude'), 'Websites', 'Hours Note',
-                    'Time Zone', 'Android User')
+                    'Time Zone', 'Android User', 'Source File')
     data_list, sources = [], []
     for path in _stores(context, 'wa.db'):
         db = open_sqlite_db_readonly(path)
         if db is None:
             continue
         sources.append(path)
-        user = android_user(context.get_relative_path(path))
+        user = _user(context.get_relative_path(path))
         try:
             tables = _tables(db)
             if 'wa_biz_profiles' not in tables:
@@ -483,5 +573,5 @@ def whatsapp_business_profiles(context):
             data_list.append((jid or '', verified.get(jid) or '', ', '.join(categories.get(row_id, [])),
                               about or '', email or '', address or '', latitude if has_point else '',
                               longitude if has_point else '', ', '.join(websites.get(row_id, [])), hours or '',
-                              zone or '', user))
-    return data_headers, data_list, '\n'.join(sources)
+                              zone or '', user, context.get_relative_path(path)))
+    return data_headers, without_snapshot_repeats(data_list), '\n'.join(sources)
