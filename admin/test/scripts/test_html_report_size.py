@@ -14,6 +14,7 @@ import csv
 import inspect
 import os
 import pathlib
+import re
 import shutil
 import sqlite3
 import sys
@@ -196,10 +197,10 @@ class IndexTabTests(unittest.TestCase):
     def _files_log(path_count):
         paths = ''.join(f'<ul><li>private/var/mobile/file-{i:05d}.jpg</li></ul>' for i in range(path_count))
         return ('Extraction/Path selected: /cases/x.zip<br><br>'
-                '<b>For firstArtifact artifact</b>'
+                '<b>For firstArtifact module</b>'
                 f'<ul><li>{path_count} files for regex <i>*/mobile/*.jpg</i> located at:{paths}</li></ul>'
                 '<ul><li>No file found for regex <i>*/missing/*</i></li></ul>'
-                '<b>For secondArtifact artifact</b>'
+                '<b>For secondArtifact module</b>'
                 '<ul><li>1 file for regex <i>*/one.db</i> located at:<ul><li>private/one.db</li></ul></li></ul>')
 
     def test_small_logs_are_copied_into_their_tabs(self):
@@ -217,8 +218,21 @@ class IndexTabTests(unittest.TestCase):
         self.assertNotIn(f'file-{report.INDEX_TAB_PATHS_PER_PATTERN:05d}.jpg', index)
         self.assertIn(f'{500 - report.INDEX_TAB_PATHS_PER_PATTERN} more in the full list', index)
         self.assertIn('No file found for regex <i>*/missing/*</i>', index)
-        self.assertIn('<b>For secondArtifact artifact</b>', index)
+        self.assertIn('<b>For secondArtifact module</b>', index)
         self.assertIn('private/one.db', index)
+
+    def test_the_summary_reads_the_heading_aleapp_writes(self):
+        source = (pathlib.Path(report.__file__).parents[1] / 'aleapp.py').read_text(encoding='utf8')
+        heading = re.search(r"log\.write\(f'<b>For \{[^']*\} (\w+)</b>'\)", source)
+        self.assertIsNotNone(heading)
+        written = f'<b>For someArtifact {heading.group(1)}</b><ul><li>No file found for regex <i>*/a</i></li></ul>'
+        self.assertEqual(report._ARTIFACT_BLOCK.match(written).group(1), 'someArtifact')  # pylint: disable=protected-access
+
+    def test_an_escaped_module_name_is_not_escaped_again(self):
+        files_log = self._files_log(500).replace('secondArtifact', 'Second &amp; Third')
+        index = self._index('short<br>\n', files_log)
+        self.assertIn('<b>For Second &amp; Third module</b>', index)
+        self.assertNotIn('&amp;amp;', index)
 
     def test_a_large_run_log_keeps_both_ends(self):
         lines = ''.join(f'log line {i}<br>\n' for i in range(1000))
