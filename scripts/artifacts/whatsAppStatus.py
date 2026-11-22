@@ -58,7 +58,21 @@ __artifacts_v2__ = {
                  "WhatsApp Business 2.26.45.80 that is not in the corpus. Both apps are read by the "
                  "same code. Other types and states, an archived row, and the older 16-column table "
                  "with rows were not exercised. On the other tested images in sample_data the table "
-                 "held no rows.",
+                 "held no rows. Source File is the database the row was read from. It stays beside "
+                 "Android User because a rollback copy under data/misc_ce or data/misc_de can hold "
+                 "different rows for the same user. Android User on a rollback copy is the user number "
+                 "in that path. A rollback row is left out when a row from the live database of the "
+                 "same user and storage class is equal to it in every other column. Each live row "
+                 "removes one rollback row. When two rollback copies hold the same row, one of them is "
+                 "still reported. A rollback copy whose main database file is byte identical to the "
+                 "live one of the same user and storage class is not read, even when its write-ahead "
+                 "log differs, so rows held only in that log are not reported. Rollback handling was "
+                 "not run on com.whatsapp data. The same code was run on a constructed tree of "
+                 "WhatsApp Business copies made from the lab captures. A rollback copy identical to "
+                 "the live one was not read. A rollback copy that differed gave 1 row under its own "
+                 "path with Android User 0. Leaving out an equal rollback row was not exercised on "
+                 "status rows. A rollback copy for a user other than 0, a copy under data/misc_de and "
+                 "two differing rollback copies were not exercised.",
         "paths": ('*/com.whatsapp/databases/status.db*', '*/com.whatsapp/databases/wa.db*'),
         "output_types": "standard",
         "artifact_icon": "circle",
@@ -97,7 +111,21 @@ __artifacts_v2__ = {
                  "with Viewed Time blank. The six tested com.whatsapp images "
                  "(samsung_a166u_a16_known_20261116, samsung_a166u_a16_known_20261117, "
                  "hc_pixel8pro_a16, hc_pixel8pro_a17, kevin_pocox7_a15, dragna_pixel9a_a16) held no "
-                 "receipt rows.",
+                 "receipt rows. Source File is the database the row was read from. It stays beside "
+                 "Android User because a rollback copy under data/misc_ce or data/misc_de can hold "
+                 "different rows for the same user. Android User on a rollback copy is the user number "
+                 "in that path. A rollback row is left out when a row from the live database of the "
+                 "same user and storage class is equal to it in every other column. Each live row "
+                 "removes one rollback row. When two rollback copies hold the same row, one of them is "
+                 "still reported. A rollback copy whose main database file is byte identical to the "
+                 "live one of the same user and storage class is not read, even when its write-ahead "
+                 "log differs, so rows held only in that log are not reported. Rollback handling was "
+                 "not run on com.whatsapp data. The same code was run on a constructed tree of "
+                 "WhatsApp Business copies made from the lab captures. A rollback copy identical to "
+                 "the live one was not read. A rollback copy that differed gave 1 row under its own "
+                 "path with Android User 0. Leaving out an equal rollback row was not exercised on "
+                 "status rows. A rollback copy for a user other than 0, a copy under data/misc_de and "
+                 "two differing rollback copies were not exercised.",
         "paths": ('*/com.whatsapp/databases/status.db*', '*/com.whatsapp/databases/wa.db*'),
         "output_types": "standard",
         "artifact_icon": "eye",
@@ -169,7 +197,20 @@ __artifacts_v2__ = {
                  "WhatsApp Business 2.26.45.80 that is not in the corpus. Both apps are read by the "
                  "same code. Other types and states, an archived row, and the older 16-column table "
                  "with rows were not exercised. None of the six tested corpus images holds a "
-                 "com.whatsapp.w4b status.db.",
+                 "com.whatsapp.w4b status.db. Source File is the database the row was read from. It "
+                 "stays beside Android User because a rollback copy under data/misc_ce or data/misc_de "
+                 "can hold different rows for the same user. Android User on a rollback copy is the "
+                 "user number in that path. A rollback row is left out when a row from the live "
+                 "database of the same user and storage class is equal to it in every other column. "
+                 "Each live row removes one rollback row. When two rollback copies hold the same row, "
+                 "one of them is still reported. A rollback copy whose main database file is byte "
+                 "identical to the live one of the same user and storage class is not read, even when "
+                 "its write-ahead log differs, so rows held only in that log are not reported. "
+                 "Rollback handling was run on a constructed tree made from the lab captures. A "
+                 "rollback copy identical to the live one was not read. A rollback copy that differed "
+                 "gave 1 row under its own path with Android User 0. Leaving out an equal rollback row "
+                 "was not exercised on status rows. A rollback copy for a user other than 0, a copy "
+                 "under data/misc_de and two differing rollback copies were not exercised.",
         "paths": ('*/com.whatsapp.w4b/databases/status.db*', '*/com.whatsapp.w4b/databases/wa.db*'),
         "output_types": "standard",
         "artifact_icon": "circle",
@@ -201,7 +242,20 @@ __artifacts_v2__ = {
                  "with Viewed Time blank. The six tested com.whatsapp images "
                  "(samsung_a166u_a16_known_20261116, samsung_a166u_a16_known_20261117, "
                  "hc_pixel8pro_a16, hc_pixel8pro_a17, kevin_pocox7_a15, dragna_pixel9a_a16) held no "
-                 "receipt rows.",
+                 "receipt rows. Source File is the database the row was read from. It stays beside "
+                 "Android User because a rollback copy under data/misc_ce or data/misc_de can hold "
+                 "different rows for the same user. Android User on a rollback copy is the user number "
+                 "in that path. A rollback row is left out when a row from the live database of the "
+                 "same user and storage class is equal to it in every other column. Each live row "
+                 "removes one rollback row. When two rollback copies hold the same row, one of them is "
+                 "still reported. A rollback copy whose main database file is byte identical to the "
+                 "live one of the same user and storage class is not read, even when its write-ahead "
+                 "log differs, so rows held only in that log are not reported. Rollback handling was "
+                 "run on a constructed tree made from the lab captures. A rollback copy identical to "
+                 "the live one was not read. A rollback copy that differed gave 1 row under its own "
+                 "path with Android User 0. Leaving out an equal rollback row was not exercised on "
+                 "status rows. A rollback copy for a user other than 0, a copy under data/misc_de and "
+                 "two differing rollback copies were not exercised.",
         "paths": ('*/com.whatsapp.w4b/databases/status.db*', '*/com.whatsapp.w4b/databases/wa.db*'),
         "output_types": "standard",
         "artifact_icon": "eye",
@@ -209,10 +263,11 @@ __artifacts_v2__ = {
 }
 
 import os
+import re
 import sqlite3
 from datetime import datetime, timezone
 
-from scripts.artifacts.storagePathViews import android_user, unique_files
+from scripts.artifacts.storagePathViews import android_user, unique_files, without_snapshot_repeats
 from scripts.ilapfuncs import artifact_processor, check_in_embedded_media, logfunc, \
     open_sqlite_db_readonly
 
@@ -238,6 +293,15 @@ def _enum(names, value):
         return ''
     name = names.get(value)
     return f'{name} ({value})' if name else f'Unknown ({value})'
+
+
+def _user(relative_path):
+    """The Android user of a path, including the user number of a rollback copy."""
+    user = android_user(relative_path)
+    if user:
+        return user
+    match = re.search(r'(?:^|/)(?:user)?data/misc_(?:ce|de)/(\d+)/rollback/\d+/', str(relative_path).replace('\\', '/'))
+    return match.group(1) if match else ''
 
 
 def _tables(db):
@@ -286,14 +350,14 @@ def _updates(context):
     headers = (('Status Time', 'datetime'), ('Server Receipt Time', 'datetime'),
                ('Received Time', 'datetime'), 'Direction', 'Sender', 'Sender Name', 'Type', 'State',
                'Text', ('Thumbnail', 'media'), 'Mime Type', 'Duration (as stored)', 'Archived',
-               'View Count', 'Reaction Count', 'Android User')
+               'View Count', 'Reaction Count', 'Android User', 'Source File')
     rows, sources = [], []
     for path in _stores(context):
         db = open_sqlite_db_readonly(path)
         if db is None:
             continue
         sources.append(path)
-        user = android_user(context.get_relative_path(path))
+        user = _user(context.get_relative_path(path))
         names = _contacts(path)
         try:
             tables = _tables(db)
@@ -333,21 +397,21 @@ def _updates(context):
             rows.append((_time(stamp), _time(server), _time(got), direction, sender, name,
                          _enum(_TYPES, kind), _enum(_STATES, state), text or '', item or '', mime,
                          duration, '' if is_archived is None else ('Yes' if is_archived else 'No'),
-                         views, reactions, user))
-    return headers, rows, '\n'.join(sources)
+                         views, reactions, user, context.get_relative_path(path)))
+    return headers, without_snapshot_repeats(rows), '\n'.join(sources)
 
 
 def _viewers(context):
     headers = (('Received Time', 'datetime'), ('Viewed Time', 'datetime'),
                ('Status Time', 'datetime'), 'Viewer', 'Viewer Name', 'Status Type', 'Status Text',
-               'Android User')
+               'Android User', 'Source File')
     rows, sources = [], []
     for path in _stores(context):
         db = open_sqlite_db_readonly(path)
         if db is None:
             continue
         sources.append(path)
-        user = android_user(context.get_relative_path(path))
+        user = _user(context.get_relative_path(path))
         names = _contacts(path)
         try:
             if not {'status', 'status_seen_receipt'} <= _tables(db):
@@ -363,8 +427,8 @@ def _viewers(context):
             db.close()
         for stamp, got, seen, jid, kind, text in records:
             rows.append((_time(got), _time(seen), _time(stamp), jid or '', names.get(jid, ''),
-                          _enum(_TYPES, kind), text or '', user))
-    return headers, rows, '\n'.join(sources)
+                          _enum(_TYPES, kind), text or '', user, context.get_relative_path(path)))
+    return headers, without_snapshot_repeats(rows), '\n'.join(sources)
 
 
 @artifact_processor
