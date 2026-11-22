@@ -3,7 +3,7 @@ __artifacts_v2__ = {
         "name": "Netstats",
         "description": "Per-application and device-wide network data usage from the binary "
                        "system netstats collections, bucketed over time, with the connection "
-                       "type and network identifiers for each interface",
+                       "type and network identifiers of each network identity",
         "author": "Alex Caithness",
         "creation_date": "2026-08-05",
         "last_update_date": "2026-11-21",
@@ -15,10 +15,17 @@ __artifacts_v2__ = {
                  "release the layout was taken from is not recorded in this module. Only the "
                  "unified collection format "
                  "(version 16) is parsed; older versions are "
-                 "rejected rather than guessed at.\n"
+                 "rejected rather than guessed at. Identity set version 8 is not in "
+                 "NetworkIdentitySet.java at the android-13 to android-16 release tags. It was "
+                 "present on four tested images. This module reads 8 more bytes per identity "
+                 "for it and does not report them.\n"
+                 "Bucket Start is the start of the bucket in milliseconds since the Unix epoch "
+                 "(NetworkStatsHistory.java), shown in UTC. Duration is the bucket length in "
+                 "milliseconds. Interface holds the connection type, subscriber ID and network "
+                 "ID of each network identity. Its other identity fields are not shown.\n"
                  "UIDs are resolved to package names through packages.xml where it parses. "
-                 "One tested image stored packages.xml encrypted; usage is still reported "
-                 "there with bare UIDs. A UID of -1 is UID_ALL in AOSP NetworkStats.java, "
+                 "If packages.xml cannot be parsed, usage is still reported with bare UIDs. "
+                 "None of the images listed in sample_data exercised this. A UID of -1 is UID_ALL in AOSP NetworkStats.java, "
                  "documented there as the uid value 'when UID details unavailable' "
                  "(https://android.googlesource.com/platform/packages/modules/Connectivity/+/"
                  "bd692130a596b4e9bc1ea6778db72c423bb8ab6f/framework-t/src/android/net/"
@@ -38,28 +45,36 @@ __artifacts_v2__ = {
                  "when totalling because they are 'already counted in TAG_NONE'. It also notes "
                  "that if VPN software uses tags, the total tagged traffic may be greater than "
                  "the TAG_NONE traffic. Do not add tagged rows to Tag 0x0 rows. Rows with UID -1 "
-                 "carry no per-application attribution, and other negative UIDs are special "
-                 "values, not single applications. AOSP leaves the VPN debug sets (Usage Set "
-                 "VPN_IN and VPN_OUT) out of its totals. This module does not remove repeated "
-                 "rows. On samsungs20_a13, six collection files were present, byte-identical, "
-                 "in two netstats folders, and each of their rows is reported twice. Check the "
-                 "source list for repeated collection files before adding rows.\n"
-                 "Timeline output is deliberately off: the buckets produce tens of thousands "
-                 "of timestamped rows per image.",
+                 "carry no per-application attribution. UIDs -4 and -5 are UID_REMOVED and "
+                 "UID_TETHERING in AOSP TrafficStats.java. Another negative UID was present on "
+                 "nine tested images. Its meaning is not established here and it is shown as "
+                 "stored. AOSP leaves the VPN debug sets (Usage Set "
+                 "VPN_IN and VPN_OUT) out of its totals.\n"
+                 "A collection file with the same SHA-256 as one already read is not read "
+                 "again, and its path stays in the source list. Files that differ are all "
+                 "reported, even when they share records: on hc_pixel8pro_a16 and sharon_a14, "
+                 "different files in different netstats folders held identical buckets, so "
+                 "those rows appear more than once. Rows do not show which folder or file kind "
+                 "(dev, xt, uid, uid_tag) they came from. On galaxys10_a10, russell_pixel6a_a13 "
+                 "and userb2_a13, one netstats folder held dev and xt files with identical "
+                 "UID -1 rows. Do not total rows across files. Identical rows can also be "
+                 "separate records, because Interface leaves out some identity fields.\n"
+                 "Timeline output is deliberately off: the buckets produced up to 62,999 "
+                 "timestamped rows on the tested images.",
         "paths": ("*/netstats/dev*", "*/netstats/uid*", "*/netstats/xt*", "*/system/packages.xml"),
         "output_types": ["html", "lava", "tsv"],
         "artifact_icon": "wifi",
         "sample_data": {
             "anne_a15": "29876 rows",
             "galaxys10_a10": "4110 rows",
-            "hc_pixel8pro_a16": "27711 rows",
+            "hc_pixel8pro_a16": "16738 rows",
             "hc_pixel8pro_a17": "12695 rows",
             "kevin_pocox7_a15": "62999 rows",
             "pixel7a_a14": "50819 rows",
             "russell_pixel6a_a13": "45469 rows",
-            "s20fe_a13": "1894 rows",
+            "s20fe_a13": "947 rows",
             "samsunga53_a14": "9825 rows",
-            "samsungs20_a13": "6794 rows",
+            "samsungs20_a13": "5097 rows",
             "sharon_a14": "53032 rows",
             "userb2_a13": "7343 rows",
         },
@@ -69,6 +84,7 @@ __artifacts_v2__ = {
 import dataclasses
 import datetime
 import enum
+import hashlib
 import struct
 import typing
 import xml.etree.ElementTree as etree
@@ -423,6 +439,14 @@ def format_tag(tag: int) -> str:
     return f"0x{tag & 0xFFFFFFFF:x}"
 
 
+def file_sha256(path: str) -> str:
+    digest = hashlib.sha256()
+    with open(path, "rb") as f:
+        while chunk := f.read(1024 * 1024):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
 @artifact_processor
 def netstats(context):
     files_found = context.get_files_found()
@@ -449,8 +473,14 @@ def netstats(context):
         "Rx Bytes", "Rx Packets", "Tx Bytes", "Tx Packets"]
     source_files = set()
     results = []
-    for file in files_found:
-        if file.endswith("packages.xml"):
+    # Sorted so the copy that is read does not depend on the order of the walk.
+    read_files = {}
+    for file in sorted(f for f in files_found if not f.endswith("packages.xml")):
+        sha256 = file_sha256(file)
+        if sha256 in read_files:
+            logfunc(f"Skipping {context.get_relative_path(file)}: byte-identical to "
+                    f"{context.get_relative_path(read_files[sha256])}")
+            source_files.add(context.get_relative_path(file))
             continue
         with open(file, "rb") as f:
             try:
@@ -475,6 +505,7 @@ def netstats(context):
                              format_tag(record.tag),
                              entry.rx_bytes, entry.rx_packets, entry.tx_bytes, entry.tx_packets))
 
+            read_files[sha256] = file
             source_files.add(context.get_relative_path(file))
 
     return headers, results, "\n".join(source_files)
