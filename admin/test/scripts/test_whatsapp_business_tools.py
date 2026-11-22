@@ -97,7 +97,7 @@ class WhatsAppBusinessTools(unittest.TestCase):
             with self.subTest(function=function.__name__):
                 rows = self.rows(function)
                 self.assertTrue(rows)
-                self.assertEqual({row['Source File'] for row in rows}, {f'{self.relative}/{name}'})
+                self.assertEqual({row['Source File'] for row in rows}, {str(pathlib.Path(self.relative) / name)})
 
 
 if __name__ == '__main__':
