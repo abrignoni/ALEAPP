@@ -1,6 +1,7 @@
 """Netstats identity columns: blank when the version lacks a field, No when it stores false."""
 import io
 import pathlib
+import re
 import struct
 import sys
 import unittest
@@ -20,7 +21,7 @@ def optional_string(value):
 
 
 def identity_bytes(version, rat_type=13, roaming=False, metered=False, default_network=False,
-                   sub_id=3):
+                   sub_id=3, network='network'):
     """One identity written with the fields its set version stores."""
     data = b''
     if version <= NetworkIdentitySet.IDENT_VERSION_INIT:
@@ -28,7 +29,7 @@ def identity_bytes(version, rat_type=13, roaming=False, metered=False, default_n
     data += struct.pack('>ii', ConnectionType.TYPE_MOBILE, rat_type)
     data += optional_string('subscriber')
     if version >= NetworkIdentitySet.IDENT_VERSION_ADD_NETWORK_ID:
-        data += optional_string('network')
+        data += optional_string(network)
     if version >= NetworkIdentitySet.IDENT_VERSION_ADD_ROAMING:
         data += bytes([roaming])
     if version >= NetworkIdentitySet.IDENT_VERSION_ADD_METERED:
@@ -87,6 +88,20 @@ class NetstatsIdentityColumns(unittest.TestCase):
     def test_blank_field_keeps_its_position(self):
         row = columns(6, identity_bytes(6), identity_bytes(6))
         self.assertEqual(row[5], ' | ')
+
+    def test_stored_trailing_space_is_kept(self):
+        row = columns(7, identity_bytes(7, network='net '), identity_bytes(7))
+        self.assertEqual(row[0], 'TYPE_MOBILE: subscriber net  | TYPE_MOBILE: subscriber network')
+
+    def test_separator_inside_a_value_is_escaped(self):
+        row = columns(7, identity_bytes(7, network='a | b'), identity_bytes(7, network='c\\d'))
+        self.assertEqual(row[0], 'TYPE_MOBILE: subscriber a \\| b | TYPE_MOBILE: subscriber c\\\\d')
+        unescaped = [len(re.findall(r'(?<!\\) \| ', value)) for value in row]
+        self.assertEqual(unescaped, [1] * 6)
+
+    def test_one_identity_stays_as_stored(self):
+        row = columns(7, identity_bytes(7, network='a | b\\c '))
+        self.assertEqual(row[0], 'TYPE_MOBILE: subscriber a | b\\c  ')
 
     def test_one_identity_has_no_separator(self):
         row = columns(8, identity_bytes(8))
