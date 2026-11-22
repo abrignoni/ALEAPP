@@ -28,14 +28,15 @@ __artifacts_v2__ = {
                  "rollback copy is the user number in that path. A rollback row is left out when a row "
                  "from the live database of the same user and storage class is equal to it in every "
                  "other column. Each live row removes one rollback row. When two rollback copies hold "
-                 "the same row, one of them is still reported. A rollback copy whose main database "
-                 "file is byte identical to the live one of the same user and storage class is not "
-                 "read, even when its write-ahead log differs, so rows held only in that log are not "
-                 "reported. Rollback handling was run on a constructed tree made from the "
-                 "emu_a16_w4b_kd keys. A rollback copy identical to the live one was not read. Of the "
-                 "2 rows in a rollback copy that differed, 1 equalled a live row and was left out and "
-                 "1 was reported. A rollback copy for a user other than 0, a copy under data/misc_de "
-                 "and two differing rollback copies were not exercised.",
+                 "the same row, one of them is still reported. A rollback copy is not read when its "
+                 "main database file, its -wal and its -journal each hold the same content as those of "
+                 "the live one for the same user and storage class. A missing or empty -wal or "
+                 "-journal, and a -wal holding only its header, count as holding nothing. The -journal "
+                 "comparison was not exercised. Rollback handling was run on a constructed tree made "
+                 "from the emu_a16_w4b_kd keys. A rollback copy identical to the live one was not "
+                 "read. Of the 2 rows in a rollback copy that differed, 1 equalled a live row and was "
+                 "left out and 1 was reported. A rollback copy for a user other than 0, a copy under "
+                 "data/misc_de and two differing rollback copies were not exercised.",
         "paths": ('*/com.whatsapp.w4b/databases/msgstore.db*', '*/com.whatsapp.w4b/databases/wa.db*',
                   '*/com.whatsapp.w4b/databases/smb.db*'),
         "output_types": ["html", "tsv", "lava"],
@@ -73,11 +74,13 @@ __artifacts_v2__ = {
                  "rollback row is left out when a row from the live database of the same user and "
                  "storage class is equal to it in every other column. Each live row removes one "
                  "rollback row. When two rollback copies hold the same row, one of them is still "
-                 "reported. A rollback copy whose main database file is byte identical to the live one "
-                 "of the same user and storage class is not read, even when its write-ahead log "
-                 "differs, so rows held only in that log are not reported. Rollback handling was not "
-                 "run for this artifact. A rollback copy for a user other than 0, a copy under "
-                 "data/misc_de and two differing rollback copies were not exercised.",
+                 "reported. A rollback copy is not read when its main database file, its -wal and its "
+                 "-journal each hold the same content as those of the live one for the same user and "
+                 "storage class. A missing or empty -wal or -journal, and a -wal holding only its "
+                 "header, count as holding nothing. The -journal comparison was not exercised. "
+                 "Rollback handling was not run for this artifact. A rollback copy for a user other "
+                 "than 0, a copy under data/misc_de and two differing rollback copies were not "
+                 "exercised.",
         "paths": ('*/com.whatsapp.w4b/databases/msgstore.db*', '*/com.whatsapp.w4b/databases/wa.db*',
                   '*/com.whatsapp.w4b/databases/smb.db*'),
         "output_types": ["html", "tsv", "lava"],
@@ -119,14 +122,17 @@ __artifacts_v2__ = {
                  "user number in that path. A rollback row is left out when a row from the live "
                  "database of the same user and storage class is equal to it in every other column. "
                  "Each live row removes one rollback row. When two rollback copies hold the same row, "
-                 "one of them is still reported. A rollback copy whose main database file is byte "
-                 "identical to the live one of the same user and storage class is not read, even when "
-                 "its write-ahead log differs, so rows held only in that log are not reported. "
-                 "Rollback handling was run on a constructed tree made from the emu_a16_w4b_kd keys. A "
-                 "rollback copy identical to the live one was not read. Both rows of a rollback copy "
-                 "that differed equalled live rows and were left out. A rollback copy for a user other "
-                 "than 0, a copy under data/misc_de and two differing rollback copies were not "
-                 "exercised.",
+                 "one of them is still reported. A rollback copy is not read when its main database "
+                 "file, its -wal and its -journal each hold the same content as those of the live one "
+                 "for the same user and storage class. A missing or empty -wal or -journal, and a -wal "
+                 "holding only its header, count as holding nothing. The -journal comparison was not "
+                 "exercised. The comparison covers that database only. Chat Name comes from wa.db in "
+                 "the same folder, which is not compared, so a rollback copy that is not read could "
+                 "have given a different Chat Name. That case was not exercised. Rollback handling was "
+                 "run on a constructed tree made from the emu_a16_w4b_kd keys. A rollback copy "
+                 "identical to the live one was not read. Both rows of a rollback copy that differed "
+                 "equalled live rows and were left out. A rollback copy for a user other than 0, a "
+                 "copy under data/misc_de and two differing rollback copies were not exercised.",
         "paths": ('*/com.whatsapp.w4b/databases/msgstore.db*', '*/com.whatsapp.w4b/databases/wa.db*',
                   '*/com.whatsapp.w4b/databases/smb.db*'),
         "output_types": ["html", "tsv", "lava"],
@@ -168,13 +174,18 @@ __artifacts_v2__ = {
                  "number in that path. A rollback row is left out when a row from the live database of "
                  "the same user and storage class is equal to it in every other column. Each live row "
                  "removes one rollback row. When two rollback copies hold the same row, one of them is "
-                 "still reported. A rollback copy whose main database file is byte identical to the "
-                 "live one of the same user and storage class is not read, even when its write-ahead "
-                 "log differs, so rows held only in that log are not reported. Rollback handling was "
-                 "run on a constructed tree made from the emu_a16_w4b_kd keys. Both rollback copies of "
-                 "smb.db were byte identical to the live one and were not read. A rollback copy that "
-                 "differs was not exercised. A rollback copy for a user other than 0, a copy under "
-                 "data/misc_de and two differing rollback copies were not exercised.",
+                 "still reported. A rollback copy is not read when its main database file, its -wal "
+                 "and its -journal each hold the same content as those of the live one for the same "
+                 "user and storage class. A missing or empty -wal or -journal, and a -wal holding only "
+                 "its header, count as holding nothing. The -journal comparison was not exercised. The "
+                 "comparison covers that database only. Chat Name comes from wa.db and msgstore.db in "
+                 "the same folder, which are not compared, so a rollback copy that is not read could "
+                 "have given a different Chat Name. That case was not exercised. Rollback handling was "
+                 "run on a constructed tree made from the emu_a16_w4b_kd keys. In both rollback "
+                 "copies, smb.db and its write-ahead log were byte identical to the live ones, and "
+                 "neither copy was read. A rollback copy that differs was not exercised. A rollback "
+                 "copy for a user other than 0, a copy under data/misc_de and two differing rollback "
+                 "copies were not exercised.",
         "paths": ('*/com.whatsapp.w4b/databases/msgstore.db*', '*/com.whatsapp.w4b/databases/wa.db*',
                   '*/com.whatsapp.w4b/databases/smb.db*'),
         "output_types": "standard",
@@ -222,15 +233,16 @@ __artifacts_v2__ = {
                  "rollback copy is the user number in that path. A rollback row is left out when a row "
                  "from the live database of the same user and storage class is equal to it in every "
                  "other column. Each live row removes one rollback row. When two rollback copies hold "
-                 "the same row, one of them is still reported. A rollback copy whose main database "
-                 "file is byte identical to the live one of the same user and storage class is not "
-                 "read, even when its write-ahead log differs, so rows held only in that log are not "
-                 "reported. Rollback handling was run on a constructed tree made from the "
-                 "emu_a16_w4b_kd keys. A rollback copy identical to the live one was not read. The 2 "
-                 "rows of a rollback copy that differed were not equal to the live rows and were "
-                 "reported. Leaving out an equal row was not exercised. A rollback copy for a user "
-                 "other than 0, a copy under data/misc_de and two differing rollback copies were not "
-                 "exercised.",
+                 "the same row, one of them is still reported. A rollback copy is not read when its "
+                 "main database file, its -wal and its -journal each hold the same content as those of "
+                 "the live one for the same user and storage class. A missing or empty -wal or "
+                 "-journal, and a -wal holding only its header, count as holding nothing. The -journal "
+                 "comparison was not exercised. Rollback handling was run on a constructed tree made "
+                 "from the emu_a16_w4b_kd keys. A rollback copy identical to the live one was not "
+                 "read. The 2 rows of a rollback copy that differed were not equal to the live rows "
+                 "and were reported. Leaving out an equal row was not exercised. A rollback copy for a "
+                 "user other than 0, a copy under data/misc_de and two differing rollback copies were "
+                 "not exercised.",
         "paths": ('*/com.whatsapp.w4b/databases/msgstore.db*', '*/com.whatsapp.w4b/databases/wa.db*',
                   '*/com.whatsapp.w4b/databases/smb.db*'),
         "output_types": ["html", "tsv", "lava"],
@@ -270,15 +282,17 @@ __artifacts_v2__ = {
                  "Android User on a rollback copy is the user number in that path. A rollback row is "
                  "left out when a row from the live database of the same user and storage class is "
                  "equal to it in every other column. Each live row removes one rollback row. When two "
-                 "rollback copies hold the same row, one of them is still reported. A rollback copy "
-                 "whose main database file is byte identical to the live one of the same user and "
-                 "storage class is not read, even when its write-ahead log differs, so rows held only "
-                 "in that log are not reported. Rollback handling was run on a constructed tree made "
-                 "from the emu_a16_w4b_kd keys. Both rollback copies of wa.db had a main file byte "
-                 "identical to the live one and were not read. One of them had a different write-ahead "
-                 "log. A rollback copy that differs was not exercised. A rollback copy for a user "
-                 "other than 0, a copy under data/misc_de and two differing rollback copies were not "
-                 "exercised.",
+                 "rollback copies hold the same row, one of them is still reported. A rollback copy is "
+                 "not read when its main database file, its -wal and its -journal each hold the same "
+                 "content as those of the live one for the same user and storage class. A missing or "
+                 "empty -wal or -journal, and a -wal holding only its header, count as holding "
+                 "nothing. The -journal comparison was not exercised. Rollback handling was run on a "
+                 "constructed tree made from the emu_a16_w4b_kd keys. One rollback copy of wa.db "
+                 "matched the live one and was not read. The other had the same main file and a "
+                 "different write-ahead log and was read. Its 1 row equalled the live row and was left "
+                 "out. A rollback row that differs from the live row was not exercised. A rollback "
+                 "copy for a user other than 0, a copy under data/misc_de and two differing rollback "
+                 "copies were not exercised.",
         "paths": ('*/com.whatsapp.w4b/databases/msgstore.db*', '*/com.whatsapp.w4b/databases/wa.db*',
                   '*/com.whatsapp.w4b/databases/smb.db*'),
         "output_types": ["html", "tsv", "lava", "kml"],
