@@ -78,6 +78,9 @@ class BodyTextTest(unittest.TestCase):
     def test_a_broken_character_reference_before_an_open_style_does_not_raise(self):
         self.assertIn('Hello', body_text_and_links('<p>Hello</p>&#<style>Kept')[0])
 
+    def test_markup_the_parser_refuses_does_not_raise(self):
+        self.assertIn('Hello', body_text_and_links('<p>Hello</p><![bogus]>')[0])
+
     def test_pre_keeps_a_line_end_before_an_inline_tag(self):
         self.assertEqual(body_text_and_links('<pre>one\n<b>two</b></pre>')[0], 'one\ntwo')
 
