@@ -36,7 +36,11 @@ __artifacts_v2__ = {
                  "from the emu_a16_w4b_kd keys. A rollback copy identical to the live one was not "
                  "read. Of the 2 rows in a rollback copy that differed, 1 equalled a live row and was "
                  "left out and 1 was reported. A rollback copy for a user other than 0, a copy under "
-                 "data/misc_de and two differing rollback copies were not exercised.",
+                 "data/misc_de and two differing rollback copies were not exercised. Credit to "
+                 "@danjethh for the idea: these artifacts came out of testing their WhatsApp Business "
+                 "PR #1785, which uses the wrapper approach of PR #1499 by @prcharan592. Neither PR is "
+                 "merged. They cover contacts, calls, messages, groups, channels and the user profile, "
+                 "not the tables read here.",
         "paths": ('*/com.whatsapp.w4b/databases/msgstore.db*', '*/com.whatsapp.w4b/databases/wa.db*',
                   '*/com.whatsapp.w4b/databases/smb.db*'),
         "output_types": ["html", "tsv", "lava"],
@@ -80,7 +84,10 @@ __artifacts_v2__ = {
                  "header, count as holding nothing. The -journal comparison was not exercised. "
                  "Rollback handling was not run for this artifact. A rollback copy for a user other "
                  "than 0, a copy under data/misc_de and two differing rollback copies were not "
-                 "exercised.",
+                 "exercised. Credit to @danjethh for the idea: these artifacts came out of testing "
+                 "their WhatsApp Business PR #1785, which uses the wrapper approach of PR #1499 by "
+                 "@prcharan592. Neither PR is merged. They cover contacts, calls, messages, groups, "
+                 "channels and the user profile, not the tables read here.",
         "paths": ('*/com.whatsapp.w4b/databases/msgstore.db*', '*/com.whatsapp.w4b/databases/wa.db*',
                   '*/com.whatsapp.w4b/databases/smb.db*'),
         "output_types": ["html", "tsv", "lava"],
@@ -132,7 +139,11 @@ __artifacts_v2__ = {
                  "run on a constructed tree made from the emu_a16_w4b_kd keys. A rollback copy "
                  "identical to the live one was not read. Both rows of a rollback copy that differed "
                  "equalled live rows and were left out. A rollback copy for a user other than 0, a "
-                 "copy under data/misc_de and two differing rollback copies were not exercised.",
+                 "copy under data/misc_de and two differing rollback copies were not exercised. Credit "
+                 "to @danjethh for the idea: these artifacts came out of testing their WhatsApp "
+                 "Business PR #1785, which uses the wrapper approach of PR #1499 by @prcharan592. "
+                 "Neither PR is merged. They cover contacts, calls, messages, groups, channels and the "
+                 "user profile, not the tables read here.",
         "paths": ('*/com.whatsapp.w4b/databases/msgstore.db*', '*/com.whatsapp.w4b/databases/wa.db*',
                   '*/com.whatsapp.w4b/databases/smb.db*'),
         "output_types": ["html", "tsv", "lava"],
@@ -185,7 +196,10 @@ __artifacts_v2__ = {
                  "copies, smb.db and its write-ahead log were byte identical to the live ones, and "
                  "neither copy was read. A rollback copy that differs was not exercised. A rollback "
                  "copy for a user other than 0, a copy under data/misc_de and two differing rollback "
-                 "copies were not exercised.",
+                 "copies were not exercised. Credit to @danjethh for the idea: these artifacts came "
+                 "out of testing their WhatsApp Business PR #1785, which uses the wrapper approach of "
+                 "PR #1499 by @prcharan592. Neither PR is merged. They cover contacts, calls, "
+                 "messages, groups, channels and the user profile, not the tables read here.",
         "paths": ('*/com.whatsapp.w4b/databases/msgstore.db*', '*/com.whatsapp.w4b/databases/wa.db*',
                   '*/com.whatsapp.w4b/databases/smb.db*'),
         "output_types": "standard",
@@ -242,7 +256,10 @@ __artifacts_v2__ = {
                  "read. The 2 rows of a rollback copy that differed were not equal to the live rows "
                  "and were reported. Leaving out an equal row was not exercised. A rollback copy for a "
                  "user other than 0, a copy under data/misc_de and two differing rollback copies were "
-                 "not exercised.",
+                 "not exercised. Credit to @danjethh for the idea: these artifacts came out of testing "
+                 "their WhatsApp Business PR #1785, which uses the wrapper approach of PR #1499 by "
+                 "@prcharan592. Neither PR is merged. They cover contacts, calls, messages, groups, "
+                 "channels and the user profile, not the tables read here.",
         "paths": ('*/com.whatsapp.w4b/databases/msgstore.db*', '*/com.whatsapp.w4b/databases/wa.db*',
                   '*/com.whatsapp.w4b/databases/smb.db*'),
         "output_types": ["html", "tsv", "lava"],
@@ -292,7 +309,10 @@ __artifacts_v2__ = {
                  "different write-ahead log and was read. Its 1 row equalled the live row and was left "
                  "out. A rollback row that differs from the live row was not exercised. A rollback "
                  "copy for a user other than 0, a copy under data/misc_de and two differing rollback "
-                 "copies were not exercised.",
+                 "copies were not exercised. Credit to @danjethh for the idea: these artifacts came "
+                 "out of testing their WhatsApp Business PR #1785, which uses the wrapper approach of "
+                 "PR #1499 by @prcharan592. Neither PR is merged. They cover contacts, calls, "
+                 "messages, groups, channels and the user profile, not the tables read here.",
         "paths": ('*/com.whatsapp.w4b/databases/msgstore.db*', '*/com.whatsapp.w4b/databases/wa.db*',
                   '*/com.whatsapp.w4b/databases/smb.db*'),
         "output_types": ["html", "tsv", "lava", "kml"],
