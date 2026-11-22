@@ -142,10 +142,10 @@ __artifacts_v2__ = {
     },
     "get_emulatedSmeta_files_legacy": {
         "name": "Emulated Storage Metadata - Files (Legacy)",
-        "description": "Parses media store metadata (files, older schema)",
+        "description": "Parses media store metadata (files, com.android.providers.media)",
         "author": "@AlexisBrignoni, Codex",
         "creation_date": "2020-10-19",
-        "last_update_date": "2026-10-27",
+        "last_update_date": "2026-11-22",
         "requirements": "none",
         "category": "Emulated Storage Metadata",
         "notes": "Reads each com.android.providers.media external.db found and takes one copy where one user's database appears under more than one of the data/data, data/user/N and data_mirror paths. A row from a copy of the database under data/misc_ce/N/rollback/ is left out when the live database of the same user gave a row equal to it in every column but Source DB Path; none of the 22 registered Android images (member listings, 2026-10-27) holds such a copy of this provider's database, so that path is unexercised. The Source DB Path column names the database each row came from, and the report's 'located at' line lists every database read, including any that returned no rows. Orientation (As Stored) reports the SQLite orientation value directly, including NULL and values outside the former parser mapping. It does not establish aspect ratio or displayed orientation. Original parser and research credit: @AlexisBrignoni. DATE_ADDED and DATE_MODIFIED are seconds since epoch and DATE_TAKEN is milliseconds, and this parser decodes them that way. Timestamp Taken is shown in UTC; the Android reference says an image must carry both the EXIF original time and its offset for this value to be reliably placed in relation to the epoch, so where the file had no offset the instant is not established. Reference: AOSP, 'MediaStore.MediaColumns.ORIENTATION', https://developer.android.com/reference/android/provider/MediaStore.MediaColumns#ORIENTATION",
@@ -171,6 +171,7 @@ __artifacts_v2__ = {
 }
 
 import datetime
+import re
 
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
 from scripts.artifacts.storagePathViews import unique_files, without_snapshot_repeats
@@ -202,6 +203,11 @@ def _keytime(date_added, date_modified):
     return _sec_to_utc(date_added if date_added else date_modified)
 
 
+def _is_media_module(path):
+    '''Whether the package folder holding this database is the MediaProvider module.'''
+    return re.split(r'[\\/]', path)[-3:-2] == ['com.google.android.providers.media.module']
+
+
 def _external_dbs(context, media_module):
     '''Every distinct external.db for the given provider.
 
@@ -213,7 +219,7 @@ def _external_dbs(context, media_module):
         file_found = str(file_found)
         if not file_found.endswith('external.db'):
             continue
-        if media_module != ('media.module' in file_found):
+        if media_module != _is_media_module(file_found):
             continue
         dbs.append(file_found)
     return dbs
