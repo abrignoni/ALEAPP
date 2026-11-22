@@ -74,18 +74,23 @@ class NetstatsIdentityColumns(unittest.TestCase):
         self.assertEqual(format_rat_type(20), 'NR (20)')
         self.assertEqual(format_rat_type(99), '99')
 
-    def test_several_identities_stay_on_their_own_lines(self):
+    def test_several_identities_keep_their_order(self):
         row = columns(7,
                       identity_bytes(7, rat_type=13, roaming=True, sub_id=1),
                       identity_bytes(7, rat_type=20, metered=True, sub_id=2))
-        self.assertEqual(row[1], 'Yes\nNo')
-        self.assertEqual(row[2], 'No\nYes')
-        self.assertEqual(row[4], 'LTE (13)\nNR (20)')
-        self.assertEqual(row[5], '1\n2')
+        self.assertEqual(row[0], 'TYPE_MOBILE: subscriber network | TYPE_MOBILE: subscriber network')
+        self.assertEqual(row[1], 'Yes | No')
+        self.assertEqual(row[2], 'No | Yes')
+        self.assertEqual(row[4], 'LTE (13) | NR (20)')
+        self.assertEqual(row[5], '1 | 2')
 
-    def test_blank_field_keeps_one_line_per_identity(self):
+    def test_blank_field_keeps_its_position(self):
         row = columns(6, identity_bytes(6), identity_bytes(6))
-        self.assertEqual(row[5], '\n')
+        self.assertEqual(row[5], ' | ')
+
+    def test_one_identity_has_no_separator(self):
+        row = columns(8, identity_bytes(8))
+        self.assertNotIn('|', ''.join(row))
 
 
 if __name__ == '__main__':

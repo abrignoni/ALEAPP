@@ -31,7 +31,8 @@ __artifacts_v2__ = {
                  "(NetworkStatsHistory.java), shown in UTC. Duration (ms) is the bucket length. "
                  "Network Identity holds the connection type, subscriber ID and network ID. "
                  "Roaming, Metered, Default Network, RAT Type and Subscription ID are fields of "
-                 "the same identity, one line per identity when a row has several. A field is "
+                 "the same identity. When a row has several identities, each of these columns and "
+                 "Network Identity list them in the same order, separated by ' | '. A field is "
                  "blank when the identity set version does not store it: Roaming starts at "
                  "version 2, Metered at 4, Default Network at 5 and Subscription ID at 7 "
                  "(NetworkIdentitySet.java, https://android.googlesource.com/platform/packages/modules/Connectivity/+/bd692130a596b4e9bc1ea6778db72c423bb8ab6f/framework-t/src/android/net/NetworkIdentitySet.java#41). "
@@ -534,19 +535,30 @@ def yes_no(value: bool) -> str:
     return "Yes" if value else "No"
 
 
+IDENTITY_SEPARATOR = " | "
+
+
+def join_identity_values(values: typing.Iterable[str]) -> str:
+    """One value as it is, several in identity order with a separator every report output shows."""
+    values = tuple(values)
+    if len(values) == 1:
+        return values[0]
+    return IDENTITY_SEPARATOR.join(value.strip() for value in values)
+
+
 def identity_columns(identities: typing.Iterable[NetworkIdentity]) -> tuple:
-    """Per-identity fields, one line per identity, blank where the identity version lacks them."""
+    """Per-identity fields in identity order, blank where the identity version lacks them."""
     identities = tuple(identities)
 
     def column(min_version, render):
-        return "\n".join(render(i) if i.identity_version >= min_version else "" for i in identities)
+        return join_identity_values(render(i) if i.identity_version >= min_version else "" for i in identities)
 
     return (
-        "\n".join(str(i) for i in identities),
+        join_identity_values(str(i) for i in identities),
         column(NetworkIdentitySet.IDENT_VERSION_ADD_ROAMING, lambda i: yes_no(i.roaming)),
         column(NetworkIdentitySet.IDENT_VERSION_ADD_METERED, lambda i: yes_no(i.metered)),
         column(NetworkIdentitySet.IDENT_VERSION_ADD_DEFAULT_NETWORK, lambda i: yes_no(i.default_network)),
-        "\n".join(format_rat_type(i.rat_type) for i in identities),
+        join_identity_values(format_rat_type(i.rat_type) for i in identities),
         column(NetworkIdentitySet.IDENT_VERSION_ADD_SUB_ID, lambda i: str(i.sub_id)),
     )
 
