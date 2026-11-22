@@ -61,7 +61,6 @@ __artifacts_v2__ = {
 
 import base64
 import binascii
-import codecs
 import datetime
 import email
 import json
@@ -87,10 +86,9 @@ def _decoded_html(data, encoding, header):
         header = header.encode('utf-8', 'replace')
     charset = email.message_from_bytes(bytes(header or b'')).get_content_charset() or 'utf-8'
     try:
-        codecs.lookup(charset)
-    except LookupError:
-        charset = 'utf-8'
-    return raw.decode(charset, 'replace')
+        return raw.decode(charset, 'replace')
+    except (LookupError, ValueError):  # an unknown name, or a codec that is not a text encoding
+        return raw.decode('utf-8', 'replace')
 
 
 def _ms_to_utc(value):

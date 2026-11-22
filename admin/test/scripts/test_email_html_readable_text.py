@@ -52,6 +52,9 @@ class BodyTextTest(unittest.TestCase):
     def test_pre_keeps_its_lines(self):
         self.assertEqual(body_text_and_links('<pre>one\n  two</pre>after')[0], 'one\ntwo\nafter')
 
+    def test_pre_keeps_a_line_end_before_an_inline_tag(self):
+        self.assertEqual(body_text_and_links('<pre>one\n<b>two</b></pre>')[0], 'one\ntwo')
+
     def test_escaped_markup_stays_as_the_words_it_spells(self):
         self.assertEqual(body_text_and_links('<p>&lt;b&gt;not a tag&lt;/b&gt;</p>')[0], '<b>not a tag</b>')
 
@@ -110,6 +113,11 @@ class K9MailTest(unittest.TestCase):
     def test_an_unknown_charset_falls_back_to_utf8(self):
         row = self.rows('text/html', '8bit', '<p>café</p>'.encode(),
                         'Content-Type: text/html; charset=not-a-charset\r\n')[0]
+        self.assertEqual(row['Content'], 'café')
+
+    def test_a_charset_that_is_not_a_text_encoding_falls_back_to_utf8(self):
+        row = self.rows('text/html', '8bit', '<p>café</p>'.encode(),
+                        'Content-Type: text/html; charset=base64\r\n')[0]
         self.assertEqual(row['Content'], 'café')
 
     def test_plain_text_that_looks_like_html_is_left_alone(self):

@@ -159,6 +159,7 @@ from scripts.ilapfuncs import open_sqlite_db_readonly, check_in_media, get_sqlit
 
 # whitespace plus the invisible padding characters observed in marketing preheaders
 _WHITESPACE_RUN = re.compile(r'[\s\u00ad\u034f\u200b\u200c\u200d\ufeff]+')
+_LINE_END = re.compile(r'\r\n|\r|\n')
 _NON_DISPLAY_TAGS = ('script', 'style', 'title')
 _CELL_TAGS = ('td', 'th')
 _BLOCK_TAGS = ('address', 'article', 'aside', 'blockquote', 'center', 'dd', 'details', 'div', 'dl',
@@ -218,7 +219,7 @@ def body_text_and_links(html_body):
             lines.append([])
         elif type(node) in (NavigableString, CData):  # pylint: disable=unidiomatic-typecheck
             if has_pre and node.find_parent('pre') is not None:
-                first, *rest = str(node).splitlines() or ['']
+                first, *rest = _LINE_END.split(str(node))
                 lines[-1].append(first)
                 lines.extend([line] for line in rest)
             else:
