@@ -1,21 +1,19 @@
 __artifacts_v2__ = {
     "get_imagemngCache": {
         "name": "Image Manager Cache",
-        "description": "Files from app image_manager_disk_cache (Glide) directories and files with a .cnt extension, reported without checking their content; .cnt files held cached image data in the samples examined",
+        "description": "Files from app image_manager_disk_cache (Glide) directories and files with a .cnt extension, reported whatever their content. On samsungs20_a13, 2,016 of the 2,109 .cnt files carried an image signature",
         "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2022-03-05",
-        "last_update_date": "2026-11-21",
+        "last_update_date": "2026-11-22",
         "requirements": "none",
         "category": "Image Manager Cache",
         "notes": "Timestamp Modified is the modification time the extraction recorded for the file as "
-                 "an epoch value (a tar member time, a zip NTFS or extended timestamp field, or the time of the "
-                 "file in an input folder), shown in UTC. It is blank when the extraction recorded no "
+                 "an epoch value, shown in UTC. Depending on the input it comes from a tar member time, a zip NTFS or extended timestamp field, a CLBX zip metadata record, the reader of a disk image or logical evidence file, or the time of the file in an input folder. It is blank when the extraction recorded no "
                  "such value. Archive Time Modified (No Zone) is filled only in that case, from the zip "
                  "directory entry, which carries a wall clock reading with no time zone; it is reported "
                  "as stored and no instant is asserted for it. What event sets the modification time of "
                  "a cache file is not established here. The second path pattern matches a file with a "
-                 ".cnt extension in any folder of the extraction, and no file is tested for image "
-                 "content. Reference: Glide, 'DiskCache.Factory.DEFAULT_DISK_CACHE_DIR', https://github.com/bumptech/glide/blob/36a7b2ecd75d84c86d4238240193ecd5e48d69ce/library/src/main/java/com/bumptech/glide/load/engine/cache/DiskCache.java",
+                 ".cnt extension in any folder of the extraction. Rows are not filtered by content: each file's type is read to display it, and a file that is not an image is still reported. On samsungs20_a13, of the 2,109 .cnt files, 2,016 carried an image signature, 11 a font header and 82 neither. Reference: Glide, 'DiskCache.Factory.DEFAULT_DISK_CACHE_DIR', https://github.com/bumptech/glide/blob/36a7b2ecd75d84c86d4238240193ecd5e48d69ce/library/src/main/java/com/bumptech/glide/load/engine/cache/DiskCache.java",
         "paths": ('*/cache/image_manager_disk_cache/*.*', '*/*.cnt'),
         "output_types": "standard",
         "artifact_icon": "photo",

@@ -98,7 +98,7 @@ __artifacts_v2__ = {
         ),
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-11-20",
-        "last_update_date": "2026-11-20",
+        "last_update_date": "2026-11-22",
         "requirements": "none",
         "category": "Samsung Clock",
         "notes": (
@@ -107,8 +107,7 @@ __artifacts_v2__ = {
             "World clock list. The dualclock table is served by the content provider in "
             "com.sec.android.widgetapp.dualclockdigital; the app's code writes it from the dual clock "
             "widget, and also names the AOD screen, the cover screen and a watch as places a city is "
-            "picked from; which one wrote the tested rows was not established. One row per city; "
-            "Store names the table. Field meanings come from the code of Clock 12.5.07.16 (the "
+            "picked from; which one wrote the tested rows was not established. One row per stored row of each table, so a city held in both tables is shown once per table. A row with the same Android user, table, Row ID and city as one already read from another copy of the database is not repeated. Store names the table. Field meanings come from the code of Clock 12.5.07.16 (the "
             "version in the manifest of the base.apk on samsung_a166u_a16_known_20261117), decompiled "
             "with jadx. The session record logged 12.5.07.13 for the 2026-11-16 actions. The code of "
             "the Clock versions on the other tested images was not read. City and Time Zone are city "
