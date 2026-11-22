@@ -7,7 +7,7 @@ __artifacts_v2__ = {
                        "network identity",
         "author": "Alex Caithness",
         "creation_date": "2026-08-05",
-        "last_update_date": "2026-11-21",
+        "last_update_date": "2026-11-22",
         "requirements": "none",
         "category": "Network Usage",
         "notes": "The binary format is read per NetworkStatsCollection.java, "
@@ -18,7 +18,7 @@ __artifacts_v2__ = {
                  "(version 16) is parsed. A file with any other collection version is skipped "
                  "and named in the run log. So is a file that raises a ValueError or "
                  "OverflowError while it is read, for example a bad signature, a short read, an "
-                 "unknown identity set or history version, an unknown connection type or a "
+                 "identity set version above 8 or an unknown history version, an unknown connection type or a "
                  "bucket start out of range. Any other error is not caught, and "
                  "the artifact then fails and produces no output. No file was skipped this way on the sample_data images. Identity set version 8 is not in "
                  "NetworkIdentitySet.java at the android-13.0.0_r1, android-14.0.0_r1, "
@@ -32,7 +32,12 @@ __artifacts_v2__ = {
                  "Network Identity holds the connection type, subscriber ID and network ID. "
                  "Roaming, Metered, Default Network, RAT Type and Subscription ID are fields of "
                  "the same identity. When a row has several identities, each of these columns and "
-                 "Network Identity list them in the same order, separated by ' | '. A field is "
+                 "Network Identity list them in the same order, separated by ' | '. On those rows "
+                 "a backslash or pipe inside a value is shown with a backslash before it, so a "
+                 "pipe without a backslash separates two identities. A row with one identity is "
+                 "shown without this change. A row has several identities when RAT Type holds "
+                 "' | '. No value on the sample_data images held a backslash or a pipe, so this "
+                 "path was not exercised on those images. A field is "
                  "blank when the identity set version does not store it: Roaming starts at "
                  "version 2, Metered at 4, Default Network at 5 and Subscription ID at 7 "
                  "(NetworkIdentitySet.java, https://android.googlesource.com/platform/packages/modules/Connectivity/+/bd692130a596b4e9bc1ea6778db72c423bb8ab6f/framework-t/src/android/net/NetworkIdentitySet.java#41). "
@@ -539,11 +544,11 @@ IDENTITY_SEPARATOR = " | "
 
 
 def join_identity_values(values: typing.Iterable[str]) -> str:
-    """One value as it is, several in identity order with a separator every report output shows."""
+    """One value as it is, several in identity order with any separator character escaped."""
     values = tuple(values)
     if len(values) == 1:
         return values[0]
-    return IDENTITY_SEPARATOR.join(value.strip() for value in values)
+    return IDENTITY_SEPARATOR.join(value.replace("\\", "\\\\").replace("|", "\\|") for value in values)
 
 
 def identity_columns(identities: typing.Iterable[NetworkIdentity]) -> tuple:
@@ -553,8 +558,13 @@ def identity_columns(identities: typing.Iterable[NetworkIdentity]) -> tuple:
     def column(min_version, render):
         return join_identity_values(render(i) if i.identity_version >= min_version else "" for i in identities)
 
+    # __str__ ends with one formatting space. Only that space is dropped between identities.
+    names = [str(i) for i in identities]
+    if len(names) > 1:
+        names = [name.removesuffix(" ") for name in names]
+
     return (
-        join_identity_values(str(i) for i in identities),
+        join_identity_values(names),
         column(NetworkIdentitySet.IDENT_VERSION_ADD_ROAMING, lambda i: yes_no(i.roaming)),
         column(NetworkIdentitySet.IDENT_VERSION_ADD_METERED, lambda i: yes_no(i.metered)),
         column(NetworkIdentitySet.IDENT_VERSION_ADD_DEFAULT_NETWORK, lambda i: yes_no(i.default_network)),
