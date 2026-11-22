@@ -20,7 +20,7 @@ __artifacts_v2__ = {
             "An event whose package id has no row in "
             "foundPackages is reported with a blank Package Name; no event on galaxys10_a10, samsungs20_a13 or samsung_a166u_a16_known_20261116 was in that state. A database present under several storage paths "
             "(data/data, data/user/0, data_mirror) is read once. "
-            "Android User is the user number in the path of the database: n under data/user/<n>, data/user_de/<n>, userdata/user/<n>, userdata/user_de/<n>, data_mirror/data_ce/<volume>/<n> or data_mirror/data_de/<volume>/<n>, and 0 under data/data or userdata/data. It is blank for any other path. That includes a rollback copy under data/misc_ce/<n>/rollback, which is read unless it is identical to the live database. No image read had a rollback copy, so the blank case is unexercised. samsung_a166u_a16_known_20261117 has users 0 and 150. The other six sample_data images have 0 on every row. "
+            "Android User is the user number in the path of the database: n under data/user/<n>, data/user_de/<n>, userdata/user/<n>, userdata/user_de/<n>, data_mirror/data_ce/<volume>/<n> or data_mirror/data_de/<volume>/<n>, and 0 under data/data or userdata/data. It is blank for any other path. That includes a rollback copy under data/misc_ce/<n>/rollback. A rollback copy is read unless the live database was also found and the two files and their -wal and -journal match. No sample_data image had a rollback copy of dwbCommon.db, so the blank case is unexercised. samsung_a166u_a16_known_20261117 has users 0 and 150. The other six sample_data images have 0 on every row. "
             "A label names a recorded transition and does not by itself establish a user "
             "action."
         ),
@@ -60,7 +60,7 @@ __artifacts_v2__ = {
                        "packages it covers, the daily limit and the stored days and state, from dwbCommon.db.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-11-16",
-        "last_update_date": "2026-11-16",
+        "last_update_date": "2026-11-22",
         "requirements": "none",
         "category": "Digital Wellbeing",
         "notes": "One row per app timer and schedule row: apptimer_table of com.samsung.android.forest/"
@@ -92,8 +92,7 @@ __artifacts_v2__ = {
                  "columns; they were empty on both rows and are not read. Nine of the ten other images "
                  "checked have no apptimer_schedule_table and no timers, so where a timer's limit is stored "
                  "on those builds is not established, and such a timer would be reported with a blank Daily "
-                 "Limit and Schedule Days. Rows from several Android users are reported together and no "
-                 "column names the user; the report's source paths list each database read. Observer ID "
+                 "Limit and Schedule Days. Android User is the user number in the path of the database: n under data/user/<n>, data/user_de/<n>, userdata/user/<n>, userdata/user_de/<n>, data_mirror/data_ce/<volume>/<n> or data_mirror/data_de/<volume>/<n>, and 0 under data/data or userdata/data. It is blank for any other path. That includes a rollback copy under data/misc_ce/<n>/rollback. A rollback copy is read unless the live database was also found and the two files and their -wal and -journal match. No sample_data image had a rollback copy of dwbCommon.db, so the blank case is unexercised. The 2 rows on samsung_a166u_a16_known_20261116, the only sample_data image with rows, have Android User 0. A non-zero value is unexercised for this artifact. Observer ID "
                  "and Schedule ID held the same values on both rows of the known-data image; they are "
                  "separate keys (apptimer_table.observer_id and apptimer_schedule_table.scheduleId). Not "
                  "reported: appTimerWidget, focusModeHistory, DailyBedTimeSchedule, drivingCustomizedApp, "
@@ -126,7 +125,7 @@ __artifacts_v2__ = {
                        "timer's remaining usage or a usage limit being reached.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-11-16",
-        "last_update_date": "2026-11-16",
+        "last_update_date": "2026-11-22",
         "requirements": "none",
         "category": "Digital Wellbeing",
         "notes": "Rows of the Logging table of com.samsung.android.forest/databases/dwbCommon.db whose "
@@ -147,8 +146,7 @@ __artifacts_v2__ = {
                  "brought to the front at 15:17:57), and at 18:16:32 for the second timer, 13 s after a "
                  "BOOT_COMPLETED row and 8 s before the Date value in the UFED .ufd (18:16:40 UTC). The "
                  "APP_USAGE_LIMIT_REACHED row does not name a package. A row does not by itself show that a "
-                 "person set or met a limit. Rows from several Android users are reported together and no "
-                 "column names the user. No Logging row on the ten other images checked matched either "
+                 "person set or met a limit. Android User is the user number in the path of the database: n under data/user/<n>, data/user_de/<n>, userdata/user/<n>, userdata/user_de/<n>, data_mirror/data_ce/<volume>/<n> or data_mirror/data_de/<volume>/<n>, and 0 under data/data or userdata/data. It is blank for any other path. That includes a rollback copy under data/misc_ce/<n>/rollback. A rollback copy is read unless the live database was also found and the two files and their -wal and -journal match. No sample_data image had a rollback copy of dwbCommon.db, so the blank case is unexercised. The 5 rows on samsung_a166u_a16_known_20261116, the only sample_data image with rows, have Android User 0. A non-zero value is unexercised for this artifact. No Logging row on the ten other images checked matched either "
                  "shape.",
         "paths": ('*/com.samsung.android.forest/databases/dwbCommon.db*',),
         "output_types": "standard",
@@ -342,6 +340,7 @@ def samsung_wellbeing_app_timers(context):
         finally:
             db.close()
 
+        user = android_user(context.get_relative_path(file_found))
         for timer in sorted(timers, key=lambda t: (t['observer_id'] is None, t['observer_id'])):
             # a timer with no schedule row still gets its own row
             for schedule in schedules.get(timer['observer_id']) or [{}]:
@@ -356,11 +355,13 @@ def samsung_wellbeing_app_timers(context):
                     timer['extended_time_limit'],
                     timer['observer_id'],
                     schedule.get('scheduleId'),
+                    user,
                 ))
 
     data_headers = (('Extended Time Stamp', 'datetime'), 'Timer Name', 'Packages',
                     'Daily Limit (minutes)', 'Schedule Days (as stored)', 'Schedule Enabled (as stored)',
-                    'Suspended (as stored)', 'Extended Time Limit (as stored)', 'Observer ID', 'Schedule ID')
+                    'Suspended (as stored)', 'Extended Time Limit (as stored)', 'Observer ID', 'Schedule ID',
+                    'Android User')
     return data_headers, data_list, '\n'.join(source_paths)
 
 
@@ -389,15 +390,16 @@ def samsung_wellbeing_app_timer_log(context):
         finally:
             db.close()
 
+        user = android_user(context.get_relative_path(file_found))
         for row_id, timestamp, _key, value in rows:
             value = value or ''
             match = _TIMER_LOG.match(value)
             if match:
                 data_list.append((_ms_to_utc(timestamp), match['packages'], int(match['remaining']),
-                                  int(match['used_min']), value, row_id))
+                                  int(match['used_min']), value, row_id, user))
             elif _LIMIT_REACHED in value:
-                data_list.append((_ms_to_utc(timestamp), '', '', '', value, row_id))
+                data_list.append((_ms_to_utc(timestamp), '', '', '', value, row_id, user))
 
     data_headers = (('Timestamp', 'datetime'), 'Packages', 'Remaining Usage (ms, parsed)',
-                    'usedInMin (parsed)', 'Log Value (as stored)', 'Log ID')
+                    'usedInMin (parsed)', 'Log Value (as stored)', 'Log ID', 'Android User')
     return data_headers, data_list, '\n'.join(source_paths)

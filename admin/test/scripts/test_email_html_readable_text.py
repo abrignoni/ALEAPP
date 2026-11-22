@@ -35,6 +35,9 @@ class FakeContext:
 
 
 class MultilineCellTest(unittest.TestCase):
+    def test_every_line_ending_shows_one_break(self):
+        self.assertEqual(artifact_report.cell_html('a\r\nb\rc\nd', 'Body', [], ['Body']), 'a<br>b<br>c<br>d')
+
     def test_the_page_shows_breaks_and_escapes_markup(self):
         cell = artifact_report.cell_html('<b>one</b>\ntwo', 'Body', [], ['Body'])
         self.assertEqual(cell, '&lt;b&gt;one&lt;/b&gt;<br>two')
@@ -77,6 +80,9 @@ class BodyTextTest(unittest.TestCase):
 
     def test_a_broken_character_reference_before_an_open_style_does_not_raise(self):
         self.assertIn('Hello', body_text_and_links('<p>Hello</p>&#<style>Kept')[0])
+
+    def test_markup_the_parser_refuses_does_not_raise(self):
+        self.assertIn('Hello', body_text_and_links('<p>Hello</p><![bogus]>')[0])
 
     def test_pre_keeps_a_line_end_before_an_inline_tag(self):
         self.assertEqual(body_text_and_links('<pre>one\n<b>two</b></pre>')[0], 'one\ntwo')
@@ -144,6 +150,25 @@ class K9MailTest(unittest.TestCase):
     def test_a_charset_that_is_not_a_text_encoding_falls_back_to_utf8(self):
         row = self.rows('text/html', '8bit', '<p>café</p>'.encode(),
                         'Content-Type: text/html; charset=base64\r\n')[0]
+        self.assertEqual(row['Content'], 'café')
+
+    def test_quoted_printable_plain_text_is_decoded_with_its_charset(self):
+        data = quopri.encodestring('café = ok\nnext'.encode('latin-1'))
+        row = self.rows('text/plain', 'quoted-printable', data,
+                        'Content-Type: text/plain; charset="iso-8859-1"\r\n')[0]
+        self.assertEqual(row['Content'], 'café = ok\nnext')
+        self.assertEqual(row['Content Links'], '')
+
+    def test_base64_plain_text_uses_its_charset(self):
+        row = self.rows('text/plain', 'base64', base64.b64encode('café'.encode('latin-1')),
+                        'Content-Type: text/plain; charset=iso-8859-1\r\n')[0]
+        self.assertEqual(row['Content'], 'café')
+
+    def test_a_stored_number_is_reported_as_itself(self):
+        self.assertEqual(self.rows('text/plain', '8bit', 5, '')[0]['Content'], '5')
+
+    def test_stored_text_is_not_decoded_again(self):
+        row = self.rows('text/plain', '8bit', 'café', 'Content-Type: text/plain; charset=iso-8859-1\r\n')[0]
         self.assertEqual(row['Content'], 'café')
 
     def test_plain_text_that_looks_like_html_is_left_alone(self):

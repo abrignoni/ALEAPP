@@ -26,7 +26,7 @@ __artifacts_v2__ = {
                  " show as a space. Other invisible characters are kept as stored. Each link is marked"
                  " [n], and Links lists the link targets by those numbers as Python's HTML parser "
                  "returns them, with character references decoded, so a target can differ from the "
-                 "stored href text. How a bare ampersand or malformed HTML is read changes between "
+                 "stored href text. Malformed HTML that the parser refuses is reported as stored. How a bare ampersand or malformed HTML is read changes between "
                  "Python versions, so Message and Links can differ between versions for such bodies. A"
                  " repeated target keeps its first number. An empty or short Message does not show the"
                  " message had no text: check the stored HTML. Removing comments and style and script "
@@ -153,6 +153,7 @@ from datetime import datetime, timezone
 from html.parser import HTMLParser
 
 from bs4 import BeautifulSoup, CData, NavigableString
+from bs4.builder import ParserRejectedMarkup
 from bs4.element import PreformattedString, Tag
 
 from scripts.artifacts.gmail import _parse_xml
@@ -190,14 +191,19 @@ def body_text_and_links(html_body):
     if not html_body:
         return '', ''
     source = html_body.decode('utf-8', 'replace') if isinstance(html_body, bytes) else str(html_body)
-    scan = HTMLParser()
-    scan.feed(source)
-    # A style or script left open holds the rest of the body. Closing it for the parse keeps
-    # that text on Python versions that would otherwise drop it at the end of the input.
-    open_element = scan.cdata_elem if scan.cdata_elem in _NON_DISPLAY_TAGS else None
-    closer = f'</{open_element}>' if open_element else ''
-    soup = BeautifulSoup(html_body + (closer.encode() if isinstance(html_body, bytes) else closer),
-                         'html.parser')
+    try:
+        scan = HTMLParser()
+        scan.feed(source)
+        # A style or script left open holds the rest of the body. Closing it for the parse keeps
+        # that text on Python versions that would otherwise drop it at the end of the input.
+        open_element = scan.cdata_elem if scan.cdata_elem in _NON_DISPLAY_TAGS else None
+        closer = f'</{open_element}>' if open_element else ''
+        soup = BeautifulSoup(html_body + (closer.encode() if isinstance(html_body, bytes) else closer),
+                             'html.parser')
+    except (AssertionError, ParserRejectedMarkup):
+        # Some Python versions refuse malformed markup. One body must not stop the artifact,
+        # so the body is reported as stored.
+        return source, ''
     for name in _NON_DISPLAY_TAGS:
         found = soup.find_all(name)
         # The scan and the tree can disagree on malformed input, so the element may be absent.
