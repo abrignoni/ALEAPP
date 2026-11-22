@@ -1,20 +1,19 @@
 __artifacts_v2__ = {
     "samsung_wellbeing": {
         "name": "Samsung Digital Wellbeing",
-        "description": "Parses Samsung Digital Wellbeing app usage events (timestamp, event ID, package and event type) from dwbCommon.db.",
+        "description": "Parses Samsung Digital Wellbeing usage events from the usageEvents table of dwbCommon.db (timestamp, event ID, package and event type).",
         "author": "@abrignoni, @Adam-Hachem",
         "creation_date": "2020-05-21",
         "last_update_date": "2026-11-22",
         "requirements": "none",
         "category": "Digital Wellbeing",
         "notes": (
-            "Event-type labels are taken from the AOSP UsageEvents.Event constant names "
+            "Timestamp is usageEvents.timeStamp read as Unix milliseconds and shown in UTC; that unit is not sourced from the app's code. Event-type labels are taken from the AOSP UsageEvents.Event constant names "
             "(reference: AOSP, UsageEvents.java at tag android-14.0.0_r1, "
             "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-14.0.0_r1/core/java/android/app/usage/UsageEvents.java#104) "
             "and applied to the stored codes. The labels for codes 1 and 2 each show two constant "
             "names, which that file defines with the same value. "
-            "Samsung's implementation is not documented and its codes are not verified to match "
-            "those constants, so the labels are unverified. An event type with no matching label "
+            "No Samsung source for these codes was used, and they are not verified to match those constants, so the labels are unverified. An event type with no matching label "
             "is shown as stored. Package Name is read from the pkgName column of usageEvents where "
             "the database has one, and otherwise joined from foundPackages on pkgId. The pkgName column was reported by @Adam-Hachem. samsung_a166u_a16_known_20261117 (Android 16) has it in the databases of Android users 0 and 150 (4,561 and 62 rows, and no row is in both), and every row there has a Package Name. samsung_a166u_a16_known_20261116 (Android 16) has pkgId. "
             "An event whose package id has no row in "
@@ -45,7 +44,7 @@ __artifacts_v2__ = {
         "last_update_date": "2026-11-22",
         "requirements": "none",
         "category": "Digital Wellbeing",
-        "notes": "Reads Logging rows whose key contains UsageDataManager::timeZoneChanged() from the first dwbCommon.db found, with the previous and new timezone split from the value. A change logged under another key is not reported: on samsungs20_a13 one Logging row holds a previous and new timezone under a different key, and this artifact reports no rows. An empty result does not show that no timezone change happened.",
+        "notes": "Reads Logging rows whose key contains UsageDataManager::timeZoneChanged() from the first dwbCommon.db found, with the previous and new timezone split from the value. A change logged under another key is not reported: on samsungs20_a13 one Logging row holds a previous and new timezone under a different key, and this artifact reports no rows. An empty result does not show that no timezone change happened. Timestamp is Logging.timeStamp, converted by a shared helper that picks the unit from the value's size, and shown in UTC.",
         "paths": ('*/com.samsung.android.forest/databases/dwbCommon.db*',),
         "output_types": "standard",
         "artifact_icon": "clock",
@@ -70,9 +69,7 @@ __artifacts_v2__ = {
                  "whose observer_id names no timer is not; both paths are in the code and were not run "
                  "against real data. Timer Name and Packages are apptimer_table.timer_name and package_name "
                  "as stored; on the known-data image the timer covering two apps stored them separated by a "
-                 "comma and a space. Daily Limit (minutes) is apptimer_schedule_table.time_limit. Schedule "
-                 "Days (as stored) is its enable_days bit field; the mapping of single bits to weekdays is "
-                 "not established. Known data on samsung_a166u_a16_known_20261116 ties the values to the "
+                 "comma and a space. Daily Limit (minutes) is apptimer_schedule_table.time_limit. Schedule Days (as stored) is its enable_days value; how that value maps to weekdays is not established. Known data on samsung_a166u_a16_known_20261116 ties the values to the "
                  "settings made on the phone: a timer set for 1 minute every day stored time_limit 1 and "
                  "enable_days 127, and one set for 30 minutes Monday to Friday stored 30 and 62 (bits 1 to "
                  "5). The Logging table records the same allowances as remainingUsage 60000 and 1800000 "
@@ -136,8 +133,7 @@ __artifacts_v2__ = {
                  "Logging rows by a key that the known-data image does not use, so that image's timezone "
                  "line is not reported by either artifact. Timestamp is Logging.timeStamp read as Unix "
                  "milliseconds. Packages, Remaining Usage and usedInMin are parsed from the value text, which "
-                 "is shown in full in Log Value (as stored); these are the app's own log lines and their "
-                 "format is not documented. Remaining Usage is in milliseconds: the 1-minute and 30-minute "
+                 "is shown in full in Log Value (as stored); no source for the format of these log lines was used. Remaining Usage is in milliseconds: the 1-minute and 30-minute "
                  "timers of the known-data image logged 60000 and 1800000. usedInMin was 0 on every row, so "
                  "its unit is taken from the field name only. On samsung_a166u_a16_known_20261116 the rows "
                  "fall at the times timers were created (15:16:11 and 15:17:45 UTC, within 2 s of the mint "
