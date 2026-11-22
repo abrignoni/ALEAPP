@@ -46,11 +46,10 @@ __artifacts_v2__ = {
                  "the text of closed style and script elements are removed, a line break is "
                  "placed at each br and block tag, each link's place is marked [n], and Content Links lists each a element's href by those numbers, as the HTML parser returns it (character references decoded). Other link elements are not listed. "
                  "The stored part stays in the source database. Any other "
-                 "text part is decoded when its encoding is base64, read as UTF-8 whatever charset the "
-                 "part names, and is otherwise reported as stored (a quoted-printable plain part stays "
-                 "encoded). When base64 decoding fails, Content shows the stored value in Python's text "
+                 "text part is decoded the same way and reported with its line breaks. "
+                 "When that decoding fails, Content shows the stored value in Python's text "
                  "form. No registered Android corpus holds a K-9 Mail database (member lists of all 89 "
-                 "keys checked on 2026-11-22), so the query and the HTML decoding were exercised only on "
+                 "keys checked on 2026-11-22), so the query and the part decoding were exercised only on "
                  "a constructed database holding the columns the query reads.",
         "paths": ('*/com.fsck.k9/databases/*',),
         "output_types": "standard",
@@ -74,10 +73,14 @@ def _is_html(mime_type):
     return str(mime_type or '').split(';')[0].strip().lower() == 'text/html'
 
 
-def _decoded_html(data, encoding, header):
-    """The part's HTML as text, from its transfer encoding and the charset its header names."""
-    raw = data.encode('utf-8', 'surrogateescape') if isinstance(data, str) else bytes(data)
+def _decoded_part(data, encoding, header):
+    """The part as text, from its transfer encoding and the charset its header names."""
     transfer = str(encoding or '').strip().lower()
+    if isinstance(data, str) and transfer not in ('base64', 'quoted-printable'):
+        return data
+    if not isinstance(data, (str, bytes, bytearray, memoryview)):
+        return str(data)
+    raw = data.encode('utf-8', 'surrogateescape') if isinstance(data, str) else bytes(data)
     if transfer == 'base64':
         raw = base64.b64decode(raw)
     elif transfer == 'quoted-printable':
@@ -204,12 +207,10 @@ def get_k9mail_messages(context):
             header = row[17].decode('UTF-8', 'replace') if isinstance(row[17], bytes) else (row[17] or '')
             content = links = ''
             try:
-                if _is_html(row[21]) and row[19]:
-                    content, links = body_text_and_links(_decoded_html(row[19], row[18], row[22]))
-                elif row[18] == 'base64' and row[19]:
-                    content = base64.b64decode(row[19]).decode('UTF-8', 'replace')
-                elif row[19]:
-                    content = row[19].decode('UTF-8', 'replace') if isinstance(row[19], bytes) else row[19]
+                if row[19]:
+                    content = _decoded_part(row[19], row[18], row[22])
+                    if _is_html(row[21]):
+                        content, links = body_text_and_links(content)
             except (ValueError, TypeError, binascii.Error):
                 content = str(row[19])
             data_list.append((
