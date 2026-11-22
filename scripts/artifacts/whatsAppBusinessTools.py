@@ -9,11 +9,11 @@ __artifacts_v2__ = {
         "category": "WhatsApp Business",
         "notes": "Read from com.whatsapp.w4b/databases/msgstore.db: one row per quick_replies row. "
                  "Shortcut is title and Reply Text is content. Field meanings come from the decompiled "
-                 "WhatsApp Business app (versionName 2.26.45.80). Tested on a lab test account capture "
-                 "of WhatsApp Business 2.26.45.80 that is not in the corpus, against values entered in "
-                 "the app. The app adds one example reply of its own, so a row does not establish that "
-                 "the user wrote it (a copy taken before the tester added a reply already held 1 of "
-                 "the 2 tested rows). Linked Lists reads associated_label_ids, which the app writes as "
+                 "WhatsApp Business app (versionName 2.26.45.80). Tested on the WhatsApp Business "
+                 "2.26.45.80 known-data keys in sample_data, against values entered in the app. The "
+                 "app adds one example reply of its own, so a row does not establish that the user "
+                 "wrote it (a copy taken before the tester added a reply already held 1 of the 2 "
+                 "tested rows). Linked Lists reads associated_label_ids, which the app writes as "
                  "comma-separated ids, and shows the labels row name with that _id, or the id itself "
                  "when none matches. That the ids are labels row ids is not established and the column "
                  "was not exercised. Attachments counts quick_reply_attachments rows and held 0. "
@@ -31,15 +31,21 @@ __artifacts_v2__ = {
                  "the same row, one of them is still reported. A rollback copy whose main database "
                  "file is byte identical to the live one of the same user and storage class is not "
                  "read, even when its write-ahead log differs, so rows held only in that log are not "
-                 "reported. Rollback handling was run on a constructed tree made from the lab "
-                 "captures. A rollback copy identical to the live one was not read. Of the 2 rows in a "
-                 "rollback copy that differed, 1 equalled a live row and was left out and 1 was "
-                 "reported. A rollback copy for a user other than 0, a copy under data/misc_de and two "
-                 "differing rollback copies were not exercised.",
+                 "reported. Rollback handling was run on a constructed tree made from the "
+                 "emu_a16_w4b_kd keys. A rollback copy identical to the live one was not read. Of the "
+                 "2 rows in a rollback copy that differed, 1 equalled a live row and was left out and "
+                 "1 was reported. A rollback copy for a user other than 0, a copy under data/misc_de "
+                 "and two differing rollback copies were not exercised.",
         "paths": ('*/com.whatsapp.w4b/databases/msgstore.db*', '*/com.whatsapp.w4b/databases/wa.db*',
                   '*/com.whatsapp.w4b/databases/smb.db*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "zap",
+        "sample_data": {
+            "emu_a16_w4b_kd_w1_channel_followed": "Android 16 | 2 rows",
+            "emu_a16_w4b_kd_w2_channel_deleted": "Android 16 | 2 rows",
+            "emu_a16_w4b_kd_w3_status_viewed": "Android 16 | 2 rows",
+            "emu_a16_w4b_kd_w4_custom_away": "Android 16 | 2 rows",
+        },
     },
     "whatsapp_business_quick_reply_attachments": {
         "name": "WhatsApp Business - Quick Reply Attachments",
@@ -76,6 +82,12 @@ __artifacts_v2__ = {
                   '*/com.whatsapp.w4b/databases/smb.db*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "paperclip",
+        "sample_data": {
+            "emu_a16_w4b_kd_w1_channel_followed": "Android 16 | 0 rows",
+            "emu_a16_w4b_kd_w2_channel_deleted": "Android 16 | 0 rows",
+            "emu_a16_w4b_kd_w3_status_viewed": "Android 16 | 0 rows",
+            "emu_a16_w4b_kd_w4_custom_away": "Android 16 | 0 rows",
+        },
     },
     "whatsapp_business_chat_lists": {
         "name": "WhatsApp Business - Chat Lists",
@@ -94,31 +106,37 @@ __artifacts_v2__ = {
                  "wa_contacts name of that linked id. Chat still shows the stored id. No tested "
                  "labeled_jid row held an @lid id, so that lookup was not run on capture data. Field "
                  "meanings come from the decompiled WhatsApp Business app (versionName 2.26.45.80). "
-                 "Tested on a lab test account capture of WhatsApp Business 2.26.45.80 that is not in "
-                 "the corpus, against values entered in the app. A chat placed in 2 lists gave 2 rows. "
-                 "Lists with no chats are not reported. An earlier copy of the database, taken before "
-                 "the tester used lists and without its write-ahead log, held 3 of the 5 lists and no "
-                 "chats in them. The 2 lists that held chats were not in that copy. They store "
-                 "predefined_id 1 and 4, and the other 3 store 0. What predefined_id means was not "
-                 "established. A list does not establish that the user created it. The table has no "
-                 "time, so a row does not show when the chat was added. Source File is the database "
-                 "the row was read from. It stays beside Android User because a rollback copy under "
-                 "data/misc_ce or data/misc_de can hold different rows for the same user. Android User "
-                 "on a rollback copy is the user number in that path. A rollback row is left out when "
-                 "a row from the live database of the same user and storage class is equal to it in "
-                 "every other column. Each live row removes one rollback row. When two rollback copies "
-                 "hold the same row, one of them is still reported. A rollback copy whose main "
-                 "database file is byte identical to the live one of the same user and storage class "
-                 "is not read, even when its write-ahead log differs, so rows held only in that log "
-                 "are not reported. Rollback handling was run on a constructed tree made from the lab "
-                 "captures. A rollback copy identical to the live one was not read. Both rows of a "
-                 "rollback copy that differed equalled live rows and were left out. A rollback copy "
-                 "for a user other than 0, a copy under data/misc_de and two differing rollback copies "
-                 "were not exercised.",
+                 "Tested on the WhatsApp Business 2.26.45.80 known-data keys in sample_data, against "
+                 "values entered in the app. A chat placed in 2 lists gave 2 rows. Lists with no chats "
+                 "are not reported. An earlier copy of the database, taken before the tester used "
+                 "lists and without its write-ahead log, held 3 of the 5 lists and no chats in them. "
+                 "The 2 lists that held chats were not in that copy. They store predefined_id 1 and 4, "
+                 "and the other 3 store 0. What predefined_id means was not established. A list does "
+                 "not establish that the user created it. The table has no time, so a row does not "
+                 "show when the chat was added. Source File is the database the row was read from. It "
+                 "stays beside Android User because a rollback copy under data/misc_ce or data/misc_de "
+                 "can hold different rows for the same user. Android User on a rollback copy is the "
+                 "user number in that path. A rollback row is left out when a row from the live "
+                 "database of the same user and storage class is equal to it in every other column. "
+                 "Each live row removes one rollback row. When two rollback copies hold the same row, "
+                 "one of them is still reported. A rollback copy whose main database file is byte "
+                 "identical to the live one of the same user and storage class is not read, even when "
+                 "its write-ahead log differs, so rows held only in that log are not reported. "
+                 "Rollback handling was run on a constructed tree made from the emu_a16_w4b_kd keys. A "
+                 "rollback copy identical to the live one was not read. Both rows of a rollback copy "
+                 "that differed equalled live rows and were left out. A rollback copy for a user other "
+                 "than 0, a copy under data/misc_de and two differing rollback copies were not "
+                 "exercised.",
         "paths": ('*/com.whatsapp.w4b/databases/msgstore.db*', '*/com.whatsapp.w4b/databases/wa.db*',
                   '*/com.whatsapp.w4b/databases/smb.db*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "tag",
+        "sample_data": {
+            "emu_a16_w4b_kd_w1_channel_followed": "Android 16 | 2 rows",
+            "emu_a16_w4b_kd_w2_channel_deleted": "Android 16 | 2 rows",
+            "emu_a16_w4b_kd_w3_status_viewed": "Android 16 | 2 rows",
+            "emu_a16_w4b_kd_w4_custom_away": "Android 16 | 2 rows",
+        },
     },
     "whatsapp_business_customer_notes": {
         "name": "WhatsApp Business - Customer Notes",
@@ -141,26 +159,32 @@ __artifacts_v2__ = {
                  "Chat Name is the wa_contacts name of that linked id. Chat still shows the stored id. "
                  "The tested wa_notes row did not hold an @lid id, so that lookup was not run on "
                  "capture data. Field meanings come from the decompiled WhatsApp Business app "
-                 "(versionName 2.26.45.80). Tested on a lab test account capture of WhatsApp Business "
-                 "2.26.45.80 that is not in the corpus, against values entered in the app. One known "
-                 "note was read back. note_type and account_jid are not reported: note_type held 0 and "
-                 "account_jid was NULL on the tested row. Source File is the database the row was read "
-                 "from. It stays beside Android User because a rollback copy under data/misc_ce or "
-                 "data/misc_de can hold different rows for the same user. Android User on a rollback "
-                 "copy is the user number in that path. A rollback row is left out when a row from the "
-                 "live database of the same user and storage class is equal to it in every other "
-                 "column. Each live row removes one rollback row. When two rollback copies hold the "
-                 "same row, one of them is still reported. A rollback copy whose main database file is "
-                 "byte identical to the live one of the same user and storage class is not read, even "
-                 "when its write-ahead log differs, so rows held only in that log are not reported. "
-                 "Rollback handling was run on a constructed tree made from the lab captures. Both "
-                 "rollback copies of smb.db were byte identical to the live one and were not read. A "
-                 "rollback copy that differs was not exercised. A rollback copy for a user other than "
-                 "0, a copy under data/misc_de and two differing rollback copies were not exercised.",
+                 "(versionName 2.26.45.80). Tested on the WhatsApp Business 2.26.45.80 known-data keys "
+                 "in sample_data, against values entered in the app. One known note was read back. "
+                 "note_type and account_jid are not reported: note_type held 0 and account_jid was "
+                 "NULL on the tested row. Source File is the database the row was read from. It stays "
+                 "beside Android User because a rollback copy under data/misc_ce or data/misc_de can "
+                 "hold different rows for the same user. Android User on a rollback copy is the user "
+                 "number in that path. A rollback row is left out when a row from the live database of "
+                 "the same user and storage class is equal to it in every other column. Each live row "
+                 "removes one rollback row. When two rollback copies hold the same row, one of them is "
+                 "still reported. A rollback copy whose main database file is byte identical to the "
+                 "live one of the same user and storage class is not read, even when its write-ahead "
+                 "log differs, so rows held only in that log are not reported. Rollback handling was "
+                 "run on a constructed tree made from the emu_a16_w4b_kd keys. Both rollback copies of "
+                 "smb.db were byte identical to the live one and were not read. A rollback copy that "
+                 "differs was not exercised. A rollback copy for a user other than 0, a copy under "
+                 "data/misc_de and two differing rollback copies were not exercised.",
         "paths": ('*/com.whatsapp.w4b/databases/msgstore.db*', '*/com.whatsapp.w4b/databases/wa.db*',
                   '*/com.whatsapp.w4b/databases/smb.db*'),
         "output_types": "standard",
         "artifact_icon": "file-text",
+        "sample_data": {
+            "emu_a16_w4b_kd_w1_channel_followed": "Android 16 | 1 row",
+            "emu_a16_w4b_kd_w2_channel_deleted": "Android 16 | 1 row",
+            "emu_a16_w4b_kd_w3_status_viewed": "Android 16 | 1 row",
+            "emu_a16_w4b_kd_w4_custom_away": "Android 16 | 1 row",
+        },
     },
     "whatsapp_business_automated_messages": {
         "name": "WhatsApp Business - Automated Messages",
@@ -173,10 +197,10 @@ __artifacts_v2__ = {
         "notes": "Read from the greeting_* and away_* keys of the props table in "
                  "com.whatsapp.w4b/databases/msgstore.db, one row for Greeting and one for Away when "
                  "their keys are stored. Field meanings come from the decompiled WhatsApp Business app "
-                 "(versionName 2.26.45.80). Tested on a lab test account capture of WhatsApp Business "
-                 "2.26.45.80 that is not in the corpus, against values entered in the app. Setting is "
-                 "on or off from greeting_on for Greeting. For Away it is away_state. always_on (1), "
-                 "custom (2) and non_business_hours (3) are the names the app's away settings code "
+                 "(versionName 2.26.45.80). Tested on the WhatsApp Business 2.26.45.80 known-data keys "
+                 "in sample_data, against values entered in the app. Setting is on or off from "
+                 "greeting_on for Greeting. For Away it is away_state. always_on (1), custom (2) and "
+                 "non_business_hours (3) are the names the app's away settings code "
                  "(AwaySettingsActivity) gives these values. off (0) is this module's label: the app "
                  "treats 0 as away not enabled. Recipients is the distribution value named everyone "
                  "(0), non_contacts (1), allowlist (2) or blocklist (3). Setting or Recipients is "
@@ -201,15 +225,22 @@ __artifacts_v2__ = {
                  "the same row, one of them is still reported. A rollback copy whose main database "
                  "file is byte identical to the live one of the same user and storage class is not "
                  "read, even when its write-ahead log differs, so rows held only in that log are not "
-                 "reported. Rollback handling was run on a constructed tree made from the lab "
-                 "captures. A rollback copy identical to the live one was not read. The 2 rows of a "
-                 "rollback copy that differed were not equal to the live rows and were reported. "
-                 "Leaving out an equal row was not exercised. A rollback copy for a user other than 0, "
-                 "a copy under data/misc_de and two differing rollback copies were not exercised.",
+                 "reported. Rollback handling was run on a constructed tree made from the "
+                 "emu_a16_w4b_kd keys. A rollback copy identical to the live one was not read. The 2 "
+                 "rows of a rollback copy that differed were not equal to the live rows and were "
+                 "reported. Leaving out an equal row was not exercised. A rollback copy for a user "
+                 "other than 0, a copy under data/misc_de and two differing rollback copies were not "
+                 "exercised.",
         "paths": ('*/com.whatsapp.w4b/databases/msgstore.db*', '*/com.whatsapp.w4b/databases/wa.db*',
                   '*/com.whatsapp.w4b/databases/smb.db*'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "message-circle",
+        "sample_data": {
+            "emu_a16_w4b_kd_w1_channel_followed": "Android 16 | 2 rows",
+            "emu_a16_w4b_kd_w2_channel_deleted": "Android 16 | 2 rows",
+            "emu_a16_w4b_kd_w3_status_viewed": "Android 16 | 2 rows",
+            "emu_a16_w4b_kd_w4_custom_away": "Android 16 | 2 rows",
+        },
     },
     "whatsapp_business_profiles": {
         "name": "WhatsApp Business - Business Profiles",
@@ -224,34 +255,40 @@ __artifacts_v2__ = {
                  "Websites come from their child tables. Account is jid and Description is "
                  "business_description. Email, Address, Latitude, Longitude, Hours Note and Time Zone "
                  "are the columns of the same name. Business Name was matched to the known name on one "
-                 "row. Tested on a lab test account capture of WhatsApp Business 2.26.45.80 that is "
-                 "not in the corpus, against values entered in the app. On the tested file the only "
-                 "row was the device's own business, with its known name and category. A profile can "
-                 "belong to another business. The table has no column that marks the device's own "
-                 "account, so compare Account with the device's own number. Description, Email, "
-                 "Address, Latitude, Longitude, Websites and Hours Note were empty on the tested row "
-                 "and were not exercised. The test account had a business hours setting, and it was "
-                 "not found in hours_note or wa_biz_profiles_hours, which held no rows and is not "
-                 "read. Time Zone is time_zone, which the app reads with the business hours. A stored "
-                 "0, 0 coordinate pair is shown blank. Other profile fields are not reported. Source "
-                 "File is the database the row was read from. It stays beside Android User because a "
-                 "rollback copy under data/misc_ce or data/misc_de can hold different rows for the "
-                 "same user. Android User on a rollback copy is the user number in that path. A "
-                 "rollback row is left out when a row from the live database of the same user and "
-                 "storage class is equal to it in every other column. Each live row removes one "
-                 "rollback row. When two rollback copies hold the same row, one of them is still "
-                 "reported. A rollback copy whose main database file is byte identical to the live one "
-                 "of the same user and storage class is not read, even when its write-ahead log "
-                 "differs, so rows held only in that log are not reported. Rollback handling was run "
-                 "on a constructed tree made from the lab captures. Both rollback copies of wa.db had "
-                 "a main file byte identical to the live one and were not read. One of them had a "
-                 "different write-ahead log. A rollback copy that differs was not exercised. A "
-                 "rollback copy for a user other than 0, a copy under data/misc_de and two differing "
-                 "rollback copies were not exercised.",
+                 "row. Tested on the WhatsApp Business 2.26.45.80 known-data keys in sample_data, "
+                 "against values entered in the app. On each tested key the only row was the device's "
+                 "own business, with its known name and category. A profile can belong to another "
+                 "business. The table has no column that marks the device's own account, so compare "
+                 "Account with the device's own number. Description, Email, Address, Latitude, "
+                 "Longitude, Websites and Hours Note were empty on the tested row and were not "
+                 "exercised. The test account had a business hours setting, and it was not found in "
+                 "hours_note or wa_biz_profiles_hours, which held no rows and is not read. Time Zone "
+                 "is time_zone, which the app reads with the business hours. A stored 0, 0 coordinate "
+                 "pair is shown blank. Other profile fields are not reported. Source File is the "
+                 "database the row was read from. It stays beside Android User because a rollback copy "
+                 "under data/misc_ce or data/misc_de can hold different rows for the same user. "
+                 "Android User on a rollback copy is the user number in that path. A rollback row is "
+                 "left out when a row from the live database of the same user and storage class is "
+                 "equal to it in every other column. Each live row removes one rollback row. When two "
+                 "rollback copies hold the same row, one of them is still reported. A rollback copy "
+                 "whose main database file is byte identical to the live one of the same user and "
+                 "storage class is not read, even when its write-ahead log differs, so rows held only "
+                 "in that log are not reported. Rollback handling was run on a constructed tree made "
+                 "from the emu_a16_w4b_kd keys. Both rollback copies of wa.db had a main file byte "
+                 "identical to the live one and were not read. One of them had a different write-ahead "
+                 "log. A rollback copy that differs was not exercised. A rollback copy for a user "
+                 "other than 0, a copy under data/misc_de and two differing rollback copies were not "
+                 "exercised.",
         "paths": ('*/com.whatsapp.w4b/databases/msgstore.db*', '*/com.whatsapp.w4b/databases/wa.db*',
                   '*/com.whatsapp.w4b/databases/smb.db*'),
         "output_types": ["html", "tsv", "lava", "kml"],
         "artifact_icon": "briefcase",
+        "sample_data": {
+            "emu_a16_w4b_kd_w1_channel_followed": "Android 16 | 1 row",
+            "emu_a16_w4b_kd_w2_channel_deleted": "Android 16 | 1 row",
+            "emu_a16_w4b_kd_w3_status_viewed": "Android 16 | 1 row",
+            "emu_a16_w4b_kd_w4_custom_away": "Android 16 | 1 row",
+        },
     },
 }
 
