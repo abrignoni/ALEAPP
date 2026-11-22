@@ -15,9 +15,10 @@ __artifacts_v2__ = {
                  "release the layout was taken from is not recorded in this module. Only the "
                  "unified collection format "
                  "(version 16) is parsed. A file with any other collection version is skipped "
-                 "and named in the run log. So is a file that raises a ValueError while it is "
-                 "read, for example a bad signature, a short read, an unknown identity set or history "
-                 "version, or an unknown connection type. Any other error is not caught, and "
+                 "and named in the run log. So is a file that raises a ValueError or "
+                 "OverflowError while it is read, for example a bad signature, a short read, an "
+                 "unknown identity set or history version, an unknown connection type or a "
+                 "bucket start out of range. Any other error is not caught, and "
                  "the artifact then fails and produces no output. No file was skipped this way on the sample_data images. Identity set version 8 is not in "
                  "NetworkIdentitySet.java at the android-13.0.0_r1, android-14.0.0_r1, "
                  "android-15.0.0_r1 or android-16.0.0_r1 tags. It was present on anne_a15, "
@@ -31,10 +32,8 @@ __artifacts_v2__ = {
                  "ID of each network identity, not an interface name. Its other identity fields are not shown.\n"
                  "UIDs are resolved through packages.xml, where it parses, to a package name "
                  "or, for a shared UID, to the shared user name. If packages.xml is absent, or "
-                 "fails with an XML parse error, an I/O error or a ValueError, usage is still "
-                 "reported with bare UIDs. Other ABX decoding errors (AbxDecodeError, "
-                 "NotImplementedError) are not caught. The artifact then fails and produces no "
-                 "output. None of the images listed in sample_data "
+                 "raises an error while it is read, decoded or mapped to UIDs, usage is still "
+                 "reported with bare UIDs. None of the images listed in sample_data "
                  "exercised these paths. A UID of -1 is UID_ALL in AOSP NetworkStats.java, "
                  "documented there as the uid value 'when UID details unavailable' "
                  "(https://android.googlesource.com/platform/packages/modules/Connectivity/+/"
@@ -493,7 +492,7 @@ def netstats(context):
 
     # packages.xml is an enrichment, not a requirement: it only maps UIDs to
     # package names. An unreadable copy must not cost the netstats rows.
-    packages = None
+    uid_map = {}
     for file in files_found:
         if file.endswith("packages.xml"):
             try:
@@ -501,11 +500,10 @@ def netstats(context):
                     packages = abxread(file, False)
                 else:
                     packages = etree.parse(file)
-            except (etree.ParseError, OSError, ValueError) as ex:
-                logfunc(f"Could not parse {file} for UID resolution ({ex}); "
-                        "usage is reported with bare UIDs")
-
-    uid_map = map_uids(packages) if packages is not None else {}
+                uid_map = map_uids(packages)
+            # abxread raises an error class local to the function, so it cannot be named here.
+            except Exception as ex:  # pylint: disable=broad-exception-caught
+                logfunc(f"Could not parse {file} for UID resolution ({ex})")
 
     headers = [
         ("Bucket Start", "datetime"), "Duration", "Collection", "UID/Package", "Interface",
@@ -524,7 +522,7 @@ def netstats(context):
         with open(file, "rb") as f:
             try:
                 collection = NetstatsCollection.read(f)
-            except ValueError as ex:
+            except (ValueError, OverflowError) as ex:
                 logfunc(f"Error reading {file} as netstats ({ex}) - skipping...")
                 continue
 
