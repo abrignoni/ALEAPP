@@ -5,7 +5,7 @@ __artifacts_v2__ = {
                        "package with no package record left in the same file.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-06",
-        "last_update_date": "2026-09-06",
+        "last_update_date": "2026-11-22",
         "requirements": "none",
         "category": "Installed Apps",
         "notes": "A row is a user-states element in packages.xml whose packageName has no package and no "
@@ -74,10 +74,7 @@ __artifacts_v2__ = {
                  "removed. The three tested Android 10 and 11 images carry no user-states element at "
                  "all, and so do ten Android 15 emulator images whose later captures do carry them, so "
                  "an empty section is not by itself a statement about the release. A file that is "
-                 "neither ABX nor plain XML is logged by name and skipped; one tested image stores "
-                 "several archive members at the packages.xml path, some of them encrypted, and the copy "
-                 "the seeker stages there does not parse, so that image reports no rows while its "
-                 "readable copy holds four.",
+                 "neither ABX nor plain XML is logged by name and skipped. samsungs20_a13 stores five archive members at the packages.xml path. The seeker stages four of them under other file names, which this artifact does not read. Three of those are neither ABX nor plain XML. The fourth is plain XML that differs from the copy read and holds the same four orphaned states. The copy staged as packages.xml parses and gives that image's four rows.",
         "paths": ('*/system/packages.xml', '*/system/packages.xml.reservecopy'),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "package",

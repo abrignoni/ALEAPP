@@ -4,10 +4,10 @@ __artifacts_v2__ = {
         "description": "Parses native downloads database",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2023-01-09",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-11-22",
         "requirements": "none",
         "category": "Downloads",
-        "notes": "Last Modified Timestamp is the lastmod column read as Unix milliseconds. Android's public DownloadManager documents its last modified column as 'Timestamp when the download was last modified, in System.currentTimeMillis() (wall clock time in UTC)'. Reference: Android Developers, 'DownloadManager.COLUMN_LAST_MODIFIED_TIMESTAMP', https://developer.android.com/reference/android/app/DownloadManager#COLUMN_LAST_MODIFIED_TIMESTAMP. Status is the status column as stored; no source for the status codes is given here. Deleted shows Yes when the deleted column is 1 and is blank when it is 0.",
+        "notes": "Last Modified Timestamp is the lastmod column read as Unix milliseconds. Android's public DownloadManager documents its last modified column as 'Timestamp when the download was last modified, in System.currentTimeMillis() (wall clock time in UTC)'. Reference: Android Developers, 'DownloadManager.COLUMN_LAST_MODIFIED_TIMESTAMP', https://developer.android.com/reference/android/app/DownloadManager#COLUMN_LAST_MODIFIED_TIMESTAMP. Status is the status column as stored; no source for the status codes is given here. Deleted shows Yes when the deleted column is 1 and is blank when it is 0. Download URI is the uri column and Initiating App Package is the notificationpackage column. Reference: AOSP, Downloads.java, https://android.googlesource.com/platform/frameworks/base/+/1cdfff555f4a21f71ccc978290e2e212e2f8b168/core/java/android/provider/Downloads.java#138.",
         "paths": ('*/data/com.android.providers.downloads/databases/downloads.db*'),
         "output_types": "standard",
         "artifact_icon": "download",
@@ -83,5 +83,5 @@ def downloads(context):
         else:
             continue
         
-    data_headers = (('Last Modified Timestamp','datetime'),'Title','Description','Provider URI','Save Location','Mime Type','App Provider Package','Current Bytes','Total Bytes','Status','Error Message','ETAG','Visible in Downloads UI','Deleted','Source File')    
+    data_headers = (('Last Modified Timestamp','datetime'),'Title','Description','Download URI','Save Location','Mime Type','Initiating App Package','Current Bytes','Total Bytes','Status','Error Message','ETAG','Visible in Downloads UI','Deleted','Source File')    
     return data_headers, data_list, '\n'.join(sorted(source_paths))
