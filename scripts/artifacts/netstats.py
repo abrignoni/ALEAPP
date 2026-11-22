@@ -68,16 +68,36 @@ __artifacts_v2__ = {
                  "A collection file with the same SHA-256 as one already read is not read "
                  "again, and its path stays in the source list. Files that differ are all "
                  "reported, even when they share records: on hc_pixel8pro_a16 and sharon_a14, "
-                 "different files in different netstats folders held identical buckets, so "
-                 "those rows appear more than once. Rows do not show which folder or file kind "
-                 "(dev, xt, uid, uid_tag) they came from. On galaxys10_a10, russell_pixel6a_a13, "
+                 "different files in different netstats folders held the same buckets, so "
+                 "those rows appear more than once and differ only in Source File. Collection and Source File name the file "
+                 "each row was read from, so these repeats can be separated. Source File names "
+                 "the copy that was read, which is the first in path order. Byte-identical "
+                 "copies appear only in the source list and in the run log. On galaxys10_a10, russell_pixel6a_a13, "
                  "sharon_a14 and userb2_a13, most UID -1 rows from the dev files of a netstats "
-                 "folder were also present, identical, in the xt files of the same folder (218 "
-                 "of 234, 336 of 371, 2,153 of 2,269 and 27 of 29). On sharon_a14 a second "
+                 "folder were also present in the xt files of the same folder with the same "
+                 "values in every column except Collection and Source File (218 of 234, 336 of 371, 2,153 of 2,269 and 27 of 29). On sharon_a14 a second "
                  "folder showed the same (27 of 34) and a third folder held dev and xt files "
-                 "with no identical rows. Rows from different files can repeat, so a total "
+                 "with no such matching rows. Rows from different files can repeat, so a total "
                  "over this table can count the same usage more than once. Identical rows can "
                  "also be separate records, because Interface leaves out some identity fields.\n"
+                 "Collection is the file name prefix (dev, xt, uid or uid_tag). In AOSP "
+                 "NetworkStatsService.java at the android-14.0.0_r1 tag, the xt, uid and uid_tag "
+                 "prefixes each have their own recorder "
+                 "(https://android.googlesource.com/platform/packages/modules/Connectivity/+/"
+                 "bd692130a596b4e9bc1ea6778db72c423bb8ab6f/service-t/src/com/android/server/net/"
+                 "NetworkStatsService.java#867). The xt recorder records the snapshot from "
+                 "readNetworkStatsSummaryXt (lines 2277 and 2290). The uid recorder is built "
+                 "with includeTags false and the uid_tag recorder with it true. At that tag a "
+                 "dev recorder is built only inside the legacy import (line 1041). At the "
+                 "android-13.0.0_r1 tag the service had its own dev recorder "
+                 "(https://android.googlesource.com/platform/packages/modules/Connectivity/+/"
+                 "1106ab86764fc0a193b332cc7ce91db18b2b20d9/service-t/src/com/android/server/net/"
+                 "NetworkStatsService.java#803). dev rows were present on galaxys10_a10, "
+                 "russell_pixel6a_a13, sharon_a14 and userb2_a13. Which release wrote each dev "
+                 "file is not established here. On all 12 sample_data keys, every uid and xt "
+                 "row had Tag 0x0 and every uid_tag row had a non-zero tag. Every dev row on the "
+                 "four keys that held dev files had Tag 0x0. Filter on Collection and Source "
+                 "File before totaling.\n"
                  "Timeline output is deliberately off: the buckets produced up to 62,999 "
                  "timestamped rows (kevin_pocox7_a15).",
         "paths": ("*/netstats/dev*", "*/netstats/uid*", "*/netstats/xt*", "*/system/packages.xml"),
@@ -104,6 +124,7 @@ import dataclasses
 import datetime
 import enum
 import hashlib
+import os
 import struct
 import typing
 import xml.etree.ElementTree as etree
@@ -487,8 +508,8 @@ def netstats(context):
     uid_map = map_uids(packages) if packages is not None else {}
 
     headers = [
-        ("Bucket Start", "datetime"), "Duration", "UID/Package", "Interface", "Usage Set", "Tag",
-        "Rx Bytes", "Rx Packets", "Tx Bytes", "Tx Packets"]
+        ("Bucket Start", "datetime"), "Duration", "Collection", "UID/Package", "Interface",
+        "Usage Set", "Tag", "Rx Bytes", "Rx Packets", "Tx Bytes", "Tx Packets", "Source File"]
     source_files = set()
     results = []
     # Sorted so the copy that is read does not depend on the order of the walk.
@@ -507,6 +528,8 @@ def netstats(context):
                 logfunc(f"Error reading {file} as netstats ({ex}) - skipping...")
                 continue
 
+            collection_kind = os.path.basename(file).split(".")[0]
+            source_file = context.get_relative_path(file)
             for stat in collection.stats:
                 for record in stat.records:
                     package = package_for_uid(record.uid, uid_map)
@@ -517,14 +540,15 @@ def netstats(context):
 
                     for entry in record.history.entries:
                         results.append(
-                            (entry.start_time, entry.duration, formatted_package,
+                            (entry.start_time, entry.duration, collection_kind, formatted_package,
                              "\n".join(str(x) for x in stat.identity_set.identities),
                              NetstatsCollection.SET_TYPES.get(record.set, f"(unknown: {record.set})"),
                              format_tag(record.tag),
-                             entry.rx_bytes, entry.rx_packets, entry.tx_bytes, entry.tx_packets))
+                             entry.rx_bytes, entry.rx_packets, entry.tx_bytes, entry.tx_packets,
+                             source_file))
 
             read_files[sha256] = file
-            source_files.add(context.get_relative_path(file))
+            source_files.add(source_file)
 
     return headers, results, "\n".join(source_files)
 
