@@ -5,7 +5,7 @@ __artifacts_v2__ = {
                        "and status updates it received.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-11-21",
-        "last_update_date": "2026-11-21",
+        "last_update_date": "2026-11-22",
         "requirements": "none",
         "category": "WhatsApp",
         "notes": "Read from com.whatsapp/databases/status.db with its write-ahead log, one row per row "
@@ -13,36 +13,52 @@ __artifacts_v2__ = {
                  "(versionName 2.26.45.80). A status table is also present in com.whatsapp on the six "
                  "tested images. Its columns vary with the app version: 21 on the two Samsung images, "
                  "20 on three images and 16 on kevin_pocox7_a15, which has no received_timestamp "
-                 "column and no status_thumbnail table. The names for Type and State come from the "
-                 "Business app and are applied to both apps. Direction is Sent when sender_user_jid is "
-                 "status_me, the value the app stores as sender for the account's own statuses. Every "
-                 "other value is shown as Received. The app also treats a row whose sender is the "
-                 "account's own identifier as its own. The module does not test for that, and no "
-                 "tested row had it. Sender is blank on Sent rows. Sender Name comes from wa_contacts "
-                 "in the wa.db beside it (display_name, then wa_name) and is blank when no contact "
-                 "matches. No tested row had a matching contact, so a filled Sender Name was not "
-                 "exercised. Status Time, Server Receipt Time and Received Time are timestamp, "
-                 "server_receipt_timestamp and received_timestamp read as Unix milliseconds. A stored "
-                 "0 or negative value, which the app uses for no value, is shown blank. Server Receipt "
-                 "Time was -1 on the tested Received rows, and Received Time was 0 on the tested Sent "
-                 "row. Type and State are named from the app's status type and state enums, and a "
-                 "value outside them is shown as Unknown. Text is text_data. Thumbnail is the image "
-                 "stored in status_thumbnail.thumbnail, a JPEG on the 3 tested rows. When a status has "
-                 "more than one thumbnail row, one is shown. The full media file is not linked: "
-                 "file_path was empty on the tested media rows. Mime Type and Duration (as stored) "
-                 "come from media_content. Archived is is_archived. Android User comes from the "
-                 "store's path. Not reported from the status table: sort_id, uuid, status_info_row_id, "
-                 "secret, content_proto, fp_proto, origin, flags, audience_type, stanza_xml, "
-                 "batch_state and server_sts. The status_interactions (view and reaction counts), "
-                 "status_receipt_device, status_text and status_info tables are not read. The table "
-                 "holds only what the app still keeps, so a missing status does not establish that "
-                 "none was posted or received. Tested rows: the same 3 received VIDEO statuses, state "
-                 "RECEIVED, all from one sender, on samsung_a166u_a16_known_20261116 and "
-                 "samsung_a166u_a16_known_20261117 (com.whatsapp), and 1 sent TEXT status, state SENT, "
-                 "on a lab test account capture of WhatsApp Business 2.26.45.80 that is not in the "
-                 "corpus. Both apps are read by the same code. Other types and states, an archived "
-                 "row, and the older 16-column table with rows were not exercised. On the other tested "
-                 "images in sample_data the table held no rows.",
+                 "column and no status_thumbnail table. The names for Type (class X.EZF) and State "
+                 "(class X.1t6, which jadx shows as EnumC42181t6) come from that Business app build "
+                 "and are applied to both apps. Direction is Sent when sender_user_jid is status_me, "
+                 "the value the app stores as sender for the account's own statuses. Every other value "
+                 "is shown as Received. The app also treats a row whose sender is the account's own "
+                 "identifier as its own. The module does not test for that, and no tested row had it. "
+                 "Sender is blank on Sent rows. Sender Name comes from wa_contacts in the wa.db beside "
+                 "it (display_name, then wa_name) and is blank when no contact matches. No tested row "
+                 "had a matching contact, so a filled Sender Name was not exercised. Status Time, "
+                 "Server Receipt Time and Received Time are timestamp, server_receipt_timestamp and "
+                 "received_timestamp read as Unix milliseconds. A stored 0 or negative value, which "
+                 "the app uses for no value, is shown blank. Server Receipt Time was -1 on the tested "
+                 "Received rows, and Received Time was 0 on the tested Sent row. Type and State are "
+                 "named from the app's status type and state enums, and a value outside them is shown "
+                 "as Unknown. Text is text_data. Thumbnail is the image stored in "
+                 "status_thumbnail.thumbnail, a JPEG on the 3 tested rows. When a status has more than "
+                 "one thumbnail row, one is shown. The full media file is not linked: file_path was "
+                 "empty on the tested media rows. Mime Type and Duration (as stored) come from "
+                 "media_content. Archived is is_archived. Android User comes from the store's path. "
+                 "Not reported from the status table: sort_id, uuid, status_info_row_id, secret, "
+                 "content_proto, fp_proto, origin, flags, audience_type, stanza_xml, batch_state and "
+                 "server_sts. View Count and Reaction Count are view_count and reaction_count from "
+                 "status_interactions, blank when the status has no row there (kevin_pocox7_a15 has no "
+                 "such table). The app's database triggers add 1 to view_count when a receipt gets a "
+                 "seen_timestamp, and add or subtract 1 from reaction_count when a type 1 row is added "
+                 "to or deleted from status_add_on. No trigger lowers view_count. On the WhatsApp "
+                 "Business lab capture, View Count was 1 and Reaction Count was 0 on the one tested "
+                 "Sent status, which had 1 known view. The 3 tested com.whatsapp rows had no "
+                 "status_interactions row, so both columns were blank on them. A View Count above 1 "
+                 "and a nonzero Reaction Count were not exercised. Other tables are not read. Among "
+                 "them: status_add_on (one row per reaction, poll vote, question answer or sticker "
+                 "interaction, by the app's add-on type enum) held no rows on any tested store, so its "
+                 "fields could not be checked. status_interactions_totals, a second table of "
+                 "interaction totals, held no rows on any tested store. status_receipt_device holds "
+                 "per-device receipt records, and Status Viewers reports the per-user receipts. "
+                 "status_text holds styling and link preview fields. It had 1 row across the tested "
+                 "stores, on the lab capture, and its url and page_title were empty. status_info holds "
+                 "per-chat counters that summarize these rows. The table holds only what the app still "
+                 "keeps, so a missing status does not establish that none was posted or received. "
+                 "Tested rows: the same 3 received VIDEO statuses, state RECEIVED, all from one "
+                 "sender, on samsung_a166u_a16_known_20261116 and samsung_a166u_a16_known_20261117 "
+                 "(com.whatsapp), and 1 sent TEXT status, state SENT, on a lab test account capture of "
+                 "WhatsApp Business 2.26.45.80 that is not in the corpus. Both apps are read by the "
+                 "same code. Other types and states, an archived row, and the older 16-column table "
+                 "with rows were not exercised. On the other tested images in sample_data the table "
+                 "held no rows.",
         "paths": ('*/com.whatsapp/databases/status.db*', '*/com.whatsapp/databases/wa.db*'),
         "output_types": "standard",
         "artifact_icon": "circle",
@@ -60,7 +76,7 @@ __artifacts_v2__ = {
         "description": "Receipts WhatsApp stored for status updates: who received or viewed each one.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-11-21",
-        "last_update_date": "2026-11-21",
+        "last_update_date": "2026-11-22",
         "requirements": "none",
         "category": "WhatsApp",
         "notes": "Read from com.whatsapp/databases/status.db with its write-ahead log, one row per "
@@ -100,7 +116,7 @@ __artifacts_v2__ = {
                        "account posted and status updates it received.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-11-21",
-        "last_update_date": "2026-11-21",
+        "last_update_date": "2026-11-22",
         "requirements": "none",
         "category": "WhatsApp Business",
         "notes": "Read from com.whatsapp.w4b/databases/status.db with its write-ahead log, one row per "
@@ -108,16 +124,17 @@ __artifacts_v2__ = {
                  "app (versionName 2.26.45.80). A status table is also present in com.whatsapp on the "
                  "six tested images. Its columns vary with the app version: 21 on the two Samsung "
                  "images, 20 on three images and 16 on kevin_pocox7_a15, which has no "
-                 "received_timestamp column and no status_thumbnail table. The names for Type and "
-                 "State come from the Business app and are applied to both apps. Direction is Sent "
-                 "when sender_user_jid is status_me, the value the app stores as sender for the "
-                 "account's own statuses. Every other value is shown as Received. The app also treats "
-                 "a row whose sender is the account's own identifier as its own. The module does not "
-                 "test for that, and no tested row had it. Sender is blank on Sent rows. Sender Name "
-                 "comes from wa_contacts in the wa.db beside it (display_name, then wa_name) and is "
-                 "blank when no contact matches. No tested row had a matching contact, so a filled "
-                 "Sender Name was not exercised. Status Time, Server Receipt Time and Received Time "
-                 "are timestamp, server_receipt_timestamp and received_timestamp read as Unix "
+                 "received_timestamp column and no status_thumbnail table. The names for Type (class "
+                 "X.EZF) and State (class X.1t6, which jadx shows as EnumC42181t6) come from that "
+                 "Business app build and are applied to both apps. Direction is Sent when "
+                 "sender_user_jid is status_me, the value the app stores as sender for the account's "
+                 "own statuses. Every other value is shown as Received. The app also treats a row "
+                 "whose sender is the account's own identifier as its own. The module does not test "
+                 "for that, and no tested row had it. Sender is blank on Sent rows. Sender Name comes "
+                 "from wa_contacts in the wa.db beside it (display_name, then wa_name) and is blank "
+                 "when no contact matches. No tested row had a matching contact, so a filled Sender "
+                 "Name was not exercised. Status Time, Server Receipt Time and Received Time are "
+                 "timestamp, server_receipt_timestamp and received_timestamp read as Unix "
                  "milliseconds. A stored 0 or negative value, which the app uses for no value, is "
                  "shown blank. Server Receipt Time was -1 on the tested Received rows, and Received "
                  "Time was 0 on the tested Sent row. Type and State are named from the app's status "
@@ -128,12 +145,26 @@ __artifacts_v2__ = {
                  "Type and Duration (as stored) come from media_content. Archived is is_archived. "
                  "Android User comes from the store's path. Not reported from the status table: "
                  "sort_id, uuid, status_info_row_id, secret, content_proto, fp_proto, origin, flags, "
-                 "audience_type, stanza_xml, batch_state and server_sts. The status_interactions (view "
-                 "and reaction counts), status_receipt_device, status_text and status_info tables are "
-                 "not read. The table holds only what the app still keeps, so a missing status does "
-                 "not establish that none was posted or received. Tested rows: the same 3 received "
-                 "VIDEO statuses, state RECEIVED, all from one sender, on "
-                 "samsung_a166u_a16_known_20261116 and samsung_a166u_a16_known_20261117 "
+                 "audience_type, stanza_xml, batch_state and server_sts. View Count and Reaction Count "
+                 "are view_count and reaction_count from status_interactions, blank when the status "
+                 "has no row there (kevin_pocox7_a15 has no such table). The app's database triggers "
+                 "add 1 to view_count when a receipt gets a seen_timestamp, and add or subtract 1 from "
+                 "reaction_count when a type 1 row is added to or deleted from status_add_on. No "
+                 "trigger lowers view_count. View Count was 1 and Reaction Count was 0 on the one "
+                 "tested Sent status, which had 1 known view. The 3 tested com.whatsapp Received rows "
+                 "had no status_interactions row, so both columns were blank on them. A View Count "
+                 "above 1 and a nonzero Reaction Count were not exercised. Other tables are not read. "
+                 "Among them: status_add_on (one row per reaction, poll vote, question answer or "
+                 "sticker interaction, by the app's add-on type enum) held no rows on any tested "
+                 "store, so its fields could not be checked. status_interactions_totals, a second "
+                 "table of interaction totals, held no rows on any tested store. status_receipt_device "
+                 "holds per-device receipt records, and Status Viewers reports the per-user receipts. "
+                 "status_text holds styling and link preview fields. It had 1 row across the tested "
+                 "stores, on the lab capture, and its url and page_title were empty. status_info holds "
+                 "per-chat counters that summarize these rows. The table holds only what the app still "
+                 "keeps, so a missing status does not establish that none was posted or received. "
+                 "Tested rows: the same 3 received VIDEO statuses, state RECEIVED, all from one "
+                 "sender, on samsung_a166u_a16_known_20261116 and samsung_a166u_a16_known_20261117 "
                  "(com.whatsapp), and 1 sent TEXT status, state SENT, on a lab test account capture of "
                  "WhatsApp Business 2.26.45.80 that is not in the corpus. Both apps are read by the "
                  "same code. Other types and states, an archived row, and the older 16-column table "
@@ -149,7 +180,7 @@ __artifacts_v2__ = {
                        "one.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-11-21",
-        "last_update_date": "2026-11-21",
+        "last_update_date": "2026-11-22",
         "requirements": "none",
         "category": "WhatsApp Business",
         "notes": "Read from com.whatsapp.w4b/databases/status.db with its write-ahead log, one row per "
@@ -255,7 +286,7 @@ def _updates(context):
     headers = (('Status Time', 'datetime'), ('Server Receipt Time', 'datetime'),
                ('Received Time', 'datetime'), 'Direction', 'Sender', 'Sender Name', 'Type', 'State',
                'Text', ('Thumbnail', 'media'), 'Mime Type', 'Duration (as stored)', 'Archived',
-               'Android User')
+               'View Count', 'Reaction Count', 'Android User')
     rows, sources = [], []
     for path in _stores(context):
         db = open_sqlite_db_readonly(path)
@@ -271,7 +302,11 @@ def _updates(context):
             columns = _columns(db, 'status')
             received = 'received_timestamp' if 'received_timestamp' in columns else 'NULL'
             archived = 'is_archived' if 'is_archived' in columns else 'NULL'
-            thumbs, media = {}, {}
+            thumbs, media, interactions = {}, {}, {}
+            if 'status_interactions' in tables:
+                for row_id, views, reactions in db.execute(
+                        'SELECT status_row_id, view_count, reaction_count FROM status_interactions'):
+                    interactions[row_id] = (views, reactions)
             if 'status_thumbnail' in tables:
                 for row_id, blob in db.execute('SELECT status_row_id, thumbnail FROM status_thumbnail'):
                     if blob:
@@ -294,10 +329,11 @@ def _updates(context):
             blob = thumbs.get(row_id)
             item = check_in_embedded_media(path, blob) if blob else ''
             mime, duration = media.get(row_id, ('', ''))
+            views, reactions = interactions.get(row_id, ('', ''))
             rows.append((_time(stamp), _time(server), _time(got), direction, sender, name,
                          _enum(_TYPES, kind), _enum(_STATES, state), text or '', item or '', mime,
                          duration, '' if is_archived is None else ('Yes' if is_archived else 'No'),
-                         user))
+                         views, reactions, user))
     return headers, rows, '\n'.join(sources)
 
 
