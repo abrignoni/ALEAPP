@@ -49,6 +49,7 @@ import heicreader
 from scripts.filetype import get_signature_bytes, guess_mime, guess_extension
 from functools import wraps
 
+from html import escape as _html_escape
 from scripts.html_safe import esc, safe_local_path
 from scripts.lavafuncs import lava_process_artifact, lava_insert_sqlite_data, lava_iter_artifact_rows, lava_update_record_count, \
     lava_get_media_item, \
@@ -166,6 +167,12 @@ def screen_log_session(func):
     return wrapped
 
 
+def _html_text(value):
+    """Escape a value for HTML element text. Quotes stay as they are, so the log files
+    still read and search the same; a value placed in an attribute goes through esc()."""
+    return _html_escape(str(value), quote=False)
+
+
 def logfunc(message=""):
     def redirect_logs(string):
         _console_write(string)
@@ -187,7 +194,7 @@ def logfunc(message=""):
 
     if OutputParameters.screen_output_file_path:
         _screen_log.write(OutputParameters.screen_output_file_path,
-                          message + '<br>' + OutputParameters.nl)
+                          _html_text(message) + '<br>' + OutputParameters.nl)
     else:
         _screen_log.write('', '')
     print(message)
@@ -1509,25 +1516,36 @@ def utf8_in_extended_ascii(input_string, *, raise_on_unexpected=False):
     
     return mis_encoded_utf8_present, "".join(output)
 
+_DEVINFO_LABELLED = re.compile(r'<b>(.*?)</b>(.*)', re.S)
+
+
 def logdevinfo(message=""):
+    # Callers pass "<b>label: </b>value" with the value read from the evidence. The bold
+    # around the label is the only markup kept.
+    labelled = _DEVINFO_LABELLED.fullmatch(message)
+    if labelled:
+        line = f'<b>{_html_text(labelled.group(1))}</b>{_html_text(labelled.group(2))}'
+    else:
+        line = _html_text(message)
     with open(OutputParameters.screen_output_file_path_devinfo, 'a', encoding='utf8') as b:
-        b.write(message + '<br>' + OutputParameters.nl)
+        b.write(line + '<br>' + OutputParameters.nl)
+
 
 def write_device_info():
     with open(OutputParameters.screen_output_file_path_devinfo, 'a', encoding='utf8') as b:
         for category, values in identifiers.items():
-            b.write('<b>--- <u>' + category + ' </u>---</b><br>' + OutputParameters.nl)
+            b.write('<b>--- <u>' + _html_text(category) + ' </u>---</b><br>' + OutputParameters.nl)
             b.write('<ul>' + OutputParameters.nl)
             for label, data in values.items():
                 if isinstance(data, list):
                     # Handle multiple values
-                    b.write('<li><b>' + label + ':</b><ul>' + OutputParameters.nl)
+                    b.write('<li><b>' + _html_text(label) + ':</b><ul>' + OutputParameters.nl)
                     for item in data:
-                        b.write(f'<li>{item["value"]} <span title="{item["source_file"]}" style="cursor:help"><i>(Source: {item["artifact"]})</i></span></li>' + OutputParameters.nl)
+                        b.write(f'<li>{_html_text(item["value"])} <span title="{esc(str(item["source_file"]))}" style="cursor:help"><i>(Source: {_html_text(item["artifact"])})</i></span></li>' + OutputParameters.nl)
                     b.write('</ul></li>' + OutputParameters.nl)
                 else:
                     # Handle single value
-                    b.write(f'<li><b>{label}:</b> {data["value"]} <span title="{data["source_file"]}" style="cursor:help"><i>(Source: {data["artifact"]})</i></span></li>' + OutputParameters.nl)
+                    b.write(f'<li><b>{_html_text(label)}:</b> {_html_text(data["value"])} <span title="{esc(str(data["source_file"]))}" style="cursor:help"><i>(Source: {_html_text(data["artifact"])})</i></span></li>' + OutputParameters.nl)
             b.write('</ul>' + OutputParameters.nl)
 
 def device_info(category, label, value, source_file=""):
