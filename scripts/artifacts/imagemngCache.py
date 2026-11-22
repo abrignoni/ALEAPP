@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Files from app image_manager_disk_cache (Glide) directories and files with a .cnt extension, reported without checking their content; .cnt files held cached image data in the samples examined",
         "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2022-03-05",
-        "last_update_date": "2026-10-04",
+        "last_update_date": "2026-11-21",
         "requirements": "none",
         "category": "Image Manager Cache",
         "notes": "Timestamp Modified is the modification time the extraction recorded for the file as "
@@ -74,17 +74,17 @@ def get_imagemngCache(context):
     files_found = unique_files(context)
     seeker = context.get_seeker()
     data_list = []
-    source_path = ''
+    source_folders = set()
     for file_found in files_found:
         file_found = str(file_found)
         if os.path.isdir(file_found):
             continue
         filename = os.path.basename(file_found)
-        source_path = os.path.dirname(file_found)
+        source_folders.add(os.path.dirname(file_found))
         media = check_in_media(file_found, filename)
         modified, modified_as_stored = _recorded_times(seeker, file_found)
         data_list.append((modified, modified_as_stored, media, filename, context.get_relative_path(file_found)))
 
     data_headers = (
         ('Timestamp Modified', 'datetime'), 'Archive Time Modified (No Zone)', ('Media', 'media'), 'Filename', 'Source File')
-    return data_headers, data_list, context.get_relative_path(source_path)
+    return data_headers, data_list, '\n'.join(sorted(source_folders))

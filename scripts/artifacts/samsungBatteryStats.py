@@ -82,10 +82,15 @@ __artifacts_v2__ = {
                        "as-is.",
         "author": "@abrignoni",
         "creation_date": "2026-07-30",
-        "last_update_date": "2026-07-30",
+        "last_update_date": "2026-11-21",
         "requirements": "none",
         "category": "Samsung Device Health Management Service",
-        "notes": "",
+        "notes": "Window Start and Window End are start_time and end_time read as Unix "
+                 "milliseconds. Used Time is the used_time column as stored. Its unit is not "
+                 "established. On samsungs20_a13, the 38 rows of one Drain Type hold values close "
+                 "to the window length in seconds, and the 10 rows of the other hold about 158 to "
+                 "1,001 times that length. On galaxys10_a10 no Drain Type follows that pattern, "
+                 "so do not carry it to another image.",
         "paths": ('*/com.sec.android.sdhms/databases/sec_batterystats_history*',),
         "output_types": "standard",
         "artifact_icon": "cpu",
@@ -248,6 +253,6 @@ def sdhmsBatterySystemHistory(context):
         ('Window End', 'datetime'),
         'Drain Type',
         'Power',
-        'Used Time (ms)',
+        'Used Time',
     )
     return data_headers, data_list, source_path
