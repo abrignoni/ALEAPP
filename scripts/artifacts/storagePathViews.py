@@ -58,18 +58,27 @@ on s20fe_a13 the snapshot copy of MediaProvider's external.db doubled every Emul
 Metadata table (Files 498 rows, 249 of them from the snapshot). A snapshot
 is not a storage view: it was taken at one moment and may hold data the live copy no longer
 does. So unique_files drops a snapshot only when the same call also holds the live copy of
-that file, for the same storage class and user, and the two are byte identical. Otherwise the
+that file, for the same storage class and user, the two are byte identical and, for a SQLite
+database, their -wal and -journal hold the same content. Otherwise the
 snapshot is kept, and its path names the rollback it belongs to. Of the 111 snapshot files
 artifacts matched on those images, 98 had the size of their live copy and 13 did not. Run over
 the 45 affected artifacts on the 7 images, this removed 363 of 18,361 rows, every one a copy of
 a row the live file also gave. A database whose snapshot holds the same rows in different bytes
 is still read twice: on russell_a14 and hc_pixel8pro_a16 the external.db snapshots differ from
 the live file and their rows stay in Emulated Storage Metadata.
+Those figures predate the -wal and -journal comparison. Across the 89 registered Android images
+(2026-11-22), 11 snapshot databases on 5 images have a main file identical to the live copy and
+a -wal that differs, and each reads different rows from its live copy. Artifact patterns reach
+two: external.db on s20fe_a13 and picker.db on hc_pixel8pro_a16. A before and after run on those
+two images left every artifact row count unchanged. On s20fe_a13 the snapshot external.db is now
+read, and Emulated Storage Metadata leaves out its rows as repeats of the live rows. On
+hc_pixel8pro_a16 the one artifact whose pattern reaches picker.db skips rollback snapshots.
 The apexrollback folders beside them hold APEX module data, not an app data folder, and are
 left as they are.
 """
 
 import filecmp
+import os
 import re
 from collections import Counter
 
@@ -87,6 +96,10 @@ _VIEWS = (
 
 # A pre-update snapshot of an app's data folder, kept for a rollback (see the module notes).
 _SNAPSHOT = re.compile(r'(^|/)(?:user)?data/misc_(ce|de)/(\d+)/rollback/\d+/')
+
+_SQLITE_HEADER = b'SQLite format 3\x00'
+# Each sidecar that can change what SQLite reads, and the size at or below which it holds nothing.
+_CONTENT_SIDECARS = (('-wal', 32), ('-journal', 0))
 
 
 def snapshot_key(relative_path):
@@ -123,8 +136,9 @@ def unique_files(context, files=None):
     Order follows the first appearance of each file, so an artifact that relied on the
     order the seeker returned keeps it. Where an extraction carries several copies the
     one under the shortest, most conventional path is the one reported. A rollback
-    snapshot of a file is left out only when its live copy is among the files and the two
-    are byte identical; otherwise it is kept in its place.
+    snapshot of a file is left out only when its live copy is among the files, the two
+    are byte identical and, for a SQLite database, their -wal and -journal hold the same
+    content; otherwise it is kept in its place.
     """
     if files is None:
         files = context.get_files_found()
@@ -151,7 +165,7 @@ def unique_files(context, files=None):
     for key in order:
         if key in snapshots:
             live_key, file_found = snapshots[key]
-            if live_key in best and _same_bytes(file_found, best[live_key][1]):
+            if live_key in best and _same_database_state(file_found, best[live_key][1]):
                 continue
             kept.append(file_found)
         else:
@@ -196,6 +210,45 @@ def _same_bytes(first, second):
         return filecmp.cmp(first, second, shallow=False)
     except OSError:
         return False
+
+
+def _sidecar_size(path):
+    try:
+        return os.path.getsize(path)
+    except FileNotFoundError:
+        return 0
+
+
+def _same_sidecar(first, second, empty_size):
+    """True when two sidecars hold the same content. Up to empty_size bytes is no content."""
+    try:
+        first_size = _sidecar_size(first)
+        second_size = _sidecar_size(second)
+    except OSError:
+        return False
+    if first_size <= empty_size or second_size <= empty_size:
+        return first_size <= empty_size and second_size <= empty_size
+    return _same_bytes(first, second)
+
+
+def _same_database_state(snapshot, live):
+    """True when a snapshot reads the same as its live copy.
+
+    The main files must be byte identical. For a SQLite database the -wal and -journal
+    beside each must also match. SQLite reads the -wal with the main file, and a -journal
+    is compared so a copy with one is not assumed to read the same. A missing sidecar, an empty one and a -wal of only its 32-byte header hold no content and
+    count as equal. The -shm is an index SQLite rebuilds from the -wal, so it is not compared.
+    """
+    if not _same_bytes(snapshot, live):
+        return False
+    try:
+        with open(snapshot, 'rb') as handle:
+            if handle.read(len(_SQLITE_HEADER)) != _SQLITE_HEADER:
+                return True
+    except OSError:
+        return False
+    return all(_same_sidecar(snapshot + suffix, live + suffix, empty_size)
+               for suffix, empty_size in _CONTENT_SIDECARS)
 
 
 def android_user(relative_path):

@@ -6,6 +6,7 @@ ROOT_DIR = Path(__file__).resolve().parents[3]
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
+import sqlite3
 import tempfile
 
 from scripts.artifacts.storagePathViews import (android_user, canonical_path, snapshot_key, unique_files,
@@ -295,6 +296,93 @@ class TestRollbackSnapshots(unittest.TestCase):
     def test_a_snapshot_names_no_android_user(self):
         """A kept snapshot must not share a (user, name) key with the live copy."""
         self.assertEqual(android_user(self.SNAP), '')
+
+
+class TestRollbackSnapshotSidecars(unittest.TestCase):
+    """A snapshot whose main file matches the live copy can still hold rows in its -wal."""
+
+    SNAP = 'Dump/data/misc_ce/0/rollback/7/com.foo/databases/x.db'
+    LIVE = 'Dump/data/data/com.foo/databases/x.db'
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.root = Path(self.tmp.name)
+        self.data = self.root / 'ALEAPP_Output' / 'data'
+        self.writer = self.root / 'writer.db'
+        self.connection = sqlite3.connect(self.writer, isolation_level=None)
+        self.connection.execute('PRAGMA journal_mode=WAL')
+        self.connection.execute('PRAGMA wal_autocheckpoint=0')
+        self.connection.execute('CREATE TABLE t(v TEXT)')
+        self.connection.execute("INSERT INTO t VALUES ('in the main file')")
+        self.connection.execute('PRAGMA wal_checkpoint(TRUNCATE)')
+        self.main = self.writer.read_bytes()
+        self.connection.execute("INSERT INTO t VALUES ('only in the log')")
+        self.wal = Path(f'{self.writer}-wal').read_bytes()
+
+    def tearDown(self):
+        self.connection.close()
+        self.tmp.cleanup()
+
+    def write(self, relative, content):
+        path = self.data / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(content)
+        return str(path)
+
+    def pair(self):
+        return self.write(self.SNAP, self.main), self.write(self.LIVE, self.main)
+
+    def run_unique(self, files):
+        return unique_files(FakeContext(files, data_folder=str(self.data)))
+
+    def test_a_snapshot_with_rows_only_in_its_wal_is_kept_and_reads_them(self):
+        snap, live = self.pair()
+        self.write(f'{self.SNAP}-wal', self.wal)
+        self.assertEqual(self.run_unique([snap, live]), [snap, live])
+        db = sqlite3.connect(f'{Path(snap).as_uri()}?mode=ro', uri=True)
+        try:
+            rows = [row[0] for row in db.execute('SELECT v FROM t')]
+        finally:
+            db.close()
+        self.assertIn('only in the log', rows)
+
+    def test_a_live_wal_the_snapshot_lacks_keeps_the_snapshot(self):
+        snap, live = self.pair()
+        self.write(f'{self.LIVE}-wal', self.wal)
+        self.assertEqual(self.run_unique([snap, live]), [snap, live])
+
+    def test_identical_wals_leave_the_snapshot_out(self):
+        snap, live = self.pair()
+        self.write(f'{self.SNAP}-wal', self.wal)
+        self.write(f'{self.LIVE}-wal', self.wal)
+        self.assertEqual(self.run_unique([snap, live]), [live])
+
+    def test_a_missing_and_an_empty_wal_are_equal(self):
+        snap, live = self.pair()
+        self.write(f'{self.SNAP}-wal', b'')
+        self.assertEqual(self.run_unique([snap, live]), [live])
+
+    def test_a_wal_of_only_its_header_holds_no_content(self):
+        snap, live = self.pair()
+        self.write(f'{self.SNAP}-wal', self.wal[:32])
+        self.assertEqual(self.run_unique([snap, live]), [live])
+
+    def test_a_differing_shm_is_not_compared(self):
+        snap, live = self.pair()
+        self.write(f'{self.SNAP}-shm', b'a' * 32768)
+        self.write(f'{self.LIVE}-shm', b'b' * 32768)
+        self.assertEqual(self.run_unique([snap, live]), [live])
+
+    def test_a_differing_journal_keeps_the_snapshot(self):
+        snap, live = self.pair()
+        self.write(f'{self.SNAP}-journal', b'\xd9\xd5\x05\xf9\x20\xa1\x63\xd7 pages')
+        self.assertEqual(self.run_unique([snap, live]), [snap, live])
+
+    def test_a_file_that_is_not_sqlite_ignores_a_neighbour_named_wal(self):
+        snap = self.write(self.SNAP, b'not a database')
+        live = self.write(self.LIVE, b'not a database')
+        self.write(f'{self.SNAP}-wal', b'x' * 100)
+        self.assertEqual(self.run_unique([snap, live]), [live])
 
 
 class TestWithoutSnapshotRepeats(unittest.TestCase):
