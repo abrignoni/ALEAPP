@@ -36,6 +36,21 @@ class DeepseekPlainTextTest(unittest.TestCase):
         self.assertEqual(artifact_report.cell_html(rows[0][4], 'Message Content', [], columns),
                          '&lt;b&gt;a&lt;/b&gt; &amp; b<br><br>second')
 
+    def test_an_inserted_at_that_cannot_convert_is_shown_as_stored(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path = pathlib.Path(folder) / 'deepseek_chat_1.db'
+            database = sqlite3.connect(path)
+            database.execute('CREATE TABLE chat_session_messages_1(role TEXT, inserted_at, fragments TEXT)')
+            database.executemany('INSERT INTO chat_session_messages_1 VALUES (?, ?, ?)',
+                                 [('USER', 2000.0, '[]'), ('USER', 'invalid', '[]'), ('USER', 'inf', '[]')])
+            database.commit()
+            database.close()
+            _, rows, _ = deepseek.deepseek_chat_messages.__wrapped__(FakeContext(path))
+        self.assertEqual(len(rows), 3)
+        self.assertEqual({row[2] for row in rows[:2]}, {'invalid', 'inf'})
+        self.assertEqual([row[0] for row in rows[:2]], [None, None])
+        self.assertEqual(rows[2][0], 2000.0)
+
 
 if __name__ == '__main__':
     unittest.main()
