@@ -6,7 +6,7 @@ __artifacts_v2__ = {
                        "type and network identifiers for each interface",
         "author": "Alex Caithness",
         "creation_date": "2026-08-05",
-        "last_update_date": "2026-10-09",
+        "last_update_date": "2026-11-21",
         "requirements": "none",
         "category": "Network Usage",
         "notes": "The binary format is read per NetworkStatsCollection.java, "
@@ -25,6 +25,25 @@ __artifacts_v2__ = {
                  "NetworkStats.java#77, "
                  "the android-14.0.0_r1 tag); where packages.xml parses, this module labels it "
                  "'[UID_ALL]'. It carries no per-application attribution.\n"
+                 "A UID of 100000 or more that packages.xml does not list is looked up by its "
+                 "app ID, the UID modulo 100000 (UserHandle.getAppId, "
+                 "https://android.googlesource.com/platform/frameworks/base/+/"
+                 "299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/core/java/android/os/"
+                 "UserHandle.java#399, the android-14.0.0_r1 tag). Where packages.xml lists "
+                 "that app ID, the package name is shown with the full UID in parentheses. "
+                 "Otherwise the UID is shown alone.\n"
+                 "Tag is the record's tag in the hexadecimal form of AOSP "
+                 "NetworkStats.tagToString. Tag 0x0 is TAG_NONE, documented in NetworkStats.java "
+                 "as the 'value for total data across all tags'. That file skips other tags "
+                 "when totalling because they are 'already counted in TAG_NONE'. It also notes "
+                 "that if VPN software uses tags, the total tagged traffic may be greater than "
+                 "the TAG_NONE traffic. Do not add tagged rows to Tag 0x0 rows. Rows with UID -1 "
+                 "carry no per-application attribution, and other negative UIDs are special "
+                 "values, not single applications. AOSP leaves the VPN debug sets (Usage Set "
+                 "VPN_IN and VPN_OUT) out of its totals. This module does not remove repeated "
+                 "rows. On samsungs20_a13, six collection files were present, byte-identical, "
+                 "in two netstats folders, and each of their rows is reported twice. Check the "
+                 "source list for repeated collection files before adding rows.\n"
                  "Timeline output is deliberately off: the buckets produce tens of thousands "
                  "of timestamped rows per image.",
         "paths": ("*/netstats/dev*", "*/netstats/uid*", "*/netstats/xt*", "*/system/packages.xml"),
@@ -62,6 +81,9 @@ from scripts.ilapfuncs import artifact_processor, checkabx, abxread, logfunc
 #      packages/modules/Connectivity/framework-t/src/android/net/NetworkStatsHistory.java
 
 
+
+# android.os.UserHandle.PER_USER_RANGE: uid = userId * PER_USER_RANGE + appId
+PER_USER_RANGE = 100000
 
 UNIX_EPOCH = datetime.datetime(1970, 1, 1, 0, 0, 0)
 def from_unix_ms(ms):
@@ -387,6 +409,20 @@ def map_uids(packages: etree.ElementTree):
 
     return uid_map
 
+def package_for_uid(uid: int, uid_map: dict) -> typing.Optional[str]:
+    """Package for a UID, through its app ID when the UID belongs to a secondary user."""
+    if uid in uid_map:
+        return uid_map[uid]
+    if uid >= PER_USER_RANGE:
+        return uid_map.get(uid % PER_USER_RANGE)
+    return None
+
+
+def format_tag(tag: int) -> str:
+    """The tag as AOSP NetworkStats.tagToString prints it (Java's unsigned hex of an int)."""
+    return f"0x{tag & 0xFFFFFFFF:x}"
+
+
 @artifact_processor
 def netstats(context):
     files_found = context.get_files_found()
@@ -409,7 +445,7 @@ def netstats(context):
     uid_map = map_uids(packages) if packages is not None else {}
 
     headers = [
-        ("Bucket Start", "datetime"), "Duration", "UID/Package", "Interface", "Usage Set",
+        ("Bucket Start", "datetime"), "Duration", "UID/Package", "Interface", "Usage Set", "Tag",
         "Rx Bytes", "Rx Packets", "Tx Bytes", "Tx Packets"]
     source_files = set()
     results = []
@@ -425,8 +461,9 @@ def netstats(context):
 
             for stat in collection.stats:
                 for record in stat.records:
-                    if record.uid in uid_map:
-                        formatted_package = f"{uid_map[record.uid]} ({record.uid})"
+                    package = package_for_uid(record.uid, uid_map)
+                    if package is not None:
+                        formatted_package = f"{package} ({record.uid})"
                     else:
                         formatted_package = f"{record.uid}"
 
@@ -435,6 +472,7 @@ def netstats(context):
                             (entry.start_time, entry.duration, formatted_package,
                              "\n".join(str(x) for x in stat.identity_set.identities),
                              NetstatsCollection.SET_TYPES.get(record.set, f"(unknown: {record.set})"),
+                             format_tag(record.tag),
                              entry.rx_bytes, entry.rx_packets, entry.tx_bytes, entry.tx_packets))
 
             source_files.add(context.get_relative_path(file))
