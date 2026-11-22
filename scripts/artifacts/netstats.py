@@ -1,9 +1,9 @@
 __artifacts_v2__ = {
     "netstats": {
         "name": "Netstats",
-        "description": "Per-application and device-wide network data usage from the binary "
-                       "system netstats collections, bucketed over time, with the connection "
-                       "type and network identifiers of each network identity",
+        "description": "Network data usage per UID, and rows with no UID detail (UID -1), from the "
+                       "binary system netstats collections, bucketed over time, with the connection "
+                       "type, subscriber ID and network ID of each network identity",
         "author": "Alex Caithness",
         "creation_date": "2026-08-05",
         "last_update_date": "2026-11-21",
@@ -14,8 +14,9 @@ __artifacts_v2__ = {
                  "framework-t/src/android/net in AOSP packages/modules/Connectivity. The "
                  "release the layout was taken from is not recorded in this module. Only the "
                  "unified collection format "
-                 "(version 16) is parsed; older versions are "
-                 "rejected rather than guessed at. Identity set version 8 is not in "
+                 "(version 16) is parsed. A file with any other collection version is skipped "
+                 "and named in the run log. So is a file that fails to parse for any other "
+                 "reason. No file was skipped this way on the sample_data images. Identity set version 8 is not in "
                  "NetworkIdentitySet.java at the android-13.0.0_r1, android-14.0.0_r1, "
                  "android-15.0.0_r1 or android-16.0.0_r1 tags. It was present on anne_a15, "
                  "hc_pixel8pro_a16, hc_pixel8pro_a17 and kevin_pocox7_a15. This module reads 8 "
@@ -23,10 +24,13 @@ __artifacts_v2__ = {
                  "Bucket Start is the start of the bucket in milliseconds since the Unix epoch "
                  "(NetworkStatsHistory.java), shown in UTC. Duration is the bucket length in "
                  "milliseconds. Interface holds the connection type, subscriber ID and network "
-                 "ID of each network identity. Its other identity fields are not shown.\n"
-                 "UIDs are resolved to package names through packages.xml where it parses. "
-                 "If packages.xml cannot be parsed, usage is still reported with bare UIDs. "
-                 "None of the images listed in sample_data exercised this. A UID of -1 is UID_ALL in AOSP NetworkStats.java, "
+                 "ID of each network identity, not an interface name. Its other identity fields are not shown.\n"
+                 "UIDs are resolved through packages.xml, where it parses, to a package name "
+                 "or, for a shared UID, to the shared user name. If packages.xml is absent, or "
+                 "fails with an XML parse error, an I/O error or a ValueError, usage is still "
+                 "reported with bare UIDs. Other ABX decoding errors are not caught, and the "
+                 "artifact then returns no rows. None of the images listed in sample_data "
+                 "exercised these paths. A UID of -1 is UID_ALL in AOSP NetworkStats.java, "
                  "documented there as the uid value 'when UID details unavailable' "
                  "(https://android.googlesource.com/platform/packages/modules/Connectivity/+/"
                  "bd692130a596b4e9bc1ea6778db72c423bb8ab6f/framework-t/src/android/net/"
@@ -38,31 +42,36 @@ __artifacts_v2__ = {
                  "https://android.googlesource.com/platform/frameworks/base/+/"
                  "299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/core/java/android/os/"
                  "UserHandle.java#399, the android-14.0.0_r1 tag). Where packages.xml lists "
-                 "that app ID, the package name is shown with the full UID in parentheses. "
+                 "that app ID, its name is shown with the full UID in parentheses. "
                  "Otherwise the UID is shown alone.\n"
                  "Tag is the record's tag in the hexadecimal form of AOSP "
                  "NetworkStats.tagToString. Tag 0x0 is TAG_NONE, documented in NetworkStats.java "
                  "as the 'value for total data across all tags'. That file skips other tags "
                  "when totalling because they are 'already counted in TAG_NONE'. It also notes "
                  "that if VPN software uses tags, the total tagged traffic may be greater than "
-                 "the TAG_NONE traffic. Do not add tagged rows to Tag 0x0 rows. Rows with UID -1 "
-                 "carry no per-application attribution. UID -4 is UID_REMOVED "
+                 "the TAG_NONE traffic. Do not add tagged rows to Tag 0x0 rows. UID -4 is UID_REMOVED "
                  "(https://android.googlesource.com/platform/packages/modules/Connectivity/+/"
                  "bd692130a596b4e9bc1ea6778db72c423bb8ab6f/framework-t/src/android/net/"
                  "TrafficStats.java#88) and UID -5 is UID_TETHERING (NetworkStats.java#80 at "
                  "the same commit, the android-14.0.0_r1 tag). UID -253 was present on every "
                  "sample_data key except galaxys10_a10, russell_pixel6a_a13 and s20fe_a13. Its "
-                 "meaning is not established here and it is shown as stored. AOSP leaves the VPN debug sets (Usage Set "
-                 "VPN_IN and VPN_OUT) out of its totals.\n"
+                 "meaning is not established here and it is shown as stored. In AOSP "
+                 "NetworkStats.setMatches, a query for all sets (SET_ALL) does not match the "
+                 "debug sets, which include VPN_IN and VPN_OUT (NetworkStats.java#1417 at the "
+                 "same commit). No VPN_IN or VPN_OUT row was present on the sample_data "
+                 "images.\n"
                  "A collection file with the same SHA-256 as one already read is not read "
                  "again, and its path stays in the source list. Files that differ are all "
                  "reported, even when they share records: on hc_pixel8pro_a16 and sharon_a14, "
                  "different files in different netstats folders held identical buckets, so "
                  "those rows appear more than once. Rows do not show which folder or file kind "
                  "(dev, xt, uid, uid_tag) they came from. On galaxys10_a10, russell_pixel6a_a13, "
-                 "sharon_a14 and userb2_a13, a netstats folder held dev and xt files with "
-                 "mostly identical UID -1 rows. Do not total rows across files. Identical rows can also be "
-                 "separate records, because Interface leaves out some identity fields.\n"
+                 "sharon_a14 and userb2_a13, most UID -1 rows from the dev files of a netstats "
+                 "folder were also present, identical, in the xt files of the same folder (218 "
+                 "of 234, 336 of 371, 2,153 of 2,269 and 27 of 29). On sharon_a14 a second "
+                 "folder showed the same (27 of 34) and a third folder held dev and xt files "
+                 "with no identical rows. Do not total rows across files. Identical rows can "
+                 "also be separate records, because Interface leaves out some identity fields.\n"
                  "Timeline output is deliberately off: the buckets produced up to 62,999 "
                  "timestamped rows (kevin_pocox7_a15).",
         "paths": ("*/netstats/dev*", "*/netstats/uid*", "*/netstats/xt*", "*/system/packages.xml"),
@@ -456,8 +465,7 @@ def netstats(context):
     files_found = context.get_files_found()
 
     # packages.xml is an enrichment, not a requirement: it only maps UIDs to
-    # package names. One tested image stores it encrypted, and an unreadable
-    # copy must not cost the netstats rows themselves.
+    # package names. An unreadable copy must not cost the netstats rows.
     packages = None
     for file in files_found:
         if file.endswith("packages.xml"):
