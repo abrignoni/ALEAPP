@@ -6,8 +6,8 @@ __artifacts_v2__ = {
                        "and flagged state and the message body where the app cached it.",
         "author": "@AlexisBrignoni, @mattiaepi (Mattia Epifani), Claude",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-10-09",
-        "requirements": "none",
+        "last_update_date": "2026-11-22",
+        "requirements": "BeautifulSoup",
         "category": "Yahoo Mail",
         "notes": "One row per cached message. The app stores its state in flux_database.db, "
                  "where every table shares the same shape, a mailboxYid naming the account, "
@@ -26,10 +26,13 @@ __artifacts_v2__ = {
                  "carries, resolved through the Folders table of the same account. Folder Name "
                  "(base64 decoded) is filled only where that stored name decodes from base64 to "
                  "printable text; whether the app encodes folder names that way is not "
-                 "established. Message Body is the HTML the "
-                 "app cached, as stored; on the tested device 1 of 6 messages carried one, so "
-                 "an empty column means no body was cached rather than that the message was "
-                 "empty. No message on the tested device carried an attachment: every "
+                 "established. Message Body (as text) is text extracted from the HTML the "
+                 "app cached, as in the Gmail artifacts (body_text_and_links): tags and the text of "
+                 "closed title, style and script elements are removed, a line break is placed at each "
+                 "br and block tag, each link's place is marked [n], and Message Body Links lists each a element's href by those numbers, as the HTML parser returns it (character references decoded). Other link elements are not listed. "
+                 "The cached HTML stays in the source database. On the tested device 1 of "
+                 "6 messages carried a body. An empty column most often means no body was cached. It "
+                 "is also empty when the cached HTML yields no text. The text extraction was checked on a constructed body only. No message on the tested device carried an attachment: every "
                  "attachmentIds list was empty and the Attachments table held no rows, so "
                  "nothing could be linked to cached bytes and no media column is offered. No "
                  "user-entered search terms were found here: on the tested device "
@@ -42,6 +45,7 @@ __artifacts_v2__ = {
             '*/com.yahoo.mobile.client.android.mail/databases/flux_database.db*',
         ),
         "output_types": ["html", "tsv", "timeline", "lava"],
+        "multiline_columns": ["Message Body (as text)", "Message Body Links"],
         "artifact_icon": "mail"
     },
     "yahoo_mail_folders": {
@@ -173,6 +177,7 @@ import sqlite3
 import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta, timezone
 
+from scripts.artifacts.gmailEmails import body_text_and_links
 from scripts.artifacts.storagePathViews import canonical_path, unique_files
 from scripts.ilapfuncs import (
     artifact_processor,
@@ -412,6 +417,7 @@ def yahoo_mail_messages(context):
 
                 attachment_ids = attachment.get('attachmentIds')
                 source_files.append(relative)
+                body_text, body_links = body_text_and_links(body.get('htmlBody') or '')
                 data_list.append((
                     _ms(document.get('date')),
                     _ms(document.get('serverSyncTimestamp')),
@@ -428,7 +434,8 @@ def yahoo_mail_messages(context):
                     str(flag.get('isRead', '')),
                     str(flag.get('isFlagged', '')),
                     len(attachment_ids) if isinstance(attachment_ids, list) else '',
-                    body.get('htmlBody') or '',
+                    body_text,
+                    body_links,
                     str(reference.get('conversationId', '')),
                     _joined(reference.get('decoIds')),
                     _joined(document.get('categoryInfo'), 'name'),
@@ -441,7 +448,7 @@ def yahoo_mail_messages(context):
 
     # Most recent message first, with the message id breaking ties so the order is the
     # same on every run rather than depending on the order the rows were read.
-    data_list.sort(key=lambda row: (str(row[0]), row[20]), reverse=True)
+    data_list.sort(key=lambda row: (str(row[0]), row[21]), reverse=True)
 
     data_headers = (
         ('Date', 'datetime'),
@@ -459,7 +466,8 @@ def yahoo_mail_messages(context):
         'Read',
         'Flagged',
         'Attachment Count',
-        'Message Body (as stored)',
+        'Message Body (as text)',
+        'Message Body Links',
         'Conversation ID',
         'Decorations (as stored)',
         'Category (as stored)',

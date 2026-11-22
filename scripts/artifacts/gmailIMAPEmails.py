@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Parses emails from IMAP mailboxes in the Gmail App",
         "author": "ogmini",
         "creation_date": "2025-08-20",
-        "last_update_date": "2026-08-24",
+        "last_update_date": "2026-11-22",
         "requirements": "BeautifulSoup",
         "category": "Email",
         "notes": "Every matched EmailProvider store is read except copies under a .magisk mirror "
@@ -14,8 +14,8 @@ __artifacts_v2__ = {
                  "the store's own Account table records for the row. Body and attachment files are "
                  "only paired with rows from the same app instance they belong to. Body(HTML) is "
                  "the readable text extracted from the message's stored HTML body file. Each "
-                 "link's place in the text is marked [n], and Links lists the link targets by "
-                 "those numbers, as stored. A link with no words of its own, such as a linked "
+                 "link's place in the text is marked [n], and Links lists the href of each a element by "
+                 "those numbers, as the HTML parser returns it (character references decoded). A link with no words of its own, such as a linked "
                  "image, still gets a marker, so the words just before a marker are not always the "
                  "link's text. The unmodified body file stays in the report's data folder. No "
                  "tested image held IMAP data (every EmailProvider.db carried empty Account and "
@@ -23,6 +23,7 @@ __artifacts_v2__ = {
                  "data, not a real image.",
         "paths": ('*/com.google.android.gm/databases/EmailProvider.*','*/com.google.android.gm/files/body/0/*/*.*','*/com.google.android.gm/databases/*.db_att/*','*/com.google.android.gm/cache/*.attachment'),
         "output_types": "standard",
+        "multiline_columns": ["Body(HTML)", "Links"],
         "artifact_icon": "inbox",
         "sample_data": {
             "anne_a15": "Android 15 | com.google.android.gm vc 65346694 | 0 rows",

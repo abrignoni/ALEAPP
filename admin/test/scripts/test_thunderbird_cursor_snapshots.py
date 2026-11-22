@@ -83,7 +83,7 @@ class TestThunderbirdCursorSnapshots(unittest.TestCase):
             self.assertEqual({row[15] for row in rows}, {'one', 'two'})
             for row in rows:
                 self.assertEqual(row[0:4], (None, None, '1@example.test', 'a\nb'))
-                self.assertEqual(row[9], '&lt;x&gt;<br>body')
+                self.assertEqual(row[9], '<x>\nbody')
                 self.assertEqual(row[16], message.name)
 
 
