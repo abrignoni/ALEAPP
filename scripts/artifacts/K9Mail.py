@@ -43,7 +43,7 @@ __artifacts_v2__ = {
                  "transfer encoding using the charset in the part's stored header (UTF-8 when none "
                  "is usable; bytes that do not decode show as the replacement character), and Content "
                  "is text extracted from it as in the Gmail artifacts (body_text_and_links): tags and "
-                 "the text of closed title, style and script elements are removed, a line break is "
+                 "the text of closed style and script elements are removed, a line break is "
                  "placed at each br and block tag, each link's place is marked [n], and Content Links lists each a element's href by those numbers, as the HTML parser returns it (character references decoded). Other link elements are not listed. "
                  "The stored part stays in the source database. Any other "
                  "text part is decoded when its encoding is base64, read as UTF-8 whatever charset the "

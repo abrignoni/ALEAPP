@@ -218,6 +218,7 @@ The key of each entry (`get_cool_messages` above) must match the name of its dec
 Optional keys:
 
 - `html_columns`: columns written to the HTML report without escaping. Pass any value that comes from the evidence through the helpers in `scripts/html_safe.py`.
+- `multiline_columns`: Header names, as plain strings, whose line breaks show as `<br>` on the HTML report page. The cell is still escaped, and LAVA, TSV and timeline keep the plain newlines. A column also listed in `html_columns` follows `html_columns`.
 - `data_views`: alternate LAVA views, such as a conversation view for message artifacts. Column order for those is in [Conversation Column Order](admin/docs/conversation_column_order.md).
 - `sample_data`: a mapping of test corpus name to a short note about what that corpus produced. The artifact processor ignores it. See [Test data and sample_data for your PR](#test-data-and-sample_data-for-your-pr).
 
