@@ -1,4 +1,4 @@
-"""WhatsApp Business tools: linked chat names, stored attachments and a source on every row."""
+"""WhatsApp Business tools: linked chat names and stored attachments."""
 import pathlib
 import sqlite3
 import sys
@@ -10,8 +10,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT))
 
 from scripts.artifacts.whatsAppBusinessTools import (  # noqa: E402
-    whatsapp_business_automated_messages, whatsapp_business_chat_lists, whatsapp_business_customer_notes,
-    whatsapp_business_profiles, whatsapp_business_quick_replies, whatsapp_business_quick_reply_attachments)
+    whatsapp_business_chat_lists, whatsapp_business_customer_notes, whatsapp_business_quick_reply_attachments)
 
 LID = '100@lid'
 PHONE = '15550000001@s.whatsapp.net'
@@ -28,7 +27,6 @@ class WhatsAppBusinessTools(unittest.TestCase):
         self.root = pathlib.Path(temporary.name)
         self.folder = self.root / 'data/data/com.whatsapp.w4b/databases'
         self.folder.mkdir(parents=True)
-        self.relative = 'data/data/com.whatsapp.w4b/databases'
         con = sqlite3.connect(self.folder / 'msgstore.db')
         con.executescript(f'''
             CREATE TABLE jid(_id INTEGER PRIMARY KEY, raw_string TEXT);
@@ -88,16 +86,6 @@ class WhatsAppBusinessTools(unittest.TestCase):
         self.assertEqual([(r['Shortcut'], r['Attachment Path (as stored)'], r['Caption'], r['Media Type (as stored)'])
                           for r in rows], [('shortcut', '/stored/path.jpg', 'caption', 1),
                                            ('', '/stored/orphan.jpg', '', '')])
-
-    def test_every_artifact_names_the_database_of_each_row(self):
-        expected = {whatsapp_business_quick_replies: 'msgstore.db', whatsapp_business_quick_reply_attachments: 'msgstore.db',
-                    whatsapp_business_chat_lists: 'msgstore.db', whatsapp_business_customer_notes: 'smb.db',
-                    whatsapp_business_automated_messages: 'msgstore.db', whatsapp_business_profiles: 'wa.db'}
-        for function, name in expected.items():
-            with self.subTest(function=function.__name__):
-                rows = self.rows(function)
-                self.assertTrue(rows)
-                self.assertEqual({row['Source File'] for row in rows}, {str(pathlib.Path(self.relative) / name)})
 
 
 if __name__ == '__main__':

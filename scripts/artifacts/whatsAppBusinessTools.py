@@ -16,11 +16,13 @@ __artifacts_v2__ = {
                  "the 2 tested rows). Linked Lists reads associated_label_ids, which the app writes as "
                  "comma-separated ids, and shows the labels row name with that _id, or the id itself "
                  "when none matches. That the ids are labels row ids is not established and the column "
-                 "was not exercised. Attachments counts quick_reply_attachments rows and held 0. WhatsApp Business - Quick Reply Attachments lists them. Times "
-                 "Used sums usage_count over the quick_reply_usage rows still present. When it loads quick replies, the app deletes usage rows dated 7 or more days earlier, so this is not a lifetime count. Last Used is the "
-                 "latest usage_date still present, which the app writes as a yyyyMMdd day in the "
-                 "phone's time zone at the time of use, and is shown as that local date. One known use "
-                 "gave 1 and the expected day. Source File is the database the row was read from.",
+                 "was not exercised. Attachments counts quick_reply_attachments rows and held 0. "
+                 "WhatsApp Business - Quick Reply Attachments lists them. Times Used sums usage_count "
+                 "over the quick_reply_usage rows still present. When it loads quick replies, the app "
+                 "deletes usage rows dated 7 or more days earlier, so this is not a lifetime count. "
+                 "Last Used is the latest usage_date still present, which the app writes as a yyyyMMdd "
+                 "day in the phone's time zone at the time of use, and is shown as that local date. "
+                 "One known use gave 1 and the expected day.",
         "paths": ('*/com.whatsapp.w4b/databases/msgstore.db*', '*/com.whatsapp.w4b/databases/wa.db*',
                   '*/com.whatsapp.w4b/databases/smb.db*'),
         "output_types": ["html", "tsv", "lava"],
@@ -34,12 +36,17 @@ __artifacts_v2__ = {
         "last_update_date": "2026-11-22",
         "requirements": "none",
         "category": "WhatsApp Business",
-        "notes": "Read from com.whatsapp.w4b/databases/msgstore.db: one row per quick_reply_attachments row, with "
-                 "Shortcut from the quick_replies row whose _id equals quick_reply_id. The decompiled WhatsApp "
-                 "Business app (versionName 2.26.45.80) writes uri as the path of the attachment's Uri made relative to an app base folder, with its caption and media_type. Which folder that is was not established. No tested capture held an attachment, so this artifact has not been run "
-                 "on real attachment rows. The attached file is not shown, because where these paths resolve in an "
-                 "extraction was not tested. Media Type is shown as stored and its meaning is not established. "
-                 "Source File is the database the row was read from.",
+        "notes": "Read from com.whatsapp.w4b/databases/msgstore.db: one row per "
+                 "quick_reply_attachments row, with Shortcut from the quick_replies row whose _id "
+                 "equals quick_reply_id. In the decompiled WhatsApp Business app (versionName "
+                 "2.26.45.80), uri is written from the path of the attachment's Uri. The app makes it "
+                 "relative to a base folder when the file is under that folder. Otherwise the full "
+                 "path is written. caption and media_type are written with it. In that source the base "
+                 "is the app's WhatsApp Business folder on shared storage. No stored value was "
+                 "observed, so the folder on a given device was not tested. No tested capture held an "
+                 "attachment, so this artifact has not been run on real attachment rows. The attached "
+                 "file is not shown, because where these paths resolve in an extraction was not "
+                 "tested. Media Type is shown as stored and its meaning is not established.",
         "paths": ('*/com.whatsapp.w4b/databases/msgstore.db*', '*/com.whatsapp.w4b/databases/wa.db*',
                   '*/com.whatsapp.w4b/databases/smb.db*'),
         "output_types": ["html", "tsv", "lava"],
@@ -53,15 +60,23 @@ __artifacts_v2__ = {
         "last_update_date": "2026-11-22",
         "requirements": "none",
         "category": "WhatsApp Business",
-        "notes": "Read from com.whatsapp.w4b/databases/msgstore.db: one row per labeled_jid row whose label_id matches a labels row, "
-                 "joined to labels for the list name and to the jid table for the chat. Chat Name "
-                 "comes from wa_contacts in the wa.db beside it. It is display_name, or wa_name when "
-                 "that is empty, and is blank when no wa_contacts row with the same id has a name. For an @lid id, the id that jid_map in the same msgstore.db links to is also looked up in wa_contacts. No tested labeled_jid row held an @lid id, so that lookup was not run on capture data. Field "
+        "notes": "Read from com.whatsapp.w4b/databases/msgstore.db: one row per labeled_jid row whose "
+                 "label_id matches a labels row, joined to labels for the list name and to the jid "
+                 "table for the chat. Chat Name comes from wa_contacts in the wa.db beside it. It is "
+                 "display_name, or wa_name when that is empty, and is blank when no wa_contacts row "
+                 "with the same id has a name. When the id has no name of its own and jid_map in the "
+                 "same msgstore.db links it (as lid_row_id) to another id, Chat Name is the "
+                 "wa_contacts name of that linked id. Chat still shows the stored id. No tested "
+                 "labeled_jid row held an @lid id, so that lookup was not run on capture data. Field "
                  "meanings come from the decompiled WhatsApp Business app (versionName 2.26.45.80). "
                  "Tested on a lab test account capture of WhatsApp Business 2.26.45.80 that is not in "
                  "the corpus, against values entered in the app. A chat placed in 2 lists gave 2 rows. "
-                 "Lists with no chats are not reported. On the tested account 3 of the 5 lists were present before the tester used lists and held no chats. The 2 that held chats carry a predefined_id, so a list does not establish that the user created it. The table has no time, so a row does not show "
-                 "when the chat was added. Source File is the database the row was read from.",
+                 "Lists with no chats are not reported. On the tested account 3 of the 5 lists were "
+                 "present before the tester used lists and held no chats. The 2 that held chats were "
+                 "not in that earlier copy. They store predefined_id 1 and 4, and the other 3 store 0. "
+                 "What predefined_id means was not established. A list does not establish that the "
+                 "user created it. The table has no time, so a row does not show when the chat was "
+                 "added.",
         "paths": ('*/com.whatsapp.w4b/databases/msgstore.db*', '*/com.whatsapp.w4b/databases/wa.db*',
                   '*/com.whatsapp.w4b/databases/smb.db*'),
         "output_types": ["html", "tsv", "lava"],
@@ -76,14 +91,21 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "WhatsApp Business",
         "notes": "Read from com.whatsapp.w4b/databases/smb.db: one row per wa_notes row. Created and "
-                 "Modified are created_at and modified_at read as Unix milliseconds. The app keeps one note per chat and overwrites its text on an edit. The app also rewrites modified_at when it migrates the chat's id, so Modified need not be a text edit. An edit was not exercised: Created "
-                 "and Modified were equal on the tested row. Chat is chat_jid. Chat Name comes from "
+                 "Modified are created_at and modified_at read as Unix milliseconds. The app keeps one "
+                 "note per chat and overwrites its text on an edit. The app has two code paths that "
+                 "change a note's chat id. One of them also rewrites modified_at, so Modified need not "
+                 "be a text edit. Neither was exercised. An edit was not exercised: Created and "
+                 "Modified were equal on the tested row. Chat is chat_jid. Chat Name comes from "
                  "wa_contacts in the wa.db beside it. It is display_name, or wa_name when that is "
-                 "empty, and is blank when no wa_contacts row with the same id has a name. For an @lid id, the id that jid_map in the msgstore.db beside it links to is also looked up. The tested wa_notes row did not hold an @lid id, so that lookup was not run on capture data. Field meanings "
-                 "come from the decompiled WhatsApp Business app (versionName 2.26.45.80). Tested on a "
-                 "lab test account capture of WhatsApp Business 2.26.45.80 that is not in the corpus, "
-                 "against values entered in the app. One known note was read back. note_type and "
-                 "account_jid are not reported: note_type held 0 and account_jid was NULL on the tested row. Source File is the database the row was read from.",
+                 "empty, and is blank when no wa_contacts row with the same id has a name. When the id "
+                 "has no name of its own and jid_map in the msgstore.db beside it links it (as "
+                 "lid_row_id) to another id, Chat Name is the wa_contacts name of that linked id. Chat "
+                 "still shows the stored id. The tested wa_notes row did not hold an @lid id, so that "
+                 "lookup was not run on capture data. Field meanings come from the decompiled WhatsApp "
+                 "Business app (versionName 2.26.45.80). Tested on a lab test account capture of "
+                 "WhatsApp Business 2.26.45.80 that is not in the corpus, against values entered in "
+                 "the app. One known note was read back. note_type and account_jid are not reported: "
+                 "note_type held 0 and account_jid was NULL on the tested row.",
         "paths": ('*/com.whatsapp.w4b/databases/msgstore.db*', '*/com.whatsapp.w4b/databases/wa.db*',
                   '*/com.whatsapp.w4b/databases/smb.db*'),
         "output_types": "standard",
@@ -98,14 +120,17 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "WhatsApp Business",
         "notes": "Read from the greeting_* and away_* keys of the props table in "
-                 "com.whatsapp.w4b/databases/msgstore.db, one row for Greeting and one for Away when their keys are stored. Field "
-                 "meanings come from the decompiled WhatsApp Business app (versionName 2.26.45.80). "
-                 "Tested on a lab test account capture of WhatsApp Business 2.26.45.80 that is not in "
-                 "the corpus, against values entered in the app. Setting is on or off from greeting_on "
-                 "for Greeting. For Away it is away_state. always_on (1), custom (2) and "
-                 "non_business_hours (3) are the names the app's away settings code (AwaySettingsActivity) gives these values. off (0) is this module's label: the app treats 0 as away not enabled. "
-                 "Recipients is the distribution value named everyone (0), non_contacts (1), allowlist "
-                 "(2) or blocklist (3). Setting or Recipients is blank when its key is not stored. The app reads a missing away_state or distribution key as 0 and a missing greeting_on as off. On three of the four tested captures "
+                 "com.whatsapp.w4b/databases/msgstore.db, one row for Greeting and one for Away when "
+                 "their keys are stored. Field meanings come from the decompiled WhatsApp Business app "
+                 "(versionName 2.26.45.80). Tested on a lab test account capture of WhatsApp Business "
+                 "2.26.45.80 that is not in the corpus, against values entered in the app. Setting is "
+                 "on or off from greeting_on for Greeting. For Away it is away_state. always_on (1), "
+                 "custom (2) and non_business_hours (3) are the names the app's away settings code "
+                 "(AwaySettingsActivity) gives these values. off (0) is this module's label: the app "
+                 "treats 0 as away not enabled. Recipients is the distribution value named everyone "
+                 "(0), non_contacts (1), allowlist (2) or blocklist (3). Setting or Recipients is "
+                 "blank when its key is not stored. The app reads a missing away_state or distribution "
+                 "key as 0 and a missing greeting_on as off. On three of the four tested captures "
                  "away_distribution was not stored. Schedule Start and End are away_start_time and "
                  "away_end_time read as Unix milliseconds. The app writes them when a custom schedule "
                  "is saved. No capture was taken after the schedule was changed away from custom, so "
@@ -116,7 +141,7 @@ __artifacts_v2__ = {
                  "message was sent: two incoming messages received while Away was always_on got no "
                  "away reply. The app checks further conditions before it sends one. The away_messages "
                  "table, which the app uses to record who was already sent the away reply, held no "
-                 "rows on the tested captures and is not read. Source File is the database the row was read from.",
+                 "rows on the tested captures and is not read.",
         "paths": ('*/com.whatsapp.w4b/databases/msgstore.db*', '*/com.whatsapp.w4b/databases/wa.db*',
                   '*/com.whatsapp.w4b/databases/smb.db*'),
         "output_types": ["html", "tsv", "lava"],
@@ -132,18 +157,19 @@ __artifacts_v2__ = {
         "category": "WhatsApp Business",
         "notes": "Read from com.whatsapp.w4b/databases/wa.db: one row per wa_biz_profiles row. "
                  "Business Name is verified_name from wa_vnames for the same account. Categories and "
-                 "Websites come from their child tables. Account is jid and Description is business_description. Email, Address, Latitude, Longitude, Hours Note and Time Zone are the columns of the same name. "
-                 "Business Name was matched to the known name on one row. Tested on a lab test account "
-                 "capture of WhatsApp Business 2.26.45.80 that is not in the corpus, against values "
-                 "entered in the app. On the tested file the only row was the device's own business, "
-                 "with its known name and category. A profile can belong to another business. The "
-                 "table has no column that marks the device's own account, so compare Account with the "
-                 "device's own number. Description, Email, Address, Latitude, Longitude, Websites and "
-                 "Hours Note were empty on the tested row and were not exercised. The test account had "
-                 "a business hours setting, and it was not found in hours_note or "
-                 "wa_biz_profiles_hours, which held no rows and is not read. Time Zone is time_zone, "
-                 "which the app reads with the business hours. A stored 0, 0 coordinate pair is shown "
-                 "blank. Other profile fields are not reported. Source File is the database the row was read from.",
+                 "Websites come from their child tables. Account is jid and Description is "
+                 "business_description. Email, Address, Latitude, Longitude, Hours Note and Time Zone "
+                 "are the columns of the same name. Business Name was matched to the known name on one "
+                 "row. Tested on a lab test account capture of WhatsApp Business 2.26.45.80 that is "
+                 "not in the corpus, against values entered in the app. On the tested file the only "
+                 "row was the device's own business, with its known name and category. A profile can "
+                 "belong to another business. The table has no column that marks the device's own "
+                 "account, so compare Account with the device's own number. Description, Email, "
+                 "Address, Latitude, Longitude, Websites and Hours Note were empty on the tested row "
+                 "and were not exercised. The test account had a business hours setting, and it was "
+                 "not found in hours_note or wa_biz_profiles_hours, which held no rows and is not "
+                 "read. Time Zone is time_zone, which the app reads with the business hours. A stored "
+                 "0, 0 coordinate pair is shown blank. Other profile fields are not reported.",
         "paths": ('*/com.whatsapp.w4b/databases/msgstore.db*', '*/com.whatsapp.w4b/databases/wa.db*',
                   '*/com.whatsapp.w4b/databases/smb.db*'),
         "output_types": ["html", "tsv", "lava", "kml"],
@@ -257,7 +283,7 @@ def _named(names, value):
 @artifact_processor
 def whatsapp_business_quick_replies(context):
     data_headers = ('Shortcut', 'Reply Text', 'Linked Lists', 'Attachments', 'Times Used (kept rows)',
-                    'Last Used (local date)', 'Android User', 'Source File')
+                    'Last Used (local date)', 'Android User')
     data_list, sources = [], []
     for path in _stores(context, 'msgstore.db'):
         db = open_sqlite_db_readonly(path)
@@ -291,14 +317,13 @@ def whatsapp_business_quick_replies(context):
             linked = [labels.get(_int(part), part) for part in str(label_ids or '').replace(',', ' ').split()]
             total, last = usage.get(str(row_id), ('', ''))
             data_list.append((title or '', content or '', ', '.join(linked), attachments.get(str(row_id), 0),
-                              total, _local_day(last), user, context.get_relative_path(path)))
+                              total, _local_day(last), user))
     return data_headers, data_list, '\n'.join(sources)
 
 
 @artifact_processor
 def whatsapp_business_quick_reply_attachments(context):
-    data_headers = ('Shortcut', 'Attachment Path (as stored)', 'Caption', 'Media Type (as stored)', 'Android User',
-                    'Source File')
+    data_headers = ('Shortcut', 'Attachment Path (as stored)', 'Caption', 'Media Type (as stored)', 'Android User')
     data_list, sources = [], []
     for path in _stores(context, 'msgstore.db'):
         db = open_sqlite_db_readonly(path)
@@ -321,13 +346,13 @@ def whatsapp_business_quick_reply_attachments(context):
             db.close()
         for reply, uri, caption, media_type in records:
             data_list.append((titles.get(str(reply)) or '', uri or '', caption or '',
-                              '' if media_type is None else media_type, user, context.get_relative_path(path)))
+                              '' if media_type is None else media_type, user))
     return data_headers, data_list, '\n'.join(sources)
 
 
 @artifact_processor
 def whatsapp_business_chat_lists(context):
-    data_headers = ('List', 'Chat', 'Chat Name', 'Android User', 'Source File')
+    data_headers = ('List', 'Chat', 'Chat Name', 'Android User')
     data_list, sources = [], []
     for path in _stores(context, 'msgstore.db'):
         db = open_sqlite_db_readonly(path)
@@ -350,15 +375,14 @@ def whatsapp_business_chat_lists(context):
         finally:
             db.close()
         for label, jid in records:
-            data_list.append((label or '', jid or '', _chat_name(names, links, jid), user,
-                              context.get_relative_path(path)))
+            data_list.append((label or '', jid or '', _chat_name(names, links, jid), user))
     return data_headers, data_list, '\n'.join(sources)
 
 
 @artifact_processor
 def whatsapp_business_customer_notes(context):
     data_headers = (('Created', 'datetime'), ('Modified', 'datetime'), 'Chat', 'Chat Name', 'Note',
-                    'Android User', 'Source File')
+                    'Android User')
     data_list, sources = [], []
     for path in _stores(context, 'smb.db'):
         db = open_sqlite_db_readonly(path)
@@ -380,7 +404,7 @@ def whatsapp_business_customer_notes(context):
             db.close()
         for created, modified, jid, note in records:
             data_list.append((_time(created), _time(modified), jid or '', _chat_name(names, links, jid), note or '',
-                              user, context.get_relative_path(path)))
+                              user))
     return data_headers, data_list, '\n'.join(sources)
 
 
@@ -388,7 +412,7 @@ def whatsapp_business_customer_notes(context):
 def whatsapp_business_automated_messages(context):
     data_headers = ('Message Type', 'Setting', 'Message', ('Schedule Start', 'datetime'),
                     ('Schedule End', 'datetime'), 'Recipients', 'Allow List', 'Block List',
-                    'Android User', 'Source File')
+                    'Android User')
     data_list, sources = [], []
     for path in _stores(context, 'msgstore.db'):
         db = open_sqlite_db_readonly(path)
@@ -412,14 +436,13 @@ def whatsapp_business_automated_messages(context):
             data_list.append(('Greeting', setting, props.get('greeting_message') or '', '', '',
                               _named(_RECIPIENTS, props.get('greeting_distribution')),
                               props.get('greeting_white_list') or '', props.get('greeting_black_list') or '',
-                              user, context.get_relative_path(path)))
+                              user))
         if 'away_state' in props or 'away_message' in props:
             data_list.append(('Away', _named(_AWAY_STATES, props.get('away_state')),
                               props.get('away_message') or '', _time(_int(props.get('away_start_time'))),
                               _time(_int(props.get('away_end_time'))),
                               _named(_RECIPIENTS, props.get('away_distribution')),
-                              props.get('away_white_list') or '', props.get('away_black_list') or '', user,
-                              context.get_relative_path(path)))
+                              props.get('away_white_list') or '', props.get('away_black_list') or '', user))
     return data_headers, data_list, '\n'.join(sources)
 
 
@@ -427,7 +450,7 @@ def whatsapp_business_automated_messages(context):
 def whatsapp_business_profiles(context):
     data_headers = ('Account', 'Business Name', 'Categories', 'Description', 'Email', 'Address',
                     ('Latitude', 'latitude'), ('Longitude', 'longitude'), 'Websites', 'Hours Note',
-                    'Time Zone', 'Android User', 'Source File')
+                    'Time Zone', 'Android User')
     data_list, sources = [], []
     for path in _stores(context, 'wa.db'):
         db = open_sqlite_db_readonly(path)
@@ -460,5 +483,5 @@ def whatsapp_business_profiles(context):
             data_list.append((jid or '', verified.get(jid) or '', ', '.join(categories.get(row_id, [])),
                               about or '', email or '', address or '', latitude if has_point else '',
                               longitude if has_point else '', ', '.join(websites.get(row_id, [])), hours or '',
-                              zone or '', user, context.get_relative_path(path)))
+                              zone or '', user))
     return data_headers, data_list, '\n'.join(sources)
