@@ -3,7 +3,8 @@ __artifacts_v2__ = {
         "name": "Netstats",
         "description": "Network data usage per UID, and rows with no UID detail (UID -1), from the "
                        "binary system netstats collections, bucketed over time, with the connection "
-                       "type, subscriber ID and network ID of each network identity",
+                       "type, subscriber ID, network ID, roaming, metered and radio type of each "
+                       "network identity",
         "author": "Alex Caithness",
         "creation_date": "2026-08-05",
         "last_update_date": "2026-11-21",
@@ -27,9 +28,25 @@ __artifacts_v2__ = {
                  "version 1 the packet counts are not stored and are shown as 0. No "
                  "sample_data image held that version.\n"
                  "Bucket Start is the start of the bucket in milliseconds since the Unix epoch "
-                 "(NetworkStatsHistory.java), shown in UTC. Duration is the bucket length in "
-                 "milliseconds. Interface holds the connection type, subscriber ID and network "
-                 "ID of each network identity, not an interface name. Its other identity fields are not shown.\n"
+                 "(NetworkStatsHistory.java), shown in UTC. Duration (ms) is the bucket length. "
+                 "Network Identity holds the connection type, subscriber ID and network ID. "
+                 "Roaming, Metered, Default Network, RAT Type and Subscription ID are fields of "
+                 "the same identity, one line per identity when a row has several. A field is "
+                 "blank when the identity set version does not store it: Roaming starts at "
+                 "version 2, Metered at 4, Default Network at 5 and Subscription ID at 7 "
+                 "(NetworkIdentitySet.java). On the sample_data images the identity set versions "
+                 "were 5 to 8, so only Subscription ID was blank (galaxys10_a10 and sharon_a14). "
+                 "The blank Roaming, Metered and Default Network paths were not exercised. RAT "
+                 "Type labels are the NETWORK_TYPE constants in TelephonyManager.java, with -1 "
+                 "from NetworkTemplate.java and -2 from NetworkStatsManager.java, at the "
+                 "android-14.0.0_r1 tag. At that tag the service stores a collapsed type "
+                 "(NetworkStatsManager.getCollapsedRatType): GSM (16) stands for the 2G types, "
+                 "UMTS (3) for the 3G types and LTE (13) for LTE and IWLAN. The label is applied "
+                 "whatever release wrote the file. Which release wrote a file is not established "
+                 "here. Only -2, -1, 0, 3, 13, 16 and 20 were present on the sample_data images. "
+                 "A Subscription ID of -1 is INVALID_SUBSCRIPTION_ID in SubscriptionManager.java "
+                 "at the same tag. OEM capabilities are "
+                 "not reported.\n"
                  "UIDs are resolved through packages.xml, where it parses, to a package name "
                  "or, for a shared UID, to the shared user name. If packages.xml is absent, or "
                  "raises an error while it is read, decoded or mapped to UIDs, usage is still "
@@ -68,7 +85,9 @@ __artifacts_v2__ = {
                  "again, and its path stays in the source list. Files that differ are all "
                  "reported, even when they share records: on hc_pixel8pro_a16 and sharon_a14, "
                  "different files in different netstats folders held the same buckets, so "
-                 "those rows appear more than once and differ only in Source File. Collection and Source File name the file "
+                 "those rows appear more than once. On hc_pixel8pro_a16 nearly all of these "
+                 "repeats differ only in Source File. On sharon_a14 most also differ in "
+                 "Subscription ID, which is blank in two of the three folders, and some in RAT Type. Collection and Source File name the file "
                  "each row was read from, so these repeats can be separated. Source File names "
                  "the copy that was read, which is the first in path order. Byte-identical "
                  "copies appear only in the source list and in the run log. On galaxys10_a10, russell_pixel6a_a13, "
@@ -77,8 +96,7 @@ __artifacts_v2__ = {
                  "values in every column except Collection and Source File (218 of 234, 336 of 371, 2,153 of 2,269 and 27 of 29). On sharon_a14 a second "
                  "folder showed the same (27 of 34) and a third folder held dev and xt files "
                  "with no such matching rows. Rows from different files can repeat, so a total "
-                 "over this table can count the same usage more than once. Identical rows can "
-                 "also be separate records, because Interface leaves out some identity fields.\n"
+                 "over this table can count the same usage more than once.\n"
                  "Collection is the file name prefix (dev, xt, uid or uid_tag). In AOSP "
                  "NetworkStatsService.java at the android-14.0.0_r1 tag, the xt, uid and uid_tag "
                  "prefixes each have their own recorder "
@@ -239,6 +257,7 @@ class NetworkIdentity:
     oem_network_capabilities: int
     sub_id: int
     transport_type: int
+    identity_version: int
 
     def __str__(self) -> str:
         return f"{self.net_type.name}: {' '.join(x for x in (self.subscriber_id, self.network_id) if x)} "
@@ -301,7 +320,7 @@ class NetworkIdentitySet:
             identities.append(
                 NetworkIdentity(
                     net_type, rat_type, subscriber_id, network_id, roaming, metered, default_network,
-                    oem_net_capabilities, sub_id, transport_type_bits))
+                    oem_net_capabilities, sub_id, transport_type_bits, version))
 
         return cls(identities)
 
@@ -478,6 +497,41 @@ def format_tag(tag: int) -> str:
     return f"0x{tag & 0xFFFFFFFF:x}"
 
 
+# TelephonyManager.NETWORK_TYPE_*, plus NetworkTemplate.NETWORK_TYPE_ALL (-1) and
+# NetworkStatsManager.NETWORK_TYPE_5G_NSA (-2).
+RAT_TYPE_NAMES = {
+    -2: "5G_NSA", -1: "ALL", 0: "UNKNOWN", 1: "GPRS", 2: "EDGE", 3: "UMTS", 4: "CDMA", 5: "EVDO_0",
+    6: "EVDO_A", 7: "1xRTT", 8: "HSDPA", 9: "HSUPA", 10: "HSPA", 11: "IDEN", 12: "EVDO_B", 13: "LTE",
+    14: "EHRPD", 15: "HSPAP", 16: "GSM", 17: "TD_SCDMA", 18: "IWLAN", 19: "LTE_CA", 20: "NR",
+}
+
+
+def format_rat_type(rat_type: int) -> str:
+    name = RAT_TYPE_NAMES.get(rat_type)
+    return f"{name} ({rat_type})" if name else str(rat_type)
+
+
+def yes_no(value: bool) -> str:
+    return "Yes" if value else "No"
+
+
+def identity_columns(identities: typing.Iterable[NetworkIdentity]) -> tuple:
+    """Per-identity fields, one line per identity, blank where the identity version lacks them."""
+    identities = tuple(identities)
+
+    def column(min_version, render):
+        return "\n".join(render(i) if i.identity_version >= min_version else "" for i in identities)
+
+    return (
+        "\n".join(str(i) for i in identities),
+        column(NetworkIdentitySet.IDENT_VERSION_ADD_ROAMING, lambda i: yes_no(i.roaming)),
+        column(NetworkIdentitySet.IDENT_VERSION_ADD_METERED, lambda i: yes_no(i.metered)),
+        column(NetworkIdentitySet.IDENT_VERSION_ADD_DEFAULT_NETWORK, lambda i: yes_no(i.default_network)),
+        "\n".join(format_rat_type(i.rat_type) for i in identities),
+        column(NetworkIdentitySet.IDENT_VERSION_ADD_SUB_ID, lambda i: str(i.sub_id)),
+    )
+
+
 def file_sha256(path: str) -> str:
     digest = hashlib.sha256()
     with open(path, "rb") as f:
@@ -506,8 +560,8 @@ def netstats(context):
                 logfunc(f"Could not parse {file} for UID resolution ({ex})")
 
     headers = [
-        ("Bucket Start", "datetime"), "Duration", "Collection", "UID/Package", "Interface",
-        "Usage Set", "Tag", "Rx Bytes", "Rx Packets", "Tx Bytes", "Tx Packets", "Source File"]
+        ("Bucket Start", "datetime"), "Duration (ms)", "Collection", "UID/Package", "Network Identity",
+        "Roaming", "Metered", "Default Network", "RAT Type", "Subscription ID", "Usage Set", "Tag", "Rx Bytes", "Rx Packets", "Tx Bytes", "Tx Packets", "Source File"]
     source_files = set()
     results = []
     # Sorted so the copy that is read does not depend on the order of the walk.
@@ -529,6 +583,7 @@ def netstats(context):
             collection_kind = os.path.basename(file).split(".")[0]
             source_file = context.get_relative_path(file)
             for stat in collection.stats:
+                identity_values = identity_columns(stat.identity_set.identities)
                 for record in stat.records:
                     package = package_for_uid(record.uid, uid_map)
                     if package is not None:
@@ -539,7 +594,7 @@ def netstats(context):
                     for entry in record.history.entries:
                         results.append(
                             (entry.start_time, entry.duration, collection_kind, formatted_package,
-                             "\n".join(str(x) for x in stat.identity_set.identities),
+                             *identity_values,
                              NetstatsCollection.SET_TYPES.get(record.set, f"(unknown: {record.set})"),
                              format_tag(record.tag),
                              entry.rx_bytes, entry.rx_packets, entry.tx_bytes, entry.tx_packets,
