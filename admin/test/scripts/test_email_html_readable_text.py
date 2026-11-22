@@ -19,7 +19,7 @@ PAGE = ('<html><head><title>Hidden title</title><style>p{color:red}</style></hea
         '<div>Second line<br>Third <a href="https://example.test/x">link</a></div>'
         '<table><tr><td>Cell A</td><td>Cell B</td></tr><tr><td>Cell C</td></tr></table>'
         '<!-- a comment --></body></html>')
-PAGE_TEXT = 'Hello world café & co.\nSecond line\nThird link [1]\nCell A Cell B\nCell C'
+PAGE_TEXT = 'Hidden title\nHello world café & co.\nSecond line\nThird link [1]\nCell A Cell B\nCell C'
 
 
 class FakeContext:
@@ -52,6 +52,21 @@ class BodyTextTest(unittest.TestCase):
     def test_pre_keeps_its_lines(self):
         self.assertEqual(body_text_and_links('<pre>one\n  two</pre>after')[0], 'one\ntwo\nafter')
 
+    def test_mixed_br_forms_break_in_place(self):
+        self.assertEqual(body_text_and_links('a<br>b<br/>c<br />d')[0], 'a\nb\nc\nd')
+
+    def test_an_unclosed_style_shows_the_text_after_it(self):
+        self.assertIn('Kept', body_text_and_links('<p>a</p><style>Kept')[0])
+
+    def test_a_style_named_in_a_later_comment_is_still_removed(self):
+        self.assertEqual(body_text_and_links('<style>p{}</style><p>a</p><!-- <style -->')[0], 'a')
+
+    def test_no_closing_tag_is_added_to_the_text(self):
+        self.assertEqual(body_text_and_links('<p>a</p><script>var s="<style>";')[0], 'a\nvar s="<style>";')
+
+    def test_a_tag_name_in_an_attribute_does_not_keep_style_text(self):
+        self.assertEqual(body_text_and_links('<style>p{}</style><a title="<style>" href="u">x</a>')[0], 'x [1]')
+
     def test_pre_keeps_a_line_end_before_an_inline_tag(self):
         self.assertEqual(body_text_and_links('<pre>one\n<b>two</b></pre>')[0], 'one\ntwo')
 
@@ -60,7 +75,7 @@ class BodyTextTest(unittest.TestCase):
 
     def test_an_unclosed_head_keeps_the_body(self):
         text, links = body_text_and_links('<head><title>T</title><body><p>Kept <a href="u">x</a></p>')
-        self.assertEqual((text, links), ('Kept x [1]', '[1] u'))
+        self.assertEqual((text, links), ('T\nKept x [1]', '[1] u'))
 
     def test_an_unclosed_style_keeps_its_text(self):
         self.assertIn('Kept', body_text_and_links('<style>p{}</style><p>a</p><style>Kept')[0])

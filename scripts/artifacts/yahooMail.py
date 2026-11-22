@@ -28,7 +28,7 @@ __artifacts_v2__ = {
                  "printable text; whether the app encodes folder names that way is not "
                  "established. Message Body (as text) is text extracted from the HTML the "
                  "app cached, as in the Gmail artifacts (body_text_and_links): tags and the text of "
-                 "closed title, style and script elements are removed, a line break is placed at each "
+                 "closed style and script elements are removed, a line break is placed at each "
                  "br and block tag, each link's place is marked [n], and Message Body Links lists each a element's href by those numbers, as the HTML parser returns it (character references decoded). Other link elements are not listed. "
                  "The cached HTML stays in the source database. On the tested device 1 of "
                  "6 messages carried a body. An empty column most often means no body was cached. It "
