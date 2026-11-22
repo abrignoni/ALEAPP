@@ -16,7 +16,7 @@ __artifacts_v2__ = {
                  "unified collection format "
                  "(version 16) is parsed. A file with any other collection version is skipped "
                  "and named in the run log. So is a file that raises a ValueError while it is "
-                 "read: a bad signature, a short read, an unknown identity set or history "
+                 "read, for example a bad signature, a short read, an unknown identity set or history "
                  "version, or an unknown connection type. Any other error is not caught, and "
                  "the artifact then fails and produces no output. No file was skipped this way on the sample_data images. Identity set version 8 is not in "
                  "NetworkIdentitySet.java at the android-13.0.0_r1, android-14.0.0_r1, "
