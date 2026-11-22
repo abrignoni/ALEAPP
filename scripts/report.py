@@ -160,7 +160,7 @@ INDEX_TAB_EMBED_LIMIT = 2 * 1024 * 1024
 INDEX_TAB_LOG_LINES = 200         # lines kept from each end of a summarised run log
 INDEX_TAB_PATHS_PER_PATTERN = 200  # paths kept per search pattern in a summarised files list
 
-_ARTIFACT_BLOCK = re.compile(r'<b>For (.*?) artifact</b>(.*?)(?=<b>For |\Z)', re.S)
+_ARTIFACT_BLOCK = re.compile(r'<b>For (.*?) module</b>(.*?)(?=<b>For |\Z)', re.S)
 _PATTERN_BLOCK = re.compile(
     r'<ul><li>(?:No file found for regex <i>(.*?)</i>'
     r'|(\d+) files? for regex <i>(.*?)</i> located at:((?:<ul><li>.*?</li></ul>)*))</li></ul>', re.S)
@@ -201,7 +201,7 @@ def processed_files_tab_content(path):
     first_block = text.find('<b>For ')
     out.append(text[:first_block] if first_block > 0 else '')
     for block in _ARTIFACT_BLOCK.finditer(text):
-        out.append(f'<b>For {block.group(1)} artifact</b>')
+        out.append(f'<b>For {block.group(1)} module</b>')
         for pattern in _PATTERN_BLOCK.finditer(block.group(2)):
             missing, count, regex, items = pattern.groups()
             if missing is not None:
