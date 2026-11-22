@@ -20,6 +20,7 @@ __artifacts_v2__ = {
             "An event whose package id has no row in "
             "foundPackages is reported with a blank Package Name; no event on galaxys10_a10, samsungs20_a13 or samsung_a166u_a16_known_20261116 was in that state. A database present under several storage paths "
             "(data/data, data/user/0, data_mirror) is read once. "
+            "Android User is the user number in the path of the database: n under data/user/<n>, userdata/user/<n> or data_mirror/data_ce/<volume>/<n>, and 0 under data/data or userdata/data. It is blank for any other path. That includes a rollback copy under data/misc_ce/<n>/rollback, which is read unless it is identical to the live database. No image read had a rollback copy, so the blank case is unexercised. samsung_a166u_a16_known_20261117 has users 0 and 150. The other six sample_data images have 0 on every row. "
             "A label names a recorded transition and does not by itself establish a user "
             "action."
         ),
@@ -173,7 +174,7 @@ import re
 import sqlite3
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_unix_ts_to_utc, get_sqlite_db_records, get_file_path, logfunc
-from scripts.artifacts.storagePathViews import unique_files
+from scripts.artifacts.storagePathViews import android_user, unique_files
 
 
 @artifact_processor
@@ -251,12 +252,14 @@ def samsung_wellbeing(context):
         all_rows = cursor.fetchall()
         db.close()
         source_paths.append(file_found)
+        user = android_user(context.get_relative_path(file_found))
 
         for row in all_rows:
             timestamp = datetime.datetime.fromtimestamp(int(row[0]) / 1000, datetime.timezone.utc) if row[0] else ''
-            data_list.append((timestamp, row[1], row[2], row[3], row[4]))
+            data_list.append((timestamp, row[1], row[2], row[3], row[4], user))
 
-    data_headers = (('Timestamp', 'datetime'), 'Event ID', 'Package Name', 'Event Type', 'Event Type Description')
+    data_headers = (('Timestamp', 'datetime'), 'Event ID', 'Package Name', 'Event Type', 'Event Type Description',
+                    'Android User')
     return data_headers, data_list, '\n'.join(source_paths)
 
 @artifact_processor
