@@ -8,8 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Image Manager Cache",
         "notes": "Timestamp Modified is the modification time the extraction recorded for the file as "
-                 "an epoch value, shown in UTC. Depending on the input it comes from a tar member time, a zip NTFS or extended timestamp field, a CLBX zip metadata record, the reader of a disk image or logical evidence file, or the time of the file in an input folder. It is blank when the extraction recorded no "
-                 "such value. Archive Time Modified (No Zone) is filled only in that case, from the zip "
+                 "an epoch value, shown in UTC. Depending on the input it comes from a tar member time, a zip NTFS or extended timestamp field, a CLBX zip metadata record, the reader of a disk image or logical evidence file, or the time of the file in an input folder. It is blank when the extraction recorded no such value or recorded 0, and when a recorded value cannot be converted. Archive Time Modified (No Zone) is filled only when no value or 0 was recorded, from the zip "
                  "directory entry, which carries a wall clock reading with no time zone; it is reported "
                  "as stored and no instant is asserted for it. What event sets the modification time of "
                  "a cache file is not established here. The second path pattern matches a file with a "
