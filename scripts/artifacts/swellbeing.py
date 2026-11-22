@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Parses Samsung Digital Wellbeing app usage events (timestamp, event ID, package and event type) from dwbCommon.db.",
         "author": "@abrignoni, @Adam-Hachem",
         "creation_date": "2020-05-21",
-        "last_update_date": "2026-10-15",
+        "last_update_date": "2026-11-22",
         "requirements": "none",
         "category": "Digital Wellbeing",
         "notes": (
@@ -16,14 +16,9 @@ __artifacts_v2__ = {
             "Samsung's implementation is not documented and its codes are not verified to match "
             "those constants, so the labels are unverified. An event type with no matching label "
             "is shown as stored. Package Name is read from the pkgName column of usageEvents where "
-            "the database has one, and otherwise joined from foundPackages on pkgId. The pkgName "
-            "column was described in a report from @Adam-Hachem of a Samsung Android 16 "
-            "extraction that is not in the corpus; no database with it has been examined here. No registered image has "
-            "it, so that path was run only against a copy of the anne_a15 (Android 15) database "
-            "with pkgId renamed to pkgName and filled with the package names from foundPackages. "
+            "the database has one, and otherwise joined from foundPackages on pkgId. The pkgName column was reported by @Adam-Hachem. samsung_a166u_a16_known_20261117 (Android 16) has it in the databases of Android users 0 and 150 (4,561 and 62 rows, and no row is in both), and every row there has a Package Name. samsung_a166u_a16_known_20261116 (Android 16) has pkgId. "
             "An event whose package id has no row in "
-            "foundPackages is reported with a blank Package Name; no event on the five tested "
-            "images was in that state. A database present under several storage paths "
+            "foundPackages is reported with a blank Package Name; no event on galaxys10_a10, samsungs20_a13 or samsung_a166u_a16_known_20261116 was in that state. A database present under several storage paths "
             "(data/data, data/user/0, data_mirror) is read once. "
             "A label names a recorded transition and does not by itself establish a user "
             "action."
@@ -37,6 +32,8 @@ __artifacts_v2__ = {
             "samsunga53_a14": "Android 14 | com.samsung.android.forest | 2307 rows",
             "samsungs20_a13": "Android 13 | com.samsung.android.forest | 554 rows",
             "sharon_a14": "Android 14 | com.samsung.android.forest vc 510200008 | 3187 rows",
+            "samsung_a166u_a16_known_20261116": "Android 16 | com.samsung.android.forest | 3689 rows",
+            "samsung_a166u_a16_known_20261117": "Android 16 | com.samsung.android.forest | 4623 rows",
         },
     },
     "samsung_wellbeing_timezone": {
@@ -196,7 +193,7 @@ def samsung_wellbeing(context):
         cursor = db.cursor()
         columns = {row[1] for row in cursor.execute('PRAGMA table_info(usageEvents)')}
         if 'pkgName' in columns:
-            # A user report describes a build that stores the package name on the event row.
+            # samsung_a166u_a16_known_20261117 stores the package name on the event row.
             package_column = 'usageEvents.pkgName'
             package_join = ''
         elif 'pkgId' in columns:
