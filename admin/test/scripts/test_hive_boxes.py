@@ -6,10 +6,15 @@ that stops without the reader recording a frame, which only the byte accounting
 catches, and an undecodable frame sitting before a stop, where the two clauses
 can otherwise contradict each other.
 """
+import pathlib
 import struct
+import tempfile
 import unittest
 import zlib
+from types import SimpleNamespace
+from unittest.mock import patch
 
+from scripts.artifacts import hiveBoxes
 from scripts.artifacts.hiveBoxes import _how_it_read, _owning_app
 from scripts.hive_parser import looks_encrypted, read_frames
 
@@ -78,6 +83,32 @@ class OwningApp(unittest.TestCase):
         self.assertEqual(
             _owning_app('data/data/com.example.app/files/com.other.app/box.hive'),
             'com.example.app')
+
+
+class ReadErrors(unittest.TestCase):
+    def test_a_read_error_in_one_box_does_not_lose_the_others(self):
+        for error in (OverflowError('infinity'), RecursionError('nested')):
+            with self.subTest(type(error).__name__):
+                self.check(error)
+
+    def check(self, error):
+        with tempfile.TemporaryDirectory() as folder:
+            root = pathlib.Path(folder)
+            bad = root / 'data/data/com.example.app/bad.hive'
+            good = root / 'data/data/com.example.app/good.hive'
+            bad.parent.mkdir(parents=True)
+            bad.write_bytes(b'x')
+            good.write_bytes(b'')
+            context = SimpleNamespace(get_files_found=lambda: [str(bad), str(good)],
+                                      get_relative_path=lambda p: str(pathlib.Path(p).relative_to(root)))
+            def frames(path):
+                if str(path).endswith('bad.hive'):
+                    raise error
+                return []
+            with patch.object(hiveBoxes, 'read_frames', side_effect=frames), patch.object(hiveBoxes, 'logfunc') as log:
+                _headers, rows, _source = hiveBoxes.hive_boxes.__wrapped__(context)
+        self.assertEqual(len(rows), 1)
+        self.assertTrue(any('bad.hive' in call.args[0] for call in log.call_args_list))
 
 
 class HowItRead(unittest.TestCase):

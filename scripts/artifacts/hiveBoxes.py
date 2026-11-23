@@ -9,7 +9,7 @@ __artifacts_v2__ = {
                        "once.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-10-27",
-        "last_update_date": "2026-11-22",
+        "last_update_date": "2026-11-23",
         "requirements": "none",
         "category": "Hive",
         "notes": "Hive is a key-value store used by Flutter applications through the hive and "
@@ -24,9 +24,7 @@ __artifacts_v2__ = {
                  "and a rollback snapshot byte-identical to its live copy is left out. A file whose "
                  "read raises an error this module handles is written to the log and gets no row, "
                  "even when it holds other readable frames. One value the reader cannot convert "
-                 "does this (on synthetic boxes: a BigInt holding non-digit text, an int frame "
-                 "holding NaN). An int frame holding infinity raises an error this module does not "
-                 "handle, so the artifact fails and produces no table for that run. "
+                 "does this (on synthetic boxes: a BigInt holding non-digit text, an int frame holding NaN or infinity, a list nested 5,000 levels deep). "
                  "'Frames Read' counts every frame the read returned: value frames, tombstones, "
                  "frames that did not decode, and the frame at which a read stopped, if any. A frame "
                  "that failed its checksum or is cut short is counted there but was not verified. "
@@ -94,7 +92,7 @@ from scripts.hive_parser import (HiveError, displaced_counts, live_entries,
                                  looks_encrypted, read_frames)
 
 # What a file named .hive that is not a Hive box, or is damaged, can raise.
-READ_ERRORS = (HiveError, OSError, ValueError, IndexError, MemoryError)
+READ_ERRORS = (HiveError, OSError, ValueError, OverflowError, RecursionError, IndexError, MemoryError)
 
 # The directory names Android puts between the storage root and the package
 # directory. The package is the segment that follows one of these, or follows the
