@@ -16,7 +16,7 @@ __artifacts_v2__ = {
                  "(https://android.googlesource.com/platform/frameworks/base/+/"
                  "299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/services/core/java/com/android/server/"
                  "notification/NotificationHistoryDatabase.java#56 "
-                 "and lines 229 to 256 of the same file). Other Android releases and vendor builds were not checked. The four Index columns are blank when the record holds no string pool index: the AOSP writer stores an index only for a string in the pool, as its position plus one (https://android.googlesource.com/platform/frameworks/base/+/299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/services/core/java/com/android/server/notification/NotificationHistoryProtoHelper.java#257). On anne_a15 and sharon_a14 (330 rows) no record holds an index, so a filled Index column is not exercised on real data. Image Data Length and Image Data Offset are blank unless the icon is a data icon (Image Type 3) or the record holds the field, and Image Resource ID is blank unless the icon is a resource icon (Image Type 2) or the record holds the field. The AOSP writer stores them only for those types (writeIcon, line 227 of the same file; type numbers at https://android.googlesource.com/platform/frameworks/base/+/299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/graphics/java/android/graphics/drawable/Icon.java#85). Every tested row is Image Type 2, so the other types are not exercised. UID, User ID and Image Type are shown as read. The AOSP writer's ProtoOutputStream does not write a zero (https://android.googlesource.com/platform/frameworks/base/+/299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/core/java/android/util/proto/ProtoOutputStream.java#1061) and that writer passes UID and User ID on each record, so with that writer a 0 in UID or User ID is the value 0 with nothing written to the file. User ID is 0 and absent from the file on all 330 tested rows. Image Type is blank when the record holds no icon.",
+                 "and lines 229 to 256 of the same file). Other Android releases and vendor builds were not checked. The four Index columns are blank when the record holds no string pool index: the AOSP writer stores an index only for a string in the pool, as its position plus one (https://android.googlesource.com/platform/frameworks/base/+/299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/services/core/java/com/android/server/notification/NotificationHistoryProtoHelper.java#257). On anne_a15 and sharon_a14 (330 rows) no record holds an index, so a filled Index column is not exercised on real data. Where a record holds no string of its own for Package Name, Channel Name, Channel ID or Conversation ID, the value is looked up in the file's string pool by the record's index. An index with no entry in the pool leaves the value blank and the Index column filled. That path was run only on a constructed file. Image Data Length and Image Data Offset are blank unless the icon is a data icon (Image Type 3) or the record holds the field, and Image Resource ID is blank unless the icon is a resource icon (Image Type 2) or the record holds the field. The AOSP writer stores them only for those types (writeIcon, line 227 of the same file; type numbers at https://android.googlesource.com/platform/frameworks/base/+/299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/graphics/java/android/graphics/drawable/Icon.java#85). Every tested row is Image Type 2, so the other types are not exercised. UID, User ID and Image Type are shown as read. The AOSP writer's ProtoOutputStream does not write a zero (https://android.googlesource.com/platform/frameworks/base/+/299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/core/java/android/util/proto/ProtoOutputStream.java#1061) and that writer passes UID and User ID on each record, so with that writer a 0 in UID or User ID is the value 0 with nothing written to the file. User ID is 0 and absent from the file on all 330 tested rows. Image Type is blank when the record holds no icon.",
         "paths": ('**/system_ce/*/notification_history/history/*',),
         "output_types": "standard",
         "artifact_icon": "bell",
@@ -216,14 +216,16 @@ def get_notificationHistory(context):
                     logfunc(f'Error in the ParseFromString() function. The error message was: {e}')
                     continue
 
-            # One of the protobuf sections stores package names indexed from 1
-            package_map = {i + 1: pkg for i, pkg in enumerate(notification_history.string_pool.strings)}
+            # The string pool holds package, channel and conversation strings, indexed from 1. The AOSP reader
+            # also appends each inline string to its pool as it reads. The AOSP writer's indexes all point into
+            # the written pool, so that step is not needed for its files and is not repeated here.
+            string_pool = {i + 1: text for i, text in enumerate(notification_history.string_pool.strings)}
             major_version = notification_history.major_version if notification_history.HasField('major_version') else None
             file_creation = _ms_to_utc(file_name)
 
             for notification in notification_history.notification:
                 package_name = notification.package if notification.package \
-                    else package_map.get(notification.package_index, "")
+                    else string_pool.get(notification.package_index, "")
 
                 # Recover each field if present in the schema, else mark 'Error'
                 values = {}
@@ -238,6 +240,11 @@ def get_notificationHistory(context):
                 else:
                     for icon_field in icon_fields:
                         values[icon_field] = None
+
+                for text, index in (('channel_name', 'channel_name_index'), ('channel_id', 'channel_id_index'),
+                                    ('conversation_id', 'conversation_id_index')):
+                    if not values[text]:
+                        values[text] = string_pool.get(values[index], '')
 
                 # The writer stores an index only for a pooled string, and these icon fields only for their
                 # own icon type. An unset field there reads as 0, which is not a stored value. A value the

@@ -52,6 +52,37 @@ class IndexColumns(unittest.TestCase):
         self.assertEqual([row[h] for h in INDEX_HEADERS], [0, 0, 0, 0])
 
 
+class StringPool(unittest.TestCase):
+    @staticmethod
+    def pooled_row():
+        history = pb.NotificationHistoryProto()
+        history.string_pool.strings.extend(['channel.id', 'Channel Name', 'conv.id', 'example.package'])
+        record = history.notification.add()
+        record.package_index, record.channel_id_index = 4, 1
+        record.channel_name_index, record.conversation_id_index = 2, 3
+        with tempfile.TemporaryDirectory() as folder:
+            path = pathlib.Path(folder) / '1700000000000'
+            path.write_bytes(history.SerializeToString())
+            context = SimpleNamespace(get_files_found=lambda: [str(path)])
+            headers, rows, _source = notificationHistory.get_notificationHistory.__wrapped__(context)
+        names = [h[0] if isinstance(h, tuple) else h for h in headers]
+        return dict(zip(names, rows[0]))
+
+    def test_pooled_strings_are_resolved(self):
+        row = self.pooled_row()
+        self.assertEqual((row['Package Name'], row['Channel Name'], row['Channel ID'], row['Conversation ID']),
+                         ('example.package', 'Channel Name', 'channel.id', 'conv.id'))
+
+    def test_the_index_stays_beside_the_resolved_string(self):
+        row = self.pooled_row()
+        self.assertEqual((row['Channel Name Index'], row['Channel ID Index'], row['Conversation ID Index']), (2, 1, 3))
+
+    def test_a_string_stored_on_the_record_is_kept(self):
+        def build(record):
+            record.channel_name = 'Stored Name'
+        self.assertEqual(report_row(build)['Channel Name'], 'Stored Name')
+
+
 class AlwaysWrittenFields(unittest.TestCase):
     def test_unset_uid_and_user_id_read_as_zero(self):
         row = report_row(lambda r: None)
