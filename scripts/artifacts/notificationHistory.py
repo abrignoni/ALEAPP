@@ -28,17 +28,20 @@ __artifacts_v2__ = {
     },
     "get_notificationHistory_status": {
         "name": "Android Notification History - Status",
-        "description": 'Reports the notification_history_enabled value found in each user\'s '
-                       'settings_secure.xml.',
+        "description": 'Reports a status label for the notification_history_enabled setting '
+                       'found in each user\'s settings_secure.xml.',
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2024-07-02",
-        "last_update_date": "2024-07-02",
+        "last_update_date": "2026-11-22",
         "requirements": "",
         "category": "Android Notification History",
-        "notes": "A stored 1 is shown as Enabled, 0 as Disabled and any other "
-                 "value as Unknown. No row is produced when the "
-                 "notification_history_enabled key is absent, which is not by "
-                 "itself evidence the feature was off.",
+        "notes": "A stored value of 1 is shown as Enabled and 0 as Disabled. Any "
+                 "other value, and a setting element with no value attribute, is "
+                 "shown as Unknown. The stored value itself is not shown. No row is produced when the notification_history_enabled key is absent, or when the file cannot be parsed. Neither is by itself evidence the feature was off. On samsungs20_a13 (users 0 and 150) and pixel3_a11 (user 0) the plain XML file contains the setting name but fails both parse attempts, so no row is produced and nothing is logged. In AOSP at "
+                 "the android-14.0.0_r1 tag, NotificationHistoryManager reads this setting as an integer with a default of 0 and treats a non-zero integer as enabled (https://android.googlesource.com/platform/frameworks/base/+/"
+                 "299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/services/core/java/com/android/server/"
+                 "notification/NotificationHistoryManager.java#424). A missing value or one that is not an integer reads as the default (core/java/android/provider/Settings.java lines 3703 to 3709 and 6652 to 6655 at the same commit). Other Android releases and vendor builds were not checked. Of the 39 images run, 28 gave a row. 27 are Unknown from an element with no value attribute, including the six sample_data keys with a row. One, russell_a14, is Enabled from a stored 1. No image run gave Disabled, so that label is not "
+                 "exercised on real data.",
         "paths": ('**/system/users/*/settings_secure.xml',),
         "output_types": "standard",
         "artifact_icon": "toggle-right",
@@ -61,7 +64,7 @@ __artifacts_v2__ = {
                        "notification_policy.xml, with the stored key and time.",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2024-07-02",
-        "last_update_date": "2026-10-09",
+        "last_update_date": "2026-11-22",
         "requirements": "",
         "category": "Android Notification History",
         "notes": "Reminder Time is the element's time attribute read as Unix "
@@ -77,10 +80,16 @@ __artifacts_v2__ = {
                  "One row is reported per child element, whatever its tag. Element "
                  "is the tag as stored, Reminder Time is blank where the element has "
                  "no time attribute, and Other Attributes lists every remaining "
-                 "attribute as name=value as stored; the meaning of the attributes "
-                 "of a context element is not established here. No recorded sample "
-                 "held a child element, so the context rows are not exercised on "
-                 "real data.",
+                 "attribute as name=value. In a binary XML (ABX) file the values are "
+                 "the decoder's text rendering of the typed values, and a null value "
+                 "appears as None. A plain XML file that fails to parse is read again with invalid UTF-8 bytes replaced, control characters other than tab, line feed and carriage return removed, and bare ampersands escaped, so its values can differ from the file. If the second read also fails, the file gives no rows and nothing is logged. On samsungs20_a13 the file needed the second read. "
+                 "The meaning of the attributes of a context element is not "
+                 "established here. On the ten sample_data keys the "
+                 "snoozed-notifications element is empty, except on galaxys10_a10, "
+                 "where it is absent. The ABX decoder failed on the pixel3_a12 file, "
+                 "so that file was not read. No image run produced a row, so no row "
+                 "of this artifact, notification or context, and no Reminder Time "
+                 "conversion is exercised on real data.",
         "paths": ('**/system/notification_policy.xml',),
         "output_types": "standard",
         "artifact_icon": "clock",
