@@ -13,7 +13,7 @@ __artifacts_v2__ = {
                  "system/users/service/eRR.p is also read. Each line is 'timestamp | event | "
                  "code | details'. The timestamp carries a UTC offset; it is shown as written in "
                  "Timestamp (Local) and converted to UTC in Timestamp. A line whose timestamp "
-                 "cannot be read in that form keeps its row with Timestamp blank.",
+                 "cannot be read in that form keeps its row with Timestamp blank. When both paths are present their rows are reported together, no column names the file, and the source path lists both. No tested image held both paths, so this was run only on a constructed pair of files.",
         "paths": ('*/system/users/service/eRR.p',
                   '*/system/users/service/data/eRR.p'),
         "output_types": ['html', 'tsv', 'lava'],
@@ -39,13 +39,13 @@ def get_errp(context):
     files_found = context.get_files_found()
 
     data_list = []
-    source_path = ''
+    source_paths = []
     for file_found in files_found:
         file_found = str(file_found)
         if not file_found.endswith('eRR.p'):
             continue  # Skip all other files
 
-        source_path = file_found
+        source_paths.append(file_found)
         with open(file_found, 'r', encoding='utf-8', errors='replace') as f:
             for line in f:
                 # The file opens with a binary LOGM header, and on some devices its
@@ -69,4 +69,4 @@ def get_errp(context):
                 data_list.append((timestamp_utc, timestamp, event, code, details))
 
     data_headers = (('Timestamp', 'datetime'), 'Timestamp (Local)', 'Event', 'Code', 'Details')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
