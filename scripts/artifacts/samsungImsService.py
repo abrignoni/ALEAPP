@@ -121,15 +121,13 @@ __artifacts_v2__ = {
         "description": "Parses the IMS SIM manager log Samsung writes in com.sec.imsservice, with the SIM slot and the carrier MNO and MVNO names as stored.",
         "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-10-04",
+        "last_update_date": "2026-11-22",
         "requirements": "none",
         "category": "Samsung IMS Service",
         "notes": "Read from com.sec.imsservice/files/SimManager_slot*.log, Samsung's IMS SIM manager log, with the "
                  "same no-time-zone timestamps as the registration log, reported as text. MNO Name (as stored) and MVNO Name (as stored) are the "
                  "operator and virtual-operator names Samsung logged. MVNO Name is the text after mvnoname= "
-                 "where a line carries one; it was present on 37 of 3,248 rows. SIM Slot comes from slot[N]. The IMSI "
-                 "in this log is masked with asterisks, so it is not surfaced here; the SIM's real IMSI is in the "
-                 "Samsung IMS Subscriber Identity artifact. On the 13 tested extractions 8 held this log, 3,248 "
+                 "where a line carries one; it was present on 37 of 3,248 rows. SIM Slot comes from slot[N]. The IMSI token in this log is masked in whole or in part and has no column of its own. It stays in Message (as stored). On anne_a15, 46 rows hold the token: 23 are fully masked and 23 show 8 of the 15 characters as digits (the first six and the last two). Those 23 rows also hold a second masked token that repeats the same digits. On the six other tested images that hold the token (139 rows), every character is an asterisk. The Samsung IMS Subscriber Identity artifact reports the key stored in saved_impu.xml. On the 13 tested extractions 8 held this log, 3,248 "
                  "rows; MNO Name values included TMobile_US, TPG_SG, Telefonica_GB, ATT_US and VZW_US.",
         "paths": ('*/com.sec.imsservice/files/SimManager_slot*.log',),
         "output_types": "standard",
