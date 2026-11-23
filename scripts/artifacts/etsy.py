@@ -203,37 +203,44 @@ __artifacts_v2__ = {
     },
     "etsy_image_caches": {
         "name": "Etsy - Image Cache Summary",
-        "description": "Summarises selected Etsy cache directories with entry counts, on-disk file sizes, image "
-                       "classifications and extrema of staged file modification times.",
+        "description": "Summarises selected Etsy cache directories with entry counts, file sizes,"
+                       " image classifications and the newest and oldest modification times the "
+                       "input records for the entries.",
         "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-08-19",
-        "last_update_date": "2026-10-07",
+        "last_update_date": "2026-11-23",
         "requirements": "none",
         "category": "Etsy",
-        "notes": "One row per cache directory per app data directory. Latest Staged File mtime and "
-                 "Earliest Staged File mtime are the newest and oldest file modification times of the "
-                 "entries as this tool staged them. They are file system times, not values the app stored,"
-                 " and they match the evidence only where the extraction and the staging kept the file "
-                 "times. The caches are summarised rather than listed: an entry name is a digest, so "
-                 "entries are counted by type and not listed one by one here. The entries that do match a "
-                 "recently viewed listing are reported and rendered on Etsy - Recently Viewed Listings "
-                 "instead. Type counts are taken from each file's leading bytes after any transfer "
-                 "encoding is decoded; WebP additionally checks its RIFF length and image decoder "
-                 "acceptance. On the tested device no entry was stored compressed. "
-                 "image_manager_disk_cache is the default disk cache folder name of the Glide image "
-                 "library (bumptech/glide v4.16.0, DiskCache.java, DEFAULT_DISK_CACHE_DIR); no source for "
-                 "the appboy directory name was checked here. Both directories are scoped here to the "
-                 "app's own data directory. The files themselves remain in the extraction at the reported "
-                 "path. Field mapping was done against a private sample provided by Mattia; no sample data"
-                 " is recorded for it. The timestamp headers identify os.path.getmtime values of the "
-                 "supplied staged paths; the existing UTC epoch-plus-seconds conversion and zero-to-blank "
-                 "policy are unchanged. They are not app event or acquisition timestamps. This header "
-                 "correction does not establish whether any particular extraction/staging preserved or "
-                 "changed evidence mtime. Original contribution credited to @AlexisBrignoni, @mattiaepi "
-                 "(Mattia Epifani) and Claude. Historical private-sample image, compression and "
-                 "directory-library observations above are not remeasured by this correction. Existing "
-                 "cache classification, aliases, count/stat failure behavior and source-path aggregation "
-                 "are unchanged.",
+        "notes": "One row per cache directory per app data directory. Latest File Modified and "
+                 "Earliest File Modified are the newest and oldest UTC modification times the "
+                 "input records for the entries, such as from a tar header or a zip entry's NTFS "
+                 "or extended timestamp field. Latest Modified (no zone, as stored) and Earliest "
+                 "Modified (no zone, as stored) are the newest and oldest readings of the entries"
+                 " that have no UTC time, as for a FAT directory entry, an exFAT directory entry "
+                 "(its stored UTC offset is not applied or shown here) or a zip entry with only "
+                 "its DOS date and time, shown with no zone conversion. A recorded time of 0, or "
+                 "one outside the range a date can show, is treated as no time. The two pairs are"
+                 " kept apart because a reading with no zone cannot be ordered against a UTC "
+                 "time. For a folder or single-file input the UTC pair is the time the operating "
+                 "system reports for those files on the examiner's machine, including any "
+                 "conversion it applied, and whatever copied them there may have set it. The "
+                 "staged copy's own time is not reported. These are file times the input records,"
+                 " not values the app stored. They are not app event or acquisition timestamps. "
+                 "The caches are summarised rather than listed: an entry name is a digest, so "
+                 "entries are counted by type and not listed one by one here. The entries that do"
+                 " match a recently viewed listing are also reported and rendered on Etsy - "
+                 "Recently Viewed Listings. Type counts are taken from each file's leading bytes,"
+                 " after gzip is decoded when the file starts with the gzip magic; WebP "
+                 "additionally checks its RIFF length and image decoder acceptance. On the tested"
+                 " device no entry was stored compressed. image_manager_disk_cache is the default"
+                 " disk cache folder name of the Glide image library (bumptech/glide v4.16.0, "
+                 "DiskCache.java, DEFAULT_DISK_CACHE_DIR); no source for the appboy directory "
+                 "name was checked here. Both directories are scoped here to the app's own data "
+                 "directory. The files themselves remain in the extraction at the reported path. "
+                 "Field mapping was done against a private sample provided by Mattia; no sample "
+                 "data is recorded for it. Original contribution credited to @AlexisBrignoni, "
+                 "@mattiaepi (Mattia Epifani) and Claude. The private-sample image, compression "
+                 "and directory-library observations above were not measured again.",
         "paths": (
             '*/com.etsy.android/cache/image_manager_disk_cache/*',
             '*/com.etsy.android/cache/appboy.imageloader.lru.cache/*',
@@ -719,6 +726,44 @@ def _cached_renditions(index, container, image_url):
 # --------------------------------------------------------------------------------------
 # Artifacts
 # --------------------------------------------------------------------------------------
+
+def _in_datetime_range(seconds):
+    """Whether Unix seconds can be shown as a datetime."""
+    try:
+        return bool(_EPOCH + timedelta(seconds=seconds))
+    except OverflowError:
+        return False
+
+
+def _usable(value):
+    """Whether a recorded time is a nonzero, finite number."""
+    return isinstance(value, (int, float)) and value != 0 and value == value and abs(value) != float('inf')
+
+
+def _file_times(seeker, path):
+    """(UTC seconds, reading with no zone) the input records for a staged file.
+
+    The staged copy's own time is not used: for a FAT, exFAT or DOS-only zip reading it is
+    that reading placed in the examiner's time zone.
+    """
+    infos = getattr(seeker, 'file_infos', None) or {}
+    windows = str(path).replace('/', '\\')
+    bare = windows.removeprefix('\\\\?\\')
+    info = next((infos[name] for name in (str(path), windows, bare, '\\\\?\\' + bare)
+                 if name in infos), None)
+    times = getattr(info, 'times', None)
+    modified = getattr(times, 'modified', None)
+    if _usable(modified):
+        return modified, ''
+    # a reading with no zone comes before the older field, which is never read as its UTC time
+    reading = getattr(times, 'modified_no_zone', None)
+    if reading:
+        return None, reading
+    modified = getattr(info, 'modification_date', None)
+    if _usable(modified):
+        return modified, ''
+    return None, ''
+
 
 @artifact_processor
 def etsy_account(context):
@@ -1217,6 +1262,7 @@ def etsy_image_caches(context):
     data_list = []
     source_files = []
     summary = {}
+    seeker = context.get_seeker()
 
     for file_found in unique_files(context):
         normalised = str(file_found).replace('\\', '/')
@@ -1228,22 +1274,32 @@ def etsy_image_caches(context):
             continue
         key = (_container(context, file_found), directory)
         entry = summary.setdefault(key, {'entries': 0, 'bytes': 0, 'types': {},
-                                         'earliest': None, 'latest': None, 'path': ''})
+                                         'earliest': None, 'latest': None,
+                                         'earliest_no_zone': '', 'latest_no_zone': '', 'path': ''})
         entry['path'] = context.get_relative_path(os.path.dirname(normalised))
         if os.path.basename(normalised) == 'journal':
             continue
         entry['entries'] += 1
         try:
             entry['bytes'] += os.path.getsize(file_found)
-            modified = os.path.getmtime(file_found)
         except OSError:
             continue
+        modified, no_zone = _file_times(seeker, file_found)
         label = _cache_image(file_found)[0]
         entry['types'][label] = entry['types'].get(label, 0) + 1
-        if entry['earliest'] is None or modified < entry['earliest']:
-            entry['earliest'] = modified
-        if entry['latest'] is None or modified > entry['latest']:
-            entry['latest'] = modified
+        if modified is not None and not _in_datetime_range(modified):
+            modified = None  # a recorded time no datetime can hold is left out of the extremes
+        if modified is not None:
+            if entry['earliest'] is None or modified < entry['earliest']:
+                entry['earliest'] = modified
+            if entry['latest'] is None or modified > entry['latest']:
+                entry['latest'] = modified
+        elif no_zone:
+            # YYYY-MM-DD HH:MM:SS text, so text order is time order
+            if not entry['earliest_no_zone'] or no_zone < entry['earliest_no_zone']:
+                entry['earliest_no_zone'] = no_zone
+            if no_zone > entry['latest_no_zone']:
+                entry['latest_no_zone'] = no_zone
 
     for (_key, directory), entry in sorted(summary.items()):
         if not entry['entries']:
@@ -1252,6 +1308,8 @@ def etsy_image_caches(context):
         data_list.append((
             _EPOCH + timedelta(seconds=entry['latest']) if entry['latest'] else '',
             _EPOCH + timedelta(seconds=entry['earliest']) if entry['earliest'] else '',
+            entry['latest_no_zone'],
+            entry['earliest_no_zone'],
             directory,
             entry['entries'],
             entry['bytes'],
@@ -1261,11 +1319,13 @@ def etsy_image_caches(context):
         ))
 
     data_headers = (
-        ('Latest Staged File mtime', 'datetime'),
-        ('Earliest Staged File mtime', 'datetime'),
+        ('Latest File Modified', 'datetime'),
+        ('Earliest File Modified', 'datetime'),
+        'Latest Modified (no zone, as stored)',
+        'Earliest Modified (no zone, as stored)',
         'Cache Directory',
         'Entries',
-        'Bytes On Disk',
+        'Bytes',
         'Entry Types',
         'Source Path',
     )

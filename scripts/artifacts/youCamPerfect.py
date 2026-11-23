@@ -73,43 +73,49 @@ __artifacts_v2__ = {
     },
     "youcam_perfect_saved_photos": {
         "name": "YouCam Perfect Saved Photos",
-        "description": "Files in the DCIM/YouCam Perfect folder, where the one tested save of the app wrote its output",
-        "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
+        "description": "Files in the DCIM/YouCam Perfect folder. One save of YouCam Perfect "
+                       "6.21.1 on a test emulator wrote its output there.",
+        "author": "@AlexisBrignoni, Claude, Codex",
         "creation_date": "2026-09-11",
-        "last_update_date": "2026-10-04",
+        "last_update_date": "2026-11-23",
         "requirements": "none",
         "category": "YouCam Perfect",
         "sample_data": {
             "emu_a15_oss2_v3": "YouCam Perfect 6.21.1 | 0 rows",
         },
         "notes": "One row per file in the device's DCIM/YouCam Perfect folder, and per file in "
-                 "any folder below it.\n"
-                 "The app's PhotoExport2 table did not record the one save tested. It stayed at "
-                 "zero rows through a save that really did write a file, so this folder is where "
-                 "that save shows. Measured on the device after this image was captured, by "
-                 "opening a photo in the editor and pressing Save: a 41,394 byte JPEG appeared in "
-                 "DCIM/YouCam Perfect while PhotoExport2 stayed empty. This image was captured "
-                 "before that save, holds no such folder, and so reports no rows here.\nThe file "
-                 "name is a local wall clock and carries no time zone. It is written as year, "
-                 "month, day, hour, minute, second and milliseconds separated by hyphens. On that "
-                 "same save the name read 2026-09-11-23-02-00-451.jpg on a device set to "
-                 "America/New_York, and the file's own modification time was 23:02:00 in that "
-                 "same zone. The name is reported as stored and no instant is asserted from it, "
-                 "because the zone a name was written in is not recorded in the name.\nThe folder "
-                 "name and the file name shape both rest on a single observation, one save on one "
-                 "app version, so a different version or a different device may write elsewhere "
-                 "or name differently. A row is evidence a file is present under the name and "
-                 "folder the app writes, not that the app produced this particular file.\nSaved "
-                 "renders the file when its name carries an image extension the report can "
-                 "display, and is blank otherwise, so a file of another kind saved into this "
-                 "folder is still reported by name and size with nothing rendered. Staged Copy mtime is "
-                 "the modification time the report tool restored on its copy of the file. For a "
-                 "tar extraction that is the Unix time the archive stores. For a zip extraction "
-                 "it comes from the member's NTFS or extended timestamp field, a UTC time, when "
-                 "the member carries one and the report folder accepts that time, and otherwise from the member's zip date and time, which "
-                 "carry no time zone, so it is then not a UTC instant. The numeric staged-copy "
-                 "value is reported as text without "
-                 "an asserted evidence time zone and should be checked against the archive.",
+                 "any folder below it.\nThe app's PhotoExport2 table did not record the one save "
+                 "tested. It stayed at zero rows through a save that really did write a file, so "
+                 "this folder is where that save shows. Measured on the device after this image "
+                 "was captured, by opening a photo in the editor and pressing Save: a 41,394 byte"
+                 " JPEG appeared in DCIM/YouCam Perfect while PhotoExport2 stayed empty. This "
+                 "image was captured before that save, holds no such folder, and so reports no "
+                 "rows here.\nThe file name is a local wall clock and carries no time zone. It is "
+                 "written as year, month, day, hour, minute, second and milliseconds separated by"
+                 " hyphens. On that same save the name read 2026-09-11-23-02-00-451.jpg on a "
+                 "device set to America/New_York, and the file's own modification time was "
+                 "23:02:00 in that same zone. File Name is reported as stored. Name Wall Clock is"
+                 " the same digits with the separators rewritten, and no instant is asserted from"
+                 " it, because the zone a name was written in is not recorded in the name.\nThe "
+                 "folder name and the file name shape both rest on a single observation, one save"
+                 " on one app version, so a different version or a different device may write "
+                 "elsewhere or name differently. A row is evidence a file is present under the "
+                 "name and folder the app writes, not that the app produced this particular file."
+                 "\nSaved renders the file when its name carries an image extension the report can"
+                 " display, and is blank otherwise, so a file of another kind saved into this "
+                 "folder is still reported by name and size with nothing rendered. File Modified "
+                 "is the modification time the tool reads from the input for the file as a UTC "
+                 "time, to the whole second, such as from a tar header or a zip entry's NTFS or "
+                 "extended timestamp field. When the tool reads no UTC time, File Modified is "
+                 "blank and Modified (no zone, as stored) shows the date and time the input "
+                 "holds, with no zone conversion. That is the case for a FAT directory entry, an "
+                 "exFAT directory entry (its stored UTC offset is not applied or shown here) and "
+                 "a zip entry with only its DOS date and time. Both columns are blank when the "
+                 "input holds neither, and a recorded time of 0 is treated as no time. For a "
+                 "folder or single-file input File Modified is the time the operating system "
+                 "reports for that file on the examiner's machine, including any conversion it "
+                 "applied, and whatever copied the file there may have set it. The staged copy's "
+                 "own time is not reported.",
         "paths": ('*/DCIM/YouCam Perfect/*',),
         "output_types": "standard",
         "artifact_icon": "device-floppy",
@@ -154,6 +160,7 @@ import os
 import re
 import xml.etree.ElementTree as ET
 
+from datetime import datetime, timedelta, timezone
 from scripts.ilapfuncs import artifact_processor, check_in_media, convert_unix_ts_to_utc, \
     get_sqlite_db_records, logfunc
 from scripts.artifacts.storagePathViews import canonical_path, unique_files
@@ -294,6 +301,46 @@ def _edit_steps(db_path):
     return out
 
 
+def _utc(seconds):
+    """Unix seconds as a UTC datetime in whole seconds, '' for none or a value datetime cannot hold."""
+    if seconds is None:
+        return ''
+    try:
+        return datetime(1970, 1, 1, tzinfo=timezone.utc) + timedelta(seconds=seconds // 1)
+    except (OverflowError, ValueError):
+        return ''
+
+
+def _usable(value):
+    """Whether a recorded time is a nonzero, finite number."""
+    return isinstance(value, (int, float)) and value != 0 and value == value and abs(value) != float('inf')
+
+
+def _file_times(seeker, path):
+    """(UTC seconds, reading with no zone) the input records for a staged file.
+
+    The staged copy's own time is not used: for a FAT, exFAT or DOS-only zip reading it is
+    that reading placed in the examiner's time zone.
+    """
+    infos = getattr(seeker, 'file_infos', None) or {}
+    windows = str(path).replace('/', '\\')
+    bare = windows.removeprefix('\\\\?\\')
+    info = next((infos[name] for name in (str(path), windows, bare, '\\\\?\\' + bare)
+                 if name in infos), None)
+    times = getattr(info, 'times', None)
+    modified = getattr(times, 'modified', None)
+    if _usable(modified):
+        return modified, ''
+    # a reading with no zone comes before the older field, which is never read as its UTC time
+    reading = getattr(times, 'modified_no_zone', None)
+    if reading:
+        return None, reading
+    modified = getattr(info, 'modification_date', None)
+    if _usable(modified):
+        return modified, ''
+    return None, ''
+
+
 @artifact_processor
 def youcam_perfect_images(context):
     files = _files(context)
@@ -357,16 +404,17 @@ def youcam_perfect_saved_photos(context):
         stamp = ('{}-{}-{} {}:{}:{}.{}'.format(*match.groups()) if match else '')
         try:
             size = os.path.getsize(found)
-            modified = str(os.path.getmtime(found))
         except OSError as error:
             logfunc(f'YouCam Perfect: could not read {name}: {error}')
-            size, modified = '', ''
-        data_list.append((stamp, modified, _render(found), name, size,
+            size = ''
+        modified, no_zone = _file_times(context.get_seeker(), found)
+        data_list.append((stamp, _utc(modified), no_zone,
+                          _render(found), name, size,
                           context.get_relative_path(found)))
         sources.append(found)
 
     data_headers = (
-        'Name Wall Clock (as stored)', 'Staged Copy mtime (seconds as stored)',
+        'Name Wall Clock (from file name, no zone)', ('File Modified', 'datetime'), 'Modified (no zone, as stored)',
         ('Saved', 'media'), 'File Name', 'Size (bytes)', 'Source File')
     return data_headers, data_list, '\n'.join(str(path) for path in sources)
 

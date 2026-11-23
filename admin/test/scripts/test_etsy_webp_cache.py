@@ -69,6 +69,7 @@ class EtsyWebpCache(unittest.TestCase):
             root = pathlib.Path(temporary)
             files, bodies = create_fixture(root)
             context = SimpleNamespace(get_files_found=lambda: files,
+                                      get_seeker=lambda: None,
                                       get_relative_path=lambda p: str(pathlib.Path(p).relative_to(root)))
             checked = []
             def original(source, *_args, **kwargs):
@@ -95,8 +96,8 @@ class EtsyWebpCache(unittest.TestCase):
                     self.assertEqual(image.format, 'WEBP' if options['force_type'] == 'image/webp' else 'JPEG')
                 self.assertFalse(data.startswith(b'\x1f\x8b'))
             _, summary, _ = etsy.etsy_image_caches.__wrapped__(context)
-            self.assertEqual(sum(row[3] for row in summary), 8)
-            self.assertTrue(any('WEBP 2' in row[5] and 'Unrecognised 3' in row[5] for row in summary))
+            self.assertEqual(sum(row[5] for row in summary), 8)
+            self.assertTrue(any('WEBP 2' in row[7] and 'Unrecognised 3' in row[7] for row in summary))
 
     def test_riff_wav_and_short_webp_headers_are_rejected(self):
         for data in (b'RIFF', b'RIFF\0\0\0\0WEBP', b'RIFF\0\0\0\0WAVEfmt '):

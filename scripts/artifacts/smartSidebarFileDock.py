@@ -42,15 +42,29 @@ __artifacts_v2__ = {
         ),
         "author": "@akhil-dara",
         "creation_date": "2026-07-18",
-        "last_update_date": "2026-07-18",
+        "last_update_date": "2026-11-23",
         "requirements": "none",
         "category": "Smart Sidebar",
         "notes": (
-            "Folder name format: base64(<uuid>|<uuid>|<epoch ms added>|<last 20 "
-            "chars of file name>). The capture time inside OPLUSDRAG file names "
-            "is device local time. On the test devices this artifact was built from, dock items "
-            "whose folder timestamp was more than two years before the extraction were still "
-            "present."
+            "Folder name format: base64(<uuid>|<uuid>|<epoch ms added>|<last 20 chars of file "
+            "name>). The capture time inside OPLUSDRAG file names is device local time. On the "
+            "test devices this artifact was built from, dock items whose folder timestamp was "
+            "more than two years before the extraction were still present. Added Timestamp is the"
+            " third field of the decoded folder name, read as Unix milliseconds in UTC, or "
+            "without it the 13-digit number in a transferdock or link file name, read the same "
+            "way. Reading that value as the time the item was added comes from the test devices, "
+            "not from app code. It is blank when neither can be read, and a file modification "
+            "time is not used in its place. File Modified is the modification time the tool reads"
+            " from the input for the file as a UTC time, to the whole second, such as from a tar "
+            "header or a zip entry's NTFS or extended timestamp field. When the tool reads no UTC"
+            " time, File Modified is blank and Modified (no zone, as stored) shows the date and "
+            "time the input holds, with no zone conversion. That is the case for a FAT directory "
+            "entry, an exFAT directory entry (its stored UTC offset is not applied or shown here)"
+            " and a zip entry with only its DOS date and time. Both columns are blank when the "
+            "input holds neither, and a recorded time of 0 is treated as no time. For a folder or"
+            " single-file input File Modified is the time the operating system reports for that "
+            "file on the examiner's machine, including any conversion it applied, and whatever "
+            "copied the file there may have set it. The staged copy's own time is not reported."
         ),
         "paths": ('*/Download/.com_coloros_smartsidebar/transferdock/*/*',),
         "output_types": "standard",
@@ -120,8 +134,8 @@ def _decode_dock_dirname(dirname):
     The folder name is base64 of "<localFileId>|<groupUUId>|<epoch ms added>|
     <last 20 chars of the cached file name>", stored without padding. Standard
     and URL-safe alphabets are both attempted. Returns ('', '', '') when the
-    name does not decode to that layout; callers then fall back to timestamps
-    embedded in the cached file name or the file modification time.
+    name does not decode to that layout; callers then use a timestamp embedded
+    in the cached file name, and leave the time blank without one.
     '''
     padded = dirname + '=' * (-len(dirname) % 4)
     for altchars in (None, b'-_'):
@@ -152,6 +166,46 @@ def _read_text(file_found):
     '''Return the text content of a cached file, tolerating invalid UTF-8.'''
     with open(file_found, 'r', encoding='utf-8', errors='replace') as file:
         return file.read().strip()
+
+
+def _utc(seconds):
+    """Unix seconds as a UTC datetime in whole seconds, '' for none or a value datetime cannot hold."""
+    if seconds is None:
+        return ''
+    try:
+        return datetime.datetime(1970, 1, 1, tzinfo=datetime.timezone.utc) + datetime.timedelta(seconds=seconds // 1)
+    except (OverflowError, ValueError):
+        return ''
+
+
+def _usable(value):
+    """Whether a recorded time is a nonzero, finite number."""
+    return isinstance(value, (int, float)) and value != 0 and value == value and abs(value) != float('inf')
+
+
+def _file_times(seeker, path):
+    """(UTC seconds, reading with no zone) the input records for a staged file.
+
+    The staged copy's own time is not used: for a FAT, exFAT or DOS-only zip reading it is
+    that reading placed in the examiner's time zone.
+    """
+    infos = getattr(seeker, 'file_infos', None) or {}
+    windows = str(path).replace('/', '\\')
+    bare = windows.removeprefix('\\\\?\\')
+    info = next((infos[name] for name in (str(path), windows, bare, '\\\\?\\' + bare)
+                 if name in infos), None)
+    times = getattr(info, 'times', None)
+    modified = getattr(times, 'modified', None)
+    if _usable(modified):
+        return modified, ''
+    # a reading with no zone comes before the older field, which is never read as its UTC time
+    reading = getattr(times, 'modified_no_zone', None)
+    if reading:
+        return None, reading
+    modified = getattr(info, 'modification_date', None)
+    if _usable(modified):
+        return modified, ''
+    return None, ''
 
 
 @artifact_processor
@@ -188,7 +242,8 @@ def get_smartSidebarFileDock(context):
     data_list.sort(key=lambda row: row[0] if isinstance(row[0], datetime.datetime) else min_utc)
 
     data_headers = (
-        ('Added Timestamp', 'datetime'), 'Item Type', ('Media', 'media'), 'Content',
+        ('Added Timestamp', 'datetime'), ('File Modified', 'datetime'), 'Modified (no zone, as stored)',
+        'Item Type', ('Media', 'media'), 'Content',
         'Source App', 'Source View', 'Capture Time (Device Local)', 'File Name',
         'File Size', 'Local File ID', 'Group UUID', 'Source Path')
     return data_headers, data_list, source_path
@@ -247,25 +302,17 @@ def _parse_dock_item(context, seeker, file_found, file_name, dock_dirname):
 
     # Items without textual content are checked into the media system so the
     # cached copy itself is surfaced (image/video thumbnail or file link).
-    # Extracted zip archives carry no file dates, so the added-to-dock time
-    # and the on-disk modification time are supplied explicitly.
+    modified, no_zone = _file_times(seeker, file_found)
+    # A zip entry can record no UTC time, so the added-to-dock time and the recorded
+    # modification time, when there is one, are supplied explicitly.
     if not content and not link_match:
-        file_info = seeker.file_infos.get(file_found)
-        modified = file_info.modification_date if file_info and file_info.modification_date \
-            else int(os.path.getmtime(file_found))
         created = int(added_utc.timestamp()) if added_utc else None
         media = check_in_media(file_found, name=file_name,
                                force_creation_date=created,
-                               force_modification_date=modified) or ''
+                               force_modification_date=int(modified) if _utc(modified) else None) or ''
 
-    # Last resort for undecodable folder names: the file modification time,
-    # which extraction restores from the archive. A zero mtime is treated as
-    # unknown rather than reported as 1970-01-01.
-    if not added_utc:
-        mtime = os.path.getmtime(file_found)
-        added_utc = _ms_to_utc(mtime * 1000) if mtime > 0 else ''
-
-    return (added_utc, item_type, media, content, source_app, source_view,
+    return (added_utc, _utc(modified), no_zone,
+            item_type, media, content, source_app, source_view,
             capture_local_time, file_name, file_size, item_id, secondary_id,
             context.get_relative_path(file_found))
 

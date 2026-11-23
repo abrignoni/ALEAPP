@@ -2,16 +2,28 @@
 __artifacts_v2__ = {
     "torbrowser_thumbnails": {
         "name": "Tor Browser Tab Thumnails",
-        "description": "Tor Browser tab thumbnails with the file system modification time of the extracted copy.",
+        "description": "Files in the Tor Browser cache folder "
+                       "mozac_browser_thumbnails/private_thumbnails, with the modification time "
+                       "the tool reads from the input for each file.",
         "author": "Damien Attoe {damien.attoe@spyderforensics.com}, @AlexisBrignoni, Codex",
         "creation_date": "2025-11-14",
-        "last_update_date": "2026-10-06",
+        "last_update_date": "2026-11-23",
         "requirements": "none",
         "category": "Tor Browser",
-        "notes": "Extracted Copy Modification Time is the file system modification time of the "
-                 "extracted copy of the thumbnail file, which depends on how the extraction and this tool preserved "
-                 "file times; it is not read from the file's content. No sample data is recorded "
-                 "for this artifact.",
+        "notes": "File Modified is the modification time the tool reads from the input for the "
+                 "file as a UTC time, to the whole second, such as from a tar header or a zip "
+                 "entry's NTFS or extended timestamp field. When the tool reads no UTC time, File"
+                 " Modified is blank and Modified (no zone, as stored) shows the date and time "
+                 "the input holds, with no zone conversion. That is the case for a FAT directory "
+                 "entry, an exFAT directory entry (its stored UTC offset is not applied or shown "
+                 "here) and a zip entry with only its DOS date and time. Both columns are blank "
+                 "when the input holds neither, and a recorded time of 0 is treated as no time. "
+                 "For a folder or single-file input File Modified is the time the operating "
+                 "system reports for that file on the examiner's machine, including any "
+                 "conversion it applied, and whatever copied the file there may have set it. The "
+                 "staged copy's own time is not reported. File Modified is not read from the "
+                 "file's content and depends on the acquisition having kept file times. No sample"
+                 " data is recorded for this artifact.",
         "paths": ('*/org.torproject.torbrowser/cache/mozac_browser_thumbnails/private_thumbnails/*.0'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "photo"
@@ -86,6 +98,46 @@ def _parse_xml(file_found):
             return ET.Element('empty')
 
 
+def _utc(seconds):
+    """Unix seconds as a UTC datetime in whole seconds, '' for none or a value datetime cannot hold."""
+    if seconds is None:
+        return ''
+    try:
+        return datetime.datetime(1970, 1, 1, tzinfo=datetime.timezone.utc) + datetime.timedelta(seconds=seconds // 1)
+    except (OverflowError, ValueError):
+        return ''
+
+
+def _usable(value):
+    """Whether a recorded time is a nonzero, finite number."""
+    return isinstance(value, (int, float)) and value != 0 and value == value and abs(value) != float('inf')
+
+
+def _file_times(seeker, path):
+    """(UTC seconds, reading with no zone) the input records for a staged file.
+
+    The staged copy's own time is not used: for a FAT, exFAT or DOS-only zip reading it is
+    that reading placed in the examiner's time zone.
+    """
+    infos = getattr(seeker, 'file_infos', None) or {}
+    windows = str(path).replace('/', '\\')
+    bare = windows.removeprefix('\\\\?\\')
+    info = next((infos[name] for name in (str(path), windows, bare, '\\\\?\\' + bare)
+                 if name in infos), None)
+    times = getattr(info, 'times', None)
+    modified = getattr(times, 'modified', None)
+    if _usable(modified):
+        return modified, ''
+    # a reading with no zone comes before the older field, which is never read as its UTC time
+    reading = getattr(times, 'modified_no_zone', None)
+    if reading:
+        return None, reading
+    modified = getattr(info, 'modification_date', None)
+    if _usable(modified):
+        return modified, ''
+    return None, ''
+
+
 @artifact_processor
 def torbrowser_thumbnails(context):
     files_found = unique_files(context)
@@ -104,15 +156,16 @@ def torbrowser_thumbnails(context):
         filename = media_path.name
         location = context.get_relative_path(str(media_path.parent))
 
-        modified_ts = os.path.getmtime(file_found)
-        modifiedtime = datetime.datetime.fromtimestamp(int(modified_ts), datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
+        modified_ts, no_zone = _file_times(context.get_seeker(), file_found)
+        modifiedtime = _utc(modified_ts)
+        modifiedtime = modifiedtime.strftime('%Y-%m-%d %H:%M:%S') if modifiedtime else ''
 
         media_item = check_in_media(filename)
 
         if media_item:
-            data_list.append((modifiedtime, media_item, filename, location))
+            data_list.append((modifiedtime, no_zone, media_item, filename, location))
 
-    data_headers = (('Extracted Copy Modification Time', 'datetime'), ('Thumbnail', 'media'), 'File Name', 'Location')
+    data_headers = (('File Modified', 'datetime'), 'Modified (no zone, as stored)', ('Thumbnail', 'media'), 'File Name', 'Location')
 
     return data_headers, data_list, '\n'.join(sorted(source_paths))
 
