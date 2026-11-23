@@ -19,7 +19,9 @@ sys.path.insert(0, str(REPO_ROOT))
 
 from scripts.search_files import FileInfo, StagedTimes  # pylint: disable=wrong-import-position
 
-MODULES = ('TorBrowser', 'browserCachefirefox', 'etsy', 'smartSidebarFileDock', 'torThumbs', 'vlcthumbsADB', 'youCamPerfect')
+MODULES = ('TorBrowser', 'browserCachechrome', 'browserCachefirefox', 'etsy', 'factory_reset', 'googleQuickSearchbox',
+           'googlemapaudioTemp', 'imagemngCache', 'last_boot_time', 'offlinePages', 'smartSidebarFileDock', 'torThumbs',
+           'vlcthumbsADB', 'whatsAppLocalBackups', 'youCamPerfect')
 UTC = 1717261200  # 2024-06-01 17:00:00 UTC
 READING = '2024-06-01 12:00:00'
 

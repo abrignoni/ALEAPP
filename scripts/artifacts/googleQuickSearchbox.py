@@ -2,33 +2,41 @@
 __artifacts_v2__ = {
     "get_quicksearch": {
         "name": "Google Quick Search Queries",
-        "description": "Query text and an embedded audio blob read from the Google app session files (com.google.android.googlequicksearchbox/app_session/*.binarypb), with the modification time the extraction recorded for each file. What causes the app to write a session file is not established.",
+        "description": "Text the module reads as queries and a byte field it presents as MP3 audio, from the Google app session files (com.google.android.googlequicksearchbox/app_session/*.binarypb), with the modification time the extraction recorded for each file. The meaning of these fields is not from a cited source. What causes the app to write a session file is not established.",
         "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2020-03-22",
-        "last_update_date": "2026-10-04",
+        "last_update_date": "2026-11-23",
         "requirements": "none",
         "category": "Google Now & QuickSearch",
-        "notes": "File Modified Time is the modification time the extraction recorded for the session file "
-                 "as an epoch value, shown in UTC: the NTFS field (0x000a), or else the extended timestamp field "
-                 "(0x5455), of a zip member, the "
-                 "mtime of a tar member, or the file's own modification time when the input is a folder. It "
-                 "is blank when the extraction recorded no such value. Archive Time Modified (No Zone) is "
-                 "filled only in that case, for a zip member, with the date and time in the member's zip "
-                 "directory entry, shown as stored. A zip directory entry records no time zone, so that "
-                 "reading is not converted and which zone it is in is not established. The time of the "
-                 "staged copy the tool extracts is not used. No time is read from inside a session file. "
-                 "On the registered images checked on 2026-10-04, both matched zip members on "
-                 "russell_pixel6a_a13 carried the extended timestamp, and the zip directory reading was "
-                 "4 hours earlier than it to within 1 second; the one matched member on sharon_a14 "
-                 "carried none and records the NTFS field instead, and on a run of 2026-10-23 the zip "
-                 "directory reading was 4 hours earlier than it to within 1 second. Extraction and acquisition handling can disturb file timestamps, so "
-                 "validate the value against other sources.",
+        "notes": "File Modified Time is the modification time the tool reads from the input for the file as a "
+                 "UTC time, such as from a tar header, a zip entry's NTFS (0x000a) or extended timestamp "
+                 "(0x5455) field, or the file system of a disk image. When the tool reads no UTC time, File "
+                 "Modified Time is blank and Modified (no zone, as stored) shows the date and time the input "
+                 "holds, with no zone conversion. That is the case for a FAT directory entry, an exFAT "
+                 "directory entry (its stored UTC offset is not applied or shown here) and a zip entry from "
+                 "which no UTC modification time is read: one with only its DOS date and time, or with an "
+                 "extra field whose time is 0 or unreadable. Which zone such a reading is in is not "
+                 "established. Both columns are blank when the tool reads neither. A UTC time recorded as 0 is"
+                 " treated as no time. A zip entry's DOS date and time is shown as decoded, with no validity "
+                 "check, so an unset one reads 1980-00-00 00:00:00. For a folder or single-file input File "
+                 "Modified Time is the time the operating system reports for that file on the examiner's "
+                 "machine, including any conversion it applied, and whatever copied the file there may have "
+                 "set it. The staged copy's own time is not reported. No time is read from inside a session "
+                 "file. On russell_pixel6a_a13 and sharon_a14 Queries and Response were empty on every row. On"
+                 " pixel3_a11, 5 rows had Queries and 3 had Response. On the registered images checked on "
+                 "2026-10-04, both matched zip members on russell_pixel6a_a13 carried the extended timestamp, "
+                 "and the zip directory reading was 4 hours earlier than it to within 1 second; the one "
+                 "matched member on sharon_a14 carried none and records the NTFS field instead, and on a run "
+                 "of 2026-10-23 the zip directory reading was 4 hours earlier than it to within 1 second. "
+                 "Extraction and acquisition handling can disturb file timestamps, so validate the value "
+                 "against other sources.",
         "paths": ('*/com.google.android.googlequicksearchbox/app_session/*.binarypb',),
         "output_types": "standard",
         "artifact_icon": "search",
         "sample_data": {
             "sharon_a14": "Android 14 | com.google.android.googlequicksearchbox vc 301381725 | 1 row",
             "russell_pixel6a_a13": "Android 13 | com.google.android.googlequicksearchbox vc 301246250 | 2 rows",
+            "pixel3_a11": "Android 11 | 5 rows",
         },
     }
 }
@@ -43,32 +51,43 @@ from scripts.ilapfuncs import artifact_processor, check_in_embedded_media
 from scripts.artifacts.storagePathViews import unique_files
 
 
-def _recorded_times(seeker, file_found):
-    """Return (epoch modification time as UTC, zone-less zip directory time as stored).
-
-    The staged copy's own time is not used: for a zip member with no NTFS or extended
-    timestamp field the seeker sets it from the member's zone-less date and time read in
-    the examiner machine's zone.
-    """
-    info = seeker.file_infos.get(file_found) if seeker else None
-    if not info:
-        return '', ''
-    if info.modification_date:
-        try:
-            return datetime.datetime.fromtimestamp(
-                float(info.modification_date), datetime.timezone.utc), ''
-        except (ValueError, OverflowError, OSError, TypeError):
-            return '', ''
-    zip_file = getattr(seeker, 'zip_file', None)
-    # A name stored more than once with different content is staged from a
-    # chosen entry, which getinfo() does not necessarily return.
-    if zip_file is None or info.source_path in getattr(seeker, '_chosen', {}):
-        return '', ''
+def _recorded_utc(value):
+    if not value:
+        return ''
     try:
-        stored = zip_file.getinfo(info.source_path).date_time
-    except KeyError:
-        return '', ''
-    return '', '{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}'.format(*stored)
+        return datetime.datetime.fromtimestamp(float(value), datetime.timezone.utc)
+    except (ValueError, OverflowError, OSError, TypeError):
+        return ''
+
+
+def _usable(value):
+    """Whether a recorded time is a nonzero, finite number."""
+    return isinstance(value, (int, float)) and value != 0 and value == value and abs(value) != float('inf')
+
+
+def _file_times(seeker, path):
+    """(UTC seconds, reading with no zone) the input records for a staged file.
+
+    The staged copy's own time is not used: for a FAT, exFAT or DOS-only zip reading it is
+    that reading placed in the examiner's time zone.
+    """
+    infos = getattr(seeker, 'file_infos', None) or {}
+    windows = str(path).replace('/', '\\')
+    bare = windows.removeprefix('\\\\?\\')
+    info = next((infos[name] for name in (str(path), windows, bare, '\\\\?\\' + bare)
+                 if name in infos), None)
+    times = getattr(info, 'times', None)
+    modified = getattr(times, 'modified', None)
+    if _usable(modified):
+        return modified, ''
+    # a reading with no zone comes before the older field, which is never read as its UTC time
+    reading = getattr(times, 'modified_no_zone', None)
+    if reading:
+        return None, reading
+    modified = getattr(info, 'modification_date', None)
+    if _usable(modified):
+        return modified, ''
+    return None, ''
 
 
 def _get_search_query_from_blob(data):
@@ -152,10 +171,11 @@ def get_quicksearch(context):
             name = os.path.splitext(os.path.basename(file_found))[0] + '.mp3'
             response = check_in_embedded_media(file_found, mp3_data, name,
                                                force_type='audio/mpeg', force_extension='mp3')
-        modified, modified_as_stored = _recorded_times(seeker, file_found)
+        recorded, modified_as_stored = _file_times(seeker, file_found)
+        modified = _recorded_utc(recorded)
         data_list.append((modified, modified_as_stored, session_type,
                           ', '.join(queries), response, context.get_relative_path(file_found)))
 
-    data_headers = (('File Modified Time', 'datetime'), 'Archive Time Modified (No Zone)', 'Type', 'Queries',
+    data_headers = (('File Modified Time', 'datetime'), 'Modified (no zone, as stored)', 'Type', 'Queries',
                     ('Response', 'media'), 'Source File')
     return data_headers, data_list, context.get_relative_path(source_path)

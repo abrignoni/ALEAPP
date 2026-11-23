@@ -4,15 +4,29 @@ __artifacts_v2__ = {
         "description": "Files from app image_manager_disk_cache (Glide) directories and files with a .cnt extension, reported whatever their content. On samsungs20_a13, 2,016 of the 2,109 .cnt files carried an image signature",
         "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2022-03-05",
-        "last_update_date": "2026-11-22",
+        "last_update_date": "2026-11-23",
         "requirements": "none",
         "category": "Image Manager Cache",
-        "notes": "Timestamp Modified is the modification time the extraction recorded for the file as "
-                 "an epoch value, shown in UTC. Depending on the input it comes from a tar member time, a zip NTFS or extended timestamp field, a CLBX zip metadata record, the reader of a disk image or logical evidence file, or the time of the file in an input folder. It is blank when the extraction recorded no such value or recorded 0, and when a recorded value cannot be converted. Archive Time Modified (No Zone) is filled only when no value or 0 was recorded, from the zip "
-                 "directory entry, which carries a wall clock reading with no time zone; it is reported "
-                 "as stored and no instant is asserted for it. What event sets the modification time of "
-                 "a cache file is not established here. The second path pattern matches a file with a "
-                 ".cnt extension in any folder of the extraction. Rows are not filtered by content: each file's type is read to display it, and a file that is not an image is still reported. On samsungs20_a13, of the 2,109 .cnt files, 2,016 carried an image signature, 11 a font header and 82 neither. Reference: Glide, 'DiskCache.Factory.DEFAULT_DISK_CACHE_DIR', https://github.com/bumptech/glide/blob/36a7b2ecd75d84c86d4238240193ecd5e48d69ce/library/src/main/java/com/bumptech/glide/load/engine/cache/DiskCache.java",
+        "notes": "Timestamp Modified is the modification time the tool reads from the input for the file as a "
+                 "UTC time, to the whole second, such as from a tar header, a zip entry's NTFS (0x000a) or "
+                 "extended timestamp (0x5455) field, or the file system of a disk image. When the tool reads "
+                 "no UTC time, Timestamp Modified is blank and Modified (no zone, as stored) shows the date "
+                 "and time the input holds, with no zone conversion. That is the case for a FAT directory "
+                 "entry, an exFAT directory entry (its stored UTC offset is not applied or shown here) and a "
+                 "zip entry from which no UTC modification time is read: one with only its DOS date and time, "
+                 "or with an extra field whose time is 0 or unreadable. Which zone such a reading is in is not"
+                 " established. Both columns are blank when the tool reads neither. A UTC time recorded as 0 "
+                 "is treated as no time. A zip entry's DOS date and time is shown as decoded, with no validity"
+                 " check, so an unset one reads 1980-00-00 00:00:00. For a folder or single-file input "
+                 "Timestamp Modified is the time the operating system reports for that file on the examiner's "
+                 "machine, including any conversion it applied, and whatever copied the file there may have "
+                 "set it. The staged copy's own time is not reported. What event sets the modification time of"
+                 " a cache file is not established here. The second path pattern matches a file with a .cnt "
+                 "extension in any folder of the extraction. Rows are not filtered by content: each file's "
+                 "type is read to display it, and a file that is not an image is still reported. On "
+                 "samsungs20_a13, of the 2,109 .cnt files, 2,016 carried an image signature, 11 a font header "
+                 "and 82 neither. Reference: Glide, 'DiskCache.Factory.DEFAULT_DISK_CACHE_DIR', "
+                 "https://github.com/bumptech/glide/blob/36a7b2ecd75d84c86d4238240193ecd5e48d69ce/library/src/main/java/com/bumptech/glide/load/engine/cache/DiskCache.java",
         "paths": ('*/cache/image_manager_disk_cache/*.*', '*/*.cnt'),
         "output_types": "standard",
         "artifact_icon": "photo",
@@ -42,28 +56,39 @@ def _sec_to_utc(value):
     if not value:
         return ''
     try:
-        return datetime.datetime.fromtimestamp(int(value), datetime.timezone.utc)
+        return datetime.datetime(1970, 1, 1, tzinfo=datetime.timezone.utc) + datetime.timedelta(seconds=value // 1)
     except (ValueError, OverflowError, OSError, TypeError):
         return ''
 
 
-def _recorded_times(seeker, file_found):
-    """Return (epoch modification time as UTC, zone-less zip directory time as stored)."""
-    info = seeker.file_infos.get(file_found) if seeker else None
-    if not info:
-        return '', ''
-    if info.modification_date:
-        return _sec_to_utc(info.modification_date), ''
-    zip_file = getattr(seeker, 'zip_file', None)
-    # A name stored more than once with different content is staged from a
-    # chosen entry, which getinfo() does not necessarily return.
-    if zip_file is None or info.source_path in getattr(seeker, '_chosen', {}):
-        return '', ''
-    try:
-        stored = zip_file.getinfo(info.source_path).date_time
-    except KeyError:
-        return '', ''
-    return '', '{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}'.format(*stored)
+def _usable(value):
+    """Whether a recorded time is a nonzero, finite number."""
+    return isinstance(value, (int, float)) and value != 0 and value == value and abs(value) != float('inf')
+
+
+def _file_times(seeker, path):
+    """(UTC seconds, reading with no zone) the input records for a staged file.
+
+    The staged copy's own time is not used: for a FAT, exFAT or DOS-only zip reading it is
+    that reading placed in the examiner's time zone.
+    """
+    infos = getattr(seeker, 'file_infos', None) or {}
+    windows = str(path).replace('/', '\\')
+    bare = windows.removeprefix('\\\\?\\')
+    info = next((infos[name] for name in (str(path), windows, bare, '\\\\?\\' + bare)
+                 if name in infos), None)
+    times = getattr(info, 'times', None)
+    modified = getattr(times, 'modified', None)
+    if _usable(modified):
+        return modified, ''
+    # a reading with no zone comes before the older field, which is never read as its UTC time
+    reading = getattr(times, 'modified_no_zone', None)
+    if reading:
+        return None, reading
+    modified = getattr(info, 'modification_date', None)
+    if _usable(modified):
+        return modified, ''
+    return None, ''
 
 
 @artifact_processor
@@ -79,9 +104,10 @@ def get_imagemngCache(context):
         filename = os.path.basename(file_found)
         source_folders.add(os.path.dirname(file_found))
         media = check_in_media(file_found, filename)
-        modified, modified_as_stored = _recorded_times(seeker, file_found)
+        recorded, modified_as_stored = _file_times(seeker, file_found)
+        modified = _sec_to_utc(recorded)
         data_list.append((modified, modified_as_stored, media, filename, context.get_relative_path(file_found)))
 
     data_headers = (
-        ('Timestamp Modified', 'datetime'), 'Archive Time Modified (No Zone)', ('Media', 'media'), 'Filename', 'Source File')
+        ('Timestamp Modified', 'datetime'), 'Modified (no zone, as stored)', ('Media', 'media'), 'Filename', 'Source File')
     return data_headers, data_list, '\n'.join(sorted(source_folders))
