@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "clipboard": {
         "name": "Clipboard Data",
-        "description": "Files under a folder named clipboard or semclipboard: for a file alone in its folder the text read from a fixed line and character offset, and in a folder holding several files each file other than clip as media, with the file's modification time as the extraction records it",
+        "description": "Files under a folder named clipboard or semclipboard: for a file alone in its folder the text read from one of two fixed line and character offsets, and in a folder holding several files each file other than clip as media, with the file's modification time as the tool reads it from the input",
         "author": "Alexis Brignoni, @AlexisBrignoni, Codex",
         "creation_date": "2022-01-08",
         "last_update_date": "2026-11-23",
@@ -10,27 +10,32 @@ __artifacts_v2__ = {
         "category": "Clipboard",
         "notes": "Modified Time is the modification time the extraction records for the file, read from the "
                  "seeker's record of it and shown in UTC: a tar member's own time, the NTFS field (0x000a) or "
-                 "else the extended timestamp field (0x5455) of a zip member, or the file's time in a folder "
-                 "input. When the tool reads no UTC time, Modified Time is blank and Modified (no zone, as "
-                 "stored) shows the date and time the input holds, with no zone conversion. That is the case "
-                 "for a FAT directory entry, an exFAT directory entry (its stored UTC offset is not applied or"
-                 " shown here) and a zip entry from which no UTC modification time is read: one with only its "
-                 "DOS date and time, or with an extra field whose time is 0 or unreadable. Which zone such a "
-                 "reading is in is not established. A zip entry's DOS date and time is shown as decoded, with "
-                 "no validity check, so an unset one reads 1980-00-00 00:00:00. Modified (no zone, as stored) "
-                 "had no value on any row of the registered images in sample_data on a run of 2026-11-23. The "
-                 "reading was exercised on constructed FAT32, exFAT and DOS-only zip inputs. The time of the "
-                 "copy staged in the report folder is not used. On anne_a15, galaxys10_a10 and samsunga53_a14 "
-                 "every matched file carried the extended timestamp field; on samsungs20_a13 and sharon_a14 "
-                 "none did, and neither produced a row. The declared pattern matches any folder whose name "
-                 "ends in clipboard; a matched file is read only when a folder in its path is named exactly "
-                 "clipboard or semclipboard, and any other is skipped with a line in the run log. Across the "
-                 "44 registered Android images the pattern matched files under folders of those two names only"
-                 " (data/clipboard, data/semclipboard and com.samsung.android.honeyboard/clipboard), so that "
-                 "skip is not exercised by a registered image. A file counts as alone in its folder only when "
-                 "no other matched path holds its folder's path, and a zip that lists the folder itself "
-                 "supplies such a path. On anne_a15, galaxys10_a10, samsunga53_a14 and cookbook_a11 every row "
-                 "was a media row and no row carried text. Path is the file's path in the extraction.",
+                 "else the extended timestamp field (0x5455) of a zip member, the file system time of a disk "
+                 "image, or the file's time in a folder input. When the tool reads no UTC modification time, "
+                 "Modified Time is blank. If the input holds a date and time with no zone, Modified (no zone, "
+                 "as stored) shows it as text, with no zone conversion. A recorded time of 0 is treated as no "
+                 "time. Both columns are blank when the input holds neither. That is the case for a FAT "
+                 "directory entry, an exFAT directory entry (its stored UTC offset is not applied or shown "
+                 "here) and a zip entry from which no UTC modification time is read, for example one with only"
+                 " its DOS date and time, or with an extra field whose modification time is missing, 0 or "
+                 "unreadable. Which zone such a reading is in is not established. A zip entry's DOS date and "
+                 "time is shown as decoded, with no validity check, so an unset one reads 1980-00-00 00:00:00."
+                 " Modified (no zone, as stored) had no value on any row of the registered images in "
+                 "sample_data on a run of 2026-11-23. The reading was exercised on constructed FAT32, exFAT "
+                 "and DOS-only zip inputs under two examiner time zones. The UTC column was blank, the no-zone"
+                 " column showed the value decoded separately from the input for each file, and it did not "
+                 "change with the zone. The time of the copy staged in the report folder is not used. On "
+                 "anne_a15, galaxys10_a10 and samsunga53_a14 every matched file carried the extended timestamp"
+                 " field; on samsungs20_a13 and sharon_a14 none did, and neither produced a row. The declared "
+                 "pattern matches any folder whose name ends in clipboard; a matched file is read only when a "
+                 "folder in its path is named exactly clipboard or semclipboard, and any other is skipped with"
+                 " a line in the run log. Across the registered Android images checked for this artifact the "
+                 "pattern matched files under folders of those two names only (data/clipboard, "
+                 "data/semclipboard and com.samsung.android.honeyboard/clipboard), so that skip is not "
+                 "exercised by a registered image. A file counts as alone in its folder only when no other "
+                 "matched path holds its folder's path, and a zip that lists the folder itself supplies such a"
+                 " path. On anne_a15, galaxys10_a10, samsunga53_a14 and cookbook_a11 every row was a media row"
+                 " and no row carried text. Path is the file's path in the extraction.",
         "paths": ('*/*clipboard/*/*'),
         "output_types": "standard",
         "artifact_icon": "clipboard",
