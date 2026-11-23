@@ -11,12 +11,12 @@ __artifacts_v2__ = {
         "description": "Parses the IMS public user identity Samsung stores in com.sec.imsservice, one row per saved entry, with the key (15 digits on the tested images) and the SIP or TEL URI stored against it.",
         "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-11-22",
+        "last_update_date": "2026-11-23",
         "requirements": "none",
         "category": "Samsung IMS Service",
         "notes": "Read from com.sec.imsservice/shared_prefs/saved_impu.xml, which holds saved entries, each "
                  "a key and an IMS public user identity. IMSI (as stored) is the map key, 15 digits on all 10 rows. "
-                 "On anne_a15 its visible digits match the partly masked IMSI token in the SIM manager log. No other image read by the SIM and Carrier State artifact showed digits in that token. galaxys10_a10 has no SIM manager log, and cookbook_a11 names it SimManager.log, which that artifact does not read. IMPU (as stored) is the SIP or TEL URI. IMPU User Part is the text after the URI's "
+                 "On anne_a15 its visible digits match the partly masked IMSI token in the SIM manager log. On cookbook_a11 the SIM manager log shows the token with all 15 digits, and it equals the key. No other image showed digits in that token. galaxys10_a10 has no SIM manager log. IMPU (as stored) is the SIP or TEL URI. IMPU User Part is the text after the URI's "
                  "scheme up to the first @, or all of it when there is no @, and IMPU Domain is the text after that "
                  "@. The module splits these two out of the stored URI. User Part was 11 or 13 digits on the tested images (9 rows of 11, 1 of 13), 4 of the 10 with a leading +; whether it is a phone number was not established. IMPU Domain is blank for a tel: URI, "
                  "which one tested image stored with no host. On the 13 tested Android extractions 9 held this file, 10 identities in "
@@ -124,25 +124,24 @@ __artifacts_v2__ = {
         "description": "Parses the IMS SIM manager log Samsung writes in com.sec.imsservice, one row per timestamped line, with the SIM slot and the mnoname= and mvnoname= values as stored.",
         "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-11-22",
+        "last_update_date": "2026-11-23",
         "requirements": "none",
         "category": "Samsung IMS Service",
-        "notes": "Read from com.sec.imsservice/files/SimManager_slot*.log, Samsung's IMS SIM manager log, with the "
+        "notes": "Read from com.sec.imsservice/files/SimManager_slot*.log, or SimManager.log on cookbook_a11, Samsung's IMS SIM manager log, with the "
                  "same no-time-zone timestamps as the registration log, reported as text. One row per line that begins with a date and time, whatever the line reports; "
-                 "2,825 of the 3,248 rows have MNO Name and MVNO Name blank. MNO Name (as stored) is the text after "
-                 "mnoname= and MVNO Name (as stored) is the text after mvnoname=. Each token was on 423 rows. MVNO "
-                 "Name was non-blank on 37 of them. On 261 of the 423 mnoname= rows the same line says hassim=false, "
-                 "so read the name with the rest of the line. Another 1,434 rows have a blank MNO Name and carry "
+                 "3,021 of the 3,485 rows have MNO Name and MVNO Name blank. MNO Name (as stored) is the text after "
+                 "mnoname= and MVNO Name (as stored) is the text after mvnoname=. Each token was on 464 rows. MVNO "
+                 "Name was non-blank on 78 of them. On 261 of the 464 mnoname= rows the same line says hassim=false, "
+                 "so read the name with the rest of the line. Another 1,523 rows have a blank MNO Name and carry "
                  "mDevMno, mNetMno or mSimMno fields, which only Message (as stored) shows. What Samsung means by "
-                 "these fields was not sourced. SIM Slot comes from slot[N]. The IMSI token in this log is masked in whole or in part and has no column of its own. It stays in Message (as stored). On anne_a15, 46 rows hold the token: 23 are fully masked and 23 show 8 of the 15 characters as digits (the first six and the last two). Those 23 rows also hold a second masked token that repeats the same digits. On the six other tested images that hold the token (139 rows), every character is an asterisk. The Samsung IMS Subscriber Identity artifact reports the key stored in saved_impu.xml. On the 13 tested extractions 8 held this log, 3,248 "
-                 "rows; MNO Name values included TMobile_US, TPG_SG, Telefonica_GB, ATT_US and VZW_US.",
-        "paths": ('*/com.sec.imsservice/files/SimManager_slot*.log',),
+                 "these fields was not sourced. SIM Slot comes from slot[N]. The IMSI token in this log has no column of its own. It stays in Message (as stored). Where the token carries a value, it is masked in whole or in part on 7 of the 9 images that hold the log and is in the clear on cookbook_a11. On s20fe_a13 the token carries no value on any row. On anne_a15, 46 rows hold the token: 23 are fully masked and 23 show 8 of the 15 characters as digits (the first six and the last two). Those 23 rows also hold a second masked token that repeats the same digits. On the six other tested images that hold the token (139 rows), every character is an asterisk. On cookbook_a11, 41 rows show the token with all 15 digits in the clear. The Samsung IMS Subscriber Identity artifact reports the key stored in saved_impu.xml. On the 13 tested extractions 9 held this log, 3,485 rows; MNO Name values included TMobile_US, TPG_SG, Telefonica_GB, ATT_US and VZW_US.",
+        "paths": ('*/com.sec.imsservice/files/SimManager_slot*.log', '*/com.sec.imsservice/files/SimManager.log'),
         "output_types": "standard",
         "artifact_icon": "smartphone",
         "sample_data": {
             "adams_ss135dl_a13": "Android 13 | 300 rows",
             "anne_a15": "Android 15 | 457 rows",
-            "cookbook_a11": "Android 11 | SimManager.log present, not matched by SimManager_slot*.log | 0 rows",
+            "cookbook_a11": "Android 11 | SimManager.log | 237 rows",
             "falken_a326u_a13": "Android 13 | 300 rows",
             "galaxys10_a10": "Android 10 | no com.sec.imsservice logs | 0 rows",
             "hc_pixel8pro_a17": "Android 17 | no com.sec.imsservice logs | 0 rows",
