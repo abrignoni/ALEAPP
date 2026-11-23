@@ -11,7 +11,7 @@ __artifacts_v2__ = {
         "description": "Parses the IMS public user identity Samsung stores in com.sec.imsservice, one row per saved entry, with the key (an IMSI on the tested images) and the SIP or TEL URI stored against it.",
         "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-11-22",
         "requirements": "none",
         "category": "Samsung IMS Service",
         "notes": "Read from com.sec.imsservice/shared_prefs/saved_impu.xml, which holds saved entries, each "
@@ -45,7 +45,7 @@ __artifacts_v2__ = {
         "description": "Parses the IMS registration log Samsung writes in com.sec.imsservice, one row per RegiMgr line, with the SIM slot, carrier profile and registration state where a line carries them, as stored.",
         "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-10-04",
+        "last_update_date": "2026-11-22",
         "requirements": "none",
         "category": "Samsung IMS Service",
         "notes": "Read from com.sec.imsservice/files/RegiMgr.log, Samsung's IMS registration log. Each line is "
@@ -86,7 +86,7 @@ __artifacts_v2__ = {
         "description": "Parses the IMS packet data network log Samsung writes in com.sec.imsservice, with the interface, link addresses and P-CSCF addresses where a line carries them, as stored.",
         "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-10-04",
+        "last_update_date": "2026-11-22",
         "requirements": "none",
         "category": "Samsung IMS Service",
         "notes": "Read from com.sec.imsservice/files/PdnController.log, Samsung's IMS packet data network log, "
@@ -153,7 +153,7 @@ __artifacts_v2__ = {
         "description": "Collects the process-start lines the Samsung IMS service writes at the head of its logs in com.sec.imsservice, with the process id and firmware build as stored.",
         "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-10-09",
+        "last_update_date": "2026-11-22",
         "requirements": "none",
         "category": "Samsung IMS Service",
         "notes": "Collects the '> Created (pid: N, binary: <firmware>)' line Samsung writes at the head of each "
@@ -166,8 +166,7 @@ __artifacts_v2__ = {
                  "share a row; the row then spans both. On three of the tested images the lines of one process id "
                  "were mostly within seconds of each other (median spread 1.9 to 4.9 seconds) while some process ids "
                  "spanned days, so a wide gap between the two times is consistent with a reused process id; what "
-                 "gap separates one start from two is not established. The Android user is taken from the file's "
-                 "path; every tested image held these logs for one user only, so the split by user is not exercised "
+                 "gap separates one start from two is not established. The Android user is taken from the file's path and is blank when the path names none; every tested image held these logs for one user only, so the split by user is not exercised "
                  "on real data. The rows of one device can carry one build string or several, so a change of build "
                  "string between rows is consistent with a firmware change in that window; this was not checked "
                  "against an update record. On the 13 tested extractions 9 held these lines, 257 rows in all, 6 more "
@@ -196,6 +195,7 @@ __artifacts_v2__ = {
 
 import re
 
+from scripts.artifacts.storagePathViews import android_user as _android_user, unique_files
 from scripts.ilapfuncs import artifact_processor
 
 _LINE = re.compile(r'^(\d{2})/(\d{2})/(\d{4}) (\d{2}):(\d{2}):(\d{2})\.(\d{3})\s{2,}(.*)$')
@@ -225,37 +225,11 @@ def _stored(mo):
     return f"{mo.group(1)}/{mo.group(2)}/{mo.group(3)} {mo.group(4)}:{mo.group(5)}:{mo.group(6)}.{mo.group(7)}"
 
 
-def _android_user(path):
-    p = path.replace('\\', '/')
-    m = re.search(r'/data/user(?:_de)?/(\d+)/', p)
-    if m:
-        return m.group(1)
-    m = re.search(r'/data_mirror/data_[a-z]+/[^/]+/(\d+)/', p)
-    if m:
-        return m.group(1)
-    m = re.search(r'/data/media/(\d+)/', p)
-    if m:
-        return m.group(1)
-    return '0'
-
-
-def _dedupe(files_found):
-    """One file per (Android user, path from com.sec.imsservice) so mirrored storage views collapse."""
-    seen = {}
-    for f in files_found:
-        p = str(f).replace('\\', '/')
-        idx = p.find('com.sec.imsservice/')
-        sub = p[idx:] if idx != -1 else p
-        key = (_android_user(p), sub)
-        seen.setdefault(key, f)
-    return list(seen.values())
-
-
 @artifact_processor
 def samsungImsSubscriber(context):
     data_list = []
     source_paths = set()
-    for source_path in _dedupe(context.get_files_found()):
+    for source_path in unique_files(context):
         try:
             with open(source_path, 'r', encoding='utf-8', errors='replace') as f:
                 text = f.read()
@@ -284,7 +258,7 @@ def samsungImsSubscriber(context):
 def samsungImsRegistration(context):
     data_list = []
     source_paths = set()
-    for source_path in _dedupe(context.get_files_found()):
+    for source_path in unique_files(context):
         try:
             with open(source_path, 'r', encoding='utf-8', errors='replace') as f:
                 lines = f.readlines()
@@ -315,7 +289,7 @@ def samsungImsRegistration(context):
 def samsungImsPdn(context):
     data_list = []
     source_paths = set()
-    for source_path in _dedupe(context.get_files_found()):
+    for source_path in unique_files(context):
         try:
             with open(source_path, 'r', encoding='utf-8', errors='replace') as f:
                 lines = f.readlines()
@@ -350,7 +324,7 @@ def samsungImsPdn(context):
 def samsungImsSimCarrier(context):
     data_list = []
     source_paths = set()
-    for source_path in _dedupe(context.get_files_found()):
+    for source_path in unique_files(context):
         try:
             with open(source_path, 'r', encoding='utf-8', errors='replace') as f:
                 lines = f.readlines()
@@ -382,7 +356,7 @@ def samsungImsSimCarrier(context):
 def samsungImsServiceStarts(context):
     instances = {}
     source_paths = set()
-    for source_path in _dedupe(context.get_files_found()):
+    for source_path in unique_files(context):
         try:
             with open(source_path, 'r', encoding='utf-8', errors='replace') as f:
                 lines = f.readlines()
