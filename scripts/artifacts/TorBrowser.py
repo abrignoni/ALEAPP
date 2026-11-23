@@ -98,6 +98,16 @@ def _parse_xml(file_found):
             return ET.Element('empty')
 
 
+def _utc(seconds):
+    """Unix seconds as a UTC datetime in whole seconds, '' for none or a value datetime cannot hold."""
+    if seconds is None:
+        return ''
+    try:
+        return datetime.datetime(1970, 1, 1, tzinfo=datetime.timezone.utc) + datetime.timedelta(seconds=seconds // 1)
+    except OverflowError:
+        return ''
+
+
 def _file_times(seeker, path):
     """(UTC seconds, reading with no zone) the input records for a staged file.
 
@@ -135,12 +145,8 @@ def torbrowser_thumbnails(context):
         location = context.get_relative_path(str(media_path.parent))
 
         modified_ts, no_zone = _file_times(context.get_seeker(), file_found)
-        try:
-            modifiedtime = (datetime.datetime(1970, 1, 1, tzinfo=datetime.timezone.utc)
-                            + datetime.timedelta(seconds=int(modified_ts))
-                            ).strftime('%Y-%m-%d %H:%M:%S') if modified_ts else ''
-        except OverflowError:
-            modifiedtime = ''
+        modifiedtime = _utc(modified_ts)
+        modifiedtime = modifiedtime.strftime('%Y-%m-%d %H:%M:%S') if modifiedtime else ''
 
         media_item = check_in_media(filename)
 

@@ -46,7 +46,7 @@ def _sec_to_utc(value):
     if not value:
         return ''
     try:
-        return datetime.datetime.fromtimestamp(int(value), datetime.timezone.utc)
+        return datetime.datetime(1970, 1, 1, tzinfo=datetime.timezone.utc) + datetime.timedelta(seconds=value // 1)
     except (ValueError, OverflowError, OSError, TypeError):
         return ''
 
