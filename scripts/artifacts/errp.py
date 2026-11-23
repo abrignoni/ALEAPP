@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_errp": {
         "name": "Errp",
-        "description": "Parses the records of the eRR.p file under system/users/service or its data subfolder (timestamp, event, code and details as stored).",
+        "description": "Parses the records of the eRR.p file under system/users/service or its data subfolder. Each record is split on the pipe character into timestamp, event, code and details. NUL bytes and surrounding whitespace are removed, bytes that are not valid UTF-8 are replaced, and text after a fourth pipe is not reported.",
         "author": "@abrignoni",
         "creation_date": "2021-08-15",
         "last_update_date": "2026-11-22",
@@ -10,9 +10,12 @@ __artifacts_v2__ = {
         "notes": "Two paths are read. The eight registered images listed in sample_data (Android "
                  "10 to 15) all hold the file at system/users/service/data/eRR.p, as did "
                  "reporter-supplied Android 15 and 16 samples. The path "
-                 "system/users/service/eRR.p is also read. Each line is 'timestamp | event | "
-                 "code | details'. The timestamp carries a UTC offset; it is shown as written in "
-                 "Timestamp (Local) and converted to UTC in Timestamp. A line whose timestamp "
+                 "system/users/service/eRR.p is also read. Each record line is split on the pipe character, and the first four fields are reported by position as Timestamp, Event, Code and Details. No line on the images run held more than four. What each field means is not established from the code that writes "
+                 "the file. Across those eight images, 411 of 459 record lines have four fields "
+                 "and 48 have three, with no Details field. Event is blank on 58 lines and Code "
+                 "on 217. A missing field is reported blank. All 459 timestamps in those images "
+                 "carry a UTC offset; the value is shown in Timestamp (Local) and converted to "
+                 "UTC in Timestamp. A line whose timestamp "
                  "cannot be read in that form keeps its row with Timestamp blank. When both paths are present their rows are reported together, no column names the file, and the source path lists both. No tested image held both paths, so this was run only on a constructed pair of files.",
         "paths": ('*/system/users/service/eRR.p',
                   '*/system/users/service/data/eRR.p'),
