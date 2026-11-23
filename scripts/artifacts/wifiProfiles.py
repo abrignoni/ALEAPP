@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_wifiProfiles": {
         "name": "wifiProfiles",
-        "description": "Saved Wi-Fi network profiles (SSID, keys, gateway MAC address and, where stored, timestamps) from WifiConfigStore.xml",
+        "description": "Wi-Fi network entries (SSID, keys, gateway MAC address and, where stored, timestamps) from WifiConfigStore.xml",
         "author": "@abrignoni",
         "creation_date": "2020-03-23",
         "last_update_date": "2026-11-22",
@@ -12,7 +12,37 @@ __artifacts_v2__ = {
                  "address if known' (framework/java/android/net/wifi/WifiConfiguration.java "
                  "line 1345 at tag android-14.0.0_r1, "
                  "https://android.googlesource.com/platform/packages/modules/Wifi/+/refs/tags/android-14.0.0_r1/framework/java/android/net/wifi/WifiConfiguration.java#1345). "
-                 "That the stored name maps to that field was not traced here. The three time columns are filled only where the file stores those elements with a positive value: cookbook_a11 and galaxys10_a10 hold them (5 rows) and the 14 other images checked do not. Timeline output is off: on the 16 images checked, 98 of 103 rows have no time. WEPKeys is the element's text, so a key stored in child elements would not be shown; the column was empty on every image checked.",
+                 "The AOSP writer stores that field under the name DefaultGwMacAddress "
+                 "(service/java/com/android/server/wifi/util/XmlUtil.java lines 351 and 646 at the same tag, "
+                 "https://android.googlesource.com/platform/packages/modules/Wifi/+/refs/tags/android-14.0.0_r1/service/java/com/android/server/wifi/util/XmlUtil.java#351). "
+                 "Vendor builds were not traced. "
+                 "Counts below are from the 36 corpus images that produced rows (151 rows). "
+                 "SecurityMode is not a stored field. It is the text after the second double quote in ConfigKey, "
+                 "so it is empty when ConfigKey is missing or has no quoted SSID, and an SSID holding a double quote would shift it. "
+                 "AOSP builds ConfigKey from getKey(), which adds a hyphen and user id for networks that are not shared "
+                 "and returns a Passpoint id as is (XmlUtil.java line 564, WifiConfiguration.java lines 3714-3727 at the same tag). "
+                 "None of the 148 stored ConfigKey values had either form. "
+                 "The other 3 rows have no ConfigKey: each is a Network element under WakeupConfigStoreData "
+                 "(hc_pixel8pro_a16, hc_pixel8pro_a17, russell_pixel6a_a13). "
+                 "The SecurityType values a network stores are not shown. 144 of the 151 networks store two, 1 stores one and 6 store none. "
+                 "SSID is shown with its surrounding double quotes removed. PreSharedKey is shown as stored: "
+                 "54 rows hold a value inside double quotes, and the quotes are in the cell. "
+                 "The 4 values on galaxys10_a10 are unquoted uppercase hex of 76 or 88 characters. "
+                 "Their encoding is not established, so do not read them as the passphrase. "
+                 "An empty PreSharedKey cell does not prove the network had no key: AOSP can store the key as an encrypted section "
+                 "with no name attribute (XmlUtil.java lines 469-474 at the same tag), which this module does not show. "
+                 "None of the 36 images stored one; the 93 empty cells are 90 null elements and the 3 rows above. "
+                 "If the XML does not parse, the module retries after removing control characters, replacing undecodable bytes and escaping bare ampersands, so a value on that path may differ from what is stored. If the retry also fails the file gives no rows. "
+                 "That retry was not needed on any of the 36 images. "
+                 "The three time columns are read from elements of those names as Unix milliseconds and shown in UTC. A zero, negative or non-numeric value is shown as empty. "
+                 "Those names are not in the AOSP XmlUtil.java at that tag, and their writer, epoch and meaning are not established. "
+                 "They are filled on cookbook_a11 and galaxys10_a10 only (5 rows, every value 13 digits) and empty on the other 34 images. "
+                 "Timeline output is off: 146 of the 151 rows have no time. "
+                 "CaptivePortal is the value attribute of an element of that name. Its writer and meaning are not established. "
+                 "It is filled on galaxys10_a10 only (4 rows). AOSP writes a different element, CaptivePortalNeverDetected "
+                 "(XmlUtil.java lines 1376 and 1398-1399 at the same tag), which this module does not show, so an empty cell says nothing about captive portal history. "
+                 "LoginUrl is the text of an element of that name. Its writer is not established and it is empty on all 151 rows. "
+                 "WEPKeys is the element's text. AOSP writes WEP keys as item child elements or as an encrypted section (XmlUtil.java lines 416 to 442 at android-14.0.0_r1), which this module does not show, so an empty cell does not prove the network had no WEP key. On the 36 images all 148 WEPKeys elements are null and the column is empty on all 151 rows.",
         "paths": ('*/misc/wifi/WifiConfigStore.xml', '*/misc**/apexdata/com.android.wifi/WifiConfigStore.xml'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "wifi",
