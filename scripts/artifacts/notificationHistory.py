@@ -159,7 +159,8 @@ def _setting_elements(file_found):
         text = f.read()
     # Only what the settings element holds: not a comment and not anything after its closing tag.
     text = re.sub(r'<!--.*?-->', '', text, flags=re.DOTALL).split('</settings>', 1)[0]
-    fragments = re.findall(r'<setting\b.*?/>', text, re.DOTALL)
+    # Split at each opening tag, so an unfinished element cannot swallow the one after it.
+    fragments = [part.strip() for part in re.split(r'(?=<setting\b)', text)[1:]]
     elements, failed = [], 0
     for fragment in fragments:
         try:
@@ -203,18 +204,18 @@ def get_notificationHistory_status(context):
 def get_notificationHistory_snoozed(context):
     files_found = context.get_files_found()
     data_list = []
-    source_path = ''
+    source_paths = []
     for file_found in files_found:
         file_found = str(file_found)
         if not os.path.basename(file_found).endswith('notification_policy.xml'):
             continue
-        source_path = file_found
         try:
             root = _xml_root(file_found, False)
         except Exception as ex:
             logfunc(f'Notification History Snoozed: {os.path.basename(file_found)} could not be read: '
                     f'{type(ex).__name__}: {ex}')
             continue
+        source_paths.append(file_found)
         for elem in root:
             if elem.tag == 'snoozed-notifications':
                 for child in elem:
@@ -225,7 +226,7 @@ def get_notificationHistory_snoozed(context):
 
     data_headers = (('Reminder Time', 'datetime'), 'Snoozed Notification', 'Element',
                     'Other Attributes')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 ICON_TYPE_RESOURCE = 2

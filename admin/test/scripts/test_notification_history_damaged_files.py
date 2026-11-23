@@ -58,6 +58,17 @@ class WhatTheFallbackReads(unittest.TestCase):
         rows, _log = status_rows(f'{self.DAMAGED}<!-- {TARGET} --></settings>')
         self.assertEqual(rows, [])
 
+    def test_an_unfinished_tag_does_not_hide_the_next_setting(self):
+        cut = '<setting id="3" name="cut" value="x"'
+        rows, log = status_rows(f'<?xml version="1.0"?><settings version="1">{OTHER}{cut}{TARGET}</settings>')
+        self.assertEqual(rows, [('Enabled', '0')])
+        self.assertTrue(any('1 could not be read' in line for line in log))
+
+    def test_a_setting_with_a_closing_tag_is_read(self):
+        closed = TARGET.replace(' />', '></setting>')
+        rows, _log = status_rows(f'{self.DAMAGED}{closed}</settings>')
+        self.assertEqual(rows, [('Enabled', '0')])
+
     def test_the_log_names_the_user_folder(self):
         _rows, log = status_rows(f'{self.DAMAGED}{TARGET}</settings>', user='150')
         self.assertTrue(any('user 150' in line for line in log))
@@ -84,6 +95,21 @@ class SnoozedDecodeFailure(unittest.TestCase):
                 _headers, rows, _source = nh.get_notificationHistory_snoozed.__wrapped__(context)
         self.assertEqual(len(rows), 1)
         self.assertTrue(any('could not be read' in call.args[0] for call in log.call_args_list))
+
+    def test_a_failed_file_is_not_named_as_the_source(self):
+        with tempfile.TemporaryDirectory() as folder:
+            good = pathlib.Path(folder) / '0' / 'notification_policy.xml'
+            bad = pathlib.Path(folder) / '10' / 'notification_policy.xml'
+            for path in (good, bad):
+                path.parent.mkdir()
+            good.write_text('<notification-policy><snoozed-notifications><notification key="k" time="1700000000000" />'
+                            '</snoozed-notifications></notification-policy>')
+            bad.write_bytes(b'ABX\x00damaged')
+            context = SimpleNamespace(get_files_found=lambda: [str(good), str(bad)])
+            with patch.object(nh, 'abxread', side_effect=ValueError('bad')), patch.object(nh, 'logfunc'):
+                _headers, rows, source = nh.get_notificationHistory_snoozed.__wrapped__(context)
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(source, str(good))
 
 
 if __name__ == '__main__':
