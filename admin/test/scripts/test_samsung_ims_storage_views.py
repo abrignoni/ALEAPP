@@ -1,5 +1,6 @@
 """Credential and device encrypted copies are different files, and a user folder is read in every layout."""
 # pylint: disable=protected-access
+import fnmatch
 import pathlib
 import sys
 import tempfile
@@ -42,6 +43,19 @@ class StorageViews(unittest.TestCase):
         rows = subscriber_rows(['data/user_de/0/com.sec.imsservice/shared_prefs/saved_impu.xml',
                                 'data/user_de/150/com.sec.imsservice/shared_prefs/saved_impu.xml'])
         self.assertEqual(len(rows), 2)
+
+
+class SimManagerPaths(unittest.TestCase):
+    def test_both_log_names_are_matched(self):
+        patterns = samsungImsService.__artifacts_v2__['samsungImsSimCarrier']['paths']
+        for name in ('SimManager.log', 'SimManager_slot0.log', 'SimManager_slot1.log'):
+            path = f'data/user_de/0/com.sec.imsservice/files/{name}'
+            self.assertTrue(any(fnmatch.fnmatch(path, pattern) for pattern in patterns), name)
+
+    def test_another_log_is_not_matched(self):
+        patterns = samsungImsService.__artifacts_v2__['samsungImsSimCarrier']['paths']
+        path = 'data/user_de/0/com.sec.imsservice/files/SimManagerOther.log'
+        self.assertFalse(any(fnmatch.fnmatch(path, pattern) for pattern in patterns))
 
 
 class AndroidUser(unittest.TestCase):
