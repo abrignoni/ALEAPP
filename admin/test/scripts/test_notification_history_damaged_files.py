@@ -69,6 +69,17 @@ class WhatTheFallbackReads(unittest.TestCase):
         rows, _log = status_rows(f'{self.DAMAGED}{closed}</settings>')
         self.assertEqual(rows, [('Enabled', '0')])
 
+    def test_a_cut_off_closing_tag_does_not_hide_the_last_setting(self):
+        for ending in ('</settings', '</sett', '<'):
+            with self.subTest(ending):
+                rows, _log = status_rows(f'{self.DAMAGED}{TARGET}{ending}')
+                self.assertEqual(rows, [('Enabled', '0')])
+
+    def test_a_closing_form_followed_by_a_cut_off_tag_is_read(self):
+        closed = TARGET.replace(' />', '></setting>')
+        rows, _log = status_rows(f'{self.DAMAGED}{closed}</settings')
+        self.assertEqual(rows, [('Enabled', '0')])
+
     def test_the_log_names_the_user_folder(self):
         _rows, log = status_rows(f'{self.DAMAGED}{TARGET}</settings>', user='150')
         self.assertTrue(any('user 150' in line for line in log))

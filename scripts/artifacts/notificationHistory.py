@@ -159,8 +159,12 @@ def _setting_elements(file_found):
         text = f.read()
     # Only what the settings element holds: not a comment and not anything after its closing tag.
     text = re.sub(r'<!--.*?-->', '', text, flags=re.DOTALL).split('</settings>', 1)[0]
-    # Split at each opening tag, so an unfinished element cannot swallow the one after it.
-    fragments = [part.strip() for part in re.split(r'(?=<setting\b)', text)[1:]]
+    # Split at each opening tag, so an unfinished element cannot swallow the one after it, and
+    # keep only the element itself, so a cut-off tag after it cannot spoil it.
+    fragments = []
+    for part in re.split(r'(?=<setting\b)', text)[1:]:
+        own = re.match(r'<setting\b[^<]*?(?:/>|>\s*</setting\s*>)', part)
+        fragments.append(own.group(0) if own else part.strip())
     elements, failed = [], 0
     for fragment in fragments:
         try:
