@@ -1,10 +1,10 @@
 __artifacts_v2__ = {
     "get_wifiProfiles": {
         "name": "wifiProfiles",
-        "description": "Saved Wi-Fi network profiles (SSID, keys, gateway MAC address, timestamps) from WifiConfigStore.xml",
+        "description": "Saved Wi-Fi network profiles (SSID, keys, gateway MAC address and, where stored, timestamps) from WifiConfigStore.xml",
         "author": "@abrignoni",
         "creation_date": "2020-03-23",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-11-22",
         "requirements": "none",
         "category": "WiFi Profiles",
         "notes": "DefaultGwMacAddress is reported as stored. AOSP documents the "
@@ -12,9 +12,9 @@ __artifacts_v2__ = {
                  "address if known' (framework/java/android/net/wifi/WifiConfiguration.java "
                  "line 1345 at tag android-14.0.0_r1, "
                  "https://android.googlesource.com/platform/packages/modules/Wifi/+/refs/tags/android-14.0.0_r1/framework/java/android/net/wifi/WifiConfiguration.java#1345). "
-                 "That the stored name maps to that field was not traced here.",
+                 "That the stored name maps to that field was not traced here. The three time columns are filled only where the file stores those elements with a positive value: cookbook_a11 and galaxys10_a10 hold them (5 rows) and the 14 other images checked do not. Timeline output is off: on the 16 images checked, 98 of 103 rows have no time. WEPKeys is the element's text, so a key stored in child elements would not be shown; the column was empty on every image checked.",
         "paths": ('*/misc/wifi/WifiConfigStore.xml', '*/misc**/apexdata/com.android.wifi/WifiConfigStore.xml'),
-        "output_types": "standard",
+        "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "wifi",
         "sample_data": {
             "anne_a15": "Android 15 | 12 rows",
@@ -102,13 +102,13 @@ def get_wifiProfiles(context):
 
             if any(fields.values()):
                 data_list.append((
+                    fields['LastConnectedTime'], fields['semCreationTime'], fields['semUpdateTime'],
                     fields['SecurityMode'], fields['SSID'], fields['PreSharedKey'], fields['WEPKeys'],
                     fields['Password'], fields['Identity'], fields['DefaultGwMacAddress'],
-                    fields['semCreationTime'], fields['semUpdateTime'], fields['LastConnectedTime'],
                     fields['CaptivePortal'], fields['LoginUrl'], fields['IpAssignment']))
 
     data_headers = (
+        ('LastConnectedTime', 'datetime'), ('semCreationTime', 'datetime'), ('semUpdateTime', 'datetime'),
         'SecurityMode', 'SSID', 'PreSharedKey', 'WEPKeys', 'Password', 'Identity', 'DefaultGwMacAddress',
-        ('semCreationTime', 'datetime'), ('semUpdateTime', 'datetime'), ('LastConnectedTime', 'datetime'),
         'CaptivePortal', 'LoginUrl', 'IpAssignment')
     return data_headers, data_list, '\n'.join(source_paths)
