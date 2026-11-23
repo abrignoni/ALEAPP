@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Journeys planned in Moovit, with both endpoints and their coordinates",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-11-22",
         "requirements": "none",
         "category": "Moovit",
         "sample_data": {
@@ -23,16 +23,18 @@ __artifacts_v2__ = {
                  "The layout is not documented, so the reader scans for each entry's parts in "
                  "order (a 36 character identifier, the next eight byte value in the range of a "
                  "millisecond time, the next string, then the next two coordinate pairs followed "
-                 "by a string). This was mapped from one device holding 2 entries. "
+                 "by a string). On emu_a15_oss_v14 to v17 (one file, the same on all four) 654 bytes lie between the end of the first entry's second place and the next identifier, and 650 between the end of the second entry's second place and the end of the file. Those bytes are not decoded and not reported. This was mapped from one device holding 2 entries. "
                  "That reading of the coordinates was checked against places whose position was "
                  "known before the file was read, not inferred from the layout: on the tested "
                  "device the three endpoints decoded to 4, 14 and 116 metres from the published "
                  "positions of the building at the origin address and of the two destinations, "
                  "which a wrong scale or byte order would not do. "
                  "Planned is the entry's own time and is reported as UTC. Origin and Destination "
-                 "are the addresses the app stored for the two ends of the journey; on the "
-                 "tested device the origin was a street address at the device's own position, so "
-                 "an origin is not necessarily somewhere a person typed. "
+                 "are the strings written after the first two coordinate pairs found after the "
+                 "Metro Area ID, assigned by that order, with trailing commas and spaces "
+                 "removed. The reader does not check whether either string is an address. On "
+                 "the tested device the origin was a street address at the device's own "
+                 "position, so an origin is not necessarily somewhere a person typed. "
                  "Latitude and Longitude are the destination's, and KML output plots the "
                  "destination only. The origin's coordinates are in their own two columns and are "
                  "not plotted, because a row holds two places and the KML writer takes one pair. "
@@ -44,8 +46,8 @@ __artifacts_v2__ = {
                  "Metro Area ID is the first string after the entry's time, reported as stored. "
                  "Whether it matches a row of the metro_info table of databases/moovit_v1.db was "
                  "not checked for these notes. "
-                 "A row records that a journey was planned, not that it was travelled. Nothing "
-                 "in this file says the route was followed.",
+                 "A row records that a journey was planned. The fields read here do not say "
+                 "whether the route was followed, and the rest of each entry is not decoded.",
         "paths": ('*/com.tranzmate/app_moovit/data_trip_plan/history_trip_plan.ds',),
         "output_types": "all",
         "artifact_icon": "map",
