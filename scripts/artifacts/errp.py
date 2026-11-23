@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Parses the records of the eRR.p file under system/users/service or its data subfolder (timestamp, event, code and details as stored).",
         "author": "@abrignoni",
         "creation_date": "2021-08-15",
-        "last_update_date": "2026-08-14",
+        "last_update_date": "2026-11-22",
         "requirements": "none",
         "category": "Wipe & Setup",
         "notes": "Two paths are read. The eight registered images listed in sample_data (Android "
@@ -58,7 +58,7 @@ def get_errp(context):
                 parts = line.split('|')
                 timestamp = parts[0].strip()
                 try:
-                    timestamp_utc = str(convert_local_to_utc(timestamp))
+                    timestamp_utc = convert_local_to_utc(timestamp)
                 except (ValueError, TypeError):
                     # A line whose timestamp will not parse must not lose the whole
                     # file; keep the row with the value as stored and no UTC form.
@@ -68,5 +68,5 @@ def get_errp(context):
                 details = parts[3].strip() if len(parts) >= 4 else ''
                 data_list.append((timestamp_utc, timestamp, event, code, details))
 
-    data_headers = ('Timestamp', 'Timestamp (Local)', 'Event', 'Code', 'Details')
+    data_headers = (('Timestamp', 'datetime'), 'Timestamp (Local)', 'Event', 'Code', 'Details')
     return data_headers, data_list, source_path
