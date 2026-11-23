@@ -7,7 +7,11 @@ __artifacts_v2__ = {
         "last_update_date": "2026-11-22",
         "requirements": "none",
         "category": "Accounts",
-        "notes": "One row per debug_table row. Last Authenticate Time is the accounts column last_password_entry_time_millis_epoch, which AOSP's AccountsDb names ACCOUNTS_LAST_AUTHENTICATE_TIME_EPOCH_MILLIS (https://android.googlesource.com/platform/frameworks/base/+/299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/services/core/java/com/android/server/accounts/AccountsDb.java#68). At android-14.0.0_r1 the platform sets it to the current time when updateAccountLastAuthenticatedTime runs (line 775 of the same file) and when the account row is inserted (insertDeAccount, line 849), so it does not by itself show that a password was typed. Other Android releases and vendor builds were not checked. It is the account's value at extraction and repeats on each debug row that names the account. Timeline output is off because Debug Time has no recorded zone. Account Type, Account Name and Last Authenticate Time come from the accounts row whose _id equals the debug row's _id when the debug "
+        "notes": "One row per debug_table row. The platform keeps at most 64 debug rows per user "
+                 "database. Once the table is full, each new entry replaces an existing row. After the service starts, the first replaced row is the one with the earliest time string, and later entries replace the rows that follow it in key order, wrapping at 64 (https://github.com/aosp-mirror/platform_frameworks_base/blob/299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/services/core/java/com/android/server/accounts/AccountsDb.java#L142, #L1300-L1329 and #L1357-L1364; the file is identical at tags android-10.0.0_r1, "
+                 "android-13.0.0_r1, android-14.0.0_r1 and android-16.0.0_r1). A missing action "
+                 "does not show that the action did not happen. Of the 12 databases on the 10 "
+                 "images in sample_data, 2 held 64 rows and none held more. Last Authenticate Time is the accounts column last_password_entry_time_millis_epoch, which AOSP's AccountsDb names ACCOUNTS_LAST_AUTHENTICATE_TIME_EPOCH_MILLIS (https://android.googlesource.com/platform/frameworks/base/+/299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/services/core/java/com/android/server/accounts/AccountsDb.java#68). At android-14.0.0_r1 the platform sets it to the current time when updateAccountLastAuthenticatedTime runs (line 775 of the same file) and when the account row is inserted (insertDeAccount, line 849), so it does not by itself show that a password was typed. Other Android releases and vendor builds were not checked. It is the account's value at extraction and repeats on each debug row that names the account. Timeline output is off because Debug Time has no recorded zone. Account Type, Account Name and Last Authenticate Time come from the accounts row whose _id equals the debug row's _id when the debug "
                  "row's table_name is accounts, and are blank when no accounts row has that _id. "
                  "An accounts row that no debug row names is not reported. On the 12 databases of "
                  "the 10 images in sample_data, 192 of 306 debug rows had no accounts row, every "
@@ -23,7 +27,14 @@ __artifacts_v2__ = {
                  "and #L5365; the same two lines were read at tags android-10.0.0_r1, "
                  "android-13.0.0_r1 and android-16.0.0_r1), so it is a wall clock string with no "
                  "zone recorded and is reported as text, not converted. Rows are ordered by that "
-                 "string. Action Type is the stored string; the platform's values are defined at "
+                 "string within each database, and each database's rows follow the previous "
+                 "one's, so a report built from more than one database may not be in time order "
+                 "overall. When more than one user's accounts_de.db is found, a Source Path "
+                 "column is added, even if one of them has no debug rows, and it names the "
+                 "database each row came from. The user id is the folder above the file. Each "
+                 "database is joined only to its own accounts table, so the same Debug Account "
+                 "ID in two databases does not point to the same accounts row. "
+                 "Action Type is the stored string; the platform's values are defined at "
                  "https://github.com/aosp-mirror/platform_frameworks_base/blob/299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/services/core/java/com/android/server/accounts/AccountsDb.java#L112-L133.",
         "paths": ('*/system_de/*/accounts_de.db*'),
         "output_types": ["html", "tsv", "lava"],
