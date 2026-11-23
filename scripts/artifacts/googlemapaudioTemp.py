@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_googlemapaudioTemp": {
         "name": "Google Maps Voice Guidance (Temp)",
-        "description": "Audio files in the Google Maps app_tts-temp folder, with the modification time the extraction records for each file. Empty files are not reported.",
+        "description": "Files in the Google Maps app_tts-temp folder, shown as media, with the modification time the extraction records for each file. The files are not checked to be audio. Empty files are not reported.",
         "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2023-04-27",
         "last_update_date": "2026-11-23",
@@ -14,16 +14,18 @@ __artifacts_v2__ = {
             "no UTC time, Timestamp Modified is blank and Modified (no zone, as stored) shows the date "
             "and time the input holds, with no zone conversion. That is the case for a FAT directory "
             "entry, an exFAT directory entry (its stored UTC offset is not applied or shown here) and a "
-            "zip entry with only its DOS date and time. Which zone such a reading is in is not "
-            "established. Both columns are blank when the input holds neither, and a recorded time of 0 "
-            "is treated as no time. For a folder or single-file input Timestamp Modified is the time the "
-            "operating system reports for that file on the examiner's machine, including any conversion "
-            "it applied, and whatever copied the file there may have set it. The staged copy's own time "
-            "is not reported. Of the five registered zip images with rows, sharon_a14 (13 files) records "
-            "the NTFS field on these files, and the 2026-10-04 check read no extended timestamp from "
-            "them, and the other four record the extended timestamp on every file; on a run of 2026-10-23"
-            " Timestamp Modified was filled on all 13 sharon_a14 rows. What event of the app sets the "
-            "file's modification time is not established."
+            "zip entry from which no UTC modification time is read: one with only its DOS date and time, "
+            "or with an extra field whose time is 0 or unreadable. Which zone such a reading is in is not"
+            " established. Both columns are blank when the tool reads neither. A UTC time recorded as 0 "
+            "is treated as no time. A zip entry's DOS date and time is shown as decoded, with no validity"
+            " check, so an unset one reads 1980-00-00 00:00:00. For a folder or single-file input "
+            "Timestamp Modified is the time the operating system reports for that file on the examiner's "
+            "machine, including any conversion it applied, and whatever copied the file there may have "
+            "set it. The staged copy's own time is not reported. Of the five registered zip images with "
+            "rows, sharon_a14 (13 files) records the NTFS field on these files, and the 2026-10-04 check "
+            "read no extended timestamp from them, and the other four record the extended timestamp on "
+            "every file; on a run of 2026-10-23 Timestamp Modified was filled on all 13 sharon_a14 rows. "
+            "What event of the app sets the file's modification time is not established."
         ),
         "paths": ('*/com.google.android.apps.maps/app_tts-temp/**',),
         "output_types": "standard",

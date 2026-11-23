@@ -2,7 +2,7 @@
 __artifacts_v2__ = {
     "get_quicksearch": {
         "name": "Google Quick Search Queries",
-        "description": "Query text and an embedded audio blob read from the Google app session files (com.google.android.googlequicksearchbox/app_session/*.binarypb), with the modification time the extraction recorded for each file. What causes the app to write a session file is not established.",
+        "description": "Text the module reads as queries and a byte field it presents as MP3 audio, from the Google app session files (com.google.android.googlequicksearchbox/app_session/*.binarypb), with the modification time the extraction recorded for each file. The meaning of these fields is not from a cited source. What causes the app to write a session file is not established.",
         "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2020-03-22",
         "last_update_date": "2026-11-23",
@@ -13,25 +13,30 @@ __artifacts_v2__ = {
                  "(0x5455) field, or the file system of a disk image. When the tool reads no UTC time, File "
                  "Modified Time is blank and Modified (no zone, as stored) shows the date and time the input "
                  "holds, with no zone conversion. That is the case for a FAT directory entry, an exFAT "
-                 "directory entry (its stored UTC offset is not applied or shown here) and a zip entry with "
-                 "only its DOS date and time. Which zone such a reading is in is not established. Both columns"
-                 " are blank when the input holds neither, and a recorded time of 0 is treated as no time. For"
-                 " a folder or single-file input File Modified Time is the time the operating system reports "
-                 "for that file on the examiner's machine, including any conversion it applied, and whatever "
-                 "copied the file there may have set it. The staged copy's own time is not reported. No time "
-                 "is read from inside a session file. On the registered images checked on 2026-10-04, both "
-                 "matched zip members on russell_pixel6a_a13 carried the extended timestamp, and the zip "
-                 "directory reading was 4 hours earlier than it to within 1 second; the one matched member on "
-                 "sharon_a14 carried none and records the NTFS field instead, and on a run of 2026-10-23 the "
-                 "zip directory reading was 4 hours earlier than it to within 1 second. Extraction and "
-                 "acquisition handling can disturb file timestamps, so validate the value against other "
-                 "sources.",
+                 "directory entry (its stored UTC offset is not applied or shown here) and a zip entry from "
+                 "which no UTC modification time is read: one with only its DOS date and time, or with an "
+                 "extra field whose time is 0 or unreadable. Which zone such a reading is in is not "
+                 "established. Both columns are blank when the tool reads neither. A UTC time recorded as 0 is"
+                 " treated as no time. A zip entry's DOS date and time is shown as decoded, with no validity "
+                 "check, so an unset one reads 1980-00-00 00:00:00. For a folder or single-file input File "
+                 "Modified Time is the time the operating system reports for that file on the examiner's "
+                 "machine, including any conversion it applied, and whatever copied the file there may have "
+                 "set it. The staged copy's own time is not reported. No time is read from inside a session "
+                 "file. On russell_pixel6a_a13 and sharon_a14 Queries and Response were empty on every row. On"
+                 " pixel3_a11, 5 rows had Queries and 3 had Response. On the registered images checked on "
+                 "2026-10-04, both matched zip members on russell_pixel6a_a13 carried the extended timestamp, "
+                 "and the zip directory reading was 4 hours earlier than it to within 1 second; the one "
+                 "matched member on sharon_a14 carried none and records the NTFS field instead, and on a run "
+                 "of 2026-10-23 the zip directory reading was 4 hours earlier than it to within 1 second. "
+                 "Extraction and acquisition handling can disturb file timestamps, so validate the value "
+                 "against other sources.",
         "paths": ('*/com.google.android.googlequicksearchbox/app_session/*.binarypb',),
         "output_types": "standard",
         "artifact_icon": "search",
         "sample_data": {
             "sharon_a14": "Android 14 | com.google.android.googlequicksearchbox vc 301381725 | 1 row",
             "russell_pixel6a_a13": "Android 13 | com.google.android.googlequicksearchbox vc 301246250 | 2 rows",
+            "pixel3_a11": "Android 11 | 5 rows",
         },
     }
 }

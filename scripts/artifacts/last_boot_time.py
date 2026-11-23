@@ -12,23 +12,25 @@ __artifacts_v2__ = {
                  "timestamp (0x5455) field, or the file system of a disk image. When the tool reads no UTC "
                  "time, Timestamp is blank and Modified (no zone, as stored) shows the date and time the input"
                  " holds, with no zone conversion. That is the case for a FAT directory entry, an exFAT "
-                 "directory entry (its stored UTC offset is not applied or shown here) and a zip entry with "
-                 "only its DOS date and time. Which zone such a reading is in is not established. Both columns"
-                 " are blank when the input holds neither, and a recorded time of 0 is treated as no time. For"
-                 " a folder or single-file input Timestamp is the time the operating system reports for that "
-                 "file on the examiner's machine, including any conversion it applied, and whatever copied the"
-                 " file there may have set it. The staged copy's own time is not reported. One row is reported"
-                 " per matched file. On the registered images checked on 2026-10-04, each held one matched "
-                 "file; the zip member carried the extended timestamp on anne_a15, galaxys10_a10, "
-                 "hc_pixel8pro_a16, kevin_pocox7_a15, pixel7a_a14, samsunga53_a14 and russell_pixel6a_a13, "
-                 "where the zip directory reading was within 1 second of a whole number of hours from it (2 "
-                 "hours later on galaxys10_a10, 4 or 5 hours earlier on the other six); it carried none on "
-                 "samsungs20_a13 and sharon_a14, whose zips record the NTFS field instead, and on runs of "
-                 "2026-10-23 the zip directory reading there was 5 hours (samsungs20_a13) or 4 hours "
-                 "(sharon_a14) earlier than it to within 1 second; userb2_a13 is a tar. Extraction and "
-                 "acquisition handling can disturb file timestamps, so validate the value against other "
-                 "sources. Reference: AOSP bootstat, 'boot_event_record_store.cpp (event values are stored in "
-                 "the file mtime attribute)', "
+                 "directory entry (its stored UTC offset is not applied or shown here) and a zip entry from "
+                 "which no UTC modification time is read: one with only its DOS date and time, or with an "
+                 "extra field whose time is 0 or unreadable. Which zone such a reading is in is not "
+                 "established. Both columns are blank when the tool reads neither. A UTC time recorded as 0 is"
+                 " treated as no time. A zip entry's DOS date and time is shown as decoded, with no validity "
+                 "check, so an unset one reads 1980-00-00 00:00:00. For a folder or single-file input "
+                 "Timestamp is the time the operating system reports for that file on the examiner's machine, "
+                 "including any conversion it applied, and whatever copied the file there may have set it. The"
+                 " staged copy's own time is not reported. One row is reported per matched file. On the "
+                 "registered images checked on 2026-10-04, each held one matched file; the zip member carried "
+                 "the extended timestamp on anne_a15, galaxys10_a10, hc_pixel8pro_a16, kevin_pocox7_a15, "
+                 "pixel7a_a14, samsunga53_a14 and russell_pixel6a_a13, where the zip directory reading was "
+                 "within 1 second of a whole number of hours from it (2 hours later on galaxys10_a10, 4 or 5 "
+                 "hours earlier on the other six); it carried none on samsungs20_a13 and sharon_a14, whose "
+                 "zips record the NTFS field instead, and on runs of 2026-10-23 the zip directory reading "
+                 "there was 5 hours (samsungs20_a13) or 4 hours (sharon_a14) earlier than it to within 1 "
+                 "second; userb2_a13 is a tar. Extraction and acquisition handling can disturb file "
+                 "timestamps, so validate the value against other sources. Reference: AOSP bootstat, "
+                 "'boot_event_record_store.cpp (event values are stored in the file mtime attribute)', "
                  "https://android.googlesource.com/platform/system/core/+/refs/tags/android-15.0.0_r1/bootstat/boot_event_record_store.cpp#49"
                  " (line 49 reads the value from st_mtime; line 89 sets it with utime())",
         "paths": ('*/misc/bootstat/last_boot_time_utc'),
@@ -112,7 +114,7 @@ def last_boot_time(context):
         boot_time = _sec_to_utc(recorded)
 
         if boot_time:
-            logdevinfo(f"<b>Last Boot Timestamp: </b>{boot_time.strftime('%Y-%m-%d %H:%M:%S')}")
+            logdevinfo(f"<b>Last Boot Timestamp (UTC): </b>{boot_time.strftime('%Y-%m-%d %H:%M:%S')}")
         elif boot_time_as_stored:
             logdevinfo(f"<b>Last Boot Modified (No Zone): </b>{boot_time_as_stored}")
         data_list.append((boot_time, boot_time_as_stored, file_name))
