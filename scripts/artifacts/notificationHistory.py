@@ -5,7 +5,7 @@ __artifacts_v2__ = {
         "description": "Notifications recorded in the system_ce notification_history protobufs.",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2024-07-02",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-11-22",
         "requirements": "",
         "category": "Android Notification History",
         "notes": "Coverage is limited to the protobuf files still present under "
@@ -16,8 +16,7 @@ __artifacts_v2__ = {
                  "(https://android.googlesource.com/platform/frameworks/base/+/"
                  "299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/services/core/java/com/android/server/"
                  "notification/NotificationHistoryDatabase.java#56 "
-                 "and lines 229 to 256 of the same file). Other Android releases and vendor "
-                 "builds were not checked.",
+                 "and lines 229 to 256 of the same file). Other Android releases and vendor builds were not checked. The four Index columns are blank when the record holds no string pool index: the AOSP writer stores an index only for a string in the pool, as its position plus one (https://android.googlesource.com/platform/frameworks/base/+/299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/services/core/java/com/android/server/notification/NotificationHistoryProtoHelper.java#257). On anne_a15 and sharon_a14 (330 rows) no record holds an index, so a filled Index column is not exercised on real data. Image Data Length and Image Data Offset are blank unless the icon is a data icon (Image Type 3) or the record holds the field, and Image Resource ID is blank unless the icon is a resource icon (Image Type 2) or the record holds the field. The AOSP writer stores them only for those types (writeIcon, line 227 of the same file; type numbers at https://android.googlesource.com/platform/frameworks/base/+/299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/graphics/java/android/graphics/drawable/Icon.java#85). Every tested row is Image Type 2, so the other types are not exercised. UID, User ID and Image Type are shown as read. The AOSP writer's ProtoOutputStream does not write a zero (https://android.googlesource.com/platform/frameworks/base/+/299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/core/java/android/util/proto/ProtoOutputStream.java#1061) and that writer passes UID and User ID on each record, so with that writer a 0 in UID or User ID is the value 0 with nothing written to the file. User ID is 0 and absent from the file on all 330 tested rows. Image Type is blank when the record holds no icon.",
         "paths": ('**/system_ce/*/notification_history/history/*',),
         "output_types": "standard",
         "artifact_icon": "bell",
@@ -186,6 +185,10 @@ def get_notificationHistory_snoozed(context):
     return data_headers, data_list, source_path
 
 
+ICON_TYPE_RESOURCE = 2
+ICON_TYPE_DATA = 3
+
+
 @artifact_processor
 def get_notificationHistory(context):
     files_found = context.get_files_found()
@@ -235,6 +238,18 @@ def get_notificationHistory(context):
                 else:
                     for icon_field in icon_fields:
                         values[icon_field] = None
+
+                # The writer stores an index only for a pooled string, and these icon fields only for their
+                # own icon type. An unset field there reads as 0, which is not a stored value. A value the
+                # record does hold is always shown, and a 0 on the field's own icon type is kept.
+                for field in ('package_index', 'channel_name_index', 'channel_id_index', 'conversation_id_index'):
+                    if not notification.HasField(field):
+                        values[field] = None
+                if notification.HasField('icon'):
+                    for field, icon_type in (('image_data_length', ICON_TYPE_DATA), ('image_data_offset', ICON_TYPE_DATA),
+                                             ('image_resource_id', ICON_TYPE_RESOURCE)):
+                        if values['image_type'] != icon_type and not notification.icon.HasField(field):
+                            values[field] = None
 
                 posted_time = _ms_to_utc(notification.posted_time_ms) if notification.HasField('posted_time_ms') else ''
                 title = notification.title if notification.HasField('title') else None
