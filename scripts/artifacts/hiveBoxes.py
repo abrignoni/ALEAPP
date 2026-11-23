@@ -7,7 +7,7 @@ __artifacts_v2__ = {
                        "reported once.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-10-27",
-        "last_update_date": "2026-10-27",
+        "last_update_date": "2026-11-22",
         "requirements": "none",
         "category": "Hive",
         "notes": "Hive is a key-value store used by Flutter applications through the hive and "
@@ -38,10 +38,7 @@ __artifacts_v2__ = {
                  "since the damage, or with recovery being off. The copy in the extraction can also "
                  "have been taken while a write was in flight. Separately, the reader refuses a "
                  "frame declaring more than 1 MiB, which Hive itself does not, so a box holding a "
-                 "larger frame reads as a stop at that offset. The App column is the package "
-                 "directory the box sits under, read from the path by position; it is empty when "
-                 "the path has no package directory above the box, or that directory carries no "
-                 "dot. A box whose every frame fails its checksum while every key parses, with the "
+                 "larger frame reads as a stop at that offset. The App column is a folder name read from the path by position: the first folder above the box that carries a dot and follows a storage root name (data, user, user_de, data_ce, data_de, data_mirror, misc_ce, misc_de, null) or an all-digit folder. Under an app data directory this is normally the package directory, as on all 38 rows of the three images run that hold a box (emu_a15_oss_v14 14, emu_a15_oss_v15 23 and sharon_a14 1). Outside one, such as shared storage, it can be another dotted folder. It is not checked against the installed packages. It is read by position only, so it can be wrong: a dotted folder that follows an all-digit folder earlier in the path is taken first, and when the package directory carries no dot a dotted folder deeper in the path that follows one of those names is reported instead. It is empty when no such folder exists. A box whose every frame fails its checksum while every key parses, with the "
                  "frames ending on the file end, is reported as reading like an encrypted box, and "
                  "its values are not decoded, because the encryption key is not in the file. For "
                  "such a row the entry and displaced counts are reported as 0, not as measured. A "
@@ -93,7 +90,7 @@ def _owning_app(relative_path):
     in the path, which silently attributes one app's data to another.
     """
     segments = relative_path.replace('\\', '/').split('/')
-    for index, segment in enumerate(segments[:-1]):
+    for index, segment in enumerate(segments[:-2]):
         if not (segment in _ROOT_MARKERS or segment.isdigit()):
             continue
         following = segments[index + 1]
