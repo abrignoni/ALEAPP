@@ -32,15 +32,15 @@ __artifacts_v2__ = {
                        'found in each user\'s settings_secure.xml.',
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2024-07-02",
-        "last_update_date": "2026-11-22",
+        "last_update_date": "2026-11-23",
         "requirements": "",
         "category": "Android Notification History",
         "notes": "A stored value of 1 is shown as Enabled and 0 as Disabled. Any "
                  "other value, and a setting element with no value attribute, is "
-                 "shown as Unknown. The stored value itself is not shown. No row is produced when the notification_history_enabled key is absent, or when the file cannot be parsed. Neither is by itself evidence the feature was off. On samsungs20_a13 (users 0 and 150) and pixel3_a11 (user 0) the plain XML file contains the setting name but fails both parse attempts, so no row is produced and nothing is logged. In AOSP at "
+                 "shown as Unknown. The stored value itself is not shown. No row is produced when the notification_history_enabled key is absent, or when its element is one that could not be read. Neither is by itself evidence the feature was off. A plain XML file that does not parse as a whole is read one setting element at a time, up to the closing settings tag and leaving out comments, and the log names the file, its user folder and how many elements could not be read. An ABX file that does not decode is written to the log and gives no row. That applied to two files each on cookbook_a11, pixel3_a11 and samsungs20_a13, and one element on samsungs20_a13 could not be read. In AOSP at "
                  "the android-14.0.0_r1 tag, NotificationHistoryManager reads this setting as an integer with a default of 0 and treats a non-zero integer as enabled (https://android.googlesource.com/platform/frameworks/base/+/"
                  "299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/services/core/java/com/android/server/"
-                 "notification/NotificationHistoryManager.java#424). A missing value or one that is not an integer reads as the default (core/java/android/provider/Settings.java lines 3703 to 3709 and 6652 to 6655 at the same commit). Other Android releases and vendor builds were not checked. Of the 39 images run, 28 gave a row. 27 are Unknown from an element with no value attribute, including the six sample_data keys with a row. One, russell_a14, is Enabled from a stored 1. No image run gave Disabled, so that label is not "
+                 "notification/NotificationHistoryManager.java#424). A missing value or one that is not an integer reads as the default (core/java/android/provider/Settings.java lines 3703 to 3709 and 6652 to 6655 at the same commit). Other Android releases and vendor builds were not checked. Of the 39 images run, 30 gave a row, 31 rows in all: samsungs20_a13 gave two, one for each of two users. 30 are Unknown from an element with no value attribute, including the rows on the seven sample_data keys that have one. One, russell_a14, is Enabled from a stored 1. No image run gave Disabled, so that label is not "
                  "exercised on real data.",
         "paths": ('**/system/users/*/settings_secure.xml',),
         "output_types": "standard",
@@ -52,7 +52,7 @@ __artifacts_v2__ = {
             "kevin_pocox7_a15": "Android 15 | 1 row",
             "pixel7a_a14": "Android 14 | 1 row",
             "samsunga53_a14": "Android 14 | 0 rows",
-            "samsungs20_a13": "Android 13 | 0 rows",
+            "samsungs20_a13": "Android 13 | 2 rows",
             "sharon_a14": "Android 14 | 0 rows",
             "russell_pixel6a_a13": "Android 13 | 1 row",
             "userb2_a13": "Android 13 | 1 row",
@@ -64,7 +64,7 @@ __artifacts_v2__ = {
                        "notification_policy.xml, with the stored key and time.",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2024-07-02",
-        "last_update_date": "2026-11-22",
+        "last_update_date": "2026-11-23",
         "requirements": "",
         "category": "Android Notification History",
         "notes": "Reminder Time is the element's time attribute read as Unix "
@@ -86,8 +86,7 @@ __artifacts_v2__ = {
                  "The meaning of the attributes of a context element is not "
                  "established here. On the ten sample_data keys the "
                  "snoozed-notifications element is empty, except on galaxys10_a10, "
-                 "where it is absent. The ABX decoder failed on the pixel3_a12 file, "
-                 "so that file was not read. No image run produced a row, so no row "
+                 "where it is absent. The ABX decoder failed on the pixel3_a12 file, so that file was not read. The failure is written to the log and any other file is still read. No image run produced a row, so no row "
                  "of this artifact, notification or context, and no Reminder Time "
                  "conversion is exercised on real data.",
         "paths": ('**/system/notification_policy.xml',),
@@ -141,6 +140,37 @@ def _parse_xml(file_found):
             return ET.Element('empty')
 
 
+def _setting_elements(file_found):
+    '''The setting elements of a settings file, one at a time when the file does not parse whole.
+
+    A plain XML settings file can hold a second root element, or one element that does not
+    parse. Either stops a whole-file parse, and neither affects the other elements.
+    '''
+    user = os.path.basename(os.path.dirname(file_found))
+    try:
+        root = _xml_root(file_found, True)
+    except Exception as ex:
+        logfunc(f'Notification History Status: {os.path.basename(file_found)} (user {user}) could not be read: '
+                f'{type(ex).__name__}: {ex}')
+        return []
+    if root.tag != 'empty':
+        return root.findall('.//setting')
+    with open(file_found, 'r', encoding='utf-8', errors='replace') as f:
+        text = f.read()
+    # Only what the settings element holds: not a comment and not anything after its closing tag.
+    text = re.sub(r'<!--.*?-->', '', text, flags=re.DOTALL).split('</settings>', 1)[0]
+    fragments = re.findall(r'<setting\b.*?/>', text, re.DOTALL)
+    elements, failed = [], 0
+    for fragment in fragments:
+        try:
+            elements.append(ET.fromstring(fragment))
+        except ET.ParseError:
+            failed += 1
+    logfunc(f'Notification History Status: {os.path.basename(file_found)} (user {user}) did not parse as a whole. '
+            f'Read {len(elements)} setting elements one at a time, {failed} could not be read')
+    return elements
+
+
 def _xml_root(file_found, multi_root):
     '''Return the XML root for either an ABX-encoded or plain-text XML file.'''
     if checkabx(file_found):
@@ -159,8 +189,7 @@ def get_notificationHistory_status(context):
             continue
         source_paths.append(file_found)
         user = os.path.basename(os.path.dirname(file_found))
-        root = _xml_root(file_found, True)
-        for setting in root.findall(".//setting"):
+        for setting in _setting_elements(file_found):
             if setting.attrib.get('name') == 'notification_history_enabled':
                 value = setting.attrib.get('value')
                 value = "Enabled" if value == "1" else "Disabled" if value == "0" else "Unknown"
@@ -180,7 +209,12 @@ def get_notificationHistory_snoozed(context):
         if not os.path.basename(file_found).endswith('notification_policy.xml'):
             continue
         source_path = file_found
-        root = _xml_root(file_found, False)
+        try:
+            root = _xml_root(file_found, False)
+        except Exception as ex:
+            logfunc(f'Notification History Snoozed: {os.path.basename(file_found)} could not be read: '
+                    f'{type(ex).__name__}: {ex}')
+            continue
         for elem in root:
             if elem.tag == 'snoozed-notifications':
                 for child in elem:
