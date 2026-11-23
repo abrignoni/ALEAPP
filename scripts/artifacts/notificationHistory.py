@@ -5,7 +5,7 @@ __artifacts_v2__ = {
         "description": "Notifications recorded in the system_ce notification_history protobufs.",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2024-07-02",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-11-22",
         "requirements": "",
         "category": "Android Notification History",
         "notes": "Coverage is limited to the protobuf files still present under "
@@ -16,8 +16,7 @@ __artifacts_v2__ = {
                  "(https://android.googlesource.com/platform/frameworks/base/+/"
                  "299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/services/core/java/com/android/server/"
                  "notification/NotificationHistoryDatabase.java#56 "
-                 "and lines 229 to 256 of the same file). Other Android releases and vendor "
-                 "builds were not checked.",
+                 "and lines 229 to 256 of the same file). Other Android releases and vendor builds were not checked. The four Index columns are blank when the record holds no string pool index: the AOSP writer stores an index only for a string in the pool, as its position plus one (https://android.googlesource.com/platform/frameworks/base/+/299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/services/core/java/com/android/server/notification/NotificationHistoryProtoHelper.java#257). On anne_a15 and sharon_a14 (330 rows) no record holds an index, so a filled Index column is not exercised on real data. Where a record holds no string of its own for Package Name, Channel Name, Channel ID or Conversation ID, the value is looked up in the file's string pool by the record's index. An index with no entry in the pool leaves the value blank and the Index column filled. That path was run only on a constructed file. Image Data Length and Image Data Offset are blank unless the icon is a data icon (Image Type 3) or the record holds the field, and Image Resource ID is blank unless the icon is a resource icon (Image Type 2) or the record holds the field. The AOSP writer stores them only for those types (writeIcon, line 227 of the same file; type numbers at https://android.googlesource.com/platform/frameworks/base/+/299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/graphics/java/android/graphics/drawable/Icon.java#85). Every tested row is Image Type 2, so the other types are not exercised. UID, User ID and Image Type are shown as read. The AOSP writer's ProtoOutputStream does not write a zero (https://android.googlesource.com/platform/frameworks/base/+/299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/core/java/android/util/proto/ProtoOutputStream.java#1061) and that writer passes UID and User ID on each record, so with that writer a 0 in UID or User ID is the value 0 with nothing written to the file. User ID is 0 and absent from the file on all 330 tested rows. Image Type is blank when the record holds no icon.",
         "paths": ('**/system_ce/*/notification_history/history/*',),
         "output_types": "standard",
         "artifact_icon": "bell",
@@ -29,17 +28,20 @@ __artifacts_v2__ = {
     },
     "get_notificationHistory_status": {
         "name": "Android Notification History - Status",
-        "description": 'Reports the notification_history_enabled value found in each user\'s '
-                       'settings_secure.xml.',
+        "description": 'Reports a status label for the notification_history_enabled setting '
+                       'found in each user\'s settings_secure.xml.',
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2024-07-02",
-        "last_update_date": "2024-07-02",
+        "last_update_date": "2026-11-22",
         "requirements": "",
         "category": "Android Notification History",
-        "notes": "A stored 1 is shown as Enabled, 0 as Disabled and any other "
-                 "value as Unknown. No row is produced when the "
-                 "notification_history_enabled key is absent, which is not by "
-                 "itself evidence the feature was off.",
+        "notes": "A stored value of 1 is shown as Enabled and 0 as Disabled. Any "
+                 "other value, and a setting element with no value attribute, is "
+                 "shown as Unknown. The stored value itself is not shown. No row is produced when the notification_history_enabled key is absent, or when the file cannot be parsed. Neither is by itself evidence the feature was off. On samsungs20_a13 (users 0 and 150) and pixel3_a11 (user 0) the plain XML file contains the setting name but fails both parse attempts, so no row is produced and nothing is logged. In AOSP at "
+                 "the android-14.0.0_r1 tag, NotificationHistoryManager reads this setting as an integer with a default of 0 and treats a non-zero integer as enabled (https://android.googlesource.com/platform/frameworks/base/+/"
+                 "299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/services/core/java/com/android/server/"
+                 "notification/NotificationHistoryManager.java#424). A missing value or one that is not an integer reads as the default (core/java/android/provider/Settings.java lines 3703 to 3709 and 6652 to 6655 at the same commit). Other Android releases and vendor builds were not checked. Of the 39 images run, 28 gave a row. 27 are Unknown from an element with no value attribute, including the six sample_data keys with a row. One, russell_a14, is Enabled from a stored 1. No image run gave Disabled, so that label is not "
+                 "exercised on real data.",
         "paths": ('**/system/users/*/settings_secure.xml',),
         "output_types": "standard",
         "artifact_icon": "toggle-right",
@@ -62,7 +64,7 @@ __artifacts_v2__ = {
                        "notification_policy.xml, with the stored key and time.",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2024-07-02",
-        "last_update_date": "2026-10-09",
+        "last_update_date": "2026-11-22",
         "requirements": "",
         "category": "Android Notification History",
         "notes": "Reminder Time is the element's time attribute read as Unix "
@@ -78,10 +80,16 @@ __artifacts_v2__ = {
                  "One row is reported per child element, whatever its tag. Element "
                  "is the tag as stored, Reminder Time is blank where the element has "
                  "no time attribute, and Other Attributes lists every remaining "
-                 "attribute as name=value as stored; the meaning of the attributes "
-                 "of a context element is not established here. No recorded sample "
-                 "held a child element, so the context rows are not exercised on "
-                 "real data.",
+                 "attribute as name=value. In a binary XML (ABX) file the values are "
+                 "the decoder's text rendering of the typed values, and a null value "
+                 "appears as None. A plain XML file that fails to parse is read again with invalid UTF-8 bytes replaced, control characters other than tab, line feed and carriage return removed, and bare ampersands escaped, so its values can differ from the file. If the second read also fails, the file gives no rows and nothing is logged. On samsungs20_a13 the file needed the second read. "
+                 "The meaning of the attributes of a context element is not "
+                 "established here. On the ten sample_data keys the "
+                 "snoozed-notifications element is empty, except on galaxys10_a10, "
+                 "where it is absent. The ABX decoder failed on the pixel3_a12 file, "
+                 "so that file was not read. No image run produced a row, so no row "
+                 "of this artifact, notification or context, and no Reminder Time "
+                 "conversion is exercised on real data.",
         "paths": ('**/system/notification_policy.xml',),
         "output_types": "standard",
         "artifact_icon": "clock",
@@ -186,6 +194,10 @@ def get_notificationHistory_snoozed(context):
     return data_headers, data_list, source_path
 
 
+ICON_TYPE_RESOURCE = 2
+ICON_TYPE_DATA = 3
+
+
 @artifact_processor
 def get_notificationHistory(context):
     files_found = context.get_files_found()
@@ -213,14 +225,16 @@ def get_notificationHistory(context):
                     logfunc(f'Error in the ParseFromString() function. The error message was: {e}')
                     continue
 
-            # One of the protobuf sections stores package names indexed from 1
-            package_map = {i + 1: pkg for i, pkg in enumerate(notification_history.string_pool.strings)}
+            # The string pool holds package, channel and conversation strings, indexed from 1. The AOSP reader
+            # also appends each inline string to its pool as it reads. The AOSP writer's indexes all point into
+            # the written pool, so that step is not needed for its files and is not repeated here.
+            string_pool = {i + 1: text for i, text in enumerate(notification_history.string_pool.strings)}
             major_version = notification_history.major_version if notification_history.HasField('major_version') else None
             file_creation = _ms_to_utc(file_name)
 
             for notification in notification_history.notification:
                 package_name = notification.package if notification.package \
-                    else package_map.get(notification.package_index, "")
+                    else string_pool.get(notification.package_index, "")
 
                 # Recover each field if present in the schema, else mark 'Error'
                 values = {}
@@ -235,6 +249,23 @@ def get_notificationHistory(context):
                 else:
                     for icon_field in icon_fields:
                         values[icon_field] = None
+
+                for text, index in (('channel_name', 'channel_name_index'), ('channel_id', 'channel_id_index'),
+                                    ('conversation_id', 'conversation_id_index')):
+                    if not values[text]:
+                        values[text] = string_pool.get(values[index], '')
+
+                # The writer stores an index only for a pooled string, and these icon fields only for their
+                # own icon type. An unset field there reads as 0, which is not a stored value. A value the
+                # record does hold is always shown, and a 0 on the field's own icon type is kept.
+                for field in ('package_index', 'channel_name_index', 'channel_id_index', 'conversation_id_index'):
+                    if not notification.HasField(field):
+                        values[field] = None
+                if notification.HasField('icon'):
+                    for field, icon_type in (('image_data_length', ICON_TYPE_DATA), ('image_data_offset', ICON_TYPE_DATA),
+                                             ('image_resource_id', ICON_TYPE_RESOURCE)):
+                        if values['image_type'] != icon_type and not notification.icon.HasField(field):
+                            values[field] = None
 
                 posted_time = _ms_to_utc(notification.posted_time_ms) if notification.HasField('posted_time_ms') else ''
                 title = notification.title if notification.HasField('title') else None

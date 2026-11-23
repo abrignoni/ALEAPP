@@ -1,9 +1,7 @@
 __artifacts_v2__ = {
     "sdhmsBatteryAppHistory": {
         "name": "SDHMS Battery App History",
-        "description": "Per-app usage in time windows from the sec_batterystats_history database of com.sec.android.sdhms (APP_HISTORY table): power "
-                       "drain, foreground/background time, CPU, wakelocks, network packets, "
-                       "GPS and audio use per uid.",
+        "description": "Per-UID usage in time windows from the sec_batterystats_history database of com.sec.android.sdhms (APP_HISTORY table): power, foreground/background time, CPU, wakelocks, network packets, GPS and audio use.",
         "author": "@abrignoni",
         "creation_date": "2026-07-30",
         "last_update_date": "2026-11-22",
@@ -32,8 +30,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Samsung Device Health Management Service",
         "notes": "Window Start and Window End are start_time and end_time read as Unix "
-                 "milliseconds. Screen On Time and Screen Off Time are labelled in "
-                 "milliseconds; that unit is not sourced here. Where the database has no "
+                 "milliseconds. Screen On Time, Screen Off Time, High Brightness Time and High Refresh Time are reported as stored. Their unit is not established. Where the database has no "
                  "screen_on_count column the Screen On Count, High Brightness Time and High "
                  "Refresh Time columns are empty.",
         "paths": ('*/com.sec.android.sdhms/databases/sec_batterystats_history*',),
@@ -57,7 +54,7 @@ __artifacts_v2__ = {
         "last_update_date": "2026-11-22",
         "requirements": "none",
         "category": "Samsung Device Health Management Service",
-        "notes": "Where the table has no id column the ID column is empty.",
+        "notes": "Update Time is update_time read as Unix milliseconds. Where the table has no id column the ID column is empty.",
         "paths": ('*/com.sec.android.sdhms/databases/sec_batterystats_history*',),
         "output_types": "standard",
         "artifact_icon": "battery",
@@ -188,13 +185,13 @@ def sdhmsBatteryDeviceHistory(context):
         ('Window End', 'datetime'),
         'All Power',
         'Screen Power',
-        'Screen On Time (ms)',
-        'Screen Off Time (ms)',
+        'Screen On Time',
+        'Screen Off Time',
         'Screen On Discharge',
         'Screen Off Discharge',
         'Screen On Count',
-        'High Brightness Time (ms)',
-        'High Refresh Time (ms)',
+        'High Brightness Time',
+        'High Refresh Time',
     )
     return data_headers, data_list, source_path
 

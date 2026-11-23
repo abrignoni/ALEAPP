@@ -68,6 +68,10 @@ class OwningApp(unittest.TestCase):
     def test_box_at_the_root(self):
         self.assertEqual(_owning_app('box.hive'), '')
 
+    def test_box_file_name_is_not_taken_for_the_app(self):
+        for path in ('data/data/box.hive', 'data/user/0/box.hive', 'data/user_de/150/a.b.hive'):
+            self.assertEqual(_owning_app(path), '', path)
+
     def test_a_package_named_later_in_the_path_does_not_win(self):
         # A substring test would read the examiner's own folder names, or the
         # second package, as the owner of the first package's box.

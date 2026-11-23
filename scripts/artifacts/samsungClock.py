@@ -9,7 +9,7 @@ __artifacts_v2__ = {
         ),
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-11-20",
-        "last_update_date": "2026-11-20",
+        "last_update_date": "2026-11-22",
         "requirements": "none",
         "category": "Samsung Clock",
         "notes": (
@@ -21,17 +21,13 @@ __artifacts_v2__ = {
             "session record logged 12.5.07.13 for the 2026-11-16 actions. The other nine tested "
             "images have an alarm table without the alarm_group_id column, and the code of the "
             "versions that wrote them was not read. The time, repeat and active fields are compared "
-            "with the known data below. Create Time is createtime and Alert Time is alerttime, both "
-            "milliseconds since the Unix epoch shown in UTC. In the code createtime is set to the "
+            "with the known data below. Create Time is createtime and Alert Time is alerttime, both read by the shared converter and shown in UTC. The converter picks the unit from the value's size: 10,000,000,000 up to 10,000,000,000,000 is read as milliseconds since the Unix epoch, and a smaller value as seconds. Every tested value has 13 digits, so it was read as milliseconds. A stored 0, negative value or non-number is blank. In the code createtime is set to the "
             "current time when an alarm is saved from the edit screen, including when an existing "
             "alarm is edited and saved (not tested), and also when an alarm is created by a SET_ALARM "
             "intent, by Bixby, by the bedtime screens or as the preset alarm. On the known data it "
             "was the logged save time for two alarms and 2 seconds before the logged time for the one "
             "created by intent, and it did not change when an alarm was turned off. Alert Time is "
-            "alerttime: on the three known-data alarms it was the next time the alarm was due; on "
-            "alarms that are off the value stays and can be old, and on two tested images it is "
-            "earlier than createtime. Alarm Time is alarmtime, stored as hours times 100 plus minutes "
-            "in the phone's local time, and shown as HH:MM. Active is the stored active value: 1 was "
+            "alerttime: on the three known-data alarms it was the next time the alarm was due. What it records on other alarms was not tested. The code path for an alarm with a selected date is described below. Every alarm on the other nine tested images is off. On cookbook_a11 and galaxys10_a10 Alert Time is earlier than Create Time. Alarm Time is alarmtime, stored as hours times 100 plus minutes in the phone's local time, and shown as HH:MM. A value that does not give hours 0 to 23 and minutes 0 to 59 is shown as the stored number, and a non-number is blank. No tested row was in either state. Active is the stored active value: 1 was "
             "on and 0 off on the known data. The code also sets and tests 2, beside log text that "
             "reads ALARM_SNOOZE (AlarmItem). No tested row held 2. Repeat is decoded from repeattype "
             "(shown as stored in Repeat Type): in AlarmItemBase the low four bits are 1 for a "
@@ -55,7 +51,7 @@ __artifacts_v2__ = {
             "KD_onetime_alarm (2:30 PM that day, left on) were saved at 06:15:43 and 06:16:33 UTC on "
             "2026-11-17, per the session record. Create Time was 15:31:37, 06:15:43 and 06:16:33 for "
             "the three, Alarm Time 04:44, 07:30 and 14:30, KD_onetime_alarm had Active 1 and Alert "
-            "Time 19:30 UTC, and both one-time alarms showed Tuesday, the day each was due. Every "
+            "Time 19:30 UTC, and both one-time alarms showed Tuesday, the day each was due. KD and KD_weekday_alarm, both turned off, had Active 0, and KD_weekday_alarm showed Weekly: Mon, Tue, Wed, Thu, Fri. Every "
             "tested image holds an unnamed 06:00 Monday to Friday alarm that is off; on the known "
             "data its createtime is 2026-02-13, before the session. That code creates a preset 06:00 "
             "weekday alarm when the alarm table is empty (AlarmMainDbRepo.setPresetAlarm), so this "

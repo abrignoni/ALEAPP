@@ -8,7 +8,7 @@ __artifacts_v2__ = {
                        " not report.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-11-18",
-        "last_update_date": "2026-11-18",
+        "last_update_date": "2026-11-22",
         "requirements": "none",
         "category": "Snapchat",
         "notes": "Read from the Turn and TurnEvent tables of "
@@ -16,8 +16,7 @@ __artifacts_v2__ = {
                  "write-ahead log when one is beside it. Sources are the app's own script "
                  "modules in the APK installed on dragna_pixel9a_a16 (Snapchat versionCode "
                  "319422; assets/turn_db.valdimodule and assets/recents_ranking.valdimodule, "
-                 "zstd-compressed, read after decompression); other app versions were not "
-                 "read, and three of the four tested stores were written by other versions. "
+                 "zstd-compressed, read after decompression); other app versions were not read. Which version wrote each tested store is not established, including the one on dragna_pixel9a_a16, where 319422 is the installed version. "
                  "turn_db/src/sqlgen/TurnDb holds the schema and TurnQueries the queries; "
                  "recents_ranking/src/TurnEventHandler and TurnRepository write them. That "
                  "version derives at most one event from each committed message of the "
@@ -29,10 +28,9 @@ __artifacts_v2__ = {
                  " and another member viewed it, or ViewSend when the signed-in user viewed "
                  "it, at the message's readAt, and a read message that fits neither case "
                  "gives no event. 'Event Time' is that time (TurnEvent.updatedAt, Unix "
-                 "milliseconds, shown in UTC). It is the first event of that type stored in "
-                 "the current turn: later events of the same type in the same turn are not "
+                 "milliseconds, shown in UTC). In that version it is the first event of that type stored in the current turn: later events of the same type in the same turn are not "
                  "stored, and each conversation keeps one event per type for its current turn"
-                 " (UNIQUE(type, turnId)). When a new event type ends the current turn under "
+                 " (UNIQUE(type, turnId)). In that version, when a new event type ends the current turn under "
                  "the module's rules (for example a MessageReceive after a MessageSend), or "
                  "when the conversation has no events yet, the app stores the event's time as"
                  " 'Turn Began' (Turn.lastUpdatedAt), keeps the earlier one as 'Previous Turn"
@@ -43,13 +41,12 @@ __artifacts_v2__ = {
                  "and samsungs20_a13). 'Previous Turn Began' is blank in stores whose Turn "
                  "table predates that column (hc_pixel8pro_a16 and samsungs20_a13), and where"
                  " the column is empty (every row of hc_pixel8pro_a17, 40 of 44 on "
-                 "dragna_pixel9a_a16): the app leaves it empty when there is no earlier turn "
-                 "or when the earlier turn's time is not earlier than the new event. "
+                 "dragna_pixel9a_a16): in that version the app leaves it empty when there is no earlier turn or when the earlier turn's time is not earlier than the new event. In all three time columns a stored zero, negative or non-integer value is shown blank. No tested row held one. "
                  "'Conversation ID' is the Snapchat conversation id, the same id the Snapchat"
                  " - Conversations (arroyo.db) artifact shows. 'Account' is the name of the "
                  "folder that holds the store; on dragna_pixel9a_a16 it equals the sender id "
                  "of the outgoing messages in Snapchat - Messages (arroyo.db), and it held "
-                 "one value on every row of each image. The tables name no sender or text. On"
+                 "one value on every row of each image. In the four tested stores neither the Turn nor the TurnEvent table has a sender or text column. On"
                  " dragna_pixel9a_a16 the 44 events name 43 conversations, 35 of which are "
                  "not among the conversations Snapchat - Conversations (arroyo.db) reports, "
                  "live or recovered. The 35 MessageReceive events in those conversations "

@@ -1,10 +1,10 @@
 __artifacts_v2__ = {
     "solid_explorer_recent_files": {
         "name": "Solid Explorer Recent Files",
-        "description": "Files Solid Explorer recorded as recently opened, with the time of each",
+        "description": "Files Solid Explorer recorded as recently opened, with one stored time per path",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-11-22",
         "requirements": "none",
         "category": "Solid Explorer",
         "sample_data": {
@@ -13,6 +13,8 @@ __artifacts_v2__ = {
         "notes": "One row per row of the recent_files table in "
                  "pl.solidexplorer2/databases/explorer.db. Opened is Unix milliseconds and is "
                  "reported as UTC. Path is the full path the app recorded, as stored. "
+                 "The schema declares path UNIQUE, so the table holds at most one row per path and repeated opens of one path cannot each have a row. Whether the time is the first or the most recent open "
+                 "of a file opened more than once was not established. "
                  "On the tested device a row appeared when a file was opened from the app and "
                  "was handled by one of Solid Explorer's own built-in viewers, the text editor "
                  "and the image viewer. Whether a file opened into a different application is "
@@ -29,7 +31,7 @@ __artifacts_v2__ = {
         "description": "Bookmarked locations in Solid Explorer, with how often each was opened",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-11-22",
         "requirements": "none",
         "category": "Solid Explorer",
         "sample_data": {
@@ -37,7 +39,10 @@ __artifacts_v2__ = {
         },
         "notes": "One row per row of the bookmarks table in "
                  "pl.solidexplorer2/databases/explorer.db. Name is the label shown in the app's "
-                 "drawer and Path is the location it points at. Times Opened is the hitcount "
+                 "drawer and Path is the location it points at. The table also has a file_id "
+                 "column that is not reported. It equalled Path on both rows of the emu_a15_oss "
+                 "images v14 to v17, which hold a byte-identical explorer.db, and that does not "
+                 "show the two are equal on a remote file system. Times Opened is the hitcount "
                  "column and counts uses of the bookmark. That was measured rather than assumed: "
                  "on the tested device a bookmark was added and then opened from the drawer twice, "
                  "and its hitcount went 0, then 1, then 2, while a second bookmark that was never "
@@ -45,10 +50,11 @@ __artifacts_v2__ = {
                  "column separates. The app ships with a bookmark already present, so a row is not "
                  "by itself evidence anyone created it; on the tested device the Download bookmark "
                  "was there before anything was done and is the one that stayed at 0. File System "
-                 "is the id of the row in the file_systems table the bookmark belongs to, which is "
-                 "the link the database itself records; no bookmark on a remote connection was "
-                 "present on the tested device, so its use to tell local from remote bookmarks was "
-                 "not exercised. Position is reported as stored.",
+                 "is the file_system column as stored. On emu_a15_oss v14 to v17 it read 1 on both "
+                 "rows and the only file_systems row had rowid 1. The schema declares no key "
+                 "between the two tables, so the link is not established. That one row is the "
+                 "local storage entry, so whether this column separates local from remote "
+                 "bookmarks was not exercised. Position is reported as stored.",
         "paths": ('*/pl.solidexplorer2/databases/explorer.db*',),
         "output_types": "standard",
         "artifact_icon": "bookmark",
@@ -85,40 +91,41 @@ __artifacts_v2__ = {
     },
     "solid_explorer_connections": {
         "name": "Solid Explorer Connections",
-        "description": "Rows of Solid Explorer's file_systems table, which holds its local and "
-                       "any remote storage connections",
+        "description": "Rows of Solid Explorer's file_systems table",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-09-05",
+        "last_update_date": "2026-11-22",
         "requirements": "none",
         "category": "Solid Explorer",
         "sample_data": {
             "emu_a15_oss_v14": "Solid Explorer 3.5.20 | 1 rows",
         },
         "notes": "One row per row of the file_systems table in "
-                 "pl.solidexplorer2/databases/explorer.db. This is where a remote connection would "
-                 "be stored: the table carries server, port, user name and remote path columns for "
-                 "it. No remote connection was present on the tested device, so none was "
-                 "exercised. Password Stored reports only whether the password column holds a "
-                 "value. The password itself is not printed. Connection Type (as stored) and "
+                 "pl.solidexplorer2/databases/explorer.db. The table has server, port, user, "
+                 "password and path columns. That suggests a remote connection would be stored "
+                 "here, which was not exercised: the emu_a15_oss images v14 to v17, which hold a "
+                 "byte-identical explorer.db, have no remote row. Password Stored reports only "
+                 "whether the password column holds a value. The password itself is not printed. "
+                 "The table also has password_mode and flags columns that are not reported. Both "
+                 "read 0 on those images. Connection Type (as stored) and "
                  "Connection Mode (as stored) are the conn_type and conn_mode columns unchanged; "
-                 "no source for their values was found. The tested device had only the built-in "
-                 "local storage entry. On that single row Server, User, Charset and Extra were "
+                 "no source for their values was found. Those images hold one row, and its Name and Package Name read as local storage. On that single row Server, User, Charset and Extra were "
                  "empty, Password Stored read No, Port and both Connection columns read 0, and "
-                 "Remote Path read a single slash. Those columns are reported because they are the "
-                 "substance of this table on a device that has a remote connection configured, "
-                 "which is the case worth having. Package Name on that row read as a local storage "
-                 "identifier rather than an Android package.",
+                 "Path read a single slash. Package Name on that row read as a local storage "
+                 "identifier rather than an Android package. The rowid of this table is not shown. "
+                 "File System in the Bookmarks and Folder Display Settings artifacts read 1 on "
+                 "those images, the rowid of this one row, but the schema declares no key between "
+                 "the tables, so that link is not established.",
         "paths": ('*/pl.solidexplorer2/databases/explorer.db*',),
         "output_types": "standard",
         "artifact_icon": "server",
     },
     "solid_explorer_folders_viewed": {
-        "name": "Solid Explorer Folders Viewed",
+        "name": "Solid Explorer Folder Display Settings",
         "description": "Folders Solid Explorer holds display settings for",
         "author": "@AlexisBrignoni, Codex",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-10-07",
+        "last_update_date": "2026-11-22",
         "requirements": "none",
         "category": "Solid Explorer",
         "sample_data": {
@@ -134,13 +141,13 @@ __artifacts_v2__ = {
                  "stored either, so nothing here can be placed in time. Sort Mode (as stored), View Mode "
                  "(as stored) and View Scale (as stored) are the sort_mode, view_mode and view_scale "
                  "columns unchanged. Grouped is the grouped column, shown as Yes for a non-zero value and "
-                 "No otherwise. Hidden (As Stored) is the dirinfo.hidden column without boolean conversion "
-                 "or an interpretation of what it controls. Its meaning was not exercised on the tested "
-                 "device; the earlier report showed No on every row using the prior truthiness conversion. "
-                 "This historical display observation does not establish the underlying stored value or "
-                 "visibility state. Original parser and recorded sample observations credited to "
-                 "@AlexisBrignoni, Claude. File System is the id of the file_systems row the folder "
-                 "belongs to, which is the link the database itself records.",
+                 "No otherwise. Hidden (as stored) is the dirinfo.hidden column without boolean conversion "
+                 "or an interpretation of what it controls. It read 0 on all four rows of the emu_a15_oss "
+                 "images v14 to v17, which hold a byte-identical explorer.db. What the column controls is "
+                 "not established. Original parser and recorded sample observations credited to "
+                 "@AlexisBrignoni, Claude. File System is the file_system column as stored. On those "
+                 "images it read 1 on all four rows and the only file_systems row had rowid 1. The schema "
+                 "declares no key between the two tables, so the link is not established.",
         "paths": ('*/pl.solidexplorer2/databases/explorer.db*',),
         "output_types": "standard",
         "artifact_icon": "folder",
@@ -222,7 +229,7 @@ def solid_explorer_connections(context):
     query = '''SELECT name, server, port, user, path, package_name, conn_type, conn_mode,
                       password, charset, extra
                FROM file_systems ORDER BY name'''
-    headers = ('Name', 'Server', 'Port', 'User', 'Remote Path', 'Package Name',
+    headers = ('Name', 'Server', 'Port', 'User', 'Path', 'Package Name',
                'Connection Type (as stored)', 'Connection Mode (as stored)',
                'Password Stored', 'Charset', 'Extra', 'Source File')
     return _rows(context, query,
@@ -237,7 +244,7 @@ def solid_explorer_folders_viewed(context):
     query = '''SELECT file_id, file_system, sort_mode, view_mode, view_scale, grouped, hidden
                FROM dirinfo ORDER BY file_id'''
     headers = ('Folder', 'File System', 'Sort Mode (as stored)', 'View Mode (as stored)',
-               'View Scale (as stored)', 'Grouped', 'Hidden (As Stored)', 'Source File')
+               'View Scale (as stored)', 'Grouped', 'Hidden (as stored)', 'Source File')
     return _rows(context, query,
                  lambda r: (r[0] or '', r[1], r[2], r[3], r[4],
                             'Yes' if r[5] else 'No', r[6]),
