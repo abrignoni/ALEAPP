@@ -218,29 +218,29 @@ __artifacts_v2__ = {
                  "Modified (no zone, as stored) are the newest and oldest readings of the entries"
                  " that have no UTC time, as for a FAT directory entry, an exFAT directory entry "
                  "(its stored UTC offset is not applied or shown here) or a zip entry with only "
-                 "its DOS date and time, shown with no zone conversion. A recorded time of 0 is "
-                 "treated as no time. The two pairs are kept apart because a reading with no zone"
-                 " cannot be ordered against a UTC time. For a folder or single-file input the "
-                 "UTC pair is the time the operating system reports for those files on the "
-                 "examiner's machine, including any conversion it applied, and whatever copied "
-                 "them there may have set it. The staged copy's own time is not reported. These "
-                 "are file times the input records, not values the app stored. They are not app "
-                 "event or acquisition timestamps. The caches are summarised rather than listed: "
-                 "an entry name is a digest, so entries are counted by type and not listed one by"
-                 " one here. The entries that do match a recently viewed listing are also "
-                 "reported and rendered on Etsy - Recently Viewed Listings. Type counts are taken"
-                 " from each file's leading bytes, after gzip is decoded when the file starts "
-                 "with the gzip magic; WebP additionally checks its RIFF length and image decoder"
-                 " acceptance. On the tested device no entry was stored compressed. "
-                 "image_manager_disk_cache is the default disk cache folder name of the Glide "
-                 "image library (bumptech/glide v4.16.0, DiskCache.java, DEFAULT_DISK_CACHE_DIR);"
-                 " no source for the appboy directory name was checked here. Both directories are"
-                 " scoped here to the app's own data directory. The files themselves remain in "
-                 "the extraction at the reported path. Field mapping was done against a private "
-                 "sample provided by Mattia; no sample data is recorded for it. Original "
-                 "contribution credited to @AlexisBrignoni, @mattiaepi (Mattia Epifani) and "
-                 "Claude. The private-sample image, compression and directory-library "
-                 "observations above were not measured again.",
+                 "its DOS date and time, shown with no zone conversion. A recorded time of 0, or "
+                 "one outside the range a date can show, is treated as no time. The two pairs are"
+                 " kept apart because a reading with no zone cannot be ordered against a UTC "
+                 "time. For a folder or single-file input the UTC pair is the time the operating "
+                 "system reports for those files on the examiner's machine, including any "
+                 "conversion it applied, and whatever copied them there may have set it. The "
+                 "staged copy's own time is not reported. These are file times the input records,"
+                 " not values the app stored. They are not app event or acquisition timestamps. "
+                 "The caches are summarised rather than listed: an entry name is a digest, so "
+                 "entries are counted by type and not listed one by one here. The entries that do"
+                 " match a recently viewed listing are also reported and rendered on Etsy - "
+                 "Recently Viewed Listings. Type counts are taken from each file's leading bytes,"
+                 " after gzip is decoded when the file starts with the gzip magic; WebP "
+                 "additionally checks its RIFF length and image decoder acceptance. On the tested"
+                 " device no entry was stored compressed. image_manager_disk_cache is the default"
+                 " disk cache folder name of the Glide image library (bumptech/glide v4.16.0, "
+                 "DiskCache.java, DEFAULT_DISK_CACHE_DIR); no source for the appboy directory "
+                 "name was checked here. Both directories are scoped here to the app's own data "
+                 "directory. The files themselves remain in the extraction at the reported path. "
+                 "Field mapping was done against a private sample provided by Mattia; no sample "
+                 "data is recorded for it. Original contribution credited to @AlexisBrignoni, "
+                 "@mattiaepi (Mattia Epifani) and Claude. The private-sample image, compression "
+                 "and directory-library observations above were not measured again.",
         "paths": (
             '*/com.etsy.android/cache/image_manager_disk_cache/*',
             '*/com.etsy.android/cache/appboy.imageloader.lru.cache/*',
@@ -726,6 +726,14 @@ def _cached_renditions(index, container, image_url):
 # --------------------------------------------------------------------------------------
 # Artifacts
 # --------------------------------------------------------------------------------------
+
+def _in_datetime_range(seconds):
+    """Whether Unix seconds can be shown as a datetime."""
+    try:
+        return bool(_EPOCH + timedelta(seconds=seconds))
+    except OverflowError:
+        return False
+
 
 def _file_times(seeker, path):
     """(UTC seconds, reading with no zone) the input records for a staged file.
@@ -1267,6 +1275,8 @@ def etsy_image_caches(context):
         modified, no_zone = _file_times(seeker, file_found)
         label = _cache_image(file_found)[0]
         entry['types'][label] = entry['types'].get(label, 0) + 1
+        if modified is not None and not _in_datetime_range(modified):
+            modified = None  # a recorded time no datetime can hold is left out of the extremes
         if modified is not None:
             if entry['earliest'] is None or modified < entry['earliest']:
                 entry['earliest'] = modified

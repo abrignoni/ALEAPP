@@ -108,6 +108,20 @@ class TestEtsyStagedMtime(unittest.TestCase):
             when = datetime.fromtimestamp(1717261200, timezone.utc)
             self.assertEqual(row[:4], (when, when, '2024-06-01 12:00:00', '2023-01-02 03:04:06'))
 
+    def test_a_recorded_time_no_date_can_hold_keeps_the_summary(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            folder = root / 'data/user/0/com.etsy.android/cache/image_manager_disk_cache'
+            folder.mkdir(parents=True)
+            good, bad = folder / 'good', folder / 'bad'
+            for path in (good, bad):
+                path.write_bytes(b'GIF89a')
+            infos = {str(good): FileInfo('good', 0, 100), str(bad): FileInfo('bad', 0, 253402300800)}
+            row = self.run_summary(root, [good, bad], infos=infos)[0]
+            when = datetime.fromtimestamp(100, timezone.utc)
+            self.assertEqual(row[:2], (when, when))
+            self.assertEqual(row[5:8], (2, 12, 'GIF 2'))
+
 
 if __name__ == '__main__':
     unittest.main()
