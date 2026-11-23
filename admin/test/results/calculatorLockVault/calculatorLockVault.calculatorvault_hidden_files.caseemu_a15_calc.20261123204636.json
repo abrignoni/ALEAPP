@@ -4,25 +4,26 @@
     "artifact_name": "Calculator Lock - Hidden Files",
     "function_name": "calculatorvault_hidden_files",
     "case_number": "caseemu_a15_calc",
-    "number_of_columns": 11,
+    "number_of_columns": 12,
     "number_of_rows": 0,
     "total_data_size_bytes": 0,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/calculatorLockVault/testdata.calculatorLockVault.calculatorvault_hidden_files.caseemu_a15_calc.zip",
-    "start_time": "2026-09-28T18:12:10.105975+00:00",
-    "end_time": "2026-09-28T18:12:10.131567+00:00",
-    "run_time_seconds": 0.0006761550903320312,
+    "start_time": "2026-11-23T20:46:36.579583+00:00",
+    "end_time": "2026-11-23T20:46:36.615030+00:00",
+    "run_time_seconds": 0.0009291172027587891,
     "last_commit": {
-      "hash": "6128a84baf6ee626d3a6ef7bb3a602a48e6741c3",
+      "hash": "53d9460364cf9d3687e43f93a6864e5564d4607f",
       "author_name": "Brigs",
       "author_email": "abrignoni@gmail.com",
-      "date": "2026-09-28T14:11:17-04:00",
-      "message": "Read every Android user's note_contact.db in calculatorLockVault"
+      "date": "2026-10-04T08:49:26-04:00",
+      "message": "Fix timestamp handling and unsupported field labels in audited artifacts"
     }
   },
   "headers": [
     "File Modified Time",
+    "File Modified (no zone, as stored)",
     "Hidden File",
     "Hidden File Name",
     "Recorded Path",

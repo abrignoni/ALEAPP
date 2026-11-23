@@ -4,25 +4,26 @@
     "artifact_name": "Calculator Lock - Hidden Files",
     "function_name": "calculatorvault_hidden_files",
     "case_number": "pixel7a_a14",
-    "number_of_columns": 11,
+    "number_of_columns": 12,
     "number_of_rows": 1,
     "total_data_size_bytes": 194,
     "media_checkins": 1,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/calculatorLockVault/testdata.calculatorLockVault.calculatorvault_hidden_files.pixel7a_a14.zip",
-    "start_time": "2026-09-28T20:04:33.030545+00:00",
-    "end_time": "2026-09-28T20:04:33.050618+00:00",
-    "run_time_seconds": 0.0006401538848876953,
+    "start_time": "2026-11-23T20:46:36.615516+00:00",
+    "end_time": "2026-11-23T20:46:36.648396+00:00",
+    "run_time_seconds": 0.000743865966796875,
     "last_commit": {
-      "hash": "dad00ace958158d36afed7e188dbcd6aeea7aa86",
+      "hash": "53d9460364cf9d3687e43f93a6864e5564d4607f",
       "author_name": "Brigs",
       "author_email": "abrignoni@gmail.com",
-      "date": "2026-09-28T14:17:46-04:00",
-      "message": "Word the calculatorLockVault Hidden Files description to the matching rule"
+      "date": "2026-10-04T08:49:26-04:00",
+      "message": "Fix timestamp handling and unsupported field labels in audited artifacts"
     }
   },
   "headers": [
     "File Modified Time",
+    "File Modified (no zone, as stored)",
     "Hidden File",
     "Hidden File Name",
     "Recorded Path",
@@ -37,6 +38,7 @@
   "data": [
     [
       1706477929,
+      "",
       "mock_hash_for_0_DiwGeKS.jpeg",
       "0_DiwGeKS.jpeg",
       "/storage/emulated/0/Download/Imgur/DiwGeKS.jpeg",

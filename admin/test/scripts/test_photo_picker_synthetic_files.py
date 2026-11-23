@@ -74,18 +74,18 @@ class PhotoPickerSyntheticFilesTest(unittest.TestCase):
                     patch.object(parser.Context, 'get_seeker', return_value=None):
                 headers, rows, source = parser.get_photo_picker_synthetic_files.__wrapped__(context(root, paths))
         self.assertTrue(all(len(r) == len(headers) for r in rows))
-        by_id = {r[9]: r for r in rows}
+        by_id = {r[10]: r for r in rows}
         self.assertEqual(sorted(by_id), ['11', '12', '13', 'abc-1_all_2'])  # two views of 11 collapse
-        self.assertEqual(by_id['11'][17], 'external.db files')
-        self.assertEqual(by_id['11'][13], 'one.jpg')
-        self.assertEqual(by_id['12'][17], 'external.db deleted_media only (no files row)')
-        self.assertEqual(by_id['12'][13], '')
-        self.assertEqual(by_id['13'][17], '')                                # user 10 row not used
-        self.assertEqual(by_id['abc-1_all_2'][17], 'picker.db media')
-        self.assertEqual(by_id['abc-1_all_2'][12], 23)
+        self.assertEqual(by_id['11'][18], 'external.db files')
+        self.assertEqual(by_id['11'][14], 'one.jpg')
+        self.assertEqual(by_id['12'][18], 'external.db deleted_media only (no files row)')
+        self.assertEqual(by_id['12'][14], '')
+        self.assertEqual(by_id['13'][18], '')                                # user 10 row not used
+        self.assertEqual(by_id['abc-1_all_2'][18], 'picker.db media')
+        self.assertEqual(by_id['abc-1_all_2'][13], 23)
         self.assertEqual([r[0] for r in rows], [''] * 4)                     # no recorded times
-        self.assertEqual(by_id['11'][15], 'not searched')                 # no seeker in the test
-        self.assertEqual(by_id['11'][5], '')
+        self.assertEqual(by_id['11'][16], 'not searched')                 # no seeker in the test
+        self.assertEqual(by_id['11'][6], '')
         self.assertNotIn('/data/user/10/', source)
 
     def test_copy_content(self):

@@ -895,27 +895,30 @@ __artifacts_v2__ = {
         ),
         "author": "Alexis Brignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-05",
-        "last_update_date": "2026-10-04",
+        "last_update_date": "2026-11-23",
         "requirements": "none",
         "category": "Telegram",
-        "notes": "The client names each log <call id>.log and each statistics log <call "
-                 "id>_stats.log (Reference: Telegram-Android, 'VoIPHelper.java (getLogFilePath)', "
-                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/"
-                 "TMessagesProj/src/main/java/org/telegram/ui/Components/voip/"
-                 "VoIPHelper.java#L795-L816); "
-                 "where a phone call service message in the chat "
-                 "carries the same id, the two can be tied together. The timestamps inside the "
-                 "log are local-time strings with no timezone, so they are reported as recorded "
-                 "and only their difference is used for the logged span. Log Last Modified (UTC) "
-                 "is the modification time the extraction records for the log file as seconds "
-                 "since 1970 UTC: a zip member's NTFS or extended timestamp field, a tar member's "
-                 "time, or the file's own time for a folder input. It is blank when a zip member's "
-                 "fields hold no modification time or it carries neither field, because the member's other stored time has no zone. "
-                 "On pixel7a_a14 the log's zip member carries an extended timestamp. "
-                 "The logged span is the difference "
-                 "between the first and last timestamp in the log and is not a call duration. "
-                 "Approach adapted from a Telegram parser contributed by WriteBlocked in "
-                 "ALEAPP pull request 716.",
+        "notes": "The client names each log <call id>.log and each statistics log <call id>_stats.log "
+                 "(Reference: Telegram-Android, 'VoIPHelper.java (getLogFilePath)', "
+                 "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/ui/Components/voip/VoIPHelper.java#L795-L816);"
+                 " where a phone call service message in the chat carries the same id, the two can be tied "
+                 "together. The timestamps inside the log are local-time strings with no timezone, so they are"
+                 " reported as recorded and only their difference is used for the logged span. Log Last "
+                 "Modified (UTC) is the modification time the extraction records for the log file as seconds "
+                 "since 1970 UTC: a zip member's NTFS or extended timestamp field, a tar member's time, or the"
+                 " file's own time for a folder input. When the tool reads no UTC time, Log Last Modified "
+                 "(UTC) is blank and Log Last Modified (no zone, as stored) shows the date and time the input "
+                 "holds, with no zone conversion. That is the case for a FAT directory entry, an exFAT "
+                 "directory entry (its stored UTC offset is not applied or shown here) and a zip entry from "
+                 "which no UTC modification time is read: one with only its DOS date and time, or with an "
+                 "extra field whose time is 0 or unreadable. Which zone such a reading is in is not "
+                 "established. A zip entry's DOS date and time is shown as decoded, with no validity check, so"
+                 " an unset one reads 1980-00-00 00:00:00. Log Last Modified (no zone, as stored) had no value"
+                 " on any row of the registered images in sample_data on a run of 2026-11-23. The reading was "
+                 "exercised on constructed FAT32, exFAT and DOS-only zip inputs. On pixel7a_a14 the log's zip "
+                 "member carries an extended timestamp. The logged span is the difference between the first "
+                 "and last timestamp in the log and is not a call duration. Approach adapted from a Telegram "
+                 "parser contributed by WriteBlocked in ALEAPP pull request 716.",
         "paths": ('*/org.telegram.messenger*/cache/voip_logs/*',),
         "output_types": "standard",
         "artifact_icon": "phone",
@@ -2759,10 +2762,41 @@ def _voip_log_span(path):
     return first, last
 
 
+def _usable(value):
+    """Whether a recorded time is a nonzero, finite number."""
+    return isinstance(value, (int, float)) and value != 0 and value == value and abs(value) != float('inf')
+
+
+def _file_times(seeker, path):
+    """(UTC seconds, reading with no zone) the input records for a staged file.
+
+    The staged copy's own time is not used: for a FAT, exFAT or DOS-only zip reading it is
+    that reading placed in the examiner's time zone.
+    """
+    infos = getattr(seeker, 'file_infos', None) or {}
+    windows = str(path).replace('/', '\\')
+    bare = windows.removeprefix('\\\\?\\')
+    info = next((infos[name] for name in (str(path), windows, bare, '\\\\?\\' + bare)
+                 if name in infos), None)
+    times = getattr(info, 'times', None)
+    modified = getattr(times, 'modified', None)
+    if _usable(modified):
+        return modified, ''
+    # a reading with no zone comes before the older field, which is never read as its UTC time
+    reading = getattr(times, 'modified_no_zone', None)
+    if reading:
+        return None, reading
+    modified = getattr(info, 'modification_date', None)
+    if _usable(modified):
+        return modified, ''
+    return None, ''
+
+
 @artifact_processor
 def get_telegramVoipLogs(context):
     data_headers = (
         ('Log Last Modified (UTC)', 'datetime'),
+        'Log Last Modified (no zone, as stored)',
         'Call ID',
         'Logged Span (seconds)',
         'First Entry (device local time)',
@@ -2789,20 +2823,16 @@ def get_telegramVoipLogs(context):
     for call_id, path in sorted(logs.items()):
         first, last = _voip_log_span(path)
         span = int((last - first).total_seconds()) if first and last else ''
-        # The time the extraction records for the file, not the staged copy's own
-        # time: for a zip member with no NTFS or extended timestamp field the seeker
-        # sets the copy's time from the member's zone-less date and time read in the
-        # examiner machine's zone.
-        info = seeker.file_infos.get(path) if seeker else None
-        modified = ''
-        if info and info.modification_date:
-            modified = convert_unix_ts_to_utc(int(info.modification_date))
+        # The times the extraction records for the file, not the staged copy's own
+        recorded, no_zone = _file_times(seeker, path)
+        modified = convert_unix_ts_to_utc(int(recorded)) if recorded else ''
         try:
             size = os.path.getsize(path)
         except OSError:
             size = ''
         data_list.append((
             modified,
+            no_zone,
             call_id,
             span,
             first.strftime('%Y-%m-%d %H:%M:%S') if first else '',

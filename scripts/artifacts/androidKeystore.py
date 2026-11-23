@@ -116,27 +116,39 @@ __artifacts_v2__ = {
                        "are not read.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-11-15",
-        "last_update_date": "2026-11-15",
+        "last_update_date": "2026-11-23",
         "requirements": "none",
         "category": "Encryption and Credentials",
-        "notes": "Before Keystore 2.0, Keystore kept one file per entry under misc/keystore/user_<Android user>/, "
-                 "named <uid>_<prefix>_<encoded alias>, with the entry's characteristics in "
+        "notes": "Before Keystore 2.0, Keystore kept one file per entry under misc/keystore/user_<Android "
+                 "user>/, named <uid>_<prefix>_<encoded alias>, with the entry's characteristics in "
                  ".<uid>_chr_<prefix>_<encoded alias> and the user's master key in .masterkey "
-                 "(https://android.googlesource.com/platform/system/security/+/5a37034a3a97492cca75928193363c4f13bce5d3/keystore2/src/legacy_blob.rs#935); the prefixes are USRPKEY, USRSKEY, USRCERT and CACERT "
-                 "(legacy_blob.rs#741). One row per user folder, owner UID and alias, and one row for each "
-                 ".masterkey file. Alias is decoded as decode_alias does (legacy_blob.rs#336); a name that does "
-                 "not decode is reported as stored and logged (unexercised). Kinds lists the prefixes present for the entry, "
-                 "with characteristics for a characteristics file. Files are the names as the extraction records them in "
-                 "the evidence: a tar seeker stages a name holding ':' with '_', and the recorded name is used "
-                 "(four files on pixel3_a11). Modified (UTC) is the newest modified time the extraction recorded "
-                 "for the row's files, a file system time, not a time Keystore stored. Owner UID and Owner are "
-                 "resolved as in Keystore Key Entries (fixed AID name, else packages.list under the same data "
-                 "root). File contents are not read. Four files on galaxys10_a10 and four on cookbook_a11 have a "
-                 "10-character alphanumeric token where the AOSP form has the numeric UID; they are reported as "
-                 "stored with no Owner UID or Alias, and logged. Measured: cookbook_a11 188 rows from 427 files (users 0 "
-                 "and 150), galaxys10_a10 112 from 291, pixel3_a11 85 from 256 (users 0 and 10); every file under "
-                 "user_<n> on those images is in a row. No known data was made: the Android 15 emulator used for "
-                 "the Keystore 2.0 known data has no legacy files.",
+                 "(https://android.googlesource.com/platform/system/security/+/5a37034a3a97492cca75928193363c4f13bce5d3/keystore2/src/legacy_blob.rs#935);"
+                 " the prefixes are USRPKEY, USRSKEY, USRCERT and CACERT (legacy_blob.rs#741). One row per "
+                 "user folder, owner UID and alias, and one row for each .masterkey file. Alias is decoded as "
+                 "decode_alias does (legacy_blob.rs#336); a name that does not decode is reported as stored "
+                 "and logged (unexercised). Kinds lists the prefixes present for the entry, with "
+                 "characteristics for a characteristics file. Files are the names as the extraction records "
+                 "them in the evidence: a tar seeker stages a name holding ':' with '_', and the recorded name"
+                 " is used (four files on pixel3_a11). Modified (UTC) is the newest modified time the "
+                 "extraction recorded for the row's files, a file system time, not a time Keystore stored. "
+                 "When the tool reads no UTC time for a file, that file adds nothing to Modified (UTC), and "
+                 "its date and time count toward Modified (no zone, as stored), which holds the newest such "
+                 "reading for the row, compared as text, with no zone conversion. That is the case for a FAT "
+                 "directory entry, an exFAT directory entry (its stored UTC offset is not applied or shown "
+                 "here) and a zip entry from which no UTC modification time is read: one with only its DOS "
+                 "date and time, or with an extra field whose time is 0 or unreadable. Which zone such a "
+                 "reading is in is not established. A zip entry's DOS date and time is shown as decoded, with "
+                 "no validity check, so an unset one reads 1980-00-00 00:00:00. Modified (no zone, as stored) "
+                 "had no value on any row of the registered images in sample_data on a run of 2026-11-23. The "
+                 "reading was exercised on constructed FAT32, exFAT and DOS-only zip inputs. A row can fill "
+                 "both columns when its files differ. Owner UID and Owner are resolved as in Keystore Key "
+                 "Entries (fixed AID name, else packages.list under the same data root). File contents are not"
+                 " read. Four files on galaxys10_a10 and four on cookbook_a11 have a 10-character alphanumeric"
+                 " token where the AOSP form has the numeric UID; they are reported as stored with no Owner "
+                 "UID or Alias, and logged. Measured: cookbook_a11 188 rows from 427 files (users 0 and 150), "
+                 "galaxys10_a10 112 from 291, pixel3_a11 85 from 256 (users 0 and 10); every file under "
+                 "user_<n> on those images is in a row. No known data was made: the Android 15 emulator used "
+                 "for the Keystore 2.0 known data has no legacy files.",
         "paths": ('*/misc/keystore/user_*/*', '*/system/packages.list'),
         "output_types": "standard",
         "artifact_icon": "key",
@@ -398,14 +410,43 @@ def _decode_alias(name):
         return None
 
 
-def _modified_utc(seeker, path):
-    info = seeker.file_infos.get(path) if seeker else None
-    if not info or not info.modification_date:
-        return None
+def _sec_to_utc(value):
+    if not value:
+        return ''
     try:
-        return datetime.datetime.fromtimestamp(int(info.modification_date), datetime.timezone.utc)
+        return datetime.datetime(1970, 1, 1, tzinfo=datetime.timezone.utc) + datetime.timedelta(seconds=value // 1)
     except (ValueError, OverflowError, OSError, TypeError):
-        return None
+        return ''
+
+
+def _usable(value):
+    """Whether a recorded time is a nonzero, finite number."""
+    return isinstance(value, (int, float)) and value != 0 and value == value and abs(value) != float('inf')
+
+
+def _file_times(seeker, path):
+    """(UTC seconds, reading with no zone) the input records for a staged file.
+
+    The staged copy's own time is not used: for a FAT, exFAT or DOS-only zip reading it is
+    that reading placed in the examiner's time zone.
+    """
+    infos = getattr(seeker, 'file_infos', None) or {}
+    windows = str(path).replace('/', '\\')
+    bare = windows.removeprefix('\\\\?\\')
+    info = next((infos[name] for name in (str(path), windows, bare, '\\\\?\\' + bare)
+                 if name in infos), None)
+    times = getattr(info, 'times', None)
+    modified = getattr(times, 'modified', None)
+    if _usable(modified):
+        return modified, ''
+    # a reading with no zone comes before the older field, which is never read as its UTC time
+    reading = getattr(times, 'modified_no_zone', None)
+    if reading:
+        return None, reading
+    modified = getattr(info, 'modification_date', None)
+    if _usable(modified):
+        return modified, ''
+    return None, ''
 
 
 @artifact_processor
@@ -453,15 +494,18 @@ def androidKeystoreLegacyEntries(context):
             logfunc(f'Keystore Legacy Entry Files: file name not in the AOSP form, reported as stored: {name}')
             key = (root, user, '', name)
             kind, uid, alias = '', '', ''
-        entry = entries.setdefault(key, {'uid': uid, 'alias': alias, 'kinds': [], 'files': [], 'mtime': None,
+        entry = entries.setdefault(key, {'uid': uid, 'alias': alias, 'kinds': [], 'files': [], 'mtime': None, 'no_zone': '',
                                          'paths': []})
         if kind and kind not in entry['kinds']:
             entry['kinds'].append(kind)
         entry['files'].append(name)
         entry['paths'].append(path)
-        mtime = _modified_utc(seeker, path)
+        recorded, no_zone = _file_times(seeker, path)
+        mtime = _sec_to_utc(recorded)
         if mtime and (entry['mtime'] is None or mtime > entry['mtime']):
             entry['mtime'] = mtime
+        if no_zone > entry['no_zone']:
+            entry['no_zone'] = no_zone
 
     data_list = []
     sources = []
@@ -470,6 +514,7 @@ def androidKeystoreLegacyEntries(context):
         uid = entry['uid']
         data_list.append((
             entry['mtime'] or '',
+            entry['no_zone'],
             user,
             uid,
             _uid_owner(uid, packages_by_root.get(root, {})) if uid != '' else '',
@@ -479,6 +524,6 @@ def androidKeystoreLegacyEntries(context):
         ))
         sources.extend(entry['paths'])
 
-    data_headers = (('Modified (UTC)', 'datetime'), 'Android User', 'Owner UID', 'Owner', 'Alias', 'Kinds',
-                    'Files')
+    data_headers = (('Modified (UTC)', 'datetime'), 'Modified (no zone, as stored)', 'Android User', 'Owner UID',
+                    'Owner', 'Alias', 'Kinds', 'Files')
     return data_headers, data_list, '\n'.join(dict.fromkeys(sources))
