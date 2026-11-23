@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Parses the account service's debug log entries from accounts_de.db (action type, time as stored, account id, table name and caller UID), with the account type, name and last authenticate time of the accounts row an entry names, where there is one.",
         "author": "@AlexisBrignoni",
         "creation_date": "2020-03-02",
-        "last_update_date": "2026-11-22",
+        "last_update_date": "2026-11-23",
         "requirements": "none",
         "category": "Accounts",
         "notes": "One row per debug_table row. The platform keeps at most 64 debug rows per user "
@@ -62,8 +62,10 @@ from scripts.ilapfuncs import artifact_processor, \
 
 @artifact_processor
 def accounts_de(context):
-    files_found = context.get_files_found()
-    source_path_list = get_file_path_list_checking_uid(files_found, "accounts_de.db", -2, "mirror")
+    # The mirrored view is the data_mirror folder of the evidence path.
+    files_found = [str(path) for path in context.get_files_found()
+                   if 'data_mirror' not in str(context.get_relative_path(path)).replace('\\', '/').split('/')]
+    source_path_list = get_file_path_list_checking_uid(files_found, "accounts_de.db", -2)
     source_path = ""
     data_list = []
 
