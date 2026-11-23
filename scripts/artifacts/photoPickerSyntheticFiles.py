@@ -7,67 +7,81 @@ __artifacts_v2__ = {
                        "MediaStore records.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-11-16",
-        "last_update_date": "2026-11-16",
+        "last_update_date": "2026-11-23",
         "requirements": "none",
         "category": "Media",
-        "notes": "One row per file under .transforms/synthetic/picker*/<user>/<provider>/media/. "
-                 "MediaProvider creates each one when its path is looked up: it queries the picker item's "
-                 "size and sets the file's length to it ( "
+        "notes": "One row per file under .transforms/synthetic/picker*/<user>/<provider>/media/. MediaProvider"
+                 " creates each one when its path is looked up: it queries the picker item's size and sets the"
+                 " file's length to it ( "
                  "https://android.googlesource.com/platform/packages/providers/MediaProvider/+/a183e2b92c71d86ec7b104c116ef3f4dbcbb523f/src/com/android/providers/media/MediaProvider.java#2668"
                  " , "
                  "https://android.googlesource.com/platform/packages/providers/MediaProvider/+/a183e2b92c71d86ec7b104c116ef3f4dbcbb523f/src/com/android/providers/media/util/SyntheticPathUtils.java#114"
-                 " ). The file therefore does not hold the picture; File Content says what its bytes are. "
-                 "The folder comes from the picker session: picker_get_content for ACTION_GET_CONTENT, "
-                 "picker for any other session ( "
+                 " ). The file therefore does not hold the picture; File Content says what its bytes are. The "
+                 "folder comes from the picker session: picker_get_content for ACTION_GET_CONTENT, picker for "
+                 "any other session ( "
                  "https://android.googlesource.com/platform/packages/providers/MediaProvider/+/a183e2b92c71d86ec7b104c116ef3f4dbcbb523f/src/com/android/providers/media/PickerUriResolver.java#339"
                  " ). A third folder, picker_transcoded ( "
                  "https://android.googlesource.com/platform/packages/providers/MediaProvider/+/a183e2b92c71d86ec7b104c116ef3f4dbcbb523f/src/com/android/providers/media/PickerUriResolver.java#86"
                  " ), is matched too; its file takes the transcoded size; it was not seen in the samples. "
                  "Media ID is the file's name without its extension. For the on-device provider "
-                 "(com.android.providers.media.photopicker) it is looked up as _id in the files table of "
-                 "the same Android user's external.db and, when absent there, as old_id in its "
-                 "deleted_media table; for any other provider (Google Photos' cloudpicker in the samples) "
-                 "as cloud_id in picker.db media. Original Matched In names the table that matched. "
-                 "'deleted_media only (no files row)' reports that the ID is listed in deleted_media and "
-                 "no files row has it; what writes deleted_media was not established (deleting a picked "
-                 "photo's file on a test emulator added no row). The same file reached through several "
-                 "storage views (data/media/<n> and mnt/pass_through/<n>/emulated/<n>) is reported once. "
-                 "Rollback snapshots of external.db and picker.db are not read. Original Media shows the "
-                 "file now at the path MediaStore records (_data, /storage/emulated/<n>/... searched as "
-                 "media/<n>/... in the extraction), only when its bytes are an image or video. It is "
-                 "matched by path, not by content. Original File says whether that file was found and what"
-                 " it is. File Modified and File Accessed are the times the extraction records for the "
-                 "file; neither is taken from the staged file. Known data (Android 15 emulator, a Chrome "
-                 "file input, one photo picked three times, host clock for the log): each confirmed pick "
-                 "moved the file's modified time, so it matched the most recent pick (17:25:19.96 UTC for "
-                 "a pick logged at 17:25:20.25), while the file's accessed time on the device (stat) "
-                 "stayed at the first pick through both re-picks; /data was mounted noatime on that "
-                 "emulator. That emulator's archive records no accessed time, so File Accessed was blank "
-                 "in a run on it. Not tested: the picker folder (any session other than "
-                 "ACTION_GET_CONTENT), picker_transcoded, cloud picks, real devices, and whether a later "
-                 "open of the file by the receiving app moves its modified time. On the 6 corpus images in"
-                 " sample_data (Android 13 to 17, 42 rows): 33 matched external.db files, 4 matched "
-                 "picker.db media, 4 were listed only in deleted_media, and 1 Google Photos file on "
-                 "kevin_pocox7_a15 matched nothing. File Content was 'all zero bytes' on all 42 rows, and "
-                 "on the test emulator the file read as root from /data/media/0 was also zero-filled. On "
-                 "the 37 matched rows File Size equalled Original Size. Original Media showed the file at "
-                 "the recorded path on 32 of the 33 files rows; on the other the extraction held no file "
-                 "at that path. Original Date Taken was blank on 30 of the 37 matched rows because the "
-                 "matched row held no value. File Accessed was recorded only on hc_pixel8pro_a17, where it"
-                 " was at or before File Modified on all 8 rows. File Accessed had no value on any row of "
-                 "hc_pixel8pro_a16, kevin_pocox7_a15, pixel7a_a14, russell_a14 and russell_pixel6a_a13: "
-                 "those archives store 0 in the accessed-time field of every file, which is read as no "
-                 "value. On pixel7a_a14 Provider (as stored) held one value on all 19 rows, and Original "
-                 "Date Added and Original Date Modified were identical as stored on the 17 rows that have "
-                 "them. On russell_a14 and russell_pixel6a_a13 the one row is listed only in "
-                 "deleted_media, so Original Date Taken, Original Date Added, Original Date Modified, "
-                 "Original Size, Original Name, Original Path, Original File, Original Media and Original "
-                 "Owner Package have no value on it. File Content held 'all zero bytes' on every row of "
-                 "every image. Android User held 0 on all 42 rows; it is kept because it selects which "
-                 "user's external.db is used. date_added and date_modified are read as seconds, datetaken "
-                 "and date_taken_ms as milliseconds. Not read: media_grants. It held no rows on any of the"
-                 " 6 images or the emulator; it is in external.db on all of them, and also in picker.db on"
-                 " hc_pixel8pro_a16 and hc_pixel8pro_a17. Suggested by an examiner on a mailing list.",
+                 "(com.android.providers.media.photopicker) it is looked up as _id in the files table of the "
+                 "same Android user's external.db and, when absent there, as old_id in its deleted_media "
+                 "table; for any other provider (Google Photos' cloudpicker in the samples) as cloud_id in "
+                 "picker.db media. Original Matched In names the table that matched. 'deleted_media only (no "
+                 "files row)' reports that the ID is listed in deleted_media and no files row has it; what "
+                 "writes deleted_media was not established (deleting a picked photo's file on a test emulator "
+                 "added no row). The same file reached through several storage views (data/media/<n> and "
+                 "mnt/pass_through/<n>/emulated/<n>) is reported once. Rollback snapshots of external.db and "
+                 "picker.db are not read. Original Media shows the file now at the path MediaStore records "
+                 "(_data, /storage/emulated/<n>/... searched as media/<n>/... in the extraction), only when "
+                 "its bytes are an image or video. It is matched by path, not by content. Original File says "
+                 "whether that file was found and what it is. File Modified and File Accessed are the UTC "
+                 "times the tool reads from the input for the file. Neither is taken from the copy staged in "
+                 "the report folder. For a folder input File Modified is the time of the copy on the "
+                 "examiner's disk and File Accessed is blank. When the tool reads no UTC modification time, "
+                 "File Modified is blank. If the input holds a date and time with no zone, File Modified (no "
+                 "zone, as stored) shows it as text, with no zone conversion. That is the case for a FAT "
+                 "directory entry, an exFAT directory entry (its stored UTC offset is not applied or shown "
+                 "here) and a zip entry from which no UTC modification time is read, for example one with only"
+                 " its DOS date and time, or with an extra field whose modification time is missing, 0 or "
+                 "unreadable. Which zone such a reading is in is not established. A recorded time of 0 is "
+                 "treated as no time. Both columns are blank when the input holds neither. A zip entry's DOS "
+                 "date and time is shown as decoded, with no validity check, so an unset one reads 1980-00-00 "
+                 "00:00:00. File Modified (no zone, as stored) had no value on any row of the registered "
+                 "images in sample_data on a run of 2026-11-23. The reading was exercised on constructed "
+                 "FAT32, exFAT and DOS-only zip inputs under two examiner time zones. The UTC column was "
+                 "blank, the no-zone column showed the value decoded separately from the input for each file, "
+                 "and it did not change with the zone. File Accessed is a UTC time only, so a FAT or exFAT "
+                 "access reading is not shown. Known data (Android 15 emulator, a Chrome file input, one photo"
+                 " picked three times, host clock for the log): each confirmed pick moved the file's modified "
+                 "time, so it matched the most recent pick (17:25:19.96 UTC for a pick logged at 17:25:20.25),"
+                 " while the file's accessed time on the device (stat) stayed at the first pick through both "
+                 "re-picks; /data was mounted noatime on that emulator. That emulator's archive records no "
+                 "accessed time, so File Accessed was blank in a run on it. Not tested: the picker folder (any"
+                 " session other than ACTION_GET_CONTENT), picker_transcoded, cloud picks, real devices, and "
+                 "whether a later open of the file by the receiving app moves its modified time. On the 6 "
+                 "corpus images in sample_data (Android 13 to 17, 42 rows): 33 matched external.db files, 4 "
+                 "matched picker.db media, 4 were listed only in deleted_media, and 1 Google Photos file on "
+                 "kevin_pocox7_a15 matched nothing. File Content was 'all zero bytes' on all 42 rows, and on "
+                 "the test emulator the file read as root from /data/media/0 was also zero-filled. On the 37 "
+                 "matched rows File Size equalled Original Size. Original Media showed the file at the "
+                 "recorded path on 32 of the 33 files rows; on the other the extraction held no file at that "
+                 "path. Original Date Taken was blank on 30 of the 37 matched rows because the matched row "
+                 "held no value. File Accessed was recorded only on hc_pixel8pro_a17, where it was at or "
+                 "before File Modified on all 8 rows. File Accessed had no value on any row of "
+                 "hc_pixel8pro_a16, kevin_pocox7_a15, pixel7a_a14, russell_a14 and russell_pixel6a_a13: those "
+                 "archives store 0 in the accessed-time field of every file, which is read as no value. On "
+                 "pixel7a_a14 Provider (as stored) held one value on all 19 rows, and Original Date Added and "
+                 "Original Date Modified were identical as stored on the 17 rows that have them. On "
+                 "russell_a14 and russell_pixel6a_a13 the one row is listed only in deleted_media, so Original"
+                 " Date Taken, Original Date Added, Original Date Modified, Original Size, Original Name, "
+                 "Original Path, Original File, Original Media and Original Owner Package have no value on it."
+                 " File Content held 'all zero bytes' on every row of every image. Android User held 0 on all "
+                 "42 rows; it is kept because it selects which user's external.db is used. date_added and "
+                 "date_modified are read as seconds, datetaken and date_taken_ms as milliseconds. Not read: "
+                 "media_grants. It held no rows on any of the 6 images or the emulator; it is in external.db "
+                 "on all of them, and also in picker.db on hc_pixel8pro_a16 and hc_pixel8pro_a17. Suggested by"
+                 " an examiner on a mailing list.",
         "paths": ('*/.transforms/synthetic/picker*/*/media/*',
                   '*/com.google.android.providers.media.module/databases/external.db*',
                   '*/com.android.providers.media.module/databases/external.db*',
@@ -139,9 +153,40 @@ def _utc(seconds):
     if seconds is None:
         return ''
     try:
-        return datetime.datetime.fromtimestamp(int(seconds), datetime.timezone.utc)
+        whole = int(seconds // 1) if isinstance(seconds, float) else int(seconds)
+        return datetime.datetime(1970, 1, 1, tzinfo=datetime.timezone.utc) + datetime.timedelta(seconds=whole)
     except (ValueError, OverflowError, OSError, TypeError):
         return ''
+
+
+def _usable(value):
+    """Whether a recorded time is a nonzero, finite number."""
+    return isinstance(value, (int, float)) and value != 0 and value == value and abs(value) != float('inf')
+
+
+def _file_times(seeker, path):
+    """(UTC seconds, reading with no zone) the input records for a staged file.
+
+    The staged copy's own time is not used: for a FAT, exFAT or DOS-only zip reading it is
+    that reading placed in the examiner's time zone.
+    """
+    infos = getattr(seeker, 'file_infos', None) or {}
+    windows = str(path).replace('/', '\\')
+    bare = windows.removeprefix('\\\\?\\')
+    info = next((infos[name] for name in (str(path), windows, bare, '\\\\?\\' + bare)
+                 if name in infos), None)
+    times = getattr(info, 'times', None)
+    modified = getattr(times, 'modified', None)
+    if _usable(modified):
+        return modified, ''
+    # a reading with no zone comes before the older field, which is never read as its UTC time
+    reading = getattr(times, 'modified_no_zone', None)
+    if reading:
+        return None, reading
+    modified = getattr(info, 'modification_date', None)
+    if _usable(modified):
+        return modified, ''
+    return None, ''
 
 
 def _times(seeker, file_found):
@@ -233,6 +278,7 @@ def get_photo_picker_synthetic_files(context):
     for (folder, user, authority, name), file_found in sorted(copies.items()):
         source_paths.append(file_found)
         times = _times(seeker, file_found)
+        recorded, no_zone = _file_times(seeker, file_found)
         stem = os.path.splitext(name)[0]
         row = {}
         matched_in = ''
@@ -261,8 +307,9 @@ def get_photo_picker_synthetic_files(context):
         if original_path:
             source_paths.append(original_path)
         data_list.append((
-            _utc(times.modified) if times else '',
+            _utc(recorded),
             _utc(times.accessed) if times else '',
+            no_zone,
             taken,
             _utc(row.get('date_added')),
             _utc(row.get('date_modified')),
@@ -284,6 +331,7 @@ def get_photo_picker_synthetic_files(context):
     data_headers = (
         ('File Modified', 'datetime'),
         ('File Accessed', 'datetime'),
+        'File Modified (no zone, as stored)',
         ('Original Date Taken', 'datetime'),
         ('Original Date Added', 'datetime'),
         ('Original Date Modified', 'datetime'),

@@ -6,40 +6,50 @@ __artifacts_v2__ = {
                        "the app's storage folder",
         "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-10-04",
+        "last_update_date": "2026-11-23",
         "requirements": "none",
         "category": "Calculator Lock",
-        "notes": "com.calculator.lock.hide.photo.video shows a working calculator, and in a "
-                 "known-data test of version 1.94 on 2026-09-28 it opened its storage area when "
-                 "the stored passcode was entered on it. note_contact.db is a plaintext SQLite "
-                 "database; no decryption is involved. Hide has two columns, hide_name and "
-                 "hide_path. On the corpus below hide_name matched a file of the same name under "
-                 "Pictures/.Calculator_Lock/Photos and hide_path held a path under "
-                 "Download/Imgur. The bytes of the matched file were an unencrypted JPEG, so the "
-                 "content is readable without the passcode; this was observed on one file in one "
-                 "corpus and is not established for other versions or file types. The five "
-                 "storage subfolders (Photos, Videos, Files, Intruder, Recycle_bin) are the "
-                 "literals built in class c5.a of base.apk from the same extraction. Each Android "
-                 "user's note_contact.db is read, with the duplicate storage paths of one "
-                 "database read once. Android User names the user whose app folder holds the "
-                 "database when databases of more than one user are read, and is blank otherwise, "
-                 "as on the corpus below. A Hide row is matched by name to a file under the "
-                 ".Calculator_Lock folder of the same Android user's external storage, the user "
-                 "being read from storage paths such as data/media/N and "
-                 "mnt/pass_through/N/emulated/N, or by name alone when the path of the database "
-                 "or of the file names no user, as a path under sdcard/ does. When that folder "
-                 "holds more than one file of the name, the one whose evidence path sorts first "
-                 "is matched. File Located In Extraction reads No when no file matched, and File "
-                 "Modified Time, Hidden File, Storage Subfolder, Detected Format, File Size "
-                 "(bytes) and Storage Path are then blank. pixel7a_a14, the only registered "
-                 "corpus found to carry the app, holds its data for one Android user only, so "
-                 "reading a second user's database and storage folder was checked on a "
-                 "constructed extraction. File Modified Time is the modification time the "
-                 "extraction records for the file, and is blank when the extraction reader holds "
-                 "no record for the file; the reader held one for each of the 3 files matched on "
-                 "pixel7a_a14. A move within one volume can preserve a file's "
-                 "modification time, so File Modified Time does not establish when the file "
-                 "reached the storage folder.",
+        "notes": "com.calculator.lock.hide.photo.video shows a working calculator, and in a known-data test of"
+                 " version 1.94 on 2026-09-28 it opened its storage area when the stored passcode was entered "
+                 "on it. note_contact.db is a plaintext SQLite database; no decryption is involved. Hide has "
+                 "two columns, hide_name and hide_path. On the corpus below hide_name matched a file of the "
+                 "same name under Pictures/.Calculator_Lock/Photos and hide_path held a path under "
+                 "Download/Imgur. The bytes of the matched file were an unencrypted JPEG, so the content is "
+                 "readable without the passcode; this was observed on one file in one corpus and is not "
+                 "established for other versions or file types. The five storage subfolders (Photos, Videos, "
+                 "Files, Intruder, Recycle_bin) are the literals built in class c5.a of base.apk from the same"
+                 " extraction. Each Android user's note_contact.db is read, with the duplicate storage paths "
+                 "of one database read once. Android User names the user whose app folder holds the database "
+                 "when databases of more than one user are read, and is blank otherwise, as on the corpus "
+                 "below. A Hide row is matched by name to a file under the .Calculator_Lock folder of the same"
+                 " Android user's external storage, the user being read from storage paths such as "
+                 "data/media/N and mnt/pass_through/N/emulated/N, or by name alone when the path of the "
+                 "database or of the file names no user, as a path under sdcard/ does. When that folder holds "
+                 "more than one file of the name, the one whose evidence path sorts first is matched. File "
+                 "Located In Extraction reads No when no file matched, and File Modified Time, File Modified "
+                 "(no zone, as stored), Hidden File, Storage Subfolder, Detected Format, File Size (bytes) and"
+                 " Storage Path are then blank. When this was written, pixel7a_a14 was the only registered "
+                 "image found to carry the app, and it holds data for one Android user. Reading a second "
+                 "user's database and storage folder has not been exercised on a registered image. File "
+                 "Modified Time is the UTC modification time the tool reads from the input for the file. It is"
+                 " blank when the tool holds no record for the file. For a folder input it is the time of the "
+                 "copy on the examiner's disk. On pixel7a_a14 the one matched storage file had a UTC time. "
+                 "When the tool reads no UTC modification time, File Modified Time is blank. If the input "
+                 "holds a date and time with no zone, File Modified (no zone, as stored) shows it as text, "
+                 "with no zone conversion. That is the case for a FAT directory entry, an exFAT directory "
+                 "entry (its stored UTC offset is not applied or shown here) and a zip entry from which no UTC"
+                 " modification time is read, for example one with only its DOS date and time, or with an "
+                 "extra field whose modification time is missing, 0 or unreadable. Which zone such a reading "
+                 "is in is not established. A recorded time of 0 is treated as no time. Both columns are blank"
+                 " when the input holds neither. A zip entry's DOS date and time is shown as decoded, with no "
+                 "validity check, so an unset one reads 1980-00-00 00:00:00. File Modified (no zone, as "
+                 "stored) had no value on any row of the registered images in sample_data on a run of "
+                 "2026-11-23. The reading was exercised on constructed FAT32, exFAT and DOS-only zip inputs "
+                 "under two examiner time zones. The UTC column was blank, the no-zone column showed the value"
+                 " decoded separately from the input for each file, and it did not change with the zone. The "
+                 "staged copy's own time is not reported. A move within one volume can preserve a file's "
+                 "modification time, so File Modified Time does not establish when the file reached the "
+                 "storage folder.",
         "paths": (
             '*/com.calculator.lock.hide.photo.video/databases/note_contact.db*',
             '*/.Calculator_Lock/*',
@@ -57,35 +67,45 @@ __artifacts_v2__ = {
                        "table does not name",
         "author": "@AlexisBrignoni, Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-07",
-        "last_update_date": "2026-10-04",
+        "last_update_date": "2026-11-23",
         "requirements": "none",
         "category": "Calculator Lock",
-        "notes": "Every file found under a .Calculator_Lock folder gets one row, whether or not "
-                 "the Hide table names it, so files present on storage without a database row are "
-                 "not dropped. One file can sit under several storage paths of one user in an "
-                 "extraction (data/media/N, mnt/pass_through/N/emulated/N, storage/emulated/N and "
-                 "others); those count once, reported under the evidence path that sorts first. "
-                 "Detected Format comes from the leading bytes of each file, not from its "
-                 "extension. Named In Hide Table and Recorded Path From Hide Table come from the "
-                 "Hide table of the note_contact.db of the Android user whose storage holds the "
-                 "file, or by name alone when the path of the file or of the database names no "
-                 "user, as a path under sdcard/ does. The comparison is by file name, so two "
-                 "files of one name in different subfolders are both reported as named. The "
-                 "Intruder subfolder is one of the five names built in class c5.a of base.apk; "
-                 "the app contains a TakePictureActivity and a TAKE_PICTURE preference, which was "
-                 "false in the tested corpus. Only a Photos file was present in that corpus, so "
-                 "this artifact's handling of Intruder, Videos, Files and Recycle_bin content has "
-                 "not been exercised on the app's own data. Android User names the user whose "
-                 "storage holds the file when files or databases of more than one user are read, "
-                 "and is blank otherwise, as on the corpus below. pixel7a_a14, the only "
-                 "registered corpus found to carry the app, holds its data for one Android user "
-                 "only, so reading a second user's storage folder and database was checked on a "
-                 "constructed extraction. File Modified Time is the modification time the "
-                 "extraction records for the file, and is blank when the extraction reader holds "
-                 "no record for the file; the reader held one for each of the 3 files matched on "
-                 "pixel7a_a14. A move within one volume can "
-                 "preserve a file's modification time, so File Modified Time does not establish "
-                 "when the file reached the storage folder.",
+        "notes": "Every file found under a .Calculator_Lock folder gets one row, whether or not the Hide table"
+                 " names it, so files present on storage without a database row are not dropped. One file can "
+                 "sit under several storage paths of one user in an extraction (data/media/N, "
+                 "mnt/pass_through/N/emulated/N, storage/emulated/N and others); those count once, reported "
+                 "under the evidence path that sorts first. Detected Format comes from the leading bytes of "
+                 "each file, not from its extension. Named In Hide Table and Recorded Path From Hide Table "
+                 "come from the Hide table of the note_contact.db of the Android user whose storage holds the "
+                 "file, or by name alone when the path of the file or of the database names no user, as a path"
+                 " under sdcard/ does. The comparison is by file name, so two files of one name in different "
+                 "subfolders are both reported as named. The Intruder subfolder is one of the five names built"
+                 " in class c5.a of base.apk; the app contains a TakePictureActivity and a TAKE_PICTURE "
+                 "preference, which was false in the tested corpus. Only a Photos file was present in that "
+                 "corpus, so this artifact's handling of Intruder, Videos, Files and Recycle_bin content has "
+                 "not been exercised on the app's own data. Android User names the user whose storage holds "
+                 "the file when files or databases of more than one user are read, and is blank otherwise, as "
+                 "on the corpus below. When this was written, pixel7a_a14 was the only registered image found "
+                 "to carry the app, and it holds data for one Android user. Reading a second user's database "
+                 "and storage folder has not been exercised on a registered image. File Modified Time is the "
+                 "UTC modification time the tool reads from the input for the file. It is blank when the tool "
+                 "holds no record for the file. For a folder input it is the time of the copy on the "
+                 "examiner's disk. On pixel7a_a14 the one matched storage file had a UTC time. When the tool "
+                 "reads no UTC modification time, File Modified Time is blank. If the input holds a date and "
+                 "time with no zone, File Modified (no zone, as stored) shows it as text, with no zone "
+                 "conversion. That is the case for a FAT directory entry, an exFAT directory entry (its stored"
+                 " UTC offset is not applied or shown here) and a zip entry from which no UTC modification "
+                 "time is read, for example one with only its DOS date and time, or with an extra field whose "
+                 "modification time is missing, 0 or unreadable. Which zone such a reading is in is not "
+                 "established. A recorded time of 0 is treated as no time. Both columns are blank when the "
+                 "input holds neither. A zip entry's DOS date and time is shown as decoded, with no validity "
+                 "check, so an unset one reads 1980-00-00 00:00:00. File Modified (no zone, as stored) had no "
+                 "value on any row of the registered images in sample_data on a run of 2026-11-23. The reading"
+                 " was exercised on constructed FAT32, exFAT and DOS-only zip inputs under two examiner time "
+                 "zones. The UTC column was blank, the no-zone column showed the value decoded separately from"
+                 " the input for each file, and it did not change with the zone. The staged copy's own time is"
+                 " not reported. A move within one volume can preserve a file's modification time, so File "
+                 "Modified Time does not establish when the file reached the storage folder.",
         "paths": (
             '*/.Calculator_Lock/*',
             '*/com.calculator.lock.hide.photo.video/databases/note_contact.db*',
@@ -497,17 +517,34 @@ def _storage_folder(path):
     return parent if parent in STORAGE_FOLDERS else ''
 
 
-def _file_times(seeker, path):
-    """Return the extraction's recorded (creation, modification) times for a file.
+def _usable(value):
+    """Whether a recorded time is a nonzero, finite number."""
+    return isinstance(value, (int, float)) and value != 0 and value == value and abs(value) != float('inf')
 
-    Both are blank when the seeker holds no record for the file: the time of the copy
-    staged for the report is the examiner machine's, not the extraction's.
+
+def _file_times(seeker, path):
+    """(UTC seconds, reading with no zone) the input records for a staged file.
+
+    The staged copy's own time is not used: for a FAT, exFAT or DOS-only zip reading it is
+    that reading placed in the examiner's time zone.
     """
-    info = seeker.file_infos.get(path) if seeker else None
-    if info:
-        return convert_unix_ts_to_utc(info.creation_date) or '', \
-            convert_unix_ts_to_utc(info.modification_date) or ''
-    return '', ''
+    infos = getattr(seeker, 'file_infos', None) or {}
+    windows = str(path).replace('/', '\\')
+    bare = windows.removeprefix('\\\\?\\')
+    info = next((infos[name] for name in (str(path), windows, bare, '\\\\?\\' + bare)
+                 if name in infos), None)
+    times = getattr(info, 'times', None)
+    modified = getattr(times, 'modified', None)
+    if _usable(modified):
+        return modified, ''
+    # a reading with no zone comes before the older field, which is never read as its UTC time
+    reading = getattr(times, 'modified_no_zone', None)
+    if reading:
+        return None, reading
+    modified = getattr(info, 'modification_date', None)
+    if _usable(modified):
+        return modified, ''
+    return None, ''
 
 
 def _user_order(user):
@@ -617,12 +654,14 @@ def calculatorvault_hidden_files(context):
             key = _match_key(on_storage, user, hide_name or '')
             located = on_storage[key] if key else ''
             modified = ''
+            no_zone = ''
             media = ''
             detected = ''
             size = ''
             storage_path = ''
             if located:
-                _, modified = _file_times(seeker, located)
+                seconds, no_zone = _file_times(seeker, located)
+                modified = convert_unix_ts_to_utc(seconds) or ''
                 label, mime, extension = _sniff(_read_head(located))
                 detected = label
                 size = os.path.getsize(located)
@@ -633,6 +672,7 @@ def calculatorvault_hidden_files(context):
 
             data_list.append((
                 modified,
+                no_zone,
                 media,
                 hide_name or '',
                 hide_path or '',
@@ -647,6 +687,7 @@ def calculatorvault_hidden_files(context):
 
     data_headers = (
         ('File Modified Time', 'datetime'),
+        'File Modified (no zone, as stored)',
         ('Hidden File', 'media'),
         'Hidden File Name',
         'Recorded Path',
@@ -683,7 +724,8 @@ def calculatorvault_storage_media(context):
         folder = os.path.dirname(path)
         if folder not in folders:
             folders.append(folder)
-        _, modified = _file_times(seeker, path)
+        seconds, no_zone = _file_times(seeker, path)
+        modified = convert_unix_ts_to_utc(seconds) or ''
         label, mime, extension = _sniff(_read_head(path))
         media = check_in_media(path, name,
                                force_type=mime or None,
@@ -691,6 +733,7 @@ def calculatorvault_storage_media(context):
         key = _match_key(recorded, user, name)
         data_list.append((
             modified,
+            no_zone,
             media,
             name,
             _storage_folder(path),
@@ -704,6 +747,7 @@ def calculatorvault_storage_media(context):
 
     data_headers = (
         ('File Modified Time', 'datetime'),
+        'File Modified (no zone, as stored)',
         ('File', 'media'),
         'File Name',
         'Storage Subfolder',

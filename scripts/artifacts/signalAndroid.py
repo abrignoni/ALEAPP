@@ -203,35 +203,46 @@ __artifacts_v2__ = {
                         "app_parts files no attachment record names."),
         "author": "Alexis Brignoni, @kalink0",
         "creation_date": "2026-07-25",
-        "last_update_date": "2026-11-15",
+        "last_update_date": "2026-11-23",
         "requirements": "none",
         "category": "Signal",
-        "notes": ("Attachment files are decrypted with the modernKey from Secrets/secrets.json "
-                  "and each attachment's data_random; rows need the database key as well, and "
-                  "without it nothing is listed. The format is detected from the leading bytes "
-                  "for JPEG, PNG, GIF, OGG, PDF, WebP, EBML (shown as video/webm), MP3 with an "
-                  "ID3 tag, and ISO media files with an ftyp box, shown as audio/mp4 for the M4A,"
-                  " M4B and M4P brands (1 row on sharon_a13, recorded as audio/aac) and as "
-                  "video/mp4 otherwise. Other content shows the recorded type, or 'unknown' when "
-                  "that type has no known extension; Detected Content Type is blank when the file"
-                  " is not in the extraction (1 row on sharon_a13). Rows come from the attachment"
-                  " table, or the part table on older releases (russell_pixel6a_a13 and "
-                  "sharon_a13), joined to their message. A file in app_parts that no record names"
-                  " is listed with Database Record 'No'; it is not decrypted here, because Signal"
-                  " keeps its random in the attachment record and not in the file. One such file "
-                  "is listed on hc_pixel8pro_a16. app_parts files of a data directory whose "
-                  "database was not read are not listed. File Modified is the member time "
-                  "recorded in the zip or tar; for a folder input it is the copy's time on the "
-                  "examiner's disk. On hc_pixel8pro_a16 Upload Timestamp and Message Date Sent "
-                  "show the same second on all 7 attachment rows; the stored millisecond values "
-                  "are equal on 5 and differ on 2, and both are blank on the unreferenced file. "
-                  "Voice Note and Video GIF are identical on all 8 rows (No on the 7 attachment "
-                  "rows, blank on the unreferenced file). On pixel7a_a14 Detected Content Type "
-                  "held 'image/jpeg', Transfer State '0', Voice Note and Video GIF 'No' and "
-                  "Database Record 'Yes' on all 9 rows, and Thumbnail and Caption had no value on"
-                  " any row of any tested image, so the thumbnail decryption is not exercised; on"
-                  " sharon_a13 Direction held one value, Incoming, on all 30 rows. Reference: "
-                  "Signal-Android, 'MessageTypes.java', "
+        "notes": ("Attachment files are decrypted with the modernKey from Secrets/secrets.json and each "
+                  "attachment's data_random; rows need the database key as well, and without it nothing is "
+                  "listed. The format is detected from the leading bytes for JPEG, PNG, GIF, OGG, PDF, WebP, "
+                  "EBML (shown as video/webm), MP3 with an ID3 tag, and ISO media files with an ftyp box, shown"
+                  " as audio/mp4 for the M4A, M4B and M4P brands (1 row on sharon_a13, recorded as audio/aac) "
+                  "and as video/mp4 otherwise. Other content shows the recorded type, application/zip for a ZIP"
+                  " container with no recorded type, or 'unknown' when the recorded type has no known "
+                  "extension; Detected Content Type is blank when the file is not in the extraction (1 row on "
+                  "sharon_a13). Rows come from the attachment table, or the part table on older releases "
+                  "(russell_pixel6a_a13 and sharon_a13), joined to their message. A file in app_parts that no "
+                  "record names is listed with Database Record 'No'; it is not decrypted here, because Signal "
+                  "keeps its random in the attachment record and not in the file. One such file is listed on "
+                  "hc_pixel8pro_a16. app_parts files of a data directory whose database was not read are not "
+                  "listed. File Modified is the UTC modification time the tool reads from the input, such as "
+                  "from a zip entry, a tar header or the file system of a disk image; for a folder input it is "
+                  "the copy's time on the examiner's disk. When the tool reads no UTC modification time, File "
+                  "Modified is blank. If the input holds a date and time with no zone, File Modified (no zone, "
+                  "as stored) shows it as text, with no zone conversion. That is the case for a FAT directory "
+                  "entry, an exFAT directory entry (its stored UTC offset is not applied or shown here) and a "
+                  "zip entry from which no UTC modification time is read, for example one with only its DOS "
+                  "date and time, or with an extra field whose modification time is missing, 0 or unreadable. "
+                  "Which zone such a reading is in is not established. A recorded time of 0 is treated as no "
+                  "time. Both columns are blank when the input holds neither. A zip entry's DOS date and time "
+                  "is shown as decoded, with no validity check, so an unset one reads 1980-00-00 00:00:00. File"
+                  " Modified (no zone, as stored) had no value on any row of the registered images in "
+                  "sample_data on a run of 2026-11-23. The reading was exercised on constructed FAT32, exFAT "
+                  "and DOS-only zip inputs under two examiner time zones. The UTC column was blank, the no-zone"
+                  " column showed the value decoded separately from the input for each file, and it did not "
+                  "change with the zone. The staged copy's own time is not reported. On hc_pixel8pro_a16 Upload"
+                  " Timestamp and Message Date Sent show the same second on all 7 attachment rows; the stored "
+                  "millisecond values are equal on 5 and differ on 2, and both are blank on the unreferenced "
+                  "file. Voice Note and Video GIF are identical on all 8 rows (No on the 7 attachment rows, "
+                  "blank on the unreferenced file). On pixel7a_a14 Detected Content Type held 'image/jpeg', "
+                  "Transfer State '0', Voice Note and Video GIF 'No' and Database Record 'Yes' on all 9 rows, "
+                  "and Thumbnail and Caption had no value on any row of any tested image, so the thumbnail "
+                  "decryption is not exercised; on sharon_a13 Direction held one value, Incoming, on all 30 "
+                  "rows. Reference: Signal-Android, 'MessageTypes.java', "
                   "https://github.com/signalapp/Signal-Android/blob/ad141bb6af88ef67aea05d3d0e55cf9760fe56eb/app/src/main/java/org/thoughtcrime/securesms/database/MessageTypes.java"),
         "paths": ('*/org.thoughtcrime.securesms/databases/signal.db*',
                   '*/org.thoughtcrime.securesms/app_parts/*',
@@ -292,23 +303,35 @@ __artifacts_v2__ = {
                         "(cache/image_manager_disk_cache) and shows them."),
         "author": "@kalink0",
         "creation_date": "2026-11-15",
-        "last_update_date": "2026-11-15",
+        "last_update_date": "2026-11-23",
         "requirements": "none",
         "category": "Signal",
         "notes": ("Signal encrypts its Glide image cache with the attachment modernKey from "
-                  "Secrets/secrets.json. A file counts as Decrypted only when Signal's encrypted "
-                  "check value matches; otherwise Status says why and the file is still listed. "
-                  "Without the key nothing is listed. A decrypted file of no recognised format "
-                  "has Status 'Decrypted, format not recognised' and Detected Content Type "
-                  "'unknown', and is still exported and linked: 117 of 439 rows on russell_a14, "
-                  "115 of 242 on russell_pixel6a_a13 and 1 of 96 on sharon_a13. Most of them are "
-                  "2 bytes long after decryption (66 bytes as stored, which is what Size (Bytes) "
-                  "shows) and hold GIF block bytes but no GIF header; why the cache holds them "
-                  "that way is not established. Cached files are not linked to a message or "
-                  "contact here: the file name is a hash Glide makes from its cache key, and the "
-                  "journal is not read. File Modified is the member time recorded in the zip or "
-                  "tar; for a folder input it is the copy's time on the examiner's disk. On "
-                  "pixel7a_a14 Status held 'Decrypted' on all 85 rows; on sharon_a14 Detected "
+                  "Secrets/secrets.json. A file counts as Decrypted only when Signal's encrypted check value "
+                  "matches; otherwise Status says why and the file is still listed. Without the key nothing is "
+                  "listed. A decrypted file of no recognised format has Status 'Decrypted, format not "
+                  "recognised' and Detected Content Type 'unknown', and is still exported and linked: 117 of "
+                  "439 rows on russell_a14, 115 of 242 on russell_pixel6a_a13 and 1 of 96 on sharon_a13. Most "
+                  "of them are 2 bytes long after decryption (66 bytes as stored, which is what Size (Bytes) "
+                  "shows) and hold GIF block bytes but no GIF header; why the cache holds them that way is not "
+                  "established. Cached files are not linked to a message or contact here. The file name does "
+                  "not name one, and the journal is not read. File Modified is the UTC modification time the "
+                  "tool reads from the input, such as from a zip entry, a tar header or the file system of a "
+                  "disk image; for a folder input it is the copy's time on the examiner's disk. When the tool "
+                  "reads no UTC modification time, File Modified is blank. If the input holds a date and time "
+                  "with no zone, File Modified (no zone, as stored) shows it as text, with no zone conversion. "
+                  "That is the case for a FAT directory entry, an exFAT directory entry (its stored UTC offset "
+                  "is not applied or shown here) and a zip entry from which no UTC modification time is read, "
+                  "for example one with only its DOS date and time, or with an extra field whose modification "
+                  "time is missing, 0 or unreadable. Which zone such a reading is in is not established. A "
+                  "recorded time of 0 is treated as no time. Both columns are blank when the input holds "
+                  "neither. A zip entry's DOS date and time is shown as decoded, with no validity check, so an "
+                  "unset one reads 1980-00-00 00:00:00. File Modified (no zone, as stored) had no value on any "
+                  "row of the registered images in sample_data on a run of 2026-11-23. The reading was "
+                  "exercised on constructed FAT32, exFAT and DOS-only zip inputs under two examiner time zones."
+                  " The UTC column was blank, the no-zone column showed the value decoded separately from the "
+                  "input for each file, and it did not change with the zone. The staged copy's own time is not "
+                  "reported. On pixel7a_a14 Status held 'Decrypted' on all 85 rows; on sharon_a14 Detected "
                   "Content Type held 'image/jpeg' on all 13 rows. Reference: Signal-Android, "
                   "'EncryptedCoder.java', "
                   "https://github.com/signalapp/Signal-Android/blob/ad141bb6af88ef67aea05d3d0e55cf9760fe56eb/app/src/main/java/org/thoughtcrime/securesms/glide/cache/EncryptedCoder.java"),
@@ -678,15 +701,49 @@ def _avatar_references(modern_key, avatar_files, container):
     return references
 
 
-def _file_modified(context, path):
-    """The modification time the extraction recorded for a file, as UTC, or ''."""
-    info = context.get_seeker().file_infos.get(path)
-    if not info or not info.modification_date:
+def _sec_to_utc(value):
+    if not value:
         return ''
     try:
-        return datetime.datetime.fromtimestamp(int(info.modification_date), datetime.timezone.utc)
-    except (TypeError, ValueError, OverflowError, OSError):
+        return datetime.datetime(1970, 1, 1, tzinfo=datetime.timezone.utc) + datetime.timedelta(seconds=value // 1)
+    except (ValueError, OverflowError, OSError, TypeError):
         return ''
+
+
+def _usable(value):
+    """Whether a recorded time is a nonzero, finite number."""
+    return isinstance(value, (int, float)) and value != 0 and value == value and abs(value) != float('inf')
+
+
+def _file_times(seeker, path):
+    """(UTC seconds, reading with no zone) the input records for a staged file.
+
+    The staged copy's own time is not used: for a FAT, exFAT or DOS-only zip reading it is
+    that reading placed in the examiner's time zone.
+    """
+    infos = getattr(seeker, 'file_infos', None) or {}
+    windows = str(path).replace('/', '\\')
+    bare = windows.removeprefix('\\\\?\\')
+    info = next((infos[name] for name in (str(path), windows, bare, '\\\\?\\' + bare)
+                 if name in infos), None)
+    times = getattr(info, 'times', None)
+    modified = getattr(times, 'modified', None)
+    if _usable(modified):
+        return modified, ''
+    # a reading with no zone comes before the older field, which is never read as its UTC time
+    reading = getattr(times, 'modified_no_zone', None)
+    if reading:
+        return None, reading
+    modified = getattr(info, 'modification_date', None)
+    if _usable(modified):
+        return modified, ''
+    return None, ''
+
+
+def _file_modified(context, path):
+    """(UTC modification time or '', reading with no zone or '') for a staged file."""
+    recorded, no_zone = _file_times(context.get_seeker(), path)
+    return _sec_to_utc(recorded), no_zone
 
 
 def _modern_key(context):
@@ -1350,11 +1407,13 @@ def get_signalAttachments(context):
             # so both views point at one copy.
             own_media = own_references.get(attachment_id, '')
             stored_path = stored_files.get((container, os.path.basename(row[5]))) if row[5] else None
+            file_modified, file_no_zone = _file_modified(context, stored_path) if stored_path else ('', '')
 
             data_list.append((
                 convert_unix_ts_to_utc(row[0]) if row[0] else '',
                 convert_unix_ts_to_utc(row[12]) if row[12] else '',
-                _file_modified(context, stored_path) if stored_path else '',
+                file_modified,
+                file_no_zone,
                 own_media,
                 thumbnails.get(attachment_id, ''),
                 row[2] or '',
@@ -1384,8 +1443,9 @@ def get_signalAttachments(context):
         if container not in read_containers:
             unread += 1
             continue
+        file_modified, file_no_zone = _file_modified(context, path)
         data_list.append((
-            '', '', _file_modified(context, path), '', '', '', '', '', os.path.getsize(path),
+            '', '', file_modified, file_no_zone, '', '', '', '', '', os.path.getsize(path),
             context.get_relative_path(path), '', '', '', '', '', '', '', '', '', 'No',
         ))
     if unread:
@@ -1400,6 +1460,7 @@ def get_signalAttachments(context):
         ('Message Date Sent', 'datetime'),
         ('Upload Timestamp', 'datetime'),
         ('File Modified', 'datetime'),
+        'File Modified (no zone, as stored)',
         ('Attachment', 'media'),
         ('Thumbnail', 'media'),
         'File Name',
@@ -1450,7 +1511,7 @@ def get_signalImageCache(context):
     if not modern_key:
         logfunc('Signal: no attachment modernKey available, so the image cache stays encrypted '
                 'and is not listed')
-        return (('File Modified', 'datetime'), ('Image', 'media'), 'Detected Content Type',
+        return (('File Modified', 'datetime'), 'File Modified (no zone, as stored)', ('Image', 'media'), 'Detected Content Type',
                 'Status', 'Size (Bytes)', 'Cache File'), [], ''
     sources = []
     for file_found in unique_files(context):
@@ -1474,8 +1535,10 @@ def get_signalImageCache(context):
                     force_type=mime, force_extension=extension)
         except (OSError, ValueError, TypeError) as error:
             status = f'Not decrypted: {error}'
+        file_modified, file_no_zone = _file_modified(context, file_found)
         data_list.append((
-            _file_modified(context, file_found),
+            file_modified,
+            file_no_zone,
             media,
             detected,
             status,
@@ -1485,6 +1548,7 @@ def get_signalImageCache(context):
 
     data_headers = (
         ('File Modified', 'datetime'),
+        'File Modified (no zone, as stored)',
         ('Image', 'media'),
         'Detected Content Type',
         'Status',
