@@ -1,12 +1,12 @@
 __artifacts_v2__ = {
     "get_chromeNetworkActionPredictor": {
-        "name": 'Network Action Predictor',
+        "name": 'Chromium - Network Action Predictor',
         "description": 'Parses the Network Action Predictor from Chromium Based Browsers',
         "author": 'Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex',
         "creation_date": '2020-03-19',
         "last_update_date": '2026-10-06',
         "requirements": 'none',
-        "category": 'Chromium',
+        "category": 'Browsers',
         "notes": 'Reads the network_action_predictor table from the Chromium profiles the declared paths match, one '
                   'storage view per file, and reports user_text, url, number_of_hits and number_of_misses as stored. '
                   'Selected Magisk mirror inputs are read consistently for every browser; no equality of their '

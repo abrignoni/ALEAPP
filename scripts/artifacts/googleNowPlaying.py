@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2020-03-22",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Now Playing",
+        "category": "Music, Video & News",
         "notes": "Protobuf fields are decoded by number; their meanings and the timestamp/duration "
                  "unit assumptions are not sourced. The existing SQL timestamp conversion and "
                  "duration display are retained, without a claim of listening or user presence. "

@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         'creation_date': '2025-11-20',
         'last_update_date': '2026-10-09',
         'requirements': 'none',
-        'category': 'Chats',
+        'category': 'Messaging',
         'notes': 'Every matched .db file other than settings.db that holds a message table is '
                  'read, one copy per storage view of the app directory, and the Source File '
                  'column names the database each row was read from. Where a '
@@ -31,7 +31,7 @@ __artifacts_v2__ = {
         'creation_date': '2026-11-16',
         'last_update_date': '2026-11-16',
         'requirements': 'none',
-        'category': 'Chats',
+        'category': 'Messaging',
         'notes': (
             'One row per row of the recents table in each .db file under com.beint.zangi/databases that holds '
             'one (files ending in settings.db are skipped; on the tested image the file name is a number). '
@@ -64,7 +64,7 @@ __artifacts_v2__ = {
         'creation_date': '2026-11-16',
         'last_update_date': '2026-11-16',
         'requirements': 'none',
-        'category': 'Chats',
+        'category': 'Messaging',
         'notes': (
             'One row per row of t_group in each Zangi account database, with its member rows from '
             't_chat_members (m_member_group_id equal to g_group_id) listed as m_chatjid with m_memberrole; '

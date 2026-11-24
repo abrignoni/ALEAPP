@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Roblox",
+        "category": "Music, Video & News",
         "notes": "Read from the LocalStorage appStorage.json key value store. The user id, username "
                  "and display name are reported from both stores that hold them, each in its own column: "
                  "UserId, Username and DisplayName in appStorage.json, and userid_long, username and "
@@ -48,7 +48,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "Roblox",
+        "category": "Music, Video & News",
         "notes": "Read from the PreviousAccountsList value of appStorage.json, which the app keys by "
                  "user id. signOutTimestamp is Unix seconds, unlike the millisecond account creation "
                  "value in the same file. An entry records an account in the client's "
@@ -69,7 +69,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "Roblox",
+        "category": "Music, Video & News",
         "notes": "One row per log file in files/appData/logs whose name has the form the client uses "
                  "(version, UTC timestamp, log type, identifier); a file named any other way is "
                  "skipped. The client names each file with the "
@@ -98,7 +98,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Roblox",
+        "category": "Music, Video & News",
         "notes": "Read from the client logs in files/appData/logs. A join is assembled from the join "
                  "line, which carries the game job id, the place id and the server address, and the "
                  "game_join_loadtime report line for the same place id in file order, which carries the "
@@ -140,7 +140,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "Roblox",
+        "category": "Music, Video & News",
         "notes": "Read from the notification_id table of the roblox-database-default Room database. "
                  "last_received_timestamp_ms is Unix milliseconds, as the column name states. The table "
                  "is read twice, once with its write ahead log applied and once ignoring it, and rows "
@@ -174,7 +174,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "Roblox",
+        "category": "Music, Video & News",
         "notes": "Read from the AXMarketplaceRecentSearches value of appStorage.json, which holds a user "
                  "id and a list of terms. The value carries no timestamp, so no date is reported and the "
                  "order of the list is preserved as stored rather than being described as most recent "
@@ -196,7 +196,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "Roblox",
+        "category": "Music, Video & News",
         "notes": "One row per property of the UserGameSettings item in "
                  "files/appData/GlobalBasicSettings_13.xml, which the client writes in Roblox's own XML "
                  "model format. The property name, its declared XML type and its value are reported as "
@@ -222,7 +222,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "Roblox",
+        "category": "Music, Video & News",
         "notes": "Read from the PolicyServiceHttpResponse value of appStorage.json. This is a server "
                  "response the client cached, so it records the policy the service returned for the "
                  "account rather than a choice the user made. The value carries no timestamp of its own, "
@@ -241,7 +241,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "Roblox",
+        "category": "Music, Video & News",
         "notes": "One row per preference from the app's small shared_prefs files. "
                  "AppFirstLaunchTime and PREF_TIME_OF_ABSOLUTE_FIRST_LAUNCH are Unix "
                  "milliseconds and are converted; every other value is reported as stored. "

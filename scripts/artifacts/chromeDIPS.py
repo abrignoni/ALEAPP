@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-04-07",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Chromium",
+        "category": "Browsers",
         "notes": "",
         "paths": ('*/app_chrome/Default/DIPS*', '*/app_sbrowser/Default/DIPS*', '*/app_opera/DIPS*', '*/app_webview/Default/DIPS*'),
         "output_types": "standard",

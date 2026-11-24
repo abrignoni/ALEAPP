@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-04-27",
         "last_update_date": "2026-11-23",
         "requirements": "none",
-        "category": "Google Maps Voice Guidance",
+        "category": "Locations & Maps",
         "notes": (
             "Timestamp Modified is the modification time the tool reads from the input for the file as a "
             "UTC time, to the whole second, such as from a tar header, a zip entry's NTFS (0x000a) or "

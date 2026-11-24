@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
         "requirements": "none",
-        "category": "CamScanner",
+        "category": "Cloud & Files",
         "sample_data": {
             "emu_a15_oss_v12": "CamScanner 7.24.5 | 1 rows",
         },
@@ -37,7 +37,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "CamScanner",
+        "category": "Cloud & Files",
         "sample_data": {
             "emu_a15_oss_v12": "CamScanner 7.24.5 | 13 rows",
         },

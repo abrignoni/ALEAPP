@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-06",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "GalleryVault",
+        "category": "Photos & Media",
         "notes": "Each vault object is a 2803-byte decoy PNG, followed by the tail of the original file, "
                  "followed by a trailer bounded by the markers >>tyfs>> and <<tyfs<<. The trailer holds "
                  "the relocated first 2803 bytes of the original, the original size, a DES-ECB wrapped XOR"
@@ -48,7 +48,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-06",
         "last_update_date": "2026-11-12",
         "requirements": "none",
-        "category": "GalleryVault",
+        "category": "Photos & Media",
         "notes": "The file_v1 table can be empty while encrypted objects remain on external "
                  "storage; compare against the GalleryVault - Vault Files artifact."
                  " Android User is read from the path of the database the row came from: data/data is user 0 and data/user/<n> is user <n>; it is blank when the path names no user.",
@@ -67,7 +67,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-06",
         "last_update_date": "2026-11-12",
         "requirements": "none",
-        "category": "GalleryVault",
+        "category": "Photos & Media",
         "notes": "The folder type labels come from the names the app gives its own default "
                  "folders in this table; a type of 0 matched no default folder name and is "
                  "labelled 'User created', a reading that is not sourced. A column the store "
@@ -92,7 +92,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-06",
         "last_update_date": "2026-11-12",
         "requirements": "none",
-        "category": "GalleryVault",
+        "category": "Photos & Media",
         "notes": "One row per selected break_in_report query result, ordered by timestamp within each "
                  "selected galleryvault.db; all returned occurrences are retained. wrongly_attempt_code "
                  "(as stored) and is_new (as stored) retain their selected values and types without "
@@ -121,7 +121,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-06",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "GalleryVault",
+        "category": "Photos & Media",
         "notes": "File names follow PS_YYYYMMDD_HHMMSS. The time in the file name carries no "
                  "zone and is reported as text in the File Name Time column, as written in the "
                  "name. The zone the app uses for the name was not sourced, and that the time "
@@ -145,7 +145,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-06",
         "last_update_date": "2026-11-12",
         "requirements": "none",
-        "category": "GalleryVault",
+        "category": "Photos & Media",
         "notes": "Android User is read from the path of the database the row came from: data/data is user 0 and data/user/<n> is user <n>; it is blank when the path names no user.",
         "paths": ('*/com.thinkyeah.galleryvault/databases/AppLock.db*',),
         "output_types": "standard",
@@ -162,7 +162,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-06",
         "last_update_date": "2026-11-12",
         "requirements": "none",
-        "category": "GalleryVault",
+        "category": "Photos & Media",
         "notes": "Android User is read from the path of the database the row came from: data/data is user 0 and data/user/<n> is user <n>; it is blank when the path names no user.",
         "paths": ('*/com.thinkyeah.galleryvault/databases/AppLock.db*',),
         "output_types": "standard",
@@ -181,7 +181,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-06",
         "last_update_date": "2026-11-12",
         "requirements": "none",
-        "category": "GalleryVault",
+        "category": "Photos & Media",
         "notes": "Android User is read from the path of the database the row came from: data/data is user 0 and data/user/<n> is user <n>; it is blank when the path names no user.",
         "paths": ('*/com.thinkyeah.galleryvault/databases/galleryvault.db*',),
         "output_types": "standard",
@@ -198,7 +198,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-06",
         "last_update_date": "2026-11-12",
         "requirements": "none",
-        "category": "GalleryVault",
+        "category": "Photos & Media",
         "notes": "Visit Count and the timestamps are reported as stored. Whether the table holds "
                  "entries the app ships with was not sourced, so a row is not by itself evidence "
                  "that the page was opened on the device."
@@ -218,7 +218,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-06",
         "last_update_date": "2026-11-12",
         "requirements": "none",
-        "category": "GalleryVault",
+        "category": "Photos & Media",
         "notes": "A column the store version does not have is reported empty."
                  " Android User is read from the path of the database the row came from: data/data is user 0 and data/user/<n> is user <n>; it is blank when the path names no user.",
         "paths": ('*/com.thinkyeah.galleryvault/databases/galleryvault.db*',),
@@ -238,7 +238,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-06",
         "last_update_date": "2026-11-12",
         "requirements": "none",
-        "category": "GalleryVault",
+        "category": "Photos & Media",
         "notes": "The export_unhidden_history table can be absent; when it is, no rows are "
                  "reported."
                  " Android User is read from the path of the database the row came from: data/data is user 0 and data/user/<n> is user <n>; it is blank when the path names no user.",
@@ -259,7 +259,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-06",
         "last_update_date": "2026-11-12",
         "requirements": "none",
-        "category": "GalleryVault",
+        "category": "Photos & Media",
         "notes": "Android User is read from the path of the database the row came from: data/data is user 0 and data/user/<n> is user <n>; it is blank when the path names no user.",
         "paths": ('*/com.thinkyeah.galleryvault/databases/galleryvault.db*',),
         "output_types": "standard",
@@ -278,7 +278,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-06",
         "last_update_date": "2026-11-12",
         "requirements": "none",
-        "category": "GalleryVault",
+        "category": "Photos & Media",
         "notes": "Two copies of file_action_log.db are read: the one in the backup folder of "
                  "the vault on shared storage (Store: Vault backup) and the one in the app's own "
                  "databases folder (Store: App database). Every row of both is reported, so a row "
@@ -315,7 +315,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-13",
         "last_update_date": "2026-11-12",
         "requirements": "none",
-        "category": "GalleryVault",
+        "category": "Photos & Media",
         "notes": (
             "Each row gives a label chosen for this report together with the original "
             "shared_prefs key. The labels are readings of the key names and are not sourced; "
@@ -356,7 +356,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-13",
         "last_update_date": "2026-09-12",
         "requirements": "none",
-        "category": "GalleryVault",
+        "category": "Photos & Media",
         "notes": (
             "GalleryVault stores its account fields DES-ECB encrypted in AccountProfile.xml. "
             "The 8-byte key is the first eight characters of the last_android_id value in "
@@ -407,7 +407,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-11-12",
         "requirements": "none",
-        "category": "GalleryVault",
+        "category": "Photos & Media",
         "notes": (
             "drive_account_id is the account identifier stored for the cloud provider, reported "
             "as stored. What the identifier refers to was not sourced. Whether any vault "
@@ -427,7 +427,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-11-12",
         "requirements": "none",
-        "category": "GalleryVault",
+        "category": "Photos & Media",
         "notes": "Rows are the cloud_folders table entries with parent paths resolved from the "
                  "same table."
                  " Android User is read from the path of the database the row came from: data/data is user 0 and data/user/<n> is user <n>; it is blank when the path names no user.",
@@ -445,7 +445,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-11-12",
         "requirements": "none",
-        "category": "GalleryVault",
+        "category": "Photos & Media",
         "notes": (
             "file_encryption_key is reported as stored; it is a per-file value distinct from the DES "
             "key used elsewhere in this parser, and what it encrypts was not sourced. is_complete (as"
@@ -473,7 +473,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-11-12",
         "requirements": "none",
-        "category": "GalleryVault",
+        "category": "Photos & Media",
         "notes": (
             "Change Action Value is presented as the raw numeric code recorded by the "
             "app; the meaning of the codes was not sourced. Entry Type shows 1 as 'Folder' "
@@ -496,7 +496,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-11-12",
         "requirements": "none",
-        "category": "GalleryVault",
+        "category": "Photos & Media",
         "notes": (
             "Task State, Task Error Code, File Bytes Uploaded and File Bytes Total are reported "
             "as stored; the meaning of the state and error codes was not sourced, and a row here "

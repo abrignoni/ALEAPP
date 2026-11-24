@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "Fossify Gallery",
+        "category": "Photos & Media",
         "notes": "One row per entry in the media table of databases/gallery.db. This table is the app's own "
                  "index of media files, and it carries a Favorite flag, a recycle bin deletion "
                  "time and a recorded date taken. Each row carries the Filename and Full Path as "

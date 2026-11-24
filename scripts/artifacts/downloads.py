@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-01-09",
         "last_update_date": "2026-11-22",
         "requirements": "none",
-        "category": "Downloads",
+        "category": "Cloud & Files",
         "notes": "Last Modified Timestamp is the lastmod column read as Unix milliseconds. Android's public DownloadManager documents its last modified column as 'Timestamp when the download was last modified, in System.currentTimeMillis() (wall clock time in UTC)'. Reference: Android Developers, 'DownloadManager.COLUMN_LAST_MODIFIED_TIMESTAMP', https://developer.android.com/reference/android/app/DownloadManager#COLUMN_LAST_MODIFIED_TIMESTAMP. Status is the status column as stored; no source for the status codes is given here. Deleted shows Yes when the deleted column is 1 and is blank when it is 0. Download URI is the uri column and Initiating App Package is the notificationpackage column. Reference: AOSP, Downloads.java, https://android.googlesource.com/platform/frameworks/base/+/1cdfff555f4a21f71ccc978290e2e212e2f8b168/core/java/android/provider/Downloads.java#138.",
         "paths": ('*/data/com.android.providers.downloads/databases/downloads.db*'),
         "output_types": "standard",

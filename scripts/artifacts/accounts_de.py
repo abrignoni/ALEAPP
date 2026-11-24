@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2020-03-02",
         "last_update_date": "2026-11-23",
         "requirements": "none",
-        "category": "Accounts",
+        "category": "Accounts & Credentials",
         "notes": "One row per debug_table row. The platform keeps at most 64 debug rows per user "
                  "database. Once the table is full, each new entry replaces an existing row. After the service starts, the first replaced row is the one with the earliest time string, and later entries replace the rows that follow it in key order, wrapping at 64 (https://github.com/aosp-mirror/platform_frameworks_base/blob/299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/services/core/java/com/android/server/accounts/AccountsDb.java#L142, #L1300-L1329 and #L1357-L1364; the file is identical at tags android-10.0.0_r1, "
                  "android-13.0.0_r1, android-14.0.0_r1 and android-16.0.0_r1). A missing action "

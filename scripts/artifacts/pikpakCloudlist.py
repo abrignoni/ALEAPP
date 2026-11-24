@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-03-24",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "PikPak",
+        "category": "Cloud & Files",
         "notes": "Each matched pikpak_files_*.db is read once per storage view. A Source "
                  "File column is added when rows come from more than one database. A "
                  "database that cannot be queried is named in the run log and skipped. "

@@ -13,7 +13,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-11-23",
         "requirements": "none",
-        "category": "Samsung IMS Service",
+        "category": "Device Information",
         "notes": "Read from com.sec.imsservice/shared_prefs/saved_impu.xml, which holds saved entries, each "
                  "a key and an IMS public user identity. IMSI (as stored) is the map key, 15 digits on all 10 rows. "
                  "On anne_a15 its visible digits match the partly masked IMSI token in the SIM manager log. On cookbook_a11 the SIM manager log shows the token with all 15 digits, and it equals the key. No other image showed digits in that token. galaxys10_a10 has no SIM manager log. IMPU (as stored) is the SIP or TEL URI. IMPU User Part is the text after the URI's "
@@ -48,7 +48,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-11-22",
         "requirements": "none",
-        "category": "Samsung IMS Service",
+        "category": "Device Information",
         "notes": "Read from com.sec.imsservice/files/RegiMgr.log, Samsung's IMS registration log. Each line is "
                  "'MM/DD/YYYY HH:MM:SS.mmm   message' with no time zone recorded. That the clock is device local time is not "
                  "measured or sourced in this field. Log Time (no zone recorded) is the stored reading rewritten "
@@ -90,7 +90,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-11-22",
         "requirements": "none",
-        "category": "Samsung IMS Service",
+        "category": "Device Information",
         "notes": "Read from com.sec.imsservice/files/PdnController.log, Samsung's IMS packet data network log, "
                  "with the same no-time-zone timestamps as the registration log, reported as text. One row per line "
                  "that begins with a date and time, whatever the line reports. Interface (as stored) is the name "
@@ -126,7 +126,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-11-23",
         "requirements": "none",
-        "category": "Samsung IMS Service",
+        "category": "Device Information",
         "notes": "Read from com.sec.imsservice/files/SimManager_slot*.log, or SimManager.log on cookbook_a11, Samsung's IMS SIM manager log, with the "
                  "same no-time-zone timestamps as the registration log, reported as text. One row per line that begins with a date and time, whatever the line reports; "
                  "3,021 of the 3,485 rows have MNO Name and MVNO Name blank. MNO Name (as stored) is the text after "
@@ -161,7 +161,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-11-22",
         "requirements": "none",
-        "category": "Samsung IMS Service",
+        "category": "Device Information",
         "notes": "Collects the '> Created (pid: N, binary: X)' lines found anywhere in the com.sec.imsservice logs, "
                  "with the same no-time-zone timestamp as the registration log, reported as text. On the 9 tested "
                  "images that held these logs, 8 of 344 distinct log files had no such line, and 256 of the 6,407 "

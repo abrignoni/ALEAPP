@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2020-02-02",
         "last_update_date": "2026-08-01",
         "requirements": "none",
-        "category": "Digital Wellbeing",
+        "category": "Device Activity",
         "notes": (
             "Event Type shows the UsageEvents.Event constant whose value matches the stored "
             "numeric 'type' field; the names shown are those for values 1, 2, 12, 18, 19, 20, 23, "
@@ -39,7 +39,7 @@ __artifacts_v2__ = {
         "creation_date": "2020-02-02",
         "last_update_date": "2026-08-10",
         "requirements": "none",
-        "category": "Digital Wellbeing",
+        "category": "Device Activity",
         "notes": (
             "Component Name is the components.component_name value stored for the event. Event "
             "shows ACTIVITY_RESUMED for a stored type of 1 and ACTIVITY_PAUSED for 2, the "

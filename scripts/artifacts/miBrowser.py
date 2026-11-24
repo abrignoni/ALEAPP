@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "Mi Browser",
+        "category": "Browsers",
         "notes": "com.mi.globalbrowser is the Mi Browser package. date and created are Unix "
                  "milliseconds. Visits is the table's own counter, so one row can stand for "
                  "several visits and the row count is not a count of page views. The "
@@ -35,7 +35,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "Mi Browser",
+        "category": "Browsers",
         "notes": "The table is named mostvisited but its type column distinguishes the rows: on "
                  "the corpus below 39 of 40 rows had type search and one had type website. "
                  "Title and URL are reported as stored. That a search row's Title is the "
@@ -62,7 +62,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "Mi Browser",
+        "category": "Browsers",
         "notes": "createtime, update_time and ordertime are Unix milliseconds. Local URI and "
                  "Referer are the localuri and referer columns as stored. Status and the two "
                  "size columns are reported as stored; no "

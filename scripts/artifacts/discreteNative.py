@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-01-19",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Privacy Dashboard",
+        "category": "Device Activity",
         "notes": "Op 1 is shown as Fine Location, op 26 as Camera and op 27 as Microphone; AOSP "
                  "names them FINE_LOCATION, CAMERA and RECORD_AUDIO. Any other op is shown as its "
                  "stored number. References: AOSP AppOpsManager.java at tag "

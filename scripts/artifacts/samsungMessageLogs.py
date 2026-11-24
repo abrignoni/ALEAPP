@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-16",
         "last_update_date": "2026-11-16",
         "requirements": "none",
-        "category": "SMS & MMS",
+        "category": "Messaging",
         "notes": "One row per row of the calls table in com.samsung.android.providers.contacts/databases/"
                  "calllog.db whose logtype is 300 or 200. The Call logs artifact leaves these rows out. "
                  "Message Type maps logtype 300 to SMS and 200 to MMS, and Direction maps type 1 and 2 to "

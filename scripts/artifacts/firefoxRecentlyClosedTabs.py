@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-01-12",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Firefox",
+        "category": "Browsers",
         "notes": (
             "Created At is the created_at column of the recently_closed_tabs table, stored as "
             "milliseconds since 1970 UTC and shown here as UTC. The column name does not say what "

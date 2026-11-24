@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-10-23",
         "requirements": "none",
-        "category": "Discord Chats",
+        "category": "Messaging",
         "notes": "Read from cache/http-cache, an OkHttp DiskLruCache: <hash>.0 holds the URL, status line and "
                  "response headers, <hash>.1 the body, gzip-compressed when the Content-Encoding header says so "
                  "(OkHttp Cache.kt Entry.writeTo at release parent-5.5.0). Each channels/<id>/messages response is "
@@ -71,7 +71,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
         "requirements": "none",
-        "category": "Discord Chats",
+        "category": "Messaging",
         "notes": "Read from the same cache as the Cached Messages artifact. The cache holds the "
                  "response to a profile request, so a row records that the profile was fetched "
                  "at the Cached time, not who the account holder is or why it was fetched. "
@@ -102,7 +102,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
         "requirements": "none",
-        "category": "Discord Chats",
+        "category": "Messaging",
         "notes": "One row per <hash>.0 metadata file in cache/http-cache whose first line is a URL. Sent and "
                  "Received are the OkHttp-Sent-Millis and OkHttp-Received-Millis headers OkHttp writes into the "
                  "entry (Unix milliseconds; present on all 317 entries of the tested images). "

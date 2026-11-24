@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "Syncthing",
+        "category": "Cloud & Files",
         "notes": "One row per device element in files/config.xml, which lists the devices in the "
                  "configuration, the local device included. Each row carries the Device ID, the "
                  "Name, its configured addresses, whether it is paused or marked untrusted, the "
@@ -37,7 +37,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "Syncthing",
+        "category": "Cloud & Files",
         "notes": "One row per folder element in files/config.xml. Each row gives the folder's ID, the "
                  "Label and the Path the configuration stores for it, the folder Type as stored, "
                  "whether it is paused, the rescan interval, and Shared With, the devices named under "

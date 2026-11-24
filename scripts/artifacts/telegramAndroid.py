@@ -17,7 +17,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-03",
         "last_update_date": "2026-11-17",
         "requirements": "none",
-        "category": "Telegram",
+        "category": "Messaging",
         "notes": (
             'The data column holds a TL-serialised TLRPC message object. Each cache4.db matched at files/'
             ' or at files/account1 to files/account3 of an org.telegram.messenger package is read, one '
@@ -268,7 +268,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Telegram",
+        "category": "Messaging",
         "notes": (
             'The client writes a row from putPushMessage for a message that reached it as a push '
             "notification, from Firebase or Huawei push (the client's flag for both is named FCM). "
@@ -387,7 +387,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-03",
         "last_update_date": "2026-10-07",
         "requirements": "none",
-        "category": "Telegram",
+        "category": "Messaging",
         "notes": (
             'Both tables store their values as plain text. They are joined on the key column, so one '
             'contact can carry several phone numbers. A phone row whose deleted column is set is not '
@@ -449,7 +449,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-03",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Telegram",
+        "category": "Messaging",
         "notes": (
             'The query selects uid, name and status from users in each cache4.db read. The existing name '
             "rendering splits on ';;;', strips the first component as Display Name and the final "
@@ -507,7 +507,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-03",
         "last_update_date": "2026-11-16",
         "requirements": "none",
-        "category": "Telegram",
+        "category": "Messaging",
         "notes": (
             'The did column is the dialog peer id. It is looked up as stored in the users and chats '
             'tables for a name; where an id is in both tables the chats name is used when it is not '
@@ -566,7 +566,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-04",
         "last_update_date": "2026-11-16",
         "requirements": "none",
-        "category": "Telegram",
+        "category": "Messaging",
         "notes": (
             'Telegram supports several accounts on one device; slot 0 is stored in userconfing.xml, '
             'spelled that way by the client, and slots 1 to 3 in userconfig1.xml through userconfig3.xml.'
@@ -639,7 +639,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-04",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Telegram",
+        "category": "Messaging",
         "notes": (
             'The info column holds a TL user full record. Across the record versions this parser covers, '
             'the about field follows the id and precedes the nested objects, so it is read directly; '
@@ -698,7 +698,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-04",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Telegram",
+        "category": "Messaging",
         "notes": (
             'The info column is passed to the existing partial TL chat/channel decoder; names are '
             'resolved from chats and the output Chat ID remains the SQL uid, not the discarded inner TL '
@@ -762,7 +762,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-04",
         "last_update_date": "2026-10-07",
         "requirements": "none",
-        "category": "Telegram",
+        "category": "Messaging",
         "notes": "Keys are <prefix>_save_gallery_photo, <prefix>_save_gallery_video and "
                  "<prefix>_save_gallery_limitVideo, where the prefix is user, groups or channels. Video "
                  "Size Limit reports a nonempty decoded string unchanged, including '0' and whitespace; an"
@@ -807,7 +807,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-05",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Telegram",
+        "category": "Messaging",
         "notes": (
             'The dialog id, user id and date columns are stored as plain integers and are reported as '
             'such. The client sets date to the time it cached the participant list and lowers it by one '
@@ -850,7 +850,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-05",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Telegram",
+        "category": "Messaging",
         "notes": (
             'The did, rating and date columns are stored as plain values. The type column is reported as '
             'stored because its values are not documented in the client source that was checked. The '
@@ -897,7 +897,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-05",
         "last_update_date": "2026-11-23",
         "requirements": "none",
-        "category": "Telegram",
+        "category": "Messaging",
         "notes": "The client names each log <call id>.log and each statistics log <call id>_stats.log "
                  "(Reference: Telegram-Android, 'VoIPHelper.java (getLogFilePath)', "
                  "https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/ui/Components/voip/VoIPHelper.java#L795-L816)."
@@ -950,7 +950,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-03",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Telegram",
+        "category": "Messaging",
         "notes": (
             'Each preset is an underscore-separated string. The first four values are auto-download masks'
             ' for contacts, other private chats, groups and channels in that order, and each mask is a '

@@ -17,7 +17,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-17",
         "last_update_date": "2026-11-17",
         "requirements": "none",
-        "category": "Samsung Voice Recorder",
+        "category": "Photos & Media",
         "notes": (
             "Read from the recording_items table of "
             "com.sec.android.app.voicenote/databases/label.db with its -wal. Rows without a "
@@ -89,7 +89,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-17",
         "last_update_date": "2026-11-17",
         "requirements": "none",
-        "category": "Samsung Voice Recorder",
+        "category": "Photos & Media",
         "notes": (
             "Read from the recent_search table (LABEL, TIME) of "
             "com.sec.android.app.voicenote/databases/label.db. On "

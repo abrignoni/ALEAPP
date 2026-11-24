@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-06-13",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Samsung SmartThings",
+        "category": "Smart Home & Connected Devices",
         "notes": "The first column is the devices table's timeStamp column, read as Unix milliseconds and shown as UTC. What event that value marks is not established, and the column carries the stored field's name for that reason. No registered corpus holds this database (20 zip listings and 24 tar indexes checked on 2026-10-04), so the millisecond reading is the module's existing conversion and was not measured.",
         "paths": ('*/com.samsung.android.oneconnect/databases/QcDB.db*',),
         "output_types": "standard",

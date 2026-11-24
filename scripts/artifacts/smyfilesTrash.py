@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-06-05",
         "last_update_date": "2024-06-05",
         "requirements": "none",
-        "category": "My Files",
+        "category": "Cloud & Files",
         "notes": "Deletion Timestamp is reported as stored; the My Files Operation History "
                  "artifact reads a separate record of file operations that can be compared with "
                  "it.",

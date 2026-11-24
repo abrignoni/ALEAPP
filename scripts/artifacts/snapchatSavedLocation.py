@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-18",
         "last_update_date": "2026-11-18",
         "requirements": "none",
-        "category": "Snapchat",
+        "category": "Messaging",
         "notes": "Read from com.snapchat.android/files/MixerLocationStore.proto, a single "
                  "protobuf message decoded with the vendored blackboxprotobuf and the field "
                  "types the app's own message class uses. Sources are the app's decompiled "

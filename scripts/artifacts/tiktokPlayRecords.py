@@ -9,7 +9,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-17",
         "last_update_date": "2026-11-17",
         "requirements": "none",
-        "category": "TikTok",
+        "category": "Social Media",
         "notes": "Read from the AWEME_READ_RECORD and FOLLOWING_READ_RECORD tables of "
                  "databases/aweme_record (a Room database, AwemeRecordDatabase in "
                  "com.ss.android.ugc.aweme.friendstab.db), with its write-ahead log when one "

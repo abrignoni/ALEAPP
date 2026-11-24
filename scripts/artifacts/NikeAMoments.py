@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-03-18",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Nike-Run",
+        "category": "Health & Fitness",
         "notes": "One row per activity_moment row, ordered by activity and stored timestamp. "
                  "Moment Type and Value are as stored; their app meanings and units are "
                  "unverified, so no derived action or distance label is added. Timestamp "

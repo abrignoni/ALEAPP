@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-06",
         "requirements": "none",
-        "category": "Permissions",
+        "category": "Installed Apps",
         "notes": "A row is an op element in system/appops.xml carrying a stored mode, with the package or the "
                  "UID that mode is stored against. Two shapes are read. From Android 14 the file holds uid "
                  "elements directly under the root and package modes under a user element per Android user, "

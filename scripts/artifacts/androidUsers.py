@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-03",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Device Users",
+        "category": "Device Information",
         "notes": "Read from the user records the platform keeps under the system users folder: "
                  "the userlist.xml index and one <id>.xml file per user, each read as ABX binary "
                  "XML or plain XML according to the file's own header. User records are reported "

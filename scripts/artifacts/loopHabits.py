@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-01",
         "last_update_date": "2026-09-01",
         "requirements": "none",
-        "category": "Loop Habit Tracker",
+        "category": "Health & Fitness",
         "sample_data": {
             "emu_a15_oss_v5": "Loop Habit Tracker 2.3.1 | 1 rows",
         },
@@ -41,7 +41,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-01",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Loop Habit Tracker",
+        "category": "Health & Fitness",
         "sample_data": {
             "emu_a15_oss_v5": "Loop Habit Tracker 2.3.1 | 2 rows",
         },

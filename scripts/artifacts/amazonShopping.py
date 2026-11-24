@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
-        "category": "Amazon Shopping",
+        "category": "Shopping & Marketplaces",
         "notes": "Dorai, Hutchinson, Rodriguez and Karabiyik describe the accounts table "
                  "as holding the accounts used with the app and userdata as holding "
                  "per-account details (name, username, account id, device name and "
@@ -40,7 +40,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
-        "category": "Amazon Shopping",
+        "category": "Shopping & Marketplaces",
         "notes": "Dorai, Hutchinson, Rodriguez and Karabiyik describe last_seen_account in "
                  "account_change_observer.xml as the account id of the last account signed "
                  "into the app, and MobileGrowthMetricsDataStore.xml as recording the last "
@@ -71,7 +71,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
-        "category": "Amazon Shopping",
+        "category": "Shopping & Marketplaces",
         "notes": "Reads the FileCacheRegistry table as stored. No tested image carried "
                  "this database, so the artifact is code present and unexercised: the "
                  "table's role, the millisecond unit assumed for the three time "
@@ -93,7 +93,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Amazon Shopping",
+        "category": "Shopping & Marketplaces",
         "notes": "Each file in app_mashWebViewState is named <unix ms>MASHWebFragment<n> "
                  "and holds a base64 wrapped, gzip compressed Android saved-state parcel. "
                  "The parcel format is not parsed. One row per existing regex match includes "

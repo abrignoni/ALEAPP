@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-03-25",
         "last_update_date": "2023-03-25",
         "requirements": "Python 3.7 or higher",
-        "category": "Map-My-Walk",
+        "category": "Health & Fitness",
         "notes": "",
         "paths": ('*com.mapmywalk.android2/databases/mmdk_user*',),
         "output_types": "standard",

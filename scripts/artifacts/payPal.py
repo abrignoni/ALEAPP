@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "PayPal",
+        "category": "Finance & Payments",
         "notes": "One row per session recorded in the tracking store. The store holds one "
                  "row per event, and events are grouped onto their session rather than "
                  "listed, and event content is not reported: each row carries an "
@@ -36,7 +36,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "PayPal",
+        "category": "Finance & Payments",
         "notes": "One row per app data directory. The elmo_cache_time column is the elmo_cache_time "
                  "value of PayPal.xml, read as Unix milliseconds and shown in UTC. What the app "
                  "records at that time is not established here. The account itself is not "

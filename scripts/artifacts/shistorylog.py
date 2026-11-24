@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-02-27",
         "last_update_date": "2026-11-17",
         "requirements": "sqlite",
-        "category": "Samsung History Log",
+        "category": "Device Activity",
         "notes": (
             "The timestamp column is text with no zone recorded. Timestamp shows that text as "
             "stored, with no conversion, and it is not typed as a date and time. Known data "

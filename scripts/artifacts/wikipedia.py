@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "Wikipedia",
+        "category": "Music, Video & News",
         "notes": "One row per article visit in the HistoryEntry table of databases/wikipedia.db, "
                  "joined to the PageImage table for the same article. Each row records that the client "
                  "opened an article, with the Timestamp stored for that visit, the article title, "
@@ -45,7 +45,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "Wikipedia",
+        "category": "Music, Video & News",
         "notes": "One row per query in the RecentSearch table of databases/wikipedia.db. Each row is a "
                  "term entered into the app's search, with the Timestamp stored on that row, Unix "
                  "milliseconds reported as UTC. The app declares the term as the table's primary "

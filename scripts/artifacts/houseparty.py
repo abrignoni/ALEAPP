@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-02",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Houseparty",
+        "category": "Calls & Contacts",
         "notes": "Read from class_RealmNote in the app's Realm store with the vendored "
                  "realm_parser. Houseparty was a group video chat app; its publisher announced on "
                  "9 September 2021 that it would be pulled from the app stores that day and "
@@ -62,7 +62,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-02",
         "last_update_date": "2026-09-04",
         "requirements": "none",
-        "category": "Houseparty",
+        "category": "Calls & Contacts",
         "notes": "Read from class_RealmRoom in the app's Realm store, with the session joined "
                  "from class_RealmRoomSession through the row's own realmRoomSession link and the "
                  "server host joined from class_RealmMediaServerEndpoint through the session's "
@@ -96,7 +96,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-02",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Houseparty",
+        "category": "Calls & Contacts",
         "notes": "Read from class_RealmUser in the app's Realm store, with the settings joined "
                  "from class_RealmUserSettings through the row's own realmUserSettings link and "
                  "the session dates from class_RealmToken matched on the account id. These are "
@@ -127,7 +127,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-02",
         "last_update_date": "2026-09-02",
         "requirements": "none",
-        "category": "Houseparty",
+        "category": "Calls & Contacts",
         "notes": "Read from class_RealmPublicUser in the app's Realm store, with presence "
                  "joined from class_RealmUserPresence through the row's own userPresence link "
                  "and the relationship, together-minutes and last-interaction values joined "
@@ -155,7 +155,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-02",
         "last_update_date": "2026-09-02",
         "requirements": "none",
-        "category": "Houseparty",
+        "category": "Calls & Contacts",
         "notes": "Read from class_RealmInteraction in the app's Realm store. From and To are "
                  "resolved to the user name class_RealmPublicUser records for that id, falling "
                  "back to the id as stored. Interaction Type is an integer the store does not "

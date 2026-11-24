@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-17",
         "last_update_date": "2026-08-17",
         "requirements": "none",
-        "category": "Private Photo Vault",
+        "category": "Photos & Media",
         "notes": "No email or password account fields were found in this preferences file; these "
                  "values are counters kept in the app's preferences, not a user identity. 'Key "
                  "Event Count' and 'Last Key Event' come from a preference the app calls "
@@ -36,7 +36,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-17",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Private Photo Vault",
+        "category": "Photos & Media",
         "notes": "Read from the app's own ppv.db, opened read-only alongside "
                  "its write-ahead log (ppv.db-wal) so that any transaction "
                  "committed to the log but not yet checkpointed into the main "
@@ -67,7 +67,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-17",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Private Photo Vault",
+        "category": "Photos & Media",
         "notes": "Read the same way as Private Photo Vault - Albums, including "
                  "the write-ahead log. The image and video content behind each row was not "
                  "recovered: on the device this was validated "

@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-05-05",
         "last_update_date": "2026-08-10",
         "requirements": "none",
-        "category": "Samsung CMH",
+        "category": "Photos & Media",
         "notes": "Rows come from the tag_map join table in cmh.db: each row is one label the "
                  "provider recorded against one file, with the label text from the tags table "
                  "and the file path and dates from the files table. Tag Type is the tags "
@@ -38,7 +38,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-05-05",
         "last_update_date": "2026-08-10",
         "requirements": "none",
-        "category": "Samsung CMH",
+        "category": "Photos & Media",
         "notes": "Rows come from the ocr_tag table in cmh.db, joined to the files table on "
                  "fk_file_id. Recognised Text is the stored image_ocr_tag value; the provider "
                  "separates the segments it read with 0x1F unit separators, which are shown "
@@ -68,7 +68,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-10",
         "last_update_date": "2026-08-10",
         "requirements": "none",
-        "category": "Samsung CMH",
+        "category": "Photos & Media",
         "notes": "Rows are the tag_map entries whose scene_qr_barcode_info column is "
                  "populated, joined to the files table. The value is reported exactly as "
                  "stored and is not decoded, resolved or requested; a stored URL is text in "
@@ -97,7 +97,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-05-05",
         "last_update_date": "2026-08-10",
         "requirements": "none",
-        "category": "Samsung CMH",
+        "category": "Photos & Media",
         "notes": "Rows come from the usertag table in cmh.db. The table has more than one "
                  "generation: newer databases carry fk_sec_media_id and timestamp, which give "
                  "the linked file and a millisecond timestamp reported as UTC; the older "

@@ -9,7 +9,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-17",
         "last_update_date": "2026-11-17",
         "requirements": "none",
-        "category": "Beats",
+        "category": "Smart Home & Connected Devices",
         "notes": "Read from the Room table table_property_model in "
                  "com.apple.bnd/databases/device_database; the write-ahead log is read when "
                  "it is beside the database. The table stores each property as a name, a "

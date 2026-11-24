@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Jitsi Meet",
+        "category": "Calls & Contacts",
         "notes": "One row per entry in the app's recent-meeting list. The list holds at most 30 "
                  "entries and keeps one entry per conference URL, the latest (reducer.ts lines 32 "
                  "and 87 to 100 at the commit below), so it is not a full history. Jitsi Meet is "
@@ -45,7 +45,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Jitsi Meet",
+        "category": "Calls & Contacts",
         "notes": "One row per reported setting read from the catalystLocalStorage table of "
                  "databases/RKStorage. Display Name and Email come from the "
                  "@jitsi-meet/features/base/settings document; on the tested device the display "

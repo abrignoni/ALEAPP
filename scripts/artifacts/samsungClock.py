@@ -11,7 +11,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-20",
         "last_update_date": "2026-11-22",
         "requirements": "none",
-        "category": "Samsung Clock",
+        "category": "Device Activity",
         "notes": (
             "Read from the alarm table of com.sec.android.app.clockpackage/databases/alarm.db with "
             "its -wal. On the 11 tested images the file is in the app's device-encrypted (user_de) "
@@ -96,7 +96,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-20",
         "last_update_date": "2026-11-22",
         "requirements": "none",
-        "category": "Samsung Clock",
+        "category": "Device Activity",
         "notes": (
             "Read from two tables in com.sec.android.app.clockpackage/databases/: worldclock in "
             "worldclock.db and dualclock in dualclock. The worldclock table holds the Clock app's "

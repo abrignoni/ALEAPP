@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "NewPipe",
+        "category": "Music, Video & News",
         "notes": "One row per stream_history entry in databases/newpipe.db, joined to the streams "
                  "table it references. Each row carries the stored Access Date and Repeat Count "
                  "and the stream's title, uploader, url, duration and type as the client cached "
@@ -45,7 +45,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "NewPipe",
+        "category": "Music, Video & News",
         "notes": "One row per search_history entry in databases/newpipe.db. Each row is a query recorded in "
                  "the search history, with its Creation Date and the service it was run against. "
                  "In NewPipe's HistoryRecordManager.onSearched (read at tag v0.27.7, commit "
@@ -73,7 +73,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "NewPipe",
+        "category": "Music, Video & News",
         "notes": "One row per subscriptions entry in databases/newpipe.db: the channel name, its url, "
                  "avatar url, the subscriber count and description as cached, and the notification "
                  "mode. A subscription is a local record held by the client on this device. "
@@ -95,7 +95,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "NewPipe",
+        "category": "Music, Video & News",
         "notes": "One row per stream_state entry in databases/newpipe.db, joined to its stream. "
                  "Progress Time is the stored progress_time value in milliseconds. In NewPipe's "
                  "HistoryRecordManager (read at tag v0.27.7, commit 81b4e3f9; the tested build is "
@@ -124,7 +124,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "NewPipe",
+        "category": "Music, Video & News",
         "notes": "One row per stream in each local playlist, from the playlists and "
                  "playlist_stream_join tables of databases/newpipe.db joined to streams, in the "
                  "playlist's stored order. Local playlists are lists held in the client's own "

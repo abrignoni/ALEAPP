@@ -20,7 +20,7 @@ __artifacts_v2__ = {
         'creation_date': '2026-10-09',
         'last_update_date': '2026-10-14',
         'requirements': 'none',
-        'category': 'Shortcut Service',
+        'category': 'Device Activity',
         'notes': 'Shortcut Updated is the last change to shortcut fields in Unix '
                  'milliseconds, not a message receipt, read or upload time. '
                  'Timeline entries use Shortcut Updated; the original millisecond '
@@ -64,7 +64,7 @@ __artifacts_v2__ = {
         'creation_date': '2026-10-09',
         'last_update_date': '2026-10-14',
         'requirements': 'none',
-        'category': 'Shortcut Service',
+        'category': 'Device Activity',
         'notes': 'One row per stored Discord payload. Extra fields and message JSON '
                  'are separate observations and are not substituted for one '
                  'another. Stored usernames are snapshots, not a complete alias '
@@ -99,7 +99,7 @@ __artifacts_v2__ = {
         'creation_date': '2026-10-09',
         'last_update_date': '2026-10-14',
         'requirements': 'none',
-        'category': 'Shortcut Service',
+        'category': 'Device Activity',
         'notes': 'One row per XML, ABX or dump file, including identical copies, '
                  'empty documents and read or parse failures. XML declaration only '
                  'means a valid declaration without a root element. Copy Comparison '

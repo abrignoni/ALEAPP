@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-16",
         "last_update_date": "2026-11-16",
         "requirements": "none",
-        "category": "Health",
+        "category": "Health & Fitness",
         "notes": (
             'One row per com_samsung_health_user__profile row. Value is the first of the text, float, long, '
             'int, double and blob value columns that holds a value, and Value Type names it; a blob is shown '
@@ -65,7 +65,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-16",
         "last_update_date": "2026-11-16",
         "requirements": "none",
-        "category": "Health",
+        "category": "Health & Fitness",
         "notes": (
             'One row per com_samsung_health_step__count row (a step sample). Times are read as Unix '
             'milliseconds; a stored time inside the first day of 1970 is shown blank. distance, calorie and '
@@ -113,7 +113,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-16",
         "last_update_date": "2026-11-16",
         "requirements": "none",
-        "category": "Health",
+        "category": "Health & Fitness",
         "notes": (
             'One row per com_samsung_health_sleep row. Times are read as Unix milliseconds; a stored time '
             'inside the first day of 1970 is shown blank. On samsung_a166u_a16_known_20261116 the one row ran '
@@ -160,7 +160,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-16",
         "last_update_date": "2026-11-16",
         "requirements": "none",
-        "category": "Health",
+        "category": "Health & Fitness",
         "notes": (
             'One row per com_samsung_health_exercise row. Times are read as Unix milliseconds; a stored time '
             'inside the first day of 1970 is shown blank. duration is shown as stored; on the known-data row '
@@ -211,7 +211,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-16",
         "last_update_date": "2026-11-16",
         "requirements": "none",
-        "category": "Samsung Customization Service",
+        "category": "Device Information",
         "notes": (
             "One row per app_usage row. Times are the table's millisecond values read as UTC. On sharon_a13, "
             'sharon_a14 and samsung_a166u_a16_known_20261116 they equal the text time stored beside them '
@@ -267,7 +267,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-16",
         "last_update_date": "2026-11-16",
         "requirements": "none",
-        "category": "Samsung Customization Service",
+        "category": "Device Information",
         "notes": (
             'One row per charging_log row. connected, plugged, level and place_id are shown as stored; their '
             "meanings are not sourced. Times are the table's millisecond values read as UTC. On sharon_a13, "
@@ -325,7 +325,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-17",
         "last_update_date": "2026-11-17",
         "requirements": "none",
-        "category": "Samsung Customization Service",
+        "category": "Device Information",
         "notes": (
             'One row per screen_state_log row. screen_state, user_present and '
             'use_keyguard are shown as stored; their meanings are not sourced. Time is '
@@ -390,7 +390,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-16",
         "last_update_date": "2026-11-16",
         "requirements": "none",
-        "category": "Samsung Customization Service",
+        "category": "Device Information",
         "notes": (
             'One row per location_log row. Rows of the update_failed provider (488 on sharon_a13, 3 on '
             'sharon_a14) and the unknown provider (16 and 6) store 0 in both latitude and longitude, which is '
@@ -450,7 +450,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-16",
         "last_update_date": "2026-11-16",
         "requirements": "none",
-        "category": "Samsung Customization Service",
+        "category": "Device Information",
         "notes": (
             "One row per motion_log row; motion_type is shown as stored. Times are the table's millisecond "
             'values read as UTC. On sharon_a13, sharon_a14 and samsung_a166u_a16_known_20261116 they equal '
@@ -506,7 +506,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-16",
         "last_update_date": "2026-11-16",
         "requirements": "none",
-        "category": "Samsung Customization Service",
+        "category": "Device Information",
         "notes": (
             'One row per web_log row with the web_info row its web_info_id names (Title, URL, Page Update '
             "Time). Times are the table's millisecond values read as UTC. On sharon_a13, sharon_a14 and "
@@ -562,7 +562,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-16",
         "last_update_date": "2026-11-16",
         "requirements": "none",
-        "category": "Samsung Customization Service",
+        "category": "Device Information",
         "notes": (
             'Rows of two tables of inferenceengine_monitoring.db, named in Table: analyzed_place_monitor '
             '(with latitude, longitude and radius) and current_place_log (with registered_type and '

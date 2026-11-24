@@ -14,14 +14,7 @@ from scripts import dumpstate_reader as reader  # noqa: E402  pylint: disable=wr
 MODULES = ('bugreportDevice', 'bugreportActivity', 'bugreportPermissions', 'bugreportUsageJobs', 'bugreportNetwork',
            'bugreportRadios', 'bugreportAccountsPower', 'bugreportSensorsMedia', 'bugreportSecurityStorage',
            'bugreportLogsCrash', 'bugreportShortcuts')
-PREFIX = 'Android Bug Report - '
-GROUPS = collections.OrderedDict([
-    ('Device and Build', 5), ('Installed Apps', 2), ('Permissions and App Ops', 6), ('Processes and Memory', 6),
-    ('App Usage', 5), ('Network', 14), ('Wi-Fi', 6), ('Bluetooth, NFC and USB', 10), ('Telephony', 7),
-    ('Battery and Power', 12), ('Location and Sensors', 10), ('Camera and Media', 7),
-    ('Accounts, Sync and Backup', 16), ('Notifications', 3), ('Display and Input', 9), ('Alarms and Jobs', 3),
-    ('Security and Device Policy', 13), ('Storage and Databases', 11), ('Settings and Config', 4), ('Logs', 3),
-    ('Boot, Crash and Dropbox', 5), ('Vendor', 3)])
+CATEGORY = 'Android Bug Report'
 PATHS = ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
          '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip')
 
@@ -34,14 +27,12 @@ def all_artifacts():
 
 
 class CategoryTests(unittest.TestCase):
-    def test_every_artifact_is_in_one_of_the_groups(self):
-        counts = collections.Counter()
+    def test_every_artifact_is_in_the_bug_report_category(self):
+        count = 0
         for module, key, value in all_artifacts():
-            category = value['category']
-            self.assertTrue(category.startswith(PREFIX), (module, key, category))
-            counts[category[len(PREFIX):]] += 1
-        self.assertEqual(dict(counts), dict(GROUPS))
-        self.assertEqual(sum(counts.values()), 160)
+            self.assertEqual(value['category'], CATEGORY, (module, key))
+            count += 1
+        self.assertEqual(count, 160)
 
     def test_names_and_paths_are_the_same_kind_everywhere(self):
         names = collections.Counter()

@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-01",
         "last_update_date": "2026-09-01",
         "requirements": "none",
-        "category": "Aurora Store",
+        "category": "Installed Apps",
         "sample_data": {
             "emu_a15_oss_v6": "Aurora Store 4.8.4 | 1 rows",
         },
@@ -31,7 +31,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-01",
         "last_update_date": "2026-09-01",
         "requirements": "none",
-        "category": "Aurora Store",
+        "category": "Installed Apps",
         "sample_data": {
             "emu_a15_oss_v6": "Aurora Store 4.8.4 | 0 rows, checked: the download table is present and empty",
         },
@@ -59,7 +59,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-01",
         "last_update_date": "2026-09-01",
         "requirements": "none",
-        "category": "Aurora Store",
+        "category": "Installed Apps",
         "sample_data": {
             "emu_a15_oss_v6": "Aurora Store 4.8.4 | 1 rows",
         },
@@ -85,7 +85,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-01",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Aurora Store",
+        "category": "Installed Apps",
         "sample_data": {
             "emu_a15_oss_v6": "Aurora Store 4.8.4 | 0 rows, checked: the update and review tables are present and empty",
         },

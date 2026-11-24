@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-03",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Device Connections",
+        "category": "Smart Home & Connected Devices",
         "notes": "Read from phone-account-registrar-state.xml in the telecom service's own folder. "
                  "The file is read as ABX binary XML or as plain XML; the reader decides per file. "
                  "One row per phone_account element.\n"

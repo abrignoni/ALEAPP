@@ -21,7 +21,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-14",
         "last_update_date": "2026-10-07",
         "requirements": "none",
-        "category": "ProtonMail",
+        "category": "Email",
         "notes": "Reads the db-mail Room store, a Proton Mail for Android store separate from the "
                  "*-MessagesDatabase.db store and the uniffi Inbox cache. In the tested image the "
                  "subject, sender and recipient values are stored in clear text, and the message body in "
@@ -45,7 +45,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-14",
         "last_update_date": "2026-10-07",
         "requirements": "none",
-        "category": "ProtonMail",
+        "category": "Email",
         "notes": "Attachment metadata from the db-mail Room store. Rows are metadata only; this artifact "
                  "reads no attachment files. MessageAttachmentMetadataEntity.uri is reported under uri (as "
                  "stored). What the app does with that value, and whether a file was written there, is not "
@@ -66,7 +66,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-14",
         "last_update_date": "2026-08-14",
         "requirements": "none",
-        "category": "ProtonMail",
+        "category": "Email",
         "notes": "Contact email rows from the db-mail Room store.",
         "paths": ('*/ch.protonmail.android/databases/db-mail*',),
         "output_types": "standard",
@@ -82,7 +82,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-14",
         "last_update_date": "2026-08-14",
         "requirements": "none",
-        "category": "ProtonMail",
+        "category": "Email",
         "notes": "Account and user rows from the db-mail Room store. Used and maximum space are bytes "
                  "as stored. createdAtUtc is Unix milliseconds.",
         "paths": ('*/ch.protonmail.android/databases/db-mail*',),

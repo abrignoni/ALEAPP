@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-05-03",
         "last_update_date": "2023-05-03",
         "requirements": "Python 3.7 or higher",
-        "category": "Badoo",
+        "category": "Dating",
         "notes": "",
         "paths": ('*com.badoo.mobile/databases/CombinedConnectionsDatabase*',),
         "output_types": "standard",

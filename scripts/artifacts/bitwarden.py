@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Bitwarden",
+        "category": "Accounts & Credentials",
         "notes": "One row per reported account setting, read from the plain text preferences file "
                  "shared_prefs/com.x8bit.bitwarden_preferences.xml. Bitwarden encrypts the vault, but "
                  "the signed-in account's own profile is kept unencrypted in this file, inside the JSON "
@@ -67,7 +67,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Bitwarden",
+        "category": "Accounts & Credentials",
         "notes": "One row per entry in the ciphers table of databases/vault_database. Bitwarden is end "
                  "to end encrypted and the contents of a vault item are not recovered here: within each "
                  "row's stored JSON the name, username, password and item key are Bitwarden EncString "

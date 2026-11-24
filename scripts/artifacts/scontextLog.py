@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2020-04-18",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "App Interaction",
+        "category": "Device Activity",
         "notes": "Each file named ContextLog.db among the matches is read once; write-ahead log and journal files are not opened on their own, and the duplicate storage paths of one file are read once. A file that cannot be queried is logged and gives no rows. A Source File column is added only when more than one file gives rows. Start Time and Stop Time are starttime and stoptime read as Unix milliseconds and shown in UTC; Timezone, App ID, APP Sub ID and Duration are as stored, and Duration in Secs is Duration divided by 1000 with the remainder dropped.",
         "paths": ('*/com.samsung.android.providers.context/databases/ContextLog.db*',),
         "output_types": "standard",

@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-05-13",
         "last_update_date": "2026-10-04",
         "requirements": "None",
-        "category": "Kijiji",
+        "category": "Shopping & Marketplaces",
         "notes": "Each conversations row stores its messages as a JSON list; one row is reported per list item. "
                  "sortByDate (as stored) is the message's sortByDate value, unchanged; its unit, its time zone and "
                  "what it marks are not established here, so it is not converted. "

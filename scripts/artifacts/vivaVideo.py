@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-06",
         "requirements": "none",
-        "category": "VivaVideo",
+        "category": "Photos & Media",
         "sample_data": {
             "emu_a15_oss2_v1": "VivaVideo 9.38.0 | 1 rows",
         },
@@ -59,7 +59,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-06",
         "requirements": "none",
-        "category": "VivaVideo",
+        "category": "Photos & Media",
         "sample_data": {
             "emu_a15_oss2_v1": "VivaVideo 9.38.0 | 2 rows",
         },
@@ -100,7 +100,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-06",
         "requirements": "none",
-        "category": "VivaVideo",
+        "category": "Photos & Media",
         "sample_data": {
             "emu_a15_oss2_v1": "VivaVideo 9.38.0 | 2 rows",
         },

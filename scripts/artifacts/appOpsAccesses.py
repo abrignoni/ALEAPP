@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-06",
         "requirements": "none",
-        "category": "Permissions",
+        "category": "Installed Apps",
         "notes": "Read from system/appops_accesses.xml, one row per <st> element. The pattern is not "
                  "anchored on a data/ prefix, because a raw userdata partition image carries the same "
                  "folder without one, as samsungs20_a13 does. The file was ABX binary XML on all 25 "

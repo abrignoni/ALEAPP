@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-21",
         "last_update_date": "2026-11-22",
         "requirements": "none",
-        "category": "WhatsApp Business",
+        "category": "Messaging",
         "notes": "Read from com.whatsapp.w4b/databases/msgstore.db: one row per quick_replies row. "
                  "Shortcut is title and Reply Text is content. Field meanings come from the decompiled "
                  "WhatsApp Business app (versionName 2.26.45.80). Tested on the WhatsApp Business "
@@ -59,7 +59,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-22",
         "last_update_date": "2026-11-22",
         "requirements": "none",
-        "category": "WhatsApp Business",
+        "category": "Messaging",
         "notes": "Read from com.whatsapp.w4b/databases/msgstore.db: one row per "
                  "quick_reply_attachments row, with Shortcut from the quick_replies row whose _id "
                  "equals quick_reply_id. In the decompiled WhatsApp Business app (versionName "
@@ -106,7 +106,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-21",
         "last_update_date": "2026-11-22",
         "requirements": "none",
-        "category": "WhatsApp Business",
+        "category": "Messaging",
         "notes": "Read from com.whatsapp.w4b/databases/msgstore.db: one row per labeled_jid row whose "
                  "label_id matches a labels row, joined to labels for the list name and to the jid "
                  "table for the chat. Chat Name comes from wa_contacts in the wa.db beside it. It is "
@@ -162,7 +162,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-21",
         "last_update_date": "2026-11-22",
         "requirements": "none",
-        "category": "WhatsApp Business",
+        "category": "Messaging",
         "notes": "Read from com.whatsapp.w4b/databases/smb.db: one row per wa_notes row. Created and "
                  "Modified are created_at and modified_at read as Unix milliseconds. The app keeps one "
                  "note per chat and overwrites its text on an edit. In that app build, two code paths "
@@ -218,7 +218,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-21",
         "last_update_date": "2026-11-22",
         "requirements": "none",
-        "category": "WhatsApp Business",
+        "category": "Messaging",
         "notes": "Read from the greeting_* and away_* keys of the props table in "
                  "com.whatsapp.w4b/databases/msgstore.db, one row for Greeting and one for Away when "
                  "their keys are stored. Field meanings come from the decompiled WhatsApp Business app "
@@ -278,7 +278,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-21",
         "last_update_date": "2026-11-22",
         "requirements": "none",
-        "category": "WhatsApp Business",
+        "category": "Messaging",
         "notes": "Read from com.whatsapp.w4b/databases/wa.db: one row per wa_biz_profiles row. "
                  "Business Name is verified_name from wa_vnames for the same account. Categories and "
                  "Websites come from their child tables. Account is jid and Description is "

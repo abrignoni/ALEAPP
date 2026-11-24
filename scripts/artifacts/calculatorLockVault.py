@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-11-23",
         "requirements": "none",
-        "category": "Calculator Lock",
+        "category": "Photos & Media",
         "notes": "com.calculator.lock.hide.photo.video shows a working calculator, and in a known-data test of"
                  " version 1.94 on 2026-09-28 it opened its storage area when the stored passcode was entered "
                  "on it. note_contact.db is a plaintext SQLite database; no decryption is involved. Hide has "
@@ -69,7 +69,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-11-23",
         "requirements": "none",
-        "category": "Calculator Lock",
+        "category": "Photos & Media",
         "notes": "Every file found under a .Calculator_Lock folder gets one row, whether or not the Hide table"
                  " names it, so files present on storage without a database row are not dropped. One file can "
                  "sit under several storage paths of one user in an extraction (data/media/N, "
@@ -124,7 +124,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-09-28",
         "requirements": "none",
-        "category": "Calculator Lock",
+        "category": "Photos & Media",
         "notes": "note_date is stored as text, not as an epoch value. In base.apk from the same "
                  "extraction (version 1.94), apart from the CREATE TABLE statement in class a5.a, "
                  "the only methods whose bytecode names note_date are method x of class a5.a, "
@@ -168,7 +168,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-09-28",
         "requirements": "none",
-        "category": "Calculator Lock",
+        "category": "Photos & Media",
         "notes": "The table has three columns, contact_id, contact_name and contact_number, and "
                  "carries no timestamp. It held no rows in the corpus below, so this artifact has "
                  "not been exercised on rows the app wrote; an empty table is not evidence the "
@@ -194,7 +194,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-09-28",
         "requirements": "none",
-        "category": "Calculator Lock",
+        "category": "Photos & Media",
         "notes": "file_date is stored as text. The pattern dd-MM-yyyy is referenced by "
                  "com.calculator.lock.hide.photo.video.activity.home_activities.FileActivity in "
                  "base.apk from the same extraction. file_extend holds a MIME type, not an "
@@ -229,7 +229,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-09-28",
         "requirements": "none",
-        "category": "Calculator Lock",
+        "category": "Photos & Media",
         "notes": "The table has two columns, delete_name and delete_date. The pattern dd/MM/yyyy "
                  "is referenced by "
                  "com.calculator.lock.hide.photo.video.activity.home_activities.RecycleBinActivity "
@@ -259,7 +259,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-09-28",
         "requirements": "none",
-        "category": "Calculator Lock",
+        "category": "Photos & Media",
         "notes": "base.apk from the same extraction (version 1.94) contains a BrowserActivity and "
                  "a RoboWebView under the package's webview namespace, but its dex files name the "
                  "History table and its columns only inside the CREATE TABLE and DROP TABLE "
@@ -295,7 +295,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-09-28",
         "requirements": "none",
-        "category": "Calculator Lock",
+        "category": "Photos & Media",
         "notes": "Every entry in com.calculator.lock.hide.photo.video_preferences.xml gets a row, "
                  "so entries added by later versions still appear. Each Android user's copy of "
                  "the file is read, with the duplicate storage paths of one copy read once. "
@@ -333,7 +333,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-28",
         "last_update_date": "2026-09-28",
         "requirements": "none",
-        "category": "Calculator Lock",
+        "category": "Photos & Media",
         "notes": "HISTORY.DB is a separate database the app keeps beside note_contact.db. Known "
                  "data made on 2026-09-28 with this app, version 1.94, on an Android 15 emulator "
                  "showed the following. The file did not exist until the first entry was saved. "

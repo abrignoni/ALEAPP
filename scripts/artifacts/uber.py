@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Uber",
+        "category": "Travel & Vehicles",
         "notes": "Read from the app's base key value store. Values are stored as JSON preceded by a "
                  "single byte, which held 0x2d on every file in the tested sample; the parser reads from "
                  "the first JSON token. The two timestamps are the lastModifiedTimeMs and originTimeMs "
@@ -23,7 +23,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Uber",
+        "category": "Travel & Vehicles",
         "notes": "Three record types are reported and the Record Type column says which store each row "
                  "came from. CACHED_UBER_LOCATION is a protobuf carrying no schema; field 2>1 and field "
                  "2>2 are reported as latitude and longitude because they differ by less than 0.0001 "
@@ -54,7 +54,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Uber",
+        "category": "Travel & Vehicles",
         "notes": "The cache is keyed by a cell identifier that is reported as stored. Each entry carries "
                  "a timestamp in Unix milliseconds, a triggerLocation member with coordinates, "
                  "reported as stored under Trigger Latitude and Trigger Longitude, and a "
@@ -73,7 +73,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Uber",
+        "category": "Travel & Vehicles",
         "notes": "Status, token type, use case and authentication type are reported as stored. The "
                  "supportedUseCases member is a list of opaque identifiers and is reported as a count "
                  "only. Field mapping was done against a private sample provided by Mattia; no sample "
@@ -89,7 +89,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Uber",
+        "category": "Travel & Vehicles",
         "notes": "The record describes a service area; whether it is the one the app last loaded "
                  "products for is not established. Vehicle views "
                  "are reported as a count and a comma separated list of the identifiers the record "
@@ -106,7 +106,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Uber",
+        "category": "Travel & Vehicles",
         "notes": "From oauth_tokens.xml the access and refresh tokens are reported by presence "
                  "only and the token strings are not written to the report. That file's "
                  "expire_time_ms and rt_expire_time_ms values are read as Unix milliseconds and "
@@ -141,7 +141,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Uber",
+        "category": "Travel & Vehicles",
         "notes": "Rows are messages from the message table of ur_message.db; whether a row was "
                  "queued for upload or uploaded is not established. In the tested sample the "
                  "content payloads carried a contextual_data.prod_meta block describing the app, "
@@ -161,7 +161,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Uber",
+        "category": "Travel & Vehicles",
         "notes": "Each cache entry is a pair of files sharing a base name: a .0 metadata file whose "
                  "first two lines are read as Unix millisecond values and shown as Metadata "
                  "Line 1 and Metadata Line 2, and which also carries the stored HTTP response "
@@ -185,7 +185,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Uber",
+        "category": "Travel & Vehicles",
         "notes": "Values are reported as stored. Absence of a key is not evidence a feature was unused "
                  "or a setting was never changed. Field mapping was done against a private sample "
                  "provided by Mattia; no sample data is recorded for it.",

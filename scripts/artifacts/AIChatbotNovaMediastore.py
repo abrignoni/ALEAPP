@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-05-30",
         "last_update_date": "2026-10-17",
         "requirements": "none",
-        "category": "AI Chatbot - Nova",
+        "category": "AI Assistants",
         "notes": "Original parser/research: Guilherme Guilherme. Scope describes the source evidence path, not ownership of a recorded device path. Both message sides are retained; Message Type is the stored value. Matching retains the existing case-insensitive filename comparison. Same-user evidence scope narrows filename candidates but does not prove attachment identity; unknown and other scopes are explicit. Media Candidate renders only a unique same-scope filesystem filename candidate with no unknown-scope collision. Ambiguous/unmatched app-folder files are reported separately, without a submission/deletion claim. MIME is stored, not sniffed. Epoch interpretation is unchanged. The author reference is an own-installation fixture, not a registered corpus sample; positive real-corpus/physical-media coverage is unavailable. Each MediaStore external.db is read together with its -wal write-ahead log when the extraction holds one, so MediaStore filename candidates come from the database as last committed. Read without its log, the MediaStore database under data/user/150 on cookbook_a11 holds no tables at all; its files table exists only in the log.",
         "paths": (
             "**/com.scaleup.chatai/databases/chat-ai.db",

@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-02-24",
         "last_update_date": "2023-02-24",
         "requirements": "none",
-        "category": "Garmin",
+        "category": "Health & Fitness",
         "notes": "Requires data extracted from the Garmin Connect API. The route is rendered "
                  "offline as an image and a KML file; no online lookup is made. Start Time and "
                  "End Time are the time values of the first and last points of "

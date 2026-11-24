@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-05-03",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Encrypting Media Apps",
+        "category": "Photos & Media",
         "notes": (
             'Exact evidence-relative Vault roots are isolated. External settings are '
             'independent observations and never drive a vault key. Multiple key candidates skip '
@@ -39,7 +39,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-05-03",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Encrypting Media Apps",
+        "category": "Photos & Media",
         "notes": (
             'Exact evidence-relative Vault roots are isolated. External settings are '
             'independent observations and never drive a vault key. Multiple key candidates skip '
@@ -75,7 +75,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-05",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Encrypting Media Apps",
+        "category": "Photos & Media",
         "notes": (
             'Candidate roles follow the existing decoder folder selectors, not proof of app '
             'ownership. All distinct conflicting sources remain listed. Byte-identical known '

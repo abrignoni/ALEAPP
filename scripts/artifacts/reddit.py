@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Reddit",
+        "category": "Social Media",
         "notes": "Reddit chat is stored in databases/matrix_session_<session id>, whose "
                  "table names and event type strings match those of the Matrix protocol; "
                  "the cited article reports the same and notes it is not confirmed by "
@@ -74,7 +74,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
-        "category": "Reddit",
+        "category": "Social Media",
         "notes": "Every row of the event table, not only chat messages. The Type column "
                  "holds the Matrix event type as stored; on the tested image these "
                  "included m.room.message, m.room.member, m.room.create, m.room.join_rules, "
@@ -108,7 +108,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Reddit",
+        "category": "Social Media",
         "notes": "One row per room in room_summary. Room Type is reported as stored; the "
                  "direct-chat and unread flags are shown as YES or NO, and blank when the "
                  "column holds no value. On the tested image a one-to-one chat carried "
@@ -138,7 +138,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Reddit",
+        "category": "Social Media",
         "notes": "The table the message artifact uses to resolve a sender to a display "
                  "name. The Matrix user id embeds the account's Reddit id in the form "
                  "@t2_<reddit id>:reddit.com. Membership state is reported as stored.\n"
@@ -165,7 +165,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Reddit",
+        "category": "Social Media",
         "notes": "RedditUserEntity ties a Reddit id to the Matrix id used in chat, which "
                  "is what allows a chat participant to be named. The NSFW, blocked and "
                  "accepting-chats flags are shown as YES or NO, and blank when the column "
@@ -197,7 +197,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Reddit",
+        "category": "Social Media",
         "notes": "The database is named reddit_db_<account name>, reported in the Store "
                  "Account column; a reddit_db_anonymous file is reported the same way, "
                  "and when the app uses it is not established. The account table is a "
@@ -232,7 +232,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Reddit",
+        "category": "Social Media",
         "notes": "session_params in the matrix_auth database. The user id is the anchor "
                  "chat direction is derived from, in the form @t2_<reddit id>:reddit.com, "
                  "and on the one tested image holding a session row the session id "
@@ -264,7 +264,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
-        "category": "Reddit",
+        "category": "Social Media",
         "notes": "The subreddit table holds the communities the app had cached, each "
                  "carrying the t5_ community identifier the article describes as a "
                  "linking value across databases (the Kind With ID column). Presence of a "
@@ -294,7 +294,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Reddit",
+        "category": "Social Media",
         "notes": "The link table stores one JSON document per post, from which the "
                  "author, title, community, permalink, target URL, score, comment count "
                  "and NSFW flag are read; the document holds many more fields than are "

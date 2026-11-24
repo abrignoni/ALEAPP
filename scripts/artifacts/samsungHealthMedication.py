@@ -18,7 +18,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-17",
         "last_update_date": "2026-11-17",
         "requirements": "none",
-        "category": "Samsung Health",
+        "category": "Health & Fitness",
         "notes": (
             "Read from the medication_schedule table of "
             "com.sec.android.app.shealth/databases/medication.db with its -wal. Known data "
@@ -79,7 +79,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-17",
         "last_update_date": "2026-11-17",
         "requirements": "none",
-        "category": "Samsung Health",
+        "category": "Health & Fitness",
         "notes": (
             "Read from the medication_log_local_cache table of "
             "com.sec.android.app.shealth/databases/medication_local_<n>_<n>.db with its "

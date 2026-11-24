@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2020-03-21",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Chats",
+        "category": "Messaging",
         "notes": "User Name and User Email are reported from a users row matched on messages.user_zynga_id = users.zynga_account_id. These fields remain empty when no users row matches. User Zynga ID reports messages.user_zynga_id as stored; no name or email is inferred from it. Validation used constructed tables because none of the 44 registered Android archives checked contains the target database.",
         "paths": ('*/com.zynga.words/db/wf_database.sqlite*',),
         "output_types": "standard",

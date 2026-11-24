@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2020-03-21",
         "last_update_date": "2026-10-25",
         "requirements": "none",
-        "category": "My Files",
+        "category": "Cloud & Files",
         "notes": "Every myfiles.db and FileInfo.db found is read once per Android user, and Android "
                  "User names the user whose app folder holds it."
                  " On the four tested Android 16 extractions Source had no value on any row because the recent_files table has no _source column there, and Description had no value on any row because the _description column holds none (930, 214, 280 and 142 rows), and Android User held one value (0) on the rows of each extraction except the one where a Secure Folder user's copy held one row of its own. On the corpus images in sample_data that hold a second Android user's database, the row count equals the sum of the rows in each user's table, counted without ALEAPP.",
@@ -30,7 +30,7 @@ __artifacts_v2__ = {
         "creation_date": "2020-03-21",
         "last_update_date": "2026-10-25",
         "requirements": "none",
-        "category": "My Files",
+        "category": "Cloud & Files",
         "notes": "Every myfiles.db and FileInfo.db found is read once per Android user, and Android "
                  "User names the user whose app folder holds it."
                  " On the four tested Android 16 extractions one value, False, was held on every row by the columns Is Hidden?, Is Trashed?, and, on one extraction, Is Downloaded?. Android User held one value (0) on the rows of each extraction except the one where a Secure Folder user's copy held one row of its own. On the corpus images in sample_data that hold a second Android user's database, the row count equals the sum of the rows in each user's table, counted without ALEAPP.",

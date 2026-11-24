@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Location and Sensors",
+        "category": "Android Bug Report",
         "notes": "One row per provider block (passive, network, fused, gps and, on some builds, others) of the location service "
                  "dump (DUMP OF SERVICE location). Two layouts are read. The layout headed Location Manager State (Android 12 "
                  "and later in the tested reports) prints for each provider a service line, a listeners list, allowed, "
@@ -59,7 +59,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Location and Sensors",
+        "category": "Android Bug Report",
         "notes": "One row per last location=Location[...] line under a provider and user of the Location Providers part of the "
                  "location service dump, and one per line of the Last Known Locations and Last Known Locations Coarse Intervals "
                  "lists of the older layout. List says which part printed the row, User is the Android user of the layout that "
@@ -116,7 +116,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Location and Sensors",
+        "category": "Android Bug Report",
         "notes": "One row per listener line under a provider's listeners: list (Location Providers part) and, in the older layout, "
                  "one per UpdateRecord line of the Active Records by Provider list. UID, Package, Attribution Tag (the text in "
                  "square brackets after the package) and Listener ID come from the identity text uid/package[tag]/id; Flags are the "
@@ -168,7 +168,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Location and Sensors",
+        "category": "Android Bug Report",
         "notes": "One row per line of the Event Log part of the location service dump. Provider is the provider named at the start of "
                  "the line (empty where the line names none, for example a user visibility line). Event is the text after the "
                  "provider: +registration and -registration (a request registered or removed), request (the provider request "
@@ -211,7 +211,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Location and Sensors",
+        "category": "Android Bug Report",
         "notes": "One row per client line of the Historical Aggregate Location Provider Data part of the location service dump "
                  "(Android 12 and later layout) and per line of the Historical Records by Provider list (Android 10 layout). "
                  "Client is the uid/package[tag] text or the package name as printed. In the newer layout the Min Interval, Max "
@@ -256,7 +256,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Location and Sensors",
+        "category": "Android Bug Report",
         "notes": "One row per item of the location_time_zone_manager service dump: the mode and package name of the primary and "
                  "secondary provider configuration, the controller state and user configuration, each State history entry of the "
                  "controller and of each provider, each provider's current state, and its target service and connected lines. Component says whether the row belongs to the "
@@ -292,7 +292,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Location and Sensors",
+        "category": "Android Bug Report",
         "notes": "One row per sensor of the Sensor List part of the sensorservice dump. Handle, Name, Vendor, Version, Type (as "
                  "printed, with the platform's type number in brackets), Permission and Flags (as stored; a hexadecimal text, not "
                  "decoded) are the first printed line of the sensor; Reporting Mode is the first word of the second line "
@@ -339,7 +339,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Location and Sensors",
+        "category": "Android Bug Report",
         "notes": "One row per sensor held by a Connection Number block of the sensorservice dump (a connection with no sensor "
                  "line gets one row with empty sensor columns). Operating Mode, Client (as printed; a class name or a short "
                  "obfuscated label chosen by the app, not a package name), UID, Has Sensor Access (the has sensor access: value "
@@ -381,7 +381,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Location and Sensors",
+        "category": "Android Bug Report",
         "notes": "One row per line of the Previous Registrations list. Clock Time (as printed) is hours, minutes and seconds with no "
                  "date on the tested reports, and month, day, hours, minutes, seconds and milliseconds with no year on the "
                  "Samsung Android 13 report of s20fe_a13, which also prints the sensor in square brackets at the end of the "
@@ -425,7 +425,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Location and Sensors",
+        "category": "Android Bug Report",
         "notes": "One row per event line under a sensor heading (name: last N events) of the Recent Sensor events part. Event "
                  "Number is the number printed on the line, Timestamp (as printed) is the ts= value (seconds, the platform's "
                  "event clock, not converted), Wall Clock (as printed) is the wall= text and Values (as printed) holds the "
@@ -466,7 +466,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Camera and Media",
+        "category": "Android Bug Report",
         "notes": "One row per line of the Camera service events log (most recent at top) of the media.camera dump. Event is the "
                  "first word after the time (CONNECT, DISCONNECT, ADD, USER_SWITCH, Device State was changed, and others the "
                  "platform prints); Device, Package, PID and Priority are read from the line where it prints them and Detail is "
@@ -506,7 +506,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Camera and Media",
+        "category": "Android Bug Report",
         "notes": "One row per Camera device N dynamic info block of the media.camera dump. State is closed or open as printed in "
                  "the Device N is line; for an open device Opened (as printed) is the time of that line, and Package, PID, UID, "
                  "Priority Score and Device Status are the Client package, Client PID, Current client UID, Client priority score "
@@ -551,7 +551,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Camera and Media",
+        "category": "Android Bug Report",
         "notes": "One row per timestamped line under an Events log (or Audio event log) heading of the audio service dump. Log is the "
                  "heading's name (for example focus commands as seen by MediaFocusControl, playback activity as reported through "
                  "PlayerBase, recording activity received by AudioService, volume changes, mute commands, wired/A2DP/hearing aid "
@@ -590,7 +590,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Camera and Media",
+        "category": "Android Bug Report",
         "notes": "One row per line of the Notification Clients table (pid, uid, name) and of the Global session refs table (session, "
                  "count, pid, uid, name) of the media.audio_flinger dump. List says which table. Name is the process or package "
                  "label the platform prints (a shared uid label such as android.uid.system can stand for several packages). "
@@ -625,7 +625,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Camera and Media",
+        "category": "Android Bug Report",
         "notes": "One row per session block of the media_session dump: a heading of the form tag package/tag (userId=N) followed by "
                  "its detail lines. Session is the tag, Key the package/tag text, Role names the global priority session or the "
                  "media button session where the dump marks the block so; Owner PID, Owner UID, Package, Active, Flags (as "
@@ -664,7 +664,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Camera and Media",
+        "category": "Android Bug Report",
         "notes": "One row per uid= packages= line under the heading Audio playback (lastly played comes first). Position is 1 for the "
                  "first line printed, which the heading says is the most recent. UID and Packages are as printed; Packages lists "
                  "every package that shares the uid (a shared uid label can list many, cut at 600 characters).\n"
@@ -696,7 +696,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Camera and Media",
+        "category": "Android Bug Report",
         "notes": "One row per numbered record of the media.metrics dump. Two layouts are read. Record Form name, time, owner "
                  "(Android 15 and 16 in the tested reports) is {key, (time), (owner, pid, uid), (properties)}: Key is the record "
                  "kind (for example audio.track.N, codec, extractor, audio.mode), Time As Printed is month, day and clock time "
@@ -737,7 +737,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Display and Input",
+        "category": "Android Bug Report",
         "notes": "One row per service component in the installed services list and, where a list is not empty, in the Bound, "
                  "Enabled, Binding and Crashed services lists of the current user's state in the accessibility service dump. User "
                  "is the currentUserId value, List names the list, Index is the number printed before an installed service "
@@ -780,7 +780,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Display and Input",
+        "category": "Android Bug Report",
         "notes": "One row per InputMethod #N block of the input_method service dump (the dump is printed twice in the Samsung and "
                  "Motorola reports, and each copy lists the input methods, so every method then has two rows that differ in Source "
                  "Line). Input Method ID is mId, Settings Activity is mSettingsActivityName, Package, Service and Permission are the "
@@ -819,7 +819,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Display and Input",
+        "category": "Android Bug Report",
         "notes": "One row per StartInput #N entry under mStartInputHistory. Entry is the number, Time As Printed is the time= text "
                  "(a device wall-clock time with milliseconds and a year), converted to Time (UTC) with the zone shown in Bug "
                  "Report - Device Facts. Reason, Restarting, Soft Input Mode, Input Type, IME Options, Field ID and Field Name are "
@@ -860,7 +860,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Display and Input",
+        "category": "Android Bug Report",
         "notes": "One row per SoftInputShowHide #N entry under mSoftInputShowHideHistory. Entry is the number, Time As Printed is the "
                  "time= text (a device wall-clock time with milliseconds and a year) converted to Time (UTC) with the zone shown "
                  "in Bug Report - Device Facts. Reason is the printed reason word (for example SHOW_SOFT_INPUT or HIDE_SOFT_INPUT), "
@@ -902,7 +902,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Display and Input",
+        "category": "Android Bug Report",
         "notes": "One row per Display Id block of the Display States part and one per logical display of the Logical Displays "
                  "part of the display service dump. Source says which part. For the first, State, Brightness (as printed) and "
                  "SDR Brightness (as printed) are the printed values (a fraction, not a percentage); for the second, State is the "
@@ -943,7 +943,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-27",
         "requirements": "none",
-        "category": "Android Bug Report - Display and Input",
+        "category": "Android Bug Report",
         "notes": "One row per line that starts with a month-day time (or, in the Samsung Android 13 report of "
                  "s20fe_a13, a full date with no fraction of a second) and holds BrightnessEvent: (the display power "
                  "controller's "
@@ -988,7 +988,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Display and Input",
+        "category": "Android Bug Report",
         "notes": "One row per mCurrentFocus, mFocusedApp, mTopFocusedDisplayId, mInputMethodWindow and mInputMethodTarget line of the "
                  "window service dump. Display is the display of the Display: mDisplayId line the focus lines follow (empty "
                  "for the lines that are not per display), Item is the printed name, Value is the printed text, cut at 400 "
@@ -1026,7 +1026,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Display and Input",
+        "category": "Android Bug Report",
         "notes": "One row per Window #N block of the WINDOW MANAGER WINDOWS part of the window service dump. Title is the text after "
                  "the user in Window{hash uN title} (a package/activity name or a system window name), Display, Owner UID, Package "
                  "and Session PID come from the mDisplayId, mOwnerUid, package= and mSession lines, View Visibility (as stored) is "
@@ -1068,7 +1068,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Display and Input",
+        "category": "Android Bug Report",
         "notes": "One row per layer of the Display N HWC layers table of the SurfaceFlinger dump. The columns are located from the "
                  "table's own header line. Layer is the name line (a package/activity name or a system layer name, cut by the "
                  "platform with [...] where it is long), Z, Window Type (as stored), Composition Type and Transform (as stored) "

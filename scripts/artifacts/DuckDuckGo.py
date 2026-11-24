@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-05-21",
         "last_update_date": "2025-06-08",
         "requirements": "none",
-        "category": "DuckDuckGo",
+        "category": "Browsers",
         "notes": "Tested by the module author on app version 5.237.0 (3 June 2025). The two images listed in sample_data produced no rows, so the query is not exercised on registered data.",
         "paths": ('*/com.duckduckgo.mobile.android/databases/app.db*'),
         "output_types": ["html", "tsv", "lava"],
@@ -24,7 +24,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-05-30",
         "last_update_date": "2025-06-08",
         "requirements": "none",
-        "category": "DuckDuckGo",
+        "category": "Browsers",
         "notes": "Tested by the module author on app version 5.237.0 (3 June 2025). The two images listed in sample_data produced no rows, so the query is not exercised on registered data.",
         "paths": ('*/com.duckduckgo.mobile.android/databases/app.db*'),
         "output_types": ["html", "tsv", "lava"],
@@ -41,7 +41,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-05-21",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "DuckDuckGo",
+        "category": "Browsers",
         "notes": (
             "Tested by the module author on app version 5.237.0 (3 June 2025). Visit Date "
             "is the stored visits_list.timestamp string as recorded, reported as text "
@@ -80,7 +80,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-05-21",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "DuckDuckGo",
+        "category": "Browsers",
         "notes": (
             "Tested on version 5.255.0 (Oct, 31st 2025). Cached Tab Preview Time (UTC) is "
             "decoded from the tab preview file name, which is a number read as a Unix time in "
@@ -128,7 +128,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-11-13",
         "last_update_date": "2025-11-13",
         "requirements": "none",
-        "category": "DuckDuckGo",
+        "category": "Browsers",
         "notes": "Tested by the module author on app version 5.255.0 (31 October 2025). The two images listed in sample_data produced no rows, so the query is not exercised on registered data.",
         "paths": ('*/com.duckduckgo.mobile.android/databases/app.db*'),
         "output_types": ["html", "tsv", "lava"],
@@ -145,7 +145,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-11-13",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "DuckDuckGo",
+        "category": "Browsers",
         "notes": "Tested by the module author on app version 5.255.0 (31 October 2025). The two images listed in sample_data produced no rows, so the query is not exercised on registered data. Reference: DuckDuckGo Android, 'DownloadStatus (STARTED=0, FINISHED=1)', https://github.com/duckduckgo/Android/blob/ce9fb1ffde1f76cea97f78bbc97fab05e5e74ea9/downloads/downloads-store/src/main/java/com/duckduckgo/downloads/store/DownloadStatus.kt#L20-L21. Download Date is the stored downloads.createdAt string as recorded, reported as text and not as a UTC date and time, because the store records no time zone for it. The app's DownloadEntity gives createdAt the default DatabaseDateFormatter.timestamp() (https://github.com/duckduckgo/Android/blob/b523dd8fd563ecc7248a14a8dfa9245371343055/downloads/downloads-store/src/main/java/com/duckduckgo/downloads/store/DownloadEntity.kt#L32), which formats LocalDateTime.now() with the pattern yyyy-MM-dd'T'HH:mm:ss, a wall clock reading with no zone written beside it (https://github.com/duckduckgo/Android/blob/b523dd8fd563ecc7248a14a8dfa9245371343055/common/common-utils/src/main/java/com/duckduckgo/common/utils/formatters/time/DatabaseDateFormatter.kt#L30-L42). That source was read at one commit of the develop branch. Neither image in sample_data holds a downloads row, so the stored shape was not observed.",
         "paths": ('*/com.duckduckgo.mobile.android/databases/downloads.db*'),
         "output_types": ["html", "tsv", "lava"],
@@ -162,7 +162,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-05-28",
         "last_update_date": "2026-10-05",
         "requirements": "none",
-        "category": "DuckDuckGo",
+        "category": "Browsers",
         "notes": (
             "Timestamp (UTC) is decoded from the thumbnail file name, which is a number read "
             "as a Unix time in milliseconds; that reading is not documented and the "
@@ -188,7 +188,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-11-13",
         "last_update_date": "2025-11-13",
         "requirements": "none",
-        "category": "DuckDuckGo",
+        "category": "Browsers",
         "notes": "Tested by the module author on app version 5.255.0 (31 October 2025). The two images listed in sample_data produced no rows, so the reader is not exercised on registered data.",
         "paths": ('*com.duckduckgo.mobile.android/app_webview/Default/Local Storage/leveldb/*'),
         "output_types": ["html", "tsv", "lava"],
@@ -205,7 +205,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-11-14",
         "last_update_date": "2026-10-05",
         "requirements": "none",
-        "category": "DuckDuckGo",
+        "category": "Browsers",
         "notes": "Tested by the module author on app version 5.255.0 (31 October 2025). Reads main Cookies or cookies files, excluding sidecars; Source File identifies each row.",
         "paths": ('*/com.duckduckgo.mobile.android/app_webview/Default/cookies',
                   '*/com.duckduckgo.mobile.android/app_webview/Default/Cookies'),

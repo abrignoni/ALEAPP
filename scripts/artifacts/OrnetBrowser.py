@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-11-13",
         "last_update_date": "2025-11-13",
         "requirements": "none",
-        "category": "Ornet Browser",
+        "category": "Browsers",
         "notes": "Tested by the author on version 1.9.26 (Oct, 22nd 2025). "
                  "The test data and row counts are not recorded here.",
         "paths": ('*/com.ornet.torbrowser/databases/appDatabase'),
@@ -21,7 +21,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-11-13",
         "last_update_date": "2026-08-01",
         "requirements": "none",
-        "category": "Ornet Browser",
+        "category": "Browsers",
         "notes": (
             "Tested by the author on version 1.9.26 (Oct, 22nd 2025). The test data and row "
             "counts are not recorded here. Rows are read from the suggestions "
@@ -39,7 +39,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-11-13",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Ornet Browser",
+        "category": "Browsers",
         "notes": (
             "Tested by the author on version 1.9.26 (Oct, 22nd 2025). The test data and "
             "row counts are not recorded here. Visit Date joins the stored "
@@ -58,7 +58,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-11-13",
         "last_update_date": "2026-08-01",
         "requirements": "none",
-        "category": "Ornet Browser",
+        "category": "Browsers",
         "notes": (
             "Tested by the author on version 1.9.26 (Oct, 22nd 2025). The test data and "
             "row counts are not recorded here. Tab Preview File Name Time is "
@@ -79,7 +79,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-11-13",
         "last_update_date": "2026-08-01",
         "requirements": "none",
-        "category": "Ornet Browser",
+        "category": "Browsers",
         "notes": (
             "Tested by the author on version 1.9.26 (Oct, 22nd 2025). The test data and "
             "row counts are not recorded here. Rows are read from the frequents "
@@ -97,7 +97,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-11-14",
         "last_update_date": "2026-08-01",
         "requirements": "none",
-        "category": "Ornet Browser",
+        "category": "Browsers",
         "notes": (
             "Tested by the author on version 1.9.26 (Oct, 22nd 2025). The test data "
             "and row counts are not recorded here. Last Modified is the stored "
@@ -115,7 +115,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-11-13",
         "last_update_date": "2026-08-01",
         "requirements": "none",
-        "category": "Ornet Browser",
+        "category": "Browsers",
         "notes": (
             "Tested by the author on version 1.9.26 (Oct, 22nd 2025). The test data and "
             "row counts are not recorded here. Timestamp is decoded from the "
@@ -136,7 +136,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-11-13",
         "last_update_date": "2025-11-13",
         "requirements": "none",
-        "category": "Ornet Browser",
+        "category": "Browsers",
         "notes": "Tested by the author on version 1.9.26 (Oct, 22nd 2025). "
                  "The test data and row counts are not recorded here.",
         "paths": ('*/com.ornet.torbrowser/databases/appDatabase'),
@@ -150,7 +150,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-11-14",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Ornet Browser",
+        "category": "Browsers",
         "notes": "Tested by the author on version 1.9.26 (Oct, 22nd 2025). "
                  "The test data and row counts are not recorded here. No "
                  "registered corpus holds this app, so the time handling "
@@ -181,7 +181,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-11-14",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Ornet Browser",
+        "category": "Browsers",
         "notes": "Tested by the author on version 1.9.26 (Oct, 22nd 2025). "
                  "The test data and row counts are not recorded here. "
                  "Value is the stored value of each of the four keys. "

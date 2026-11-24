@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-05-11",
         "last_update_date": "2024-05-11",
         "requirements": "",
-        "category": "MS Authenticator",
+        "category": "Accounts & Credentials",
         "notes": "One row per row of the accounts table of the PhoneFactor database, with the "
                  "name, username and oath_secret_key columns as stored. Every matched PhoneFactor "
                  "file that is not a -wal, -shm or -journal sidecar is read. The OATH Secret Key "

@@ -10,7 +10,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-30",
         "last_update_date": "2026-09-12",
         "requirements": "none",
-        "category": "Samsung Media Provider",
+        "category": "Photos & Media",
         "notes": "The Address column is the packed multi-part string as stored (parts "
                  "separated by '|'). Reference: Cellebrite Location Booklet 2025. Every "
                  "media.db the declared path matches is read, except that where one "
@@ -52,7 +52,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-30",
         "last_update_date": "2026-09-12",
         "requirements": "none",
-        "category": "Samsung Media Provider",
+        "category": "Photos & Media",
         "notes": "Reference: Cellebrite Location Booklet 2025. Every media.db the declared "
                  "path matches is read, except that where one user's database appears "
                  "under more than one of the data/data, data/user and data_mirror/data_ce "

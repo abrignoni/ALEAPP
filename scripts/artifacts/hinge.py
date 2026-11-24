@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "Hinge",
+        "category": "Dating",
         "notes": "One row per app data directory. The values come from the app's own "
                  "basic_choices table, which holds rows keyed by attribute and apiId with the "
                  "chosen values marked selected. Where an attribute has more than one selected "
@@ -40,7 +40,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "Hinge",
+        "category": "Dating",
         "notes": "One row per selected preference. The preference_choices table holds option rows "
                  "and marks some of them selected, so only the selected rows "
                  "are reported; on the tested device that was 22 of 89. Values are reported "
@@ -66,7 +66,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "Hinge",
+        "category": "Dating",
         "notes": "One row per cached profile. These are profiles the app held locally, which "
                  "records that the app received them rather than that the account holder "
                  "looked at any particular one. Row Created and Row Updated are Unix "
@@ -95,7 +95,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "Hinge",
+        "category": "Dating",
         "notes": "One row per media entry. Owner reads Account Holder for rows of the "
                  "player_media table. For rows of the subject_media table it carries the "
                  "profile's user "
@@ -124,7 +124,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "Hinge",
+        "category": "Dating",
         "notes": "One row per answer. Owner reads Account Holder for rows of the player_answers "
                  "table. For rows of the subject_answers table it carries the profile's user id, "
                  "with the first name from the profiles table where one is held. The label is "
@@ -154,7 +154,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "Hinge",
+        "category": "Dating",
         "notes": "One row per recorded event. Timestamp is an ISO 8601 value stored with a "
                  "trailing Z, reported as the UTC time it states. Event names are the "
                  "app's own labels, as stored. Subject is the profile identifier the event "
@@ -178,7 +178,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Hinge",
+        "category": "Dating",
         "notes": "One row per cache entry. The cache is a libcore.io.DiskLruCache in which "
                  "each entry is a pair of files, a metadata file holding the response "
                  "headers and a payload file holding the bytes; the bytes are checked in and "

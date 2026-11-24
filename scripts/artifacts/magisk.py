@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "Magisk",
+        "category": "Installed Apps",
         "notes": "com.topjohnwu.magisk is a root management app; this database sits in that "
                  "package's data directory. Each row names the package and app label "
                  "that asked for superuser rights, the command string recorded for the request, "
@@ -50,7 +50,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "Magisk",
+        "category": "Installed Apps",
         "notes": "Reads com.topjohnwu.magisk_preferences.xml and su_timeout.xml. Every entry in "
                  "both files is reported so settings added by later versions still appear. The "
                  "values are as stored: the numeric settings, including root_access, "

@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2020-02-25",
         "last_update_date": "2026-11-07",
         "requirements": "none",
-        "category": "Digital Wellbeing",
+        "category": "Device Activity",
         "notes": ("One row per distinct AccountData.pb per Android user. The protobuf is decoded with "
                   "the vendored blackboxprotobuf, without a schema, so fields are named by their field "
                   "numbers and the meaning of each field is not established here. A length-delimited "

@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-03",
         "last_update_date": "2026-09-03",
         "requirements": "none",
-        "category": "RedReader",
+        "category": "Social Media",
         "sample_data": {
             "emu_a15_oss_v8": "RedReader 1.26 | 88 rows",
         },
@@ -51,7 +51,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-03",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "RedReader",
+        "category": "Social Media",
         "sample_data": {
             "emu_a15_oss_v8": "RedReader 1.26 | 2 rows",
         },
@@ -87,7 +87,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-03",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "RedReader",
+        "category": "Social Media",
         "sample_data": {
             "emu_a15_oss_v8": "RedReader 1.26 | 2 rows",
         },

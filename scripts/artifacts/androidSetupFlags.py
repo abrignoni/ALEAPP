@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-27",
         "last_update_date": "2026-10-28",
         "requirements": "none",
-        "category": "Wipe & Setup",
+        "category": "Device Information",
         "notes": "Sources: settings_secure.xml of each Android user (plain XML, or the binary ABX form, read with the ABX reader of the "
                  "tool), settings_history_secure.json and settings_history_global.json of the same folder, and persistent_properties "
                  "(read as a protobuf store; its boot reason entries are rows of Persistent Properties - Matched Text Observations). The"

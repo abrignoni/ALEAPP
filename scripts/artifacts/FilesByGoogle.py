@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-01-18",
         "last_update_date": "2026-10-05",
         "requirements": "none",
-        "category": "Files By Google",
+        "category": "Cloud & Files",
         "notes": "Root Path is read from each file entry rather than from where the database "
                  "sits, so it does not name the database, and Source File names the database "
                  "each row came from. Media Type (as stored) holds media_type without an enum label, "
@@ -30,7 +30,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-01-18",
         "last_update_date": "2025-09-09",
         "requirements": "none",
-        "category": "Files By Google",
+        "category": "Cloud & Files",
         "notes": "Rows come from the search_history_content table; the timestamp column is read as "
                  "Unix milliseconds. No sample_data is recorded for this artifact.",
         "paths": ('*/com.google.android.apps.nbu.files/databases/search_history_database*'),

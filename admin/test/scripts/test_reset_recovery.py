@@ -331,9 +331,9 @@ class RegistrationTests(unittest.TestCase):
     def test_names_categories_and_paths(self):
         for key, info in bug.__artifacts_v2__.items():
             self.assertTrue(info['name'].startswith('Bug Report - '), key)
-            self.assertTrue(info['category'].startswith('Android Bug Report - '), key)
+            self.assertEqual(info['category'], 'Android Bug Report', key)
             self.assertTrue(set(info['paths']) <= {'*/bugreport-*.zip', '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'}, key)
-        self.assertEqual({info['category'] for info in sRecoveryhist.__artifacts_v2__.values()}, {'Wipe & Setup'})
+        self.assertEqual({info['category'] for info in sRecoveryhist.__artifacts_v2__.values()}, {'Device Information'})
         for _name, module in MODULES:
             for key in module.__artifacts_v2__:
                 self.assertTrue(callable(getattr(module, key)), key)

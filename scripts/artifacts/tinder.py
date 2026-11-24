@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
-        "category": "Tinder",
+        "category": "Dating",
         "notes": "Direction is derived, not stored. The match_person table holds the profiles of "
                  "matched accounts and the match table links each match to one of them through "
                  "person_id. A message whose from_id equals that person_id is reported as "
@@ -70,7 +70,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
-        "category": "Tinder",
+        "category": "Dating",
         "notes": "One row per match table entry, joined to the matched person's match_person row. "
                  "creation_date and last_activity_date are stored as epoch milliseconds and are "
                  "reported under those names; this artifact does not interpret what activity "
@@ -100,7 +100,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
-        "category": "Tinder",
+        "category": "Dating",
         "notes": "One row per com.tinder data directory. The files/datastore files are Jetpack "
                  "DataStore protobufs with no published schema, so fields are reported by "
                  "position: the email comes from files/datastore/account; the phone number comes "
@@ -140,7 +140,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
-        "category": "Tinder",
+        "category": "Dating",
         "notes": "These are not user-to-user chat messages; those are in the Tinder - Messages "
                  "artifact. In the tested public image the inbox_message bodies were notices "
                  "from Tinder itself, carrying campaign and experiment identifiers. sent_date is "
@@ -160,7 +160,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
-        "category": "Tinder",
+        "category": "Dating",
         "notes": "A listing of the files present in files/ProfilePhotos, with the content shown. "
                  "File names are UUIDs with no extension; the content is sniffed from the file "
                  "header, and every tested file was a JPEG. In the tested images these file "

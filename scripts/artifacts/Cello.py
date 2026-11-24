@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2020-12-21",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Google Drive",
+        "category": "Cloud & Files",
         "notes": "The Shared With Me Date, Modified By Me Date and Viewed By Me Date columns are the "
                  "shared_with_me_date, modified_by_me_date and viewed_by_me_date columns of the items "
                  "table; which account the name refers to is not recorded in the row and is not "

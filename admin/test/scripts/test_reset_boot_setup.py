@@ -229,7 +229,7 @@ MODULES = (('persistentProp', persistentProp), ('androidSetupFlags', setupflags)
 class RegistrationTests(unittest.TestCase):
     def test_names_categories_and_paths(self):
         for module in (persistentProp, setupflags):
-            self.assertEqual({info['category'] for info in module.__artifacts_v2__.values()}, {'Wipe & Setup'})
+            self.assertEqual({info['category'] for info in module.__artifacts_v2__.values()}, {'Device Information'})
         for _name, module in MODULES:
             for key in module.__artifacts_v2__:
                 self.assertTrue(callable(getattr(module, key)), key)

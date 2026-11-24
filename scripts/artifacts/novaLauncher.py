@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
         "requirements": "none",
-        "category": "Nova Launcher",
+        "category": "Device Activity",
         "sample_data": {
             "emu_a15_oss_v10": "Nova Launcher 8.9.0 | 19 rows",
         },
@@ -50,7 +50,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-10-07",
         "requirements": "none",
-        "category": "Nova Launcher",
+        "category": "Device Activity",
         "sample_data": {
             "emu_a15_oss_v10": "Nova Launcher 8.9.0 | 20 rows",
         },

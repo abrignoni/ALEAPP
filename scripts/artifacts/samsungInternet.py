@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-16",
         "last_update_date": "2026-11-16",
         "requirements": "none",
-        "category": "Samsung Internet",
+        "category": "Browsers",
         "notes": (
             'One row per BOOKMARKS row in com.sec.android.app.sbrowser/databases/SBrowser.db that is not a '
             'folder (FOLDER 1); Folder is the TITLE of the row PARENT names, or PARENT as stored when no '
@@ -54,7 +54,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-16",
         "last_update_date": "2026-11-16",
         "requirements": "none",
-        "category": "Samsung Internet",
+        "category": "Browsers",
         "notes": (
             'One row per READINGLIST row in SBrowser.db, the list Samsung Internet showed as Saved pages in '
             "the known-data session. Saved Page links the file the row's dir_path records, matched on that "
@@ -99,7 +99,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-16",
         "last_update_date": "2026-11-16",
         "requirements": "none",
-        "category": "Samsung Internet",
+        "category": "Browsers",
         "notes": (
             'One row per TABS row in SBrowser.db. Thumbnail renders cache/Bitmap/Thumbnail/<w>/<n>.0 in the '
             'same app container for the tab whose TAB_ID is <w>_<n>. That link is by name: on '
@@ -151,7 +151,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-16",
         "last_update_date": "2026-11-16",
         "requirements": "none",
-        "category": "Samsung Internet",
+        "category": "Browsers",
         "notes": (
             'One row per SMARTTABDELETE row in com.sec.android.app.sbrowser/databases/SmartTabDelete.db. '
             'Column names are the stored ones because their meanings are not sourced; the three times are '
@@ -186,7 +186,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-17",
         "last_update_date": "2026-11-17",
         "requirements": "none",
-        "category": "Samsung Internet",
+        "category": "Browsers",
         "notes": (
             'One row per history row in com.sec.android.app.sbrowser/databases/SearchHistory.db. Keyword is '
             'the KEYWORD column as stored. In the app\'s code (30.0.5.27, decompiled from '
@@ -227,7 +227,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-17",
         "last_update_date": "2026-11-17",
         "requirements": "none",
-        "category": "Samsung Internet",
+        "category": "Browsers",
         "notes": (
             'One row per quickaccess_item row in com.sec.android.app.sbrowser/databases/quickaccess.db. Title '
             'and URL are as stored, Position is the position column as stored, and Type, Deleted and Dirty '
@@ -272,7 +272,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-17",
         "last_update_date": "2026-11-17",
         "requirements": "none",
-        "category": "Samsung Internet",
+        "category": "Browsers",
         "notes": (
             'One row per navigation entry in each files/<w>_tab<n> file, in the app private data folder '
             '(data/data/com.sec.android.app.sbrowser/files/). Source File names the file; its name holds two '
@@ -332,7 +332,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-18",
         "last_update_date": "2026-11-18",
         "requirements": "none",
-        "category": "Samsung Internet",
+        "category": "Browsers",
         "notes": (
             'One row per tab in each files/<n>tab_state file in the app private data folder '
             '(data/data/com.sec.android.app.sbrowser/files/), the list of open tabs Samsung Internet '

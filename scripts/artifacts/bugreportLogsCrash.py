@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Logs",
+        "category": "Android Bug Report",
         "notes": "One row per line in logcat form of the SYSTEM LOG section (logcat -v threadtime -v uid) and, where the report "
                  "prints it, the SYSTEM LOG AFTER DONE section (the same command run once more after the dump, limited with -T). "
                  "Source Section says which one printed the row. Time As Printed is month, day and clock time with milliseconds in "
@@ -61,7 +61,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Logs",
+        "category": "Android Bug Report",
         "notes": "One row per line in logcat form of the EVENT LOG section (logcat -b events -v threadtime -v uid). Tag is the event name and Message is the bracketed value list as printed, not decoded: the meaning of each position belongs to the event and is not applied here. Time As Printed, Time (UTC), UID, PID, TID, Level, Buffer and the other columns are read as in Bug Report - System Log, including the year rule for the time. Level held one value, I, on all rows of all five tested reports, and Buffer held one value, events, on the three reports whose section opens with that marker (it is empty on all rows of the Huawei and Transsion-brand reports, which print none). The section is one section, so there is no Source Section column. The Huawei report prints 12 lines in this section, all with the tag auditd. A line that is not in logcat form is not a row and is counted in the log. The buffer is limited, so an event that is not listed says nothing about earlier use; the table stops at 500,000 rows with a warning in the log.\nEvidence tiers. Data-proven on five real bug reports (Samsung A-series and S-series on Android 16, Huawei and a Transsion-brand phone on Android 10, Motorola on Android 15): 15,122, 12, 2,863, 10,296 and 16,552 rows (A-series, Huawei, Transsion-brand, Motorola and S-series respectively), each equal to a count of timestamped lines in the raw section and to an independent split, field by field. The conversion to UTC was the identity on every row of these five (UTC+0 zone on all five). Constructed only: a continuation of a value list on a line of its own, zones with an offset other than the UTC-5 of the emulator known data below, daylight saving changes, and the layout without a uid column. Not examined: Android 11 and 12 and other vendors.\nOn the corpus the run gave s20fe_a13 15,635 rows (4,225 from the dumpState text, 1,224 from an automatically generated dump, 10,186 from an automatically generated dump), samsungs20_a13 6,988 rows, sharon_a14 12,938 rows and userb2_a13 3,460 rows (2,811 from a partial text, 649 from a partial text). An independent count of the raw text gave the same numbers. Time (UTC) is empty on every userb2_a13 row (the partial texts record no usable time zone). On the known data emu_a15_bugreport_known_20261116 (an Android 15 emulator in America/New_York) the conversion moved the printed local time 5 hours to UTC on all 722 rows. The section spans 52 seconds after the reboot, and the one step of the mint record with events in it, a Settings launch at 02:12:55 UTC host time, has its activity events in the same second. One auditd line is printed 12-31 19:00:00.020, which in that zone is 20 milliseconds after the Unix epoch; why the platform stamped it so is not established here. The year rule gives it 2025, so it shows as 2026-01-01 00:00:00.020 UTC, which is not a real date.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
@@ -84,7 +84,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Logs",
+        "category": "Android Bug Report",
         "notes": "One row per non-blank line of the KERNEL LOG (dmesg) section and of the LAST KMSG section; Source Section says "
                  "which. The heading of LAST KMSG names the file the report took the text from (/proc/last_kmsg or "
                  "/sys/fs/pstore/console-ramoops-0 in the tested reports). Seconds Since Boot is the number in the first square "
@@ -129,7 +129,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Boot, Crash and Dropbox",
+        "category": "Android Bug Report",
         "notes": "One row per thread of each process dump (a block headed '----- pid N at TIME -----') in the VM TRACES JUST NOW, "
                  "VM TRACES AT LAST ANR and HISTORICAL ANR sections of the text, and in the anr_* and trace* files under "
                  "FS/data/anr of a bug report zip (the zip made by adb bugreport or kept by the Shell app). Source Section is the "
@@ -178,7 +178,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Boot, Crash and Dropbox",
+        "category": "Android Bug Report",
         "notes": "One row per member named FS/data/tombstones/tombstone_<n> (text) or tombstone_<n>.pb (protobuf) in a bug report zip "
                  "(the zip made by adb bugreport or kept by the Shell app; a bug report text read alone has none). The fields are "
                  "read with the parsers of Android Tombstones in androidDropbox.py, which is not repeated here: that artifact reads "
@@ -223,7 +223,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Boot, Crash and Dropbox",
+        "category": "Android Bug Report",
         "notes": "Two sources. DUMP OF SERVICE dropbox lists the entries the dropbox kept (one line each: time, tag, content type "
                  "and size, or 'contents lost'); Preview is the indented line the platform prints under it, which the platform "
                  "cuts and which joins header lines with '/'. The DROPBOX SYSTEM SERVER CRASHES, DROPBOX SYSTEM APP CRASHES and "
@@ -270,7 +270,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Boot, Crash and Dropbox",
+        "category": "Android Bug Report",
         "notes": "These sections are printed by the Samsung builds tested (the A-series and S-series reports, Android 16) and by "
                  "none of the other three reports. Form 'event line' is a line 'time | EVENT | flag | detail' (the history file "
                  "eRR.p, and the same lines inside the power off files): Event is the word between the first pair of bars (ON, "
@@ -312,7 +312,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Vendor",
+        "category": "Android Bug Report",
         "notes": "One row per non-blank line of these dumpsys services: SveService, secims, sec_location, "
                  "sem_wifi, nfc SamsungExtension, advanced_protection, application_policy, enterprise_policy, persona, "
                  "motion_recognition and PkgPredictorService. The knoxguard_service and knoxcustom dumps are not here: "

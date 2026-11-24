@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-06",
         "requirements": "none",
-        "category": "AppLock",
+        "category": "Photos & Media",
         "sample_data": {
             "emu_a15_oss_v17": "AppLock 6.3.3 | 10 rows",
         },
@@ -35,7 +35,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-06",
         "requirements": "none",
-        "category": "AppLock",
+        "category": "Photos & Media",
         "sample_data": {
             "emu_a15_oss_v17": "AppLock 6.3.3 | 3 rows",
         },

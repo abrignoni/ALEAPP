@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-29",
         "requirements": "none",
-        "category": "Pinterest",
+        "category": "Social Media",
         "notes": "Read from the PREF_MY_USER value of the app's own preferences file, which holds "
                  "the account record as JSON. Account Created and Last Pin Saved are stored as "
                  "formatted text carrying no time zone, so they are reported as stored rather than "
@@ -31,7 +31,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Pinterest",
+        "category": "Social Media",
         "notes": "Each preference entry in the account switcher store is named for an account id "
                  "and holds that account's own record as JSON. Account Switcher Group ID is "
                  "taken from that record; when the record carries none, the value from the "
@@ -59,7 +59,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Pinterest",
+        "category": "Social Media",
         "notes": "A selected set of preference keys is reported, one row per key, with the value "
                  "as stored. Preference File names the preference file a key was read from and "
                  "does not separate two Android users' copies of it, so Source File names the file"
@@ -95,7 +95,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Pinterest",
+        "category": "Social Media",
         "notes": "This store holds suggestions the app downloaded, not terms the user searched for. "
                  "On the tested sample the app's own preferences recorded the partition URL it was "
                  "fetched from on a Pinterest content delivery host, a cache version naming a "
@@ -133,7 +133,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Pinterest",
+        "category": "Social Media",
         "notes": "Each file in the app's paged list cache begins with the four bytes 23 06 14 20, "
                  "then a little endian eight byte length and that many bytes of cache key, then a "
                  "second length prefixed string, then eight bytes, then a little endian eight byte "
@@ -165,7 +165,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Pinterest",
+        "category": "Social Media",
         "notes": "Covers both DiskLruCache stores the app keeps for images, the one under "
                  "image_manager_disk_cache and the one in the cache directory itself. No "
                  "reproducible link from a cached image back to a pin, a board or a URL was found. "
@@ -199,7 +199,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Pinterest",
+        "category": "Social Media",
         "notes": "Two stores are reported and the Source Store column says which each row came "
                  "from. In the response cache the entry file name is the MD5 of the request URL, "
                  "confirmed by recomputing it for all 13 entries on the tested sample, the first "
@@ -248,7 +248,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Pinterest",
+        "category": "Social Media",
         "notes": "Read from the idea_pin_drafts table of the app's Room database. The file name "
                  "carries a variable suffix, so the path pattern is a prefix match, which also "
                  "picks up the write-ahead log and shared memory sidecars; the tested sample "

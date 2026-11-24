@@ -13,7 +13,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-02-23",
         "last_update_date": "2022-02-23",
         "requirements": "none",
-        "category": "Vaulty",
+        "category": "Photos & Media",
         "notes": "",
         "paths": ('*/com.theronrogers.vaultyfree/shared_prefs/com.theronrogers.vaultyfree_preferences.xml',),
         "output_types": ['html', 'tsv', 'lava'],

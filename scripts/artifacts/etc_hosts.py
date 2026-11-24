@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2020-10-09",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Etc Hosts",
+        "category": "App Data Stores",
         "notes": "One row per hostname token occurrence in the first selected input, in physical "
                  "line and token order. Exact 127.0.0.1/localhost and ::1/ip6-localhost pairs "
                  "are suppressed; other aliases on those lines remain. Blank and comment-only "

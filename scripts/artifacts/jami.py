@@ -10,7 +10,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-17",
         "last_update_date": "2026-11-17",
         "requirements": "dulwich",
-        "category": "Jami",
+        "category": "Messaging",
         "notes": 'Jami (cx.ring) keeps one git repository per conversation under '
                  'files/<account>/conversations/<conversation id>; every message is a'
                  ' commit whose message is a JSON object, except merge commits '
@@ -112,7 +112,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-17",
         "last_update_date": "2026-11-17",
         "requirements": "dulwich",
-        "category": "Jami",
+        "category": "Messaging",
         "notes": 'Read from the msgpack file files/<account>/convInfo (ConvInfo, '
                  'conversation.h). The daemon writes each time twice, in seconds and '
                  "in milliseconds ('createdMs'); the milliseconds are used when "
@@ -157,7 +157,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-17",
         "last_update_date": "2026-11-17",
         "requirements": "none",
-        "category": "Jami",
+        "category": "Messaging",
         "notes": 'Read from the msgpack file files/<account>/contacts (Contact, '
                  "jami_contact.h), a map from the contact's 20-byte account id, shown"
                  " as hex ('Contact URI'), to its record. Times are seconds, or "
@@ -194,7 +194,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-17",
         "last_update_date": "2026-11-17",
         "requirements": "none",
-        "category": "Jami",
+        "category": "Messaging",
         "notes": 'One row per account folder under files/, read from its config.yml. '
                  'Only the five keys reported are read, and only as single-line '
                  'values; a key written in any other YAML form is left blank, and '
@@ -229,7 +229,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-17",
         "last_update_date": "2026-11-17",
         "requirements": "none",
-        "category": "Jami",
+        "category": "Messaging",
         "notes": 'Read from the msgpack file files/<account>/knownDevices, a map from'
                  " the 32-byte device id, shown as hex, to the device's record. Older"
                  ' daemons store the record as [name, last sync in seconds] and newer'

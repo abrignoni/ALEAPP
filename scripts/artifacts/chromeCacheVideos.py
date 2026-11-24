@@ -9,7 +9,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-02",
         "last_update_date": "2026-10-15",
         "requirements": "none",
-        "category": "Chromium",
+        "category": "Browsers",
         "notes": (
             "Video is rebuilt by the vendored chromiumcacheprobe from MP4 fragments found in "
             "the cache's entry files, including the sparse _s files. Sample bytes are copied as stored and only the "

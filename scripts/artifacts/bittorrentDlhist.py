@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-03-26",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "BitTorrent",
+        "category": "Cloud & Files",
         "notes": "Each file is bencoded and holds a records list. Every entry of that list is reported in file order. "
                  "The columns a, n and s (as stored) hold the entry's values under those keys as the file stores them; "
                  "what the app records in each key is not sourced here. "

@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "BRD (BreadWallet)",
+        "category": "Finance & Payments",
         "notes": "Read from the kvStoreTable of databases/platform.db, taking the rows whose key "
                  "begins with 'txn2-'.\n"
                  "What these rows are is taken from the application's own code, not inferred. The "
@@ -59,7 +59,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "BRD (BreadWallet)",
+        "category": "Finance & Payments",
         "notes": "Read from the kvStoreTable of databases/platform.db, without filtering, so the "
                  "transaction metadata rows the BRD - Transaction Metadata Records artifact "
                  "reports separately also appear here.\n"
@@ -96,7 +96,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
         "requirements": "none",
-        "category": "BRD (BreadWallet)",
+        "category": "Finance & Payments",
         "notes": "Read from shared_prefs/MyPrefsFile.xml.\n"
                  "Every value is reported under the preference name the app stored it against, "
                  "with no interpretation added. userId is a UUID as stored; walletRewardId is a "
@@ -128,7 +128,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "BRD (BreadWallet)",
+        "category": "Finance & Payments",
         "notes": "Read from currencyTable_v2 in databases/breadwallet.db.\n"
                  "The table stores a code, a name, a rate and an iso. Reading iso as the crypto "
                  "asset and code as the fiat currency, so that the rate is the value of one unit "

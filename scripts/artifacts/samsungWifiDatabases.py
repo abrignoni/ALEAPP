@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",
-        "category": "WiFi Profiles",
+        "category": "Network & Connectivity",
         "notes": "The CREATION_TIME column does not exist in every schema observed and is "
                  "reported empty there; where it exists, entries holding 0 are also "
                  "reported empty.",
@@ -33,7 +33,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",
-        "category": "GEO Location",
+        "category": "Locations & Maps",
         "notes": "Coordinates of 1000.0 (the declared column default) or -1.0 (held on rows "
                  "of the tested images and treated by this parser as unset) are reported "
                  "empty.",

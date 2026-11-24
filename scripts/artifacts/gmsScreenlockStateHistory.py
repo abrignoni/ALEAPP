@@ -9,7 +9,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Device Settings",
+        "category": "Device Information",
         "notes": "Reads screenlock_state_history and acknowledged_secure_lock_state from Google Play Services' "
                  "com.google.android.gms.auth.authzen.cryptauth.DeviceStateSyncManager preferences (plain XML; "
                  "the ABX reader is present in the code but no tested file was ABX); one row per history entry, in stored order, Entry 1 being the oldest kept. The "

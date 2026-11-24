@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Ryanair",
+        "category": "Travel & Vehicles",
         "notes": "Read from the user_profile table of the app's Room database. Two schema "
                  "versions were seen across the tested samples and the columns they do not "
                  "share are selected only where the table declares them, so both parse. "
@@ -24,7 +24,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Ryanair",
+        "category": "Travel & Vehicles",
         "notes": "Each booking row carries a booking_json payload holding the record "
                  "locator, status, currency, balance due and the point of sale location "
                  "code. Server and user modification times come from the booking_timestamps "
@@ -42,7 +42,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Ryanair",
+        "category": "Travel & Vehicles",
         "notes": "The booking payload carries two sets of departure and arrival times. The "
                  "depart and arrive members are UTC and match the flight table's "
                  "departure_time_utc column exactly on the tested sample. The members under "
@@ -62,7 +62,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Ryanair",
+        "category": "Travel & Vehicles",
         "notes": "Passengers come from the booking payload. Passenger type and title are "
                  "reported as stored. Check in status is taken from the payload's checkins "
                  "list, matched to the passenger by passenger number. Field mapping was "
@@ -79,7 +79,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-10-04",
         "requirements": "PyCryptodome",
-        "category": "Ryanair",
+        "category": "Travel & Vehicles",
         "notes": "The boardingpass table stores each pass as an encrypted blob. The key is "
                  "the base64 value under encryptionKeyBase64 in the app's own shared "
                  "preferences file, so both paths are needed. Decryption is AES-256 in CFB "
@@ -113,7 +113,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Ryanair",
+        "category": "Travel & Vehicles",
         "notes": "The database is read twice through SQLite, immutable=1 to ignore the "
                  "write-ahead log and mode=ro to apply it, and the two are compared on the "
                  "row id. Rows present only in the first read are reported with a Source "
@@ -135,7 +135,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Ryanair",
+        "category": "Travel & Vehicles",
         "notes": "Covers the recent_stations and recent_countries tables, distinguished by "
                  "the Record Type column. The country type integer is undocumented and is "
                  "reported as stored. recent_countries.last_used held Unix milliseconds on the "
@@ -154,7 +154,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Ryanair",
+        "category": "Travel & Vehicles",
         "notes": "Modified Date is the modified_date of the dot_booking row with the same "
                  "booking id and language, read as Unix milliseconds. Availability rows come "
                  "from the dot_booking_availability table and carry Is Available as stored. "
@@ -178,7 +178,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-10-07",
         "requirements": "none",
-        "category": "Ryanair",
+        "category": "Travel & Vehicles",
         "notes": "The selected preference value is read as a three-component token; only its base64url "
                  "JSON payload is decoded, without verifying its header, signature, authenticity or "
                  "acceptance by any service. Issued At and Expires At preserve the existing conversion and"

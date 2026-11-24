@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2020-03-22",
         "last_update_date": "2026-08-01",
         "requirements": "none",
-        "category": "Google Now & QuickSearch",
+        "category": "Device Activity",
         "notes": "",
         "paths": ('*/com.google.android.googlequicksearchbox/files/recently/*',
                   '*/com.google.android.googlequicksearchbox/files/accounts/*/RecentsDataStore.pb',

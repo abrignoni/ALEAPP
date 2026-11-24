@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-10-07",
         "requirements": "none",
-        "category": "Musicolet",
+        "category": "Music, Video & News",
         "sample_data": {
             "emu_a15_oss_v12": "Musicolet 6.14.1 | 5 rows",
         },
@@ -45,7 +45,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
         "requirements": "none",
-        "category": "Musicolet",
+        "category": "Music, Video & News",
         "sample_data": {
             "emu_a15_oss_v12": "Musicolet 6.14.1 | 3 rows",
         },
@@ -75,7 +75,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
         "requirements": "none",
-        "category": "Musicolet",
+        "category": "Music, Video & News",
         "sample_data": {
             "emu_a15_oss_v12": "Musicolet 6.14.1 | 2 rows",
         },

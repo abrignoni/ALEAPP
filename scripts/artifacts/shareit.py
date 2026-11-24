@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-03-11",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "File Transfer",
+        "category": "Cloud & Files",
         "notes": ("history_type and device_id are the history table columns of those names, "
                   "reported as stored. What each history_type value means, and whether device_id "
                   "names the sending or the receiving device, is not established here, so no "

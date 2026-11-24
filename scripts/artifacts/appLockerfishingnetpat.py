@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-12-14",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Encrypting Media Apps",
+        "category": "Photos & Media",
         "notes": "Uses preference 85B064D26810275C89F1F2CC15E20B442E98874398F16F6717BBD5D34920E3F8, "
                  "the existing fixed key/IV and PKCS7 unpadding. Key applicability and unlock meaning remain unverified.",
         "paths": ('*/com.hld.anzenbokusufake/shared_prefs/share_privacy_safe.xml',),

@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Slack",
+        "category": "Messaging",
         "notes": "Read from the messages and message_threads tables of the per-workspace store "
                  "databases/org_<team id>. Every file found under databases that holds the messages, "
                  "conversation and users tables is read as a workspace store, the duplicate storage "
@@ -63,7 +63,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Slack",
+        "category": "Messaging",
         "notes": "Read from the conversation table of databases/org_<team id>. "
                  "Every file found under databases that holds the messages, conversation and users "
                  "tables is read as a workspace store, the duplicate storage paths of one file "
@@ -93,7 +93,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Slack",
+        "category": "Messaging",
         "notes": "Read from the users table of databases/org_<team id>. "
                  "Every file found under databases that holds the messages, conversation and users "
                  "tables is read as a workspace store, the duplicate storage paths of one file "
@@ -121,7 +121,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Slack",
+        "category": "Messaging",
         "notes": "Read from the files table of databases/org_<team id>. "
                  "Every file found under databases that holds the messages, conversation and users "
                  "tables is read as a workspace store, the duplicate storage paths of one file "
@@ -156,7 +156,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Slack",
+        "category": "Messaging",
         "notes": "Read from the accounts table of databases/account_manager.\n"
                  "That table also holds token_encrypted and token_encrypted_ext1 columns. Those "
                  "are session credentials for the account, so they are deliberately not reported "

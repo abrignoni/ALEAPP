@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-05-13",
         "last_update_date": "2026-10-17",
         "requirements": "none",
-        "category": "WhatsApp",
+        "category": "Messaging",
         "notes": "Each row is a log line containing one of eight tokens; a line containing two "
                  "tokens gives two rows. The Description shown for a token is this parser's "
                  "label: the token-to-event mapping is not vendor-documented, and the Full Line "

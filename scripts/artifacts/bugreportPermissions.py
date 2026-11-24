@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Permissions and App Ops",
+        "category": "Android Bug Report",
         "notes": "One row per permission line under an install permissions: heading (Permission Type install) or under a runtime "
                  "permissions: heading of a User line (Permission Type runtime) in the Packages, Hidden system packages and "
                  "Shared users blocks of the package service dump. Package Or Shared User and Holder Type say which entry the "
@@ -57,7 +57,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Permissions and App Ops",
+        "category": "Android Bug Report",
         "notes": "One row per Permission [name] entry of the Permissions: heading of the package service dump. Source Package is "
                  "sourcePackage=, Source Uid and Gids (as printed) are uid= and gids=, Type (as stored) is type= and Protection "
                  "(as printed) is the text after prot= (for example signature|privileged), all as printed and not decoded. Flags "
@@ -95,7 +95,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Permissions and App Ops",
+        "category": "Android Bug Report",
         "notes": "Rows come from the Uid N: blocks of the appops service dump. Scope Uid: the uid-level lines OP: mode=X of a "
                  "block, with one row for each distinct Mode value of that uid; Ops lists the ops of those lines in the order "
                  "printed and Op Count is their number, so the 32,633, 42,419, 152, 120 and 89,199 uid-level lines of the five "
@@ -145,7 +145,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Permissions and App Ops",
+        "category": "Android Bug Report",
         "notes": "One row per Access: or Reject: line under an OP (mode): line of a Package heading in a Uid N: block of the "
                  "appops service dump (Kind Access or Reject), and one row of Kind Running for each Running start at: line. "
                  "Uid (as printed), Numeric Uid and Package are those of the block and heading (see Bug Report - App Ops Modes "
@@ -203,7 +203,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Permissions and App Ops",
+        "category": "Android Bug Report",
         "notes": "One row per name= entry of the roles list of each user_id= block in the role service dump (ROLE MANAGER STATE "
                  "on Android 10, ROLE STATE on Android 15). Role is the name (for example android.app.role.HOME), Holders (as "
                  "printed) is the text after holders= and is empty where the entry prints no holders= line, which is what the "
@@ -237,7 +237,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Permissions and App Ops",
+        "category": "Android Bug Report",
         "notes": "One row per permission line under a Permissions: heading of a User: block of an App ID: block in the "
                  "permissionmgr service dump. App ID and User are the numbers of those headings, Permission is the name, "
                  "Granted the text after granted= and Flags (as printed) the text inside flags=[ ], as printed and not "

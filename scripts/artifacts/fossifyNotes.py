@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Fossify Notes",
+        "category": "Productivity",
         "notes": "One row per entry in the notes table of databases/notes.db. Each row is a note the app "
                  "holds, with its Title, notes.value in Note Value (as stored), the Type, the "
                  "Path, and the note-lock state in Protection. Type is decoded from the app's NoteType "

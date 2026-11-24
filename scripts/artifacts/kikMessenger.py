@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-06",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Kik",
+        "category": "Messaging",
         "notes": "The code reads a database file whose name ends in kikDatabase.db, so a name "
                  "that carries a prefix before it is read. Direction is taken from the was_me "
                  "column: 1 is reported as Outgoing and 0 as Incoming, and no source for that "
@@ -49,7 +49,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-06",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Kik",
+        "category": "Messaging",
         "notes": "A column the store version does not have is reported empty.",
         "paths": ('*/kik.android/databases/*kikDatabase.db*',),
         "output_types": "standard",
@@ -67,7 +67,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-06",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Kik",
+        "category": "Messaging",
         "notes": "KIKContentTable stores one row per property, keyed by content id; this artifact "
                  "pivots those rows and adds the platform URIs from KIKContentURITable. Property "
                  "names are reported as the app wrote them. Files kept on the device under "
@@ -96,7 +96,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
-        "category": "Kik",
+        "category": "Messaging",
         "notes": "",
         "paths": ('*/kik.android/databases/*kikDatabase.db*',),
         "output_types": "standard",
@@ -115,7 +115,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
-        "category": "Kik",
+        "category": "Messaging",
         "notes": "",
         "paths": ('*/kik.android/databases/kikCoreDatabase.db*',),
         "output_types": "standard",
@@ -133,7 +133,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-06",
         "last_update_date": "2026-10-07",
         "requirements": "none",
-        "category": "Kik",
+        "category": "Messaging",
         "notes": "Original contribution credited to Claude. This artifact reads bare_jid from both "
                  "tables and last_update_timestamp from "
                  "ContactProfileEntries; the other columns of the two tables are not read and what "

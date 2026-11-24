@@ -9,7 +9,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-26",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "ExoPlayer Cache",
+        "category": "App Data Stores",
         "notes": "Read with the vendored exoprobe (scripts/vendor/exoprobe.py, "
                  "https://github.com/abrignoni/exoprobe) from the ExoPlayer SimpleCache folders the extraction "
                  "holds, whatever the app, found by their file names: pieces named <id>.<position>.<time>.v3.exo, or"

@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Zoom",
+        "category": "Calls & Contacts",
         "notes": "One row per distinct folder name under data/Zoom in an app container. "
                  "A leading date-shaped segment, time-shaped segment and remaining suffix are "
                  "reported as text under Folder Date Text, Folder Time Text and Folder Suffix. "
@@ -33,7 +33,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-10-07",
         "requirements": "none",
-        "category": "Zoom",
+        "category": "Calls & Contacts",
         "notes": "One row per app data directory that holds an account name or at least one counted store."
                  " The First xmpp.zoom.us Path Match column preserves the existing first matching "
                  "substring from the selected paths. That substring alone does not establish an account "

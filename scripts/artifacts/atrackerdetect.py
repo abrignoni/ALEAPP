@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-01-08",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "AirTags",
+        "category": "Locations & Maps",
         "notes": "Preference Name is the name attribute, Value is the value attribute and Element Text is the text "
                  "inside the element, each as stored; a column is blank where the element has no such part. On "
                  "pixel3_a12 the file holds one boolean named terms_and_conditions_read and two string preferences "

@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-11",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Avast Cleanup",
+        "category": "Cloud & Files",
         "sample_data": {
             "emu_a15_oss2_v3": "Avast Cleanup 26.16.1 | 23 rows",
         },
@@ -55,7 +55,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-11",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Avast Cleanup",
+        "category": "Cloud & Files",
         "sample_data": {
             "emu_a15_oss2_v3": "Avast Cleanup 26.16.1 | 15 rows",
         },
@@ -92,7 +92,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-11",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Avast Cleanup",
+        "category": "Cloud & Files",
         "sample_data": {
             "emu_a15_oss2_v3": "Avast Cleanup 26.16.1 | 0 rows",
         },
@@ -125,7 +125,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-11",
         "last_update_date": "2026-09-11",
         "requirements": "none",
-        "category": "Avast Cleanup",
+        "category": "Cloud & Files",
         "sample_data": {
             "emu_a15_oss2_v3": "Avast Cleanup 26.16.1 | 4 rows",
         },
@@ -164,7 +164,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-11",
         "last_update_date": "2026-09-11",
         "requirements": "none",
-        "category": "Avast Cleanup",
+        "category": "Cloud & Files",
         "sample_data": {
             "emu_a15_oss2_v3": "Avast Cleanup 26.16.1 | 1 rows",
         },

@@ -16,7 +16,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-17",
         "last_update_date": "2026-11-17",
         "requirements": "none",
-        "category": "Samsung Gallery",
+        "category": "Photos & Media",
         "notes": (
             "Read from the search_history table (title, date_added, search_target) of "
             "com.sec.android.gallery3d/databases/local.db with its -wal. Date Added is "
@@ -56,7 +56,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-17",
         "last_update_date": "2026-11-17",
         "requirements": "none",
-        "category": "Samsung Gallery",
+        "category": "Photos & Media",
         "notes": (
             "Read from the operation_history table (timestamp, action, media_id) of "
             "com.sec.android.gallery3d/databases/local.db with its -wal. Timestamp is "

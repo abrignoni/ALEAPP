@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-03-24",
         "last_update_date": "2023-03-24",
         "requirements": "none",
-        "category": "PikPak",
+        "category": "Cloud & Files",
         "notes": "",
         "paths": ('*/com.pikcloud.pikpak/databases/pikpak_downloads.db*',),
         "output_types": "standard",

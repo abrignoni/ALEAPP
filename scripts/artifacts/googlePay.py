@@ -16,7 +16,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-28",
         "last_update_date": "2026-10-16",
         "requirements": "none",
-        "category": "Google Pay",
+        "category": "Finance & Payments",
         "notes": "Owner is the Google Pay account the database belongs to: the payer of a sent payment and the "
                  "payee of a received one. Transaction Date is the transaction's own time; when the card carries "
                  "none it is the card's creation time. Counterparty Name at Bank is a second name the card stores "
@@ -39,7 +39,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-29",
         "last_update_date": "2026-10-16",
         "requirements": "none",
-        "category": "Google Pay",
+        "category": "Finance & Payments",
         "notes": "Device Owner is Yes for a UPI ID the owner paid from or was paid into, or that posted a payment "
                  "card as the owner's side. Name at Bank is a second name the card stores with the UPI ID, read "
                  "by the contributor as the name it is registered to. First and Last Seen are the times of the "

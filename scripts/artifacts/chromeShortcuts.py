@@ -1,6 +1,6 @@
 __artifacts_v2__ = {
     "chromeShortcuts": {
-        "name": "Omnibox Shortcuts",
+        "name": "Chromium - Omnibox Shortcuts",
         "description": "Rows of the omni_box_shortcuts table from the Shortcuts database of Chromium "
                        "based browsers on Android (packages with an app_chrome/Default profile): the "
                        "stored input text, the URL and the fill_into_edit, contents and description "
@@ -10,7 +10,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Chromium",
+        "category": "Browsers",
         "notes": "Reads the omni_box_shortcuts table of each Shortcuts database in an app_chrome/Default "
                  "profile folder; one row per table row. Browser Package is the app folder that holds "
                  "app_chrome, and Android User is the user whose app data folder holds it (data/data "

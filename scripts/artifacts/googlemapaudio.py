@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-12-27",
         "last_update_date": "2021-12-27",
         "requirements": "none",
-        "category": "Google Maps Voice Guidance",
+        "category": "Locations & Maps",
         "notes": "",
         "paths": ('*/com.google.android.apps.maps/app_tts-cache/*_*',),
         "output_types": "standard",

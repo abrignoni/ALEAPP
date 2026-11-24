@@ -10,7 +10,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-18",
         "last_update_date": "2026-11-22",
         "requirements": "none",
-        "category": "Snapchat",
+        "category": "Messaging",
         "notes": "Read from the Turn and TurnEvent tables of "
                  "com.snapchat.android/files/valdi_cache/sqlite/<account>/turn_db, with its "
                  "write-ahead log when one is beside it. Sources are the app's own script "

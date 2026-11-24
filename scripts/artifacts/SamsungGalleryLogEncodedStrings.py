@@ -13,7 +13,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-09",
         "last_update_date": "2026-11-16",
         "requirements": "none",
-        "category": "Samsung Gallery",
+        "category": "Photos & Media",
         "notes":        "The base APKs from several versions of com.sec.android.gallery3d were "
                         "reviewed using JADX. Three encoding methods were identified within the "
                         "APKs. The earliest (V1), present in the reviewed v7.0.00.9 and v10.0.01.17 "

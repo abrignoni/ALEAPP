@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-02-08",
         "last_update_date": "2026-08-01",
         "requirements": "none",
-        "category": "Chats",
+        "category": "Messaging",
         "notes": (
             "Timestamps are rendered in UTC. The Method names for the stored numeric "
             "'method' field (1, 3 and 8) are the labels this parser assigns; the source for them "

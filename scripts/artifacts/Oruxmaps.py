@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-03-11",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "GEO Location",
+        "category": "Locations & Maps",
         "notes": "poitime is read as milliseconds since the Unix epoch and shown in UTC. "
                  "That unit comes from two public readers of this database, not from the "
                  "app's own code, for which no public source was found, and it was not "
@@ -34,7 +34,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-03-11",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "GEO Location",
+        "category": "Locations & Maps",
         "notes": "The trackciudad column holds the "
                  "tracks.trackciudad value as stored; what the app stores "
                  "there is not established. trkpttime is read as milliseconds since the "

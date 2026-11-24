@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "Disney+",
+        "category": "Music, Video & News",
         "notes": "Read from the bookmarks table of the app's db_offline_bookmarks database. "
                  "occurredOn is Unix milliseconds. playhead and runtime are media offsets "
                  "rather than timestamps and are reported both as stored and formatted; the "
@@ -37,7 +37,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Disney+",
+        "category": "Music, Video & News",
         "notes": "Read from the bookmarksHandshake keys of the app's default shared "
                  "preferences file. Each value is a JSON object naming a media id, a content "
                  "id, a series id, a content identifier type and a timestamp in Unix "
@@ -62,7 +62,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "Disney+",
+        "category": "Music, Video & News",
         "notes": "Read from the recentSearches key of RecentSearchSharedPref. The value is a "
                  "JSON object keyed by profile id, so a term is attributable to the profile "
                  "that holds it. Each entry carries the search term together with a content "
@@ -83,7 +83,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Disney+",
+        "category": "Music, Video & News",
         "notes": "Read from the BAM_SDK_STORAGE shared preferences file. The session state "
                  "value records when the access context was generated, when it expires, the "
                  "service region, the token type, an attempts value and a lastFailure time "
@@ -113,7 +113,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "Disney+",
+        "category": "Music, Video & News",
         "notes": "Key and value pairs from the app's own shared preferences files: the "
                  "default file, BAMPLAYER, AnalyticsSharedPrefs and Conviva. On the one "
                  "tested sample these carried playback preferences, an install referrer, a "
@@ -142,7 +142,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Disney+",
+        "category": "Music, Video & News",
         "notes": "One row per media identifier, summarising the request URLs recorded in the "
                  "app's sdk-cache entries for the media delivery hosts. The individual "
                  "manifest fetches are counted rather than listed, because an examiner cannot "
@@ -169,7 +169,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "Disney+",
+        "category": "Music, Video & News",
         "notes": "One row per cached trickplay index. The sdk-cache entries whose content "
                  "type is application/bif hold a Base Index Frames file: an eight byte "
                  "signature, a declared image count, a declared timestamp multiplier and an "
@@ -199,7 +199,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "Disney+",
+        "category": "Music, Video & News",
         "notes": "One row per cached content service response, giving the endpoint, the "
                  "availability region the response was served for and the number of titles it "
                  "carries. The titles themselves are deliberately not enumerated: on the one "
@@ -233,7 +233,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "Disney+",
+        "category": "Music, Video & News",
         "notes": "One row per image store rather than one per file. On the tested sample the "
                  "images were service supplied artwork for catalogue titles and avatars and no "
                  "user created image was found, so enumerating each file would fill the report "
@@ -266,7 +266,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "Disney+",
+        "category": "Music, Video & News",
         "notes": "Each file under files/dustv2 is one queued telemetry event in CloudEvents "
                  "form. The event time and the invocation start time are ISO 8601 strings "
                  "carrying their own offset and are reported with that offset preserved. The "

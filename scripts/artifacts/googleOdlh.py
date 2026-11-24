@@ -14,7 +14,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-30",
         "last_update_date": "2026-10-16",
         "requirements": "none",
-        "category": "GEO Location",
+        "category": "Locations & Maps",
         "notes": "Coordinates are read as E7 fixed-point integers inside the protobuf. "
                  "The pair is read from protobuf path 3.1.4.5, fields 1 and 2, and a "
                  "value above 2**31 is wrapped to a negative number. What the pair "
@@ -73,7 +73,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",
-        "category": "GEO Location",
+        "category": "Locations & Maps",
         "notes": "",
         "paths": ('*/com.google.android.gms/databases/odlh-storage.db*',),
         "output_types": "standard",
@@ -100,7 +100,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-14",
         "last_update_date": "2026-10-16",
         "requirements": "none",
-        "category": "GEO Location",
+        "category": "Locations & Maps",
         "notes": "Read from segments whose semantic_segment protobuf has path 3.3. Field "
                  "3.3.4 holds packed little-endian 32-bit latitudes and 3.3.5 the matching "
                  "longitudes, both E7 fixed-point; field 3.3.6 holds packed varint "

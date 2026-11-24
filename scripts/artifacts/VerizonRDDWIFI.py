@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-07-07",
         "last_update_date": "2023-07-07",
         "requirements": "none",
-        "category": "Verizon RDD Analytics",
+        "category": "Device Information",
         "notes": "",
         "paths": ('*/com.verizon.mips.services/databases/RDD_WIFI_DATA_DATABASE',),
         "output_types": "standard",

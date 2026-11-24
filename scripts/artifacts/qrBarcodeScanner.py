@@ -9,7 +9,7 @@ __artifacts_v2__ = {
             "emu_a15_oss_v11": "QR & Barcode Scanner 2.2.224 | 9 rows",
         },
         "requirements": "none",
-        "category": "QR and Barcode Scanner",
+        "category": "Cloud & Files",
         "notes": "One row per row of the history table in "
                  "com.gamma.scan/databases/barcode_scanner_history.db. Timestamp is Unix "
                  "milliseconds and is reported as UTC. Source separates the two ways a row gets "

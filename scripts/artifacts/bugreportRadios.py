@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Bluetooth, NFC and USB",
+        "category": "Android Bug Report",
         "notes": "One row per value of the Bluetooth Status block (enabled, state, address, name, time since enabled), of the line that "
                  "counts the crashes of the Bluetooth process, of the line that counts the registered BLE apps and, once each, of "
                  "these adapter property lines when the dump prints them: ConnectionState, State, ScanMode, "
@@ -41,7 +41,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Bluetooth, NFC and USB",
+        "category": "Android Bug Report",
         "notes": "One row per device line of the lists that the bluetooth_manager service dump heads Bonded devices and Other "
                  "devices. Listed Under is the heading as printed. Name, Address, Address Type, Device Type, Class (as stored), "
                  "Profiles, Packages and Connection State are the parts of the line in the order the layouts print them, and "
@@ -91,7 +91,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Bluetooth, NFC and USB",
+        "category": "Android Bug Report",
         "notes": "One row per timed line of five lists of the bluetooth_manager service dump. Event Source says which: Enable "
                  "log, Adapter state (the rec[n] records of the adapter state machine), Connection events, Bond events or Scan "
                  "mode changes. Event is the first word of a connection event (CONNECTED, DISCONNECTED), the Enabled or Disabled "
@@ -137,7 +137,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Bluetooth, NFC and USB",
+        "category": "Android Bug Report",
         "notes": "One row per address of the Link Key Types list. BR/EDR Key Type is the word printed after BR: (for example "
                  "AUTH_COMB) and LE Key Types the words printed after LE:, both as printed and not decoded; the key values "
                  "themselves are not in the dump. Address is as printed (lower case on the tested reports), with the first four octets masked as xx "
@@ -170,7 +170,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Bluetooth, NFC and USB",
+        "category": "Android Bug Report",
         "notes": "One row per line of three parts of the nfc service dump. Group Adapter state holds the key=value and key: "
                  "value lines before the list of card emulation services (for example mState, mScreenState, mTechMask), Group "
                  "Preferred services the lines of the Preferred services part (the current preferred foreground, wallet and "
@@ -203,7 +203,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Bluetooth, NFC and USB",
+        "category": "Android Bug Report",
         "notes": "One row per AID of each ComponentInfo entry under the Registered HCE services heading of the nfc service dump, "
                  "and one row with empty AID columns for an entry that lists none. Package and Service are read from the "
                  "ComponentInfo text, Description and UID from the parentheses after it, Host Type from the On Host Service or "
@@ -246,7 +246,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Bluetooth, NFC and USB",
+        "category": "Android Bug Report",
         "notes": "One row per line of the Nfc Event Log in the nfc service dump. Event is the first word after the time "
                  "(for example reader_mode_change, bootup_state, aid_registration) and Detail the rest of the line as printed, "
                  "cut at 400 characters. Time As Printed is device wall-clock text with milliseconds and no zone; Time (UTC) "
@@ -283,7 +283,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Bluetooth, NFC and USB",
+        "category": "Android Bug Report",
         "notes": "One row per non-empty line of the NFC SYSTEM LOG command section (/proc/nfclog, printed by some Samsung "
                  "builds). Kernel Time (as stored) is the text in the first square brackets, seconds on the kernel clock with a B on the early lines, the spaces around it in the brackets removed (not interpreted); Message is the rest of the line, cut at 400 "
                  "characters. About 1 line in 20 also prints a wall time in square brackets (Time As Printed, month, day and "
@@ -323,7 +323,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Bluetooth, NFC and USB",
+        "category": "Android Bug Report",
         "notes": "One row per key=value line under the device_manager, host_manager, port_manager and alsa_manager parts of the "
                  "USB MANAGER STATE text of the usb service dump. Path is the keys above the line joined with dots (a list of "
                  "ports is numbered [0], [1]) and Value is the text after the equals sign, as printed. The lines of the USB "
@@ -362,7 +362,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Bluetooth, NFC and USB",
+        "category": "Android Bug Report",
         "notes": "One row per non-empty line of the USB LOG command section (/proc/usblog, printed by some Samsung builds). Block "
                  "is the heading the line is under (CCIC EVENT, PCM, EXTRA, or the controller information block), the heading "
                  "lines themselves are rows with their counts as printed, and the time sync line is a row with Block time sync. "
@@ -409,7 +409,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Telephony",
+        "category": "Android Bug Report",
         "notes": "One row per value line of four service dumps; Service says which. telephony.registry: the m...= lines of "
                  "the last known state of each phone (Phone Id) and of the registry itself (Phone Id empty), such as the call "
                  "state, the service state, the data connection state, the display info and mActiveDataSubId. phone: the "
@@ -449,7 +449,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-31",
         "requirements": "none",
-        "category": "Android Bug Report - Telephony",
+        "category": "Android Bug Report",
         "notes": "One row per subscription line of the Active subscriptions and All subscriptions lists (ActiveSubInfoList and "
                  "AllSubInfoList on the Android 10 reports) of the isub service dump; Listed In says which list (a "
                  "subscription in both lists has a row in each). Subscription Id, Slot Index (-1 for a subscription with no "
@@ -494,7 +494,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Telephony",
+        "category": "Android Bug Report",
         "notes": "One row per key = value line printed under mConfigFromDefaultApp, mConfigFromOemApp, mConfigFromCarrierApp, "
                  "mPersistentOverrideConfigs, mOverrideConfigs and mNoSimConfig of each phone in the carrier_config service "
                  "dump (Source is that name; most of these print null and give no row), and one row per cached configuration "
@@ -536,7 +536,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Telephony",
+        "category": "Android Bug Report",
         "notes": "One row per line that starts with a date and time (YYYY-MM-DDTHH:MM:SS.ffffff - text) in six service dumps; "
                  "Service says which and Heading is the last heading line above the row (for example local logs:, "
                  "mDataRoamingNotifLog:, CarrierConfigLoader local log=). Message is the text after the dash, cut at 1,000 "
@@ -573,7 +573,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Telephony",
+        "category": "Android Bug Report",
         "notes": "One row per rec[n] line (time=MM-DD HH:MM:SS.mmm processed=... org=... dest=... what=...) of the state "
                  "machines in the telephony service dumps. State Machine is the heading above the total records line (for "
                  "example the inbound SMS or cell broadcast handler), Position the number n, Processed In, From and To the "
@@ -610,7 +610,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Telephony",
+        "category": "Android Bug Report",
         "notes": "One row per PhoneAccount line of the PhoneAccountRegistrar part of the telecom service dump. Package and "
                  "Service are read from the ComponentInfo text, Account Id is the id after it (the platform prints "
                  "*** for most of them), User the UserHandle number, Enabled Mark the character inside the first brackets "
@@ -645,7 +645,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Telephony",
+        "category": "Android Bug Report",
         "notes": "One row per line of the RADIO LOG command section (logcat -b radio) whose tag starts with one of these "
                  "state tracker tags: SST, ServiceStateTracker, SSCtr, NetworkTypeController, DNC-, DN-, DefaultPhoneNotifier, "
                  "LocaleTracker, NitzStateMachineImpl, PhoneSwitcher, SubscriptionController, SubscriptionManagerService, "

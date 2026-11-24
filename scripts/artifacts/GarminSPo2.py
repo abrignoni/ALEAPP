@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-02-24",
         "last_update_date": "2026-10-06",
         "requirements": "Python 3.7 or higher",
-        "category": "Garmin",
+        "category": "Health & Fitness",
         "notes": "Whether a given Garmin Connect version still populates cache-database is not "
                  "established here; gcm_cache.db and garmin.api files are parsed by the "
                  "GarminJson, GarminGcmJsonActivities, garmin and Garmin*API artifacts. "

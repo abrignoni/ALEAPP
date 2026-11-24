@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "ColorNote",
+        "category": "Productivity",
         "sample_data": {
             "emu_a15_oss_v10": "ColorNote 4.8.8 | 6 rows",
         },

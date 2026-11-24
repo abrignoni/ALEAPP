@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-07-28",
         "last_update_date": "2026-10-25",
         "requirements": "none",
-        "category": "Android Auto",
+        "category": "Travel & Vehicles",
         "notes": "One row per row of the allowedcars table. On every copy examined the same database also has a rejectedcars "
                  "table with the same columns; the Android Auto - Rejected Cars artifact reads it. Android Auto is closed source and what places "
                  "a car in allowedcars, or what event the connectiontime column marks, is not established; a row is "
@@ -33,7 +33,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-25",
         "last_update_date": "2026-10-25",
         "requirements": "none",
-        "category": "Android Auto",
+        "category": "Travel & Vehicles",
         "notes": "One row per row of the rejectedcars table, which has the same columns as allowedcars and is read "
                  "with the same code as Android Auto - Allowed Cars, whose notes describe the connectiontime column. Android Auto "
                  "is closed source and what places a car in rejectedcars, or what event the connectiontime column "

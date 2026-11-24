@@ -9,7 +9,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-11-14",
         "last_update_date": "2026-11-23",
         "requirements": "none",
-        "category": "Tor Browser",
+        "category": "Browsers",
         "notes": "File Modified is the modification time the tool reads from the input for the "
                  "file as a UTC time, to the whole second, such as from a tar header or a zip "
                  "entry's NTFS or extended timestamp field. When the tool reads no UTC time, File"
@@ -35,7 +35,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-11-14",
         "last_update_date": "2025-11-14",
         "requirements": "none",
-        "category": "Tor Browser",
+        "category": "Browsers",
         "notes": "Run on hc_pixel8pro_a16 (version code 2016164570, 1 row) and "
                  "russell_pixel6a_a13 (version code 2015960779, 0 rows).",
         "paths": ('*/org.torproject.torbrowser/files/places.sqlite*'),
@@ -53,7 +53,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-11-14",
         "last_update_date": "2025-11-14",
         "requirements": "none",
-        "category": "Tor Browser",
+        "category": "Browsers",
         "notes": "Reports three keys of fenix_preferences.xml: "
                  "pref_key_last_browse_activity_time, pref_key_times_app_opened and "
                  "pref_key_open_private_tabs_count. The first is read as Unix milliseconds and "

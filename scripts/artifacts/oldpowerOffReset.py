@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-03-14",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Power Events",
+        "category": "Device Information",
         "notes": "Each entry begins with a line holding a date and time as "
                  "yy/mm/dd hh:mm:ss with no time zone. The Timestamp (as "
                  "recorded) column shows that line as text, unconverted, and "

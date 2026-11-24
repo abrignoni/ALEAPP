@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-04-14",
         "last_update_date": "2026-08-01",
         "requirements": "none",
-        "category": "Google Photos",
+        "category": "Photos & Media",
         "notes": "Timezone Offset (hours, truncated) is the stored timezone_offset value divided "
                  "by 3,600,000, that is read as milliseconds and reported in whole hours with the "
                  "remainder truncated. A +5:30 offset therefore renders as 5.",
@@ -33,7 +33,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-04-14",
         "last_update_date": "2026-08-01",
         "requirements": "none",
-        "category": "Google Photos",
+        "category": "Photos & Media",
         "notes": "Timezone Offset (hours, truncated) is the stored timezone_offset value divided "
                  "by 3,600,000, that is read as milliseconds and reported in whole hours with the "
                  "remainder truncated. A +5:30 offset therefore renders as 5.\n"
@@ -64,7 +64,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-04-14",
         "last_update_date": "2026-08-01",
         "requirements": "none",
-        "category": "Google Photos",
+        "category": "Photos & Media",
         "notes": "Timezone Offset (hours, truncated) is the stored timezone_offset value divided "
                  "by 3,600,000, that is read as milliseconds and reported in whole hours with the "
                  "remainder truncated. A +5:30 offset therefore renders as 5.\n"
@@ -95,7 +95,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-04-14",
         "last_update_date": "2026-08-01",
         "requirements": "none",
-        "category": "Google Photos",
+        "category": "Photos & Media",
         "notes": "A row is a distinct bucket ID, folder name and folder path taken from the "
                  "local_media rows whose bucket_id is listed in the backup_folders table. A "
                  "bucket listed in backup_folders with no local_media row gives no row. Folder "
@@ -125,7 +125,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-04-14",
         "last_update_date": "2021-04-14",
         "requirements": "none",
-        "category": "Google Photos",
+        "category": "Photos & Media",
         "notes": "",
         "paths": ('*/com.google.android.apps.photos/databases/disk_cache*',
                   '*/com.google.android.apps.photos/cache/glide_cache/*'),
@@ -151,7 +151,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-04-14",
         "last_update_date": "2026-08-01",
         "requirements": "none",
-        "category": "Google Photos",
+        "category": "Photos & Media",
         "notes": "Media shown here is the file still present under files/trash_files matched to a "
                  "local_trash.db row. Nothing is carved or otherwise recovered.\n"
                  "Local Path is the local_trash.db local_path value as stored.",

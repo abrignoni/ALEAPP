@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-02-24",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Map My Walk",
+        "category": "Health & Fitness",
         "notes": "Samples are ordered by interpreted integer Unix milliseconds, with eligible "
                  "timestamps first; zero and negative timestamps are eligible when representable. "
                  "NULL, empty, nonnumeric, nonfinite and unrepresentable timestamps remain in an "

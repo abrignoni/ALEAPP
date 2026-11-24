@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Security and Device Policy",
+        "category": "Android Bug Report",
         "notes": "One row per admin component printed under an Enabled Device Admins (User N, provisioningState: P) heading of the "
                  "device_policy service dump. Admin Component is the component as printed (package, a slash and the class); Package "
                  "is the part before the slash. Declared Policies are the lines printed under policies: for the entry, in the order "
@@ -52,7 +52,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Security and Device Policy",
+        "category": "Android Bug Report",
         "notes": "One row per name and value line of these parts of the device_policy service dump: Group says which part. The groups "
                  "are the Immutable state, a Profile Owner or Device Owner entry (User holds the user of the entry), the lines "
                  "printed after the admin entries of a user (Device admins state, for example mPasswordOwner and "
@@ -89,7 +89,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Security and Device Policy",
+        "category": "Android Bug Report",
         "notes": "One row per admin printed under Per-admin Policy of a policy, or one row for a policy that prints null there. "
                  "Scope is Local (User holds the user printed above the policy) or Global (User is empty). Policy Key is the "
                  "key type and key as printed. Admin Package and Admin Authorities come from the EnforcingAdmin text; Admin Value "
@@ -125,7 +125,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Security and Device Policy",
+        "category": "Android Bug Report",
         "notes": "One row per User N entry of the lock_settings service dump. The Android 14 and later layout (User State) prints "
                  "Protector ID, LSKF last changed with the previous protector, Backup protector, SI Checker, Secure Mode, SID, "
                  "Quality, CredentialType, SeparateChallenge, Metrics and failed attempt; the Android 10 layout prints only "
@@ -166,7 +166,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Security and Device Policy",
+        "category": "Android Bug Report",
         "notes": "One row per file printed under Storage: in the lock_settings service dump. Location says which listing (User N, "
                  "or Backup) and Directory is the directory printed on the heading. Size is the number printed before the time, "
                  "as printed. Modified As Printed is a device wall-clock time without a zone and Modified "
@@ -200,7 +200,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Security and Device Policy",
+        "category": "Android Bug Report",
         "notes": "One row per line of these parts of the lock_settings service dump: Service (for example DO Enabled, SP Enabled, "
                  "PasswordHandleCount, ThirdPartyAppsStarted), Keys in namespace (the key names printed, which contain protector "
                  "ids), StrongAuth (one row per name and value, with User for the lines that print userId=) and RebootEscrow "
@@ -233,7 +233,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Security and Device Policy",
+        "category": "Android Bug Report",
         "notes": "One row per timestamped entry after the LSSLog: line of the lock_settings service dump. State is the part the "
                  "entry sits in (the text between Start and End on the dashed lines: Enroll, Verify, Events, Restore, Keyguard, "
                  "Summary, KeystoreErr and Unknown in the tested reports). An entry is a line at the left, or two spaces in, "
@@ -276,7 +276,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Security and Device Policy",
+        "category": "Android Bug Report",
         "notes": "One row per entry of the prints list in the {\"service\": ...} line of the fingerprint and face service dumps. "
                  "Service is the dump (fingerprint or face); Sensor ID and Provider come from the Dumping for sensorId line "
                  "(empty on the Android 10 layout, which prints none); Provider Service is the service text of the JSON line. "
@@ -313,7 +313,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Security and Device Policy",
+        "category": "Android Bug Report",
         "notes": "One row per ID(n) line under Sensors: in the biometric service dump. OEM Strength, Updated Strength, Modality, State "
                  "and Cookie are the numbers printed (as stored) and are not decoded here: the strength and modality numbers are "
                  "the platform's own values. A row says which sensor ids the biometric service listed when the dump ran.\n"
@@ -344,7 +344,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Security and Device Policy",
+        "category": "Android Bug Report",
         "notes": "One row per numbered line after the AuthSessionCoordinator logs begin line. Service says which dump printed the "
                  "line. Sequence is the number after #. Event is the function name printed (for example authStartedFor, "
                  "authEndedFor, resetLockoutFor), with internal: in front for the lines the platform marks internal. User, Sensor "
@@ -380,7 +380,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Security and Device Policy",
+        "category": "Android Bug Report",
         "notes": "One row per enabled trust agent of each User entry in the trust service dump, or one row for a user entry that "
                  "prints no agent (Agent is empty; Note holds the sentence the dump prints for it). User ID, User Name, "
                  "Flags (as stored) and the words in brackets (Qualifiers, for example current) are as printed; the name is "
@@ -416,7 +416,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Security and Device Policy",
+        "category": "Android Bug Report",
         "notes": "One row per numbered line under Events: of a user entry in the trust service dump. Sequence is the number after "
                  "#, Event the word before the colon and Detail the text after it (for example agent=...). Time As Printed is month, "
                  "day and clock time without a year or zone. The year is not in the dump: Time (UTC) uses the latest year, the one "
@@ -451,7 +451,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Security and Device Policy",
+        "category": "Android Bug Report",
         "notes": "One row per key=value line of the nested ADB MANAGER STATE text of the adb service dump. Path joins the names of "
                  "the enclosing blocks with dots (for example debugging_manager.connected_to_adb) and Value is as printed. A row "
                  "records what the ADB manager printed when the dump ran: connected_to_adb=false says that the manager listed no "
@@ -484,7 +484,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Vendor",
+        "category": "Android Bug Report",
         "notes": "One row per line of the knoxguard_service service dump after its heading. Kind is Log for a line of the form "
                  "time : [tag] message or time : pid|tid : message (the Android 13 layout of s20fe_a13), and State for any other "
                  "line (for example ADB blocked : false, DO blocked : false, SF counter : 1). Tag is the text in square brackets "
@@ -523,7 +523,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Vendor",
+        "category": "Android Bug Report",
         "notes": "One row per line of the knoxcustom service dump of the form Manager:Name: value (the heading line is skipped). "
                  "Manager is the text before the first colon (for example SystemManager), Name and Value the rest as printed. A "
                  "line printed as Name is null gives Value null and a line printed as Name:value is split at the colon; "
@@ -555,7 +555,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-31",
         "requirements": "none",
-        "category": "Android Bug Report - Storage and Databases",
+        "category": "Android Bug Report",
         "notes": "One row per line of the FILESYSTEMS & FREE SPACE (df) command section, after the header line. Filesystem, "
                  "1K-blocks, Used, Available, Use% and Mounted On are as printed (the counts are in 1K blocks as the header says; "
                  "a number larger than SQLite can hold is shown as printed text). The sizes are the state when the command ran. A "
@@ -586,7 +586,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-31",
         "requirements": "none",
-        "category": "Android Bug Report - Storage and Databases",
+        "category": "Android Bug Report",
         "notes": "One row per line of the FILESYSTEMS & FREE INODE (df -i) command section, after the header line. Inodes, IUsed, "
                  "IFree and IUse% are shown as printed text, because the platform prints 18446744073709551615 (the largest 64-bit "
                  "unsigned number) for file systems that do not count inodes, and the counts are not converted. A row says what the "
@@ -616,7 +616,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-31",
         "requirements": "none",
-        "category": "Android Bug Report - Storage and Databases",
+        "category": "Android Bug Report",
         "notes": "One row per line of the MOUNT POINT DUMP (mount) command section of the form device on path type fs (options). "
                  "Device, Mount Point, FS Type and Options are as printed and the options (up to 1,000 characters) are not split or "
                  "decoded. A line of another shape is not read. A row says what the mount command printed when the report was "
@@ -646,7 +646,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-31",
         "requirements": "none",
-        "category": "Android Bug Report - Storage and Databases",
+        "category": "Android Bug Report",
         "notes": "One row per StorageVolume: entry, per VolumeInfo{id} entry and per DiskInfo entry of the mount service dump. Kind "
                  "says which. ID is the id printed (emulated;0, for example). State, Path and Internal Path are mState or state, "
                  "mPath or path, mInternalPath or internalPath; Description, Primary, Removable and Emulated are the m-prefixed "
@@ -681,7 +681,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-31",
         "requirements": "none",
-        "category": "Android Bug Report - Storage and Databases",
+        "category": "Android Bug Report",
         "notes": "One row per line after a VOLD LAST LOG BUF#n line in the mount service dump. Buffer is the BUF heading. Time As "
                  "Printed is year/month/day-hour:minute:second followed by the label (GMT or UTC); Time (UTC) is that time read as UTC. PID, TID, "
                  "Component and Message are as printed. A line without a time (92 rows of the Samsung A-series report and 530 of the S-series report: "
@@ -715,7 +715,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-31",
         "requirements": "none",
-        "category": "Android Bug Report - Storage and Databases",
+        "category": "Android Bug Report",
         "notes": "One row per line of the STORAGED IO INFO (storaged -u -p) command section after its name/uid header. Name/UID is "
                  "as printed (a package name, a shared:... uid name or a number). The ten columns are named as the section's own "
                  "header names them (fg_rchar to bg_fsync) and are shown as printed numbers, not decoded or converted to "
@@ -749,7 +749,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-31",
         "requirements": "none",
-        "category": "Android Bug Report - Storage and Databases",
+        "category": "Android Bug Report",
         "notes": "One row per line of the diskstats service dump other than the per-package lists (Latency, Recent Disk Write Speed, "
                  "the Data-Free, Cache-Free, System-Free and Metadata-Free lines, File-based Encryption and the App, App Data, App "
                  "Cache, Photos, Videos, Audio, Downloads, System and Other size lines), one row per I/O perf history line printed "
@@ -785,7 +785,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-31",
         "requirements": "none",
-        "category": "Android Bug Report - Storage and Databases",
+        "category": "Android Bug Report",
         "notes": "One row per entry of the Package Names list of the diskstats service dump, joined by position with the same position "
                  "of the App Sizes, App Data Sizes and Cache Sizes lists. Index is the position (from 0). The sizes are the numbers "
                  "printed; the dump states no unit and no user. If the lists have different lengths the shortest is used and the "
@@ -816,7 +816,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Storage and Databases",
+        "category": "Android Bug Report",
         "notes": "One row per Connection pool for <path> entry of the dbinfo service dump, under the ** Database info for pid N "
                  "[process] ** heading it follows. Open, Max Connections, Total Execution Time (the number printed, in ms on the "
                  "newer layout and with no unit on the Android 10 layout), Total Statements, Average Time Per Statement, "
@@ -850,7 +850,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Storage and Databases",
+        "category": "Android Bug Report",
         "notes": "One row per file line of a Database files in <directory>: listing of the dbinfo service dump. Process and PID come from "
                  "the ** Database info for pid N [process] ** heading above the listing. Directory is the path printed, File Name and "
                  "Size (bytes) are as printed (the size is the number before the b). ctime, mtime and atime are the three times the "
@@ -884,7 +884,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Storage and Databases",
+        "category": "Android Bug Report",
         "notes": "One row per numbered operation line under Most recently executed operations: of a connection in the dbinfo service "
                  "dump. Process, PID and Database Path come from the headings above it; Connection is the connection number and "
                  "Index the number before the time. Operation is the first word (for example prepare, execute, "
@@ -926,7 +926,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Settings and Config",
+        "category": "Android Bug Report",
         "notes": "One row per namespace/flag=value line after the DeviceConfig flags: heading of the device_config service dump. A "
                  "value that continues on the following lines is joined with one space (up to 1,000 characters). Namespace, Flag and "
                  "Value are as printed. These are feature flags that the platform and its servers set, and they are present on "
@@ -958,7 +958,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Settings and Config",
+        "category": "Android Bug Report",
         "notes": "One row per ChangeId(id; name=...; ...) line of the platform_compat service dump. Enable Since Target SDK and "
                  "Enable After Target SDK are the numbers printed after enableSinceTargetSdk= and enableAfterTargetSdk=; Disabled, "
                  "Logging Only and Overridable are yes where the line prints the word disabled, loggingOnly or overridable; any other "
@@ -990,7 +990,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Device and Build",
+        "category": "Android Bug Report",
         "notes": "One row per flag of the flags (or flag_artifacts) list of each build_flags.json text printed in a SYSTEM, SYSTEM_EXT, "
                  "PRODUCT or VENDOR BUILD-TIME RELEASE FLAGS section. Partition comes from the section name. Flag Name, Namespace, "
                  "Description (up to 500 characters), Workflow and Containers are the declaration's fields as printed. Declared Value "
@@ -1024,7 +1024,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Device and Build",
+        "category": "Android Bug Report",
         "notes": "One row per indented line of the SDK EXTENSIONS command section. Group is the heading line (system properties, apex "
                  "module versions, last 3 version requirements) and Name and Value are the text before and after the first colon "
                  "(for example build.version.extensions.t and 23; <not set> is shown as printed). A row says what the extension "

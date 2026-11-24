@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-02-24",
         "last_update_date": "2026-10-04",
         "requirements": "Python 3.7 or higher, json and datetime",
-        "category": "Garmin",
+        "category": "Health & Fitness",
         "notes": "The garmin.api folder is written by the Garmin-Connect-API-Extractor tool named in this module, "
                  "not by the app on the device. Every matched sleep file is read, one row per entry of each "
                  "file. Start Time and End Time are read from sleepStartTimestampGMT and "

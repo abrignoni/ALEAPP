@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-01-08",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "AirTags",
+        "category": "Locations & Maps",
         "notes": "One row per beacon row. Timestamp is the matching device record's lastSeen, so "
                  "it repeats on every beacon of one device and is not the time of that beacon; "
                  "Received Time is the beacon's receivedAt, Device First Discovery is the device "
@@ -38,7 +38,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-01-08",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "AirTags",
+        "category": "Locations & Maps",
         "notes": "The app's source (seemoo-lab/AirGuard at commit d515c53, Scan.kt and "
                  "DateTimeConverter.kt) stores startDate and endDate as LocalDateTime strings with "
                  "no time zone. Both are reported as the text the database stores, with no "

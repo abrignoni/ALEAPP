@@ -31,7 +31,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-13",
         "last_update_date": "2026-11-21",
         "requirements": "none",
-        "category": "Chromium",
+        "category": "Browsers",
         "notes": "One row per icon_mapping row, which Chromium's source describes as a page URL "
                  "and the id of an icon mapped to it, joined to that icon's favicons row (its URL "
                  f"and type) and to its favicon_bitmaps rows ({_CC}/components/favicon/core/"

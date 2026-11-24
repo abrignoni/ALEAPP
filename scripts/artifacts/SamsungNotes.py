@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-01-17",
         "last_update_date": "2026-11-18",
         "requirements": "os",
-        "category": "Notes",
+        "category": "Productivity",
         "notes": (
             "Every sdoc.db matched is read. On the tested images that is one per Android user that "
             "holds the app. Android User is the user of the app data folder the database is in, taken "

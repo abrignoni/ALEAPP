@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-04-25",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Gallery Trash",
+        "category": "Cloud & Files",
         "notes": "",
         "paths": ('*/data/com.sec.android.gallery3d/databases/local.db*',
                   '*/data/com.sec.android.gallery3d/files/.Trash/**'),

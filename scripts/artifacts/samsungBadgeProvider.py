@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",
-        "category": "Samsung Badge Provider",
+        "category": "Device Activity",
         "notes": "More info: https://blog.digital-forensics.it/2025/11/beyond-known-call-to-forensic-research.html",
         "paths": ('*/com.sec.android.provider.badge/databases/badge.db*',),
         "output_types": "standard",
