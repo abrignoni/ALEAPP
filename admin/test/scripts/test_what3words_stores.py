@@ -99,5 +99,22 @@ class Versions(unittest.TestCase):
         self.assertEqual(sorted(r[headers.index('Realm Version')] for r in rows), ['Active', 'Inactive'])
 
 
+class ListIds(unittest.TestCase):
+    def cell(self, value):
+        headers, rows = run_versions('what3words_saved_places', 'class_LocationRealm',
+                                     [{'id': 'a', 'listIds': value}], [])
+        return rows[0][headers.index('listIds (as stored)')]
+
+    def test_one_list_id_is_shown(self):
+        self.assertEqual(self.cell([123]), '123')
+
+    def test_several_list_ids_are_joined_in_stored_order(self):
+        self.assertEqual(self.cell([5, 3]), '5, 3')
+
+    def test_no_list_id_is_blank(self):
+        self.assertEqual(self.cell([]), '')
+        self.assertEqual(self.cell(None), '')
+
+
 if __name__ == '__main__':
     unittest.main()
