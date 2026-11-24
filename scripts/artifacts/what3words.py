@@ -1,18 +1,16 @@
 __artifacts_v2__ = {
     "what3words_saved_places": {
         "name": "what3words - Locations",
-        "description": "Rows of the what3words LocationRealm store, with the three word address, "
-                       "the stored label, the nearest place and the coordinates",
+        "description": "Rows of the class_LocationRealm table of the what3words Realm store, from the "
+                       "active version and, where they differ, the inactive version. Columns include "
+                       "the three word address, label, nearestPlace value and the stored lat and lng values",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-11-24",
         "requirements": "none",
         "category": "what3words",
         "notes": "Read from the class_LocationRealm table of the app's Realm store "
-                 "(files/default.realm) using the vendored realm_parser. The latitude and "
-                 "longitude are the coordinates the app stored for the address. A Realm file holds two versions. Each commit writes the new version into the header slot not in use and then switches the header to it (realm-core GroupCommitter::commit, group_writer.cpp at v14.0.0, commit faf9c152), so the inactive version is the one that was current before the last commit. Realm Version names the version a row comes from: Active for the current one, Inactive for the other. Every row of the active version is reported, and an inactive row is reported when no active row holds the same value in every column. On hc_pixel8pro_a16, hc_pixel8pro_a17 and sharon_a14 the inactive version holds the same rows as the active one, so only Active rows are shown. On sharon_a13 it holds one row whose id is not in the active version. That row matches an active row in every other column, so the two rows differ only in id (as stored). Whether a place deleted in the app shows up as an Inactive row is not tested on real data. id (as stored) is the id value; what it identifies is not established. The createdAt, listIds, listIdsConcat, isShared and address columns are not reported because no source for what they hold was read. isShared held 0 or no value on the four images with rows. Location Type Value is the locationType "
-                 "value as stored; its meaning is not established, so a row is not shown to be a "
-                 "saved place by this artifact alone. Each what3words default.realm found is read and the rows are reported together. Copies of one store under different storage paths are read once. Android User is the user the store's path denotes: 0 for data/data, the number in the path for data/user/<n> and the mirrored layouts, and blank for a path under none of them, which includes a rollback snapshot. No column other than Android User separates two stores. Of the 39 images run, 6 held a store, one each. Four gave rows, all for user 0. The other two sit under user 10 and hold no rows in either table. A second store on one image, and a row for a user other than 0, are not exercised on real data.",
+                 "(files/default.realm) using the vendored realm_parser. Latitude and Longitude are the lat and lng values stored in the same row as the address. Modification Time is the modificationTime Realm timestamp, shown as UTC. What sets it is not established. A Realm file header has two version slots, and one bit selects the slot in use. Each commit writes the new version's top ref into the slot not in use and then switches the header to it (realm-core group_writer.cpp: GroupWriter::commit at v10.0.0, commit c29f4347, and v13.0.0, commit 82e57f1d; GroupCommitter::commit at v14.0.0, commit faf9c152). The stores read here are file format 20 and 23. The realm-core release inside the app was not read. On that reading the inactive slot points to the version that was current before the last commit. A slot can be empty: the two stores under user 10 hold one version. Realm Version names the version a row comes from: Active for the current one, Inactive for the other. Every row of the active version is reported. An inactive row is reported when no active row of the same store holds the same value in every column of the table, including the columns this artifact does not show. On hc_pixel8pro_a16, hc_pixel8pro_a17 and sharon_a14 the inactive version holds the same rows as the active one, so only Active rows are shown. The stores on hc_pixel8pro_a16 and hc_pixel8pro_a17 are byte identical. On sharon_a13 it holds one row whose id is not in the active version. That row matches an active row in every other column of the table, so in the report the two rows differ only in id (as stored) and Realm Version. Whether a place deleted in the app shows up as an Inactive row is not tested on real data. id (as stored) is the id value; what it identifies is not established. order (as stored) is the order value; what it means is not established. The createdAt, listIds, listIdsConcat, isShared and address columns are not reported because no source for what they hold was read. isShared held false on every row on the four images with rows. Location Type Value is the locationType value as stored; its meaning is not established, so a row is not shown to be a saved place by this artifact alone. Each default.realm found whose active version holds either table is read, and the rows are reported together. A file the parser cannot decode gives no rows. Copies of one store under different storage paths are read once. Android User is the user the store's path denotes: 0 for data/data, the number in the path for data/user/<n> and the mirrored layouts, and blank for a path under none of them, which includes a rollback snapshot. No column other than Android User separates two stores. Of the 39 images run, 6 held a store, one each. Four gave rows, all for user 0. The other two sit under user 10, hold no rows in either table, and are the same file, byte for byte. A second store on one image, and a row for a user other than 0, are not exercised on real data.",
         "paths": ('*/com.what3words.android/files/default.realm',),
         "output_types": "standard",
         "artifact_icon": "map-pin",
@@ -22,9 +20,9 @@ __artifacts_v2__ = {
     },
     "what3words_lists": {
         "name": "what3words - Location Lists",
-        "description": "Rows of the what3words LocationsListsRealm store, with the list label, the "
-                       "number of locations in it, the stored createdBy value and the created and "
-                       "updated times",
+        "description": "Rows of the class_LocationsListsRealm table of the what3words Realm store, with "
+                       "the list label, the stored count and createdBy values, and the createdWhen and "
+                       "updatedAt values read as times",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07",
         "last_update_date": "2026-11-24",
@@ -32,9 +30,9 @@ __artifacts_v2__ = {
         "category": "what3words",
         "notes": "Read from the class_LocationsListsRealm table of the app's Realm store. "
                  "createdBy (as stored) is the createdBy value; what it identifies is not "
-                 "established. isSharedList (as stored) is the isSharedList value with no label "
-                 "applied, and is blank where the row holds none. Created and Updated are the createdWhen and updatedAt integers "
-                 "shown as UTC. They are read as Unix time, with the unit taken from the size of the number. The epoch and unit are not confirmed from the app's code. On hc_pixel8pro_a16, hc_pixel8pro_a17, sharon_a13 and sharon_a14 (one list row each) createdWhen has 13 digits, read as milliseconds and cut to whole seconds. updatedAt has 10 digits, read as seconds, on three of them and holds no value on sharon_a13. A value of 0 or no value is shown blank. The listTypeId, order, sortBy, collaboratorCount and followerCount columns are not reported because no source for what they hold was read. On the four images with rows, order, collaboratorCount and followerCount held 0 or no value. A Realm file holds two versions. Each commit writes the new version into the header slot not in use and then switches the header to it (realm-core GroupCommitter::commit, group_writer.cpp at v14.0.0, commit faf9c152), so the inactive version is the one that was current before the last commit. Realm Version names the version a row comes from: Active for the current one, Inactive for the other. Every row of the active version is reported, and an inactive row is reported when no active row holds the same value in every column. On those four images the inactive version held the same list row as the active one, so only Active rows are shown. An Inactive row is not exercised on real data. Each what3words default.realm found is read and the rows are reported together. Copies of one store under different storage paths are read once. Android User is the user the store's path denotes: 0 for data/data, the number in the path for data/user/<n> and the mirrored layouts, and blank for a path under none of them, which includes a rollback snapshot. No column other than Android User separates two stores. Of the 39 images run, 6 held a store, one each. Four gave rows, all for user 0. The other two sit under user 10 and hold no rows in either table. A second store on one image, and a row for a user other than 0, are not exercised on real data.",
+                 "established. isSharedList (as stored) is the isSharedList boolean shown as True or False, "
+                 "and is blank where the row holds none. The blank case is not exercised on real data. Created and Updated are the createdWhen and updatedAt integers "
+                 "shown as UTC. They are read as Unix time, with the unit taken from the size of the number. The epoch and unit are not confirmed from the app's code. On hc_pixel8pro_a16, hc_pixel8pro_a17, sharon_a13 and sharon_a14 (one list row each) createdWhen has 13 digits, read as milliseconds and cut to whole seconds. updatedAt has 10 digits, read as seconds, on three of them and holds no value on sharon_a13. A value of 0 or no value is shown blank. The listTypeId, order, sortBy, collaboratorCount and followerCount columns are not reported because no source for what they hold was read. On the four images with rows, order, collaboratorCount and followerCount held 0 or no value. A Realm file header has two version slots, and one bit selects the slot in use. Each commit writes the new version's top ref into the slot not in use and then switches the header to it (realm-core group_writer.cpp: GroupWriter::commit at v10.0.0, commit c29f4347, and v13.0.0, commit 82e57f1d; GroupCommitter::commit at v14.0.0, commit faf9c152). The stores read here are file format 20 and 23. The realm-core release inside the app was not read. On that reading the inactive slot points to the version that was current before the last commit. A slot can be empty: the two stores under user 10 hold one version. Realm Version names the version a row comes from: Active for the current one, Inactive for the other. Every row of the active version is reported. An inactive row is reported when no active row of the same store holds the same value in every column of the table, including the columns this artifact does not show. On those four images the inactive version held the same list row as the active one, so only Active rows are shown. An Inactive row in this artifact is not exercised on real data. count (as stored) is the count value. On the four images with rows it equals the number of location rows that name the list. What the app counts is not established. color (as stored) is the color value. id (as stored) is the id value of the list row. shareType held no value on the four images with rows. Each default.realm found whose active version holds either table is read, and the rows are reported together. A file the parser cannot decode gives no rows. Copies of one store under different storage paths are read once. Android User is the user the store's path denotes: 0 for data/data, the number in the path for data/user/<n> and the mirrored layouts, and blank for a path under none of them, which includes a rollback snapshot. No column other than Android User separates two stores. Of the 39 images run, 6 held a store, one each. Four gave rows, all for user 0. The other two sit under user 10, hold no rows in either table, and are the same file, byte for byte. A second store on one image, and a row for a user other than 0, are not exercised on real data.",
         "paths": ('*/com.what3words.android/files/default.realm',),
         "output_types": "standard",
         "artifact_icon": "list",
@@ -119,7 +117,7 @@ def what3words_saved_places(context):
         'Country Code',
         'Language',
         'Location Type Value',
-        'Order',
+        'order (as stored)',
         'id (as stored)',
         'Realm Version',
         'Android User',
@@ -156,13 +154,13 @@ def what3words_lists(context):
         ('Created', 'datetime'),
         ('Updated', 'datetime'),
         'Label',
-        'Location Count',
+        'count (as stored)',
         'createdBy (as stored)',
-        'Colour',
+        'color (as stored)',
         'isSharedList (as stored)',
         'Share Type',
         'Shared List ID',
-        'List ID',
+        'id (as stored)',
         'Realm Version',
         'Android User',
     )
