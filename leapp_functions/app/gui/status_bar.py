@@ -11,15 +11,16 @@ import tkinter as tk
 from tkinter import ttk
 
 from leapp_functions.app.gui import themes
-from leapp_functions.app.gui.app_state import is_waiting
+from leapp_functions.app.gui.app_state import SECRETS, is_waiting
 from leapp_functions.app.gui.custom_widgets import OutlineButton
 
-# For each screen: its title, its subtitle and the text of its main button.
+# For each screen: its title, its subtitle and the text of its main button. The subtitle of
+# Source is the "subtitle" of "secrets" in data/leapp_config.json, none without secrets.
 TEXTS = {
     "case": ("Case data is optional", "It only decorates the header of the report",
              "Continue to Source"),
-    "source": ("The extraction and the output folder are required", "The keychain is optional",
-               "Continue to Artifacts"),
+    "source": ("The extraction and the output folder are required",
+               getattr(SECRETS, "subtitle", ""), "Continue to Artifacts"),
     "artifacts": ("Choose what to parse", "", "Review and run"),
     "review": ("Ready to run", "The run takes place in the background: the window stays usable",
                "Start parsing"),
