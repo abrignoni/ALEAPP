@@ -369,7 +369,7 @@ class TestBundleContents(unittest.TestCase):
         for artifact in (REPO_ROOT / 'scripts' / 'artifacts').glob('*.py'):
             self.assertIn((artifact.name, 'scripts/artifacts'), shipped)
         # The window's icon and logos.
-        for image in ('icon.png', 'ALEAPP_logo.png', 'settings.png', 'leapps_a_logo.png'):
+        for image in ('icon.png', 'ALEAPP_logo.png', 'leapps_logo.png'):
             self.assertIn((image, 'assets'), shipped)
         # leapp_functions reads it when imported, from sys._MEIPASS/data in a build.
         self.assertIn(('leapp_config.json', 'data'), shipped)
