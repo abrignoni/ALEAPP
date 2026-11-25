@@ -5,7 +5,7 @@ __artifacts_v2__ = {
         "description": "Notifications recorded in the system_ce notification_history protobufs.",
         "author": "Evangelos Dragonas (@theAtropos4n6)",
         "creation_date": "2024-07-02",
-        "last_update_date": "2026-11-22",
+        "last_update_date": "2026-11-24",
         "requirements": "",
         "category": "Android Notification History",
         "notes": "Coverage is limited to the protobuf files still present under "
@@ -16,7 +16,7 @@ __artifacts_v2__ = {
                  "(https://android.googlesource.com/platform/frameworks/base/+/"
                  "299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/services/core/java/com/android/server/"
                  "notification/NotificationHistoryDatabase.java#56 "
-                 "and lines 229 to 256 of the same file). Other Android releases and vendor builds were not checked. The four Index columns are blank when the record holds no string pool index: the AOSP writer stores an index only for a string in the pool, as its position plus one (https://android.googlesource.com/platform/frameworks/base/+/299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/services/core/java/com/android/server/notification/NotificationHistoryProtoHelper.java#257). On anne_a15 and sharon_a14 (330 rows) no record holds an index, so a filled Index column is not exercised on real data. Where a record holds no string of its own for Package Name, Channel Name, Channel ID or Conversation ID, the value is looked up in the file's string pool by the record's index. An index with no entry in the pool leaves the value blank and the Index column filled. That path was run only on a constructed file. Image Data Length and Image Data Offset are blank unless the icon is a data icon (Image Type 3) or the record holds the field, and Image Resource ID is blank unless the icon is a resource icon (Image Type 2) or the record holds the field. The AOSP writer stores them only for those types (writeIcon, line 227 of the same file; type numbers at https://android.googlesource.com/platform/frameworks/base/+/299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/graphics/java/android/graphics/drawable/Icon.java#85). Every tested row is Image Type 2, so the other types are not exercised. UID, User ID and Image Type are shown as read. The AOSP writer's ProtoOutputStream does not write a zero (https://android.googlesource.com/platform/frameworks/base/+/299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/core/java/android/util/proto/ProtoOutputStream.java#1061) and that writer passes UID and User ID on each record, so with that writer a 0 in UID or User ID is the value 0 with nothing written to the file. User ID is 0 and absent from the file on all 330 tested rows. Image Type is blank when the record holds no icon.",
+                 "and lines 229 to 256 of the same file). Other Android releases and vendor builds were not checked. The four Index columns are blank when the record holds no string pool index: the AOSP writer stores an index only for a string in the pool, as its position plus one (https://android.googlesource.com/platform/frameworks/base/+/299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/services/core/java/com/android/server/notification/NotificationHistoryProtoHelper.java#257). On anne_a15 and sharon_a14 (330 rows) no record holds an index, so a filled Index column is not exercised on real data. Where a record holds no string of its own for Package Name, Channel Name, Channel ID or Conversation ID, the value is looked up in the file's string pool by the record's index. An index with no entry in the pool leaves the value blank and the Index column filled. That path was run only on a constructed file. Image Data Length and Image Data Offset are blank unless the icon is a data icon (Image Type 3) or the record holds the field, and Image Resource ID is blank unless the icon is a resource icon (Image Type 2) or the record holds the field. The AOSP writer stores them only for those types (writeIcon, line 227 of the same file; type numbers at https://android.googlesource.com/platform/frameworks/base/+/299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/graphics/java/android/graphics/drawable/Icon.java#85). Every tested row is Image Type 2, so the other types are not exercised. Image Type is the stored icon type followed by the name the AOSP schema gives that number (ImageTypeEnum, core/proto/android/server/notificationhistory.proto lines 65 to 73 at the same commit, which the schema says matches the android.graphics.drawable.Icon constants): 1 bitmap, 2 resource, 3 data, 4 uri and 5 adaptive bitmap. Any other number is shown alone. Icon Image is the bitmap of a data icon (Image Type 3), checked in as media. The AOSP writer stores a data icon's byte array with its offset and length (writeIcon, lines 232 to 237 of NotificationHistoryProtoHelper.java), the reader rebuilds the icon from that array at that offset and length (lines 201 to 205), and AOSP documents those bytes as compressed bitmap data that BitmapFactory can decode (Icon.java lines 728 to 734). Icon Image is blank for any other icon type and when the offset and length do not fit the stored bytes. Of the 39 images run, 3 held notification records (371 rows), and every icon there is Image Type 2, so Icon Image and the other type names are not exercised on real data. UID and User ID are shown as read. The AOSP writer's ProtoOutputStream does not write a zero (https://android.googlesource.com/platform/frameworks/base/+/299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/core/java/android/util/proto/ProtoOutputStream.java#1061) and that writer passes UID and User ID on each record, so with that writer a 0 in UID or User ID is the value 0 with nothing written to the file. User ID is 0 and absent from the file on all 330 tested rows. Image Type is blank when the record holds no icon.",
         "paths": ('**/system_ce/*/notification_history/history/*',),
         "output_types": "standard",
         "artifact_icon": "bell",
@@ -113,7 +113,7 @@ import re
 import xml.etree.ElementTree as ET
 
 import scripts.artifacts.notification_history_pb.notificationhistory_pb2 as notificationhistory_pb2
-from scripts.ilapfuncs import artifact_processor, logfunc, abxread, checkabx
+from scripts.ilapfuncs import artifact_processor, logfunc, abxread, checkabx, check_in_embedded_media
 
 
 def _ms_to_utc(value):
@@ -235,6 +235,28 @@ def get_notificationHistory_snoozed(context):
 
 ICON_TYPE_RESOURCE = 2
 ICON_TYPE_DATA = 3
+# ImageTypeEnum in core/proto/android/server/notificationhistory.proto (lines 65 to 73 at the pinned commit),
+# which matches the android.graphics.drawable.Icon TYPE_* constants.
+ICON_TYPE_NAMES = {1: 'bitmap', 2: 'resource', 3: 'data', 4: 'uri', 5: 'adaptive bitmap'}
+
+
+def _icon_type(value):
+    '''The stored icon type followed by the name of the Icon constant it equals; blank with no icon.'''
+    if value is None:
+        return None
+    return f'{value} ({ICON_TYPE_NAMES[value]})' if value in ICON_TYPE_NAMES else value
+
+
+def _icon_image(file_found, file_name, notification):
+    '''A data icon's bitmap bytes, image_data[offset:offset + length] as the AOSP reader takes them,
+    checked in as media. Blank for any other icon, or when the slice does not fit the stored bytes.'''
+    if not notification.HasField('icon') or notification.icon.image_type != ICON_TYPE_DATA:
+        return ''
+    data = notification.icon.image_data
+    offset, length = notification.icon.image_data_offset, notification.icon.image_data_length
+    if not data or offset < 0 or length <= 0 or offset + length > len(data):
+        return ''
+    return check_in_embedded_media(file_found, data[offset:offset + length], f'{file_name}_icon') or ''
 
 
 @artifact_processor
@@ -314,10 +336,11 @@ def get_notificationHistory(context):
                     posted_time, title, text, package_name, values['user_id'], values['uid'],
                     values['package_index'], values['channel_name'], values['channel_name_index'],
                     values['channel_id'], values['channel_id_index'], values['conversation_id'],
-                    values['conversation_id_index'], major_version, values['image_type'],
+                    values['conversation_id_index'], major_version, _icon_type(values['image_type']),
                     values['image_bitmap_filename'], values['image_resource_id'],
                     values['image_resource_id_package'], values['image_data_length'],
-                    values['image_data_offset'], values['image_uri'], file_name, file_creation))
+                    values['image_data_offset'], values['image_uri'],
+                    _icon_image(file_found, file_name, notification), file_name, file_creation))
         except Exception as e:
             logfunc(f'Error while opening notification pb files. The error message was: "{e}"')
 
@@ -325,6 +348,6 @@ def get_notificationHistory(context):
         ('Posted Time', 'datetime'), 'Title', 'Text', 'Package Name', 'User ID', 'UID', 'Package Index',
         'Channel Name', 'Channel Name Index', 'Channel ID', 'Channel ID Index', 'Conversation ID',
         'Conversation ID Index', 'Major Version', 'Image Type', 'Image Bitmap Filename', 'Image Resource ID',
-        'Image Resource ID Package', 'Image Data Length', 'Image Data Offset', 'Image URI',
+        'Image Resource ID Package', 'Image Data Length', 'Image Data Offset', 'Image URI', ('Icon Image', 'media'),
         'Protobuf File Name', ('Timestamp From Protobuf File Name', 'datetime'))
     return data_headers, data_list, source_path
