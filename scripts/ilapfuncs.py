@@ -1357,15 +1357,24 @@ def _null_out_column(query, reference):
     "(" begins with SELECT, or begins with WITH and has seen a SELECT at that
     depth) it becomes "NULL AS <name>". Inside a function call or other
     parenthesized expression the enclosing alias already names the column and
-    a plain NULL is correct.
+    a plain NULL is correct. So is any reference past the select list at its
+    depth (in FROM, WHERE, GROUP BY, HAVING, ORDER BY or LIMIT), where SQLite
+    does not allow an alias. WINDOW is left out: SQLite also accepts it as a
+    name, and a window definition is always inside parentheses.
+    Names may hold "$", and the FROM of IS [NOT] DISTINCT FROM is part of a
+    comparison, so neither ends the select list.
     '''
     name = reference.split('.')[-1].strip('"[]`')
     pattern = re.compile(r'(?<![\w.])' + re.escape(reference) + r'\b'
                          r'(?P<tail>\s*(?:,|$)|\s+(?i:FROM)\b)?')
     select_keyword = re.compile(r'SELECT\b', re.IGNORECASE)
     with_keyword = re.compile(r'WITH\b', re.IGNORECASE)
+    clause_keywords = {'SELECT', 'FROM', 'WHERE', 'GROUP', 'HAVING', 'ORDER', 'LIMIT'}
     query_len = len(query)
+    # Each open "(" is [position, has seen SELECT, last clause keyword at its depth].
     open_parens = []
+    top_clause = [None]
+    prev_word = [None]
     scan_pos = 0
 
     def in_select_list(end):
@@ -1373,6 +1382,8 @@ def _null_out_column(query, reference):
         i = scan_pos
         while i < end:
             ch = query[i]
+            if ch in ("'", '"', '`', '[', '(', ')'):
+                prev_word[0] = None
             if ch in ("'", '"', '`'):
                 i += 1
                 while i < query_len:
@@ -1399,7 +1410,7 @@ def _null_out_column(query, reference):
                     i += 1
                 i = min(query_len, i + 2)
             elif ch == '(':
-                open_parens.append([i, False])
+                open_parens.append([i, False, None])
                 i += 1
             elif ch == ')':
                 if open_parens:
@@ -1407,18 +1418,31 @@ def _null_out_column(query, reference):
                 i += 1
             elif ch.isalnum() or ch == '_':
                 start = i
-                while i < query_len and (query[i].isalnum() or query[i] == '_'):
+                while i < query_len and (query[i].isalnum() or query[i] in '_$'):
                     i += 1
-                if (i <= end and open_parens
-                        and query[start:i].isascii()
-                        and query[start:i].upper() == 'SELECT'):
-                    open_parens[-1][1] = True
+                word = query[start:i].upper() if query[start:i].isascii() else ''
+                after_distinct = prev_word[0] == 'DISTINCT'
+                prev_word[0] = word
+                if (i <= end and word in clause_keywords
+                        and not (word == 'FROM' and after_distinct)
+                        and (start == 0 or query[start - 1] != '.')):
+                    frame = open_parens[-1] if open_parens else None
+                    if frame is None:
+                        top_clause[0] = word
+                    else:
+                        frame[2] = word
+                        if word == 'SELECT':
+                            frame[1] = True
             else:
+                if not ch.isspace():
+                    prev_word[0] = None
                 i += 1
         scan_pos = i
         if not open_parens:
-            return True
-        open_pos, has_select = open_parens[-1]
+            return top_clause[0] in (None, 'SELECT')
+        open_pos, has_select, clause = open_parens[-1]
+        if clause not in (None, 'SELECT'):
+            return False
         pos = open_pos + 1
         while pos < end:
             if query[pos].isspace():
