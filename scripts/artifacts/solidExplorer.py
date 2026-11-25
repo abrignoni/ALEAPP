@@ -4,57 +4,29 @@ __artifacts_v2__ = {
         "description": "Files Solid Explorer recorded as recently opened, with one stored time per path",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-11-22",
+        "last_update_date": "2026-11-24",
         "requirements": "none",
         "category": "Solid Explorer",
         "sample_data": {
             "emu_a15_oss_v14": "Solid Explorer 3.5.20 | 2 rows",
         },
-        "notes": "One row per row of the recent_files table in "
-                 "pl.solidexplorer2/databases/explorer.db. Opened is Unix milliseconds and is "
-                 "reported as UTC. Path is the full path the app recorded, as stored. "
-                 "The schema declares path UNIQUE, so the table holds at most one row per path and repeated opens of one path cannot each have a row. Whether the time is the first or the most recent open "
-                 "of a file opened more than once was not established. "
-                 "On the tested device a row appeared when a file was opened from the app and "
-                 "was handled by one of Solid Explorer's own built-in viewers, the text editor "
-                 "and the image viewer. Whether a file opened into a different application is "
-                 "recorded here was not established, so the absence of a row is not evidence a "
-                 "file was never opened. "
-                 "The path is what the app wrote and is not resolved against the extraction, so "
-                 "a row is evidence the app opened that path, not that the file is still there.",
+        "notes": "One row per row of the recent_files table in pl.solidexplorer2/databases/explorer.db. Opened is Unix milliseconds and is reported as UTC. Path is the full path the app recorded, as stored. The schema declares path UNIQUE, so the table holds at most one row per path and repeated opens of one path cannot each have a row. Whether the time is the first or the most recent open of a file opened more than once was not established. On the tested device a row appeared when a file was opened from the app and was handled by one of Solid Explorer's own built-in viewers, the text editor and the image viewer. Whether a file opened into a different application is recorded here was not established, so the absence of a row is not evidence a file was never opened. The path is what the app wrote and is not resolved against the extraction, so a row shows the app recorded that path, not that the file is still there.",
         "paths": ('*/pl.solidexplorer2/databases/explorer.db*',),
         "output_types": "standard",
         "artifact_icon": "file-text",
     },
     "solid_explorer_bookmarks": {
         "name": "Solid Explorer Bookmarks",
-        "description": "Bookmarked locations in Solid Explorer, with how often each was opened",
+        "description": "Bookmarked locations in Solid Explorer, with the stored hitcount",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-11-22",
+        "last_update_date": "2026-11-24",
         "requirements": "none",
         "category": "Solid Explorer",
         "sample_data": {
             "emu_a15_oss_v14": "Solid Explorer 3.5.20 | 2 rows",
         },
-        "notes": "One row per row of the bookmarks table in "
-                 "pl.solidexplorer2/databases/explorer.db. Name is the label shown in the app's "
-                 "drawer and Path is the location it points at. The table also has a file_id "
-                 "column that is not reported. It equalled Path on both rows of the emu_a15_oss "
-                 "images v14 to v17, which hold a byte-identical explorer.db, and that does not "
-                 "show the two are equal on a remote file system. Times Opened is the hitcount "
-                 "column and counts uses of the bookmark. That was measured rather than assumed: "
-                 "on the tested device a bookmark was added and then opened from the drawer twice, "
-                 "and its hitcount went 0, then 1, then 2, while a second bookmark that was never "
-                 "opened stayed at 0. A bookmark can therefore be present and unused, which the "
-                 "column separates. The app ships with a bookmark already present, so a row is not "
-                 "by itself evidence anyone created it; on the tested device the Download bookmark "
-                 "was there before anything was done and is the one that stayed at 0. File System "
-                 "is the file_system column as stored. On emu_a15_oss v14 to v17 it read 1 on both "
-                 "rows and the only file_systems row had rowid 1. The schema declares no key "
-                 "between the two tables, so the link is not established. That one row is the "
-                 "local storage entry, so whether this column separates local from remote "
-                 "bookmarks was not exercised. Position is reported as stored.",
+        "notes": "One row per row of the bookmarks table in pl.solidexplorer2/databases/explorer.db. Name is the label shown in the app's drawer and Path is the location it points at. The table also has a file_id column that is not reported. It equalled Path on both rows of the emu_a15_oss images v14 to v17, which hold a byte-identical explorer.db, and that does not show the two are equal on a remote file system. hitcount (as stored) is the hitcount column unchanged. On the tested device a bookmark was added and its drawer entry was then tapped twice. Its hitcount read 0, then 1, then 2. The other bookmark was not tapped in that session and stayed at 0. Tapping a bookmark in the drawer is the only action tested, so whether other ways of reaching the location change hitcount was not established, and a 0 does not show the location was never visited. On the tested device (Solid Explorer 3.5.20) the Download bookmark was already in the table at the first read of the database, before the test session added or tapped any bookmark, and it stayed at 0. How that row came to exist was not recorded, so a row is not by itself evidence that a user created the bookmark. File System is the file_system column as stored. On emu_a15_oss v14 to v17 it read 1 on both rows and the only file_systems row had rowid 1. The schema declares no key between the two tables, so the link is not established. That one row is the local storage entry, so whether this column separates local from remote bookmarks was not exercised. Position is reported as stored.",
         "paths": ('*/pl.solidexplorer2/databases/explorer.db*',),
         "output_types": "standard",
         "artifact_icon": "bookmark",
@@ -64,27 +36,13 @@ __artifacts_v2__ = {
         "description": "Rows of Solid Explorer's search_suggestions and suggestions tables",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-10-09",
+        "last_update_date": "2026-11-24",
         "requirements": "none",
         "category": "Solid Explorer",
         "sample_data": {
             "emu_a15_oss_v14": "Solid Explorer 3.5.20 | 4 rows",
         },
-        "notes": "One row per row of the search_suggestions and suggestions tables in "
-                 "pl.solidexplorer2/databases/explorer.db. Table says which of the two a row came "
-                 "from. Neither table carries a timestamp, so these terms cannot be placed in time "
-                 "from this store. Suggestion (as stored) is the suggestion column of either table. For "
-                 "search_suggestions it held the literal string submitted on the tested device. "
-                 "What the suggestions table stores there is not established, because that table "
-                 "was empty. The search_suggestions terms are worth reading literally: on the "
-                 "tested device the app did not clear the search box between searches, so two of "
-                 "the four stored terms are the previous term with the next one appended. That is "
-                 "what the app recorded and it is reported unchanged rather than split. Counter "
-                 "(as stored) is the counter column unchanged. It read 0 on every row of the "
-                 "tested device, where four terms were submitted and none of them incremented it "
-                 "past zero. Type (as stored) belongs to the suggestions table only and is blank "
-                 "for rows from search_suggestions. The suggestions table was empty on the tested "
-                 "device.",
+        "notes": "One row per row of the search_suggestions and suggestions tables in pl.solidexplorer2/databases/explorer.db. Table says which of the two a row came from. Neither table carries a timestamp, so these terms cannot be placed in time from this store. Suggestion (as stored) is the suggestion column of either table. What the suggestions table stores there is not established, because that table was empty. The search_suggestions terms are worth reading literally. On the tested device the first term was entered into a newly opened search box. Before the second and the third, a Back key and a tap on the search icon were sent, and the next term was entered without clearing the box. Each of those two stored terms is the previous stored term with the new text appended. Before the fourth, delete key presses were sent to the box first, and the stored term equals the text entered, as does the first. The screen was not captured between those steps, so what the box held is inferred from the stored strings. That is what the app recorded and it is reported unchanged rather than split. Counter (as stored) is the counter column unchanged. It read 0 on every row of the tested device, where four terms were submitted and none of them incremented it past zero. Type (as stored) belongs to the suggestions table only and is blank for rows from search_suggestions. The suggestions table was empty on the tested device.",
         "paths": ('*/pl.solidexplorer2/databases/explorer.db*',),
         "output_types": "standard",
         "artifact_icon": "search",
@@ -100,22 +58,7 @@ __artifacts_v2__ = {
         "sample_data": {
             "emu_a15_oss_v14": "Solid Explorer 3.5.20 | 1 rows",
         },
-        "notes": "One row per row of the file_systems table in "
-                 "pl.solidexplorer2/databases/explorer.db. The table has server, port, user, "
-                 "password and path columns. That suggests a remote connection would be stored "
-                 "here, which was not exercised: the emu_a15_oss images v14 to v17, which hold a "
-                 "byte-identical explorer.db, have no remote row. Password Stored reports only "
-                 "whether the password column holds a value. The password itself is not printed. "
-                 "The table also has password_mode and flags columns that are not reported. Both "
-                 "read 0 on those images. Connection Type (as stored) and "
-                 "Connection Mode (as stored) are the conn_type and conn_mode columns unchanged; "
-                 "no source for their values was found. Those images hold one row, and its Name and Package Name read as local storage. On that single row Server, User, Charset and Extra were "
-                 "empty, Password Stored read No, Port and both Connection columns read 0, and "
-                 "Path read a single slash. Package Name on that row read as a local storage "
-                 "identifier rather than an Android package. The rowid of this table is not shown. "
-                 "File System in the Bookmarks and Folder Display Settings artifacts read 1 on "
-                 "those images, the rowid of this one row, but the schema declares no key between "
-                 "the tables, so that link is not established.",
+        "notes": "One row per row of the file_systems table in pl.solidexplorer2/databases/explorer.db. The table has server, port, user, password and path columns. That suggests a remote connection would be stored here, which was not exercised: the emu_a15_oss images v14 to v17, which hold a byte-identical explorer.db, have no remote row. Password Stored reports only whether the password column holds a value. The password itself is not printed. The table also has password_mode and flags columns that are not reported. Both read 0 on those images. Connection Type (as stored) and Connection Mode (as stored) are the conn_type and conn_mode columns unchanged; no source for their values was found. Those images hold one row, and its Name and Package Name read as local storage. On that single row Server, User, Charset and Extra were empty, Password Stored read No, Port and both Connection columns read 0, and Path read a single slash. Package Name on that row read as a local storage identifier rather than an Android package. The rowid of this table is not shown. File System in the Bookmarks and Folder Display Settings artifacts read 1 on those images, the rowid of this one row, but the schema declares no key between the tables, so that link is not established.",
         "paths": ('*/pl.solidexplorer2/databases/explorer.db*',),
         "output_types": "standard",
         "artifact_icon": "server",
@@ -131,23 +74,7 @@ __artifacts_v2__ = {
         "sample_data": {
             "emu_a15_oss_v14": "Solid Explorer 3.5.20 | 4 rows",
         },
-        "notes": "One row per row of the dirinfo table in pl.solidexplorer2/databases/explorer.db. The "
-                 "table holds per-folder display settings, so a row means the app kept settings for that "
-                 "folder rather than that someone deliberately configured it. A row is not written for "
-                 "every folder opened, which was tested rather than assumed: a folder was opened twice "
-                 "from a bookmark during the session that built the sample and gained no row, while four "
-                 "other folders had rows throughout. So a row shows the app held settings for that folder, "
-                 "and the absence of one is not evidence the folder was never opened. No timestamp is "
-                 "stored either, so nothing here can be placed in time. Sort Mode (as stored), View Mode "
-                 "(as stored) and View Scale (as stored) are the sort_mode, view_mode and view_scale "
-                 "columns unchanged. Grouped is the grouped column, shown as Yes for a non-zero value and "
-                 "No otherwise. Hidden (as stored) is the dirinfo.hidden column without boolean conversion "
-                 "or an interpretation of what it controls. It read 0 on all four rows of the emu_a15_oss "
-                 "images v14 to v17, which hold a byte-identical explorer.db. What the column controls is "
-                 "not established. Original parser and recorded sample observations credited to "
-                 "@AlexisBrignoni, Claude. File System is the file_system column as stored. On those "
-                 "images it read 1 on all four rows and the only file_systems row had rowid 1. The schema "
-                 "declares no key between the two tables, so the link is not established.",
+        "notes": "One row per row of the dirinfo table in pl.solidexplorer2/databases/explorer.db. The table holds per-folder display settings, so a row means the app kept settings for that folder rather than that someone deliberately configured it. A row is not written for every folder opened, which was tested rather than assumed: the bookmark for a folder was tapped twice in the drawer during the session that built the sample, hitcount rose each time, and that folder gained no row, while four other folders had rows throughout. So a row shows the app held settings for that folder, and the absence of one is not evidence the folder was never opened. No timestamp is stored either, so nothing here can be placed in time. Sort Mode (as stored), View Mode (as stored) and View Scale (as stored) are the sort_mode, view_mode and view_scale columns unchanged. Grouped is the grouped column, shown as Yes for a non-zero value and No otherwise. Hidden (as stored) is the dirinfo.hidden column without boolean conversion or an interpretation of what it controls. It read 0 on all four rows of the emu_a15_oss images v14 to v17, which hold a byte-identical explorer.db. What the column controls is not established. Original parser and recorded sample observations credited to @AlexisBrignoni, Claude. File System is the file_system column as stored. On those images it read 1 on all four rows and the only file_systems row had rowid 1. The schema declares no key between the two tables, so the link is not established.",
         "paths": ('*/pl.solidexplorer2/databases/explorer.db*',),
         "output_types": "standard",
         "artifact_icon": "folder",
@@ -204,7 +131,7 @@ def solid_explorer_recent_files(context):
 def solid_explorer_bookmarks(context):
     query = '''SELECT name, path, hitcount, file_system, parent_id, position
                FROM bookmarks ORDER BY hitcount DESC, name'''
-    headers = ('Name', 'Path', 'Times Opened', 'File System', 'Parent Path',
+    headers = ('Name', 'Path', 'hitcount (as stored)', 'File System', 'Parent Path',
                'Position', 'Source File')
     return _rows(context, query,
                  lambda r: (r[0] or '', r[1] or '', r[2], r[3], r[4] or '', r[5]),
