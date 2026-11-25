@@ -1240,6 +1240,64 @@ def does_table_exist_in_db(path, table_name):
             db.close()
     return False
 
+# The table each provider database rebuilt by ALEX (Android Logical Extractor) always holds.
+ALEX_REBUILT_MAIN_TABLES = ('sms', 'calls', 'raw_contacts', 'Events')
+
+
+def is_alex_rebuilt_provider_db(path):
+    '''True when path is a provider database (mmssms.db, calllog.db, contacts2.db or
+    calendar.db) that ALEX rebuilt from `content query` output instead of copying it
+    from the device.
+
+    ALEX's create_table declares every column TEXT and never sets user_version
+    (alex.py in prosch88/ALEX, release v0.6 to commit 9ef34bf0). Of 570 copies of these
+    databases swept in the Android corpus, 557 declare the main table's _id INTEGER and
+    none TEXT; the other 13, Samsung calllog.db copies, have user_version 0 and no calls
+    table, so user_version 0 alone is not enough (ALEAPP #2076).'''
+    db = open_sqlite_db_readonly(path)
+    if db is None:
+        return False
+    try:
+        if db.execute('PRAGMA user_version').fetchone()[0] != 0:
+            return False
+        for table in ALEX_REBUILT_MAIN_TABLES:
+            for row in db.execute(f'PRAGMA table_info("{table}")'):
+                if row[1] == '_id':
+                    return str(row[2]).upper() == 'TEXT'
+        return False
+    except sqlite3.Error as ex:
+        logfunc(f'Could not check {Context.get_relative_path(path)} for an ALEX rebuild: {ex}')
+        return False
+    finally:
+        db.close()
+
+
+def alex_default_row_filter(path, table, alias=None):
+    '''A SQL condition that leaves out the _id 0 rows ALEX writes on its own.
+
+    ALEX writes a row of its schema defaults, with _id 0, when a provider returned no
+    rows. When a text value holds "Row: <n>" it cuts the value there and writes the
+    columns after it as another _id 0 row (ALEAPP #2076). For an ALEX-rebuilt database
+    this returns the condition that drops those rows from table (named alias in the
+    query, when given) and logs how many it drops. For any other database it returns
+    '1', which keeps every row.'''
+    if not is_alex_rebuilt_provider_db(path):
+        return '1'
+    name = alias or table
+    left_out = 0
+    db = open_sqlite_db_readonly(path)
+    if db is not None:
+        try:
+            left_out = db.execute(f'SELECT count(*) FROM "{table}" WHERE _id = \'0\'').fetchone()[0]
+        except sqlite3.Error:
+            left_out = 0
+        finally:
+            db.close()
+    logfunc(f'{Context.get_relative_path(path)} was rebuilt by ALEX from content provider queries; '
+            f'{left_out} row(s) of {table} with _id 0 left out')
+    return f'("{name}"._id IS NULL OR "{name}"._id != \'0\')'
+
+
 def null_absent_columns(path, query):
     '''Replace references to columns the database lacks with NULL.
 
