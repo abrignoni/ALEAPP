@@ -3,7 +3,7 @@
 #
 #   bash packaging/check_linux_packages.sh <version>
 #
-# <version> is leapp_version as scripts/version_info.py has it (2026.4.6-dev), which is
+# <version> is the version in data/leapp_config.json (2026.4.6-dev), which is
 # what `aleapp --version` must print. Run on an Ubuntu GitHub runner after
 # `build.py linux-packages`, from the repository root: the .deb is installed on the runner
 # with apt, and the .rpm with dnf inside a Fedora container, because a package can build

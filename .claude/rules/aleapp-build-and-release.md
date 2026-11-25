@@ -71,7 +71,9 @@ Decided in `build.py`, which the spec loads, so it is tested without running PyI
 (`admin/test/scripts/test_packaging_build.py`, which also exec's the spec with PyInstaller
 stubbed out).
 
-- `scripts/`, `leapp_functions/` and `assets/` ship as files, without `__pycache__`.
+- `scripts/`, `leapp_functions/`, `assets/` and `data/` ship as files, without `__pycache__`.
+  `leapp_functions` reads `data/leapp_config.json` (name, version, description) as soon as
+  it is imported.
 - **Every artifact module is also a hidden import.** What it still cannot follow is a module
   imported by a name built at run time, and an artifact whose file name is not a valid
   module name, which ships and loads but is not analysed.
@@ -98,7 +100,7 @@ releases do not use it.
 
 ## What the driver guarantees
 
-The version is read from `scripts/version_info.py` as text and passed to the spec and to
+The version is read from `data/leapp_config.json` and passed to the spec and to
 Inno Setup; `installer.iss` refuses to compile without it. Windows and macOS take only
 numbers there, so `2026.4.1-dev` becomes `2026.4.1` in those fields. `ONEFILE` reaches the
 spec through `ALEAPP_ONEFILE`. PyInstaller and dmgbuild are pinned in
@@ -112,7 +114,7 @@ refuses to build one layout over the other; `--clean` is the explicit way.
 
 ## What `smoke` checks
 
-`--version` against `scripts/version_info.py`; a run over an empty extraction; a run over
+`--version` against `data/leapp_config.json`; a run over an empty extraction; a run over
 the NTFS raw fixture, whose log has to show the walk; the mister_skinnylegs plugins in the
 bundle (read from the archive inside the executable for `--onefile`); and
 `aleapp --selfcheck`, which takes the window's path, starts Tk, loads the images from
@@ -153,7 +155,7 @@ pinned by digest in `build.py`. Linux builds are made on Ubuntu 22.04 for its gl
 requests that touch packaging or the requirements.
 
 `release.yml` runs the same steps when a `v*` tag is pushed, refuses a tag that is not
-`v` + `leapp_version`, names the assets `ALEAPP-<version>-<platform>-<arch>` (portable.zip
+`v` + the `version` in `data/leapp_config.json`, names the assets `ALEAPP-<version>-<platform>-<arch>` (portable.zip
 on Windows, .dmg on macOS, .AppImage, .deb and .rpm on Linux; no Linux .tar.gz), gathers them
 in `release-assets/` (never `assets/`, which holds the window's images), adds
 `SHA256SUMS.txt`, and creates a **draft** release. `.github/release-footer.md` is appended

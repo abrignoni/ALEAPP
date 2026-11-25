@@ -1,6 +1,6 @@
 ![ALEAPP](assets/ALEAPP_logo.png)
 
-# Android Logs Events And Protobuf Parser
+# Android Logs, Events and Protobuf Parser
 
 If you want to contribute hit me up here: https://abrignoni.github.io
 
