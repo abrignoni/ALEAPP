@@ -667,10 +667,9 @@ def process(casedata):
             if output_folder[1] == ':': output_folder = '\\\\?\\' + output_folder.replace('/', '\\')
 
         # re-create modules list based on user selection
-        selected_modules = get_selected_modules()
-        selected_modules.insert(0, 'usagestatsVersion') # Force usagestatsVersion as first item to be parsed
-        selected_modules = [loader[module] for module in selected_modules]
-        progress_bar.config(maximum=len(selected_modules))
+        selected_modules = [loader[module] for module in get_selected_modules()]
+        # crunch_artifacts runs usagestatsVersion first, in addition to the modules selected
+        progress_bar.config(maximum=len(selected_modules) + 1)
         casedata = {key: value.get() for key, value in casedata.items()}
         out_params = OutputParameters(output_folder, output_folder_name_entry.get().strip())
         Context.set_output_params(out_params)

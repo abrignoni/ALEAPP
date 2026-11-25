@@ -284,14 +284,8 @@ def main():
     loader = plugin_loader.PluginLoader(plugin_paths=loader_paths)
     available_plugins = list(loader.plugins)
 
-    plugins = []
-    plugins_parsed_first = []
-
-    for plugin in available_plugins:
-        if plugin.module_name == 'usagestatsVersion':
-            plugins_parsed_first.append(plugin)
-        else:
-            plugins.append(plugin)
+    # usagestatsVersion is never chosen: crunch_artifacts runs it first, whatever is chosen
+    plugins = [plugin for plugin in available_plugins if plugin.module_name != 'usagestatsVersion']
 
     selected_plugins = plugins.copy()
 
@@ -449,8 +443,6 @@ def main():
 
     out_params = OutputParameters(output_path, custom_output_folder)
     Context.set_output_params(out_params)
-
-    selected_plugins = plugins_parsed_first + selected_plugins
     
     initialize_lava(input_text(input_path, found_members),
                     out_params.output_folder_base, extracttype, profile_filename, casedata)
@@ -544,10 +536,14 @@ def crunch_artifacts(
 
     try:
         # Now ready to run
+        selected_count = len(plugins)
+        # usagestatsVersion is added at the start, whatever was chosen, in the list it was
+        # given: the window reads that list to know how many artifacts the run has
+        plugins.insert(0, loader['usagestatsVersion'])
         logfunc(f'Info: {len(loader) - 1} modules loaded.') # excluding usagestatsVersion
         if profile_filename:
             logfunc(f'Loaded profile: {profile_filename}')
-        logfunc(f'Artifact categories to parse: {len(plugins) - 1}') # excluding usagestatsVersion always executed first
+        logfunc(f'Artifact categories to parse: {selected_count}')
         input_path = input_text(input_path, found_members)
         logfunc(f'File/Directory selected: {input_path}')
         hashes = None
@@ -568,21 +564,34 @@ def crunch_artifacts(
         log = open(os.path.join(out_params.output_folder_base, '_HTML', '_Script_Logs', 'ProcessedFilesLog.html'), 'w+', encoding='utf8')
         log.write(f'Extraction/Path selected: {esc(input_path)}<br><br>')
         
-        parsed_modules = 0
         plugin_run_times = []
+        stopped_note = ''
         artifact_search_pattern_id = 0
         file_path_ids = set()
-
+        # usagestatsVersion is added before the artifacts chosen, which alone are numbered, as
+        # in the window
+        added_first = len(plugins) - selected_count
 
         # Search for the files per the arguments
         for plugin_number, plugin in enumerate(plugins, start=1):
+            GuiWindow.SetProgressBar(plugin_number - 1, len(plugins))
+            if GuiWindow.stop_requested:
+                GuiWindow.stopped = True
+                not_run = plugins[plugin_number - 1:]
+                stopped_note = (f'Stopped by the user: {min(len(not_run), selected_count)} of '
+                                f'{selected_count} artifacts were not run.')
+                logfunc(f'\n{stopped_note}')
+                for left in not_run:
+                    lava_add_module(left.module_name, "Not run", 0, left.name)
+                break
             # Timed from here, before the file search, because the search runs after the
             # "artifact started" line is printed and is itself a place a run can sit.
             plugin_start = perf_counter()
             logfunc()
-            logfunc('[{}/{}] {} [{}] artifact started at {} UTC'.format(plugin_number, len(plugins),
-                                                                  plugin.name, plugin.module_name,
-                                                                  strftime('%H:%M:%S', gmtime())))
+            position = plugin_number - added_first
+            counter = f'[{position}/{selected_count}]' if position > 0 else '[-]'
+            logfunc(f'{counter} {plugin.name} [{plugin.module_name}] artifact started at '
+                    f'{strftime("%H:%M:%S", gmtime())} UTC')
             if isinstance(plugin.search, list) or isinstance(plugin.search, tuple):
                 search_regexes = plugin.search
             else:
@@ -657,9 +666,9 @@ def crunch_artifacts(
             plugin_run_times.append((plugin.name, plugin_elapsed))
             logfunc('{} [{}] artifact completed in {:.1f}s'.format(
                 plugin.name, plugin.module_name, plugin_elapsed))
-            parsed_modules += 1
-            GuiWindow.SetProgressBar(parsed_modules, len(plugins))
             log.flush()
+        if not GuiWindow.stopped:
+            GuiWindow.SetProgressBar(len(plugins), len(plugins))
         log.close()
         if hashes is not None:
             hashes.close()
@@ -668,7 +677,7 @@ def crunch_artifacts(
 
         write_device_info()
         logfunc('')
-        logfunc('Processes completed.')
+        logfunc('Processes stopped.' if GuiWindow.stopped else 'Processes completed.')
         end = process_time()
         end_wall = perf_counter()
         run_time_secs =  end - start
@@ -677,6 +686,7 @@ def crunch_artifacts(
         run_time_secs =  end_wall - start_wall
         run_time_HMS = strftime('%H:%M:%S', gmtime(run_time_secs))
         logfunc("Run time (wall clock) = {}".format(run_time_HMS))
+        GuiWindow.run_time = run_time_HMS
 
         # Filtered on the rounded value so the list holds exactly what the per-artifact
         # lines showed as 1.0s or more, with no artifact visible above the cut but missing here.
@@ -697,7 +707,9 @@ def crunch_artifacts(
             if input_path.startswith('\\\\?\\'):
                 input_path = input_path[4:]
         
-        report.generate_report(out_params.output_folder_base, run_time_secs, run_time_HMS, extracttype, input_path, casedata, profile_filename, icons)
+        report.generate_report(out_params.output_folder_base, run_time_secs, run_time_HMS,
+                               extracttype, input_path, casedata, profile_filename, icons,
+                               stopped_note)
         logfunc('Report generation Completed.')
 
         logfunc('')
