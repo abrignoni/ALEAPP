@@ -16,7 +16,7 @@ __artifacts_v2__ = {
                  "(https://android.googlesource.com/platform/frameworks/base/+/"
                  "299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/services/core/java/com/android/server/"
                  "notification/NotificationHistoryDatabase.java#56 "
-                 "and lines 229 to 256 of the same file). Other Android releases and vendor builds were not checked. The four Index columns are blank when the record holds no string pool index: the AOSP writer stores an index only for a string in the pool, as its position plus one (https://android.googlesource.com/platform/frameworks/base/+/299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/services/core/java/com/android/server/notification/NotificationHistoryProtoHelper.java#257). On anne_a15 and sharon_a14 (330 rows) no record holds an index, so a filled Index column is not exercised on real data. Where a record holds no string of its own for Package Name, Channel Name, Channel ID or Conversation ID, the value is looked up in the file's string pool by the record's index. An index with no entry in the pool leaves the value blank and the Index column filled. That path was run only on a constructed file. Image Data Length and Image Data Offset are blank unless the icon is a data icon (Image Type 3) or the record holds the field, and Image Resource ID is blank unless the icon is a resource icon (Image Type 2) or the record holds the field. The AOSP writer stores them only for those types (writeIcon, line 227 of the same file; type numbers at https://android.googlesource.com/platform/frameworks/base/+/299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/graphics/java/android/graphics/drawable/Icon.java#85). Every tested row is Image Type 2, so the other types are not exercised. Image Type is the stored icon type followed by the name the AOSP schema gives that number (ImageTypeEnum, core/proto/android/server/notificationhistory.proto lines 65 to 73 at the same commit, which the schema says matches the android.graphics.drawable.Icon constants): 1 bitmap, 2 resource, 3 data, 4 uri and 5 adaptive bitmap. Any other number is shown alone. Icon Image is the bitmap of a data icon (Image Type 3), checked in as media. The AOSP writer stores a data icon's byte array with its offset and length (writeIcon, lines 232 to 237 of NotificationHistoryProtoHelper.java), the reader rebuilds the icon from that array at that offset and length (lines 201 to 205), and AOSP documents those bytes as compressed bitmap data that BitmapFactory can decode (Icon.java lines 728 to 734). Icon Image is blank for any other icon type and when the offset and length do not fit the stored bytes. Of the 39 images run, 3 held notification records (371 rows), and every icon there is Image Type 2, so Icon Image and the other type names are not exercised on real data. UID and User ID are shown as read. The AOSP writer's ProtoOutputStream does not write a zero (https://android.googlesource.com/platform/frameworks/base/+/299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/core/java/android/util/proto/ProtoOutputStream.java#1061) and that writer passes UID and User ID on each record, so with that writer a 0 in UID or User ID is the value 0 with nothing written to the file. User ID is 0 and absent from the file on all 330 tested rows. Image Type is blank when the record holds no icon.",
+                 "and lines 229 to 256 of the same file). Other Android releases and vendor builds were not checked. The four Index columns are blank when the record holds no string pool index: the AOSP writer stores an index only for a string in the pool, as its position plus one (https://android.googlesource.com/platform/frameworks/base/+/299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/services/core/java/com/android/server/notification/NotificationHistoryProtoHelper.java#257). On anne_a15, russell_a14 and sharon_a14 (371 rows) no record holds an index, so a filled Index column is not exercised on real data. Where a record holds no string of its own for Package Name, Channel Name, Channel ID or Conversation ID, the value is looked up in the file's string pool by the record's index. An index with no entry in the pool leaves the value blank and the Index column filled. That path was run only on a constructed file. Image Data Length and Image Data Offset are blank unless the icon is a data icon (Image Type 3) or the record holds the field, and Image Resource ID is blank unless the icon is a resource icon (Image Type 2) or the record holds the field. The AOSP writer stores them only for those types (writeIcon, line 227 of the same file; type numbers at https://android.googlesource.com/platform/frameworks/base/+/299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/graphics/java/android/graphics/drawable/Icon.java#85). Image Type is the stored icon type number followed by the name of the android.graphics.drawable.Icon constant it equals (Icon.java lines 77 to 106 at the same commit): 1 bitmap, 2 resource, 3 data, 4 uri, 5 adaptive bitmap and 6 uri adaptive bitmap. Any other number is shown alone. The schema's ImageTypeEnum (core/proto/android/server/notificationhistory.proto lines 65 to 73 at the same commit) stops at 5, so the parser keeps a larger number among the record's unknown fields, and the module reads it from there. That path was run only on constructed records. Icon Image is the stored bytes of a data icon (Image Type 3), from the stored offset for the stored length, checked in as media. The bytes are not decoded or checked to be an image. The AOSP writer stores a data icon's byte array with its offset and length (writeIcon, lines 232 to 237 of NotificationHistoryProtoHelper.java), the reader rebuilds the icon from that array at that offset and length (lines 201 to 205), and AOSP documents those bytes as compressed bitmap data that BitmapFactory can decode (Icon.java lines 728 to 734). Icon Image is blank for any other icon type, when the record holds no icon bytes, when the length is 0 or less, and when the offset and length do not fit the stored bytes. Of the 39 images run, 3 held notification records (371 rows), and every icon there is Image Type 2, so Icon Image and the other type names are not exercised on real data. UID and User ID are shown as read. The AOSP writer's ProtoOutputStream does not write a zero (https://android.googlesource.com/platform/frameworks/base/+/299fe6f5d6fc6f1af7c3411dcf4e5efdf7217368/core/java/android/util/proto/ProtoOutputStream.java#1061) and that writer passes UID and User ID on each record, so with that writer a 0 in UID or User ID is the value 0 with nothing written to the file. User ID is 0 and absent from the file on all 371 tested rows. Image Type is blank when the record holds no icon or the icon stores no type. Every tested record holds an icon with a type, so that was run only on constructed records.",
         "paths": ('**/system_ce/*/notification_history/history/*',),
         "output_types": "standard",
         "artifact_icon": "bell",
@@ -111,6 +111,8 @@ import datetime
 import os
 import re
 import xml.etree.ElementTree as ET
+
+from google.protobuf.unknown_fields import UnknownFieldSet
 
 import scripts.artifacts.notification_history_pb.notificationhistory_pb2 as notificationhistory_pb2
 from scripts.ilapfuncs import artifact_processor, logfunc, abxread, checkabx, check_in_embedded_media
@@ -235,9 +237,20 @@ def get_notificationHistory_snoozed(context):
 
 ICON_TYPE_RESOURCE = 2
 ICON_TYPE_DATA = 3
-# ImageTypeEnum in core/proto/android/server/notificationhistory.proto (lines 65 to 73 at the pinned commit),
-# which matches the android.graphics.drawable.Icon TYPE_* constants.
-ICON_TYPE_NAMES = {1: 'bitmap', 2: 'resource', 3: 'data', 4: 'uri', 5: 'adaptive bitmap'}
+# android.graphics.drawable.Icon TYPE_* constants (Icon.java lines 77 to 106 at the pinned commit).
+ICON_TYPE_NAMES = {1: 'bitmap', 2: 'resource', 3: 'data', 4: 'uri', 5: 'adaptive bitmap', 6: 'uri adaptive bitmap'}
+
+
+def _raw_icon_type(icon):
+    '''The image_type number the record stores. The schema's enum stops at 5, so the parser keeps a
+    larger number among the unknown fields instead of in image_type; it is read back from there.
+    None when the icon stores no type.'''
+    if icon.HasField('image_type'):
+        return icon.image_type
+    for field in UnknownFieldSet(icon):
+        if field.field_number == 1 and field.wire_type == 0:
+            return field.data
+    return None
 
 
 def _icon_type(value):
@@ -250,7 +263,7 @@ def _icon_type(value):
 def _icon_image(file_found, file_name, notification):
     '''A data icon's bitmap bytes, image_data[offset:offset + length] as the AOSP reader takes them,
     checked in as media. Blank for any other icon, or when the slice does not fit the stored bytes.'''
-    if not notification.HasField('icon') or notification.icon.image_type != ICON_TYPE_DATA:
+    if not notification.HasField('icon') or _raw_icon_type(notification.icon) != ICON_TYPE_DATA:
         return ''
     data = notification.icon.image_data
     offset, length = notification.icon.image_data_offset, notification.icon.image_data_length
@@ -263,7 +276,7 @@ def _icon_image(file_found, file_name, notification):
 def get_notificationHistory(context):
     files_found = context.get_files_found()
     data_list = []
-    source_path = ''
+    source_paths = []
     fields = ['uid', 'user_id', 'package_index', 'channel_name', 'channel_id',
               'channel_id_index', 'channel_name_index', 'conversation_id', 'conversation_id_index']
     icon_fields = ['image_type', 'image_bitmap_filename', 'image_resource_id', 'image_resource_id_package',
@@ -276,7 +289,8 @@ def get_notificationHistory(context):
             # extractions; only the per-notification files are protobufs.
             continue
         file_name = os.path.basename(file_found)
-        source_path = os.path.dirname(file_found)
+        if os.path.dirname(file_found) not in source_paths:
+            source_paths.append(os.path.dirname(file_found))
         try:
             notification_history = notificationhistory_pb2.NotificationHistoryProto()
             with open(file_found, 'rb') as f:
@@ -307,6 +321,7 @@ def get_notificationHistory(context):
                 if notification.HasField('icon'):
                     for icon_field in icon_fields:
                         values[icon_field] = getattr(notification.icon, icon_field)
+                    values['image_type'] = _raw_icon_type(notification.icon)
                 else:
                     for icon_field in icon_fields:
                         values[icon_field] = None
@@ -333,21 +348,21 @@ def get_notificationHistory(context):
                 text = notification.text if notification.HasField('text') else None
 
                 data_list.append((
-                    posted_time, title, text, package_name, values['user_id'], values['uid'],
+                    posted_time, file_creation, title, text, package_name, values['user_id'], values['uid'],
                     values['package_index'], values['channel_name'], values['channel_name_index'],
                     values['channel_id'], values['channel_id_index'], values['conversation_id'],
                     values['conversation_id_index'], major_version, _icon_type(values['image_type']),
                     values['image_bitmap_filename'], values['image_resource_id'],
                     values['image_resource_id_package'], values['image_data_length'],
                     values['image_data_offset'], values['image_uri'],
-                    _icon_image(file_found, file_name, notification), file_name, file_creation))
+                    _icon_image(file_found, file_name, notification), file_name))
         except Exception as e:
             logfunc(f'Error while opening notification pb files. The error message was: "{e}"')
 
     data_headers = (
-        ('Posted Time', 'datetime'), 'Title', 'Text', 'Package Name', 'User ID', 'UID', 'Package Index',
+        ('Posted Time', 'datetime'), ('Timestamp From Protobuf File Name', 'datetime'), 'Title', 'Text', 'Package Name', 'User ID', 'UID', 'Package Index',
         'Channel Name', 'Channel Name Index', 'Channel ID', 'Channel ID Index', 'Conversation ID',
         'Conversation ID Index', 'Major Version', 'Image Type', 'Image Bitmap Filename', 'Image Resource ID',
         'Image Resource ID Package', 'Image Data Length', 'Image Data Offset', 'Image URI', ('Icon Image', 'media'),
-        'Protobuf File Name', ('Timestamp From Protobuf File Name', 'datetime'))
-    return data_headers, data_list, source_path
+        'Protobuf File Name')
+    return data_headers, data_list, '\n'.join(source_paths)
