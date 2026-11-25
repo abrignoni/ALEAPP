@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-25",
         "last_update_date": "2026-11-25",
         "requirements": "none",
-        "category": "Android Content Query",
+        "category": "Logs & Diagnostics",
         "notes": "One row per URI that the Content Query artifacts read, for each output folder found, and one row per "
                  "other output file in the folder. Folders read: the <YYYYMMDD_HH_MM_SS>_contentprovider folder that "
                  "android_triage (RealityNet/android_triage, android_triage.sh, content_provider function, "
@@ -53,7 +53,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-25",
         "last_update_date": "2026-11-25",
         "requirements": "none",
-        "category": "Android Content Query",
+        "category": "Messaging",
         "notes": "Read from ALEX raw text output only (content_provider_<serial>/sms/sms.txt); android_triage does not "
                  "query SMS. ALEX also keeps sms_inbox, sms_sent, sms_draft, sms_outbox, sms_queued and sms_all, which "
                  "are views of the same table; they are not read, so a message is not reported twice. Because ALEX "
@@ -98,7 +98,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-25",
         "last_update_date": "2026-11-25",
         "requirements": "none",
-        "category": "Android Content Query",
+        "category": "Messaging",
         "notes": "Read from ALEX raw text output only (content_provider_<serial>/mms/mms.txt); android_triage does not "
                  "query MMS. ALEX's mms_inbox, mms_sent and mms_outbox files are views of the same table and are not "
                  "read. From, To, Cc and Bcc are the address values of the rows of mms_addr.txt in the same folder "
@@ -152,7 +152,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-25",
         "last_update_date": "2026-11-25",
         "requirements": "none",
-        "category": "Android Content Query",
+        "category": "Messaging",
         "notes": "Read from ALEX raw text output only (content_provider_<serial>/mms/mms_addr.txt); android_triage does "
                  "not query MMS. AOSP's MmsProvider does not match content://mms/addr (it matches "
                  "content://mms/<id>/addr, line 1211 at "
@@ -193,7 +193,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-25",
         "last_update_date": "2026-11-25",
         "requirements": "none",
-        "category": "Android Content Query",
+        "category": "Messaging",
         "notes": "Read from ALEX raw text output only (content_provider_<serial>/mms/mms_part.txt); android_triage does "
                  "not query MMS. A part row gives the part's message (mid, the _id of the row in MMS (content query)), "
                  "position (seq), content type (ct), names (name, fn, cl, cid), character set (chset), the path of the "
@@ -231,7 +231,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-25",
         "last_update_date": "2026-11-25",
         "requirements": "none",
-        "category": "Android Content Query",
+        "category": "Calls & Contacts",
         "notes": "Read from ALEX raw text output only (content_provider_<serial>/call_log/call_log_calls.txt); "
                  "android_triage does not query the call log. Date is read as milliseconds since 1970-01-01 UTC and "
                  "Duration (s) is the duration value as printed, in seconds, per the provider contract "
@@ -272,7 +272,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-25",
         "last_update_date": "2026-11-25",
         "requirements": "none",
-        "category": "Android Content Query",
+        "category": "Calls & Contacts",
         "notes": "Read from android_triage (<date>_contentprovider/contacts_contacts.txt) and ALEX raw text output "
                  "(content_provider_<serial>/com.android.contacts/com.android.contacts_contacts.txt). One row per "
                  "aggregated contact the provider returned; the phone numbers are in Contact Phone Numbers (content "
@@ -312,7 +312,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-25",
         "last_update_date": "2026-11-25",
         "requirements": "none",
-        "category": "Android Content Query",
+        "category": "Calls & Contacts",
         "notes": "Read from android_triage (<date>_contentprovider/contacts_data_phones.txt) and ALEX raw text output "
                  "(content_provider_<serial>/com.android.contacts/com.android.contacts_data_phones.txt). One row per "
                  "phone number data row. Number is data1, Phone Type data2, Label data3 and Normalized Number data4, as "
@@ -355,7 +355,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-25",
         "last_update_date": "2026-11-25",
         "requirements": "none",
-        "category": "Android Content Query",
+        "category": "Productivity",
         "notes": "Read from android_triage only (<date>_contentprovider/calendar_events.txt); ALEX does not query "
                  "content://com.android.calendar/events, and its event_entities output is read by Calendar Event "
                  "Entities (content query). Start and End are dtstart and dtend read as milliseconds since 1970-01-01 "
@@ -395,7 +395,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-25",
         "last_update_date": "2026-11-25",
         "requirements": "none",
-        "category": "Android Content Query",
+        "category": "Productivity",
         "notes": "Read from android_triage (<date>_contentprovider/calendar_event_entities.txt) and ALEX raw text "
                  "output (content_provider_<serial>/com.android.calendar/com.android.calendar_event_entities.txt). "
                  "This is a second URI of the same provider as Calendar Events (content query); android_triage "
@@ -438,7 +438,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-25",
         "last_update_date": "2026-11-25",
         "requirements": "none",
-        "category": "Android Content Query",
+        "category": "Productivity",
         "notes": "Read from android_triage (<date>_contentprovider/calendar_calendars.txt) and ALEX raw text output "
                  "(content_provider_<serial>/com.android.calendar/com.android.calendar_calendars.txt). One row per "
                  "calendar; Calendar ID is the _id that the event rows name in their calendar_id. Account Name, "
@@ -472,7 +472,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-25",
         "last_update_date": "2026-11-25",
         "requirements": "none",
-        "category": "Android Content Query",
+        "category": "Photos & Media",
         "notes": "Read from android_triage (<date>_contentprovider/media_external_file.txt) and ALEX raw text output "
                  "(content_provider_<serial>/media/media_external_file.txt). One row per file the MediaStore indexed "
                  "on external storage and returned to the shell user; the files themselves are not in this output. "
