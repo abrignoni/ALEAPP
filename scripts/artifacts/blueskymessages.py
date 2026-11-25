@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-11-19",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Bluesky",
+        "category": "Social Media",
         "notes": "",
         "paths": ('*/xyz.blueskyweb.app/databases/RKStorage*',
                   '*/xyz.blueskyweb.app/cache/http-cache/*.*'),
@@ -21,7 +21,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-11-19",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Bluesky",
+        "category": "Social Media",
         "notes": "RKStorage rows carry the did, handle and email members of each object in "
                  "session.accounts of the BSKY_STORAGE value, as stored, with the other columns "
                  "blank. Identical rows are reported once. Reading more than one account from "

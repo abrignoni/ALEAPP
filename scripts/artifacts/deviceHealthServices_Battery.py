@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-06-29",
         "last_update_date": "2026-10-31",
         "requirements": "none",
-        "category": "Device Health Services",
+        "category": "Device Information",
         "notes": "One row per battery_event record. Timestamp is timestamp_millis read as Unix "
                  "milliseconds and reported in UTC, in whole seconds. Timezone is the timezone text "
                  "stored on the row; it is not applied to Timestamp. Charge Type (as stored) and "
@@ -37,7 +37,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-06-29",
         "last_update_date": "2026-10-31",
         "requirements": "none",
-        "category": "Device Health Services",
+        "category": "Device Information",
         "notes": "Timestamp is timestamp_millis read as Unix milliseconds and reported in UTC, in "
                  "whole seconds. Timezone is the time_zone text stored on the row; it is not applied "
                  "to Timestamp. No registered image listed in sample_data holds a record, so the "

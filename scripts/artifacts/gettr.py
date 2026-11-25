@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "GETTR",
+        "category": "Social Media",
         "notes": "The chat database is app_flutter/db_u<user id>.sqlite, one per signed-in "
                  "account. Its tables match the Stream Chat Flutter client's local persistence "
                  "schema. The column names read here are those of the tested store; at the cited "
@@ -61,7 +61,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "GETTR",
+        "category": "Social Media",
         "notes": "Joins the members, users and reads tables of the per-account chat database on "
                  "the user id and the channel identifier. Last Read Timestamp and Unread "
                  "Messages come from the reads table and are blank when that table has no row "
@@ -90,7 +90,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "GETTR",
+        "category": "Social Media",
         "notes": "The store is databases/private_<username>.db, one per signed-in account, and "
                  "the account name is taken from that file name. msg_date is Unix milliseconds "
                  "here, unlike the Unix seconds the chat database uses, so the two are converted "
@@ -123,7 +123,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "GETTR",
+        "category": "Social Media",
         "notes": "Every row of the kv table in databases/g.db and in each "
                  "databases/private_<username>.db is reported, so keys written by later versions "
                  "still appear and nothing is filtered on a guess at which keys matter. The "
@@ -154,7 +154,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "GETTR",
+        "category": "Social Media",
         "notes": "files/libCachedImageData.db records the URL, the stored file name and the "
                  "length for each image this cache holds, so the link between a cached file and "
                  "the address it came from is one the app recorded rather than one derived by "

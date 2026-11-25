@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Truecaller",
+        "category": "Messaging",
         "notes": "Read from the history table of tc.db. The timestamp column is Unix "
                  "milliseconds. The type, action and feature columns are integers with no "
                  "mapping recoverable from the extraction, so they are reported as stored; "
@@ -30,7 +30,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Truecaller",
+        "category": "Messaging",
         "notes": "One row per raw_contact. Numbers come from the data table where "
                  "data_type is 4 and the value is in data1: that pairing is data-proven "
                  "rather than assumed, because contact_default_number equalled data1 on all "
@@ -54,7 +54,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Truecaller",
+        "category": "Messaging",
         "notes": "Read from the msg_im_users table of tc.db. The date column is Unix "
                  "milliseconds and registration_timestamp in the same row is Unix seconds; "
                  "the two units were established from their values in the tested sample. "
@@ -75,7 +75,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Truecaller",
+        "category": "Messaging",
         "notes": "Read from the sender_info table of insights.db, whose rows hold a "
                  "sender, a sender name and type fields; what causes the app to write a "
                  "row was not established here. The table carries no timestamp. Sender "
@@ -95,7 +95,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Truecaller",
+        "category": "Messaging",
         "notes": "Read from the call_cache table of calling-cache.db. The timestamp column "
                  "is Unix milliseconds. The state column is reported as stored. The max age "
                  "column is reported as stored and is not treated as an event time. Field "
@@ -113,7 +113,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Truecaller",
+        "category": "Messaging",
         "notes": ("Each named entry of tc.settings.xml, core_settings.xml and tc_premium_state_settings.xml is reported as stored, with its "
                   "declared preference type. For a string-set entry the value is its member strings, one per line, in the order the file "
                   "lists them. Values are not interpreted and absence of a key is not evidence a feature was unused. The rows carry no "

@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-02-15",
         "last_update_date": "2026-08-01",
         "requirements": "none",
-        "category": "Burner",
+        "category": "Messaging",
         "notes": "",
         "paths": ('*/data/com.adhoclabs.burner/databases/burnerDatabase.db*',),
         "output_types": "standard",

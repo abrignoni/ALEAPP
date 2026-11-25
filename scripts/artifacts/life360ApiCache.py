@@ -9,7 +9,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
         "requirements": "none",
-        "category": "Life360",
+        "category": "Locations & Maps",
         "notes": "Read from the app's OkHttp response caches under cache/; the history responses sat in "
                  "cache/http_cache on both tested images that held them (hc_pixel8pro_a16 and hc_pixel8pro_a17). "
                  "Each cache entry is a pair of files named by the MD5 of the URL: <hash>.0 holds the URL, the "
@@ -59,7 +59,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Life360",
+        "category": "Locations & Maps",
         "notes": "Read from the same OkHttp response caches as the Member Location History artifact. One row per "
                  "distinct contact id per circle. When several cached responses hold the same contact, the row's "
                  "values and its Cached time (the OkHttp-Received-Millis header, Unix milliseconds rendered "
@@ -95,7 +95,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
         "requirements": "none",
-        "category": "Life360",
+        "category": "Locations & Maps",
         "notes": "One row per <hash>.0 metadata file in each DiskLruCache directory under the app's cache/ folder "
                  "whose entries start with a URL. Sent and Received are the OkHttp-Sent-Millis and "
                  "OkHttp-Received-Millis headers OkHttp writes into the entry (Unix "

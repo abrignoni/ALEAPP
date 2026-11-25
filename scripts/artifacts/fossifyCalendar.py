@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "Fossify Calendar",
+        "category": "Productivity",
         "notes": "One row per entry in the events table of databases/events.db, joined to event_types for "
                  "the calendar name. The table holds both calendar events and the app's tasks, told "
                  "apart by the Type column (0 an event, 1 a task, per TYPE_EVENT and TYPE_TASK in "

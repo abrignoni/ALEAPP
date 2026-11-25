@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-02",
         "last_update_date": "2026-10-02",
         "requirements": "none",
-        "category": "Google Now & QuickSearch",
+        "category": "Device Activity",
         "notes": 'Read from the cache_table table of the SqliteKeyValueCache databases in cache/accounts/<number> of '
                  "the Google app's data folder (com.google.android.googlequicksearchbox). Each of the 297 such "
                  'databases on the tested images has the same table, with the columns request_data, response_data, '
@@ -99,7 +99,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-02",
         "last_update_date": "2026-10-02",
         "requirements": "none",
-        "category": "Google Now & QuickSearch",
+        "category": "Device Activity",
         "notes": 'Read from the cache_table table of the SqliteKeyValueCache databases in cache/accounts/<number> of '
                  "the Google app's data folder (com.google.android.googlequicksearchbox). Each of the 297 such "
                  'databases on the tested images has the same table, with the columns request_data, response_data, '
@@ -187,7 +187,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-02",
         "last_update_date": "2026-10-02",
         "requirements": "none",
-        "category": "Google Now & QuickSearch",
+        "category": "Device Activity",
         "notes": 'Read from the cache_table table of the SqliteKeyValueCache databases in cache/accounts/<number> of '
                  "the Google app's data folder (com.google.android.googlequicksearchbox). Each of the 297 such "
                  'databases on the tested images has the same table, with the columns request_data, response_data, '

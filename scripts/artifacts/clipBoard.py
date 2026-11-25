@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-01-08",
         "last_update_date": "2026-11-23",
         "requirements": "none",
-        "category": "Clipboard",
+        "category": "Device Activity",
         "notes": "Modified Time is the modification time the extraction records for the file, read from the "
                  "seeker's record of it and shown in UTC: a tar member's own time, the NTFS field (0x000a) or "
                  "else the extended timestamp field (0x5455) of a zip member, the file system time of a disk "

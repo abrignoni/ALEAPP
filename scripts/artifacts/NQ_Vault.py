@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-05-19",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Encrypting Media Apps",
+        "category": "Photos & Media",
         "notes": "Stored Password ID is password_id as stored. Matching Digit String Candidate "
                  "is a built-in digit string or the first searched 3-to-15-digit string whose "
                  "32-bit Java String hashcode matches that identifier. Built-in candidates "
@@ -28,7 +28,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-05-19",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Encrypting Media Apps",
+        "category": "Photos & Media",
         "notes": "Media bytes are transformed using the low byte of the Java String hashcode "
                  "of the Matching Digit String Candidate. Only the first 128 bytes of each "
                  ".bin file under a .image or .video folder are XORed; the remainder is copied "

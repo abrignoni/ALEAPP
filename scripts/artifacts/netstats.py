@@ -9,7 +9,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-05",
         "last_update_date": "2026-11-22",
         "requirements": "none",
-        "category": "Network Usage",
+        "category": "Network & Connectivity",
         "notes": "The binary format is read per NetworkStatsCollection.java, "
                  "NetworkIdentitySet.java and NetworkStatsHistory.java under "
                  "framework-t/src/android/net in AOSP packages/modules/Connectivity. The "

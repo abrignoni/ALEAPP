@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Outlook",
+        "category": "Email",
         "notes": "Each entry in the OneAuth accounts preferences file holds a JSON value "
                  "carrying the account identifiers and, on some entries, an "
                  "additional_properties member holding the claims of a token the component "
@@ -38,7 +38,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Outlook",
+        "category": "Email",
         "notes": "The appUpdates log is tab delimited and carries a level, an ISO 8601 "
                  "timestamp with a UTC offset, a correlation identifier, a thread, a "
                  "component and a message. Three message forms were seen across the tested "
@@ -67,7 +67,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Outlook",
+        "category": "Email",
         "notes": "The versions preferences file holds an initial, a previous and a last run "
                  "version name and version code. The install identifier comes from the "
                  "pref_install_id value in the acompli preferences file and matched the "
@@ -91,7 +91,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Outlook",
+        "category": "Email",
         "notes": "Each preference is reported as a row carrying its key, the type the file "
                  "declares for it and its value as stored. The tested samples ranged from 1 to "
                  "164 keys and the sets differ between them, so no key is required to be present. "

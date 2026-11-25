@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-01-12",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Firefox",
+        "category": "Browsers",
         "notes": "Reference: Mozilla application-services, 'places Timestamp is milliseconds on "
                  "Android', "
                  "https://github.com/mozilla/application-services/blob/71d8b70bf62e6911d9d439a559aab56d8bef38b9/components/support/types/src/lib.rs. "
@@ -44,7 +44,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-01-12",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Firefox",
+        "category": "Browsers",
         "notes": "Reference: Mozilla application-services, 'places Timestamp is milliseconds on "
                  "Android', "
                  "https://github.com/mozilla/application-services/blob/71d8b70bf62e6911d9d439a559aab56d8bef38b9/components/support/types/src/lib.rs. "
@@ -75,7 +75,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-01-12",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Firefox",
+        "category": "Browsers",
         "notes": "Reference: Mozilla application-services, 'places Timestamp is milliseconds on "
                  "Android', "
                  "https://github.com/mozilla/application-services/blob/71d8b70bf62e6911d9d439a559aab56d8bef38b9/components/support/types/src/lib.rs. "
@@ -106,7 +106,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-01-12",
         "last_update_date": "2026-08-10",
         "requirements": "none",
-        "category": "Firefox",
+        "category": "Browsers",
         "notes": "This artifact is not limited to org.mozilla.firefox: the path pattern is "
                  "anchored on the files/places.sqlite layout rather than on a package, so "
                  "Gecko-based forks that use that layout are read too, and the Browser column "

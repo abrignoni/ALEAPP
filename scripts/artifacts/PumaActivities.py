@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-02-24",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Puma",
+        "category": "Health & Fitness",
         "notes": "The route is drawn from the positions rows for each activity and shown as an "
                  "offline image and a route KML; the interactive folium map and online reverse "
                  "geocoding were removed. The positions rows of an activity are sorted by the "

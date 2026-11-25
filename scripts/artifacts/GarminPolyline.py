@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-02-24",
         "last_update_date": "2023-02-24",
         "requirements": "polyline",
-        "category": "Garmin",
+        "category": "Health & Fitness",
         "notes": "The route is decoded from activity_polyline.encodedSamples and rendered offline "
                  "as an image and a KML file; no online lookup is made. Only activities with a "
                  "polyline row are reported. Latitude and Longitude are the first decoded point "

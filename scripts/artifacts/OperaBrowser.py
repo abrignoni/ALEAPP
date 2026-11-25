@@ -11,7 +11,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-10-16",
         "requirements": "none",
-        "category": "Opera",
+        "category": "Browsers",
         "notes": "Opera's regular browsing history, search terms, bookmarks, "
                  "autofill, cookies and saved logins are already covered by this "
                  "project's Chromium artifacts (chrome.py and the chrome*.py family), "
@@ -64,7 +64,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-10-16",
         "requirements": "none",
-        "category": "Opera",
+        "category": "Browsers",
         "notes": "This is the tab's navigation stack as stored, not a full visit log; a page "
                  "absent here may still have been visited. The Chromium History artifact "
                  "(chrome.py) reads the History database separately, so the two should be read "

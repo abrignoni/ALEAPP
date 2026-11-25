@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-10-16",
         "last_update_date": "2023-10-16",
         "requirements": "none",
-        "category": "GEO Location",
+        "category": "Locations & Maps",
         "notes": "",
         "paths": ('*/com.google.android.apps.maps/files/saved_directions.data.cs',),
         "output_types": "all",

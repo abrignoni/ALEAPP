@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-08-18",
         "last_update_date": "2025-03-16",
         "requirements": "none",
-        "category": "Airtag Detection",
+        "category": "Locations & Maps",
         "notes": "",
         "paths": '*/com.google.android.gms/databases/personalsafety_db*',
         "output_types": "standard",
@@ -29,7 +29,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-08-18",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Airtag Detection",
+        "category": "Locations & Maps",
         "notes": "Possible RSSI is field 2 of the bleScan blob. Possible Latitude and Possible "
                  "Longitude are fields 4 and 5 of the locationScan blob divided by 10,000,000. "
                  "Both blobs are decoded without a schema, and the meaning of those fields and "
@@ -59,7 +59,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-08-18",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Airtag Detection",
+        "category": "Locations & Maps",
         "notes": "The file is decoded without a schema. That field 1 is the time of the last scan "
                  "is not established by a published schema. On kevin_pocox7_a15, pixel7a_a14 and "
                  "sharon_a14, field 1 read as Unix milliseconds was 200 seconds after, 23 seconds "
@@ -85,7 +85,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-08-18",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Airtag Detection",
+        "category": "Locations & Maps",
         "notes": "The file is decoded without a schema, and what each value of field 1 means is not "
                  "established by a published schema, so the number is reported as stored with no "
                  "label. The file was present on one of the 20 registered Android zip extractions "

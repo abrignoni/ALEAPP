@@ -17,7 +17,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-17",
         "last_update_date": "2026-11-17",
         "requirements": "none",
-        "category": "Samsung Find",
+        "category": "Locations & Maps",
         "notes": (
             "Read from com.samsung.android.app.find/databases/app-database.db with its "
             "-wal; on the known data every row was in the -wal. Known data: "
@@ -72,7 +72,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-17",
         "last_update_date": "2026-11-17",
         "requirements": "none",
-        "category": "Samsung Find",
+        "category": "Locations & Maps",
         "notes": (
             "Read from com.samsung.android.app.find/databases/app-database.db with its "
             "-wal; on the known data every row was in the -wal. Known data: "
@@ -117,7 +117,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-17",
         "last_update_date": "2026-11-17",
         "requirements": "none",
-        "category": "Samsung Find",
+        "category": "Locations & Maps",
         "notes": (
             "Read from com.samsung.android.app.find/databases/app-database.db with its "
             "-wal; on the known data every row was in the -wal. Known data: "

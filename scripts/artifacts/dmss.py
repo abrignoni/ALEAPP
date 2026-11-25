@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-04-13",
         "last_update_date": "2023-04-13",
         "requirements": "none",
-        "category": "Dahua Technology (DMSS)",
+        "category": "Smart Home & Connected Devices",
         "notes": "",
         "paths": ('*/com.mm.android.DMSS/databases/devicechannel.db*',),
         "output_types": "standard",
@@ -19,7 +19,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-04-13",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Dahua Technology (DMSS)",
+        "category": "Smart Home & Connected Devices",
         "notes": "IP, Port, Username and Password are reported as stored. Their encrypted, "
                  "encoded or plaintext nature is not established here. A devices row does not by "
                  "itself establish that the app connected to the device.",
@@ -34,7 +34,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-04-13",
         "last_update_date": "2023-04-13",
         "requirements": "none",
-        "category": "Dahua Technology (DMSS)",
+        "category": "Smart Home & Connected Devices",
         "notes": "Account is the database file name without its .db ending, or 'Without Account' "
                  "for the file named .db. Only the file named .db and database files whose name "
                  "starts with ez or is longer than 25 characters are read. Alarm State and Full "
@@ -52,7 +52,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-04-13",
         "last_update_date": "2023-04-13",
         "requirements": "none",
-        "category": "Dahua Technology (DMSS)",
+        "category": "Smart Home & Connected Devices",
         "notes": "Account is the database file name without its .db ending, or 'Without Account' "
                  "for the file named .db. Only the file named .db and database files whose name "
                  "starts with ez or is longer than 25 characters are read. Shared Enabled shows a "
@@ -69,7 +69,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-04-13",
         "last_update_date": "2026-08-01",
         "requirements": "none",
-        "category": "Dahua Technology (DMSS)",
+        "category": "Smart Home & Connected Devices",
         "notes": "Alarm Notification renders the stored alarmTypeStr token as a readable label "
                  "(for example gwMsg_AlarmLocal_PassiveInfrared as 'Motion detected'). Those "
                  "token-to-label meanings are not documented in the data, and no source or "
@@ -94,7 +94,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-04-13",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Dahua Technology (DMSS)",
+        "category": "Smart Home & Connected Devices",
         "notes": "Files with lowercase .jpg, .mp4 or .dav suffixes are reported unless their "
                  "staged path contains .thumb. A video substring in a directory or filename does "
                  "not establish a thumbnail relationship and is not used to exclude JPG candidates. "

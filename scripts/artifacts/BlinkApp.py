@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-20",
         "last_update_date": "2026-09-11",
         "requirements": "none",
-        "category": "Blink",
+        "category": "Smart Home & Connected Devices",
         "notes": "Rows come from the camera table of the app's Room database, "
                  "data/data/com.immediasemi.android.blink/databases/BlinkRoom. Created Timestamp and "
                  "Updated Timestamp are stored as ISO 8601 text carrying an explicit UTC offset and are "
@@ -36,7 +36,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-20",
         "last_update_date": "2026-09-11",
         "requirements": "none",
-        "category": "Blink",
+        "category": "Smart Home & Connected Devices",
         "notes": "Each row is one entitlement the entitlement table records against one camera. That "
                  "table's primary key is (target, target_id, name), so target_id alone does not identify "
                  "a device: the join matches entitlement.target_id against camera.id and "
@@ -69,7 +69,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-20",
         "last_update_date": "2026-09-11",
         "requirements": "none",
-        "category": "Blink",
+        "category": "Smart Home & Connected Devices",
         "notes": "Rows come from the syncmodule table of the app's Room database. Network ID names the "
                  "row in Blink Network Information that this sync module belongs to. Created Timestamp "
                  "and Updated Timestamp are stored as ISO 8601 text carrying an explicit UTC offset and "
@@ -98,7 +98,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-20",
         "last_update_date": "2026-09-11",
         "requirements": "none",
-        "category": "Blink",
+        "category": "Smart Home & Connected Devices",
         "notes": "Each row is one entitlement the entitlement table records against one sync module. "
                  "That table's primary key is (target, target_id, name), so target_id alone does not "
                  "identify a device: the join matches entitlement.target_id against syncmodule.id and "
@@ -130,7 +130,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-11",
         "last_update_date": "2026-09-11",
         "requirements": "none",
-        "category": "Blink",
+        "category": "Smart Home & Connected Devices",
         "notes": "Rows come from the network table of the app's Room database. On the tested file the "
                  "sync module row and both camera rows carried this network row's id in their network_id "
                  "column, and both artifacts report that id. Time Zone is an IANA zone name stored on "
@@ -163,7 +163,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-11",
         "last_update_date": "2026-09-11",
         "requirements": "none",
-        "category": "Blink",
+        "category": "Smart Home & Connected Devices",
         "notes": "Rows come from the key_value_pair table of the app's Room database, which is a key and "
                  "value store the app writes. Value is reported as stored because Value Type does not "
                  "say whether a value is a timestamp: on the tested file the three values typed LONG "
@@ -188,7 +188,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-11",
         "last_update_date": "2026-09-11",
         "requirements": "none",
-        "category": "Blink",
+        "category": "Smart Home & Connected Devices",
         "notes": "Rows come from the subscription table of the app's Room database. Target and Target ID "
                  "name what a subscription is attached to, and that vocabulary is not the one the "
                  "entitlement table uses: on the tested file the single subscription's target did not "
@@ -218,7 +218,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-11",
         "last_update_date": "2026-09-11",
         "requirements": "none",
-        "category": "Blink",
+        "category": "Smart Home & Connected Devices",
         "notes": "Rows come from the message table of the app's Room database. The table has no sender "
                  "or recipient column, so "
                  "nothing in it records a message a person sent or received. Created Timestamp is stored "
@@ -249,7 +249,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-11",
         "last_update_date": "2026-09-11",
         "requirements": "none",
-        "category": "Blink",
+        "category": "Smart Home & Connected Devices",
         "notes": "Rows come from the tracking_event table of the app's Room database. Timestamp is "
                  "stored as ISO 8601 text carrying a Z offset and is reported as stored. Event Name is "
                  "reported as stored and the full set of names the app can write is not established; the "

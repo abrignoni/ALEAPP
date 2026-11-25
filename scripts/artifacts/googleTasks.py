@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-08-21",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Google Tasks",
+        "category": "Productivity",
         "notes": "Protobuf field positions for created/modified/completed times are not "
                  "documented and were assigned by the module from values on data that is not "
                  "recorded here: Created Time is field 11.1, Last Modified Time field 3.1 and "

@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-07-06",
         "last_update_date": "2022-07-06",
         "requirements": "none",
-        "category": "App Interaction",
+        "category": "Device Activity",
         "notes": "",
         "paths": ('*/usage-history.xml',),
         "output_types": "standard",

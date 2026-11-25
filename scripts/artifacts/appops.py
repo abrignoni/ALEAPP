@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-08-15",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Permissions",
+        "category": "Installed Apps",
         "notes": "Access Timestamp and Reject Timestamp are the t and r attributes of each st "
                  "record, read as Unix milliseconds; Proxy Package Name and Proxy Package UID are "
                  "its pp and pu attributes and ID is its id attribute where present. Distinct "
@@ -50,7 +50,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-08-15",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Permissions",
+        "category": "Installed Apps",
         "notes": "Last Access Persistent (tp), Last Access Cached (tc), Last Access Background "
                  "(tb), Last Access Foreground (tf), Last Access Foreground Service (tfs) and "
                  "Last Access Top (tt) are the op element's tp, tc, tb, tf, tfs and tt "

@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-04-26",
         "last_update_date": "2026-10-06",
         "requirements": "None",
-        "category": "Twitter",
+        "category": "Social Media",
         "notes": "Canonical aliases collapse only when main, WAL and journal bytes agree; "
                  "conflicting states and independent users remain separate. Per-row Source File "
                  "is included only when rows combine distinct database sources. Unsupported "

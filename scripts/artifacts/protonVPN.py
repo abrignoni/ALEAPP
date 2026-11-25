@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-09-04",
         "last_update_date": "2022-09-04",
         "requirements": "none",
-        "category": "ProtonVPN",
+        "category": "Network & Connectivity",
         "notes": "",
         "paths": ('*/ch.protonvpn.android/shared_prefs/ServerListUpdater.xml',),
         "output_types": ['html', 'tsv', 'lava'],
@@ -19,7 +19,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-09-04",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "ProtonVPN",
+        "category": "Network & Connectivity",
         "notes": "A row is a log line that contains 'to:' and a name that starts with 'node' and ends with "
                  "'.protonvpn.net'. Server Address is the first such name on the line, made only of "
                  "letters, digits, dots and hyphens, with no lookup; a line naming a server under "
@@ -58,7 +58,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-09-04",
         "last_update_date": "2026-08-01",
         "requirements": "none",
-        "category": "ProtonVPN",
+        "category": "Network & Connectivity",
         "notes": "Each UserEntity row is matched to its AccountEntity row on the user id column the two "
                  "tables share. If a database is met whose schema exposes no shared user id, the rows "
                  "are paired by result order instead, and an unequal number of rows on either side "

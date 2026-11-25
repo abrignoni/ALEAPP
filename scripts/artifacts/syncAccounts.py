@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-30",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Accounts",
+        "category": "Accounts & Credentials",
         "notes": "A row is an authority element of accounts.xml. Its presence does not show that "
                  "the account synced that data, and no source for the values of enabled and "
                  "syncable is given here. A copy of the file whose path in the extraction has a "

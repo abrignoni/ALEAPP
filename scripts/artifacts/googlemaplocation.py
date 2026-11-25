@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-03-17",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "GEO Location",
+        "category": "Locations & Maps",
         "notes": "",
         "paths": ('*/com.google.android.apps.maps/databases/da_destination_history*',),
         "output_types": "standard",

@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-07-28",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Google Duo",
+        "category": "Calls & Contacts",
         "notes": "Timestamp is timestamp_usec read as microseconds since 1970 UTC, the unit the column name gives. "
                  "Activity Type (as stored), Call State (as stored) and Outgoing (as stored) are the integers in the "
                  "activity_type, call_state and outgoing columns. No source for what each value means was found, so "
@@ -37,7 +37,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-07-28",
         "last_update_date": "2021-07-28",
         "requirements": "none",
-        "category": "Google Duo",
+        "category": "Calls & Contacts",
         "notes": "",
         "paths": ('*/com.google.android.apps.tachyon/databases/tachyon.db*',),
         "output_types": "standard",
@@ -62,7 +62,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-07-28",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Google Duo",
+        "category": "Calls & Contacts",
         "notes": "Sent Timestamp, Received Timestamp and Seen Timestamp are sent_timestamp_millis, "
                  "received_timestamp_millis and seen_timestamp_millis read as milliseconds since 1970 UTC, the unit "
                  "the column names give. Each is blank when the stored value is 0, which is the default the table "

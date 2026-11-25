@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-06",
         "requirements": "none",
-        "category": "Fing",
+        "category": "Network & Connectivity",
         "sample_data": {
             "emu_a15_oss_v16": "Fing 12.13.3 | 10 rows",
         },

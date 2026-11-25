@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-25",
         "last_update_date": "2026-10-25",
         "requirements": "none",
-        "category": "Bluetooth",
+        "category": "Smart Home & Connected Devices",
         "notes": "One row per row of the btopp table of each btopp.db found (the Bluetooth app's database in "
                  "device encrypted storage, one per Android user, storage views of one copy collapsed; Source "
                  "File names the database). A copy found under data/misc_de/<user>/rollback/<id>/<package>/ "

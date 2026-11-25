@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-10-09",
         "requirements": "sqlcipher3",
-        "category": "Encrypting Media Apps",
+        "category": "Photos & Media",
         "notes": "The vault's index, .privacy_safe/db/privacy_safe.db, is a SQLCipher database. "
                  "Its passphrase is the same fixed string that decrypts the preferences and the "
                  "stored media, the ASCII Rny48Ni8aPjYCnUI. The SQLCipher parameter set "
@@ -61,7 +61,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "sqlcipher3",
-        "category": "Encrypting Media Apps",
+        "category": "Photos & Media",
         "notes": "Each SAFE_BOX row carries an album name (FOLDER_NAME) and is read from the same "
                  "SQLCipher index and with the same key and fallback as the Hidden Files "
                  "artifact. Four rows were present on each corpus below, named recycler_bin, "
@@ -93,7 +93,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "Encrypting Media Apps",
+        "category": "Photos & Media",
         "notes": "The share_privacy_safe.xml preferences file of com.hld.anzenbokusucal stores "
                  "both halves of every entry as hexadecimal ciphertext: the entry name and, for "
                  "string entries, the value. Both decrypt with AES in CBC mode using the key and "

@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Wi-Fi",
+        "category": "Android Bug Report",
         "notes": "One row per entry of the WifiConfigManager - Configured networks block in the wifi service dump. The ConfigurationMap "
                  "block that follows it holds the same networks again and is not read. Entry Mark is the text printed before ID: "
                  "(an asterisk or - DSBLE; empty where nothing is printed). SSID and BSSID are as printed: with quote marks, in the "
@@ -80,7 +80,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Wi-Fi",
+        "category": "Android Bug Report",
         "notes": "One row per startTime= line under mConnectionEvents in the WifiMetrics part of the wifi service dump. SSID, BSSID, Duration (ms), Roam Type, Connection Result, Level 2 Failure Code, Connectivity Failure Code, Signal Strength, Wi-Fi State, Screen On, Network Type, Connection Nominator and Network Creator are the key=value pairs of the line as printed; Connection Result and Channel Info are shown as stored (no meaning is given to the numbers), Other Fields holds the remaining pairs in the order printed, cut at 1,500 characters. The Android 10 builds print fewer pairs, so Network Type and Network Creator are empty on those two reports. Start Time As Printed is month, day and clock time without a year and with unpadded hours, minutes and seconds; Start Time (UTC) uses the year rule of Bug Report - Wi-Fi Saved Networks and the zone of Bug Report - Device Facts. The fraction after the seconds is printed unpadded on some builds (.45 was seen), so the UTC value is given to the whole second and the fraction is kept only in the printed text.\nThe platform keeps a short list: the tested reports held 0 to 6 lines. A row records that the Wi-Fi metrics noted a connection attempt with that outcome; it does not say who started it. The wifip2p service prints a list of the same name that was empty on the three reports that print it and is not read.\nAll rows of the Samsung A-series, Huawei, Transsion-brand and Motorola reports held ROAM_UNRELATED in Roam Type, 1 in Connection Result, NONE in both failure code columns and WIFI_DISCONNECTED in Wi-Fi State; the Samsung A-series, Huawei and Transsion-brand reports hold one row each, so the other columns are uniform there too. Channel Info held 0 on the Huawei row. On the Motorola report, whose six rows are the same network, SSID, BSSID, Level 2 Failure Code, Connectivity Failure Code, Channel Info, Network Type, Connection Nominator and Network Creator held one value on all rows.\nEvidence tiers. Data-proven on five real bug reports (Samsung A-series and S-series on Android 16, Huawei and a Transsion-brand phone on Android 10, Motorola on Android 15): 1, 0, 1, 1 and 6 rows, each equal to a count of startTime= lines in the raw text made by a separate script and to an independent parser on SSID, BSSID, duration, roam type, result, signal strength, state and screen flag; the Samsung S-series report printed none (its Wi-Fi was off at the dump). The zone of all five is UTC+0, so the conversion was the identity on the rows of these five. Not examined: Android 11, 12 and 14, other vendors, and failed attempts (every tested row reports result 1). In a value read from the report text, ASCII control characters other than a tab are shown as spaces, and values longer than the limits named here are cut.\nOn the corpus only the full Samsung dumpState text of s20fe_a13 (Android 13) prints this section; the error dumps of s20fe_a13, samsungs20_a13 and sharon_a14 and the partial texts of userb2_a13 do not. s20fe_a13 gave no rows: its mConnectionEvents list is empty. The known data emu_a15_bugreport_known_20261116 (Android 15 emulator, America/New_York) gave the first rows from a registered corpus key: one row, result 1, starting at 02:12:24 UTC, 20 seconds after the reboot in the mint record, converted from a printed local time 5 hours earlier. The mint record lists svc wifi disable and svc wifi enable commands about 50 and 35 seconds before that reboot. No row carries those times, and no Wi-Fi table of the report holds anything from before the reboot, so the report does not show whether they took effect.",
         "paths": ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                   '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'),
@@ -103,7 +103,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Wi-Fi",
+        "category": "Android Bug Report",
         "notes": "One row per mWifiInfo line of the wifi service dump, and one row with the Wi-Fi status and mode lines alone where "
                  "the dump prints no mWifiInfo line. Wi-Fi Status and Wi-Fi Mode are the Wi-Fi is enabled or disabled line and the "
                  "Current wifi mode line as printed. The other columns are the pairs of the mWifiInfo line as printed (the Android "
@@ -148,7 +148,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Wi-Fi",
+        "category": "Android Bug Report",
         "notes": "One row per access point line of the Latest scan results and Latest native scan results tables of the wifiscanner "
                  "service dump; Scan Table says which. The Latest native pno scan results table is read the same way and named in Scan Table (it was empty on the tested reports); the hexadecimal Latest native scan results IEs block is not read. BSSID, Frequency, RSSI, Age "
                  "(sec), SSID and Flags are the columns of the table as printed; RSSI Detail is the per-chain text some builds "
@@ -183,7 +183,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Wi-Fi",
+        "category": "Android Bug Report",
         "notes": "One row per rec[N]: time= line of the three Wi-Fi services. Service is the dump the line is in; State Machine is "
                  "the heading line above it (for example WifiPnoScanStateMachine); Record is N; Processed State, Origin State and "
                  "Destination State are processed=, org= and dest=; What is the rest of the line after what= as printed, cut at 500 "
@@ -219,7 +219,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Wi-Fi",
+        "category": "Android Bug Report",
         "notes": "One row per line that starts with an ISO time (YYYY-MM-DDTHH:MM:SS with an optional fraction) between a <name> - Log Begin "
                  "line and the matching Log End line in the wifi and wifiscanner service dumps (for example WifiScanningService, "
                  "WifiConnectivityManager, WifiConfigManager, WifiLastResortWatchdog). Log is the <name>; Message is the text after the time "
@@ -254,7 +254,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Network",
+        "category": "Android Bug Report",
         "notes": "One row per history bucket. Statistics Table is the table the bucket is printed in: Dev stats, Xt stats, UID stats "
                  "or UID tag stats in the netstats service dump and in the CHECKIN NETSTATS section that prints the same tables, or "
                  "checkin plus the group name (xt) for the compact checkin form (v1 lines). Source Section says which section "
@@ -307,7 +307,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Network",
+        "category": "Android Bug Report",
         "notes": "One row per UID= line, indented by two spaces, under a heading of the netpolicy service dump. List is the heading "
                  "(Policy for UIDs, Power save whitelist (except idle) app ids, Power save whitelist app ids, App idle whitelist "
                  "app ids, Default restrict background allowlist (or whitelist) uids, Uids transitioning to background, Status for "
@@ -342,7 +342,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Network",
+        "category": "Android Bug Report",
         "notes": "One row per line of the netpolicy service dump that is not a UID line and not a line of the three event logs: the "
                  "state lines at the top (System ready, Restrict background, Restrict power, Device idle and others), the flag lines, "
                  "the Network policies and Subscription plans lines, the active subscriptions, the network to interface map, the "
@@ -375,7 +375,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Network",
+        "category": "Android Bug Report",
         "notes": "One row per time-stamped line of the three logs, printed most recent first. Log is mEventLogs (for example Firewall "
                  "rule changed: <uid>-<chain>-<allow or deny>), mNetworkBlockedLogs (a uid and a blocked state) or mUidStateChangeLogs "
                  "(a uid and a process state text). Message is the text after the time as printed, cut at 600 characters; the codes "
@@ -410,7 +410,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Network",
+        "category": "Android Bug Report",
         "notes": "One row per NetworkAgentInfo line under Current Networks in the connectivity service dump. Network ID is network{N}; "
                  "Default Network is true when it equals the Active default network line of the same dump. Network Info is the ni{} "
                  "text (Android 16 and 15: type and state; Android 10: a bracketed list), Created is created= where the build prints "
@@ -455,7 +455,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Network",
+        "category": "Android Bug Report",
         "notes": "One row per interface entry (N: name: <flags> mtu ...) of the NETWORK INTERFACES command section. Linked is the "
                  "name after @ where the entry prints one, Flags is the text in angle brackets, and Qdisc, State, Mode, Group and "
                  "Queue Length are the words after those names. Link Type, Link Address and Broadcast come from the link/ line "
@@ -497,7 +497,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Network",
+        "category": "Android Bug Report",
         "notes": "One row per interface line of /proc/net/dev. The columns are the sixteen counters of the table in the order "
                  "printed: bytes, packets, errs, drop, fifo, frame, compressed and multicast for receive, and bytes, packets, errs, "
                  "drop, fifo, colls, carrier and compressed for transmit. The counters are the totals printed when the dump ran, not figures for a period; "
@@ -529,7 +529,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Network",
+        "category": "Android Bug Report",
         "notes": "One row per server line under DNS servers in each NetId block of the dnsresolver service dump. Server is the address "
                  "as printed (an IPv6 link-local address carries its interface); Total, Successes, Errors, Timeouts and Internal "
                  "Errors are the counts in the parentheses, RTT Average (ms) and Last Sample (s) the last two values. The sample "
@@ -567,7 +567,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Network",
+        "category": "Android Bug Report",
         "notes": "One row per line of the PrivateDnsLog list: Time Of Day As Printed (hours, minutes, seconds and milliseconds with "
                  "no date), Net ID, Server (the address, port and path text in braces) and State (for example in_process, success, "
                  "fail). The list has no date, so there is no UTC value and no time column; the entries are older than the dump by "
@@ -598,7 +598,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Network",
+        "category": "Android Bug Report",
         "notes": "One row per tcp, udp or raw line of the Active Internet connections table of the NETSTAT command section "
                  "(netstat -npWae on the Samsung reports, a plainer netstat on the others). Local and Foreign are the addresses with "
                  "ports as printed; State is the word printed for tcp (empty for udp); UID, Inode and Program are printed by the "
@@ -633,7 +633,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Network",
+        "category": "Android Bug Report",
         "notes": "One row per unix line of the Active UNIX domain sockets table of the NETSTAT command section. Reference Count, "
                  "Flags, Socket Type, State, Inode and Path are the columns as printed (State is empty for a socket that prints "
                  "none; Path is empty for an unnamed socket). Program is the PID/Program column printed by the Samsung reports "
@@ -666,7 +666,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Network",
+        "category": "Android Bug Report",
         "notes": "One row per socket line of the DETAILED SOCKET STATE command section (ss -eionptu on the tested builds). Netid, "
                  "State, Receive Queue, Send Queue, Local and Peer are the columns as printed; UID, Inode and Socket are the uid:, "
                  "ino: and sk: values and Timer and Users the timer:(...) and users:((...)) texts where printed; Extended Fields is "
@@ -700,7 +700,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Network",
+        "category": "Android Bug Report",
         "notes": "One row per time-stamped line under the Log heading of the tethering service dump. Message is the text after the "
                  "time as printed, cut at 1,000 characters (it includes the configuration text the service logs when its settings "
                  "change). Time As Printed is device wall-clock time with a fraction; Time (UTC) converts it with the zone shown in "
@@ -734,7 +734,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Network",
+        "category": "Android Bug Report",
         "notes": "One row per indented line of the tethering service dump outside the Log list. Group is the heading above the line "
                  "(Tethering, Configuration, Entitlement, Tether state, Hardware offload, BPF offload and so on), Name is the "
                  "text before the first colon when that text is plain words, otherwise empty, and Value is the rest, cut at 1,500 "

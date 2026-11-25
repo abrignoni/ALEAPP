@@ -15,7 +15,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-06-27",
         "last_update_date": "2026-11-17",
         "requirements": "none",
-        "category": "Waze",
+        "category": "Locations & Maps",
         "notes": "Reference: Django Faiola, 'Comprehensive Waze Forensic Parsing for Android', "
                  "https://djangofaiola.blogspot.com/2026/07/comprehensive-waze-forensic-parsing-for.html "
                  "(written by this parser's author). Field mappings are the parser's own; no test "
@@ -41,7 +41,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-06-27",
         "last_update_date": "2026-11-17",
         "requirements": "none",
-        "category": "Waze",
+        "category": "Locations & Maps",
         "notes": "A stored 0,0 position is shown as 0.000000, 0.000000; the module does not establish "
                  "whether it is a position or an unset value. Reference: Django Faiola, 'Comprehensive "
                  "Waze Forensic Parsing for Android', "
@@ -67,7 +67,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-06-27",
         "last_update_date": "2026-11-17",
         "requirements": "none",
-        "category": "Waze",
+        "category": "Locations & Maps",
         "notes": "Reference: Django Faiola, 'Comprehensive Waze Forensic Parsing for Android', "
                  "https://djangofaiola.blogspot.com/2026/07/comprehensive-waze-forensic-parsing-for.html "
                  "(written by this parser's author). Log field mappings are the parser's own; no test "
@@ -98,7 +98,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-06-27",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Waze",
+        "category": "Locations & Maps",
         "notes": "Reference: Django Faiola, 'Comprehensive Waze Forensic Parsing for Android', "
                  "https://djangofaiola.blogspot.com/2026/07/comprehensive-waze-forensic-parsing-for.html "
                  "(written by this parser's author). One row per row of the PLACES table in "
@@ -123,7 +123,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-06-27",
         "last_update_date": "2026-11-17",
         "requirements": "none",
-        "category": "Waze",
+        "category": "Locations & Maps",
         "notes": "A stored 0 in Last Waypoint Access leaves it empty. Reference: Django Faiola, "
                  "'Comprehensive Waze Forensic Parsing for Android', "
                  "https://djangofaiola.blogspot.com/2026/07/comprehensive-waze-forensic-parsing-for.html "
@@ -147,7 +147,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-06-27",
         "last_update_date": "2026-11-17",
         "requirements": "none",
-        "category": "Waze",
+        "category": "Locations & Maps",
         "notes": "Reference: Django Faiola, 'Comprehensive Waze Forensic Parsing for Android', "
                  "https://djangofaiola.blogspot.com/2026/07/comprehensive-waze-forensic-parsing-for.html "
                  "(written by this parser's author). Type shows this parser's label for the stored "
@@ -175,7 +175,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-06-27",
         "last_update_date": "2026-08-01",
         "requirements": "none",
-        "category": "Waze",
+        "category": "Locations & Maps",
         "notes": "Reference: Django Faiola, 'Comprehensive Waze Forensic Parsing for Android', "
                  "https://djangofaiola.blogspot.com/2026/07/comprehensive-waze-forensic-parsing-for.html "
                  "(written by this parser's author). Field mappings are the parser's own; no test "
@@ -196,7 +196,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-06-27",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Waze",
+        "category": "Locations & Maps",
         "notes": "Reference: Django Faiola, 'Comprehensive Waze Forensic Parsing for Android', "
                  "https://djangofaiola.blogspot.com/2026/07/comprehensive-waze-forensic-parsing-for.html "
                  "(written by this parser's author). Type shows this parser's label for the stored "
@@ -222,7 +222,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-06-27",
         "last_update_date": "2026-08-01",
         "requirements": "none",
-        "category": "Waze",
+        "category": "Locations & Maps",
         "notes": "Reference: Django Faiola, 'Comprehensive Waze Forensic Parsing for Android', "
                  "https://djangofaiola.blogspot.com/2026/07/comprehensive-waze-forensic-parsing-for.html "
                  "(written by this parser's author). One row per row of each table in tts.db whose "

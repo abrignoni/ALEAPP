@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - App Usage",
+        "category": "Android Bug Report",
         "notes": "One row per package line of the packages list under each In-memory daily, weekly, monthly and yearly stats "
                  "heading of each Android user, in the usagestats service dump (DUMP OF SERVICE usagestats) and in the CHECKIN "
                  "USAGESTATS command section. Source Section says which one printed the row. Interval is the heading word. "
@@ -63,7 +63,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - App Usage",
+        "category": "Android Bug Report",
         "notes": "One row per line of the event aggregations list under each In-memory daily, weekly, monthly and yearly stats "
                  "heading of each Android user, in the usagestats service dump and in the CHECKIN USAGESTATS command section "
                  "(Source Section says which). Event is the name as printed (screen-interactive, screen-non-interactive, "
@@ -101,7 +101,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - App Usage",
+        "category": "Android Bug Report",
         "notes": "One row per package line of the App Standby States list of each Android user, in the usagestats service dump "
                  "and in the CHECKIN USAGESTATS command section (Source Section says which). Android 10 prints the list indented "
                  "under each user, Android 15 and 16 under a User N App Standby States heading. Bucket is the number after "
@@ -151,7 +151,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Alarms and Jobs",
+        "category": "Android Bug Report",
         "notes": "One row per JOB entry of the Registered N jobs list and, where the dump prints one, per entry of the Recently "
                  "completed jobs list of the jobscheduler service dump (List says which). Package is the pkg= of the Source line "
                  "(the app the job belongs to), User and UID are its user= and uid= as printed, Namespace, Job ID and Tag are "
@@ -198,7 +198,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Alarms and Jobs",
+        "category": "Android Bug Report",
         "notes": "One row per alarm of the pending alarm list of the alarm service dump (List: Pending alarms) and one row for "
                  "each line under Next alarm clock information (List: Next alarm clock). Android 10 prints the alarms in batches "
                  "(Batch holds the batch id), Android 15 and 16 as N pending alarms. Alarm Type is the printed type name, "
@@ -242,7 +242,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Alarms and Jobs",
+        "category": "Android Bug Report",
         "notes": "One row per entry of these lists of the alarm service dump (History says which): Removal history, Addition "
                  "history, Delivery history and Wakeup Alarm history(screen off) (the last three are printed by the Samsung "
                  "reports only), and App Alarm history, Allow while idle history and Allow while idle compat history, where each "
@@ -286,7 +286,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Notifications",
+        "category": "Android Bug Report",
         "notes": "One row per NotificationRecord of the Notification List (List: Notification list) and one row per "
                  "StatusBarNotification the dump prints under mArchive (List: Archive) in the notification service dump. The "
                  "notification list is printed, in the tested reports, in the section the bug report labels CRITICAL, the archive in the main one. "
@@ -332,7 +332,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Notifications",
+        "category": "Android Bug Report",
         "notes": "One row per component in the lists under Notification listeners and Notification assistant services of the "
                  "notification service dump. Role is Listener or Assistant. List is the list heading: Allowed (the allowed "
                  "components, split at the colons the dump joins them with), Enabled for current profiles, Live and Snoozed. "
@@ -367,7 +367,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Notifications",
+        "category": "Android Bug Report",
         "notes": "One row per NotificationChannel line under each AppSettings: line of the PackagePreferences list of the "
                  "notification service dump, and one row (with an empty Channel ID) for each package whose AppSettings: line "
                  "carries settings but no channel. Package and UID are as printed, User is derived from the uid (the uid divided "

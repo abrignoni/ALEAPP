@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-27",
         "last_update_date": "2026-10-27",
         "requirements": "none",
-        "category": "WiFi Profiles",
+        "category": "Network & Connectivity",
         "notes": "Reads misc/wifi/TcpMonitorApInfo.json, written by the TCP monitor in Samsung's Wi-Fi "
                  "service. One row per package listed under a network; a network with no package list "
                  "gives one row with the package cells blank. The meanings below come from three Samsung "

@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-11-24",
         "requirements": "none",
-        "category": "Solid Explorer",
+        "category": "Cloud & Files",
         "sample_data": {
             "emu_a15_oss_v14": "Solid Explorer 3.5.20 | 2 rows",
         },
@@ -22,7 +22,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-11-24",
         "requirements": "none",
-        "category": "Solid Explorer",
+        "category": "Cloud & Files",
         "sample_data": {
             "emu_a15_oss_v14": "Solid Explorer 3.5.20 | 2 rows",
         },
@@ -38,7 +38,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-11-24",
         "requirements": "none",
-        "category": "Solid Explorer",
+        "category": "Cloud & Files",
         "sample_data": {
             "emu_a15_oss_v14": "Solid Explorer 3.5.20 | 4 rows",
         },
@@ -54,7 +54,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-11-22",
         "requirements": "none",
-        "category": "Solid Explorer",
+        "category": "Cloud & Files",
         "sample_data": {
             "emu_a15_oss_v14": "Solid Explorer 3.5.20 | 1 rows",
         },
@@ -70,7 +70,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-11-22",
         "requirements": "none",
-        "category": "Solid Explorer",
+        "category": "Cloud & Files",
         "sample_data": {
             "emu_a15_oss_v14": "Solid Explorer 3.5.20 | 4 rows",
         },

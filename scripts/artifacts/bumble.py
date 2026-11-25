@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "name": "Bumble - User Settings",
         "description": "Bumble local user details from the settings protobuf",
         "author": "Kevin Pagano (@stark4n6)", "creation_date": "2022-11-07", "last_update_date": "2022-11-07",
-        "requirements": "none", "category": "Bumble",
+        "requirements": "none", "category": "Dating",
         "paths": ('*/com.bumble.app/files/c2V0dGluZ3M=',),
         "output_types": "standard", "artifact_icon": "user",
     },
@@ -12,7 +12,7 @@ __artifacts_v2__ = {
         "name": "Bumble - Chat Messages",
         "description": "Bumble chat messages",
         "author": "Kevin Pagano (@stark4n6)", "creation_date": "2022-11-07", "last_update_date": "2026-07-03",
-        "requirements": "none", "category": "Bumble",
+        "requirements": "none", "category": "Dating",
         "paths": ('*/com.bumble.app/databases/ChatComDatabase*', '*/com.bumble.app/files/c2V0dGluZ3M='),
         "output_types": "standard", "artifact_icon": "message",
         "data_views": {
@@ -30,7 +30,7 @@ __artifacts_v2__ = {
         "name": "Bumble - Matches",
         "description": "Rows of the conversation_info table of Bumble's ChatComDatabase: user name, age, gender, game mode, profile image URL and user IDs. A row shows the app held a conversation entry for that user; game_mode is reported as stored without assigning enum meanings.",
         "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex", "creation_date": "2022-11-07", "last_update_date": "2026-10-06",
-        "requirements": "none", "category": "Bumble",
+        "requirements": "none", "category": "Dating",
         "paths": ('*/com.bumble.app/databases/ChatComDatabase*',),
         "output_types": "standard", "artifact_icon": "users",
     }

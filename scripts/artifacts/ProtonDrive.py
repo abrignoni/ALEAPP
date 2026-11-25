@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-11-14",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Proton Drive",
+        "category": "Cloud & Files",
         "notes": "Field mapping was written against app version 2.29.1; no "
                  "sample data is recorded for it. createdAtUTC is read as "
                  "Unix milliseconds. Used and Max Space are the stored byte "
@@ -24,7 +24,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-11-14",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Proton Drive",
+        "category": "Cloud & Files",
         "notes": "Field mapping was written against app version 2.29.1; no sample data is "
                  "recorded for it. Every distinct main state is read, with known aliases collapsed "
                  "only when main/WAL/journal bytes agree; combined inputs carry per-row "

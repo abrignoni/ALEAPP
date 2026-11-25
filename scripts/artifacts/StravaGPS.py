@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-03-24",
         "last_update_date": "2026-10-06",
         "requirements": "fitdecode",
-        "category": "Strava",
+        "category": "Health & Fitness",
         "notes": "One row per file whose name ends in fit under com.strava/files that decodes; a "
                  "file that cannot be decoded is logged and gives no row. Activity Type, Start Time, "
                  "total time and distance come from the session message. Total Time (minutes) is "

@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-21",
         "last_update_date": "2026-11-22",
         "requirements": "none",
-        "category": "WhatsApp",
+        "category": "Messaging",
         "notes": "Read from com.whatsapp/databases/status.db with its write-ahead log, one row per row "
                  "of the status table. Field meanings come from the decompiled WhatsApp Business app "
                  "(versionName 2.26.45.80). A status table is also present in com.whatsapp on the six "
@@ -101,7 +101,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-21",
         "last_update_date": "2026-11-22",
         "requirements": "none",
-        "category": "WhatsApp",
+        "category": "Messaging",
         "notes": "Read from com.whatsapp/databases/status.db with its write-ahead log, one row per "
                  "status_seen_receipt row joined to its status. A receipt whose status row is no "
                  "longer in the table is not reported. Field meanings come from the decompiled "
@@ -160,7 +160,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-21",
         "last_update_date": "2026-11-22",
         "requirements": "none",
-        "category": "WhatsApp Business",
+        "category": "Messaging",
         "notes": "Read from com.whatsapp.w4b/databases/status.db with its write-ahead log, one row per "
                  "row of the status table. Field meanings come from the decompiled WhatsApp Business "
                  "app (versionName 2.26.45.80). A status table is also present in com.whatsapp on the "
@@ -253,7 +253,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-21",
         "last_update_date": "2026-11-22",
         "requirements": "none",
-        "category": "WhatsApp Business",
+        "category": "Messaging",
         "notes": "Read from com.whatsapp.w4b/databases/status.db with its write-ahead log, one row per "
                  "status_seen_receipt row joined to its status. A receipt whose status row is no "
                  "longer in the table is not reported. Field meanings come from the decompiled "

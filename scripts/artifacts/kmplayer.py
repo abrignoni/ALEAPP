@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-06",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "KMPlayer",
+        "category": "Music, Video & News",
         "sample_data": {
             "emu_a15_oss_v15": "KMPlayer 36.04.235 | 2 rows",
         },

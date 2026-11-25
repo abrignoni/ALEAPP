@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-04-26",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "ProtonMail",
+        "category": "Email",
         "notes": "Message Type shows messagev3.Type under the name the app's "
                  "MessageType enum gives it: 0 INBOX, 1 DRAFT, 2 SENT, 3 "
                  "INBOX_AND_SENT; any other value is shown as stored. "
@@ -67,7 +67,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-04-26",
         "last_update_date": "2023-04-26",
         "requirements": "none",
-        "category": "ProtonMail",
+        "category": "Email",
         "notes": "",
         "paths": ('*/ch.protonmail.android/databases/*-ContactsDatabase.db*',),
         "output_types": "standard",

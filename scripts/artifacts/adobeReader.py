@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Adobe Acrobat Reader",
+        "category": "Cloud & Files",
         "notes": "Read from the app's shared preferences. FoundationMigrated.xml holds the "
                  "account identity as plain text values. AccessTokenExpiration is a Unix "
                  "millisecond value stored as a string. Account type, service level and the "
@@ -33,7 +33,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Adobe Acrobat Reader",
+        "category": "Cloud & Files",
         "notes": "Read from ARRecentFileEntity in com.adobe.reader.ARRecentDatabase, which "
                  "keys one row per file path. lastOpenTime is Unix milliseconds: read as "
                  "seconds the column lands beyond the year 57000, and read as milliseconds "
@@ -59,7 +59,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Adobe Acrobat Reader",
+        "category": "Cloud & Files",
         "notes": "Read from ARRecentsFileTable, joined to ARRecentsSharedTable on the row id "
                  "the schema declares as the foreign key. last_access is an ISO 8601 string "
                  "and appeared in three spellings in the tested sample, with and without a "
@@ -90,7 +90,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Adobe Acrobat Reader",
+        "category": "Cloud & Files",
         "notes": "Read from ARThumbnailTable. The thumbnail column holds a base64 encoded "
                  "image, PNG on every decoded row of the tested sample, and the decoded bytes "
                  "are checked in so the image renders in the report. The image is the "
@@ -118,7 +118,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Adobe Acrobat Reader",
+        "category": "Cloud & Files",
         "notes": "Read from ARBellNotificationEntity. Each row carries a JSON payload that "
                  "parsed on every row of the tested sample. timeStamp is Unix milliseconds. "
                  "The payload declares comment and comment_html members, and both were empty "
@@ -145,7 +145,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Adobe Acrobat Reader",
+        "category": "Cloud & Files",
         "notes": "Read from the app's services database, named database. Five tables are "
                  "reported and the Record Type column names the table each row came from. "
                  "modifiedDateAtDownload and updatedModifiedDate are Unix milliseconds and "
@@ -175,7 +175,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Adobe Acrobat Reader",
+        "category": "Cloud & Files",
         "notes": "Read from DCMConversation in DCMQnAConversationDb, with the linked documents "
                  "resolved through DCMConversationAssetCrossRef into DCMAsset. The three "
                  "timestamp columns are Unix milliseconds, which their own column names state "
@@ -199,7 +199,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Adobe Acrobat Reader",
+        "category": "Cloud & Files",
         "notes": "Read from tool_usage in nba_database. timestampInMs is Unix milliseconds. "
                  "toolId and eventType are stored as literal names rather than codes and are "
                  "reported as stored. docId is populated on some rows only and is the "
@@ -218,7 +218,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Adobe Acrobat Reader",
+        "category": "Cloud & Files",
         "notes": "Four tables from three databases are reported and the Record Type column "
                  "names the table each row came from. For OpenDocTable rows the Asset ID "
                  "column holds uniqueCloudIdentifier; for ARShareInProgressFileInfo rows the "

@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-04-02",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "kleinanzeigen.de App",
+        "category": "Shopping & Marketplaces",
         "notes": ("Account Registered since (as stored) is the USERPROFILE_USER_SINCE_DATE_KEY "
                   "string exactly as the preferences file holds it. Account Registered since is "
                   "that string converted to UTC, and is filled only when the string parses as "
@@ -27,7 +27,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-04-02",
         "last_update_date": "2024-04-02",
         "requirements": "none",
-        "category": "kleinanzeigen.de App",
+        "category": "Shopping & Marketplaces",
         "notes": "",
         "paths": ('*/com.ebay.kleinanzeigen/files/RECENT_SEARCHES_CACHE',),
         "output_types": "standard",
@@ -40,7 +40,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-04-08",
         "last_update_date": "2024-04-08",
         "requirements": "none",
-        "category": "kleinanzeigen.de App",
+        "category": "Shopping & Marketplaces",
         "notes": "",
         "paths": ('*/com.ebay.kleinanzeigen/files/NON_RESETTABLE_RECENT_SEARCHES_CACHE',),
         "output_types": "standard",
@@ -53,7 +53,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-04-13",
         "last_update_date": "2024-04-13",
         "requirements": "none",
-        "category": "kleinanzeigen.de App",
+        "category": "Shopping & Marketplaces",
         "notes": "",
         "paths": ('*com.ebay.kleinanzeigen/databases/messageBoxDatabase.db*',),
         "output_types": "standard",
@@ -66,7 +66,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-04-13",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "kleinanzeigen.de App",
+        "category": "Shopping & Marketplaces",
         "notes": ("Direction is decoded from each message's 'sender' value: 'ME' is read as a "
                   "message sent from this account. No source or measurement for that mapping is "
                   "recorded here; any other sender value is reported as stored, and a message "

@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-03-26",
         "last_update_date": "2023-03-26",
         "requirements": "none",
-        "category": "BitTorrent",
+        "category": "Cloud & Files",
         "notes": "",
         "paths": ('*/com.bittorrent.client/shared_prefs/com.bittorrent.client_preferences.xml',),
         "output_types": ['html', 'tsv', 'lava'],

@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-07-23",
         "last_update_date": "2026-08-01",
         "requirements": "none",
-        "category": "Samsung Browser",
+        "category": "Browsers",
         "notes": "Field 16 is decoded as milliseconds since the 1601 epoch. The unit was chosen "
                  "from the values seen in one Samsung Android 14 image and is not sourced: read as "
                  "microseconds, the Chromium base::Time convention, a 14-digit value falls between "

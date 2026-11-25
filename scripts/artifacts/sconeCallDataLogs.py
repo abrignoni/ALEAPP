@@ -9,7 +9,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-29",
         "last_update_date": "2026-10-29",
         "requirements": "none",
-        "category": "Call Logs",
+        "category": "Calls & Contacts",
         "notes": "Reads the CallDataLogs table of call_data_logs.db, in the device-encrypted storage "
                  "(user_de) of the Google app com.google.android.apps.scone. The app is closed source. "
                  "Meanings come from the build installed on pixel7a_a14 (base.apk, SHA-256 "

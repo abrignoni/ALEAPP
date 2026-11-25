@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-07",
         "requirements": "none",
-        "category": "Permissions",
+        "category": "Installed Apps",
         "notes": "A row is an app-op element in the permission subsystem's access.abx carrying a stored mode, with "
                  "the app id or the package name that mode is stored against. Two sections are read: "
                  "app-id-app-ops, whose app-id elements key on an app id, and package-app-ops, whose package "
@@ -206,7 +206,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-06",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Permissions",
+        "category": "Installed Apps",
         "notes": "A row is a permission element in the app-id-permissions section of the permission subsystem's "
                  "access.abx, one per permission the subsystem holds state for against an app id. There were "
                  "194,284 rows across the tested images, carrying 4,514 distinct permission names. Reference: "

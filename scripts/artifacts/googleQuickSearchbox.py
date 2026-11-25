@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2020-03-22",
         "last_update_date": "2026-11-23",
         "requirements": "none",
-        "category": "Google Now & QuickSearch",
+        "category": "Device Activity",
         "notes": "File Modified Time is the modification time the tool reads from the input for the file as a "
                  "UTC time, such as from a tar header, a zip entry's NTFS (0x000a) or extended timestamp "
                  "(0x5455) field, or the file system of a disk image. When the tool reads no UTC time, File "

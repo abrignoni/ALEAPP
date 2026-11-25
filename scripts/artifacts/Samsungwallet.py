@@ -9,7 +9,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-26",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Samsung Wallet",
+        "category": "Finance & Payments",
         "notes": "Source is spay.db's card table. The database file itself was 4 KB on each "
                  "tested extraction and its contents sat in the spay.db-wal write-ahead log, "
                  "so the path pattern takes the sidecars and the file is read with the log "
@@ -53,7 +53,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-26",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Samsung Wallet",
+        "category": "Finance & Payments",
         "notes": "Source is spay.db's receipt table, the same database as Samsung Wallet - "
                  "Enrolled Cards. The receipt table declares its relationship to the card "
                  "table in its own schema, as FOREIGN KEY(tokenID) REFERENCES "
@@ -101,7 +101,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-28",
         "last_update_date": "2026-08-28",
         "requirements": "none",
-        "category": "Samsung Wallet",
+        "category": "Finance & Payments",
         "notes": "Source is spay.db's cardArt table together with the PNG files it names "
                  "under the app's files/cardArt directory. cardArt.cardArtUri records the "
                  "on-device path of each image and cardArt.enrollmentId names the card it "

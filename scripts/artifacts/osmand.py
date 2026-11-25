@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "OsmAnd",
+        "category": "Locations & Maps",
         "notes": "One row per entry in the history_recents table of databases/search_history. OsmAnd is an "
                  "offline maps and navigation app, and this table records the entries the app kept "
                  "in its history. Place entries carry a Latitude and Longitude the app held, which "
@@ -45,7 +45,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "OsmAnd",
+        "category": "Locations & Maps",
         "notes": "One row per entry in the app_events table of databases/analytics. Each row is an "
                  "event name and a time as stored. What causes the app to write a row was not "
                  "sourced here. Date is Unix milliseconds and is reported as UTC. Event is the "

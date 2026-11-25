@@ -11,7 +11,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-22",
         "last_update_date": "2026-10-23",
         "requirements": "none",
-        "category": "KeepSafe",
+        "category": "Photos & Media",
         "notes": (
             "Document bodies are Fleece-encoded and are decoded with the database's own "
             "SharedKeys entry in kv_info; a store in the LiteCore 2.x layout, whose body column "
@@ -62,7 +62,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-22",
         "last_update_date": "2026-10-23",
         "requirements": "none",
-        "category": "KeepSafe",
+        "category": "Photos & Media",
         "notes": (
             "Column names are the document's field names written as words. File Count is "
             "computed by this module. On the validation image there were two albums with "
@@ -83,7 +83,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-22",
         "last_update_date": "2026-10-23",
         "requirements": "none",
-        "category": "KeepSafe",
+        "category": "Photos & Media",
         "notes": (
             "Column names are the document's field names written as words; values are as "
             "stored, booleans shown as Yes/No and timeCaptured (epoch milliseconds) converted to "
@@ -106,7 +106,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-22",
         "last_update_date": "2026-10-23",
         "requirements": "none",
-        "category": "KeepSafe",
+        "category": "Photos & Media",
         "notes": (
             "Column names are the document's field names written as words; createdAt and "
             "lastAccessTime (epoch milliseconds) are converted to UTC. Matches Session "
@@ -127,7 +127,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-22",
         "last_update_date": "2026-10-23",
         "requirements": "none",
-        "category": "KeepSafe",
+        "category": "Photos & Media",
         "notes": (
             "The file is a MessagePack array of records whose keys are small integers; it "
             "stores no field names. In Stored Key, the record type is the value of key 4 and "

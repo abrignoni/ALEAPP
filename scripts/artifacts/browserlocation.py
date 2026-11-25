@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-03-17",
         "last_update_date": "2021-03-17",
         "requirements": "none",
-        "category": "GEO Location",
+        "category": "Locations & Maps",
         "notes": "",
         "paths": ('*/com.android.browser/app_geolocation/CachedGeoposition.db*',),
         "output_types": "standard",

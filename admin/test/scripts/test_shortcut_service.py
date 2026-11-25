@@ -361,7 +361,7 @@ class ShortcutServiceTests(unittest.TestCase):
         Context.set_output_params(params)
         Context.set_data_folder(str(self.root))
         output = Path(params.output_folder_base)
-        report = output / '_HTML' / 'Shortcut Service'
+        report = output / '_HTML' / 'Device Activity'
         report.mkdir(parents=True)
         lavafuncs.initialize_lava(str(self.root), str(output), 'fs')
         processor = vars(shortcut_service)['get_shortcut_service']
@@ -603,7 +603,7 @@ class ShortcutServiceTests(unittest.TestCase):
         Context.set_output_params(params)
         Context.set_data_folder(str(self.root))
         output = Path(params.output_folder_base)
-        report = output / '_HTML' / 'Shortcut Service'
+        report = output / '_HTML' / 'Device Activity'
         report.mkdir(parents=True)
         lavafuncs.initialize_lava(str(self.root), str(output), 'fs')
         for name in ('get_shortcut_service', 'get_shortcut_service_discord'):
@@ -621,7 +621,7 @@ class ShortcutServiceTests(unittest.TestCase):
             'FROM get_shortcut_service_discord').fetchone()
         self.assertEqual(row, ('StoredExtra', 'StoredAuthor', message['timestamp']))
         self.assertEqual([entry['record_count'] for entry in
-                          lavafuncs.lava_data['artifacts']['Shortcut Service']], [1, 1])
+                          lavafuncs.lava_data['artifacts']['Device Activity']], [1, 1])
         with sqlite3.connect(output / '_Timeline' / 'tl.db') as db:
             timeline = db.execute('SELECT key, activity, datalist FROM data').fetchall()
         self.assertEqual(len(timeline), 2)

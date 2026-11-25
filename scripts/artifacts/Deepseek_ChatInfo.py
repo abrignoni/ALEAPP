@@ -13,7 +13,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-05-24",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "DeepSeek",
+        "category": "AI Assistants",
         "notes": (
             "Timestamp is updated_at read as Unix seconds and shown in UTC. The unit and what "
             "updated_at marks are this parser's reading and have not been checked against a source or data: no "

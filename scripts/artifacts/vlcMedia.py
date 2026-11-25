@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-03-01",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "VLC",
+        "category": "Music, Video & News",
         "sample_data": {
             "emu_a15_oss_v4": "VLC 3.7.1 | 2 rows",
         },

@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-03-18",
         "last_update_date": "2026-10-06",
         "requirements": "Python 3.7 or higher",
-        "category": "Nike-Run",
+        "category": "Health & Fitness",
         "notes": "Read (as stored) and Deleted (as stored) preserve the inbox values, "
                  "including NULL, zero and unknown codes; their app semantics are not "
                  "established. Only the first exact ns_inbox.db main database is read; "

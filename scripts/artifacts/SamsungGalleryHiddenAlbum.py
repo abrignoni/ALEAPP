@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-23",
         "last_update_date": "2026-09-25",
         "requirements": "none",
-        "category": "Samsung Gallery",
+        "category": "Photos & Media",
         "notes": "The contributor reports that secured.db and the sec_pass media were only present in an "
                  "extraction taken while the Hidden Album was unlocked. Developed against one contributor "
                  "case that cannot be shared. The contributor supplied the files table schema and the path "

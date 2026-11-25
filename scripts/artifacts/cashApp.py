@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-10-06",
         "last_update_date": "2021-10-06",
         "requirements": "none",
-        "category": "Cash App",
+        "category": "Finance & Payments",
         "notes": "",
         "paths": ('*/com.squareup.cash/databases/cash_money.db*',),
         "output_types": "standard",

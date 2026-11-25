@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "name": "Snapchat - Feeds",
         "description": "Snapchat feed (last interaction per conversation)",
         "author": "@A-725-K", "creation_date": "2021-11-10", "last_update_date": "2021-11-10",
-        "requirements": "none", "category": "Snapchat", "notes": "",
+        "requirements": "none", "category": "Messaging", "notes": "",
         "paths": ('*/com.snapchat.android/databases/main.db*', '*/com.snapchat.android/databases/tcspahn.db*'),
         "output_types": "standard", "artifact_icon": "rss",
         "sample_data": {
@@ -22,7 +22,7 @@ __artifacts_v2__ = {
                        "is above 0, with the time each one added the account where recorded.",
         "author": "@A-725-K, @AlexisBrignoni, Claude",
         "creation_date": "2021-11-10", "last_update_date": "2026-09-21",
-        "requirements": "none", "category": "Snapchat",
+        "requirements": "none", "category": "Messaging",
         "notes": "main.db (com.snapchat.android/databases/) holds a Friend table that is not a friends "
                  "list. On the 8 tested images whose Friend table held rows, 2,441 of the 2,487 rows had "
                  "no addedTimestamp, including 561 of the 564 users the app lists in its SuggestedFriend "
@@ -82,7 +82,7 @@ __artifacts_v2__ = {
         "name": "Snapchat - Messages",
         "description": "Snapchat chat messages",
         "author": "@A-725-K", "creation_date": "2021-11-10", "last_update_date": "2021-11-10",
-        "requirements": "none", "category": "Snapchat", "notes": "",
+        "requirements": "none", "category": "Messaging", "notes": "",
         "paths": ('*/com.snapchat.android/databases/main.db*', '*/com.snapchat.android/databases/tcspahn.db*'),
         "output_types": "standard", "artifact_icon": "message",
         "sample_data": {
@@ -106,7 +106,7 @@ __artifacts_v2__ = {
                        "is not evidence it did not exist.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07", "last_update_date": "2026-10-26",
-        "requirements": "blackboxprotobuf", "category": "Snapchat",
+        "requirements": "blackboxprotobuf", "category": "Messaging",
         "notes": "Newer Snapchat builds keep conversations in arroyo.db; the older Snapchat - "
                  "Messages artifact reads main.db and tcspahn.db and returns nothing on them.\n"
                  "Record Origin. Live rows come back from a normal read. Recovered rows do not: "
@@ -270,7 +270,7 @@ __artifacts_v2__ = {
                        "exist.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-07", "last_update_date": "2026-10-26",
-        "requirements": "blackboxprotobuf", "category": "Snapchat",
+        "requirements": "blackboxprotobuf", "category": "Messaging",
         "notes": "Record Origin. Live rows come back from a normal read. Recovered rows are "
                  "conversations whose client_conversation_id another state in the write-ahead "
                  "log holds in conversation or feed_entry, and the current state holds in neither. "
@@ -330,7 +330,7 @@ __artifacts_v2__ = {
                        "key resolves to one.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-16", "last_update_date": "2026-08-16",
-        "requirements": "blackboxprotobuf", "category": "Snapchat",
+        "requirements": "blackboxprotobuf", "category": "Messaging",
         "notes": "Rows come from CACHE_FILE_CLAIM in "
                  "databases/native_content_manager/cache_controller.db, limited to the "
                  "chat_snap, snap and chat_media_thumbnail external-key prefixes; on the tested "
@@ -367,7 +367,7 @@ __artifacts_v2__ = {
         "name": "Snapchat - Memories",
         "description": "Snapchat memories entries",
         "author": "@A-725-K", "creation_date": "2021-11-10", "last_update_date": "2021-11-10",
-        "requirements": "none", "category": "Snapchat", "notes": "",
+        "requirements": "none", "category": "Messaging", "notes": "",
         "paths": ('*/com.snapchat.android/databases/memories.db*',),
         "output_types": "standard", "artifact_icon": "photo",
         "sample_data": {
@@ -381,7 +381,7 @@ __artifacts_v2__ = {
         "name": "Snapchat - MEO My Eyes Only",
         "description": "Snapchat My Eyes Only confidential data; recovers the 4-digit passcode via bcrypt",
         "author": "@A-725-K", "creation_date": "2021-11-10", "last_update_date": "2021-11-10",
-        "requirements": "none", "category": "Snapchat",
+        "requirements": "none", "category": "Messaging",
         "notes": "Passcode recovery brute-forces the 4-digit MEO code (bcrypt); can be slow.",
         "paths": ('*/com.snapchat.android/databases/memories.db*',),
         "output_types": "standard", "artifact_icon": "eye-off",
@@ -396,7 +396,7 @@ __artifacts_v2__ = {
         "name": "Snapchat - Snap Media",
         "description": "Snapchat memories snap media (incl. geolocation)",
         "author": "@A-725-K", "creation_date": "2021-11-10", "last_update_date": "2021-11-10",
-        "requirements": "none", "category": "Snapchat", "notes": "",
+        "requirements": "none", "category": "Messaging", "notes": "",
         "paths": ('*/com.snapchat.android/databases/memories.db*',),
         "output_types": "all", "artifact_icon": "photo",
         "sample_data": {
@@ -410,7 +410,7 @@ __artifacts_v2__ = {
         "name": "Snapchat - Identity Persistent Store",
         "description": "Snapchat identity_persistent_store.xml",
         "author": "@A-725-K", "creation_date": "2021-11-10", "last_update_date": "2021-11-10",
-        "requirements": "none", "category": "Snapchat", "notes": "",
+        "requirements": "none", "category": "Messaging", "notes": "",
         "paths": ('*/com.snapchat.android/shared_prefs/identity_persistent_store.xml',),
         "output_types": "standard", "artifact_icon": "user",
         "sample_data": {
@@ -426,7 +426,7 @@ __artifacts_v2__ = {
         "name": "Snapchat - Login Signup Store",
         "description": "Snapchat LoginSignupStore.xml",
         "author": "@A-725-K", "creation_date": "2021-11-10", "last_update_date": "2021-11-10",
-        "requirements": "none", "category": "Snapchat", "notes": "",
+        "requirements": "none", "category": "Messaging", "notes": "",
         "paths": ('*/com.snapchat.android/shared_prefs/LoginSignupStore.xml',),
         "output_types": "standard", "artifact_icon": "login-2",
         "sample_data": {
@@ -444,7 +444,7 @@ __artifacts_v2__ = {
                        "the app's own key names.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-16", "last_update_date": "2026-08-16",
-        "requirements": "none", "category": "Snapchat",
+        "requirements": "none", "category": "Messaging",
         "notes": "On the tested image the file carried key_user_id (the signed-in "
                  "account's user id, matching the sender of outgoing arroyo.db messages "
                  "and the LAST_LOGGED_IN_USERNAME account in identity_persistent_store), "
@@ -473,7 +473,7 @@ __artifacts_v2__ = {
         "description": "Rows from the Preferences table in core.db: key and stored value.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-16", "last_update_date": "2026-08-16",
-        "requirements": "none", "category": "Snapchat",
+        "requirements": "none", "category": "Messaging",
         "notes": "Each row reports the key and whichever typed value column is populated, "
                  "with the column's name. Keys are the app's own; what a setting means is "
                  "not established here.",
@@ -500,7 +500,7 @@ __artifacts_v2__ = {
                        "key, values reported as stored.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-16", "last_update_date": "2026-08-16",
-        "requirements": "blackboxprotobuf", "category": "Snapchat",
+        "requirements": "blackboxprotobuf", "category": "Messaging",
         "notes": "Each row's itemKey protobuf names the store group (CoreData, UserScore) "
                  "and the user id it belongs to, and those are decoded and reported. The "
                  "property NAME of each value is not stored in the database (the itemKey "

@@ -15,7 +15,7 @@ __artifacts_v2__ = {
         'creation_date': '2026-10-01',
         'last_update_date': '2026-10-01',
         'requirements': 'none',
-        'category': 'SwiftKey Keyboard',
+        'category': 'Device Activity',
         'notes': "One row per language model file found. Reads the Samsung Keyboard's "
                  "app_SwiftKey/user/dynamic.lm, its backup/dynamic.lm copy and the files under "
                  "user/specific, and the SwiftKey app's files/language_models/user/dynamic.lm. A file is "
@@ -68,7 +68,7 @@ __artifacts_v2__ = {
         'creation_date': '2026-10-01',
         'last_update_date': '2026-10-01',
         'requirements': 'none',
-        'category': 'SwiftKey Keyboard',
+        'category': 'Device Activity',
         'notes': 'One row per term that has a count of its own in the model file. The term text is stored '
                  'masked. The rule was read from libfluency-java.so (version string 5.0.6.138) inside the '
                  "Samsung Keyboard package on samsunga53_a14, and the same routine is in the SwiftKey app's "
@@ -117,7 +117,7 @@ __artifacts_v2__ = {
         'creation_date': '2026-10-01',
         'last_update_date': '2026-10-01',
         'requirements': 'none',
-        'category': 'SwiftKey Keyboard',
+        'category': 'Device Activity',
         'notes': 'One row per stored sequence of two or more terms per model file. The model keeps a tree: each '
                  'entry is a term index and a count, followed by the entries that continue it, so a row is the '
                  'chain of terms from the top of the tree down to that entry. Sequence joins the terms with a '
@@ -158,7 +158,7 @@ __artifacts_v2__ = {
         'creation_date': '2026-10-01',
         'last_update_date': '2026-10-01',
         'requirements': 'none',
-        'category': 'SwiftKey Keyboard',
+        'category': 'Device Activity',
         'notes': 'One row per entry under each app package name a model file keeps separate term counts for. '
                  'An entry of more than one term would show its terms joined with a space in Term; on the '
                  'tested images each row was a single term. After its sequence tree a dynamic.lm can hold a '

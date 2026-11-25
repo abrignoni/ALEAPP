@@ -9,7 +9,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-26",
         "requirements": "none",
-        "category": "Twitter",
+        "category": "Social Media",
         "notes": "Read from cache/precache and cache/video_cache, each an ExoPlayer SimpleCache: "
                  "cached_content_index.exi maps an integer id to the cache key (here the segment URL on "
                  "video.twimg.com) and the span files <id>.<position>.<last touch ms>.v3.exo hold the bytes "
@@ -59,7 +59,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Snapchat",
+        "category": "Messaging",
         "notes": "Read from files/streaming/cached_content_index.exi (androidx media3 1.11.0 "
                  "CachedContentIndex.LegacyStorage, version 2; an index marked encrypted is skipped with a log "
                  "line, and none was on the tested images) and the <id>.<position>.<last touch ms>.v3.exo span "
@@ -106,7 +106,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-26",
         "requirements": "none",
-        "category": "Instagram",
+        "category": "Social Media",
         "notes": "This artifact reads no index file for this cache: each span file is named "
                  "<key>.<position>.<last touch ms>.v2.exo "
                  "(androidx media3 1.11.0 SimpleCacheSpan CACHE_FILE_PATTERN_V2), so the key is read from the file "
@@ -147,7 +147,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-26",
         "requirements": "none",
-        "category": "Reddit",
+        "category": "Social Media",
         "notes": "The index is the SQLite storage of ExoPlayer's cache (androidx media3 1.11.0 "
                  "CachedContentIndex.DatabaseStorage, present in google/ExoPlayer "
                  "CachedContentIndex.java at tag r2.10.0 and absent at r2.9.6): the "

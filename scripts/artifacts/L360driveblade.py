@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         'creation_date': '2026-06-10',
         'last_update_date': '2026-08-01',
         'requirements': 'none',
-        'category': 'Life360',
+        'category': 'Locations & Maps',
         'notes': 'The stored speed columns are reported as stored. The MPH columns multiply them by '
                  '2.23694, which assumes the stored value is in metres per second; the database does '
                  'not record the unit.',
@@ -25,7 +25,7 @@ __artifacts_v2__ = {
         'creation_date': '2026-06-10',
         'last_update_date': '2026-08-01',
         'requirements': 'none',
-        'category': 'Life360',
+        'category': 'Locations & Maps',
         'notes': 'Speed is reported as stored. The MPH column multiplies it by 2.23694, which assumes '
                  'the stored value is in metres per second; the database does not record the unit.',
         'paths': ('*/com.life360.android.safetymapd/databases/DriveBladeDB*',),
@@ -42,7 +42,7 @@ __artifacts_v2__ = {
         'creation_date': '2026-06-10',
         'last_update_date': '2026-08-01',
         'requirements': 'none',
-        'category': 'Life360',
+        'category': 'Locations & Maps',
         'notes': 'Speed is reported as stored. The MPH column multiplies it by 2.23694, which assumes '
                  'the stored value is in metres per second; the database does not record the unit.',
         'paths': ('*/com.life360.android.safetymapd/databases/DriveBladeDB*',),

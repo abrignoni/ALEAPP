@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-08-15",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Wipe & Setup",
+        "category": "Device Information",
         "notes": "Nested tags and attributes are source values, without operation/state code interpretation. "
                  "Blank dates follow the existing nonpositive timestamp policy or indicate missing/invalid text. "
                  "These observations do not establish a wipe or setup event. Version-specific meanings remain unverified.",

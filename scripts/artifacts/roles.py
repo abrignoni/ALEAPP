@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-01-25",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "App Roles",
+        "category": "Installed Apps",
         "notes": "Source Path Variant records the collected path, not an Android version. "
                  "Every direct child with a name attribute is reported in XML order, including "
                  "blank names, duplicates and named children with other tags. A blank Holder row "

@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2020-11-18",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "WiFi Profiles",
+        "category": "Network & Connectivity",
         "notes": "SecurityType is read from a named element and is therefore only populated for the "
                  "WifiConfigStoreSoftAp.xml form; it is blank for the binary softap.conf form.\n"
                  "In the binary softap.conf form SSID and Passphrase are taken by byte position: "

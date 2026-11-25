@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         'creation_date': '2026-06-10',
         'last_update_date': '2026-10-05',
         'requirements': 'none',
-        'category': 'Life360',
+        'category': 'Locations & Maps',
         'notes': 'Original parser by Heather Charpentier. Invalid or absent timestamps are left blank in converted date columns; the four stored values are retained in raw columns. The existing seconds/milliseconds interpretations remain unverified.',
         'paths': ('*/com.life360.android.safetymapd/databases/MembersEngineRoomDatabase*',),
         'output_types': 'standard',

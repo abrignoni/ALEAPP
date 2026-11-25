@@ -9,7 +9,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-16",
         "last_update_date": "2026-11-16",
         "requirements": "none",
-        "category": "SMS & MMS",
+        "category": "Messaging",
         "notes": "One row per received SMS (sms.type 1, MESSAGE_TYPE_INBOX) whose date and date_sent are "
                  "both greater than zero, ordered by Service Centre Time within each database. In AOSP's "
                  "reference Messaging app, date_sent is written from SmsMessage.getTimestampMillis(), the "

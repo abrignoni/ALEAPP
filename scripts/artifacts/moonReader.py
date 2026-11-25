@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-06",
         "requirements": "none",
-        "category": "Moon+ Reader",
+        "category": "Music, Video & News",
         "sample_data": {
             "emu_a15_oss_v15": "Moon+ Reader 10.7 | 1 row",
         },

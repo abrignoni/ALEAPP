@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-03-08",
         "last_update_date": "2026-11-22",
         "requirements": "none",
-        "category": "FairCode FairEmail App",
+        "category": "Email",
         "notes": "Server Host (as stored) and Server Port (as stored) hold account.host and account.port. The stored fields do not establish a protocol or successful connection. The query does not limit rows to IMAP accounts. No sample_data is recorded for this artifact.",
         "paths": ('*/eu.faircode.email/databases/fairemail*'),
         "output_types": ["standard"],
@@ -22,7 +22,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-03-08",
         "last_update_date": "2025-11-15",
         "requirements": "none",
-        "category": "FairCode FairEmail App",
+        "category": "Email",
         "notes": "",
         "paths": ('*/eu.faircode.email/databases/fairemail*'),
         "output_types": ["standard"],
@@ -36,7 +36,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-11-16",
         "last_update_date": "2026-11-22",
         "requirements": "os",
-        "category": "FairCode FairEmail App",
+        "category": "Email",
         "notes": ("The Sender, Recipient, CC and BCC columns list every entry of the message's from, to, cc and bcc "
                   "fields in stored order, separated by '; '. A name column keeps an empty place for an entry "
                   "that stores no name, so the nth name belongs to the nth address. Return Path shows the first "

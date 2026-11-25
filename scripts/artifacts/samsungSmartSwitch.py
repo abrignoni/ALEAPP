@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-25",
         "last_update_date": "2026-10-25",
         "requirements": "none",
-        "category": "Samsung Smart Switch",
+        "category": "Device Information",
         "notes": (
             "Each folder under files/History is named with a number that reads as epoch "
             "milliseconds; History Folder Time is that number shown as UTC. What event the "
@@ -57,7 +57,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-25",
         "last_update_date": "2026-10-25",
         "requirements": "none",
-        "category": "Samsung Smart Switch",
+        "category": "Device Information",
         "notes": (
             "Type, Status, View Count, Content Count, Size, Data Size, Backup Time, Predicted "
             "Backup Time, File List Count and File List Size are the values of each ItemList "
@@ -94,7 +94,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-25",
         "last_update_date": "2026-10-25",
         "requirements": "none",
-        "category": "Samsung Smart Switch",
+        "category": "Device Information",
         "notes": (
             "One row per CategoryInfoExtra entry. Category is the entry's Type, Package, App "
             "Name, Version Name, Version Code, Stub Version Code, Stub Content Size and Support Stub Install are as stored (Support Stub Install shown as Yes or No), and Last Time Used is LastTimeUsed (epoch milliseconds) "
@@ -124,7 +124,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-25",
         "last_update_date": "2026-10-25",
         "requirements": "none",
-        "category": "Samsung Smart Switch",
+        "category": "Device Information",
         "notes": (
             "One row per entry of AccountInfos.Accounts, with Type and Name as stored. Type is a string of the shape of an Android account type; its meaning is not established here. The Name can be empty or partly masked in the file; which side masked it is not established. The list shows accounts "
             "the file recorded; it does not show that an app was in use. Tested on an "
@@ -151,7 +151,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-25",
         "last_update_date": "2026-10-25",
         "requirements": "none",
-        "category": "Samsung Smart Switch",
+        "category": "Device Information",
         "notes": (
             "One row per MessagePeriods entry: Period, Count, SMS, MMS, RCS, RCS file transfer "
             "and RCS instant message counts, and Size, MMS Size and RCS File Transfer Size, as "
@@ -180,7 +180,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-25",
         "last_update_date": "2026-10-25",
         "requirements": "none",
-        "category": "Samsung Smart Switch",
+        "category": "Device Information",
         "notes": (
             "One row per entry of each of the two lists; List names which one. Account and "
             "Type are the contact account's name and type as stored, and Selected, Syncable, "
@@ -206,7 +206,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-25",
         "last_update_date": "2026-10-25",
         "requirements": "none",
-        "category": "Samsung Smart Switch",
+        "category": "Device Information",
         "notes": (
             "One row per entry of TransferredHistoryList: UUID and Display Name as stored, and "
             "Time (epoch milliseconds) shown as UTC. UUID is an identifier as stored and Display Name is free text; what device the UUID names is not established by this module. On the tested "
@@ -233,7 +233,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-25",
         "last_update_date": "2026-10-25",
         "requirements": "none",
-        "category": "Samsung Smart Switch",
+        "category": "Device Information",
         "notes": (
             "One row per bkmedia row: name, file path, backup file path, size, unique id and "
             "count as stored. The table name and folder suggest a list of media for backup, though what the app uses it for is not established here; "

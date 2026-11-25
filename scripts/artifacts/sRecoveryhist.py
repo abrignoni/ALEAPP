@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-08-15",
         "last_update_date": "2026-10-28",
         "requirements": "none",
-        "category": "Wipe & Setup",
+        "category": "Device Information",
         "notes": "Each record begins with a '+ [tag | timestamp | build]' header. One file shape closes the first bracket after the tag "
                  "('+ [tag] | timestamp | build]'); it is read the same way. A record can end with a lone '-' line or with no separator,"
                  " in which case the next '+' header ends the previous record. Both layouts are read, and so is an older header shape "

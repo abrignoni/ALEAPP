@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-21",
         "last_update_date": "2026-11-21",
         "requirements": "none",
-        "category": "TikTok",
+        "category": "Social Media",
         "notes": "Read from the files/keva/repo/search folder of com.zhiliaoapp.musically. The same "
                  "path under com.ss.android.ugc.trill is matched but no tested image held it. Keva "
                  "(com.bytedance.keva) is the key-value store library TikTok uses. The store layout "

@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-06-21",
         "last_update_date": "2026-10-07",
         "requirements": "",
-        "category": "App Semantic Locations",
+        "category": "Locations & Maps",
         "notes": "Thanks to Josh Hickman for the research. An explicitly present value attribute is "
                  "retained, including an empty attribute. Only when value is absent on an exact "
                  "unnamespaced string element is its direct parsed child.text reported, or an empty "

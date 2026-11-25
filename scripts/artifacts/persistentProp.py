@@ -9,7 +9,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-08-18",
         "last_update_date": "2026-10-28",
         "requirements": "none",
-        "category": "Wipe & Setup",
+        "category": "Device Information",
         "notes": "These are the platform's kept boot reason texts, not proof of a reboot, wipe, event completion or ownership: an entry "
                  "says that the platform kept that text at a start, not why the start happened. Two readings share the columns. (1) When"
                  " the file is a persistent property store (a protobuf file written by init: a repeated record with the property name as"

@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "Kiwix",
+        "category": "Music, Video & News",
         "notes": "One row per entry in the HistoryRoomEntity table of databases/KiwixRoom.db. "
                  "Each row carries the article title and its in content URL, the name of the ZIM "
                  "file the entry names, and the zimReaderSource value as stored (the zimFilePath "
@@ -40,7 +40,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "Kiwix",
+        "category": "Music, Video & News",
         "notes": "One row per entry in the RecentSearchRoomEntity table of databases/KiwixRoom.db. Each "
                  "row carries the searchTerm, zimId and url fields of the app's "
                  "RecentSearchRoomEntity (kiwix/kiwix-android, "

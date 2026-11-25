@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2020-03-23",
         "last_update_date": "2026-11-24",
         "requirements": "none",
-        "category": "WiFi Profiles",
+        "category": "Network & Connectivity",
         "notes": "DefaultGwMacAddress is reported as stored. AOSP documents the "
                  "WifiConfiguration field defaultGwMacAddress as 'default Gateway MAC "
                  "address if known' (framework/java/android/net/wifi/WifiConfiguration.java "
@@ -88,7 +88,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-24",
         "last_update_date": "2026-11-24",
         "requirements": "none",
-        "category": "WiFi Profiles",
+        "category": "Network & Connectivity",
         "notes": "Each row is a Provider element of WifiConfigStore.xml, which AOSP writes from PasspointConfigUserStoreData "
                  "(service/java/com/android/server/wifi/hotspot2/PasspointConfigUserStoreData.java lines 183-213 at tag android-14.0.0_r1, "
                  "https://android.googlesource.com/platform/packages/modules/Wifi/+/82d2b854425b2e8731f4902bbba175c653b54d60/service/java/com/android/server/wifi/hotspot2/PasspointConfigUserStoreData.java#198). "

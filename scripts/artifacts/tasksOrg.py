@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-31",
         "last_update_date": "2026-08-31",
         "requirements": "none",
-        "category": "Tasks.org",
+        "category": "Productivity",
         "sample_data": {
             "emu_a15_oss_v4": "Tasks.org 15.10 | 1 rows",
         },
@@ -48,7 +48,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-31",
         "last_update_date": "2026-10-07",
         "requirements": "none",
-        "category": "Tasks.org",
+        "category": "Productivity",
         "sample_data": {
             "emu_a15_oss_v4": "Tasks.org 15.10 | 1 rows",
         },
@@ -81,7 +81,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-31",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Tasks.org",
+        "category": "Productivity",
         "sample_data": {
             "emu_a15_oss_v4": "Tasks.org 15.10 | 2 rows",
         },

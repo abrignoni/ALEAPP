@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-02-24",
         "last_update_date": "2026-08-01",
         "requirements": "polyline",
-        "category": "Adidas",
+        "category": "Health & Fitness",
         "notes": "The route image and the route KML are built by this parser from the decoded "
                  "encodedTrace polyline; they are not files the app stored. The values temperature "
                  "-300, "

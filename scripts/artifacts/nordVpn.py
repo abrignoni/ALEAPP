@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "NordVPN",
+        "category": "Network & Connectivity",
         "notes": "One row per event record in the queue_elements table. Timestamp is the event's "
                  "own Unix second value "
                  "rendered in UTC, and Local Time is the value the event separately records "
@@ -39,7 +39,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "NordVPN",
+        "category": "Network & Connectivity",
         "notes": "One row per app data directory. Values come from the app's Settings "
                  "database, from the shared context its reporting library keeps, and from "
                  "its own preference files, all read from the same directory. Server "
@@ -88,7 +88,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "NordVPN",
+        "category": "Network & Connectivity",
         "notes": "One row per stored domain. The rows are reported as stored: the database "
                  "records only an identifier and a domain, the extraction carries no app "
                  "binary, and nothing in the extraction states what the app does with them, "

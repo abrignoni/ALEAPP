@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-25",
         "last_update_date": "2026-10-25",
         "requirements": "none",
-        "category": "Phone",
+        "category": "Calls & Contacts",
         "notes": "One row per row of the blocked table in each blockednumbers.db found, one database per Android "
                  "user and storage view collapsed to one copy (Source File names the database). The table has three "
                  "columns, all reported as stored: _id, original_number and e164_number. The table holds no "

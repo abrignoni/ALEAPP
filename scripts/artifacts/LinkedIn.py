@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-04-26",
         'last_update_date': '2026-07-10',
         "requirements": "xml, json",
-        "category": "LinkedIn",
+        "category": "Social Media",
         "notes": "",
         "paths": ('*/com.linkedin.android/shared_prefs/linkedInPrefsName.xml',),
         "output_types": "standard",
@@ -24,7 +24,7 @@ __artifacts_v2__ = {
         'creation_date': '2025-04-26',
         'last_update_date': '2026-10-04',
         "requirements": "",
-        "category": "LinkedIn",
+        "category": "Social Media",
         "notes": "The query uses only SQL functions available across the SQLite versions bundled "
                  "with supported Python builds; an earlier revision used concat(), which SQLite "
                  "added in 3.44.0 (2023-11-01, sqlite.org/changes.html), so on older SQLite "

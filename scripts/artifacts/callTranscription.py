@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-09-19",
         "last_update_date": "2026-10-31",
         "requirements": "none",
-        "category": "Phone",
+        "category": "Calls & Contacts",
         "notes": "",
         "paths": ('*/com.google.android.dialer/files/fermat_files/*.pb'),
         "output_types": "standard",

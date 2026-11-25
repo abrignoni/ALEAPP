@@ -1,13 +1,13 @@
 # pylint: disable=W0702
 __artifacts_v2__ = {
     "get_chromeTopSites": {
-        "name": "Top Sites",
+        "name": "Chromium - Top Sites",
         "description": "Parses Top Sites from Chromium Based Browsers",
         "author": "@abrignoni",
         "creation_date": "2020-03-21",
         "last_update_date": "2020-03-21",
         "requirements": "none",
-        "category": "Chromium",
+        "category": "Browsers",
         "notes": "",
         "paths": ('*/app_chrome/Default/Top Sites*', '*/app_sbrowser/Default/Top Sites*', '*/app_opera/Top Sites*', '*/app_webview/Default/Top Sites*'),
         "output_types": ['html', 'tsv', 'lava'],

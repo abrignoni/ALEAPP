@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "Shazam",
+        "category": "Music, Video & News",
         "notes": "timestamp is Unix milliseconds. Read as seconds every value in the one device "
                  "tested falls outside the range a date can represent, and read as milliseconds "
                  "every value falls inside the period the rest of the device supports, so the "
@@ -58,7 +58,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "Shazam",
+        "category": "Music, Video & News",
         "notes": "This table holds the track rows that tag rows in Shazam Recognitions point to "
                  "through track_key. Whether the app can hold a track row with no recognition is "
                  "not established. Artists are joined through the apple_artist_track table on the "
@@ -88,7 +88,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Shazam",
+        "category": "Music, Video & News",
         "notes": "Each entry dates a fetch the app made, which is why the entries are reported "
                  "individually rather than summarised. The cache is a DiskLruCache holding a "
                  "metadata file and a body file per entry. The metadata file records the URL on "
@@ -122,7 +122,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "Shazam",
+        "category": "Music, Video & News",
         "notes": "The stored request is JSON carrying an HTTP method and a URL, and the URL "
                  "carries app and device identifying values, which is why the row is reported "
                  "rather than summarised. The table has no timestamp column, so when a request "
@@ -142,7 +142,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "Shazam",
+        "category": "Music, Video & News",
         "notes": "Every entry in the file is reported with its stored type and value. The file is "
                  "small and holds the install identifier, the last recognition and last "
                  "foreground times and the app's record of which permissions were refused, so it "
@@ -171,7 +171,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "Shazam",
+        "category": "Music, Video & News",
         "notes": "These stores hold content the app fetched, not anything the user produced, and "
                  "their individual items are not enumerated here because a single cached image, "
                  "video fragment or announcement carries no fact an examiner can act on. The "

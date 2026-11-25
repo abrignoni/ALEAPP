@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-03",
         "last_update_date": "2026-11-09",
         "requirements": "none",
-        "category": "Private Notepad",
+        "category": "Productivity",
         "notes": "One row per row of the notes table in "
                  "ru.alexandermalikov.protectednotes/databases/notes.db. Date, Created and Delete "
                  "Date are the date, date_created and date_delete columns as stored; which events "
@@ -53,7 +53,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-03",
         "last_update_date": "2026-11-09",
         "requirements": "none",
-        "category": "Private Notepad",
+        "category": "Productivity",
         "notes": "One row per attachment id in the images and audio_files columns of the notes "
                  "table, each a JSON object whose lists hold the ids, and one row per file in the "
                  "attachment folders that no note names. An id from the images column is matched "
@@ -92,7 +92,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-06",
         "last_update_date": "2026-11-06",
         "requirements": "none",
-        "category": "Private Notepad",
+        "category": "Productivity",
         "notes": "One row per file directly in the files/intruder_photos folder of an app data "
                  "folder. The folder name is the app's own; this artifact does not show who appears "
                  "in a photo or why it was taken, and what prompts the app to take one was not "
@@ -118,7 +118,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-03",
         "last_update_date": "2026-11-09",
         "requirements": "none",
-        "category": "Private Notepad",
+        "category": "Productivity",
         "notes": "One row per row of the passwords table in notes.db; a database without the "
                  "table yields no rows and logs it. Name, Login, Password, Site Address and "
                  "Comment are the password_name, password_login, password_password, "
@@ -142,7 +142,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-03",
         "last_update_date": "2026-11-09",
         "requirements": "none",
-        "category": "Private Notepad",
+        "category": "Productivity",
         "notes": "One row per protected_notes_preferences.xml, or per notes.db whose service table "
                  "has a row when there is no readable preferences file. Values are the preference "
                  "keys last_app_usage_time, show_lock_screen, protection_type, password_hint and "

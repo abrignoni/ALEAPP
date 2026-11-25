@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2020-03-10",
         "last_update_date": "2026-11-25",
         "requirements": "none",
-        "category": "SMS & MMS",
+        "category": "Messaging",
         "notes": "SMS date values are in milliseconds and MMS pdu.date values are in seconds; "
                  "the provider's own union query multiplies pdu.date by 1000 to line the two up. "
                  "Reference: AOSP, 'MmsSmsProvider.java, getConversations and "
@@ -68,7 +68,7 @@ __artifacts_v2__ = {
         "creation_date": "2020-03-10",
         "last_update_date": "2026-11-25",
         "requirements": "none",
-        "category": "SMS & MMS",
+        "category": "Messaging",
         "notes": "SMS date values are in milliseconds and MMS pdu.date values are in seconds; "
                  "the provider's own union query multiplies pdu.date by 1000 to line the two up. "
                  "Reference: AOSP, 'MmsSmsProvider.java, getConversations and "
@@ -135,7 +135,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-02",
         "last_update_date": "2026-11-25",
         "requirements": "none",
-        "category": "SMS & MMS",
+        "category": "Messaging",
         "notes": "The rows of the SMS Messages and MMS Messages artifacts in one table, sorted by Date, so a thread that carries both transports reads in one place. Both tables key on the same thread_id and the provider itself tells the two apart in its unified queries with a transport_type discriminator column. Reference: AOSP, 'Telephony.MmsSms.TYPE_DISCRIMINATOR_COLUMN', https://developer.android.com/reference/android/provider/Telephony.MmsSms#TYPE_DISCRIMINATOR_COLUMN. Message Type is SMS or MMS, and Source Table names the table each row was read from (sms, spam_sms or pdu); both are uniform on an image holding only one transport. Address is sms.address for SMS rows (the other party, per Telephony.TextBasedSmsColumns.ADDRESS) and the From (PduHeaders.FROM, 0x89) addr entry for MMS rows. To Address, Cc and Bcc are filled for MMS rows only; Contact ID, Service Center and Error Code are filled for SMS rows only. MMS rows are one per non-SMIL part, so a multi-part MMS repeats its MSG ID, and MSG ID is sms._id or pdu._id, unique only together with Message Type. Media renders the part file when it is in the extraction, matched on the part's recorded _data path (storage class, Android user, package and file name) rather than on the file name alone, and is blank for SMS rows, for text parts, and for parts whose file is not in the image (the part's stored path is then shown in Body). Direction maps sms.type and pdu.msg_box through the same words from the AOSP constants (Received, Sent, Draft, Outbox, Failed; Queued exists for SMS only), with the LG extended sms.type values handled as in the SMS Messages artifact. A pdu.msg_box of 0 is shown as 'All messages' and any other msg_box value is shown as stored. References: AOSP, 'Telephony.TextBasedSmsColumns MESSAGE_TYPE constants', https://developer.android.com/reference/android/provider/Telephony.TextBasedSmsColumns; AOSP, 'Telephony.BaseMmsColumns MESSAGE_BOX constants', https://developer.android.com/reference/android/provider/Telephony.BaseMmsColumns. SMS date values are in milliseconds and MMS pdu.date values are in seconds; the provider's own union query multiplies pdu.date by 1000 to line the two up. Reference: AOSP, 'MmsSmsProvider.java, getConversations and buildConversationQuery', https://android.googlesource.com/platform/packages/providers/TelephonyProvider/+/bca387f553a4493c88e24455172225fd1049c91f/src/com/android/providers/telephony/MmsSmsProvider.java"
                  " A mmssms.db that ALEX (Android Logical Extractor) rebuilt from content provider queries, recognised by user_version 0 and sms._id declared TEXT, is read with the same queries as a device copy, except that rows with _id 0 are left out of sms and pdu and their number is written to the log. ALEX writes such a row, filled with its default values, when the provider returned no rows. It also writes one when a text value held 'Row: <number>': that value is cut there and the columns after it go to the _id 0 row. ALEX builds its values by parsing the text output of the queries and stores every value as text. The parsing can cut or trim text, stores an empty value or the text NULL as NULL, and can move part of a text value into another column. The rebuilt database is a new file written by ALEX, so it carries no free pages or write-ahead log from the device database. A time stored as the text 0 is shown blank, as a stored 0 is. No real MMS row from an ALEX rebuild was available to test this. Direction reads msg_box as a number, so a msg_box stored as text decodes the same way; that was tested on a synthetic database only. On the known data emu_a15_alex_prfs_empty_20261125 and emu_a15_alex_prfs_sms_20261125 (ALEX backups of an Android 15 emulator, ALEAPP #2076) this gave 0 rows and 6 rows, where the version before this change reported 2 and 8.",
         "paths": ('*/com.android.providers.telephony/databases/mmssms*',
@@ -193,7 +193,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-02",
         "last_update_date": "2026-10-12",
         "requirements": "none",
-        "category": "SMS & MMS",
+        "category": "Messaging",
         "notes": "One row per part row that records a file path (part._data), joined to its pdu "
                  "row for Date, Direction and From Address, plus known-layout files not matched by a "
                  "returned part row and unresolved-layout file candidates. Association keys are indexed when "

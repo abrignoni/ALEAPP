@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-30",
         "last_update_date": "2026-11-22",
         "requirements": "none",
-        "category": "Samsung Device Health Management Service",
+        "category": "Device Information",
         "notes": "Window Start and Window End are start_time and end_time read as Unix "
                  "milliseconds. Foreground Time, Background Time, CPU Time, Wakelock Time, GPS Time and Audio Time are fg_time, bg_time, cpu_time, wakelock_time, gps_time and audio_time as stored. Their unit is not established. Where the database has no bluetooth_scan column the "
                  "Bluetooth Scan column is empty.",
@@ -28,7 +28,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-30",
         "last_update_date": "2026-11-22",
         "requirements": "none",
-        "category": "Samsung Device Health Management Service",
+        "category": "Device Information",
         "notes": "Window Start and Window End are start_time and end_time read as Unix "
                  "milliseconds. Screen On Time, Screen Off Time, High Brightness Time and High Refresh Time are reported as stored. Their unit is not established. Where the database has no "
                  "screen_on_count column the Screen On Count, High Brightness Time and High "
@@ -53,7 +53,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-30",
         "last_update_date": "2026-11-22",
         "requirements": "none",
-        "category": "Samsung Device Health Management Service",
+        "category": "Device Information",
         "notes": "Update Time is update_time read as Unix milliseconds. Where the table has no id column the ID column is empty.",
         "paths": ('*/com.sec.android.sdhms/databases/sec_batterystats_history*',),
         "output_types": "standard",
@@ -74,7 +74,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-30",
         "last_update_date": "2026-11-22",
         "requirements": "none",
-        "category": "Samsung Device Health Management Service",
+        "category": "Device Information",
         "notes": "Window Start and Window End are start_time and end_time read as Unix "
                  "milliseconds. Used Time is the used_time column as stored. Its unit is not "
                  "established. On samsungs20_a13, the 38 rows of one Drain Type hold values close "

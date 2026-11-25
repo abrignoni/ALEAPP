@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-11-22",
         "requirements": "BeautifulSoup",
-        "category": "Yahoo Mail",
+        "category": "Email",
         "notes": "One row per cached message. The app stores its state in flux_database.db, "
                  "where every table shares the same shape, a mailboxYid naming the account, "
                  "a key naming the record and a JSON document in value, so one message is "
@@ -56,7 +56,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-29",
         "requirements": "none",
-        "category": "Yahoo Mail",
+        "category": "Email",
         "notes": "One row per folder record. Record Timestamp is the timestamp column of the "
                  "Folders row, read as Unix milliseconds; what event it marks is not "
                  "established. Total Messages and Unread Messages are the counts the folder "
@@ -89,7 +89,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "Yahoo Mail",
+        "category": "Email",
         "notes": "One row per account listed in the app's Mailboxes record. The account "
                  "fields come from that record, and the device name, Android version and "
                  "push state from the app's own phoenix_preferences and fluxStartupData "
@@ -119,7 +119,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-10-07",
         "requirements": "none",
-        "category": "Yahoo Mail",
+        "category": "Email",
         "notes": "One row per account that has records in the AppConfig table, built from "
                  "that account's settings. Every timestamp is Unix milliseconds. The counters "
                  "are the values the app stores, reported as stored; whether they cover the "
@@ -148,7 +148,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "Yahoo Mail",
+        "category": "Email",
         "notes": "One row per contact record. Record Timestamp is the timestamp column of the "
                  "ContactInfo row, read as Unix milliseconds; what event it marks is not "
                  "established. On the tested device every record carried isUserCurated false "

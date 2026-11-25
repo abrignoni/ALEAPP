@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-01-06",
         "last_update_date": "2026-11-25",
         "requirements": "none",
-        "category": "Calendar",
+        "category": "Productivity",
         "notes": "Every calendar.db found is read once per Android user, and Android User names the "
                  "user whose app folder holds it. Taking the first match instead returned no rows on a "
                  "One UI 8 (Android 16) extraction whose Secure Folder user's copy sorted first and held "
@@ -40,7 +40,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-01-06",
         "last_update_date": "2026-11-25",
         "requirements": "none",
-        "category": "Calendar",
+        "category": "Productivity",
         "notes": "Every calendar.db found is read once per Android user, and Android User names the "
                  "user whose app folder holds it. The first column, cal_sync8 (Read As Unix "
                  "Milliseconds), is the cal_sync8 value read as Unix milliseconds and shown in UTC; the cal_sync8 (As Stored) column is the "
@@ -94,7 +94,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",
-        "category": "Calendar",
+        "category": "Productivity",
         "notes": "The fields are read from the event protobuf by number: link 3, Created "
                  "4, Updated 5, title 6, description 7, calendar id and name 10 (or 35), "
                  "iCal UID 19, start 36.1 and end 37.1. No source for these field numbers "

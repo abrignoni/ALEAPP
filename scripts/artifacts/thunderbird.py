@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-11-18",
         "last_update_date": "2026-10-31",
         "requirements": "re, json",
-        "category": "Thunderbird App",
+        "category": "Email",
         "notes": "Every matched preferences_storage file is read. A copy of the same Android "
                  "user's file under another storage path (data/data, data/user/<n> or "
                  "data_mirror/data_ce/<volume>/<n>) is read once. When more than one file gives "
@@ -32,7 +32,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-11-20",
         "last_update_date": "2026-11-22",
         "requirements": "re, json",
-        "category": "Thunderbird App",
+        "category": "Email",
         "notes": "Date is the messages table's date column and Internal Date is its internal_date column, "
                  "both read as Unix milliseconds and shown in UTC. In the app's source at commit 9aee4a9, "
                  "date is the time parsed from the message's Date header, or the device time when the "

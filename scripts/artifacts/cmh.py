@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2020-03-05",
         "last_update_date": "2026-10-25",
         "requirements": "none",
-        "category": "Samsung_CMH",
+        "category": "Photos & Media",
         "notes": "Queries the files table directly (media_type 1 = images). In the samples "
                  "examined, older CMH versions defined an images view over the files table with "
                  "the same filter and newer CMH versions did not carry that view. The files table "

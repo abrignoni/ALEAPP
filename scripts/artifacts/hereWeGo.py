@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "HERE WeGo",
+        "category": "Locations & Maps",
         "sample_data": {
             "emu_a15_oss_v14": "HERE WeGo 4.21.100 | 2 rows",
         },
@@ -44,7 +44,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
         "requirements": "none",
-        "category": "HERE WeGo",
+        "category": "Locations & Maps",
         "sample_data": {
             "emu_a15_oss_v14": "HERE WeGo 4.21.100 | 2 rows",
         },
@@ -94,7 +94,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
         "requirements": "none",
-        "category": "HERE WeGo",
+        "category": "Locations & Maps",
         "sample_data": {
             "emu_a15_oss_v14": "HERE WeGo 4.21.100 | 2 rows",
         },
@@ -124,7 +124,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
         "requirements": "none",
-        "category": "HERE WeGo",
+        "category": "Locations & Maps",
         "sample_data": {
             "emu_a15_oss_v14": "HERE WeGo 4.21.100 | 28 rows",
         },

@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
-        "category": "BeReal",
+        "category": "Social Media",
         "notes": "The BeReal Room databases (bereal.core.database.db and the others) are "
                  "not read by this artifact. The media itself survives in the app caches. The "
                  "OkHttp network cache stores a '.0' metadata file next to each '.1' body; the "
@@ -45,7 +45,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-06",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "BeReal",
+        "category": "Social Media",
         "notes": "Read from the JSON bodies in the OkHttp network cache, not from the app's "
                  "databases, so a row is a user a cached response listed, not proof of a "
                  "friendship; the Status column shows the value the response stored, and the "
@@ -67,7 +67,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-06",
         "last_update_date": "2026-08-06",
         "requirements": "none",
-        "category": "BeReal",
+        "category": "Social Media",
         "notes": "Lists the cached responses whose body is uncompressed JSON and whose metadata "
                  "file names a URL, so an examiner can see which of those endpoints have a cached "
                  "response "

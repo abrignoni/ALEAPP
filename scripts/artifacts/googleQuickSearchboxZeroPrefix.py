@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-02",
         "last_update_date": "2026-10-02",
         "requirements": "none",
-        "category": "Google Now & QuickSearch",
+        "category": "Device Activity",
         "notes": "Read from cache/accounts/<number>/CompleteServerZeroPrefixCache.pb in the Google app's data folder "
                  '(com.google.android.googlequicksearchbox). The app is closed source and no published schema for this '
                  'file was found, so the fields were read off the file itself, on the 32 distinct copies in the tested '
@@ -110,7 +110,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-02",
         "last_update_date": "2026-10-02",
         "requirements": "none",
-        "category": "Google Now & QuickSearch",
+        "category": "Device Activity",
         "notes": "One row per readable cache/accounts/<number>/CompleteServerZeroPrefixCache.pb in the Google app's "
                  'data folder (com.google.android.googlequicksearchbox). The app is closed source and no published '
                  'schema for this file was found; the field numbers were read off the file itself and are described in '

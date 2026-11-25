@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2020-03-21",
         "last_update_date": "2020-03-21",
         "requirements": "none",
-        "category": "Chats",
+        "category": "Messaging",
         "notes": "",
         "paths": ('*/com.zynga.chess.googleplay/databases/wf_database.sqlite*', '*/data/com.zynga.chess.googleplay/db/wf_database.sqlite*'),
         "output_types": ['html', 'tsv', 'lava'],

@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Dust",
+        "category": "Messaging",
         "notes": "com.radicalapps.cyberdust is a messaging app; no message content was found in "
                  "room-db, which has no message table, and its Blasts, Contacts and "
                  "messageKeyPairs tables held no rows on any of the three corpora below. What "
@@ -45,7 +45,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "Dust",
+        "category": "Messaging",
         "notes": "recipientKeyModels is a JSON object whose keys are device identifiers and "
                  "whose values carry an accountId and a deviceId for each. Device Identifiers "
                  "lists those keys and Accounts In Bundle lists the distinct accountId values "
@@ -72,7 +72,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "Dust",
+        "category": "Messaging",
         "notes": "Each row is a UserPhotoUrls record holding an account identifier, a photo URL "
                  "value and an updatedTime. How those identifiers relate to the Chat table's "
                  "accountId and otherAccountId values was not compared on the corpora below; "

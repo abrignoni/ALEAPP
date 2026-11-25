@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-02-21",
         "last_update_date": "2026-02-21",
         "requirements": "inspect, pathlib",
-        "category": "Trash",
+        "category": "Cloud & Files",
         "notes": "More info on: https://bebinary4n6.blogspot.com/2026/02/samsung-trash-provider-app-traces-of.html",
         "paths": (
             "*/com.samsung.android.providers.trash/databases/trash.db*",

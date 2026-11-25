@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-12-02",
         "last_update_date": "2026-08-10",
         "requirements": "none",
-        "category": "Google Keep Notes",
+        "category": "Productivity",
         "notes": "",
         "paths": ('*/data/com.google.android.keep/databases/keep.db*',),
         "output_types": "standard",

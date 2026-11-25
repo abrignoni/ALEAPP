@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-06-05",
         "last_update_date": "2026-08-01",
         "requirements": "none",
-        "category": "My Files",
+        "category": "Cloud & Files",
         "notes": "Current decode works with Android versions 10-12. Subscripted/accented/unknown "
                  "characters will be replaced with '?'. The substitution table used to turn the stored "
                  "item paths into cleartext is not from app or vendor documentation and no "

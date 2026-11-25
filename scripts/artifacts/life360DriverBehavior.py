@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-09-17",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Life360DriverBehavior",
+        "category": "Locations & Maps",
         "notes": "Reads the events list of each JSON file under "
                  "the exact com.life360.android.safetymapd/files/DriverBehavior/trips path under "
                  "legacy data, data/data, numeric user/user_de and data_mirror CE/DE namespaces. "
@@ -28,7 +28,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-09-17",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Life360DriverBehavior",
+        "category": "Locations & Maps",
         "notes": "Reads the waypoints list of each event in the JSON files under "
                  "the exact com.life360.android.safetymapd/files/DriverBehavior/trips path under "
                  "legacy data, data/data, numeric user/user_de and data_mirror CE/DE namespaces. "

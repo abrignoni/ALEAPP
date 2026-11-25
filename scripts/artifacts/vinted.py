@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-10-07",
         "requirements": "none",
-        "category": "Vinted",
+        "category": "Shopping & Marketplaces",
         "notes": "One row per cached listing. The row holds the listing as a stored document and the "
                  "columns are read from it. The status (existing rendering) column is the document's "
                  "status member rendered by the existing str(value or '') expression; zero, False, None "
@@ -38,7 +38,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-10-07",
         "requirements": "none",
-        "category": "Vinted",
+        "category": "Shopping & Marketplaces",
         "notes": "One row per recorded listing. Favourited is the flag the row carries, reported as "
                  "stored, so a row marked false is not evidence the listing was favourited; why the app "
                  "holds such rows is not established. Cache Expires is Unix milliseconds and is the app's "
@@ -66,7 +66,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "Vinted",
+        "category": "Shopping & Marketplaces",
         "notes": "One row per feedback entry. Row Created is the table's created_at column in "
                  "Unix milliseconds and is distinct from the feedback's own date, which is a "
                  "date string with no time part and is reported separately. Owner ID is the "
@@ -92,7 +92,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "Vinted",
+        "category": "Shopping & Marketplaces",
         "notes": "One row per app data directory. Help Session Time is Unix milliseconds. "
                  "Sessions is the number_of_sessions value the app stores, reported as stored; "
                  "whether it counts the whole life of the install is not established. Locale and "

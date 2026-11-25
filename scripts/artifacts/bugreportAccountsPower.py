@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Accounts, Sync and Backup",
+        "category": "Android Bug Report",
         "notes": "One row per Account {name=..., type=...} line under the Accounts: heading of each Android user "
                  "in the account service dump (DUMP OF SERVICE account). User, User Name and User Flags (as "
                  "stored) come from the User UserInfo{id:name:flags}: line above the list; the flags are the "
@@ -52,7 +52,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Accounts, Sync and Backup",
+        "category": "Android Bug Report",
         "notes": "One row per line of the table printed under the AccountId, Action_Type, timestamp, UID, "
                  "TableName, Key heading and the Accounts History heading of each Android user. Account ID, "
                  "Action, UID, Table and Key are the printed values: Action is the name the dump prints (the real "
@@ -99,7 +99,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Accounts, Sync and Backup",
+        "category": "Android Bug Report",
         "notes": "One row per ServiceInfo: AuthenticatorDescription line under the RegisteredServicesCache heading "
                  "of each Android user. Account Type is the text after type=, Component the ComponentInfo{...} "
                  "text (package and class), UID the number after uid and Last Update Time (as printed) the text "
@@ -137,7 +137,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Accounts, Sync and Backup",
+        "category": "Android Bug Report",
         "notes": "One row per package line under an account name in the Account visibility: list of each Android "
                  "user. Account is the line above the package lines, Package the text before the last comma and "
                  "Visibility (as stored) the number after it, which is not decoded here. A row says that the "
@@ -175,7 +175,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Accounts, Sync and Backup",
+        "category": "Android Bug Report",
         "notes": "One row per authority line of the table printed under each Account <name> u<user> <type> heading "
                  "in the Sync Status part of the content service dump (DUMP OF SERVICE content). A block headed "
                  "with a trailing (locked) is read as well and the text is shown in Account State (as printed). "
@@ -227,7 +227,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Accounts, Sync and Backup",
+        "category": "Android Bug Report",
         "notes": "One row per #N: line of the Recent Sync History list in the content service dump, in the order "
                  "printed (newest first in the real reports). Time As Printed is the date and time text; Source, "
                  "Duration (s as printed), Account, Account Type, User, Authority and Reason are read from the "
@@ -276,7 +276,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Accounts, Sync and Backup",
+        "category": "Android Bug Report",
         "notes": "One row per dated line under a Last syncs: heading of an account, type and authority in the Per "
                  "Adapter History part of the content service dump. Result is the word after the time (for example "
                  "success, canceled or io-error, as printed), Source, Elapsed (as printed), Reason, Exemption and "
@@ -320,7 +320,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Accounts, Sync and Backup",
+        "category": "Android Bug Report",
         "notes": "One row per JobId= line under the Active Syncs:, Pending Syncs: and Periodic Syncs: headings of "
                  "the content service dump; List is that heading. Account, Account Type, User, Authority and "
                  "Source are read from the line (two shapes were seen: account/type uN [authority] and, on Android "
@@ -360,7 +360,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Accounts, Sync and Backup",
+        "category": "Android Bug Report",
         "notes": "One row per Name: value line before the Active Syncs heading (for example Data connected, Auto "
                  "sync, Clock valid, Accounts, Now, Uptime and Time spent syncing), one row for each of the Active "
                  "Syncs, Pending Syncs and Periodic Syncs counts, and one row for each line of the Sync Statistics "
@@ -399,7 +399,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Accounts, Sync and Backup",
+        "category": "Android Bug Report",
         "notes": "One row per Name: value line at the start of a line in the backup service dump outside the "
                  "lists, and one row for a line that has no colon (Name is Statement and Value the sentence, for "
                  "example the Backup Manager enabled, Auto-restore and Framework scheduling lines). The Last "
@@ -438,7 +438,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Accounts, Sync and Backup",
+        "category": "Android Bug Report",
         "notes": "One row per line of the Transport whitelist: list (List is Whitelist) and per transport of the "
                  "Available transports: list (List is Available). Transport is the component text as printed. "
                  "Marked With * (current) is yes where the dump puts an asterisk before the transport. Destination "
@@ -473,7 +473,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Accounts, Sync and Backup",
+        "category": "Android Bug Report",
         "notes": "One row per line of the form package - N state bytes under the transport marked with an asterisk "
                  "in the Available transports list. Transport is that transport and State Bytes (as printed) the "
                  "number before state bytes. @pm@ and other non-package names are listed as printed. A row says "
@@ -508,7 +508,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Accounts, Sync and Backup",
+        "category": "Android Bug Report",
         "notes": "One row per package line under a uid: line of the Participants: list. UID is the number after "
                  "uid: and Package the name. A row says that the backup manager listed that package among its "
                  "participants when the dump ran; it does not say that data of the package was backed up (see Bug "
@@ -540,7 +540,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Accounts, Sync and Backup",
+        "category": "Android Bug Report",
         "notes": "One row per BackupRequest{pkg=...} line under Pending key/value backup (Number Before Package is "
                  "empty) and per N : package line under Full backup queue (the number is shown as printed). Time "
                  "(UTC) is set when that number reads as epoch milliseconds between 2009 and 2100; 0 is shown as "
@@ -575,7 +575,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Accounts, Sync and Backup",
+        "category": "Android Bug Report",
         "notes": "One row per UserInfo{id:name:flags} line of the Users: list in the user service dump (DUMP OF "
                  "SERVICE user). User ID, Name and UserInfo Flags (hex as printed) come from that line, Serial No, "
                  "Is Primary and Parent ID from the key=value words after it. Type, Flags Line (as printed), "
@@ -619,7 +619,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Accounts, Sync and Backup",
+        "category": "Android Bug Report",
         "notes": "One row per Name: value line at the start of the user service dump or after the Users: list (for "
                  "example Current user, Device owner id, Device managed, Started users state, Max users and "
                  "Supports switchable users) and one row for the Guest restrictions list, whose lines are joined "
@@ -651,7 +651,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Battery and Power",
+        "category": "Android Bug Report",
         "notes": "One row per record of the Battery History list in the batterystats service dump (DUMP OF SERVICE "
                  "batterystats), in the order printed. Level (%) is the three digit number after the time, State "
                  "Bits (hex as printed) the hexadecimal number after it (not decoded) and Changes (as printed) the "
@@ -711,7 +711,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Battery and Power",
+        "category": "Android Bug Report",
         "notes": "One row per Daily from <start> to <end>: period of the Daily stats part of the batterystats "
                  "service dump, and one row for the open period where the dump prints a Current daily step durations "
                  "heading (Period is Current; its start is the Current start time and it has no end). A dump that "
@@ -754,7 +754,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Battery and Power",
+        "category": "Android Bug Report",
         "notes": "One row per line under a Package changes: heading of a Daily from period. Change is the first "
                  "word (the real reports printed Update only), Package the second and Version Code the number "
                  "after vers=. The period start and end are those of the Daily from block; the dump does not print "
@@ -794,7 +794,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Battery and Power",
+        "category": "Android Bug Report",
         "notes": "One row per item line (Capacity, Global items, Screen, Idle and similar) and per UID or Uid line "
                  "in the Estimated power use (mAh): block. Kind is Item or UID, Name the text before the colon (a "
                  "uid label such as u0aNNN or 1000 for a UID row) and Total (as printed) the first number after "
@@ -840,7 +840,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Battery and Power",
+        "category": "Android Bug Report",
         "notes": "One row per Wake lock line inside a uid block (Kind is UID; UID is the label of the block such as "
                  "u0aNNN or 1000) and per Kernel Wake lock line of the All kernel wake locks list (Kind is "
                  "Kernel; UID is empty). Wake Lock is the name before the usage text and Usage (as printed) the "
@@ -882,7 +882,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Battery and Power",
+        "category": "Android Bug Report",
         "notes": "One row per name: value line of the battery service dump (DUMP OF SERVICE battery), for example "
                  "status, health, present, level, scale, voltage, temperature, technology and the charge counter, "
                  "plus the vendor lines the dump adds. Value is the text as printed; status, health and the other "
@@ -918,7 +918,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Battery and Power",
+        "category": "Android Bug Report",
         "notes": "One row per status line (Kind is Status; Group is the heading above a tab indented line, for "
                  "example ThermalEventListeners), per Temperature{...} line (Kind is Temperature; Name, Type (as "
                  "stored), Value (as printed) and Status (as stored) are the mName=, mType=, mValue= and mStatus= "
@@ -956,7 +956,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Battery and Power",
+        "category": "Android Bug Report",
         "notes": "One row per key=value or key: value line in the Power Manager State: and Settings and "
                  "Configuration: blocks of the power service dump (DUMP OF SERVICE power; Block says which), and "
                  "per Name: N ms timeout line below them (Block is Timeouts). A line under a sub-heading such as "
@@ -990,7 +990,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Battery and Power",
+        "category": "Android Bug Report",
         "notes": "One row per line under Wake Locks: size=N in the power service dump. Level is the wake lock "
                  "level word (for example PARTIAL_WAKE_LOCK), Tag the quoted text, Flags the words between the tag "
                  "and ACQ= and after the time before the parenthesis, and Held (as printed, relative) the ACQ= "
@@ -1028,7 +1028,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Battery and Power",
+        "category": "Android Bug Report",
         "notes": "One row per numbered line of the WakeUp History and WakeLock Release History lists printed under "
                  "PowerHistorian in the power service dump; History says which and Entry is the number in "
                  "brackets. A WakeUp row has UID, Display ID (as printed), State (ON or OFF as printed), Reason, "
@@ -1071,7 +1071,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Battery and Power",
+        "category": "Android Bug Report",
         "notes": "One row per key=value line under the Settings: heading of the deviceidle service dump (Block is "
                  "Settings) and per key=value pair of the state lines at the end of the dump (Block is State, for "
                  "example mState, mLightState, mScreenOn, mCharging and mNextLightIdleDelay). Value is the text as "
@@ -1104,7 +1104,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Battery and Power",
+        "category": "Android Bug Report",
         "notes": "One row per line of the Idling history: list, in the order printed (newest first in the real "
                  "reports). State is the word before the colon (for example light-idle, deep-idle or normal), Time "
                  "Ago (as printed) the time before the dump (shaped -NhNNmNNsNNms) and Reason the text in "
@@ -1140,7 +1140,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Processes and Memory",
+        "category": "Android Bug Report",
         "notes": "One row per state line (TOTAL, Persistent, Top, Imp Fg, Service and the other labels, as "
                  "printed) under a * process / uid / vversion: line in a COMMITTED STATS FROM period and in the "
                  "Process summary: part of the CURRENT STATS and AGGREGATED OVER LAST 24 HOURS periods; Period is "
@@ -1182,7 +1182,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Processes and Memory",
+        "category": "Android Bug Report",
         "notes": "One row per thread line of the PROCESSES AND THREADS (ps -A -T -Z -O "
                  "pri,nice,rtprio,sched,pcy,time) command section. The columns are the printed ones: PID, TID, "
                  "PPID, User, Command (CMD, which can contain spaces), Label (the security context), State (S), "
@@ -1222,7 +1222,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Processes and Memory",
+        "category": "Android Bug Report",
         "notes": "One row per line of the Total PSS by process: and Total RSS by process: lists in the meminfo "
                  "service dump (List is PSS or RSS). Kilobytes is the number before K:, Process the name, PID the "
                  "number after pid and Note the text after a slash in the parentheses (for example activities). "
@@ -1262,7 +1262,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Processes and Memory",
+        "category": "Android Bug Report",
         "notes": "One row per ** MEMINFO in pid N [name] ** block of the meminfo service dump. The figures "
                  "(kilobytes) are the TOTAL row of the heap table (Pss Total, Private Dirty, Shared Dirty, SwapPss "
                  "Dirty, Rss Total, Heap Size, Heap Alloc and Heap Free, read by their printed column names), the "
@@ -1306,7 +1306,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Processes and Memory",
+        "category": "Android Bug Report",
         "notes": "One row per line that starts with Uptime and Realtime (two rows, the numbers as printed), Total "
                  "RAM, Free RAM, Used RAM, Lost RAM, ZRAM, Tuning, DMA-BUF, DMA-BUF Heaps, DMA-BUF Heaps pool, GPU "
                  "or Kernel CMA in the meminfo service dump. Value is the text after the colon as printed, with "

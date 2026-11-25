@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-31",
         "last_update_date": "2026-08-31",
         "requirements": "none",
-        "category": "Trail Sense",
+        "category": "Locations & Maps",
         "sample_data": {
             "emu_a15_oss_v4": "Trail Sense 8.1.1 | 2 rows",
         },
@@ -37,7 +37,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-31",
         "last_update_date": "2026-08-31",
         "requirements": "none",
-        "category": "Trail Sense",
+        "category": "Locations & Maps",
         "sample_data": {
             "emu_a15_oss_v4": "Trail Sense 8.1.1 | 1 rows",
         },
@@ -69,7 +69,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-31",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Trail Sense",
+        "category": "Locations & Maps",
         "sample_data": {
             "emu_a15_oss_v4": "Trail Sense 8.1.1 | 1 rows",
         },

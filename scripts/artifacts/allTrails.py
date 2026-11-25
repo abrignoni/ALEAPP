@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "AllTrails",
+        "category": "Health & Fitness",
         "notes": "Read from the trackpoints table of databases/alltrails.\n"
                  "lat and lng are stored as integers. On the tested image, dividing them by "
                  "1,000,000 produces a coordinate pair that falls in the same state as the place "
@@ -46,7 +46,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "AllTrails",
+        "category": "Health & Fitness",
         "notes": "Read from the maps table of databases/alltrails, joined to lines through map_id "
                  "and to line_geo_stats through the line's line_geo_stats_id, and to users "
                  "through user_id.\nUnits are derived from the data rather than documented. On "
@@ -86,7 +86,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "AllTrails",
+        "category": "Health & Fitness",
         "notes": "Read from the map_photos and trail_photos tables of databases/alltrails, "
                  "distinguished by the Record Source column.\n"
                  "The picture is found by the path the app recorded. On pixel7a_a14 "
@@ -130,7 +130,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
         "requirements": "none",
-        "category": "AllTrails",
+        "category": "Health & Fitness",
         "notes": "Read from the users table of databases/alltrails, joined to locations through "
                  "location_id for the recorded place names.\n"
                  "Remote ID is the remote_id value as stored, and on the tested image equalled "

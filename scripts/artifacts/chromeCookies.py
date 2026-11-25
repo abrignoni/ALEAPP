@@ -1,12 +1,12 @@
 __artifacts_v2__ = {
     "get_chromeCookies": {
-        "name": "Cookies",
+        "name": "Chromium - Cookies",
         "description": "Parses Cookies from Chromium Based Browsers",
         "author": "@abrignoni",
         "creation_date": "2020-03-21",
         "last_update_date": "2020-03-21",
         "requirements": "none",
-        "category": "Chromium",
+        "category": "Browsers",
         "notes": "",
         "paths": ('*/app_chrome/Default/Cookies*', '*/app_sbrowser/Default/Cookies*', '*/app_opera/Cookies*', '*/app_webview/Default/Cookies*'),
         "output_types": "standard",

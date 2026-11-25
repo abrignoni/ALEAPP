@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-02-01",
         "last_update_date": "2026-10-19",
         "requirements": "None",
-        "category": "GroupMe",
+        "category": "Messaging",
         "notes": "Message Count (stored) and Attachment Count (stored) are the counter values held in "
                  "the groups table; they are not counts of the messages and attachments recovered by "
                  "this artifact. Group Creator and Creator Role are read from the creator's own "
@@ -39,7 +39,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-02-01",
         "last_update_date": "2026-10-19",
         "requirements": "None",
-        "category": "GroupMe",
+        "category": "Messaging",
         "notes": "Message Deletion Time and Message Deletion Actor (as stored) are the messages table's "
                  "deleted_at and deletion_actor columns. deleted_at is 0 where no deletion timestamp is "
                  "stored, reported here as an empty cell rather than an epoch date. The database's own "

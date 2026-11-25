@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-11-15",
         "last_update_date": "2024-11-15",
         "requirements": "none",
-        "category": "Bluesky",
+        "category": "Social Media",
         "notes": "",
         "paths": ('*/xyz.blueskyweb.app/databases/RKStorage*',),
         "output_types": ['html', 'tsv', 'lava'],

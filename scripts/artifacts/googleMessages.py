@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-01-30",
         "last_update_date": "2026-08-10",
         "requirements": "None",
-        "category": "Google Messages",
+        "category": "Messaging",
         "notes": ("Direction comes from the sending participant's sub_id. AOSP treats -2 as the "
                   "marker for a participant other than the device's own, so a sender whose sub_id "
                   "is anything else is the self participant and the message is outgoing. A row "

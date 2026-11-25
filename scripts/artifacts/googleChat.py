@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-02-05",
         "last_update_date": "2026-10-26",
         "requirements": "blackboxprotobuf",
-        "category": "Google Chat",
+        "category": "Messaging",
         "notes": "Record Origin. Live rows come from a normal read of the query. A message is the unique index of topic_messages on (group_id, topic_id, id), not row_id: on hickman_a13 12 of 39 messages held a different row_id in different states. A Recovered row is a message another state in the database's write-ahead log holds and the current topic_messages table does not. An Earlier version row is a non-empty text_body another state held for a message whose current text_body differs, one row per distinct text. A row whose message and text the current state still holds is not reported again. The whole query is run in each state, so a Recovered or Earlier version row's sender and conversation come from the same state as its text. Recovery Method and Recovery Location are filled in only on those rows. Why a message is absent or its text changed is not established here. States are read by scripts/sqlite_wal.py: each readable earlier committed state of the log's current generation (state n is the database after the first n committed transactions, and state 0 the database file without its log; states the reader cannot rebuild exactly are skipped and counted in the run log), the previous generation's left-over frames where its checks pass, and frames after the last commit where SQLite's quick_check passes. Each row is reported as the newest committed state holding it stored it, else the previous generation's newest left-over commit, else the frames after the last commit. Recovery Location names the committed states the row was read in, with their first and last numbers, and the previous log generation with the first and last numbers of its left-over commits; for a row read only after the last commit it names the log's frames after the last commit. Recovery Method is WAL committed states, or WAL uncommitted frames for a row read only after the last commit. On pixel7a_a14 the reader read 4 of the previous generation's 17 left-over commits and no row came from them. No row on the tested images or in the unit test went through the previous-generation or uncommitted-frame wording of Recovery Method and Recovery Location. "
                  "On the tested images no Recovered or Earlier version row was returned, so Record "
                  "Origin held Live on every row and Recovery Method and Recovery Location were empty "
@@ -50,7 +50,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-02-05",
         "last_update_date": "2021-02-05",
         "requirements": "none",
-        "category": "Google Chat",
+        "category": "Messaging",
         "notes": "",
         "paths": ('*/com.google.android.gm/databases/user_accounts/*/dynamite.db*',
                   '*/com.google.android.apps.dynamite/databases/dynamite.db*',
@@ -77,7 +77,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-02-05",
         "last_update_date": "2021-02-05",
         "requirements": "none",
-        "category": "Google Chat",
+        "category": "Messaging",
         "notes": "",
         "paths": ('*/com.google.android.gm/databases/user_accounts/*/dynamite.db*',
                   '*/com.google.android.apps.dynamite/databases/dynamite.db*',
@@ -104,7 +104,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-02-05",
         "last_update_date": "2021-02-05",
         "requirements": "none",
-        "category": "Google Chat",
+        "category": "Messaging",
         "notes": "",
         "paths": ('*/com.google.android.gm/databases/user_accounts/*/dynamite.db*',
                   '*/com.google.android.apps.dynamite/databases/dynamite.db*',

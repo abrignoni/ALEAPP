@@ -11,7 +11,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-05-24",
         "last_update_date": "2026-10-05",
         "requirements": "none",
-        "category": "DeepSeek",
+        "category": "AI Assistants",
         "notes": "Mobile Number retains mobile_number as stored, including empty, whitespace and zero values. SQL NULL renders blank; stored text Not Found is retained. The stored field does not establish phone validity or account availability.",
         "paths": ('*/data/com.deepseek.chat/databases/deepseek_chat.db*'),
         "output_types": ["html", "lava", "tsv"],

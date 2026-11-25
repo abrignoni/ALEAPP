@@ -23,7 +23,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-14",
         "last_update_date": "2026-08-14",
         "requirements": "none",
-        "category": "My Files",
+        "category": "Cloud & Files",
         "notes": "The local_files table is the app's index of local storage. is_hidden and is_trashed "
                  "are integer flags reported as stored. The Cached Thumbnail column shows the app's "
                  "cached preview when FileCache.db links one to the file's path; the preview is a "
@@ -47,7 +47,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-14",
         "last_update_date": "2026-08-14",
         "requirements": "none",
-        "category": "My Files",
+        "category": "Cloud & Files",
         "notes": "analyze_storage rows are reported as stored; what populates the table was not "
                  "exercised, since it was empty on the registered corpora. as_type "
                  "and mediaType are integer category codes reported as stored. The Cached Thumbnail "
@@ -74,7 +74,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-14",
         "last_update_date": "2026-08-14",
         "requirements": "none",
-        "category": "My Files",
+        "category": "Cloud & Files",
         "notes": "frequently_folder rows are reported as stored. Access Count is the mCount "
                  "column as stored; its meaning as a count of folder openings is not established.",
         "paths": ('*/com.sec.android.app.myfiles/databases/Frequency.db*',),
@@ -92,7 +92,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-14",
         "last_update_date": "2026-08-29",
         "requirements": "none",
-        "category": "My Files",
+        "category": "Cloud & Files",
         "notes": "search_history rows are reported as stored; the table was empty on the "
                  "registered corpora. Empty on the "
                  "registered corpora; the layout was mapped against a private Android 16 sample.",
@@ -112,7 +112,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-14",
         "last_update_date": "2026-08-14",
         "requirements": "none",
-        "category": "My Files",
+        "category": "Cloud & Files",
         "notes": "home_item rows are reported as stored. item_type is an integer code reported "
                  "as stored. last_used_time is a small integer (observed -1 to 3), not a "
                  "timestamp, and is reported as stored; its meaning is not established.",
@@ -132,7 +132,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-14",
         "last_update_date": "2026-08-14",
         "requirements": "none",
-        "category": "My Files",
+        "category": "Cloud & Files",
         "notes": "trash_apps rows (a per-app count and size) are reported as stored; the table "
                  "was empty on the registered corpora. Empty on "
                  "the registered corpora; the layout was mapped against a private Android 16 sample.",
@@ -151,7 +151,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-14",
         "last_update_date": "2026-08-14",
         "requirements": "none",
-        "category": "My Files",
+        "category": "Cloud & Files",
         "notes": "Joins operation_history (date, operation type, page) to operation_history_data (source "
                  "and destination paths, in cleartext). This is separate from the My Files Operation "
                  "History artifact, whose paths are encoded and which is limited to Android 10-12: the "

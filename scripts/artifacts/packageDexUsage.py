@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-06",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Android System",
+        "category": "Installed Apps",
         "notes": "Read from the ART Service dex use store at /data/system/package-dex-usage.pb. Reference: "
          "Android Open Source Project, art/libartservice/service/proto/dex_use.proto for the "
          "schema and libartservice/service/java/com/android/server/art/DexUseManagerLocal.java for "
@@ -120,7 +120,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-06",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Android System",
+        "category": "Installed Apps",
         "notes": "Read from the ART Service dex use store at /data/system/package-dex-usage.pb. Reference: "
          "Android Open Source Project, art/libartservice/service/proto/dex_use.proto for the "
          "schema and libartservice/service/java/com/android/server/art/DexUseManagerLocal.java for "
@@ -235,7 +235,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-06",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Android System",
+        "category": "Installed Apps",
         "notes": "Read from the ART Service dex use store at /data/system/package-dex-usage.pb. Reference: "
          "Android Open Source Project, art/libartservice/service/proto/dex_use.proto for the "
          "schema and libartservice/service/java/com/android/server/art/DexUseManagerLocal.java for "

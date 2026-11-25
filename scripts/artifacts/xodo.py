@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-06",
         "requirements": "none",
-        "category": "Xodo PDF",
+        "category": "Cloud & Files",
         "sample_data": {
             "emu_a15_oss_v16": "Xodo PDF 11.0.1 | 1 row",
         },

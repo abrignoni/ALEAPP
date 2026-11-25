@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-06",
         "requirements": "none",
-        "category": "File Commander",
+        "category": "Cloud & Files",
         "sample_data": {
             "emu_a15_oss_v17": "File Commander 10.7.54240 | 1 row",
         },
@@ -36,7 +36,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-06",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "File Commander",
+        "category": "Cloud & Files",
         "sample_data": {
             "emu_a15_oss_v17": "File Commander 10.7.54240 | 0 rows",
         },

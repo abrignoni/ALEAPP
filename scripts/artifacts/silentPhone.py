@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "Silent Phone",
+        "category": "Messaging",
         "notes": "com.silentcircle.silentphone keeps its messages in encrypted "
                  "databases that this artifact does not open. Those are repo_store_enc.db, a "
                  "per-account file ending _axo_store_enc.db, message_indexes.db and "
@@ -55,7 +55,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "Silent Phone",
+        "category": "Messaging",
         "notes": "Every entry from the preference files the application itself writes is "
                  "reported, so entries added by later versions still appear and nothing is "
                  "filtered on a guess at which names matter. Those are the files named "
@@ -87,7 +87,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "Silent Phone",
+        "category": "Messaging",
         "notes": "The app keeps files under cache/objects in a directory "
                  "named for the two parties joined by an underscore, three colons and an underscore, "
                  "then a directory named "

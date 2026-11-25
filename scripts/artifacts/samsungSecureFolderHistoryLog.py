@@ -18,7 +18,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-06-30",
         "last_update_date": "2026-11-18",
         "requirements": "none",
-        "category": "Knox Secure Folder",
+        "category": "Cloud & Files",
         "notes": (
             "Ported from the Samsung Secure Folder History Log Parser by 4n6Wizard: "
             "https://github.com/4n6Wizard/Samsung-HistoryLog-Parser (its README was read at "

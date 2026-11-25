@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-08",
         "last_update_date": "2026-10-25",
         "requirements": "none",
-        "category": "Android Settings",
+        "category": "Device Information",
         "notes": "Every search_index.db found is read once per Android user, and Android User names the "
                  "user whose app folder holds it. Taking the first match instead returned no rows on a "
                  "One UI 8 (Android 16) extraction whose Secure Folder user's copy sorted first and held "

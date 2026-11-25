@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-01-25",
         "last_update_date": "2026-11-23",
         "requirements": "none",
-        "category": "Offline Pages",
+        "category": "Browsers",
         "notes": "Timestamp Modified is the modification time the tool reads from the input for the file as a "
                  "UTC time, to the whole second, such as from a tar header, a zip entry's NTFS (0x000a) or "
                  "extended timestamp (0x5455) field, or the file system of a disk image. When the tool reads "

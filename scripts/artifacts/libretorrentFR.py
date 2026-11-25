@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-09-15",
         "last_update_date": "2026-08-01",
         "requirements": "none",
-        "category": "Libre Torrent",
+        "category": "Cloud & Files",
         "notes": "The two FastResume columns are read by position over 'SELECT * from FastResume'; the "
                  "first column is reported as the info hash and the second is decoded as bencoded "
                  "data. The app version and data this order was taken from are not recorded, and "

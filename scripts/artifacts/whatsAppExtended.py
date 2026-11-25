@@ -15,7 +15,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-14",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "WhatsApp",
+        "category": "Messaging",
         "notes": "Each row is one entry in the message_add_on_reaction table joined to its "
                  "message_add_on record and the message it reacted to. In every tested image the "
                  "add-on record's message_add_on_type was 56 for all reaction rows; the value is "
@@ -51,7 +51,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-14",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "WhatsApp",
+        "category": "Messaging",
         "notes": "message_edit_info holds a message row id (message_row_id), original_key_id, "
                  "edited_timestamp and sender_timestamp; they are reported under Original Key ID, "
                  "edited_timestamp and Sender Timestamp as stored, and what each marks is not "
@@ -85,7 +85,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-14",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "WhatsApp",
+        "category": "Messaging",
         "notes": "Rows in message_revoked joined to the message row they reference. Across all "
                  "tested images (283 rows) text_data on the referenced row was empty, and this "
                  "artifact reports text_data as currently stored, including any nonempty value; the "
@@ -122,7 +122,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-14",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "WhatsApp",
+        "category": "Messaging",
         "notes": "One row per poll option, joined to the poll's message row; the question is the "
                  "message row's text_data. Vote Total is the integer stored in "
                  "message_poll_option.vote_total, as stored. The per-voter tables "
@@ -156,7 +156,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-14",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "WhatsApp",
+        "category": "Messaging",
         "notes": "One row per recipient per message from the receipt_user table. The three "
                  "timestamp columns carry the table's own column names (receipt_timestamp, "
                  "read_timestamp, played_timestamp); the database does not document their exact "
@@ -190,7 +190,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-14",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "WhatsApp",
+        "category": "Messaging",
         "notes": "Rows in message_system joined to the message row and to the companion tables "
                  "that hold decoded details where present: affected participants "
                  "(message_system_chat_participant), old and new number "

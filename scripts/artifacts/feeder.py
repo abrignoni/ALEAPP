@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-01",
         "last_update_date": "2026-09-01",
         "requirements": "none",
-        "category": "Feeder",
+        "category": "Music, Video & News",
         "sample_data": {
             "emu_a15_oss_v5": "Feeder 2.22.0 | 1 rows",
         },
@@ -31,7 +31,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-01",
         "last_update_date": "2026-09-01",
         "requirements": "none",
-        "category": "Feeder",
+        "category": "Music, Video & News",
         "sample_data": {
             "emu_a15_oss_v5": "Feeder 2.22.0 | 16 rows",
         },

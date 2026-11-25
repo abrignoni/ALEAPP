@@ -10,7 +10,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-03-12",
         "last_update_date": "2026-10-09",
         "requirements": "xmltodict, xml",
-        "category": "Android Battery Statistics",
+        "category": "Device Information",
         "notes": "Prefix Meaning is this module's reading of the mode letters. Lowercase letters "
                  "come from the step's initial mode bits and uppercase letters from its modified "
                  "mode bits, which a comment in AOSP BatteryStats.java at android-14.0.0_r1 (line "
@@ -44,7 +44,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-31",
         "last_update_date": "2026-10-31",
         "requirements": "xmltodict, xml",
-        "category": "Android Battery Statistics",
+        "category": "Device Information",
         "notes": "One row per upd or rem element inside an item element, in file order. Marco Neumann "
                  "described these records in his post Ten Days of Android Battery History and App Updates "
                  "(https://bebinary4n6.blogspot.com/2026/10/ten-days-of-android-battery-history-and.html). "

@@ -5,7 +5,7 @@ __artifacts_v2__ = {'get_fitbit_activity': {'name': 'Fitbit - Activity',
                          'creation_date': '2021-04-23',
                          'last_update_date': '2026-08-01',
                          'requirements': 'none',
-                         'category': 'Fitbit',
+                         'category': 'Health & Fitness',
                          'notes': 'ACTIVITY_LOG_ENTRY.DURATION is reported as stored and again divided '
                                   'by 60. The sleep summary in this same module divides its own '
                                   'DURATION column by 60000, so the unit of the activity DURATION '
@@ -23,7 +23,7 @@ __artifacts_v2__ = {'get_fitbit_activity': {'name': 'Fitbit - Activity',
                        'creation_date': '2021-04-23',
                        'last_update_date': '2026-01-12',
                        'requirements': 'none',
-                       'category': 'Fitbit',
+                       'category': 'Health & Fitness',
                        'notes': 'No sample_data is recorded for this artifact; its timestamps are read '
                                 'as Unix milliseconds without a tested sample, and only the first '
                                 'matching database is read.',
@@ -36,7 +36,7 @@ __artifacts_v2__ = {'get_fitbit_activity': {'name': 'Fitbit - Activity',
                          'creation_date': '2021-04-23',
                          'last_update_date': '2026-01-12',
                          'requirements': 'none',
-                         'category': 'Fitbit',
+                         'category': 'Health & Fitness',
                          'notes': 'No sample_data is recorded for this artifact; its timestamps are '
                                   'read as Unix milliseconds without a tested sample, and only the '
                                   'first matching database is read.',
@@ -49,7 +49,7 @@ __artifacts_v2__ = {'get_fitbit_activity': {'name': 'Fitbit - Activity',
                        'creation_date': '2021-04-23',
                        'last_update_date': '2026-01-12',
                        'requirements': 'none',
-                       'category': 'Fitbit',
+                       'category': 'Health & Fitness',
                        'notes': 'No sample_data is recorded for this artifact; its timestamps are read '
                                 'as Unix milliseconds without a tested sample, and only the first '
                                 'matching database is read.',
@@ -62,7 +62,7 @@ __artifacts_v2__ = {'get_fitbit_activity': {'name': 'Fitbit - Activity',
                       'creation_date': '2021-04-23',
                       'last_update_date': '2026-01-12',
                       'requirements': 'none',
-                      'category': 'Fitbit',
+                      'category': 'Health & Fitness',
                       'notes': 'No sample_data is recorded for this artifact; its timestamps are read '
                                'as Unix milliseconds without a tested sample, and only the first '
                                'matching database is read.',
@@ -76,7 +76,7 @@ __artifacts_v2__ = {'get_fitbit_activity': {'name': 'Fitbit - Activity',
                              'creation_date': '2021-04-23',
                              'last_update_date': '2026-01-12',
                              'requirements': 'none',
-                             'category': 'Fitbit',
+                             'category': 'Health & Fitness',
                              'notes': 'No sample_data is recorded for this artifact; its timestamps are '
                                       'read as Unix milliseconds without a tested sample, and only the '
                                       'first matching database is read.',
@@ -90,7 +90,7 @@ __artifacts_v2__ = {'get_fitbit_activity': {'name': 'Fitbit - Activity',
                               'creation_date': '2021-04-23',
                               'last_update_date': '2026-08-01',
                               'requirements': 'none',
-                              'category': 'Fitbit',
+                              'category': 'Health & Fitness',
                               'notes': 'SLEEP_LOG.DURATION is reported as stored and again divided by '
                                        '60000. The divisor assumes the column holds milliseconds; the '
                                        'activity log in this same module divides its own DURATION '
@@ -107,7 +107,7 @@ __artifacts_v2__ = {'get_fitbit_activity': {'name': 'Fitbit - Activity',
                         'creation_date': '2021-04-23',
                         'last_update_date': '2026-01-12',
                         'requirements': 'none',
-                        'category': 'Fitbit',
+                        'category': 'Health & Fitness',
                         'notes': "The table's own FRIEND column is shown in the Friend column as "
                                  'stored, so a row is not by itself a friend. No sample_data is '
                                  'recorded for this artifact, and only the first matching database is '
@@ -121,7 +121,7 @@ __artifacts_v2__ = {'get_fitbit_activity': {'name': 'Fitbit - Activity',
                      'creation_date': '2021-04-23',
                      'last_update_date': '2026-10-04',
                      'requirements': 'none',
-                     'category': 'Fitbit',
+                     'category': 'Health & Fitness',
                      'notes': 'Joined Date (UTC) and Date of Birth (UTC) show USER_PROFILE.JOINED_DATE '
                               'and DATE_OF_BIRTH read as Unix milliseconds and written out in UTC as '
                               'plain text. The two columns are not typed as date-times, so a report '
@@ -154,7 +154,7 @@ __artifacts_v2__ = {'get_fitbit_activity': {'name': 'Fitbit - Activity',
                       'creation_date': '2021-04-23',
                       'last_update_date': '2026-01-12',
                       'requirements': 'none',
-                      'category': 'Fitbit',
+                      'category': 'Health & Fitness',
                       'notes': 'No sample_data is recorded for this artifact; its timestamps are read '
                                'as Unix milliseconds without a tested sample, and only the first '
                                'matching database is read.',
@@ -168,7 +168,7 @@ __artifacts_v2__ = {'get_fitbit_activity': {'name': 'Fitbit - Activity',
                                'creation_date': '2021-04-23',
                                'last_update_date': '2026-01-12',
                                'requirements': 'none',
-                               'category': 'Fitbit',
+                               'category': 'Health & Fitness',
                                'notes': 'No sample_data is recorded for this artifact; its values are '
                                         'reported as stored, and only the first matching database is '
                                         'read.',
@@ -182,7 +182,7 @@ __artifacts_v2__ = {'get_fitbit_activity': {'name': 'Fitbit - Activity',
                                 'creation_date': '2021-04-23',
                                 'last_update_date': '2026-10-04',
                                 'requirements': 'none',
-                                'category': 'Fitbit',
+                                'category': 'Health & Fitness',
                                 'notes': 'ActivityExerciseEntity.duration is reported as stored under '
                                          "'Duration (as stored)' and again divided by 60000 under "
                                          "'Duration / 60000', with any remainder dropped. The divisor "
@@ -203,7 +203,7 @@ __artifacts_v2__ = {'get_fitbit_activity': {'name': 'Fitbit - Activity',
                              'creation_date': '2021-04-23',
                              'last_update_date': '2026-08-01',
                              'requirements': 'none',
-                             'category': 'Fitbit',
+                             'category': 'Health & Fitness',
                              'notes': 'SedentaryDataEntity.longestDuration is reported as stored; the '
                                       'database does not record its unit, so it is not labelled as '
                                       'minutes. The two totalMinutes* columns are named as minutes by '
@@ -220,7 +220,7 @@ __artifacts_v2__ = {'get_fitbit_activity': {'name': 'Fitbit - Activity',
                               'creation_date': '2021-04-23',
                               'last_update_date': '2026-01-12',
                               'requirements': 'none',
-                              'category': 'Fitbit',
+                              'category': 'Health & Fitness',
                               'notes': 'No sample_data is recorded for this artifact; its values are '
                                        'reported as stored, and only the first matching database is '
                                        'read.',
@@ -234,7 +234,7 @@ __artifacts_v2__ = {'get_fitbit_activity': {'name': 'Fitbit - Activity',
                                   'creation_date': '2021-04-23',
                                   'last_update_date': '2026-01-12',
                                   'requirements': 'none',
-                                  'category': 'Fitbit',
+                                  'category': 'Health & Fitness',
                                   'notes': 'No sample_data is recorded for this artifact; its '
                                            'timestamps are read as Unix milliseconds without a tested '
                                            'sample, and only the first matching database is read.',
@@ -248,7 +248,7 @@ __artifacts_v2__ = {'get_fitbit_activity': {'name': 'Fitbit - Activity',
                                 'creation_date': '2021-04-23',
                                 'last_update_date': '2026-10-04',
                                 'requirements': 'none',
-                                'category': 'Fitbit',
+                                'category': 'Health & Fitness',
                                 'notes': 'The column headed Time is ExerciseSummaryEntity.time; what '
                                          'that time marks is not established. No registered image was '
                                          'found to hold this database (20 zip images and 2 phone tar '
@@ -265,7 +265,7 @@ __artifacts_v2__ = {'get_fitbit_activity': {'name': 'Fitbit - Activity',
                            'creation_date': '2021-04-23',
                            'last_update_date': '2026-01-12',
                            'requirements': 'none',
-                           'category': 'Fitbit',
+                           'category': 'Health & Fitness',
                            'notes': 'No sample_data is recorded for this artifact; its timestamps are '
                                     'read as Unix milliseconds without a tested sample, and only the '
                                     'first matching database is read.',
@@ -279,7 +279,7 @@ __artifacts_v2__ = {'get_fitbit_activity': {'name': 'Fitbit - Activity',
                                  'creation_date': '2021-04-23',
                                  'last_update_date': '2026-01-12',
                                  'requirements': 'none',
-                                 'category': 'Fitbit',
+                                 'category': 'Health & Fitness',
                                  'notes': 'No sample_data is recorded for this artifact; its timestamps '
                                           'are read as Unix milliseconds without a tested sample, and '
                                           'only the first matching database is read. Every selected '
@@ -297,7 +297,7 @@ __artifacts_v2__ = {'get_fitbit_activity': {'name': 'Fitbit - Activity',
                           'creation_date': '2021-04-23',
                           'last_update_date': '2026-08-01',
                           'requirements': 'none',
-                          'category': 'Fitbit',
+                          'category': 'Health & Fitness',
                           'notes': 'HeartRateStatEntity.value is reported as stored under the header '
                                    "'Value'; the database does not record its unit, so it is not "
                                    'published as BPM. No sample_data is recorded for this artifact; its '
@@ -312,7 +312,7 @@ __artifacts_v2__ = {'get_fitbit_activity': {'name': 'Fitbit - Activity',
                             'creation_date': '2021-04-23',
                             'last_update_date': '2026-08-01',
                             'requirements': 'none',
-                            'category': 'Fitbit',
+                            'category': 'Health & Fitness',
                             'notes': 'LivePaceEntity.timeSeconds is decoded as a Unix epoch in seconds, '
                                      'following the column name; this decoding has not been checked '
                                      'against a sample database. LivePaceEntity.value is reported as '
@@ -329,7 +329,7 @@ __artifacts_v2__ = {'get_fitbit_activity': {'name': 'Fitbit - Activity',
                              'creation_date': '2021-04-23',
                              'last_update_date': '2026-01-12',
                              'requirements': 'none',
-                             'category': 'Fitbit',
+                             'category': 'Health & Fitness',
                              'notes': 'No sample_data is recorded for this artifact; its timestamps are '
                                       'read as Unix milliseconds without a tested sample, and only the '
                                       'first matching database is read.',
@@ -342,7 +342,7 @@ __artifacts_v2__ = {'get_fitbit_activity': {'name': 'Fitbit - Activity',
                            'creation_date': '2021-04-23',
                            'last_update_date': '2026-08-01',
                            'requirements': 'none',
-                           'category': 'Fitbit',
+                           'category': 'Health & Fitness',
                            'notes': 'PassiveAzmEntity.value is reported as stored under the header '
                                     "'Value'; the database does not record what it counts, so it is not "
                                     'published as points. No sample_data is recorded for this artifact; '
@@ -358,7 +358,7 @@ __artifacts_v2__ = {'get_fitbit_activity': {'name': 'Fitbit - Activity',
                               'creation_date': '2021-04-23',
                               'last_update_date': '2026-01-12',
                               'requirements': 'none',
-                              'category': 'Fitbit',
+                              'category': 'Health & Fitness',
                               'notes': 'No sample_data is recorded for this artifact; its timestamps '
                                        'are read as Unix milliseconds without a tested sample, and only '
                                        'the first matching database is read.',
@@ -373,7 +373,7 @@ __artifacts_v2__ = {'get_fitbit_activity': {'name': 'Fitbit - Activity',
                                  'creation_date': '2021-04-23',
                                  'last_update_date': '2026-01-12',
                                  'requirements': 'none',
-                                 'category': 'Fitbit',
+                                 'category': 'Health & Fitness',
                                  'notes': 'No sample_data is recorded for this artifact; its timestamps '
                                           'are read as Unix milliseconds without a tested sample, and '
                                           'only the first matching database is read.',

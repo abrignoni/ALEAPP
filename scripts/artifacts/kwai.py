@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-11",
         "last_update_date": "2026-09-11",
         "requirements": "none",
-        "category": "Kwai",
+        "category": "Social Media",
         "sample_data": {
             "emu_a15_oss2_v3": "Kwai 13.7.50.646403 | 11 rows",
         },
@@ -82,7 +82,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-11",
         "last_update_date": "2026-09-11",
         "requirements": "none",
-        "category": "Kwai",
+        "category": "Social Media",
         "sample_data": {
             "emu_a15_oss2_v3": "Kwai 13.7.50.646403 | 1 rows",
         },

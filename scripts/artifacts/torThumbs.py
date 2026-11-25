@@ -9,7 +9,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-12-23",
         "last_update_date": "2026-11-23",
         "requirements": "none",
-        "category": "TOR",
+        "category": "Browsers",
         "notes": "File Modified is the modification time the tool reads from the input for the "
                  "file as a UTC time, to the whole second, such as from a tar header or a zip "
                  "entry's NTFS or extended timestamp field. When the tool reads no UTC time, File"

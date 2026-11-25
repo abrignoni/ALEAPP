@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-06",
         "requirements": "none",
-        "category": "File Manager",
+        "category": "Cloud & Files",
         "sample_data": {
             "emu_a15_oss_v16": "Cx File Explorer 2.7.8 and File Manager+ 3.8.3 | 29 rows",
         },
@@ -51,7 +51,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-06",
         "requirements": "none",
-        "category": "File Manager",
+        "category": "Cloud & Files",
         "sample_data": {
             "emu_a15_oss_v16": "Cx File Explorer 2.7.8 and File Manager+ 3.8.3 | 170 rows",
         },

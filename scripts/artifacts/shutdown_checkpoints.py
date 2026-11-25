@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-01-22",
         "last_update_date": "2025-08-09",
         "requirements": "none",
-        "category": "Power Events",
+        "category": "Device Information",
         "notes": "",
         "paths": ('*/system/shutdown-checkpoints/checkpoints-*'),
         "output_types": "standard",

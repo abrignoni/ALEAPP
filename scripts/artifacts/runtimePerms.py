@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-01-25",
         "last_update_date": "2021-01-25",
         "requirements": "none",
-        "category": "Permissions",
+        "category": "Installed Apps",
         "notes": "",
         "paths": ('*/system/users/*/runtime-permissions.xml', '*/misc_de/*/apexdata/com.android.permission/runtime-permissions.xml'),
         "output_types": ['html', 'tsv', 'lava'],

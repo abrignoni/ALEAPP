@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2020-12-24",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Viber",
+        "category": "Messaging",
         "notes": ("Call Direction is decoded from the calls table 'type' column. Direction/status "
                   "value mappings are not vendor-documented and the evidence for them is not "
                   "recorded here; unrecognized values are reported as stored, so a value the "
@@ -36,7 +36,7 @@ __artifacts_v2__ = {
         "creation_date": "2020-12-24",
         "last_update_date": "2020-12-24",
         "requirements": "none",
-        "category": "Viber",
+        "category": "Messaging",
         "notes": "",
         "paths": ('*/com.viber.voip/databases/*',),
         "output_types": ['html', 'tsv', 'lava'],
@@ -54,7 +54,7 @@ __artifacts_v2__ = {
         "creation_date": "2020-12-24",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Viber",
+        "category": "Messaging",
         "notes": ("Direction is decoded from the messages table 'send_type' column. From Phone "
                   "Number is the number of the participant the message row names, and Recipients "
                   "lists the numbers of the other participant rows of the same conversation; it is "
@@ -100,7 +100,7 @@ __artifacts_v2__ = {
         "creation_date": "2020-12-24",
         "last_update_date": "2020-12-24",
         "requirements": "none",
-        "category": "Viber",
+        "category": "Messaging",
         "notes": "",
         "paths": ('*/com.viber.voip/databases/*',),
         "output_types": ['html', 'tsv', 'lava'],

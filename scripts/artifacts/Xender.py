@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2020-12-24",
         "last_update_date": "2026-08-01",
         "requirements": "none",
-        "category": "File Transfer",
+        "category": "Cloud & Files",
         "notes": ("One row per row of the profile table in cn.xender/databases/trans-history-db. "
                   "The table is the app's record of the remote devices it has connected to: "
                   "device_id, the nickname that device advertised, its device type, how many "
@@ -46,7 +46,7 @@ __artifacts_v2__ = {
         "creation_date": "2020-12-24",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "File Transfer",
+        "category": "Cloud & Files",
         "notes": ("Direction (as stored) is the new_history 'c_direction' value without "
                   "a direction lookup. No source or measurement for its meaning is recorded "
                   "here; a value of 1 is not labelled as an outgoing transfer.\n"

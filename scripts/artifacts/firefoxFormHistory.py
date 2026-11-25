@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-01-12",
         "last_update_date": "2022-01-12",
         "requirements": "none",
-        "category": "Firefox",
+        "category": "Browsers",
         "notes": "firstUsed and lastUsed are read as microseconds. The artifact produced no rows on the one image listed in sample_data, so that reading is not exercised.",
         "paths": ('*/org.mozilla.firefox/files/mozilla/*.default/formhistory.sqlite*',),
         "output_types": "standard",

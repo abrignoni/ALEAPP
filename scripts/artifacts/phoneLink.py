@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-04",
         "last_update_date": "2026-09-04",
         "requirements": "none",
-        "category": "Phone Link",
+        "category": "Smart Home & Connected Devices",
         "notes": "Read from the app's ACCOUNT_NAME Preferences DataStore file, a protobuf key and "
                  "value store. Each key is the account name joined to its type by a colon, and "
                  "each value is a small JSON object holding the same type and a username, which "
@@ -72,7 +72,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Phone Link",
+        "category": "Smart Home & Connected Devices",
         "notes": "com.microsoft.appmanager is the phone side of Microsoft Phone Link, which pairs "
                  "a phone with a Windows PC. content_access_event is the only table in this "
                  "package holding dated event rows in the current state on the corpora below. start_time is Unix "
@@ -129,7 +129,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "Phone Link",
+        "category": "Smart Home & Connected Devices",
         "notes": "phoneAppsTable holds one row per application the Phone Link app listed, with a "
                  "name, package name and version; how the app builds or uses the list is not "
                  "sourced here. Whether every row names an application installed on the phone "

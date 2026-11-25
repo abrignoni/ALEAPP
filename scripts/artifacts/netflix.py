@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Netflix",
+        "category": "Music, Video & News",
         "notes": "eventType, network and offline are stored as integers. The enum constant names "
                  "are not present in the app binary checked, whose version is not recorded here, "
                  "so the integers are reported as "
@@ -52,7 +52,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
-        "category": "Netflix",
+        "category": "Music, Video & News",
         "notes": "streamId values overlap the playableId values in the playEvent table, so the "
                  "same title lookup is applied here. The overlap was not total on the populated "
                  "extraction the row producing path was exercised against: some stream ids "
@@ -87,7 +87,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
-        "category": "Netflix",
+        "category": "Music, Video & News",
         "notes": "bookmarkInMs is reported as stored and also formatted as hours, minutes and "
                  "seconds. Titles are filled in from the offlineFalkorPlayable table and the "
                  "Apollo cache where the same video id appears there. Artwork is shown when a file "
@@ -119,7 +119,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Netflix",
+        "category": "Music, Video & News",
         "notes": "The table carries many columns; the ones reported here are the descriptive "
                  "fields. videoType, maturityLevel and the boolean-looking integers are reported "
                  "as stored because the app's constant names are not present in the app binary "
@@ -158,7 +158,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
-        "category": "Netflix",
+        "category": "Music, Video & News",
         "notes": "Profile identifiers also appear as the file name of the Apollo cache database "
                  "and of the cached avatar under files/img/of/profiles, and those are used to add "
                  "rows for profiles the table itself does not list. isKids is reported as stored. "
@@ -188,7 +188,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
-        "category": "Netflix",
+        "category": "Music, Video & News",
         "notes": "The cache file name carries the profile identifier, which is reported per row. "
                  "The records table holds normalised GraphQL objects keyed as Video.<video id>; "
                  "this artifact reads those keys and the Video.<video id>.tags.<n> records that "
@@ -219,7 +219,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
-        "category": "Netflix",
+        "category": "Music, Video & News",
         "notes": "The files carry an .img extension whatever the format; content is identified by "
                  "signature, and WebP and PNG were both observed. The file name is the video id "
                  "for images under videos and the profile id for images under profiles, sometimes "
@@ -254,7 +254,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Netflix",
+        "category": "Music, Video & News",
         "notes": "One row per nfxpref.xml file when that file, or the CurrentCountryCode.xml in "
                  "the same shared_prefs folder, carries at least one of the reported values. "
                  "Current Country Code is the code value of the CurrentCountryCode.xml in the "
@@ -301,7 +301,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
-        "category": "Netflix",
+        "category": "Music, Video & News",
         "notes": "The file also holds persistent_<number> entries, which are not reported here; "
                  "every key that starts with persistent_ is left out. The credential bearing "
                  "keys named in the account artifact's notes and the signInConfigData key are "
@@ -327,7 +327,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Netflix",
+        "category": "Music, Video & News",
         "notes": "Each file is parsed as JSON. A top level array is read as a list of entries and "
                  "a single JSON object is read as one entry; a file that holds anything else is "
                  "skipped. What the app does with these files is not established here. Entries "

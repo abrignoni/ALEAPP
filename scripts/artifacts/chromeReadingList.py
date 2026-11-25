@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-16",
         "last_update_date": "2026-11-16",
         "requirements": "none",
-        "category": "Chrome",
+        "category": "Browsers",
         "notes": ('Reads the Sync Data/LevelDB folder of Chromium-based browsers: app_chrome/<profile>/Sync'
                   ' Data/LevelDB, and app_opera/Sync Data/LevelDB for Opera, read only when the directory '
                   'directly above app_chrome or app_opera is shaped like a package name, with the store '

@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-05-04",
         "last_update_date": "2024-05-04",
         "requirements": "none",
-        "category": "K-9 Mail",
+        "category": "Email",
         "notes": "Based on https://bebinary4n6.blogspot.com/2024/05/app-k-9-mail-for-android.html",
         "paths": ('*/com.fsck.k9/databases/*',),
         "output_types": "standard",
@@ -20,7 +20,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-05-04",
         "last_update_date": "2026-11-22",
         "requirements": "BeautifulSoup",
-        "category": "K-9 Mail",
+        "category": "Email",
         "notes": "Based on https://bebinary4n6.blogspot.com/2024/05/app-k-9-mail-for-android.html"
                  ". Date is the messages.date column and Internal Date is the "
                  "messages.internal_date column, both read as Unix milliseconds and shown in UTC. "

@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-06",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Cloudflare WARP",
+        "category": "Network & Connectivity",
         "sample_data": {
             "emu_a15_oss_v16": "1.1.1.1 WARP 6.38.9 | 12 rows",
         },

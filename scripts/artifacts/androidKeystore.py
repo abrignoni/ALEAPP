@@ -18,7 +18,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-15",
         "last_update_date": "2026-11-15",
         "requirements": "none",
-        "category": "Encryption and Credentials",
+        "category": "Accounts & Credentials",
         "notes": "One row per keyentry row of persistent.sqlite, joined to its keymetadata, keyparameter, "
                  "blobentry and grant rows; the tables are those created in Keystore 2.0's database.rs "
                  "(https://android.googlesource.com/platform/system/security/+/5a37034a3a97492cca75928193363c4f13bce5d3/keystore2/src/database.rs#922). Created is keymetadata tag 0, CreationDate, the first "
@@ -118,7 +118,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-15",
         "last_update_date": "2026-11-23",
         "requirements": "none",
-        "category": "Encryption and Credentials",
+        "category": "Accounts & Credentials",
         "notes": "Before Keystore 2.0, Keystore kept one file per entry under misc/keystore/user_<Android "
                  "user>/, named <uid>_<prefix>_<encoded alias>, with the entry's characteristics in "
                  ".<uid>_chr_<prefix>_<encoded alias> and the user's master key in .masterkey "

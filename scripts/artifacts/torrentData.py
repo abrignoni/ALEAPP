@@ -9,7 +9,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-09-15",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Torrent Data",
+        "category": "Cloud & Files",
         "notes": "One row per .torrent file read. In the Path column each listed file is one "
                  "line: the folder is every component of the file's path list except the last, "
                  "joined with '/', and the file name is the last component. The info hash is "
