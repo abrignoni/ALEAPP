@@ -25,6 +25,7 @@ from leapp_functions.app.gui.settings import SettingsControl
 from leapp_functions.app.gui.source import SourceScreen
 from leapp_functions.app.gui.status_bar import StatusBar
 import aleapp
+from scripts import signal_backup
 from scripts.version_info import check_runtime_dependencies
 
 MIN_SIZE = (1000, 700)
@@ -35,11 +36,17 @@ SCREENS = {"case": CaseScreen, "source": SourceScreen, "artifacts": ArtifactsScr
 
 
 def crunch(request):
-    """ The parser. """
-    return aleapp.crunch_artifacts(request.plugins, request.detected.kind, request.input_path,
-                                   request.out_params, True, request.loader, request.case,
-                                   request.profile, image_password=request.image_keys,
-                                   found_members=request.found, hash_files=request.hash_files)
+    """ The parser. The Signal recovery key is held for this run only, as the command line
+    holds it: never written anywhere, and cleared when the run ends, whatever its end. """
+    key = request.secrets.get("signal_recovery_key")
+    signal_backup.set_recovery_key(signal_backup.normalise_recovery_key(key) if key else None)
+    try:
+        return aleapp.crunch_artifacts(request.plugins, request.detected.kind, request.input_path,
+                                       request.out_params, True, request.loader, request.case,
+                                       request.profile, image_password=request.image_keys,
+                                       found_members=request.found, hash_files=request.hash_files)
+    finally:
+        signal_backup.set_recovery_key(None)
 
 
 class MainWindow(tk.Tk):
