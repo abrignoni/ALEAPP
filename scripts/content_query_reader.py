@@ -305,6 +305,7 @@ URIS = (
     Uri('sms', 'content://sms', None, 'sms/sms.txt'),
     Uri('mms', 'content://mms', None, 'mms/mms.txt'),
     Uri('mms_part', 'content://mms/part', None, 'mms/mms_part.txt'),
+    Uri('mms_addr', 'content://mms/addr', None, 'mms/mms_addr.txt'),
     Uri('call_log', 'content://call_log/calls', None, 'call_log/call_log_calls.txt'),
     Uri('contacts', 'content://com.android.contacts/contacts', 'contacts_contacts.txt',
         'com.android.contacts/com.android.contacts_contacts.txt'),

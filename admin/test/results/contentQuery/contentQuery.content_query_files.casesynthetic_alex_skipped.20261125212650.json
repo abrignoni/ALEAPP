@@ -5,20 +5,20 @@
     "function_name": "content_query_files",
     "case_number": "casesynthetic_alex_skipped",
     "number_of_columns": 9,
-    "number_of_rows": 10,
-    "total_data_size_bytes": 2827,
+    "number_of_rows": 11,
+    "total_data_size_bytes": 3039,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/contentQuery/testdata.contentQuery.content_query_files.casesynthetic_alex_skipped.zip",
-    "start_time": "2026-11-25T14:43:40.856817+00:00",
-    "end_time": "2026-11-25T14:43:40.955778+00:00",
-    "run_time_seconds": 0.0003619194030761719,
+    "start_time": "2026-11-25T21:26:50.686269+00:00",
+    "end_time": "2026-11-25T21:26:50.785741+00:00",
+    "run_time_seconds": 0.002355337142944336,
     "last_commit": {
-      "hash": "Uncommitted",
-      "author_name": "N/A",
-      "author_email": "N/A",
-      "date": "2026-11-25T11:43:40.951993",
-      "message": "File not yet committed to git"
+      "hash": "aa6e33b09730ad7e8af396fc1ad75b0279b31154",
+      "author_name": "Maximiliano Telmo",
+      "author_email": "50964800+Maxitelmo@users.noreply.github.com",
+      "date": "2026-11-25T12:06:33-03:00",
+      "message": "Read saved content query text from android_triage and ALEX raw text output"
     }
   },
   "headers": [
@@ -49,10 +49,10 @@
       "ALEX_SYNTH0001/content_provider_SYNTH0001",
       "content://mms",
       "mms/mms.txt",
-      "no file",
+      "rows",
+      2,
       "",
-      "unknown: ALEX writes no file when the query printed No result found, an error, or text that holds one of its four error strings anywhere, including inside a value",
-      "",
+      "_id, thread_id, date, date_sent, msg_box, read, sub, ct_t, m_type, seen, sub_id, creator, text_only",
       "MMS (content query)"
     ],
     [
@@ -65,6 +65,17 @@
       "unknown: ALEX writes no file when the query printed No result found, an error, or text that holds one of its four error strings anywhere, including inside a value",
       "",
       "MMS Parts (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0001/content_provider_SYNTH0001",
+      "content://mms/addr",
+      "mms/mms_addr.txt",
+      "no file",
+      "",
+      "unknown: ALEX writes no file when the query printed No result found, an error, or text that holds one of its four error strings anywhere, including inside a value",
+      "",
+      "MMS Addresses (content query)"
     ],
     [
       "ALEX",

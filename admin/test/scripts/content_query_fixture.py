@@ -9,9 +9,12 @@ write. Four cases are built:
 * ``alex``: an ALEX raw text folder, saved with CRLF line endings as Path.write_text does on
   Windows, with multi-line values, a value that holds ', total=', a value that holds the
   name of the next column (', seen='), a value line that starts with 'Row: ', NULL, BLOB
-  and empty values, MMS parts, and a file of a URI the artifacts do not read;
+  and empty values, MMS parts, MMS addresses (FROM, TO, CC and BCC rows, a NULL address,
+  a msg_id with no MMS row and a type that is not an address field), and a file of a URI
+  the artifacts do not read;
 * ``alex_skipped``: an ALEX folder without sms.txt (what ALEX leaves when a body holds
-  'No result found'), with a call log;
+  'No result found') and without mms_addr.txt, with a call log and MMS rows whose
+  addresses are then unknown;
 * ``triage``: an android_triage folder with LF line endings, 'No result found.', an empty
   file (a failed query, whose error went to the terminal), multi-line values, a contacts
   data dump whose hash_id ends with a line break on every row, the tool's own log and
@@ -70,6 +73,27 @@ MMS = rows(
     [('_id', '8'), ('thread_id', '5'), ('date', '1767247200'), ('date_sent', '0'), ('msg_box', '2'),
      ('read', '1'), ('sub', 'Holiday\nphotos'), ('ct_t', 'application/vnd.wap.multipart.related'),
      ('m_type', '128'), ('seen', '1'), ('sub_id', '1'), ('creator', 'com.example.messaging'), ('text_only', '1')],
+)
+
+MMS_ADDR = rows(
+    [('_id', '30'), ('msg_id', '7'), ('contact_id', 'NULL'), ('address', '+15550100003'), ('type', '137'),
+     ('charset', '106'), ('sub_id', '1')],
+    [('_id', '31'), ('msg_id', '7'), ('contact_id', 'NULL'), ('address', 'insert-address-token'), ('type', '151'),
+     ('charset', '106'), ('sub_id', '1')],
+    [('_id', '32'), ('msg_id', '7'), ('contact_id', 'NULL'), ('address', '+15550100004'), ('type', '130'),
+     ('charset', '106'), ('sub_id', '1')],
+    [('_id', '33'), ('msg_id', '7'), ('contact_id', 'NULL'), ('address', 'test.user@example.com'), ('type', '130'),
+     ('charset', '106'), ('sub_id', '1')],
+    [('_id', '34'), ('msg_id', '8'), ('contact_id', 'NULL'), ('address', 'insert-address-token'), ('type', '137'),
+     ('charset', '106'), ('sub_id', '1')],
+    [('_id', '35'), ('msg_id', '8'), ('contact_id', 'NULL'), ('address', '+15550100003'), ('type', '151'),
+     ('charset', '106'), ('sub_id', '1')],
+    [('_id', '36'), ('msg_id', '8'), ('contact_id', 'NULL'), ('address', 'NULL'), ('type', '129'),
+     ('charset', 'NULL'), ('sub_id', '1')],
+    [('_id', '37'), ('msg_id', '99'), ('contact_id', 'NULL'), ('address', '+15550100005'), ('type', '137'),
+     ('charset', '106'), ('sub_id', '1')],
+    [('_id', '38'), ('msg_id', '8'), ('contact_id', 'NULL'), ('address', '+15550100006'), ('type', '140'),
+     ('charset', '106'), ('sub_id', '1')],
 )
 
 MMS_PART = rows(
@@ -183,6 +207,7 @@ CASES = {
         f'{ALEX_ROOT}/sms/sms.txt': crlf(SMS),
         f'{ALEX_ROOT}/mms/mms.txt': crlf(MMS),
         f'{ALEX_ROOT}/mms/mms_part.txt': crlf(MMS_PART),
+        f'{ALEX_ROOT}/mms/mms_addr.txt': crlf(MMS_ADDR),
         f'{ALEX_ROOT}/call_log/call_log_calls.txt': crlf(CALLS),
         f'{ALEX_ROOT}/com.android.contacts/com.android.contacts_contacts.txt': crlf(CONTACTS),
         f'{ALEX_ROOT}/com.android.contacts/com.android.contacts_data_phones.txt': crlf(PHONES),
@@ -193,6 +218,7 @@ CASES = {
     },
     'alex_skipped': {
         f'{ALEX_ROOT}/call_log/call_log_calls.txt': CALLS,
+        f'{ALEX_ROOT}/mms/mms.txt': MMS,
     },
     'triage': {
         f'{TRIAGE_ROOT}/20261125_10_15_30_contentprovider.txt': '[*] Content Provider Acquisition started\n',

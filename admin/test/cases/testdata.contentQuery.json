@@ -1,17 +1,17 @@
 {
   "casesynthetic_alex": {
-    "description": "Synthetic ALEX raw text folder (content_provider_<serial>), CRLF line endings: SMS with a multi-line body holding a line that starts with 'Row: ', a body holding ', total=', a body holding ', seen=' (the next column's name, flagged), NULL, BLOB and empty values and an undocumented type value; MMS and MMS parts (no part content); call log; contacts; contact phone numbers whose hash_id ends with a line break; calendar event entities with a multi-line description; calendars; MediaStore files with 0 and NULL times; and a settings file that no artifact reads. Invented values, contains no real evidence.",
+    "description": "Synthetic ALEX raw text folder (content_provider_<serial>), CRLF line endings: SMS with a multi-line body holding a line that starts with 'Row: ', a body holding ', total=', a body holding ', seen=' (the next column's name, flagged), NULL, BLOB and empty values and an undocumented type value; MMS, MMS parts (no part content) and MMS addresses (FROM, TO, CC and BCC rows, a NULL address, a msg_id with no MMS row, a type that is not an address field); call log; contacts; contact phone numbers whose hash_id ends with a line break; calendar event entities with a multi-line description; calendars; MediaStore files with 0 and NULL times; and a settings file that no artifact reads. Invented values, contains no real evidence.",
     "maker": "@Maxitelmo",
     "make_data": {
       "input_data_path": "content_query_synthetic_alex.zip",
       "os": "Windows-11-10.0.26200-SP0",
-      "timestamp": "2026-11-25T11:36:44.269007",
+      "timestamp": "2026-11-25T18:26:31.022452",
       "last_commit": {
-        "hash": "Uncommitted",
-        "author_name": "N/A",
-        "author_email": "N/A",
-        "date": "2026-11-25T11:36:44.137412",
-        "message": "File not yet committed to git"
+        "hash": "aa6e33b09730ad7e8af396fc1ad75b0279b31154",
+        "author_name": "Maximiliano Telmo",
+        "author_email": "50964800+Maxitelmo@users.noreply.github.com",
+        "date": "2026-11-25T12:06:33-03:00",
+        "message": "Read saved content query text from android_triage and ALEX raw text output"
       }
     },
     "artifacts": {
@@ -20,7 +20,7 @@
           "*/*_contentprovider/*.txt",
           "*/content_provider_*/*.txt"
         ],
-        "file_count": 10,
+        "file_count": 11,
         "expected_output": {
           "headers": [],
           "data": []
@@ -38,9 +38,21 @@
       },
       "content_query_mms": {
         "search_patterns": [
+          "*/content_provider_*/mms/mms.txt",
+          "*/content_provider_*/mms/mms_addr.txt"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "content_query_mms_addresses": {
+        "search_patterns": [
+          "*/content_provider_*/mms/mms_addr.txt",
           "*/content_provider_*/mms/mms.txt"
         ],
-        "file_count": 1,
+        "file_count": 2,
         "expected_output": {
           "headers": [],
           "data": []
@@ -132,18 +144,18 @@
     "os_name": "Android"
   },
   "casesynthetic_alex_skipped": {
-    "description": "Synthetic ALEX raw text folder holding only the call log, as ALEX leaves it when it writes no file for the other providers (no rows, an error, or one of its error strings inside a value): every other URI is reported as unknown. Invented values, contains no real evidence.",
+    "description": "Synthetic ALEX raw text folder holding only the call log and MMS rows, as ALEX leaves it when it writes no file for the other providers (no rows, an error, or one of its error strings inside a value): every other URI is reported as unknown, and the MMS addresses are unknown. Invented values, contains no real evidence.",
     "maker": "@Maxitelmo",
     "make_data": {
       "input_data_path": "content_query_synthetic_alex_skipped.zip",
       "os": "Windows-11-10.0.26200-SP0",
-      "timestamp": "2026-11-25T11:36:44.826279",
+      "timestamp": "2026-11-25T18:26:32.296406",
       "last_commit": {
-        "hash": "Uncommitted",
-        "author_name": "N/A",
-        "author_email": "N/A",
-        "date": "2026-11-25T11:36:44.706545",
-        "message": "File not yet committed to git"
+        "hash": "aa6e33b09730ad7e8af396fc1ad75b0279b31154",
+        "author_name": "Maximiliano Telmo",
+        "author_email": "50964800+Maxitelmo@users.noreply.github.com",
+        "date": "2026-11-25T12:06:33-03:00",
+        "message": "Read saved content query text from android_triage and ALEX raw text output"
       }
     },
     "artifacts": {
@@ -152,7 +164,7 @@
           "*/*_contentprovider/*.txt",
           "*/content_provider_*/*.txt"
         ],
-        "file_count": 1,
+        "file_count": 2,
         "expected_output": {
           "headers": [],
           "data": []
@@ -167,10 +179,25 @@
       },
       "content_query_mms": {
         "search_patterns": [
+          "*/content_provider_*/mms/mms.txt",
+          "*/content_provider_*/mms/mms_addr.txt"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "content_query_mms_addresses": {
+        "search_patterns": [
+          "*/content_provider_*/mms/mms_addr.txt",
           "*/content_provider_*/mms/mms.txt"
         ],
-        "file_count": 0,
-        "note": "No responsive files found for this artifact"
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
       },
       "content_query_mms_parts": {
         "search_patterns": [
@@ -245,13 +272,13 @@
     "make_data": {
       "input_data_path": "content_query_synthetic_triage.zip",
       "os": "Windows-11-10.0.26200-SP0",
-      "timestamp": "2026-11-25T11:36:45.374508",
+      "timestamp": "2026-11-25T18:26:33.550137",
       "last_commit": {
-        "hash": "Uncommitted",
-        "author_name": "N/A",
-        "author_email": "N/A",
-        "date": "2026-11-25T11:36:45.258444",
-        "message": "File not yet committed to git"
+        "hash": "aa6e33b09730ad7e8af396fc1ad75b0279b31154",
+        "author_name": "Maximiliano Telmo",
+        "author_email": "50964800+Maxitelmo@users.noreply.github.com",
+        "date": "2026-11-25T12:06:33-03:00",
+        "message": "Read saved content query text from android_triage and ALEX raw text output"
       }
     },
     "artifacts": {
@@ -275,6 +302,15 @@
       },
       "content_query_mms": {
         "search_patterns": [
+          "*/content_provider_*/mms/mms.txt",
+          "*/content_provider_*/mms/mms_addr.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_mms_addresses": {
+        "search_patterns": [
+          "*/content_provider_*/mms/mms_addr.txt",
           "*/content_provider_*/mms/mms.txt"
         ],
         "file_count": 0,
@@ -368,13 +404,13 @@
     "make_data": {
       "input_data_path": "content_query_synthetic_triage_stderr.zip",
       "os": "Windows-11-10.0.26200-SP0",
-      "timestamp": "2026-11-25T11:36:45.921952",
+      "timestamp": "2026-11-25T18:26:34.934237",
       "last_commit": {
-        "hash": "Uncommitted",
-        "author_name": "N/A",
-        "author_email": "N/A",
-        "date": "2026-11-25T11:36:45.807575",
-        "message": "File not yet committed to git"
+        "hash": "aa6e33b09730ad7e8af396fc1ad75b0279b31154",
+        "author_name": "Maximiliano Telmo",
+        "author_email": "50964800+Maxitelmo@users.noreply.github.com",
+        "date": "2026-11-25T12:06:33-03:00",
+        "message": "Read saved content query text from android_triage and ALEX raw text output"
       }
     },
     "artifacts": {
@@ -398,6 +434,15 @@
       },
       "content_query_mms": {
         "search_patterns": [
+          "*/content_provider_*/mms/mms.txt",
+          "*/content_provider_*/mms/mms_addr.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_mms_addresses": {
+        "search_patterns": [
+          "*/content_provider_*/mms/mms_addr.txt",
           "*/content_provider_*/mms/mms.txt"
         ],
         "file_count": 0,

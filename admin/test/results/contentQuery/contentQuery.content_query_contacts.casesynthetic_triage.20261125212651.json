@@ -10,15 +10,15 @@
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/contentQuery/testdata.contentQuery.content_query_contacts.casesynthetic_triage.zip",
-    "start_time": "2026-11-25T14:43:41.050545+00:00",
-    "end_time": "2026-11-25T14:43:41.166745+00:00",
-    "run_time_seconds": 0.000270843505859375,
+    "start_time": "2026-11-25T21:26:51.444682+00:00",
+    "end_time": "2026-11-25T21:26:51.526036+00:00",
+    "run_time_seconds": 0.0007617473602294922,
     "last_commit": {
-      "hash": "Uncommitted",
-      "author_name": "N/A",
-      "author_email": "N/A",
-      "date": "2026-11-25T11:43:41.163653",
-      "message": "File not yet committed to git"
+      "hash": "aa6e33b09730ad7e8af396fc1ad75b0279b31154",
+      "author_name": "Maximiliano Telmo",
+      "author_email": "50964800+Maxitelmo@users.noreply.github.com",
+      "date": "2026-11-25T12:06:33-03:00",
+      "message": "Read saved content query text from android_triage and ALEX raw text output"
     }
   },
   "headers": [

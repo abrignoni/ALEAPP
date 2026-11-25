@@ -101,10 +101,15 @@ __artifacts_v2__ = {
         "category": "Android Content Query",
         "notes": "Read from ALEX raw text output only (content_provider_<serial>/mms/mms.txt); android_triage does not "
                  "query MMS. ALEX's mms_inbox, mms_sent and mms_outbox files are views of the same table and are not "
-                 "read. ALEX also queries content://mms/addr, which AOSP's MmsProvider does not match (it matches "
-                 "content://mms/<id>/addr, line 1211 at "
+                 "read. From, To, Cc and Bcc are the address values of the rows of mms_addr.txt in the same folder "
+                 "(content://mms/addr) whose msg_id is the message's _id, by type, in file order and joined with "
+                 "'; ', as printed (a NULL address shows as the text NULL); an address row whose type is none of "
+                 "the four (PduHeaders FROM 137, TO 151, CC 130, BCC 129) is not shown on the message row. MMS "
+                 "Addresses (content query) lists every address row with its Source Line. AOSP's MmsProvider does not match content://mms/addr (it "
+                 "matches content://mms/<id>/addr, line 1211 at "
                  "https://android.googlesource.com/platform/packages/providers/TelephonyProvider/+/f5fa3b6153f98c57fa50c80ade2904005a4987ce/src/com/android/providers/telephony/MmsProvider.java), "
-                 "so no address file is expected and the sender and recipients of an MMS are not in these rows. The "
+                 "but some device providers answer it with one row per address keyed by msg_id. When ALEX kept no "
+                 "mms_addr.txt the four columns are blank and the addresses are unknown, which the log says. The "
                  "parts of each message are in MMS Parts (content query), keyed by its _id. Date and Date Sent: the "
                  "provider contract gives the type INTEGER (long) and no unit (Telephony.BaseMmsColumns.DATE and "
                  "DATE_SENT, https://developer.android.com/reference/android/provider/Telephony.BaseMmsColumns#DATE). "
@@ -132,10 +137,51 @@ __artifacts_v2__ = {
                  "listed column that a device does not print is blank and named in the log. Source Line is the line "
                  "of the file where the row starts. Evidence tier: source-verified and tested on synthetic files "
                  "only.",
-        "paths": ('*/content_provider_*/mms/mms.txt',),
+        "paths": ('*/content_provider_*/mms/mms.txt', '*/content_provider_*/mms/mms_addr.txt'),
         "output_types": "standard",
         "artifact_icon": "message",
         "multiline_columns": ["Subject", "Parse Note"],
+    },
+    "content_query_mms_addresses": {
+        "name": "MMS Addresses (content query)",
+        "description": "MMS address rows from the saved output of adb shell content query --uri content://mms/addr, "
+                       "as printed, with the PduHeaders name of each address type.",
+        "author": "@Maxitelmo, Claude",
+        "creation_date": "2026-11-25",
+        "last_update_date": "2026-11-25",
+        "requirements": "none",
+        "category": "Android Content Query",
+        "notes": "Read from ALEX raw text output only (content_provider_<serial>/mms/mms_addr.txt); android_triage does "
+                 "not query MMS. AOSP's MmsProvider does not match content://mms/addr (it matches "
+                 "content://mms/<id>/addr, line 1211 at "
+                 "https://android.googlesource.com/platform/packages/providers/TelephonyProvider/+/f5fa3b6153f98c57fa50c80ade2904005a4987ce/src/com/android/providers/telephony/MmsProvider.java), "
+                 "but some device providers answer it with one row per address keyed by msg_id, the _id of the "
+                 "message in MMS (content query). Where the provider rejects the URI ALEX keeps no file and the "
+                 "addresses are unknown; Content Query Files reports that. Address Type is the type value as printed "
+                 "and the name of the PduHeaders address field with that value (129 BCC, 130 CC, 137 FROM, 151 TO; "
+                 "lines 31, 32, 39 and 55 at "
+                 "https://android.googlesource.com/platform/frameworks/base/+/8d2ed506045d5d6cf25ef7ef77a30da910733657/telephony/common/com/google/android/mms/pdu/PduHeaders.java); "
+                 "another value is shown as printed. Address, Charset, Contact ID and Subscription ID are as printed. "
+                 "MMS Row says whether msg_id is the _id of a row of mms.txt in the same folder (yes or no), and is "
+                 "blank when that file holds no rows or is not in the folder. The same addresses are shown on the "
+                 "message rows of MMS (content query) as From, To, Cc and Bcc. ALEX writes no file when any value "
+                 "holds 'No result found' (or another of its four error strings). "
+                 "Format: rows are read from the text that the content command prints (AOSP Content.java, lines 664 to "
+                 "706 at "
+                 "https://android.googlesource.com/platform/frameworks/base/+/8d2ed506045d5d6cf25ef7ef77a30da910733657/cmds/content/src/com/android/commands/content/Content.java): "
+                 "'Row: <n> ' and the name=value pairs joined with ', ', with no quoting or escaping. A NULL value "
+                 "prints as the text NULL and a BLOB as the text BLOB, so a stored text NULL or BLOB cannot be told "
+                 "apart from a real NULL or BLOB. An empty string prints as nothing and is blank here. A row is split "
+                 "at ', <next column>=' along the column list that the rows of the file agree on; Parse Note flags a "
+                 "row where a value holds ', <name>=' for a name of that list (the split may be off there) and a row "
+                 "that could not be split. Columns not listed here are not shown (Content Query Files lists the "
+                 "columns of each file), and a listed column that a device does not print is blank and named in the "
+                 "log. Source Line is the line of the file where the row starts. Evidence tier: source-verified and "
+                 "tested on synthetic files only.",
+        "paths": ('*/content_provider_*/mms/mms_addr.txt', '*/content_provider_*/mms/mms.txt'),
+        "output_types": ["html", "tsv", "lava"],
+        "artifact_icon": "users",
+        "multiline_columns": ["Parse Note"],
     },
     "content_query_mms_parts": {
         "name": "MMS Parts (content query)",
@@ -466,6 +512,9 @@ from scripts.ilapfuncs import artifact_processor, logfunc
 
 SMS_TYPES = {'0': 'ALL', '1': 'INBOX', '2': 'SENT', '3': 'DRAFT', '4': 'OUTBOX', '5': 'FAILED', '6': 'QUEUED'}
 MMS_BOXES = {'0': 'ALL', '1': 'INBOX', '2': 'SENT', '3': 'DRAFTS', '4': 'OUTBOX', '5': 'FAILED'}
+# PduHeaders address field values, as the addr rows print them in their type column.
+ADDRESS_TYPES = {'129': 'BCC', '130': 'CC', '137': 'FROM', '151': 'TO'}
+ADDRESS_CODES = ('137', '151', '130', '129')
 CALL_TYPES = {'1': 'INCOMING_TYPE', '2': 'OUTGOING_TYPE', '3': 'MISSED_TYPE', '4': 'VOICEMAIL_TYPE',
               '5': 'REJECTED_TYPE', '6': 'BLOCKED_TYPE', '7': 'ANSWERED_EXTERNALLY_TYPE'}
 
@@ -521,9 +570,20 @@ COLUMNS = {
         ('Trashed', 'is_trashed', None), ('Pending', 'is_pending', None), ('File ID', '_id', None)),
 }
 COLUMNS['calendar_event_entities'] = COLUMNS['calendar_events']
+COLUMNS['mms_addr'] = (
+    ('Message ID', 'msg_id', None), ('Address Type', 'type', ADDRESS_TYPES), ('Address', 'address', None),
+    ('Charset', 'charset', None), ('Contact ID', 'contact_id', None), ('Subscription ID', 'sub_id', None),
+    ('Address ID', '_id', None))
+
+# Columns taken from another file of the same folder: (position, headers). MMS rows get the
+# addresses of their msg_id by type; address rows say whether their msg_id is an MMS row.
+JOINED_HEADERS = {'mms': (3, ['From', 'To', 'Cc', 'Bcc']), 'mms_addr': (1, ['MMS Row'])}
+# Files an artifact reads only to join, and does not report rows of.
+JOINED_FROM = {'mms': ('mms_addr',), 'mms_addr': ('mms',)}
 
 READ_BY = {
     'sms': 'SMS (content query)', 'mms': 'MMS (content query)', 'mms_part': 'MMS Parts (content query)',
+    'mms_addr': 'MMS Addresses (content query)',
     'call_log': 'Call Log (content query)', 'contacts': 'Contacts (content query)',
     'contact_phones': 'Contact Phone Numbers (content query)', 'calendar_events': 'Calendar Events (content query)',
     'calendar_event_entities': 'Calendar Event Entities (content query)', 'calendars': 'Calendars (content query)',
@@ -543,6 +603,9 @@ def _headers(key, with_source_file):
             headers.append((f'{header} (UTC)', 'datetime'))
         else:
             headers.append(header)
+    if key in JOINED_HEADERS:
+        position, extra = JOINED_HEADERS[key]
+        headers[position:position] = extra
     headers += ['Parse Note', 'Source Line']
     if with_source_file:
         headers.append('Source File')
@@ -560,16 +623,67 @@ def _shown(value, shown, notes):
     return value
 
 
+def _sibling(context, layout, key):
+    """The file of URI ``key`` in the same layout folder, from this artifact's files found, or None."""
+    for other in context.get_files_found():
+        other_layout = reader.layout_of(other)
+        uri = reader.uri_of(other_layout[0], other) if other_layout else None
+        if other_layout == layout and uri is not None and uri.key == key:
+            return other
+    return None
+
+
+def _mms_addresses(path):
+    """{msg_id: {type: [address, ...]}} from an MMS address file, in file order."""
+    addresses = {}
+    for record in reader.read_file(path).records:
+        values = reader.Values(record)
+        addresses.setdefault(values['msg_id'], {}).setdefault(values['type'], []).append(values['address'])
+    return addresses
+
+
+def _mms_ids(path):
+    """The _id values of an MMS file that holds rows, or None when it holds none."""
+    dump = reader.read_file(path)
+    if dump.status != reader.ROWS:
+        return None
+    return {reader.Values(record)['_id'] for record in dump.records}
+
+
+def _joined(context, key, layout, relative):
+    """Extra values for each row of ``key``: a function of the row's Values, or None."""
+    if key == 'mms':
+        addr_path = _sibling(context, layout, 'mms_addr')
+        if addr_path is None:
+            logfunc(f'Content query {relative}: no mms_addr.txt in this folder, From, To, Cc and Bcc are unknown')
+            return lambda values: ['', '', '', '']
+        addresses = _mms_addresses(addr_path)
+        logfunc(f'Content query {relative}: addresses from {_relative(context, addr_path)}')
+        return lambda values: ['; '.join(addresses.get(values['_id'], {}).get(code, []))
+                               for code in ADDRESS_CODES]
+    if key == 'mms_addr':
+        mms_path = _sibling(context, layout, 'mms')
+        ids = _mms_ids(mms_path) if mms_path else None
+        if ids is None:
+            logfunc(f'Content query {relative}: no MMS rows in this folder to match msg_id against')
+            return lambda values: ['']
+        return lambda values: ['yes' if values['msg_id'] in ids else 'no']
+    return None
+
+
 def _read(context, key, with_source_file=True):
     rows, sources = [], []
     for path in sorted(context.get_files_found()):
         layout = reader.layout_of(path)
         relative = _relative(context, path)
         uri = reader.uri_of(layout[0], path) if layout else None
+        if uri is not None and uri.key in JOINED_FROM.get(key, ()):
+            continue
         if uri is None or uri.key != key:
             logfunc(f'Content query: {relative} is not in a known layout folder, not read')
             continue
         dump = reader.read_file(path)
+        joined = _joined(context, key, layout, relative)
         sources.append(path)
         logfunc(f'Content query {layout[0]} {relative}: {reader.status_text(dump)}')
         for warning in dump.warnings:
@@ -585,6 +699,9 @@ def _read(context, key, with_source_file=True):
             values = reader.Values(record)
             notes = [record.note] if record.note else []
             row = [_shown(values[column], shown, notes) for _header, column, shown in COLUMNS[key]]
+            if joined is not None:
+                position = JOINED_HEADERS[key][0]
+                row[position:position] = joined(values)
             row += ['; '.join(notes), record.line]
             if with_source_file:
                 row.append(relative)
@@ -600,6 +717,11 @@ def content_query_sms(context):
 @artifact_processor
 def content_query_mms(context):
     return _read(context, 'mms')
+
+
+@artifact_processor
+def content_query_mms_addresses(context):
+    return _read(context, 'mms_addr')
 
 
 @artifact_processor

@@ -154,6 +154,7 @@ class LayoutTest(unittest.TestCase):
         self.assertEqual(reader.layout_of(path), (reader.ALEX, self.ALEX))
         self.assertEqual(reader.uri_of(reader.ALEX, path).key, 'contact_phones')
         self.assertEqual(reader.uri_of(reader.ALEX, f'{self.ALEX}/sms/sms.txt').key, 'sms')
+        self.assertEqual(reader.uri_of(reader.ALEX, f'{self.ALEX}/mms/mms_addr.txt').key, 'mms_addr')
         self.assertIsNone(reader.uri_of(reader.ALEX, f'{self.ALEX}/sms/sms_inbox.txt'))
         self.assertIsNone(reader.layout_of(f'{self.ALEX}/sms/other.txt'))
         self.assertIsNone(reader.layout_of('root/x/other/sms/sms.txt'))

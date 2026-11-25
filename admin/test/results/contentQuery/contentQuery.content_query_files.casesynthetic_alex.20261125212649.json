@@ -5,20 +5,20 @@
     "function_name": "content_query_files",
     "case_number": "casesynthetic_alex",
     "number_of_columns": 9,
-    "number_of_rows": 11,
-    "total_data_size_bytes": 2522,
+    "number_of_rows": 12,
+    "total_data_size_bytes": 2690,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/contentQuery/testdata.contentQuery.content_query_files.casesynthetic_alex.zip",
-    "start_time": "2026-11-25T14:43:39.939453+00:00",
-    "end_time": "2026-11-25T14:43:40.049807+00:00",
-    "run_time_seconds": 0.003493785858154297,
+    "start_time": "2026-11-25T21:26:49.925024+00:00",
+    "end_time": "2026-11-25T21:26:50.036537+00:00",
+    "run_time_seconds": 0.0074346065521240234,
     "last_commit": {
-      "hash": "Uncommitted",
-      "author_name": "N/A",
-      "author_email": "N/A",
-      "date": "2026-11-25T11:43:40.033290",
-      "message": "File not yet committed to git"
+      "hash": "aa6e33b09730ad7e8af396fc1ad75b0279b31154",
+      "author_name": "Maximiliano Telmo",
+      "author_email": "50964800+Maxitelmo@users.noreply.github.com",
+      "date": "2026-11-25T12:06:33-03:00",
+      "message": "Read saved content query text from android_triage and ALEX raw text output"
     }
   },
   "headers": [
@@ -65,6 +65,17 @@
       "",
       "_id, mid, seq, ct, name, chset, cid, cl, fn, _data, text",
       "MMS Parts (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0001/content_provider_SYNTH0001",
+      "content://mms/addr",
+      "mms/mms_addr.txt",
+      "rows",
+      9,
+      "",
+      "_id, msg_id, contact_id, address, type, charset, sub_id",
+      "MMS Addresses (content query)"
     ],
     [
       "ALEX",

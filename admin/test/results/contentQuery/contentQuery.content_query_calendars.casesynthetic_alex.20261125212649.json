@@ -10,15 +10,15 @@
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/contentQuery/testdata.contentQuery.content_query_calendars.casesynthetic_alex.zip",
-    "start_time": "2026-11-25T14:43:40.251505+00:00",
-    "end_time": "2026-11-25T14:43:40.354238+00:00",
-    "run_time_seconds": 0.00036978721618652344,
+    "start_time": "2026-11-25T21:26:49.746086+00:00",
+    "end_time": "2026-11-25T21:26:49.834817+00:00",
+    "run_time_seconds": 0.0013096332550048828,
     "last_commit": {
-      "hash": "Uncommitted",
-      "author_name": "N/A",
-      "author_email": "N/A",
-      "date": "2026-11-25T11:43:40.349115",
-      "message": "File not yet committed to git"
+      "hash": "aa6e33b09730ad7e8af396fc1ad75b0279b31154",
+      "author_name": "Maximiliano Telmo",
+      "author_email": "50964800+Maxitelmo@users.noreply.github.com",
+      "date": "2026-11-25T12:06:33-03:00",
+      "message": "Read saved content query text from android_triage and ALEX raw text output"
     }
   },
   "headers": [

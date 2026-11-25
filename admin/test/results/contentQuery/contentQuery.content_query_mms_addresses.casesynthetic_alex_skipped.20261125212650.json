@@ -1,0 +1,38 @@
+{
+  "metadata": {
+    "module_name": "contentQuery",
+    "artifact_name": "MMS Addresses (content query)",
+    "function_name": "content_query_mms_addresses",
+    "case_number": "casesynthetic_alex_skipped",
+    "number_of_columns": 11,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/contentQuery/testdata.contentQuery.content_query_mms_addresses.casesynthetic_alex_skipped.zip",
+    "start_time": "2026-11-25T21:26:50.579596+00:00",
+    "end_time": "2026-11-25T21:26:50.683416+00:00",
+    "run_time_seconds": 0.0003173351287841797,
+    "last_commit": {
+      "hash": "aa6e33b09730ad7e8af396fc1ad75b0279b31154",
+      "author_name": "Maximiliano Telmo",
+      "author_email": "50964800+Maxitelmo@users.noreply.github.com",
+      "date": "2026-11-25T12:06:33-03:00",
+      "message": "Read saved content query text from android_triage and ALEX raw text output"
+    }
+  },
+  "headers": [
+    "Message ID",
+    "MMS Row",
+    "Address Type",
+    "Address",
+    "Charset",
+    "Contact ID",
+    "Subscription ID",
+    "Address ID",
+    "Parse Note",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}
