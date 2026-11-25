@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-03",
         "last_update_date": "2026-09-03",
         "requirements": "none",
-        "category": "Breezy Weather",
+        "category": "Locations & Maps",
         "sample_data": {
             "emu_a15_oss_v7": "Breezy Weather 6.2.2 | 1 rows",
         },
@@ -42,7 +42,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-03",
         "last_update_date": "2026-09-03",
         "requirements": "none",
-        "category": "Breezy Weather",
+        "category": "Locations & Maps",
         "sample_data": {
             "emu_a15_oss_v7": "Breezy Weather 6.2.2 | 0 rows, checked: the alerts table is present and empty",
         },

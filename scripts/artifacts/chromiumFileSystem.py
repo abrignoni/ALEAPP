@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-29",
         "last_update_date": "2026-11-01",
         "requirements": "none",
-        "category": "Chromium",
+        "category": "Browsers",
         "notes": "Reads the Origins database in every Default/File System folder found (on the tested "
                  "images these sit under <package>/app_*/). Format and meanings come from Chromium at commit "
                  "3a50e012e4c9b8a410a4e2b12bf577e69ee8f755 (tag 130.0.6723.58). The folder is read with "
@@ -102,7 +102,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-29",
         "last_update_date": "2026-11-01",
         "requirements": "none",
-        "category": "Chromium",
+        "category": "Browsers",
         "notes": "Reads the Paths database in each type folder of a Chromium profile's File System folder "
                  "(every Default/File System/<folder>/t, p or s found; on the tested images these sit "
                  "under <package>/app_*/) and of each bucket "
@@ -215,7 +215,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-29",
         "last_update_date": "2026-11-01",
         "requirements": "none",
-        "category": "Chromium",
+        "category": "Browsers",
         "notes": "Reads the File System API storage Chromium keeps per storage bucket: "
                  "<profile>/WebStorage/<bucket id>/FileSystem "
                  "(https://github.com/chromium/chromium/blob/3a50e012e4c9b8a410a4e2b12bf577e69ee8f755/storage/browser/quota/storage_directory_util.cc#L11-L25), "

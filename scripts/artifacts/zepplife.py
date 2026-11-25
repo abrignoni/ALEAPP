@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-07-28",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Zepp Life",
+        "category": "Health & Fitness",
         "notes": "TIME is reported as text because its epoch and unit have not been established. "
                  "All matched origin_db files are read; SQLite sidecars are excluded.",
         "paths": ('*/com.xiaomi.hm.health/databases/origin_db*',),

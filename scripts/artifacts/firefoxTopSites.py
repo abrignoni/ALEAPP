@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-01-12",
         "last_update_date": "2022-01-12",
         "requirements": "none",
-        "category": "Firefox",
+        "category": "Browsers",
         "notes": "",
         "paths": ('*/org.mozilla.firefox/databases/top_sites*',),
         "output_types": "standard",

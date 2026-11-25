@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-07-28",
         "last_update_date": "2026-10-07",
         "requirements": "none",
-        "category": "Speedtest",
+        "category": "Network & Connectivity",
         "notes": "Original parser contribution credited to its5Q. Exact AmplifyDatastore.db main filenames are processed in matched input encounter order; standalone WAL/SHM/journal paths are excluded and each main is opened with its own available sidecars. Repeated input occurrences, including repeated aliases, are retained without byte-hash or canonical-path deduplication. Equal stored result rows are retained. Timestamp is the date column read as a Unix time and shown as UTC; the conversion picks the unit from the size of the value, and the unit the app stores is not sourced here. The other eight values and the existing Kbps headers are unchanged; their units and meanings are not independently established by this selection correction. A Source File column is appended only when more than one distinct matched main path contributes rows, using the existing extraction-relative path helper. The artifact source indicator lists distinct contributing paths in encounter order; when no rows are found it lists successfully queried empty mains instead. Unreadable mains or failed queries are logged and skipped; this does not establish a complete result history. A matched path is a source indicator, not an account, user or device ownership assertion. No registered positive test image was previously listed for this artifact; the historical 44-image absence statements belong to the unchanged REPORT siblings and are not revalidated here.",
         "paths": ('*/org.zwanoo.android.speedtest/databases/AmplifyDatastore.db*',),
         "output_types": "all",
@@ -23,7 +23,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-07-28",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Speedtest",
+        "category": "Network & Connectivity",
         "notes": "A record with no start.location gives no row. Start Timestamp (as stored) is "
                  "the record's start.timestamp text, unchanged. Timestamp is that text converted "
                  "to UTC, and only when the text is an ISO 8601 time that carries its own offset "
@@ -46,7 +46,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-07-28",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Speedtest",
+        "category": "Network & Connectivity",
         "notes": "Computed Time is computed, not stored: the record's start.time.timestamp "
                  "minus its elapsedRealtimeNanos, plus the scan entry's timestamp read as "
                  "microseconds since boot. It is blank when the record holds no "

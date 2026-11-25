@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-09-12",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Torrent Data",
+        "category": "Cloud & Files",
         "notes": "Selection uses the filename and expected table, not verified app provenance. "
                  "The filename does not establish which app wrote the database, and a row does "
                  "not establish a completed download or user action. Only the first exact main "

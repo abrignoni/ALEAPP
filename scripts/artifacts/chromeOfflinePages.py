@@ -1,12 +1,12 @@
 __artifacts_v2__ = {
     "get_chromeOfflinePages": {
-        "name": "Offline Pages",
+        "name": "Chromium - Offline Pages",
         "description": "Parses Offline Pages from Chromium Based Browsers",
         "author": "@abrignoni",
         "creation_date": "2020-04-02",
         "last_update_date": "2020-04-02",
         "requirements": "none",
-        "category": "Chromium",
+        "category": "Browsers",
         "notes": "",
         "paths": ('*/app_chrome/Default/Offline Pages/metadata/OfflinePages.db*', '*/app_sbrowser/Default/Offline Pages/metadata/OfflinePages.db*', '*/app_webview/Default/Offline Pages/metadata/OfflinePages.db*'),
         "output_types": "standard",

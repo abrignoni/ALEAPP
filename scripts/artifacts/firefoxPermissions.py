@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-01-12",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Firefox",
+        "category": "Browsers",
         "notes": "Reference: Mozilla, 'nsIPermissionManager (ALLOW_ACTION=1, DENY_ACTION=2); any other stored value, including PROMPT_ACTION=3, is shown as stored', https://github.com/mozilla-firefox/firefox/blob/6d751cf5d0af4b7fcc1b232b6c2ba0551afabe1d/netwerk/base/nsIPermissionManager.idl",
         "paths": ('*/org.mozilla.firefox/files/mozilla/*.default/permissions.sqlite*',),
         "output_types": "standard",

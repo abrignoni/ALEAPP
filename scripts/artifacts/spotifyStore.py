@@ -9,7 +9,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-17",
         "last_update_date": "2026-11-17",
         "requirements": "none",
-        "category": "Spotify",
+        "category": "Music, Video & News",
         "notes": "Ported from iLEAPP's spotify.py, which reads the same store and key "
                  "families on iOS. One row per distinct key, integer and record state among "
                  "the keys beginning !rp#trk#, !rp#ctx# or !yl#rpp# in "
@@ -73,7 +73,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-17",
         "last_update_date": "2026-11-17",
         "requirements": "none",
-        "category": "Spotify",
+        "category": "Music, Video & News",
         "notes": "Ported from iLEAPP's spotify.py. One row per key beginning !col# or "
                  "!xmeta#offlkeys#, newest record per key, in the same store as Spotify - "
                  "Recently Played (Store), when the record or key holds an address. 'Key "
@@ -119,7 +119,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-17",
         "last_update_date": "2026-11-17",
         "requirements": "none",
-        "category": "Spotify",
+        "category": "Music, Video & News",
         "notes": "Ported from iLEAPP's spotify.py. One row per "
                  "files/spotifycache/Users/<account>-user/context_player_state_restore, "
                  "copies with identical bytes under several storage paths counted once. "

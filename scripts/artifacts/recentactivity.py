@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2020-02-25",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Recent Activity",
+        "category": "Device Activity",
         "notes": (
             "Recent Tasks is a mutable system list, not a complete "
             "application-use history. A task snapshot may be a real screen "

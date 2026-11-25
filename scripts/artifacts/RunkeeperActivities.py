@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-03-25",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Runkeeper",
+        "category": "Health & Fitness",
         "notes": "One row per row of the trips table. Start Time and Device Sync Time are start_date "
                  "and device_sync_time read as Unix milliseconds and shown as UTC. Latitude, "
                  "Longitude, End Latitude and End Longitude are the first and last points of the "

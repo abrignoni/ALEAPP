@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-06",
         "requirements": "none",
-        "category": "Android System",
+        "category": "Installed Apps",
         "notes": (
             "Read from the platform's dex use store at /data/system/package-dex-usage.list. Reference: "
             'Android Open Source Project, '
@@ -148,7 +148,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-06",
         "last_update_date": '2026-10-07',
         "requirements": "none",
-        "category": "Android System",
+        "category": "Installed Apps",
         "notes": (
             "Read from the platform's dex use store at /data/system/package-dex-usage.list. Reference: "
             'Android Open Source Project, '

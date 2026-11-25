@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-06-23",
         "last_update_date": "2022-06-23",
         "requirements": "none",
-        "category": "My Files",
+        "category": "Cloud & Files",
         "notes": "",
         "paths": ('*/com.sec.android.app.myfiles/databases/FileCache.db*',
                   '*/com.sec.android.app.myfiles/cache/*.*'),

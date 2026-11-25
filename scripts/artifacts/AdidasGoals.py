@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-04-21",
         "last_update_date": "2026-08-01",
         "requirements": "Python 3.7 or higher",
-        "category": "Adidas-Running",
+        "category": "Health & Fitness",
         "notes": "Columns of goalV2 are read by position over 'Select * from goalV2'; the mapping was "
                  "written against one app version, which is not recorded here, and may not hold "
                  "on other versions. The eighth column of the table is not reported. The Start "

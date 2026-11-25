@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-07-02",
         "last_update_date": "2026-11-24",
         "requirements": "",
-        "category": "Android Notification History",
+        "category": "Device Activity",
         "notes": "Coverage is limited to the protobuf files still present under "
                  "notification_history/history at the time of extraction, which is not the "
                  "device's full notification history. In AOSP at the android-14.0.0_r1 tag, "
@@ -34,7 +34,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-07-02",
         "last_update_date": "2026-11-23",
         "requirements": "",
-        "category": "Android Notification History",
+        "category": "Device Activity",
         "notes": "A stored value of 1 is shown as Enabled and 0 as Disabled. Any "
                  "other value, and a setting element with no value attribute, is "
                  "shown as Unknown. The stored value itself is not shown. No row is produced when the notification_history_enabled key is absent, or when its element is one that could not be read. Neither is by itself evidence the feature was off. A plain XML file that does not parse as a whole is read one setting element at a time, up to the closing settings tag and leaving out comments, and the log names the file, its user folder and how many elements could not be read. An ABX file that does not decode is written to the log and gives no row. That applied to two files each on cookbook_a11, pixel3_a11 and samsungs20_a13, and one element on samsungs20_a13 could not be read. In AOSP at "
@@ -66,7 +66,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-07-02",
         "last_update_date": "2026-11-23",
         "requirements": "",
-        "category": "Android Notification History",
+        "category": "Device Activity",
         "notes": "Reminder Time is the element's time attribute read as Unix "
                  "milliseconds and Snoozed Notification is its key attribute. "
                  "In AOSP at the android-14.0.0_r1 tag, SnoozeHelper.writeXml "

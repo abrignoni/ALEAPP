@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-03-15",
         "last_update_date": "2026-08-01",
         "requirements": "none",
-        "category": "Skype",
+        "category": "Messaging",
         "notes": ("Call Direction is decoded from the chatitem 'is_sender_me' flag. Direction/status "
                   "value mappings are the labels this parser assigns; the source for them is not "
                   "established, and unrecognized values, including "
@@ -27,7 +27,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-03-15",
         "last_update_date": "2026-08-29",
         "requirements": "none",
-        "category": "Skype",
+        "category": "Messaging",
         "notes": ("Direction is decoded from the chatitem 'is_sender_me' flag. Direction/status "
                   "value mappings are the labels this parser assigns; the source for them is not "
                   "established, and unrecognized values, including "
@@ -56,7 +56,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-03-15",
         "last_update_date": "2021-03-15",
         "requirements": "none",
-        "category": "Skype",
+        "category": "Messaging",
         "notes": "",
         "paths": ('*/com.skype.raider/databases/live*',),
         "output_types": ['html', 'tsv', 'lava'],

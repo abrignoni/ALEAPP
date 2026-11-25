@@ -10,7 +10,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-10",
         "last_update_date": "2026-08-10",
         "requirements": "none",
-        "category": "DJI Drone",
+        "category": "Smart Home & Connected Devices",
         "notes": "Source files: */DJI/<app>/FlightRecord/MCDatFlightRecords/*.DAT, DAT files "
                  "found in the FlightRecord/MCDatFlightRecords folder of a DJI app's storage. "
                  "The container is the DJI DAT format: a 'BUILD' header, then records framed by "

@@ -21,7 +21,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-17",
         "last_update_date": "2026-11-17",
         "requirements": "none",
-        "category": "Device Events",
+        "category": "Device Information",
         "notes": (
             "Read from the text files vold-dump_NN in data/log; on s20fe_a13 three more "
             "were read from data/media/0/log, so Dump File gives the path. Lines with "

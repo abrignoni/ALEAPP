@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         'creation_date': '2026-06-10',
         'last_update_date': '2026-10-04',
         'requirements': 'none',
-        'category': 'Life360',
+        'category': 'Locations & Maps',
         'notes': (
             'One row per row of the pet_profile table. Created Timestamp and Updated Timestamp are the '
             'createdAt and lastUpdated columns read as Unix milliseconds and shown in UTC. The table '

@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date":"2025-12-12",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category" : "Citymapper",
+        "category" : "Locations & Maps",
         "notes" : "Interactive online folium map removed; locations are exported to KML by the framework. "
                   "The Date column holds the table's date value as stored, with no conversion: its "
                   "unit and epoch are not established, no source for them was found and no "
@@ -25,7 +25,7 @@ __artifacts_v2__ = {
         "creation_date":"2025-12-12",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category" : "Citymapper",
+        "category" : "Locations & Maps",
         "notes" : "Interactive online folium map removed; home/work coordinates are shown in the table. "
                   "The Created column holds the table's created value as stored, with no conversion: "
                   "its unit and epoch are not established, no source for them was found and no "
@@ -43,7 +43,7 @@ __artifacts_v2__ = {
         "creation_date":"2025-12-12",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category" : "Citymapper",
+        "category" : "Locations & Maps",
         "notes" : "Interactive online folium map removed. The LAST_LOCATION value is split into "
                   "Latitude and Longitude and exported to KML; what event sets it is not "
                   "established. One row is built per shared_prefs folder from the preference files "

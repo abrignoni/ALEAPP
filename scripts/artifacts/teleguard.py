@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-01-09",
         "last_update_date": "2026-08-21",
         "requirements": "none",
-        "category": "Teleguard",
+        "category": "Messaging",
         "notes": "Is Edited? held 0 on every message row of every tested extraction. The column "
                  "is reported so a row with another value is visible "
                  "on an extraction that has one. Direction is derived by comparing the row's "
@@ -45,7 +45,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-01-09",
         "last_update_date": "2026-08-21",
         "requirements": "none",
-        "category": "Teleguard",
+        "category": "Messaging",
         "notes": "",
         "paths": ('*/ch.swisscows.messenger.teleguardapp/app_flutter/teleguard_database.db*',),
         "output_types": "standard",
@@ -63,7 +63,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-01-09",
         "last_update_date": "2026-08-21",
         "requirements": "none",
-        "category": "Teleguard",
+        "category": "Messaging",
         "notes": "Personal ID is an optional identifier separate from the Server ID the app issues. "
                  "What sets the column for a contact is not established. It was null on "
                  "every contact row of every tested extraction, meaning none of those contacts had "
@@ -84,7 +84,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-01-09",
         "last_update_date": "2026-08-21",
         "requirements": "none",
-        "category": "Teleguard",
+        "category": "Messaging",
         "notes": "The channels table is read with 'SELECT *' and the first twelve columns are labelled "
                  "by position; the mapping was made against one app version and is not "
                  "established for other versions. Any further columns are not reported.",
@@ -104,7 +104,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-21",
         "last_update_date": "2026-10-07",
         "requirements": "none",
-        "category": "Teleguard",
+        "category": "Messaging",
         "notes": "Call events are stored as rows of the messages table with type 'CALL', not in a "
                  "separate call log. Each row carries a JSON metadata object with the keys "
                  "isSuccessfull, subtext, membersText and callType; all call rows in the tested "
@@ -142,7 +142,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-21",
         "last_update_date": "2026-08-21",
         "requirements": "none",
-        "category": "Teleguard",
+        "category": "Messaging",
         "notes": "Rows of the messages table with type 'SERVICE' are reported here; 2 such rows "
                  "were present on one tested extraction (pixel7a_a14). Whether every SERVICE row "
                  "is a membership or invitation event is not established. The event text is the "
@@ -166,7 +166,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-21",
         "last_update_date": "2026-08-21",
         "requirements": "none",
-        "category": "Teleguard",
+        "category": "Messaging",
         "notes": "The local account is stored as the 'user' row of the service table, whose data "
                  "column is JSON. Server ID is the serverId value of that JSON; this module "
                  "compares it with the sender column of the messages table to derive Direction in "
@@ -197,7 +197,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-21",
         "last_update_date": "2026-08-21",
         "requirements": "none",
-        "category": "Teleguard",
+        "category": "Messaging",
         "notes": "Drafts live in a second database, teleguard_temp.db, in the same directory as "
                  "teleguard_database.db. The draft table is keyed on the recipient's serverId, which "
                  "is resolved to a contact alias from the contacts table of the main database in the "
@@ -224,7 +224,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-21",
         "last_update_date": "2026-08-21",
         "requirements": "none",
-        "category": "Teleguard",
+        "category": "Messaging",
         "notes": "databases/download_tasks.db and its task table are the store of the "
                  "flutter_downloader plugin. Reference: flutter_downloader, 'TaskDbHelper.kt', "
                  "https://github.com/fluttercommunity/flutter_downloader/blob/"
@@ -261,7 +261,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-21",
         "last_update_date": "2026-11-03",
         "requirements": "none",
-        "category": "Teleguard",
+        "category": "Messaging",
         "notes": "Two locations, distinguished by the Location column. Files named avatar<epoch>.jpg "
                  "in the app's app_flutter directory carry a Unix millisecond epoch in the file name, "
                  "reported in the File Name Timestamp column; in the tested extraction that image was "
@@ -294,7 +294,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-21",
         "last_update_date": "2026-08-21",
         "requirements": "none",
-        "category": "Teleguard",
+        "category": "Messaging",
         "notes": "Last Cache Clearing is the flutter.lastCacheClearing value from the app's "
                  "FlutterSharedPreferences file, stored as a Unix millisecond epoch. Database Version "
                  "is the contents of the app_flutter/db.version file. Other keys of the same "

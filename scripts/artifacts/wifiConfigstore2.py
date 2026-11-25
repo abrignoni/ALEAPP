@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-05-11",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "WiFi Profiles",
+        "category": "Network & Connectivity",
         "notes": "ConnectChoiceTimeStamp is read as Unix milliseconds and reported as UTC; that "
                  "unit follows Android 10 WifiConfiguration's setConnectChoiceTimestamp contract "
                  "(https://android.googlesource.com/platform/frameworks/base/+/android-10.0.0_r1/"

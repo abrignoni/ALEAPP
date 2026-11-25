@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-03-03",
         "last_update_date": "2026-10-05",
         "requirements": "none",
-        "category": "Facebook Messenger",
+        "category": "Messaging",
         "notes": "Storage aliases are selected by evidence-relative paths; mirror-only and secondary-user files remain eligible.",
         "paths": ('*/*threads_db2-uid',),
         "output_types": "standard",
@@ -25,7 +25,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-03-03",
         "last_update_date": "2026-10-05",
         "requirements": "none",
-        "category": "Facebook Messenger",
+        "category": "Messaging",
         "notes": "Rows that are the same record found in more than one place are merged, and the "
                  "Source File column lists every location a row was found in. An extraction "
                  "holding both the Facebook app and Messenger can carry a copy of msys_database "
@@ -79,7 +79,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-03-03",
         "last_update_date": "2026-10-05",
         "requirements": "none",
-        "category": "Facebook Messenger",
+        "category": "Messaging",
         "notes": "Rows that are the same record found in more than one place are merged, and the "
                  "Source File column lists every location a row was found in. An extraction "
                  "holding both the Facebook app and Messenger can carry a copy of msys_database "
@@ -116,7 +116,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-03-03",
         "last_update_date": "2026-10-05",
         "requirements": "none",
-        "category": "Facebook Messenger",
+        "category": "Messaging",
         "notes": "Rows that are the same record found in more than one place are merged, and the "
                  "Source File column lists every location a row was found in. An extraction "
                  "holding both the Facebook app and Messenger can carry a copy of msys_database "
@@ -155,7 +155,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-03-03",
         "last_update_date": "2026-10-05",
         "requirements": "none",
-        "category": "Facebook Messenger",
+        "category": "Messaging",
         "notes": "Not exercised: the artifact produced no rows on the four images listed in "
                  "sample_data. Messages with msg_type -1 and messages carrying "
                  "generic_admin_message_extensible_data are not reported. Only the first "
@@ -178,7 +178,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-03-03",
         "last_update_date": "2026-10-05",
         "requirements": "none",
-        "category": "Facebook Messenger",
+        "category": "Messaging",
         "notes": "The legacy artifact key get_fb_threads_calls is retained. Rows are messages whose "
                  "generic_admin_message_extensible_data is not NULL and whose thread matches threads; "
                  "metadata presence does not establish that a message is a call. Message Timestamp "
@@ -211,7 +211,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-03-03",
         "last_update_date": "2026-10-05",
         "requirements": "none",
-        "category": "Facebook Messenger",
+        "category": "Messaging",
         "notes": "Not exercised: the artifact produced no rows on the four images listed in "
                  "sample_data. Is Messenger User (as stored) holds is_messenger_user without a "
                  "label, preserving NULL and unknown values; no membership interpretation is established. Friendship Status and Contact Relationship "

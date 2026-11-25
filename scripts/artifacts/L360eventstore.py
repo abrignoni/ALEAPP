@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         'creation_date': '2026-06-10',
         'last_update_date': '2026-08-01',
         'requirements': 'none',
-        'category': 'Life360',
+        'category': 'Locations & Maps',
         'notes': 'Rows are the event rows whose eventVersion is 6; other versions are not read by '
                  'this artifact. Timestamp is locationData.time read as Unix milliseconds. '
                  'Speed is reported as stored. The MPH column multiplies it by 2.23694, which '
@@ -27,7 +27,7 @@ __artifacts_v2__ = {
         'creation_date': '2026-06-10',
         'last_update_date': '2026-08-01',
         'requirements': 'none',
-        'category': 'Life360',
+        'category': 'Locations & Maps',
         'notes': 'Rows are the type.waypoints elements of event rows whose eventVersion is 1, 3, '
                  '4 or 5. Speed is reported as stored. The MPH column multiplies it by 2.23694, '
                  'which assumes the stored value is in metres per second; the JSON records no unit '
@@ -47,7 +47,7 @@ __artifacts_v2__ = {
         'creation_date': '2026-06-10',
         'last_update_date': '2026-06-30',
         'requirements': 'none',
-        'category': 'Life360',
+        'category': 'Locations & Maps',
         'notes': '',
         'paths': ('*/com.life360.android.safetymapd/databases/L360EventStore_service.db*',),
         'output_types': 'standard',
@@ -64,7 +64,7 @@ __artifacts_v2__ = {
         'creation_date': '2026-06-10',
         'last_update_date': '2026-06-30',
         'requirements': 'none',
-        'category': 'Life360',
+        'category': 'Locations & Maps',
         'notes': '',
         'paths': ('*/com.life360.android.safetymapd/databases/L360EventStore_service.db*',),
         'output_types': ['html', 'tsv', 'lava', 'kml'],

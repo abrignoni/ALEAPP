@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-01-28",
         "last_update_date": "2021-01-28",
         "requirements": "none",
-        "category": "Permissions",
+        "category": "Installed Apps",
         "notes": "",
         "paths": ('*/system/packages.xml',),
         "output_types": ['html', 'tsv', 'lava'],
@@ -31,7 +31,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-01-28",
         "last_update_date": "2021-01-28",
         "requirements": "none",
-        "category": "Permissions",
+        "category": "Installed Apps",
         "notes": "",
         "paths": ('*/system/packages.xml',),
         "output_types": ['html', 'tsv', 'lava'],
@@ -59,7 +59,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-01-28",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Permissions",
+        "category": "Installed Apps",
         "notes": "Element Type is the tag of any top-level element, other than "
                  "permission-trees and permissions, that has a perms child, and Element Name is "
                  "that element's name attribute. granted (as stored) is the granted attribute "

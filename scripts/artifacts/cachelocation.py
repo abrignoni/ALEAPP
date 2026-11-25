@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-03-17",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "GEO Location",
+        "category": "Locations & Maps",
         "notes": "Key (hex) retains the length-prefixed bytes without identifier interpretation. "
                  "The existing entries*32 < file size guard is retained; it is not a full format validation. "
                  "Short records are diagnosed and already decoded records retained. No version-specific layout claim is added.",

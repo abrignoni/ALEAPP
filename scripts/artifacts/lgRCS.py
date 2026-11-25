@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-01-06",
         "last_update_date": "2021-01-06",
         "requirements": "none",
-        "category": "RCS Chats",
+        "category": "Messaging",
         "notes": "",
         "paths": ('*/mmssms.db*',),
         "output_types": "standard",

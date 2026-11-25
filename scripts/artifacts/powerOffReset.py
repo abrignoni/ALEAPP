@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-10-12",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Power Events",
+        "category": "Device Information",
         "notes": "Only lines containing REASON: are reported. Timestamp "
                  "(Local) is the date and time as written in the log line and "
                  "Timezone Offset is the offset written directly after it on "

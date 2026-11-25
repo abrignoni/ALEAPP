@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "Sleep as Android",
+        "category": "Health & Fitness",
         "notes": "Each row is one record of the records table with the start and end times the "
                  "application stored. A row does not by itself establish that a person was asleep "
                  "between those times. startTime and toTime are Unix milliseconds and are "
@@ -47,7 +47,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Sleep as Android",
+        "category": "Health & Fitness",
         "notes": "An alarm row records a configured wake time rather than an event that "
                  "happened. Hour and Minutes are the configured time of day as stored, in "
                  "whatever zone the device was set to, and carry no date. Days Of Week (as "

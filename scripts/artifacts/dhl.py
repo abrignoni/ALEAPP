@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-20",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "DHL",
+        "category": "Travel & Vehicles",
         "notes": "One row per row of the TBL_TRACK_SHIPMENT table. Airway Bill is the "
                  "airWayBill column and Search Date is the search_date column, as stored; what "
                  "action writes a row was not established beyond the table and column names. "
@@ -33,7 +33,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-20",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "DHL",
+        "category": "Travel & Vehicles",
         "notes": "One row per row of the TBL_USERSETTING table. Setting Row ID (_id) is the "
                  "_id column of that row, as stored; whether it identifies an account, and "
                  "whether it equals the user_id on the tracked "

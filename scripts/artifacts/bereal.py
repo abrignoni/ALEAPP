@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-19",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "BeReal - Social Media",
+        "category": "Social Media",
         "notes": "Every qualifying occurrence is retained, including tied and lower-ranked candidates. "
                  "URL signals use exact path segments, excluding query/fragment; JSON path signals use exact components. "
                  "High/Medium/Low are parser ranks, not authentication or ownership determinations. "
@@ -34,7 +34,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-19",
         "last_update_date": "2026-07-19",
         "requirements": "none",
-        "category": "BeReal - Social Media",
+        "category": "Social Media",
         "notes": "A profile is reported when a parsed JSON object carries a status, relationship, "
                  "friendshipStatus or state value of accepted, friend, friends or connected, or an "
                  "isFriend, areFriends or is_friend flag set to true. The Source Endpoint column "
@@ -60,7 +60,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-19",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "BeReal - Social Media",
+        "category": "Social Media",
         "notes": "Field names (id, primaryContent/secondaryContent/btsContent, myPosts/friendsPosts, comments, realMojis) are the key names this module reads. The author reports comparing them with the BeReal Android app's code; the app version and classes compared are not recorded here. The Authorship Basis column says how each author was chosen: nested under myPosts or userPosts (shown as Device User), the user object beside a posts list, a username key on the post itself, or an isMyPost flag. A post found in a friendsPosts list with no user object, or found outside those wrappers, is reported with a blank author. For a post nested under myPosts or userPosts, Authorship Basis names the key the post was found under. The Front Camera Media, Rear Camera Media and Video columns show a cached file only when the URL in its cache metadata equals the URL the post stores. Local BtsVideo File Nearest In Time is different: it shows the file under files/bereal_my_user_temp_video whose filename number, read as Unix milliseconds, is nearest the Captured time and no more than 120 seconds from it, for posts under myPosts or userPosts only. Nothing this module reads records which post such a file belongs to, so that column is a match on time and not a recorded link. Local BtsVideo Filename Time Minus Captured (s) gives the difference in seconds, negative when the filename number is earlier. Where several files carry the same filename number, the first by file name is shown. On pixel7a_a14 both posts were found under userPosts, neither had a cached file for its video URL, and the differences were -3.0 and -13.8 seconds; the second post's filename number is shared by three files. A time string that carries no UTC offset is shown as stored and is not used for the time match.",
         "paths": (
                         "*/com.bereal.ft/cache/network/*",
@@ -82,7 +82,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-19",
         "last_update_date": "2026-07-19",
         "requirements": "none",
-        "category": "BeReal - Social Media",
+        "category": "Social Media",
         "notes": "A cached image is reported only when its metadata URL equals the profile picture URL of a user object found in a cached response. User objects from responses whose URL contains search, recommend, suggest or friends-of-friends are not used. An image outside profile_picture_friends_cache is reported only when its URL contains profile or avatar. DiskLruCache .0 metadata is paired with .1 content.",
         "paths": (
                         "*/com.bereal.ft/cache/profile_picture_friends_cache/*",
@@ -102,7 +102,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-19",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "BeReal - Social Media",
+        "category": "Social Media",
         "notes": "Comments are extracted from a post's own embedded \"comments\" array or a "
                  "standalone {postId, comments:[...]} endpoint response, not from generic "
                  "keyword matching."
@@ -125,7 +125,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-19",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "BeReal - Social Media",
+        "category": "Social Media",
         "notes": "RealMojis are extracted from a post's own embedded \"realMojis\" array. Instant "
                  "and Standard are historical parser labels applied only to exact JSON Boolean true "
                  "and false respectively; their BeReal meaning has not been independently established. "

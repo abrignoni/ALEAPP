@@ -1,6 +1,6 @@
 __artifacts_v2__ = {
     "chromeBrowsingTopics": {
-        "name": "Browsing Topics API Usage",
+        "name": "Chromium - Browsing Topics API Usage",
         "description": "Rows of the browsing_topics_api_usages table from the BrowsingTopicsSiteData "
                        "database of Chromium based browsers on Android: the last usage time, the "
                        "context domain named by the database's own lookup table, and the main frame "
@@ -10,7 +10,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Chromium",
+        "category": "Browsers",
         "notes": "Reads the browsing_topics_api_usages table of each BrowsingTopicsSiteData database in "
                  "an app_chrome/Default profile folder; one row per table row. Chromium source is cited "
                  "at tag 130.0.6723.0 (commit ed44bc873f9ef776a2ef1ccb90252a6de5666cd6). The writer "

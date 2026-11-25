@@ -9,7 +9,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-25",
         "last_update_date": "2026-10-25",
         "requirements": "none",
-        "category": "Health Connect",
+        "category": "Health & Fitness",
         "notes": (
             "Health Connect is the Android framework store that apps write health and fitness "
             "records to and read them from; its SQLite database is healthconnect.db in "
@@ -46,7 +46,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-25",
         "last_update_date": "2026-10-25",
         "requirements": "none",
-        "category": "Health Connect",
+        "category": "Health & Fitness",
         "notes": (
             "Keys and values are reported as stored; the meaning of a key is not established "
             "here, and a key the store does not contain is not evidence about the setting it "
@@ -78,7 +78,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-25",
         "last_update_date": "2026-10-25",
         "requirements": "none",
-        "category": "Health Connect",
+        "category": "Health & Fitness",
         "notes": (
             "Each package or shared-user element carries a name and a first-grant-time written as "
             "an ISO 8601 UTC string, which is shown as stored and also converted to a time; Entry "
@@ -108,7 +108,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-25",
         "last_update_date": "2026-10-25",
         "requirements": "none",
-        "category": "Health Connect",
+        "category": "Health & Fitness",
         "notes": (
             "One row per record from steps_record_table, distance_record_table, "
             "active_calories_burned_record_table, total_calories_burned_record_table, "
@@ -153,7 +153,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-25",
         "last_update_date": "2026-10-25",
         "requirements": "none",
-        "category": "Health Connect",
+        "category": "Health & Fitness",
         "notes": (
             "One row per record from the instant record tables: weight, height, body_fat, "
             "lean_body_mass, bone_mass, body_water_mass, resting_heart_rate, "
@@ -191,7 +191,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-25",
         "last_update_date": "2026-10-25",
         "requirements": "none",
-        "category": "Health Connect",
+        "category": "Health & Fitness",
         "notes": (
             "heart_rate_record_series_table holds one row per sample (beats_per_minute and "
             "epoch_millis) and its parent_key names the row of heart_rate_record_table, which "
@@ -216,7 +216,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-25",
         "last_update_date": "2026-10-25",
         "requirements": "none",
-        "category": "Health Connect",
+        "category": "Health & Fitness",
         "notes": (
             "One row per row of sleep_session_record_table, with the title and notes the "
             "writing app supplied and the number of rows sleep_stages_table holds for the "
@@ -241,7 +241,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-25",
         "last_update_date": "2026-10-25",
         "requirements": "none",
-        "category": "Health Connect",
+        "category": "Health & Fitness",
         "notes": (
             "Stage Type is the number stored, shown with the SleepSessionRecord.StageType "
             "name of the AOSP framework (0 unknown, 1 awake, 2 sleeping, 3 awake out of bed, "
@@ -265,7 +265,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-25",
         "last_update_date": "2026-10-25",
         "requirements": "none",
-        "category": "Health Connect",
+        "category": "Health & Fitness",
         "notes": (
             "One row per row of exercise_session_record_table. Exercise Type is the number "
             "stored, shown with the name of the AOSP ExerciseSessionType class; a number that "
@@ -296,7 +296,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-25",
         "last_update_date": "2026-10-25",
         "requirements": "none",
-        "category": "Health Connect",
+        "category": "Health & Fitness",
         "notes": (
             "One row per point: time (epoch milliseconds shown as UTC), latitude, longitude, "
             "altitude and the horizontal and vertical accuracy values the writing app "
@@ -324,7 +324,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-25",
         "last_update_date": "2026-10-25",
         "requirements": "none",
-        "category": "Health Connect",
+        "category": "Health & Fitness",
         "notes": (
             "Access Time is epoch milliseconds shown as UTC. Operation is the stored "
             "operation_type shown with the name used by the AOSP Constants class (0 upsert, "
@@ -355,7 +355,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-25",
         "last_update_date": "2026-10-25",
         "requirements": "none",
-        "category": "Health Connect",
+        "category": "Health & Fitness",
         "notes": (
             "Reader and Writer are the packages that reader_app_id and writer_app_id point to "
             "in application_info_table. Record Type is the stored numeric id shown with the "
@@ -383,7 +383,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-25",
         "last_update_date": "2026-10-25",
         "requirements": "none",
-        "category": "Health Connect",
+        "category": "Health & Fitness",
         "notes": (
             "Record Type is the stored numeric id shown with the AOSP RecordTypeIdentifier "
             "name; Operation is shown with the name used by the AOSP Constants class (0 "

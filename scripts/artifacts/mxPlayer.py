@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
         "requirements": "none",
-        "category": "MX Player",
+        "category": "Music, Video & News",
         "sample_data": {
             "emu_a15_oss_v10": "MX Player 3.1.4 | 2 rows",
         },
@@ -40,7 +40,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-10-07",
         "requirements": "none",
-        "category": "MX Player",
+        "category": "Music, Video & News",
         "sample_data": {
             "emu_a15_oss_v10": "MX Player 3.1.4 | 4 rows",
         },

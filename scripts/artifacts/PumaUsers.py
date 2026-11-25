@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-03-25",
         "last_update_date": "2026-10-06",
         "requirements": "Python 3.7 or higher",
-        "category": "Puma-Trac",
+        "category": "Health & Fitness",
         "notes": "Date of Birth is read as Unix milliseconds. Workout Duration (as stored) "
                  "retains preferences_workoutDuration, including zero and NULL. Workout "
                  "Duration / 60 (unit unverified) preserves the existing division and N/A "

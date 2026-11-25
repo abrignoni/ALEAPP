@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-03-18",
         "last_update_date": "2026-10-05",
         "requirements": "none",
-        "category": "Nike-Run",
+        "category": "Health & Fitness",
         "notes": "Activity, tag and summary projections use explicit column names verified in the "
                  "registered Samsung schema; its tables were empty, so positive real activity-value "
                  "validation remains unavailable. Activity App ID holds as2_sa_app_id, formerly "

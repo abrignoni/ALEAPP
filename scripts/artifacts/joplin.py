@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "Joplin",
+        "category": "Productivity",
         "notes": "One row per note in the notes table of databases/joplin.sqlite. Each row carries the "
                  "note's title and body, the notebook it lives in resolved from the parent folder, its "
                  "created and updated times, and its geolocation. The times are Unix milliseconds and "
@@ -39,7 +39,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "Joplin",
+        "category": "Productivity",
         "notes": "One row per notebook in the folders table of databases/joplin.sqlite. "
                  "Notebooks can be nested, so the Parent Notebook column resolves the parent id "
                  "to its title where the notebook has a parent. Created and Updated are Unix "
@@ -60,7 +60,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Joplin",
+        "category": "Productivity",
         "notes": "One row per resource in the resources table of databases/joplin.sqlite. A "
                  "resource row describes a file the app stores; this artifact does not link it to "
                  "a note. Each row gives the resource's title, original file name, mime type, "

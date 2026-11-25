@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-02-15",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Burner",
+        "category": "Messaging",
         "notes": "Trial Extracted Value is SQLite json_extract(value, '$.trial'); Trial JSON Type "
                  "is json_type for the same path. Boolean true/false extract as 1/0 but their "
                  "types distinguish them from numbers. JSON null has type null and a SQL NULL "

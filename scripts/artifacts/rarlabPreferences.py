@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-03-29",
         "last_update_date": "2023-03-29",
         "requirements": "none",
-        "category": "RAR Lab Prefs",
+        "category": "App Data Stores",
         "notes": "",
         "paths": ('*/com.rarlab.rar_preferences.xml',),
         "output_types": ['html', 'tsv', 'lava'],

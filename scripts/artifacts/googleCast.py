@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-01-11",
         "last_update_date": "2025-08-09",
         "requirements": "none",
-        "category": "Cast",
+        "category": "Smart Home & Connected Devices",
         "notes": "",
         "paths": ('*/com.google.android.gms/databases/cast.db*'),
         "output_types": "standard",

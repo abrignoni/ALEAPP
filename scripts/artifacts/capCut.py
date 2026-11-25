@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "CapCut",
+        "category": "Photos & Media",
         "notes": "One row per row of the session table. Session Timestamp is the table's "
                  "timestamp column, read as Unix milliseconds; what moment of a session it "
                  "marks was not established. Duration is "
@@ -38,7 +38,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "CapCut",
+        "category": "Photos & Media",
         "notes": "One row per app data directory. Monitor Install Time 3 is the "
                  "monitor_install_time3 "
                  "value of applog_monitor.xml, read as Unix milliseconds; what the app marks "

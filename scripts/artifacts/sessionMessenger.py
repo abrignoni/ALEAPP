@@ -10,7 +10,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
         "requirements": "none",
-        "category": "Session Messenger",
+        "category": "Messaging",
         "notes": (
             "Session (network.loki.messenger) is derived from Signal for Android. This artifact reports "
             "plaintext values from the app's shared preferences file only. "
@@ -57,7 +57,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
         "requirements": "none",
-        "category": "Session Messenger",
+        "category": "Messaging",
         "notes": (
             "A per-key view of the same file parsed by the Session - Account artifact, so the account keys "
             "appear in both. Values are reported as stored; this artifact assigns no meaning to a key "
@@ -96,7 +96,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
         "requirements": "none",
-        "category": "Session Messenger",
+        "category": "Messaging",
         "notes": (
             "A directory listing, not a media artifact. The content of these files is not recovered and no "
             "thumbnail is produced. In the tested images the files carried no recognisable file-format "

@@ -11,7 +11,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "JusTalk",
+        "category": "Messaging",
         "notes": "Messages are read from the class_CallLog table of the per-account Realm store "
                  "(files/<account uid>.realm). default.realm, .realm and the .backup. copies are "
                  "not read, and a store whose message, file, friend, member and moment tables are "
@@ -75,7 +75,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "JusTalk",
+        "category": "Messaging",
         "notes": "Read from the rows of class_CallLog whose type is AudioCall or VideoCall. "
                  "Direction is taken from the boolean 'incoming' column: a true value is reported "
                  "as Incoming and a false value as Outgoing; a missing or null value leaves Direction blank. Duration "
@@ -108,7 +108,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "JusTalk",
+        "category": "Messaging",
         "notes": "Each row is one class_ROFileUrl record. The record's 'md5' column is base64 of "
                  "the MD5 of the file's contents, so cached copies are located by hashing every "
                  "file in the paths above and matching, rather than by file name. In the sample "
@@ -143,7 +143,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "JusTalk",
+        "category": "Messaging",
         "notes": "Read from the class_ServerFriend table. The class_Contact table was empty in "
                  "the sample this artifact was built from; what it holds was not established, "
                  "and it is not covered here.\n"
@@ -164,7 +164,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-10",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "JusTalk",
+        "category": "Messaging",
         "notes": "Read from the class_ServerMember table.",
         "paths": ('*/com.juphoon.justalk/files/*.realm',),
         "output_types": "standard",
@@ -178,7 +178,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-10",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "JusTalk",
+        "category": "Messaging",
         "notes": "Read from the class_Moment table.",
         "paths": ('*/com.juphoon.justalk/files/*.realm',),
         "output_types": "standard",
@@ -193,7 +193,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "JusTalk",
+        "category": "Messaging",
         "notes": "The per-account Realm store is named after the local account's own user id, so "
                  "the file name is reported as the account UID. That reading is corroborated by "
                  "the senderUid on outgoing message rows, which carries the same value.\n"
@@ -257,7 +257,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
         "requirements": "none",
-        "category": "JusTalk",
+        "category": "Messaging",
         "notes": "Read from files/mmkv/mmkv.default with the shared mmkv_parser. Keys and values "
                  "are reported as the app wrote them and are not renamed or interpreted.\n"
                  "A key can appear more than once in the file. Every entry is reported in file "
@@ -290,7 +290,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "JusTalk Kids",
+        "category": "Messaging",
         "notes": "Messages are read from the class_CallLog table of the per-account Realm store "
                  "(files/<account uid>.realm). default.realm, .realm and the .backup. copies are "
                  "not read, and a store whose message, file, friend, member and moment tables are "
@@ -354,7 +354,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "JusTalk Kids",
+        "category": "Messaging",
         "notes": "Read from the rows of class_CallLog whose type is AudioCall or VideoCall. "
                  "Direction is taken from the boolean 'incoming' column: a true value is reported "
                  "as Incoming and a false value as Outgoing; a missing or null value leaves Direction blank. Duration "
@@ -390,7 +390,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "JusTalk Kids",
+        "category": "Messaging",
         "notes": "Each row is one class_ROFileUrl record. The record's 'md5' column is base64 of "
                  "the MD5 of the file's contents, so cached copies are located by hashing every "
                  "file in the paths above and matching, rather than by file name. In the sample "
@@ -423,7 +423,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "JusTalk Kids",
+        "category": "Messaging",
         "notes": "Read from the class_ServerFriend table. The class_Contact table was empty in "
                  "the sample this artifact was built from; what it holds was not established, "
                  "and it is not covered here.\n"
@@ -444,7 +444,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-10",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "JusTalk Kids",
+        "category": "Messaging",
         "notes": "Read from the class_ServerMember table.",
         "paths": ('*/com.justalk.kids.android/files/*.realm',),
         "output_types": "standard",
@@ -458,7 +458,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-10",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "JusTalk Kids",
+        "category": "Messaging",
         "notes": "Read from the class_Moment table.",
         "paths": ('*/com.justalk.kids.android/files/*.realm',),
         "output_types": "standard",
@@ -472,7 +472,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "JusTalk Kids",
+        "category": "Messaging",
         "notes": "The per-account Realm store is named after the local account's own user id, so "
                  "the file name is reported as the account UID. That reading is corroborated by "
                  "the senderUid on outgoing message rows, which carries the same value.\n"
@@ -538,7 +538,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
         "requirements": "none",
-        "category": "JusTalk Kids",
+        "category": "Messaging",
         "notes": "Read from files/mmkv/mmkv.default with the shared mmkv_parser. Keys and values "
                  "are reported as the app wrote them and are not renamed or interpreted.\n"
                  "A key can appear more than once in the file. Every entry is reported in file "

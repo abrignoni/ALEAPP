@@ -1,13 +1,13 @@
 # pylint: disable=W0718
 __artifacts_v2__ = {
     "get_chrome": {
-        "name": "Web History",
+        "name": "Chromium - Web History",
         "description": "Parses Web History from Chromium based browsers",
         "author": "@abrignoni",
         "creation_date": "2020-03-19",
         "last_update_date": "2020-03-19",
         "requirements": "none",
-        "category": "Chromium",
+        "category": "Browsers",
         "notes": "",
         "paths": ('*/app_chrome/Default/History*', '*/app_sbrowser/Default/History*', '*/app_opera/History*', '*/app_webview/Default/History*'),
         "output_types": "standard",
@@ -27,13 +27,13 @@ __artifacts_v2__ = {
         },
     },
     "get_chromeWebVisits": {
-        "name": "Web Visits",
+        "name": "Chromium - Web Visits",
         "description": "Parses Web Visits from Chromium based browsers",
         "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2020-03-19",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Chromium",
+        "category": "Browsers",
         "notes": "Transition (As Stored) retains the full visits.transition SQLite value without conversion. "
                  "Core Transition Interpretation names the low byte of that value, 0 through 10, with the "
                  "names Chromium's page_transition_types.h gives them at the commit cited below, without "
@@ -65,13 +65,13 @@ __artifacts_v2__ = {
         },
     },
     "get_chromeSearchTerms": {
-        "name": "Search Terms",
+        "name": "Chromium - Search Terms",
         "description": "Extracts text after the first ASCII case-insensitive search?q= marker in selected Chromium History URLs and decodes it once with unquote_plus. Search URLs of other forms are not reported; the keyword_search_terms table is reported by Keyword Search Terms.",
         "author": "@AlexisBrignoni, Codex",
         "creation_date": "2020-03-19",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Chromium",
+        "category": "Browsers",
         "notes": "The existing SQLite LIKE substring selection is retained. The selected text "
                  "ends at a second literal search?q= marker or the first ampersand, and is "
                  "decoded once with unquote_plus: literal plus becomes space and %2B becomes "
@@ -96,13 +96,13 @@ __artifacts_v2__ = {
         },
     },
     "get_chromeDownloads": {
-        "name": "Downloads",
+        "name": "Chromium - Downloads",
         "description": "Parses Downloads from Chromium based browsers",
         "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2020-03-19",
         "last_update_date": "2026-10-31",
         "requirements": "none",
-        "category": "Chromium",
+        "category": "Browsers",
         "notes": "Tab URL is the downloads.tab_url column, the page the download was started from. The "
                  "source URL of the downloaded file is held in the downloads_url_chains table, which "
                  "this artifact does not parse. State, Danger Type and Interrupt Reason retain the "
@@ -139,13 +139,13 @@ __artifacts_v2__ = {
         },
     },
     "get_chromeKeywordSearchTerms": {
-        "name": "Keyword Search Terms",
+        "name": "Chromium - Keyword Search Terms",
         "description": "Parses Keyword Search Terms from Chromium based browsers",
         "author": "@abrignoni",
         "creation_date": "2020-03-19",
         "last_update_date": "2020-03-19",
         "requirements": "none",
-        "category": "Chromium",
+        "category": "Browsers",
         "notes": "",
         "paths": ('*/app_chrome/Default/History*', '*/app_sbrowser/Default/History*', '*/app_opera/History*', '*/app_webview/Default/History*'),
         "output_types": "standard",

@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Termux",
+        "category": "App Data Stores",
         "notes": "One row per apt transaction from files/usr/var/log/apt/history.log, which "
                  "records apt transactions; on the tested image the shipped bootstrap packages "
                  "did not appear in it, only transactions made after setup. Each block carries a "
@@ -48,7 +48,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Termux",
+        "category": "App Data Stores",
         "notes": "One row per package from the dpkg status database at files/usr/var/lib/dpkg/status. This is "
                  "the state of the environment at acquisition, the shipped bootstrap packages together with "
                  "anything installed later, and the file carries no install date, so it cannot on its own "
@@ -75,7 +75,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "Termux",
+        "category": "App Data Stores",
         "notes": "One row per container, combining the app's shared_prefs/com.termux_preferences.xml "
                  "with the non-comment settings in files/home/.termux/termux.properties. The "
                  "preferences file holds a current_session identifier and a log_level; the Terminal "

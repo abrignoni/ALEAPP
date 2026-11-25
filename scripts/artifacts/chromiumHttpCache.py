@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Chromium",
+        "category": "Browsers",
         "notes": "Read from the Simple Cache entry files (<16 hex digits>_0 and _1) under a browser's "
                  "cache/Cache/Cache_Data folder, and under cache/WebView/<profile>/HTTP Cache/Cache_Data for "
                  "DuckDuckGo, which renders pages in a WebView. On the tested images that first layout was used "
@@ -92,7 +92,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Chromium",
+        "category": "Browsers",
         "notes": "Read from index-dir/the-real-index in each Cache_Data folder the Entries artifact covers. The "
                  "file is a base::Pickle with a CRC header, then magic 0x656e74657220796f, version, entry count, "
                  "cache size and the reason the index was written, then one record per entry (hash, last used "

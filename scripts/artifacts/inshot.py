@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-06",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "InShot",
+        "category": "Photos & Media",
         "sample_data": {
             "emu_a15_oss_v17": "InShot 2.222.1548 | 1 row",
         },
@@ -42,7 +42,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-06",
         "requirements": "none",
-        "category": "InShot",
+        "category": "Photos & Media",
         "sample_data": {
             "emu_a15_oss_v17": "InShot 2.222.1548 | 1 row",
         },

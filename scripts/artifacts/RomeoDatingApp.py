@@ -12,7 +12,7 @@ __artifacts_v2__ = {
         'creation_date': '2026-02-25',
         'last_update_date': '2026-10-04',
         'requirements': '',
-        'category': 'Chats',
+        'category': 'Messaging',
         'notes': 'A message is reported whether or not ChatPartnerEntity holds a row for its chat '
                  'partner, and is not repeated for each image attached to it. Whether profileId is '
                  'unique in ChatPartnerEntity is not established; if it is not, a message appears once '
@@ -43,7 +43,7 @@ __artifacts_v2__ = {
         'creation_date': '2026-02-25',
         'last_update_date': '2026-10-04',
         'requirements': '',
-        'category': 'Contacts',
+        'category': 'Calls & Contacts',
         'notes': 'Last Fetched and Deleted are fetchDate and deletionDate read as Unix milliseconds, an '
                  'assumed unit: no source for the unit was found and no registered test image holds '
                  'this database. A stored value that is NULL or 0 is reported blank, so a blank '
@@ -65,7 +65,7 @@ __artifacts_v2__ = {
         'creation_date': '2026-02-25',
         'last_update_date': '2026-10-04',
         'requirements': '',
-        'category': 'Accounts',
+        'category': 'Accounts & Credentials',
         'notes': 'Creation Date and Last Login Date are the creation_date and last_login values of '
                  'the profile JSON as stored, with no conversion. Their stored format and time zone '
                  'are not established, so both columns are reported as text and not as a date and '

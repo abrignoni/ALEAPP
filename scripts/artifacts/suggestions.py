@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-08-15",
         "last_update_date": "2026-11-16",
         "requirements": "none",
-        "category": "Wipe & Setup",
+        "category": "Device Information",
         "notes": "Only the three keys ending _setup_time that the module lists are reported; every other entry of the file is ignored. Name is the key as stored. What each time marks is not established here. One observation on one build: on the known data emu_a15_reset_known_20261116 (an Android 15 emulator; by the mint record it was booted with its user data wiped and the Settings app was opened about 21 seconds after the time the factory_reset bootstat file records), com.android.settings.suggested.category.DEFERRED_SETUP_setup_time held a time 22 seconds after that bootstat time and about 18 seconds after the suw_finished_time_ms that setup_wizard_info.xml holds, and suggestions.xml was last modified in that same second. The mint record says suggestions.xml did not exist before Settings was opened; the image cannot show that. No run was made with Settings left closed and the app's code was not read, so what writes the key is not established. Other builds and the other two keys were not compared with known times.",
         "paths": ('*/com.google.android.settings.intelligence/shared_prefs/suggestions.xml',),
         "output_types": "standard",

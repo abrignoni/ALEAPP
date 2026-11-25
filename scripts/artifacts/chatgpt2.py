@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-07-08",
         "last_update_date": "2026-11-11",
         "requirements": "none",
-        "category": "ChatGPT",
+        "category": "AI Assistants",
         "notes": "Role, Creation Time, Modified Time and Conversation ID are read from the top "
                  "level of the message JSON, and Content is the message's content.content text. "
                  "Role falls back to author.role when the top-level key is missing; that path was "

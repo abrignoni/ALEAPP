@@ -1,12 +1,12 @@
 __artifacts_v2__ = {
     "get_chromeLoginData": {
-        "name": "Login Data",
+        "name": "Chromium - Login Data",
         "description": "Rows of the logins table of the Login Data database of Chromium based browsers, with the stored password value decrypted where it carries the v10 prefix and the result passes a padding and text check.",
         "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2020-03-20",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Chromium",
+        "category": "Browsers",
         "notes": (
             "Created Time is date_created read as microseconds since 1601-01-01 UTC, shown to the "
             "second. Chromium binds the column that way: "

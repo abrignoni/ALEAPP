@@ -344,7 +344,7 @@ class ArtifactTests(unittest.TestCase):
     def test_every_function_has_an_artifact_entry_of_its_own_name(self):
         self.assertEqual({f.__name__ for f in self.FUNCTIONS}, set(artifacts.__artifacts_v2__))
         for key, entry in artifacts.__artifacts_v2__.items():
-            self.assertTrue(entry['category'].startswith('Android Bug Report - '))
+            self.assertEqual(entry['category'], 'Android Bug Report')
             self.assertEqual(entry['paths'], ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                 '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'), key)
 

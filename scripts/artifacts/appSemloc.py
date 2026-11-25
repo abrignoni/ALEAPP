@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2024/06/21",
         "last_update_date": "2026-11-18",
         "requirements": "",
-        "category": "Semantic Location",
+        "category": "Locations & Maps",
         "notes": "Read from Google Play services' semantic location raw signal LevelDB "
                  "(com.google.android.gms/app_semanticlocation_rawsignal_db) with the vendored "
                  "ccl_leveldb readers (thanks to Alex Caithness). Sources are the decompiled Google "
@@ -88,7 +88,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-18",
         "last_update_date": "2026-11-18",
         "requirements": "",
-        "category": "Semantic Location",
+        "category": "Locations & Maps",
         "notes": "Read from Google Play services' semantic location raw signal LevelDB "
                  "(com.google.android.gms/app_semanticlocation_rawsignal_db) with the vendored "
                  "ccl_leveldb readers (thanks to Alex Caithness). Sources are the decompiled Google "
@@ -172,7 +172,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-18",
         "last_update_date": "2026-11-18",
         "requirements": "",
-        "category": "Semantic Location",
+        "category": "Locations & Maps",
         "notes": "Read from Google Play services' semantic location raw signal LevelDB "
                  "(com.google.android.gms/app_semanticlocation_rawsignal_db) with the vendored "
                  "ccl_leveldb readers (thanks to Alex Caithness). Sources are the decompiled Google "

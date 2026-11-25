@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-11-22",
         "requirements": "none",
-        "category": "Moovit",
+        "category": "Locations & Maps",
         "sample_data": {
             "emu_a15_oss_v14": "Moovit 5.199.1.1804 | 2 rows",
         },

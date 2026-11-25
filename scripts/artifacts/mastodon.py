@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-12-07",
         "last_update_date": "2026-10-09",
         "requirements": "BeautifulSoup",
-        "category": "Mastodon",
+        "category": "Social Media",
         "notes": ""
                  "Every file ending in .db that the search returned is read, one storage view of "
                  "each, and a database without the recent_searches table is passed over. Source "
@@ -27,7 +27,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-12-07",
         "last_update_date": "2026-10-09",
         "requirements": "BeautifulSoup",
-        "category": "Mastodon",
+        "category": "Social Media",
         "notes": "Every file ending in .db that the search returned is read, one storage view of each, and a database without the recent_searches table is passed over. Source File names the database a row came from.",
         "paths": ('*/org.joinmastodon.android/databases/*.db*',),
         "output_types": "standard",
@@ -43,7 +43,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-12-07",
         "last_update_date": "2026-10-09",
         "requirements": "BeautifulSoup",
-        "category": "Mastodon",
+        "category": "Social Media",
         "notes": ""
                  "Notification Type Interpretation is decoded from the stored integer type as 0 Follow, 2 "
                  "Mention, 3 Boost and 4 Favorite, the positions of FOLLOW, MENTION, REBLOG and "
@@ -68,7 +68,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-12-07",
         "last_update_date": "2026-10-09",
         "requirements": "BeautifulSoup",
-        "category": "Mastodon",
+        "category": "Social Media",
         "notes": "Every file ending in .db that the search returned is read, one storage view of each, and a database without the home_timeline table is passed over. Source File names the database a row came from.",
         "paths": ('*/org.joinmastodon.android/databases/*.db*',),
         "output_types": "standard",
@@ -84,7 +84,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-12-07",
         "last_update_date": "2022-12-07",
         "requirements": "BeautifulSoup",
-        "category": "Mastodon",
+        "category": "Social Media",
         "notes": "",
         "paths": ('*/org.joinmastodon.android/files/accounts.json',),
         "output_types": "standard",
@@ -100,7 +100,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-12-07",
         "last_update_date": "2022-12-07",
         "requirements": "BeautifulSoup",
-        "category": "Mastodon",
+        "category": "Social Media",
         "notes": "",
         "paths": ('*/org.joinmastodon.android/files/instance*.json',),
         "output_types": "standard",

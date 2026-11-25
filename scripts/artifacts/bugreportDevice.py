@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-27",
         "requirements": "none",
-        "category": "Android Bug Report - Device and Build",
+        "category": "Android Bug Report",
         "notes": "One row per header line of the bug report text that is named here, the report time as printed, and each of 40 "
                  "properties of the SYSTEM PROPERTIES (getprop) section that are on a fixed list (build, product, hardware, security state, USB configuration, locale, time zone and boot reason), as printed (control characters shown as a space, a value over several lines joined with spaces, values cut at 400 characters) and once each. Header lines read: Build, Build fingerprint, Bootloader, Radio, "
                  "Network, Module Metadata version, Android SDK version, SDK extensions, Kernel, Uptime, Bugreport format version "
@@ -50,7 +50,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-27",
         "last_update_date": "2026-10-27",
         "requirements": "none",
-        "category": "Android Bug Report - Device and Build",
+        "category": "Android Bug Report",
         "notes": "Values are shown as printed, nothing is masked: control characters shown as a space, a value over several "
                  "lines joined with spaces. Rows, in the order of the text: each of 25 properties of the SYSTEM PROPERTIES "
                  "(getprop) section that are on a fixed list, once each, values cut at 400 characters (ro.serialno, ro.boot.serialno, "
@@ -106,7 +106,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Device and Build",
+        "category": "Android Bug Report",
         "notes": "One row per section that the bug report text opens: a command section (a line like '------ TITLE (command) "
                  "------'), a dumpsys service section (a line 'DUMP OF SERVICE name:', priority words dropped), a dumpsys group (a "
                  "command that runs the dumpsys binary and holds service sections) and the header before the first section. Start Line "
@@ -150,7 +150,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Installed Apps",
+        "category": "Android Bug Report",
         "notes": "One row per Package [name] block of the Packages: and Hidden system packages: parts of the package service dump "
                  "(DUMP OF SERVICE package) of the bug report text. Block says which part. The same package name is in both parts "
                  "in the tested reports (29 to 90 names); the hidden part is read here as the system copy that an update replaced, "
@@ -198,7 +198,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Android Bug Report - Installed Apps",
+        "category": "Android Bug Report",
         "notes": "One row per firstInstallTime, lastUpdateTime and timeStamp value printed in a Package block of the package "
                  "service dump. Event is the key as printed. firstInstallTime is printed for each Android user on the Android 13, 15 and "
                  "16 reports (User names the user) and once per package on the two Android 10 reports, where User is empty. lastUpdateTime and timeStamp are printed once per package. What the platform means by timeStamp is not "

@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "last_update_date": "2026-10-04",
         "notes": "Two schema variants are handled: destination_directory and directory_path. Reference: Mozilla android-components, 'DownloadState.Status (INITIATED=1, DOWNLOADING=2, PAUSED=3, CANCELLED=4, FAILED=5, COMPLETED=6); statuses 3 to 6 are shown as Paused, Canceled, Failed and Finished, and statuses 1 and 2 and any other value are shown as stored', https://github.com/mozilla-firefox/firefox/blob/6d751cf5d0af4b7fcc1b232b6c2ba0551afabe1d/mobile/android/android-components/components/browser/state/src/main/java/mozilla/components/browser/state/state/content/DownloadState.kt",
         "requirements": "none",
-        "category": "Firefox",
+        "category": "Browsers",
         "paths": ('*/org.mozilla.firefox/databases/mozac_downloads_database*',
                   '*/org.torproject.torbrowser/databases/mozac_downloads_database*'),
         "output_types": "standard",

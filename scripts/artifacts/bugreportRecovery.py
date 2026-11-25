@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-27",
         "last_update_date": "2026-10-28",
         "requirements": "none",
-        "category": "Android Bug Report - Boot, Crash and Dropbox",
+        "category": "Android Bug Report",
         "notes": "The members of a bug report zip named FS/cache/recovery/history, last_history, last_all_history, last_extra_history "
                  "and extra_history (and the same names under efs/recovery) are read from the zip as it is, with the reader and the "
                  "columns of sRecoveryhist (see its notes for the fields, the Activity words, the volumes of the extra history file and "

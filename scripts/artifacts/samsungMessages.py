@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-16",
         "last_update_date": "2026-11-16",
         "requirements": "none",
-        "category": "SMS & MMS",
+        "category": "Messaging",
         "notes": "One row per message in the messages table of com.samsung.android.messaging/databases/"
                  "message_content.db, or one row per attachment part for a message with more than one; no "
                  "message with more than one attachment part was present on the images checked, so that "

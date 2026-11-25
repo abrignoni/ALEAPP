@@ -44,7 +44,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-18",
         "last_update_date": "2026-11-23",
         "requirements": "none",
-        "category": "Smart Sidebar",
+        "category": "Device Activity",
         "notes": (
             "Folder name format: base64(<uuid>|<uuid>|<epoch ms added>|<last 20 chars of file "
             "name>). The capture time inside OPLUSDRAG file names is device local time. On the "
@@ -85,7 +85,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-18",
         "last_update_date": "2026-07-18",
         "requirements": "none",
-        "category": "Smart Sidebar",
+        "category": "Device Activity",
         "notes": (
             "The main db file can be nearly empty with schema and rows resident in the "
             "un-checkpointed WAL, hence the db* search pattern. For text selections the db may "

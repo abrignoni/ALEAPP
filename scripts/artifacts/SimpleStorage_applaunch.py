@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "last_update_date": "2026-10-06",
         "last_updated": "2025-09-12",
         "requirements": "none",
-        "category": "Android System Intelligence",
+        "category": "Device Activity",
         "notes": "The query and the Launched From names for launchLocationId values 1, 2, 4, 7, 8, "
                  "12 and 1000 come from Josh Hickman's (@josh_hickman1) research and testing. No "
                  "published reference for them is cited here. Any other value is shown as stored. "

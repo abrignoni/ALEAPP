@@ -10,7 +10,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-28",
         "last_update_date": "2026-08-29",
         "requirements": "blackboxprotobuf",
-        "category": "Google Play Movies & TV",
+        "category": "Music, Video & News",
         "notes": "Source is purchase_store.db. On some of the database copies tested the database "
                  "file itself held no tables at all and every row was in the write ahead log, so "
                  "the path pattern collects the sidecars and they must be carried alongside the "

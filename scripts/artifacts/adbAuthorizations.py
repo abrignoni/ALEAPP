@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-03",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Device Connections",
+        "category": "Smart Home & Connected Devices",
         "notes": "Read from the adb_temp_keys.xml the platform keeps in its adb folder, which may "
                  "be ABX binary XML or plain XML; the format is detected per file. One row per "
                  "adbKey element. Last Connection is the lastConnection attribute in Unix "

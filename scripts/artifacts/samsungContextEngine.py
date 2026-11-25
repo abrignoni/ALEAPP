@@ -31,7 +31,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-20",
         "last_update_date": "2026-11-20",
         "requirements": "none",
-        "category": "Samsung Continuity Service",
+        "category": "Device Activity",
         "notes": "The store also holds a detectingDevice code and a deviceUuid. Both held "
                  "one value on all 66 rows of anne_a15 and are not reported. Which device "
                  "made the classification is not established. The store's confidence column "
@@ -57,7 +57,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-20",
         "last_update_date": "2026-11-20",
         "requirements": "none",
-        "category": "Samsung Continuity Service",
+        "category": "Device Activity",
         "notes": "Activity decodes the stored state with the order of the activity list in "
                  "mcfds 1.3.08.9 (0 UNKNOWN, 1 STATIONARY, 2 WALKING, 3 RUNNING, 4 VEHICLE, "
                  "5 CYCLE, 6 AIRPLANE). Only 2 and 4 occur on anne_a15, and the mapping was "
@@ -87,7 +87,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-20",
         "last_update_date": "2026-11-20",
         "requirements": "none",
-        "category": "Samsung Continuity Service",
+        "category": "Device Activity",
         "notes": "Entered and Exited follow the column names ingressTime and egressTime. "
                  "Visit ID is fvpId for a place and varId for an area, as stored. Latitude "
                  "and Longitude are the plain columns. Both are filled only when latitude "
@@ -128,7 +128,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-20",
         "last_update_date": "2026-11-20",
         "requirements": "none",
-        "category": "Samsung Continuity Service",
+        "category": "Device Activity",
         "notes": "Set Time is the time of the saved set. Level is the stored value. In "
                  "mcfds 1.3.08.9 it is calculated from the scans merged into the set, so it "
                  "is not one measured reading. Latitude and Longitude are the plain "
@@ -166,7 +166,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-20",
         "last_update_date": "2026-11-20",
         "requirements": "none",
-        "category": "Samsung Continuity Service",
+        "category": "Device Activity",
         "notes": "Trigger, operators, country code and Roaming are as stored. On anne_a15 "
                  "Network Operator, SIM Operator, Country Code and Roaming each held one "
                  "value on all 33 rows. User is the user number in the database path, and a "
@@ -191,7 +191,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-20",
         "last_update_date": "2026-11-20",
         "requirements": "none",
-        "category": "Samsung Continuity Service",
+        "category": "Device Activity",
         "notes": "Latitude and Longitude are the plain columns. Both are filled only when "
                  "latitude is between -90 and 90, longitude is between -180 and 180, and "
                  "the pair is not 0, 0. Otherwise both are blank. The app reads a plain "

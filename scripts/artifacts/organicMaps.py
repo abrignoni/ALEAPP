@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "Organic Maps",
+        "category": "Locations & Maps",
         "notes": "One row per point bookmark in the KML files under files/bookmarks. Organic Maps stores each "
                  "bookmark category as its own KML document, so the Category column is the KML "
                  "Document name, and the file name without its extension when the document has no "
@@ -39,7 +39,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-10-07",
         "requirements": "none",
-        "category": "Organic Maps",
+        "category": "Locations & Maps",
         "notes": "One row per direct-child line Placemark selected from a direct-child KML "
                  "Document in files/bookmarks. The parser uses the LineString coordinates branch "
                  "when that element has nonempty text; otherwise it examines gx:Track. The "

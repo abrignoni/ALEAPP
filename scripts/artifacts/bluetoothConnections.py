@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-06-23",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Bluetooth Connections",
+        "category": "Smart Home & Connected Devices",
         "notes": "Reads every bt_config.conf the path matches; the report's located at line lists each "
                  "file read, and rows are not marked with their file. The nine registered zip images "
                  "checked on 2026-10-04 (anne_a15, galaxys10_a10, hc_pixel8pro_a16, kevin_pocox7_a15, "
@@ -52,7 +52,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-06-23",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Bluetooth Connections",
+        "category": "Smart Home & Connected Devices",
         "notes": "Reads every bt_config.conf the path matches; the report's located at line lists each "
                  "file read, and rows are not marked with their file. The nine registered zip images "
                  "checked on 2026-10-04 each hold one such file.",

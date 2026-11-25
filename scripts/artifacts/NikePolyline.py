@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-02-24",
         "last_update_date": "2026-10-06",
         "requirements": "polyline",
-        "category": "Nike-Run",
+        "category": "Health & Fitness",
         "notes": "One row per activity_polyline row that holds an as2_p_encoded_polyline value, "
                  "joined to its activity. The stored string is decoded as an encoded polyline at "
                  "5 decimal places, the polyline library's default; that precision is assumed "

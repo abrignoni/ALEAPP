@@ -9,7 +9,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-16",
         "last_update_date": "2026-11-16",
         "requirements": "none",
-        "category": "Chrome",
+        "category": "Browsers",
         "notes": ('Reads Preferences in app_chrome/<profile> of Chromium-based browsers, read only when the'
                   ' directory directly above app_chrome is shaped like a package name; Browser is that '
                   'package and Profile the profile folder. The storage views one Android extraction can '

@@ -9,7 +9,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",
-        "category": "Permissions",
+        "category": "Installed Apps",
         "notes": "More info: https://blog.digital-forensics.it/2025/11/beyond-known-call-to-forensic-research.html. "
                  "Where a permission_db has no UID column the UID cell is left empty.",
         "paths": ('*/com.samsung.android.privacydashboard/databases/permission_db*',),

@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-03-11",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Tango",
+        "category": "Messaging",
         "notes": ("Direction is decoded from the messages table 'direction' column. Message is "
                   "derived, not stored: the payload column is base64-decoded, the bytes are read as "
                   "UTF-8 with any byte sequence that is not valid UTF-8 dropped, and the text "

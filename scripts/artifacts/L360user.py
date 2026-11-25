@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         'creation_date': '2026-06-11',
         'last_update_date': '2026-06-12',
         'requirements': 'none',
-        'category': 'Life360',
+        'category': 'Locations & Maps',
         'notes': '',
         'paths': ('*/com.life360.android.safetymapd/databases/com.amplitude.api*',),
         'output_types': 'standard',

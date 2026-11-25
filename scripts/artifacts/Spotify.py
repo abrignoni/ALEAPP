@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Spotify",
+        "category": "Music, Video & News",
         "notes": "No email address or display name for the account was found on the extraction "
                  "this artifact was built on, which is not named here; each file under the app's "
                  "data directory there, including shared_prefs and the per-user settings folder, "
@@ -49,7 +49,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-25",
         "requirements": "none",
-        "category": "Spotify",
+        "category": "Music, Video & News",
         "notes": "Source is frecency.pb, a per-account file; it is not a public format, so the "
                  "layout was worked out from the file on one tested image, which is not named "
                  "here, and not from documentation. Snapshot Time is field 4 of a snapshot, read "
@@ -96,7 +96,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-25",
         "requirements": "none",
-        "category": "Spotify",
+        "category": "Music, Video & News",
         "notes": "Source is event-sender.db's Events table, a table of named events written by the "
                  "app; its purpose is not sourced here. Each row's 'fragments' column is a "
                  "protobuf blob decoded without a schema, so field numbers carry no names. An "
@@ -152,7 +152,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-25",
         "requirements": "none",
-        "category": "Spotify",
+        "category": "Music, Video & News",
         "notes": "Source is the app's HTTP disk cache (cache/http-cache), specifically a cached "
                  "response from the recently-played/v3 endpoint; the response body is schema-less "
                  "protobuf, decoded the same way this project already decodes undocumented "
@@ -200,7 +200,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Spotify",
+        "category": "Music, Video & News",
         "notes": "Source is the app's HTTP disk cache (cache/http-cache): the color-lyrics/v2 and "
                  "merch-npv-service/v1 endpoints; what the app requests them for is not "
                  "established here. The Spotify track ID is read directly from each cached "
@@ -245,7 +245,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Spotify",
+        "category": "Music, Video & News",
         "notes": "Source is the app's HTTP disk cache (cache/http-cache), specifically cached "
                  "responses from the artist-identity-view/v2 endpoint; what the app requests it "
                  "for is not established here; the response is plain JSON and 'Artist Name' / "

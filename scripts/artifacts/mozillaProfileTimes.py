@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-30",
         "last_update_date": "2026-10-30",
         "requirements": "none",
-        "category": "Mozilla Browsers",
+        "category": "Browsers",
         "notes": "Reads times.json in each files/mozilla/<profile> folder of an app's data directory, one "
                  "row per profile. Mozilla's ProfileAge module writes this file "
                  "(https://github.com/mozilla-firefox/firefox/blob/204a96d56b40285148fea160628bbad54ff98f3c/toolkit/modules/ProfileAge.sys.mjs): "

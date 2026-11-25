@@ -9,7 +9,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-30",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Samsung Continuity Service",
+        "category": "Device Activity",
         "notes": "The Time Text column is the timeText string as stored; the store records "
                  "no zone for it. On anne_a15 the text was 7 hours behind the Time column "
                  "(UTC) on 46 rows and 4 hours behind on 40 rows, changing once in time "
@@ -31,7 +31,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-30",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Samsung Continuity Service",
+        "category": "Device Activity",
         "notes": "The Sleep Start Text, Sleep End Text and Recorded Text columns are the "
                  "startTimeText, endTimeText and timeText strings as stored (month, day, "
                  "hour and minute, with no year and no zone). On anne_a15 each was 4 hours "

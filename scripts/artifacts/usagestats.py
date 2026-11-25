@@ -10,7 +10,7 @@ __artifacts_v2__ = {
         "creation_date": "2020-02-25",
         "last_update_date": "2026-11-20",
         "requirements": "none",
-        "category": "Usage Stats",
+        "category": "Device Activity",
         "notes": (
             "Usage Type names the record kind a row was read from: 'packages' and "
             "'configurations' are per-interval aggregates written by the platform, "

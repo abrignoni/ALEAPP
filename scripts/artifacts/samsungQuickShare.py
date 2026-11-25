@@ -18,7 +18,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-17",
         "last_update_date": "2026-11-17",
         "requirements": "none",
-        "category": "Samsung Quick Share",
+        "category": "Cloud & Files",
         "notes": (
             "Read from com.samsung.android.app.sharelive/databases/linkShare.db with its "
             "-wal. Outgoing rows come from the devices table (one row per peer device "
@@ -126,7 +126,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-17",
         "last_update_date": "2026-11-17",
         "requirements": "none",
-        "category": "Samsung Quick Share",
+        "category": "Cloud & Files",
         "notes": (
             "Read from the box (one row per link) and content (one row per file, box_id "
             "points to box.id) tables of "

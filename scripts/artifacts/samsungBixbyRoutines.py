@@ -14,7 +14,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-27",
         "requirements": "none",
-        "category": "Samsung Bixby Routines",
+        "category": "Device Activity",
         "notes": (
             (
             (
@@ -75,7 +75,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-26",
         "last_update_date": "2026-08-27",
         "requirements": "none",
-        "category": "Samsung Bixby Routines",
+        "category": "Device Activity",
         "notes": (
             (
             (
@@ -119,7 +119,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-26",
         "last_update_date": "2026-08-27",
         "requirements": "none",
-        "category": "Samsung Bixby Routines",
+        "category": "Device Activity",
         "notes": (
             (
             (
@@ -161,7 +161,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-26",
         "last_update_date": "2026-08-27",
         "requirements": "none",
-        "category": "Samsung Bixby Routines",
+        "category": "Device Activity",
         "notes": (
             (
             (
@@ -201,7 +201,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-26",
         "last_update_date": "2026-08-27",
         "requirements": "none",
-        "category": "Samsung Bixby Routines",
+        "category": "Device Activity",
         "notes": (
             (
             (
@@ -246,7 +246,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-27",
         "requirements": "none",
-        "category": "Samsung Bixby Routines",
+        "category": "Device Activity",
         "notes": (
             (
             (
@@ -298,7 +298,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-27",
         "requirements": "none",
-        "category": "Samsung Bixby Routines",
+        "category": "Device Activity",
         "notes": (
             (
             (

@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-08-23",
         "last_update_date": "2026-11-23",
         "requirements": "none",
-        "category": "VLC",
+        "category": "Music, Video & News",
         "notes": "One row per file matched. File Modified is the modification time the tool reads"
                  " from the input for the file as a UTC time, to the whole second, such as from a"
                  " tar header or a zip entry's NTFS or extended timestamp field. When the tool "
@@ -31,7 +31,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-08-23",
         "last_update_date": "2026-11-23",
         "requirements": "none",
-        "category": "VLC",
+        "category": "Music, Video & News",
         "notes": "One row per file matched outside the thumbnails folder; the file type is not "
                  "checked. Only paths under the app's medialib/thumbnails directory are left out."
                  " File Modified is the modification time the tool reads from the input for the "

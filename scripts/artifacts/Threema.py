@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-17",
         "last_update_date": "2026-11-15",
         "requirements": "none",
-        "category": "Threema",
+        "category": "Messaging",
         "notes": "Read from the client's default preferences file, which Android names after "
                  "the package. 'Linked Mobile Number' is blank when the file carries none; "
                  "absence is not evidence that no number was ever linked. 'Package' is the "
@@ -53,7 +53,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-17",
         "last_update_date": "2026-11-16",
         "requirements": "sqlcipher3",
-        "category": "Threema",
+        "category": "Messaging",
         "notes": "threema4.db is SQLCipher-encrypted and is opened read-only with its "
                  "write-ahead log, with the master key from key.dat, version 1, read when "
                  "unprotected and its checksum verifies (Version1MasterKeyFileManager.kt "
@@ -142,7 +142,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-17",
         "last_update_date": "2026-11-16",
         "requirements": "sqlcipher3",
-        "category": "Threema",
+        "category": "Messaging",
         "notes": "The database is opened as for Threema - Contacts, with the same key files "
                  "and limits. Rows come from the message table (one-to-one chats) and "
                  "m_group_message (groups); a column a schema lacks is blank. 'Created', "
@@ -279,7 +279,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-14",
         "last_update_date": "2026-11-16",
         "requirements": "sqlcipher3",
-        "category": "Threema",
+        "category": "Messaging",
         "notes": "One row per file in the client's two user files directories, "
                  "files/user-data/ in the app data directory and files/data/ in external "
                  "storage (AppDirectoryProvider.kt L18-L22, L36-L38); an external directory "

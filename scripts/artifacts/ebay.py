@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "eBay",
+        "category": "Shopping & Marketplaces",
         "notes": "Read from the watch_list table of nautilus_db. Listing End Date is a Unix "
                  "millisecond value. The table's primary key is a separate entry key that is not "
                  "the listing id on any tested row, so both are reported. Aspects is the record's "
@@ -41,7 +41,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "eBay",
+        "category": "Shopping & Marketplaces",
         "notes": "Read from the RecentSearchEntity table of nautilus_db, which the app keys by its "
                  "own user id, so rows for more than one account can be present in one table and "
                  "the user id is reported on every row. Timestamp is a Unix millisecond value. "
@@ -66,7 +66,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "eBay",
+        "category": "Shopping & Marketplaces",
         "notes": "Read from the suggestions table of suggestions.db, whose schema is the one the "
                  "Android platform's SearchRecentSuggestionsProvider creates (AOSP "
                  "frameworks/base, core/java/android/content/SearchRecentSuggestionsProvider.java "
@@ -95,7 +95,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "eBay",
+        "category": "Shopping & Marketplaces",
         "notes": "Read from the app's own cacheManager store, whose entries begin with a four byte "
                  "big endian length, a JSON header carrying an item count and an expiration time, "
                  "and then the cached JSON. Two caches are read: the followed searches cache, "
@@ -121,7 +121,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "eBay",
+        "category": "Shopping & Marketplaces",
         "notes": "Read from the followed_seller_entity table of nautilus_db. The table carries no "
                  "timestamp, so when the seller was followed cannot be established from it. "
                  "Following is the flag as stored; what a value of zero records was not "
@@ -141,7 +141,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "eBay",
+        "category": "Shopping & Marketplaces",
         "notes": "Read from the apls_session table of nautilus_db, with the screen names joined "
                  "from apls_beacon and a count of the network calls the session recorded. Session "
                  "Start is startTimeWallClock, a Unix millisecond value, and is the only column in "
@@ -168,7 +168,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "eBay",
+        "category": "Shopping & Marketplaces",
         "notes": "Read from the app's own image cache under cache/cacheManager/image_cache.disk. "
                  "Each file begins with a four byte big endian length, a JSON header carrying the "
                  "item size and an expiration time, then a count and length prefixed metadata "
@@ -203,7 +203,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "eBay",
+        "category": "Shopping & Marketplaces",
         "notes": "One row per distinct value in each of six user id columns of nautilus_db "
                  "(key_value.publicUserId, RecentSearchEntity.userId, "
                  "followed_seller_entity.hashedUserId, share_entity.userId, "
@@ -234,7 +234,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "eBay",
+        "category": "Shopping & Marketplaces",
         "notes": "Read from the FtsMetadataEntity table of nautilus_db. The app version, "
                  "site code, country code, language code, Android SDK level and environment "
                  "values are reported as stored. The timestamp column is read as a Unix "
@@ -257,7 +257,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "eBay",
+        "category": "Shopping & Marketplaces",
         "notes": "Read from the key_value table of nautilus_db, one row per entry, with the value "
                  "taken from whichever of the table's typed columns the entry populated and the "
                  "column named on the row. Timestamp is a Unix millisecond value, shown as a UTC "
@@ -280,7 +280,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "eBay",
+        "category": "Shopping & Marketplaces",
         "notes": "Read from the share_channels table of nautilus_db, which records a named sharing "
                  "destination against the app's user id. The schema names the numeric column "
                  "value; it held a Unix millisecond value on every row of the tested samples and "

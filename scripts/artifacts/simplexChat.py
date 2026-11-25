@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-20",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "SimpleX Chat",
+        "category": "Messaging",
         "notes": "One row per chat item. The app keeps its database encrypted with SQLCipher, and "
                  "this artifact reads it only when the extraction also carries the key: the "
                  "passphrase is taken from the SimpleX entry of a Secrets/secrets.json produced "
@@ -61,7 +61,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-20",
         "last_update_date": "2026-08-20",
         "requirements": "none",
-        "category": "SimpleX Chat",
+        "category": "Messaging",
         "notes": "One row per contact. Read from the same encrypted database as the "
                  "messages and subject to the same requirement that the extraction carries "
                  "the key. Local Alias is a name the account holder set for the contact and "
@@ -88,7 +88,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-20",
         "last_update_date": "2026-08-20",
         "requirements": "none",
-        "category": "SimpleX Chat",
+        "category": "Messaging",
         "notes": "One row per file record. File Present states whether a file of that name is in "
                  "the extraction beside the database; on one tested device 15 of the 20 records "
                  "had one and on the other all 21 did. The stored files are themselves encrypted "
@@ -122,7 +122,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-20",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "SimpleX Chat",
+        "category": "Messaging",
         "notes": "One row per stored version of a message. The app keeps the previous "
                  "content of an edited message, so these rows are what a message said "
                  "before it was changed and are reported alongside the message they belong "
@@ -148,7 +148,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-20",
         "last_update_date": "2026-08-20",
         "requirements": "none",
-        "category": "SimpleX Chat",
+        "category": "Messaging",
         "notes": "One row per reaction. Sent is the flag the record carries and separates a "
                  "reaction the account holder made from one made to their message. On the two "
                  "tested devices Group ID was empty because none came through a group and Created "

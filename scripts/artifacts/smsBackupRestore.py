@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-06",
         "requirements": "none",
-        "category": "SMS Backup and Restore",
+        "category": "Messaging",
         "sample_data": {
             "emu_a15_oss_v16": "SMS Backup & Restore 10.26.010 | 1 row",
         },
@@ -35,7 +35,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-06",
         "requirements": "none",
-        "category": "SMS Backup and Restore",
+        "category": "Messaging",
         "sample_data": {
             "emu_a15_oss_v16": "SMS Backup & Restore 10.26.010 | 3 rows",
         },

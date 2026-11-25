@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-01",
         "last_update_date": "2026-09-01",
         "requirements": "none",
-        "category": "OpenTracks",
+        "category": "Health & Fitness",
         "sample_data": {
             "emu_a15_oss_v6": "OpenTracks 4.28.2 | 1 rows",
         },
@@ -43,7 +43,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-01",
         "last_update_date": "2026-09-01",
         "requirements": "none",
-        "category": "OpenTracks",
+        "category": "Health & Fitness",
         "sample_data": {
             "emu_a15_oss_v6": "OpenTracks 4.28.2 | 15 rows",
         },
@@ -86,7 +86,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-01",
         "last_update_date": "2026-09-01",
         "requirements": "none",
-        "category": "OpenTracks",
+        "category": "Health & Fitness",
         "sample_data": {
             "emu_a15_oss_v6": "OpenTracks 4.28.2 | 0 rows, checked: the markers table is present and empty",
         },

@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-31",
         "last_update_date": "2026-08-31",
         "requirements": "none",
-        "category": "Fossify Keyboard",
+        "category": "Device Activity",
         "sample_data": {
             "emu_a15_oss_v4": "Fossify Keyboard 1.9.1 | 1 rows",
         },

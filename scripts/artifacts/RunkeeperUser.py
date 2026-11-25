@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-03-25",
         "last_update_date": "2023-03-25",
         "requirements": "Python 3.7 or higher and ElementTree",
-        "category": "Runkeeper",
+        "category": "Health & Fitness",
         "notes": "lastActive, lastWeightSyncTime and birthday are read as Unix milliseconds and "
                  "creationTime as Unix seconds, shown as UTC; those units are assumed. Other values "
                  "are reported as stored. Only the first matched file is read.",

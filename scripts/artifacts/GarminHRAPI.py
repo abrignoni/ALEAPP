@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-02-24",
         "last_update_date": "2026-10-05",
         "requirements": "Python 3.7 or higher, json",
-        "category": "Garmin",
+        "category": "Health & Fitness",
         "notes": "Date is the payload calendarDate. Last Seven Days Average Resting Heart Rate (as stored) is lastSevenDaysAvgRestingHeartRate, not a general all-day average. Existing N/A rendering for JSON null values is retained.",
         "paths": ('*/garmin.api/heart_rate*',),
         "output_types": ['html', 'tsv', 'lava'],

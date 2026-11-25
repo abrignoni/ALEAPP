@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-04",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Nearby",
+        "category": "Cloud & Files",
         "notes": "Read from the Play services LevelDB store "
                  "files/nearby-fast-pair/nearby_fast_pair_item_cache.db with the vendored "
                  "ccl_leveldb, decoding each record's value with blackboxprotobuf. The store is a "
@@ -84,7 +84,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-04",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Nearby",
+        "category": "Cloud & Files",
         "notes": "Read from the Play services LevelDB store "
                  "files/nearby-discovery/nearby_discovery_item_cache.db with the vendored "
                  "ccl_leveldb, decoding each record's value with blackboxprotobuf. The store is a "

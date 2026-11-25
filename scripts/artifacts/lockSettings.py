@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Device Settings",
+        "category": "Device Information",
         "notes": "Reads the locksettings table (name, user, value) of each system locksettings.db; one "
                  "row per table row, except internal migration and version markers (names starting "
                  "with migrated or enable-sp-for-, or ending in .ver), which are not reported. Value "

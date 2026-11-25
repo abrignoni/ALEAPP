@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-02-23",
         "last_update_date": "2026-08-01",
         "requirements": "none",
-        "category": "Vaulty",
+        "category": "Photos & Media",
         "notes": "Column names in media.db do not describe their contents: date_added holds the "
                  "creation timestamp of the file and date_modified holds the timestamp the file "
                  "was added to the vault, per Kibaffo33, 'Decoding Vaulty', "

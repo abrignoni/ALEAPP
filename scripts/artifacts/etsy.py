@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "Etsy",
+        "category": "Shopping & Marketplaces",
         "notes": "One row per app data directory. The account fields come from the app's "
                  "own EtsyUserPrefs preferences file. The install identifier is held in three "
                  "places, the app's EtsyInstallPrefs file, the crash reporter's cached user "
@@ -51,7 +51,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Etsy",
+        "category": "Shopping & Marketplaces",
         "notes": "One row per listing id and timestamp pair read. The live table keeps one "
                  "row per listing, so a listing owns more than one row here when earlier "
                  "timestamp values for it are recovered. The Timestamp column is the "
@@ -97,7 +97,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Etsy",
+        "category": "Shopping & Marketplaces",
         "notes": "timestamp is Unix milliseconds. Interaction type, listing source and "
                  "display location are reported as stored; the extraction carries no app "
                  "binary, so no mapping for them was available to source. The store is "
@@ -126,7 +126,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "Etsy",
+        "category": "Shopping & Marketplaces",
         "notes": "The two tables are named for advertising impressions and clicks; what a row "
                  "records was not exercised, because no row was present on the tested device. "
                  "timestamp is Unix "
@@ -152,7 +152,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "Etsy",
+        "category": "Shopping & Marketplaces",
         "notes": "Each row holds one JSON record from the logs table of etsy-logs. "
                  "log_created_time is Unix seconds with a fractional part. The app version "
                  "is carried on every record, so the rows place a sequence of app versions "
@@ -181,7 +181,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Etsy",
+        "category": "Shopping & Marketplaces",
         "notes": "The breadcrumb cache is written by the Sentry SDK the app embeds and is "
                  "scoped here to the app's own data directory. It holds the requests recorded up "
                  "to the time the file was last written, so it is a short record rather than a "
@@ -210,7 +210,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-11-23",
         "requirements": "none",
-        "category": "Etsy",
+        "category": "Shopping & Marketplaces",
         "notes": "One row per cache directory per app data directory. Latest File Modified and "
                  "Earliest File Modified are the newest and oldest UTC modification times the "
                  "input records for the entries, such as from a tar header or a zip entry's NTFS "

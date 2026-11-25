@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-11-14",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Grok",
+        "category": "AI Assistants",
         "notes": "The author reports testing on app version 1.0.71 (Nov 11th, 2025); no image or "
                  "count from that testing is recorded. The cache last touch timestamp is not "
                  "updated when the app's cache uses an evictor that does not ask for touches; "
@@ -36,7 +36,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-11-14",
         "last_update_date": "2025-11-14",
         "requirements": "none",
-        "category": "Grok",
+        "category": "AI Assistants",
         "notes": "The author reports testing on app version 1.0.71 (Nov 11th, 2025); no image or "
                  "count from that testing is recorded.",
         "paths": ('*/ai.x.grok/shared_prefs/INTERCOM_DEDUPER_PREFS.xml', '*/ai.x.grok/shared_prefs/INTERCOM_SDK_USER_PREFS.xml'),

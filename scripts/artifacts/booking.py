@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Booking.com",
+        "category": "Travel & Vehicles",
         "notes": "Read from the records table of post_booking_reservation_cache, which holds a "
                  "normalised GraphQL cache. Each row is one cache record; the key names the field "
                  "path and the value is its JSON, with nested objects held as ApolloCacheReference "
@@ -39,7 +39,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Booking.com",
+        "category": "Travel & Vehicles",
         "notes": "Read from the roomReservations records of post_booking_reservation_cache and "
                  "joined to the booking number held in the parent record's key. In the tested "
                  "samples one room was held in two records that were identical once the "
@@ -62,7 +62,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Booking.com",
+        "category": "Travel & Vehicles",
         "notes": "Read from the records table of account_data_cache, a normalised GraphQL cache "
                  "holding the personalProfile record and, on the app versions that write them, the "
                  "genius and wallet records. Gender and genius level are reported as stored. "
@@ -82,7 +82,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Booking.com",
+        "category": "Travel & Vehicles",
         "notes": "Read from the mybooking.xml and remote_profile.xml preference files, which carry "
                  "the same pref3 prefixed profile keys. On the tested samples remote_profile.xml "
                  "held a subset of the keys in mybooking.xml, and the Source File column says which "
@@ -107,7 +107,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-10-07",
         "requirements": "none",
-        "category": "Booking.com",
+        "category": "Travel & Vehicles",
         "notes": "Read from the app's OkHttp response cache, where each entry is a pair of files sharing a"
                  " name: the .0 file holds the request URL and the response headers and the .1 file holds "
                  "the body. Bodies for this endpoint were gzip compressed on the tested samples and are "
@@ -133,7 +133,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Booking.com",
+        "category": "Travel & Vehicles",
         "notes": "Read from the specific_query and general_query keys of "
                  "com.booking_preferences.xml, each holding one JSON search query. The two keys held "
                  "identical values on all four tested samples and both are reported, with the Query "
@@ -153,7 +153,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Booking.com",
+        "category": "Travel & Vehicles",
         "notes": "Read from the app's OkHttp response cache. The text parameter of the cached "
                  "mobile.autocomplete request URL holds the characters the request was made for, and "
                  "the response body holds the destinations returned for it, one row each. The "
@@ -173,7 +173,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Booking.com",
+        "category": "Travel & Vehicles",
         "notes": "Read from the app's OkHttp response cache. The type_and_id parameter of the "
                  "cached mobile.getDestinationInfo request URL names the destination looked up and "
                  "the response body holds its record. The request time comes from the "
@@ -194,7 +194,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-10-07",
         "requirements": "none",
-        "category": "Booking.com",
+        "category": "Travel & Vehicles",
         "notes": "Two sources are reported and the Record Type column says which each row came from. "
                  "Resolved links come from cached mobile.decodeUniversalLink responses in the app's OkHttp"
                  " response cache, where the url request parameter holds the link submitted and the body "
@@ -230,7 +230,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Booking.com",
+        "category": "Travel & Vehicles",
         "notes": "Read from the notification table of notifications.db. time_epoch is Unix seconds; "
                  "the value in the tested samples resolved to a date within the app's installed "
                  "life on that image, which a millisecond reading would not. The viewed, clicked "
@@ -249,7 +249,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Booking.com",
+        "category": "Travel & Vehicles",
         "notes": "Read from com.booking_preferences.xml and startup_data.xml. The first_use, "
                  "deeplinking_aid_exp_time and used keys are reported as stored under their own "
                  "key names. The unit of the first two and what each of the three records are not "
@@ -275,7 +275,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Booking.com",
+        "category": "Travel & Vehicles",
         "notes": "One row for each entry in the app's two OkHttp response caches, okhttp and "
                  "saba-http-cache. The request and response times come from the OkHttp-Sent-Millis "
                  "and OkHttp-Received-Millis headers OkHttp writes into the cached entry "

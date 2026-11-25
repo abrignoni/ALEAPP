@@ -9,7 +9,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-16",
         "last_update_date": "2026-11-23",
         "requirements": "none",
-        "category": "Media",
+        "category": "Photos & Media",
         "notes": "One row per file under .transforms/synthetic/picker*/<user>/<provider>/media/. MediaProvider"
                  " creates each one when its path is looked up: it queries the picker item's size and sets the"
                  " file's length to it ( "

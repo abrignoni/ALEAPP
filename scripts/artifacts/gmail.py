@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-11-08",
         "last_update_date": "2026-08-24",
         "requirements": "none",
-        "category": "Gmail",
+        "category": "Email",
         "notes": "One row per Gmail.xml that records an active-account value, so a device "
                  "with several Android users reports each "
                  "user's active account. Duplicate storage spellings of the same file "

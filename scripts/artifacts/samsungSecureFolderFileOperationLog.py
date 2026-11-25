@@ -12,7 +12,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-18",
         "last_update_date": "2026-11-18",
         "requirements": "none",
-        "category": "Knox Secure Folder",
+        "category": "Cloud & Files",
         "notes": (
             "Read from the SecureFolderDumpLog_<kind><yyyymmddHHMMSS>.xml files in "
             "com.samsung.knox.securefolder/cache/dump/ of each Android user that has them. On the "

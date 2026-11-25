@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-28",
         "last_update_date": "2026-08-28",
         "requirements": "none",
-        "category": "Social",
+        "category": "Social Media",
         "notes": "Reads from the plain text preferences file io.invertase.firebase.xml. Iterates "
                  "through saved strings to parse Untappd FCM push notifications and venue menu "
                  "updates stored as JSON. Deliberately skips the all_notification_ids key to "
@@ -30,7 +30,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-28",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Social",
+        "category": "Social Media",
         "notes": "Parses the userProfiles table within the clevertap SQLite database. The user's "
                  "information is stored as a JSON string within the data column. Extracts plain "
                  "text profile details including Email, Name, Username, Gender, Last Checkin "
@@ -52,7 +52,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-28",
         "last_update_date": "2026-10-07",
         "requirements": "none",
-        "category": "Social",
+        "category": "Social Media",
         "notes": "Parses selected device_attributes rows from ManagedEventData in superwall_database. One "
                  "output row is retained for each selected source row, including repeated identical "
                  "projections and rows with shared, missing or NULL app_session_id values; rows are not "
@@ -78,7 +78,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-28",
         "last_update_date": "2026-08-28",
         "requirements": "none",
-        "category": "Social",
+        "category": "Social Media",
         "notes": "Parses the ManagedEventData table in the superwall_database SQLite database and "
                  "reports its app_close, app_open, app_launch, app_install and session_start "
                  "rows, mapping those names to readable labels. Whether the table holds every "
@@ -100,7 +100,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-28",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Social",
+        "category": "Social Media",
         "notes": "Parses GZIP-compressed binary files (.1 extension) found in the "
                  "cache/http-cache/ directory. Decodes the uncompressed raw bytes into UTF-8 "
                  "JSON strings to extract check-in data. Captures the Checkin ID, the creation "
@@ -125,7 +125,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-28",
         "last_update_date": "2026-08-28",
         "requirements": "none",
-        "category": "Social",
+        "category": "Social Media",
         "notes": "Parses GZIP-compressed HTTP cache files whose payload carries a discover_items "
                  "member. To determine the cache timestamp, the parser locates the companion .0 "
                  "meta file on disk and extracts the HTTP Date header, converting it to a "
@@ -147,7 +147,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-28",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Social",
+        "category": "Social Media",
         "notes": "Parses location suggestions stored in GZIP-compressed HTTP cache files; when "
                  "the app requests them is not established. Like other cache parsers, it "
                  "extracts the HTTP Date header from the companion .0 file for the query "

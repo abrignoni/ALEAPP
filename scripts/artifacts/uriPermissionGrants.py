@@ -9,7 +9,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-17",
         "last_update_date": "2026-11-17",
         "requirements": "none",
-        "category": "Permissions",
+        "category": "Installed Apps",
         "notes": "Read from /data/system/urigrants.xml, in ABX or plain XML (every tested "
                  "file was ABX; the plain XML path was not exercised), with the element and "
                  "attribute names UriGrantsManagerService reads and writes (frameworks/base "

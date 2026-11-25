@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-01",
         "last_update_date": "2026-09-01",
         "requirements": "none",
-        "category": "Seal",
+        "category": "Cloud & Files",
         "sample_data": {
             "emu_a15_oss_v6": "Seal 1.13.1 | 1 rows",
         },
@@ -43,7 +43,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-01",
         "last_update_date": "2026-09-01",
         "requirements": "none",
-        "category": "Seal",
+        "category": "Cloud & Files",
         "sample_data": {
             "emu_a15_oss_v6": "Seal 1.13.1 | 1 rows",
         },

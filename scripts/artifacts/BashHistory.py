@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2020-10-11",
         "last_update_date": "2026-10-05",
         "requirements": "none",
-        "category": "Bash History",
+        "category": "App Data Stores",
         "notes": "Original parser: Kevin Pagano (@stark4n6). Source File identifies each history.",
         "paths": ('*/.bash_history'),
         "output_types": ["html", "lava", "tsv"],

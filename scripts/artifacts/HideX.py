@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-10-12",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "GroupMe",
+        "category": "Messaging",
         "notes": "Is Active (as stored) preserves isActive including NULL, zero and unknown codes. App-state semantics and positive genuine corpus coverage remain unverified.",
         "paths": ('*/com.flatfish.cal.privacy/databases/hidex.db*',),
         "output_types": ['html', 'tsv', 'lava'],

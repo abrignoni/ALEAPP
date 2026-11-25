@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-06",
         "last_update_date": "2026-11-22",
         "requirements": "none",
-        "category": "Usage Stats",
+        "category": "Device Activity",
         "notes": "Read from the per-user app_idle_stats.xml under the system users folder, one row per "
                  "package element, with User ID taken from the folder the file sits in. The pattern is "
                  "not anchored on a data/ prefix, because a raw userdata partition image carries the "

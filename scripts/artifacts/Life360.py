@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-01-17",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Life360",
+        "category": "Locations & Maps",
         "notes": "A message with a photo has a message_media row whose photo_key is the photo's "
                  "URL. The cache/picasso-cache directory is read as an OkHttp DiskLruCache, in "
                  "which the <hash>.0 file starts with the URL requested and the <hash>.1 file is "
@@ -57,7 +57,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-01-17",
         "last_update_date": "2026-08-01",
         "requirements": "none",
-        "category": "Life360",
+        "category": "Locations & Maps",
         "notes": "Radius is reported as stored; the database does not record its unit.",
         "paths": ('*/com.life360.android.safetymapd/databases/L360LocalStoreRoomDatabase*',),
         "output_types": ['html', 'tsv', 'lava', 'kml'],
@@ -74,7 +74,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-01-17",
         "last_update_date": "2026-08-01",
         "requirements": "none",
-        "category": "Life360",
+        "category": "Locations & Maps",
         "notes": "Speed and the two accuracy values are reported as stored; the JSON records no units "
                  "for them.",
         "paths": ('*/com.life360.android.safetymapd/databases/L360EventStore.db*',),
@@ -92,7 +92,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-01-17",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Life360",
+        "category": "Locations & Maps",
         "notes": "Battery (as stored) preserves metaData.battery without assigning a unit or meaning; percentage is not established by these JSON records.",
         "paths": ('*/com.life360.android.safetymapd/databases/L360EventStore.db*',),
         "output_types": "standard",

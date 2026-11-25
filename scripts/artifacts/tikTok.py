@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-03-02",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "TikTok",
+        "category": "Social Media",
         "notes": "Every database named <uid>_im.db is parsed, including those named "
                  "biz_2_<uid>_im.db. The Account ID column carries the uid from the file "
                  "name, and messages whose sender equals it are marked Outgoing. On the "
@@ -77,7 +77,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-03-02",
         "last_update_date": "2026-09-12",
         "requirements": "none",
-        "category": "TikTok",
+        "category": "Social Media",
         "notes": "Contacts come from IM_USER_BASE_INFO in the db_im_contact databases and "
                  "from SIMPLE_USER in db_im_xx. A UID present in more than one store is "
                  "reported once, from the first store that returns it, with "
@@ -123,7 +123,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
-        "category": "TikTok",
+        "category": "Social Media",
         "notes": "Hu and Karabiyik describe TIKTOK.db as keeping track of the timestamps "
                  "for each instance the app is opened. On the tested image every open_time "
                  "value fell exactly on a local midnight; the value is reported as stored and "
@@ -157,7 +157,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
-        "category": "TikTok",
+        "category": "Social Media",
         "notes": "On the tested image the rows were the app's own resource downloads "
                  "(models, assets, images), not user-saved videos; what a given row "
                  "represents is read from its URL and save path, not asserted here. "
@@ -195,7 +195,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
-        "category": "TikTok",
+        "category": "Social Media",
         "notes": "Event rows carry the app's own tag strings and an ext_json payload "
                  "reported as stored; what an individual event means is not established "
                  "here. Session rows carry the session table's value column (shown as Session "
@@ -233,7 +233,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
-        "category": "TikTok",
+        "category": "Social Media",
         "notes": "aweme_user.xml keeps one entry per key; several entries hold JSON "
                  "documents whose names carry the account uid as a prefix "
                  "(<uid>_account_user_info, <uid>_aweme_user_info, "

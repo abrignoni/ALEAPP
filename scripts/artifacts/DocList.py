@@ -1,12 +1,12 @@
 __artifacts_v2__ = {
     "get_DocList": {
-        "name": "DocList",
+        "name": "Google Drive - DocList",
         "description": "Parses the EntryView rows of the Google Drive DocList.db database (title, owner, kind, creation, last modified and last opened times, URIs, MD5 and size). Reads distinct matched main DocList.db and reports the row source. Missing projected columns in an otherwise compatible EntryView are blank; query/open failures are logged by source and do not stop other databases.",
         "author": "@AlexisBrignoni, Codex",
         "creation_date": "2020-12-21",
         "last_update_date": "2026-10-05",
         "requirements": "none",
-        "category": "Google Drive",
+        "category": "Cloud & Files",
         "notes": "Original parser: Kevin Pagano (@stark4n6). The inspected Anne and Pixel8Pro EntryView schemas contain no rows and omit owner, lastModifierAccountAlias, lastModifierAccountName and shareableUri; these columns are blank rather than mapped to unrelated fields. A valid empty view is not a query error.",
         "paths": ('*/com.google.android.apps.docs/databases/DocList.db*',),
         "output_types": "standard",

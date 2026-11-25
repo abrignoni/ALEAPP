@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-06-29",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Device Health Services",
+        "category": "Device Information",
         "notes": "Each string in the file's app_usage_stats set is the text before a '#' (shown as App Name; a package "
                  "name on every string of sharon_a14, samsunga53_a14 and pixel7a_a14) followed by a comma separated list of "
                  "numbers, one row per number. The numbers are read as Unix milliseconds in UTC: the same file names its "

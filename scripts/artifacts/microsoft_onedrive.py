@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-04-17",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Cloud Storage",
+        "category": "Cloud & Files",
         "notes": "Timestamps of 0 or less are shown blank. Storage Path is built by walking each "
                  "item's parentRid to the top. itemType (as stored) is the items.itemType value "
                  "without a label; what each value denotes was not established. Rows "

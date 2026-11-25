@@ -10,7 +10,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-03-26",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "BitTorrent",
+        "category": "Cloud & Files",
         "notes": "One row per .torrent file read. Each file a multi-file torrent lists is shown "
                  "once, as 'Files:' followed by the components of its path list joined with "
                  "'/'. A value that is a number is shown as stored; a list or dictionary value "

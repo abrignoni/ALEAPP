@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-12-30",
         "last_update_date": "2026-08-01",
         "requirements": "none",
-        "category": "GEO Location",
+        "category": "Locations & Maps",
         "notes": "A row is a directions URL (/dir/...) found inside a gmm_storage_table record; "
                  "records with none are not reported. Latitude and Longitude are the first "
                  "coordinate pair after /dir/ and To Latitude and To Longitude are taken from the "
@@ -36,7 +36,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-12-30",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "GEO Location",
+        "category": "Locations & Maps",
         "notes": ("Key (as stored) is the sync_item key_string column, reported as stored; what its "
                   "values mean is not established and no label is assigned from it. Label is the "
                   "text held in the row's protobuf and is blank where the protobuf holds none. "

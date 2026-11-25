@@ -1,12 +1,12 @@
 __artifacts_v2__ = {
     "get_nova_momo_prefs": {
-        "name": "Shared Preferences - Account & Usage",
+        "name": "Nova - Shared Preferences - Account & Usage",
         "description": "Extracts account info, decoded Firebase JWT data, device identifiers, and usage metrics.",
         "author": "Guilherme Guilherme",
         "creation_date": "2026-05-30",
         "last_update_date": "2026-10-31",
         "requirements": "none",
-        "category": "AI Chatbot - Nova",
+        "category": "AI Assistants",
         "notes": (
             "Values are reported as stored except that keys beginning KEY_DID_ or KEY_IS_ "
             "are shown as Yes when the stored value is true and No for any other value, "
@@ -23,13 +23,13 @@ __artifacts_v2__ = {
         "artifact_icon": "settings",
     },
     "get_nova_adapty_prefs": {
-        "name": "Shared Preferences - Adapty Payment",
+        "name": "Nova - Shared Preferences - Adapty Payment",
         "description": "Extracts payment profile and installation metadata from AdaptySDKPrefs.xml.",
         "author": "Guilherme Guilherme, @AlexisBrignoni, Codex",
         "creation_date": "2026-05-30",
         "last_update_date": "2026-10-31",
         "requirements": "none",
-        "category": "AI Chatbot - Nova",
+        "category": "AI Assistants",
         "notes": (
             "Only these preference entries are read: the members of "
             "LAST_SENT_INSTALLATION_META, and from an entry named "

@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-01-10",
         "last_update_date": "2026-10-31",
         "requirements": "",
-        "category": "Samsung Device Health Management Service",
+        "category": "Device Information",
         "notes": "Every distinct main database state is read; known canonical aliases collapse only when main/WAL/journal bytes agree. Conflicts remain separate. Combined inputs carry per-row evidence sources. The post linked in the description reports that in its test data most rows had the "
                  "reason BOOT_COMPLETED and that the last five matched that author's device "
                  "reboots. The reason column is reported as stored.",
@@ -29,7 +29,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-01-10",
         "last_update_date": "2026-10-31",
         "requirements": "",
-        "category": "Samsung Device Health Management Service",
+        "category": "Device Information",
         "notes": "The post linked in the description describes net_usage as bytes transferred in the "
                  "time window; that unit was not measured here, so the column is headed Net Usage "
                  "(as stored). The uid column is reported as UID (as stored), without inferred "
@@ -55,7 +55,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-01-10",
         "last_update_date": "2026-10-31",
         "requirements": "",
-        "category": "Samsung Device Health Management Service",
+        "category": "Device Information",
         "notes": "Every distinct main database state is read; known canonical aliases collapse only when main/WAL/journal bytes agree. Conflicts remain separate. Combined inputs carry per-row evidence sources. The post linked in the description says the values are stored in degrees Celsius "
                  "times 10 and that on devices with different regional settings they may be stored "
                  "in degrees Fahrenheit, so the unit is not established for every device.",
@@ -77,7 +77,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-01-10",
         "last_update_date": "2026-10-31",
         "requirements": "",
-        "category": "Samsung Device Health Management Service",
+        "category": "Device Information",
         "notes": "The post linked in the description describes process_usage as CPU time used in the "
                  "time window, scaled and dependent on the number of cores, and uptime as seconds. "
                  "The uid column is reported as UID (as stored), without inferred package identity. "

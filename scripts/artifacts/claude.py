@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-23",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Claude",
+        "category": "AI Assistants",
         "notes": "Timestamps stored as ISO 8601 combined date-time format. "
                  "Display Name is reported as stored. An XML file in the app container also "
                  "holds the email address; that file is not read by this artifact. Every "
@@ -29,7 +29,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-22",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Claude",
+        "category": "AI Assistants",
         "notes": "Each cachedConversations row holds a JSON object. Conversation Start Time is "
                  "its created_at value, is_temporary (existing rendering) reports its is_temporary value and "
                  "Conversation Starred its is_starred value; a value other than 0 or 1 is shown "
@@ -53,7 +53,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-21",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Claude",
+        "category": "AI Assistants",
         "notes": "Each message is joined to its conversation on the conversation uuid so the "
                  "conversation name appears on the row. Timestamps stored as ISO 8601 combined "
                  "date-time format and converted for LAVA. First Stored File Name is the first file name "
@@ -90,7 +90,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-24",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Claude",
+        "category": "AI Assistants",
         "notes": "Project Creator is the creator.full_name value of the project record, as "
                  "stored. "
                  "Timestamps are ISO 8601 combined date-time format. Every matched cache "

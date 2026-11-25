@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-31",
         "last_update_date": "2026-08-31",
         "requirements": "none",
-        "category": "Catima",
+        "category": "Finance & Payments",
         "sample_data": {
             "emu_a15_oss_v4": "Catima 2.45.0 | 1 rows",
         },

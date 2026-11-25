@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Threads",
+        "category": "Social Media",
         "notes": "One row per account the app recorded. Account identifiers are read from "
                  "the app's own preference files, and the user name and profile picture "
                  "address from the backup preference file, which is the only store in the "
@@ -31,7 +31,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "Threads",
+        "category": "Social Media",
         "notes": "One row per recorded interval. In the sample the mapping was made from, the "
                  "store's file name carried a number that matched an account identifier; the "
                  "Account column is that number from the file name. Because Account comes from the "
@@ -63,7 +63,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Threads",
+        "category": "Social Media",
         "notes": "One row per post inside a stored feed item; a stored item with no readable post "
                  "still produces one row with the post columns blank. These are posts the app held "
                  "in "

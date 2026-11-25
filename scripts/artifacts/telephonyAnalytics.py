@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-17",
         "last_update_date": "2026-11-17",
         "requirements": "none",
-        "category": "Telephony Analytics",
+        "category": "Device Information",
         "notes": "Read from user_de/<user>/com.android.phone/databases/telephony_analytics.db"
                  " with the table and column names AOSP's telephony analytics providers "
                  "create (frameworks/opt/telephony "
@@ -58,7 +58,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-17",
         "last_update_date": "2026-11-17",
         "requirements": "none",
-        "category": "Telephony Analytics",
+        "category": "Device Information",
         "notes": "Read from user_de/<user>/com.android.phone/databases/telephony_analytics.db"
                  " with the table and column names AOSP's telephony analytics providers "
                  "create (frameworks/opt/telephony "
@@ -109,7 +109,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-17",
         "last_update_date": "2026-11-17",
         "requirements": "none",
-        "category": "Telephony Analytics",
+        "category": "Device Information",
         "notes": "Read from user_de/<user>/com.android.phone/databases/telephony_analytics.db"
                  " with the table and column names AOSP's telephony analytics providers "
                  "create (frameworks/opt/telephony "

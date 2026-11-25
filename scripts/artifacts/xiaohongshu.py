@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-10-07",
         "requirements": "none",
-        "category": "Xiaohongshu",
+        "category": "Social Media",
         "notes": "Read from the historyRecord table of the PlayHistoryRecordDB Room store in "
                  "com.xingin.xhs (Xiaohongshu, also published as RED and as Little Red Book).\nThe "
                  "user_name and user_id values are reported under their stored field names without "
@@ -46,7 +46,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-03",
         "last_update_date": "2026-09-04",
         "requirements": "none",
-        "category": "Xiaohongshu",
+        "category": "Social Media",
         "notes": "Read from the app's own MMKV stores with the vendored mmkv_parser: the profile "
                  "JSON in the com.xingin.xhs store (key_desc_userinfo) and the login record in "
                  "login_user_info_kv (login_account_info_key). One row. Both globs are scoped to "
@@ -74,7 +74,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-03",
         "last_update_date": "2026-09-04",
         "requirements": "none",
-        "category": "Xiaohongshu",
+        "category": "Social Media",
         "notes": "Read from the IMRecentChatsManager MMKV store, from the keys the app prefixes "
                  "IMRecentChatsManager_Default_Share_User_. One row per entry of the JSON list "
                  "stored under each such key. Peer User ID, Nickname and Group Chat are the "
@@ -97,7 +97,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-03",
         "last_update_date": "2026-10-31",
         "requirements": "none",
-        "category": "Xiaohongshu",
+        "category": "Social Media",
         "notes": "Read from every write of the last_launch_success_time key in the "
                  "app_cold_start_record MMKV store. Each write of the key is a separate entry in "
                  "the file until MMKV rewrites it; one row per entry, in Unix milliseconds. That "
