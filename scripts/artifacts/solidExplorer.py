@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Files Solid Explorer recorded as recently opened, with one stored time per path",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-11-22",
+        "last_update_date": "2026-11-24",
         "requirements": "none",
         "category": "Solid Explorer",
         "sample_data": {
@@ -21,17 +21,17 @@ __artifacts_v2__ = {
                  "recorded here was not established, so the absence of a row is not evidence a "
                  "file was never opened. "
                  "The path is what the app wrote and is not resolved against the extraction, so "
-                 "a row is evidence the app opened that path, not that the file is still there.",
+                 "a row shows the app recorded that path, not that the file is still there.",
         "paths": ('*/pl.solidexplorer2/databases/explorer.db*',),
         "output_types": "standard",
         "artifact_icon": "file-text",
     },
     "solid_explorer_bookmarks": {
         "name": "Solid Explorer Bookmarks",
-        "description": "Bookmarked locations in Solid Explorer, with how often each was opened",
+        "description": "Bookmarked locations in Solid Explorer, with the stored hitcount",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-11-22",
+        "last_update_date": "2026-11-24",
         "requirements": "none",
         "category": "Solid Explorer",
         "sample_data": {
@@ -42,14 +42,14 @@ __artifacts_v2__ = {
                  "drawer and Path is the location it points at. The table also has a file_id "
                  "column that is not reported. It equalled Path on both rows of the emu_a15_oss "
                  "images v14 to v17, which hold a byte-identical explorer.db, and that does not "
-                 "show the two are equal on a remote file system. Times Opened is the hitcount "
-                 "column and counts uses of the bookmark. That was measured rather than assumed: "
-                 "on the tested device a bookmark was added and then opened from the drawer twice, "
+                 "show the two are equal on a remote file system. hitcount (as stored) is the hitcount "
+                 "column unchanged. On the tested device a bookmark was added and then opened from the drawer twice, "
                  "and its hitcount went 0, then 1, then 2, while a second bookmark that was never "
-                 "opened stayed at 0. A bookmark can therefore be present and unused, which the "
-                 "column separates. The app ships with a bookmark already present, so a row is not "
-                 "by itself evidence anyone created it; on the tested device the Download bookmark "
-                 "was there before anything was done and is the one that stayed at 0. File System "
+                 "opened stayed at 0. Opening a bookmark from the drawer is the only action tested, so whether "
+                 "other ways of reaching the location change hitcount was not established, and a 0 does not show "
+                 "the location was never visited. A row is not by itself evidence anyone created the bookmark: "
+                 "on the tested device (Solid Explorer 3.5.20) the Download bookmark was already present before "
+                 "any bookmark was added or opened, and is the one that stayed at 0. File System "
                  "is the file_system column as stored. On emu_a15_oss v14 to v17 it read 1 on both "
                  "rows and the only file_systems row had rowid 1. The schema declares no key "
                  "between the two tables, so the link is not established. That one row is the "
@@ -64,7 +64,7 @@ __artifacts_v2__ = {
         "description": "Rows of Solid Explorer's search_suggestions and suggestions tables",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-09-05",
-        "last_update_date": "2026-10-09",
+        "last_update_date": "2026-11-24",
         "requirements": "none",
         "category": "Solid Explorer",
         "sample_data": {
@@ -77,8 +77,9 @@ __artifacts_v2__ = {
                  "search_suggestions it held the literal string submitted on the tested device. "
                  "What the suggestions table stores there is not established, because that table "
                  "was empty. The search_suggestions terms are worth reading literally: on the "
-                 "tested device the app did not clear the search box between searches, so two of "
-                 "the four stored terms are the previous term with the next one appended. That is "
+                 "tested device each search was typed after going back and reopening search, and the box still held "
+                 "the previous term, so two of the four stored terms are the previous term with the next one appended. "
+                 "The fourth was typed after the box was cleared by hand. That is "
                  "what the app recorded and it is reported unchanged rather than split. Counter "
                  "(as stored) is the counter column unchanged. It read 0 on every row of the "
                  "tested device, where four terms were submitted and none of them incremented it "
@@ -204,7 +205,7 @@ def solid_explorer_recent_files(context):
 def solid_explorer_bookmarks(context):
     query = '''SELECT name, path, hitcount, file_system, parent_id, position
                FROM bookmarks ORDER BY hitcount DESC, name'''
-    headers = ('Name', 'Path', 'Times Opened', 'File System', 'Parent Path',
+    headers = ('Name', 'Path', 'hitcount (as stored)', 'File System', 'Parent Path',
                'Position', 'Source File')
     return _rows(context, query,
                  lambda r: (r[0] or '', r[1] or '', r[2], r[3], r[4] or '', r[5]),
