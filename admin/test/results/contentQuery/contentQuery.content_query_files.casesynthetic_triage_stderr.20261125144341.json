@@ -1,0 +1,147 @@
+{
+  "metadata": {
+    "module_name": "contentQuery",
+    "artifact_name": "Content Query Files",
+    "function_name": "content_query_files",
+    "case_number": "casesynthetic_triage_stderr",
+    "number_of_columns": 9,
+    "number_of_rows": 10,
+    "total_data_size_bytes": 2950,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/contentQuery/testdata.contentQuery.content_query_files.casesynthetic_triage_stderr.zip",
+    "start_time": "2026-11-25T14:43:41.847228+00:00",
+    "end_time": "2026-11-25T14:43:41.938500+00:00",
+    "run_time_seconds": 0.0008053779602050781,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-11-25T11:43:41.931731",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Layout",
+    "Folder",
+    "URI",
+    "File",
+    "Status",
+    "Rows",
+    "Detail",
+    "Columns",
+    "Read By"
+  ],
+  "data": [
+    [
+      "android_triage",
+      "a1b2c3d4e5f60718/20261125_10_15_30_contentprovider",
+      "content://sms",
+      "",
+      "not queried by this tool",
+      "",
+      "",
+      "",
+      "SMS (content query)"
+    ],
+    [
+      "android_triage",
+      "a1b2c3d4e5f60718/20261125_10_15_30_contentprovider",
+      "content://mms",
+      "",
+      "not queried by this tool",
+      "",
+      "",
+      "",
+      "MMS (content query)"
+    ],
+    [
+      "android_triage",
+      "a1b2c3d4e5f60718/20261125_10_15_30_contentprovider",
+      "content://mms/part",
+      "",
+      "not queried by this tool",
+      "",
+      "",
+      "",
+      "MMS Parts (content query)"
+    ],
+    [
+      "android_triage",
+      "a1b2c3d4e5f60718/20261125_10_15_30_contentprovider",
+      "content://call_log/calls",
+      "",
+      "not queried by this tool",
+      "",
+      "",
+      "",
+      "Call Log (content query)"
+    ],
+    [
+      "android_triage",
+      "a1b2c3d4e5f60718/20261125_10_15_30_contentprovider",
+      "content://com.android.contacts/contacts",
+      "contacts_contacts.txt",
+      "access denied (SecurityException)",
+      "",
+      "provider com.android.contacts: java.lang.SecurityException: Permission Denial: opening provider com.android.providers.contacts.ContactsProvider2 from (null) (pid=12345, uid=2000) requires android.permission.READ_CONTACTS or android.permission.WRITE_CONTACTS",
+      "",
+      "Contacts (content query)"
+    ],
+    [
+      "android_triage",
+      "a1b2c3d4e5f60718/20261125_10_15_30_contentprovider",
+      "content://com.android.contacts/data/phones",
+      "contacts_data_phones.txt",
+      "access denied (SecurityException)",
+      "",
+      "provider com.android.contacts: java.lang.SecurityException: Permission Denial: opening provider com.android.providers.contacts.ContactsProvider2 from (null) (pid=12345, uid=2000) requires android.permission.READ_CONTACTS or android.permission.WRITE_CONTACTS",
+      "",
+      "Contact Phone Numbers (content query)"
+    ],
+    [
+      "android_triage",
+      "a1b2c3d4e5f60718/20261125_10_15_30_contentprovider",
+      "content://com.android.calendar/events",
+      "calendar_events.txt",
+      "no file",
+      "",
+      "android_triage creates the file of every URI it queries with a shell redirect, even when the query prints nothing, so the file was not kept in this extraction or the run stopped before this query",
+      "",
+      "Calendar Events (content query)"
+    ],
+    [
+      "android_triage",
+      "a1b2c3d4e5f60718/20261125_10_15_30_contentprovider",
+      "content://com.android.calendar/event_entities",
+      "calendar_event_entities.txt",
+      "no file",
+      "",
+      "android_triage creates the file of every URI it queries with a shell redirect, even when the query prints nothing, so the file was not kept in this extraction or the run stopped before this query",
+      "",
+      "Calendar Event Entities (content query)"
+    ],
+    [
+      "android_triage",
+      "a1b2c3d4e5f60718/20261125_10_15_30_contentprovider",
+      "content://com.android.calendar/calendars",
+      "calendar_calendars.txt",
+      "provider error",
+      "",
+      "provider com.android.calendar: java.lang.IllegalArgumentException: Unknown URL content://com.android.calendar/calendars",
+      "",
+      "Calendars (content query)"
+    ],
+    [
+      "android_triage",
+      "a1b2c3d4e5f60718/20261125_10_15_30_contentprovider",
+      "content://media/external/file",
+      "media_external_file.txt",
+      "rows",
+      2,
+      "then provider error: provider media: java.lang.IllegalStateException: Couldn't read row 2, col 0 from CursorWindow; the text ends with a provider error after the last row; the rows printed before it are read",
+      "_id, _data, _display_name, relative_path, volume_name, mime_type, _size, date_added, date_modified, datetaken, owner_package_name, bucket_display_name, is_trashed, is_pending",
+      "MediaStore Files (content query)"
+    ]
+  ]
+}

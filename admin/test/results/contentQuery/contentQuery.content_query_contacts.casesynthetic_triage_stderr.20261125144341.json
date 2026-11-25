@@ -1,0 +1,36 @@
+{
+  "metadata": {
+    "module_name": "contentQuery",
+    "artifact_name": "Contacts (content query)",
+    "function_name": "content_query_contacts",
+    "case_number": "casesynthetic_triage_stderr",
+    "number_of_columns": 9,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/contentQuery/testdata.contentQuery.content_query_contacts.casesynthetic_triage_stderr.zip",
+    "start_time": "2026-11-25T14:43:41.758011+00:00",
+    "end_time": "2026-11-25T14:43:41.846506+00:00",
+    "run_time_seconds": 0.0003769397735595703,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-11-25T11:43:41.843081",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Last Updated (UTC)",
+    "Display Name",
+    "Has Phone Number",
+    "Starred",
+    "Lookup Key",
+    "Contact ID",
+    "Parse Note",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

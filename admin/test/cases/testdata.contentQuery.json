@@ -1,0 +1,482 @@
+{
+  "casesynthetic_alex": {
+    "description": "Synthetic ALEX raw text folder (content_provider_<serial>), CRLF line endings: SMS with a multi-line body holding a line that starts with 'Row: ', a body holding ', total=', a body holding ', seen=' (the next column's name, flagged), NULL, BLOB and empty values and an undocumented type value; MMS and MMS parts (no part content); call log; contacts; contact phone numbers whose hash_id ends with a line break; calendar event entities with a multi-line description; calendars; MediaStore files with 0 and NULL times; and a settings file that no artifact reads. Invented values, contains no real evidence.",
+    "maker": "@Maxitelmo",
+    "make_data": {
+      "input_data_path": "content_query_synthetic_alex.zip",
+      "os": "Windows-11-10.0.26200-SP0",
+      "timestamp": "2026-11-25T11:36:44.269007",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-11-25T11:36:44.137412",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "content_query_files": {
+        "search_patterns": [
+          "*/*_contentprovider/*.txt",
+          "*/content_provider_*/*.txt"
+        ],
+        "file_count": 10,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "content_query_sms": {
+        "search_patterns": [
+          "*/content_provider_*/sms/sms.txt"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "content_query_mms": {
+        "search_patterns": [
+          "*/content_provider_*/mms/mms.txt"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "content_query_mms_parts": {
+        "search_patterns": [
+          "*/content_provider_*/mms/mms_part.txt"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "content_query_call_log": {
+        "search_patterns": [
+          "*/content_provider_*/call_log/call_log_calls.txt"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "content_query_contacts": {
+        "search_patterns": [
+          "*/*_contentprovider/contacts_contacts.txt",
+          "*/content_provider_*/com.android.contacts/com.android.contacts_contacts.txt"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "content_query_contact_phones": {
+        "search_patterns": [
+          "*/*_contentprovider/contacts_data_phones.txt",
+          "*/content_provider_*/com.android.contacts/com.android.contacts_data_phones.txt"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "content_query_calendar_events": {
+        "search_patterns": [
+          "*/*_contentprovider/calendar_events.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_calendar_event_entities": {
+        "search_patterns": [
+          "*/*_contentprovider/calendar_event_entities.txt",
+          "*/content_provider_*/com.android.calendar/com.android.calendar_event_entities.txt"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "content_query_calendars": {
+        "search_patterns": [
+          "*/*_contentprovider/calendar_calendars.txt",
+          "*/content_provider_*/com.android.calendar/com.android.calendar_calendars.txt"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "content_query_media_files": {
+        "search_patterns": [
+          "*/*_contentprovider/media_external_file.txt",
+          "*/content_provider_*/media/media_external_file.txt"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    },
+    "os_name": "Android"
+  },
+  "casesynthetic_alex_skipped": {
+    "description": "Synthetic ALEX raw text folder holding only the call log, as ALEX leaves it when it writes no file for the other providers (no rows, an error, or one of its error strings inside a value): every other URI is reported as unknown. Invented values, contains no real evidence.",
+    "maker": "@Maxitelmo",
+    "make_data": {
+      "input_data_path": "content_query_synthetic_alex_skipped.zip",
+      "os": "Windows-11-10.0.26200-SP0",
+      "timestamp": "2026-11-25T11:36:44.826279",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-11-25T11:36:44.706545",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "content_query_files": {
+        "search_patterns": [
+          "*/*_contentprovider/*.txt",
+          "*/content_provider_*/*.txt"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "content_query_sms": {
+        "search_patterns": [
+          "*/content_provider_*/sms/sms.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_mms": {
+        "search_patterns": [
+          "*/content_provider_*/mms/mms.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_mms_parts": {
+        "search_patterns": [
+          "*/content_provider_*/mms/mms_part.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_call_log": {
+        "search_patterns": [
+          "*/content_provider_*/call_log/call_log_calls.txt"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "content_query_contacts": {
+        "search_patterns": [
+          "*/*_contentprovider/contacts_contacts.txt",
+          "*/content_provider_*/com.android.contacts/com.android.contacts_contacts.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_contact_phones": {
+        "search_patterns": [
+          "*/*_contentprovider/contacts_data_phones.txt",
+          "*/content_provider_*/com.android.contacts/com.android.contacts_data_phones.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_calendar_events": {
+        "search_patterns": [
+          "*/*_contentprovider/calendar_events.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_calendar_event_entities": {
+        "search_patterns": [
+          "*/*_contentprovider/calendar_event_entities.txt",
+          "*/content_provider_*/com.android.calendar/com.android.calendar_event_entities.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_calendars": {
+        "search_patterns": [
+          "*/*_contentprovider/calendar_calendars.txt",
+          "*/content_provider_*/com.android.calendar/com.android.calendar_calendars.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_media_files": {
+        "search_patterns": [
+          "*/*_contentprovider/media_external_file.txt",
+          "*/content_provider_*/media/media_external_file.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      }
+    },
+    "os_name": "Android"
+  },
+  "casesynthetic_triage": {
+    "description": "Synthetic android_triage folder (<ANDROID_ID>/<date>_contentprovider), LF line endings: contacts with 'No result found.', an empty calendar event entities file (a failed query whose error went to the terminal), contact phone numbers whose hash_id ends with a line break, calendar events with multi-line title and description, a recurring event with no dtend and an all-day event, calendars, MediaStore files, the tool's own log and provider list (not listed), and a settings file that no artifact reads. Invented values, contains no real evidence.",
+    "maker": "@Maxitelmo",
+    "make_data": {
+      "input_data_path": "content_query_synthetic_triage.zip",
+      "os": "Windows-11-10.0.26200-SP0",
+      "timestamp": "2026-11-25T11:36:45.374508",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-11-25T11:36:45.258444",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "content_query_files": {
+        "search_patterns": [
+          "*/*_contentprovider/*.txt",
+          "*/content_provider_*/*.txt"
+        ],
+        "file_count": 9,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "content_query_sms": {
+        "search_patterns": [
+          "*/content_provider_*/sms/sms.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_mms": {
+        "search_patterns": [
+          "*/content_provider_*/mms/mms.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_mms_parts": {
+        "search_patterns": [
+          "*/content_provider_*/mms/mms_part.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_call_log": {
+        "search_patterns": [
+          "*/content_provider_*/call_log/call_log_calls.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_contacts": {
+        "search_patterns": [
+          "*/*_contentprovider/contacts_contacts.txt",
+          "*/content_provider_*/com.android.contacts/com.android.contacts_contacts.txt"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "content_query_contact_phones": {
+        "search_patterns": [
+          "*/*_contentprovider/contacts_data_phones.txt",
+          "*/content_provider_*/com.android.contacts/com.android.contacts_data_phones.txt"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "content_query_calendar_events": {
+        "search_patterns": [
+          "*/*_contentprovider/calendar_events.txt"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "content_query_calendar_event_entities": {
+        "search_patterns": [
+          "*/*_contentprovider/calendar_event_entities.txt",
+          "*/content_provider_*/com.android.calendar/com.android.calendar_event_entities.txt"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "content_query_calendars": {
+        "search_patterns": [
+          "*/*_contentprovider/calendar_calendars.txt",
+          "*/content_provider_*/com.android.calendar/com.android.calendar_calendars.txt"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "content_query_media_files": {
+        "search_patterns": [
+          "*/*_contentprovider/media_external_file.txt",
+          "*/content_provider_*/media/media_external_file.txt"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    },
+    "os_name": "Android"
+  },
+  "casesynthetic_triage_stderr": {
+    "description": "Synthetic android_triage folder whose files hold the error text the content command prints on stderr, which the published script does not capture: a SecurityException (access denied) on contacts and contact phone numbers, an IllegalArgumentException (provider error) on calendars, and MediaStore rows followed by an IllegalStateException. Invented values, contains no real evidence.",
+    "maker": "@Maxitelmo",
+    "make_data": {
+      "input_data_path": "content_query_synthetic_triage_stderr.zip",
+      "os": "Windows-11-10.0.26200-SP0",
+      "timestamp": "2026-11-25T11:36:45.921952",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-11-25T11:36:45.807575",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "content_query_files": {
+        "search_patterns": [
+          "*/*_contentprovider/*.txt",
+          "*/content_provider_*/*.txt"
+        ],
+        "file_count": 4,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "content_query_sms": {
+        "search_patterns": [
+          "*/content_provider_*/sms/sms.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_mms": {
+        "search_patterns": [
+          "*/content_provider_*/mms/mms.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_mms_parts": {
+        "search_patterns": [
+          "*/content_provider_*/mms/mms_part.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_call_log": {
+        "search_patterns": [
+          "*/content_provider_*/call_log/call_log_calls.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_contacts": {
+        "search_patterns": [
+          "*/*_contentprovider/contacts_contacts.txt",
+          "*/content_provider_*/com.android.contacts/com.android.contacts_contacts.txt"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "content_query_contact_phones": {
+        "search_patterns": [
+          "*/*_contentprovider/contacts_data_phones.txt",
+          "*/content_provider_*/com.android.contacts/com.android.contacts_data_phones.txt"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "content_query_calendar_events": {
+        "search_patterns": [
+          "*/*_contentprovider/calendar_events.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_calendar_event_entities": {
+        "search_patterns": [
+          "*/*_contentprovider/calendar_event_entities.txt",
+          "*/content_provider_*/com.android.calendar/com.android.calendar_event_entities.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_calendars": {
+        "search_patterns": [
+          "*/*_contentprovider/calendar_calendars.txt",
+          "*/content_provider_*/com.android.calendar/com.android.calendar_calendars.txt"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "content_query_media_files": {
+        "search_patterns": [
+          "*/*_contentprovider/media_external_file.txt",
+          "*/content_provider_*/media/media_external_file.txt"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    },
+    "os_name": "Android"
+  }
+}

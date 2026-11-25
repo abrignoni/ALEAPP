@@ -1,0 +1,42 @@
+{
+  "metadata": {
+    "module_name": "contentQuery",
+    "artifact_name": "Calendar Event Entities (content query)",
+    "function_name": "content_query_calendar_event_entities",
+    "case_number": "casesynthetic_triage",
+    "number_of_columns": 15,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/contentQuery/testdata.contentQuery.content_query_calendar_event_entities.casesynthetic_triage.zip",
+    "start_time": "2026-11-25T14:43:41.667537+00:00",
+    "end_time": "2026-11-25T14:43:41.757262+00:00",
+    "run_time_seconds": 0.0002675056457519531,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-11-25T11:43:41.754190",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Start (UTC)",
+    "End (UTC)",
+    "Time Zone",
+    "All Day",
+    "Title",
+    "Description",
+    "Location",
+    "Organizer",
+    "Recurrence Rule",
+    "Deleted",
+    "Calendar ID",
+    "Event ID",
+    "Parse Note",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

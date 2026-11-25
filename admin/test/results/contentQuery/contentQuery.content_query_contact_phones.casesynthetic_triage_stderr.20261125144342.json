@@ -1,0 +1,41 @@
+{
+  "metadata": {
+    "module_name": "contentQuery",
+    "artifact_name": "Contact Phone Numbers (content query)",
+    "function_name": "content_query_contact_phones",
+    "case_number": "casesynthetic_triage_stderr",
+    "number_of_columns": 14,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/contentQuery/testdata.contentQuery.content_query_contact_phones.casesynthetic_triage_stderr.zip",
+    "start_time": "2026-11-25T14:43:42.122569+00:00",
+    "end_time": "2026-11-25T14:43:42.208383+00:00",
+    "run_time_seconds": 0.00026988983154296875,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-11-25T11:43:42.205415",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Contact Last Updated (UTC)",
+    "Display Name",
+    "Number",
+    "Phone Type",
+    "Label",
+    "Normalized Number",
+    "Account Type",
+    "Account Name",
+    "Contact ID",
+    "Raw Contact ID",
+    "Data ID",
+    "Parse Note",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

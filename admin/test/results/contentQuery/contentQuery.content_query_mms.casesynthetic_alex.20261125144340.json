@@ -1,0 +1,80 @@
+{
+  "metadata": {
+    "module_name": "contentQuery",
+    "artifact_name": "MMS (content query)",
+    "function_name": "content_query_mms",
+    "case_number": "casesynthetic_alex",
+    "number_of_columns": 16,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 307,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/contentQuery/testdata.contentQuery.content_query_mms.casesynthetic_alex.zip",
+    "start_time": "2026-11-25T14:43:40.154033+00:00",
+    "end_time": "2026-11-25T14:43:40.250234+00:00",
+    "run_time_seconds": 0.0006892681121826172,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-11-25T11:43:40.242314",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Date (UTC)",
+    "Date Sent (UTC)",
+    "Message Box",
+    "Subject",
+    "Message Type",
+    "Content Type",
+    "Read",
+    "Seen",
+    "Text Only",
+    "Thread ID",
+    "Subscription ID",
+    "Creator",
+    "Message ID",
+    "Parse Note",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1767243600,
+      1767243590,
+      "1 (INBOX)",
+      "NULL",
+      "132",
+      "application/vnd.wap.multipart.related",
+      "1",
+      "1",
+      "0",
+      "5",
+      "1",
+      "com.example.messaging",
+      "7",
+      "",
+      1,
+      "ALEX_SYNTH0001/content_provider_SYNTH0001/mms/mms.txt"
+    ],
+    [
+      1767247200,
+      "",
+      "2 (SENT)",
+      "Holiday\nphotos",
+      "128",
+      "application/vnd.wap.multipart.related",
+      "1",
+      "1",
+      "1",
+      "5",
+      "1",
+      "com.example.messaging",
+      "8",
+      "",
+      2,
+      "ALEX_SYNTH0001/content_provider_SYNTH0001/mms/mms.txt"
+    ]
+  ]
+}

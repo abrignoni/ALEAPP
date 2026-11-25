@@ -1,0 +1,158 @@
+{
+  "metadata": {
+    "module_name": "contentQuery",
+    "artifact_name": "Content Query Files",
+    "function_name": "content_query_files",
+    "case_number": "casesynthetic_alex",
+    "number_of_columns": 9,
+    "number_of_rows": 11,
+    "total_data_size_bytes": 2522,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/contentQuery/testdata.contentQuery.content_query_files.casesynthetic_alex.zip",
+    "start_time": "2026-11-25T14:43:39.939453+00:00",
+    "end_time": "2026-11-25T14:43:40.049807+00:00",
+    "run_time_seconds": 0.003493785858154297,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-11-25T11:43:40.033290",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Layout",
+    "Folder",
+    "URI",
+    "File",
+    "Status",
+    "Rows",
+    "Detail",
+    "Columns",
+    "Read By"
+  ],
+  "data": [
+    [
+      "ALEX",
+      "ALEX_SYNTH0001/content_provider_SYNTH0001",
+      "content://sms",
+      "sms/sms.txt",
+      "rows",
+      5,
+      "",
+      "_id, thread_id, address, person, date, date_sent, read, status, type, subject, body, seen, sub_id, creator",
+      "SMS (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0001/content_provider_SYNTH0001",
+      "content://mms",
+      "mms/mms.txt",
+      "rows",
+      2,
+      "",
+      "_id, thread_id, date, date_sent, msg_box, read, sub, ct_t, m_type, seen, sub_id, creator, text_only",
+      "MMS (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0001/content_provider_SYNTH0001",
+      "content://mms/part",
+      "mms/mms_part.txt",
+      "rows",
+      3,
+      "",
+      "_id, mid, seq, ct, name, chset, cid, cl, fn, _data, text",
+      "MMS Parts (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0001/content_provider_SYNTH0001",
+      "content://call_log/calls",
+      "call_log/call_log_calls.txt",
+      "rows",
+      3,
+      "",
+      "_id, number, date, duration, type, name, presentation, subscription_id, geocoded_location, countryiso",
+      "Call Log (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0001/content_provider_SYNTH0001",
+      "content://com.android.contacts/contacts",
+      "com.android.contacts/com.android.contacts_contacts.txt",
+      "rows",
+      2,
+      "",
+      "_id, display_name, has_phone_number, starred, lookup, photo_uri, contact_last_updated_timestamp",
+      "Contacts (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0001/content_provider_SYNTH0001",
+      "content://com.android.contacts/data/phones",
+      "com.android.contacts/com.android.contacts_data_phones.txt",
+      "rows",
+      2,
+      "",
+      "_id, contact_id, raw_contact_id, display_name, data1, data2, data3, data4, data15, account_type, account_name, contact_last_updated_timestamp, hash_id",
+      "Contact Phone Numbers (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0001/content_provider_SYNTH0001",
+      "content://com.android.calendar/events",
+      "",
+      "not queried by this tool",
+      "",
+      "",
+      "",
+      "Calendar Events (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0001/content_provider_SYNTH0001",
+      "content://com.android.calendar/event_entities",
+      "com.android.calendar/com.android.calendar_event_entities.txt",
+      "rows",
+      3,
+      "",
+      "_id, calendar_id, title, description, eventLocation, dtstart, dtend, eventTimezone, duration, allDay, rrule, organizer, deleted",
+      "Calendar Event Entities (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0001/content_provider_SYNTH0001",
+      "content://com.android.calendar/calendars",
+      "com.android.calendar/com.android.calendar_calendars.txt",
+      "rows",
+      2,
+      "",
+      "_id, account_name, account_type, calendar_displayName, ownerAccount, visible, sync_events, deleted",
+      "Calendars (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0001/content_provider_SYNTH0001",
+      "content://media/external/file",
+      "media/media_external_file.txt",
+      "rows",
+      3,
+      "",
+      "_id, _data, _display_name, relative_path, volume_name, mime_type, _size, date_added, date_modified, datetaken, owner_package_name, bucket_display_name, is_trashed, is_pending",
+      "MediaStore Files (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0001/content_provider_SYNTH0001",
+      "",
+      "settings/settings_secure.txt",
+      "rows",
+      1,
+      "",
+      "_id, name, value",
+      "not read"
+    ]
+  ]
+}

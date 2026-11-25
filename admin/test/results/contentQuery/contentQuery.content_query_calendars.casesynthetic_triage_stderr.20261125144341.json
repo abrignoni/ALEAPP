@@ -1,0 +1,38 @@
+{
+  "metadata": {
+    "module_name": "contentQuery",
+    "artifact_name": "Calendars (content query)",
+    "function_name": "content_query_calendars",
+    "case_number": "casesynthetic_triage_stderr",
+    "number_of_columns": 11,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/contentQuery/testdata.contentQuery.content_query_calendars.casesynthetic_triage_stderr.zip",
+    "start_time": "2026-11-25T14:43:41.939856+00:00",
+    "end_time": "2026-11-25T14:43:42.025090+00:00",
+    "run_time_seconds": 0.0002841949462890625,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-11-25T11:43:42.021883",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Display Name",
+    "Account Name",
+    "Account Type",
+    "Owner Account",
+    "Visible",
+    "Sync Events",
+    "Deleted",
+    "Calendar ID",
+    "Parse Note",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

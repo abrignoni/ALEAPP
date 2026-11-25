@@ -1,0 +1,147 @@
+{
+  "metadata": {
+    "module_name": "contentQuery",
+    "artifact_name": "Content Query Files",
+    "function_name": "content_query_files",
+    "case_number": "casesynthetic_alex_skipped",
+    "number_of_columns": 9,
+    "number_of_rows": 10,
+    "total_data_size_bytes": 2827,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/contentQuery/testdata.contentQuery.content_query_files.casesynthetic_alex_skipped.zip",
+    "start_time": "2026-11-25T14:43:40.856817+00:00",
+    "end_time": "2026-11-25T14:43:40.955778+00:00",
+    "run_time_seconds": 0.0003619194030761719,
+    "last_commit": {
+      "hash": "Uncommitted",
+      "author_name": "N/A",
+      "author_email": "N/A",
+      "date": "2026-11-25T11:43:40.951993",
+      "message": "File not yet committed to git"
+    }
+  },
+  "headers": [
+    "Layout",
+    "Folder",
+    "URI",
+    "File",
+    "Status",
+    "Rows",
+    "Detail",
+    "Columns",
+    "Read By"
+  ],
+  "data": [
+    [
+      "ALEX",
+      "ALEX_SYNTH0001/content_provider_SYNTH0001",
+      "content://sms",
+      "sms/sms.txt",
+      "no file",
+      "",
+      "unknown: ALEX writes no file when the query printed No result found, an error, or text that holds one of its four error strings anywhere, including inside a value",
+      "",
+      "SMS (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0001/content_provider_SYNTH0001",
+      "content://mms",
+      "mms/mms.txt",
+      "no file",
+      "",
+      "unknown: ALEX writes no file when the query printed No result found, an error, or text that holds one of its four error strings anywhere, including inside a value",
+      "",
+      "MMS (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0001/content_provider_SYNTH0001",
+      "content://mms/part",
+      "mms/mms_part.txt",
+      "no file",
+      "",
+      "unknown: ALEX writes no file when the query printed No result found, an error, or text that holds one of its four error strings anywhere, including inside a value",
+      "",
+      "MMS Parts (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0001/content_provider_SYNTH0001",
+      "content://call_log/calls",
+      "call_log/call_log_calls.txt",
+      "rows",
+      3,
+      "",
+      "_id, number, date, duration, type, name, presentation, subscription_id, geocoded_location, countryiso",
+      "Call Log (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0001/content_provider_SYNTH0001",
+      "content://com.android.contacts/contacts",
+      "com.android.contacts/com.android.contacts_contacts.txt",
+      "no file",
+      "",
+      "unknown: ALEX writes no file when the query printed No result found, an error, or text that holds one of its four error strings anywhere, including inside a value",
+      "",
+      "Contacts (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0001/content_provider_SYNTH0001",
+      "content://com.android.contacts/data/phones",
+      "com.android.contacts/com.android.contacts_data_phones.txt",
+      "no file",
+      "",
+      "unknown: ALEX writes no file when the query printed No result found, an error, or text that holds one of its four error strings anywhere, including inside a value",
+      "",
+      "Contact Phone Numbers (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0001/content_provider_SYNTH0001",
+      "content://com.android.calendar/events",
+      "",
+      "not queried by this tool",
+      "",
+      "",
+      "",
+      "Calendar Events (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0001/content_provider_SYNTH0001",
+      "content://com.android.calendar/event_entities",
+      "com.android.calendar/com.android.calendar_event_entities.txt",
+      "no file",
+      "",
+      "unknown: ALEX writes no file when the query printed No result found, an error, or text that holds one of its four error strings anywhere, including inside a value",
+      "",
+      "Calendar Event Entities (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0001/content_provider_SYNTH0001",
+      "content://com.android.calendar/calendars",
+      "com.android.calendar/com.android.calendar_calendars.txt",
+      "no file",
+      "",
+      "unknown: ALEX writes no file when the query printed No result found, an error, or text that holds one of its four error strings anywhere, including inside a value",
+      "",
+      "Calendars (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0001/content_provider_SYNTH0001",
+      "content://media/external/file",
+      "media/media_external_file.txt",
+      "no file",
+      "",
+      "unknown: ALEX writes no file when the query printed No result found, an error, or text that holds one of its four error strings anywhere, including inside a value",
+      "",
+      "MediaStore Files (content query)"
+    ]
+  ]
+}
