@@ -5,5 +5,7 @@
   "report_description": "ALEAPP is an open source project that aims to parse every known Android artifact for the purpose of forensic analysis.",
   "objective": "Triage Android Full System Extractions.",
   "profile_extension": ".alprofile",
-  "casedata_extension": ".lcasedata"
+  "casedata_extension": ".lcasedata",
+  "input_types": ["fs", "tar", "gz", "zip", "raw"],
+  "hidden_artifacts": ["usagestatsVersion"]
 }
