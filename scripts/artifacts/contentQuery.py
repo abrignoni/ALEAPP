@@ -109,7 +109,9 @@ __artifacts_v2__ = {
                  "matches content://mms/<id>/addr, line 1211 at "
                  "https://android.googlesource.com/platform/packages/providers/TelephonyProvider/+/f5fa3b6153f98c57fa50c80ade2904005a4987ce/src/com/android/providers/telephony/MmsProvider.java), "
                  "but some device providers answer it with one row per address keyed by msg_id. When ALEX kept no "
-                 "mms_addr.txt the four columns are blank and the addresses are unknown, which the log says. The "
+                 "mms_addr.txt the four columns are blank and Parse Note says 'addresses unknown' on each row, "
+                 "since no rows, an error and a skipped dump look the same. When mms_addr.txt is there but holds "
+                 "no FROM, TO, CC or BCC row for a message, Parse Note says so on that row. The "
                  "parts of each message are in MMS Parts (content query), keyed by its _id. Date and Date Sent: the "
                  "provider contract gives the type INTEGER (long) and no unit (Telephony.BaseMmsColumns.DATE and "
                  "DATE_SENT, https://developer.android.com/reference/android/provider/Telephony.BaseMmsColumns#DATE). "
@@ -515,6 +517,9 @@ MMS_BOXES = {'0': 'ALL', '1': 'INBOX', '2': 'SENT', '3': 'DRAFTS', '4': 'OUTBOX'
 # PduHeaders address field values, as the addr rows print them in their type column.
 ADDRESS_TYPES = {'129': 'BCC', '130': 'CC', '137': 'FROM', '151': 'TO'}
 ADDRESS_CODES = ('137', '151', '130', '129')
+NOTE_ADDRESSES_UNKNOWN = ('addresses unknown: no mms/mms_addr.txt in this folder (ALEX writes none when the query '
+                          'printed no rows, an error, or one of its four error strings)')
+NOTE_NO_ADDRESS_ROWS = 'no FROM, TO, CC or BCC rows for this message in mms_addr.txt'
 CALL_TYPES = {'1': 'INCOMING_TYPE', '2': 'OUTGOING_TYPE', '3': 'MISSED_TYPE', '4': 'VOICEMAIL_TYPE',
               '5': 'REJECTED_TYPE', '6': 'BLOCKED_TYPE', '7': 'ANSWERED_EXTERNALLY_TYPE'}
 
@@ -651,23 +656,33 @@ def _mms_ids(path):
 
 
 def _joined(context, key, layout, relative):
-    """Extra values for each row of ``key``: a function of the row's Values, or None."""
+    """Extra values for each row of ``key``: a function of the row's Values and its note list, or None."""
     if key == 'mms':
         addr_path = _sibling(context, layout, 'mms_addr')
         if addr_path is None:
             logfunc(f'Content query {relative}: no mms_addr.txt in this folder, From, To, Cc and Bcc are unknown')
-            return lambda values: ['', '', '', '']
+
+            def unknown(_values, notes):
+                notes.append(NOTE_ADDRESSES_UNKNOWN)
+                return ['', '', '', '']
+            return unknown
         addresses = _mms_addresses(addr_path)
         logfunc(f'Content query {relative}: addresses from {_relative(context, addr_path)}')
-        return lambda values: ['; '.join(addresses.get(values['_id'], {}).get(code, []))
-                               for code in ADDRESS_CODES]
+
+        def found(values, notes):
+            by_type = addresses.get(values['_id'], {})
+            shown = ['; '.join(by_type.get(code, [])) for code in ADDRESS_CODES]
+            if not any(code in by_type for code in ADDRESS_CODES):
+                notes.append(NOTE_NO_ADDRESS_ROWS)
+            return shown
+        return found
     if key == 'mms_addr':
         mms_path = _sibling(context, layout, 'mms')
         ids = _mms_ids(mms_path) if mms_path else None
         if ids is None:
             logfunc(f'Content query {relative}: no MMS rows in this folder to match msg_id against')
-            return lambda values: ['']
-        return lambda values: ['yes' if values['msg_id'] in ids else 'no']
+            return lambda values, notes: ['']
+        return lambda values, notes: ['yes' if values['msg_id'] in ids else 'no']
     return None
 
 
@@ -701,7 +716,7 @@ def _read(context, key, with_source_file=True):
             row = [_shown(values[column], shown, notes) for _header, column, shown in COLUMNS[key]]
             if joined is not None:
                 position = JOINED_HEADERS[key][0]
-                row[position:position] = joined(values)
+                row[position:position] = joined(values, notes)
             row += ['; '.join(notes), record.line]
             if with_source_file:
                 row.append(relative)

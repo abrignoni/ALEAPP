@@ -10,15 +10,15 @@
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/contentQuery/testdata.contentQuery.content_query_files.casesynthetic_alex_skipped.zip",
-    "start_time": "2026-11-25T21:26:50.686269+00:00",
-    "end_time": "2026-11-25T21:26:50.785741+00:00",
-    "run_time_seconds": 0.002355337142944336,
+    "start_time": "2026-11-25T21:50:27.886014+00:00",
+    "end_time": "2026-11-25T21:50:27.951407+00:00",
+    "run_time_seconds": 0.0012309551239013672,
     "last_commit": {
-      "hash": "aa6e33b09730ad7e8af396fc1ad75b0279b31154",
+      "hash": "9b6ac5ad209440b52a1ae251f797daf2a8eb6874",
       "author_name": "Maximiliano Telmo",
       "author_email": "50964800+Maxitelmo@users.noreply.github.com",
-      "date": "2026-11-25T12:06:33-03:00",
-      "message": "Read saved content query text from android_triage and ALEX raw text output"
+      "date": "2026-11-25T18:31:16-03:00",
+      "message": "Read MMS addresses from content://mms/addr"
     }
   },
   "headers": [
@@ -50,7 +50,7 @@
       "content://mms",
       "mms/mms.txt",
       "rows",
-      2,
+      3,
       "",
       "_id, thread_id, date, date_sent, msg_box, read, sub, ct_t, m_type, seen, sub_id, creator, text_only",
       "MMS (content query)"

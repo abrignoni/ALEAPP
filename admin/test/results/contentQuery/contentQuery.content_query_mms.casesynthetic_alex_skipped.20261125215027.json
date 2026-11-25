@@ -5,20 +5,20 @@
     "function_name": "content_query_mms",
     "case_number": "casesynthetic_alex_skipped",
     "number_of_columns": 20,
-    "number_of_rows": 2,
-    "total_data_size_bytes": 307,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 893,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/contentQuery/testdata.contentQuery.content_query_mms.casesynthetic_alex_skipped.zip",
-    "start_time": "2026-11-25T21:26:50.484585+00:00",
-    "end_time": "2026-11-25T21:26:50.576948+00:00",
-    "run_time_seconds": 0.0014450550079345703,
+    "start_time": "2026-11-25T21:50:27.953707+00:00",
+    "end_time": "2026-11-25T21:50:28.027442+00:00",
+    "run_time_seconds": 0.0009274482727050781,
     "last_commit": {
-      "hash": "aa6e33b09730ad7e8af396fc1ad75b0279b31154",
+      "hash": "9b6ac5ad209440b52a1ae251f797daf2a8eb6874",
       "author_name": "Maximiliano Telmo",
       "author_email": "50964800+Maxitelmo@users.noreply.github.com",
-      "date": "2026-11-25T12:06:33-03:00",
-      "message": "Read saved content query text from android_triage and ALEX raw text output"
+      "date": "2026-11-25T18:31:16-03:00",
+      "message": "Read MMS addresses from content://mms/addr"
     }
   },
   "headers": [
@@ -62,7 +62,7 @@
       "1",
       "com.example.messaging",
       "7",
-      "",
+      "addresses unknown: no mms/mms_addr.txt in this folder (ALEX writes none when the query printed no rows, an error, or one of its four error strings)",
       1,
       "ALEX_SYNTH0001/content_provider_SYNTH0001/mms/mms.txt"
     ],
@@ -84,8 +84,30 @@
       "1",
       "com.example.messaging",
       "8",
-      "",
+      "addresses unknown: no mms/mms_addr.txt in this folder (ALEX writes none when the query printed no rows, an error, or one of its four error strings)",
       2,
+      "ALEX_SYNTH0001/content_provider_SYNTH0001/mms/mms.txt"
+    ],
+    [
+      1767250800,
+      "",
+      "3 (DRAFTS)",
+      "",
+      "",
+      "",
+      "",
+      "NULL",
+      "128",
+      "application/vnd.wap.multipart.related",
+      "1",
+      "1",
+      "1",
+      "6",
+      "1",
+      "com.example.messaging",
+      "9",
+      "addresses unknown: no mms/mms_addr.txt in this folder (ALEX writes none when the query printed no rows, an error, or one of its four error strings)",
+      4,
       "ALEX_SYNTH0001/content_provider_SYNTH0001/mms/mms.txt"
     ]
   ]

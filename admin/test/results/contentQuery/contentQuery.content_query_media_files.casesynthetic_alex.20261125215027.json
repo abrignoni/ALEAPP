@@ -3,22 +3,22 @@
     "module_name": "contentQuery",
     "artifact_name": "MediaStore Files (content query)",
     "function_name": "content_query_media_files",
-    "case_number": "casesynthetic_triage_stderr",
+    "case_number": "casesynthetic_alex",
     "number_of_columns": 17,
-    "number_of_rows": 2,
-    "total_data_size_bytes": 480,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 675,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
-    "input_zip_path": "admin/test/cases/data/contentQuery/testdata.contentQuery.content_query_media_files.casesynthetic_triage_stderr.zip",
-    "start_time": "2026-11-25T21:26:51.807491+00:00",
-    "end_time": "2026-11-25T21:26:51.907740+00:00",
-    "run_time_seconds": 0.0014872550964355469,
+    "input_zip_path": "admin/test/cases/data/contentQuery/testdata.contentQuery.content_query_media_files.casesynthetic_alex.zip",
+    "start_time": "2026-11-25T21:50:27.473702+00:00",
+    "end_time": "2026-11-25T21:50:27.534244+00:00",
+    "run_time_seconds": 0.0009341239929199219,
     "last_commit": {
-      "hash": "aa6e33b09730ad7e8af396fc1ad75b0279b31154",
+      "hash": "9b6ac5ad209440b52a1ae251f797daf2a8eb6874",
       "author_name": "Maximiliano Telmo",
       "author_email": "50964800+Maxitelmo@users.noreply.github.com",
-      "date": "2026-11-25T12:06:33-03:00",
-      "message": "Read saved content query text from android_triage and ALEX raw text output"
+      "date": "2026-11-25T18:31:16-03:00",
+      "message": "Read MMS addresses from content://mms/addr"
     }
   },
   "headers": [
@@ -58,7 +58,7 @@
       "1001",
       "",
       1,
-      "a1b2c3d4e5f60718/20261125_10_15_30_contentprovider/media_external_file.txt"
+      "ALEX_SYNTH0001/content_provider_SYNTH0001/media/media_external_file.txt"
     ],
     [
       1767272400,
@@ -77,7 +77,26 @@
       "1002",
       "",
       2,
-      "a1b2c3d4e5f60718/20261125_10_15_30_contentprovider/media_external_file.txt"
+      "ALEX_SYNTH0001/content_provider_SYNTH0001/media/media_external_file.txt"
+    ],
+    [
+      "",
+      "",
+      "",
+      "/storage/emulated/0/Pictures/.trashed-1768000000-old.png",
+      ".trashed-1768000000-old.png",
+      "",
+      "external_primary",
+      "image/png",
+      "512",
+      "NULL",
+      "Pictures",
+      "1",
+      "0",
+      "1003",
+      "",
+      3,
+      "ALEX_SYNTH0001/content_provider_SYNTH0001/media/media_external_file.txt"
     ]
   ]
 }

@@ -3,22 +3,22 @@
     "module_name": "contentQuery",
     "artifact_name": "Contacts (content query)",
     "function_name": "content_query_contacts",
-    "case_number": "casesynthetic_triage",
+    "case_number": "casesynthetic_triage_stderr",
     "number_of_columns": 9,
     "number_of_rows": 0,
     "total_data_size_bytes": 0,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
-    "input_zip_path": "admin/test/cases/data/contentQuery/testdata.contentQuery.content_query_contacts.casesynthetic_triage.zip",
-    "start_time": "2026-11-25T21:26:51.444682+00:00",
-    "end_time": "2026-11-25T21:26:51.526036+00:00",
-    "run_time_seconds": 0.0007617473602294922,
+    "input_zip_path": "admin/test/cases/data/contentQuery/testdata.contentQuery.content_query_contacts.casesynthetic_triage_stderr.zip",
+    "start_time": "2026-11-25T21:50:28.733692+00:00",
+    "end_time": "2026-11-25T21:50:28.810592+00:00",
+    "run_time_seconds": 0.0007023811340332031,
     "last_commit": {
-      "hash": "aa6e33b09730ad7e8af396fc1ad75b0279b31154",
+      "hash": "9b6ac5ad209440b52a1ae251f797daf2a8eb6874",
       "author_name": "Maximiliano Telmo",
       "author_email": "50964800+Maxitelmo@users.noreply.github.com",
-      "date": "2026-11-25T12:06:33-03:00",
-      "message": "Read saved content query text from android_triage and ALEX raw text output"
+      "date": "2026-11-25T18:31:16-03:00",
+      "message": "Read MMS addresses from content://mms/addr"
     }
   },
   "headers": [

@@ -3,22 +3,22 @@
     "module_name": "contentQuery",
     "artifact_name": "MediaStore Files (content query)",
     "function_name": "content_query_media_files",
-    "case_number": "casesynthetic_triage",
+    "case_number": "casesynthetic_triage_stderr",
     "number_of_columns": 17,
-    "number_of_rows": 3,
-    "total_data_size_bytes": 684,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 480,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
-    "input_zip_path": "admin/test/cases/data/contentQuery/testdata.contentQuery.content_query_media_files.casesynthetic_triage.zip",
-    "start_time": "2026-11-25T21:26:51.363952+00:00",
-    "end_time": "2026-11-25T21:26:51.441951+00:00",
-    "run_time_seconds": 0.001096963882446289,
+    "input_zip_path": "admin/test/cases/data/contentQuery/testdata.contentQuery.content_query_media_files.casesynthetic_triage_stderr.zip",
+    "start_time": "2026-11-25T21:50:28.812509+00:00",
+    "end_time": "2026-11-25T21:50:28.879453+00:00",
+    "run_time_seconds": 0.0008664131164550781,
     "last_commit": {
-      "hash": "aa6e33b09730ad7e8af396fc1ad75b0279b31154",
+      "hash": "9b6ac5ad209440b52a1ae251f797daf2a8eb6874",
       "author_name": "Maximiliano Telmo",
       "author_email": "50964800+Maxitelmo@users.noreply.github.com",
-      "date": "2026-11-25T12:06:33-03:00",
-      "message": "Read saved content query text from android_triage and ALEX raw text output"
+      "date": "2026-11-25T18:31:16-03:00",
+      "message": "Read MMS addresses from content://mms/addr"
     }
   },
   "headers": [
@@ -77,25 +77,6 @@
       "1002",
       "",
       2,
-      "a1b2c3d4e5f60718/20261125_10_15_30_contentprovider/media_external_file.txt"
-    ],
-    [
-      "",
-      "",
-      "",
-      "/storage/emulated/0/Pictures/.trashed-1768000000-old.png",
-      ".trashed-1768000000-old.png",
-      "",
-      "external_primary",
-      "image/png",
-      "512",
-      "NULL",
-      "Pictures",
-      "1",
-      "0",
-      "1003",
-      "",
-      3,
       "a1b2c3d4e5f60718/20261125_10_15_30_contentprovider/media_external_file.txt"
     ]
   ]

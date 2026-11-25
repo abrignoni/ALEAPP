@@ -10,7 +10,8 @@ write. Four cases are built:
   Windows, with multi-line values, a value that holds ', total=', a value that holds the
   name of the next column (', seen='), a value line that starts with 'Row: ', NULL, BLOB
   and empty values, MMS parts, MMS addresses (FROM, TO, CC and BCC rows, a NULL address,
-  a msg_id with no MMS row and a type that is not an address field), and a file of a URI
+  a msg_id with no MMS row, a type that is not an address field, and an MMS row with no
+  address rows), and a file of a URI
   the artifacts do not read;
 * ``alex_skipped``: an ALEX folder without sms.txt (what ALEX leaves when a body holds
   'No result found') and without mms_addr.txt, with a call log and MMS rows whose
@@ -72,6 +73,9 @@ MMS = rows(
      ('seen', '1'), ('sub_id', '1'), ('creator', 'com.example.messaging'), ('text_only', '0')],
     [('_id', '8'), ('thread_id', '5'), ('date', '1767247200'), ('date_sent', '0'), ('msg_box', '2'),
      ('read', '1'), ('sub', 'Holiday\nphotos'), ('ct_t', 'application/vnd.wap.multipart.related'),
+     ('m_type', '128'), ('seen', '1'), ('sub_id', '1'), ('creator', 'com.example.messaging'), ('text_only', '1')],
+    [('_id', '9'), ('thread_id', '6'), ('date', '1767250800'), ('date_sent', '0'), ('msg_box', '3'),
+     ('read', '1'), ('sub', 'NULL'), ('ct_t', 'application/vnd.wap.multipart.related'),
      ('m_type', '128'), ('seen', '1'), ('sub_id', '1'), ('creator', 'com.example.messaging'), ('text_only', '1')],
 )
 

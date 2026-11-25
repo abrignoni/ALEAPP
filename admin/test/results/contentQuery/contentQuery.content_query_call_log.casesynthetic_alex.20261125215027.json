@@ -3,22 +3,22 @@
     "module_name": "contentQuery",
     "artifact_name": "Call Log (content query)",
     "function_name": "content_query_call_log",
-    "case_number": "casesynthetic_alex_skipped",
+    "case_number": "casesynthetic_alex",
     "number_of_columns": 13,
     "number_of_rows": 3,
     "total_data_size_bytes": 365,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
-    "input_zip_path": "admin/test/cases/data/contentQuery/testdata.contentQuery.content_query_call_log.casesynthetic_alex_skipped.zip",
-    "start_time": "2026-11-25T21:26:50.788914+00:00",
-    "end_time": "2026-11-25T21:26:50.890927+00:00",
-    "run_time_seconds": 0.0011181831359863281,
+    "input_zip_path": "admin/test/cases/data/contentQuery/testdata.contentQuery.content_query_call_log.casesynthetic_alex.zip",
+    "start_time": "2026-11-25T21:50:27.407777+00:00",
+    "end_time": "2026-11-25T21:50:27.472150+00:00",
+    "run_time_seconds": 0.0017571449279785156,
     "last_commit": {
-      "hash": "aa6e33b09730ad7e8af396fc1ad75b0279b31154",
+      "hash": "9b6ac5ad209440b52a1ae251f797daf2a8eb6874",
       "author_name": "Maximiliano Telmo",
       "author_email": "50964800+Maxitelmo@users.noreply.github.com",
-      "date": "2026-11-25T12:06:33-03:00",
-      "message": "Read saved content query text from android_triage and ALEX raw text output"
+      "date": "2026-11-25T18:31:16-03:00",
+      "message": "Read MMS addresses from content://mms/addr"
     }
   },
   "headers": [

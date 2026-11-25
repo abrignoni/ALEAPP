@@ -1,17 +1,17 @@
 {
   "casesynthetic_alex": {
-    "description": "Synthetic ALEX raw text folder (content_provider_<serial>), CRLF line endings: SMS with a multi-line body holding a line that starts with 'Row: ', a body holding ', total=', a body holding ', seen=' (the next column's name, flagged), NULL, BLOB and empty values and an undocumented type value; MMS, MMS parts (no part content) and MMS addresses (FROM, TO, CC and BCC rows, a NULL address, a msg_id with no MMS row, a type that is not an address field); call log; contacts; contact phone numbers whose hash_id ends with a line break; calendar event entities with a multi-line description; calendars; MediaStore files with 0 and NULL times; and a settings file that no artifact reads. Invented values, contains no real evidence.",
+    "description": "Synthetic ALEX raw text folder (content_provider_<serial>), CRLF line endings: SMS with a multi-line body holding a line that starts with 'Row: ', a body holding ', total=', a body holding ', seen=' (the next column's name, flagged), NULL, BLOB and empty values and an undocumented type value; MMS, MMS parts (no part content) and MMS addresses (FROM, TO, CC and BCC rows, a NULL address, a msg_id with no MMS row, a type that is not an address field, an MMS row with no address rows); call log; contacts; contact phone numbers whose hash_id ends with a line break; calendar event entities with a multi-line description; calendars; MediaStore files with 0 and NULL times; and a settings file that no artifact reads. Invented values, contains no real evidence.",
     "maker": "@Maxitelmo",
     "make_data": {
       "input_data_path": "content_query_synthetic_alex.zip",
       "os": "Windows-11-10.0.26200-SP0",
-      "timestamp": "2026-11-25T18:26:31.022452",
+      "timestamp": "2026-11-25T18:50:23.440954",
       "last_commit": {
-        "hash": "aa6e33b09730ad7e8af396fc1ad75b0279b31154",
+        "hash": "9b6ac5ad209440b52a1ae251f797daf2a8eb6874",
         "author_name": "Maximiliano Telmo",
         "author_email": "50964800+Maxitelmo@users.noreply.github.com",
-        "date": "2026-11-25T12:06:33-03:00",
-        "message": "Read saved content query text from android_triage and ALEX raw text output"
+        "date": "2026-11-25T18:31:16-03:00",
+        "message": "Read MMS addresses from content://mms/addr"
       }
     },
     "artifacts": {
@@ -144,18 +144,18 @@
     "os_name": "Android"
   },
   "casesynthetic_alex_skipped": {
-    "description": "Synthetic ALEX raw text folder holding only the call log and MMS rows, as ALEX leaves it when it writes no file for the other providers (no rows, an error, or one of its error strings inside a value): every other URI is reported as unknown, and the MMS addresses are unknown. Invented values, contains no real evidence.",
+    "description": "Synthetic ALEX raw text folder holding only the call log and MMS rows, as ALEX leaves it when it writes no file for the other providers (no rows, an error, or one of its error strings inside a value): every other URI is reported as unknown, and each MMS row says its addresses are unknown. Invented values, contains no real evidence.",
     "maker": "@Maxitelmo",
     "make_data": {
       "input_data_path": "content_query_synthetic_alex_skipped.zip",
       "os": "Windows-11-10.0.26200-SP0",
-      "timestamp": "2026-11-25T18:26:32.296406",
+      "timestamp": "2026-11-25T18:50:24.330013",
       "last_commit": {
-        "hash": "aa6e33b09730ad7e8af396fc1ad75b0279b31154",
+        "hash": "9b6ac5ad209440b52a1ae251f797daf2a8eb6874",
         "author_name": "Maximiliano Telmo",
         "author_email": "50964800+Maxitelmo@users.noreply.github.com",
-        "date": "2026-11-25T12:06:33-03:00",
-        "message": "Read saved content query text from android_triage and ALEX raw text output"
+        "date": "2026-11-25T18:31:16-03:00",
+        "message": "Read MMS addresses from content://mms/addr"
       }
     },
     "artifacts": {
@@ -272,13 +272,13 @@
     "make_data": {
       "input_data_path": "content_query_synthetic_triage.zip",
       "os": "Windows-11-10.0.26200-SP0",
-      "timestamp": "2026-11-25T18:26:33.550137",
+      "timestamp": "2026-11-25T18:50:25.183047",
       "last_commit": {
-        "hash": "aa6e33b09730ad7e8af396fc1ad75b0279b31154",
+        "hash": "9b6ac5ad209440b52a1ae251f797daf2a8eb6874",
         "author_name": "Maximiliano Telmo",
         "author_email": "50964800+Maxitelmo@users.noreply.github.com",
-        "date": "2026-11-25T12:06:33-03:00",
-        "message": "Read saved content query text from android_triage and ALEX raw text output"
+        "date": "2026-11-25T18:31:16-03:00",
+        "message": "Read MMS addresses from content://mms/addr"
       }
     },
     "artifacts": {
@@ -404,13 +404,13 @@
     "make_data": {
       "input_data_path": "content_query_synthetic_triage_stderr.zip",
       "os": "Windows-11-10.0.26200-SP0",
-      "timestamp": "2026-11-25T18:26:34.934237",
+      "timestamp": "2026-11-25T18:50:26.076663",
       "last_commit": {
-        "hash": "aa6e33b09730ad7e8af396fc1ad75b0279b31154",
+        "hash": "9b6ac5ad209440b52a1ae251f797daf2a8eb6874",
         "author_name": "Maximiliano Telmo",
         "author_email": "50964800+Maxitelmo@users.noreply.github.com",
-        "date": "2026-11-25T12:06:33-03:00",
-        "message": "Read saved content query text from android_triage and ALEX raw text output"
+        "date": "2026-11-25T18:31:16-03:00",
+        "message": "Read MMS addresses from content://mms/addr"
       }
     },
     "artifacts": {
