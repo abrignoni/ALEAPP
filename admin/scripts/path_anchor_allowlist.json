@@ -123,6 +123,7 @@
   "*/misc/bootstat/last_boot_time_utc": "shared or system location: no app data container in the path; measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",
   "*/misc/wifi/WifiConfigStore.xml": "pre-existing when the anchor check was added; matched nothing on the corpora measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12, breadth unestablished",
   "*/misc/wifi/softap.conf": "pre-existing when the anchor check was added; matched nothing on the corpora measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12, breadth unestablished",
+  "*/misc_ce/*/wifi/WifiConfigStore.xml": "shared or system location: the Wi-Fi service's per-user store under misc_ce, outside any app data container; measured 2026-11-24 on the 39 ALEAPP sample keys, where it matched one file, on galaxys10_a10",
   "*/mmkv/*": "deliberate cross-app sweep: MMKV names its own store directory, and every row carries the store's evidence-relative path, so the owning app is attributed per row; measured 2026-09-07 on kevin_pocox7_a15, sharon_a14, samsungs20_a13 and pixel7a_a14",
   "*/mmkv_private/*": "deliberate cross-app sweep: MMKV names its own store directory, and every row carries the store's evidence-relative path, so the owning app is attributed per row; measured 2026-09-07 on kevin_pocox7_a15, sharon_a14, samsungs20_a13 and pixel7a_a14",
   "*/mmssms.db*": "distinctive marker: matched only com.android.providers.telephony, measured 2026-08-28 on pixel7a_a14, samsunga53_a14, pixel3_a12",

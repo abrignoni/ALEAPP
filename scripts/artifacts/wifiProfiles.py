@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "get_wifiProfiles": {
         "name": "wifiProfiles",
-        "description": "Wi-Fi network entries (SSID, keys, gateway MAC address, randomized MAC address, the apps that created and last changed each network and, where stored, timestamps) from WifiConfigStore.xml",
+        "description": "Wi-Fi network entries (SSID, keys, gateway MAC address, randomized MAC address, the stored creator and last-update names and uids and, where stored, timestamps) from WifiConfigStore.xml",
         "author": "@abrignoni",
         "creation_date": "2020-03-23",
         "last_update_date": "2026-11-24",
@@ -44,23 +44,28 @@ __artifacts_v2__ = {
                  "LoginUrl is the text of an element of that name. Its writer is not established and it is empty on all 151 rows. "
                  "WEPKeys is the element's text. AOSP writes WEP keys as item child elements or as an encrypted section (XmlUtil.java lines 416 to 442 at android-14.0.0_r1), which this module does not show, so an empty cell does not prove the network had no WEP key. On the 36 images all 148 WEPKeys elements are null and the column is empty on all 151 rows. "
                  "HiddenSSID, HasEverConnected, CreatorName, CreatorUid, LastUpdateName, LastUpdateUid, RandomizedMacAddress and MacRandomizationSetting "
-                 "are the values the AOSP writer stores under those names (XmlUtil.java lines 569, 656-659, 666-669 and 1397 at the same tag), shown as stored. "
+                 "are the values the AOSP writer stores under those names (XmlUtil.java lines 569, 656-659, 666-669 and 1397 at the same tag). All but MacRandomizationSetting are shown as stored. "
                  "AOSP documents hiddenSSID as a network that does not broadcast its SSID (WifiConfiguration.java lines 1225-1229), "
                  "creatorUid and lastUpdateUid as the uid of the app that created and last modified the configuration, and creatorName and "
-                 "lastUpdateName as that app's name from PackageManager.getNameForUid (lines 1374-1409). "
-                 "hasEverConnected is set to true on a successful connection, and to false when no earlier value was stored or the credentials change, such as a password change (lines 2440-2446). "
+                 "lastUpdateName as the universal name for that app, with a reference to PackageManager.getNameForUid (lines 1374-1409). On the 36 images CreatorName has the form android.uid.<name>:<uid> on 124 of the 148 filled rows and a package name form on 24, and LastUpdateName on 125 and 23. The module does not resolve the first form to a package. "
+                 "AOSP documents that hasEverConnected is set to true on a successful connection, and to false when no earlier value was stored or the credentials change, such as a password change (lines 2440-2446). "
                  "RandomizedMacAddress is the randomized MAC address the framework keeps for the network. AOSP says the device may or may not use it, "
-                 "depending on the user's preference (lines 1885-1897), so read it with MacRandomizationSetting. "
+                 "depending on the user's preference (lines 1887-1898), so read it with MacRandomizationSetting. "
                  "MacRandomizationSetting is the stored number followed by the name of the AOSP constant it equals (lines 1799-1818): "
                  "0 none (the factory MAC), 1 persistent, 2 non-persistent and 3 auto. Any other number is shown alone. "
                  "On the 36 images these eight columns are filled on 148 of the 151 rows and empty on the 3 WakeupConfigStoreData rows. "
                  "MacRandomizationSetting is 3 on 141 rows, 1 on 6 and 0 on 1. "
-                 "Store is User <n> for a file under misc_ce/<n> or data_mirror/misc_ce/<volume>/<n>, the per-user store, and Shared for any other path. "
-                 "AOSP keeps one shared store and one store per user (framework/java/android/net/wifi/util/Environment.java lines 48-61 at the same tag). "
-                 "Shared also covers the older misc/wifi path, whose writer was not traced. "
+                 "Store is User <n> for a file under misc_ce/<n> or data_mirror/misc_ce/<volume>/<n>, and Shared for any other path. "
+                 "AOSP keeps a WifiConfigStore.xml in a shared folder and one in a folder per user (service/java/com/android/server/wifi/WifiConfigStore.java "
+                 "lines 159-167 and 342-364; framework/java/android/net/wifi/util/Environment.java lines 48-61 at the same tag). "
+                 "The mapping of those folders to misc and misc_ce/<n> was read from the paths on the corpus images, not traced in source. "
+                 "Shared also covers the older misc/wifi path, whose writer was not traced. The older per-user path misc_ce/<n>/wifi is searched too. "
+                 "On the 39 images it matched one file, on galaxys10_a10, which holds no Network element. "
                  "A data_mirror copy is not read when the misc_ce copy for the same user was also found and holds the same bytes. "
+                 "A data_mirror copy that differs is read, and its rows carry the same Store value as the live copy. "
                  "On the 39 images 35 data_mirror copies were found and each matched its misc_ce copy. 148 rows are Shared and 3 are User 0.",
-        "paths": ('*/misc/wifi/WifiConfigStore.xml', '*/misc**/apexdata/com.android.wifi/WifiConfigStore.xml'),
+        "paths": ('*/misc/wifi/WifiConfigStore.xml', '*/misc_ce/*/wifi/WifiConfigStore.xml',
+                  '*/misc**/apexdata/com.android.wifi/WifiConfigStore.xml'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "wifi",
         "sample_data": {
@@ -78,7 +83,7 @@ __artifacts_v2__ = {
     },
     "get_wifiPasspointProviders": {
         "name": "Wi-Fi Passpoint Providers",
-        "description": "Passpoint provider entries (FQDN, friendly name, realm, credential and creating package) from WifiConfigStore.xml",
+        "description": "Passpoint provider entries (FQDN, friendly name, realm, credential, package name and creator uid) from WifiConfigStore.xml",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-11-24",
         "last_update_date": "2026-11-24",
@@ -94,8 +99,9 @@ __artifacts_v2__ = {
                  "Username and Password come from the UserCredential section inside it (lines 401-403) and IMSI from the SimCredential section (line 450). "
                  "The Username and Password values of the subscription and policy update sections are not reported. "
                  "AOSP documents the stored password as Base64-encoded (framework/java/android/net/wifi/hotspot2/pps/Credential.java lines 195-198). "
-                 "Password (as stored) is the stored text. On the 8 providers that hold one it ends with a line break. "
-                 "Password (Base64 decoded) is that text decoded as Base64 and read as UTF-8 text, and is blank when it is not valid Base64 or not UTF-8. "
+                 "Password (as stored) is the stored text. On the 9 providers that hold one it ends with a line break. "
+                 "Password (Base64 decoded) is that text with surrounding white space removed, decoded as Base64 and read as UTF-8 text. "
+                 "It is blank when the text holds any character outside the Base64 alphabet, including a line break inside the value, or when the result is not UTF-8. All 9 stored values decoded. "
                  "IMSI is shown as stored. AOSP expects digits that may end with an asterisk for prefix matching (Credential.java lines 818-821). "
                  "The four time columns are read as milliseconds since 1970 in UTC, as AOSP documents them (Credential.java lines 59-83; "
                  "framework/java/android/net/wifi/hotspot2/PasspointConfiguration.java lines 269-295). AOSP uses Long.MIN_VALUE for an unset time. "
@@ -103,9 +109,10 @@ __artifacts_v2__ = {
                  "so the time columns are empty and no row has a time. "
                  "Store is User <n> for a file under misc_ce/<n> or data_mirror/misc_ce/<volume>/<n> and Shared for any other path, "
                  "and an identical data_mirror copy is not read, as in the wifiProfiles artifact. "
-                 "Of the 39 images run, 10 held providers, 13 in all, every one in a User 0 store: 8 with a UserCredential and 5 with a SimCredential. "
+                 "Of the 39 images run, 11 held providers, 14 in all, every one in a User 0 store: 9 with a UserCredential and 5 with a SimCredential. One of them, on galaxys10_a10, is in the older per-user store at misc_ce/0/wifi. "
                  "A provider in a store for a user other than 0 is not exercised on real data.",
-        "paths": ('*/misc/wifi/WifiConfigStore.xml', '*/misc**/apexdata/com.android.wifi/WifiConfigStore.xml'),
+        "paths": ('*/misc/wifi/WifiConfigStore.xml', '*/misc_ce/*/wifi/WifiConfigStore.xml',
+                  '*/misc**/apexdata/com.android.wifi/WifiConfigStore.xml'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "wifi",
         "sample_data": {
