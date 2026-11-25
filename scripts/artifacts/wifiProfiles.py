@@ -61,7 +61,7 @@ __artifacts_v2__ = {
                  "The mapping of those folders to misc and misc_ce/<n> was read from the paths on the corpus images, not traced in source. "
                  "Shared also covers the older misc/wifi path, whose writer was not traced. The older per-user path misc_ce/<n>/wifi is searched too. "
                  "On the 39 images it matched one file, on galaxys10_a10, which holds no Network element. "
-                 "A data_mirror copy is not read when the misc_ce copy for the same user was also found and holds the same bytes. "
+                 "A data_mirror copy is not read when the data/misc_ce copy for the same user under the same evidence root was also found and holds the same bytes. "
                  "A data_mirror copy that differs is read, and its rows carry the same Store value as the live copy. "
                  "On the 39 images 35 data_mirror copies were found and each matched its misc_ce copy. 148 rows are Shared and 3 are User 0.",
         "paths": ('*/misc/wifi/WifiConfigStore.xml', '*/misc_ce/*/wifi/WifiConfigStore.xml',
@@ -165,21 +165,27 @@ def _store(relative_path):
     return f'User {match.group(1)}' if match else 'Shared'
 
 
+_LIVE_STORE = re.compile(r'(?:^|/)data/misc_ce/(\d+)/(.*)$')
+
+
 def _store_files(context):
-    '''The matched files, leaving out a data_mirror copy whose live misc_ce copy was also
-    found and holds the same bytes.'''
+    '''The matched files, leaving out a data_mirror copy whose live data/misc_ce copy under
+    the same evidence root was also found and holds the same bytes.'''
     files = [str(f) for f in context.get_files_found()]
     live = {}
     for file_found in files:
         path = context.get_relative_path(file_found).replace('\\', '/')
-        match = _USER_STORE.search(path)
+        match = _LIVE_STORE.search(path)
         if match and not _MIRROR_STORE.search(path):
-            live.setdefault(match.groups(), []).append(file_found)
+            live.setdefault((path[:match.start()],) + match.groups(), []).append(file_found)
     kept = []
     for file_found in files:
-        match = _MIRROR_STORE.search(context.get_relative_path(file_found).replace('\\', '/'))
-        if match and any(filecmp.cmp(file_found, other, shallow=False) for other in live.get(match.groups(), [])):
-            continue
+        path = context.get_relative_path(file_found).replace('\\', '/')
+        match = _MIRROR_STORE.search(path)
+        if match:
+            key = (path[:match.start()],) + match.groups()
+            if any(filecmp.cmp(file_found, other, shallow=False) for other in live.get(key, [])):
+                continue
         kept.append(file_found)
     return kept
 

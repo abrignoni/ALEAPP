@@ -165,6 +165,14 @@ class MirrorCopies(unittest.TestCase):
         self.assertEqual(sorted(r['FQDN'] for r in rows), ['example.com', 'sim.example'])
         self.assertEqual({r['Store'] for r in rows}, {'User 10'})
 
+    def test_a_mirror_under_another_evidence_root_is_read(self):
+        rows = run('get_wifiPasspointProviders', {f'one/{USER}': passpoint(PROVIDER), f'two/{MIRROR}': passpoint(PROVIDER)})
+        self.assertEqual(len(rows), 2)
+
+    def test_a_mirror_beside_its_live_copy_under_a_root_is_read_once(self):
+        rows = run('get_wifiPasspointProviders', {f'one/{USER}': passpoint(PROVIDER), f'one/{MIRROR}': passpoint(PROVIDER)})
+        self.assertEqual(len(rows), 1)
+
     def test_a_mirror_copy_alone_is_read_and_names_its_user(self):
         rows = run('get_wifiPasspointProviders', {MIRROR: passpoint(PROVIDER)})
         self.assertEqual([r['Store'] for r in rows], ['User 10'])
