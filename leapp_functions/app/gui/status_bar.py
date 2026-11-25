@@ -11,8 +11,9 @@ import tkinter as tk
 from tkinter import ttk
 
 from leapp_functions.app.gui import themes
-from leapp_functions.app.gui.app_state import SECRETS, is_waiting
+from leapp_functions.app.gui.app_state import is_waiting
 from leapp_functions.app.gui.custom_widgets import OutlineButton
+from leapp_functions.app.secret_fields import SECRETS
 
 # For each screen: its title, its subtitle and the text of its main button. The subtitle of
 # Source is the "subtitle" of "secrets" in data/leapp_config.json, none without secrets.
