@@ -4,10 +4,11 @@ __artifacts_v2__ = {
         "description": "Parses per-app battery usage (timestamp, application, power consumed, foreground and background usage, battery level and status) from the settings intelligence battery-usage-db-v4 database.",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2021-12-21",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
         "category": "Device Information",
-        "notes": "Battery Status is labelled on the reading that the BatteryStatus column holds the AOSP BatteryManager status constants (1 Unknown, 2 Charging, 3 Discharging, 4 Not Charging, 5 Fully Charged); any other value is reported as the raw number. No source for what this database stores in that column is cited here. Reference: AOSP, 'BatteryManager status constants', https://developer.android.com/reference/android/os/BatteryManager",
+        "notes": "Battery Status is labelled on the reading that the BatteryStatus column holds the AOSP BatteryManager status constants (1 Unknown, 2 Charging, 3 Discharging, 4 Not Charging, 5 Fully Charged); any other value is reported as the raw number. No source for what this database stores in that column is cited here. Reference: AOSP, 'BatteryManager status constants', https://developer.android.com/reference/android/os/BatteryManager "
+                 "When the extraction holds this database under more than one storage spelling (data/data, data/user/0, data_mirror) and the copies read differently, every differing copy is read and a row the copies share is reported once; a row only one copy holds is reported as well, and a row that differs between copies appears once per version. On pixel3_a12 this added 129 rows (8,514 to 8,643).",
         "paths": ('*/com.google.android.settings.intelligence/databases/battery-usage-db-v4*',),
         "output_types": "standard",
         "artifact_icon": "battery",
@@ -23,7 +24,7 @@ __artifacts_v2__ = {
 import datetime
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
-from scripts.artifacts.storagePathViews import unique_files
+from scripts.artifacts.storagePathViews import union_view_rows, unique_files
 
 
 def _ms_to_utc(value):
@@ -34,17 +35,19 @@ def _ms_to_utc(value):
 
 @artifact_processor
 def get_battery_usage_v4(context):
-    files_found = unique_files(context)
+    files_found = unique_files(context, keep_differing_views=True)
 
-    data_list = []
+    file_rows = []
     source_paths = []
     for file_found in files_found:
         file_name = str(file_found)
         if not file_name.endswith('battery-usage-db-v4'):
             continue  # Skip -shm, -wal, etc.
 
-        source_paths.append(file_name)
         db = open_sqlite_db_readonly(file_name)
+        if db is None:
+            continue
+        source_paths.append(file_name)
         cursor = db.cursor()
         cursor.execute('''
             select
@@ -68,8 +71,12 @@ def get_battery_usage_v4(context):
         all_rows = cursor.fetchall()
         db.close()
 
-        for row in all_rows:
-            data_list.append((_ms_to_utc(row[0]), row[1], row[2], row[3], _ms_to_utc(row[4]), row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12]))
+        file_rows.append((file_name, [
+            (_ms_to_utc(row[0]), row[1], row[2], row[3], _ms_to_utc(row[4]), row[5], row[6], row[7], row[8], row[9],
+             row[10], row[11], row[12])
+            for row in all_rows]))
+
+    data_list = union_view_rows(context, file_rows)
 
     data_headers = (('Timestamp', 'datetime'), 'Application', 'Package Name', 'Hidden', ('Boot Timestamp', 'datetime'), 'Timezone', 'Total Power', 'Consumed Power', '% Of Consumed', 'Foreground Usage (Seconds)', 'Background Usage (Seconds)', 'Battery Level (%)', 'Battery Status')
     return data_headers, data_list, '\n'.join(source_paths)

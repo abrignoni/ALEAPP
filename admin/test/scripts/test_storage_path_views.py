@@ -9,8 +9,8 @@ if str(ROOT_DIR) not in sys.path:
 import sqlite3
 import tempfile
 
-from scripts.artifacts.storagePathViews import (android_user, canonical_path, snapshot_key, unique_files,
-                                                without_snapshot_repeats)
+from scripts.artifacts.storagePathViews import (android_user, canonical_path, snapshot_key, union_view_rows,
+                                                unique_files, user_files, without_snapshot_repeats)
 
 
 class FakeContext:
@@ -425,6 +425,127 @@ class TestWithoutSnapshotRepeats(unittest.TestCase):
         rows = [('a', 'Dump/data/user_de/0/com.foo/x'), ('a', 'Dump/data/misc_de/0/rollback/7/com.foo/x'),
                 ('a', 'Dump/data/misc_ce/0/rollback/7/com.foo/x')]
         self.assertEqual(without_snapshot_repeats(rows), [rows[0], rows[2]])
+
+
+class TestKeepDifferingViews(unittest.TestCase):
+    """keep_differing_views keeps a copy under another spelling when it reads differently."""
+
+    DATA = 'Dump/data/data/com.foo/databases/x.db'
+    USER0 = 'Dump/data/user/0/com.foo/databases/x.db'
+    MIRROR = 'Dump/data_mirror/data_ce/null/0/com.foo/databases/x.db'
+    USER10 = 'Dump/data/user/10/com.foo/databases/x.db'
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.root = Path(self.tmp.name)
+        self.data = self.root / 'ALEAPP_Output' / 'data'
+        writer = self.root / 'writer.db'
+        self.connection = sqlite3.connect(writer, isolation_level=None)
+        self.connection.execute('PRAGMA journal_mode=WAL')
+        self.connection.execute('PRAGMA wal_autocheckpoint=0')
+        self.connection.execute('CREATE TABLE t(v TEXT)')
+        self.connection.execute("INSERT INTO t VALUES ('shared')")
+        self.connection.execute('PRAGMA wal_checkpoint(TRUNCATE)')
+        self.main = writer.read_bytes()
+        self.connection.execute("INSERT INTO t VALUES ('only in one log')")
+        self.wal = Path(f'{writer}-wal').read_bytes()
+
+    def tearDown(self):
+        self.connection.close()
+        self.tmp.cleanup()
+
+    def write(self, relative, content):
+        path = self.data / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(content)
+        return str(path)
+
+    def run_unique(self, files, keep=True):
+        return unique_files(FakeContext(files, data_folder=str(self.data)), keep_differing_views=keep)
+
+    def test_identical_copies_still_collapse(self):
+        files = [self.write(self.USER0, self.main), self.write(self.DATA, self.main),
+                 self.write(self.MIRROR, self.main)]
+        self.assertEqual(self.run_unique(files), [files[1]])
+
+    def test_a_copy_whose_wal_differs_is_kept_after_the_preferred_one(self):
+        files = [self.write(self.USER0, self.main), self.write(self.DATA, self.main)]
+        self.write(f'{self.USER0}-wal', self.wal)
+        self.assertEqual(self.run_unique(files), [files[1], files[0]])
+
+    def test_the_option_off_keeps_only_the_preferred_copy(self):
+        files = [self.write(self.USER0, self.main), self.write(self.DATA, self.main)]
+        self.write(f'{self.USER0}-wal', self.wal)
+        self.assertEqual(self.run_unique(files, keep=False), [files[1]])
+        self.assertEqual(unique_files(FakeContext(files, data_folder=str(self.data))), [files[1]])
+
+    def test_of_two_extra_copies_reading_alike_one_is_kept(self):
+        files = [self.write(self.DATA, self.main), self.write(self.USER0, self.main),
+                 self.write(self.MIRROR, self.main)]
+        self.write(f'{self.USER0}-wal', self.wal)
+        self.write(f'{self.MIRROR}-wal', self.wal)
+        self.assertEqual(self.run_unique(files), [files[0], files[1]])
+
+    def test_an_unreadable_preferred_copy_keeps_the_good_one(self):
+        files = [self.write(self.DATA, b'not a database'), self.write(self.USER0, self.main)]
+        self.assertEqual(self.run_unique(files), files)
+
+    def test_another_user_is_its_own_store(self):
+        files = [self.write(self.DATA, self.main), self.write(self.USER10, self.main)]
+        self.assertEqual(self.run_unique(files), files)
+
+    def test_a_snapshot_matching_an_extra_copy_is_left_out(self):
+        snap = 'Dump/data/misc_ce/0/rollback/7/com.foo/databases/x.db'
+        files = [self.write(self.DATA, self.main), self.write(self.USER0, self.main), self.write(snap, self.main)]
+        self.write(f'{self.USER0}-wal', self.wal)
+        self.write(f'{snap}-wal', self.wal)
+        self.assertEqual(self.run_unique(files), [files[0], files[1]])
+
+    def test_user_files_passes_the_option_through(self):
+        files = [self.write(self.DATA, self.main), self.write(self.USER0, self.main)]
+        self.write(f'{self.USER0}-wal', self.wal)
+        context = FakeContext(files, data_folder=str(self.data))
+        self.assertEqual(len(user_files(context, 'x.db')), 1)
+        self.assertEqual([p for p, _u in user_files(context, 'x.db', keep_differing_views=True)], files)
+
+
+class TestUnionViewRows(unittest.TestCase):
+    DATA = '/out/ALEAPP_Output/data/Dump/data/data/com.foo/databases/x.db'
+    USER0 = '/out/ALEAPP_Output/data/Dump/data/user/0/com.foo/databases/x.db'
+    MIRROR = '/out/ALEAPP_Output/data/Dump/data_mirror/data_ce/null/0/com.foo/databases/x.db'
+    USER10 = '/out/ALEAPP_Output/data/Dump/data/user/10/com.foo/databases/x.db'
+
+    def union(self, file_rows, ignore=()):
+        return union_view_rows(FakeContext([]), file_rows, ignore)
+
+    def test_shared_rows_once_and_each_copys_own_rows_kept(self):
+        rows = self.union([(self.DATA, [('a',), ('b',)]), (self.USER0, [('a',), ('c',)])])
+        self.assertEqual(rows, [('a',), ('b',), ('c',)])
+
+    def test_a_row_held_twice_in_one_copy_stays_twice(self):
+        rows = self.union([(self.DATA, [('a',), ('a',)]), (self.USER0, [('a',), ('a',), ('a',)])])
+        self.assertEqual(rows, [('a',)] * 3)
+
+    def test_three_copies(self):
+        rows = self.union([(self.DATA, [('a',)]), (self.USER0, [('a',), ('b',)]), (self.MIRROR, [('b',), ('c',)])])
+        self.assertEqual(rows, [('a',), ('b',), ('c',)])
+
+    def test_another_users_rows_are_never_folded(self):
+        rows = self.union([(self.DATA, [('a',)]), (self.USER10, [('a',)])])
+        self.assertEqual(rows, [('a',), ('a',)])
+
+    def test_an_ignored_path_column_does_not_split_a_shared_row(self):
+        rows = self.union([(self.DATA, [('a', 'data/data')]), (self.USER0, [('a', 'data/user/0'), ('b', 'data/user/0')])],
+                          ignore={1})
+        self.assertEqual(rows, [('a', 'data/data'), ('b', 'data/user/0')])
+
+    def test_without_ignore_a_path_column_splits_it(self):
+        rows = self.union([(self.DATA, [('a', 'data/data')]), (self.USER0, [('a', 'data/user/0')])])
+        self.assertEqual(len(rows), 2)
+
+    def test_one_copy_passes_through(self):
+        rows = [('a',), ('b',), ('a',)]
+        self.assertEqual(self.union([(self.DATA, rows)]), rows)
 
 
 if __name__ == '__main__':

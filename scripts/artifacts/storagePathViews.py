@@ -40,9 +40,21 @@ The copies are usually byte identical, but not always, and the difference is wor
 knowing when reading a report. On samsunga53_a14, 19 of the 35,177 files present under all
 three credential encrypted views differ between them: write ahead logs, shared memory
 files and logs an app was writing while the extraction ran, so each view caught a slightly
-different moment. The copy under the preferred spelling is the one reported and the others
-are not read. Measured 2026-08-27; on that image no artifact's row count changed as a
-result, and contacts2.db returns the same rows through all three views.
+different moment. By default the copy under the preferred spelling is the one reported and
+the others are not read. Measured 2026-08-27; on that image no artifact's row count changed
+as a result, and contacts2.db returns the same rows through all three views.
+
+That does not hold across the corpus. Over the registered Android images (listings of
+2026-11-26), 12,946 files are held under more than one spelling with a -wal or -journal
+beside at least one copy. In 238 of them the copies differ in the main file, the -wal or the
+-journal. In 176 of those another copy
+holds rows the preferred copy does not, and in 153 each copy holds rows the other lacks, so
+no single copy is complete. In 4 the preferred copy does not open as a database while another
+copy does. An artifact that reads such a database passes keep_differing_views=True to
+unique_files, which then also keeps every copy that reads differently, and passes its rows
+through union_view_rows, which reports a row the copies share once. The option is off by
+default because an artifact that keeps the extra copies without the union reports every
+shared row once per copy.
 
 Keying is done on the evidence relative path rather than the extracted path. The report's
 own extraction folder is itself named "data", so a pattern applied to the full on-disk
@@ -130,7 +142,7 @@ def canonical_path(relative_path):
     return path, 0
 
 
-def unique_files(context, files=None):
+def unique_files(context, files=None, keep_differing_views=False):
     """The context's files with the duplicate storage views of each file removed.
 
     Order follows the first appearance of each file, so an artifact that relied on the
@@ -139,6 +151,13 @@ def unique_files(context, files=None):
     snapshot of a file is left out only when its live copy is among the files, the two
     are byte identical and, for a SQLite database, their -wal and -journal hold the same
     content; otherwise it is kept in its place.
+
+    With keep_differing_views, a copy under another spelling is also kept, right after
+    the preferred one, when it does not read the same: its bytes differ or, for a SQLite
+    database, its -wal or -journal holds different content (the test applied to rollback
+    snapshots). Copies that read the same as one already kept are still dropped. An
+    artifact that sets it reads every differing copy, so it should pass its rows through
+    union_view_rows to report a row the copies share once.
     """
     if files is None:
         files = context.get_files_found()
@@ -157,21 +176,61 @@ def unique_files(context, files=None):
             continue
         key, rank = canonical_path(relative)
         if key not in best:
-            best[key] = (rank, file_found)
+            best[key] = [(rank, file_found)]
             order.append(key)
-        elif rank < best[key][0]:
-            best[key] = (rank, file_found)
-    kept = []
+        elif all(path != file_found for _rank, path in best[key]):
+            best[key].append((rank, file_found))
+    kept_by_key = {}
+    for key, copies in best.items():
+        copies.sort(key=lambda copy: copy[0])
+        kept = [copies[0][1]]
+        if keep_differing_views:
+            for _rank, path in copies[1:]:
+                if not any(_same_database_state(path, other) for other in kept):
+                    kept.append(path)
+        kept_by_key[key] = kept
+    result = []
     for key in order:
         if key in snapshots:
             live_key, file_found = snapshots[key]
-            if live_key in best and _same_database_state(file_found, best[live_key][1]):
+            if any(_same_database_state(file_found, live) for live in kept_by_key.get(live_key, ())):
                 continue
-            kept.append(file_found)
+            result.append(file_found)
         else:
-            kept.append(best[key][1])
-    return kept
+            result.extend(kept_by_key[key])
+    return result
 
+
+def union_view_rows(context, file_rows, ignore=()):
+    """Rows read from every kept copy of each store, with the rows the copies share once.
+
+    file_rows is a list of (path, rows) pairs, one per file read, in the order
+    unique_files(context, keep_differing_views=True) returned the files. Copies of one
+    file under different storage spellings (same storage class and Android user) are
+    grouped, and a row is reported as many times as the copy holding it most often holds
+    it: a row two copies share appears once, and a row only one copy holds appears with
+    the rows of that copy. Positions in ignore (a Source File or path column, which
+    differs between copies) are left out of the comparison. Rows keep their order and
+    each comes from the path it was read from.
+    """
+    ignore = set(ignore)
+
+    def value(row):
+        return repr([cell for index, cell in enumerate(row) if index not in ignore])
+
+    emitted = {}
+    kept = []
+    for path, rows in file_rows:
+        key = canonical_path(context.get_relative_path(str(path)))[0]
+        seen = emitted.setdefault(key, Counter())
+        own = Counter()
+        for row in rows:
+            cell = value(row)
+            own[cell] += 1
+            if own[cell] > seen[cell]:
+                seen[cell] += 1
+                kept.append(row)
+    return kept
 
 
 def without_snapshot_repeats(rows, source_index=-1):
@@ -266,7 +325,7 @@ def android_user(relative_path):
     return ''
 
 
-def user_files(context, name, files=None):
+def user_files(context, name, files=None, keep_differing_views=False):
     """[(path, Android user)] of the files called name, one per user and storage class.
 
     Sidecar files (-wal, -shm, -journal) are not matched because name is compared in full.
@@ -277,7 +336,7 @@ def user_files(context, name, files=None):
     copy can hide the owner's data.
     """
     pairs = []
-    for path in unique_files(context, files):
+    for path in unique_files(context, files, keep_differing_views):
         if str(path).replace('\\', '/').rsplit('/', 1)[-1] == name:
             pairs.append((str(path), android_user(context.get_relative_path(path))))
     return pairs

@@ -4,10 +4,10 @@ __artifacts_v2__ = {
         "description": "Parses Google Cast device information",
         "author": "@deagler4n6 & @stark4n6",
         "creation_date": "2021-01-11",
-        "last_update_date": "2025-08-09",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
         "category": "Smart Home & Connected Devices",
-        "notes": "",
+        "notes": "When the extraction holds this database under more than one storage spelling (data/data, data/user/0, data_mirror) and the copies read differently, every differing copy is read and a row the copies share is reported once; a row only one copy holds is reported as well, and a row that differs between copies appears once per version. On hickman_a13 this added 1 row (1 to 2), the same device with different values in the two copies.",
         "paths": ('*/com.google.android.gms/databases/cast.db*'),
         "output_types": "standard",
         "artifact_icon": "cast",
@@ -27,20 +27,22 @@ __artifacts_v2__ = {
 }
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
-from scripts.artifacts.storagePathViews import unique_files
+from scripts.artifacts.storagePathViews import union_view_rows, unique_files
 
 @artifact_processor
 def googleCast(context):
-    files_found = unique_files(context)
-    data_list = []
+    files_found = unique_files(context, keep_differing_views=True)
+    file_rows = []
     source_paths = set()
 
     for file_found in files_found:
         file_found = str(file_found)
 
         if file_found.endswith('cast.db'):
-            source_paths.add(file_found)
             db = open_sqlite_db_readonly(file_found)
+            if db is None:
+                continue
+            source_paths.add(file_found)
             cursor = db.cursor()
             cursor.execute('''
             SELECT
@@ -73,6 +75,8 @@ def googleCast(context):
             ''')
 
             all_rows = cursor.fetchall()
+            rows = []
+            file_rows.append((file_found, rows))
             usageentries = len(all_rows)
             if usageentries > 0:
                 for row in all_rows:
@@ -94,10 +98,12 @@ def googleCast(context):
                     else:
                         last_discovered_ble = convert_utc_human_to_timezone(convert_ts_human_to_utc(last_discovered_ble),'UTC')
                 
-                    data_list.append((last_published,row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],last_discovered,last_discovered_ble,context.get_relative_path(file_found)))
+                    rows.append((last_published,row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],last_discovered,last_discovered_ble,context.get_relative_path(file_found)))
             db.close()
         else:
             continue # Skip all other files
     
+    data_list = union_view_rows(context, file_rows, ignore={16})
+
     data_headers = (('Last Published Timestamp','datetime'),'Device ID (SSDP UDN)','Capabilities','Device Version','Device Friendly Name','Device Model Name','Receiver Metrics ID','Service Instance Name','Device IP Address','Device Port','Supported Criteria','RCN Enabled Status','Hotspot BSSID','Cloud Device ID',('Last Discovered Timestamp','datetime'),('Last Discovered By BLE Timestamp','datetime'),'Source File') 
     return data_headers, data_list, '\n'.join(sorted(source_paths))
