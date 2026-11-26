@@ -4,7 +4,8 @@ The store sits at files/tasks/<folder>/data.db or files/tasks-<folder>/data.db. 
 pin the path globs against both layouts and the five packages, the segment match that keeps
 a decoy package and a nested folder out, the collapse of the data/data and data/user/0
 spellings of one store, a second Android user kept apart, a store whose tables are only in
-its -wal, and the column decode, including a task with no field 2.2.
+its -wal, and the column decode, including a task with no field 2.2 and a time outside
+the dates a datetime holds.
 """
 import fnmatch
 import pathlib
@@ -33,6 +34,12 @@ DONE_TASK = {
     '2': {'2': b'Done title', '3': b'Done details', '5': {'1': 1700000500, '2': 0}},
     '3': {'1': 1700000600, '2': 0},
     '11': {'1': 1700000000, '2': 0},
+}
+BAD_TIME_TASK = {
+    '2': {'3': b'Bad time'},
+    '3': {'1': 1700000001, '2': 0},
+    '9': {'1': {'6': {'1': 253402300800}}},
+    '11': {'1': 10 ** 12, '2': 0},
 }
 TASK_LIST = {'2': {'1': b'List A'}}
 SCHEMA = ('CREATE TABLE Tasks (TaskId TEXT, TaskListId TEXT, DueDate TEXT, Completed INTEGER, '
@@ -148,6 +155,17 @@ class TestGoogleTasks(unittest.TestCase):
         self.assertEqual(str(done_row['Time (field 2.5)']), '2023-11-14 22:21:40+00:00')
         self.assertEqual(done_row['Text (field 2.2)'], 'Done title')
         self.assertEqual(done_row['Time (field 9.1.6.1)'], '')
+
+    def test_out_of_range_time_blanks_the_cell_only(self):
+        files = [self._store('data/data/com.google.android.gm/files/tasks/111/data.db',
+                             tasks=((BAD_TIME_TASK, 0),)),
+                 self._store('data/data/com.google.android.calendar/files/tasks/uuid-1/data.db')]
+        _names, rows, _source = self._run(files)
+        self.assertEqual(len(rows), 2)
+        bad = next(r for r in rows if r['Text (field 2.3)'] == 'Bad time')
+        self.assertEqual(bad['Time (field 11)'], '')
+        self.assertEqual(bad['Time (field 9.1.6.1)'], '')
+        self.assertEqual(str(bad['Time (field 3)']), '2023-11-14 22:13:21+00:00')
 
     def test_store_without_tasks_table_is_skipped(self):
         db_path = self.data / 'data/data/com.google.android.keep/files/tasks/1/data.db'
