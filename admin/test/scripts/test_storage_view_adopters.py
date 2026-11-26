@@ -16,6 +16,7 @@ import unittest
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO_ROOT))
 
+from scripts.artifacts.Spotify import spotify_playback_activity  # pylint: disable=wrong-import-position
 from scripts.artifacts.googleCast import googleCast  # pylint: disable=wrong-import-position
 from scripts.context import Context  # pylint: disable=wrong-import-position
 
@@ -39,7 +40,7 @@ class TestStorageViewAdopters(unittest.TestCase):
         Context.clear()
         shutil.rmtree(self.tmpdir, ignore_errors=True)
 
-    def _cast(self, view, devices, table=True):
+    def _cast(self, view, devices, table=True, times=1700000000000):
         path = self.data / view / CAST
         path.parent.mkdir(parents=True)
         db = sqlite3.connect(path)
@@ -47,7 +48,7 @@ class TestStorageViewAdopters(unittest.TestCase):
             db.execute(f'CREATE TABLE DeviceInfo ({", ".join(COLUMNS)})')
             for device in devices:
                 db.execute(f'INSERT INTO DeviceInfo VALUES ({", ".join("?" * len(COLUMNS))})',
-                           (1700000000000, device) + ('',) * (len(COLUMNS) - 4) + (1700000000000, 1700000000000))
+                           (times, device) + ('',) * (len(COLUMNS) - 4) + (times, times))
         else:
             db.execute('CREATE TABLE other (x)')
         db.commit()
@@ -75,6 +76,26 @@ class TestStorageViewAdopters(unittest.TestCase):
         files = [self._cast('Dump/data/data', ['A', 'B']), self._cast('Dump/data/user/0', [], table=False)]
         devices, _source = self._run(files)
         self.assertEqual(devices, ['A', 'B'])
+
+    def test_a_copy_with_zero_times_does_not_cost_the_rows(self):
+        files = [self._cast('Dump/data/data', ['A']), self._cast('Dump/data/user/0', ['B'], times=0)]
+        devices, _source = self._run(files)
+        self.assertEqual(devices, ['A', 'B'])
+
+    def test_a_spotify_copy_that_is_not_a_database_does_not_cost_the_good_copys_rows(self):
+        good = self.data / 'Dump/data/data/com.spotify.music/databases/event-sender.db'
+        good.parent.mkdir(parents=True)
+        db = sqlite3.connect(good)
+        db.execute('CREATE TABLE Events (id INTEGER, eventName TEXT, fragments BLOB)')
+        db.commit()
+        db.close()
+        bad = self.data / 'Dump/data/user/0/com.spotify.music/databases/event-sender.db'
+        bad.parent.mkdir(parents=True)
+        bad.write_bytes(b'not a database' * 100)
+        Context.set_files_found([str(good), str(bad)])
+        _headers, rows, source = spotify_playback_activity.__wrapped__(Context)
+        self.assertEqual(rows, [])
+        self.assertIn('data/data', source)
 
 
 if __name__ == '__main__':

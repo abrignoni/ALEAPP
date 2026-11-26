@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "last_update_date": "2026-11-26",
         "requirements": "none",
         "category": "Smart Home & Connected Devices",
-        "notes": "When the extraction holds this database under more than one storage path (for example data/data, data/user/0 and data_mirror) and the copies differ in their bytes or in their -wal or -journal content, every differing copy is read. Rows are compared on the reported columns. A row the copies share is reported once, a row only one copy holds is reported as well, and a row that differs between copies appears once per version. The Source column of a shared row names the first copy read. On hickman_a13 this added 1 row (1 to 2), the same device with different values in the two copies.",
+        "notes": "A timestamp stored as 0 is left blank. When the extraction holds this database under more than one storage path (for example data/data, data/user/0 and data_mirror) and the copies differ in their bytes or in their -wal or -journal content, every differing copy is read. Rows are compared on the reported columns. A row the copies share is reported once, a row only one copy holds is reported as well, and a row that differs between copies appears once per version. The Source column of a shared row names the first copy read. On hickman_a13 this added 1 row (1 to 2), the same device with different values in the two copies.",
         "paths": ('*/com.google.android.gms/databases/cast.db*'),
         "output_types": "standard",
         "artifact_icon": "cast",
@@ -89,20 +89,20 @@ def googleCast(context):
             if usageentries > 0:
                 for row in all_rows:
                     last_published = row[0]
-                    if last_published is None:
-                        pass
+                    if not last_published:
+                        last_published = None
                     else:
                         last_published = convert_utc_human_to_timezone(convert_ts_human_to_utc(last_published),'UTC')
                     
                     last_discovered = row[14]
-                    if last_discovered is None:
-                        pass
+                    if not last_discovered:
+                        last_discovered = None
                     else:
                         last_discovered = convert_utc_human_to_timezone(convert_ts_human_to_utc(last_discovered),'UTC')
                     
                     last_discovered_ble = row[15]
-                    if last_discovered_ble is None:
-                        pass
+                    if not last_discovered_ble:
+                        last_discovered_ble = None
                     else:
                         last_discovered_ble = convert_utc_human_to_timezone(convert_ts_human_to_utc(last_discovered_ble),'UTC')
                 

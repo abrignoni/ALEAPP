@@ -283,6 +283,7 @@ __artifacts_v2__ = {
 import gzip
 import json
 import re
+import sqlite3
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 
@@ -626,11 +627,15 @@ def spotify_playback_activity(context):
     for db_path in _find_all(files_found, 'event-sender.db'):
         data_list = []
         file_rows.append((db_path, data_list))
-        rows = get_sqlite_db_records(
-            db_path,
-            f"SELECT eventName, fragments FROM Events "
-            f"WHERE eventName IN ({name_list}) ORDER BY id",
-        )
+        try:
+            rows = list(get_sqlite_db_records(
+                db_path,
+                f"SELECT eventName, fragments FROM Events "
+                f"WHERE eventName IN ({name_list}) ORDER BY id",
+            ))
+        except sqlite3.Error as ex:
+            logfunc(f"Spotify: could not read {context.get_relative_path(db_path)}: {ex}")
+            continue
         source_paths.add(db_path)
         for event_name, fragments in rows:
             try:
