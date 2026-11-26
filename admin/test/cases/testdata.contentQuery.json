@@ -5,13 +5,13 @@
     "make_data": {
       "input_data_path": "content_query_synthetic_alex.zip",
       "os": "Windows-11-10.0.26200-SP0",
-      "timestamp": "2026-11-25T18:50:23.440954",
+      "timestamp": "2026-11-25T23:43:22.853454",
       "last_commit": {
-        "hash": "9b6ac5ad209440b52a1ae251f797daf2a8eb6874",
+        "hash": "f16d0303e8636453a375fc0aaed535514c1726b7",
         "author_name": "Maximiliano Telmo",
         "author_email": "50964800+Maxitelmo@users.noreply.github.com",
-        "date": "2026-11-25T18:31:16-03:00",
-        "message": "Read MMS addresses from content://mms/addr"
+        "date": "2026-11-25T19:19:57-03:00",
+        "message": "Use the agreed artifact categories for the content query artifacts"
       }
     },
     "artifacts": {
@@ -143,19 +143,376 @@
     },
     "os_name": "Android"
   },
+  "casesynthetic_alex_join_incomplete": {
+    "description": "Synthetic ALEX raw text folder: MMS rows 7, 8 and 9 and a row whose _id is the text NULL, with an mms_addr.txt that holds an address row for message 7, a row with an empty msg_id and a row with msg_id NULL, and then ends with a provider error. Messages 8 and 9 say their addresses are unknown because the address list is not complete, the NULL _id row says it has no usable _id, and the two address rows without a usable msg_id are not matched. Invented values, contains no real evidence.",
+    "maker": "@Maxitelmo",
+    "make_data": {
+      "input_data_path": "content_query_synthetic_alex_join_incomplete.zip",
+      "os": "Windows-11-10.0.26200-SP0",
+      "timestamp": "2026-11-25T23:43:23.781556",
+      "last_commit": {
+        "hash": "f16d0303e8636453a375fc0aaed535514c1726b7",
+        "author_name": "Maximiliano Telmo",
+        "author_email": "50964800+Maxitelmo@users.noreply.github.com",
+        "date": "2026-11-25T19:19:57-03:00",
+        "message": "Use the agreed artifact categories for the content query artifacts"
+      }
+    },
+    "artifacts": {
+      "content_query_files": {
+        "search_patterns": [
+          "*/*_contentprovider/*.txt",
+          "*/content_provider_*/*.txt"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "content_query_sms": {
+        "search_patterns": [
+          "*/content_provider_*/sms/sms.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_mms": {
+        "search_patterns": [
+          "*/content_provider_*/mms/mms.txt",
+          "*/content_provider_*/mms/mms_addr.txt"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "content_query_mms_addresses": {
+        "search_patterns": [
+          "*/content_provider_*/mms/mms_addr.txt",
+          "*/content_provider_*/mms/mms.txt"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "content_query_mms_parts": {
+        "search_patterns": [
+          "*/content_provider_*/mms/mms_part.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_call_log": {
+        "search_patterns": [
+          "*/content_provider_*/call_log/call_log_calls.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_contacts": {
+        "search_patterns": [
+          "*/*_contentprovider/contacts_contacts.txt",
+          "*/content_provider_*/com.android.contacts/com.android.contacts_contacts.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_contact_phones": {
+        "search_patterns": [
+          "*/*_contentprovider/contacts_data_phones.txt",
+          "*/content_provider_*/com.android.contacts/com.android.contacts_data_phones.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_calendar_events": {
+        "search_patterns": [
+          "*/*_contentprovider/calendar_events.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_calendar_event_entities": {
+        "search_patterns": [
+          "*/*_contentprovider/calendar_event_entities.txt",
+          "*/content_provider_*/com.android.calendar/com.android.calendar_event_entities.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_calendars": {
+        "search_patterns": [
+          "*/*_contentprovider/calendar_calendars.txt",
+          "*/content_provider_*/com.android.calendar/com.android.calendar_calendars.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_media_files": {
+        "search_patterns": [
+          "*/*_contentprovider/media_external_file.txt",
+          "*/content_provider_*/media/media_external_file.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      }
+    },
+    "os_name": "Android"
+  },
+  "casesynthetic_alex_mms_incomplete": {
+    "description": "Synthetic ALEX raw text folder: an mms.txt that holds message 7 and then ends with a provider error, with a full mms_addr.txt. Address rows of message 7 say yes, and address rows of messages 8 and 99 leave MMS Row blank with the reason, since the MMS list is not complete. Invented values, contains no real evidence.",
+    "maker": "@Maxitelmo",
+    "make_data": {
+      "input_data_path": "content_query_synthetic_alex_mms_incomplete.zip",
+      "os": "Windows-11-10.0.26200-SP0",
+      "timestamp": "2026-11-25T23:43:24.680945",
+      "last_commit": {
+        "hash": "f16d0303e8636453a375fc0aaed535514c1726b7",
+        "author_name": "Maximiliano Telmo",
+        "author_email": "50964800+Maxitelmo@users.noreply.github.com",
+        "date": "2026-11-25T19:19:57-03:00",
+        "message": "Use the agreed artifact categories for the content query artifacts"
+      }
+    },
+    "artifacts": {
+      "content_query_files": {
+        "search_patterns": [
+          "*/*_contentprovider/*.txt",
+          "*/content_provider_*/*.txt"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "content_query_sms": {
+        "search_patterns": [
+          "*/content_provider_*/sms/sms.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_mms": {
+        "search_patterns": [
+          "*/content_provider_*/mms/mms.txt",
+          "*/content_provider_*/mms/mms_addr.txt"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "content_query_mms_addresses": {
+        "search_patterns": [
+          "*/content_provider_*/mms/mms_addr.txt",
+          "*/content_provider_*/mms/mms.txt"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "content_query_mms_parts": {
+        "search_patterns": [
+          "*/content_provider_*/mms/mms_part.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_call_log": {
+        "search_patterns": [
+          "*/content_provider_*/call_log/call_log_calls.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_contacts": {
+        "search_patterns": [
+          "*/*_contentprovider/contacts_contacts.txt",
+          "*/content_provider_*/com.android.contacts/com.android.contacts_contacts.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_contact_phones": {
+        "search_patterns": [
+          "*/*_contentprovider/contacts_data_phones.txt",
+          "*/content_provider_*/com.android.contacts/com.android.contacts_data_phones.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_calendar_events": {
+        "search_patterns": [
+          "*/*_contentprovider/calendar_events.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_calendar_event_entities": {
+        "search_patterns": [
+          "*/*_contentprovider/calendar_event_entities.txt",
+          "*/content_provider_*/com.android.calendar/com.android.calendar_event_entities.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_calendars": {
+        "search_patterns": [
+          "*/*_contentprovider/calendar_calendars.txt",
+          "*/content_provider_*/com.android.calendar/com.android.calendar_calendars.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_media_files": {
+        "search_patterns": [
+          "*/*_contentprovider/media_external_file.txt",
+          "*/content_provider_*/media/media_external_file.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      }
+    },
+    "os_name": "Android"
+  },
+  "casesynthetic_alex_row_edges": {
+    "description": "Two synthetic ALEX raw text folders, each with a single SMS row: one whose body holds ', seen=yes' before the seen column, so the column list names seen twice and the row is kept unsplit with its text; one whose body holds an 'Error while accessing provider:' line and an exception line followed by the read column, which stays part of the row. Invented values, contains no real evidence.",
+    "maker": "@Maxitelmo",
+    "make_data": {
+      "input_data_path": "content_query_synthetic_alex_row_edges.zip",
+      "os": "Windows-11-10.0.26200-SP0",
+      "timestamp": "2026-11-25T23:43:25.625470",
+      "last_commit": {
+        "hash": "f16d0303e8636453a375fc0aaed535514c1726b7",
+        "author_name": "Maximiliano Telmo",
+        "author_email": "50964800+Maxitelmo@users.noreply.github.com",
+        "date": "2026-11-25T19:19:57-03:00",
+        "message": "Use the agreed artifact categories for the content query artifacts"
+      }
+    },
+    "artifacts": {
+      "content_query_files": {
+        "search_patterns": [
+          "*/*_contentprovider/*.txt",
+          "*/content_provider_*/*.txt"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "content_query_sms": {
+        "search_patterns": [
+          "*/content_provider_*/sms/sms.txt"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "content_query_mms": {
+        "search_patterns": [
+          "*/content_provider_*/mms/mms.txt",
+          "*/content_provider_*/mms/mms_addr.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_mms_addresses": {
+        "search_patterns": [
+          "*/content_provider_*/mms/mms_addr.txt",
+          "*/content_provider_*/mms/mms.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_mms_parts": {
+        "search_patterns": [
+          "*/content_provider_*/mms/mms_part.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_call_log": {
+        "search_patterns": [
+          "*/content_provider_*/call_log/call_log_calls.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_contacts": {
+        "search_patterns": [
+          "*/*_contentprovider/contacts_contacts.txt",
+          "*/content_provider_*/com.android.contacts/com.android.contacts_contacts.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_contact_phones": {
+        "search_patterns": [
+          "*/*_contentprovider/contacts_data_phones.txt",
+          "*/content_provider_*/com.android.contacts/com.android.contacts_data_phones.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_calendar_events": {
+        "search_patterns": [
+          "*/*_contentprovider/calendar_events.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_calendar_event_entities": {
+        "search_patterns": [
+          "*/*_contentprovider/calendar_event_entities.txt",
+          "*/content_provider_*/com.android.calendar/com.android.calendar_event_entities.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_calendars": {
+        "search_patterns": [
+          "*/*_contentprovider/calendar_calendars.txt",
+          "*/content_provider_*/com.android.calendar/com.android.calendar_calendars.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      },
+      "content_query_media_files": {
+        "search_patterns": [
+          "*/*_contentprovider/media_external_file.txt",
+          "*/content_provider_*/media/media_external_file.txt"
+        ],
+        "file_count": 0,
+        "note": "No responsive files found for this artifact"
+      }
+    },
+    "os_name": "Android"
+  },
   "casesynthetic_alex_skipped": {
     "description": "Synthetic ALEX raw text folder holding only the call log and MMS rows, as ALEX leaves it when it writes no file for the other providers (no rows, an error, or one of its error strings inside a value): every other URI is reported as unknown, and each MMS row says its addresses are unknown. Invented values, contains no real evidence.",
     "maker": "@Maxitelmo",
     "make_data": {
       "input_data_path": "content_query_synthetic_alex_skipped.zip",
       "os": "Windows-11-10.0.26200-SP0",
-      "timestamp": "2026-11-25T18:50:24.330013",
+      "timestamp": "2026-11-25T23:43:26.502968",
       "last_commit": {
-        "hash": "9b6ac5ad209440b52a1ae251f797daf2a8eb6874",
+        "hash": "f16d0303e8636453a375fc0aaed535514c1726b7",
         "author_name": "Maximiliano Telmo",
         "author_email": "50964800+Maxitelmo@users.noreply.github.com",
-        "date": "2026-11-25T18:31:16-03:00",
-        "message": "Read MMS addresses from content://mms/addr"
+        "date": "2026-11-25T19:19:57-03:00",
+        "message": "Use the agreed artifact categories for the content query artifacts"
       }
     },
     "artifacts": {
@@ -272,13 +629,13 @@
     "make_data": {
       "input_data_path": "content_query_synthetic_triage.zip",
       "os": "Windows-11-10.0.26200-SP0",
-      "timestamp": "2026-11-25T18:50:25.183047",
+      "timestamp": "2026-11-25T23:43:27.443939",
       "last_commit": {
-        "hash": "9b6ac5ad209440b52a1ae251f797daf2a8eb6874",
+        "hash": "f16d0303e8636453a375fc0aaed535514c1726b7",
         "author_name": "Maximiliano Telmo",
         "author_email": "50964800+Maxitelmo@users.noreply.github.com",
-        "date": "2026-11-25T18:31:16-03:00",
-        "message": "Read MMS addresses from content://mms/addr"
+        "date": "2026-11-25T19:19:57-03:00",
+        "message": "Use the agreed artifact categories for the content query artifacts"
       }
     },
     "artifacts": {
@@ -404,13 +761,13 @@
     "make_data": {
       "input_data_path": "content_query_synthetic_triage_stderr.zip",
       "os": "Windows-11-10.0.26200-SP0",
-      "timestamp": "2026-11-25T18:50:26.076663",
+      "timestamp": "2026-11-25T23:43:28.342742",
       "last_commit": {
-        "hash": "9b6ac5ad209440b52a1ae251f797daf2a8eb6874",
+        "hash": "f16d0303e8636453a375fc0aaed535514c1726b7",
         "author_name": "Maximiliano Telmo",
         "author_email": "50964800+Maxitelmo@users.noreply.github.com",
-        "date": "2026-11-25T18:31:16-03:00",
-        "message": "Read MMS addresses from content://mms/addr"
+        "date": "2026-11-25T19:19:57-03:00",
+        "message": "Use the agreed artifact categories for the content query artifacts"
       }
     },
     "artifacts": {

@@ -1,0 +1,279 @@
+{
+  "metadata": {
+    "module_name": "contentQuery",
+    "artifact_name": "Content Query Files",
+    "function_name": "content_query_files",
+    "case_number": "casesynthetic_alex_row_edges",
+    "number_of_columns": 9,
+    "number_of_rows": 22,
+    "total_data_size_bytes": 7154,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/contentQuery/testdata.contentQuery.content_query_files.casesynthetic_alex_row_edges.zip",
+    "start_time": "2026-11-26T02:43:30.564828+00:00",
+    "end_time": "2026-11-26T02:43:30.637712+00:00",
+    "run_time_seconds": 0.0013883113861083984,
+    "last_commit": {
+      "hash": "f16d0303e8636453a375fc0aaed535514c1726b7",
+      "author_name": "Maximiliano Telmo",
+      "author_email": "50964800+Maxitelmo@users.noreply.github.com",
+      "date": "2026-11-25T19:19:57-03:00",
+      "message": "Use the agreed artifact categories for the content query artifacts"
+    }
+  },
+  "headers": [
+    "Layout",
+    "Folder",
+    "URI",
+    "File",
+    "Status",
+    "Rows",
+    "Detail",
+    "Columns",
+    "Read By"
+  ],
+  "data": [
+    [
+      "ALEX",
+      "ALEX_SYNTH0002/content_provider_SYNTH0002",
+      "content://sms",
+      "sms/sms.txt",
+      "rows",
+      1,
+      "the column list of this dump names seen more than once, which a value holding \", <name>=\" can also cause; rows are not split",
+      "_id, address, date, type, body, seen, seen",
+      "SMS (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0002/content_provider_SYNTH0002",
+      "content://mms",
+      "mms/mms.txt",
+      "no file",
+      "",
+      "unknown: ALEX writes no file when the query printed no row (No result found. or an error), and up to commit 8f27e7a also when the output holds one of its four error strings anywhere, including inside a value",
+      "",
+      "MMS (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0002/content_provider_SYNTH0002",
+      "content://mms/part",
+      "mms/mms_part.txt",
+      "no file",
+      "",
+      "unknown: ALEX writes no file when the query printed no row (No result found. or an error), and up to commit 8f27e7a also when the output holds one of its four error strings anywhere, including inside a value",
+      "",
+      "MMS Parts (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0002/content_provider_SYNTH0002",
+      "content://mms/addr",
+      "mms/mms_addr.txt",
+      "no file",
+      "",
+      "unknown: ALEX writes no file when the query printed no row (No result found. or an error), and up to commit 8f27e7a also when the output holds one of its four error strings anywhere, including inside a value",
+      "",
+      "MMS Addresses (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0002/content_provider_SYNTH0002",
+      "content://call_log/calls",
+      "call_log/call_log_calls.txt",
+      "no file",
+      "",
+      "unknown: ALEX writes no file when the query printed no row (No result found. or an error), and up to commit 8f27e7a also when the output holds one of its four error strings anywhere, including inside a value",
+      "",
+      "Call Log (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0002/content_provider_SYNTH0002",
+      "content://com.android.contacts/contacts",
+      "com.android.contacts/com.android.contacts_contacts.txt",
+      "no file",
+      "",
+      "unknown: ALEX writes no file when the query printed no row (No result found. or an error), and up to commit 8f27e7a also when the output holds one of its four error strings anywhere, including inside a value",
+      "",
+      "Contacts (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0002/content_provider_SYNTH0002",
+      "content://com.android.contacts/data/phones",
+      "com.android.contacts/com.android.contacts_data_phones.txt",
+      "no file",
+      "",
+      "unknown: ALEX writes no file when the query printed no row (No result found. or an error), and up to commit 8f27e7a also when the output holds one of its four error strings anywhere, including inside a value",
+      "",
+      "Contact Phone Numbers (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0002/content_provider_SYNTH0002",
+      "content://com.android.calendar/events",
+      "",
+      "not queried by this tool",
+      "",
+      "",
+      "",
+      "Calendar Events (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0002/content_provider_SYNTH0002",
+      "content://com.android.calendar/event_entities",
+      "com.android.calendar/com.android.calendar_event_entities.txt",
+      "no file",
+      "",
+      "unknown: ALEX writes no file when the query printed no row (No result found. or an error), and up to commit 8f27e7a also when the output holds one of its four error strings anywhere, including inside a value",
+      "",
+      "Calendar Event Entities (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0002/content_provider_SYNTH0002",
+      "content://com.android.calendar/calendars",
+      "com.android.calendar/com.android.calendar_calendars.txt",
+      "no file",
+      "",
+      "unknown: ALEX writes no file when the query printed no row (No result found. or an error), and up to commit 8f27e7a also when the output holds one of its four error strings anywhere, including inside a value",
+      "",
+      "Calendars (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0002/content_provider_SYNTH0002",
+      "content://media/external/file",
+      "media/media_external_file.txt",
+      "no file",
+      "",
+      "unknown: ALEX writes no file when the query printed no row (No result found. or an error), and up to commit 8f27e7a also when the output holds one of its four error strings anywhere, including inside a value",
+      "",
+      "MediaStore Files (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0003/content_provider_SYNTH0003",
+      "content://sms",
+      "sms/sms.txt",
+      "rows",
+      1,
+      "a provider error line inside the last row is kept as part of its values, since the row without it does not hold the columns of this dump",
+      "_id, address, date, type, body, read",
+      "SMS (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0003/content_provider_SYNTH0003",
+      "content://mms",
+      "mms/mms.txt",
+      "no file",
+      "",
+      "unknown: ALEX writes no file when the query printed no row (No result found. or an error), and up to commit 8f27e7a also when the output holds one of its four error strings anywhere, including inside a value",
+      "",
+      "MMS (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0003/content_provider_SYNTH0003",
+      "content://mms/part",
+      "mms/mms_part.txt",
+      "no file",
+      "",
+      "unknown: ALEX writes no file when the query printed no row (No result found. or an error), and up to commit 8f27e7a also when the output holds one of its four error strings anywhere, including inside a value",
+      "",
+      "MMS Parts (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0003/content_provider_SYNTH0003",
+      "content://mms/addr",
+      "mms/mms_addr.txt",
+      "no file",
+      "",
+      "unknown: ALEX writes no file when the query printed no row (No result found. or an error), and up to commit 8f27e7a also when the output holds one of its four error strings anywhere, including inside a value",
+      "",
+      "MMS Addresses (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0003/content_provider_SYNTH0003",
+      "content://call_log/calls",
+      "call_log/call_log_calls.txt",
+      "no file",
+      "",
+      "unknown: ALEX writes no file when the query printed no row (No result found. or an error), and up to commit 8f27e7a also when the output holds one of its four error strings anywhere, including inside a value",
+      "",
+      "Call Log (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0003/content_provider_SYNTH0003",
+      "content://com.android.contacts/contacts",
+      "com.android.contacts/com.android.contacts_contacts.txt",
+      "no file",
+      "",
+      "unknown: ALEX writes no file when the query printed no row (No result found. or an error), and up to commit 8f27e7a also when the output holds one of its four error strings anywhere, including inside a value",
+      "",
+      "Contacts (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0003/content_provider_SYNTH0003",
+      "content://com.android.contacts/data/phones",
+      "com.android.contacts/com.android.contacts_data_phones.txt",
+      "no file",
+      "",
+      "unknown: ALEX writes no file when the query printed no row (No result found. or an error), and up to commit 8f27e7a also when the output holds one of its four error strings anywhere, including inside a value",
+      "",
+      "Contact Phone Numbers (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0003/content_provider_SYNTH0003",
+      "content://com.android.calendar/events",
+      "",
+      "not queried by this tool",
+      "",
+      "",
+      "",
+      "Calendar Events (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0003/content_provider_SYNTH0003",
+      "content://com.android.calendar/event_entities",
+      "com.android.calendar/com.android.calendar_event_entities.txt",
+      "no file",
+      "",
+      "unknown: ALEX writes no file when the query printed no row (No result found. or an error), and up to commit 8f27e7a also when the output holds one of its four error strings anywhere, including inside a value",
+      "",
+      "Calendar Event Entities (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0003/content_provider_SYNTH0003",
+      "content://com.android.calendar/calendars",
+      "com.android.calendar/com.android.calendar_calendars.txt",
+      "no file",
+      "",
+      "unknown: ALEX writes no file when the query printed no row (No result found. or an error), and up to commit 8f27e7a also when the output holds one of its four error strings anywhere, including inside a value",
+      "",
+      "Calendars (content query)"
+    ],
+    [
+      "ALEX",
+      "ALEX_SYNTH0003/content_provider_SYNTH0003",
+      "content://media/external/file",
+      "media/media_external_file.txt",
+      "no file",
+      "",
+      "unknown: ALEX writes no file when the query printed no row (No result found. or an error), and up to commit 8f27e7a also when the output holds one of its four error strings anywhere, including inside a value",
+      "",
+      "MediaStore Files (content query)"
+    ]
+  ]
+}

@@ -4,7 +4,7 @@ Every value is invented: phone numbers are +1555 numbers, addresses are under ex
 packages under com.example, the serial and ANDROID_ID are made up. Only the structure is
 taken from the sources: the text the content command prints (AOSP Content.java) and the
 folders and file names android_triage (android_triage.sh) and ALEX (alex.py, query_content)
-write. Four cases are built:
+write. These cases are built:
 
 * ``alex``: an ALEX raw text folder, saved with CRLF line endings as Path.write_text does on
   Windows, with multi-line values, a value that holds ', total=', a value that holds the
@@ -16,6 +16,13 @@ write. Four cases are built:
 * ``alex_skipped``: an ALEX folder without sms.txt (what ALEX leaves when a body holds
   'No result found') and without mms_addr.txt, with a call log and MMS rows whose
   addresses are then unknown;
+* ``alex_join_incomplete``: MMS rows (one with _id NULL) and an address file that ends
+  with a provider error and holds address rows with an empty and a NULL msg_id;
+* ``alex_mms_incomplete``: an MMS file that ends with a provider error after its first
+  row, and a full address file;
+* ``alex_row_edges``: two ALEX folders, one with a single SMS row whose body holds
+  ', seen=' (the column list then names seen twice), one with a single SMS row whose
+  body holds an error line and an exception line, followed by another column;
 * ``triage``: an android_triage folder with LF line endings, 'No result found.', an empty
   file (a failed query, whose error went to the terminal), multi-line values, a contacts
   data dump whose hash_id ends with a line break on every row, the tool's own log and
@@ -206,6 +213,39 @@ def crlf(text):
     return text.replace('\n', '\r\n')
 
 
+def provider_error(authority, exception):
+    return (f'Error while accessing provider:{authority}\n{exception}\n'
+            '\tat android.os.Parcel.createExceptionOrNull(Parcel.java:3011)\n')
+
+
+# MMS rows 7, 8 and 9 as above, and a fourth row with no usable _id (the text NULL).
+MMS_WITH_NULL_ID = MMS + ('Row: 3 _id=NULL, thread_id=7, date=1767254400, date_sent=0, msg_box=1, read=1, '
+                          'sub=NULL, ct_t=application/vnd.wap.multipart.related, m_type=132, seen=1, sub_id=1, '
+                          'creator=com.example.messaging, text_only=1\n')
+# Address rows for message 7, one with an empty msg_id and one with msg_id NULL, then a provider
+# error: a list that is not complete.
+MMS_ADDR_THEN_ERROR = rows(
+    [('_id', '30'), ('msg_id', '7'), ('contact_id', 'NULL'), ('address', '+15550100003'), ('type', '137'),
+     ('charset', '106'), ('sub_id', '1')],
+    [('_id', '31'), ('msg_id', ''), ('contact_id', 'NULL'), ('address', '+15550100007'), ('type', '151'),
+     ('charset', '106'), ('sub_id', '1')],
+    [('_id', '32'), ('msg_id', 'NULL'), ('contact_id', 'NULL'), ('address', '+15550100008'), ('type', '151'),
+     ('charset', '106'), ('sub_id', '1')],
+) + provider_error('mms', "java.lang.IllegalStateException: Couldn't read row 3, col 0 from CursorWindow")
+# MMS rows for message 7 only, then a provider error.
+MMS_THEN_ERROR = MMS.split('Row: 1 ')[0] + provider_error(
+    'mms', "java.lang.IllegalStateException: Couldn't read row 1, col 0 from CursorWindow")
+# One SMS row whose body holds ', seen=' for the next column: the column list names seen twice.
+SMS_ONE_ROW_REPEATED = rows([('_id', '40'), ('address', '+15550100009'), ('date', '1767258000000'),
+                             ('type', '1'), ('body', 'the form says, seen=yes'), ('seen', '1')])
+# One SMS row whose body holds an error line and an exception line, followed by more columns.
+SMS_ERROR_TEXT_IN_BODY = rows([('_id', '41'), ('address', '+15550100010'), ('date', '1767261600000'),
+                               ('type', '1'),
+                               ('body', 'line one\nError while accessing provider:sms\n'
+                                        'java.lang.SecurityException: fake text'),
+                               ('read', '1')])
+
+
 CASES = {
     'alex': {
         f'{ALEX_ROOT}/sms/sms.txt': crlf(SMS),
@@ -234,6 +274,18 @@ CASES = {
         f'{TRIAGE_ROOT}/calendar_calendars.txt': CALENDARS,
         f'{TRIAGE_ROOT}/media_external_file.txt': MEDIA,
         f'{TRIAGE_ROOT}/settings_secure.txt': SETTINGS,
+    },
+    'alex_join_incomplete': {
+        f'{ALEX_ROOT}/mms/mms.txt': MMS_WITH_NULL_ID,
+        f'{ALEX_ROOT}/mms/mms_addr.txt': MMS_ADDR_THEN_ERROR,
+    },
+    'alex_mms_incomplete': {
+        f'{ALEX_ROOT}/mms/mms.txt': MMS_THEN_ERROR,
+        f'{ALEX_ROOT}/mms/mms_addr.txt': MMS_ADDR,
+    },
+    'alex_row_edges': {
+        'ALEX_SYNTH0002/content_provider_SYNTH0002/sms/sms.txt': SMS_ONE_ROW_REPEATED,
+        'ALEX_SYNTH0003/content_provider_SYNTH0003/sms/sms.txt': SMS_ERROR_TEXT_IN_BODY,
     },
     'triage_stderr': {
         f'{TRIAGE_ROOT}/contacts_contacts.txt': SECURITY_ERROR,

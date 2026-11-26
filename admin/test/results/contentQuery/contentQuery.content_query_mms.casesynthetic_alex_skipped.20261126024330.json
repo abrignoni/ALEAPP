@@ -6,19 +6,19 @@
     "case_number": "casesynthetic_alex_skipped",
     "number_of_columns": 20,
     "number_of_rows": 3,
-    "total_data_size_bytes": 893,
+    "total_data_size_bytes": 1043,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/contentQuery/testdata.contentQuery.content_query_mms.casesynthetic_alex_skipped.zip",
-    "start_time": "2026-11-25T21:50:27.953707+00:00",
-    "end_time": "2026-11-25T21:50:28.027442+00:00",
-    "run_time_seconds": 0.0009274482727050781,
+    "start_time": "2026-11-26T02:43:30.639454+00:00",
+    "end_time": "2026-11-26T02:43:30.704140+00:00",
+    "run_time_seconds": 0.0011012554168701172,
     "last_commit": {
-      "hash": "9b6ac5ad209440b52a1ae251f797daf2a8eb6874",
+      "hash": "f16d0303e8636453a375fc0aaed535514c1726b7",
       "author_name": "Maximiliano Telmo",
       "author_email": "50964800+Maxitelmo@users.noreply.github.com",
-      "date": "2026-11-25T18:31:16-03:00",
-      "message": "Read MMS addresses from content://mms/addr"
+      "date": "2026-11-25T19:19:57-03:00",
+      "message": "Use the agreed artifact categories for the content query artifacts"
     }
   },
   "headers": [
@@ -62,7 +62,7 @@
       "1",
       "com.example.messaging",
       "7",
-      "addresses unknown: no mms/mms_addr.txt in this folder (ALEX writes none when the query printed no rows, an error, or one of its four error strings)",
+      "addresses unknown: no mms/mms_addr.txt in this folder (ALEX writes none when the query printed no row or an error, and up to commit 8f27e7a also when the output holds one of its four error strings)",
       1,
       "ALEX_SYNTH0001/content_provider_SYNTH0001/mms/mms.txt"
     ],
@@ -84,7 +84,7 @@
       "1",
       "com.example.messaging",
       "8",
-      "addresses unknown: no mms/mms_addr.txt in this folder (ALEX writes none when the query printed no rows, an error, or one of its four error strings)",
+      "addresses unknown: no mms/mms_addr.txt in this folder (ALEX writes none when the query printed no row or an error, and up to commit 8f27e7a also when the output holds one of its four error strings)",
       2,
       "ALEX_SYNTH0001/content_provider_SYNTH0001/mms/mms.txt"
     ],
@@ -106,7 +106,7 @@
       "1",
       "com.example.messaging",
       "9",
-      "addresses unknown: no mms/mms_addr.txt in this folder (ALEX writes none when the query printed no rows, an error, or one of its four error strings)",
+      "addresses unknown: no mms/mms_addr.txt in this folder (ALEX writes none when the query printed no row or an error, and up to commit 8f27e7a also when the output holds one of its four error strings)",
       4,
       "ALEX_SYNTH0001/content_provider_SYNTH0001/mms/mms.txt"
     ]

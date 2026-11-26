@@ -360,9 +360,10 @@ def epoch_to_utc(text, unit):
 # providers (content_providers_list.txt), which are not content query output.
 # ALEX (prosch88/ALEX, alex.py, query_content; URIs from ressources/content_provider.json):
 # content_provider_<serial>/<key>/<key>.txt for content://<key>, and <key>_<sub>.txt for
-# content://<key>/<sub> with each '/' of <sub> written as '_'. No file is written when the
-# output holds any of: Error while accessing provider, Unsupported argument, No result
-# found, command not found.
+# content://<key>/<sub> with each '/' of <sub> written as '_'. Up to commit 8f27e7a no file
+# is written when the output holds any of: Error while accessing provider, Unsupported
+# argument, No result found, command not found. From ed3d41eb the file is written whenever
+# the output holds a row. The PRFS zip layout of ed3d41eb (extra/content_provider/) is not read.
 TRIAGE = 'android_triage'
 ALEX = 'ALEX'
 TRIAGE_FOLDER = re.compile(r'\d{8}_\d{2}_\d{2}_\d{2}_contentprovider\Z')
@@ -434,8 +435,9 @@ def missing_file_detail(layout):
         return ('android_triage creates the file of every URI it queries with a shell redirect, even when the '
                 'query prints nothing, so the file was not kept in this extraction or the run stopped '
                 'before this query')
-    return ('unknown: ALEX writes no file when the query printed No result found, an error, or text that '
-            'holds one of its four error strings anywhere, including inside a value')
+    return ('unknown: ALEX writes no file when the query printed no row (No result found. or an error), and up to '
+            'commit 8f27e7a also when the output holds one of its four error strings anywhere, including inside '
+            'a value')
 
 
 def status_text(dump):

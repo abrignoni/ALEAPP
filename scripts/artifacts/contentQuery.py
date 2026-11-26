@@ -28,18 +28,23 @@ __artifacts_v2__ = {
                  "error text is not in the extraction; an empty file says only that the query printed nothing on "
                  "stdout. android_triage creates the file of every URI it queries, so a URI file missing from an "
                  "android_triage folder was not kept in the extraction, or the run stopped before that query. "
-                 "ALEX writes no file when the output holds "
-                 "any of 'Error while accessing provider', 'Unsupported argument', 'No result found' or 'command not "
-                 "found', matched anywhere in the output, including inside a value, and notes the skip in its own log "
-                 "only; so for ALEX a missing file is reported as unknown, since no rows, an error and a skipped dump "
-                 "look the same. A row of a folder can say 'not queried by this tool' when the layout has no file for "
+                 "ALEX up to commit 8f27e7a writes no file when the output holds any of 'Error while accessing "
+                 "provider', 'Unsupported argument', 'No result found' or 'command not found', matched anywhere in the "
+                 "output, including inside a value, and notes the skip in its own log only. From ed3d41eb (2026-11-25, "
+                 "https://github.com/prosch88/ALEX/blob/ed3d41ebea64f73f86f4568f29ff6cf5a1a10cf1/alex.py#L4280-L4321) "
+                 "it writes the file whenever the output holds a row, so a missing file then means no row was printed "
+                 "(No result found. or an error). Either way, for ALEX a missing file is reported as unknown, since no "
+                 "rows and an error look the same. From ed3d41eb ALEX's PRFS zip also keeps the raw text of each query "
+                 "and a status file under extra/content_provider/; that layout is not read here. A row of a folder "
+                 "can say 'not queried by this tool' when the layout has no file for "
                  "that URI (android_triage does not query SMS, MMS or the call log; ALEX does not query "
                  "content://com.android.calendar/events). Rows of a file ending with a provider error after its last "
                  "row say so in Detail. Columns lists the column names that the rows of the file printed, in order. "
                  "Read By names the Content Query artifact that presents the file's rows; 'not read' means none does, "
                  "which says nothing about what the file holds. android_triage's own log (<folder>.txt) and its "
                  "dumpsys of the providers (content_providers_list.txt) are not content query output and are not "
-                 "listed. Evidence tier: source-verified (format from the AOSP source above, layouts from the source of "
+                 "listed. Evidence tier: source-verified (format from the AOSP source above, layouts from the source "
+                 "of "
                  "each tool at the commits linked) and tested on synthetic files only.",
         "paths": ('*/*_contentprovider/*.txt', '*/content_provider_*/*.txt'),
         "output_types": ["html", "tsv", "lava"],
@@ -56,9 +61,11 @@ __artifacts_v2__ = {
         "category": "Messaging",
         "notes": "Read from ALEX raw text output only (content_provider_<serial>/sms/sms.txt); android_triage does not "
                  "query SMS. ALEX also keeps sms_inbox, sms_sent, sms_draft, sms_outbox, sms_queued and sms_all, which "
-                 "are views of the same table; they are not read, so a message is not reported twice. Because ALEX "
-                 "writes no file when any value holds 'No result found' (or another of its four error strings), one "
-                 "such message body leaves no sms.txt at all; Content Query Files then reports the file as unknown. "
+                 "are views of the same table; they are not read, so a message is not reported twice. ALEX up to "
+                 "commit 8f27e7a (prosch88/ALEX) writes no file when the output holds 'No result found' or another of "
+                 "its four error strings anywhere, so with it one such message body leaves no sms.txt at all; from "
+                 "ed3d41eb (2026-11-25) it writes the file whenever the output holds a row. Content Query Files "
+                 "reports a missing file as unknown. "
                  "Date and Date Sent: the provider contract gives the type INTEGER (long) and no unit "
                  "(Telephony.TextBasedSmsColumns.DATE and DATE_SENT, "
                  "https://developer.android.com/reference/android/provider/Telephony.TextBasedSmsColumns#DATE). They "
@@ -66,7 +73,8 @@ __artifacts_v2__ = {
                  "date itself (System.currentTimeMillis(), line 783 at "
                  "https://android.googlesource.com/platform/packages/providers/TelephonyProvider/+/5fb0368b51edc7e9babaa2febf88e8aa94b86f55/src/com/android/providers/telephony/SmsProvider.java). "
                  "A value of 0, NULL or nothing is blank. Type is the type value as printed and the name of the "
-                 "Telephony.TextBasedSmsColumns MESSAGE_TYPE constant with that value (0 ALL, 1 INBOX, 2 SENT, 3 DRAFT, "
+                 "Telephony.TextBasedSmsColumns MESSAGE_TYPE constant with that value (0 ALL, 1 INBOX, 2 SENT, 3 "
+                 "DRAFT, "
                  "4 OUTBOX, 5 FAILED, 6 QUEUED; "
                  "https://developer.android.com/reference/android/provider/Telephony.TextBasedSmsColumns#MESSAGE_TYPE_INBOX); "
                  "another value is shown as printed. Address, Body and the other columns are as printed. "
@@ -75,7 +83,8 @@ __artifacts_v2__ = {
                  "https://android.googlesource.com/platform/frameworks/base/+/8d2ed506045d5d6cf25ef7ef77a30da910733657/cmds/content/src/com/android/commands/content/Content.java): "
                  "'Row: <n> ' and the name=value pairs joined with ', ', with no quoting or escaping. A NULL value "
                  "prints as the text NULL and a BLOB as the text BLOB, so a stored text NULL or BLOB cannot be told "
-                 "apart from a real NULL or BLOB. An empty string prints as nothing and is blank here. Values are shown "
+                 "apart from a real NULL or BLOB. An empty string prints as nothing and is blank here. Values are "
+                 "shown "
                  "as printed, line breaks kept. A row is split at ', <next column>=' along the column list that the "
                  "rows of the file agree on; Parse Note flags a row where a value holds ', <name>=' for a name of that "
                  "list (the split may be off there) and a row that could not be split. A value line that is exactly "
@@ -105,31 +114,43 @@ __artifacts_v2__ = {
                  "(content://mms/addr) whose msg_id is the message's _id, by type, in file order and joined with "
                  "'; ', as printed (a NULL address shows as the text NULL); an address row whose type is none of "
                  "the four (PduHeaders FROM 137, TO 151, CC 130, BCC 129) is not shown on the message row. MMS "
-                 "Addresses (content query) lists every address row with its Source Line. AOSP's MmsProvider does not match content://mms/addr (it "
+                 "Addresses (content query) lists every address row with its Source Line. AOSP's MmsProvider does "
+                 "not match content://mms/addr (it "
                  "matches content://mms/<id>/addr, line 1211 at "
                  "https://android.googlesource.com/platform/packages/providers/TelephonyProvider/+/f5fa3b6153f98c57fa50c80ade2904005a4987ce/src/com/android/providers/telephony/MmsProvider.java), "
                  "but some device providers answer it with one row per address keyed by msg_id. When ALEX kept no "
                  "mms_addr.txt the four columns are blank and Parse Note says 'addresses unknown' on each row, "
                  "since no rows, an error and a skipped dump look the same. When mms_addr.txt is there but holds "
-                 "no FROM, TO, CC or BCC row for a message, Parse Note says so on that row. The "
+                 "no FROM, TO, CC or BCC row for a message, Parse Note says so on that row. When mms_addr.txt is not "
+                 "a full list of rows (a provider error, rows followed by an error, rows that could not be split, an "
+                 "empty or unrecognised file, or a file that could not be read), the addresses read from it are "
+                 "shown and a message with none says 'addresses unknown' with the reason. A message row whose _id is "
+                 "empty or the text NULL is not matched and says 'addresses unknown'; address rows whose msg_id is "
+                 "empty or NULL are not matched to any message. The report's source list names mms_addr.txt next to "
+                 "mms.txt; Source File and Source Line stay those of the message row. The "
                  "parts of each message are in MMS Parts (content query), keyed by its _id. Date and Date Sent: the "
                  "provider contract gives the type INTEGER (long) and no unit (Telephony.BaseMmsColumns.DATE and "
                  "DATE_SENT, https://developer.android.com/reference/android/provider/Telephony.BaseMmsColumns#DATE). "
                  "They are read as seconds since 1970-01-01 UTC, the unit AOSP's MmsProvider uses when it sets the "
                  "date itself (System.currentTimeMillis() / 1000, line 479 of the MmsProvider.java linked above). A "
-                 "value of 0, NULL or nothing is blank. Message Box is the msg_box value as printed and the name of the "
+                 "value of 0, NULL or nothing is blank. Message Box is the msg_box value as printed and the name of "
+                 "the "
                  "Telephony.BaseMmsColumns MESSAGE_BOX constant with that value (0 ALL, 1 INBOX, 2 SENT, 3 DRAFTS, "
                  "4 OUTBOX, 5 FAILED; "
                  "https://developer.android.com/reference/android/provider/Telephony.BaseMmsColumns#MESSAGE_BOX_INBOX); "
                  "another value is shown as printed. Subject (sub), Message Type (m_type) and the other columns are as "
-                 "printed. ALEX writes no file when any value holds 'No result found' (or another of its four error "
-                 "strings); Content Query Files then reports the file as unknown. "
+                 "printed. ALEX up to commit 8f27e7a (prosch88/ALEX) writes no file when the output holds 'No result "
+                 "found' or "
+                 "another of its four error strings anywhere, including inside a value; from ed3d41eb (2026-11-25) it "
+                 "writes the file whenever the output holds a row. Content Query Files reports a missing file as "
+                 "unknown. "
                  "Format: rows are read from the text that the content command prints (AOSP Content.java, lines 664 to "
                  "706 at "
                  "https://android.googlesource.com/platform/frameworks/base/+/8d2ed506045d5d6cf25ef7ef77a30da910733657/cmds/content/src/com/android/commands/content/Content.java): "
                  "'Row: <n> ' and the name=value pairs joined with ', ', with no quoting or escaping. A NULL value "
                  "prints as the text NULL and a BLOB as the text BLOB, so a stored text NULL or BLOB cannot be told "
-                 "apart from a real NULL or BLOB. An empty string prints as nothing and is blank here. Values are shown "
+                 "apart from a real NULL or BLOB. An empty string prints as nothing and is blank here. Values are "
+                 "shown "
                  "as printed, line breaks kept. A row is split at ', <next column>=' along the column list that the "
                  "rows of the file agree on; Parse Note flags a row where a value holds ', <name>=' for a name of that "
                  "list (the split may be off there) and a row that could not be split. A value line that is exactly "
@@ -153,7 +174,8 @@ __artifacts_v2__ = {
         "last_update_date": "2026-11-25",
         "requirements": "none",
         "category": "Messaging",
-        "notes": "Read from ALEX raw text output only (content_provider_<serial>/mms/mms_addr.txt); android_triage does "
+        "notes": "Read from ALEX raw text output only (content_provider_<serial>/mms/mms_addr.txt); android_triage "
+        "does "
                  "not query MMS. AOSP's MmsProvider does not match content://mms/addr (it matches "
                  "content://mms/<id>/addr, line 1211 at "
                  "https://android.googlesource.com/platform/packages/providers/TelephonyProvider/+/f5fa3b6153f98c57fa50c80ade2904005a4987ce/src/com/android/providers/telephony/MmsProvider.java), "
@@ -164,10 +186,17 @@ __artifacts_v2__ = {
                  "lines 31, 32, 39 and 55 at "
                  "https://android.googlesource.com/platform/frameworks/base/+/8d2ed506045d5d6cf25ef7ef77a30da910733657/telephony/common/com/google/android/mms/pdu/PduHeaders.java); "
                  "another value is shown as printed. Address, Charset, Contact ID and Subscription ID are as printed. "
-                 "MMS Row says whether msg_id is the _id of a row of mms.txt in the same folder (yes or no), and is "
-                 "blank when that file holds no rows or is not in the folder. The same addresses are shown on the "
-                 "message rows of MMS (content query) as From, To, Cc and Bcc. ALEX writes no file when any value "
-                 "holds 'No result found' (or another of its four error strings). "
+                 "MMS Row says whether msg_id is the _id of a row of mms.txt in the same folder: yes, or no when "
+                 "mms.txt is a full list of rows (or 'No result found.'). It is blank, with the reason in Parse Note, "
+                 "when msg_id is empty or the text NULL, when the folder has no mms.txt, and when mms.txt is not a "
+                 "full list (a provider error, rows followed by an error, rows that could not be split, an empty or "
+                 "unrecognised file) and holds no row with that _id. The report's source list names mms.txt next to "
+                 "mms_addr.txt; Source File and Source Line stay those of the address row. The same addresses are "
+                 "shown on the message rows of MMS (content query) as From, To, Cc and Bcc. ALEX up to commit "
+                 "8f27e7a (prosch88/ALEX) writes no file when the output holds 'No result found' or "
+                 "another of its four error strings anywhere, including inside a value; from ed3d41eb (2026-11-25) it "
+                 "writes the file whenever the output holds a row. Content Query Files reports a missing file as "
+                 "unknown. "
                  "Format: rows are read from the text that the content command prints (AOSP Content.java, lines 664 to "
                  "706 at "
                  "https://android.googlesource.com/platform/frameworks/base/+/8d2ed506045d5d6cf25ef7ef77a30da910733657/cmds/content/src/com/android/commands/content/Content.java): "
@@ -194,21 +223,26 @@ __artifacts_v2__ = {
         "last_update_date": "2026-11-25",
         "requirements": "none",
         "category": "Messaging",
-        "notes": "Read from ALEX raw text output only (content_provider_<serial>/mms/mms_part.txt); android_triage does "
+        "notes": "Read from ALEX raw text output only (content_provider_<serial>/mms/mms_part.txt); android_triage "
+        "does "
                  "not query MMS. A part row gives the part's message (mid, the _id of the row in MMS (content query)), "
                  "position (seq), content type (ct), names (name, fn, cl, cid), character set (chset), the path of the "
                  "part file on the device (_data) and, for a text part, its text. The content of a part file (a "
                  "picture, audio, video or other media) is not in content query output: it is read with a separate "
                  "command such as content read, and neither layout read here saves it, so the media was not collected "
                  "and is not linked. A _data path names where the provider kept the file on the device; the file "
-                 "itself is not in these layouts. ALEX writes no file when any value holds 'No result found' (or "
-                 "another of its four error strings); Content Query Files then reports the file as unknown. "
+                 "itself is not in these layouts. ALEX up to commit 8f27e7a (prosch88/ALEX) writes no file when the "
+                 "output holds 'No result found' or "
+                 "another of its four error strings anywhere, including inside a value; from ed3d41eb (2026-11-25) it "
+                 "writes the file whenever the output holds a row. Content Query Files reports a missing file as "
+                 "unknown. "
                  "Format: rows are read from the text that the content command prints (AOSP Content.java, lines 664 to "
                  "706 at "
                  "https://android.googlesource.com/platform/frameworks/base/+/8d2ed506045d5d6cf25ef7ef77a30da910733657/cmds/content/src/com/android/commands/content/Content.java): "
                  "'Row: <n> ' and the name=value pairs joined with ', ', with no quoting or escaping. A NULL value "
                  "prints as the text NULL and a BLOB as the text BLOB, so a stored text NULL or BLOB cannot be told "
-                 "apart from a real NULL or BLOB. An empty string prints as nothing and is blank here. Values are shown "
+                 "apart from a real NULL or BLOB. An empty string prints as nothing and is blank here. Values are "
+                 "shown "
                  "as printed, line breaks kept. A row is split at ', <next column>=' along the column list that the "
                  "rows of the file agree on; Parse Note flags a row where a value holds ', <name>=' for a name of that "
                  "list (the split may be off there) and a row that could not be split. A value line that is exactly "
@@ -242,14 +276,18 @@ __artifacts_v2__ = {
                  "6 BLOCKED_TYPE, 7 ANSWERED_EXTERNALLY_TYPE; "
                  "https://developer.android.com/reference/android/provider/CallLog.Calls#INCOMING_TYPE); another value "
                  "is shown as printed. Number, Name and the other columns are as printed; Name is a cached value the "
-                 "provider keeps with the call. ALEX writes no file when any value holds 'No result found' (or another "
-                 "of its four error strings); Content Query Files then reports the file as unknown. "
+                 "provider keeps with the call. ALEX up to commit 8f27e7a (prosch88/ALEX) writes no file when the "
+                 "output holds 'No result found' or "
+                 "another of its four error strings anywhere, including inside a value; from ed3d41eb (2026-11-25) it "
+                 "writes the file whenever the output holds a row. Content Query Files reports a missing file as "
+                 "unknown. "
                  "Format: rows are read from the text that the content command prints (AOSP Content.java, lines 664 to "
                  "706 at "
                  "https://android.googlesource.com/platform/frameworks/base/+/8d2ed506045d5d6cf25ef7ef77a30da910733657/cmds/content/src/com/android/commands/content/Content.java): "
                  "'Row: <n> ' and the name=value pairs joined with ', ', with no quoting or escaping. A NULL value "
                  "prints as the text NULL and a BLOB as the text BLOB, so a stored text NULL or BLOB cannot be told "
-                 "apart from a real NULL or BLOB. An empty string prints as nothing and is blank here. Values are shown "
+                 "apart from a real NULL or BLOB. An empty string prints as nothing and is blank here. Values are "
+                 "shown "
                  "as printed, line breaks kept. A row is split at ', <next column>=' along the column list that the "
                  "rows of the file agree on; Parse Note flags a row where a value holds ', <name>=' for a name of that "
                  "list (the split may be off there) and a row that could not be split. A value line that is exactly "
@@ -281,14 +319,18 @@ __artifacts_v2__ = {
                  "(ContactsContract.ContactsColumns.CONTACT_LAST_UPDATED_TIMESTAMP, 'milliseconds since epoch', "
                  "https://developer.android.com/reference/android/provider/ContactsContract.ContactsColumns#CONTACT_LAST_UPDATED_TIMESTAMP); "
                  "a value of 0, NULL or nothing is blank. Display Name, Has Phone Number, Starred and Lookup Key are "
-                 "as printed. ALEX writes no file when any value holds 'No result found' (or another of its four error "
-                 "strings); Content Query Files then reports the file as unknown. "
+                 "as printed. ALEX up to commit 8f27e7a (prosch88/ALEX) writes no file when the output holds 'No "
+                 "result found' or "
+                 "another of its four error strings anywhere, including inside a value; from ed3d41eb (2026-11-25) it "
+                 "writes the file whenever the output holds a row. Content Query Files reports a missing file as "
+                 "unknown. "
                  "Format: rows are read from the text that the content command prints (AOSP Content.java, lines 664 to "
                  "706 at "
                  "https://android.googlesource.com/platform/frameworks/base/+/8d2ed506045d5d6cf25ef7ef77a30da910733657/cmds/content/src/com/android/commands/content/Content.java): "
                  "'Row: <n> ' and the name=value pairs joined with ', ', with no quoting or escaping. A NULL value "
                  "prints as the text NULL and a BLOB as the text BLOB, so a stored text NULL or BLOB cannot be told "
-                 "apart from a real NULL or BLOB. An empty string prints as nothing and is blank here. Values are shown "
+                 "apart from a real NULL or BLOB. An empty string prints as nothing and is blank here. Values are "
+                 "shown "
                  "as printed, line breaks kept. A row is split at ', <next column>=' along the column list that the "
                  "rows of the file agree on; Parse Note flags a row where a value holds ', <name>=' for a name of that "
                  "list (the split may be off there) and a row that could not be split. A value line that is exactly "
@@ -315,7 +357,8 @@ __artifacts_v2__ = {
         "category": "Calls & Contacts",
         "notes": "Read from android_triage (<date>_contentprovider/contacts_data_phones.txt) and ALEX raw text output "
                  "(content_provider_<serial>/com.android.contacts/com.android.contacts_data_phones.txt). One row per "
-                 "phone number data row. Number is data1, Phone Type data2, Label data3 and Normalized Number data4, as "
+                 "phone number data row. Number is data1, Phone Type data2, Label data3 and Normalized Number data4, "
+                 "as "
                  "printed (ContactsContract.CommonDataKinds.Phone NUMBER, TYPE, LABEL and NORMALIZED_NUMBER, "
                  "https://developer.android.com/reference/android/provider/ContactsContract.CommonDataKinds.Phone); "
                  "Phone Type is not decoded. Account Type and Account Name are the account of the raw contact the "
@@ -324,14 +367,18 @@ __artifacts_v2__ = {
                  "(ContactsContract.ContactsColumns.CONTACT_LAST_UPDATED_TIMESTAMP, 'milliseconds since epoch', "
                  "https://developer.android.com/reference/android/provider/ContactsContract.ContactsColumns#CONTACT_LAST_UPDATED_TIMESTAMP); "
                  "it belongs to the aggregated contact, not to the number, and a value of 0, NULL or nothing is blank. "
-                 "A value can end with a line break that the provider stores; it is kept. ALEX writes no file when any value holds 'No result found' (or another of its four error "
-                 "strings); Content Query Files then reports the file as unknown. "
+                 "A value can end with a line break that the provider stores; it is kept. ALEX up to commit 8f27e7a "
+                 "(prosch88/ALEX) writes no file when the output holds 'No result found' or "
+                 "another of its four error strings anywhere, including inside a value; from ed3d41eb (2026-11-25) it "
+                 "writes the file whenever the output holds a row. Content Query Files reports a missing file as "
+                 "unknown. "
                  "Format: rows are read from the text that the content command prints (AOSP Content.java, lines 664 to "
                  "706 at "
                  "https://android.googlesource.com/platform/frameworks/base/+/8d2ed506045d5d6cf25ef7ef77a30da910733657/cmds/content/src/com/android/commands/content/Content.java): "
                  "'Row: <n> ' and the name=value pairs joined with ', ', with no quoting or escaping. A NULL value "
                  "prints as the text NULL and a BLOB as the text BLOB, so a stored text NULL or BLOB cannot be told "
-                 "apart from a real NULL or BLOB. An empty string prints as nothing and is blank here. Values are shown "
+                 "apart from a real NULL or BLOB. An empty string prints as nothing and is blank here. Values are "
+                 "shown "
                  "as printed, line breaks kept. A row is split at ', <next column>=' along the column list that the "
                  "rows of the file agree on; Parse Note flags a row where a value holds ', <name>=' for a name of that "
                  "list (the split may be off there) and a row that could not be split. A value line that is exactly "
@@ -372,7 +419,8 @@ __artifacts_v2__ = {
                  "https://android.googlesource.com/platform/frameworks/base/+/8d2ed506045d5d6cf25ef7ef77a30da910733657/cmds/content/src/com/android/commands/content/Content.java): "
                  "'Row: <n> ' and the name=value pairs joined with ', ', with no quoting or escaping. A NULL value "
                  "prints as the text NULL and a BLOB as the text BLOB, so a stored text NULL or BLOB cannot be told "
-                 "apart from a real NULL or BLOB. An empty string prints as nothing and is blank here. Values are shown "
+                 "apart from a real NULL or BLOB. An empty string prints as nothing and is blank here. Values are "
+                 "shown "
                  "as printed, line breaks kept. A row is split at ', <next column>=' along the column list that the "
                  "rows of the file agree on; Parse Note flags a row where a value holds ', <name>=' for a name of that "
                  "list (the split may be off there) and a row that could not be split. A value line that is exactly "
@@ -406,15 +454,20 @@ __artifacts_v2__ = {
                  "value of 0, NULL or nothing is blank, and per the contract a recurring event is one row and carries "
                  "duration rather than dtend (CalendarContract.Events, "
                  "https://developer.android.com/reference/android/provider/CalendarContract.Events). Time Zone is "
-                 "eventTimezone, All Day is allDay, Recurrence Rule is rrule, Deleted is deleted, all as printed. Title, Description "
-                 "and Location are as printed. ALEX writes no file when any value holds 'No result found' (or another "
-                 "of its four error strings); Content Query Files then reports the file as unknown. "
+                 "eventTimezone, All Day is allDay, Recurrence Rule is rrule, Deleted is deleted, all as printed. "
+                 "Title, Description "
+                 "and Location are as printed. ALEX up to commit 8f27e7a (prosch88/ALEX) writes no file when the "
+                 "output holds 'No result found' or "
+                 "another of its four error strings anywhere, including inside a value; from ed3d41eb (2026-11-25) it "
+                 "writes the file whenever the output holds a row. Content Query Files reports a missing file as "
+                 "unknown. "
                  "Format: rows are read from the text that the content command prints (AOSP Content.java, lines 664 to "
                  "706 at "
                  "https://android.googlesource.com/platform/frameworks/base/+/8d2ed506045d5d6cf25ef7ef77a30da910733657/cmds/content/src/com/android/commands/content/Content.java): "
                  "'Row: <n> ' and the name=value pairs joined with ', ', with no quoting or escaping. A NULL value "
                  "prints as the text NULL and a BLOB as the text BLOB, so a stored text NULL or BLOB cannot be told "
-                 "apart from a real NULL or BLOB. An empty string prints as nothing and is blank here. Values are shown "
+                 "apart from a real NULL or BLOB. An empty string prints as nothing and is blank here. Values are "
+                 "shown "
                  "as printed, line breaks kept. A row is split at ', <next column>=' along the column list that the "
                  "rows of the file agree on; Parse Note flags a row where a value holds ', <name>=' for a name of that "
                  "list (the split may be off there) and a row that could not be split. A value line that is exactly "
@@ -442,15 +495,20 @@ __artifacts_v2__ = {
         "notes": "Read from android_triage (<date>_contentprovider/calendar_calendars.txt) and ALEX raw text output "
                  "(content_provider_<serial>/com.android.calendar/com.android.calendar_calendars.txt). One row per "
                  "calendar; Calendar ID is the _id that the event rows name in their calendar_id. Account Name, "
-                 "Account Type, Display Name (calendar_displayName), Owner Account (ownerAccount), Visible, Sync Events "
-                 "and Deleted are as printed. ALEX writes no file when any value holds 'No result found' (or another "
-                 "of its four error strings); Content Query Files then reports the file as unknown. "
+                 "Account Type, Display Name (calendar_displayName), Owner Account (ownerAccount), Visible, Sync "
+                 "Events "
+                 "and Deleted are as printed. ALEX up to commit 8f27e7a (prosch88/ALEX) writes no file when the "
+                 "output holds 'No result found' or "
+                 "another of its four error strings anywhere, including inside a value; from ed3d41eb (2026-11-25) it "
+                 "writes the file whenever the output holds a row. Content Query Files reports a missing file as "
+                 "unknown. "
                  "Format: rows are read from the text that the content command prints (AOSP Content.java, lines 664 to "
                  "706 at "
                  "https://android.googlesource.com/platform/frameworks/base/+/8d2ed506045d5d6cf25ef7ef77a30da910733657/cmds/content/src/com/android/commands/content/Content.java): "
                  "'Row: <n> ' and the name=value pairs joined with ', ', with no quoting or escaping. A NULL value "
                  "prints as the text NULL and a BLOB as the text BLOB, so a stored text NULL or BLOB cannot be told "
-                 "apart from a real NULL or BLOB. An empty string prints as nothing and is blank here. Values are shown "
+                 "apart from a real NULL or BLOB. An empty string prints as nothing and is blank here. Values are "
+                 "shown "
                  "as printed, line breaks kept. A row is split at ', <next column>=' along the column list that the "
                  "rows of the file agree on; Parse Note flags a row where a value holds ', <name>=' for a name of that "
                  "list (the split may be off there) and a row that could not be split. Columns not listed here are not "
@@ -482,19 +540,23 @@ __artifacts_v2__ = {
                  "1970-01-01T00:00:00Z', and DATE_TAKEN, 'number of milliseconds since 1970-01-01T00:00:00Z', "
                  "https://developer.android.com/reference/android/provider/MediaStore.MediaColumns#DATE_ADDED); a "
                  "value of 0, NULL or nothing is blank. The contract says date_modified is the indexed "
-                 "File.lastModified() and datetaken is taken from the file's metadata (MediaMetadataRetriever or EXIF). "
+                 "File.lastModified() and datetaken is taken from the file's metadata (MediaMetadataRetriever or "
+                 "EXIF). "
                  "Owner Package is owner_package_name, the package the contract says contributed the item, which can "
                  "be NULL, and whose visibility from Android 14 depends on package visibility. Path (_data), Display "
                  "Name, Relative Path, Volume, MIME Type, Size, Bucket, Trashed (is_trashed) and Pending (is_pending) "
-                 "are as printed; MediaStore columns differ between Android versions, so some can be blank. ALEX "
-                 "writes no file when any value holds 'No result found' (or another of its four error strings); "
-                 "Content Query Files then reports the file as unknown. "
+                 "are as printed; MediaStore columns differ between Android versions, so some can be blank. ALEX up "
+                 "to commit 8f27e7a (prosch88/ALEX) writes no file when the output holds 'No result found' or "
+                 "another of its four error strings anywhere, including inside a value; from ed3d41eb (2026-11-25) it "
+                 "writes the file whenever the output holds a row. Content Query Files reports a missing file as "
+                 "unknown. "
                  "Format: rows are read from the text that the content command prints (AOSP Content.java, lines 664 to "
                  "706 at "
                  "https://android.googlesource.com/platform/frameworks/base/+/8d2ed506045d5d6cf25ef7ef77a30da910733657/cmds/content/src/com/android/commands/content/Content.java): "
                  "'Row: <n> ' and the name=value pairs joined with ', ', with no quoting or escaping. A NULL value "
                  "prints as the text NULL and a BLOB as the text BLOB, so a stored text NULL or BLOB cannot be told "
-                 "apart from a real NULL or BLOB. An empty string prints as nothing and is blank here. Values are shown "
+                 "apart from a real NULL or BLOB. An empty string prints as nothing and is blank here. Values are "
+                 "shown "
                  "as printed. A row is split at ', <next column>=' along the column list that the rows of the file "
                  "agree on; Parse Note flags a row where a value holds ', <name>=' for a name of that list (the split "
                  "may be off there) and a row that could not be split. Columns not listed here are not shown (Content "
@@ -518,8 +580,15 @@ MMS_BOXES = {'0': 'ALL', '1': 'INBOX', '2': 'SENT', '3': 'DRAFTS', '4': 'OUTBOX'
 ADDRESS_TYPES = {'129': 'BCC', '130': 'CC', '137': 'FROM', '151': 'TO'}
 ADDRESS_CODES = ('137', '151', '130', '129')
 NOTE_ADDRESSES_UNKNOWN = ('addresses unknown: no mms/mms_addr.txt in this folder (ALEX writes none when the query '
-                          'printed no rows, an error, or one of its four error strings)')
+                          'printed no row or an error, and up to commit 8f27e7a also when the output holds one of '
+                          'its four error strings)')
 NOTE_NO_ADDRESS_ROWS = 'no FROM, TO, CC or BCC rows for this message in mms_addr.txt'
+NOTE_ADDRESSES_INCOMPLETE = ('addresses unknown: no FROM, TO, CC or BCC row for this message was read, and '
+                             'mms_addr.txt is incomplete ({reason})')
+NOTE_NO_MMS_KEY = 'addresses unknown: this row has no usable _id (empty or NULL) to match msg_id against'
+NOTE_NO_ADDR_KEY = 'MMS row unknown: msg_id is empty or NULL'
+NOTE_MMS_ROW_INCOMPLETE = 'MMS row unknown: no MMS row with this _id was read, and mms.txt is incomplete ({reason})'
+NOTE_MMS_ROW_NO_FILE = 'MMS row unknown: no mms/mms.txt in this folder'
 CALL_TYPES = {'1': 'INCOMING_TYPE', '2': 'OUTGOING_TYPE', '3': 'MISSED_TYPE', '4': 'VOICEMAIL_TYPE',
               '5': 'REJECTED_TYPE', '6': 'BLOCKED_TYPE', '7': 'ANSWERED_EXTERNALLY_TYPE'}
 
@@ -638,25 +707,36 @@ def _sibling(context, layout, key):
     return None
 
 
-def _mms_addresses(path):
-    """{msg_id: {type: [address, ...]}} from an MMS address file, in file order."""
-    addresses = {}
-    for record in reader.read_file(path).records:
-        values = reader.Values(record)
-        addresses.setdefault(values['msg_id'], {}).setdefault(values['type'], []).append(values['address'])
-    return addresses
+def _usable_key(value):
+    """True for a join key that can be matched: not empty and not the text NULL."""
+    return value.strip() not in ('', 'NULL')
 
 
-def _mms_ids(path):
-    """The _id values of an MMS file that holds rows, or None when it holds none."""
-    dump = reader.read_file(path)
-    if dump.status != reader.ROWS:
-        return None
-    return {reader.Values(record)['_id'] for record in dump.records}
+def _incomplete(dump):
+    """Why a sibling dump cannot be taken as the full list of its rows, or '' when it can."""
+    if dump.status not in (reader.ROWS, reader.NO_RESULT):
+        return reader.status_text(dump)
+    if dump.detail:
+        count = len(dump.records)
+        return f'{count} row{"" if count == 1 else "s"}, {dump.detail}'
+    unsplit = sum(1 for record in dump.records if not record.pairs)
+    if unsplit:
+        return f'{unsplit} row(s) not split'
+    return ''
+
+
+def _sibling_dump(context, path, relative):
+    """(dump, reason) of a sibling file; dump is None when it could not be read."""
+    try:
+        dump = reader.read_file(path, context.get_seeker())
+    except OSError as error:
+        logfunc(f'Content query {relative}: {_relative(context, path)} could not be read: {error}')
+        return None, f'could not be read: {error}'
+    return dump, _incomplete(dump)
 
 
 def _joined(context, key, layout, relative):
-    """Extra values for each row of ``key``: a function of the row's Values and its note list, or None."""
+    """(function of a row's Values and its note list giving the extra values, sibling path), or (None, None)."""
     if key == 'mms':
         addr_path = _sibling(context, layout, 'mms_addr')
         if addr_path is None:
@@ -665,29 +745,56 @@ def _joined(context, key, layout, relative):
             def unknown(_values, notes):
                 notes.append(NOTE_ADDRESSES_UNKNOWN)
                 return ['', '', '', '']
-            return unknown
-        addresses = _mms_addresses(addr_path)
-        logfunc(f'Content query {relative}: addresses from {_relative(context, addr_path)}')
+            return unknown, None
+        dump, reason = _sibling_dump(context, addr_path, relative)
+        addresses = {}
+        for record in (dump.records if dump else []):
+            values = reader.Values(record)
+            if _usable_key(values['msg_id']):
+                addresses.setdefault(values['msg_id'], {}).setdefault(values['type'], []).append(values['address'])
+        logfunc(f'Content query {relative}: addresses from {_relative(context, addr_path)}'
+                + (f', which is incomplete ({reason})' if reason else ''))
 
         def found(values, notes):
+            if not _usable_key(values['_id']):
+                notes.append(NOTE_NO_MMS_KEY)
+                return ['', '', '', '']
             by_type = addresses.get(values['_id'], {})
             shown = ['; '.join(by_type.get(code, [])) for code in ADDRESS_CODES]
             if not any(code in by_type for code in ADDRESS_CODES):
-                notes.append(NOTE_NO_ADDRESS_ROWS)
+                notes.append(NOTE_ADDRESSES_INCOMPLETE.format(reason=reason) if reason else NOTE_NO_ADDRESS_ROWS)
             return shown
-        return found
+        return found, addr_path
     if key == 'mms_addr':
         mms_path = _sibling(context, layout, 'mms')
-        ids = _mms_ids(mms_path) if mms_path else None
-        if ids is None:
-            logfunc(f'Content query {relative}: no MMS rows in this folder to match msg_id against')
-            return lambda values, notes: ['']
-        return lambda values, notes: ['yes' if values['msg_id'] in ids else 'no']
-    return None
+        if mms_path is None:
+            logfunc(f'Content query {relative}: no mms.txt in this folder to match msg_id against')
+
+            def no_mms(_values, notes):
+                notes.append(NOTE_MMS_ROW_NO_FILE)
+                return ['']
+            return no_mms, None
+        dump, reason = _sibling_dump(context, mms_path, relative)
+        ids = {reader.Values(record)['_id'] for record in (dump.records if dump else [])}
+        ids = {value for value in ids if _usable_key(value)}
+
+        def match(values, notes):
+            if not _usable_key(values['msg_id']):
+                notes.append(NOTE_NO_ADDR_KEY)
+                return ['']
+            if values['msg_id'] in ids:
+                return ['yes']
+            if reason:
+                notes.append(NOTE_MMS_ROW_INCOMPLETE.format(reason=reason))
+                return ['']
+            return ['no']
+        return match, mms_path
+    return None, None
 
 
 def _read(context, key, with_source_file=True):
     rows, sources = [], []
+    run = context.get_seeker()
     for path in sorted(context.get_files_found()):
         layout = reader.layout_of(path)
         relative = _relative(context, path)
@@ -697,9 +804,11 @@ def _read(context, key, with_source_file=True):
         if uri is None or uri.key != key:
             logfunc(f'Content query: {relative} is not in a known layout folder, not read')
             continue
-        dump = reader.read_file(path)
-        joined = _joined(context, key, layout, relative)
+        dump = reader.read_file(path, run)
+        joined, sibling = _joined(context, key, layout, relative)
         sources.append(path)
+        if sibling is not None and sibling not in sources:
+            sources.append(sibling)
         logfunc(f'Content query {layout[0]} {relative}: {reader.status_text(dump)}')
         for warning in dump.warnings:
             logfunc(f'Content query {relative}: {warning}')
@@ -814,7 +923,7 @@ def content_query_files(context):
 
 
 def _file_row(context, layout, folder_relative, uri, path, read_by):
-    dump = reader.read_file(path)
+    dump = reader.read_file(path, context.get_seeker())
     relative = _relative(context, path)
     name = relative[len(folder_relative) + 1:] if relative.startswith(folder_relative + '/') else relative
     detail = '; '.join(([dump.detail] if dump.detail else []) + dump.warnings)

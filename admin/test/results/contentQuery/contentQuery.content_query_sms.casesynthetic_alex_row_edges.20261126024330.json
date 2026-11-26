@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "module_name": "contentQuery",
+    "artifact_name": "SMS (content query)",
+    "function_name": "content_query_sms",
+    "case_number": "casesynthetic_alex_row_edges",
+    "number_of_columns": 14,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 452,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/contentQuery/testdata.contentQuery.content_query_sms.casesynthetic_alex_row_edges.zip",
+    "start_time": "2026-11-26T02:43:30.499774+00:00",
+    "end_time": "2026-11-26T02:43:30.561800+00:00",
+    "run_time_seconds": 0.0012187957763671875,
+    "last_commit": {
+      "hash": "f16d0303e8636453a375fc0aaed535514c1726b7",
+      "author_name": "Maximiliano Telmo",
+      "author_email": "50964800+Maxitelmo@users.noreply.github.com",
+      "date": "2026-11-25T19:19:57-03:00",
+      "message": "Use the agreed artifact categories for the content query artifacts"
+    }
+  },
+  "headers": [
+    "Date (UTC)",
+    "Date Sent (UTC)",
+    "Type",
+    "Address",
+    "Body",
+    "Read",
+    "Seen",
+    "Thread ID",
+    "Subscription ID",
+    "Creator",
+    "Message ID",
+    "Parse Note",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "the column list of this dump names seen more than once, which a value holding \", <name>=\" can also cause; values not split. Row text: _id=40, address=+15550100009, date=1767258000000, type=1, body=the form says, seen=yes, seen=1",
+      1,
+      "ALEX_SYNTH0002/content_provider_SYNTH0002/sms/sms.txt"
+    ],
+    [
+      1767261600,
+      "",
+      "1 (INBOX)",
+      "+15550100010",
+      "line one\nError while accessing provider:sms\njava.lang.SecurityException: fake text",
+      "1",
+      "",
+      "",
+      "",
+      "",
+      "41",
+      "",
+      1,
+      "ALEX_SYNTH0003/content_provider_SYNTH0003/sms/sms.txt"
+    ]
+  ]
+}
