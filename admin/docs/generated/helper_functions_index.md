@@ -26,7 +26,7 @@ for the rest. `admin/docs/helper_functions.md` explains where the five cores' he
 | 135 | `convert_unix_ts_to_utc` | `convert_unix_ts_to_utc(ts)` | (no docstring) |
 | 101 | `check_in_media` | `check_in_media(file_path, name='', converted_file_path=False, force_type=None, force_extension=None, force_creation_date=None, force_modification_date=None)` | Check in media. |
 | 67 | `is_sqlite_sidecar` | `is_sqlite_sidecar(path)` | True for the -wal, -shm or -journal file SQLite keeps beside a database. |
-| 48 | `does_table_exist_in_db` | `does_table_exist_in_db(path, table_name)` | Checks if a table with specified name exists in an sqlite db |
+| 49 | `does_table_exist_in_db` | `does_table_exist_in_db(path, table_name)` | Checks if a table with specified name exists in an sqlite db |
 | 40 | `check_in_embedded_media` | `check_in_embedded_media(source_file, data, name='', force_type=None, force_extension=None, force_creation_date=None, force_modification_date=None)` | Check in embedded media. |
 | 32 | `abxread` | `abxread(in_path, multi_root)` | Copyright 2021-2022, CCL Forensics |
 | 32 | `decode_protobuf` | `decode_protobuf(data, typedef=None)` | Decode schemaless protobuf data via the vendored blackboxprotobuf. |
@@ -95,7 +95,7 @@ for the rest. `admin/docs/helper_functions.md` explains where the five cores' he
 | ---: | --- | --- | --- |
 | 290 | `unique_files` | `unique_files(context, files=None, keep_differing_views=False)` | The context's files with the duplicate storage views of each file removed. |
 | 61 | `canonical_path` | `canonical_path(relative_path)` | (key, rank) for a path under an app data directory, else (path, 0). |
-| 24 | `android_user` | `android_user(relative_path)` | The Android user whose storage holds a path under an app data directory. |
+| 25 | `android_user` | `android_user(relative_path)` | The Android user whose storage holds a path under an app data directory. |
 | 13 | `user_files` | `user_files(context, name, files=None, keep_differing_views=False)` | [(path, Android user)] of the files called name, one per user and storage class. |
 | 7 | `union_view_rows` | `union_view_rows(context, file_rows, ignore=())` | Rows read from every kept copy of each store, with the rows the copies share once. |
 | 4 | `without_snapshot_repeats` | `without_snapshot_repeats(rows, source_index=-1)` | rows without the ones from a rollback snapshot that repeat a row the live copy gave. |
