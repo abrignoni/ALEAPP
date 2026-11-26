@@ -43,20 +43,28 @@ __artifacts_v2__ = {
                  "the same code. Known data, emu_a16_w4b_kd_w5_media_delete: the test account sent two "
                  "photos to a chat and deleted both messages for me. The delete dialog offers 'Also "
                  "delete media in this chat from the device gallery'. With it unticked the photo's "
-                 "file stayed in the Sent folder and is the one row listed. With it ticked the file "
-                 "was removed and nothing is listed. The box opened ticked on the first delete and "
-                 "unticked on the second, after it was unticked by hand the first time. One round does "
-                 "not establish what sets its starting state. Deleting received media and deleting for "
-                 "everyone were not exercised. A row does not establish that a message was deleted. On "
-                 "the tested WhatsApp images 43 of 54 rows were files in a .Links folder. What .Links "
-                 "holds was not established. Only a Media folder under the package's own folder is "
-                 "read. A WhatsApp/Media folder at the top of shared storage is not. On a constructed "
-                 "tree with Android users 0 and 10, each user's unreferenced file gave its own row. A "
-                 "copy under another package's folder is not matched by the search patterns and gave "
-                 "none. The tree's databases were copies of one another, so it does not test matching "
-                 "per user. Modified (no zone, as stored) was blank on every tested row. Each zip and "
-                 "tar recorded a UTC modified time, so the reading with no zone was not used. Android "
-                 "User held 0 on every row from the corpus inputs.",
+                 "file stayed in the Sent folder and is the one row listed. With it ticked, no file "
+                 "for that photo was in the folder at capture, and nothing is listed. Known data, "
+                 "emu_a16_w4b_kd_w6_media_received_everyone (made after w5): the test phone sent two "
+                 "photos to the test account, which deleted both for me. With the box unticked the "
+                 "received photo's file stayed and is listed, and with it ticked, no file for the "
+                 "second photo was in the folder at capture. The test account then sent a photo and "
+                 "deleted it for everyone with the box unticked, and afterwards the Sent folder held "
+                 "no file for it, so that delete left nothing to list. On w6 the two rows are that "
+                 "received photo and the Sent photo kept from w5. On the first of the five deletes the "
+                 "box opened ticked. On each of the other four it opened in the state chosen at the "
+                 "previous delete. What sets its state the first time was not established. A delete "
+                 "for everyone with the box ticked, and deletes of media other than photos, were not "
+                 "exercised. A row does not establish that a message was deleted. On the tested "
+                 "WhatsApp images 43 of 54 rows were files in a .Links folder. What .Links holds was "
+                 "not established. Only a Media folder under the package's own folder is read. A "
+                 "WhatsApp/Media folder at the top of shared storage is not. On a constructed tree "
+                 "with Android users 0 and 10, each user's unreferenced file gave its own row. A copy "
+                 "under another package's folder is not matched by the search patterns and gave none. "
+                 "The tree's databases were copies of one another, so it does not test matching per "
+                 "user. Modified (no zone, as stored) was blank on every tested row. Each zip and tar "
+                 "recorded a UTC modified time, so the reading with no zone was not used. Android User "
+                 "held 0 on every row from the corpus inputs.",
         "paths": ('*/com.whatsapp/databases/msgstore.db*', '*/com.whatsapp/databases/status.db*',
                   '*/com.whatsapp/WhatsApp/Media/*'),
         "output_types": ["html", "tsv", "timeline", "lava"],
@@ -106,10 +114,18 @@ __artifacts_v2__ = {
                  "data, emu_a16_w4b_kd_w5_media_delete: the test account sent two photos to a chat and "
                  "deleted both messages for me. The delete dialog offers 'Also delete media in this "
                  "chat from the device gallery'. With it unticked the photo's file stayed in the Sent "
-                 "folder and is the one row listed. With it ticked the file was removed and nothing is "
-                 "listed. The box opened ticked on the first delete and unticked on the second, after "
-                 "it was unticked by hand the first time. One round does not establish what sets its "
-                 "starting state. Deleting received media and deleting for everyone were not "
+                 "folder and is the one row listed. With it ticked, no file for that photo was in the "
+                 "folder at capture, and nothing is listed. Known data, "
+                 "emu_a16_w4b_kd_w6_media_received_everyone (made after w5): the test phone sent two "
+                 "photos to the test account, which deleted both for me. With the box unticked the "
+                 "received photo's file stayed and is listed, and with it ticked, no file for the "
+                 "second photo was in the folder at capture. The test account then sent a photo and "
+                 "deleted it for everyone with the box unticked, and afterwards the Sent folder held "
+                 "no file for it, so that delete left nothing to list. On w6 the two rows are that "
+                 "received photo and the Sent photo kept from w5. On the first of the five deletes the "
+                 "box opened ticked. On each of the other four it opened in the state chosen at the "
+                 "previous delete. What sets its state the first time was not established. A delete "
+                 "for everyone with the box ticked, and deletes of media other than photos, were not "
                  "exercised. A row does not establish that a message was deleted. On the eight "
                  "com.whatsapp images named in the WhatsApp artifact's notes, run with the same code, "
                  "43 of 54 rows were files in a .Links folder. What .Links holds was not established. "
@@ -131,6 +147,7 @@ __artifacts_v2__ = {
             "emu_a16_w4b_kd_w3_status_viewed": "Android 16 | com.whatsapp.w4b 2.26.45.80 | 0 rows",
             "emu_a16_w4b_kd_w4_custom_away": "Android 16 | com.whatsapp.w4b 2.26.45.80 | 0 rows",
             "emu_a16_w4b_kd_w5_media_delete": "Android 16 | com.whatsapp.w4b 2.26.45.80 | 1 row",
+            "emu_a16_w4b_kd_w6_media_received_everyone": "Android 16 | com.whatsapp.w4b 2.26.45.80 | 2 rows",
         },
     },
 }
