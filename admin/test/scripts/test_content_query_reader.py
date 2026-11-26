@@ -94,6 +94,13 @@ class ParseRowsTest(unittest.TestCase):
         self.assertEqual(dump.columns, ('_id', 'body'))
         self.assertEqual(values(dump)[0]['body'], 'quoted:\nRow: 0 example=x\nRow: 1 example=y')
 
+    def test_quoted_sequence_does_not_replace_rows_with_an_unsplit_one(self):
+        dump = reader.parse_text('Row: 0 _id=1, body=a, seen=1\nRow: 1 _id=2, body=b, seen=0\n'
+                                 'Row: 2 _id=3, body=quoted:\nRow: 0 example=x\nRow: 1 example=y\n')
+        self.assertEqual(dump.columns, ('_id', 'body', 'seen'))
+        self.assertEqual(len(dump.records), 3)
+        self.assertEqual([record.number for record in dump.records], [0, 1, 2])
+
     def test_large_dump_with_a_quoted_row_zero_is_read(self):
         # The second reading makes the whole text one row of many names; the repeated-name check
         # over that list was quadratic and did not finish on a dump of this size.

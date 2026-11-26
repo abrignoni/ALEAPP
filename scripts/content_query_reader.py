@@ -35,9 +35,10 @@ Parsing:
    in sequence (0, 1, 2, ...) and the first column the one the first ``Row: 0`` line names
    (the one most such lines start with when there is no ``Row: 0`` line). When ``Row: 0``
    lines name different first columns (a line before the rows, or a value quoting rows),
-   each of the first four is tried and the reading kept has the fewest rows that cannot be split, then the
-   least text before its first row, then the earliest ``Row: 0``; a text where two readings
-   both split cleanly with no text before them keeps the earliest. Every
+   the earliest is kept when a ``Row: 1`` line with the same first column follows it. Only
+   when it does not, each of the first four is tried and the reading kept has the fewest
+   rows that cannot be split, then the least text before its first row, then the earliest
+   ``Row: 0``. Every
    other line belongs to the value before it. A value line that is itself exactly
    ``Row: <next number> <first column>=...`` cannot be told apart from a new row.
 3. The column list of the dump is the most common ordered list of names found in the rows
@@ -237,6 +238,12 @@ def parse_text(text):
     names = _row_zero_names(lines)
     if len(names) < 2:
         return _parse_lines(lines, _row_starts(lines))
+    # The earliest 'Row: 0' line is row 0 when a 'Row: 1' line with the same first column
+    # follows it: then the text holds at least two rows that way, and a sequence quoted later
+    # inside a value cannot replace them.
+    starts = _row_starts(lines, names[0] + '=')
+    if len(starts) > 1:
+        return _parse_lines(lines, starts)
     # Several 'Row: 0' lines name different first columns: a line before the rows, or a value
     # that quotes rows, looks like row 0 too. Each reading is tried, and the one kept has the
     # fewest rows that cannot be split, then the least text left before its first row; on a
