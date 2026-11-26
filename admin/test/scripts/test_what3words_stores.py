@@ -106,6 +106,11 @@ class Versions(unittest.TestCase):
         self.assertEqual(sorted((r[headers.index('listIds (as stored)')], r[headers.index('Realm Version')])
                                 for r in rows), [('3, 5', 'Inactive'), ('5, 3', 'Active')])
 
+    def test_an_empty_list_and_an_empty_dict_do_not_match(self):
+        headers, rows = run_versions('what3words_saved_places', 'class_LocationRealm',
+                                     [{'id': 'a', 'listIds': []}], [{'id': 'a', 'listIds': {}}])
+        self.assertEqual(sorted(r[headers.index('Realm Version')] for r in rows), ['Active', 'Inactive'])
+
 
 class ListIds(unittest.TestCase):
     def cell(self, value):
