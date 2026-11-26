@@ -6,10 +6,12 @@ changes anything under `scripts/`.
 
 Read this before writing a helper of your own: a reader, a timestamp conversion, a path
 shortener or a storage-view collapse may already be here. "Used by" is the number of artifact
-modules that import the name. A class's public methods are listed under it, since artifacts
-call them on an object (`context.get_files_found()`). The first line of each docstring is
-shown; open the module for the rest. `admin/docs/helper_functions.md` explains where the five
-cores' helpers differ.
+modules that import the name. A class row shows its constructor, and its public methods and
+properties are listed under it, since artifacts call them on an object
+(`context.get_files_found()`). `scripts.context` is listed even where no artifact imports it,
+because artifacts are handed a Context. A name a module imports from another one is listed
+with the module it is defined in. The first line of each docstring is shown; open the module
+for the rest. `admin/docs/helper_functions.md` explains where the five cores' helpers differ.
 
 ## `scripts.ilapfuncs`
 
@@ -68,16 +70,16 @@ cores' helpers differ.
 | 0 | `is_platform_macos` | `is_platform_macos()` | Returns True if running on macOS |
 | 0 | `iter_data_list_with_media` | `iter_data_list_with_media(media_header_info, data_list, html_output=False)` | Stream rows with media reference columns converted for the requested output. |
 | 0 | `kmlgen` | `kmlgen(report_folder, kmlactivity, data_list, data_headers)` | (no docstring) |
-| 0 | class `MediaItem` | | (no docstring) |
+| 0 | class `MediaItem` | `MediaItem(id)` | (no docstring) |
 | | `MediaItem.set_values` | `set_values(self, media_info)` | (no docstring) |
-| 0 | class `MediaReferences` | | (no docstring) |
+| 0 | class `MediaReferences` | `MediaReferences(id)` | (no docstring) |
 | | `MediaReferences.set_values` | `set_values(self, media_ref_info)` | (no docstring) |
-| 0 | class `OutputParameters` | | Defines the parameters that are common for |
+| 0 | class `OutputParameters` | `OutputParameters(output_folder, custom_folder_name=None)` | Defines the parameters that are common for |
 | 0 | `record_html_table_held_back` | `record_html_table_held_back(category, artifact_name, safe_artifact_name, rows)` | Remember a table the HTML report held back, for the index page and the run log. |
 | 0 | `sanitize_report_name` | `sanitize_report_name(name, kind='name')` | Replaces path separators in an artifact name or category so it is usable as a file |
 | 0 | `screen_log_session` | `screen_log_session(func)` | Keep the HTML log open during processing and close it on every exit. |
 | 0 | `set_media_references` | `set_media_references(media_ref_id, media_id, module_name, artifact_name, name)` | Set the media references in the LAVA database. |
-| 0 | class `SqliteRecords` | | The rows of one query, read as the caller iterates. |
+| 0 | class `SqliteRecords` | `SqliteRecords(db, cursor)` | The rows of one query, read as the caller iterates. |
 | | `SqliteRecords.close` | `close(self)` | Release the cursor and the connection. Safe to call more than once. |
 | 0 | `strip_tuple_from_headers` | `strip_tuple_from_headers(data_headers)` | (no docstring) |
 | 0 | `timeline` | `timeline(report_folder, tlactivity, data_list, data_headers)` | (no docstring) |
@@ -108,7 +110,7 @@ cores' helpers differ.
 | 1 | `safe_source` | `safe_source(text)` | Escape an evidence text/document body for display as source on the HTML page. |
 | 1 | `safe_url` | `safe_url(url, text=None, target=None)` | Render an evidence URL as escaped text. **Never returns a link.** |
 | 0 | `safe_join` | `safe_join(values, sep='<br>')` | Escape each evidence value and join with a tool-controlled separator. |
-| 0 | `safe_local_link` | `safe_local_link(path, text=None)` | Build an ``<a href>`` to a file inside the report folder. |
+| 0 | `safe_local_link` | `safe_local_link(path, text=None)` | Build an ``&lt;a href&gt;`` to a file inside the report folder. |
 | 0 | `safe_local_path` | `safe_local_path(path)` | Percent-encode a report-relative path for use in an ``href``/``src`` attribute. |
 
 ## `scripts.dumpstate_reader`
@@ -123,7 +125,7 @@ Imported as a module by 12 artifact module(s), whose uses of its names are not c
 | 0 | `clear_cache` | `clear_cache()` | Forget the reports read so far (the tests use this). |
 | 0 | `epoch_ms_to_utc` | `epoch_ms_to_utc(milliseconds)` | A timezone-aware UTC datetime from epoch milliseconds, or None when out of range. |
 | 0 | `epoch_s_to_utc` | `epoch_s_to_utc(seconds)` | A timezone-aware UTC datetime from epoch seconds, or None when out of range. |
-| 0 | class `ExitInfoReader` | | ``ApplicationExitInfo #N`` entries of the ACTIVITY MANAGER PROCESS EXIT INFO part of the activity dump. |
+| 0 | class `ExitInfoReader` | `ExitInfoReader(report, section)` | ``ApplicationExitInfo #N`` entries of the ACTIVITY MANAGER PROCESS EXIT INFO part of the activity dump. |
 | | `ExitInfoReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `ExitInfoReader.finish` | `finish(self)` | (no docstring) |
 | 0 | `find_shared_stamps` | `find_shared_stamps(entries)` | The set of wall times (tests 2 and 3) that are factory stamps. |
@@ -135,19 +137,19 @@ Imported as a module by 12 artifact module(s), whose uses of its names are not c
 | 0 | `key_values` | `key_values(text)` | Split ``a=1 b=two c="x y"`` into a dict. Quoted values keep their spaces; a repeated key keeps its first value. |
 | 0 | `load_reports` | `load_reports(paths, relative_path, log)` | ``[(label, Report)]`` for the bug report texts among ``paths``, in path order. |
 | 0 | `normal_wall_text` | `normal_wall_text(text)` | ``YYYY-MM-DD HH:MM:SS`` from a printed wall time, or '' when the text is not that shape. |
-| 0 | class `PackageReader` | | ``dumpsys package``: one record per ``Package [name]`` of the Packages and Hidden system packages blocks. |
+| 0 | class `PackageReader` | `PackageReader(report, section)` | ``dumpsys package``: one record per ``Package [name]`` of the Packages and Hidden system packages blocks. |
 | | `PackageReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `PackageReader.finish` | `finish(self)` | (no docstring) |
 | 0 | `parse_setting_entry` | `parse_setting_entry(first, extra)` | The fields of one ``_id:N name:KEY pkg:WRITER value:VALUE [default:D] ...`` entry, or None. |
 | 0 | `parse_wall_time` | `parse_wall_time(text)` | A naive datetime from ``YYYY-MM-DD HH:MM:SS[.fff]`` (a ``T`` separator also works), or None. |
 | 0 | `plausible_epoch_ms` | `plausible_epoch_ms(milliseconds)` | True for 2009 to 2100. Rejects 0, small counters and garbage without guessing a unit. |
-| 0 | class `PreambleReader` | | The banner and the header lines before the first section. |
+| 0 | class `PreambleReader` | `PreambleReader(report, section)` | The banner and the header lines before the first section. |
 | | `PreambleReader.feed` | `feed(self, line_no, text)` | (no docstring) |
-| 0 | class `PropertiesReader` | | ``getprop`` output: ``[name]: [value]``. A value can continue over several lines. |
+| 0 | class `PropertiesReader` | `PropertiesReader(report, section)` | ``getprop`` output: ``[name]: [value]``. A value can continue over several lines. |
 | | `PropertiesReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | 0 | `read_report` | `read_report(source)` | The :class:`Report` of a source, read once per run and kept for the artifacts that follow. |
 | 0 | `readers_by_section` | `readers_by_section()` | ``{(kind, name): [reader classes]}`` for the section readers above. |
-| 0 | class `Report` | | What one pass over one report text found. Tables are lists of named tuples in the order printed. |
+| 0 | class `Report` | `Report(source)` | What one pass over one report text found. Tables are lists of named tuples in the order printed. |
 | | `Report.warn` | `warn(self, message)` | (no docstring) |
 | | `Report.add` | `add(self, table, row)` | Append to a table unless it holds MAX_ROWS rows. |
 | | `Report.finish` | `finish(self)` | Derive what needs the whole text (the zone, the factory stamps) once the pass is done. |
@@ -159,11 +161,11 @@ Imported as a module by 12 artifact module(s), whose uses of its names are not c
 | | `Report.time_value` | `time_value(self, text)` | ``(UTC datetime or None, note)`` for a device wall time printed in the report. |
 | 0 | `say_once` | `say_once(log, message)` | Pass a message to ``log`` unless this run has said it already (the artifacts of one run read the same files). |
 | 0 | `scan_lines` | `scan_lines(raw_lines, report)` | Feed every line of a report text to the section readers (one pass, nothing is stored but the tables). |
-| 0 | class `Section` | | A section of the text: ``kind`` is preamble, command or service; ``end_line`` is the first line that is not in it. |
-| 0 | class `SectionReader` | | Base of the readers that receive the lines of one kind of section. |
+| 0 | class `Section` | `Section(kind, name, line, group=False)` | A section of the text: ``kind`` is preamble, command or service; ``end_line`` is the first line that is not in it. |
+| 0 | class `SectionReader` | `SectionReader(report, section)` | Base of the readers that receive the lines of one kind of section. |
 | | `SectionReader.feed` | `feed(self, line_no, text)` | One line of the section body (the header line is not included). |
 | | `SectionReader.finish` | `finish(self)` | The section ended. |
-| 0 | class `SettingsReader` | | The SettingsProvider tables of the settings dump (global, secure, system; per user) and their change history. |
+| 0 | class `SettingsReader` | `SettingsReader(report, section)` | The SettingsProvider tables of the settings dump (global, secure, system; per user) and their change history. |
 | | `SettingsReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `SettingsReader.finish` | `finish(self)` | (no docstring) |
 | 0 | `sits_on_image` | `sits_on_image(code_path, hidden_system=False)` | True for a package from the hidden system block, or one whose code path is outside the user data mounts. |
@@ -171,11 +173,11 @@ Imported as a module by 12 artifact module(s), whose uses of its names are not c
 | 0 | `tidy` | `tidy(value)` | A text value with control characters (NUL, lone carriage returns, form feeds) shown as a space. |
 | 0 | `to_int` | `to_int(text, default=None)` | Integer value of a printed number (decimal or 0x hex), or ``default``. |
 | 0 | class `UsageCheckinReader` | | (no docstring) |
-| 0 | class `UsageReader` | | The ``Last 24 hour events`` list of each user in the usagestats dump (service form or checkin form). |
+| 0 | class `UsageReader` | `UsageReader(report, section)` | The ``Last 24 hour events`` list of each user in the usagestats dump (service form or checkin form). |
 | | `UsageReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | 0 | class `UsageServiceReader` | | (no docstring) |
-| 0 | class `ZoneClock` | | Converts the device's wall-clock text to UTC with the zone the report records. |
-| | `ZoneClock.known` | `known(self)` | (no docstring) |
+| 0 | class `ZoneClock` | `ZoneClock(zone_name)` | Converts the device's wall-clock text to UTC with the zone the report records. |
+| | `ZoneClock.known` | property | (no docstring) |
 | | `ZoneClock.to_utc` | `to_utc(self, text)` | UTC datetime for a printed wall time, or None when the zone is unknown or the text is not a time. |
 
 ## `scripts.context`
@@ -252,13 +254,13 @@ Imported as a module by 6 artifact module(s), whose uses of its names are not co
 | Used by | Name | Signature | First docstring line |
 | ---: | --- | --- | --- |
 | 7 | `rows_not_in_current` | `rows_not_in_current(db_path, query, params=(), key_columns=None, max_states=DEFAULT_MAX_STATES, include=(KIND_COMMITTED,))` | Rows the query returns in another state but not in the current one. |
-| 1 | class `WalStates` | | Open each readable state of a WAL-mode database read-only. |
+| 1 | class `WalStates` | `WalStates(db_path, max_states=DEFAULT_MAX_STATES, include=(KIND_COMMITTED,))` | Open each readable state of a WAL-mode database read-only. |
 | | `WalStates.summary` | `summary(self)` | One line describing what was read and what was not, for the log. |
 | | `WalStates.close` | `close(self)` | (no docstring) |
 | | `WalStates.states` | `states(self)` | Yield a State for each readable state, current first, as the class says. |
-| 0 | class `EarlierRow` | | A row read from another state that the current state does not hold. |
-| 0 | class `EarlierRun` | | The contiguous frames the previous log generation left after the current one. |
-| 0 | class `WalLog` | | The frame layout of one write-ahead log, as SQLite would validate it. |
+| 0 | class `EarlierRow` | `EarlierRow(values, status, first_state, last_state, first_frame, last_frame, earlier_generation=None, uncommitted=False)` | A row read from another state that the current state does not hold. |
+| 0 | class `EarlierRun` | `EarlierRun()` | The contiguous frames the previous log generation left after the current one. |
+| 0 | class `WalLog` | `WalLog(wal_path, fallback_page_size=0)` | The frame layout of one write-ahead log, as SQLite would validate it. |
 | | `WalLog.image` | `image(self, offset)` | (no docstring) |
 | | `WalLog.frame_header` | `frame_header(self, index)` | (no docstring) |
 
@@ -271,7 +273,7 @@ Imported as a module by 6 artifact module(s), whose uses of its names are not co
 | 4 | `parse_realm_file` | `parse_realm_file(path)` | Parse an unencrypted Realm file at ``path``. |
 | 2 | `realm_rows` | `realm_rows(path, class_name, section='active')` | Yield each row of ``class_name`` as a {column_name: value} dict. |
 | 0 | class `AbstractParser` | | (no docstring) |
-| 0 | class `ParseResult` | | (no docstring) |
+| 0 | class `ParseResult` | `ParseResult(**kwargs)` | (no docstring) |
 | 0 | class `RealmParser` | | (no docstring) |
 | | `RealmParser.can_parse` | `can_parse(self, path: str, peek_bytes: bytes)` | (no docstring) |
 | | `RealmParser.parse` | `parse(self, node: VFSNode, vfs: VFS, password: str \| None=None)` | (no docstring) |
@@ -334,7 +336,7 @@ Imported as a module by 2 artifact module(s), whose uses of its names are not co
 | ---: | --- | --- | --- |
 | 0 | `activity_of` | `activity_of(options, reason)` | The activity words for an entry: what recovery was started with, taken from the options. |
 | 0 | `entry_notes` | `entry_notes(entry, repeated_code)` | Short notes for an entry's row, as a list of texts. |
-| 0 | `formatted_volumes` | `formatted_volumes(extra)` | ``{code: [(volume, has start line, has end line), ...]}`` from the ``format_volume : <volume>`` lines, in order. |
+| 0 | `formatted_volumes` | `formatted_volumes(extra)` | ``{code: [(volume, has start line, has end line), ...]}`` from the ``format_volume : &lt;volume&gt;`` lines, in order. |
 | 0 | `header_date_before_floor` | `header_date_before_floor(moment)` | True for a header date before HEADER_NOTE_YEAR (it is shown as printed and noted). |
 | 0 | `option_value` | `option_value(entry, name)` | The text after ``=`` of the first option named ``name`` (for example ``--locale``) of an entry, or ''. |
 | 0 | `orphan_records` | `orphan_records(extra, known_codes, source_label, extra_label)` | One record for each code with format lines in the extra file and no entry among ``known_codes``. |
@@ -380,7 +382,7 @@ Imported as a module by 2 artifact module(s), whose uses of its names are not co
 | 1 | `decode` | `decode(data, message)` | Decode `data` as `message`, a name in SCHEMAS. Returns a dict by field name. |
 | 1 | `enum_label` | `enum_label(names, value)` | 'NAME (n)' for a stored enum value, 'unknown (n)' when the value is not in `names`. |
 | 1 | class `ProtoError` | | A value that does not decode as the message it is read as. |
-| 1 | class `SyncStore` | | The live records of one Sync Data/LevelDB folder. |
+| 1 | class `SyncStore` | `SyncStore(folder)` | The live records of one Sync Data/LevelDB folder. |
 | | `SyncStore.records_of` | `records_of(self, root_tag)` | (account storage, storage key, value) for the live data records of one type. |
 | | `SyncStore.local_cache_guid` | `local_cache_guid(self, root_tag, account=False)` | The cache GUID the type's DataTypeState records for this client, or ''. |
 
@@ -405,8 +407,8 @@ Imported as a module by 1 artifact module(s), whose uses of its names are not co
 
 | Used by | Name | Signature | First docstring line |
 | ---: | --- | --- | --- |
-| 1 | `user_of` | `user_of(path)` | The Android user number in a path ``.../users/<n>/...``, else ''. |
-| 0 | `current_rows` | `current_rows(root, namespace, user, label)` | Rows for the setup settings among the ``<setting>`` elements of an XML root. |
+| 1 | `user_of` | `user_of(path)` | The Android user number in a path ``.../users/&lt;n&gt;/...``, else ''. |
+| 0 | `current_rows` | `current_rows(root, namespace, user, label)` | Rows for the setup settings among the ``&lt;setting&gt;`` elements of an XML root. |
 | 0 | `history_rows` | `history_rows(text, namespace, user, label)` | ``(rows, warning)`` for the history file of the provider: one row for each entry of a setup setting. |
 | 0 | `ms_moment` | `ms_moment(value)` | UTC datetime for epoch milliseconds between 2009 and 2100, else None. |
 | 0 | `namespace_of` | `namespace_of(file_name)` | ``secure``, ``global`` or ``system`` for a file name such as ``settings_secure.xml``, else ''. |
@@ -430,7 +432,7 @@ Imported as a module by 1 artifact module(s), whose uses of its names are not co
 | 0 | `read_file` | `read_file(path, run=None)` | Reads one content query output file and returns a Dump. |
 | 0 | `status_text` | `status_text(dump)` | One line saying what a dump holds. |
 | 0 | `uri_of` | `uri_of(layout, path)` | The Uri entry a file of a known layout holds, or None for a URI this module does not read. |
-| 0 | class `Values` | | The values of one row, by column name. A column printed twice keeps its first value. |
+| 0 | class `Values` | `Values(record)` | The values of one row, by column name. A column printed twice keeps its first value. |
 | | `Values.has` | `has(self, name)` | (no docstring) |
 
 ## `scripts.dumpstate_accountspower`
@@ -441,49 +443,49 @@ Imported as a module by 1 artifact module(s), whose uses of its names are not co
 
 | Used by | Name | Signature | First docstring line |
 | ---: | --- | --- | --- |
-| 0 | class `AccountReader` | | ``dumpsys account``: the accounts, the account history table, the registered authenticators and the visibility lists. |
+| 0 | class `AccountReader` | `AccountReader(report, section)` | ``dumpsys account``: the accounts, the account history table, the registered authenticators and the visibility lists. |
 | | `AccountReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `AccountReader.finish` | `finish(self)` | (no docstring) |
 | 0 | `add` | `add(report, table, row)` | Append to a table unless it holds the row limit of the reader module. |
-| 0 | class `BackupReader` | | ``dumpsys backup``: the manager state, the transports, the participants and the two queues. |
+| 0 | class `BackupReader` | `BackupReader(report, section)` | ``dumpsys backup``: the manager state, the transports, the participants and the two queues. |
 | | `BackupReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `BackupReader.finish` | `finish(self)` | (no docstring) |
 | 0 | class `BatteryServiceReader` | | ``dumpsys battery``: the ``name: value`` lines of the Battery Service state. |
 | | `BatteryServiceReader.feed` | `feed(self, line_no, text)` | (no docstring) |
-| 0 | class `BatteryStatsReader` | | ``dumpsys batterystats``: the history, the daily periods, the estimated power use and the wake locks. |
+| 0 | class `BatteryStatsReader` | `BatteryStatsReader(report, section)` | ``dumpsys batterystats``: the history, the daily periods, the estimated power use and the wake locks. |
 | | `BatteryStatsReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `BatteryStatsReader.finish` | `finish(self)` | (no docstring) |
 | 0 | `bump` | `bump(report, name, amount=1)` | Count lines that were seen and not turned into rows. |
-| 0 | class `ContentReader` | | ``dumpsys content``: the sync manager state, its jobs, the adapter status table, the recent history and the per adapter history. |
+| 0 | class `ContentReader` | `ContentReader(report, section)` | ``dumpsys content``: the sync manager state, its jobs, the adapter status table, the recent history and the per adapter history. |
 | | `ContentReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `ContentReader.finish` | `finish(self)` | (no docstring) |
 | 0 | `dash_time` | `dash_time(text)` | ``YYYY-MM-DD HH:MM:SS[.mmm]`` from the ``YYYY-MM-DD-HH-MM-SS[-mmm]`` form some dumps print, or ''. |
-| 0 | class `DeviceIdleReader` | | ``dumpsys deviceidle``: the settings, the idling history and the state lines. |
+| 0 | class `DeviceIdleReader` | `DeviceIdleReader(report, section)` | ``dumpsys deviceidle``: the settings, the idling history and the state lines. |
 | | `DeviceIdleReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | 0 | `duration_ms` | `duration_ms(text)` | Milliseconds of a printed ``+1d04h32m55s844ms`` (sign and spaces ignored), or None when no part is found. |
 | 0 | `is_digits` | `is_digits(text)` | True for a non-empty text of ASCII digits. |
-| 0 | class `MeminfoReader` | | ``dumpsys meminfo``: the process lists, the per process blocks and the memory totals the dump prints. |
+| 0 | class `MeminfoReader` | `MeminfoReader(report, section)` | ``dumpsys meminfo``: the process lists, the per process blocks and the memory totals the dump prints. |
 | | `MeminfoReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `MeminfoReader.finish` | `finish(self)` | (no docstring) |
-| 0 | class `PowerReader` | | ``dumpsys power``: the state and settings lines, the wake locks held when the dump ran and the wake up and release histories. |
+| 0 | class `PowerReader` | `PowerReader(report, section)` | ``dumpsys power``: the state and settings lines, the wake locks held when the dump ran and the wake up and release histories. |
 | | `PowerReader.feed` | `feed(self, line_no, text)` | (no docstring) |
-| 0 | class `ProcStatsReader` | | ``dumpsys procstats``: the process lines of the committed periods and of the Process summary of the other periods. |
+| 0 | class `ProcStatsReader` | `ProcStatsReader(report, section)` | ``dumpsys procstats``: the process lines of the committed periods and of the Process summary of the other periods. |
 | | `ProcStatsReader.feed` | `feed(self, line_no, text)` | (no docstring) |
-| 0 | class `PsReader` | | ``ps -A -T -Z``: one record per thread. |
+| 0 | class `PsReader` | `PsReader(report, section)` | ``ps -A -T -Z``: one record per thread. |
 | | `PsReader.feed` | `feed(self, line_no, text)` | (no docstring) |
-| 0 | class `Reader` | | Base of the readers here: the same interface as ``SectionReader``. |
+| 0 | class `Reader` | `Reader(report, section)` | Base of the readers here: the same interface as ``SectionReader``. |
 | | `Reader.feed` | `feed(self, line_no, text)` | One line of the section body (the header line is not included). |
 | | `Reader.finish` | `finish(self)` | The section ended. |
 | 0 | `rows` | `rows(report, table)` | The rows of ``table`` (an empty list when the report has none). |
 | 0 | `split_account` | `split_account(text)` | ``(name, type, user)`` of a ``name/type uN`` text; the whole text as the name when it has another shape. |
-| 0 | class `Tables` | | The rows of one report, by table name, and the names of the tables that reached the row limit. |
+| 0 | class `Tables` | `Tables()` | The rows of one report, by table name, and the names of the tables that reached the row limit. |
 | 0 | `tables` | `tables(report)` | The :class:`Tables` of a report, made on first use. |
-| 0 | class `ThermalReader` | | ``dumpsys thermalservice``: status lines, the temperatures, cooling devices and thresholds the dump prints. |
+| 0 | class `ThermalReader` | `ThermalReader(report, section)` | ``dumpsys thermalservice``: status lines, the temperatures, cooling devices and thresholds the dump prints. |
 | | `ThermalReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | 0 | `tidy` | `tidy(value)` | A text value with control characters shown as a space. |
 | 0 | `to_float` | `to_float(text, default=None)` | Float value of a printed number, or ``default`` (nan and inf are not numbers here). |
 | 0 | `to_int` | `to_int(text, default=None)` | Integer value of a printed number (decimal or 0x hex), or ``default``. |
-| 0 | class `UserReader` | | ``dumpsys user``: one record per ``UserInfo`` and the facts the dump prints about the user manager. |
+| 0 | class `UserReader` | `UserReader(report, section)` | ``dumpsys user``: one record per ``UserInfo`` and the facts the dump prints about the user manager. |
 | | `UserReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `UserReader.finish` | `finish(self)` | (no docstring) |
 
@@ -499,22 +501,22 @@ Imported as a module by 1 artifact module(s), whose uses of its names are not co
 | 0 | class `ApResetInfoReader` | | (no docstring) |
 | 0 | `drop_entry_row` | `drop_entry_row(section, stamp, tag, kind_text, line_no)` | A dropbox entry row (a list that later lines complete). |
 | 0 | class `DropboxAppCrashesReader` | | (no docstring) |
-| 0 | class `DropboxPrintReader` | | ``dumpsys dropbox -p <tag>``: the entries of one tag, each after a divider line, with its header lines and body. |
+| 0 | class `DropboxPrintReader` | `DropboxPrintReader(report, section)` | ``dumpsys dropbox -p &lt;tag&gt;``: the entries of one tag, each after a divider line, with its header lines and body. |
 | | `DropboxPrintReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `DropboxPrintReader.finish` | `finish(self)` | (no docstring) |
 | 0 | class `DropboxServerCrashesReader` | | (no docstring) |
-| 0 | class `DropboxServiceReader` | | ``dumpsys dropbox``: one line per entry (time, tag, content type and size) and an indented preview. |
+| 0 | class `DropboxServiceReader` | `DropboxServiceReader(report, section)` | ``dumpsys dropbox``: one line per entry (time, tag, content type and size) and an indented preview. |
 | | `DropboxServiceReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `DropboxServiceReader.finish` | `finish(self)` | (no docstring) |
 | 0 | class `DropboxWatchdogReader` | | (no docstring) |
 | 0 | class `EventLogReader` | | (no docstring) |
 | 0 | class `HistoricalAnrReader` | | (no docstring) |
 | 0 | class `KernelLogReader` | | (no docstring) |
-| 0 | class `KernelReader` | | The lines of KERNEL LOG (dmesg) or LAST KMSG, one row per non-blank line. |
+| 0 | class `KernelReader` | `KernelReader(report, section)` | The lines of KERNEL LOG (dmesg) or LAST KMSG, one row per non-blank line. |
 | | `KernelReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | 0 | class `LastKmsgReader` | | (no docstring) |
 | 0 | `logcat_utc` | `logcat_utc(report, text)` | UTC datetime or None for a logcat time ``MM-DD HH:MM:SS.mmm`` (the year is inferred from the report time). |
-| 0 | class `LogcatReader` | | Lines of a logcat section: one row per line in logcat form. Other lines are counted, not kept. |
+| 0 | class `LogcatReader` | `LogcatReader(report, section)` | Lines of a logcat section: one row per line in logcat form. Other lines are counted, not kept. |
 | | `LogcatReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | 0 | `note_cut` | `note_cut(report, section_name, text)` | Remember that the platform printed its time limit line inside a command section. |
 | 0 | `parse_kernel_line` | `parse_kernel_line(text)` | ``(seconds, level, context, message)`` of a kernel message line; the first three are '' when the stamp is missing. |
@@ -524,24 +526,24 @@ Imported as a module by 1 artifact module(s), whose uses of its names are not co
 | 0 | `read_trace_text` | `read_trace_text(source, lines, limit=MAX_ROWS)` | Thread rows of a trace file: ``lines`` yields the text of each line. At most ``limit`` rows are kept. |
 | 0 | `record_time_text` | `record_time_text(text)` | ``YYYY-MM-DD HH:MM:SS`` for a ``yy/mm/dd HH:MM:SS`` record header (two digit years are read as 20yy), or ''. |
 | 0 | `register` | `register()` | Add the readers and the section index entries to the pass of ``dumpstate_reader`` (once, in any import order). |
-| 0 | class `ResetReader` | | The reset history files: ``time \| EVENT \| flag \| detail`` lines and (in the power off files) reset records. |
+| 0 | class `ResetReader` | `ResetReader(report, section)` | The reset history files: ``time \| EVENT \| flag \| detail`` lines and (in the power off files) reset records. |
 | | `ResetReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `ResetReader.finish` | `finish(self)` | (no docstring) |
 | 0 | `split_tag` | `split_tag(rest)` | ``(tag, message)`` from ``tag    : message`` (the platform pads a short tag to eight characters). |
 | 0 | `stamp_utc` | `stamp_utc(report, text)` | ``(UTC datetime or None, note)`` for ``YYYY-MM-DD HH:MM:SS[.fff]`` with or without a trailing ``+HHMM`` offset. |
 | 0 | class `SystemLogAfterDoneReader` | | (no docstring) |
 | 0 | class `SystemLogReader` | | (no docstring) |
-| 0 | class `Tables` | | The rows of this module's sections for one report. |
+| 0 | class `Tables` | `Tables()` | The rows of this module's sections for one report. |
 | 0 | `tables` | `tables(report)` | The :class:`Tables` of a report (made on first use). |
-| 0 | class `TraceParser` | | Reads a thread dump (ART ``DALVIK THREADS`` and native thread lists) and emits one row per thread. |
+| 0 | class `TraceParser` | `TraceParser(source, emit)` | Reads a thread dump (ART ``DALVIK THREADS`` and native thread lists) and emits one row per thread. |
 | | `TraceParser.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `TraceParser.finish` | `finish(self)` | (no docstring) |
-| 0 | class `TraceReader` | | A VM TRACES or HISTORICAL ANR command section. |
+| 0 | class `TraceReader` | `TraceReader(report, section)` | A VM TRACES or HISTORICAL ANR command section. |
 | | `TraceReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `TraceReader.finish` | `finish(self)` | (no docstring) |
 | 0 | `vendor_time` | `vendor_time(text)` | The first time printed in the first 80 characters of a line, as printed ('' when there is none). |
 | 0 | `vendor_time_to_wall` | `vendor_time_to_wall(text)` | ``(YYYY-MM-DD HH:MM:SS[.fff] or '', note)`` for a time returned by :func:`vendor_time`. |
-| 0 | class `VendorLinesReader` | | Every non-blank line of one vendor service, with its indent and the first time printed in it. |
+| 0 | class `VendorLinesReader` | `VendorLinesReader(report, section)` | Every non-blank line of one vendor service, with its indent and the first time printed in it. |
 | | `VendorLinesReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | 0 | class `VmTracesAtLastAnrReader` | | (no docstring) |
 | 0 | class `VmTracesJustNowReader` | | (no docstring) |
@@ -555,22 +557,22 @@ Imported as a module by 1 artifact module(s), whose uses of its names are not co
 
 | Used by | Name | Signature | First docstring line |
 | ---: | --- | --- | --- |
-| 0 | class `AppOpsReader` | | ``dumpsys appops``: ``Uid N:`` blocks with their uid modes, packages, ops and Access / Reject lines. |
+| 0 | class `AppOpsReader` | `AppOpsReader(report, section)` | ``dumpsys appops``: ``Uid N:`` blocks with their uid modes, packages, ops and Access / Reject lines. |
 | | `AppOpsReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `AppOpsReader.finish` | `finish(self)` | (no docstring) |
 | 0 | `cut` | `cut(value, limit=NAME_CHARS)` | A tidy text cut to ``limit`` characters. |
 | 0 | `duration_ms` | `duration_ms(text)` | Milliseconds of a printed duration such as ``+1h51m17s15ms`` (a sign is accepted), or None when it is another shape. |
 | 0 | `indent_of` | `indent_of(text)` | (no docstring) |
-| 0 | class `PackagePermissionsReader` | | ``dumpsys package``: install and runtime permission lines of each holder, and the Permissions table. |
+| 0 | class `PackagePermissionsReader` | `PackagePermissionsReader(report, section)` | ``dumpsys package``: install and runtime permission lines of each holder, and the Permissions table. |
 | | `PackagePermissionsReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `PackagePermissionsReader.finish` | `finish(self)` | (no docstring) |
 | 0 | `parse_permission_line` | `parse_permission_line(body)` | ``(permission, granted, flags, user id)`` of ``name: granted=true, flags=[ A\|B], userId=11``, or None. |
-| 0 | class `PermissionManagerReader` | | ``dumpsys permissionmgr``: ``App ID: N`` / ``User: U`` / ``Permissions:`` with ``name: granted=..., flags=[...]``. |
+| 0 | class `PermissionManagerReader` | `PermissionManagerReader(report, section)` | ``dumpsys permissionmgr``: ``App ID: N`` / ``User: U`` / ``Permissions:`` with ``name: granted=..., flags=[...]``. |
 | | `PermissionManagerReader.feed` | `feed(self, line_no, text)` | (no docstring) |
-| 0 | class `PermissionReader` | | Same contract as the readers of ``dumpstate_reader.SectionReader``: ``kind``, ``name``, ``feed``, ``finish``. |
+| 0 | class `PermissionReader` | `PermissionReader(report, section)` | Same contract as the readers of ``dumpstate_reader.SectionReader``: ``kind``, ``name``, ``feed``, ``finish``. |
 | | `PermissionReader.feed` | `feed(self, line_no, text)` | One line of the section body (the header line is not included). |
 | | `PermissionReader.finish` | `finish(self)` | The section ended. |
-| 0 | class `RoleReader` | | ``dumpsys role``: ``user_id=`` then, for each role, ``name=``, ``fallback_enabled=`` and ``holders=``. |
+| 0 | class `RoleReader` | `RoleReader(report, section)` | ``dumpsys role``: ``user_id=`` then, for each role, ``name=``, ``fallback_enabled=`` and ``holders=``. |
 | | `RoleReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `RoleReader.finish` | `finish(self)` | (no docstring) |
 | 0 | `rows_of` | `rows_of(report, name)` | The rows of ``name`` a report holds (none when no reader of this module ran on it). |
@@ -587,31 +589,31 @@ Imported as a module by 1 artifact module(s), whose uses of its names are not co
 
 | Used by | Name | Signature | First docstring line |
 | ---: | --- | --- | --- |
-| 0 | class `AdbManagerReader` | | The ADB manager state: nested ``name={`` blocks with ``key=value`` leaves, shown as ``path`` and ``value``. |
+| 0 | class `AdbManagerReader` | `AdbManagerReader(report, section)` | The ADB manager state: nested ``name={`` blocks with ``key=value`` leaves, shown as ``path`` and ``value``. |
 | | `AdbManagerReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | 0 | `add` | `add(report, table, row)` | Append to one of the tables above, creating it on the report object on first use. |
-| 0 | class `BiometricReader` | | The ``fingerprint`` and ``face`` service dumps: the statistics JSON and the authentication session coordinator log. |
+| 0 | class `BiometricReader` | `BiometricReader(report, section)` | The ``fingerprint`` and ``face`` service dumps: the statistics JSON and the authentication session coordinator log. |
 | | `BiometricReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `BiometricReader.finish` | `finish(self)` | (no docstring) |
 | 0 | class `BiometricSensorReader` | | The ``Sensors:`` list of the biometric service dump. |
 | | `BiometricSensorReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | 0 | `cap` | `cap(text, size=TEXT_CAP)` | (no docstring) |
-| 0 | class `DbInfoReader` | | The ``dbinfo`` dump: connection pools, the database file listings and the recently executed operations. |
+| 0 | class `DbInfoReader` | `DbInfoReader(report, section)` | The ``dbinfo`` dump: connection pools, the database file listings and the recently executed operations. |
 | | `DbInfoReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `DbInfoReader.finish` | `finish(self)` | (no docstring) |
-| 0 | class `DeviceConfigReader` | | The ``device_config`` dump: one ``namespace/flag=value`` line for each flag (a value can continue on the next lines). |
+| 0 | class `DeviceConfigReader` | `DeviceConfigReader(report, section)` | The ``device_config`` dump: one ``namespace/flag=value`` line for each flag (a value can continue on the next lines). |
 | | `DeviceConfigReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `DeviceConfigReader.finish` | `finish(self)` | (no docstring) |
-| 0 | class `DevicePolicyReader` | | ``dumpsys device_policy``: device admins, owners, policy state and the policy engine's local and global policies. |
+| 0 | class `DevicePolicyReader` | `DevicePolicyReader(report, section)` | ``dumpsys device_policy``: device admins, owners, policy state and the policy engine's local and global policies. |
 | | `DevicePolicyReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `DevicePolicyReader.finish` | `finish(self)` | (no docstring) |
 | 0 | class `DfInodesReader` | | ``df -i`` (the inode counts of each file system), kept as printed because a count can be larger than 2^63. |
 | | `DfInodesReader.make` | `make(parts, line_no)` | (no docstring) |
-| 0 | class `DfReader` | | ``df`` (the free space of each file system). |
+| 0 | class `DfReader` | `DfReader(report, section)` | ``df`` (the free space of each file system). |
 | | `DfReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `DfReader.make` | `make(parts, line_no)` | (no docstring) |
 | | `DfReader.finish` | `finish(self)` | (no docstring) |
-| 0 | class `DiskStatsReader` | | The ``diskstats`` dump: free space lines, size totals, and the per-package size lists. |
+| 0 | class `DiskStatsReader` | `DiskStatsReader(report, section)` | The ``diskstats`` dump: free space lines, size totals, and the per-package size lists. |
 | | `DiskStatsReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `DiskStatsReader.finish` | `finish(self)` | (no docstring) |
 | 0 | `enforcing_admin` | `enforcing_admin(text)` | ``(package, authorities)`` of an ``EnforcingAdmin { mPackageName= ..., mAuthorities= [...] ...}`` text. |
@@ -623,12 +625,12 @@ Imported as a module by 1 artifact module(s), whose uses of its names are not co
 | | `KnoxCustomReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | 0 | class `KnoxGuardReader` | | The ``knoxguard_service`` dump: a few state lines and the timestamped event lines. |
 | | `KnoxGuardReader.feed` | `feed(self, line_no, text)` | (no docstring) |
-| 0 | class `LockSettingsReader` | | ``dumpsys lock_settings``: the credential protector state of each user, the protector files and the strong auth state. |
+| 0 | class `LockSettingsReader` | `LockSettingsReader(report, section)` | ``dumpsys lock_settings``: the credential protector state of each user, the protector files and the strong auth state. |
 | | `LockSettingsReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `LockSettingsReader.finish` | `finish(self)` | (no docstring) |
 | 0 | class `MountPointReader` | | ``mount`` (one line per mount: device, mount point, file system type and options). |
 | | `MountPointReader.feed` | `feed(self, line_no, text)` | (no docstring) |
-| 0 | class `MountServiceReader` | | The ``mount`` service dump: storage volumes, volumes, disks, the scalar lines and the vold log. |
+| 0 | class `MountServiceReader` | `MountServiceReader(report, section)` | The ``mount`` service dump: storage volumes, volumes, disks, the scalar lines and the vold log. |
 | | `MountServiceReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `MountServiceReader.finish` | `finish(self)` | (no docstring) |
 | 0 | `number` | `number(text)` | An int for a printed integer that SQLite can hold, the printed text for any other value, '' for nothing. |
@@ -637,17 +639,17 @@ Imported as a module by 1 artifact module(s), whose uses of its names are not co
 | | `PlatformCompatReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | 0 | class `ProductReleaseFlagsReader` | | (no docstring) |
 | 0 | `register` | `register()` | Add the readers and the section index entries to the pass of ``dumpstate_reader`` (once, in any import order). |
-| 0 | class `ReleaseFlagsReader` | | A ``BUILD-TIME RELEASE FLAGS`` section (the ``build_flags.json`` text of one partition). |
+| 0 | class `ReleaseFlagsReader` | `ReleaseFlagsReader(report, section)` | A ``BUILD-TIME RELEASE FLAGS`` section (the ``build_flags.json`` text of one partition). |
 | | `ReleaseFlagsReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `ReleaseFlagsReader.finish` | `finish(self)` | (no docstring) |
-| 0 | class `SdkExtensionsReader` | | ``derive_sdk --dump``: the extension version properties, the module versions and the version requirements. |
+| 0 | class `SdkExtensionsReader` | `SdkExtensionsReader(report, section)` | ``derive_sdk --dump``: the extension version properties, the module versions and the version requirements. |
 | | `SdkExtensionsReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | 0 | `split_pair` | `split_pair(body)` | ``(name, value)`` for ``name=value`` or ``name: value``, whichever delimiter comes first. |
 | 0 | class `StoragedIoReader` | | ``storaged -u -p`` (the counters of each uid, with the column names the section prints). |
 | | `StoragedIoReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | 0 | class `SystemExtReleaseFlagsReader` | | (no docstring) |
 | 0 | class `SystemReleaseFlagsReader` | | (no docstring) |
-| 0 | class `TrustReader` | | The trust manager dump: each user's trust state, the trust agents and the event list. |
+| 0 | class `TrustReader` | `TrustReader(report, section)` | The trust manager dump: each user's trust state, the trust agents and the event list. |
 | | `TrustReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `TrustReader.finish` | `finish(self)` | (no docstring) |
 | 0 | `utc_from_iso` | `utc_from_iso(text)` | Timezone-aware UTC datetime from ``2026-04-27T15:30:05.259227Z`` or None. |
@@ -662,29 +664,29 @@ Imported as a module by 1 artifact module(s), whose uses of its names are not co
 
 | Used by | Name | Signature | First docstring line |
 | ---: | --- | --- | --- |
-| 0 | class `AccessibilityReader` | | The accessibility dump: the installed, bound, enabled, binding and crashed service lists of the current user. |
+| 0 | class `AccessibilityReader` | `AccessibilityReader(report, section)` | The accessibility dump: the installed, bound, enabled, binding and crashed service lists of the current user. |
 | | `AccessibilityReader.feed` | `feed(self, line_no, text)` | (no docstring) |
-| 0 | class `AudioFlingerReader` | | The media.audio_flinger dump: the clients registered for notifications and the global session references. |
+| 0 | class `AudioFlingerReader` | `AudioFlingerReader(report, section)` | The media.audio_flinger dump: the clients registered for notifications and the global session references. |
 | | `AudioFlingerReader.feed` | `feed(self, line_no, text)` | (no docstring) |
-| 0 | class `AudioReader` | | The audio service dump: the timestamped lines of its event logs (focus, playback, recording, devices, volume). |
+| 0 | class `AudioReader` | `AudioReader(report, section)` | The audio service dump: the timestamped lines of its event logs (focus, playback, recording, devices, volume). |
 | | `AudioReader.feed` | `feed(self, line_no, text)` | (no docstring) |
-| 0 | class `CameraReader` | | The media.camera dump: the service events log and the open or closed state of each camera device. |
+| 0 | class `CameraReader` | `CameraReader(report, section)` | The media.camera dump: the service events log and the open or closed state of each camera device. |
 | | `CameraReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `CameraReader.finish` | `finish(self)` | (no docstring) |
 | 0 | `clean` | `clean(text, cap=TEXT_CAP)` | (no docstring) |
-| 0 | class `DisplayReader` | | The display dump: the display states, the logical displays and the brightness event lists. |
+| 0 | class `DisplayReader` | `DisplayReader(report, section)` | The display dump: the display states, the logical displays and the brightness event lists. |
 | | `DisplayReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `DisplayReader.finish` | `finish(self)` | (no docstring) |
 | 0 | `indent_of` | `indent_of(text)` | (no docstring) |
-| 0 | class `InputMethodReader` | | The input_method dump: the input methods, the start-input history and the soft-input show and hide history. |
+| 0 | class `InputMethodReader` | `InputMethodReader(report, section)` | The input_method dump: the input methods, the start-input history and the soft-input show and hide history. |
 | | `InputMethodReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `InputMethodReader.finish` | `finish(self)` | (no docstring) |
-| 0 | class `LocationReader` | | The location service dump: providers, listeners, last known locations, aggregate usage and the event log. |
+| 0 | class `LocationReader` | `LocationReader(report, section)` | The location service dump: providers, listeners, last known locations, aggregate usage and the event log. |
 | | `LocationReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `LocationReader.finish` | `finish(self)` | (no docstring) |
 | 0 | class `MediaMetricsReader` | | The media.metrics dump: the records the media metrics service kept (audio tracks, codecs, extractors, recorders). |
 | | `MediaMetricsReader.feed` | `feed(self, line_no, text)` | (no docstring) |
-| 0 | class `MediaSessionReader` | | The media_session dump: the sessions it lists and the order in which uids last played audio. |
+| 0 | class `MediaSessionReader` | `MediaSessionReader(report, section)` | The media_session dump: the sessions it lists and the order in which uids last played audio. |
 | | `MediaSessionReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `MediaSessionReader.finish` | `finish(self)` | (no docstring) |
 | 0 | `parse_location_text` | `parse_location_text(text)` | ``(provider, latitude, longitude, accuracy, elapsed)`` as printed in a Location[...] text, empty where not printed. |
@@ -692,17 +694,17 @@ Imported as a module by 1 artifact module(s), whose uses of its names are not co
 | 0 | `register` | `register()` | Add the readers and the section index entries to the pass of ``dumpstate_reader`` (once, in any import order). |
 | 0 | `request_work_source` | `request_work_source(text)` | The text after the Request[...] part of a listener line, the WorkSource if there is one. |
 | 0 | `rows` | `rows(report, name)` | The rows of one of this module's tables on a Report (an empty list when the section was not read). |
-| 0 | class `SensorReader` | | The sensorservice dump: the sensor list with its active state, connections, previous registrations and recent events. |
+| 0 | class `SensorReader` | `SensorReader(report, section)` | The sensorservice dump: the sensor list with its active state, connections, previous registrations and recent events. |
 | | `SensorReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `SensorReader.finish` | `finish(self)` | (no docstring) |
 | 0 | `split_clock` | `split_clock(text)` | ``(time text, rest)`` for a line that starts with ``MM-DD HH:MM:SS.mmm`` (or ``:mmm``, or with a year), else ``('', text)``. |
-| 0 | class `SurfaceFlingerReader` | | The SurfaceFlinger dump: the HWC layer list of each display (name, z, window type, composition type, focus mark). |
+| 0 | class `SurfaceFlingerReader` | `SurfaceFlingerReader(report, section)` | The SurfaceFlinger dump: the HWC layer list of each display (name, z, window type, composition type, focus mark). |
 | | `SurfaceFlingerReader.feed` | `feed(self, line_no, text)` | (no docstring) |
-| 0 | class `TimeZoneReader` | | The location_time_zone_manager dump: provider configuration, controller state and the state histories. |
+| 0 | class `TimeZoneReader` | `TimeZoneReader(report, section)` | The location_time_zone_manager dump: provider configuration, controller state and the state histories. |
 | | `TimeZoneReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | 0 | `to_uid` | `to_uid(text)` | (no docstring) |
 | 0 | `utc_for` | `utc_for(report, time_text)` | UTC datetime or None for a time text of split_clock: with a year it is converted as printed, without one the year rule of the settings history is used. |
-| 0 | class `WindowReader` | | The window dump: the focus lines of each display and the window list. |
+| 0 | class `WindowReader` | `WindowReader(report, section)` | The window dump: the focus lines of each display and the window list. |
 | | `WindowReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `WindowReader.finish` | `finish(self)` | (no docstring) |
 
@@ -718,7 +720,7 @@ Imported as a module by 1 artifact module(s), whose uses of its names are not co
 | 0 | `person_count` | `person_count(text)` | Number of entries in ``Arrays.toString(Person[])``: None for ``null``, 0 for ``[]``. |
 | 0 | `register` | `register()` | Add the reader and the section index entry to the pass of ``dumpstate_reader`` (once, in any import order). |
 | 0 | `rows_of` | `rows_of(report)` | The shortcut rows a report holds (none when the section was not in it). |
-| 0 | class `ShortcutReader` | | ``dumpsys shortcut``: the ShortcutInfo entries of each user and package. |
+| 0 | class `ShortcutReader` | `ShortcutReader(report, section)` | ``dumpsys shortcut``: the ShortcutInfo entries of each user and package. |
 | | `ShortcutReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `ShortcutReader.finish` | `finish(self)` | (no docstring) |
 | 0 | `split_letters` | `split_letters(letters)` | ``(names, leftover)`` for a flag letter run such as ``DynIc-fStrLiv``, read left to right. |
@@ -731,7 +733,7 @@ Imported as a module by 1 artifact module(s), whose uses of its names are not co
 
 | Used by | Name | Signature | First docstring line |
 | ---: | --- | --- | --- |
-| 0 | class `AlarmReader` | | Pending alarms, the next alarm clock and the history lists of the alarm dump. |
+| 0 | class `AlarmReader` | `AlarmReader(report, section)` | Pending alarms, the next alarm clock and the history lists of the alarm dump. |
 | | `AlarmReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `AlarmReader.finish` | `finish(self)` | (no docstring) |
 | 0 | `anchor` | `anchor(report)` | ``(nowRTC milliseconds, wall text)`` printed in the alarm dump, or None. |
@@ -741,10 +743,10 @@ Imported as a module by 1 artifact module(s), whose uses of its names are not co
 | 0 | `counts` | `counts(report)` | The counters of a report (``{(what, key): number}``); empty for a report in which no reader of this module ran. |
 | 0 | `duration_ms` | `duration_ms(text)` | Milliseconds of a printed duration such as ``-1h7m31s759ms`` or ``+22m30s0ms``; None when it is not one. |
 | 0 | `ensure` | `ensure(report)` | Create the ``uj_*`` tables and counters on a report the first time a reader of this module runs. |
-| 0 | class `JobReader` | | Registered jobs and recently completed jobs of the jobscheduler dump. |
+| 0 | class `JobReader` | `JobReader(report, section)` | Registered jobs and recently completed jobs of the jobscheduler dump. |
 | | `JobReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `JobReader.finish` | `finish(self)` | (no docstring) |
-| 0 | class `NotificationReader` | | Notification list, archive, listeners, assistants and the per-package channels of the notification dump. |
+| 0 | class `NotificationReader` | `NotificationReader(report, section)` | Notification list, archive, listeners, assistants and the per-package channels of the notification dump. |
 | | `NotificationReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `NotificationReader.finish` | `finish(self)` | (no docstring) |
 | 0 | `register` | `register()` | Add the readers to the pass of ``dumpstate_reader`` once. |
@@ -752,7 +754,7 @@ Imported as a module by 1 artifact module(s), whose uses of its names are not co
 | 0 | `time_amount_ms` | `time_amount_ms(text)` | Milliseconds of a printed amount of time: digits (milliseconds, checkin form) or a clock text (service form). |
 | 0 | `uid_user` | `uid_user(label)` | The Android user of a printed uid (``u11a283`` is user 11, a plain number is its uid divided by 100000), or None. |
 | 0 | class `UsageIntervalCheckinReader` | | (no docstring) |
-| 0 | class `UsageIntervalReader` | | In-memory daily, weekly, monthly and yearly stats per package, event aggregations and App Standby States. |
+| 0 | class `UsageIntervalReader` | `UsageIntervalReader(report, section)` | In-memory daily, weekly, monthly and yearly stats per package, event aggregations and App Standby States. |
 | | `UsageIntervalReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `UsageIntervalReader.finish` | `finish(self)` | (no docstring) |
 | 0 | class `UsageIntervalServiceReader` | | (no docstring) |
@@ -770,9 +772,9 @@ Imported as a module by 1 artifact module(s), whose uses of its names are not co
 | 1 | `read_frames` | `read_frames(source, carve=False, key_crc=0)` | Every frame in file order, superseded values and deletions included. |
 | 0 | `hive_entries` | `hive_entries(path, carve=False)` | ``(live entries, superseded frame counts per key)`` for one box. |
 | 0 | class `HiveDateTime` | | Milliseconds since the Unix epoch, as the box stores them. |
-| 0 | class `HiveListRef` | | A reference into another box: a box name and the keys it points at. |
-| 0 | class `HiveObject` | | A value written by a developer-defined TypeAdapter. |
-| 0 | class `HiveRaw` | | A developer type whose payload does not describe itself. |
+| 0 | class `HiveListRef` | `HiveListRef(box_name, keys)` | A reference into another box: a box name and the keys it points at. |
+| 0 | class `HiveObject` | `HiveObject(type_id, fields)` | A value written by a developer-defined TypeAdapter. |
+| 0 | class `HiveRaw` | `HiveRaw(type_id, payload)` | A developer type whose payload does not describe itself. |
 | 0 | class `HiveSet` | | A Dart ``Set``, kept in the order the box stores it. |
 | 0 | `read_value` | `read_value(buf, index)` | One value at ``index``, returning it and the index after it. |
 | 0 | `superseded_counts` | `superseded_counts(frames)` | ``{key: how many of its frames were later replaced}``. |
@@ -811,12 +813,12 @@ artifact modules importing any one name from it, or the module itself.
 | 16 | `scripts.artifacts.chrome` | artifact module |
 | 9 | `scripts.blackboxprotobuf` | package |
 | 9 | `scripts.ccl.ccl_android_fcm_queued_messages` | vendored or generated |
-| 9 | `scripts.vendor.ccl` | package |
+| 9 | `scripts.vendor.ccl.ccl_leveldb` | vendored or generated |
 | 6 | `scripts.artifacts.settingsSecure` | artifact module |
 | 4 | `scripts.artifacts.gmailEmails` | artifact module |
 | 2 | `scripts.artifacts.appOpsAccesses` | artifact module |
 | 2 | `scripts.artifacts.discordServers` | artifact module |
-| 1 | `scripts.artifacts` | package |
+| 1 | `scripts.artifacts.WhatsApp` | artifact module |
 | 1 | `scripts.artifacts.androidDropbox` | artifact module |
 | 1 | `scripts.artifacts.chromeSyncSessions` | artifact module |
 | 1 | `scripts.artifacts.chromiumHttpCache` | artifact module |
@@ -824,8 +826,10 @@ artifact modules importing any one name from it, or the module itself.
 | 1 | `scripts.artifacts.gmail` | artifact module |
 | 1 | `scripts.artifacts.googleQuickSearchboxZeroPrefix` | artifact module |
 | 1 | `scripts.artifacts.notification_history_pb.notificationhistory_pb2` | vendored or generated |
-| 1 | `scripts.artifacts.recentactivity_pb` | package |
+| 1 | `scripts.artifacts.recentactivity_pb.task_snapshot_pb2` | vendored or generated |
 | 1 | `scripts.artifacts.sRecoveryhist` | artifact module |
 | 1 | `scripts.artifacts.usagestats_pb.usagestatsservice_pb2` | vendored or generated |
 | 1 | `scripts.artifacts.usagestats_pb.usagestatsservice_v2_pb2` | vendored or generated |
-| 1 | `scripts.vendor` | package |
+| 1 | `scripts.vendor.c2pareader` | vendored or generated |
+| 1 | `scripts.vendor.chromiumcacheprobe` | vendored or generated |
+| 1 | `scripts.vendor.exoprobe` | vendored or generated |
