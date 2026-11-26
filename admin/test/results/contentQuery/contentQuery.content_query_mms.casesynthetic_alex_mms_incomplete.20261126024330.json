@@ -1,0 +1,70 @@
+{
+  "metadata": {
+    "module_name": "contentQuery",
+    "artifact_name": "MMS (content query)",
+    "function_name": "content_query_mms",
+    "case_number": "casesynthetic_alex_mms_incomplete",
+    "number_of_columns": 20,
+    "number_of_rows": 1,
+    "total_data_size_bytes": 352,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/contentQuery/testdata.contentQuery.content_query_mms.casesynthetic_alex_mms_incomplete.zip",
+    "start_time": "2026-11-26T02:43:30.313173+00:00",
+    "end_time": "2026-11-26T02:43:30.375344+00:00",
+    "run_time_seconds": 0.001585245132446289,
+    "last_commit": {
+      "hash": "f16d0303e8636453a375fc0aaed535514c1726b7",
+      "author_name": "Maximiliano Telmo",
+      "author_email": "50964800+Maxitelmo@users.noreply.github.com",
+      "date": "2026-11-25T19:19:57-03:00",
+      "message": "Use the agreed artifact categories for the content query artifacts"
+    }
+  },
+  "headers": [
+    "Date (UTC)",
+    "Date Sent (UTC)",
+    "Message Box",
+    "From",
+    "To",
+    "Cc",
+    "Bcc",
+    "Subject",
+    "Message Type",
+    "Content Type",
+    "Read",
+    "Seen",
+    "Text Only",
+    "Thread ID",
+    "Subscription ID",
+    "Creator",
+    "Message ID",
+    "Parse Note",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1767243600,
+      1767243590,
+      "1 (INBOX)",
+      "+15550100003",
+      "insert-address-token",
+      "+15550100004; test.user@example.com",
+      "",
+      "NULL",
+      "132",
+      "application/vnd.wap.multipart.related",
+      "1",
+      "1",
+      "0",
+      "5",
+      "1",
+      "com.example.messaging",
+      "7",
+      "the provider error text after this row was read as an error; it could also be the end of the last value, which would then be longer",
+      1,
+      "ALEX_SYNTH0001/content_provider_SYNTH0001/mms/mms.txt"
+    ]
+  ]
+}
