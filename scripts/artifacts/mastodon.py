@@ -66,13 +66,13 @@ __artifacts_v2__ = {
     },
     "get_mastodon_accounts": {
         "name": "Mastodon - Account Details",
-        "description": "Parses Mastodon account details",
+        "description": "Mastodon account details from accounts.json, with the token creation time and the two refresh times the app stores beside each account",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-12-07",
         "last_update_date": "2026-11-26",
         "requirements": "BeautifulSoup",
         "category": "Social Media",
-        "notes": "Fields are read from the one-letter keys the app wrote at versionCode 93: b for the account, c for the instance domain and j for the push subscription. The letters follow the field order of AccountSession at release v2.5.0 (https://github.com/mastodon/mastodon-android/blob/1124bc48c253567a4b79a4fd0cab3a8a16f86bd8/mastodon/src/main/java/org/joinmastodon/android/api/session/AccountSession.java#L48-L57), and a later commit lists them as alternates of named keys (https://github.com/mastodon/mastodon-android/blob/24d8c5d9d012858e8928ab465b455ad52805a9ee/mastodon/src/main/java/org/joinmastodon/android/api/session/AccountSession.java#L63-L81). At a later commit (versionCode 190) the app keeps accounts in the accounts table of accounts.db. It moves an existing accounts.json into that table and deletes the file (https://github.com/mastodon/mastodon-android/blob/24d8c5d9d012858e8928ab465b455ad52805a9ee/mastodon/src/main/java/org/joinmastodon/android/api/session/AccountSessionManager.java#L843-L861). This artifact does not read accounts.db. An entry without the b, c and j keys gives a row with every column blank. Account (acct) is the acct field of the account. Bio has its HTML tags removed. The entry also holds the time the access token was generated (https://github.com/mastodon/mastodon-android/blob/1124bc48c253567a4b79a4fd0cab3a8a16f86bd8/mastodon/src/main/java/org/joinmastodon/android/model/Token.java#L23-L26) and two millisecond times: one the app sets when it adds the account and when it refreshes the account info (https://github.com/mastodon/mastodon-android/blob/1124bc48c253567a4b79a4fd0cab3a8a16f86bd8/mastodon/src/main/java/org/joinmastodon/android/api/session/AccountSession.java#L80 and https://github.com/mastodon/mastodon-android/blob/1124bc48c253567a4b79a4fd0cab3a8a16f86bd8/mastodon/src/main/java/org/joinmastodon/android/api/session/AccountSessionManager.java#L293), and one it sets when it refreshes the word filters (https://github.com/mastodon/mastodon-android/blob/1124bc48c253567a4b79a4fd0cab3a8a16f86bd8/mastodon/src/main/java/org/joinmastodon/android/api/session/AccountSessionManager.java#L311). This artifact does not report them.",
+        "notes": "Fields are read from the one-letter keys the app wrote at versionCode 93: b for the account, c for the instance domain and j for the push subscription. The letters follow the field order of AccountSession at release v2.5.0 (https://github.com/mastodon/mastodon-android/blob/1124bc48c253567a4b79a4fd0cab3a8a16f86bd8/mastodon/src/main/java/org/joinmastodon/android/api/session/AccountSession.java#L48-L57), and a later commit lists them as alternates of named keys (https://github.com/mastodon/mastodon-android/blob/24d8c5d9d012858e8928ab465b455ad52805a9ee/mastodon/src/main/java/org/joinmastodon/android/api/session/AccountSession.java#L63-L81). At a later commit (versionCode 190) the app keeps accounts in the accounts table of accounts.db. It moves an existing accounts.json into that table and deletes the file (https://github.com/mastodon/mastodon-android/blob/24d8c5d9d012858e8928ab465b455ad52805a9ee/mastodon/src/main/java/org/joinmastodon/android/api/session/AccountSessionManager.java#L843-L861). This artifact does not read accounts.db. An entry without the b, c and j keys gives a row with every column blank. Account (acct) is the acct field of the account. Bio has its HTML tags removed. Token Created is the created_at of the entry's token (key a), which the app documents as when the token was generated, in Unix time (https://github.com/mastodon/mastodon-android/blob/1124bc48c253567a4b79a4fd0cab3a8a16f86bd8/mastodon/src/main/java/org/joinmastodon/android/model/Token.java#L23-L26); it is read as Unix seconds and shown as UTC. Account Info Updated is key e, a millisecond time the app sets when it adds the account and when it refreshes the account info (https://github.com/mastodon/mastodon-android/blob/1124bc48c253567a4b79a4fd0cab3a8a16f86bd8/mastodon/src/main/java/org/joinmastodon/android/api/session/AccountSession.java#L80 and https://github.com/mastodon/mastodon-android/blob/1124bc48c253567a4b79a4fd0cab3a8a16f86bd8/mastodon/src/main/java/org/joinmastodon/android/api/session/AccountSessionManager.java#L293). Filters Updated is key l, a millisecond time it sets when it refreshes the word filters (https://github.com/mastodon/mastodon-android/blob/1124bc48c253567a4b79a4fd0cab3a8a16f86bd8/mastodon/src/main/java/org/joinmastodon/android/api/session/AccountSessionManager.java#L311). A missing value is shown blank. The access token itself is in the entry and is not reported. On pixel7a_a14 the one entry holds all three times.",
         "paths": ('*/org.joinmastodon.android/files/accounts.json',),
         "output_types": "standard",
         "artifact_icon": "user",
@@ -266,8 +266,10 @@ def get_mastodon_accounts(context):
             data = json.loads(f.read())
         for x in data.get('accounts', []):
             b = x.get('b', {})
+            token = x.get('a', {}) if isinstance(x.get('a'), dict) else {}
             alerts = x.get('j', {}).get('alerts', {})
             data_list.append((
+                _sec_to_utc(token.get('created_at')), _ms_to_utc(x.get('e')), _ms_to_utc(x.get('l')),
                 _iso_to_utc(b.get('created_at', '')), b.get('acct', ''), b.get('username', ''), b.get('display_name', ''),
                 b.get('url', ''), b.get('id', ''), b.get('followers_count', ''), b.get('following_count', ''),
                 _strip_html(b.get('note', '')), b.get('avatar', ''), x.get('c', ''),
@@ -276,7 +278,8 @@ def get_mastodon_accounts(context):
                 str(b.get('bot', '')).title(), str(b.get('discoverable', '')).title(),
                 str(b.get('locked', '')).title(), str(b.get('suspended', '')).title()))
 
-    data_headers = (('Created Timestamp', 'datetime'), 'Account (acct)', 'User Name', 'Display Name', 'URL', 'ID', 'Followers Count', 'Following Count', 'Bio', 'Avatar URL', 'Instance Domain', 'Favorite Alerts', 'Follow Alerts', 'Mention Alerts', 'Poll Alerts', 'Boost Alerts', 'Is Bot', 'Is Discoverable', 'Is Locked', 'Is Suspended')
+    data_headers = (('Token Created', 'datetime'), ('Account Info Updated', 'datetime'), ('Filters Updated', 'datetime'),
+                    ('Created Timestamp', 'datetime'), 'Account (acct)', 'User Name', 'Display Name', 'URL', 'ID', 'Followers Count', 'Following Count', 'Bio', 'Avatar URL', 'Instance Domain', 'Favorite Alerts', 'Follow Alerts', 'Mention Alerts', 'Poll Alerts', 'Boost Alerts', 'Is Bot', 'Is Discoverable', 'Is Locked', 'Is Suspended')
     return data_headers, data_list, source_path
 
 
