@@ -83,6 +83,17 @@ class ParseRowsTest(unittest.TestCase):
         self.assertEqual(len(dump.records), 1)
         self.assertEqual(values(dump)[0]['body'], 'quoted:\nRow: 1 example=x\nRow: 2 example=y')
 
+    def test_row_like_line_before_the_rows_does_not_set_the_first_column(self):
+        dump = reader.parse_text('Row: 0 example=x\nRow: 0 _id=1, body=a\nRow: 1 _id=2, body=b\n')
+        self.assertEqual(dump.columns, ('_id', 'body'))
+        self.assertEqual([row['_id'] for row in values(dump)], ['1', '2'])
+        self.assertTrue(any('before the first row' in warning for warning in dump.warnings))
+
+    def test_single_row_with_row_lines_in_its_value_keeps_the_first_row_zero(self):
+        dump = reader.parse_text('Row: 0 _id=1, body=quoted:\nRow: 0 example=x\nRow: 1 example=y\n')
+        self.assertEqual(dump.columns, ('_id', 'body'))
+        self.assertEqual(values(dump)[0]['body'], 'quoted:\nRow: 0 example=x\nRow: 1 example=y')
+
     def test_delimiter_at_the_start_of_a_value_is_flagged(self):
         dump = reader.parse_text('Row: 0 _id=1, body=, seen=yes, read=1, seen=1\n'
                                  'Row: 1 _id=2, body=b, read=0, seen=0\nRow: 2 _id=3, body=c, read=1, seen=1\n')

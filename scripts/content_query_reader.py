@@ -33,7 +33,11 @@ Parsing:
    so a file saved with CRLF line endings reads like one saved with LF.
 2. A line opens a row when it is ``Row: <n> <first column>=`` with ``n`` the next row number
    in sequence (0, 1, 2, ...) and the first column the one the first ``Row: 0`` line names
-   (the one most such lines start with when there is no ``Row: 0`` line). Every
+   (the one most such lines start with when there is no ``Row: 0`` line). When ``Row: 0``
+   lines name different first columns (a line before the rows, or a value quoting rows),
+   each is tried and the reading kept has the fewest rows that cannot be split, then the
+   least text before its first row, then the earliest ``Row: 0``; a text where two readings
+   both split cleanly with no text before them keeps the earliest. Every
    other line belongs to the value before it. A value line that is itself exactly
    ``Row: <next number> <first column>=...`` cannot be told apart from a new row.
 3. The column list of the dump is the most common ordered list of names found in the rows
@@ -146,24 +150,38 @@ def _classify_without_rows(lines):
     return UNRECOGNISED, _cut(first)
 
 
-def _row_starts(lines):
-    """Indexes of the lines that open a row (see the module docstring, step 2)."""
+def _candidates(lines):
+    """(index, number, rest) of every line shaped like 'Row: <n> ...'."""
     candidates = []
     for index, line in enumerate(lines):
         match = ROW.match(line)
         if match:
             candidates.append((index, int(match.group(1)), match.group(2)))
+    return candidates
+
+
+def _row_zero_names(lines):
+    """The first-column names of the 'Row: 0' lines, in order, each once."""
+    names = []
+    for _index, number, rest in _candidates(lines):
+        name = FIRST_NAME.match(rest)
+        if number == 0 and name and name.group(1) not in names:
+            names.append(name.group(1))
+    return names
+
+
+def _row_starts(lines, first=None):
+    """Indexes of the lines that open a row (see the module docstring, step 2), with ``first``
+    ('<name>=') as the first column when it is given."""
+    candidates = _candidates(lines)
     if not candidates:
         return []
-    # The first column is the one the first 'Row: 0' line names: row 0 is printed before any
-    # value, so a line inside a value cannot come first. A vote over every candidate is kept
-    # only for a text with no 'Row: 0' line.
-    first = None
-    for _index, number, rest in candidates:
-        name = FIRST_NAME.match(rest)
-        if number == 0 and name:
-            first = name.group(1) + '='
-            break
+    # Without ``first``, the first column is the one the first 'Row: 0' line names: row 0 is
+    # printed before any value, so a line inside a value cannot come first. A vote over every
+    # candidate is kept only for a text with no 'Row: 0' line.
+    if first is None:
+        names = _row_zero_names(lines)
+        first = names[0] + '=' if names else None
     if first is None:
         first_names = collections.Counter()
         for _index, _number, rest in candidates:
@@ -214,8 +232,26 @@ def _ambiguous(pairs, names):
 def parse_text(text):
     """Reads the text of one content query output and returns a Dump."""
     lines = _lines(text)
+    names = _row_zero_names(lines)
+    if len(names) < 2:
+        return _parse_lines(lines, _row_starts(lines))
+    # Several 'Row: 0' lines name different first columns: a line before the rows, or a value
+    # that quotes rows, looks like row 0 too. Each reading is tried, and the one kept has the
+    # fewest rows that cannot be split, then the least text left before its first row; on a
+    # tie, the earliest 'Row: 0' line.
+    readings = []
+    for order, name in enumerate(names):
+        starts = _row_starts(lines, name + '=')
+        dump = _parse_lines(lines, starts)
+        unsplit = sum(1 for record in dump.records if not record.pairs) if dump.records else len(lines)
+        before = sum(1 for line in lines[:starts[0]] if line.strip()) if starts else len(lines)
+        readings.append(((unsplit, before, order), dump))
+    return min(readings, key=lambda reading: reading[0])[1]
+
+
+def _parse_lines(lines, starts):
+    """The Dump of a text split into lines, with ``starts`` the indexes of the lines that open a row."""
     warnings = []
-    starts = _row_starts(lines)
     if not starts:
         status, detail = _classify_without_rows(lines)
         return Dump(status, detail, (), [], warnings)
