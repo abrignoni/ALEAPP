@@ -1,6 +1,6 @@
 {
   "name": "ALEAPP",
-  "version": "2026.4.7-dev",
+  "version": "2026.5.0",
   "description": "Android Logs, Events and Protobuf Parser",
   "report_description": "ALEAPP is an open source project that aims to parse every known Android artifact for the purpose of forensic analysis.",
   "objective": "Triage Android Full System Extractions.",
