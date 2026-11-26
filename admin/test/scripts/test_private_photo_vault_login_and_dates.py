@@ -1,5 +1,6 @@
 """Private Photo Vault login records are reported, and media rows carry the stored deletion,
 trash, favourite and upload dates. All values here are made up."""
+# pylint: disable=protected-access
 import pathlib
 import sqlite3
 import sys
@@ -50,8 +51,20 @@ class MediaDates(unittest.TestCase):
     def test_the_four_dates_are_reported_as_stored(self):
         rows, _headers = run('private_photo_vault_media')
         row = rows[0]
-        self.assertEqual((row['Deleted Time (as stored)'], row['Trashed Date (as stored)'],
-                          row['Favourite Date (as stored)'], row['Uploaded Date (as stored)']), ('D1', 'T1', 'F1', 'U1'))
+        self.assertEqual((row['Deleted Time (As Stored)'], row['Trashed Date (As Stored)'],
+                          row['Favourite Date (As Stored)'], row['Uploaded Date (As Stored)']), ('D1', 'T1', 'F1', 'U1'))
+
+
+    def test_the_dates_follow_the_creation_date(self):
+        _rows, headers = run('private_photo_vault_media')
+        names = [h[0] if isinstance(h, tuple) else h for h in headers]
+        self.assertEqual(names[2:6], ['Deleted Time (As Stored)', 'Trashed Date (As Stored)',
+                                      'Favourite Date (As Stored)', 'Uploaded Date (As Stored)'])
+
+
+class LoginDateDefault(unittest.TestCase):
+    def test_a_login_date_equal_to_the_other_tables_default_is_still_converted(self):
+        self.assertIsNotNone(ppv._iso_to_utc('2021-01-01T01:00:00.000Z', skip_schema_default=False))
 
 
 if __name__ == '__main__':

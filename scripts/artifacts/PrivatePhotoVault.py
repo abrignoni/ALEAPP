@@ -50,13 +50,13 @@ __artifacts_v2__ = {
     },
     "private_photo_vault_media": {
         "name": "Private Photo Vault - Media",
-        "description": "Media file records in Private Photo Vault's local database (MediaFile table), with each row's stored creation date, image width and height, the view count as stored, Favourite and Deleted shown as Yes when the stored flag is non-zero, and the stored deletion, trash, favourite and upload dates.",
+        "description": "Media file records in Private Photo Vault's local database (MediaFile table), with each row's stored creation date, image width and height, the view count as stored, Favourite and Deleted shown as Yes when the stored flag is non-zero, and the deleted_time, trashed_date, favourite_date and uploaded_date values as stored.",
         "author": "@Gear-I & Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-17",
         "last_update_date": "2026-11-26",
         "requirements": "none",
         "category": "Photos & Media",
-        "notes": "Read the same way as Private Photo Vault - Albums, including the write-ahead log. From ppv.db this module reads the Album and MediaFile tables, and the LoginRecord table in Private Photo Vault - Login Records. The Download, CircularLog and CachedPartAuthorization tables are not read. On pixel3_a12 (schema version 10) the database has only the first two. All four are empty on pixel7a_a14. On cookbook_a11 CircularLog holds 1 row, which this module does not report. The media content behind each row is not recovered by this module. On pixel7a_a14 the files at File Path and Thumbnail Path were not examined by this module. The database does store a per-file 'Encryption Key' and IV for each row. That stored value decodes from base64 to 48 bytes, which is not the length of a bare 32-byte AES key. This module does not look for a key that decrypts the files. The encryption_key and local_iv values are reported exactly as stored. How the 48 byte value relates to the key that encrypts the file is not established, and this module makes no attempt to decrypt the media itself. 'View Count' is reported as stored. 'Favourite' and 'Deleted' show Yes when the stored flag is non-zero and are blank otherwise. What updates them is not established. Creation Date (As Stored) is the creation_date text. Created is that text converted to UTC, and is filled only when the text carries a Z or a UTC offset; a value with neither is left blank in Created because no zone is recorded for it. All three stored values on pixel7a_a14 carry a UTC offset, two of them with a two digit fraction of a second. A row whose creation_date is the schema's default, 2021-01-01T01:00:00.000Z, which both tables declare for the column, has a blank Created and the default in Creation Date (As Stored). No row on pixel7a_a14 holds it. Image Width, Image Height and View Count are read where the MediaFile table has those columns and are blank where it does not. On pixel3_a12 (database schema version 10) the table has none of the three, and its 2 rows are reported with those columns blank. Deleted Time (as stored), Trashed Date (as stored), Favourite Date (as stored) and Uploaded Date (as stored) are the deleted_time, trashed_date, favourite_date and uploaded_date text columns, shown unchanged. Their format and what sets them are not established, and they are blank where the table has no such column. They held no value on any media row of pixel7a_a14, cookbook_a11 or pixel3_a12, so they are not exercised on real data.",
+        "notes": "Read the same way as Private Photo Vault - Albums, including the write-ahead log. From ppv.db this module reads the Album and MediaFile tables, and the LoginRecord table in Private Photo Vault - Login Records. The Download, CircularLog and CachedPartAuthorization tables are not read. On pixel3_a12 (schema version 10) the database has the Download table and no CircularLog or CachedPartAuthorization table. On pixel7a_a14 the Download, CircularLog, CachedPartAuthorization and LoginRecord tables are all empty. On cookbook_a11 CircularLog holds 1 row, which this module does not report. The media content behind each row is not recovered by this module. On pixel7a_a14 the files at File Path and Thumbnail Path were not examined by this module. The database does store a per-file 'Encryption Key' and IV for each row. That stored value decodes from base64 to 48 bytes, which is not the length of a bare 32-byte AES key. This module does not look for a key that decrypts the files. The encryption_key and local_iv values are reported exactly as stored. How the 48 byte value relates to the key that encrypts the file is not established, and this module makes no attempt to decrypt the media itself. 'View Count' is reported as stored. 'Favourite' and 'Deleted' show Yes when the stored flag is non-zero and are blank otherwise. What updates them is not established. Creation Date (As Stored) is the creation_date text. Created is that text converted to UTC, and is filled only when the text carries a Z or a UTC offset; a value with neither is left blank in Created because no zone is recorded for it. All three stored values on pixel7a_a14 carry a UTC offset, two of them with a two digit fraction of a second. A row whose creation_date is the schema's default, 2021-01-01T01:00:00.000Z, which both tables declare for the column, has a blank Created and the default in Creation Date (As Stored). No row on pixel7a_a14 holds it. Image Width, Image Height and View Count are read where the MediaFile table has those columns and are blank where it does not. On pixel3_a12 (database schema version 10) the table has none of the three, and its 2 rows are reported with those columns blank. Deleted Time (As Stored), Trashed Date (As Stored), Favourite Date (As Stored) and Uploaded Date (As Stored) are the deleted_time, trashed_date, favourite_date and uploaded_date text columns, shown unchanged. Their format and what sets them are not established, and they are blank where the table has no such column. They held no value on any media row of pixel7a_a14, cookbook_a11 or pixel3_a12, so they are not exercised on real data.",
         "paths": ('*/com.enchantedcloud.photovault/databases/ppv.db*',),
         "output_types": ["standard", "timeline"],
         "artifact_icon": "photo",
@@ -66,13 +66,13 @@ __artifacts_v2__ = {
     },
     "private_photo_vault_login_records": {
         "name": "Private Photo Vault - Login Records",
-        "description": "Rows of the LoginRecord table in Private Photo Vault's local database: each row's stored date, type, latitude, longitude and original file path.",
+        "description": "Rows of the LoginRecord table in Private Photo Vault's local database: each row's stored date, type, latitude, longitude, original file path and uid.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-11-26",
         "last_update_date": "2026-11-26",
         "requirements": "none",
         "category": "Photos & Media",
-        "notes": "Read from the LoginRecord table of ppv.db the same way as Private Photo Vault - Albums, including the write-ahead log. The table is declared with uid, orig_file_path, date, type, latitude and longitude columns. Date (as stored) is the date text. Date is that text converted to UTC, filled only when the text carries a Z or a UTC offset, as for the Created column of the other Private Photo Vault artifacts. Type (as stored), Original File Path (as stored), Latitude and Longitude are the stored values, unchanged. The app's source was not read, so what a row records, what the type values mean, what the file at the original path is and how the position was obtained are not established. A column the table lacks is blank. The table is present and empty on pixel7a_a14, cookbook_a11 and pixel3_a12, so this artifact is not exercised on real data.",
+        "notes": "Read from the LoginRecord table of ppv.db the same way as Private Photo Vault - Albums, including the write-ahead log. On pixel7a_a14, cookbook_a11 and pixel3_a12 the table is declared with uid, orig_file_path, date, type, latitude and longitude columns. Date (as stored) is the date text. Date is that text converted to UTC, filled only when the text is ISO 8601 and carries a Z or a UTC offset. The format the app writes in this column is not established. Type (as stored), Original File Path (as stored) and UID are the stored values, unchanged. Latitude and Longitude are the stored numbers. In LAVA a whole-number coordinate is stored without its decimal point. The app's source was not read, so what a row records, what the type values mean, what the file at the original path is and how the position was obtained are not established. A column the table lacks is blank. The table is present and empty on pixel7a_a14, cookbook_a11 and pixel3_a12, so this artifact is not exercised on real data. A row is written to the KML export only when both coordinates are present and neither is 0. A row with a blank Date is written to the timeline with no time, and its KML point is named N/A. The KML and timeline outputs were checked on made-up rows only.",
         "paths": ('*/com.enchantedcloud.photovault/databases/ppv.db*',),
         "output_types": ["standard", "timeline", "kml"],
         "artifact_icon": "lock",
@@ -118,12 +118,12 @@ _ISO_FRACTION = re.compile(r'\.(\d+)')
 _SCHEMA_DEFAULT_DATE = '2021-01-01T01:00:00.000Z'
 
 
-def _iso_to_utc(value):
+def _iso_to_utc(value, skip_schema_default=True):
     """The stored ISO 8601 text as a UTC datetime, or None when the text
     carries no Z or UTC offset (no instant can be stated for it) or cannot be
     parsed. The fraction is padded to six digits first: before Python 3.11,
     fromisoformat accepts only three or six."""
-    if not value or not isinstance(value, str) or value.strip() == _SCHEMA_DEFAULT_DATE:
+    if not value or not isinstance(value, str) or (skip_schema_default and value.strip() == _SCHEMA_DEFAULT_DATE):
         return None
     text = _ISO_FRACTION.sub(
         lambda m: '.' + m.group(1)[:6].ljust(6, '0'), value.strip(), count=1)
@@ -224,11 +224,11 @@ def _media_query(source_path):
 def private_photo_vault_media(context):
     data_headers = (
         ("Created", "datetime"), "Creation Date (As Stored)",
+        "Deleted Time (As Stored)", "Trashed Date (As Stored)", "Favourite Date (As Stored)",
+        "Uploaded Date (As Stored)",
         "Album Bucket ID", "File Path",
         "Thumbnail Path", "MIME Type", "Image Width", "Image Height",
         "Favourite", "Deleted", "View Count", "Encryption Key", "IV",
-        "Deleted Time (as stored)", "Trashed Date (as stored)", "Favourite Date (as stored)",
-        "Uploaded Date (as stored)",
     )
 
     files_found = unique_files(context)
@@ -245,6 +245,10 @@ def private_photo_vault_media(context):
         data_list.append((
             _iso_to_utc(created),
             created,
+            deleted_time,
+            trashed_date,
+            favourite_date,
+            uploaded_date,
             bucket_id,
             file_path,
             thumbnail_path,
@@ -256,10 +260,6 @@ def private_photo_vault_media(context):
             view_count,
             encryption_key,
             local_iv,
-            deleted_time,
-            trashed_date,
-            favourite_date,
-            uploaded_date,
         ))
 
     logfunc(f"Private Photo Vault Media: {len(data_list)} media record(s) "
@@ -288,7 +288,9 @@ def private_photo_vault_login_records(context):
                             for c in _LOGIN_COLUMNS)
         for date, kind, latitude, longitude, orig_file_path, uid in get_sqlite_db_records(
                 source_path, f'SELECT {columns} FROM LoginRecord ORDER BY date;'):
-            data_list.append((_iso_to_utc(date), date, kind, latitude, longitude, orig_file_path, uid))
+            # LoginRecord.date declares no default, so the Album and MediaFile default is not blanked here.
+            data_list.append((_iso_to_utc(date, skip_schema_default=False), date, kind, latitude, longitude,
+                              orig_file_path, uid))
 
     logfunc(f"Private Photo Vault Login Records: {len(data_list)} record(s) recovered.")
     return data_headers, data_list, '\n'.join(read_paths)
