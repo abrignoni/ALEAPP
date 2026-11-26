@@ -290,7 +290,8 @@ __artifacts_v2__ = {
         },
         "data_views": {
             "conversation": {
-                "conversationDiscriminatorColumn": "Channel Name",
+                "conversationDiscriminatorColumn": "Channel JID",
+                "conversationLabelColumn": "Channel Name",
                 "textColumn": "Message",
                 "directionColumn": "Message Direction",
                 "directionSentValue": "Outgoing",
