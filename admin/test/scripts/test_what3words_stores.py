@@ -98,6 +98,14 @@ class Versions(unittest.TestCase):
         headers, rows = run_versions('what3words_saved_places', 'class_LocationRealm', [self.SAME], [changed])
         self.assertEqual(sorted(r[headers.index('Realm Version')] for r in rows), ['Active', 'Inactive'])
 
+    def test_rows_with_list_values_match_by_value(self):
+        active = {'id': 'a', 'listIds': [5, 3]}
+        same = {'listIds': [5, 3], 'id': 'a'}
+        reordered = {'id': 'a', 'listIds': [3, 5]}
+        headers, rows = run_versions('what3words_saved_places', 'class_LocationRealm', [active], [same, reordered])
+        self.assertEqual(sorted((r[headers.index('listIds (as stored)')], r[headers.index('Realm Version')])
+                                for r in rows), [('3, 5', 'Inactive'), ('5, 3', 'Active')])
+
 
 class ListIds(unittest.TestCase):
     def cell(self, value):
