@@ -20,7 +20,10 @@ __artifacts_v2__ = {
                  "data/media/<n>, userdata/media/<n>, storage/emulated/<n> or emulated/<n> is compared "
                  "with the databases of Android user n. When its path names no user in one of those "
                  "forms, or that user has no database, it is compared with every database read. "
-                 "Matching per user was not exercised with users whose databases differ. When a "
+                 "Matching per user was not exercised with users whose databases differ. A rollback "
+                 "copy of a database under data/misc_ce or data/misc_de counts for the user number in "
+                 "its path; this was exercised by a unit test only. A path with no readable file "
+                 "behind it is skipped, and a recorded time out of range is shown blank. When a "
                  "database cannot be read the log says so and no file is listed; this was not "
                  "exercised. .nomedia files are not listed. A byte-identical copy of the same file "
                  "listed under two storage paths for one user is shown once. File Modified is the UTC "
@@ -89,7 +92,10 @@ __artifacts_v2__ = {
                  "storage/emulated/<n> or emulated/<n> is compared with the databases of Android user "
                  "n. When its path names no user in one of those forms, or that user has no database, "
                  "it is compared with every database read. Matching per user was not exercised with "
-                 "users whose databases differ. When a database cannot be read the log says so and no "
+                 "users whose databases differ. A rollback copy of a database under data/misc_ce or "
+                 "data/misc_de counts for the user number in its path; this was exercised by a unit "
+                 "test only. A path with no readable file behind it is skipped, and a recorded time "
+                 "out of range is shown blank. When a database cannot be read the log says so and no "
                  "file is listed; this was not exercised. .nomedia files are not listed. A "
                  "byte-identical copy of the same file listed under two storage paths for one user is "
                  "shown once. File Modified is the UTC modified time the zip or tar recorded for the "
@@ -139,6 +145,7 @@ from scripts.artifacts.storagePathViews import android_user, unique_files
 from scripts.ilapfuncs import artifact_processor, check_in_media, is_sqlite_sidecar, logfunc, \
     open_sqlite_db_readonly
 
+_ROLLBACK_USER = re.compile(r'(?:^|/)(?:user)?data/misc_(?:ce|de)/(\d+)/rollback/\d+/')
 _MEDIA_USER = re.compile(r'(?:^|/)(?:(?:user)?data/media|storage/emulated|emulated)/(\d+)/')
 
 
@@ -162,6 +169,25 @@ def _file_times(seeker, path):
         return None, reading
     # modification_date is not used: a folder input records only the time of the examiner's copy there.
     return None, ''
+
+
+def _database_user(relative_path):
+    """The Android user of a database path, including the user number of a rollback copy."""
+    user = android_user(relative_path)
+    if user:
+        return user
+    match = _ROLLBACK_USER.search(str(relative_path).replace('\\', '/'))
+    return match.group(1) if match else ''
+
+
+def _utc(seconds):
+    """A recorded time as a UTC datetime, or blank when it is out of range."""
+    if not seconds:
+        return ''
+    try:
+        return datetime.fromtimestamp(seconds, tz=timezone.utc)
+    except (OverflowError, OSError, ValueError):
+        return ''
 
 
 def _after_media(path):
@@ -216,7 +242,7 @@ def _report(context, marker):
                 logfunc('WhatsApp media: no files listed, because a database could not be read')
                 return data_headers, [], '\n'.join(databases)
             everything |= names
-            user = android_user(context.get_relative_path(path))
+            user = _database_user(context.get_relative_path(path))
             if user:
                 by_user.setdefault(user, set()).update(names)
     if not databases:
@@ -227,7 +253,8 @@ def _report(context, marker):
     for path in files:
         relative = context.get_relative_path(path).replace('\\', '/')
         index = relative.find(marker)
-        if index < 0 or os.path.basename(path) == '.nomedia' or os.path.isdir(path):
+        # A link whose target is outside the input is returned with no staged file behind it.
+        if index < 0 or os.path.basename(path) == '.nomedia' or not os.path.isfile(path):
             continue
         rest = relative[index + len(marker):]
         match = _MEDIA_USER.search(relative)
@@ -237,14 +264,14 @@ def _report(context, marker):
             continue
         # The same folder can be listed under two storage paths (data/media/<n> and an emulated/<n> view).
         # A byte-identical copy at the same place under the Media folder, for the same user, is shown once.
-        earlier = shown.get((user, rest))
-        if earlier and filecmp.cmp(earlier, path, shallow=False):
+        copies = shown.setdefault((user, rest), [])
+        if any(filecmp.cmp(earlier, path, shallow=False) for earlier in copies):
             continue
-        shown.setdefault((user, rest), path)
+        copies.append(path)
         modified, no_zone = _file_times(seeker, path)
         folder = rest.rsplit('/', 1)[0] if '/' in rest else ''
         sources.append(path)
-        when = datetime.fromtimestamp(modified, tz=timezone.utc) if modified else ''
+        when = _utc(modified)
         data_list.append((when, no_zone, check_in_media(path, name=os.path.basename(path)) or '', folder,
                           os.path.basename(path), os.path.getsize(path), user,
                           os.path.dirname(relative)))
