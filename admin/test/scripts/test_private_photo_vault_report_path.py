@@ -8,7 +8,7 @@ import sqlite3
 import sys
 import tempfile
 import unittest
-from contextlib import ExitStack, contextmanager, redirect_stdout
+from contextlib import ExitStack, closing, contextmanager, redirect_stdout
 from types import SimpleNamespace
 from unittest.mock import patch
 
@@ -123,11 +123,11 @@ class LoginRecordOutputs(unittest.TestCase):
             cls.lava = lavafuncs.lava_db.execute(
                 'SELECT uid, date, date_as_stored, latitude, longitude FROM private_photo_vault_login_records '
                 'ORDER BY uid').fetchall()
-        with sqlite3.connect(output / '_Timeline' / 'tl.db') as tl:
+        with closing(sqlite3.connect(output / '_Timeline' / 'tl.db')) as tl:
             cls.timeline = {json.loads(values)['UID']: (key, json.loads(values))
                             for key, _activity, values in tl.execute('SELECT key, activity, datalist FROM data')}
         kml_folder = output / '_KML Exports'
-        with sqlite3.connect(kml_folder / '_latlong.db') as kml:
+        with closing(sqlite3.connect(kml_folder / '_latlong.db')) as kml:
             cls.latlong = (kml.execute('SELECT timestamp, latitude, longitude FROM data').fetchall())
         cls.kml = next(kml_folder.glob('*.kml')).read_text(encoding='utf-8')
 
