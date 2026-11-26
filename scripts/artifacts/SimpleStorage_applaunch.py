@@ -11,10 +11,14 @@ __artifacts_v2__ = {
         "notes": "The query and the Launched From names for launchLocationId values 1, 2, 4, 7, 8, "
                  "12 and 1000 come from Josh Hickman's (@josh_hickman1) research and testing. No "
                  "published reference for them is cited here. Any other value is shown as stored. "
-                 "Every row the query selects is reported. On russell_pixel6a_a13 each launch (one "
-                 "timestampMillis, packageName and launchLocationId) is stored as three rows that differ "
-                 "only in predictionUiSurfaceId, predictionSourceId, predictionRank and id, which this "
-                 "artifact does not report, so the report shows each of its 38 launches three times. Raw Timestamp "
+                 "Every row the query selects is reported. On russell_pixel6a_a13 the file this artifact "
+                 "reads holds 114 rows. Each of its 38 combinations of timestampMillis, packageName and "
+                 "launchLocationId appears in three rows. Within a combination the rows differ in "
+                 "predictionSourceId and id, and in some combinations in predictionRank. This artifact "
+                 "does not report those columns, so the report shows each combination three times. "
+                 "Whether the three rows are one launch is not established here. Only the first "
+                 "SimpleStorage file found is read. This image holds a second one under data/user/10, "
+                 "which is not reported. Raw Timestamp "
                  "Millis and Launch Location ID preserve the source values beside the converted "
                  "timestamp and credited label; the label meanings remain unverified here.",
         "paths": ('*/com.google.android.as/databases/SimpleStorage*'),
