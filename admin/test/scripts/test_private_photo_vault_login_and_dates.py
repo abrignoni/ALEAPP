@@ -89,6 +89,31 @@ class FavouriteFromDate(unittest.TestCase):
         self.assertEqual(self.favourite(0, None), '')
 
 
+class OriginalFileName(unittest.TestCase):
+    def name_cell(self, with_column):
+        with tempfile.TemporaryDirectory() as folder:
+            path = pathlib.Path(folder) / 'data/data/com.enchantedcloud.photovault/databases/ppv.db'
+            path.parent.mkdir(parents=True)
+            db = sqlite3.connect(path)
+            extra = ', original_file_name TEXT' if with_column else ''
+            db.execute(f'CREATE TABLE MediaFile (creation_date TEXT, file_path TEXT, is_favourite INTEGER, is_deleted INTEGER{extra})')
+            values = ('2024-01-01T00:00:00.000+00:00', 'f', 0, 0) + (('made_up.jpg',) if with_column else ())
+            db.execute(f"INSERT INTO MediaFile VALUES ({', '.join('?' * len(values))})", values)
+            db.commit()
+            db.close()
+            context = SimpleNamespace(get_files_found=lambda: [str(path)],
+                                      get_relative_path=lambda p: str(pathlib.Path(p).relative_to(folder)))
+            headers, rows, _source = ppv.private_photo_vault_media.__wrapped__(context)
+        names = [h[0] if isinstance(h, tuple) else h for h in headers]
+        return dict(zip(names, rows[0]))['Original File Name (As Stored)']
+
+    def test_the_stored_name_is_reported(self):
+        self.assertEqual(self.name_cell(True), 'made_up.jpg')
+
+    def test_an_older_schema_without_the_column_is_blank(self):
+        self.assertIsNone(self.name_cell(False))
+
+
 class LoginDateDefault(unittest.TestCase):
     def test_a_login_date_equal_to_the_other_tables_default_is_still_converted(self):
         self.assertIsNotNone(ppv._iso_to_utc('2021-01-01T01:00:00.000Z', skip_schema_default=False))
