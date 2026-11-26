@@ -22,29 +22,23 @@
                                                   (Authenticode on Windows, codesign on macOS);
                                                   --subject TEXT also requires the signer to match
 
-One executable, aleapp, is both programs. packaging/entrypoint.py opens the window when
-it is started without arguments, as a double-click starts it, and is the command line
-when it is given some, so tools that run `aleapp -t fs -i ... -o ...` see no change.
+One executable, aleapp, is both programs: packaging/entrypoint.py opens the window without arguments
+and is the command line with some, so tools running `aleapp -t fs -i ... -o ...` see no change.
 
-Signing belongs between the two phases. Sign dist/ALEAPP/aleapp.exe, or codesign
-dist/ALEAPP.app, after phase 1 and before phase 2, or the installer carries an unsigned
-executable inside a signed wrapper. `all` refuses --sign-tool for exactly that reason.
+Sign dist/ALEAPP/aleapp.exe, or codesign dist/ALEAPP.app, between the two phases, or the installer
+carries an unsigned executable inside a signed wrapper: `all` refuses --sign-tool for that reason.
 
-The version is read from scripts/version_info.py as text, so nothing is imported, and
-handed to the spec and to Inno Setup, so neither the executable nor the installer can
-report a different version from the app. Windows and macOS take only numbers in their
-version fields, so a suffix such as -dev is left out there and kept everywhere else.
-ONEFILE reaches the spec through the ALEAPP_ONEFILE environment variable; the spec is
-never edited by a build. PyInstaller is pinned in packaging/requirements-build.txt,
-which phase 1 installs, then requirements.txt and requirements-msl-lock.txt through
-admin/scripts/install_requirements.py, as CI does, so a build carries the
-mister_skinnylegs chain that was tested rather than whatever its unversioned
-dependencies resolve to that day, and refuses a Brotli older than 1.2.1.
+The version is read from data/leapp_config.json, so nothing is imported, and handed to the spec
+and to Inno Setup, so neither can report a different version from the app; their Windows and macOS
+version fields take only its numbers (no -dev). ONEFILE reaches the spec through ALEAPP_ONEFILE; a
+build never edits the spec. Phase 1 installs packaging/requirements-build.txt (PyInstaller pinned),
+then requirements.txt and requirements-msl-lock.txt through install_requirements.py, as CI does: a
+build carries the tested mister_skinnylegs chain, never what its unversioned dependencies resolve to
+that day, and refuses a Brotli older than 1.2.1.
 
-What goes into the bundle is decided here rather than in packaging/aleapp.spec, which
-loads this file and only wires the answers into PyInstaller, so it can be tested without
-running a build: the data trees, mister_skinnylegs' plugins, and every artifact module
-as a hidden import.
+What goes into the bundle is decided here rather than in packaging/aleapp.spec, which loads this
+file and only wires the answers into PyInstaller, so it can be tested without running a build: the
+data trees, mister_skinnylegs' plugins, and every artifact module as a hidden import.
 """
 
 from __future__ import annotations
@@ -52,6 +46,7 @@ from __future__ import annotations
 import argparse
 import gzip
 import hashlib
+import json
 import os
 import platform
 import re
@@ -106,7 +101,6 @@ HOMEPAGE = "https://github.com/abrignoni/ALEAPP"
 # its executable, and the .desktop entry, icon and licence go where desktops and package
 # managers look for them. Nothing is rebuilt per distribution.
 LINUX_PKG = "aleapp"
-LINUX_SUMMARY = "Android Logs, Events, and Protobuf Parser"
 LINUX_DESCRIPTION = (
     "ALEAPP parses Android extractions and writes an HTML report with TSV, timeline, "
     "KML and LAVA output. One executable, aleapp, opens the window when started "
@@ -124,8 +118,9 @@ MSL_PLUGIN_GLOB = "*_plugin.py"
 
 # Folders shipped as files beside the executable. The plugin loader reads the artifacts
 # from scripts/artifacts as source, the report copies scripts/_elements, and the window
-# loads its images from assets/. leapp_functions/ is imported by the artifacts.
-DATA_TREES = ("scripts", "leapp_functions", "assets")
+# loads its images from assets/. leapp_functions/ is imported by the artifacts, and reads
+# data/leapp_config.json (the tool's name, its palette, its input types) when imported.
+DATA_TREES = ("scripts", "leapp_functions", "assets", "data")
 # Never shipped: bytecode caches from the build machine, and Finder metadata.
 DATA_EXCLUDED_DIRS = {"__pycache__"}
 DATA_EXCLUDED_SUFFIXES = (".pyc", ".pyo")
@@ -169,13 +164,20 @@ APPIMAGE_DIGESTS = {
 }
 
 
+def read_config(field: str) -> str:
+    """A text field of data/leapp_config.json, read so that nothing is imported."""
+    try:
+        value = json.loads((ROOT / "data" / "leapp_config.json").read_text(encoding="utf-8"))[field]
+    except (OSError, ValueError, KeyError, TypeError):
+        value = None
+    if not isinstance(value, str) or not value:
+        sys.exit(f"build: could not find {field} in data/leapp_config.json")
+    return value
+
+
 def read_version() -> str:
-    """The version string from scripts/version_info.py, read as text so nothing is imported."""
-    text = (ROOT / "scripts" / "version_info.py").read_text(encoding="utf-8")
-    m = re.search(r"""^leapp_version\s*=\s*['"]([^'"]+)['"]""", text, re.M)
-    if not m:
-        sys.exit("build: could not find leapp_version in scripts/version_info.py")
-    return m.group(1)
+    """The version string from data/leapp_config.json."""
+    return read_config("version")
 
 
 def numeric_version(version: str) -> str:
@@ -462,7 +464,7 @@ def appimage_desktop_entry() -> str:
         "[Desktop Entry]",
         "Type=Application",
         f"Name={APP}",
-        "Comment=Android Logs, Events, and Protobuf Parser",
+        f"Comment={read_config('description')}",
         f"Exec={EXE}",
         f"Icon={EXE}",
         "Terminal=false",
@@ -617,7 +619,7 @@ def debian_control(version: str, arch: str, installed_kib: int) -> str:
         "Section: utils",
         "Priority: optional",
         f"Homepage: {HOMEPAGE}",
-        f"Description: {LINUX_SUMMARY}",
+        f"Description: {read_config('description')}",
         f" {LINUX_DESCRIPTION}",
         "",
     ))
@@ -643,7 +645,7 @@ def rpm_spec(version: str, arch: str) -> str:
         f"Name: {LINUX_PKG}",
         f"Version: {version}",
         "Release: 1",
-        f"Summary: {LINUX_SUMMARY}",
+        f"Summary: {read_config('description')}",
         "License: MIT",
         f"URL: {HOMEPAGE}",
         f"BuildArch: {arch}",

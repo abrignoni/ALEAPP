@@ -27,6 +27,7 @@ import shutil
 import struct
 import sys
 import tempfile
+import threading
 import time
 import unittest
 import zlib
@@ -1938,6 +1939,43 @@ class KeysAndLogicalEvidenceTest(unittest.TestCase):
         with mock.patch.object(simpledialog, 'askstring', lambda *a, **kw: None):
             keys = raw_image.ask_image_keys(None, self.apfs)
         self.assertEqual(keys.apfs_secrets, [])
+
+    def test_another_window_asks_its_own_way_from_a_worker_thread(self):
+        """unlock_raw_input asks its questions through any object with DialogAsker's methods."""
+        class Recorder:
+            """An asker that answers from a list and records the prompts it was shown."""
+            def __init__(self):
+                self.answers = iter(['not it', APFS_PASSWORD])
+                self.prompts = []
+
+            def ask_secret(self, title, prompt):
+                """The next answer of the list."""
+                self.prompts.append((title, prompt))
+                return next(self.answers)
+
+            def ask_file(self, _title, _filetypes):
+                """No key file is chosen."""
+                return None
+
+            def confirm_members(self, _search):
+                """The members found are used."""
+                return 'use'
+
+            def show_info(self, _title, _message):
+                """Nothing to show."""
+
+            def show_error(self, _title, _message):
+                """Nothing to show."""
+
+        asker, result = Recorder(), []
+        worker = threading.Thread(
+            target=lambda: result.append(raw_image.unlock_raw_input(self.apfs, asker)))
+        worker.start()
+        worker.join(60)
+        self.assertEqual(result[0].keys.apfs_secrets, [APFS_PASSWORD])
+        self.assertEqual(asker.prompts[0][0], 'Encrypted APFS volume')
+        self.assertIn(APFS_HINT, asker.prompts[0][1])
+        self.assertTrue(asker.prompts[1][1].startswith('That does not open it.'))
 
     def _luks_members(self, keys):
         data = tempfile.mkdtemp(prefix='raw_image_data_')     # one folder per seeker

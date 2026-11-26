@@ -28,6 +28,8 @@ on:
       - 'packaging/**'
       - 'requirements.txt'
       - 'LICENSES/**'
+      # data/ ships in the bundle and gives the build its version
+      - 'data/**'
       - 'requirements-msl-lock.txt'
       - '.github/workflows/test_builds.yml'
 

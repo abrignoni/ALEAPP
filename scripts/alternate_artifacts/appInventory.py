@@ -80,7 +80,7 @@ import xml.etree.ElementTree as etree
 import xmltodict
 
 from scripts.ilapfuncs import artifact_processor, abxread, checkabx, logfunc
-from scripts.version_info import leapp_name, leapp_version
+from leapp_functions import leapp
 
 
 # Package-owned locations, checked in order; first match wins. The directory
@@ -256,8 +256,8 @@ def extractionInfo(context):
             data_list.append((prop, str(value), source))
 
     input_path = _input_path(seeker)
-    add('LEAPP Name', leapp_name)
-    add('LEAPP Version', leapp_version)
+    add('LEAPP Name', leapp.name)
+    add('LEAPP Version', leapp.version)
     add('Extraction Type', _seeker_kind(seeker))
     add('Input Path', input_path)
     add('Input Name', os.path.basename(input_path) if input_path else '')

@@ -47,7 +47,7 @@ polyline==2.0.0
 # uses the vendored copy in scripts/blackboxprotobuf instead.
 protobuf==5.29.6
 sqlcipher3==0.6.2
-PyCryptodome
+PyCryptodome>=3.23.0  # AES.MODE_KW (RFC 3394 key unwrap), for encrypted iTunes backups, came in 3.23.0
 pytz
 mister_skinnylegs @ git+https://github.com/cclgroupltd/mister-skinnylegs.git@v0.0.18
 simplekml

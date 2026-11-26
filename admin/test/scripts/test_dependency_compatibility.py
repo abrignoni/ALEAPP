@@ -1,4 +1,5 @@
 import importlib
+import json
 import os
 import subprocess
 import sys
@@ -144,7 +145,9 @@ class TestDependencyCompatibility(unittest.TestCase):
         )
 
         self.assertEqual(result.returncode, 0, msg=result.stderr)
-        self.assertIn("ALEAPP: Android Logs, Events, and Protobuf Parser.", result.stdout)
+        config = json.loads((REPO_ROOT / "data" / "leapp_config.json").read_text(encoding="utf-8"))
+        self.assertIn(f"{config['name']} v{config['version']}: {config['description']}.",
+                      " ".join(result.stdout.split()))
 
     def test_imagetk_imports_when_tkinter_is_available(self):
         try:

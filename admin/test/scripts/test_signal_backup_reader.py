@@ -193,6 +193,21 @@ class KeyTests(unittest.TestCase):
             sb.normalise_recovery_key('secretvalue123')
         self.assertNotIn('secretvalue', str(caught.exception))
 
+    def test_the_log_of_the_run_records_the_key_given(self):
+        """The key given is in the log of the run, in clear, as the report needs it."""
+        self.addCleanup(sb.set_recovery_key, None)
+        sb.set_recovery_key(KEY)
+        with mock.patch.object(sb, 'logfunc') as log:
+            sb.report_supplied_recovery_key()
+        log.assert_called_once_with(f'Signal recovery key: {KEY}')
+
+    def test_nothing_is_logged_without_a_key(self):
+        """No key, no line."""
+        sb.set_recovery_key(None)
+        with mock.patch.object(sb, 'logfunc') as log:
+            sb.report_supplied_recovery_key()
+        log.assert_not_called()
+
 
 class ParserTests(unittest.TestCase):
     def test_a_float_field_not_named_here_does_not_fail_the_message(self):

@@ -251,8 +251,8 @@ class TestDriver(unittest.TestCase):
             self.assertIn(word, result.stdout)
 
     def test_version_matches_the_app_without_importing_it(self):
-        from scripts.version_info import leapp_version  # pylint: disable=import-outside-toplevel
-        self.assertEqual(self.driver.read_version(), leapp_version)
+        from leapp_functions import leapp  # pylint: disable=import-outside-toplevel
+        self.assertEqual(self.driver.read_version(), leapp.version)
 
     def test_numeric_version_keeps_only_the_leading_numbers(self):
         self.assertEqual(self.driver.numeric_version('2026.4.2-dev'), '2026.4.2')
@@ -359,18 +359,20 @@ class TestBundleContents(unittest.TestCase):
     def setUp(self):
         self.driver = _load_driver()
 
-    def test_scripts_leapp_functions_and_assets_ship_as_files(self):
+    def test_scripts_leapp_functions_assets_and_data_ship_as_files(self):
         datas = self.driver.bundle_datas()
         destinations = {dest for _, dest in datas}
-        for dest in ('scripts/artifacts', 'scripts/_elements', 'leapp_functions', 'assets'):
+        for dest in ('scripts/artifacts', 'scripts/_elements', 'leapp_functions', 'assets', 'data'):
             self.assertIn(dest, destinations)
         shipped = {(pathlib.Path(src).name, dest) for src, dest in datas}
         # The plugin loader reads every artifact from its source file.
         for artifact in (REPO_ROOT / 'scripts' / 'artifacts').glob('*.py'):
             self.assertIn((artifact.name, 'scripts/artifacts'), shipped)
         # The window's icon and logos.
-        for image in ('icon.png', 'ALEAPP_logo.png', 'settings.png', 'leapps_a_logo.png'):
+        for image in ('icon.png', 'ALEAPP_logo.png', 'leapps_logo.png'):
             self.assertIn((image, 'assets'), shipped)
+        # leapp_functions reads it when imported, from sys._MEIPASS/data in a build.
+        self.assertIn(('leapp_config.json', 'data'), shipped)
 
     def test_no_bytecode_cache_or_finder_file_ships(self):
         for src, dest in self.driver.bundle_datas():
@@ -422,9 +424,9 @@ class TestEntryPoint(unittest.TestCase):
     def test_the_command_line_runs_from_the_entry_point(self):
         result = subprocess.run([sys.executable, str(PACKAGING / 'entrypoint.py'), '--version'],
                                 capture_output=True, text=True, check=False)
-        from scripts.version_info import leapp_version  # pylint: disable=import-outside-toplevel
+        from leapp_functions import leapp  # pylint: disable=import-outside-toplevel
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual(result.stdout.strip(), f'ALEAPP {leapp_version}')
+        self.assertEqual(result.stdout.strip(), f'ALEAPP {leapp.version}')
 
 
 @unittest.skipUnless(sys.platform in ('win32', 'darwin') or 'DISPLAY' in os.environ,
@@ -546,6 +548,8 @@ class TestAppImage(unittest.TestCase):
         for line in ('Type=Application', 'Name=ALEAPP', 'Exec=aleapp', 'Icon=aleapp',
                      'Terminal=false', 'Categories=Utility;'):
             self.assertIn(line, lines)
+        from leapp_functions import leapp  # pylint: disable=import-outside-toplevel
+        self.assertIn(f'Comment={leapp.description}', lines)
 
     @unittest.skipIf(sys.platform == 'win32', 'an AppDir is made on Linux, with symlinks')
     def test_the_appdir_runs_the_folder_build(self):

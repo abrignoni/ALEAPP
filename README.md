@@ -1,6 +1,6 @@
 ![ALEAPP](assets/ALEAPP_logo.png)
 
-# Android Logs Events And Protobuf Parser
+# Android Logs, Events and Protobuf Parser
 
 If you want to contribute hit me up here: https://abrignoni.github.io
 
@@ -120,13 +120,15 @@ RSA private key (`--image_private_key`). A BitLocker volume in an image opens wi
 password or recovery password, given the same way, or its startup key
 (`--bitlocker_key`, repeatable), an APFS volume macOS encrypted in software with its
 password or personal recovery key, and a LUKS container with its passphrase, each given
-the same way. At a terminal whatever is missing is asked for, and the GUI asks in dialogs;
-a BitLocker, APFS or LUKS volume nothing opens is reported and not searched.
+the same way. At a terminal whatever is missing is asked for, and the GUI asks for it in the
+DETECTED card of the Source screen as soon as the image is chosen; a BitLocker, APFS or LUKS
+volume nothing opens is reported and not searched.
 
 A Signal on-device backup is listed without a key. Its messages, recipients and
 attachments open with the account's 64-character recovery key, given with
-`--signal_recovery_key_file` or `--signal_recovery_key_env`, or in the GUI with the
-Signal backup recovery key button. The key is held in memory for the run and is not saved.
+`--signal_recovery_key_file` or `--signal_recovery_key_env`, or in the GUI in the Signal
+recovery key card of the Source screen. The key is held in memory for the run and saved
+nowhere, but the log of the run records it, in clear, at its start.
 
 The disk images of a Linux software RAID set (md, or LVM2 across disks) are read
 together: give them all to `-i` with `-t raw`, or pick them together in the GUI's file
