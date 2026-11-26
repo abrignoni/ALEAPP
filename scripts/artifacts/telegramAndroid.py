@@ -973,7 +973,7 @@ __artifacts_v2__ = {
         "sample_data": {
             "anne_a15": "24 rows",
             "hc_pixel8pro_a16": "24 rows",
-            "hc_pixel8pro_a17": "17 | 24 rows",
+            "hc_pixel8pro_a17": "24 rows",
             "kevin_pocox7_a15": "24 rows",
             "pixel7a_a14": "24 rows",
             "russell_pixel6a_a13": "24 rows",

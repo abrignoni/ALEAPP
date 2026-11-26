@@ -15,7 +15,7 @@ __artifacts_v2__ = {
                  "package name and matches any package that keeps an "
                  "app_chrome/<profile>/Sessions folder, so the Browser column reports the package "
                  "the file was found under and the same glob covers Chrome, Brave and Edge.\nOne "
-                 "row per navigation entry in each matched file, taken from the command Chromium "
+                 "row per navigation entry in each selected file, taken from the command Chromium "
                  "calls kCommandUpdateTabNavigation. Mirrored storage views with the same canonical "
                  "identity and exactly equal complete bytes are reported once, using the preferred "
                  "storage spelling. Different byte states remain separate; Source File names the "
