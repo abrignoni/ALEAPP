@@ -7,7 +7,7 @@ __artifacts_v2__ = {
                         'the package folder that holds the store.'),
         "author": "@bolisettynihith, @AlexisBrignoni, Claude",
         "creation_date": "2021-08-21",
-        "last_update_date": "2026-11-25",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
         "category": "Productivity",
         "notes": ('The store is data.db at files/tasks/<folder>/data.db (seen under com.google.android.gm, '
@@ -30,30 +30,32 @@ __artifacts_v2__ = {
                   ' field records is not established. Fields 11 and 3 held two integers, read as seconds in field 1'
                   ' and nanoseconds in field 2, the shape of google.protobuf.Timestamp, and are converted to UTC on'
                   ' that basis. Field 2.5 is read the same way; it was not present on Android data. Field 9.1.6.1 '
-                  "is an integer converted as Unix seconds to UTC. Fields 2.2, 2.3 and 9.1.4 and the task list's "
-                  'field 2.1 are read as bytes and decoded as UTF-8 text. A protobuf blob starting with the bytes '
-                  "FE FF is not decoded, leaving that row's protobuf columns blank; no such blob was seen. The task"
-                  ' list is joined by Tasks.TaskListId to TaskLists.TaskListIdWithoutShard within the same ShardId;'
-                  ' a task list with no tasks gets no row. On the 19 registered Android images listed in '
-                  'sample_data, checked on 2026-11-25, 36 stores were found once the duplicate spellings were '
-                  'collapsed: 16 Gmail, 13 Calendar, 3 Keep and 4 com.google.android.apps.dynamite, two of the '
-                  'Calendar stores under data/user/10. One store, Gmail on adams_ss135dl_a13, held a task, and its '
-                  'row was only in the -wal. On that row field 2.2 was absent, so Text (field 2.2) had no value, '
-                  'and field 2.3 held text, field 11 was earlier than field 3, field 2.4 held the same date as Due '
-                  'Date, and field 9.1.6.1 equalled the date in field 9.1.2 and the hour and minute in field 9.1.3 '
-                  'read in the zone named by field 9.1.4. Its Completed column was 0, so field 2.5 on a row whose '
-                  'Completed column is set was not exercised on Android data and Time (field 2.5) had no value. The'
-                  ' other 35 stores held no tasks, so the Calendar, Keep and com.google.android.apps.dynamite '
-                  'stores, and every store in the files/tasks-<folder> layout, were exercised only with empty Tasks'
-                  ' tables. In 13 of the 36 stores the tables were only in the -wal; without the -wal such a store '
-                  'reads as having no tables. Of the task fields on the Android row seen, 1, 2.4, 4, 8, 9.1.2, '
-                  "9.1.3 and 13 are not reported, nor are the task list's fields other than 2.1 or the Task and "
-                  'OriginalTask blobs. Not reported: TaskRecurrenceId (empty on the one task row seen), '
-                  'TaskRecurrences (no rows in any store seen), HasDirtyState (0 on every task and task list row '
-                  'seen), Operations, UserActions, Rooms, RoomsTable, DocumentsTable, GlobalMetadata and '
-                  'UserExperimental (no rows in any store seen), and ClientSyncState, UserMetadata, UserPrefs and '
-                  'GlobalMetadataTable (not decoded; GlobalMetadataTable has an ObfuscatedGaiaId column in 28 of '
-                  'the 36 stores, holding a value in 25).'),
+                  'is an integer converted as Unix seconds to UTC. A time field whose value is outside the dates '
+                  'the report can hold (before year 1 or after year 9999) is logged and left blank; no such value '
+                  "was seen. Fields 2.2, 2.3 and 9.1.4 and the task list's field 2.1 are read as bytes and decoded "
+                  "as UTF-8 text. A protobuf blob starting with the bytes FE FF is not decoded, leaving that row's "
+                  'protobuf columns blank; no such blob was seen. The task list is joined by Tasks.TaskListId to '
+                  'TaskLists.TaskListIdWithoutShard within the same ShardId; a task list with no tasks gets no row.'
+                  ' On the 19 registered Android images listed in sample_data, checked on 2026-11-25, 36 stores '
+                  'were found once the duplicate spellings were collapsed: 16 Gmail, 13 Calendar, 3 Keep and 4 '
+                  'com.google.android.apps.dynamite, two of the Calendar stores under data/user/10. One store, '
+                  'Gmail on adams_ss135dl_a13, held a task, and its row was only in the -wal. On that row field 2.2'
+                  ' was absent, so Text (field 2.2) had no value, and field 2.3 held text, field 11 was earlier '
+                  'than field 3, field 2.4 held the same date as Due Date, and field 9.1.6.1 equalled the date in '
+                  'field 9.1.2 and the hour and minute in field 9.1.3 read in the zone named by field 9.1.4. Its '
+                  'Completed column was 0, so field 2.5 on a row whose Completed column is set was not exercised on'
+                  ' Android data and Time (field 2.5) had no value. The other 35 stores held no tasks, so the '
+                  'Calendar, Keep and com.google.android.apps.dynamite stores, and every store in the '
+                  'files/tasks-<folder> layout, were exercised only with empty Tasks tables. In 13 of the 36 stores'
+                  ' the tables were only in the -wal; without the -wal such a store reads as having no tables. Of '
+                  'the task fields on the Android row seen, 1, 2.4, 4, 8, 9.1.2, 9.1.3 and 13 are not reported, nor'
+                  " are the task list's fields other than 2.1 or the Task and OriginalTask blobs. Not reported: "
+                  'TaskRecurrenceId (empty on the one task row seen), TaskRecurrences (no rows in any store seen), '
+                  'HasDirtyState (0 on every task and task list row seen), Operations, UserActions, Rooms, '
+                  'RoomsTable, DocumentsTable, GlobalMetadata and UserExperimental (no rows in any store seen), and'
+                  ' ClientSyncState, UserMetadata, UserPrefs and GlobalMetadataTable (not decoded; '
+                  'GlobalMetadataTable has an ObfuscatedGaiaId column in 28 of the 36 stores, holding a value in '
+                  '25).'),
         "paths": ('*/com.google.android.apps.tasks/files/tasks*/data.db*',
                   '*/com.google.android.gm/files/tasks*/data.db*',
                   '*/com.google.android.calendar/files/tasks*/data.db*',
@@ -185,14 +187,24 @@ def _pb_time(message, *keys):
     if not isinstance(value, dict) or not isinstance(value.get('1'), int):
         return ''
     nanos = value.get('2') if isinstance(value.get('2'), int) else 0
-    return _EPOCH + timedelta(seconds=value['1'], microseconds=nanos // 1000)
+    return _utc(value['1'], nanos // 1000, '.'.join(keys))
 
 
 def _pb_seconds(message, *keys):
     value = _pb(message, *keys)
     if not isinstance(value, int) or isinstance(value, bool):
         return ''
-    return _EPOCH + timedelta(seconds=value)
+    return _utc(value, 0, '.'.join(keys))
+
+
+def _utc(seconds, microseconds, field):
+    '''Unix seconds to UTC, or blank and a log line when the value is outside what a datetime holds.'''
+    try:
+        return _EPOCH + timedelta(seconds=seconds, microseconds=microseconds)
+    except OverflowError:
+        logfunc(f'Google Tasks: protobuf field {field} holds {seconds}, outside the dates a report can '
+                'show; left blank')
+        return ''
 
 
 def _decode(blob, label, typedef):
