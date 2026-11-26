@@ -63,6 +63,32 @@ class MediaDates(unittest.TestCase):
                                       'Favourite Date (As Stored)', 'Uploaded Date (As Stored)'])
 
 
+class FavouriteFromDate(unittest.TestCase):
+    def favourite(self, is_favourite, favourite_date):
+        with tempfile.TemporaryDirectory() as folder:
+            path = pathlib.Path(folder) / 'data/data/com.enchantedcloud.photovault/databases/ppv.db'
+            path.parent.mkdir(parents=True)
+            db = sqlite3.connect(path)
+            db.execute('CREATE TABLE MediaFile (creation_date TEXT, is_favourite INTEGER, is_deleted INTEGER, favourite_date TEXT)')
+            db.execute('INSERT INTO MediaFile VALUES (?, ?, 0, ?)', ('2024-01-01T00:00:00.000+00:00', is_favourite, favourite_date))
+            db.commit()
+            db.close()
+            context = SimpleNamespace(get_files_found=lambda: [str(path)],
+                                      get_relative_path=lambda p: str(pathlib.Path(p).relative_to(folder)))
+            headers, rows, _source = ppv.private_photo_vault_media.__wrapped__(context)
+        names = [h[0] if isinstance(h, tuple) else h for h in headers]
+        return dict(zip(names, rows[0]))['Favourite']
+
+    def test_a_favourite_date_with_a_zero_flag_is_a_favourite(self):
+        self.assertEqual(self.favourite(0, '2024-02-01T00:00:00.000-05:00'), 'Yes')
+
+    def test_the_flag_alone_is_still_a_favourite(self):
+        self.assertEqual(self.favourite(1, None), 'Yes')
+
+    def test_neither_is_not_a_favourite(self):
+        self.assertEqual(self.favourite(0, None), '')
+
+
 class LoginDateDefault(unittest.TestCase):
     def test_a_login_date_equal_to_the_other_tables_default_is_still_converted(self):
         self.assertIsNotNone(ppv._iso_to_utc('2021-01-01T01:00:00.000Z', skip_schema_default=False))
