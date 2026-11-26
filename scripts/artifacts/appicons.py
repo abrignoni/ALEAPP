@@ -5,17 +5,27 @@ __artifacts_v2__ = {
         "description": "Extract App icons from Nexus launcher database",
         "author": "@ydkhatri, @AlexisBrignoni, Codex",
         "creation_date": "2020-11-03",
-        "last_update_date": "2026-10-06",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
         "category": "Installed Apps",
-        "notes": "Read every distinct app_icons.db state of the Pixel Launcher. Known canonical "
-                 "aliases collapse only when main/WAL/journal bytes agree. Groups remain separate "
-                 "by source, package and stored profile ID; profile ID does not establish Android "
-                 "user identity or ownership. Combined row origins carry Source File. Icon choice "
-                 "is heuristic and does not establish the main app icon or user interaction. "
-                 "Other launchers are not covered. Raw component rows, repeated component keys "
-                 "within one profile, and version/date fields remain unreported. Shared media items "
-                 "retain the first source pointer; row origins and BLOB bytes establish later sources.",
+        "notes": ('Read every distinct app_icons.db state of the Pixel Launcher. Copies of one store under '
+                 'different paths (for example data/data, data/user/0 and data_mirror) are taken data/data '
+                 'first, then data/user/<user>, then data_mirror. A copy whose main, -wal and -journal bytes '
+                 'equal an earlier one is not read again, so of identical copies the first in that order is '
+                 'read. Each copy that differs is read: a row the copies share is reported once, from the '
+                 "first copy read, and a row only one copy holds is reported with that copy's path, so the "
+                 'same package and profile can appear on two rows that differ in content. Stores of different '
+                 'Android users are never merged. Within one copy, groups are separate by package and stored '
+                 'profile ID; profile ID does not establish Android user identity or ownership. Source File is'
+                 ' shown only when the reported rows come from more than one file; the source list names every'
+                 ' copy read, including one whose rows were all shared. On 31 registered Android images that '
+                 'hold this store (2026-11-26), reporting shared rows once changed pixel3_a12 from 369 rows to'
+                 ' 124, hickman_a13 from 252 to 126 and emu_a15_oss_v6 from 184 to 110, and left the other 28 '
+                 'unchanged; apart from Source File, the set of distinct rows was the same before and after on'
+                 ' all 31. Icon choice is heuristic and does not establish the main app icon or user '
+                 'interaction. Other launchers are not covered. Raw component rows, repeated component keys '
+                 'within one profile, and version/date fields remain unreported. Shared media items retain the'
+                 ' first source pointer; row origins and BLOB bytes establish later sources.'),
         "paths": ('*/com.google.android.apps.nexuslauncher/databases/app_icons.db*'),
         "output_types": ["html", "lava"],
         "artifact_icon": "package",
@@ -23,6 +33,9 @@ __artifacts_v2__ = {
             "hc_pixel8pro_a16": "Android 16 | com.google.android.apps.nexuslauncher | 70 rows",
             "pixel7a_a14": "Android 14 | com.google.android.apps.nexuslauncher | 100 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.apps.nexuslauncher | 359 rows (293 user 0, 66 user 10)",
+            "emu_a15_oss_v6": "Android 15 | com.google.android.apps.nexuslauncher | 110 rows",
+            "hickman_a13": "Android 13 | com.google.android.apps.nexuslauncher | 126 rows",
+            "pixel3_a12": "Android 12 | com.google.android.apps.nexuslauncher | 124 rows",
             "userb2_a13": "Android 13 | com.google.android.apps.nexuslauncher | 88 rows",
         }
     }
@@ -35,7 +48,7 @@ from html import escape
 from scripts.ilapfuncs import artifact_processor, \
     open_sqlite_db_readonly, check_in_embedded_media, \
     logfunc, convert_unix_ts_to_utc, null_absent_columns
-from scripts.artifacts.storagePathViews import canonical_path
+from scripts.artifacts.storagePathViews import canonical_path, union_view_rows
 
 class App:
     def __init__(self, package, profileid):
@@ -48,9 +61,14 @@ class App:
 
 
 def _app_icon_sources(context):
-    """Keep independent complete states; collapse proven canonical aliases only."""
-    paths = []
-    seen = set()
+    """Keep independent complete states; collapse proven canonical aliases only.
+
+    The copies of one store are taken in the order unique_files prefers (data/data, then
+    data/user/<user>, then data_mirror) before identical ones collapse, so the copy kept of an
+    identical pair, and the copy a shared row is reported from, is the lowest ranked one
+    whatever order the seeker found the files in.
+    """
+    candidates = []
     for candidate in context.get_files_found():
         path = str(candidate)
         if Path(path).name != 'app_icons.db':
@@ -84,6 +102,13 @@ def _app_icon_sources(context):
         except OSError as error:
             logfunc(f'App Icons: unreadable database state {relative}: {error}; skipping source')
             continue
+        candidates.append((identity, canonical_path(relative)[1], path))
+    first = {}
+    for identity, _rank, _path in candidates:
+        first.setdefault(identity[0], len(first))
+    paths = []
+    seen = set()
+    for identity, _rank, path in sorted(candidates, key=lambda item: (first[item[0][0]], item[1])):
         if identity not in seen:
             seen.add(identity)
             paths.append(path)
@@ -91,8 +116,7 @@ def _app_icon_sources(context):
 
 @artifact_processor
 def appIcons(context):
-    data_list = []
-    sources = {}
+    file_rows = []
 
     query = '''
     SELECT 
@@ -125,6 +149,8 @@ def appIcons(context):
         finally:
             db.close()
         apps = {}
+        rows = []
+        file_rows.append((source_path, rows))
 
         for record in db_records:
             icon_last_update = convert_unix_ts_to_utc(record[2])
@@ -175,10 +201,13 @@ def appIcons(context):
                     # other_icon = check_in_embedded_media(artifact_info, report_folder, seeker, source_path, v[1], v[0], v[2])
                     other_icon = check_in_embedded_media(source_path, v[1], v[0])
                     other_icons.append(other_icon)
-            data_list.append((escape(app.name), escape(app.package), main_icon, other_icons, app.profileid, relative))
-            sources[source_path] = None
+            rows.append((escape(app.name), escape(app.package), main_icon, other_icons, app.profileid, relative))
 
-    if len(sources) > 1:
+    # Two copies of one store that differ in bytes can still give the same row; it is reported
+    # once, from the first copy read. Rows only one copy gives are kept with that copy's path.
+    data_list = union_view_rows(context, file_rows, ignore={5})
+    sources = {path: None for path, rows in file_rows if rows}
+    if len({row[5] for row in data_list}) > 1:
         data_headers += ('Source File',)
     else:
         data_list = [row[:-1] for row in data_list]

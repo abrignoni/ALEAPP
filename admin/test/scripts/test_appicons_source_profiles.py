@@ -114,18 +114,29 @@ class AppIconsSourceProfilesTest(unittest.TestCase):
             pathlib.Path(str(mirror) + '-journal').write_bytes(b'fingerprint-only journal fixture')
             self.assertEqual(_app_icon_sources(context(root, paths)), list(map(str,paths)))
 
-    def test_actual_wal_difference_preserves_both_alias_states_and_source_rows(self):
+    def test_identical_aliases_keep_the_data_data_copy_whatever_the_seeker_order(self):
         with tempfile.TemporaryDirectory() as root:
-            paths = tuple(reversed(make_wal_pair(root)))
-            self.assertEqual(_app_icon_sources(context(root, paths)), list(map(str,paths)))
+            main, _ = make_database(root)
+            mirror = copy_to(main, root, 'data_mirror/data_ce/null/0')
+            user_0 = copy_to(main, root, 'data/user/0')
+            for order in ((mirror, user_0, main), (user_0, mirror, main), (main, mirror, user_0)):
+                self.assertEqual(_app_icon_sources(context(root, order)), [str(main)])
+
+    def test_actual_wal_difference_reads_both_alias_states_and_reports_shared_rows_once(self):
+        with tempfile.TemporaryDirectory() as root:
+            data_data, user_0 = make_wal_pair(root)
+            # Handed over in the seeker's order, data/user/0 first; data/data is read first.
+            given = (user_0, data_data)
+            self.assertEqual(_app_icon_sources(context(root, given)), [str(data_data), str(user_0)])
             with patch('scripts.artifacts.appicons.check_in_embedded_media', side_effect=lambda p,d,n:n):
-                headers, rows, source = appIcons.__wrapped__(context(root, paths))
+                headers, rows, source = appIcons.__wrapped__(context(root, given))
             self.assertEqual(headers[-1], 'Source File')
-            self.assertEqual(len(rows), 10)
-            self.assertEqual([rows[0][0], rows[5][0]], ['WAL-two','WAL-one'])
-            self.assertEqual([r[-1] for r in rows[:5]], [str(paths[0].relative_to(root))]*5)
-            self.assertEqual([r[-1] for r in rows[5:]], [str(paths[1].relative_to(root))]*5)
-            self.assertEqual(source.splitlines(), list(map(str,paths)))
+            # 5 rows from data/data, then the one row only data/user/0 holds.
+            self.assertEqual(len(rows), 6)
+            self.assertEqual([rows[0][0], rows[5][0]], ['WAL-one', 'WAL-two'])
+            self.assertEqual([r[-1] for r in rows[:5]], [str(data_data.relative_to(root))]*5)
+            self.assertEqual(rows[5][-1], str(user_0.relative_to(root)))
+            self.assertEqual(source.splitlines(), [str(data_data), str(user_0)])
 
     def test_exact_main_filter_errors_and_only_successful_row_origins(self):
         with tempfile.TemporaryDirectory() as root:
