@@ -22,19 +22,28 @@ __artifacts_v2__ = {
     },
     "get_gboardCache_keystrokes": {
         "name": "Gboard - Keystroke Cache",
-        "description": "Text decoded from the Gboard trainingcache2, trainingcache3 and trainingcachev2 databases, with the app and input field values stored beside it. The field meanings are not sourced. In trainingcachev2 a session with no decoded text is not reported. No tested image produced a row.",
+        "description": "Text decoded from the Gboard trainingcache2, trainingcache3 and trainingcachev2 databases, with the app and input field values stored beside it. The field meanings are not sourced. In trainingcachev2 a session with no decoded text is not reported.",
         "author": "@ydkhatri",
         "creation_date": "2021-01-09",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
         "category": "Device Activity",
-        "notes": "",
+        "notes": ("Each protobuf payload is decoded on its own. A payload that does not decode is logged and "
+                  "the rows after it are still read. In trainingcache2.db the row is reported with blank text "
+                  "and keeps its other columns. In trainingcachev2.db a row is a session built from several "
+                  "payloads: an input payload that does not decode adds no text to its session, a session "
+                  "payload that does not decode leaves App and Input Name blank, and a session left with no "
+                  "text is not reported. The report row does not mark the failure; the log names the table and "
+                  "row. On pixel3_a11, 4 of the 207 payloads in trainingcache2.db did not decode. No run image "
+                  "had a trainingcachev2 payload that did not decode; that path is covered by the unit test "
+                  "only."),
         "paths": ('*/com.google.android.inputmethod.latin/databases/trainingcache*.db*',),
         "output_types": "standard",
         "artifact_icon": "brand-chrome",
         "sample_data": {
             "hc_pixel8pro_a16": "Android 16 | com.google.android.inputmethod.latin vc 175827782 | 0 rows",
             "kevin_pocox7_a15": "Android 15 | com.google.android.inputmethod.latin vc 175401514 | 0 rows",
+            "pixel3_a11": "Android 11 | 466 rows",
             "pixel7a_a14": "Android 14 | com.google.android.inputmethod.latin vc 128278094 | 0 rows",
             "russell_pixel6a_a13": "Android 13 | com.google.android.inputmethod.latin vc 114763994 | 0 rows",
             "userb2_a13": "Android 13 | com.google.android.inputmethod.latin vc 155404870 | 0 rows",
@@ -65,6 +74,9 @@ __artifacts_v2__ = {
 import datetime
 import os
 import sqlite3
+import struct
+
+from google.protobuf.message import DecodeError
 
 from scripts.ilapfuncs import decode_protobuf, is_sqlite_sidecar
 
@@ -95,6 +107,30 @@ def _str_to_utc(value):
         return ''
 
 
+_DECODE_ERRORS = (DecodeError, ValueError, TypeError, KeyError, IndexError, struct.error)
+
+
+def _decode(blob, typedef, file_found, table, row_id):
+    '''One protobuf payload decoded, or {} and a log line when it does not decode.
+
+    Each payload is decoded on its own, so one that does not decode costs only what it held,
+    and the rows after it are still read.
+    '''
+    try:
+        data, _ = decode_protobuf(blob, typedef)
+        return data if isinstance(data, dict) else {}
+    except _DECODE_ERRORS as ex:
+        logfunc(f'gboard: payload of {table} row {row_id} in {file_found} did not decode '
+                f'({ex}); its content is not reported')
+        return {}
+
+
+def _text(item):
+    '''Field 1 of a decoded text item as UTF-8, or '' when it is not a single bytes value.'''
+    value = item.get('1', b'') if isinstance(item, dict) else b''
+    return value.decode('utf8', 'ignore') if isinstance(value, bytes) else ''
+
+
 def _events_trainingcache2(file_found):
     events = []
     db = open_sqlite_db_readonly(file_found)
@@ -111,15 +147,16 @@ def _events_trainingcache2(file_found):
                               {'2': {'type': 'message', 'message_typedef':
                                      {'1': {'name': '', 'type': 'bytes'}}}}}}
             for row in cursor.fetchall():
-                data, _ = decode_protobuf(row['_payload'], pb_types)
-                texts = data.get('7', {}).get('2', [])
+                data = _decode(row['_payload'], pb_types, file_found, 'training_input_events_table', row['_id'])
+                field7 = data.get('7')
+                texts = field7.get('2', []) if isinstance(field7, dict) else []
                 text_typed = ''
                 if texts:
                     if isinstance(texts, list):
                         for t in texts:
-                            text_typed += t.get('1', b'').decode('utf8', 'ignore')
+                            text_typed += _text(t)
                     else:
-                        text_typed = texts.get('1', b'').decode('utf8', 'ignore')
+                        text_typed = _text(texts)
                 events.append(keyboard_event(row['_id'], row['app'], text_typed,
                                              row['textbox_name'], row['textbox_id'], row['ts']))
         except (sqlite3.Error, TypeError, ValueError) as ex:
@@ -166,7 +203,7 @@ def _events_trainingcachev2(file_found):
                 ke = keyboard_event(row['id'], '', '', '', '', row['ts2'], row['ts1'], row['ts1'])
                 desc_proto = row['desc_proto']
                 if desc_proto:
-                    desc, _ = decode_protobuf(desc_proto, None)
+                    desc = _decode(desc_proto, None, file_found, 'session_table', row['session'])
                     try:
                         ke.textbox_name = desc.get('6', b'').decode('utf8', 'ignore')
                     except AttributeError:
@@ -178,23 +215,12 @@ def _events_trainingcachev2(file_found):
             ke.end_date = row['ts1']
             data_proto = row['data_proto']
             if data_proto:
-                data, _ = decode_protobuf(data_proto, None)
+                data = _decode(data_proto, None, file_found, 'input_action_table', row['id'])
                 input_dict = data.get('6', None)
-                if input_dict:
+                if isinstance(input_dict, dict):
                     chars_items = input_dict.get('4', {})
-                    chars = ''
-                    if isinstance(chars_items, list):
-                        for item in chars_items:
-                            try:
-                                chars += item.get('1', b'').decode('utf8', 'ignore')
-                            except AttributeError:
-                                pass
-                    else:
-                        try:
-                            chars = chars_items.get('1', b'').decode('utf8', 'ignore')
-                        except AttributeError:
-                            pass
-                    ke.text += chars
+                    items = chars_items if isinstance(chars_items, list) else [chars_items]
+                    ke.text += ''.join(_text(item) for item in items)
         if ke and ke.text:
             events.append(ke)
     except (sqlite3.Error, TypeError, ValueError) as ex:
