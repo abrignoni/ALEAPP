@@ -5,7 +5,7 @@ __artifacts_v2__ = {
                        "holds: rows, No result found., an access or provider error, an empty file, or no file.",
         "author": "@Maxitelmo, Claude",
         "creation_date": "2026-11-25",
-        "last_update_date": "2026-11-25",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
         "category": "Logs & Diagnostics",
         "notes": "One row per URI that the Content Query artifacts read, for each output folder found, and one row per "
@@ -21,7 +21,9 @@ __artifacts_v2__ = {
                  "provider returns no cursor or an empty one), 'access denied (SecurityException)' when the text holds "
                  "the error line 'Error while accessing provider:' followed by a java.lang.SecurityException, "
                  "'provider error' for the same error line followed by any other exception (Detail gives its class "
-                 "and message), 'empty file', 'text not recognised' (Detail gives the first line), or 'no file'. "
+                 "and message), 'empty file', 'text not recognised' (Detail gives the first line), 'file not "
+                 "readable' (the file was found but could not be opened; Detail gives the error class, and the "
+                 "other files and folders are still read), or 'no file'. "
                  "Content.java prints the error line and the stack trace on stderr (lines 530 and 531 at "
                  "https://android.googlesource.com/platform/frameworks/base/+/8d2ed506045d5d6cf25ef7ef77a30da910733657/cmds/content/src/com/android/commands/content/Content.java). "
                  "android_triage redirects stdout only, so a query that fails leaves an empty file there and the "
@@ -56,7 +58,7 @@ __artifacts_v2__ = {
                        "with dates read as milliseconds.",
         "author": "@Maxitelmo, Claude",
         "creation_date": "2026-11-25",
-        "last_update_date": "2026-11-25",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
         "category": "Messaging",
         "notes": "Read from ALEX raw text output only (content_provider_<serial>/sms/sms.txt); android_triage does not "
@@ -105,7 +107,7 @@ __artifacts_v2__ = {
                        "printed, with dates read as seconds.",
         "author": "@Maxitelmo, Claude",
         "creation_date": "2026-11-25",
-        "last_update_date": "2026-11-25",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
         "category": "Messaging",
         "notes": "Read from ALEX raw text output only (content_provider_<serial>/mms/mms.txt); android_triage does not "
@@ -123,7 +125,8 @@ __artifacts_v2__ = {
                  "since no rows, an error and a skipped dump look the same. When mms_addr.txt is there but holds "
                  "no FROM, TO, CC or BCC row for a message, Parse Note says so on that row. When mms_addr.txt is not "
                  "a full list of rows (a provider error, rows followed by an error, rows that could not be split, an "
-                 "empty or unrecognised file, or a file that could not be read), the addresses read from it are "
+                 "empty or unrecognised file, a file that could not be read, or rows that print no msg_id or type "
+                 "column, as a query with a projection can leave out), the addresses read from it are "
                  "shown, a message with some says 'addresses may be partial' with the reason, and a message with "
                  "none says 'addresses unknown' with the reason. A message row whose _id is "
                  "empty or the text NULL is not matched and says 'addresses unknown'; address rows whose msg_id is "
@@ -172,7 +175,7 @@ __artifacts_v2__ = {
                        "as printed, with the PduHeaders name of each address type.",
         "author": "@Maxitelmo, Claude",
         "creation_date": "2026-11-25",
-        "last_update_date": "2026-11-25",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
         "category": "Messaging",
         "notes": "Read from ALEX raw text output only (content_provider_<serial>/mms/mms_addr.txt); android_triage "
@@ -191,7 +194,8 @@ __artifacts_v2__ = {
                  "mms.txt is a full list of rows (or 'No result found.'). It is blank, with the reason in Parse Note, "
                  "when msg_id is empty or the text NULL, when the folder has no mms.txt, and when mms.txt is not a "
                  "full list (a provider error, rows followed by an error, rows that could not be split, an empty or "
-                 "unrecognised file) and holds no row with that _id. The report's source list names mms.txt next to "
+                 "unrecognised file, a file that could not be read, or rows that print no _id column) and holds no "
+                 "row with that _id. The report's source list names mms.txt next to "
                  "mms_addr.txt; Source File and Source Line stay those of the address row. The same addresses are "
                  "shown on the message rows of MMS (content query) as From, To, Cc and Bcc. ALEX up to commit "
                  "8f27e7a (prosch88/ALEX) writes no file when the output holds 'No result found' or "
@@ -221,7 +225,7 @@ __artifacts_v2__ = {
                        "printed; the part content (media) is not in this output.",
         "author": "@Maxitelmo, Claude",
         "creation_date": "2026-11-25",
-        "last_update_date": "2026-11-25",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
         "category": "Messaging",
         "notes": "Read from ALEX raw text output only (content_provider_<serial>/mms/mms_part.txt); android_triage "
@@ -264,7 +268,7 @@ __artifacts_v2__ = {
                        "as printed, with the date read as milliseconds and the duration as seconds.",
         "author": "@Maxitelmo, Claude",
         "creation_date": "2026-11-25",
-        "last_update_date": "2026-11-25",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
         "category": "Calls & Contacts",
         "notes": "Read from ALEX raw text output only (content_provider_<serial>/call_log/call_log_calls.txt); "
@@ -309,7 +313,7 @@ __artifacts_v2__ = {
                        "content://com.android.contacts/contacts, as printed.",
         "author": "@Maxitelmo, Claude",
         "creation_date": "2026-11-25",
-        "last_update_date": "2026-11-25",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
         "category": "Calls & Contacts",
         "notes": "Read from android_triage (<date>_contentprovider/contacts_contacts.txt) and ALEX raw text output "
@@ -353,7 +357,7 @@ __artifacts_v2__ = {
                        "content://com.android.contacts/data/phones, as printed.",
         "author": "@Maxitelmo, Claude",
         "creation_date": "2026-11-25",
-        "last_update_date": "2026-11-25",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
         "category": "Calls & Contacts",
         "notes": "Read from android_triage (<date>_contentprovider/contacts_data_phones.txt) and ALEX raw text output "
@@ -401,7 +405,7 @@ __artifacts_v2__ = {
                        "content://com.android.calendar/events, as printed, with start and end read as milliseconds.",
         "author": "@Maxitelmo, Claude",
         "creation_date": "2026-11-25",
-        "last_update_date": "2026-11-25",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
         "category": "Productivity",
         "notes": "Read from android_triage only (<date>_contentprovider/calendar_events.txt); ALEX does not query "
@@ -442,7 +446,7 @@ __artifacts_v2__ = {
                        "milliseconds.",
         "author": "@Maxitelmo, Claude",
         "creation_date": "2026-11-25",
-        "last_update_date": "2026-11-25",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
         "category": "Productivity",
         "notes": "Read from android_triage (<date>_contentprovider/calendar_event_entities.txt) and ALEX raw text "
@@ -490,7 +494,7 @@ __artifacts_v2__ = {
                        "content://com.android.calendar/calendars, as printed.",
         "author": "@Maxitelmo, Claude",
         "creation_date": "2026-11-25",
-        "last_update_date": "2026-11-25",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
         "category": "Productivity",
         "notes": "Read from android_triage (<date>_contentprovider/calendar_calendars.txt) and ALEX raw text output "
@@ -529,7 +533,7 @@ __artifacts_v2__ = {
                        "content://media/external/file, as printed, with dates read per the MediaStore contract.",
         "author": "@Maxitelmo, Claude",
         "creation_date": "2026-11-25",
-        "last_update_date": "2026-11-25",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
         "category": "Photos & Media",
         "notes": "Read from android_triage (<date>_contentprovider/media_external_file.txt) and ALEX raw text output "
@@ -728,14 +732,24 @@ def _incomplete(dump):
     return ''
 
 
-def _sibling_dump(context, path, relative):
-    """(dump, reason) of a sibling file; dump is None when it could not be read."""
+def _read_error(error):
+    """An OSError as report text, without the path it names (a path on the examiner's machine)."""
+    return f'could not be read: {type(error).__name__}' + (f' ({error.strerror})' if error.strerror else '')
+
+
+def _sibling_dump(context, path, relative, required):
+    """(dump, reason) of a sibling file; dump is None when it could not be read. A dump with rows that
+    lacks a column of ``required`` cannot say that a key is absent from it, so it gets a reason too."""
     try:
         dump = reader.read_file(path, context.get_seeker())
     except OSError as error:
-        logfunc(f'Content query {relative}: {_relative(context, path)} could not be read: {error}')
-        return None, f'could not be read: {error}'
-    return dump, _incomplete(dump)
+        logfunc(f'Content query {relative}: {_relative(context, path)} {_read_error(error)}')
+        return None, _read_error(error)
+    reason = _incomplete(dump)
+    missing = [column for column in required if dump.records and column not in dump.columns]
+    if missing:
+        reason = '; '.join(filter(None, [reason, f'it prints no {" or ".join(missing)} column']))
+    return dump, reason
 
 
 def _joined(context, key, layout, relative):
@@ -749,7 +763,7 @@ def _joined(context, key, layout, relative):
                 notes.append(NOTE_ADDRESSES_UNKNOWN)
                 return ['', '', '', '']
             return unknown, None
-        dump, reason = _sibling_dump(context, addr_path, relative)
+        dump, reason = _sibling_dump(context, addr_path, relative, ('msg_id', 'type'))
         addresses = {}
         for record in (dump.records if dump else []):
             values = reader.Values(record)
@@ -779,7 +793,7 @@ def _joined(context, key, layout, relative):
                 notes.append(NOTE_MMS_ROW_NO_FILE)
                 return ['']
             return no_mms, None
-        dump, reason = _sibling_dump(context, mms_path, relative)
+        dump, reason = _sibling_dump(context, mms_path, relative, ('_id',))
         ids = {reader.Values(record)['_id'] for record in (dump.records if dump else [])}
         ids = {value for value in ids if _usable_key(value)}
 
@@ -809,9 +823,13 @@ def _read(context, key, with_source_file=True):
         if uri is None or uri.key != key:
             logfunc(f'Content query: {relative} is not in a known layout folder, not read')
             continue
-        dump = reader.read_file(path, run)
-        joined, sibling = _joined(context, key, layout, relative)
         sources.append(path)
+        try:
+            dump = reader.read_file(path, run)
+        except OSError as error:
+            logfunc(f'Content query {layout[0]} {relative}: {_read_error(error)}; its rows are not reported')
+            continue
+        joined, sibling = _joined(context, key, layout, relative)
         if sibling is not None and sibling not in sources:
             sources.append(sibling)
         logfunc(f'Content query {layout[0]} {relative}: {reader.status_text(dump)}')
@@ -928,9 +946,13 @@ def content_query_files(context):
 
 
 def _file_row(context, layout, folder_relative, uri, path, read_by):
-    dump = reader.read_file(path, context.get_seeker())
     relative = _relative(context, path)
     name = relative[len(folder_relative) + 1:] if relative.startswith(folder_relative + '/') else relative
+    try:
+        dump = reader.read_file(path, context.get_seeker())
+    except OSError as error:
+        logfunc(f'Content query {layout} {relative}: {_read_error(error)}')
+        return (layout, folder_relative, uri, name, reader.UNREADABLE, '', _read_error(error), '', read_by)
     detail = '; '.join(([dump.detail] if dump.detail else []) + dump.warnings)
     count = len(dump.records) if dump.status == reader.ROWS else ''
     return (layout, folder_relative, uri, name, dump.status, count, detail,

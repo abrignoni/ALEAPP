@@ -117,5 +117,52 @@ class MmsJoinTest(unittest.TestCase):
         self.assertIn('mms.txt is incomplete', rows[1]['Parse Note'])
 
 
+    def test_missing_join_columns_leave_the_relation_unknown(self):
+        mms = self.write('mms.txt', MMS)
+        addr = self.write('mms_addr.txt', 'Row: 0 _id=30, address=+15550100003, type=137\n')
+        rows, _sources = self.rows('mms', mms, addr)
+        self.assertIn('addresses unknown', rows[0]['Parse Note'])
+        self.assertIn('msg_id', rows[0]['Parse Note'])
+        self.assertNotIn(contentQuery.NOTE_NO_ADDRESS_ROWS, rows[0]['Parse Note'])
+        mms = self.write('mms.txt', 'Row: 0 thread_id=5, date=1767243600, msg_box=1\n')
+        addr = self.write('mms_addr.txt', ADDR)
+        rows, _sources = self.rows('mms_addr', addr, mms)
+        self.assertEqual(rows[0]['MMS Row'], '')
+        self.assertIn('_id', rows[0]['Parse Note'])
+
+
+class UnreadableFileTest(unittest.TestCase):
+    """A file that cannot be opened is reported and does not stop the other folders."""
+
+    def setUp(self):
+        reader.clear_cache()
+        self.addCleanup(reader.clear_cache)
+        self.folder = tempfile.TemporaryDirectory()
+        self.addCleanup(self.folder.cleanup)
+        good = os.path.join(self.folder.name, 'content_provider_A', 'call_log')
+        bad = os.path.join(self.folder.name, 'content_provider_B', 'call_log')
+        os.makedirs(good)
+        # A folder where the file should be: opening it raises an OSError on every platform.
+        os.makedirs(os.path.join(bad, 'call_log_calls.txt'))
+        self.good = os.path.join(good, 'call_log_calls.txt')
+        self.bad = os.path.join(bad, 'call_log_calls.txt')
+        with open(self.good, 'w', encoding='utf-8') as handle:
+            handle.write('Row: 0 _id=1, number=+15550100001, date=1767225600000, duration=4, type=1\n')
+        self.context = StubContext(self.folder.name, [self.bad, self.good])
+
+    def test_artifact_keeps_the_other_folders(self):
+        _headers, rows, sources = contentQuery._read(self.context, 'call_log')  # pylint: disable=protected-access
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(sorted(sources.split('\n')), sorted([self.bad, self.good]))
+
+    def test_files_artifact_shows_the_file_as_unreadable(self):
+        _headers, rows, _sources = contentQuery.content_query_files.__wrapped__(self.context)
+        calls = [row for row in rows if row[2] == 'content://call_log/calls']
+        self.assertEqual(sorted(row[4] for row in calls), sorted([reader.ROWS, reader.UNREADABLE]))
+        unreadable = next(row for row in calls if row[4] == reader.UNREADABLE)
+        self.assertTrue(unreadable[6].startswith('could not be read: '))
+        self.assertNotIn(self.folder.name, unreadable[6])
+
+
 if __name__ == '__main__':
     unittest.main()
