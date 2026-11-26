@@ -120,8 +120,9 @@ RSA private key (`--image_private_key`). A BitLocker volume in an image opens wi
 password or recovery password, given the same way, or its startup key
 (`--bitlocker_key`, repeatable), an APFS volume macOS encrypted in software with its
 password or personal recovery key, and a LUKS container with its passphrase, each given
-the same way. At a terminal whatever is missing is asked for, and the GUI asks in dialogs;
-a BitLocker, APFS or LUKS volume nothing opens is reported and not searched.
+the same way. At a terminal whatever is missing is asked for, and the GUI asks for it in the
+DETECTED card of the Source screen as soon as the image is chosen; a BitLocker, APFS or LUKS
+volume nothing opens is reported and not searched.
 
 A Signal on-device backup is listed without a key. Its messages, recipients and
 attachments open with the account's 64-character recovery key, given with
