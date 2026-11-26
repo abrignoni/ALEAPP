@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Parses MEGA transfer records (timestamp, folder, filename, size, direction and state) from the completedtransfers table of the MEGA megapreferences database.",
         "author": "@kibaffo33",
         "creation_date": "2022-06-04",
-        "last_update_date": "2026-10-09",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
         "category": "Cloud & Files",
         "notes": ""
@@ -16,7 +16,10 @@ __artifacts_v2__ = {
                  "STATE_FAILED 8. Any other value is shown as decrypted. A row that does not "
                  "decrypt is logged and not reported. Timestamp is read as Unix milliseconds. "
                  "Both tested images returned 0 rows, so the decoding is code present and "
-                 "unexercised on the registered images.",
+                 "unexercised on the registered images. On hc_pixel8pro_a16, hc_pixel8pro_a17 and "
+                 "pixel7a_a14 megapreferences does not start with the SQLite header, so it is "
+                 "logged and not read. What format the file is in on those app versions is not "
+                 "established.",
         "paths": ('*/mega.privacy.android.app/databases/megapreferences',),
         "output_types": "standard",
         "artifact_icon": "download",
@@ -36,6 +39,8 @@ from Crypto.Cipher import AES
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, logfunc
 from scripts.artifacts.storagePathViews import unique_files
+
+SQLITE_HEADER = b'SQLite format 3\x00'
 
 DIRECTION = {"0": "Download", "1": "Upload", "2": "Local TCP Download"}
 STATE = {
@@ -71,6 +76,18 @@ def get_mega_transfers(context):
         if not file_found.endswith('megapreferences'):
             continue
         source_path = file_found
+        shown = context.get_relative_path(file_found)
+        try:
+            with open(file_found, 'rb') as handle:
+                header = handle.read(len(SQLITE_HEADER))
+        except OSError as exc:
+            logfunc(f'Mega transfers: could not open {shown}: {type(exc).__name__}')
+            continue
+        if header != SQLITE_HEADER:
+            # Not SQLite at all, so there is nothing for a SQLite reader to report. Logged
+            # in plain words, not as a database error, because no read was attempted.
+            logfunc(f'Mega transfers: {shown} does not start with the SQLite header, so it was not read')
+            continue
         db = open_sqlite_db_readonly(file_found)
         try:
             cursor = db.cursor()
@@ -81,9 +98,9 @@ def get_mega_transfers(context):
             ''')
             results = cursor.fetchall()
         except sqlite3.Error as exc:
-            # megapreferences isn't always a valid sqlite db (encrypted/other format) --
-            # skip it instead of aborting the whole artifact ("file is not a database")
-            logfunc(f'Mega transfers: could not read {file_found}: {exc}')
+            # A file with the SQLite header that still fails to read is a real read error,
+            # so it is logged with SQLite's own message.
+            logfunc(f'Mega transfers: could not read {shown}: {exc}')
             results = []
         finally:
             db.close()

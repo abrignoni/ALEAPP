@@ -301,8 +301,11 @@ def _open_index(db_path):
 
     A wrong parameter set fails outright rather than returning wrong rows, because
     SQLCipher checks the HMAC of every page it decrypts, so trying them in turn
-    cannot silently pick the wrong one.
+    cannot silently pick the wrong one. A set that fails before another opens the
+    database is the normal search and is not logged; the failures are logged only
+    when no set opens it, so the log records a database that was not read.
     """
+    failures = []
     for label, pragmas in _CIPHER_PARAMETER_SETS:
         connection = None
         try:
@@ -315,13 +318,14 @@ def _open_index(db_path):
             cursor.execute('SELECT count(*) FROM sqlite_master;').fetchone()
             return connection
         except Exception as error:  # pylint: disable=broad-exception-caught
-            logfunc(f'HLD Vault: {os.path.basename(db_path)} did not open with '
-                    f'{label}: {error}')
+            failures.append(f'{label}: {error}')
             if connection is not None:
                 try:
                     connection.close()
                 except Exception:  # pylint: disable=broad-exception-caught
                     pass
+    for failure in failures:
+        logfunc(f'HLD Vault: {os.path.basename(db_path)} did not open with {failure}')
     return None
 
 
