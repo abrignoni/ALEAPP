@@ -104,42 +104,7 @@ __artifacts_v2__ = {
         "sample_data": {
             "emu_a15_oss2_v3": "Kwai 13.7.50.646403 | 1 rows",
         },
-        "notes": "One row per matched path at or below a DCIM/Camera folder whose file name "
-                 "carries the pattern seen on the one saved file: a run of digits, then "
-                 "_play.mp4_logo_, then any trailing text. On the one file seen the trailing text "
-                 "was two capital letters and .mp4. What it encodes was not established. The name "
-                 "check ignores letter case. The search pattern that finds the file does not on "
-                 "macOS and Linux, so a name or folder in different case is not reported there. "
-                 "The digit run is required to be 6 to 25 digits long, so a file carrying the "
-                 "rest of the shape with a shorter or longer run is not reported. The ids seen "
-                 "on the tested device are 19 digits. An extraction that holds shared storage "
-                 "under more than one path would give one row per path. That was not seen on the "
-                 "tested image.\n"
-                 "On the one file saved during testing the leading digits were the app's PHOTO_ID "
-                 "for that video, which is what joins the file "
-                 "back to the Kwai Watched Videos row for the same video. That is a recorded "
-                 "identifier rather than a match on size or time. On the tested device one video "
-                 "was saved through the app's share sheet and its file name carried the identifier "
-                 "of a video already present in the watch table.\n"
-                 "The file name pattern rests on a single observation. One save was produced "
-                 "during testing; a second attempt wrote no file and reported no error, so the "
-                 "shape of the name is described from one example and may vary by app version or "
-                 "region.\n"
-                 "A file is reported because its name matches that shape. Nothing inside the file "
-                 "establishes which app wrote it, so a row is a name match and not an "
-                 "attribution.\n"
-                 "The one saved file measured was written into the device camera folder rather than "
-                 "a folder of the app's own, so it sits beside camera output. A table named "
-                 "OFFLINE_VIDEO_ENTITY in com.kwai.video/databases/offline_video.db held no rows "
-                 "after that one save. What the app uses that table for was not established. This "
-                 "artifact does not read it.\n"
-                 "Video renders the file, and only when its bytes really open with an ISO base media "
-                 "header: the name says MP4 and the header is what is checked before the file "
-                 "is registered as one, so a row whose Video cell is empty is a file that either "
-                 "did not open that way or that the report could not register.\n"
-                 "A row is evidence a file is present under a name of the shape the app wrote once "
-                 "in testing. It does not show the app wrote this file or that the app is still "
-                 "installed.",
+        "notes": "One row per matched path at or below a DCIM/Camera folder whose file name carries the pattern seen on the one saved file: a run of digits, then _play.mp4_logo_, then any trailing text. On the one file seen the trailing text was two capital letters and .mp4. What it encodes was not established. The name check ignores letter case. The search pattern that finds the file ignores case on Windows hosts, and for NTFS, ReFS, exFAT and FAT volumes read from a raw disk image. On folder, tar and zip inputs read on macOS or Linux it does not, so a name or folder in different case is not reported there. The digit run is required to be 6 to 25 digits long, so a file carrying the rest of the shape with a shorter or longer run is not reported. The ids seen on the tested device are 19 digits. An extraction that holds shared storage under more than one path would give one row per path. That was not seen on the tested image.\nOn the one file saved during testing the leading digits were the app's PHOTO_ID for that video, which is what joins the file back to the Kwai Watched Videos row for the same video. That is a recorded identifier rather than a match on size or time. On the tested device one video was saved through the app's share sheet and its file name carried the identifier of a video already present in the watch table.\nThe file name pattern rests on a single observation. One save was produced during testing; a second attempt wrote no file and reported no error, so the shape of the name is described from one example and may vary by app version or region.\nA file is reported because its name matches that shape. Nothing inside the file establishes which app wrote it, so a row is a name match and not an attribution.\nThe one saved file measured was written into the device camera folder rather than a folder of the app's own, so it sits beside camera output. A table named OFFLINE_VIDEO_ENTITY in com.kwai.video/databases/offline_video.db held no rows after that one save. What the app uses that table for was not established. This artifact does not read it.\nVideo renders the file, and only when its bytes really open with an ISO base media header: the name says MP4 and the header is what is checked before the file is registered as one, so a row whose Video cell is empty is a file that either did not open that way or that the report could not register.\nA row is evidence a file is present under a name of the shape the app wrote once in testing. It does not show the app wrote this file or that the app is still installed.",
         "paths": ('*/DCIM/Camera/*_play.mp4_logo_*',),
         "output_types": "standard",
         "artifact_icon": "device-floppy",
