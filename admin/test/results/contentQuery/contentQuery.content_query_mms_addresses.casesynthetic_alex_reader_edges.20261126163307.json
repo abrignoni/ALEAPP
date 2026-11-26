@@ -1,0 +1,65 @@
+{
+  "metadata": {
+    "module_name": "contentQuery",
+    "artifact_name": "MMS Addresses (content query)",
+    "function_name": "content_query_mms_addresses",
+    "case_number": "casesynthetic_alex_reader_edges",
+    "number_of_columns": 11,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 258,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/contentQuery/testdata.contentQuery.content_query_mms_addresses.casesynthetic_alex_reader_edges.zip",
+    "start_time": "2026-11-26T16:33:07.624824+00:00",
+    "end_time": "2026-11-26T16:33:07.691739+00:00",
+    "run_time_seconds": 0.001531362533569336,
+    "last_commit": {
+      "hash": "6b4ea83b0350335cdbca7e0365056629f803a901",
+      "author_name": "Maximiliano Telmo",
+      "author_email": "50964800+Maxitelmo@users.noreply.github.com",
+      "date": "2026-11-26T13:09:34-03:00",
+      "message": "Content query: report an unreadable file per file, treat a dump without the join columns as incomplete"
+    }
+  },
+  "headers": [
+    "Message ID",
+    "MMS Row",
+    "Address Type",
+    "Address",
+    "Charset",
+    "Contact ID",
+    "Subscription ID",
+    "Address ID",
+    "Parse Note",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "",
+      "",
+      "137 (FROM)",
+      "+15550100014",
+      "106",
+      "NULL",
+      "",
+      "60",
+      "MMS row unknown: msg_id is empty or NULL",
+      1,
+      "ALEX_SYNTH0005/content_provider_SYNTH0005/mms/mms_addr.txt"
+    ],
+    [
+      "",
+      "",
+      "151 (TO)",
+      "+15550100015",
+      "106",
+      "NULL",
+      "",
+      "61",
+      "MMS row unknown: msg_id is empty or NULL",
+      2,
+      "ALEX_SYNTH0005/content_provider_SYNTH0005/mms/mms_addr.txt"
+    ]
+  ]
+}
