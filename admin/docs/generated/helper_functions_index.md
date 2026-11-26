@@ -110,7 +110,7 @@ for the rest. `admin/docs/helper_functions.md` explains where the five cores' he
 | 1 | `safe_source` | `safe_source(text)` | Escape an evidence text/document body for display as source on the HTML page. |
 | 1 | `safe_url` | `safe_url(url, text=None, target=None)` | Render an evidence URL as escaped text. **Never returns a link.** |
 | 0 | `safe_join` | `safe_join(values, sep='<br>')` | Escape each evidence value and join with a tool-controlled separator. |
-| 0 | `safe_local_link` | `safe_local_link(path, text=None)` | Build an ``&lt;a href&gt;`` to a file inside the report folder. |
+| 0 | `safe_local_link` | `safe_local_link(path, text=None)` | Build an ``<a href>`` to a file inside the report folder. |
 | 0 | `safe_local_path` | `safe_local_path(path)` | Percent-encode a report-relative path for use in an ``href``/``src`` attribute. |
 
 ## `scripts.dumpstate_reader`
@@ -336,7 +336,7 @@ Imported as a module by 2 artifact module(s), whose uses of its names are not co
 | ---: | --- | --- | --- |
 | 0 | `activity_of` | `activity_of(options, reason)` | The activity words for an entry: what recovery was started with, taken from the options. |
 | 0 | `entry_notes` | `entry_notes(entry, repeated_code)` | Short notes for an entry's row, as a list of texts. |
-| 0 | `formatted_volumes` | `formatted_volumes(extra)` | ``{code: [(volume, has start line, has end line), ...]}`` from the ``format_volume : &lt;volume&gt;`` lines, in order. |
+| 0 | `formatted_volumes` | `formatted_volumes(extra)` | ``{code: [(volume, has start line, has end line), ...]}`` from the ``format_volume : <volume>`` lines, in order. |
 | 0 | `header_date_before_floor` | `header_date_before_floor(moment)` | True for a header date before HEADER_NOTE_YEAR (it is shown as printed and noted). |
 | 0 | `option_value` | `option_value(entry, name)` | The text after ``=`` of the first option named ``name`` (for example ``--locale``) of an entry, or ''. |
 | 0 | `orphan_records` | `orphan_records(extra, known_codes, source_label, extra_label)` | One record for each code with format lines in the extra file and no entry among ``known_codes``. |
@@ -407,8 +407,8 @@ Imported as a module by 1 artifact module(s), whose uses of its names are not co
 
 | Used by | Name | Signature | First docstring line |
 | ---: | --- | --- | --- |
-| 1 | `user_of` | `user_of(path)` | The Android user number in a path ``.../users/&lt;n&gt;/...``, else ''. |
-| 0 | `current_rows` | `current_rows(root, namespace, user, label)` | Rows for the setup settings among the ``&lt;setting&gt;`` elements of an XML root. |
+| 1 | `user_of` | `user_of(path)` | The Android user number in a path ``.../users/<n>/...``, else ''. |
+| 0 | `current_rows` | `current_rows(root, namespace, user, label)` | Rows for the setup settings among the ``<setting>`` elements of an XML root. |
 | 0 | `history_rows` | `history_rows(text, namespace, user, label)` | ``(rows, warning)`` for the history file of the provider: one row for each entry of a setup setting. |
 | 0 | `ms_moment` | `ms_moment(value)` | UTC datetime for epoch milliseconds between 2009 and 2100, else None. |
 | 0 | `namespace_of` | `namespace_of(file_name)` | ``secure``, ``global`` or ``system`` for a file name such as ``settings_secure.xml``, else ''. |
@@ -501,7 +501,7 @@ Imported as a module by 1 artifact module(s), whose uses of its names are not co
 | 0 | class `ApResetInfoReader` | | (no docstring) |
 | 0 | `drop_entry_row` | `drop_entry_row(section, stamp, tag, kind_text, line_no)` | A dropbox entry row (a list that later lines complete). |
 | 0 | class `DropboxAppCrashesReader` | | (no docstring) |
-| 0 | class `DropboxPrintReader` | `DropboxPrintReader(report, section)` | ``dumpsys dropbox -p &lt;tag&gt;``: the entries of one tag, each after a divider line, with its header lines and body. |
+| 0 | class `DropboxPrintReader` | `DropboxPrintReader(report, section)` | ``dumpsys dropbox -p <tag>``: the entries of one tag, each after a divider line, with its header lines and body. |
 | | `DropboxPrintReader.feed` | `feed(self, line_no, text)` | (no docstring) |
 | | `DropboxPrintReader.finish` | `finish(self)` | (no docstring) |
 | 0 | class `DropboxServerCrashesReader` | | (no docstring) |
@@ -811,7 +811,7 @@ artifact modules importing any one name from it, or the module itself.
 | Used by | Module | Kind |
 | ---: | --- | --- |
 | 16 | `scripts.artifacts.chrome` | artifact module |
-| 9 | `scripts.blackboxprotobuf` | package |
+| 9 | `scripts.blackboxprotobuf` | vendored or generated |
 | 9 | `scripts.ccl.ccl_android_fcm_queued_messages` | vendored or generated |
 | 9 | `scripts.vendor.ccl.ccl_leveldb` | vendored or generated |
 | 6 | `scripts.artifacts.settingsSecure` | artifact module |
