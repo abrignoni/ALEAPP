@@ -66,13 +66,13 @@ __artifacts_v2__ = {
     },
     "get_mastodon_accounts": {
         "name": "Mastodon - Account Details",
-        "description": "Mastodon account details from accounts.json, with the token creation time and the two refresh times the app stores beside each account",
+        "description": "Mastodon account details from accounts.json, with the token creation time and the times the app last updated the account info and the word filters",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-12-07",
         "last_update_date": "2026-11-26",
         "requirements": "BeautifulSoup",
         "category": "Social Media",
-        "notes": "Fields are read from the one-letter keys the app wrote at versionCode 93: b for the account, c for the instance domain and j for the push subscription. The letters follow the field order of AccountSession at release v2.5.0 (https://github.com/mastodon/mastodon-android/blob/1124bc48c253567a4b79a4fd0cab3a8a16f86bd8/mastodon/src/main/java/org/joinmastodon/android/api/session/AccountSession.java#L48-L57), and a later commit lists them as alternates of named keys (https://github.com/mastodon/mastodon-android/blob/24d8c5d9d012858e8928ab465b455ad52805a9ee/mastodon/src/main/java/org/joinmastodon/android/api/session/AccountSession.java#L63-L81). At a later commit (versionCode 190) the app keeps accounts in the accounts table of accounts.db. It moves an existing accounts.json into that table and deletes the file (https://github.com/mastodon/mastodon-android/blob/24d8c5d9d012858e8928ab465b455ad52805a9ee/mastodon/src/main/java/org/joinmastodon/android/api/session/AccountSessionManager.java#L843-L861). This artifact does not read accounts.db. An entry without the b, c and j keys gives a row with every column blank. Account (acct) is the acct field of the account. Bio has its HTML tags removed. Token Created is the created_at of the entry's token (key a), which the app documents as when the token was generated, in Unix time (https://github.com/mastodon/mastodon-android/blob/1124bc48c253567a4b79a4fd0cab3a8a16f86bd8/mastodon/src/main/java/org/joinmastodon/android/model/Token.java#L23-L26); it is read as Unix seconds and shown as UTC. Account Info Updated is key e, a millisecond time the app sets when it adds the account and when it refreshes the account info (https://github.com/mastodon/mastodon-android/blob/1124bc48c253567a4b79a4fd0cab3a8a16f86bd8/mastodon/src/main/java/org/joinmastodon/android/api/session/AccountSession.java#L80 and https://github.com/mastodon/mastodon-android/blob/1124bc48c253567a4b79a4fd0cab3a8a16f86bd8/mastodon/src/main/java/org/joinmastodon/android/api/session/AccountSessionManager.java#L293). Filters Updated is key l, a millisecond time it sets when it refreshes the word filters (https://github.com/mastodon/mastodon-android/blob/1124bc48c253567a4b79a4fd0cab3a8a16f86bd8/mastodon/src/main/java/org/joinmastodon/android/api/session/AccountSessionManager.java#L311). A missing value is shown blank. The access token itself is in the entry and is not reported. On pixel7a_a14 the one entry holds all three times.",
+        "notes": "Fields are read from the one-letter keys the app wrote at versionCode 93: a for the token, b for the account, c for the instance domain, e and l for two update times, and j for the push subscription. The letters follow the field order of AccountSession at release v2.5.0 (https://github.com/mastodon/mastodon-android/blob/1124bc48c253567a4b79a4fd0cab3a8a16f86bd8/mastodon/src/main/java/org/joinmastodon/android/api/session/AccountSession.java#L48-L59), and a later commit lists them as alternates of named keys (https://github.com/mastodon/mastodon-android/blob/24d8c5d9d012858e8928ab465b455ad52805a9ee/mastodon/src/main/java/org/joinmastodon/android/api/session/AccountSession.java#L63-L86). At a later commit (versionCode 190) the app keeps accounts in the accounts table of accounts.db. It moves an existing accounts.json into that table and deletes the file (https://github.com/mastodon/mastodon-android/blob/24d8c5d9d012858e8928ab465b455ad52805a9ee/mastodon/src/main/java/org/joinmastodon/android/api/session/AccountSessionManager.java#L843-L861). This artifact does not read accounts.db. An entry with none of the a, b, c, e, j and l keys gives a row with every column blank. Account (acct) is the acct field of the account. Bio has its HTML tags removed. Token Created is the created_at of the entry's token (key a), which the app documents as when the token was generated, in Unix time (https://github.com/mastodon/mastodon-android/blob/1124bc48c253567a4b79a4fd0cab3a8a16f86bd8/mastodon/src/main/java/org/joinmastodon/android/model/Token.java#L23-L26); it is read as Unix seconds and shown as UTC. Account Info Updated is key e, a millisecond time the app sets when it adds the account and each time it stores a fresh copy of the account info (https://github.com/mastodon/mastodon-android/blob/1124bc48c253567a4b79a4fd0cab3a8a16f86bd8/mastodon/src/main/java/org/joinmastodon/android/api/session/AccountSession.java#L80 and https://github.com/mastodon/mastodon-android/blob/1124bc48c253567a4b79a4fd0cab3a8a16f86bd8/mastodon/src/main/java/org/joinmastodon/android/api/session/AccountSessionManager.java#L293 and https://github.com/mastodon/mastodon-android/blob/1124bc48c253567a4b79a4fd0cab3a8a16f86bd8/mastodon/src/main/java/org/joinmastodon/android/api/session/AccountSessionManager.java#L418). Filters Updated is key l, a millisecond time the app sets when a refresh of the word filters succeeds (https://github.com/mastodon/mastodon-android/blob/1124bc48c253567a4b79a4fd0cab3a8a16f86bd8/mastodon/src/main/java/org/joinmastodon/android/api/session/AccountSessionManager.java#L311). A missing or zero value, or one that is not a number, is shown blank. The access token itself is in the entry and is not reported. On pixel7a_a14 the one entry holds all three times.",
         "paths": ('*/org.joinmastodon.android/files/accounts.json',),
         "output_types": "standard",
         "artifact_icon": "user",
@@ -109,14 +109,20 @@ from scripts.artifacts.storagePathViews import unique_files
 
 
 def _sec_to_utc(value):
-    if value:
-        return datetime.datetime.fromtimestamp(int(value), datetime.timezone.utc)
+    try:
+        if value:
+            return datetime.datetime.fromtimestamp(int(value), datetime.timezone.utc)
+    except (TypeError, ValueError, OverflowError, OSError):
+        pass
     return ''
 
 
 def _ms_to_utc(value):
-    if value:
-        return datetime.datetime.fromtimestamp(int(value) / 1000, datetime.timezone.utc)
+    try:
+        if value:
+            return datetime.datetime.fromtimestamp(int(value) / 1000, datetime.timezone.utc)
+    except (TypeError, ValueError, OverflowError, OSError):
+        pass
     return ''
 
 

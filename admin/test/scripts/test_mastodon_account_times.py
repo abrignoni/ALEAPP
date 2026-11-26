@@ -1,4 +1,4 @@
-"""Mastodon account rows carry the token creation time and the two refresh times the app stores
+"""Mastodon account rows carry the token creation time and the two update times the app stores
 beside the account. The access token itself is not reported. All values here are made up."""
 import json
 import pathlib
@@ -46,6 +46,11 @@ class AccountTimes(unittest.TestCase):
         entry = {k: v for k, v in ENTRY.items() if k not in ('a', 'e', 'l')}
         row, _headers = account_row(entry)
         self.assertEqual((row['Token Created'], row['Account Info Updated'], row['Filters Updated']), ('', '', ''))
+
+
+    def test_a_time_that_is_not_a_number_is_blank(self):
+        row, _headers = account_row(dict(ENTRY, e='not a time'))
+        self.assertEqual(row['Account Info Updated'], '')
 
 
 if __name__ == '__main__':
