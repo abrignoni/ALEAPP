@@ -287,7 +287,8 @@ __artifacts_v2__ = {
         },
         "data_views": {
             "conversation": {
-                "conversationDiscriminatorColumn": "Channel Name",
+                "conversationDiscriminatorColumn": "Channel JID",
+                "conversationLabelColumn": "Channel Name",
                 "textColumn": "Message",
                 "directionColumn": "Message Direction",
                 "directionSentValue": "Outgoing",
@@ -901,7 +902,8 @@ def get_whatsapp_channel_messages(context):
 @artifact_processor
 def get_whatsapp_user_profile(context):
     keys = ('push_name', 'my_current_status', 'version', 'ph', 'cc')
-    names = ('com.whatsapp_preferences_light.xml', 'startup_prefs.xml')
+    # WhatsApp Business names its preferences file after its own package.
+    names = ('com.whatsapp_preferences_light.xml', 'com.whatsapp.w4b_preferences_light.xml', 'startup_prefs.xml')
     # One row per shared_prefs folder, so values from two copies of the app (a second Android
     # user, for one) are never combined. unique_files collapses the data/data, data/user/0 and
     # data_mirror views of one folder.
