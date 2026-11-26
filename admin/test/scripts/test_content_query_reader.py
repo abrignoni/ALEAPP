@@ -63,11 +63,19 @@ class ParseRowsTest(unittest.TestCase):
         self.assertIn('not split', dump.records[2].note)
         self.assertTrue(any('not split' in warning for warning in dump.warnings))
 
-    def test_duplicate_column_keeps_first_value(self):
-        dump = reader.parse_text('Row: 0 _id=1, name=a, _id=1\n')
-        self.assertEqual(dump.columns, ('_id', 'name', '_id'))
-        self.assertEqual(reader.Values(dump.records[0])['_id'], '1')
+    def test_repeated_column_name_is_not_split(self):
+        dump = reader.parse_text('Row: 0 _id=1, body=the form says, seen=yes, seen=1\n')
+        self.assertEqual(dump.columns, ('_id', 'body', 'seen', 'seen'))
+        self.assertEqual(dump.records[0].pairs, [])
+        self.assertIn('more than once', dump.records[0].note)
+        self.assertIn('_id=1, body=the form says, seen=yes, seen=1', dump.records[0].note)
         self.assertEqual(reader.Values(dump.records[0])['absent'], '')
+
+    def test_repeated_name_in_one_row_of_many_is_flagged_not_learned(self):
+        dump = reader.parse_text('Row: 0 _id=1, body=the form says, seen=yes, seen=1\n'
+                                 'Row: 1 _id=2, body=b, seen=0\nRow: 2 _id=3, body=c, seen=1\n')
+        self.assertEqual(dump.columns, ('_id', 'body', 'seen'))
+        self.assertIn('", seen="', dump.records[0].note)
 
     def test_text_before_first_row_is_reported(self):
         dump = reader.parse_text('WARNING: linker: something\nRow: 0 _id=1\n')
@@ -118,6 +126,16 @@ class ParseStatusTest(unittest.TestCase):
         self.assertEqual(dump.status, reader.ROWS)
         self.assertEqual(values(dump)[1]['a'], 'y')
         self.assertIn('then provider error', dump.detail)
+        self.assertIn('could also be the end of the last value', dump.records[1].note)
+        self.assertEqual(dump.records[0].note, '')
+
+    def test_error_lines_inside_last_value_with_columns_after_them_are_kept(self):
+        dump = reader.parse_text('Row: 0 _id=1, body=line one\nError while accessing provider:sms\n'
+                                 'java.lang.SecurityException: fake text, read=1\n')
+        self.assertEqual(dump.detail, '')
+        self.assertEqual(values(dump)[0]['read'], '1')
+        self.assertEqual(values(dump)[0]['body'],
+                         'line one\nError while accessing provider:sms\njava.lang.SecurityException: fake text')
 
     def test_error_text_inside_a_value_is_kept(self):
         dump = reader.parse_text('Row: 0 _id=1, body=it said\nError while accessing provider:x\n'
@@ -128,6 +146,24 @@ class ParseStatusTest(unittest.TestCase):
 
 
 class ReadFileTest(unittest.TestCase):
+    def setUp(self):
+        reader.clear_cache()
+        self.addCleanup(reader.clear_cache)
+
+    def test_cache_is_scoped_to_one_run(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path = os.path.join(folder, 'sms.txt')
+            with open(path, 'wb') as handle:
+                handle.write(b'Row: 0 _id=1, body=aaaa\n')
+            first_run, second_run = object(), object()
+            self.assertEqual(values(reader.read_file(path, first_run))[0]['body'], 'aaaa')
+            with open(path, 'wb') as handle:
+                handle.write(b'Row: 0 _id=1, body=bbbb\n')
+            # Same path and byte length: the same run keeps what it read, a new run reads the file again.
+            self.assertEqual(values(reader.read_file(path, first_run))[0]['body'], 'aaaa')
+            self.assertEqual(values(reader.read_file(path, second_run))[0]['body'], 'bbbb')
+            self.assertEqual(values(reader.read_file(path))[0]['body'], 'bbbb')
+
     def test_bom_and_bytes_that_are_not_utf8(self):
         with tempfile.TemporaryDirectory() as folder:
             path = os.path.join(folder, 'sms.txt')

@@ -6,19 +6,19 @@
     "case_number": "casesynthetic_triage_stderr",
     "number_of_columns": 9,
     "number_of_rows": 11,
-    "total_data_size_bytes": 3085,
+    "total_data_size_bytes": 3166,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin/test/cases/data/contentQuery/testdata.contentQuery.content_query_files.casesynthetic_triage_stderr.zip",
-    "start_time": "2026-11-25T21:50:28.668780+00:00",
-    "end_time": "2026-11-25T21:50:28.732423+00:00",
-    "run_time_seconds": 0.0014848709106445312,
+    "start_time": "2026-11-26T02:35:50.917443+00:00",
+    "end_time": "2026-11-26T02:35:50.992377+00:00",
+    "run_time_seconds": 0.0014393329620361328,
     "last_commit": {
-      "hash": "9b6ac5ad209440b52a1ae251f797daf2a8eb6874",
+      "hash": "f16d0303e8636453a375fc0aaed535514c1726b7",
       "author_name": "Maximiliano Telmo",
       "author_email": "50964800+Maxitelmo@users.noreply.github.com",
-      "date": "2026-11-25T18:31:16-03:00",
-      "message": "Read MMS addresses from content://mms/addr"
+      "date": "2026-11-25T19:19:57-03:00",
+      "message": "Use the agreed artifact categories for the content query artifacts"
     }
   },
   "headers": [
@@ -150,7 +150,7 @@
       "media_external_file.txt",
       "rows",
       2,
-      "then provider error: provider media: java.lang.IllegalStateException: Couldn't read row 2, col 0 from CursorWindow; the text ends with a provider error after the last row; the rows printed before it are read",
+      "then provider error: provider media: java.lang.IllegalStateException: Couldn't read row 2, col 0 from CursorWindow; the text ends with a provider error after the last row; the rows printed before it are read; the provider error text after the last row could also be part of its last value",
       "_id, _data, _display_name, relative_path, volume_name, mime_type, _size, date_added, date_modified, datetaken, owner_package_name, bucket_display_name, is_trashed, is_pending",
       "MediaStore Files (content query)"
     ]

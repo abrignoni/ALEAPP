@@ -39,10 +39,14 @@ Parsing:
    by a plain split at ``, <name>=``. Each row is then split by walking that list: the
    value of a column runs to the first ``, <next column>=``. A value that holds
    ``, <name>=`` for a name of the dump's own column list is flagged on its row, since the
-   split there may be off.
+   split there may be off. When that list names a column more than once, which a value
+   holding ``, <name>=`` in every row of the dump (or in its only row) also produces, the
+   rows are not split and each keeps its text.
+4. 'Error while accessing provider:' and an exception line inside the last row are read
+   as an error printed after it only when the row without them still holds the column
+   list; when the whole row holds it too, the row says the boundary is ambiguous.
 """
 import collections
-import functools
 import os
 import re
 from datetime import datetime, timedelta, timezone
@@ -70,6 +74,10 @@ NO_FILE = 'no file'
 # Notes on a row, shown in its Parse Note column.
 NOTE_AMBIGUOUS = 'a value holds ", {name}=", the name of a column of this dump; the split at that point may be off'
 NOTE_NOT_SPLIT = 'the row does not hold the columns of this dump in order; values not split. Row text: {text}'
+NOTE_REPEATED = ('the column list of this dump names {names} more than once, which a value holding ", <name>=" '
+                 'can also cause; values not split. Row text: {text}')
+NOTE_ERROR_OR_VALUE = ('the provider error text after this row was read as an error; it could also be the end of '
+                       'the last value, which would then be longer')
 
 Record = collections.namedtuple('Record', 'number line pairs note')
 Dump = collections.namedtuple('Dump', 'status detail columns records warnings')
@@ -203,42 +211,74 @@ def parse_text(text):
     bounds = list(zip(starts, starts[1:] + [len(lines)]))
     status, detail = ROWS, ''
     last_start, last_end = bounds[-1]
+    error_at = None
     for index in range(last_start + 1, last_end):
         if lines[index].startswith(ERROR_LINE):
             following = [line for line in lines[index + 1:last_end] if line.strip()]
             if following and EXCEPTION_LINE.match(following[0].strip()):
-                error_status, error_detail = _error(lines, index)
-                status = ROWS
-                detail = f'then {error_status}: {error_detail}'
-                warnings.append('the text ends with a provider error after the last row; '
-                                'the rows printed before it are read')
-                bounds[-1] = (last_start, index)
+                error_at = index
                 break
 
-    texts = []
-    for start, end in bounds:
+    def row_text(start, end):
         first = ROW.match(lines[start])
-        texts.append((int(first.group(1)), start + 1, '\n'.join([first.group(2)] + lines[start + 1:end])))
+        return '\n'.join([first.group(2)] + lines[start + 1:end])
 
-    orders = collections.Counter()
-    for _number, _line, row_text in texts:
-        orders[tuple(match.group(1) for match in NAME_IN_ROW.finditer(row_text))] += 1
-    top = max(orders.values())
-    columns = min((order for order, count in orders.items() if count == top), key=len)
+    texts = [(int(ROW.match(lines[start]).group(1)), start + 1, row_text(start, end)) for start, end in bounds]
+    columns = _columns(texts)
+
+    last_note = ''
+    if error_at is not None:
+        # The error text may follow the last row, or be part of its last value. It is read as an
+        # error only when the row without it still holds the dump's columns in order.
+        cut_text = row_text(last_start, error_at)
+        cut_fits = _split(cut_text, columns) is not None
+        whole_fits = _split(texts[-1][2], columns) is not None
+        if cut_fits:
+            error_status, error_detail = _error(lines, error_at)
+            detail = f'then {error_status}: {error_detail}'
+            warnings.append('the text ends with a provider error after the last row; '
+                            'the rows printed before it are read')
+            texts[-1] = (texts[-1][0], texts[-1][1], cut_text)
+            if whole_fits:
+                last_note = NOTE_ERROR_OR_VALUE
+                warnings.append('the provider error text after the last row could also be part of its last value')
+        else:
+            warnings.append('a provider error line inside the last row is kept as part of its values, since the row '
+                            'without it does not hold the columns of this dump')
+
+    repeated = sorted({name for name in columns if columns.count(name) > 1})
     names = set(columns)
-
     records = []
-    for number, line, row_text in texts:
-        pairs = _split(row_text, columns)
+    for number, line, text in texts:
+        if repeated:
+            records.append(Record(number, line, [], NOTE_REPEATED.format(names=', '.join(repeated), text=text)))
+            continue
+        pairs = _split(text, columns)
         if pairs is None:
-            records.append(Record(number, line, [], NOTE_NOT_SPLIT.format(text=_cut(row_text, 300))))
+            records.append(Record(number, line, [], NOTE_NOT_SPLIT.format(text=text)))
             continue
         name = _ambiguous(pairs, names)
-        records.append(Record(number, line, pairs, NOTE_AMBIGUOUS.format(name=name) if name else ''))
-    unsplit = sum(1 for record in records if not record.pairs)
-    if unsplit:
-        warnings.append(f'{unsplit} row(s) do not hold the columns of this dump in order and are not split')
+        notes = [NOTE_AMBIGUOUS.format(name=name)] if name else []
+        if last_note and number == texts[-1][0] and line == texts[-1][1]:
+            notes.append(last_note)
+        records.append(Record(number, line, pairs, '; '.join(notes)))
+    if repeated:
+        warnings.append(f'the column list of this dump names {", ".join(repeated)} more than once, which a value '
+                        f'holding ", <name>=" can also cause; rows are not split')
+    else:
+        unsplit = sum(1 for record in records if not record.pairs)
+        if unsplit:
+            warnings.append(f'{unsplit} row(s) do not hold the columns of this dump in order and are not split')
     return Dump(status, detail, columns, records, warnings)
+
+
+def _columns(texts):
+    """The column list of a dump: the most common ordered list of names in its rows (step 3)."""
+    orders = collections.Counter()
+    for _number, _line, text in texts:
+        orders[tuple(match.group(1) for match in NAME_IN_ROW.finditer(text))] += 1
+    top = max(orders.values())
+    return min((order for order, count in orders.items() if count == top), key=len)
 
 
 def decode(data):
@@ -249,8 +289,7 @@ def decode(data):
         return data.decode('utf-8', errors='replace'), 'bytes that are not UTF-8 are shown as U+FFFD'
 
 
-@functools.lru_cache(maxsize=CACHE_SIZE)
-def _read_cached(path, size):  # pylint: disable=unused-argument
+def _read(path):
     with open(path, 'rb') as handle:
         data = handle.read()
     text, warning = decode(data)
@@ -260,10 +299,40 @@ def _read_cached(path, size):  # pylint: disable=unused-argument
     return dump
 
 
-def read_file(path):
-    """Reads one content query output file and returns a Dump. Each file is read once per run while cached."""
-    size = os.path.getsize(path)
-    return _read_cached(os.path.abspath(path), size)
+# Dumps read in the current processing run, by path. The run is the object the caller passes (the
+# run's seeker): it is held here and compared by identity, so a new run, which has a new seeker,
+# starts with an empty cache and reads its own staged files, even at the same path.
+_CACHE = collections.OrderedDict()
+_CACHE_RUN = [None]
+
+
+def clear_cache():
+    """Forget the dumps read so far."""
+    _CACHE.clear()
+    _CACHE_RUN[0] = None
+
+
+def read_file(path, run=None):
+    """Reads one content query output file and returns a Dump.
+
+    With ``run`` (an object that stands for one processing run, such as its seeker) the dump is kept
+    for the other artifacts of the same run, so each file is read once per run; a call with another
+    ``run`` clears what was kept. Without it the file is read every time."""
+    if run is None:
+        return _read(path)
+    if _CACHE_RUN[0] is not run:
+        clear_cache()
+        _CACHE_RUN[0] = run
+    key = os.path.abspath(path)
+    dump = _CACHE.get(key)
+    if dump is None:
+        dump = _read(path)
+        _CACHE[key] = dump
+        while len(_CACHE) > CACHE_SIZE:
+            _CACHE.popitem(last=False)
+    else:
+        _CACHE.move_to_end(key)
+    return dump
 
 
 def epoch_to_utc(text, unit):
