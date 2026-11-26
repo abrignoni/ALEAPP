@@ -124,7 +124,8 @@ __artifacts_v2__ = {
                  "no FROM, TO, CC or BCC row for a message, Parse Note says so on that row. When mms_addr.txt is not "
                  "a full list of rows (a provider error, rows followed by an error, rows that could not be split, an "
                  "empty or unrecognised file, or a file that could not be read), the addresses read from it are "
-                 "shown and a message with none says 'addresses unknown' with the reason. A message row whose _id is "
+                 "shown, a message with some says 'addresses may be partial' with the reason, and a message with "
+                 "none says 'addresses unknown' with the reason. A message row whose _id is "
                  "empty or the text NULL is not matched and says 'addresses unknown'; address rows whose msg_id is "
                  "empty or NULL are not matched to any message. The report's source list names mms_addr.txt next to "
                  "mms.txt; Source File and Source Line stay those of the message row. The "
@@ -585,6 +586,8 @@ NOTE_ADDRESSES_UNKNOWN = ('addresses unknown: no mms/mms_addr.txt in this folder
 NOTE_NO_ADDRESS_ROWS = 'no FROM, TO, CC or BCC rows for this message in mms_addr.txt'
 NOTE_ADDRESSES_INCOMPLETE = ('addresses unknown: no FROM, TO, CC or BCC row for this message was read, and '
                              'mms_addr.txt is incomplete ({reason})')
+NOTE_ADDRESSES_PARTIAL = ('addresses may be partial: mms_addr.txt is incomplete ({reason}), so FROM, TO, CC or BCC '
+                          'rows for this message may be missing')
 NOTE_NO_MMS_KEY = 'addresses unknown: this row has no usable _id (empty or NULL) to match msg_id against'
 NOTE_NO_ADDR_KEY = 'MMS row unknown: msg_id is empty or NULL'
 NOTE_MMS_ROW_INCOMPLETE = 'MMS row unknown: no MMS row with this _id was read, and mms.txt is incomplete ({reason})'
@@ -763,6 +766,8 @@ def _joined(context, key, layout, relative):
             shown = ['; '.join(by_type.get(code, [])) for code in ADDRESS_CODES]
             if not any(code in by_type for code in ADDRESS_CODES):
                 notes.append(NOTE_ADDRESSES_INCOMPLETE.format(reason=reason) if reason else NOTE_NO_ADDRESS_ROWS)
+            elif reason:
+                notes.append(NOTE_ADDRESSES_PARTIAL.format(reason=reason))
             return shown
         return found, addr_path
     if key == 'mms_addr':

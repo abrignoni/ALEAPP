@@ -83,8 +83,16 @@ class MmsJoinTest(unittest.TestCase):
         addr = self.write('mms_addr.txt', ADDR.split('Row: 1 ')[0] + ERROR)
         rows, _sources = self.rows('mms', mms, addr)
         self.assertEqual(rows[0]['From'], '+15550100003')
+        self.assertIn('addresses may be partial', rows[0]['Parse Note'])
+        self.assertIn('incomplete (1 row, then provider error', rows[0]['Parse Note'])
         self.assertIn('addresses unknown', rows[1]['Parse Note'])
         self.assertIn('incomplete (1 row, then provider error', rows[1]['Parse Note'])
+
+    def test_complete_address_list_adds_no_partial_note(self):
+        mms = self.write('mms.txt', MMS)
+        addr = self.write('mms_addr.txt', ADDR)
+        rows, _sources = self.rows('mms', mms, addr)
+        self.assertNotIn('partial', rows[0]['Parse Note'])
 
     def test_unreadable_or_error_address_file_makes_messages_unknown(self):
         mms = self.write('mms.txt', MMS)
