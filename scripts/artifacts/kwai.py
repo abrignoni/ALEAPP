@@ -175,7 +175,9 @@ def _is_mp4(path):
 
 
 def _saved_files(context):
-    """(Android user, video id, path) for every file carrying the app's save-name pattern."""
+    """(Android user, video id, path) for each matched file whose name fits SAVED_NAME, storage-view
+    duplicates collapsed. The user is read from the shared storage path and is 0 when the path names none.
+    SAVED_NAME is a pattern widened from the one saved-video name seen on the tested device."""
     out = []
     for found in unique_files(context):
         path = str(found).replace('\\', '/')
@@ -204,7 +206,9 @@ def _ms(value):
 
 
 def _int(value):
-    """The vse table stores every column as text. Return the number, or the raw value."""
+    """On the tested device (Kwai 13.7.50.646403) vse declares its duration and count columns TEXT. Only its
+    id column is INTEGER. Return blank for an absent value, the integer when the text parses as one, or the
+    raw value."""
     if value in (None, ''):
         return ''
     try:
