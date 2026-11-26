@@ -32,7 +32,8 @@ Parsing:
 1. Lines are split on ``\\n``, and one carriage return at the end of each line is dropped,
    so a file saved with CRLF line endings reads like one saved with LF.
 2. A line opens a row when it is ``Row: <n> <first column>=`` with ``n`` the next row number
-   in sequence (0, 1, 2, ...) and the first column the one most rows start with. Every
+   in sequence (0, 1, 2, ...) and the first column the one the first ``Row: 0`` line names
+   (the one most such lines start with when there is no ``Row: 0`` line). Every
    other line belongs to the value before it. A value line that is itself exactly
    ``Row: <next number> <first column>=...`` cannot be told apart from a new row.
 3. The column list of the dump is the most common ordered list of names found in the rows
@@ -54,6 +55,8 @@ from datetime import datetime, timedelta, timezone
 ROW = re.compile(r'Row: (\d+) (.*)\Z', re.S)
 FIRST_NAME = re.compile(r'([^\s=,]+)=')
 NAME_IN_ROW = re.compile(r'(?:\A|, )([^\s=,]+)=')
+# The separator alone (', <name>='), so a value that starts with a plain 'name=' is not flagged.
+DELIMITER = re.compile(r', ([^\s=,]+)=')
 ERROR_LINE = 'Error while accessing provider:'
 NO_RESULT_LINE = 'No result found.'
 EXCEPTION_LINE = re.compile(r'(?:Caused by: )?([A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)+)(?::\s?(.*))?\Z')
@@ -70,6 +73,7 @@ PROVIDER_ERROR = 'provider error'
 EMPTY_FILE = 'empty file'
 UNRECOGNISED = 'text not recognised'
 NO_FILE = 'no file'
+UNREADABLE = 'file not readable'
 
 # Notes on a row, shown in its Parse Note column.
 NOTE_AMBIGUOUS = 'a value holds ", {name}=", the name of a column of this dump; the split at that point may be off'
@@ -151,14 +155,24 @@ def _row_starts(lines):
             candidates.append((index, int(match.group(1)), match.group(2)))
     if not candidates:
         return []
-    first_names = collections.Counter()
-    for _index, _number, rest in candidates:
+    # The first column is the one the first 'Row: 0' line names: row 0 is printed before any
+    # value, so a line inside a value cannot come first. A vote over every candidate is kept
+    # only for a text with no 'Row: 0' line.
+    first = None
+    for _index, number, rest in candidates:
         name = FIRST_NAME.match(rest)
-        if name:
-            first_names[name.group(1)] += 1
-    if not first_names:
-        return []
-    first = first_names.most_common(1)[0][0] + '='
+        if number == 0 and name:
+            first = name.group(1) + '='
+            break
+    if first is None:
+        first_names = collections.Counter()
+        for _index, _number, rest in candidates:
+            name = FIRST_NAME.match(rest)
+            if name:
+                first_names[name.group(1)] += 1
+        if not first_names:
+            return []
+        first = first_names.most_common(1)[0][0] + '='
     starts, expected = [], 0
     for index, number, rest in candidates:
         if number == expected and rest.startswith(first):
@@ -187,11 +201,12 @@ def _split(text, columns):
 
 
 def _ambiguous(pairs, names):
+    """The first column name of the dump that a value holds as ', <name>=', at any offset, or None."""
     for _name, value in pairs:
         if ', ' not in value:
             continue
-        for match in NAME_IN_ROW.finditer(value):
-            if match.start() and match.group(1) in names:
+        for match in DELIMITER.finditer(value):
+            if match.group(1) in names:
                 return match.group(1)
     return None
 
@@ -343,12 +358,13 @@ def epoch_to_utc(text, unit):
     sign = value[1:] if value.startswith('-') else value
     if not (sign.isascii() and sign.isdigit()):
         return '', f'time value {_cut(value, 40)} is not an integer'
-    number = int(value)
     try:
+        # int() raises ValueError past Python's integer string conversion limit (4,300 digits by default).
+        number = int(value)
         delta = timedelta(milliseconds=number) if unit == 'ms' else timedelta(seconds=number)
         return EPOCH + delta, ''
-    except OverflowError:
-        return '', f'time value {value} is out of range'
+    except (OverflowError, ValueError):
+        return '', f'time value {_cut(value, 40)} ({len(sign)} digits) is out of range'
 
 
 # ------------------------------------------------------------------------------------------

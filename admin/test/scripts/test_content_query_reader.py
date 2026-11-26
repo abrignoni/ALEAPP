@@ -77,6 +77,21 @@ class ParseRowsTest(unittest.TestCase):
         self.assertEqual(dump.columns, ('_id', 'body', 'seen'))
         self.assertIn('", seen="', dump.records[0].note)
 
+    def test_row_lines_inside_a_value_do_not_outvote_the_first_column(self):
+        dump = reader.parse_text('Row: 0 _id=1, body=quoted:\nRow: 1 example=x\nRow: 2 example=y, seen=1\n')
+        self.assertEqual(dump.status, reader.ROWS)
+        self.assertEqual(len(dump.records), 1)
+        self.assertEqual(values(dump)[0]['body'], 'quoted:\nRow: 1 example=x\nRow: 2 example=y')
+
+    def test_delimiter_at_the_start_of_a_value_is_flagged(self):
+        dump = reader.parse_text('Row: 0 _id=1, body=, seen=yes, read=1, seen=1\n'
+                                 'Row: 1 _id=2, body=b, read=0, seen=0\nRow: 2 _id=3, body=c, read=1, seen=1\n')
+        self.assertEqual(dump.columns, ('_id', 'body', 'read', 'seen'))
+        self.assertEqual(values(dump)[0]['body'], ', seen=yes')
+        self.assertIn('", seen="', dump.records[0].note)
+        plain = reader.parse_text('Row: 0 _id=1, body=seen=yes, seen=1\n')
+        self.assertEqual(plain.records[0].note, '')
+
     def test_text_before_first_row_is_reported(self):
         dump = reader.parse_text('WARNING: linker: something\nRow: 0 _id=1\n')
         self.assertEqual(len(dump.records), 1)
@@ -212,6 +227,9 @@ class TimeTest(unittest.TestCase):
             self.assertEqual(reader.epoch_to_utc(text, 'ms'), ('', ''))
         self.assertIn('not an integer', reader.epoch_to_utc('12a', 'ms')[1])
         self.assertIn('out of range', reader.epoch_to_utc('9' * 30, 's')[1])
+        # More digits than Python's default int conversion limit (4,300) must not raise.
+        self.assertIn('out of range', reader.epoch_to_utc('9' * 5000, 'ms')[1])
+        self.assertIn('out of range', reader.epoch_to_utc('-' + '9' * 5000, 's')[1])
 
 
 if __name__ == '__main__':
