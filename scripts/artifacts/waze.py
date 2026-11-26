@@ -13,17 +13,10 @@ __artifacts_v2__ = {
         "description": "Parses and extracts account information",
         "author": "@djangofaiola",
         "creation_date": "2026-06-27",
-        "last_update_date": "2026-11-17",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
         "category": "Locations & Maps",
-        "notes": "Reference: Django Faiola, 'Comprehensive Waze Forensic Parsing for Android', "
-                 "https://djangofaiola.blogspot.com/2026/07/comprehensive-waze-forensic-parsing-for.html "
-                 "(written by this parser's author). Field mappings are the parser's own; no test "
-                 "count, image or source for them is recorded here. First Use comes from the "
-                 "General.First use key of the user file; on the row read from cached_data it is "
-                 "field 10 of the profile message, whose meaning is not established. Invisible "
-                 "Mode shows On for a stored 1, Off for a stored 0, N/A for an empty value and "
-                 "any other value as stored.",
+        "notes": "Reference: Django Faiola, 'Comprehensive Waze Forensic Parsing for Android', https://djangofaiola.blogspot.com/2026/07/comprehensive-waze-forensic-parsing-for.html (written by this parser's author). Field mappings are the parser's own; no test count, image or source for them is recorded here. First Use comes from the General.First use key of the user file; on the row read from cached_data it is field 10 of the profile message, whose meaning is not established. Invisible Mode shows On for a stored 1, Off for a stored 0, N/A for an empty value and any other value as stored. On the row read from cached_data, Last Name is field 2 of the profile message, shown as text with leading and trailing spaces removed. On the row read from the user file it is the Realtime.LastName key. When field 2 decodes as a nested message, Last Name is left empty. A short text value can decode that way, so an empty Last Name on the cached_data row does not establish that no last name is stored. Field 2 is absent from the cached_data of the three corpus images that hold the file, so neither case is exercised by corpus data. The nested case is covered by a unit test with made-up values.",
         "paths": ("*/com.waze/user",
                   "*/com.waze/waze/cached_data*"),
         "output_types": ["standard"],
@@ -145,20 +138,10 @@ __artifacts_v2__ = {
         "description": "Parses and extracts favorite locations information",
         "author": "@djangofaiola",
         "creation_date": "2026-06-27",
-        "last_update_date": "2026-11-17",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
         "category": "Locations & Maps",
-        "notes": "Reference: Django Faiola, 'Comprehensive Waze Forensic Parsing for Android', "
-                 "https://djangofaiola.blogspot.com/2026/07/comprehensive-waze-forensic-parsing-for.html "
-                 "(written by this parser's author). Type shows this parser's label for the stored "
-                 "favourite type, with the stored integer in parentheses after it: -1 N/A, 0 Custom, 1 "
-                 "Home, 2 Work, 3 Events, 4 Saved POI; any other value is shown as Unknown (value) on rows "
-                 "read from user.db and as the stored value alone on rows read from cached_data. Modified "
-                 "is FAVORITES.modified_time on rows read from user.db. On rows read from cached_data it "
-                 "is field 10 of the place message, which the author's iOS research describes as the last "
-                 "modification time; no Waze source for that is cited. No test count, image or source for "
-                 "these labels is recorded here. Neither listed image produced rows, so this artifact is "
-                 "not exercised by the listed data.",
+        "notes": "Reference: Django Faiola, 'Comprehensive Waze Forensic Parsing for Android', https://djangofaiola.blogspot.com/2026/07/comprehensive-waze-forensic-parsing-for.html (written by this parser's author). Type shows this parser's label for the stored favourite type, with the stored integer in parentheses after it: -1 N/A, 0 Custom, 1 Home, 2 Work, 3 Events, 4 Saved POI; any other value is shown as Unknown (value) on rows read from user.db and as the stored value alone on rows read from cached_data. Modified is FAVORITES.modified_time on rows read from user.db. On rows read from cached_data it is field 10 of the place message, which the author's iOS research describes as the last modification time; no Waze source for that is cited. No test count, image or source for these labels is recorded here. Neither listed image produced rows, so this artifact is not exercised by the listed data. A stored 0 or an empty value in a time column is left empty, on rows read from user.db and in Modified on rows read from cached_data. In the three user.db files examined, FAVORITES.access_time and FAVORITES.waypoint_access_time default to 0. created_time and modified_time have no default, and the meaning of a 0 in them is not established. No corpus image holds a FAVORITES row, so this is covered only by a unit test with made-up values.",
         "paths": ("*/com.waze/user.db*",
                   "*/com.waze/waze/cached_data*"),
         "output_types": ["all"],
@@ -173,14 +156,10 @@ __artifacts_v2__ = {
         "description": "Parses and extracts shared locations information",
         "author": "@djangofaiola",
         "creation_date": "2026-06-27",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
         "category": "Locations & Maps",
-        "notes": "Reference: Django Faiola, 'Comprehensive Waze Forensic Parsing for Android', "
-                 "https://djangofaiola.blogspot.com/2026/07/comprehensive-waze-forensic-parsing-for.html "
-                 "(written by this parser's author). Field mappings are the parser's own; no test "
-                 "count, image or source for them is recorded here. Neither listed image produced "
-                 "rows, so this artifact is not exercised by the listed data.",
+        "notes": "Reference: Django Faiola, 'Comprehensive Waze Forensic Parsing for Android', https://djangofaiola.blogspot.com/2026/07/comprehensive-waze-forensic-parsing-for.html (written by this parser's author). Field mappings are the parser's own; no test count, image or source for them is recorded here. Neither listed image produced rows, so this artifact is not exercised by the listed data. A stored 0 or an empty value in a time column is left empty. In the three user.db files examined, no SHARED_PLACES time column has a default, and the meaning of a stored 0 is not established. No corpus image holds a SHARED_PLACES row, so this is covered only by a unit test with made-up values.",
         "paths": ("*/com.waze/user.db*"),
         "output_types": ["all"],
         "artifact_icon": "map-pin",
@@ -256,6 +235,20 @@ from scripts.ilapfuncs import (
     does_column_exist_in_db, get_txt_file_content, convert_unix_ts_to_utc,
     artifact_processor, logfunc
 )
+
+
+def _unix_ts_or_blank(value):
+    """A Unix time as UTC, or blank for 0 or no value. FAVORITES.access_time and waypoint_access_time
+    default to 0 in the schemas examined; the other time columns have no default."""
+    if value in (None, '', 0, '0'):
+        return ''
+    return convert_unix_ts_to_utc(value)
+
+
+def _last_name(value):
+    """Profile field 2 as text. When it decodes as a nested message, blank is returned rather than
+    text of the parser's own. A short text value can decode that way."""
+    return '' if isinstance(value, dict) else _safe_str(value)
 
 # Constants
 COMMA_SEP = ', '
@@ -815,12 +808,7 @@ def _parse_account_cached(source_path: str, context, data_list: list, data_list_
 
         # Names
         fields[F_FIRST_NAME] = _safe_str(_pbget(profile, 1))
-        last_name_data = _pbget(profile, 2)
-        if isinstance(last_name_data, dict):
-            ref_id = _safe_str(_pbget(last_name_data, 9))
-            fields[F_LAST_NAME] = f"ID_REF:{ref_id}" if ref_id else "UNKNOWN"
-        else:
-            fields[F_LAST_NAME] = _safe_str(last_name_data)
+        fields[F_LAST_NAME] = _last_name(_pbget(profile, 2))
 
         # Email
         fields[F_EMAIL] = _safe_str(_pbget(profile, 4))
@@ -1892,7 +1880,7 @@ def _parse_favorite_cached(source_path: str, context, data_list: list) -> None:
 
             # Convert timestamps to UTC
             # created = convert_unix_ts_to_utc(_pbget(place_details, ))
-            fields[F_MODIFIED] = convert_unix_ts_to_utc(_pbget(place_details, 10))
+            fields[F_MODIFIED] = _unix_ts_or_blank(_pbget(place_details, 10))
 
             # Server Identifier
             fields[F_SERVER_ID] = _safe_str(_pbget(place_details, 1))
@@ -2015,10 +2003,10 @@ def _parse_favorite_user_db(source_path: str, context, data_list: list) -> None:
             place_id = record[1]
 
             # Convert timestamps to UTC
-            fields[F_LAST_ACCESS] = convert_unix_ts_to_utc(record[2])
-            fields[F_CREATED] = convert_unix_ts_to_utc(record[13])
-            fields[F_MODIFIED] = convert_unix_ts_to_utc(record[14])
-            fields[F_LAST_WAYPOINT_ACCESS] = convert_unix_ts_to_utc(record[15])
+            fields[F_LAST_ACCESS] = _unix_ts_or_blank(record[2])
+            fields[F_CREATED] = _unix_ts_or_blank(record[13])
+            fields[F_MODIFIED] = _unix_ts_or_blank(record[14])
+            fields[F_LAST_WAYPOINT_ACCESS] = _unix_ts_or_blank(record[15])
 
             # Location Type
             fields[F_LOCATION_TYPE] = record[3]
@@ -2216,10 +2204,10 @@ def waze_shared_locations(context):
             place_id = record[1]
 
             # Convert timestamps to UTC
-            fields[F_SHARED] = convert_unix_ts_to_utc(record[2])
-            fields[F_CREATED] = convert_unix_ts_to_utc(record[11])
-            fields[F_MODIFIED] = convert_unix_ts_to_utc(record[12])
-            fields[F_LAST_ACCESS] = convert_unix_ts_to_utc(record[13])
+            fields[F_SHARED] = _unix_ts_or_blank(record[2])
+            fields[F_CREATED] = _unix_ts_or_blank(record[11])
+            fields[F_MODIFIED] = _unix_ts_or_blank(record[12])
+            fields[F_LAST_ACCESS] = _unix_ts_or_blank(record[13])
 
             # Name
             fields[F_NAME] = record[3]
