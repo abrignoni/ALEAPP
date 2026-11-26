@@ -257,14 +257,18 @@ def parse_text(text):
     # fewest rows that cannot be split, then the least text left before its first row; on a
     # tie, the earliest 'Row: 0' line.
     # Each reading parses the whole text; _row_zero_names keeps at most MAX_READINGS names.
-    readings = []
+    # Only the best reading so far is kept, so at most two parsed dumps are alive at once.
+    best_score, best_dump = None, None
     for order, name in enumerate(names):
         starts = _row_starts(candidates, name + '=')
         dump = _parse_lines(lines, starts)
         unsplit = sum(1 for record in dump.records if not record.pairs) if dump.records else len(lines)
         before = sum(1 for line in lines[:starts[0]] if line.strip()) if starts else len(lines)
-        readings.append(((unsplit, before, order), dump))
-    return min(readings, key=lambda reading: reading[0])[1]
+        score = (unsplit, before, order)
+        if best_score is None or score < best_score:
+            best_score, best_dump = score, dump
+        del dump
+    return best_dump
 
 
 def _parse_lines(lines, starts):
