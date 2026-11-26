@@ -4,7 +4,7 @@ __artifacts_v2__ = {
         "description": "Parses ProtonMail messages (timestamp, subject, sender, message type, unread flag, size, AccessTime, location, attachments and recipient lists; a message with several attachments has one row per attachment) from the ProtonMail messages database.",
         "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2023-04-26",
-        "last_update_date": "2026-10-04",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
         "category": "Email",
         "notes": "Message Type shows messagev3.Type under the name the app's "
@@ -53,9 +53,11 @@ __artifacts_v2__ = {
                  "database; the data_mirror copy held 6 messages, none with it "
                  "set. "
                  "The row count is not a message count: a message with several "
-                 "attachments has one row per attachment. "
+                 "attachments has one row per attachment, and a message whose stored "
+                 "values differ between copies of the database has one row per version. "
                  "The source was read at that commit only; other app versions "
-                 "were not checked.",
+                 "were not checked. "
+                 "When the extraction holds this database under more than one storage path (for example data/data, data/user/0 and data_mirror) and the copies differ in their bytes or in their -wal or -journal content, every differing copy is read. Rows are compared on the reported columns. A row the copies share is reported once, a row only one copy holds is reported as well, and a row that differs between copies appears once per version. On pixel3_a12 this added 4 rows (8 to 12): each is a second version of one of the 8 messages, and no message was held only by the other copy.",
         "paths": ('*/ch.protonmail.android/databases/*-MessagesDatabase.db*',),
         "output_types": "standard",
         "artifact_icon": "mail",
@@ -75,15 +77,26 @@ __artifacts_v2__ = {
     }
 }
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_human_ts_to_utc, is_sqlite_sidecar
-from scripts.artifacts.storagePathViews import unique_files
+import sqlite3
+
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_human_ts_to_utc, is_sqlite_sidecar, logfunc
+from scripts.artifacts.storagePathViews import union_view_rows, unique_files
+
+
+def _query(db, sql, path):
+    """Rows of sql on one copy of the database, or none and a log line when the query fails there."""
+    try:
+        return db.execute(sql).fetchall()
+    except sqlite3.Error as error:
+        logfunc(f'Proton Mail: query failed on {path}: {error}')
+        return []
 
 
 @artifact_processor
 def get_protonmail_messages(context):
-    files_found = unique_files(context)
-    data_list = []
-    source_path = ''
+    files_found = unique_files(context, keep_differing_views=True)
+    file_rows = []
+    source_paths = []
     for file_found in files_found:
         file_name = str(file_found)
 
@@ -91,10 +104,11 @@ def get_protonmail_messages(context):
             continue
 
         if file_name.endswith('-MessagesDatabase.db'):
-            source_path = file_name
             db = open_sqlite_db_readonly(file_found)
-            cursor = db.cursor()
-            cursor.execute('''
+            if db is None:
+                continue
+            source_paths.append(file_name)
+            all_rows = _query(db, '''
             SELECT
             datetime(messagev3.Time,'unixepoch') AS 'Message Timestamp',
             messagev3.Subject AS 'Subject',
@@ -150,13 +164,16 @@ def get_protonmail_messages(context):
             FROM messagev3
             LEFT JOIN attachmentv3 ON attachmentv3.message_id = messagev3.ID
             ORDER BY messagev3.Time ASC
-            ''')
-
-            all_rows = cursor.fetchall()
-            for row in all_rows:
-                data_list.append((convert_human_ts_to_utc(row[0]),row[1],row[2],row[3],row[4],row[5],convert_human_ts_to_utc(row[6]),row[7],row[8],row[9],row[10],row[11],row[12],row[13],row[14],row[15],row[16]))
+            ''', context.get_relative_path(file_name))
+            file_rows.append((file_name, [
+                (convert_human_ts_to_utc(row[0]), row[1], row[2], row[3], row[4], row[5],
+                 convert_human_ts_to_utc(row[6]), row[7], row[8], row[9], row[10], row[11], row[12], row[13],
+                 row[14], row[15], row[16])
+                for row in all_rows]))
 
             db.close()
+
+    data_list = union_view_rows(context, file_rows)
 
     data_headers = (
         ('Message Timestamp', 'datetime'),
@@ -177,7 +194,7 @@ def get_protonmail_messages(context):
         'BCC List',
         'Message Header',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)
 
 
 @artifact_processor

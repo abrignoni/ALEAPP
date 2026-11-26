@@ -4,10 +4,10 @@ __artifacts_v2__ = {
         "description": "Parses Google Cast device information",
         "author": "@deagler4n6 & @stark4n6",
         "creation_date": "2021-01-11",
-        "last_update_date": "2025-08-09",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
         "category": "Smart Home & Connected Devices",
-        "notes": "",
+        "notes": "A timestamp stored as 0 is left blank. When the extraction holds this database under more than one storage path (for example data/data, data/user/0 and data_mirror) and the copies differ in their bytes or in their -wal or -journal content, every differing copy is read. Rows are compared on the reported columns. A row the copies share is reported once, a row only one copy holds is reported as well, and a row that differs between copies appears once per version. The Source column of a shared row names the first copy read. On hickman_a13 this added 1 row (1 to 2), the same device with different values in the two copies.",
         "paths": ('*/com.google.android.gms/databases/cast.db*'),
         "output_types": "standard",
         "artifact_icon": "cast",
@@ -26,23 +26,35 @@ __artifacts_v2__ = {
     }
 }
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
-from scripts.artifacts.storagePathViews import unique_files
+import sqlite3
+
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone, logfunc
+from scripts.artifacts.storagePathViews import union_view_rows, unique_files
+
+
+def _query(db, sql, path):
+    """Rows of sql on one copy of the database, or none and a log line when the query fails there."""
+    try:
+        return db.execute(sql).fetchall()
+    except sqlite3.Error as error:
+        logfunc(f'Google Cast: query failed on {path}: {error}')
+        return []
 
 @artifact_processor
 def googleCast(context):
-    files_found = unique_files(context)
-    data_list = []
+    files_found = unique_files(context, keep_differing_views=True)
+    file_rows = []
     source_paths = set()
 
     for file_found in files_found:
         file_found = str(file_found)
 
         if file_found.endswith('cast.db'):
-            source_paths.add(file_found)
             db = open_sqlite_db_readonly(file_found)
-            cursor = db.cursor()
-            cursor.execute('''
+            if db is None:
+                continue
+            source_paths.add(file_found)
+            all_rows = _query(db, '''
             SELECT
             case last_published_timestamp_millis
                 when 0 then ''
@@ -70,34 +82,36 @@ def googleCast(context):
                 else datetime(last_discovered_by_ble_timestamp_millis/1000, 'unixepoch')
             end as "Last Discovered By BLE Timestamp"
             from DeviceInfo
-            ''')
-
-            all_rows = cursor.fetchall()
+            ''', context.get_relative_path(file_found))
+            rows = []
+            file_rows.append((file_found, rows))
             usageentries = len(all_rows)
             if usageentries > 0:
                 for row in all_rows:
                     last_published = row[0]
-                    if last_published is None:
-                        pass
+                    if not last_published:
+                        last_published = None
                     else:
                         last_published = convert_utc_human_to_timezone(convert_ts_human_to_utc(last_published),'UTC')
                     
                     last_discovered = row[14]
-                    if last_discovered is None:
-                        pass
+                    if not last_discovered:
+                        last_discovered = None
                     else:
                         last_discovered = convert_utc_human_to_timezone(convert_ts_human_to_utc(last_discovered),'UTC')
                     
                     last_discovered_ble = row[15]
-                    if last_discovered_ble is None:
-                        pass
+                    if not last_discovered_ble:
+                        last_discovered_ble = None
                     else:
                         last_discovered_ble = convert_utc_human_to_timezone(convert_ts_human_to_utc(last_discovered_ble),'UTC')
                 
-                    data_list.append((last_published,row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],last_discovered,last_discovered_ble,context.get_relative_path(file_found)))
+                    rows.append((last_published,row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],last_discovered,last_discovered_ble,context.get_relative_path(file_found)))
             db.close()
         else:
             continue # Skip all other files
     
+    data_list = union_view_rows(context, file_rows, ignore={16})
+
     data_headers = (('Last Published Timestamp','datetime'),'Device ID (SSDP UDN)','Capabilities','Device Version','Device Friendly Name','Device Model Name','Receiver Metrics ID','Service Instance Name','Device IP Address','Device Port','Supported Criteria','RCN Enabled Status','Hotspot BSSID','Cloud Device ID',('Last Discovered Timestamp','datetime'),('Last Discovered By BLE Timestamp','datetime'),'Source File') 
     return data_headers, data_list, '\n'.join(sorted(source_paths))

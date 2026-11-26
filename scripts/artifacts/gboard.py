@@ -45,10 +45,10 @@ __artifacts_v2__ = {
         "description": "Gboard keyboard input sessions (trainingcachev3.db)",
         "author": "@ydkhatri",
         "creation_date": "2021-01-09",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
         "category": "Device Activity",
-        "notes": "",
+        "notes": "When the extraction holds this database under more than one storage path (for example data/data, data/user/0 and data_mirror) and the copies differ in their bytes or in their -wal or -journal content, every differing copy is read. Rows are compared on the reported columns. A row the copies share is reported once, a row only one copy holds is reported as well, and a row that differs between copies appears once per version. On emu_a15_oss_v2 this added 1 row (36 to 37).",
         "paths": ('*/com.google.android.inputmethod.latin/databases/trainingcachev3.db*',),
         "output_types": "standard",
         "artifact_icon": "brand-chrome",
@@ -70,7 +70,7 @@ from scripts.ilapfuncs import decode_protobuf, is_sqlite_sidecar
 
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly, \
     does_table_exist_in_db, check_in_media
-from scripts.artifacts.storagePathViews import unique_files
+from scripts.artifacts.storagePathViews import union_view_rows, unique_files
 
 
 class keyboard_event:
@@ -270,15 +270,17 @@ def get_gboardCache_keystrokes(context):
 
 @artifact_processor
 def get_gboardCache_sessions(context):
-    files_found = unique_files(context)
+    files_found = unique_files(context, keep_differing_views=True)
     source_paths = []
-    data_list = []
+    file_rows = []
     for file_found in files_found:
         file_found = str(file_found)
         if not file_found.endswith('trainingcachev3.db'):
             continue
-        source_paths.append(file_found)
         db = open_sqlite_db_readonly(file_found)
+        if db is None:
+            continue
+        source_paths.append(file_found)
         cursor = db.cursor()
         try:
             cursor.execute('''
@@ -291,8 +293,9 @@ def get_gboardCache_sessions(context):
         except sqlite3.Error:
             rows = []
         db.close()
-        for row in rows:
-            data_list.append((_str_to_utc(row[0]), _str_to_utc(row[1]), row[2], row[3]))
+        file_rows.append((file_found, [(_str_to_utc(row[0]), _str_to_utc(row[1]), row[2], row[3]) for row in rows]))
+
+    data_list = union_view_rows(context, file_rows)
 
     data_headers = (('_session_id (as timestamp)', 'datetime'), ('_timestamp_', 'datetime'),
                     'Session ID', 'Application')
