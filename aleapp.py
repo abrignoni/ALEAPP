@@ -428,7 +428,8 @@ def main():
         # what was found beside the image given, and any image given twice
         found_members = raw_input
 
-    # Held in memory for this run only; never written to a profile, the log or the report.
+    # Held in memory for this run only; never written to a profile or a report table. The log of
+    # the run records it at its start (signal_backup.report_supplied_recovery_key).
     if args.signal_recovery_key_file and args.signal_recovery_key_env:
         print('Give the Signal recovery key once: a file or an environment variable, not both.')
         return
@@ -506,6 +507,7 @@ def crunch_artifacts(
     logfunc(f'Objective: {leapp.objective}')
     logfunc('By: Alexis Brignoni | @AlexisBrignoni | abrignoni.com')
     logfunc('By: Yogesh Khatri   | @SwiftForensics | swiftforensics.com\n')
+    signal_backup.report_supplied_recovery_key()
     logdevinfo()
     
     seeker = None

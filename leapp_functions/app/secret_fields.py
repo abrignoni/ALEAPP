@@ -5,7 +5,8 @@ Each field of "secrets" is one of two kinds:
 - "text": a text to type or to read from a file, hidden on screen, such as a recovery key.
 A field may name, in "check", the function that says whether a text can be used, as
 "module:function": it raises ValueError, whose message never holds the text.
-A secret is never written to a file by the window: not to the history, nor to the case data.
+The window never writes a secret to a file: not to the history, nor to the case data. Whether
+the log of a run records it is each tool's choice.
 """
 
 import importlib

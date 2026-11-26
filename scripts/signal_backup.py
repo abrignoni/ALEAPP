@@ -1,7 +1,9 @@
 """Signal on-device backup: the recovery key for this run, and the reader of a snapshot.
 
-The key is held in this process only. It is never written to a profile, case data file,
-log, report or history entry, and no message raised here carries it.
+The key is held in this process only, for one run. It is never written to a profile, case
+data file, report table or history entry, and no message raised here carries it. The log of
+the run records it in clear, once, at the start (report_supplied_recovery_key), as iLEAPP
+records the password of an encrypted backup: the report then says which key was given.
 
 Format from Signal-Android tag v8.35.4 (commit b330f4efcf49a0cec87807d18504f07f5df12bf2)
 and libsignal tag v0.106.1 (commit 904c8dc8216073b078a5f2f5090e3da8382e6a92). _SCHEMA below
@@ -20,6 +22,8 @@ from Crypto.Hash import SHA256
 from Crypto.Protocol.KDF import HKDF
 from google.protobuf import descriptor_pb2, descriptor_pool, message_factory
 from google.protobuf.message import DecodeError
+
+from scripts.ilapfuncs import logfunc
 
 KEY_LENGTH = 64  # AccountEntropyPool.LENGTH (core/util-jvm/.../AccountEntropyPool.kt L21)
 _FORWARD_SECRECY_MAGIC = b'SBACKUP\x01'  # EncryptedBackupWriter.MAGIC_NUMBER
@@ -77,6 +81,13 @@ def set_recovery_key(key):
 def get_recovery_key():
     """The key held for this run, or None."""
     return _recovery_key
+
+
+def report_supplied_recovery_key():
+    """Record in the log of the run, at its start, the key given for it, in clear and in the
+    form it is held (letters and digits only, lower case). Nothing when none was given."""
+    if _recovery_key:
+        logfunc(f'Signal recovery key: {_recovery_key}')
 
 
 # name: {field: (number, type or message name[, 'repeated'])}

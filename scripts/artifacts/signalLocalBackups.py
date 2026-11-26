@@ -108,7 +108,7 @@ __artifacts_v2__ = {
                        "quotes and edits. Gives no rows without the key.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-11-20",
-        "last_update_date": "2026-11-20",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
         "category": "Signal",
         "notes": (
@@ -118,7 +118,8 @@ __artifacts_v2__ = {
             "same message in two snapshots is two rows. A snapshot is the state Signal exported when the "
             "backup ran: it says nothing about messages removed before then. The HMAC over the main file "
             "is checked before any of main is decrypted. When it does not verify, the snapshot gives no "
-            "rows and the run log names the snapshot. The key is never logged. Fields are read from "
+            "rows and the run log names the snapshot. The key is in no row; the run log records "
+            "it at the start of the run. Fields are read from "
             "ChatItem in Backup.proto at Signal-Android commit b330f4efcf49a0cec87807d18504f07f5df12bf2.\n"
             "Times are read as milliseconds since 1970 UTC and shown in whole seconds. On the tested "
             "backup that reading put Backup Time 1 second after the folder-name time and the Note to "
