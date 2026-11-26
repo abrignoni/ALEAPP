@@ -801,6 +801,7 @@ Imported as a module by 1 artifact module(s), whose uses of its names are not co
 | 0 | `normalise_recovery_key` | `normalise_recovery_key(text)` | The key in the form Signal derives from (AccountEntropyPool.kt L17, L29-32, L49). |
 | 0 | `open_snapshot` | `open_snapshot(main_path, metadata_path, recovery_key)` | (BackupInfo, iterator of Frame) of a snapshot. The HMAC over main is checked first. |
 | 0 | `parse` | `parse(name, data)` | A message of _SCHEMA parsed from bytes. Raises BackupFormatError when it does not decode. |
+| 0 | `report_supplied_recovery_key` | `report_supplied_recovery_key()` | Record in the log of the run, at its start, the key given for it, in clear and in the |
 | 0 | `set_recovery_key` | `set_recovery_key(key)` | Hold the normalised key for this run, or clear it with None. |
 | 0 | `which` | `which(message, names)` | The first of names that is set on message, or ''. |
 
