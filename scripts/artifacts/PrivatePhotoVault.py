@@ -72,10 +72,15 @@ __artifacts_v2__ = {
         "last_update_date": "2026-11-26",
         "requirements": "none",
         "category": "Photos & Media",
-        "notes": "Read from the LoginRecord table of ppv.db the same way as Private Photo Vault - Albums, including the write-ahead log. On pixel7a_a14, cookbook_a11 and pixel3_a12 the table is declared with uid, orig_file_path, date, type, latitude and longitude columns. Date (as stored) is the date text. Date is that text converted to UTC, filled only when the text is ISO 8601 and carries a Z or a UTC offset. The format the app writes in this column is not established. Type (as stored), Original File Path (as stored) and UID are the stored values, unchanged. Latitude and Longitude are the stored numbers. In LAVA a whole-number coordinate is stored without its decimal point. The app's source was not read, so what a row records, what the type values mean, what the file at the original path is and how the position was obtained are not established. A column the table lacks is blank. The table is present and empty on pixel7a_a14, cookbook_a11 and pixel3_a12, so this artifact is not exercised on real data. A row is written to the KML export only when both coordinates are present and neither is 0. A row with a blank Date is written to the timeline with no time, and its KML point is named N/A. The KML and timeline outputs were checked on made-up rows only.",
+        "notes": "Read from the LoginRecord table of ppv.db the same way as Private Photo Vault - Albums, including the write-ahead log. On pixel7a_a14, cookbook_a11 and pixel3_a12 the table is declared with uid, orig_file_path, date, type, latitude and longitude columns. Date (as stored) is the date text. Date is that text converted to UTC, filled only when the text is ISO 8601 and carries a Z or a UTC offset. The format the app writes in this column is not established. Type (as stored), Original File Path (as stored) and UID are the stored values, unchanged. Latitude and Longitude are the stored numbers. In LAVA a whole-number coordinate is stored without its decimal point. The app's source was not read, so what a row records, what the type values mean, what the file at the original path is and how the position was obtained are not established. A column the table lacks is blank. The table is present and empty on pixel7a_a14, cookbook_a11 and pixel3_a12, so this artifact is not exercised on real data. A row is written to the KML export only when both coordinates are present and neither is 0. A row with a blank Date is written to the timeline with no time, and its KML point is named N/A. The KML and timeline outputs were checked on made-up rows only. Each ppv.db found is read once, and Android User is the user the database's path denotes: 0 for data/data, the number in the path for data/user/<n> and the other per-user layouts, and blank for any other path. No column other than Android User separates two databases.",
         "paths": ('*/com.enchantedcloud.photovault/databases/ppv.db*',),
         "output_types": ["standard", "timeline", "kml"],
         "artifact_icon": "lock",
+        "sample_data": {
+            "pixel7a_a14": "Android 14 | com.enchantedcloud.photovault | 0 rows",
+            "cookbook_a11": "Android 11 | com.enchantedcloud.photovault | 0 rows",
+            "pixel3_a12": "Android 12 | com.enchantedcloud.photovault | 0 rows",
+        },
     },
 }
 
@@ -84,7 +89,7 @@ import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 
 from scripts.ilapfuncs import artifact_processor, does_column_exist_in_db, does_table_exist_in_db, get_sqlite_db_records, logfunc
-from scripts.artifacts.storagePathViews import unique_files
+from scripts.artifacts.storagePathViews import android_user, unique_files
 
 
 def _find_all(files_found, suffix):
@@ -274,7 +279,7 @@ _LOGIN_COLUMNS = ('date', 'type', 'latitude', 'longitude', 'orig_file_path', 'ui
 def private_photo_vault_login_records(context):
     data_headers = (
         ("Date", "datetime"), "Date (as stored)", "Type (as stored)", ("Latitude", "latitude"),
-        ("Longitude", "longitude"), "Original File Path (as stored)", "UID",
+        ("Longitude", "longitude"), "Original File Path (as stored)", "UID", "Android User",
     )
 
     source_paths = _find_all(unique_files(context), 'ppv.db')
@@ -284,13 +289,14 @@ def private_photo_vault_login_records(context):
         if not does_table_exist_in_db(source_path, 'LoginRecord'):
             continue
         read_paths.append(source_path)
+        user = android_user(context.get_relative_path(source_path))
         columns = ', '.join(c if does_column_exist_in_db(source_path, 'LoginRecord', c) else f'NULL AS {c}'
                             for c in _LOGIN_COLUMNS)
         for date, kind, latitude, longitude, orig_file_path, uid in get_sqlite_db_records(
                 source_path, f'SELECT {columns} FROM LoginRecord ORDER BY date;'):
             # LoginRecord.date declares no default, so the Album and MediaFile default is not blanked here.
             data_list.append((_iso_to_utc(date, skip_schema_default=False), date, kind, latitude, longitude,
-                              orig_file_path, uid))
+                              orig_file_path, uid, user))
 
     logfunc(f"Private Photo Vault Login Records: {len(data_list)} record(s) recovered.")
     return data_headers, data_list, '\n'.join(read_paths)

@@ -45,6 +45,7 @@ class LoginRecords(unittest.TestCase):
         self.assertEqual((row['Latitude'], row['Longitude']), (1.5, -2.5))
         self.assertEqual(row['Original File Path (as stored)'], '/made/up.jpg')
         self.assertIn(('Latitude', 'latitude'), headers)
+        self.assertEqual(row['Android User'], '0')
 
 
 class MediaDates(unittest.TestCase):
