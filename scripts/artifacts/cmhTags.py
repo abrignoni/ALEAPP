@@ -91,21 +91,13 @@ __artifacts_v2__ = {
     },
     "cmh_user_tags": {
         "name": "CMH User Tags",
-        "description": "Tags recorded in the Samsung CMH user tag table, with the file each "
-                       "one is linked to where the schema carries that link.",
+        "description": "Tags recorded in the Samsung CMH user tag table, with the file each one is linked to where the usertag table carries fk_sec_media_id.",
         "author": "Panagiotis Nakoutis - @4n6equals10, @AlexisBrignoni, Claude",
         "creation_date": "2025-05-05",
-        "last_update_date": "2026-08-10",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
         "category": "Photos & Media",
-        "notes": "Rows come from the usertag table in cmh.db. The table has more than one "
-                 "generation: newer databases carry fk_sec_media_id and timestamp, which give "
-                 "the linked file and a millisecond timestamp reported as UTC; the older "
-                 "generation seen on an Android 10 image carries neither, so those rows are "
-                 "reported with the tag value alone and no file or time. Absent columns are "
-                 "read as NULL rather than assumed.\n"
-                 "Tag Value is the stored user_tag_data. The "
-                 "database does not record how any individual row was created.",
+        "notes": "Rows come from the usertag table in cmh.db. The table has more than one generation. Newer databases carry fk_sec_media_id and timestamp. fk_sec_media_id is joined to files.sec_media_id, the join cmh.db makes itself in its files_delete_recommendation_view, to give the linked file. On anne_a15 the one row links to a files row this way. timestamp is read as Unix milliseconds and reported as UTC. The unit was not sourced; the one populated row in the corpus holds a 13-digit value. The older generation, seen on Android 10 and Android 11 images, carries neither column. Rows from it would be reported with the tag value alone and no file or time. No older-generation database in the corpus holds a usertag row. That generation links tags to files through tag_map, which this artifact does not follow. Absent columns are read as NULL rather than assumed.\nTag Value is the stored user_tag_data. File Name is files.title. This artifact does not report how a row was created. The usertag columns mp_user_tag_id, server_id and dirty (user_tag_type in the older generation) are not reported and their meaning is not established.",
         "paths": ('*/cmh.db*',),
         "output_types": "standard",
         "artifact_icon": "user-check",
@@ -291,7 +283,7 @@ def cmh_user_tags(context):
                 SELECT {time_expr}, usertag.user_tag_data, files.datetaken,
                        files.title, files._data
                 FROM usertag
-                LEFT JOIN files ON files._id = usertag.fk_sec_media_id
+                LEFT JOIN files ON files.sec_media_id = usertag.fk_sec_media_id
             '''
         else:
             sql = f'''
