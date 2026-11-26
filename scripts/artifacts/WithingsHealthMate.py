@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-04-20",
         "last_update_date": "2026-05-14",
         "requirements": "none",
-        "category": "Withings Health Mate",
+        "category": "Health & Fitness",
         "notes": "Based on https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-1-users.html",
         "paths": ('*/com.withings.wiscale2/databases/Withings-WiScale*'),
         "output_types": "standard",
@@ -19,7 +19,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-04-20",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Withings Health Mate",
+        "category": "Health & Fitness",
         "notes": "Based on https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-2.html "
                  "Columns of the Track table are read by position; the mapping was written "
                  "against app versions 5.1.4 (Android 6) and 6.3.1 (Android 13), the versions "
@@ -53,7 +53,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-04-20",
         "last_update_date": "2026-08-01",
         "requirements": "none",
-        "category": "Withings Health Mate",
+        "category": "Health & Fitness",
         "notes": "Based on https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-3-heart.html "
                  "Columns of the WorkoutLocation table, including Latitude and Longitude, are read by "
                  "position; the mapping was written against app versions 5.1.4 (Android 6) and "
@@ -70,7 +70,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-04-20",
         "last_update_date": "2026-08-01",
         "requirements": "none",
-        "category": "Withings Health Mate",
+        "category": "Health & Fitness",
         "notes": "Based on https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-1-users.html "
                  "Columns of the chat table are read by position (the cited post, written against "
                  "app 5.1.4, names the table chats); the mapping was written "
@@ -87,7 +87,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-04-21",
         "last_update_date": "2026-08-01",
         "requirements": "none",
-        "category": "Withings Health Mate",
+        "category": "Health & Fitness",
         "notes": "Based on https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-1-users.html "
                  "Columns of the leaderboard table of the room-healthmate database are read by "
                  "position (the cited post, written against app 5.1.4, found the table in "
@@ -106,7 +106,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-04-21",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Withings Health Mate",
+        "category": "Health & Fitness",
         "notes": "Based on "
                  "https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-3-heart.html "
                  "The Category names for -16 (Heart Rate) and 16 (Steps) come from that post; the "
@@ -128,7 +128,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-04-21",
         "last_update_date": "2026-08-01",
         "requirements": "none",
-        "category": "Withings Health Mate",
+        "category": "Health & Fitness",
         "notes": "Based on https://bebinary4n6.blogspot.com/2020/10/app-healthmate-on-android-part-1-users.html "
                  "Columns of the devices table, including the value reported as the Last Used "
                  "Timestamp and the Latitude/Longitude pair, are read by position; the mapping was "

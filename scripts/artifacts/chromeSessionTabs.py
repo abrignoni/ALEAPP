@@ -9,7 +9,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-04",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Chromium Sessions",
+        "category": "Browsers",
         "notes": "Read from the Sessions/Tabs_<number> files a Chromium browser writes under its "
                  "app_chrome folder, with the vendored snss_parser. The path pattern carries no "
                  "package name and matches any package that keeps an "
@@ -79,7 +79,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-04",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Chromium Sessions",
+        "category": "Browsers",
         "notes": "Read from the same Tabs_<number> files, from the command Chromium calls "
                  "kCommandSelectedNavigationInTab. Unlike the navigation entries this record is "
                  "not a pickle but a fixed structure of a tab id, the selected navigation index "

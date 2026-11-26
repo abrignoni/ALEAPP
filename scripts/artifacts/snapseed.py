@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Snapseed",
+        "category": "Photos & Media",
         "sample_data": {
             "emu_a15_oss_v13": "Snapseed 4.1.6.975983225 | 6 rows",
         },
@@ -94,7 +94,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
         "requirements": "none",
-        "category": "Snapseed",
+        "category": "Photos & Media",
         "sample_data": {
             "emu_a15_oss_v13": "Snapseed 4.1.6.975983225 | 8 rows",
         },
@@ -138,7 +138,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Snapseed",
+        "category": "Photos & Media",
         "sample_data": {
             "emu_a15_oss_v13": "Snapseed 4.1.6.975983225 | 22 rows",
         },

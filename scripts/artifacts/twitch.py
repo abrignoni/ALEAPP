@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-08-19",
         "requirements": "none",
-        "category": "Twitch",
+        "category": "Music, Video & News",
         "notes": "One row per app data directory. The app holds no databases of its own; "
                  "every value here comes from its preference files and from a single "
                  "identifier file. Account Created is an ISO 8601 value the app stores with "

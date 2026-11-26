@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Revolut",
+        "category": "Finance & Payments",
         "notes": "One row per row of the payments_recent_v2 table, the app's recent payment recipients list. This is a lead sheet, not a transaction history: the payments themselves are not in this store and the app's transaction and chat databases were encrypted on the tested samples and no key for them was found in those extractions, so no amount, currency, direction or payment date is available. What each row does carry is a recipient and an item identifier. Item ID is the itemId column as stored; it was distinct on each of the 17 rows of the tested sample. What the identifier refers to is not established beyond the Item Type stored beside it. Recipient Type is reported as stored and was BANK, CONTACT_CODE or CRYPTO on the tested device: a contact code row carries a readable handle naming a counterparty, while the others carry an opaque identifier, so of the 17 rows there 3 named a counterparty and 14 did not, and 11 of the 17 were crypto. Unread Sync Timestamp is the unreadSyncTimestamp column, read as Unix milliseconds and shown in UTC; what it records is not established and no source for it was found, and it is not the time of a payment record in this store. It was zero on 14 of the 17 rows, and the rows are ordered by recipient type and then recipient rather than by it so that they are not presented as though ordered by when a payment happened. Unread Counter was zero on every row of the tested device, so it is carried but was never exercised there. A row records that the app listed the recipient, which is not the same as a payment having been made. Field mapping was done against three private samples provided by Mattia; only one of the three carried this store, and no sample data is recorded for them.",
         "paths": (
             '*/com.revolut.revolut/databases/payments_recent_db*',
@@ -24,7 +24,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-19",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Revolut",
+        "category": "Finance & Payments",
         "notes": "One row per app data directory. Every timestamp is Unix milliseconds. The "
                  "three caches this row counts hold content the service supplied rather than "
                  "anything the account holder produced, so they are counted rather than "

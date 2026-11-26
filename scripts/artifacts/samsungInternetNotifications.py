@@ -17,7 +17,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-17",
         "last_update_date": "2026-11-18",
         "requirements": "none",
-        "category": "Samsung Internet",
+        "category": "Browsers",
         "notes": (
             "Read from the notifications table of "
             "com.sec.android.app.sbrowser/databases/webNotificationDB.db with its -wal. Time is "

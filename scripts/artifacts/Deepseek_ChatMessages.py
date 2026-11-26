@@ -17,7 +17,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-05-24",
         "last_update_date": "2026-11-22",
         "requirements": "",
-        "category": "DeepSeek",
+        "category": "AI Assistants",
         "notes": "inserted_at is read as Unix seconds. The unit was not checked against the app's code or a real database. A value that cannot be converted is shown as stored.",
         "paths": ('*/data/com.deepseek.chat/databases/deepseek_chat_*.db*'),
         "output_types": ["html", "lava", "tsv"],

@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-09-18",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Discord Chats",
+        "category": "Messaging",
         "notes": "Each account's "
                  "kv-storage/@account.<id>/a database is read separately (one account on each of the 6 tested "
                  "images holding one); Direction is Outgoing when the sender id equals the account id in that "

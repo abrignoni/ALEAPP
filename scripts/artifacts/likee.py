@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-05-20",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "LIKEE",
+        "category": "Social Media",
         "notes": ""
                  "Each kept line is the whole line with control characters, the line break "
                  "included, removed; the kept lines of one file are joined with nothing between "
@@ -24,7 +24,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-05-20",
         "last_update_date": "2024-05-20",
         "requirements": "none",
-        "category": "LIKEE",
+        "category": "Social Media",
         "notes": "",
         "paths": ('*/video.like/databases/like_pub.db*',),
         "output_types": "standard",
@@ -37,7 +37,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-05-20",
         "last_update_date": "2024-05-20",
         "requirements": "none",
-        "category": "LIKEE",
+        "category": "Social Media",
         "notes": "",
         "paths": ('*/video.like/databases/*.db*',),
         "output_types": "standard",

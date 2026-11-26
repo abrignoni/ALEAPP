@@ -10,21 +10,21 @@ __artifacts_v2__ = {
     "get_samsung_gallery_search_history": {
         "name": "Samsung Gallery - Search History",
         "description": (
-            "Parses the search_history table of Samsung Gallery's local.db: each stored search with its date_added time, the stored title, the search kind and term split from the title where it holds a slash, and the stored search target."
+            "Parses the search_history table of Samsung Gallery's local.db: each stored search with its date_added time, the stored title, the title split at its first slash where text follows the slash, and the stored search target."
         ),
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-11-17",
-        "last_update_date": "2026-11-17",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
-        "category": "Samsung Gallery",
+        "category": "Photos & Media",
         "notes": (
             "Read from the search_history table (title, date_added, search_target) of "
             "com.sec.android.gallery3d/databases/local.db with its -wal. Date Added is "
             "date_added, milliseconds since the Unix epoch converted to UTC and cut to the "
-            "whole second. Search Kind and Search Term are the stored title split at its first slash. Two rows were seen: on samsung_a166u_a16_known_20261117 the title is key_word, a slash and the logged search term; on sharon_a14 the title holds no slash, so Search Kind is blank and Search Term is the whole title. Title (as stored) keeps the whole value, and Search Target is the stored search URI. "
+            "whole second. Title Prefix and Search Term are the stored title split at its first slash. When nothing follows the slash, or the title holds no slash, the title is not split: Title Prefix is blank and Search Term is the whole title. The split does not check that the text before the slash is a prefix, so a title stored without one that holds a slash in the searched text would be split there. No row on the images run has that shape. Two rows were seen: on samsung_a166u_a16_known_20261117 the title is key_word, a slash and the logged search term; on sharon_a14 the title holds no slash, so Title Prefix is blank and Search Term is the whole title. What the app means by the text before the slash is not established. Title (as stored) keeps the whole value, and Search Target is the stored search URI. search_history also has a cover_id column on some images run, including anne_a15 and samsung_a166u_a16_known_20261117. It is not reported. On samsung_a166u_a16_known_20261117 its one value is above 2147483648 and is one of the ids on that image's V row in operation_history. What it identifies is not established. "
             "On samsung_a166u_a16_known_20261117 the one row matches the one logged Gallery search; the stored time is within two seconds of the logged time. sharon_a14 holds one row. On the other ten images run the table is empty. Whether the "
             "app keeps every search or only recent ones is not established. "
-            "Left out from local.db: the log table (its cells that hold encoded strings are reported by the Samsung Gallery Log Encoded Strings artifact), mxalbum (album and folder records: paths, names and counts, with no action column), cache (key and data columns, meaning not established) and the operation_history table, reported by Samsung Gallery - Operation History. The other tables in local.db are not reported; count_history holds rows on seven of the images run and its meaning is not established."
+            "Left out from local.db: the log table (its cells that hold encoded strings are reported by the Samsung Gallery Log Encoded Strings artifact), mxalbum (album and folder records: paths, names and counts, with no action column), cache (key and data columns, meaning not established) and the operation_history table, reported by Samsung Gallery - Operation History. The other tables in local.db are not reported; count_history holds rows on at least eight of the images run and its meaning is not established."
         ),
         "paths": ("*/com.sec.android.gallery3d/databases/local.db*",),
         "output_types": "standard",
@@ -54,25 +54,11 @@ __artifacts_v2__ = {
         ),
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-11-17",
-        "last_update_date": "2026-11-17",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
-        "category": "Samsung Gallery",
+        "category": "Photos & Media",
         "notes": (
-            "Read from the operation_history table (timestamp, action, media_id) of "
-            "com.sec.android.gallery3d/databases/local.db with its -wal. Timestamp is "
-            "milliseconds since the Unix epoch converted to UTC and cut to the whole "
-            "second. Media IDs (as stored) is the comma-separated media_id value. "
-            "Each id is looked up as _id in the files table of the media provider's "
-            "external.db (com.google.android.providers.media.module or "
-            "com.android.providers.media) for the same Android user, and File Names and "
-            "Folders give its _display_name and relative_path there, one per line in the stored order; when _display_name is empty the name is taken from the end of _data (no row on the images run needed that). Every lookup on the images run went through com.google.android.providers.media.module; the com.android.providers.media path was not exercised. Media Resolved counts the ids found. The lookup is against the media provider as extracted: a file renamed or moved since the operation would show the name and folder it has at extraction, and a deleted one would show nothing. This was not tested. "
-            "Action (as stored) is not decoded. On samsung_a166u_a16_known_20261117 "
-            "(Gallery actions logged during the session): P named the three screenshots "
-            "that were then copied into a new album, E named the album copy that was "
-            "cropped, and S named the file that was then shared with Quick Share; each "
-            "stored time came before the logged action, by about 10 to about 80 seconds. On the eight images run that hold P, E or S rows, every id on those rows (19 ids on 17 rows) resolved through external.db; only on samsung_a166u_a16_known_20261117 was the resolved file checked against a logged action. V rows held ids of 2147483649 and above, none of which is an _id in external.db, so their files are not resolved and what V records is not "
-            "established. "
-            "Rows with no resolved id leave File Names and Folders blank. A media provider database for another Android user is read for that user's rows (cookbook_a11 has one E row under user 150, resolved)."
+            "Read from the operation_history table (_id, timestamp, action, media_id) of com.sec.android.gallery3d/databases/local.db with its -wal. Operation ID is the row's _id. It is numbered per database, so the same number can appear under two Android users (cookbook_a11 has 1 under users 0 and 150). The table's __log column is not read; it is empty on all 27 rows of anne_a15, cookbook_a11, samsung_a166u_a16_known_20261117 and sharon_a14. Timestamp is milliseconds since the Unix epoch converted to UTC and cut to the whole second. Media IDs (as stored) is the comma-separated media_id value. Each id is looked up as _id in the files table of the media provider's external.db (com.google.android.providers.media.module or com.android.providers.media) for the same Android user, and File Names and Folders give its _display_name and relative_path there, one per line in the stored order; when _display_name is empty the name is taken from the end of _data (no row on the images run needed that). Every lookup on the images run went through com.google.android.providers.media.module; the com.android.providers.media path was not exercised. Media Count is the number of entries in media_id. An id that is repeated in the value is counted each time. Five V rows on falken_a326u_a13 and sharon_a14 repeat an id. Media Resolved counts the ids found. The lookup is against the media provider as extracted: a file renamed or moved since the operation would show the name and folder it has at extraction, and a deleted one would show nothing. This was not tested. Action (as stored) is not decoded. On samsung_a166u_a16_known_20261117 (Gallery actions logged during the session): P named the three screenshots that were then copied into a new album, E named the album copy that was cropped, and S named the file that was then shared with Quick Share; each stored time came before the logged action, by about 10 to about 80 seconds. On the eight images run that hold P, E or S rows, every id on those rows (19 ids on 17 rows) resolved through external.db; only on samsung_a166u_a16_known_20261117 was the resolved file checked against a logged action. V rows held ids of 2147483649 and above, none of which is an _id in external.db, so their files are not resolved and what V records is not established. Rows with no resolved id leave File Names and Folders blank. In the stored and exported strings, a row where only some ids resolve keeps an empty entry for each unresolved id, separated by newlines. The HTML report collapses these line breaks, so visible positions there cannot be used to match names and folders to Media IDs (as stored). No row on the images run had that shape. A media provider database for another Android user is read for that user's rows (cookbook_a11 has one E row under user 150, resolved)."
         ),
         "paths": (
             "*/com.sec.android.gallery3d/databases/local.db*",
@@ -182,7 +168,7 @@ def get_samsung_gallery_search_history(context):
     data_headers = (
         ("Date Added", "datetime"),
         "Search Term",
-        "Search Kind",
+        "Title Prefix",
         "Title (as stored)",
         "Search Target (as stored)",
         "Android User",

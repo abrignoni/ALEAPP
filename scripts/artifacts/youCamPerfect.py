@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-11",
         "last_update_date": "2026-09-11",
         "requirements": "none",
-        "category": "YouCam Perfect",
+        "category": "Photos & Media",
         "sample_data": {
             "emu_a15_oss2_v3": "YouCam Perfect 6.21.1 | 7 rows",
         },
@@ -79,7 +79,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-11",
         "last_update_date": "2026-11-23",
         "requirements": "none",
-        "category": "YouCam Perfect",
+        "category": "Photos & Media",
         "sample_data": {
             "emu_a15_oss2_v3": "YouCam Perfect 6.21.1 | 0 rows",
         },
@@ -127,7 +127,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-11",
         "last_update_date": "2026-09-11",
         "requirements": "none",
-        "category": "YouCam Perfect",
+        "category": "Photos & Media",
         "sample_data": {
             "emu_a15_oss2_v3": "YouCam Perfect 6.21.1 | 1 rows",
         },

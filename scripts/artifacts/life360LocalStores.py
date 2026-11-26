@@ -11,7 +11,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
         "requirements": "none",
-        "category": "Life360",
+        "category": "Locations & Maps",
         "notes": "Read from the location table of "
                  "com.life360.android.safetymapd/databases/L360LocationLocalStoreRoomDatabase, a "
                  "store in the app's own data directory; the -wal and -shm sidecars are read "
@@ -54,7 +54,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
         "requirements": "none",
-        "category": "Life360",
+        "category": "Locations & Maps",
         "notes": "Read from the activity_transition table of the same L360LocationLocalStoreRoomDatabase, with the "
                  "same write-ahead log handling and millisecond time conversion. Activity Type (as stored) and "
                  "Transition (as stored) are the table's integer type and transition columns, reported as stored; "
@@ -89,7 +89,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
         "requirements": "none",
-        "category": "Life360",
+        "category": "Locations & Maps",
         "notes": "Read from the geofence table of the same L360LocationLocalStoreRoomDatabase, with the same "
                  "write-ahead log handling. Geofence ID and Place ID are as stored (on every tested row the "
                  "geofence id is the place id with a _LOCAL suffix), Latitude and Longitude are placeLatitude and "
@@ -118,7 +118,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
         "requirements": "none",
-        "category": "Life360",
+        "category": "Locations & Maps",
         "notes": "Read from the device_locations table of "
                  "com.life360.android.safetymapd/databases/MembersEngineRoomDatabase, joined to devices on "
                  "device_id for Device Name and Device OS (as stored) and to members on default_member_id and "
@@ -160,7 +160,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
         "requirements": "none",
-        "category": "Life360",
+        "category": "Locations & Maps",
         "notes": "Read from the devices table of the same MembersEngineRoomDatabase, with Circle IDs from "
                  "device_circle_cross_ref and Owner IDs the userId values of the owners JSON list (filled on all "
                  "11 rows). Modified is the ISO 8601 UTC text the app stored and Last Updated a millisecond epoch "

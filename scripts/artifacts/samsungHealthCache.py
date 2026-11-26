@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-16",
         "last_update_date": "2026-11-16",
         "requirements": "none",
-        "category": "Health",
+        "category": "Health & Fitness",
         "notes": (
             'One row per Samsung Health container whose shared_prefs/temporary_sharedpreferences_main.xml '
             'holds tracker_weight_weight or tracker_weight_height. Values are read with an XML parser and '
@@ -64,7 +64,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-16",
         "last_update_date": "2026-11-16",
         "requirements": "none",
-        "category": "Health",
+        "category": "Health & Fitness",
         "notes": (
             'One row per pedometer_setting.db whose tracker_pedometer_temp_step_data key holds a JSON step '
             'summary, read with a JSON parser. The mStepCount, mWalkStepCount and mRunStepCount values are '
@@ -121,7 +121,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-16",
         "last_update_date": "2026-11-16",
         "requirements": "none",
-        "category": "Health",
+        "category": "Health & Fitness",
         "notes": (
             'One row per bin with a non-zero mStepCount in the JSON list stored under '
             'tracker_pedometer_temp_step_binning in pedometer_setting.db, read with a JSON parser; bins with '

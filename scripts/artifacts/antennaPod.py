@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-31",
         "last_update_date": "2026-08-31",
         "requirements": "none",
-        "category": "AntennaPod",
+        "category": "Music, Video & News",
         "sample_data": {
             "emu_a15_oss_v4": "AntennaPod 3.12.0 | 1 rows",
         },
@@ -36,7 +36,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-31",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "AntennaPod",
+        "category": "Music, Video & News",
         "sample_data": {
             "emu_a15_oss_v4": "AntennaPod 3.12.0 | 1013 rows",
         },

@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-03-15",
         "last_update_date": "2026-11-16",
         "requirements": "none",
-        "category": "Line",
+        "category": "Messaging",
         "notes": ("One row per row of the contacts table in each naver_line database. The "
                   "duplicate storage views of one database are collapsed first, and where "
                   "the extraction holds more than one database (a second Android user) every "
@@ -48,7 +48,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-03-15",
         "last_update_date": "2026-11-16",
         "requirements": "none",
-        "category": "Line",
+        "category": "Messaging",
         "notes": ("Direction is decoded from the chat_history 'status' column, 1 read as "
                   "Incoming and 2 as Outgoing, with every other value reported as stored. "
                   "That mapping predates this work and no source for it was found.\n"
@@ -164,7 +164,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-03-15",
         "last_update_date": "2026-11-16",
         "requirements": "none",
-        "category": "Line",
+        "category": "Messaging",
         "notes": ("Direction is decoded from the last character of the call_history 'call_type' "
                   "column, O read as Outgoing and I as Incoming, and Call Type from the "
                   "'voip_type' letter, V read as Video, A as Audio and G as a group call whose "

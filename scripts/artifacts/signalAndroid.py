@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-25",
         "last_update_date": "2026-11-15",
         "requirements": "none",
-        "category": "Signal",
+        "category": "Messaging",
         "notes": ("Requires the SQLCipher key from Secrets/secrets.json (extra/Secrets/ in the "
                   "extraction); the write-ahead log is replayed. One key is read and applied to "
                   "every Signal database found; a database it does not open is skipped and named "
@@ -80,7 +80,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-25",
         "last_update_date": "2026-11-15",
         "requirements": "none",
-        "category": "Signal",
+        "category": "Messaging",
         "notes": ("Requires the SQLCipher key from Secrets/secrets.json (extra/Secrets/ in the "
                   "extraction); the write-ahead log is replayed. One key is read and applied to "
                   "every Signal database found; a database it does not open is skipped and named "
@@ -116,7 +116,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-25",
         "last_update_date": "2026-11-15",
         "requirements": "none",
-        "category": "Signal",
+        "category": "Messaging",
         "notes": ("Requires the SQLCipher key from Secrets/secrets.json (extra/Secrets/ in the "
                   "extraction); the write-ahead log is replayed. One key is read and applied to "
                   "every Signal database found; a database it does not open is skipped and named "
@@ -173,7 +173,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-25",
         "last_update_date": "2026-11-15",
         "requirements": "none",
-        "category": "Signal",
+        "category": "Messaging",
         "notes": ("Requires the SQLCipher key from Secrets/secrets.json (extra/Secrets/ in the "
                   "extraction); the write-ahead log is replayed. One key is read and applied to "
                   "every Signal database found; a database it does not open is skipped and named "
@@ -205,7 +205,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-25",
         "last_update_date": "2026-11-23",
         "requirements": "none",
-        "category": "Signal",
+        "category": "Messaging",
         "notes": ("Attachment files are decrypted with the modernKey from Secrets/secrets.json and each "
                   "attachment's data_random; rows need the database key as well, and without it nothing is "
                   "listed. The format is detected from the leading bytes for JPEG, PNG, GIF, OGG, PDF, WebP, "
@@ -266,7 +266,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-15",
         "last_update_date": "2026-11-15",
         "requirements": "none",
-        "category": "Signal",
+        "category": "Messaging",
         "notes": ("Requires the SQLCipher key from Secrets/secrets.json (extra/Secrets/ in the "
                   "extraction); the write-ahead log is replayed. One key is read and applied to "
                   "every Signal database found; a database it does not open is skipped and named "
@@ -305,7 +305,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-15",
         "last_update_date": "2026-11-23",
         "requirements": "none",
-        "category": "Signal",
+        "category": "Messaging",
         "notes": ("Signal encrypts its Glide image cache with the attachment modernKey from "
                   "Secrets/secrets.json. A file counts as Decrypted only when Signal's encrypted check value "
                   "matches; otherwise Status says why and the file is still listed. Without the key nothing is "

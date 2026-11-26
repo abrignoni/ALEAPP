@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Prime Video",
+        "category": "Music, Video & News",
         "notes": "Read from the playbackHistory table of the app's dbplaybackhistory "
                  "database. lastAccessed is converted as Unix milliseconds; "
                  "watched_position, runtime "
@@ -31,7 +31,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Prime Video",
+        "category": "Music, Video & News",
         "notes": "Read from the bookmark_cache table of the app's bookmark database. "
                  "last_update is converted as Unix milliseconds. timecode is milliseconds "
                  "of media time; on one tested sample it equalled the playback history "
@@ -58,7 +58,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Prime Video",
+        "category": "Music, Video & News",
         "notes": "continueWatchingSaveFile holds a Java serialised "
                  "com.amazon.avod.discovery.collections.CollectionModelV3. The stream "
                  "carries its own class and field names, so the members read here are "
@@ -84,7 +84,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Prime Video",
+        "category": "Music, Video & News",
         "notes": "Read from the LocalSearchQuery table of search_query.db. queryTimeMillis "
                  "is Unix milliseconds. The table's primary key is the query text together "
                  "with the account and profile, so a query has one row per account and "
@@ -109,7 +109,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Prime Video",
+        "category": "Music, Video & News",
         "notes": "The aiv.UserManagerConfig:householdInfo key of InternalPreferences.xml "
                  "holds a base64 Java serialised com.amazon.avod.identity.HouseholdInfo. "
                  "The stream carries its own class descriptors, field names and enum "
@@ -146,7 +146,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Prime Video",
+        "category": "Music, Video & News",
         "notes": "map_data_storage.db is the Amazon account store, holding the accounts, "
                  "userdata, tokens and device_data tables. Every row is reported with its "
                  "own timestamp column, converted as Unix milliseconds; what the "
@@ -173,7 +173,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Prime Video",
+        "category": "Music, Video & News",
         "notes": "Read from the download table of the app's downloads database, joined to "
                  "title, season, series and drm through the foreign keys those tables "
                  "declare. No tested sample held a download row, so the epoch and unit of "
@@ -204,7 +204,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Prime Video",
+        "category": "Music, Video & News",
         "notes": "Read from the cached_content_table of the dbcachedcontent database. "
                  "accessed_time_seconds is Unix "
                  "seconds. request_submission_time_ms is not: on the tested sample it held "
@@ -228,7 +228,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Prime Video",
+        "category": "Music, Video & News",
         "notes": "The app keeps two caches whose directory names are title ids: "
                  "files/streaming-plugins holds trickplay images, subtitles and X-Ray data, "
                  "and files/global/global_video_cache holds streaming manifests and media "
@@ -262,7 +262,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Prime Video",
+        "category": "Music, Video & News",
         "notes": "Images under the trickplay and xray folders of files/streaming-plugins "
                  "are checked in and rendered. A file in any other folder there, or one "
                  "whose leading bytes are not JPEG, PNG, GIF or WEBP, is not reported. "
@@ -292,7 +292,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Prime Video",
+        "category": "Music, Video & News",
         "notes": "Read from the events table of the app's event database. Timestamp is "
                  "converted as Unix "
                  "milliseconds. Type, Name, Priority and Processed are reported as stored. "
@@ -317,7 +317,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-18",
         "last_update_date": "2026-08-18",
         "requirements": "none",
-        "category": "Prime Video",
+        "category": "Music, Video & News",
         "notes": "Reports the app's own preference files together with the JSON lines of "
                  "AppEventsJsonFile. Keys whose name ends in Millis, Time, "
                  "TimeMs or Timestamp and whose value is a 13 digit number are rendered as "

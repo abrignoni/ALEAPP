@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",
-        "category": "Accounts",
+        "category": "Accounts & Credentials",
         "notes": "The description of the store follows the cited post. Reference: Mattia Epifani, "
                  "'A first look at Android 14 forensics', "
                  "https://blog.digital-forensics.it/2024/01/a-first-look-at-android-14-forensics.html",

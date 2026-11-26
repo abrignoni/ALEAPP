@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "ccl_chromium_reader",
-        "category": "Tutanota",
+        "category": "Email",
         "notes": "The client keeps its account list in three different shapes depending on release, and "
                  "all three are read. Newer releases store it in the PersistedCredentials table of the Room "
                  "database databases/tuta-db. Older releases store it in the web app's own configuration "
@@ -85,7 +85,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "ccl_chromium_reader",
-        "category": "Tutanota",
+        "category": "Email",
         "notes": "One row per container, combining the KeyValue table of databases/tuta-db with the "
                  "newest tutanotaConfig record in the WebView Local Storage. The KeyValue key names are "
                  "the app's own constants in app-android/tutashared/src/main/java/de/tutao/tutashared/"
@@ -131,7 +131,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "Tutanota",
+        "category": "Email",
         "notes": "Read from the AlarmNotification table of databases/tuta-db. The table stores the "
                  "encrypted form of the alarm, so most of it is not readable: the app's own entity is "
                  "named EncryptedAlarmNotificationEntity and its decrypt function passes summary, "

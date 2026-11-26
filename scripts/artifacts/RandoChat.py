@@ -12,7 +12,7 @@ __artifacts_v2__ = {
         'creation_date': '2026-01-15',
         'last_update_date': '2026-10-06',
         'requirements': 'os, path',
-        'category': 'Chats',
+        'category': 'Messaging',
         'notes': 'Timestamp is the hora column read as Unix milliseconds. Sent? is the minha column as '
                  'stored; a comment in the module reads 1 as sent and 2 as received, and no source for '
                  'those values is recorded. Stored Media URL retains url as stored. A local media '
@@ -42,7 +42,7 @@ __artifacts_v2__ = {
         'creation_date': '2026-01-15',
         'last_update_date': '2026-10-06',
         'requirements': '',
-        'category': 'Accounts',
+        'category': 'Accounts & Credentials',
         'notes': 'Stored Sex and Stored Sex Search Value retain the values under sexo and sexo_search. '
                  'Existing SQLite MAX aggregates and name LIKE predicates are preserved, so duplicate '
                  'keys are not a chronology claim. The H/M vendor meanings are unverified. Every '
@@ -62,7 +62,7 @@ __artifacts_v2__ = {
         'creation_date': '2026-01-15',
         'last_update_date': '2026-10-06',
         'requirements': '',
-        'category': 'Contacts',
+        'category': 'Calls & Contacts',
         'notes': 'Stored Sex is c.sexo as stored, including unknown values and NULL. H/M vendor meanings '
                  'are unverified. Stored Person ID is c.id_pessoa without asserting an account '
                  'relationship. Every distinct main state is read; known canonical aliases collapse only '

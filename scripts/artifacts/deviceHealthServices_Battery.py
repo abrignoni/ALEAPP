@@ -5,16 +5,17 @@ __artifacts_v2__ = {
         "description": "Battery level records from the battery_event table of Device Health Services' turbo.db, with the charge type and battery saver values as stored.",
         "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2021-06-29",
-        "last_update_date": "2026-10-31",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
-        "category": "Device Health Services",
+        "category": "Device Information",
         "notes": "One row per battery_event record. Timestamp is timestamp_millis read as Unix "
                  "milliseconds and reported in UTC, in whole seconds. Timezone is the timezone text "
                  "stored on the row; it is not applied to Timestamp. Charge Type (as stored) and "
                  "Battery Saver (as stored) are the charge_type and battery_saver integers; no "
                  "source for their meaning was found, so they are not labelled. On the copies of "
                  "turbo.db in hc_pixel8pro_a16, pixel7a_a14 and russell_pixel6a_a13 (7,417 records "
-                 "in four files) charge_type held 0, 1 or 2 and battery_saver held 2 on every record.",
+                 "in four files) charge_type held 0, 1 or 2 and battery_saver held 2 on every record. "
+                 "When the extraction holds this database under more than one storage path (for example data/data, data/user/0 and data_mirror) and the copies differ in their bytes or in their -wal or -journal content, every differing copy is read. Rows are compared on the reported columns. A row the copies share is reported once, a row only one copy holds is reported as well, and a row that differs between copies appears once per version. The Source column of a shared row names the first copy read. This added 2 rows on pixel3_a11, 2 on pixel3_a12 and 1 on hickman_a13.",
         "paths": ('*/com.google.android.apps.turbo/databases/turbo.db*',),
         "output_types": "standard",
         "artifact_icon": "battery-charging",
@@ -37,7 +38,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-06-29",
         "last_update_date": "2026-10-31",
         "requirements": "none",
-        "category": "Device Health Services",
+        "category": "Device Information",
         "notes": "Timestamp is timestamp_millis read as Unix milliseconds and reported in UTC, in "
                  "whole seconds. Timezone is the time_zone text stored on the row; it is not applied "
                  "to Timestamp. No registered image listed in sample_data holds a record, so the "
@@ -57,25 +58,36 @@ __artifacts_v2__ = {
 
 import os
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_ts_human_to_utc
-from scripts.artifacts.storagePathViews import unique_files
+import sqlite3
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_ts_human_to_utc, logfunc
+from scripts.artifacts.storagePathViews import union_view_rows, unique_files
+
+
+def _query(db, sql, path):
+    """Rows of sql on one copy of the database, or none and a log line when the query fails there."""
+    try:
+        return db.execute(sql).fetchall()
+    except sqlite3.Error as error:
+        logfunc(f'Turbo Battery: query failed on {path}: {error}')
+        return []
 
 @artifact_processor
 def Turbo_Battery(context):
-    files_found = unique_files(context)
-    source_file_turbo = ''
+    files_found = unique_files(context, keep_differing_views=True)
+    source_paths = []
     turbo_db = ''
-    data_list = []
+    file_rows = []
         
     for file_found in files_found:
         file_found = str(file_found)
         if file_found.lower().endswith('turbo.db'):
             turbo_db = str(file_found)
-            source_file_turbo = os.path.basename(file_found)
         
             db = open_sqlite_db_readonly(turbo_db)
-            cursor = db.cursor()
-            cursor.execute('''
+            if db is None:
+                continue
+            source_paths.append(turbo_db)
+            all_rows = _query(db, '''
             select
             case timestamp_millis
                 when 0 then ''
@@ -86,9 +98,9 @@ def Turbo_Battery(context):
             battery_saver,
             timezone
             from battery_event
-            ''')
-
-            all_rows = cursor.fetchall()
+            ''', context.get_relative_path(file_found))
+            rows = []
+            file_rows.append((file_found, rows))
             usageentries = len(all_rows)
             if usageentries > 0:
                 for row in all_rows:
@@ -98,13 +110,15 @@ def Turbo_Battery(context):
                             timestamp = convert_ts_human_to_utc(timestamp)
                         except Exception:
                             pass
-                    data_list.append((timestamp,row[1],row[2],row[3],row[4],context.get_relative_path(file_found)))
+                    rows.append((timestamp,row[1],row[2],row[3],row[4],context.get_relative_path(file_found)))
             
             db.close()
-            
+
+    data_list = union_view_rows(context, file_rows, ignore={5})
+
     data_headers = (('Timestamp', 'datetime'),'Battery Level','Charge Type (as stored)','Battery Saver (as stored)','Timezone','Source')
         
-    return data_headers, data_list, source_file_turbo
+    return data_headers, data_list, '\n'.join(source_paths)
             
 @artifact_processor
 def Turbo_Bluetooth(context):

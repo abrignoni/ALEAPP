@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-21",
         "last_update_date": "2026-10-23",
         "requirements": "none",
-        "category": "Yandex Disk",
+        "category": "Cloud & Files",
         "notes": "One row per row of the DISK and FOREIGN_DISK tables in "
                  "ru.yandex.disk/databases/<uid>_disk, one database per signed-in account. Account UID is "
                  "the number in the file name, which the app builds from the signed-in account's numeric "
@@ -71,7 +71,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-21",
         "last_update_date": "2026-10-21",
         "requirements": "none",
-        "category": "Yandex Disk",
+        "category": "Cloud & Files",
         "notes": "One row per row of the DISK_QUEUE table in ru.yandex.disk/databases/<uid>_disk, "
                  "joined to DISK_QUEUE_EXT on upload_id. Account UID is the number in the file name "
                  "and Account is the queue's own user column; Android User is taken from the storage "
@@ -148,7 +148,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-21",
         "last_update_date": "2026-10-22",
         "requirements": "none",
-        "category": "Yandex Disk",
+        "category": "Cloud & Files",
         "notes": "One row per row of the accounts table in ru.yandex.disk/databases/PassportInternal.db, "
                  "joined by account uid to accounts_last_action, tokens and gcm_subscriptions in the "
                  "same file and to CREDENTIAL in the SETTINGS database beside it. PassportInternal.db "
@@ -217,7 +217,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-22",
         "last_update_date": "2026-10-22",
         "requirements": "none",
-        "category": "Yandex Disk",
+        "category": "Cloud & Files",
         "notes": "One row per account scope in PLAIN_SETTINGS_TABLE of ru.yandex.disk/databases/SETTINGS "
                  "that holds at least one of the settings below. The app scopes its per-account settings "
                  "as user@ followed by the account's CREDENTIAL.USER; Account is the scope with user@ "
@@ -259,7 +259,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-22",
         "last_update_date": "2026-10-23",
         "requirements": "none",
-        "category": "Yandex Disk",
+        "category": "Cloud & Files",
         "notes": "One row per entry of the video_timecodes setting in PLAIN_SETTINGS_TABLE of "
                  "ru.yandex.disk/databases/SETTINGS, which holds one such setting per account scope (user@ "
                  "followed by the account). Account is the scope with user@ removed; Account UID comes "
@@ -313,7 +313,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-23",
         "last_update_date": "2026-10-23",
         "requirements": "none",
-        "category": "Yandex Disk",
+        "category": "Cloud & Files",
         "notes": "One row per local path found in the MediaHashes or MediaItems table of "
                  "ru.yandex.disk/databases/<uid>_disk, one database per signed-in account; Account UID is "
                  "the number in the file name and Android User is taken from the storage path. Field "
@@ -368,7 +368,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-23",
         "last_update_date": "2026-10-23",
         "requirements": "none",
-        "category": "Yandex Disk",
+        "category": "Cloud & Files",
         "notes": "One row per entry file in the app's image cache, bitmapCache under the app's files "
                  "folder, normally Android/data/ru.yandex.disk/files in shared storage, in its thumbCache, "
                  "tileCache, commonCache and faceCache folders. A cache the app moved to another storage "
@@ -415,7 +415,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-22",
         "last_update_date": "2026-10-22",
         "requirements": "none",
-        "category": "Yandex Disk",
+        "category": "Cloud & Files",
         "notes": "One row per row of the TRASH table in ru.yandex.disk/databases/<uid>_trash.db, one "
                  "database per signed-in account; Account UID is the number in the file name and Android "
                  "User is taken from the storage path. Field meanings were sourced from the decompiled "
@@ -446,7 +446,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-22",
         "last_update_date": "2026-10-22",
         "requirements": "none",
-        "category": "Yandex Disk",
+        "category": "Cloud & Files",
         "notes": "One row per row of the queue table in ru.yandex.disk/databases/<uid>_download_queue, "
                  "one database per signed-in account; Account UID is the number in the file name and "
                  "Android User is taken from the storage path. Field meanings were sourced from the "
@@ -483,7 +483,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-22",
         "last_update_date": "2026-10-22",
         "requirements": "none",
-        "category": "Yandex Disk",
+        "category": "Cloud & Files",
         "notes": "One row per row of the note table in ru.yandex.disk/databases/<uid>_notes.db, joined "
                  "to content and attach on the note's local_id; one database per signed-in account. "
                  "Account UID is the number in the file name and Android User is taken from the storage "

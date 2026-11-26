@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-03-15",
         "last_update_date": "2026-08-01",
         "requirements": "none",
-        "category": "Text Now",
+        "category": "Messaging",
         "notes": ("Call Direction is decoded from the messages table 'message_direction' column, the "
                   "same column and mapping used by Text Now - Messages. Values 1 and 2 are "
                   "labelled Incoming and Outgoing; that mapping is not vendor-documented and no "
@@ -29,7 +29,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-03-15",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Text Now",
+        "category": "Messaging",
         "notes": ("Each messages table row whose message_type is not 100 or 102 is reported "
                   "once, whether or not its contact_value is present in the contacts table. "
                   "Thread ID and the member list shown in To ID are filled only when the "
@@ -52,7 +52,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-03-15",
         "last_update_date": "2021-03-15",
         "requirements": "none",
-        "category": "Text Now",
+        "category": "Messaging",
         "notes": "",
         "paths": ('*/com.enflick.android.TextNow/databases/textnow_data.db*',),
         "output_types": ['html', 'tsv', 'lava'],

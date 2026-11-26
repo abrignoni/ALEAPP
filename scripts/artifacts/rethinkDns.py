@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-01",
         "last_update_date": "2026-09-01",
         "requirements": "none",
-        "category": "RethinkDNS",
+        "category": "Network & Connectivity",
         "sample_data": {
             "emu_a15_oss_v6": "RethinkDNS 0.5.6 | 117 rows",
         },
@@ -41,7 +41,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-01",
         "last_update_date": "2026-09-01",
         "requirements": "none",
-        "category": "RethinkDNS",
+        "category": "Network & Connectivity",
         "sample_data": {
             "emu_a15_oss_v6": "RethinkDNS 0.5.6 | 214 rows",
         },
@@ -79,7 +79,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-01",
         "last_update_date": "2026-09-01",
         "requirements": "none",
-        "category": "RethinkDNS",
+        "category": "Network & Connectivity",
         "sample_data": {
             "emu_a15_oss_v6": "RethinkDNS 0.5.6 | 25 rows",
         },

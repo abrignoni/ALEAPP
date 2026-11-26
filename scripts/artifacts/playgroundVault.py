@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-01-16",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Encrypting Media Apps",
+        "category": "Photos & Media",
         "notes": "The key file name and its cipher_key entry match the "
                  "shared preferences key store of Facebook's Conceal library "
                  "(SharedPrefsBackedKeyChain.java lines 40 to 42 and 81 to 82, "

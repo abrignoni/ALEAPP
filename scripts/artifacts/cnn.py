@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-01",
         "last_update_date": "2026-09-01",
         "requirements": "none",
-        "category": "CNN",
+        "category": "Music, Video & News",
         "notes": "Read from files/datastore/search.preferences_pb, an Android DataStore preferences "
                  "file. The file is a protobuf in which each entry pairs a key with a typed value; the "
                  "recent_search key holds a JSON array of strings, which is decoded and reported one "
@@ -40,7 +40,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-01",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "CNN",
+        "category": "Music, Video & News",
         "notes": "Read from files/datastore/article_meter.preferences_pb and "
                  "article_shown.preferences_pb, Android DataStore preferences files. The "
                  "article_meter_set key holds a JSON array of identifiers and current_article holds a "

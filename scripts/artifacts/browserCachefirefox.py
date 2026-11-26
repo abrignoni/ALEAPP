@@ -10,7 +10,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-01-30",
         "last_update_date": "2026-11-23",
         "requirements": "none",
-        "category": "Browser Cache",
+        "category": "Browsers",
         "notes": "Timestamp Modified is the modification time the tool reads from the input for "
                  "the file as a UTC time, to the whole second, such as from a tar header or a zip"
                  " entry's NTFS or extended timestamp field. When the tool reads no UTC time, "

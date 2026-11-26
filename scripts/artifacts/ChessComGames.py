@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-03-27",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Chess.com",
+        "category": "Music, Video & News",
         "notes": "Game Start Time and Timestamp are the game_start_time and timestamp columns of daily_games, "
                  "read as Unix seconds and shown as UTC. What event each column marks is not established, and the "
                  "seconds reading was not checked against a registered corpus because none holds this database. "

@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-03-02",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "TikTok",
+        "category": "Social Media",
         "notes": "Every database named <uid>_im.db is parsed, including those named "
                  "biz_2_<uid>_im.db. The Account ID column carries the uid from the file "
                  "name, and messages whose sender equals it are marked Outgoing. On the "
@@ -77,7 +77,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-03-02",
         "last_update_date": "2026-09-12",
         "requirements": "none",
-        "category": "TikTok",
+        "category": "Social Media",
         "notes": "Contacts come from IM_USER_BASE_INFO in the db_im_contact databases and "
                  "from SIMPLE_USER in db_im_xx. A UID present in more than one store is "
                  "reported once, from the first store that returns it, with "
@@ -123,7 +123,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
-        "category": "TikTok",
+        "category": "Social Media",
         "notes": "Hu and Karabiyik describe TIKTOK.db as keeping track of the timestamps "
                  "for each instance the app is opened. On the tested image every open_time "
                  "value fell exactly on a local midnight; the value is reported as stored and "
@@ -157,7 +157,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
-        "category": "TikTok",
+        "category": "Social Media",
         "notes": "On the tested image the rows were the app's own resource downloads "
                  "(models, assets, images), not user-saved videos; what a given row "
                  "represents is read from its URL and save path, not asserted here. "
@@ -193,9 +193,9 @@ __artifacts_v2__ = {
                        "timestamps, reported as stored.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-08-16",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
-        "category": "TikTok",
+        "category": "Social Media",
         "notes": "Event rows carry the app's own tag strings and an ext_json payload "
                  "reported as stored; what an individual event means is not established "
                  "here. Session rows carry the session table's value column (shown as Session "
@@ -206,17 +206,18 @@ __artifacts_v2__ = {
                  "join it to an account. "
                  "Reference: Xiao Hu and Umit Karabiyik, 'Shopping while Watching: An "
                  "Updated Forensic Analysis of TikTok on Android and iOS', ISNCC 2024, "
-                 "https://doi.org/10.1109/ISNCC62547.2024.10759027",
+                 "https://doi.org/10.1109/ISNCC62547.2024.10759027 "
+                 "When the extraction holds this database under more than one storage path (for example data/data, data/user/0 and data_mirror) and the copies differ in their bytes or in their -wal or -journal content, every differing copy is read. Rows are compared on the reported columns. A row the copies share is reported once, a row only one copy holds is reported as well, and a row that differs between copies appears once per version. The Source column of a shared row names the first copy read. This added 4 rows on pixel3_a11 (24 to 28) and 4 on pixel3_a12 (2 to 6, three copies).",
         "paths": ('*/com.zhiliaoapp.musically/databases/ss_app_log.db*',),
         "output_types": "standard",
         "artifact_icon": "activity",
         "sample_data": {
             "sharon_a14": "Android 14 | com.zhiliaoapp.musically vc 2023600040 | 107 rows",
-            "pixel3_a11": "Android 11 | 24 rows",
+            "pixel3_a11": "Android 11 | 28 rows",
             "russell_a14": "Android 14 | 15 rows",
             "sharon_a13": "Android 13 | 7 rows",
             "pixel7a_a14": "Android 14 | com.zhiliaoapp.musically vc 2023507030 | 6 rows",
-            "pixel3_a12": "Android 12 | 2 rows",
+            "pixel3_a12": "Android 12 | 6 rows",
             "anne_a15": "Android 15 | com.zhiliaoapp.musically vc 2024108030 | 2 rows",
             "galaxys10_a10": "Android 10 | com.zhiliaoapp.musically vc 2021809050 | 2 rows",
             "russell_pixel6a_a13": "Android 13 | com.zhiliaoapp.musically vc 2023000030 | 2 rows",
@@ -233,7 +234,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
-        "category": "TikTok",
+        "category": "Social Media",
         "notes": "aweme_user.xml keeps one entry per key; several entries hold JSON "
                  "documents whose names carry the account uid as a prefix "
                  "(<uid>_account_user_info, <uid>_aweme_user_info, "
@@ -273,7 +274,7 @@ import sqlite3
 import xml.etree.ElementTree as ET
 
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, is_sqlite_sidecar
-from scripts.artifacts.storagePathViews import unique_files
+from scripts.artifacts.storagePathViews import union_view_rows, unique_files
 
 _ACCOUNT_DB_RE = re.compile(r'(\d+)_im\.db$')
 
@@ -303,10 +304,14 @@ def _rows(source_path, sql):
     return rows
 
 
-def _files_ending(context, suffix):
-    '''The context's files ending in suffix, one copy per duplicate storage view.'''
+def _files_ending(context, suffix, keep_differing_views=False):
+    '''The context's files ending in suffix, one copy per duplicate storage view.
+
+    With keep_differing_views, a copy under another spelling that reads differently is
+    kept too (see storagePathViews.unique_files).
+    '''
     return unique_files(context, [f for f in context.get_files_found()
-                                  if str(f).endswith(suffix)])
+                                  if str(f).endswith(suffix)], keep_differing_views)
 
 
 def _account_dbs(context):
@@ -550,11 +555,13 @@ def get_tikTok_downloads(context):
 
 @artifact_processor
 def get_tikTok_app_log_events(context):
-    data_list = []
-    source_path = ''
-    for file_found in _files_ending(context, 'ss_app_log.db'):
-        source_path = source_path or file_found
+    file_rows = []
+    source_paths = []
+    for file_found in _files_ending(context, 'ss_app_log.db', keep_differing_views=True):
+        source_paths.append(file_found)
         source_file = context.get_relative_path(file_found)
+        data_list = []
+        file_rows.append((file_found, data_list))
         for (timestamp, category, tag, label, ext_json, session_id,
              user_id) in _rows(file_found, """
                 SELECT timestamp, category, tag, label, ext_json, session_id, user_id
@@ -569,7 +576,8 @@ def get_tikTok_app_log_events(context):
             data_list.append((
                 _ms_to_utc(timestamp), 'session', '', '', '', '', session_row_id, '',
                 value, f'{app_version} (duration {duration})', source_file))
+    data_list = union_view_rows(context, file_rows, ignore={10})
     data_headers = (('Timestamp', 'datetime'), 'Row Type', 'Category', 'Tag', 'Label',
                     'Payload (as stored)', 'Session ID', 'User ID', 'Session UUID',
                     'Session Info', 'Source File')
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(source_paths)

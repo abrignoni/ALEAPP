@@ -2,25 +2,29 @@ __artifacts_v2__ = {
     "private_photo_vault_account": {
         "name": "Private Photo Vault - Account Usage",
         "description": "Install date and the key event count and last key event date the Private Photo Vault app keeps "
-                       "in its main preferences file, with the two dates converted as Unix "
-                       "milliseconds and the counts as stored.",
+                       "in its main preferences file, with the two dates converted from Unix "
+                       "milliseconds to UTC and the counts as stored.",
         "author": "@Gear-I & Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-17",
-        "last_update_date": "2026-08-17",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
-        "category": "Private Photo Vault",
-        "notes": "No email or password account fields were found in this preferences file; these "
-                 "values are counters kept in the app's preferences, not a user identity. 'Key "
-                 "Event Count' and 'Last Key Event' come from a preference the app calls "
-                 "lastKeyEventDate/keyEventCount; its exact meaning is not documented publicly, "
-                 "so this module reports the raw value rather than asserting what triggers it. "
-                 "On the device this was validated against, its one recorded event's timestamp "
-                 "lands within a second of every imported media file's own creation timestamp, "
-                 "which does not establish what the event is. 'Uses Encrypted Preferences' is "
-                 "the "
-                 "app's own usesEncryptedPreferencesV2 flag, reported as stored; what the app "
-                 "does when it is set is not established here, and no PIN value was recovered "
-                 "from this file.",
+        "category": "Photos & Media",
+        "notes": "On pixel7a_a14 this preferences file holds 15 entries and none is named as an "
+                 "email, password or PIN field. On pixel3_a12 the file holds 11 entries, and four "
+                 "are named aesEncryptedEmail, rsaEncryptedEmailKey, aesEncryptedPasscode and "
+                 "rsaEncryptedPasscodeKey. This module does not read those four entries. "
+                 "The module reads six named entries and does not "
+                 "search the file for others. The six values are two dates, three numbers and "
+                 "one flag. None is a user identity field. 'Key Event Count' and 'Last Key Event' come "
+                 "from two preferences the app names keyEventCount and lastKeyEventDate. No "
+                 "source for their meaning was found, so this module does not say what triggers "
+                 "them. The count is reported as stored and the date is converted from Unix "
+                 "milliseconds to UTC. On pixel7a_a14 (1 row), the one recorded event's timestamp "
+                 "is within a second before the stored creation date of each of the three media "
+                 "rows, which does not establish what the event is. 'Uses Encrypted Preferences' "
+                 "is the app's own usesEncryptedPreferencesV2 flag, reported as stored; what the "
+                 "app does when it is set is not established here. This module does not look for "
+                 "a PIN.",
         "paths": ('*/com.enchantedcloud.photovault/shared_prefs/APP_PREFERENCES.xml',),
         "output_types": ["standard"],
         "artifact_icon": "info-circle",
@@ -30,26 +34,13 @@ __artifacts_v2__ = {
     },
     "private_photo_vault_albums": {
         "name": "Private Photo Vault - Albums",
-        "description": "Albums recorded in Private Photo Vault's local database, "
-                       "each with its own bucket identifier and creation time.",
+        "description": "Albums recorded in Private Photo Vault's local database, each with its bucket identifier and creation time.",
         "author": "@Gear-I & Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-17",
-        "last_update_date": "2026-10-04",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
-        "category": "Private Photo Vault",
-        "notes": "Read from the app's own ppv.db, opened read-only alongside "
-                 "its write-ahead log (ppv.db-wal) so that any transaction "
-                 "committed to the log but not yet checkpointed into the main "
-                 "file is still included. On the device this was validated "
-                 "against, two albums exist: one with bucket_id 'albums' "
-                 "holding the device's three imported pictures, and one, "
-                 "created one millisecond later, with bucket_id 'albums_decoy' and no media in "
-                 "it. This module reports the bucket_id exactly as stored rather than asserting "
-                 "what feature it belongs to. Creation Date (As Stored) is the creation_date "
-                 "text. Created is that text converted to UTC, and is filled only when the "
-                 "text carries a Z or a UTC offset; a value with neither is left blank in "
-                 "Created because no zone is recorded for it. Both stored values on "
-                 "pixel7a_a14 carry a UTC offset.",
+        "category": "Photos & Media",
+        "notes": "Read from the app's own ppv.db, opened read-only alongside its write-ahead log (ppv.db-wal) so that any transaction committed to the log but not yet checkpointed into the main file is still included. On pixel7a_a14, two albums exist: one with bucket_id 'albums', which all three media rows (MIME type image/jpeg) point to, and one with bucket_id 'albums_decoy', whose creation_date is 7 milliseconds later, that no media row points to. This module reports the bucket_id exactly as stored rather than asserting what feature it belongs to. Creation Date (As Stored) is the creation_date text. Created is that text converted to UTC, and is filled only when the text carries a Z or a UTC offset; a value with neither is left blank in Created because no zone is recorded for it. Both stored values on pixel7a_a14 carry a UTC offset. A row whose creation_date is the schema's default, 2021-01-01T01:00:00.000Z, which both tables declare for the column, has a blank Created and the default in Creation Date (As Stored). No row on pixel7a_a14 holds it.",
         "paths": ('*/com.enchantedcloud.photovault/databases/ppv.db*',),
         "output_types": ["standard"],
         "artifact_icon": "album",
@@ -59,33 +50,13 @@ __artifacts_v2__ = {
     },
     "private_photo_vault_media": {
         "name": "Private Photo Vault - Media",
-        "description": "Imported media files recorded in Private Photo Vault's "
-                       "local database, with each row's stored creation date, "
-                       "image width and height, and the favourite, deleted "
-                       "and view count columns as stored.",
+        "description": "Media file records in Private Photo Vault's local database (MediaFile table), with each row's stored creation date, image width and height, the view count as stored, and Favourite and Deleted shown as Yes when the stored flag is non-zero.",
         "author": "@Gear-I & Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-17",
-        "last_update_date": "2026-10-04",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
-        "category": "Private Photo Vault",
-        "notes": "Read the same way as Private Photo Vault - Albums, including "
-                 "the write-ahead log. The image and video content behind each row was not "
-                 "recovered: on the device this was validated "
-                 "against the files at File Path and Thumbnail Path do not begin with any "
-                 "recognizable image file signature, and while the database does store a "
-                 "per-file 'Encryption Key' and IV for each row, that stored value decodes from "
-                 "base64 to 48 bytes, which is not the length of a bare 32-byte AES key, and no "
-                 "key that decrypts the files was recovered from the extraction. The "
-                 "encryption_key and local_iv values are reported exactly as stored. How the 48 "
-                 "byte value relates to the key that encrypts the file is not established, and "
-                 "this module makes no attempt "
-                 "to decrypt the media itself. 'View Count', 'Favourite' and 'Deleted' are "
-                 "reported as stored; what updates them is not established. Creation Date (As "
-                 "Stored) is the creation_date text. Created is that text converted to UTC, "
-                 "and is filled only when the text carries a Z or a UTC offset; a value with "
-                 "neither is left blank in Created because no zone is recorded for it. All "
-                 "three stored values on pixel7a_a14 carry a UTC offset, two of them with a "
-                 "two digit fraction of a second.",
+        "category": "Photos & Media",
+        "notes": "Read the same way as Private Photo Vault - Albums, including the write-ahead log. From ppv.db this module reads only the Album and MediaFile tables. The LoginRecord, Download, CircularLog and CachedPartAuthorization tables are not read. On pixel3_a12 (schema version 10) the database has only the first two. All four are empty on pixel7a_a14. On cookbook_a11 CircularLog holds 1 row, which this module does not report. The media content behind each row is not recovered by this module. On pixel7a_a14 the files at File Path and Thumbnail Path were not examined by this module. The database does store a per-file 'Encryption Key' and IV for each row. That stored value decodes from base64 to 48 bytes, which is not the length of a bare 32-byte AES key. This module does not look for a key that decrypts the files. The encryption_key and local_iv values are reported exactly as stored. How the 48 byte value relates to the key that encrypts the file is not established, and this module makes no attempt to decrypt the media itself. 'View Count' is reported as stored. 'Favourite' and 'Deleted' show Yes when the stored flag is non-zero and are blank otherwise. What updates them is not established. Creation Date (As Stored) is the creation_date text. Created is that text converted to UTC, and is filled only when the text carries a Z or a UTC offset; a value with neither is left blank in Created because no zone is recorded for it. All three stored values on pixel7a_a14 carry a UTC offset, two of them with a two digit fraction of a second. A row whose creation_date is the schema's default, 2021-01-01T01:00:00.000Z, which both tables declare for the column, has a blank Created and the default in Creation Date (As Stored). No row on pixel7a_a14 holds it. Image Width, Image Height and View Count are read where the MediaFile table has those columns and are blank where it does not. On pixel3_a12 (database schema version 10) the table has none of the three, and its 2 rows are reported with those columns blank.",
         "paths": ('*/com.enchantedcloud.photovault/databases/ppv.db*',),
         "output_types": ["standard", "timeline"],
         "artifact_icon": "photo",
@@ -99,7 +70,7 @@ import re
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 
-from scripts.ilapfuncs import artifact_processor, get_sqlite_db_records, logfunc
+from scripts.ilapfuncs import artifact_processor, does_column_exist_in_db, get_sqlite_db_records, logfunc
 from scripts.artifacts.storagePathViews import unique_files
 
 
@@ -129,12 +100,17 @@ def _epoch_ms_to_utc(value):
 _ISO_FRACTION = re.compile(r'\.(\d+)')
 
 
+# Both tables declare creation_date TEXT NOT NULL DEFAULT this value. It is not shown as a Created time.
+# When the app leaves the default in place is not established.
+_SCHEMA_DEFAULT_DATE = '2021-01-01T01:00:00.000Z'
+
+
 def _iso_to_utc(value):
     """The stored ISO 8601 text as a UTC datetime, or None when the text
     carries no Z or UTC offset (no instant can be stated for it) or cannot be
     parsed. The fraction is padded to six digits first: before Python 3.11,
     fromisoformat accepts only three or six."""
-    if not value or not isinstance(value, str):
+    if not value or not isinstance(value, str) or value.strip() == _SCHEMA_DEFAULT_DATE:
         return None
     text = _ISO_FRACTION.sub(
         lambda m: '.' + m.group(1)[:6].ljust(6, '0'), value.strip(), count=1)
@@ -218,6 +194,18 @@ def private_photo_vault_albums(context):
     return data_headers, data_list, '\n'.join(source_paths)
 
 
+_MEDIA_COLUMNS = ('creation_date', 'bucket_id', 'file_path', 'thumbnail_path', 'mime_type', 'image_width',
+                  'image_height', 'is_favourite', 'is_deleted', 'view_count', 'encryption_key', 'local_iv')
+
+
+def _media_query(source_path):
+    """The MediaFile query, with NULL in place of a column this schema version does not have, so its
+    rows are still reported. An older schema has no image_width, image_height or view_count."""
+    columns = ', '.join(c if does_column_exist_in_db(source_path, 'MediaFile', c) else f'NULL AS {c}'
+                        for c in _MEDIA_COLUMNS)
+    return f'SELECT {columns} FROM MediaFile ORDER BY creation_date;'
+
+
 @artifact_processor
 def private_photo_vault_media(context):
     data_headers = (
@@ -237,12 +225,7 @@ def private_photo_vault_media(context):
          height, is_favourite, is_deleted, view_count, encryption_key,
          local_iv) in (
             record for source_path in source_paths
-            for record in get_sqlite_db_records(
-                source_path,
-                "SELECT creation_date, bucket_id, file_path, thumbnail_path, "
-                "mime_type, image_width, image_height, is_favourite, is_deleted, "
-                "view_count, encryption_key, local_iv FROM MediaFile "
-                "ORDER BY creation_date;")):
+            for record in get_sqlite_db_records(source_path, _media_query(source_path))):
         data_list.append((
             _iso_to_utc(created),
             created,

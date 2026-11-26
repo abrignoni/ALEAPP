@@ -18,7 +18,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-17",
         "last_update_date": "2026-11-17",
         "requirements": "none",
-        "category": "Call Logs",
+        "category": "Calls & Contacts",
         "notes": (
             "Read from com.samsung.android.incallui/databases/rtt_chat_history_db.db. The "
             "table history holds one row per line (history_id, history_is_me, history_msg, "

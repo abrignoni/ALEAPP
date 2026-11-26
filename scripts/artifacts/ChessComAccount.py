@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-03-27",
         "last_update_date": "2022-03-27",
         "requirements": "none",
-        "category": "Chess.com",
+        "category": "Music, Video & News",
         "notes": "",
         "paths": ('*/com.chess/shared_prefs/com.chess.app.login_credentials.xml', '*/data/com.chess/shared_prefs/com.chess.app.session_preferences.xml'),
         "output_types": ['html', 'tsv', 'lava'],

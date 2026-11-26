@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-03-11",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Contacts",
+        "category": "Calls & Contacts",
         "notes": "Reads the files named contacts2.db or contacts.db. Only data rows whose mimetype is phone_v2 or email_v2 are reported; other data rows of a contact are not.",
         "paths": ('*/com.android.providers.contacts/databases/contact*', '*/com.samsung.android.providers.contacts/databases/contact*'),
         "output_types": ["html","tsv","lava"],

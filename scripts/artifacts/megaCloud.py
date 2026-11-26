@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-12",
         "last_update_date": "2026-10-07",
         "requirements": "none",
-        "category": "Mega",
+        "category": "Cloud & Files",
         "notes": 'Read from the nodes table of megaclient_statecache<version>_<account>.db in '
                  'the MEGA app\'s own directory, the local node cache the MEGA SDK keeps for a '
                  'signed in account. The nodes table appears from cache version 13: the SDK\'s '
@@ -94,7 +94,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-12",
         "last_update_date": "2026-09-12",
         "requirements": "none",
-        "category": "Mega",
+        "category": "Cloud & Files",
         "notes": 'One row per file staged from MEGA\'s thumbnailsMEGA, previewsMEGA and '
                  'tempMEGA caches. All three name the file after the node handle, with or '
                  'without an extension; a name that is not an 8 character handle is reported '

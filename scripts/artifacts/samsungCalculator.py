@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-20",
         "last_update_date": "2026-11-20",
         "requirements": "none",
-        "category": "Samsung Calculator",
+        "category": "Device Activity",
         "notes": (
             "Read from files/calculator.data in the app private data folder of "
             "com.sec.android.app.popupcalculator, the Samsung Calculator's history list. Layout from "

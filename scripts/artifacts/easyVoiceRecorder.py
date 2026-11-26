@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Easy Voice Recorder",
+        "category": "Photos & Media",
         "sample_data": {
             "emu_a15_oss_v10": "Easy Voice Recorder 2.10.3 | 4 rows",
         },
@@ -52,7 +52,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
         "requirements": "none",
-        "category": "Easy Voice Recorder",
+        "category": "Photos & Media",
         "sample_data": {
             "emu_a15_oss_v10": "Easy Voice Recorder 2.10.3 | 8 rows",
         },

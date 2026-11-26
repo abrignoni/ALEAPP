@@ -13,17 +13,10 @@ __artifacts_v2__ = {
         "description": "Parses and extracts account information",
         "author": "@djangofaiola",
         "creation_date": "2026-06-27",
-        "last_update_date": "2026-11-17",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
-        "category": "Waze",
-        "notes": "Reference: Django Faiola, 'Comprehensive Waze Forensic Parsing for Android', "
-                 "https://djangofaiola.blogspot.com/2026/07/comprehensive-waze-forensic-parsing-for.html "
-                 "(written by this parser's author). Field mappings are the parser's own; no test "
-                 "count, image or source for them is recorded here. First Use comes from the "
-                 "General.First use key of the user file; on the row read from cached_data it is "
-                 "field 10 of the profile message, whose meaning is not established. Invisible "
-                 "Mode shows On for a stored 1, Off for a stored 0, N/A for an empty value and "
-                 "any other value as stored.",
+        "category": "Locations & Maps",
+        "notes": "Reference: Django Faiola, 'Comprehensive Waze Forensic Parsing for Android', https://djangofaiola.blogspot.com/2026/07/comprehensive-waze-forensic-parsing-for.html (written by this parser's author). Field mappings are the parser's own; no test count, image or source for them is recorded here. First Use comes from the General.First use key of the user file; on the row read from cached_data it is field 10 of the profile message, whose meaning is not established. Invisible Mode shows On for a stored 1, Off for a stored 0, N/A for an empty value and any other value as stored. On the row read from cached_data, Last Name is field 2 of the profile message, shown as text with leading and trailing spaces removed. On the row read from the user file it is the Realtime.LastName key. When field 2 decodes as a nested message, Last Name is left empty. A short text value can decode that way, so an empty Last Name on the cached_data row does not establish that no last name is stored. Field 2 is absent from the cached_data of the three corpus images that hold the file, so neither case is exercised by corpus data. The nested case is covered by a unit test with made-up values. On both pixel7a_a14 and sharon_a14 the First Use value on the cached_data row differs from the General.First use value on the user file row. Time columns are read as Unix time and shown in UTC; a value of more than ten digits is scaled to seconds by its size. The epoch and unit are not sourced here.",
         "paths": ("*/com.waze/user",
                   "*/com.waze/waze/cached_data*"),
         "output_types": ["standard"],
@@ -39,19 +32,26 @@ __artifacts_v2__ = {
         "description": "Parses and extracts session information",
         "author": "@djangofaiola",
         "creation_date": "2026-06-27",
-        "last_update_date": "2026-11-17",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
-        "category": "Waze",
+        "category": "Locations & Maps",
         "notes": "A stored 0,0 position is shown as 0.000000, 0.000000; the module does not establish "
                  "whether it is a position or an unset value. Reference: Django Faiola, 'Comprehensive "
                  "Waze Forensic Parsing for Android', "
                  "https://djangofaiola.blogspot.com/2026/07/comprehensive-waze-forensic-parsing-for.html "
                  "(written by this parser's author). Friendly Name is this parser's label for the stored "
                  "key and is not taken from Waze; read the Field column for the key as stored. No test "
-                 "count, image or source for the labels is recorded here. Only the keys this parser lists "
-                 "are reported. Timestamps are read as Unix time, and a value of more than ten digits is "
-                 "scaled to seconds by its size; positions are read as millionths of a degree. Neither "
-                 "unit is sourced here. A stored 0 leaves Timestamp empty and is kept in Value.",
+                 "count, image or source for the labels is recorded here. On pixel7a_a14 and sharon_a14, "
+                 "Home.Position and Work.Position held one identical value, the same in both keys and on "
+                 "both images. A value in these rows does not establish that the user set a home or a "
+                 "work place. Only the keys this parser lists are reported, and a listed key with an "
+                 "empty value is not reported. A missing row does not show the key is absent from the "
+                 "file. Timestamps are read as Unix time, and a value of more than ten digits is "
+                 "scaled to seconds by its size. Positions are read as longitude then latitude, in "
+                 "millionths of a degree; the stored pair is in Value. Neither the timestamp unit nor "
+                 "the position order and unit is sourced here. A stored 0 leaves Timestamp empty and is "
+                 "kept in Value. Location is the line number of the record in the session file. It is "
+                 "not a place.",
         "paths": ("*/com.waze/session"),
         "output_types": ["all"],
         "artifact_icon": "navigation",
@@ -65,9 +65,9 @@ __artifacts_v2__ = {
         "description": "Parses and extracts track GPS quality information",
         "author": "@djangofaiola",
         "creation_date": "2026-06-27",
-        "last_update_date": "2026-11-17",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
-        "category": "Waze",
+        "category": "Locations & Maps",
         "notes": "Reference: Django Faiola, 'Comprehensive Waze Forensic Parsing for Android', "
                  "https://djangofaiola.blogspot.com/2026/07/comprehensive-waze-forensic-parsing-for.html "
                  "(written by this parser's author). Log field mappings are the parser's own; no test "
@@ -75,8 +75,15 @@ __artifacts_v2__ = {
                  "a newer block whose timestamp is within 250 ms is treated as the same sample and only "
                  "the newer record is reported; the pairing rests on the time difference alone. Position "
                  "Provider is the logged value. On the newer layout the text LOCATION_PROVIDER_ is removed "
-                 "from it. Duplicate Sample Count is read from a dup_sample_count or "
-                 "duplicate_sample_count line. Neither listed image produced rows, so this artifact is not "
+                 "from it. Duplicate Sample Count is read from the DUP_SAMPLE_COUNT field of a legacy "
+                 "line, or from a dup_sample_count or duplicate_sample_count line of a newer block. A "
+                 "count, accuracy or provider field that is missing is shown as N/A. Timestamp is "
+                 "TIMESTAMP_MS on a legacy line, read as Unix milliseconds (not sourced here). On a newer block it is the "
+                 "first seconds value and the first non-zero nanos value found anywhere in the event "
+                 "block, read as Unix time; "
+                 "the parser does not check which field they belong to. Location is the log file name "
+                 "and line number of the record. It is not a place. "
+                 "Neither listed image produced rows, so this artifact is not "
                  "exercised by the listed data. The accuracy columns combine the ACC_MIN/ACC_AVG/ACC_MAX "
                  "fields, which carry no unit in the log, with the "
                  "accuracy_min_meters/accuracy_avg_meters/accuracy_max_meters fields, whose names carry a "
@@ -96,9 +103,9 @@ __artifacts_v2__ = {
         "description": "Rows of the PLACES table in the Waze user.db, one per stored place record",
         "author": "@djangofaiola",
         "creation_date": "2026-06-27",
-        "last_update_date": "2026-10-09",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
-        "category": "Waze",
+        "category": "Locations & Maps",
         "notes": "Reference: Django Faiola, 'Comprehensive Waze Forensic Parsing for Android', "
                  "https://djangofaiola.blogspot.com/2026/07/comprehensive-waze-forensic-parsing-for.html "
                  "(written by this parser's author). One row per row of the PLACES table in "
@@ -106,8 +113,15 @@ __artifacts_v2__ = {
                  "report file names keep the earlier search history wording. The table holds "
                  "place records the app stored; a row does not establish "
                  "that the place was searched for. Field mappings are the parser's own; no test "
-                 "count, image or source for them is recorded here; unrecognized values are "
-                 "reported as stored.",
+                 "count, image or source for them is recorded here. Residential Status shows Yes for "
+                 "a stored is_residential of 1, No for 0, N/A for an empty (NULL) value and any "
+                 "other value as stored; on pixel7a_a14 and sharon_a14 it was N/A on 4 of 7 rows. "
+                 "When the table has no is_residential column the cell is empty. Latitude and "
+                 "Longitude are the stored values divided by 1,000,000; the unit is not sourced "
+                 "here. Created is converted as described next. Updated is PLACES.updated_time "
+                 "converted the same way. When the table has no updated_time column, Updated is "
+                 "empty. None of the three user.db files examined has that column, so Updated is "
+                 "not exercised by corpus data. The other columns are reported as stored. Time columns are read as Unix time and shown in UTC; a value of more than ten digits is scaled to seconds by its size. The epoch and unit are not sourced here. Location is the PLACES id of the row. It is not a place.",
         "paths": ("*/com.waze/user.db*"),
         "output_types": ["all"],
         "artifact_icon": "search",
@@ -121,9 +135,9 @@ __artifacts_v2__ = {
         "description": "Parses and extracts recent locations information",
         "author": "@djangofaiola",
         "creation_date": "2026-06-27",
-        "last_update_date": "2026-11-17",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
-        "category": "Waze",
+        "category": "Locations & Maps",
         "notes": "A stored 0 in Last Waypoint Access leaves it empty. Reference: Django Faiola, "
                  "'Comprehensive Waze Forensic Parsing for Android', "
                  "https://djangofaiola.blogspot.com/2026/07/comprehensive-waze-forensic-parsing-for.html "
@@ -131,7 +145,12 @@ __artifacts_v2__ = {
                  "RECENTS.type integer, with the stored integer in parentheses after it: -1 N/A, 0 User "
                  "Search, 1 Advertising, 2 Map Interaction, 3 Shared, 4 Navigation History; any other "
                  "value is shown as stored with no label. No test count, image or source for these labels "
-                 "is recorded here, so a label does not establish how the entry came to be stored.",
+                 "is recorded here, so a label does not establish how the entry came to be stored. "
+                 "Name is RECENTS.name, or PLACES.name when RECENTS.name is NULL. An empty "
+                 "RECENTS.name stays empty. The row does not show which table gave the value. On "
+                 "pixel7a_a14 and sharon_a14 no RECENTS.name was NULL, so the fallback is not "
+                 "exercised by the listed data. Time columns are read as Unix time and shown in UTC; a value of more than ten digits is scaled to seconds by its size. The epoch and unit are not sourced here. Location is the RECENTS id and, when "
+                 "linked, the PLACES id of the row. It is not a place.",
         "paths": ("*/com.waze/user.db*"),
         "output_types": ["all"],
         "artifact_icon": "map-pin",
@@ -145,20 +164,10 @@ __artifacts_v2__ = {
         "description": "Parses and extracts favorite locations information",
         "author": "@djangofaiola",
         "creation_date": "2026-06-27",
-        "last_update_date": "2026-11-17",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
-        "category": "Waze",
-        "notes": "Reference: Django Faiola, 'Comprehensive Waze Forensic Parsing for Android', "
-                 "https://djangofaiola.blogspot.com/2026/07/comprehensive-waze-forensic-parsing-for.html "
-                 "(written by this parser's author). Type shows this parser's label for the stored "
-                 "favourite type, with the stored integer in parentheses after it: -1 N/A, 0 Custom, 1 "
-                 "Home, 2 Work, 3 Events, 4 Saved POI; any other value is shown as Unknown (value) on rows "
-                 "read from user.db and as the stored value alone on rows read from cached_data. Modified "
-                 "is FAVORITES.modified_time on rows read from user.db. On rows read from cached_data it "
-                 "is field 10 of the place message, which the author's iOS research describes as the last "
-                 "modification time; no Waze source for that is cited. No test count, image or source for "
-                 "these labels is recorded here. Neither listed image produced rows, so this artifact is "
-                 "not exercised by the listed data.",
+        "category": "Locations & Maps",
+        "notes": "Reference: Django Faiola, 'Comprehensive Waze Forensic Parsing for Android', https://djangofaiola.blogspot.com/2026/07/comprehensive-waze-forensic-parsing-for.html (written by this parser's author). Type shows this parser's label for the stored favourite type, with the stored integer in parentheses after it: -1 N/A, 0 Custom, 1 Home, 2 Work, 3 Events, 4 Saved POI; any other value is shown as Unknown (value) on rows read from user.db and as the stored value alone on rows read from cached_data. Modified is FAVORITES.modified_time on rows read from user.db. On rows read from cached_data it is field 10 of the place details message, which is field 1 of each saved place. It is read as Unix time. Its meaning is not established and it is not exercised by the listed data. No test count, image or source for these labels is recorded here. Neither listed image produced rows, so this artifact is not exercised by the listed data. A stored 0 or an empty value in a time column is left empty, on rows read from user.db and in Modified on rows read from cached_data. In the three user.db files examined, FAVORITES.access_time and FAVORITES.waypoint_access_time default to 0. created_time and modified_time have no default, and the meaning of a 0 in them is not established. No corpus image holds a FAVORITES row, so this is covered only by a unit test with made-up values. Time columns are read as Unix time and shown in UTC; a value of more than ten digits is scaled to seconds by its size. The epoch and unit are not sourced here. Location is the FAVORITES id and, when linked, the PLACES id of the row. On rows read from cached_data it is the text Tag: 1.5. followed by a number: the place's position among the saved places, counted from 1, or the field number when the saved places field holds a single place. It is not an id stored with the place. Location is not a place.",
         "paths": ("*/com.waze/user.db*",
                   "*/com.waze/waze/cached_data*"),
         "output_types": ["all"],
@@ -173,14 +182,10 @@ __artifacts_v2__ = {
         "description": "Parses and extracts shared locations information",
         "author": "@djangofaiola",
         "creation_date": "2026-06-27",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
-        "category": "Waze",
-        "notes": "Reference: Django Faiola, 'Comprehensive Waze Forensic Parsing for Android', "
-                 "https://djangofaiola.blogspot.com/2026/07/comprehensive-waze-forensic-parsing-for.html "
-                 "(written by this parser's author). Field mappings are the parser's own; no test "
-                 "count, image or source for them is recorded here. Neither listed image produced "
-                 "rows, so this artifact is not exercised by the listed data.",
+        "category": "Locations & Maps",
+        "notes": "Reference: Django Faiola, 'Comprehensive Waze Forensic Parsing for Android', https://djangofaiola.blogspot.com/2026/07/comprehensive-waze-forensic-parsing-for.html (written by this parser's author). Field mappings are the parser's own; no test count, image or source for them is recorded here. Neither listed image produced rows, so this artifact is not exercised by the listed data. A stored 0 or an empty value in a time column is left empty. In the three user.db files examined, no SHARED_PLACES time column has a default, and the meaning of a stored 0 is not established. No corpus image holds a SHARED_PLACES row, so this is covered only by a unit test with made-up values. Name is SHARED_PLACES.name, or PLACES.name when SHARED_PLACES.name is NULL; the row does not show which table gave the value. Time columns are read as Unix time and shown in UTC; a value of more than ten digits is scaled to seconds by its size. The epoch and unit are not sourced here. Location is the SHARED_PLACES id and, when linked, the PLACES id of the row. It is not a place.",
         "paths": ("*/com.waze/user.db*"),
         "output_types": ["all"],
         "artifact_icon": "map-pin",
@@ -194,9 +199,9 @@ __artifacts_v2__ = {
         "description": "Parses and extracts the EVENTS_PLACES table and its linked place records.",
         "author": "@djangofaiola",
         "creation_date": "2026-06-27",
-        "last_update_date": "2026-10-09",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
-        "category": "Waze",
+        "category": "Locations & Maps",
         "notes": "Reference: Django Faiola, 'Comprehensive Waze Forensic Parsing for Android', "
                  "https://djangofaiola.blogspot.com/2026/07/comprehensive-waze-forensic-parsing-for.html "
                  "(written by this parser's author). Type shows this parser's label for the stored "
@@ -205,7 +210,8 @@ __artifacts_v2__ = {
                  "label and an empty one as N/A. All Day shows No for 0 and Yes "
                  "for 1. No test count, image or source for these labels is recorded here. Neither "
                  "listed image produced rows, so this artifact is not exercised by the listed "
-                 "data.",
+                 "data. Time columns are read as Unix time and shown in UTC; a value of more than ten digits is scaled to seconds by its size. The epoch and unit are not sourced here. Location is the EVENTS_PLACES id and, when linked, the PLACES ids "
+                 "of the row. It is not a place.",
         "paths": ("*/com.waze/user.db*"),
         "output_types": ["all"],
         "html_columns": ["Image URL"],
@@ -220,14 +226,19 @@ __artifacts_v2__ = {
         "description": "Parses and extracts text-to-speech navigation information",
         "author": "@djangofaiola",
         "creation_date": "2026-06-27",
-        "last_update_date": "2026-08-01",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
-        "category": "Waze",
+        "category": "Locations & Maps",
         "notes": "Reference: Django Faiola, 'Comprehensive Waze Forensic Parsing for Android', "
                  "https://djangofaiola.blogspot.com/2026/07/comprehensive-waze-forensic-parsing-for.html "
                  "(written by this parser's author). One row per row of each table in tts.db whose "
-                 "name this parser accepts: the stored text, its update_time converted to UTC, and "
-                 "the table and rowid it came from. A row records that the text was stored, not "
+                 "name this parser accepts: the stored text, its update_time read as Unix time and "
+                 "shown in UTC (a value of more than ten digits is scaled to seconds by its size; "
+                 "the unit is not sourced here), and the table and rowid it came from, in Location. "
+                 "Location is not a place. The path, storage_type and data columns are not "
+                 "reported. On pixel7a_a14 and sharon_a14, path held a relative file path on every "
+                 "row, storage_type was 2 on every row (meaning not established) and data was empty "
+                 "on every row. A row records that the text was stored, not "
                  "that it was spoken or that a route was driven. Text Type shows this parser's "
                  "label for the stored text_type integer: 0 Prompt, 1 Maneuver, 2 Route, 3 Alert; "
                  "any other value is shown as stored and an empty one as N/A. No test count, image "
@@ -256,6 +267,20 @@ from scripts.ilapfuncs import (
     does_column_exist_in_db, get_txt_file_content, convert_unix_ts_to_utc,
     artifact_processor, logfunc
 )
+
+
+def _unix_ts_or_blank(value):
+    """A Unix time as UTC, or blank for 0 or no value. FAVORITES.access_time and waypoint_access_time
+    default to 0 in the schemas examined; the other time columns have no default."""
+    if value in (None, '', 0, '0'):
+        return ''
+    return convert_unix_ts_to_utc(value)
+
+
+def _last_name(value):
+    """Profile field 2 as text. When it decodes as a nested message, blank is returned rather than
+    text of the parser's own. A short text value can decode that way."""
+    return '' if isinstance(value, dict) else _safe_str(value)
 
 # Constants
 COMMA_SEP = ', '
@@ -815,12 +840,7 @@ def _parse_account_cached(source_path: str, context, data_list: list, data_list_
 
         # Names
         fields[F_FIRST_NAME] = _safe_str(_pbget(profile, 1))
-        last_name_data = _pbget(profile, 2)
-        if isinstance(last_name_data, dict):
-            ref_id = _safe_str(_pbget(last_name_data, 9))
-            fields[F_LAST_NAME] = f"ID_REF:{ref_id}" if ref_id else "UNKNOWN"
-        else:
-            fields[F_LAST_NAME] = _safe_str(last_name_data)
+        fields[F_LAST_NAME] = _last_name(_pbget(profile, 2))
 
         # Email
         fields[F_EMAIL] = _safe_str(_pbget(profile, 4))
@@ -1892,7 +1912,7 @@ def _parse_favorite_cached(source_path: str, context, data_list: list) -> None:
 
             # Convert timestamps to UTC
             # created = convert_unix_ts_to_utc(_pbget(place_details, ))
-            fields[F_MODIFIED] = convert_unix_ts_to_utc(_pbget(place_details, 10))
+            fields[F_MODIFIED] = _unix_ts_or_blank(_pbget(place_details, 10))
 
             # Server Identifier
             fields[F_SERVER_ID] = _safe_str(_pbget(place_details, 1))
@@ -2015,10 +2035,10 @@ def _parse_favorite_user_db(source_path: str, context, data_list: list) -> None:
             place_id = record[1]
 
             # Convert timestamps to UTC
-            fields[F_LAST_ACCESS] = convert_unix_ts_to_utc(record[2])
-            fields[F_CREATED] = convert_unix_ts_to_utc(record[13])
-            fields[F_MODIFIED] = convert_unix_ts_to_utc(record[14])
-            fields[F_LAST_WAYPOINT_ACCESS] = convert_unix_ts_to_utc(record[15])
+            fields[F_LAST_ACCESS] = _unix_ts_or_blank(record[2])
+            fields[F_CREATED] = _unix_ts_or_blank(record[13])
+            fields[F_MODIFIED] = _unix_ts_or_blank(record[14])
+            fields[F_LAST_WAYPOINT_ACCESS] = _unix_ts_or_blank(record[15])
 
             # Location Type
             fields[F_LOCATION_TYPE] = record[3]
@@ -2216,10 +2236,10 @@ def waze_shared_locations(context):
             place_id = record[1]
 
             # Convert timestamps to UTC
-            fields[F_SHARED] = convert_unix_ts_to_utc(record[2])
-            fields[F_CREATED] = convert_unix_ts_to_utc(record[11])
-            fields[F_MODIFIED] = convert_unix_ts_to_utc(record[12])
-            fields[F_LAST_ACCESS] = convert_unix_ts_to_utc(record[13])
+            fields[F_SHARED] = _unix_ts_or_blank(record[2])
+            fields[F_CREATED] = _unix_ts_or_blank(record[11])
+            fields[F_MODIFIED] = _unix_ts_or_blank(record[12])
+            fields[F_LAST_ACCESS] = _unix_ts_or_blank(record[13])
 
             # Name
             fields[F_NAME] = record[3]

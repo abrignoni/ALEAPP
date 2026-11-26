@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-10-15",
         "last_update_date": "2023-10-15",
         "requirements": "none",
-        "category": "GEO Location",
+        "category": "Locations & Maps",
         "notes": "",
         "paths": ('*/com.google.android.apps.maps/files/new_recent_history_cache_search.cs',),
         "output_types": "all",

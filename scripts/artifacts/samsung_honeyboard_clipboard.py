@@ -30,7 +30,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-05-30",
         "last_update_date": "2026-07-13",
         "requirements": "",
-        "category": "Clipboard",
+        "category": "Device Activity",
         "notes": (
             "Schema detected automatically. user_id is reported as stored; what "
             "each value stands for is not sourced here. Old-schema UIDs are "
@@ -63,7 +63,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-13",
         "last_update_date": "2026-10-26",
         "requirements": "",
-        "category": "Clipboard",
+        "category": "Device Activity",
         "notes": (
             "State n is the database after the first n committed transactions in the log; state 0 "
             "is the database file without its log. First State and Last State are the oldest and "
@@ -113,7 +113,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-05-30",
         "last_update_date": "2026-10-04",
         "requirements": "Pillow (PIL) for EXIF and the image; SEFT decoding is pure Python.",
-        "category": "Clipboard",
+        "category": "Device Activity",
         "notes": (
             "Captured App Info Package is the package part of the comp value in the "
             "Captured_App_Info field of the trailer Samsung appends after the JPEG "

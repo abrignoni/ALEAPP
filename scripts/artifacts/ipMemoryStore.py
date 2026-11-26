@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-29",
         "last_update_date": "2026-10-29",
         "requirements": "none",
-        "category": "WiFi Profiles",
+        "category": "Network & Connectivity",
         "notes": "Reads the NetworkAttributes table of the Android network stack's IP memory store in "
                  "user_de/0 of com.google.android.networkstack or com.android.networkstack, "
                  "IpMemoryStore.db or, after the network stack renames it, IpMemoryStoreV2.db "

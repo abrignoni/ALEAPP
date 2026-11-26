@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-12",
         "last_update_date": "2026-11-19",
         "requirements": "none",
-        "category": "Chromium",
+        "category": "Browsers",
         "notes": (
             "Correlates content://media/<volume>/downloads/<id> with the MediaStore files table. "
             "Extraction root and Android user are kept separate. An explicit user-qualified URI "

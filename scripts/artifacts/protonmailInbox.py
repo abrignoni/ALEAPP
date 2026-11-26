@@ -27,7 +27,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-14",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "ProtonMail",
+        "category": "Email",
         "notes": "Reads the uniffi Inbox cache of Proton Mail for Android, separate from the "
                  "*-MessagesDatabase.db store. In the tested image the subject, sender and "
                  "recipient values are stored in clear text, and raw_message_body held PGP "
@@ -56,7 +56,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-14",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "ProtonMail",
+        "category": "Email",
         "notes": "One row per row of the attachments table of the Inbox cache. Cached Path is "
                  "the path the attachment_cache table records for the attachment "
                  "(attachment_cache.attachment_id equal to attachments.local_id). The media "
@@ -84,7 +84,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-14",
         "last_update_date": "2026-08-14",
         "requirements": "none",
-        "category": "ProtonMail",
+        "category": "Email",
         "notes": "Contact email rows from the Inbox cache. A proton-autosave uid is reported as "
                  "stored; what distinguishes a contact carrying it from one saved by hand is not "
                  "sourced here.",
@@ -103,7 +103,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-14",
         "last_update_date": "2026-08-14",
         "requirements": "none",
-        "category": "ProtonMail",
+        "category": "Email",
         "notes": "Account and user rows from databases/account.db and the mail cache. Used and maximum "
                  "space are bytes as stored.",
         "paths": ('*/ch.protonmail.android/databases/*.db*',),

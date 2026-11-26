@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-03",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Aves Gallery",
+        "category": "Photos & Media",
         "sample_data": {
             "emu_a15_oss_v9": "Aves Gallery Libre 1.14.9 | 6 rows",
         },
@@ -69,7 +69,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-03",
         "last_update_date": "2026-09-03",
         "requirements": "none",
-        "category": "Aves Gallery",
+        "category": "Photos & Media",
         "sample_data": {
             "emu_a15_oss_v9": "Aves Gallery Libre 1.14.9 | 0 rows, checked: the trash and vaults tables are present and empty",
         },

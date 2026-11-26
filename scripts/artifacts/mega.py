@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-01-31",
         "last_update_date": "2026-10-09",
         "requirements": "None",
-        "category": "Mega",
+        "category": "Cloud & Files",
         "notes": ""
                  "Message Type is labelled from the stored history.type using MEGAchat's message "
                  "type constants "

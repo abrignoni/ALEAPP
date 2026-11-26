@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-03",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Orgzly",
+        "category": "Productivity",
         "sample_data": {
             "emu_a15_oss_v7": "Orgzly Revived 1.23.0 | 35 rows, of which 34 are the notebook the app installs on first run",
         },
@@ -66,7 +66,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-03",
         "last_update_date": "2026-09-03",
         "requirements": "none",
-        "category": "Orgzly",
+        "category": "Productivity",
         "sample_data": {
             "emu_a15_oss_v7": "Orgzly Revived 1.23.0 | 1 rows",
         },

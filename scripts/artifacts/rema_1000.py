@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-04-17",
         "last_update_date": "2026-08-01",
         "requirements": "Cellebrite UFED After First Unlock data acquisition, or similar",
-        "category": "Rema1000 | Scan Selv",
+        "category": "Shopping & Marketplaces",
         "notes": "Raw contents of the ReceiptEntity table, one column per header.",
         "paths": ("*/dk.rema1000.app/databases/receipts.db*",),
         "output_types": "standard",
@@ -21,7 +21,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-04-17",
         "last_update_date": "2026-10-09",
         "requirements": "Cellebrite UFED After First Unlock data acquisition, or similar",
-        "category": "Rema1000 | Scan Selv",
+        "category": "Shopping & Marketplaces",
         "notes": "Date and time is paymentDate read as a Unix epoch in milliseconds and converted to "
                  "Europe/Copenhagen; both the epoch unit and that timezone are assumptions, neither is "
                  "recorded in the database. Total price is totalPrice divided by 100, which assumes the "

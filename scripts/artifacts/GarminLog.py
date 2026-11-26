@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-02-24",
         "last_update_date": "2026-10-05",
         "requirements": "Python 3.7 or higher",
-        "category": "Garmin",
+        "category": "Health & Fitness",
         "notes": "One row represents one LF-delimited source line containing any listed attribute; "
                  "all matched attributes are listed without splitting values or inferring a timestamp. "
                  "Repeated lines and later Authorization records remain separate. Line terminators "

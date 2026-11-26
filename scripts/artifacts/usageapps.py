@@ -9,7 +9,7 @@ __artifacts_v2__ = {
         "creation_date": "2020-04-11",
         "last_update_date": "2020-04-11",
         "requirements": "none",
-        "category": "App Interaction",
+        "category": "Device Activity",
         "notes": "",
         "paths": ('*/com.google.android.as/databases/reflection_gel_events.db*',),
         "output_types": "standard",

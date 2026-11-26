@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2020-03-21",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "File Transfer",
+        "category": "Cloud & Files",
         "notes": ("Direction (as stored) preserves the transfer table direction value without "
                   "assigning a transfer direction. Recorded Device is the stored device field; "
                   "its sender or recipient role is not established. No source or measurement "

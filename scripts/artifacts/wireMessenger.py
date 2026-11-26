@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-04-24",
         "last_update_date": "2026-08-15",
         "requirements": "None",
-        "category": "Wire Messenger",
+        "category": "Messaging",
         "notes": (
                  'The module records a test on Android 13 with Wire 3.81.35; the image used is not recorded. Rows were produced '
                  'on pixel3_a11 and pixel3_a12 (see sample_data). Only the first client in the stored clients list (clients[0]) '
@@ -38,7 +38,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-04-24",
         "last_update_date": "2026-08-15",
         "requirements": "None",
-        "category": "Wire Messenger",
+        "category": "Messaging",
         "notes": (
                  'The module records a test on Android 13 with Wire 3.81.35; the image used is not recorded. Rows were produced '
                  'on pixel3_a11 and pixel3_a12 (see sample_data). Applies to the legacy app generation that keeps a plain-SQLite '
@@ -68,7 +68,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-04-24",
         "last_update_date": "2026-10-04",
         "requirements": "None",
-        "category": "Wire Messenger",
+        "category": "Messaging",
         "notes": (
                  'The module records a test on Android 13 with Wire 3.81.35; the image used is not recorded. Rows were produced '
                  'on pixel3_a11 and pixel3_a12 (see sample_data). Rows taken from the MsgDeletion table are given the Message '
@@ -124,7 +124,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-15",
         "last_update_date": "2026-10-07",
         "requirements": "None",
-        "category": "Wire Messenger",
+        "category": "Messaging",
         "notes": (
                  'One row per file under files/wire.com/<account id>/ and cache/wire.com/<account id>/ inside the app sandbox. '
                  'On tested images these directories hold PNG and JPEG content, some of it in files without an extension; the '
@@ -164,7 +164,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-15",
         "last_update_date": "2026-08-16",
         "requirements": "None",
-        "category": "Wire Messenger",
+        "category": "Messaging",
         "notes": (
                  'One row per file under app_accounts/<domain>/<account id>/proteus/sessions/ in current app versions, or '
                  'files/otr/<account id>/sessions/ in the legacy generation. The file name is the Proteus session id, which the '
@@ -204,7 +204,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-16",
         "last_update_date": "2026-11-16",
         "requirements": "None",
-        "category": "Wire Messenger",
+        "category": "Messaging",
         "notes": (
                  "These rows come from a database that newer Wire app generations encrypt with SQLCipher. The extraction's "
                  'Secrets/secrets.json com.wire entry holds the two Tink keysets that decrypt shared_prefs/app-preference.xml. '
@@ -283,7 +283,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-16",
         "last_update_date": "2026-11-16",
         "requirements": "None",
-        "category": "Wire Messenger",
+        "category": "Messaging",
         "notes": (
                  "These rows come from a database that newer Wire app generations encrypt with SQLCipher. The extraction's "
                  'Secrets/secrets.json com.wire entry holds the two Tink keysets that decrypt shared_prefs/app-preference.xml. '
@@ -333,7 +333,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-16",
         "last_update_date": "2026-11-16",
         "requirements": "None",
-        "category": "Wire Messenger",
+        "category": "Messaging",
         "notes": (
                  "These rows come from a database that newer Wire app generations encrypt with SQLCipher. The extraction's "
                  'Secrets/secrets.json com.wire entry holds the two Tink keysets that decrypt shared_prefs/app-preference.xml. '
@@ -376,7 +376,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-16",
         "last_update_date": "2026-11-16",
         "requirements": "None",
-        "category": "Wire Messenger",
+        "category": "Messaging",
         "notes": (
                  "These rows come from a database that newer Wire app generations encrypt with SQLCipher. The extraction's "
                  'Secrets/secrets.json com.wire entry holds the two Tink keysets that decrypt shared_prefs/app-preference.xml. '
@@ -419,7 +419,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-16",
         "last_update_date": "2026-11-16",
         "requirements": "None",
-        "category": "Wire Messenger",
+        "category": "Messaging",
         "notes": (
                  "These rows come from a database that newer Wire app generations encrypt with SQLCipher. The extraction's "
                  'Secrets/secrets.json com.wire entry holds the two Tink keysets that decrypt shared_prefs/app-preference.xml. '
@@ -462,7 +462,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-16",
         "last_update_date": "2026-11-16",
         "requirements": "None",
-        "category": "Wire Messenger",
+        "category": "Messaging",
         "notes": (
                  "These rows come from a database that newer Wire app generations encrypt with SQLCipher. The extraction's "
                  'Secrets/secrets.json com.wire entry holds the two Tink keysets that decrypt shared_prefs/app-preference.xml. '
@@ -503,7 +503,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-16",
         "last_update_date": "2026-11-16",
         "requirements": "None",
-        "category": "Wire Messenger",
+        "category": "Messaging",
         "notes": (
                  "These rows come from a database that newer Wire app generations encrypt with SQLCipher. The extraction's "
                  'Secrets/secrets.json com.wire entry holds the two Tink keysets that decrypt shared_prefs/app-preference.xml. '

@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-03-11",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "IMO",
+        "category": "Messaging",
         "notes": "",
         "paths": ('*/com.imo.android.imous/databases/accountdb.db*',),
         "output_types": ['html', 'tsv', 'lava'],
@@ -22,7 +22,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-03-11",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "IMO",
+        "category": "Messaging",
         "notes": ("Direction is decoded from the messages table 'message_type' column. "
                   "Direction is mapped from message_type values 1 Incoming and 2 Outgoing; that "
                   "mapping is not sourced from the app. Unrecognized "

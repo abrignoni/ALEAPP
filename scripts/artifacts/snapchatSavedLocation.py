@@ -6,9 +6,9 @@ __artifacts_v2__ = {
                        "time of the location fix.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-11-18",
-        "last_update_date": "2026-11-18",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
-        "category": "Snapchat",
+        "category": "Messaging",
         "notes": "Read from com.snapchat.android/files/MixerLocationStore.proto, a single "
                  "protobuf message decoded with the vendored blackboxprotobuf and the field "
                  "types the app's own message class uses. Sources are the app's decompiled "
@@ -19,17 +19,24 @@ __artifacts_v2__ = {
                  "types, and their app versions were not decompiled. The app builds the file "
                  "from an android.location.Location it saves (classes C19450bt6 and C7209Li6,"
                  " where the task is labelled saveLocation; the write is in C3517Fm6, the "
-                 "file name in C35723mU8, wired in C34852lv5); which location source supplies"
-                 " that Location was not traced: field 1 is getLatitude(), field 2 "
-                 "getLongitude() and field 3 getAccuracy(), written as doubles, and field 4 "
-                 "getTime(), written as an int64 (message class CUa). Each save overwrites "
+                 "file name in C35723mU8, wired in C34852lv5). Which location source supplies"
+                 " that Location was not traced. The app writes field 1 from getLatitude(), "
+                 "field 2 from getLongitude() and field 3 from getAccuracy(), each as a "
+                 "double (message class CUa). Field 4 is getTime(), written as an int64. Each save overwrites "
                  "the file, so it holds one location. Android documents getTime() as the Unix"
                  " epoch time of the fix in milliseconds, and says the clock that set it "
                  "depends on the provider and can be the device clock; it documents "
                  "getAccuracy() as the estimated horizontal accuracy radius in meters at 68% "
                  "confidence, valid only when the location has an accuracy "
-                 "(android.location.Location). The app does not record whether it had one, so"
-                 " 0 can mean none. 'Accuracy (m)' is the stored float in its shortest form. "
+                 "(android.location.Location). The four fields hold no flag for whether the "
+                 "location had an accuracy, so the stored value alone does not show it was "
+                 "valid. A file with no field 3 gives a blank 'Accuracy (m)'. A zero or "
+                 "missing accuracy was not seen on the 7 images in sample_data other than "
+                 "dragna_pixel9a_a16. The "
+                 "file stores field 3 as a double. 'Accuracy (m)' shows the shortest decimal "
+                 "that gives the same 32-bit float. That is often shorter than the decimal "
+                 "form of the stored double. "
+                 "A stored value that is not a widened 32-bit float is shown as the double. "
                  "'Fix Time' is field 4 shown in UTC, and 'Fix Time (as stored)' keeps the "
                  "integer; LAVA keeps Fix Time in whole seconds, so the milliseconds are only"
                  " in the stored column there. The app reads a record whose time is 0 or less"

@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-08-06",
         "last_update_date": "2021-08-06",
         "requirements": "none",
-        "category": "Google Call Screen",
+        "category": "Calls & Contacts",
         "notes": "",
         "paths": ('*/com.google.android.dialer/databases/callscreen_transcripts*',
                   '*/com.google.android.dialer/files/callscreenrecordings/*.*'),

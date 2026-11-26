@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-05-01",
         "last_update_date": "2026-10-04",
         "requirements": "None",
-        "category": "Package Predictions",
+        "category": "Device Activity",
         "notes": "launch_time is converted as Unix milliseconds. Screen "
                  "Orientation is screen_orientation as stored; no source for "
                  "its values was found, and the five listed images held 0, 1 "

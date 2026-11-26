@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Aegis",
+        "category": "Accounts & Credentials",
         "notes": "One row per aegis.json vault file in the app's files directory. The vault can "
                  "be plaintext or encrypted, and this artifact reports which: when the header "
                  "carries encryption slots the db field is a base64 string, this artifact does "
@@ -32,7 +32,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "Aegis",
+        "category": "Accounts & Credentials",
         "notes": "One row per two factor entry in a plaintext aegis.json vault, with the issuer "
                  "and account name recorded for each entry. Issuer is the service the token is "
                  "for and Name is the account name (docs/vault.md at beemdevelopment/Aegis "

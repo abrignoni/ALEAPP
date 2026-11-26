@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2020-03-21",
         "last_update_date": "2026-10-19",
         "requirements": "none",
-        "category": "User Dictionary",
+        "category": "Device Activity",
         "notes": "Every user_dict.db found is read once per storage location: the views of one "
                  "app directory (data/data, data/user/0, data_mirror) are read once, each other "
                  "Android user's copy is read as well, and Source File names the database each row "

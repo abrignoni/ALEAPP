@@ -21,7 +21,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-17",
         "last_update_date": "2026-11-17",
         "requirements": "none",
-        "category": "Samsung Reminder",
+        "category": "Productivity",
         "notes": (
             "Read from com.samsung.android.app.reminder/databases/reminder.db with its "
             "-wal. Live items come from reminder, joined on reminder_uuid to alarm_event "
@@ -125,7 +125,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-17",
         "last_update_date": "2026-11-17",
         "requirements": "none",
-        "category": "Samsung Reminder",
+        "category": "Productivity",
         "notes": (
             "Read from the search_history table of "
             "com.samsung.android.app.reminder/databases/reminder.db. Updated is "

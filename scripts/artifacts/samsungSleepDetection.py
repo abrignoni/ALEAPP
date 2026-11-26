@@ -1,19 +1,27 @@
 __artifacts_v2__ = {
     "samsungSleepScreenData": {
         "name": "Samsung Sleep Detection Screen Data",
-        "description": "Screen state changes logged by the Samsung Continuity Service sleep "
-                       "detection (SleepDetection.db, screen_data table), with the user "
-                       "present and keyguard flags. State values are stored as raw integers "
-                       "and are reported as-is.",
+        "description": "Rows of the screen_data table in SleepDetection.db of the "
+                       "com.samsung.android.mcfds package: a time, a screenState "
+                       "value, and the userPresent and useKeyGuard values. State values are "
+                       "stored as raw integers and are reported as-is. What causes the "
+                       "service to write a row is not established.",
         "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-07-30",
-        "last_update_date": "2026-10-04",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
-        "category": "Samsung Continuity Service",
+        "category": "Device Activity",
         "notes": "The Time Text column is the timeText string as stored; the store records "
                  "no zone for it. On anne_a15 the text was 7 hours behind the Time column "
                  "(UTC) on 46 rows and 4 hours behind on 40 rows, changing once in time "
-                 "order, so it is a wall clock reading and not a fixed offset from UTC.",
+                 "order, so the text is not a fixed offset from UTC on this image. That is "
+                 "consistent with a device local clock reading, but the code that writes "
+                 "timeText was not read, so how it is produced is not established. On "
+                 "anne_a15, 33 of the 85 rows after the first, in time order, have the same "
+                 "screenState as the row before. The stored time values are Unix "
+                 "milliseconds; they are shown to the second and the millisecond part is "
+                 "not reported. The same database also has motion_data and user_info "
+                 "tables. This module does not read them. Both were empty on anne_a15.",
         "paths": ('*/com.samsung.android.mcfds/databases/SleepDetection.db*',),
         "output_types": "standard",
         "artifact_icon": "smartphone",
@@ -23,20 +31,28 @@ __artifacts_v2__ = {
     },
     "samsungSleepTime": {
         "name": "Samsung Sleep Detection Sleep Times",
-        "description": "Rows of the sleep_time table in the Samsung Continuity Service "
-                       "SleepDetection.db: the startTime, endTime and time values as UTC "
+        "description": "Rows of the sleep_time table in SleepDetection.db of the "
+                       "com.samsung.android.mcfds package: the startTime, endTime and time values as UTC "
                        "with their stored text forms, and ignoreSleep as stored. What the "
                        "service uses these rows for is not established.",
         "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2026-07-30",
-        "last_update_date": "2026-10-04",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
-        "category": "Samsung Continuity Service",
-        "notes": "The Sleep Start Text, Sleep End Text and Recorded Text columns are the "
+        "category": "Device Activity",
+        "notes": "The Sleep Start Text, Sleep End Text and Time Text columns are the "
                  "startTimeText, endTimeText and timeText strings as stored (month, day, "
                  "hour and minute, with no year and no zone). On anne_a15 each was 4 hours "
-                 "behind its UTC column on all 5 rows. The headers Sleep Start, Sleep End "
-                 "and Recorded follow the column names startTime, endTime and time.",
+                 "behind its UTC column on all 5 rows. The headers Sleep Start and Sleep "
+                 "End are the startTime and endTime columns of the sleep_time table. Time "
+                 "is the time column, and what it marks is not established. On anne_a15 "
+                 "all 5 rows hold the same Time value, later than every Sleep End. Whether "
+                 "a row is a detected sleep period is not established. On anne_a15 the "
+                 "span from startTime to endTime ran from about 2.6 to about 14.2 hours "
+                 "over 5 rows, and ignoreSleep was 0 on all 5. The stored time values are "
+                 "Unix milliseconds; they are shown to the second and the millisecond part "
+                 "is not reported. The same database also has motion_data and user_info "
+                 "tables. This module does not read them. Both were empty on anne_a15.",
         "paths": ('*/com.samsung.android.mcfds/databases/SleepDetection.db*',),
         "output_types": "standard",
         "artifact_icon": "moon",
@@ -139,8 +155,8 @@ def samsungSleepTime(context):
         'Sleep Start Text',
         ('Sleep End', 'datetime'),
         'Sleep End Text',
-        ('Recorded', 'datetime'),
-        'Recorded Text',
+        ('Time', 'datetime'),
+        'Time Text',
         'Ignore Sleep',
     )
     return data_headers, data_list, source_path

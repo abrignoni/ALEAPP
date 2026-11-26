@@ -65,6 +65,13 @@ Get these right, because they are the ones most often wrong:
 - **`paths`** is `fnmatch`, not glob. `*` crosses `/`. Matching is case-sensitive off
   Windows, except on the NTFS, ReFS, exFAT and FAT volumes of a raw image. See the `leapp-artifact-paths` rule and validate before committing.
 - **`author`** is unversioned: `@YourHandle`, or `@YourHandle, Claude` if an agent helped.
+- **`category`** comes from the agreed list in `admin/data/artifact_categories.json`. The GUI
+  category picker, the report sidebar and the LAVA manifest all group by it, so a new name
+  becomes a new group of one. Use the category whose purpose fits (iLEAPP, ALEAPP), the
+  provider (RLEAPP), the make (VLEAPP), or in DLEAPP the platform-prefixed one for system
+  artifacts and the shared one for apps. When none fits, add the category to the list in the
+  same PR and say why in the PR body. The New Category Alert workflow comments on any PR whose
+  category is not on the list, and it does not fail the build.
 - **`description` and `notes`** are examiner-facing and reach the report and the LAVA
   manifest. Say only what the data proves. See the `leapp-claims` rule.
 - **`output_types`**: `"standard"` for the usual fan-out, `"all"` to add KML when the
@@ -82,6 +89,13 @@ Get these right, because they are the ones most often wrong:
   after, then identifiers, then descriptive fields.
 - **Never write to evidence.** Use `open_sqlite_db_readonly()`, and
   `attach_sqlite_db_readonly()` if you attach. See the `leapp-evidence-readonly` rule.
+- **Use the helpers that already exist.** `admin/docs/generated/helper_functions_index.md`
+  lists every helper artifact modules import in the repo you are in: the signature, the first
+  line of the docstring and how many modules use it. The documentation workflow rebuilds it
+  after a merge that changes `scripts/`, and the five cores' lists differ, so read the one in
+  the repo you are working in.
+  `admin/docs/helper_functions.md` explains where the cores differ. Look there before writing
+  your own reader, timestamp conversion, path shortener or storage-view collapse.
 - **Prefer a reader to a scan.** When a library that reads the store's format is already
   available, vendored in the core under `scripts/` (the `ccl` readers, `ccl_leveldb`,
   `blackboxprotobuf`) or used by another module, parse the store with it. Do not run a

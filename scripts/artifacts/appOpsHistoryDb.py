@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-25",
         "last_update_date": "2026-11-20",
         "requirements": "none",
-        "category": "Permissions",
+        "category": "Installed Apps",
         "notes": "One row per row of the app_op_accesses table in the App Ops history databases under "
                  "system/appops, read with the write-ahead log applied. If a database cannot be read with its "
                  "-wal, the rows of the database file alone are reported and the run log says so. Three databases "
@@ -147,7 +147,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-25",
         "last_update_date": "2026-11-20",
         "requirements": "none",
-        "category": "Permissions",
+        "category": "Installed Apps",
         "notes": "Rows that are in the main App Ops history database file but are not in the database as SQLite "
                  "reads it with the write-ahead log applied, or are there with different values, from the same "
                  "files as App Ops Access History (Database) and with the same columns. Row Status says which: "

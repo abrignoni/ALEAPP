@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Weibo",
+        "category": "Social Media",
         "notes": "Read from child_flow_item_table in the feed_database Room store. The rows read "
                  "hold the post as a JSON document in serialized_data; rows where that column is "
                  "empty or does not parse are not reported. The columns reported here are read out "
@@ -50,7 +50,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Weibo",
+        "category": "Social Media",
         "notes": "Read from long_text_table in ArticleDb.db, which holds long post bodies. "
                  "_own_uid is reported as Account UID, as stored; that it names the signed-in "
                  "account is not established here. _mid is reported as Post ID. The Weibo - Post "
@@ -80,7 +80,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
         "requirements": "none",
-        "category": "Weibo",
+        "category": "Social Media",
         "notes": "Read from mblog_pic_table in the sina_weibo database. The table records the "
                  "remote URLs Weibo serves each image from at several sizes, together with the "
                  "picture id and the id of the post the image belongs to.\n"

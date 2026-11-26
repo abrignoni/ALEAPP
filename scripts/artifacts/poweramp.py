@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Poweramp",
+        "category": "Music, Video & News",
         "sample_data": {
             "emu_a15_oss_v15": "Poweramp build-1025-bundle-play | 4 rows",
         },

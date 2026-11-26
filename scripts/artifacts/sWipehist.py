@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-08-15",
         "last_update_date": "2026-11-03",
         "requirements": "none",
-        "category": "Wipe & Setup",
+        "category": "Device Information",
         "notes": "A record starts at a line beginning with a plus sign and runs to the next such "
                  "line or the end of the file. One row is written for each record that holds a "
                  "line starting --wipe_data or --prompt_and_wipe_data; a record with neither "

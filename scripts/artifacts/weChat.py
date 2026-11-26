@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-10-09",
         "requirements": "sqlcipher3",
-        "category": "WeChat",
+        "category": "Messaging",
         "notes": "com.tencent.mm stores its messages in EnMicroMsg.db, a SQLCipher database. The "
                  "key is the first seven characters of the lowercase MD5 of the device IMEI joined "
                  "to the account uin; no reference for that scheme is cited here, and the derived "
@@ -94,7 +94,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "sqlcipher3",
-        "category": "WeChat",
+        "category": "Messaging",
         "notes": "rcontact holds the contact records the account keeps; on the corpus below "
                  "these included service and official accounts alongside personal contacts. Type "
                  "(as stored) and Verify Flag (as stored) are the columns that separate those, "
@@ -125,7 +125,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "sqlcipher3",
-        "category": "WeChat",
+        "category": "Messaging",
         "notes": "rconversation is one row per conversation. Username is the username column, "
                  "reported as stored. Message Count is the msgCount column and Unread Count the "
                  "unReadCount column, both as stored. Last Message Time is conversationTime as "
@@ -149,7 +149,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-10-09",
         "requirements": "sqlcipher3",
-        "category": "WeChat",
+        "category": "Messaging",
         "notes": "userinfo is a key and value table holding the signed-in account's own record. "
                  "The rows are reported with the numeric id the table uses and the value as "
                  "stored, a stored 0 included; an empty value is shown blank: on the corpus "

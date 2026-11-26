@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "Linkbox",
+        "category": "Cloud & Files",
         "notes": "com.linkbox.plus.android keeps an upload table in its own database. The store "
                  "is databases/upload_<account id>.db, one per account, and the account id in "
                  "that file name is reported in its own column; on the corpus below it also "

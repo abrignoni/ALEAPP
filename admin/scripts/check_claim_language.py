@@ -163,9 +163,6 @@ ALLOWLIST = {
     ('loopHabits.py', 'loop_habits_checkins', 'name', 'habit'),
     ('loopHabits.py', 'loop_habits_checkins', 'description', 'habit'),
     ('loopHabits.py', 'loop_habits_checkins', 'notes', 'habit'),
-    # "completed" names columns the artifact emits (completed time) and the Google Tasks
-    # status value, not a claim that the task list is complete.
-    ('googleTasks.py', 'get_googleTasks', 'description', 'complete'),
     # "completedtransfers" is the literal name of the MEGA table being read. The
     # description no longer asserts the transfers themselves completed.
     ('mega_transfers.py', 'get_mega_transfers', 'description', 'complete'),

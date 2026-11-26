@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-18",
         "last_update_date": "2026-11-18",
         "requirements": "none",
-        "category": "Google Calculator",
+        "category": "Device Activity",
         "notes": "Read from the expressions table of "
                  "com.google.android.calculator/databases/Expressions.db; the path pattern "
                  "also stages the database's sidecar files. On the tested images the database"

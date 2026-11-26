@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-03-26",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Travel",
+        "category": "Travel & Vehicles",
         "notes": (
             "Timestamp (UTC) is the table's timestamp column read as Unix milliseconds and "
             "rendered in UTC. What event it marks is not established. The millisecond reading is "
@@ -33,7 +33,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-03-26",
         "last_update_date": "2026-08-01",
         "requirements": "none",
-        "category": "Travel",
+        "category": "Travel & Vehicles",
         "notes": (
             "Timestamps are rendered in UTC. The Departure (type) and Destination (type) "
             "names for the stored 'a', 'p', 'c' and 's' values are the labels this parser "
@@ -58,7 +58,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-03-26",
         "last_update_date": "2026-08-09",
         "requirements": "none",
-        "category": "Travel",
+        "category": "Travel & Vehicles",
         "notes": "",
         "paths": ('*/data/ch.sbb.mobile.*/databases/SbbMobile.db*'),
         "output_types": "standard",
@@ -74,7 +74,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-03-26",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Travel",
+        "category": "Travel & Vehicles",
         "notes": (
             "Refund State shows the refundState value as stored. What each stored state means "
             "is not established. The one registered image holding this table, galaxys10_a10, "

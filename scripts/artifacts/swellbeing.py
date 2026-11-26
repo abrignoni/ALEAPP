@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2020-05-21",
         "last_update_date": "2026-11-22",
         "requirements": "none",
-        "category": "Digital Wellbeing",
+        "category": "Device Activity",
         "notes": (
             "Timestamp is usageEvents.timeStamp read as Unix milliseconds and shown in UTC; that unit is not sourced from the app's code. Event-type labels are taken from the AOSP UsageEvents.Event constant names "
             "(reference: AOSP, UsageEvents.java at tag android-14.0.0_r1, "
@@ -43,7 +43,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-03",
         "last_update_date": "2026-11-22",
         "requirements": "none",
-        "category": "Digital Wellbeing",
+        "category": "Device Activity",
         "notes": "Reads Logging rows whose key contains UsageDataManager::timeZoneChanged() from the first dwbCommon.db found, with the previous and new timezone split from the value. A change logged under another key is not reported: on samsungs20_a13 one Logging row holds a previous and new timezone under a different key, and this artifact reports no rows. An empty result does not show that no timezone change happened. Timestamp is Logging.timeStamp, converted by a shared helper that picks the unit from the value's size, and shown in UTC.",
         "paths": ('*/com.samsung.android.forest/databases/dwbCommon.db*',),
         "output_types": "standard",
@@ -61,7 +61,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-16",
         "last_update_date": "2026-11-22",
         "requirements": "none",
-        "category": "Digital Wellbeing",
+        "category": "Device Activity",
         "notes": "One row per app timer and schedule row: apptimer_table of com.samsung.android.forest/"
                  "databases/dwbCommon.db joined to apptimer_schedule_table on observer_id. A timer with more "
                  "than one schedule row would give one row per schedule; the known-data image has one "
@@ -124,7 +124,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-16",
         "last_update_date": "2026-11-22",
         "requirements": "none",
-        "category": "Digital Wellbeing",
+        "category": "Device Activity",
         "notes": "Rows of the Logging table of com.samsung.android.forest/databases/dwbCommon.db whose "
                  "value names an app timer's packages followed by timeUsedUdm, timeVisibleUsm, usedInMin "
                  "and remainingUsage, or contains APP_USAGE_LIMIT_REACHED. Every other Logging row (boot "

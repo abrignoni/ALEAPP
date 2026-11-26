@@ -9,13 +9,13 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-02",
         "last_update_date": "2026-10-15",
         "requirements": "none",
-        "category": "Chromium",
+        "category": "Browsers",
         "notes": (
             "Video is rebuilt by the vendored chromiumcacheprobe from MP4 fragments found in "
             "the cache's entry files, including the sparse _s files. Sample bytes are copied as stored and only the "
             "container is written; no decoder is run. Recovery Method says whether a clip was "
             "rebuilt or was a complete MP4 copied byte for byte. The file "
-            "chromeCacheVideos_provenance.json in the report's Chromium folder lists the source "
+            "chromeCacheVideos_provenance.json in the report's Browsers folder lists the source "
             "file hashes and the offset and size of every sample. "
             "Response Time and Request Time are the HTTP exchange times Chrome stored with the "
             "cache entry, and Last Used is the entry's time in the cache index. They are not "

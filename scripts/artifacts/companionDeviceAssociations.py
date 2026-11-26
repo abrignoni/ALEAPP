@@ -9,7 +9,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-17",
         "last_update_date": "2026-11-17",
         "requirements": "none",
-        "category": "Device Connections",
+        "category": "Smart Home & Connected Devices",
         "notes": "Read from /data/system_de/<user>/companion_device_manager.xml (Android 13 "
                  "and later, persistence version 1) and the earlier "
                  "/data/system/users/<user>/companion_device_manager_associations.xml "

@@ -9,7 +9,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-17",
         "last_update_date": "2026-11-17",
         "requirements": "none",
-        "category": "Snapchat",
+        "category": "Messaging",
         "notes": "Read from the Notifications table of "
                  "com.snapchat.android/databases/client_notifications.db, with its "
                  "write-ahead log when one is beside it. Column meanings are the ones the "

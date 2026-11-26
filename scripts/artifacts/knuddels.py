@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-05-04",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Chats",
+        "category": "Messaging",
         "notes": ("From Me is derived from the database file name: the owner's nickname is taken to "
                   "be the part of the name that follows 'knuddels', URL-decoded, and a message is "
                   "marked 1 when its User Name matches that nickname and 0 when it does not. Where "
@@ -55,7 +55,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-06-30",
         "last_update_date": "2026-08-01",
         "requirements": "none",
-        "category": "Contacts",
+        "category": "Calls & Contacts",
         "notes": ("Sex is decoded from the users.sex column as 1 = Male and 2 = Female. That mapping "
                   "is not documented in the data, no source or measurement for it is recorded "
                   "here, and any other "
@@ -71,7 +71,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-06-30",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Accounts",
+        "category": "Accounts & Credentials",
         "notes": ("passwordU (as stored) is the raw value of the shared_prefs key 'passwordU'. "
                   "passwordU (ROT13-decoded, unverified) is that same value passed through ROT13 by "
                   "this parser. Nothing in the data records what encoding, if any, was applied to "

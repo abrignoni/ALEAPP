@@ -1247,6 +1247,78 @@ def does_table_exist_in_db(path, table_name):
             db.close()
     return False
 
+# The table each provider database rebuilt by ALEX (Android Logical Extractor) always holds.
+ALEX_REBUILT_MAIN_TABLES = ('sms', 'calls', 'raw_contacts', 'Events')
+
+
+def is_alex_rebuilt_provider_db(path):
+    '''True when path is a provider database (mmssms.db, calllog.db, contacts2.db or
+    calendar.db) that ALEX rebuilt from `content query` output instead of copying it
+    from the device.
+
+    ALEX's create_table declares every column TEXT and never sets user_version
+    (alex.py in prosch88/ALEX, release v0.6 to commit 9ef34bf0). Of 570 copies of these
+    databases swept in the Android corpus, 557 declare the main table's _id INTEGER and
+    none TEXT; the other 13, Samsung calllog.db copies, have user_version 0 and no calls
+    table, so user_version 0 alone is not enough (ALEAPP #2076).'''
+    db = open_sqlite_db_readonly(path)
+    if db is None:
+        return False
+    try:
+        if db.execute('PRAGMA user_version').fetchone()[0] != 0:
+            return False
+        for table in ALEX_REBUILT_MAIN_TABLES:
+            for row in db.execute(f'PRAGMA table_info("{table}")'):
+                if row[1] == '_id':
+                    return str(row[2]).upper() == 'TEXT'
+        return False
+    except sqlite3.Error as ex:
+        logfunc(f'Could not check {Context.get_relative_path(path)} for an ALEX rebuild: {ex}')
+        return False
+    finally:
+        db.close()
+
+
+def alex_default_row_filter(path, table, alias=None):
+    '''A SQL condition that leaves out the rows of an ALEX rebuild that are not records.
+
+    ALEX before commit 8f27e7a writes a row of its schema defaults, with _id 0, when a
+    provider returned no rows, and up to 8f27e7a a text value holding "Row: <n>" is cut
+    there with the columns after it written as another _id 0 row. At ed3d41eb a line
+    break followed by "Row: <n> <column>=" inside a value breaks the split of every
+    row, and _id then usually holds row text instead of a number; a break that leaves
+    _id a whole number is not caught (ALEAPP #2076). For an ALEX-
+    rebuilt database this returns the condition that drops rows whose _id is 0 or not a
+    whole number from table (named alias in the query, when given) and logs how many it
+    drops. Rows with a NULL _id are kept. For any other database it returns '1', which
+    keeps every row.'''
+    if not is_alex_rebuilt_provider_db(path):
+        return '1'
+    name = alias or table
+    default_rows = broken_rows = 0
+    db = open_sqlite_db_readonly(path)
+    if db is not None:
+        try:
+            default_rows, broken_rows = db.execute(
+                f'''SELECT count(CASE WHEN _id = '0' THEN 1 END),
+                          count(CASE WHEN _id IS NOT NULL AND _id != '0' AND
+                                     (_id NOT GLOB '[0-9]*' OR _id GLOB '*[^0-9]*') THEN 1 END)
+                   FROM "{table}"''').fetchone()
+        except sqlite3.Error:
+            default_rows = broken_rows = 0
+        finally:
+            db.close()
+    logfunc(f'{Context.get_relative_path(path)} was rebuilt by ALEX from content provider queries; '
+            f'{default_rows} row(s) of {table} with _id 0 left out')
+    if broken_rows:
+        logfunc(f'{Context.get_relative_path(path)}: {broken_rows} row(s) of {table} whose _id is not a '
+                f'whole number left out. ALEX at ed3d41eb leaves row text in _id when it cannot split '
+                f'the query output into columns. '
+                f'The raw content query text, where the backup keeps it, is under extra/content_provider/.')
+    return (f'("{name}"._id IS NULL OR ("{name}"._id != \'0\' AND "{name}"._id GLOB \'[0-9]*\' '
+            f'AND "{name}"._id NOT GLOB \'*[^0-9]*\'))')
+
+
 def null_absent_columns(path, query):
     '''Replace references to columns the database lacks with NULL.
 
@@ -1301,18 +1373,124 @@ def _null_out_column(query, reference):
     '''Replace one column reference with NULL, keeping the output column name.
 
     A bare NULL renames the output column, and artifacts read rows by name, so
-    where the reference is a select item in its own right it becomes
-    "NULL AS <name>". Inside an expression the enclosing alias already names the
-    column and a plain NULL is correct.
+    where the reference is a bare select item at depth zero or directly inside
+    a subquery (such as a derived table or CTE body whose innermost enclosing
+    "(" begins with SELECT, or begins with WITH and has seen a SELECT at that
+    depth) it becomes "NULL AS <name>". Inside a function call or other
+    parenthesized expression the enclosing alias already names the column and
+    a plain NULL is correct. So is any reference past the select list at its
+    depth (in FROM, WHERE, GROUP BY, HAVING, ORDER BY or LIMIT), where SQLite
+    does not allow an alias. WINDOW is left out: SQLite also accepts it as a
+    name, and a window definition is always inside parentheses.
+    Names may hold "$", and the FROM of IS [NOT] DISTINCT FROM is part of a
+    comparison, so neither ends the select list.
     '''
     name = reference.split('.')[-1].strip('"[]`')
     pattern = re.compile(r'(?<![\w.])' + re.escape(reference) + r'\b'
                          r'(?P<tail>\s*(?:,|$)|\s+(?i:FROM)\b)?')
+    select_keyword = re.compile(r'SELECT\b', re.IGNORECASE)
+    with_keyword = re.compile(r'WITH\b', re.IGNORECASE)
+    clause_keywords = {'SELECT', 'FROM', 'WHERE', 'GROUP', 'HAVING', 'ORDER', 'LIMIT'}
+    query_len = len(query)
+    # Each open "(" is [position, has seen SELECT, last clause keyword at its depth].
+    open_parens = []
+    top_clause = [None]
+    prev_word = [None]
+    scan_pos = 0
+
+    def in_select_list(end):
+        nonlocal scan_pos
+        i = scan_pos
+        while i < end:
+            ch = query[i]
+            if ch in ("'", '"', '`', '[', '(', ')'):
+                prev_word[0] = None
+            if ch in ("'", '"', '`'):
+                i += 1
+                while i < query_len:
+                    if query[i] == ch:
+                        i += 1
+                        if i < query_len and query[i] == ch:
+                            i += 1
+                            continue
+                        break
+                    i += 1
+            elif ch == '[':
+                i += 1
+                while i < query_len and query[i] != ']':
+                    i += 1
+                if i < query_len:
+                    i += 1
+            elif ch == '-' and i + 1 < query_len and query[i + 1] == '-':
+                i += 2
+                while i < query_len and query[i] != '\n':
+                    i += 1
+            elif ch == '/' and i + 1 < query_len and query[i + 1] == '*':
+                i += 2
+                while i + 1 < query_len and not (query[i] == '*' and query[i + 1] == '/'):
+                    i += 1
+                i = min(query_len, i + 2)
+            elif ch == '(':
+                open_parens.append([i, False, None])
+                i += 1
+            elif ch == ')':
+                if open_parens:
+                    open_parens.pop()
+                i += 1
+            elif ch.isalnum() or ch == '_':
+                start = i
+                while i < query_len and (query[i].isalnum() or query[i] in '_$'):
+                    i += 1
+                word = query[start:i].upper() if query[start:i].isascii() else ''
+                after_distinct = prev_word[0] == 'DISTINCT'
+                prev_word[0] = word
+                if (i <= end and word in clause_keywords
+                        and not (word == 'FROM' and after_distinct)
+                        and (start == 0 or query[start - 1] != '.')):
+                    frame = open_parens[-1] if open_parens else None
+                    if frame is None:
+                        top_clause[0] = word
+                    else:
+                        frame[2] = word
+                        if word == 'SELECT':
+                            frame[1] = True
+            else:
+                if not ch.isspace():
+                    prev_word[0] = None
+                i += 1
+        scan_pos = i
+        if not open_parens:
+            return top_clause[0] in (None, 'SELECT')
+        open_pos, has_select, clause = open_parens[-1]
+        if clause not in (None, 'SELECT'):
+            return False
+        pos = open_pos + 1
+        while pos < end:
+            if query[pos].isspace():
+                pos += 1
+            elif query[pos] == '-' and pos + 1 < end and query[pos + 1] == '-':
+                pos += 2
+                while pos < end and query[pos] != '\n':
+                    pos += 1
+            elif query[pos] == '/' and pos + 1 < end and query[pos + 1] == '*':
+                pos += 2
+                while pos + 1 < end and not (query[pos] == '*' and query[pos + 1] == '/'):
+                    pos += 1
+                pos = min(end, pos + 2)
+            else:
+                break
+        keyword = select_keyword.match(query, pos)
+        if keyword is not None and keyword.end() <= end:
+            return True
+        keyword = with_keyword.match(query, pos)
+        return keyword is not None and keyword.end() <= end and has_select
 
     def replace(match):
         tail = match.group('tail')
         if tail is None:
             return 'NULL'
+        if not in_select_list(match.start()):
+            return f'NULL{tail}'
         return f'NULL AS {name}{tail}'
 
     return pattern.sub(replace, query)

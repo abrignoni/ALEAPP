@@ -12,7 +12,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-20",
         "last_update_date": "2026-11-20",
         "requirements": "none",
-        "category": "Signal",
+        "category": "Messaging",
         "notes": (
             "Layout from Signal-Android tag v8.35.4 (commit b330f4efcf49a0cec87807d18504f07f5df12bf2); "
             "other versions were not checked. File names below are under "
@@ -110,7 +110,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-20",
         "last_update_date": "2026-11-26",
         "requirements": "none",
-        "category": "Signal",
+        "category": "Messaging",
         "notes": (
             "Needs the recovery key (--signal_recovery_key_file, --signal_recovery_key_env or the "
             "window's Signal backup recovery key button). See Signal - On-Device Backups for the layout "
@@ -187,7 +187,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-20",
         "last_update_date": "2026-11-20",
         "requirements": "none",
-        "category": "Signal",
+        "category": "Messaging",
         "notes": (
             "Needs the recovery key. An attachment's file in the backup's files folder is named from the "
             "SHA-256 of its plaintext hash and its local key "
@@ -230,7 +230,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-20",
         "last_update_date": "2026-11-20",
         "requirements": "none",
-        "category": "Signal",
+        "category": "Messaging",
         "notes": (
             "Needs the recovery key. One row per Recipient frame per snapshot, from Backup.proto at "
             "Signal-Android commit b330f4efcf49a0cec87807d18504f07f5df12bf2. Backup.proto calls "
@@ -259,7 +259,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-20",
         "last_update_date": "2026-11-20",
         "requirements": "none",
-        "category": "Signal",
+        "category": "Messaging",
         "notes": (
             "Needs the recovery key. One row per Chat frame per snapshot, from Backup.proto at Signal-Android "
             "commit b330f4efcf49a0cec87807d18504f07f5df12bf2. Items, First Item and Last Item are counted here "
@@ -283,7 +283,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-20",
         "last_update_date": "2026-11-20",
         "requirements": "none",
-        "category": "Signal",
+        "category": "Messaging",
         "notes": (
             "Needs the recovery key. One row per snapshot from AccountData in Backup.proto at Signal-Android "
             "commit b330f4efcf49a0cec87807d18504f07f5df12bf2. PIN (as stored) is the svrPin field. Backup Time "

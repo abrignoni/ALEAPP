@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Instagram",
+        "category": "Social Media",
         "notes": "Each messages row holds a JSON copy of the message; the sender, content type "
                  "and media fields are read from it. Message and Item Type are the table's own "
                  "text and message_type columns. Its thread_key and timestamp fields agreed with "
@@ -70,7 +70,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Instagram",
+        "category": "Social Media",
         "notes": "Rows of the messages table whose type is video_call_event. Action, "
                  "Description and Did Join are the stored values of the event JSON; the "
                  "description is the text stored in the event JSON (for example 'You "
@@ -107,7 +107,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Instagram",
+        "category": "Social Media",
         "notes": "One row per threads table entry. Participants and the inviter are read from "
                  "the thread_info JSON as username (full name) pairs. Participants is the stored "
                  "recipients (or users) list, each id once; the inviter appears there only "
@@ -143,7 +143,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
-        "category": "Instagram",
+        "category": "Social Media",
         "notes": "Parses the account JSON the app keeps in the 'current' and 'user_access_map' "
                  "preference keys; entries from both are reported and the Source Key column "
                  "says which one a row came from, so the same account can appear twice with "
@@ -181,7 +181,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
-        "category": "Instagram",
+        "category": "Social Media",
         "notes": "The per-account ig_msys_database_<number> is plain SQLite in the tested "
                  "images and its contacts table carries named columns, which are reported "
                  "under their own names. The integer columns contact_type, "
@@ -220,7 +220,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-16",
         "requirements": "none",
-        "category": "Instagram",
+        "category": "Social Media",
         "notes": "One row per intervals table entry. start_walltime and end_walltime are "
                  "stored as epoch seconds. The start_event and end_event integers are "
                  "reported as stored; nothing in the extraction maps them. The user id in "

@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-06",
         "requirements": "none",
-        "category": "AccuWeather",
+        "category": "Locations & Maps",
         "sample_data": {
             "emu_a15_oss_v16": "AccuWeather 21.1.16-4-rc | 1 row",
         },

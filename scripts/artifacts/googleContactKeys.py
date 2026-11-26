@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-21",
         "last_update_date": "2026-11-21",
         "requirements": "none",
-        "category": "Google Contact Keys",
+        "category": "Accounts & Credentials",
         "notes": "Read from com.google.android.contactkeys/databases/contactkeys_room with its "
                  "write-ahead log. The log matters: on dragna_pixel9a_a16 the 6 contact_keys rows "
                  "are only in the log, and the database file alone holds 2 self_keys rows that the "

@@ -1,0 +1,59 @@
+{
+  "metadata": {
+    "module_name": "contentQuery",
+    "artifact_name": "Contacts (content query)",
+    "function_name": "content_query_contacts",
+    "case_number": "casesynthetic_alex",
+    "number_of_columns": 9,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 269,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/contentQuery/testdata.contentQuery.content_query_contacts.casesynthetic_alex.zip",
+    "start_time": "2026-11-25T21:50:27.193626+00:00",
+    "end_time": "2026-11-25T21:50:27.266633+00:00",
+    "run_time_seconds": 0.00084686279296875,
+    "last_commit": {
+      "hash": "9b6ac5ad209440b52a1ae251f797daf2a8eb6874",
+      "author_name": "Maximiliano Telmo",
+      "author_email": "50964800+Maxitelmo@users.noreply.github.com",
+      "date": "2026-11-25T18:31:16-03:00",
+      "message": "Read MMS addresses from content://mms/addr"
+    }
+  },
+  "headers": [
+    "Last Updated (UTC)",
+    "Display Name",
+    "Has Phone Number",
+    "Starred",
+    "Lookup Key",
+    "Contact ID",
+    "Parse Note",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1767200000,
+      "Test Contact",
+      "1",
+      "0",
+      "0r1-EXAMPLE",
+      "1",
+      "",
+      1,
+      "ALEX_SYNTH0001/content_provider_SYNTH0001/com.android.contacts/com.android.contacts_contacts.txt"
+    ],
+    [
+      1767200100,
+      "Second, Example",
+      "1",
+      "1",
+      "0r2-EXAMPLE",
+      "2",
+      "",
+      2,
+      "ALEX_SYNTH0001/content_provider_SYNTH0001/com.android.contacts/com.android.contacts_contacts.txt"
+    ]
+  ]
+}

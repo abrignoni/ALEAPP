@@ -402,7 +402,7 @@ class ArtifactTests(unittest.TestCase):
     def test_every_artifact_is_declared_with_its_function(self):
         self.assertEqual(len(self.FUNCTIONS), 33)
         for name, block in artifacts.__artifacts_v2__.items():
-            self.assertTrue(block['category'].startswith('Android Bug Report - '))
+            self.assertEqual(block['category'], 'Android Bug Report')
             self.assertEqual(block['paths'], ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                 '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'))
             self.assertTrue(callable(getattr(artifacts, name)))

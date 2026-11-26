@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-09-25",
         "last_update_date": "2026-08-15",
         "requirements": "none",
-        "category": "Meteo",
+        "category": "Locations & Maps",
         "notes": "What event writes a row of plz_interaction is not established here. Recorded "
                  "Coordinates is an OpenStreetMap link built from the row's own lat and lon and is "
                  "blank when either is empty. Meteo of the city shows the primary_name of the plz "
@@ -34,7 +34,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-09-25",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Meteo",
+        "category": "Locations & Maps",
         "notes": "What writes a row, what the timestamp marks and what position the coordinates "
                  "describe are not established here; the artifact is named for the table it reads. "
                  "Timestamp is the table's timestamp column converted as Unix milliseconds. That "

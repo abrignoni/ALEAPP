@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-08-08",
         "last_update_date": "2025-10-29",
         "requirements": "blackboxprotobuf",
-        "category": "Google Voice",
+        "category": "Messaging",
         "notes": "The authors report testing on app version 2025.07.20.788599304 (October 29th, "
                  "2025) on Samsung and Motorola devices; no count or image from that testing is "
                  "recorded. The registered image with rows is pixel7a_a14. Account number, name "
@@ -29,7 +29,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-08-20",
         "last_update_date": "2026-10-09",
         "requirements": "blackboxprotobuf",
-        "category": "Google Voice",
+        "category": "Messaging",
         "notes": "The authors report testing on app version 2025.07.20.788599304 (October 29th, "
                  "2025) on Samsung and Motorola devices; no count or image from that testing is "
                  "recorded. The registered image with rows is pixel7a_a14. Direction, Call Status "
@@ -62,7 +62,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-09-03",
         "last_update_date": "2025-10-29",
         "requirements": "blackboxprotobuf",
-        "category": "Google Voice",
+        "category": "Messaging",
         "notes": "The authors report testing on app version 2025.07.20.788599304 (October 29th, "
                  "2025) on Samsung and Motorola devices; no count or image from that testing is "
                  "recorded. The registered image with rows is pixel7a_a14. Read Status is field 6 "
@@ -84,7 +84,7 @@ __artifacts_v2__ = {
         "creation_date": "2025-10-22",
         "last_update_date": "2026-10-09",
         "requirements": "blackboxprotobuf",
-        "category": "Google Voice",
+        "category": "Messaging",
         "notes": "The authors report testing on app version 2025.07.20.788599304 (October 29th, "
                  "2025) on Samsung and Motorola devices; no count or image from that testing is "
                  "recorded. The registered image with rows is pixel7a_a14. Rows are the message_t "
@@ -134,7 +134,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-06",
         "last_update_date": "2026-10-06",
         "requirements": "blackboxprotobuf",
-        "category": "Google Voice",
+        "category": "Messaging",
         "notes": "One row per selected query occurrence with a NULL/nontext/empty/unsupported "
                  "conversation ID, or an individual t record with missing/unsupported field 13 "
                  "or failed decoding. These may be calls, voicemail or other records; no message, "

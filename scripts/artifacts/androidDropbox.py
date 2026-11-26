@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Android System Logs",
+        "category": "Logs & Diagnostics",
         "notes": "Read from the entry files under the platform's system dropbox folder. Each "
                  "entry is one file named <tag>@<time>.<ext>, where the time is Unix milliseconds "
                  "and the extension records the content flags (txt for text, dat for binary, a "
@@ -96,7 +96,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Android System Logs",
+        "category": "Logs & Diagnostics",
         "notes": "Read from the system dropbox entry files whose tag is <class>_<event>, where "
                  "the class is system_server, system_app or data_app and the event is crash, anr, "
                  "wtf, strictmode, native_crash or lowmem, plus the SYSTEM_TOMBSTONE and "
@@ -207,7 +207,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Android System Logs",
+        "category": "Logs & Diagnostics",
         "notes": "Read from the system dropbox entry files not reported by the boot or "
                  "process-error artifacts. Entries are added under a tag the caller chooses, and "
                  "at android-14.0.0_r1 DropBoxManagerService applies no permission check when "
@@ -273,7 +273,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
         "requirements": "none",
-        "category": "Android System Logs",
+        "category": "Logs & Diagnostics",
         "notes": "Read from the tombstone_<n> text files and their tombstone_<n>.pb protobuf "
                  "twins under the platform's tombstones folder. The text form is the report "
                  "debuggerd writes: Build fingerprint, Timestamp, Cmdline and Process uptime "
@@ -358,7 +358,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-05",
         "last_update_date": "2026-09-05",
         "requirements": "none",
-        "category": "Android System Logs",
+        "category": "Logs & Diagnostics",
         "notes": "Read from the anr_<date>-<time>-<ms> and trace_<n> files under the platform's "
                  "anr folder. A newer file opens with a Subject line naming what timed out and "
                  "then the process dumps, each headed ----- pid <n> at <time> ----- and a Cmd "

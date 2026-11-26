@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-11-20",
         "last_update_date": "2024-11-20",
         "requirements": "none",
-        "category": "Bluesky",
+        "category": "Social Media",
         "notes": "",
         "paths": ('*/xyz.blueskyweb.app/cache/http-cache/*.*',),
         "output_types": "standard",

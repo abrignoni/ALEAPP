@@ -675,7 +675,7 @@ class ArtifactTests(unittest.TestCase):
         self.assertEqual(declared, found)
         self.assertEqual(len(declared), 30)
         for key, info in art.__artifacts_v2__.items():
-            self.assertTrue(info['category'].startswith('Android Bug Report - '))
+            self.assertEqual(info['category'], 'Android Bug Report')
             self.assertEqual(info['paths'], ('*/dumpstate.txt', '*/bugreport-*.txt', '*/bugreport-*.zip', '*/bugreports/bugreport-*.tmp',
                 '*/log/*dumpState*.zip', '*/log/dumpstate_*.zip'), key)
 

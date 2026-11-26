@@ -4,14 +4,16 @@ __artifacts_v2__ = {
         "description": "Parses provider calendar events",
         "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2023-01-06",
-        "last_update_date": "2026-10-25",
+        "last_update_date": "2026-11-25",
         "requirements": "none",
-        "category": "Calendar",
+        "category": "Productivity",
         "notes": "Every calendar.db found is read once per Android user, and Android User names the "
                  "user whose app folder holds it. Taking the first match instead returned no rows on a "
                  "One UI 8 (Android 16) extraction whose Secure Folder user's copy sorted first and held "
                  "no events while the owner's copy held three."
-                 " On the four tested Android 16 extractions Android User held one value (0) on every row, because the Secure Folder user's copy held no events. Event Location had no value on any of the 111 rows of one extraction and on any of the 3 rows of another. On those 3 rows Description and All Day Event had no value, and Event Timezone, Organizer, Calendar Display Name and Has Alarm each held one value. On the corpus images in sample_data that hold a second Android user's database, the row count equals the sum of the rows in each user's table, counted without ALEAPP.",
+                 " On the four tested Android 16 extractions Android User held one value (0) on every row, because the Secure Folder user's copy held no events. Event Location had no value on any of the 111 rows of one extraction and on any of the 3 rows of another. On those 3 rows Description and All Day Event had no value, and Event Timezone, Organizer, Calendar Display Name and Has Alarm each held one value. On the corpus images in sample_data that hold a second Android user's database, the row count equals the sum of the rows in each user's table, counted without ALEAPP."
+                 " A calendar.db that ALEX (Android Logical Extractor) rebuilt from content provider queries, recognised by user_version 0 and Events._id declared TEXT, is read with the same queries as a device copy, except that rows with _id 0 are left out of Events and their number is written to the log. ALEX from v0.6 to commit 9ef34bf0 (prosch88/ALEX, 2026-11-21) writes such a row, filled with its default values, when the provider returned no rows: the parser returns one empty row for the 'No result found.' text (https://github.com/prosch88/ALEX/blob/9ef34bf02c7f7ff29e1ad1a1db3c7b2ac6e3f048/alex.py#L4406) and insert_data fills it with the defaults (https://github.com/prosch88/ALEX/blob/9ef34bf02c7f7ff29e1ad1a1db3c7b2ac6e3f048/alex.py#L4926); commit 8f27e7a (2026-11-25) stopped that (https://github.com/prosch88/ALEX/blob/8f27e7aca2d8b0a6acd1c7918cfe4582963dead2/alex.py#L4932). ALEX from v0.6 to 8f27e7a also writes one when a text value held 'Row: <number>': that value is cut there and the columns after it go to the _id 0 row (https://github.com/prosch88/ALEX/blob/9ef34bf02c7f7ff29e1ad1a1db3c7b2ac6e3f048/alex.py#L4392). From v0.6 to 8f27e7a its parsing of the query output can also trim text and store an empty value as NULL (https://github.com/prosch88/ALEX/blob/9ef34bf02c7f7ff29e1ad1a1db3c7b2ac6e3f048/alex.py#L4401-L4402). From v0.6 to ed3d41eb it stores the text NULL as NULL (https://github.com/prosch88/ALEX/blob/ed3d41ebea64f73f86f4568f29ff6cf5a1a10cf1/alex.py#L4357). At ed3d41eb, when the query output has two or more rows, it cuts a text value at ', <column name>=' if that column is in every row, and moves the rest into that column (https://github.com/prosch88/ALEX/blob/ed3d41ebea64f73f86f4568f29ff6cf5a1a10cf1/alex.py#L4331-L4357); with a single row it cuts at any ', <word>=', except that for sms and mms it checks the word against its bundled schema after a free-text column (https://github.com/prosch88/ALEX/blob/ed3d41ebea64f73f86f4568f29ff6cf5a1a10cf1/alex.py#L4336-L4355). The NULL and the ', <column name>=' cases were reproduced on emu_a15_alex_prfs_nullcut_20261125. At ed3d41eb a value holding a line break followed by 'Row: <number> <column name>=' breaks the split of every row in that query's output (https://github.com/prosch88/ALEX/blob/ed3d41ebea64f73f86f4568f29ff6cf5a1a10cf1/alex.py#L4326): on emu_a15_alex_prfs_rowsplit_20261125 all 9 messages lost their body and their _id held row text, and one extra _id 0 row was written. Rows of a rebuilt table whose _id is not a whole number are therefore also left out, with a log line. A broken split that leaves _id a whole number is not detected; the raw query text, where the backup keeps it, is under extra/content_provider/. From v0.6 to ed3d41eb ALEX declares every column TEXT (https://github.com/prosch88/ALEX/blob/07ef1c1790152283d3fb83dcf52e2f87f91ed01b/alex.py#L3975, https://github.com/prosch88/ALEX/blob/ed3d41ebea64f73f86f4568f29ff6cf5a1a10cf1/alex.py#L4877); on the known data backups every stored value is text or NULL. The rebuilt database is a new file written by ALEX, so it carries no free pages or write-ahead log from the device database. A time stored as the text 0 is shown blank, as a stored 0 is. No real event row from an ALEX rebuild was available to test this. On the known data emu_a15_alex_prfs_empty_20261125 and emu_a15_alex_prfs_sms_20261125 (ALEX backups of an Android 15 emulator, ALEAPP #2076) this left out one default Events row each time, so no rows were reported, where the version before this change reported 1 event dated 1970-01-01."
+                 " On emu_a15_alex_prfs_fixed_20261125 (ALEX at ed3d41eb, the same emulator and messages) ALEX wrote no _id 0 row and stored the 6 synthetic message bodies as inserted, nothing was left out, and this artifact reported 0 rows.",
         "paths": ('*/com.android.providers.calendar/databases/calendar.db*',),
         "output_types": "standard",
         "artifact_icon": "calendar",
@@ -28,6 +30,11 @@ __artifacts_v2__ = {
             "userb2_a13": "Android 13 | com.android.providers.calendar | 0 rows",
             "cookbook_a11": "Android 11 | com.android.providers.calendar | 1 row",
             "russell_a14": "Android 14 | com.android.providers.calendar | 235 rows",
+            "emu_a15_alex_prfs_empty_20261125": "Android 15 | ALEX PRFS backup of an emulator (known data) | 0 rows",
+            "emu_a15_alex_prfs_sms_20261125": "Android 15 | ALEX PRFS backup of an emulator (known data) | 0 rows",
+            "emu_a15_alex_prfs_fixed_20261125": "Android 15 | ALEX PRFS backup of an emulator (known data) | 0 rows",
+            "emu_a15_alex_prfs_rowsplit_20261125": "Android 15 | ALEX PRFS backup of an emulator (known data) | 0 rows",
+            "emu_a15_alex_prfs_nullcut_20261125": "Android 15 | ALEX PRFS backup of an emulator (known data) | 0 rows",
         },
     },
     "get_calendar_calendars": {
@@ -35,9 +42,9 @@ __artifacts_v2__ = {
         "description": "Calendars table of the calendar provider database.",
         "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2023-01-06",
-        "last_update_date": "2026-10-25",
+        "last_update_date": "2026-11-25",
         "requirements": "none",
-        "category": "Calendar",
+        "category": "Productivity",
         "notes": "Every calendar.db found is read once per Android user, and Android User names the "
                  "user whose app folder holds it. The first column, cal_sync8 (Read As Unix "
                  "Milliseconds), is the cal_sync8 value read as Unix milliseconds and shown in UTC; the cal_sync8 (As Stored) column is the "
@@ -58,7 +65,9 @@ __artifacts_v2__ = {
                  "account type (LOCAL, com.osp.app.signin, com.xiaomi) stored NULL. A stored value "
                  "that is not a whole number leaves the first column blank and appears only in the "
                  "cal_sync8 (As Stored) column."
-                 " On the four tested Android 16 extractions Calendar Location had no value on any row, and Android User held one value (0) on every row of the one extraction that holds a single user's calendars. On two of them cal_sync8 (Read As Unix Milliseconds) had no value on any of 5 rows, and Timezone, Is Primary and Color Index had no value on any row, Account Name and Owner Account were identical on all 5 rows, and on one of them Visible held one value (Yes). On the corpus images in sample_data that hold a second Android user's database, the row count equals the sum of the rows in each user's table, counted without ALEAPP.",
+                 " On the four tested Android 16 extractions Calendar Location had no value on any row, and Android User held one value (0) on every row of the one extraction that holds a single user's calendars. On two of them cal_sync8 (Read As Unix Milliseconds) had no value on any of 5 rows, and Timezone, Is Primary and Color Index had no value on any row, Account Name and Owner Account were identical on all 5 rows, and on one of them Visible held one value (Yes). On the corpus images in sample_data that hold a second Android user's database, the row count equals the sum of the rows in each user's table, counted without ALEAPP."
+                 " A calendar.db that ALEX (Android Logical Extractor) rebuilt from content provider queries, recognised by user_version 0 and Events._id declared TEXT, is read with the same queries as a device copy, except that rows with _id 0 are left out of Calendars and their number is written to the log. ALEX from v0.6 to commit 9ef34bf0 (prosch88/ALEX, 2026-11-21) writes such a row, filled with its default values, when the provider returned no rows: the parser returns one empty row for the 'No result found.' text (https://github.com/prosch88/ALEX/blob/9ef34bf02c7f7ff29e1ad1a1db3c7b2ac6e3f048/alex.py#L4406) and insert_data fills it with the defaults (https://github.com/prosch88/ALEX/blob/9ef34bf02c7f7ff29e1ad1a1db3c7b2ac6e3f048/alex.py#L4926); commit 8f27e7a (2026-11-25) stopped that (https://github.com/prosch88/ALEX/blob/8f27e7aca2d8b0a6acd1c7918cfe4582963dead2/alex.py#L4932). ALEX from v0.6 to 8f27e7a also writes one when a text value held 'Row: <number>': that value is cut there and the columns after it go to the _id 0 row (https://github.com/prosch88/ALEX/blob/9ef34bf02c7f7ff29e1ad1a1db3c7b2ac6e3f048/alex.py#L4392). From v0.6 to 8f27e7a its parsing of the query output can also trim text and store an empty value as NULL (https://github.com/prosch88/ALEX/blob/9ef34bf02c7f7ff29e1ad1a1db3c7b2ac6e3f048/alex.py#L4401-L4402). From v0.6 to ed3d41eb it stores the text NULL as NULL (https://github.com/prosch88/ALEX/blob/ed3d41ebea64f73f86f4568f29ff6cf5a1a10cf1/alex.py#L4357). At ed3d41eb, when the query output has two or more rows, it cuts a text value at ', <column name>=' if that column is in every row, and moves the rest into that column (https://github.com/prosch88/ALEX/blob/ed3d41ebea64f73f86f4568f29ff6cf5a1a10cf1/alex.py#L4331-L4357); with a single row it cuts at any ', <word>=', except that for sms and mms it checks the word against its bundled schema after a free-text column (https://github.com/prosch88/ALEX/blob/ed3d41ebea64f73f86f4568f29ff6cf5a1a10cf1/alex.py#L4336-L4355). The NULL and the ', <column name>=' cases were reproduced on emu_a15_alex_prfs_nullcut_20261125. At ed3d41eb a value holding a line break followed by 'Row: <number> <column name>=' breaks the split of every row in that query's output (https://github.com/prosch88/ALEX/blob/ed3d41ebea64f73f86f4568f29ff6cf5a1a10cf1/alex.py#L4326): on emu_a15_alex_prfs_rowsplit_20261125 all 9 messages lost their body and their _id held row text, and one extra _id 0 row was written. Rows of a rebuilt table whose _id is not a whole number are therefore also left out, with a log line. A broken split that leaves _id a whole number is not detected; the raw query text, where the backup keeps it, is under extra/content_provider/. From v0.6 to ed3d41eb ALEX declares every column TEXT (https://github.com/prosch88/ALEX/blob/07ef1c1790152283d3fb83dcf52e2f87f91ed01b/alex.py#L3975, https://github.com/prosch88/ALEX/blob/ed3d41ebea64f73f86f4568f29ff6cf5a1a10cf1/alex.py#L4877); on the known data backups every stored value is text or NULL. The rebuilt database is a new file written by ALEX, so it carries no free pages or write-ahead log from the device database. A time stored as the text 0 is shown blank, as a stored 0 is. No real calendar row from an ALEX rebuild was available to test this. On the known data emu_a15_alex_prfs_empty_20261125 and emu_a15_alex_prfs_sms_20261125 (ALEX backups of an Android 15 emulator, ALEAPP #2076) this left out one default Calendars row each time, so no rows were reported, where the version before this change reported 1 calendar."
+                 " On emu_a15_alex_prfs_fixed_20261125 (ALEX at ed3d41eb, the same emulator and messages) ALEX wrote no _id 0 row and stored the 6 synthetic message bodies as inserted, nothing was left out, and this artifact reported 0 rows.",
         "paths": ('*/com.android.providers.calendar/databases/calendar.db*',),
         "output_types": "standard",
         "artifact_icon": "calendar",
@@ -75,6 +84,11 @@ __artifacts_v2__ = {
             "userb2_a13": "Android 13 | com.android.providers.calendar | 1 row",
             "cookbook_a11": "Android 11 | com.android.providers.calendar | 4 rows",
             "russell_a14": "Android 14 | com.android.providers.calendar | 4 rows",
+            "emu_a15_alex_prfs_empty_20261125": "Android 15 | ALEX PRFS backup of an emulator (known data) | 0 rows",
+            "emu_a15_alex_prfs_sms_20261125": "Android 15 | ALEX PRFS backup of an emulator (known data) | 0 rows",
+            "emu_a15_alex_prfs_fixed_20261125": "Android 15 | ALEX PRFS backup of an emulator (known data) | 0 rows",
+            "emu_a15_alex_prfs_rowsplit_20261125": "Android 15 | ALEX PRFS backup of an emulator (known data) | 0 rows",
+            "emu_a15_alex_prfs_nullcut_20261125": "Android 15 | ALEX PRFS backup of an emulator (known data) | 0 rows",
         },
     },
     "googleCalendarAppEvents": {
@@ -88,7 +102,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-30",
         "last_update_date": "2026-07-30",
         "requirements": "none",
-        "category": "Calendar",
+        "category": "Productivity",
         "notes": "The fields are read from the event protobuf by number: link 3, Created "
                  "4, Updated 5, title 6, description 7, calendar id and name 10 (or 35), "
                  "iCal UID 19, start 36.1 and end 37.1. No source for these field numbers "
@@ -114,14 +128,15 @@ import sqlite3
 
 from scripts.artifacts.storagePathViews import user_files
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, \
-    get_sqlite_db_records, convert_unix_ts_to_utc, decode_protobuf, does_column_exist_in_db
+    get_sqlite_db_records, convert_unix_ts_to_utc, decode_protobuf, does_column_exist_in_db, \
+    alex_default_row_filter
 
 
 def _ms_to_utc(value):
-    if not value:
-        return ''
+    # int() first: a database ALEX rebuilt stores every value as text, so 0 arrives as '0'
     try:
-        return datetime.datetime.fromtimestamp(int(value) / 1000, datetime.timezone.utc)
+        number = int(value)
+        return datetime.datetime.fromtimestamp(number / 1000, datetime.timezone.utc) if number else ''
     except (ValueError, OverflowError, OSError, TypeError):
         return ''
 
@@ -140,11 +155,13 @@ def _run(source_path, sql):
     return rows
 
 
-def _run_all(stores, sql):
-    """The rows of sql from every (database path, Android user) pair, each row followed by its user."""
+def _run_all(stores, sql, table):
+    """The rows of sql from every (database path, Android user) pair, each row followed by its user.
+    sql holds {keep}, the condition that leaves out ALEX default rows of table."""
     rows = []
     for source_path, user in stores:
-        rows.extend(tuple(row) + (user,) for row in _run(source_path, sql))
+        query = sql.format(keep=alex_default_row_filter(source_path, table))
+        rows.extend(tuple(row) + (user,) for row in _run(source_path, query))
     return rows
 
 
@@ -157,7 +174,8 @@ def get_calendar(context):
         CASE Events.allDay WHEN 0 THEN '' WHEN 1 THEN 'Yes' END,
         CASE Events.hasAlarm WHEN 0 THEN '' WHEN 1 THEN 'Yes' END
         FROM Events LEFT JOIN Calendars ON Calendars._id = Events.calendar_id
-    ''')
+        WHERE {keep}
+    ''', 'Events')
     data_list = [(_ms_to_utc(r[0]), _ms_to_utc(r[1]), r[2], r[3], r[4], r[5], r[6], r[7], r[8], r[9], r[10],
                   r[11])
                  for r in rows]
@@ -178,7 +196,8 @@ def get_calendar_calendars(context):
         CASE isPrimary WHEN 0 THEN '' WHEN 1 THEN 'Yes' END,
         calendar_color, calendar_color_index
         FROM Calendars
-    ''')
+        WHERE {keep}
+    ''', 'Calendars')
     data_list = [(_ms_to_utc(r[0]), r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8], r[9], r[10], r[11],
                   r[0], r[12])
                  for r in rows]

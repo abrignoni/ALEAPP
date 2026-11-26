@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Spotify",
+        "category": "Music, Video & News",
         "notes": "No email address or display name for the account was found on the extraction "
                  "this artifact was built on, which is not named here; each file under the app's "
                  "data directory there, including shared_prefs and the per-user settings folder, "
@@ -47,9 +47,9 @@ __artifacts_v2__ = {
                        "time and the two counters each snapshot stores.",
         "author": "@Gear-I, Claude",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-08-25",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
-        "category": "Spotify",
+        "category": "Music, Video & News",
         "notes": "Source is frecency.pb, a per-account file; it is not a public format, so the "
                  "layout was worked out from the file on one tested image, which is not named "
                  "here, and not from documentation. Snapshot Time is field 4 of a snapshot, read "
@@ -68,7 +68,8 @@ __artifacts_v2__ = {
                  "snapshots roughly six months apart. The large opaque integer stored alongside "
                  "each snapshot is not included: it did not decode to a timestamp or a count and "
                  "its meaning is not established. A playlist absent from this file is not evidence "
-                 "that it was absent from the account.",
+                 "that it was absent from the account. "
+                 "When the extraction holds this file under more than one storage path (for example data/data, data/user/0 and data_mirror) and the copies differ in their bytes, every differing copy is read. Rows are compared on the reported columns. A row the copies share is reported once, a row only one copy holds is reported as well, and a row that differs between copies appears once per version. On hickman_a13 this added 1 row (4 to 5).",
         "paths": ('*/com.spotify.music/files/settings/Users/*/frecency.pb',),
         "output_types": ["standard"],
         "artifact_icon": "playlist",
@@ -94,9 +95,9 @@ __artifacts_v2__ = {
                        "string fields as stored.",
         "author": "@Gear-I, Claude",
         "creation_date": "2026-08-16",
-        "last_update_date": "2026-08-25",
+        "last_update_date": "2026-11-26",
         "requirements": "none",
-        "category": "Spotify",
+        "category": "Music, Video & News",
         "notes": "Source is event-sender.db's Events table, a table of named events written by the "
                  "app; its purpose is not sourced here. Each row's 'fragments' column is a "
                  "protobuf blob decoded without a schema, so field numbers carry no names. An "
@@ -121,10 +122,11 @@ __artifacts_v2__ = {
                  "the meaning of each of those values is not established. Purely numeric fields "
                  "(byte counts, bitrates, internal enum values) are not reported, since there is "
                  "no public schema to confirm what they mean. Where an extraction carries the "
-                 "app's data directory more than once, the duplicate storage views of one file are "
-                 "collapsed and each genuinely separate copy is read, so a second Android user's "
+                 "app's data directory more than once, the duplicate storage views of one file that "
+                 "hold the same content are collapsed and each genuinely separate copy is read, so a second Android user's "
                  "events are reported alongside the first user's with no column separating them; "
-                 "the source paths listed for the artifact name every database the rows came from.",
+                 "the source paths listed for the artifact name every database the rows came from. "
+                 "When the extraction holds this database under more than one storage path (for example data/data, data/user/0 and data_mirror) and the copies differ in their bytes or in their -wal or -journal content, every differing copy is read. Rows are compared on the reported columns. A row the copies share is reported once, a row only one copy holds is reported as well, and a row that differs between copies appears once per version. On hickman_a13 this added 3 rows (0 to 3).",
         "paths": ('*/com.spotify.music/databases/event-sender.db*',),
         "output_types": ["standard"],
         "artifact_icon": "player-play",
@@ -152,7 +154,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-08-25",
         "requirements": "none",
-        "category": "Spotify",
+        "category": "Music, Video & News",
         "notes": "Source is the app's HTTP disk cache (cache/http-cache), specifically a cached "
                  "response from the recently-played/v3 endpoint; the response body is schema-less "
                  "protobuf, decoded the same way this project already decodes undocumented "
@@ -200,7 +202,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Spotify",
+        "category": "Music, Video & News",
         "notes": "Source is the app's HTTP disk cache (cache/http-cache): the color-lyrics/v2 and "
                  "merch-npv-service/v1 endpoints; what the app requests them for is not "
                  "established here. The Spotify track ID is read directly from each cached "
@@ -245,7 +247,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-16",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Spotify",
+        "category": "Music, Video & News",
         "notes": "Source is the app's HTTP disk cache (cache/http-cache), specifically cached "
                  "responses from the artist-identity-view/v2 endpoint; what the app requests it "
                  "for is not established here; the response is plain JSON and 'Artist Name' / "
@@ -281,10 +283,11 @@ __artifacts_v2__ = {
 import gzip
 import json
 import re
+import sqlite3
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 
-from scripts.artifacts.storagePathViews import unique_files
+from scripts.artifacts.storagePathViews import union_view_rows, unique_files
 from scripts.blackboxprotobuf import decode_message
 from scripts.ilapfuncs import artifact_processor, get_sqlite_db_records, logfunc
 
@@ -435,7 +438,10 @@ def _find_all(files_found, suffix):
     Android user under data/user/<n>, and, for the per-account settings folder,
     one file per Spotify account signed in on the device. Duplicate spellings of
     a single file are collapsed by unique_files() before this is called, so what
-    is left here is separate evidence and every one of them is read.
+    is left here is separate evidence and every one of them is read. Where an
+    artifact asks unique_files() to keep differing copies, a copy of one file
+    under another spelling that reads differently is here too, and its rows go
+    through union_view_rows() so the rows the copies share are reported once.
     """
     return [str(f) for f in files_found if str(f).endswith(suffix)]
 
@@ -568,9 +574,9 @@ def spotify_playlist_library(context):
         "Counter A (raw)", "Counter B (raw)",
     )
 
-    files_found = [str(f) for f in unique_files(context)]
+    files_found = [str(f) for f in unique_files(context, keep_differing_views=True)]
 
-    data_list = []
+    file_rows = []
     source_paths = set()
     for frecency_path in _find_all(files_found, 'frecency.pb'):
         with open(frecency_path, 'rb') as f:
@@ -582,6 +588,8 @@ def spotify_playlist_library(context):
             continue
         source_paths.add(frecency_path)
         account = _account_folder(context, frecency_path)
+        data_list = []
+        file_rows.append((frecency_path, data_list))
         for entry in _as_list(values.get('1')):
             if not isinstance(entry, dict):
                 continue
@@ -594,6 +602,7 @@ def spotify_playlist_library(context):
                     snapshot.get('2'), snapshot.get('3'),
                 ))
 
+    data_list = union_view_rows(context, file_rows)
     data_list.sort(key=lambda row: (row[0] is None, row[0]))
     logfunc(f"Spotify Playlist Library Activity: {len(data_list)} snapshot(s) "
             f"recovered from {len(source_paths)} frecency.pb file(s).")
@@ -606,21 +615,27 @@ def spotify_playback_activity(context):
         ("Event Time", "datetime"), "Event Type", "Content URI", "Session ID", "Notes",
     )
 
-    files_found = [str(f) for f in unique_files(context)]
+    files_found = [str(f) for f in unique_files(context, keep_differing_views=True)]
 
     # get_sqlite_db_records() takes a plain query string with no bound-parameter
     # support, so the whitelist is inlined directly; it is a fixed internal
     # tuple, never user input, so this is safe.
     name_list = ', '.join(f"'{name}'" for name in _PLAYBACK_EVENT_NAMES)
 
-    data_list = []
+    file_rows = []
     source_paths = set()
     for db_path in _find_all(files_found, 'event-sender.db'):
-        rows = get_sqlite_db_records(
-            db_path,
-            f"SELECT eventName, fragments FROM Events "
-            f"WHERE eventName IN ({name_list}) ORDER BY id",
-        )
+        data_list = []
+        file_rows.append((db_path, data_list))
+        try:
+            rows = list(get_sqlite_db_records(
+                db_path,
+                f"SELECT eventName, fragments FROM Events "
+                f"WHERE eventName IN ({name_list}) ORDER BY id",
+            ))
+        except sqlite3.Error as ex:
+            logfunc(f"Spotify: could not read {context.get_relative_path(db_path)}: {ex}")
+            continue
         source_paths.add(db_path)
         for event_name, fragments in rows:
             try:
@@ -635,6 +650,7 @@ def spotify_playback_activity(context):
             uri, session_id, notes = _summarize_message(message)
             data_list.append((event_time, event_name, uri, session_id, notes))
 
+    data_list = union_view_rows(context, file_rows)
     data_list.sort(key=lambda row: (row[0] is None, row[0]))
     logfunc(f"Spotify Playback Activity: {len(data_list)} event(s) recovered "
             f"from {len(source_paths)} event-sender.db file(s).")

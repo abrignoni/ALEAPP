@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-08-15",
         "last_update_date": "2026-11-24",
         "requirements": "none",
-        "category": "Wipe & Setup",
+        "category": "Device Information",
         "notes": "Two paths are read. The eight registered images listed in sample_data (Android "
                  "10 to 15) all hold the file at system/users/service/data/eRR.p. The path "
                  "system/users/service/eRR.p is also read. Each record line is split on the pipe character, and the first four fields are reported by position as Timestamp, Event, Code and Details. No line on the images run held more than four. What each field means is not established from the code that writes "

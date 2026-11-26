@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-06",
         "last_update_date": "2026-10-07",
         "requirements": "none",
-        "category": "CCleaner",
+        "category": "Cloud & Files",
         "sample_data": {
             "emu_a15_oss_v17": "CCleaner 26.12.2 | 95 rows",
         },
@@ -38,7 +38,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-06",
         "requirements": "none",
-        "category": "CCleaner",
+        "category": "Cloud & Files",
         "sample_data": {
             "emu_a15_oss_v17": "CCleaner 26.12.2 | 17 rows",
         },
@@ -66,7 +66,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-06",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "CCleaner",
+        "category": "Cloud & Files",
         "sample_data": {
             "emu_a15_oss_v17": "CCleaner 26.12.2 | 9 rows",
         },
@@ -94,7 +94,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-06",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "CCleaner",
+        "category": "Cloud & Files",
         "sample_data": {
             "emu_a15_oss_v17": "CCleaner 26.12.2 | 3 rows",
         },
@@ -122,7 +122,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-09-06",
         "last_update_date": "2026-09-06",
         "requirements": "none",
-        "category": "CCleaner",
+        "category": "Cloud & Files",
         "sample_data": {
             "emu_a15_oss_v17": "CCleaner 26.12.2 | 2 rows",
         },

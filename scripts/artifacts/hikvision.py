@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-03-23",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Hikvision",
+        "category": "Smart Home & Connected Devices",
         "notes": ("Original parser by Evangelos Dragonas (@theAtropos4n6). "
                   "nEnable is reported as returned by SQLite. Its meaning and the actions "
                   "that set it have not been established."),
@@ -21,7 +21,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-03-23",
         "last_update_date": "2023-03-23",
         "requirements": "none",
-        "category": "Hikvision",
+        "category": "Smart Home & Connected Devices",
         "notes": "",
         "paths": ('*/com.connect.enduser/databases/database.hik*',),
         "output_types": "standard",
@@ -34,7 +34,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-03-23",
         "last_update_date": "2026-08-01",
         "requirements": "none",
-        "category": "Hikvision",
+        "category": "Smart Home & Connected Devices",
         "notes": "",
         "paths": ('*/com.connect.enduser/databases/ezvizlog.db*',),
         "output_types": "standard",
@@ -47,7 +47,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-03-23",
         "last_update_date": "2026-08-01",
         "requirements": "none",
-        "category": "Hikvision",
+        "category": "Smart Home & Connected Devices",
         "notes": ("Video Start Time and Video End Time are reported exactly as stored. Unlike "
                   "createdTime in the same row, which is read as Unix milliseconds and shown in "
                   "UTC (a unit the module assumes), they are not converted, because the format "

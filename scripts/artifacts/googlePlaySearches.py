@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2020-04-02",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Google Play Store",
+        "category": "Installed Apps",
         "notes": "Every suggestions.db the paths match is read, once per Android user: where an "
                  "extraction holds the same user's file under more than one storage path "
                  "(data/data, data/user/N, data_mirror/data_ce) one copy is read. Source File "

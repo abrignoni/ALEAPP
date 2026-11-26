@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-11-10",
         "last_update_date": "2026-08-01",
         "requirements": "none",
-        "category": "MeWe",
+        "category": "Social Media",
         "notes": ("Source: MeWe moved its chat store from 'app_database' to 'app_v3.db'; both are read. "
                   "An empty 'mewe_old' can sit beside it and is skipped.\n"
                   "Direction: Sent is shown where the CHAT_MESSAGE 'currentUserMessage' flag is 1 "
@@ -57,7 +57,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-26",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "MeWe",
+        "category": "Social Media",
         "notes": ("This is cached feed content, not an authorship record. Rows are posts held in "
                   "the app's POST table, so their presence shows what was cached on the device, "
                   "NOT that the device owner wrote, opened or read any of "
@@ -91,7 +91,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-26",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "MeWe",
+        "category": "Social Media",
         "notes": ("Like MeWe - Posts, this is cached feed content: comments held in the app's "
                   "COMMENT table for posts it cached. Presence does not imply the device owner "
                   "wrote or "
@@ -122,7 +122,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-26",
         "last_update_date": "2026-07-26",
         "requirements": "none",
-        "category": "MeWe",
+        "category": "Social Media",
         "notes": ("Image URL and Video URL Template are server-side paths on MeWe's CDN (for "
                   "example /api/v2/photo/...), NOT files on the device. Do not expect to find a "
                   "file at that path. This artifact does not correlate them to files in the "
@@ -151,7 +151,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-26",
         "last_update_date": "2026-07-26",
         "requirements": "none",
-        "category": "MeWe",
+        "category": "Social Media",
         "notes": ("One row per poll option, so a poll spans several rows sharing a Post Id and Question.\nOption Votes and Total Votes are the POLL_OPTION votes and POST pollVotes values as stored. This artifact reports no column for the account's own vote. The POST table has a pollVoted column, not reported here, that was 0 on every cached poll in the test image; what it records was not established.\nCounts are the stored values and can differ from the live ones."),
         "paths": ('*/com.mewe/databases/app_database',
                   '*/com.mewe/databases/app_v3.db*'),
@@ -168,7 +168,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-26",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "MeWe",
+        "category": "Social Media",
         "notes": ("Reactions are stored as a per-emoji tally, not a list of reactors. Reaction "
                   "Count is the stored count for that emoji on that object and names no one. "
                   "userReacted is the column of that name on the tally row, reported as stored; "
@@ -195,7 +195,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-26",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "MeWe",
+        "category": "Social Media",
         "notes": ("Three tables are merged and the Type column says which one a row came from: "
                   "Group (GROUP_), Page (PAGE) or Community (COMMUNITY). The same entity can appear "
                   "twice, once as a Group or Page and again as a Community; match on Id.\nA "
@@ -228,7 +228,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-07-26",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "MeWe",
+        "category": "Social Media",
         "notes": ("Rows are the participants recorded for a thread in CHAT_THREAD_PARTICIPANT. "
                   "Whether the device owner is listed among them was not established; "
                   "pixel7a_a14 and hc_pixel8pro_a16 each yielded a single participant row and "
@@ -262,7 +262,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-11-10",
         "last_update_date": "2021-11-10",
         "requirements": "none",
-        "category": "MeWe",
+        "category": "Social Media",
         "notes": ("Every key and value is reported as stored, including a key of the form "
                   "'user_info<id>' where one is present. That its suffix is the signed in "
                   "account's MeWe user id "

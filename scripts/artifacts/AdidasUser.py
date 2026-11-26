@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-03-24",
         "last_update_date": "2026-10-04",
         "requirements": "Python 3.7 or higher",
-        "category": "Adidas-Running",
+        "category": "Health & Fitness",
         "notes": "The lastV3SessionSyncAtLocalTime column holds that key's value as stored, as text. "
                  "The key name says local time; the unit and the zone of the value are not "
                  "established, so it is not converted. The My Fitness Pal, Garmin Connect and Polar "

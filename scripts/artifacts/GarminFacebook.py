@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-02-24",
         "last_update_date": "2023-02-24",
         "requirements": "none",
-        "category": "Garmin",
+        "category": "Health & Fitness",
         "notes": "Parses the cached values in the com.facebook shared_prefs XML only. No online "
                  "lookup is made. The last_refresh, data_access_expiration_time and expires_at "
                  "values are converted to UTC, read as milliseconds when 13 digits long and as "

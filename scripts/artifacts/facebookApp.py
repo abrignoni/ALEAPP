@@ -29,7 +29,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-20",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Facebook",
+        "category": "Social Media",
         "notes": "This is each app's own contacts store and is separate from the msys mailbox "
                  "contacts reported by the Facebook Messenger artifacts. A row records a contact "
                  "the app held for this account; it does not establish that the contact was "
@@ -87,7 +87,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-20",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Facebook",
+        "category": "Social Media",
         "notes": "Two sources are combined. Rows labelled Sync Property come from "
                  "contacts_db_properties, where last_contacts_sync_client_time_ms and "
                  "last_full_contacts_sync_client_time_ms are Unix milliseconds and are converted "
@@ -153,7 +153,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-20",
         "last_update_date": "2026-08-20",
         "requirements": "none",
-        "category": "Facebook",
+        "category": "Social Media",
         "notes": "The table holds cache bookkeeping, not story content: there is no author or "
                  "message column, and this artifact reports the keys and state the app stored. "
                  "The rows are feed items the app cached, so their presence does not establish "
@@ -196,7 +196,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-20",
         "last_update_date": "2026-08-20",
         "requirements": "none",
-        "category": "Facebook",
+        "category": "Social Media",
         "notes": "This is the list held in the mentions_entities table of the app's search "
                  "bootstrap database. A row records an entity the app held for this "
                  "account; it is not a record that the user searched for, mentioned or "
@@ -238,7 +238,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-20",
         "last_update_date": "2026-08-20",
         "requirements": "none",
-        "category": "Facebook",
+        "category": "Social Media",
         "notes": "One row per intervals table entry. start_walltime and end_walltime are read "
                  "as Unix seconds. The start_event and end_event integers are reported as "
                  "stored; nothing in the extraction maps them. The user id in the User ID "
@@ -279,7 +279,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-20",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Facebook",
+        "category": "Social Media",
         "notes": "Every row of each store's preferences table is reported rather than a "
                  "selected subset, so nothing is filtered out by this module's choices. Messenger "
                  "(com.facebook.orca) holds a database of the same name under its own "

@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2023-07-07",
         "last_update_date": "2026-10-04",
         "requirements": "none",
-        "category": "Podcast Addict",
+        "category": "Music, Video & News",
         "notes": "publication_date, playbackDate and downloaded_date are read "
                  "as Unix milliseconds; no source for that unit was found and "
                  "no registered corpus holds this database, so it is not "

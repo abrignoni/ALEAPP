@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-06-04",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Mega",
+        "category": "Cloud & Files",
         "notes": ""
                  "Each cell is AES decrypted with a fixed key written in this module. Direction "
                  "and State are labelled from the MEGA SDK's MegaTransfer constants "

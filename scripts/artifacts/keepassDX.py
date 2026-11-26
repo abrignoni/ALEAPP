@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-30",
         "last_update_date": "2026-08-30",
         "requirements": "none",
-        "category": "KeePassDX",
+        "category": "Accounts & Credentials",
         "notes": "One row per entry in the file_database_history table of the app's own Room store "
                  "databases/com.kunzisoft.keepass.database. KeePassDX is a password manager; the vault "
                  "itself (a .kdbx file) is encrypted and its contents are not recovered here. The "

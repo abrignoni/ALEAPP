@@ -1,13 +1,13 @@
 # pylint: disable=W0612
 __artifacts_v2__ = {
     "get_chromeBookmarks": {
-        "name": "Bookmarks",
+        "name": "Chromium - Bookmarks",
         "description": "Parses bookmark and folder entries under each root of Chromium based browser Bookmarks and AccountBookmarks files, including descendants and their immediate parent and ancestor context.",
         "author": "@abrignoni, @AlexisBrignoni, Codex",
         "creation_date": "2020-03-20",
         "last_update_date": "2026-10-31",
         "requirements": "none",
-        "category": "Chromium",
+        "category": "Browsers",
         "notes": "Rows follow source, root and child-array depth-first order, not chronology. "
                  "Folder rows and duplicate occurrences are retained. Added Date keeps the existing "
                  "1601-epoch microsecond conversion; invalid dates remain blank with the raw value. "

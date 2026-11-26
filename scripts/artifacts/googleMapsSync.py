@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Google Maps",
+        "category": "Locations & Maps",
         "notes": "Reads the sync_item_data rows of corpus 11 and 14 from each gmm_sync.db, one row per "
                  "record. What the corpus numbers denote is not established; the artifact is named for "
                  "what their records were observed to hold. item_proto is decoded without a schema. "
@@ -67,7 +67,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-10-26",
         "last_update_date": "2026-10-26",
         "requirements": "none",
-        "category": "Google Maps",
+        "category": "Locations & Maps",
         "notes": "Reads the sync_item_data rows of corpus 1 from each gmm_sync.db, one row per record. "
                  "What the corpus number denotes, and why these people are recorded, is not established. "
                  "item_proto is decoded without a schema. Timestamp is the row's timestamp column read "

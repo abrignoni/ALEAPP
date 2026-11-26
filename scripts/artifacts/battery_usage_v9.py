@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-05-12",
         "last_update_date": "2026-11-17",
         "requirements": "blackboxprotobuf",
-        "category": "Settings Services - Battery Usage - Battery States",
+        "category": "Device Information",
         "notes": "First based on the Android 14 post "
                  "https://bebinary4n6.blogspot.com/2024/05/android-14-battery-usage-and-app-usage.html."
                  " The databases are read by file name battery-usage-db-v<number> with their "
@@ -66,7 +66,7 @@ __artifacts_v2__ = {
         "creation_date": "2024-05-12",
         "last_update_date": "2026-11-17",
         "requirements": "blackboxprotobuf",
-        "category": "Settings Services - Battery Usage - App Usage Events",
+        "category": "Device Information",
         "notes": "Getting App Battery Usage Event from Settings Services - Based on "
                  "https://bebinary4n6.blogspot.com/2024/05/android-14-battery-usage-and-app-usage.html."
                  " App Usage Event Type decodes the AppUsageEventEntity.appUsageEventType "

@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-10-09",
         "requirements": "none",
-        "category": "Dropbox",
+        "category": "Cloud & Files",
         "notes": "Read from the dropbox table of the account database, whose file name carries a "
                  "prefix before -db.db, so the path allows for it. Whether that prefix is the "
                  "account id was not established. Every database matched is read, one copy per "
@@ -33,7 +33,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Dropbox",
+        "category": "Cloud & Files",
         "notes": "Read from the DropboxAccountPrefs table of the first matched preferences database. "
                  "ACCOUNT_INFO, FULL_ACCOUNT_INFO_V2 and PLAN_INFO_V2 are base64 wrapped protobuf; "
                  "printable ASCII runs are extracted without binding them to protobuf fields. "
@@ -62,7 +62,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-08-07",
         "last_update_date": "2026-08-07",
         "requirements": "none",
-        "category": "Dropbox",
+        "category": "Cloud & Files",
         "notes": "Read from the thumbnail_info table of the account database. A row is a "
                  "thumbnail_info record naming a cloud path, a size and a format. This artifact "
                  "does not locate or show any image file, and whether a cached image exists for "

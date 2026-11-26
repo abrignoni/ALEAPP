@@ -5,14 +5,10 @@ __artifacts_v2__ = {
         "description": "Rows of the recent_searches table whose id begins with tag, from the Mastodon databases",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-12-07",
-        "last_update_date": "2026-10-09",
+        "last_update_date": "2026-11-26",
         "requirements": "BeautifulSoup",
-        "category": "Mastodon",
-        "notes": ""
-                 "Every file ending in .db that the search returned is read, one storage view of "
-                 "each, and a database without the recent_searches table is passed over. Source "
-                 "File names the database a row came from. Timestamp is the time column read "
-                 "as Unix seconds.",
+        "category": "Social Media",
+        "notes": "Each file ending in .db that the search returned is read once, even when it appears under several storage views. A rollback snapshot that is identical to its live copy is not read. A database without the recent_searches table is passed over. Source File names the database a row came from. Timestamp is recent_searches.time read as Unix seconds. The app sets it when it saves a search result to its recent searches and replaces the row when the same result is saved again, so it is the latest save of that result (CacheController.java putRecentSearch at release v2.5.0, versionCode 93: https://github.com/mastodon/mastodon-android/blob/1124bc48c253567a4b79a4fd0cab3a8a16f86bd8/mastodon/src/main/java/org/joinmastodon/android/api/CacheController.java#L250-L257). Later app versions keep only the 20 newest rows (https://github.com/mastodon/mastodon-android/blob/24d8c5d9d012858e8928ab465b455ad52805a9ee/mastodon/src/main/java/org/joinmastodon/android/api/CacheController.java#L364). The app builds an id that begins with post for post results (https://github.com/mastodon/mastodon-android/blob/1124bc48c253567a4b79a4fd0cab3a8a16f86bd8/mastodon/src/main/java/org/joinmastodon/android/model/SearchResult.java#L63-L65), but at both commits read, the code that saves a recent search skips post results (https://github.com/mastodon/mastodon-android/blob/1124bc48c253567a4b79a4fd0cab3a8a16f86bd8/mastodon/src/main/java/org/joinmastodon/android/fragments/discover/SearchFragment.java#L106-L107). Only rows whose id begins with tag or acc are reported, one kind per artifact.",
         "paths": ('*/org.joinmastodon.android/databases/*.db*',),
         "output_types": "standard",
         "artifact_icon": "search",
@@ -25,10 +21,10 @@ __artifacts_v2__ = {
         "description": "Parses Mastodon account searches",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-12-07",
-        "last_update_date": "2026-10-09",
+        "last_update_date": "2026-11-26",
         "requirements": "BeautifulSoup",
-        "category": "Mastodon",
-        "notes": "Every file ending in .db that the search returned is read, one storage view of each, and a database without the recent_searches table is passed over. Source File names the database a row came from.",
+        "category": "Social Media",
+        "notes": "Each file ending in .db that the search returned is read once, even when it appears under several storage views. A rollback snapshot that is identical to its live copy is not read. A database without the recent_searches table is passed over. Source File names the database a row came from. Timestamp is recent_searches.time read as Unix seconds. The app sets it when it saves a search result to its recent searches and replaces the row when the same result is saved again, so it is the latest save of that result (CacheController.java putRecentSearch at release v2.5.0, versionCode 93: https://github.com/mastodon/mastodon-android/blob/1124bc48c253567a4b79a4fd0cab3a8a16f86bd8/mastodon/src/main/java/org/joinmastodon/android/api/CacheController.java#L250-L257). Later app versions keep only the 20 newest rows (https://github.com/mastodon/mastodon-android/blob/24d8c5d9d012858e8928ab465b455ad52805a9ee/mastodon/src/main/java/org/joinmastodon/android/api/CacheController.java#L364). The app builds an id that begins with post for post results (https://github.com/mastodon/mastodon-android/blob/1124bc48c253567a4b79a4fd0cab3a8a16f86bd8/mastodon/src/main/java/org/joinmastodon/android/model/SearchResult.java#L63-L65), but at both commits read, the code that saves a recent search skips post results (https://github.com/mastodon/mastodon-android/blob/1124bc48c253567a4b79a4fd0cab3a8a16f86bd8/mastodon/src/main/java/org/joinmastodon/android/fragments/discover/SearchFragment.java#L106-L107). Only rows whose id begins with tag or acc are reported, one kind per artifact.",
         "paths": ('*/org.joinmastodon.android/databases/*.db*',),
         "output_types": "standard",
         "artifact_icon": "search",
@@ -38,22 +34,13 @@ __artifacts_v2__ = {
     },
     "get_mastodon_notifications": {
         "name": "Mastodon - Notifications",
-        "description": "Reports Mastodon notifications with the stored type and the existing type interpretation",
+        "description": "Rows of the notifications_all table of the Mastodon databases, with the notification type as stored and an interpretation of it. The notifications_mentions table is not read.",
         "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2022-12-07",
-        "last_update_date": "2026-10-09",
+        "last_update_date": "2026-11-26",
         "requirements": "BeautifulSoup",
-        "category": "Mastodon",
-        "notes": ""
-                 "Notification Type Interpretation is decoded from the stored integer type as 0 Follow, 2 "
-                 "Mention, 3 Boost and 4 Favorite, the positions of FOLLOW, MENTION, REBLOG and "
-                 "FAVORITE in the app's NotificationType enum "
-                 "(https://github.com/mastodon/mastodon-android/blob/24d8c5d9d012858e8928ab465b455ad52805a9ee/mastodon/src/main/java/org/joinmastodon/android/model/NotificationType.java#L9-L17). "
-                 "That the column holds the enum position was not established. Any other stored "
-                 "value is shown blank in the interpretation. Type (As Stored) retains notifications_all.type "
-                 "without coercion, including NULL and unrecognized values; it does not establish their meaning. Every file ending in .db that the search "
-                 "returned is read, one storage view of each, and a database without the "
-                 "notifications_all table is passed over. Source File names the database a row came from.",
+        "category": "Social Media",
+        "notes": "Notification Type Interpretation is decoded from the stored integer type as 0 Follow, 2 Mention, 3 Boost and 4 Favorite. The app writes the enum position (ordinal) of the notification type to notifications_all.type (CacheController.java putNotifications at release v2.5.0, versionCode 93: https://github.com/mastodon/mastodon-android/blob/1124bc48c253567a4b79a4fd0cab3a8a16f86bd8/mastodon/src/main/java/org/joinmastodon/android/api/CacheController.java#L229). At that release the enum is Notification.Type (https://github.com/mastodon/mastodon-android/blob/1124bc48c253567a4b79a4fd0cab3a8a16f86bd8/mastodon/src/main/java/org/joinmastodon/android/model/Notification.java#L42-L52), and at a later commit it is NotificationType (https://github.com/mastodon/mastodon-android/blob/24d8c5d9d012858e8928ab465b455ad52805a9ee/mastodon/src/main/java/org/joinmastodon/android/model/NotificationType.java#L9-L17). Both have the same first five positions: FOLLOW, FOLLOW_REQUEST, MENTION, REBLOG and FAVORITE. Any other stored value, including 1 (FOLLOW_REQUEST), is shown blank in the interpretation. On pixel7a_a14 only stored values 0 and 2 occur. The enum position of a type can differ in an app version that was not checked. Type (As Stored) shows the number in notifications_all.type as read, whether or not the interpretation covers it. The report stores it as text. The columns were mapped on the layout of app versionCode 93, where each row holds one notification with its account and, when it has one, its status. Later app versions store grouped notifications and keep the accounts and statuses in the notifications_accounts_all and notifications_statuses_all tables (https://github.com/mastodon/mastodon-android/blob/24d8c5d9d012858e8928ab465b455ad52805a9ee/mastodon/src/main/java/org/joinmastodon/android/api/CacheController.java#L306-L341), which this artifact does not read. On those versions Notification Created Timestamp, Status Created Timestamp, Notification From, Reference URL, Text Content and Visibility are blank, and ID is the group key. Not tested on such a database. Text Content has its HTML tags removed. Each file ending in .db that the search returned is read once, even when it appears under several storage views. A rollback snapshot that is identical to its live copy is not read. A database without the notifications_all table is passed over. Source File names the database a row came from.",
         "paths": ('*/org.joinmastodon.android/databases/*.db*',),
         "output_types": "standard",
         "artifact_icon": "bell",
@@ -66,10 +53,10 @@ __artifacts_v2__ = {
         "description": "Parses Mastodon timeline",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-12-07",
-        "last_update_date": "2026-10-09",
+        "last_update_date": "2026-11-26",
         "requirements": "BeautifulSoup",
-        "category": "Mastodon",
-        "notes": "Every file ending in .db that the search returned is read, one storage view of each, and a database without the home_timeline table is passed over. Source File names the database a row came from.",
+        "category": "Social Media",
+        "notes": "Each file ending in .db that the search returned is read once, even when it appears under several storage views. A rollback snapshot that is identical to its live copy is not read. A database without the home_timeline table is passed over. Source File names the database a row came from. Timestamp is the created_at of the row's status. Text Content and Boosted Content have their HTML tags removed. Attachment URL lists the media of the row's own status only. Media attached to a boosted post is not reported. No boost or attachment row was present on pixel7a_a14.",
         "paths": ('*/org.joinmastodon.android/databases/*.db*',),
         "output_types": "standard",
         "artifact_icon": "message",
@@ -82,10 +69,10 @@ __artifacts_v2__ = {
         "description": "Parses Mastodon account details",
         "author": "Kevin Pagano (@stark4n6)",
         "creation_date": "2022-12-07",
-        "last_update_date": "2022-12-07",
+        "last_update_date": "2026-11-26",
         "requirements": "BeautifulSoup",
-        "category": "Mastodon",
-        "notes": "",
+        "category": "Social Media",
+        "notes": "Fields are read from the one-letter keys the app wrote at versionCode 93: b for the account, c for the instance domain and j for the push subscription. The letters follow the field order of AccountSession at release v2.5.0 (https://github.com/mastodon/mastodon-android/blob/1124bc48c253567a4b79a4fd0cab3a8a16f86bd8/mastodon/src/main/java/org/joinmastodon/android/api/session/AccountSession.java#L48-L57), and a later commit lists them as alternates of named keys (https://github.com/mastodon/mastodon-android/blob/24d8c5d9d012858e8928ab465b455ad52805a9ee/mastodon/src/main/java/org/joinmastodon/android/api/session/AccountSession.java#L63-L81). At a later commit (versionCode 190) the app keeps accounts in the accounts table of accounts.db. It moves an existing accounts.json into that table and deletes the file (https://github.com/mastodon/mastodon-android/blob/24d8c5d9d012858e8928ab465b455ad52805a9ee/mastodon/src/main/java/org/joinmastodon/android/api/session/AccountSessionManager.java#L843-L861). This artifact does not read accounts.db. An entry without the b, c and j keys gives a row with every column blank. Account (acct) is the acct field of the account. Bio has its HTML tags removed. The entry also holds the time the access token was generated (https://github.com/mastodon/mastodon-android/blob/1124bc48c253567a4b79a4fd0cab3a8a16f86bd8/mastodon/src/main/java/org/joinmastodon/android/model/Token.java#L23-L26) and two millisecond times: one the app sets when it adds the account and when it refreshes the account info (https://github.com/mastodon/mastodon-android/blob/1124bc48c253567a4b79a4fd0cab3a8a16f86bd8/mastodon/src/main/java/org/joinmastodon/android/api/session/AccountSession.java#L80 and https://github.com/mastodon/mastodon-android/blob/1124bc48c253567a4b79a4fd0cab3a8a16f86bd8/mastodon/src/main/java/org/joinmastodon/android/api/session/AccountSessionManager.java#L293), and one it sets when it refreshes the word filters (https://github.com/mastodon/mastodon-android/blob/1124bc48c253567a4b79a4fd0cab3a8a16f86bd8/mastodon/src/main/java/org/joinmastodon/android/api/session/AccountSessionManager.java#L311). This artifact does not report them.",
         "paths": ('*/org.joinmastodon.android/files/accounts.json',),
         "output_types": "standard",
         "artifact_icon": "user",
@@ -100,7 +87,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-12-07",
         "last_update_date": "2022-12-07",
         "requirements": "BeautifulSoup",
-        "category": "Mastodon",
+        "category": "Social Media",
         "notes": "",
         "paths": ('*/org.joinmastodon.android/files/instance*.json',),
         "output_types": "standard",
@@ -289,7 +276,7 @@ def get_mastodon_accounts(context):
                 str(b.get('bot', '')).title(), str(b.get('discoverable', '')).title(),
                 str(b.get('locked', '')).title(), str(b.get('suspended', '')).title()))
 
-    data_headers = (('Created Timestamp', 'datetime'), 'Name', 'User Name', 'Display Name', 'URL', 'ID', 'Followers Count', 'Following Count', 'Bio', 'Avatar URL', 'Instance Name', 'Favorite Alerts', 'Follow Alerts', 'Mention Alerts', 'Poll Alerts', 'Boost Alerts', 'Is Bot', 'Is Discoverable', 'Is Locked', 'Is Suspended')
+    data_headers = (('Created Timestamp', 'datetime'), 'Account (acct)', 'User Name', 'Display Name', 'URL', 'ID', 'Followers Count', 'Following Count', 'Bio', 'Avatar URL', 'Instance Domain', 'Favorite Alerts', 'Follow Alerts', 'Mention Alerts', 'Poll Alerts', 'Boost Alerts', 'Is Bot', 'Is Discoverable', 'Is Locked', 'Is Suspended')
     return data_headers, data_list, source_path
 
 

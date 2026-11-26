@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-18",
         "last_update_date": "2026-11-21",
         "requirements": "none",
-        "category": "Google Find My Device",
+        "category": "Locations & Maps",
         "notes": "Read from "
                  "com.google.android.apps.adm/files/datastore/com.google:<account>_devices_store.pb, "
                  "a DataStore file the app registers as devices_store. It holds one protobuf "
@@ -78,7 +78,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-21",
         "last_update_date": "2026-11-21",
         "requirements": "none",
-        "category": "Google Find My Device",
+        "category": "Locations & Maps",
         "notes": "Read from the location list (field 3) of "
                  "com.google.android.apps.adm/files/datastore/com.google:<account>_devices_store.pb, "
                  "the same file as Google Find My Device - Devices. Field meanings come from the "

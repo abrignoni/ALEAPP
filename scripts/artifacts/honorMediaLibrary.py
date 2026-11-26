@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-06-20",
         "last_update_date": "2026-08-01",
         "requirements": "none",
-        "category": "HONOR",
+        "category": "Device Information",
         "notes": "The Hash (as stored) column is the gallery_media.hash column reported unchanged; the "
                  "hashing algorithm is not recorded in the database and has not been established. "
                  "Recycled? shows 'Yes (flag = n)' for every non-zero recycleFlag value. The "

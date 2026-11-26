@@ -1,0 +1,86 @@
+{
+  "metadata": {
+    "module_name": "contentQuery",
+    "artifact_name": "Call Log (content query)",
+    "function_name": "content_query_call_log",
+    "case_number": "casesynthetic_alex",
+    "number_of_columns": 13,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 365,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/contentQuery/testdata.contentQuery.content_query_call_log.casesynthetic_alex.zip",
+    "start_time": "2026-11-25T21:50:27.407777+00:00",
+    "end_time": "2026-11-25T21:50:27.472150+00:00",
+    "run_time_seconds": 0.0017571449279785156,
+    "last_commit": {
+      "hash": "9b6ac5ad209440b52a1ae251f797daf2a8eb6874",
+      "author_name": "Maximiliano Telmo",
+      "author_email": "50964800+Maxitelmo@users.noreply.github.com",
+      "date": "2026-11-25T18:31:16-03:00",
+      "message": "Read MMS addresses from content://mms/addr"
+    }
+  },
+  "headers": [
+    "Date (UTC)",
+    "Type",
+    "Number",
+    "Name",
+    "Duration (s)",
+    "Presentation",
+    "Phone Account ID",
+    "Geocoded Location",
+    "Country ISO",
+    "Call ID",
+    "Parse Note",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1767225600,
+      "1 (INCOMING_TYPE)",
+      "+15550100001",
+      "Test Contact",
+      "74",
+      "1",
+      "1",
+      "Example",
+      "US",
+      "1",
+      "",
+      1,
+      "ALEX_SYNTH0001/content_provider_SYNTH0001/call_log/call_log_calls.txt"
+    ],
+    [
+      1767229200,
+      "3 (MISSED_TYPE)",
+      "+15550100002",
+      "NULL",
+      "0",
+      "1",
+      "1",
+      "",
+      "US",
+      "2",
+      "",
+      2,
+      "ALEX_SYNTH0001/content_provider_SYNTH0001/call_log/call_log_calls.txt"
+    ],
+    [
+      1767232800,
+      "2 (OUTGOING_TYPE)",
+      "",
+      "NULL",
+      "12",
+      "2",
+      "NULL",
+      "",
+      "NULL",
+      "3",
+      "",
+      3,
+      "ALEX_SYNTH0001/content_provider_SYNTH0001/call_log/call_log_calls.txt"
+    ]
+  ]
+}

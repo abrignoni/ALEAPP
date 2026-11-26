@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-18",
         "last_update_date": "2026-11-18",
         "requirements": "none",
-        "category": "Semantic Location",
+        "category": "Locations & Maps",
         "notes": "Read from Google Play services' semloc_transient_database (Room database, table "
                  "TransientDataEntity, under com.google.android.gms/databases/). Two tested images "
                  "(anne_a15, kevin_pocox7_a15) also have a copy under com.google.android.gms/cache/. "
@@ -94,7 +94,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-18",
         "last_update_date": "2026-11-18",
         "requirements": "none",
-        "category": "Semantic Location",
+        "category": "Locations & Maps",
         "notes": "Read from Google Play services' semloc_transient_database (Room database, table "
                  "TransientDataEntity, under com.google.android.gms/databases/). Two tested images "
                  "(anne_a15, kevin_pocox7_a15) also have a copy under com.google.android.gms/cache/. "
@@ -184,7 +184,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-18",
         "last_update_date": "2026-11-18",
         "requirements": "none",
-        "category": "Semantic Location",
+        "category": "Locations & Maps",
         "notes": "Read from Google Play services' semloc_transient_database (Room database, table "
                  "TransientDataEntity, under com.google.android.gms/databases/). Two tested images "
                  "(anne_a15, kevin_pocox7_a15) also have a copy under com.google.android.gms/cache/. "
@@ -258,7 +258,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-18",
         "last_update_date": "2026-11-18",
         "requirements": "none",
-        "category": "Semantic Location",
+        "category": "Locations & Maps",
         "notes": "Read from Google Play services' semloc_transient_database (Room database, table "
                  "TransientDataEntity, under com.google.android.gms/databases/). Two tested images "
                  "(anne_a15, kevin_pocox7_a15) also have a copy under com.google.android.gms/cache/. "
@@ -334,7 +334,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-18",
         "last_update_date": "2026-11-18",
         "requirements": "none",
-        "category": "Semantic Location",
+        "category": "Locations & Maps",
         "notes": "Read from Google Play services' semloc_transient_database (Room database, table "
                  "TransientDataEntity, under com.google.android.gms/databases/). Two tested images "
                  "(anne_a15, kevin_pocox7_a15) also have a copy under com.google.android.gms/cache/. "

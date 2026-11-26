@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2022-02-23",
         "last_update_date": "2022-02-23",
         "requirements": "none",
-        "category": "Chess.com",
+        "category": "Music, Video & News",
         "notes": "",
         "paths": ('*/com.chess/databases/chess-database*',),
         "output_types": ['html', 'tsv', 'lava'],

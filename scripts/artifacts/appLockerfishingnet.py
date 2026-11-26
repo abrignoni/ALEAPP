@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "creation_date": "2021-12-14",
         "last_update_date": "2026-10-06",
         "requirements": "none",
-        "category": "Encrypting Media Apps",
+        "category": "Photos & Media",
         "notes": "CBC output is not authenticated. File signatures are heuristic; key/IV "
                  "applicability and app-version coverage remain uncorroborated.",
         "paths": ('*/.privacy_safe/picture/*', '*/.privacy_safe/video/*'),
