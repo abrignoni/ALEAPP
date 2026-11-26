@@ -1,0 +1,90 @@
+{
+  "metadata": {
+    "module_name": "contentQuery",
+    "artifact_name": "SMS (content query)",
+    "function_name": "content_query_sms",
+    "case_number": "casesynthetic_alex_reader_edges",
+    "number_of_columns": 14,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 550,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/contentQuery/testdata.contentQuery.content_query_sms.casesynthetic_alex_reader_edges.zip",
+    "start_time": "2026-11-26T16:33:07.560543+00:00",
+    "end_time": "2026-11-26T16:33:07.623363+00:00",
+    "run_time_seconds": 0.0012662410736083984,
+    "last_commit": {
+      "hash": "6b4ea83b0350335cdbca7e0365056629f803a901",
+      "author_name": "Maximiliano Telmo",
+      "author_email": "50964800+Maxitelmo@users.noreply.github.com",
+      "date": "2026-11-26T13:09:34-03:00",
+      "message": "Content query: report an unreadable file per file, treat a dump without the join columns as incomplete"
+    }
+  },
+  "headers": [
+    "Date (UTC)",
+    "Date Sent (UTC)",
+    "Type",
+    "Address",
+    "Body",
+    "Read",
+    "Seen",
+    "Thread ID",
+    "Subscription ID",
+    "Creator",
+    "Message ID",
+    "Parse Note",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1767265200,
+      "",
+      "1 (INBOX)",
+      "+15550100011",
+      "pasted from a log:\nRow: 1 example=one\nRow: 2 example=two\nRow: 3 example=three\nRow: 4 example=four",
+      "1",
+      "1",
+      "",
+      "",
+      "",
+      "50",
+      "",
+      1,
+      "ALEX_SYNTH0004/content_provider_SYNTH0004/sms/sms.txt"
+    ],
+    [
+      1767268800,
+      "",
+      "1 (INBOX)",
+      "+15550100012",
+      ", seen=yes",
+      "1",
+      "1",
+      "",
+      "",
+      "",
+      "51",
+      "a value holds \", seen=\", the name of a column of this dump; the split at that point may be off",
+      6,
+      "ALEX_SYNTH0004/content_provider_SYNTH0004/sms/sms.txt"
+    ],
+    [
+      "",
+      "",
+      "2 (SENT)",
+      "+15550100013",
+      "long date",
+      "1",
+      "1",
+      "",
+      "",
+      "",
+      "52",
+      "time value 9999999999999999999999999999999999999999... (5000 digits) is out of range",
+      7,
+      "ALEX_SYNTH0004/content_provider_SYNTH0004/sms/sms.txt"
+    ]
+  ]
+}

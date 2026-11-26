@@ -32,7 +32,13 @@ Parsing:
 1. Lines are split on ``\\n``, and one carriage return at the end of each line is dropped,
    so a file saved with CRLF line endings reads like one saved with LF.
 2. A line opens a row when it is ``Row: <n> <first column>=`` with ``n`` the next row number
-   in sequence (0, 1, 2, ...) and the first column the one most rows start with. Every
+   in sequence (0, 1, 2, ...) and the first column the one the first ``Row: 0`` line names
+   (the one most such lines start with when there is no ``Row: 0`` line). When ``Row: 0``
+   lines name different first columns (a line before the rows, or a value quoting rows),
+   the earliest is kept when a ``Row: 1`` line with the same first column follows it. Only
+   when it does not, each of the first four is tried and the reading kept has the fewest
+   rows that cannot be split, then the least text before its first row, then the earliest
+   ``Row: 0``. Every
    other line belongs to the value before it. A value line that is itself exactly
    ``Row: <next number> <first column>=...`` cannot be told apart from a new row.
 3. The column list of the dump is the most common ordered list of names found in the rows
@@ -54,12 +60,16 @@ from datetime import datetime, timedelta, timezone
 ROW = re.compile(r'Row: (\d+) (.*)\Z', re.S)
 FIRST_NAME = re.compile(r'([^\s=,]+)=')
 NAME_IN_ROW = re.compile(r'(?:\A|, )([^\s=,]+)=')
+# The separator alone (', <name>='), so a value that starts with a plain 'name=' is not flagged.
+DELIMITER = re.compile(r', ([^\s=,]+)=')
 ERROR_LINE = 'Error while accessing provider:'
 NO_RESULT_LINE = 'No result found.'
 EXCEPTION_LINE = re.compile(r'(?:Caused by: )?([A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)+)(?::\s?(.*))?\Z')
 SECURITY_EXCEPTION = 'java.lang.SecurityException'
 DETAIL_CHARS = 400
 CACHE_SIZE = 8
+# 'Row: 0' readings tried when several 'Row: 0' lines name different first columns.
+MAX_READINGS = 4
 EPOCH = datetime(1970, 1, 1, tzinfo=timezone.utc)
 
 # What a file holds, as reported by the Content Query Files artifact.
@@ -70,6 +80,7 @@ PROVIDER_ERROR = 'provider error'
 EMPTY_FILE = 'empty file'
 UNRECOGNISED = 'text not recognised'
 NO_FILE = 'no file'
+UNREADABLE = 'file not readable'
 
 # Notes on a row, shown in its Parse Note column.
 NOTE_AMBIGUOUS = 'a value holds ", {name}=", the name of a column of this dump; the split at that point may be off'
@@ -142,23 +153,50 @@ def _classify_without_rows(lines):
     return UNRECOGNISED, _cut(first)
 
 
-def _row_starts(lines):
-    """Indexes of the lines that open a row (see the module docstring, step 2)."""
+def _candidates(lines):
+    """(index, number, rest) of every line shaped like 'Row: <n> ...'."""
     candidates = []
     for index, line in enumerate(lines):
         match = ROW.match(line)
         if match:
             candidates.append((index, int(match.group(1)), match.group(2)))
+    return candidates
+
+
+def _row_zero_names(candidates):
+    """The first-column names of the 'Row: 0' lines among ``candidates``, in order, each once, up
+    to MAX_READINGS: no more are ever tried."""
+    names, seen = [], set()
+    for _index, number, rest in candidates:
+        name = FIRST_NAME.match(rest)
+        if number == 0 and name and name.group(1) not in seen:
+            seen.add(name.group(1))
+            names.append(name.group(1))
+            if len(names) == MAX_READINGS:
+                break
+    return names
+
+
+def _row_starts(candidates, first=None):
+    """Indexes of the lines that open a row (see the module docstring, step 2), from the
+    ``candidates`` of the text, with ``first`` ('<name>=') as the first column when it is given."""
     if not candidates:
         return []
-    first_names = collections.Counter()
-    for _index, _number, rest in candidates:
-        name = FIRST_NAME.match(rest)
-        if name:
-            first_names[name.group(1)] += 1
-    if not first_names:
-        return []
-    first = first_names.most_common(1)[0][0] + '='
+    # Without ``first``, the first column is the one the first 'Row: 0' line names: row 0 is
+    # printed before any value, so a line inside a value cannot come first. A vote over every
+    # candidate is kept only for a text with no 'Row: 0' line.
+    if first is None:
+        names = _row_zero_names(candidates)
+        first = names[0] + '=' if names else None
+    if first is None:
+        first_names = collections.Counter()
+        for _index, _number, rest in candidates:
+            name = FIRST_NAME.match(rest)
+            if name:
+                first_names[name.group(1)] += 1
+        if not first_names:
+            return []
+        first = first_names.most_common(1)[0][0] + '='
     starts, expected = [], 0
     for index, number, rest in candidates:
         if number == expected and rest.startswith(first):
@@ -187,11 +225,12 @@ def _split(text, columns):
 
 
 def _ambiguous(pairs, names):
+    """The first column name of the dump that a value holds as ', <name>=', at any offset, or None."""
     for _name, value in pairs:
         if ', ' not in value:
             continue
-        for match in NAME_IN_ROW.finditer(value):
-            if match.start() and match.group(1) in names:
+        for match in DELIMITER.finditer(value):
+            if match.group(1) in names:
                 return match.group(1)
     return None
 
@@ -199,8 +238,42 @@ def _ambiguous(pairs, names):
 def parse_text(text):
     """Reads the text of one content query output and returns a Dump."""
     lines = _lines(text)
+    # The row-like lines are found once and shared by the steps below.
+    candidates = _candidates(lines)
+    names = _row_zero_names(candidates)
+    if len(names) < 2:
+        starts = _row_starts(candidates, names[0] + '=' if names else None)
+        del candidates  # not needed while the rows are split
+        return _parse_lines(lines, starts)
+    # The earliest 'Row: 0' line is row 0 when a 'Row: 1' line with the same first column
+    # follows it: then the text holds at least two rows that way, and a sequence quoted later
+    # inside a value cannot replace them.
+    starts = _row_starts(candidates, names[0] + '=')
+    if len(starts) > 1:
+        del candidates
+        return _parse_lines(lines, starts)
+    # Several 'Row: 0' lines name different first columns: a line before the rows, or a value
+    # that quotes rows, looks like row 0 too. Each reading is tried, and the one kept has the
+    # fewest rows that cannot be split, then the least text left before its first row; on a
+    # tie, the earliest 'Row: 0' line.
+    # Each reading parses the whole text; _row_zero_names keeps at most MAX_READINGS names.
+    # Only the best reading so far is kept, so at most two parsed dumps are alive at once.
+    best_score, best_dump = None, None
+    for order, name in enumerate(names):
+        starts = _row_starts(candidates, name + '=')
+        dump = _parse_lines(lines, starts)
+        unsplit = sum(1 for record in dump.records if not record.pairs) if dump.records else len(lines)
+        before = sum(1 for line in lines[:starts[0]] if line.strip()) if starts else len(lines)
+        score = (unsplit, before, order)
+        if best_score is None or score < best_score:
+            best_score, best_dump = score, dump
+        del dump
+    return best_dump
+
+
+def _parse_lines(lines, starts):
+    """The Dump of a text split into lines, with ``starts`` the indexes of the lines that open a row."""
     warnings = []
-    starts = _row_starts(lines)
     if not starts:
         status, detail = _classify_without_rows(lines)
         return Dump(status, detail, (), [], warnings)
@@ -246,7 +319,7 @@ def parse_text(text):
             warnings.append('a provider error line inside the last row is kept as part of its values, since the row '
                             'without it does not hold the columns of this dump')
 
-    repeated = sorted({name for name in columns if columns.count(name) > 1})
+    repeated = sorted(name for name, count in collections.Counter(columns).items() if count > 1)
     names = set(columns)
     records = []
     for number, line, text in texts:
@@ -343,12 +416,13 @@ def epoch_to_utc(text, unit):
     sign = value[1:] if value.startswith('-') else value
     if not (sign.isascii() and sign.isdigit()):
         return '', f'time value {_cut(value, 40)} is not an integer'
-    number = int(value)
     try:
+        # int() raises ValueError past Python's integer string conversion limit (4,300 digits by default).
+        number = int(value)
         delta = timedelta(milliseconds=number) if unit == 'ms' else timedelta(seconds=number)
         return EPOCH + delta, ''
-    except OverflowError:
-        return '', f'time value {value} is out of range'
+    except (OverflowError, ValueError):
+        return '', f'time value {_cut(value, 40)} ({len(sign)} digits) is out of range'
 
 
 # ------------------------------------------------------------------------------------------

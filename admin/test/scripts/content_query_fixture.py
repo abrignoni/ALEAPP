@@ -23,6 +23,9 @@ write. These cases are built:
 * ``alex_row_edges``: two ALEX folders, one with a single SMS row whose body holds
   ', seen=' (the column list then names seen twice), one with a single SMS row whose
   body holds an error line and an exception line, followed by another column;
+* ``alex_reader_edges`` (#2093): an ALEX folder with SMS rows whose body holds four
+  'Row: <n> example=' lines, whose body starts with ', seen=', and whose date has 5,000
+  digits; and an ALEX folder whose mms_addr.txt prints no msg_id column;
 * ``triage``: an android_triage folder with LF line endings, 'No result found.', an empty
   file (a failed query, whose error went to the terminal), multi-line values, a contacts
   data dump whose hash_id ends with a line break on every row, the tool's own log and
@@ -213,6 +216,28 @@ def crlf(text):
     return text.replace('\n', '\r\n')
 
 
+# Three SMS rows for the reader edge cases of #2093: a body holding four lines that start with
+# 'Row: <n> example=' (more than the real rows, so a vote over row-like lines would pick
+# 'example' as the first column), a body that starts with ', seen=' (the name of a later
+# column), and a date of 5,000 digits (past Python's integer string conversion limit).
+SMS_READER_EDGES = rows(
+    [('_id', '50'), ('address', '+15550100011'), ('date', '1767265200000'), ('type', '1'),
+     ('body', 'pasted from a log:\nRow: 1 example=one\nRow: 2 example=two\nRow: 3 example=three\n'
+              'Row: 4 example=four'),
+     ('read', '1'), ('seen', '1')],
+    [('_id', '51'), ('address', '+15550100012'), ('date', '1767268800000'), ('type', '1'),
+     ('body', ', seen=yes'), ('read', '1'), ('seen', '1')],
+    [('_id', '52'), ('address', '+15550100013'), ('date', '9' * 5000), ('type', '2'),
+     ('body', 'long date'), ('read', '1'), ('seen', '1')],
+)
+# MMS rows with an address file whose rows print no msg_id column (as a query with a
+# projection could leave it out): the addresses cannot be matched to any message.
+MMS_ADDR_NO_MSG_ID = rows(
+    [('_id', '60'), ('contact_id', 'NULL'), ('address', '+15550100014'), ('type', '137'), ('charset', '106')],
+    [('_id', '61'), ('contact_id', 'NULL'), ('address', '+15550100015'), ('type', '151'), ('charset', '106')],
+)
+
+
 def provider_error(authority, exception):
     return (f'Error while accessing provider:{authority}\n{exception}\n'
             '\tat android.os.Parcel.createExceptionOrNull(Parcel.java:3011)\n')
@@ -286,6 +311,11 @@ CASES = {
     'alex_row_edges': {
         'ALEX_SYNTH0002/content_provider_SYNTH0002/sms/sms.txt': SMS_ONE_ROW_REPEATED,
         'ALEX_SYNTH0003/content_provider_SYNTH0003/sms/sms.txt': SMS_ERROR_TEXT_IN_BODY,
+    },
+    'alex_reader_edges': {
+        'ALEX_SYNTH0004/content_provider_SYNTH0004/sms/sms.txt': SMS_READER_EDGES,
+        'ALEX_SYNTH0005/content_provider_SYNTH0005/mms/mms.txt': MMS,
+        'ALEX_SYNTH0005/content_provider_SYNTH0005/mms/mms_addr.txt': MMS_ADDR_NO_MSG_ID,
     },
     'triage_stderr': {
         f'{TRIAGE_ROOT}/contacts_contacts.txt': SECURITY_ERROR,

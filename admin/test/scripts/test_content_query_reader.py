@@ -77,6 +77,57 @@ class ParseRowsTest(unittest.TestCase):
         self.assertEqual(dump.columns, ('_id', 'body', 'seen'))
         self.assertIn('", seen="', dump.records[0].note)
 
+    def test_row_lines_inside_a_value_do_not_outvote_the_first_column(self):
+        dump = reader.parse_text('Row: 0 _id=1, body=quoted:\nRow: 1 example=x\nRow: 2 example=y, seen=1\n')
+        self.assertEqual(dump.status, reader.ROWS)
+        self.assertEqual(len(dump.records), 1)
+        self.assertEqual(values(dump)[0]['body'], 'quoted:\nRow: 1 example=x\nRow: 2 example=y')
+
+    def test_row_like_line_before_the_rows_does_not_set_the_first_column(self):
+        dump = reader.parse_text('Row: 0 example=x\nRow: 0 _id=1, body=a\nRow: 1 _id=2, body=b\n')
+        self.assertEqual(dump.columns, ('_id', 'body'))
+        self.assertEqual([row['_id'] for row in values(dump)], ['1', '2'])
+        self.assertTrue(any('before the first row' in warning for warning in dump.warnings))
+
+    def test_single_row_with_row_lines_in_its_value_keeps_the_first_row_zero(self):
+        dump = reader.parse_text('Row: 0 _id=1, body=quoted:\nRow: 0 example=x\nRow: 1 example=y\n')
+        self.assertEqual(dump.columns, ('_id', 'body'))
+        self.assertEqual(values(dump)[0]['body'], 'quoted:\nRow: 0 example=x\nRow: 1 example=y')
+
+    def test_quoted_sequence_does_not_replace_rows_with_an_unsplit_one(self):
+        dump = reader.parse_text('Row: 0 _id=1, body=a, seen=1\nRow: 1 _id=2, body=b, seen=0\n'
+                                 'Row: 2 _id=3, body=quoted:\nRow: 0 example=x\nRow: 1 example=y\n')
+        self.assertEqual(dump.columns, ('_id', 'body', 'seen'))
+        self.assertEqual(len(dump.records), 3)
+        self.assertEqual([record.number for record in dump.records], [0, 1, 2])
+
+    def test_many_distinct_row_zero_names_are_not_all_collected(self):
+        # Only the first MAX_READINGS names are ever tried; collecting every distinct name with a
+        # list membership test was quadratic (40,000 names took over ten seconds).
+        text = ('Row: 0 _id=1, body=x\n' + ''.join(f'Row: 0 n{i}=x\n' for i in range(40000))
+                + 'Row: 1 _id=2, body=y\n')
+        self.assertEqual(len(reader._row_zero_names(reader._candidates(reader._lines(text)))), reader.MAX_READINGS)  # pylint: disable=protected-access
+        dump = reader.parse_text(text)
+        self.assertEqual([row['_id'] for row in values(dump)], ['1', '2'])
+
+    def test_large_dump_with_a_quoted_row_zero_is_read(self):
+        # The second reading makes the whole text one row of many names; the repeated-name check
+        # over that list was quadratic and did not finish on a dump of this size.
+        lines = [f'Row: {n} _id={n}, _data=/x/IMG_{n}.jpg, mime_type=image/jpeg' for n in range(20000)]
+        lines[5] += '\nRow: 0 quoted=x'
+        dump = reader.parse_text('\n'.join(lines) + '\n')
+        self.assertEqual(len(dump.records), 20000)
+        self.assertEqual(dump.columns[0], '_id')
+
+    def test_delimiter_at_the_start_of_a_value_is_flagged(self):
+        dump = reader.parse_text('Row: 0 _id=1, body=, seen=yes, read=1, seen=1\n'
+                                 'Row: 1 _id=2, body=b, read=0, seen=0\nRow: 2 _id=3, body=c, read=1, seen=1\n')
+        self.assertEqual(dump.columns, ('_id', 'body', 'read', 'seen'))
+        self.assertEqual(values(dump)[0]['body'], ', seen=yes')
+        self.assertIn('", seen="', dump.records[0].note)
+        plain = reader.parse_text('Row: 0 _id=1, body=seen=yes, seen=1\n')
+        self.assertEqual(plain.records[0].note, '')
+
     def test_text_before_first_row_is_reported(self):
         dump = reader.parse_text('WARNING: linker: something\nRow: 0 _id=1\n')
         self.assertEqual(len(dump.records), 1)
@@ -212,6 +263,9 @@ class TimeTest(unittest.TestCase):
             self.assertEqual(reader.epoch_to_utc(text, 'ms'), ('', ''))
         self.assertIn('not an integer', reader.epoch_to_utc('12a', 'ms')[1])
         self.assertIn('out of range', reader.epoch_to_utc('9' * 30, 's')[1])
+        # More digits than Python's default int conversion limit (4,300) must not raise.
+        self.assertIn('out of range', reader.epoch_to_utc('9' * 5000, 'ms')[1])
+        self.assertIn('out of range', reader.epoch_to_utc('-' + '9' * 5000, 's')[1])
 
 
 if __name__ == '__main__':
