@@ -1,8 +1,8 @@
 __artifacts_v2__ = {
     "private_photo_vault_account": {
         "name": "Private Photo Vault - Account Usage",
-        "description": "Install date and the key event count and last key event date the Private Photo Vault app keeps "
-                       "in its main preferences file, with the two dates converted from Unix "
+        "description": "Install date, key event count and last key event date from the Private Photo Vault app's "
+                       "APP_PREFERENCES.xml file, with the two dates converted from Unix "
                        "milliseconds to UTC and the counts as stored.",
         "author": "@Gear-I & Claude, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-17",
@@ -23,7 +23,9 @@ __artifacts_v2__ = {
                  "is within a second before the stored creation date of each of the three media "
                  "rows, which does not establish what the event is. 'Uses Encrypted Preferences' "
                  "is the app's own usesEncryptedPreferencesV2 flag, reported as stored; what the "
-                 "app does when it is set is not established here. This module does not look for "
+                 "app does when it is set is not established here. 'Imported Media Count' and 'Minutes Spent "
+                 "In App' are the importedMedia and minutesSpentInApp entries, reported as stored. "
+                 "What updates them was not read from the app's code. This module does not look for "
                  "a PIN.",
         "paths": ('*/com.enchantedcloud.photovault/shared_prefs/APP_PREFERENCES.xml',),
         "output_types": ["standard"],
