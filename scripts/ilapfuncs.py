@@ -1273,29 +1273,43 @@ def is_alex_rebuilt_provider_db(path):
 
 
 def alex_default_row_filter(path, table, alias=None):
-    '''A SQL condition that leaves out the _id 0 rows ALEX writes on its own.
+    '''A SQL condition that leaves out the rows of an ALEX rebuild that are not records.
 
-    ALEX writes a row of its schema defaults, with _id 0, when a provider returned no
-    rows. When a text value holds "Row: <n>" it cuts the value there and writes the
-    columns after it as another _id 0 row (ALEAPP #2076). For an ALEX-rebuilt database
-    this returns the condition that drops those rows from table (named alias in the
-    query, when given) and logs how many it drops. For any other database it returns
-    '1', which keeps every row.'''
+    ALEX before commit 8f27e7a writes a row of its schema defaults, with _id 0, when a
+    provider returned no rows, and up to 8f27e7a a text value holding "Row: <n>" is cut
+    there with the columns after it written as another _id 0 row. At ed3d41eb a line
+    break followed by "Row: <n> <column>=" inside a value breaks the split of every
+    row, and _id then usually holds row text instead of a number; a break that leaves
+    _id a whole number is not caught (ALEAPP #2076). For an ALEX-
+    rebuilt database this returns the condition that drops rows whose _id is 0 or not a
+    whole number from table (named alias in the query, when given) and logs how many it
+    drops. Rows with a NULL _id are kept. For any other database it returns '1', which
+    keeps every row.'''
     if not is_alex_rebuilt_provider_db(path):
         return '1'
     name = alias or table
-    left_out = 0
+    default_rows = broken_rows = 0
     db = open_sqlite_db_readonly(path)
     if db is not None:
         try:
-            left_out = db.execute(f'SELECT count(*) FROM "{table}" WHERE _id = \'0\'').fetchone()[0]
+            default_rows, broken_rows = db.execute(
+                f'''SELECT count(CASE WHEN _id = '0' THEN 1 END),
+                          count(CASE WHEN _id IS NOT NULL AND _id != '0' AND
+                                     (_id NOT GLOB '[0-9]*' OR _id GLOB '*[^0-9]*') THEN 1 END)
+                   FROM "{table}"''').fetchone()
         except sqlite3.Error:
-            left_out = 0
+            default_rows = broken_rows = 0
         finally:
             db.close()
     logfunc(f'{Context.get_relative_path(path)} was rebuilt by ALEX from content provider queries; '
-            f'{left_out} row(s) of {table} with _id 0 left out')
-    return f'("{name}"._id IS NULL OR "{name}"._id != \'0\')'
+            f'{default_rows} row(s) of {table} with _id 0 left out')
+    if broken_rows:
+        logfunc(f'{Context.get_relative_path(path)}: {broken_rows} row(s) of {table} whose _id is not a '
+                f'whole number left out. ALEX at ed3d41eb leaves row text in _id when it cannot split '
+                f'the query output into columns. '
+                f'The raw content query text, where the backup keeps it, is under extra/content_provider/.')
+    return (f'("{name}"._id IS NULL OR ("{name}"._id != \'0\' AND "{name}"._id GLOB \'[0-9]*\' '
+            f'AND "{name}"._id NOT GLOB \'*[^0-9]*\'))')
 
 
 def null_absent_columns(path, query):

@@ -91,7 +91,8 @@ class AlexRebuiltDetectionTest(unittest.TestCase):
             self.assertFalse(is_alex_rebuilt_provider_db(str(integer_v0)))
             self.assertEqual(alex_default_row_filter(str(device), 'calls'), '1')
             self.assertEqual(alex_default_row_filter(str(rebuilt), 'calls', 'c'),
-                             '("c"._id IS NULL OR "c"._id != \'0\')')
+                             '("c"._id IS NULL OR ("c"._id != \'0\' AND "c"._id GLOB \'[0-9]*\' '
+                             'AND "c"._id NOT GLOB \'*[^0-9]*\'))')
 
 
 class AlexRebuiltArtifactsTest(unittest.TestCase):
@@ -125,6 +126,14 @@ class AlexRebuiltArtifactsTest(unittest.TestCase):
         path = self._mmssms(True, [], [('0', '0', '0', '0', '0', '0'), pdu_real, pdu_null_id])
         _, rows, _ = run(self.root, [path], get_sms_mms_mms)
         self.assertEqual(sorted(r[2] for r in rows), ['Received', 'Sent'])
+
+    def test_broken_split_rows_left_out(self):
+        # ALEX ed3d41eb: a body with a line break before "Row: <n> read=" leaves row text in _id.
+        broken = ('7, thread_id=2, address=+15550100010, date=1767312000000', None, None, None, '0', '0',
+                  '0, status=-1, type=1', '0', None, None, '-1')
+        path = self._mmssms(True, [SMS_REAL, broken, SMS_DEFAULT], [])
+        _, rows, _ = run(self.root, [path], get_sms_mms)
+        self.assertEqual([r[5] for r in rows], ['1'])
 
     def test_device_database_untouched(self):
         device_default = (0,) + SMS_DEFAULT[1:]
