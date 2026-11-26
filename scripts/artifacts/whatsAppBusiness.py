@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-25",
         "last_update_date": "2026-11-25",
         "requirements": "none",
-        "category": "WhatsApp Business",
+        "category": "Messaging",
         "notes": "Runs the same reader as WhatsApp - Contacts on com.whatsapp.w4b files only, so "
                  "WhatsApp and WhatsApp Business are never read together. The columns are those of "
                  "WhatsApp - Contacts. Its notes describe the columns it documents. Those notes were "
@@ -40,7 +40,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-25",
         "last_update_date": "2026-11-25",
         "requirements": "none",
-        "category": "WhatsApp Business",
+        "category": "Messaging",
         "notes": "Runs the same reader as WhatsApp - Call Logs on com.whatsapp.w4b files only, so "
                  "WhatsApp and WhatsApp Business are never read together. The columns are those of "
                  "WhatsApp - Call Logs. Its notes describe the columns it documents. Those notes were "
@@ -75,7 +75,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-25",
         "last_update_date": "2026-11-25",
         "requirements": "none",
-        "category": "WhatsApp Business",
+        "category": "Messaging",
         "notes": "Runs the same reader as WhatsApp - One To One Messages on com.whatsapp.w4b files "
                  "only, so WhatsApp and WhatsApp Business are never read together. The columns are "
                  "those of WhatsApp - One To One Messages. Its notes describe the columns it "
@@ -131,7 +131,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-25",
         "last_update_date": "2026-11-25",
         "requirements": "none",
-        "category": "WhatsApp Business",
+        "category": "Messaging",
         "notes": "Runs the same reader as WhatsApp - Group Messages on com.whatsapp.w4b files only, so "
                  "WhatsApp and WhatsApp Business are never read together. The columns are those of "
                  "WhatsApp - Group Messages. Its notes describe the columns it documents. Those notes "
@@ -182,7 +182,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-25",
         "last_update_date": "2026-11-25",
         "requirements": "none",
-        "category": "WhatsApp Business",
+        "category": "Messaging",
         "notes": "Runs the same reader as WhatsApp - Group Details on com.whatsapp.w4b files only, so "
                  "WhatsApp and WhatsApp Business are never read together. The columns are those of "
                  "WhatsApp - Group Details. Its notes describe the columns it documents. Those notes "
@@ -217,7 +217,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-25",
         "last_update_date": "2026-11-25",
         "requirements": "none",
-        "category": "WhatsApp Business",
+        "category": "Messaging",
         "notes": "Runs the same reader as WhatsApp - Channels on com.whatsapp.w4b files only, so "
                  "WhatsApp and WhatsApp Business are never read together. The columns are those of "
                  "WhatsApp - Channels. Its notes describe the columns it documents. Those notes were "
@@ -258,7 +258,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-25",
         "last_update_date": "2026-11-25",
         "requirements": "none",
-        "category": "WhatsApp Business",
+        "category": "Messaging",
         "notes": "Runs the same reader as WhatsApp - Channel Messages on com.whatsapp.w4b files only, "
                  "so WhatsApp and WhatsApp Business are never read together. The columns are those of "
                  "WhatsApp - Channel Messages. Its notes describe the columns it documents. Those "
@@ -310,7 +310,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-25",
         "last_update_date": "2026-11-25",
         "requirements": "none",
-        "category": "WhatsApp Business",
+        "category": "Messaging",
         "notes": "Runs the same reader as WhatsApp - User Profile on com.whatsapp.w4b files only, so "
                  "WhatsApp and WhatsApp Business are never read together. The columns are those of "
                  "WhatsApp - User Profile. Its notes describe the columns it documents. Those notes "
@@ -344,7 +344,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-25",
         "last_update_date": "2026-11-25",
         "requirements": "none",
-        "category": "WhatsApp Business",
+        "category": "Messaging",
         "notes": "Runs the same reader as WhatsApp - Default Disappearing Messages Timer on "
                  "com.whatsapp.w4b files only, so WhatsApp and WhatsApp Business are never read "
                  "together. The columns are those of WhatsApp - Default Disappearing Messages Timer. "
