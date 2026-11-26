@@ -55,5 +55,22 @@ class Users(unittest.TestCase):
         self.assertEqual((len(rows), len(source)), (1, 1))
 
 
+    def test_a_damaged_store_does_not_hide_the_others(self):
+        for artifact in ('get_wellbeing', 'get_wellbeing_url'):
+            with self.subTest(artifact):
+                with tempfile.TemporaryDirectory() as folder:
+                    root = pathlib.Path(folder)
+                    good = root / f'data/user/0/{STORE}'
+                    bad = root / f'data/user/10/{STORE}'
+                    make_store(good, 'com.example.good')
+                    bad.parent.mkdir(parents=True)
+                    bad.write_bytes(b'SQLite format 3\x00' + b'\xff' * 4080)
+                    files = [str(good), str(bad)]
+                    context = SimpleNamespace(get_files_found=lambda f=files: f,
+                                              get_relative_path=lambda p, r=root: str(pathlib.Path(p).relative_to(r)))
+                    _headers, rows, _source = getattr(wellbeing, artifact).__wrapped__(context)
+                self.assertEqual(len(rows), 1)
+
+
 if __name__ == '__main__':
     unittest.main()
