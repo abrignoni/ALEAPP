@@ -35,7 +35,7 @@ Parsing:
    in sequence (0, 1, 2, ...) and the first column the one the first ``Row: 0`` line names
    (the one most such lines start with when there is no ``Row: 0`` line). When ``Row: 0``
    lines name different first columns (a line before the rows, or a value quoting rows),
-   each is tried and the reading kept has the fewest rows that cannot be split, then the
+   each of the first four is tried and the reading kept has the fewest rows that cannot be split, then the
    least text before its first row, then the earliest ``Row: 0``; a text where two readings
    both split cleanly with no text before them keeps the earliest. Every
    other line belongs to the value before it. A value line that is itself exactly
@@ -67,6 +67,8 @@ EXCEPTION_LINE = re.compile(r'(?:Caused by: )?([A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\
 SECURITY_EXCEPTION = 'java.lang.SecurityException'
 DETAIL_CHARS = 400
 CACHE_SIZE = 8
+# 'Row: 0' readings tried when several 'Row: 0' lines name different first columns.
+MAX_READINGS = 4
 EPOCH = datetime(1970, 1, 1, tzinfo=timezone.utc)
 
 # What a file holds, as reported by the Content Query Files artifact.
@@ -239,8 +241,9 @@ def parse_text(text):
     # that quotes rows, looks like row 0 too. Each reading is tried, and the one kept has the
     # fewest rows that cannot be split, then the least text left before its first row; on a
     # tie, the earliest 'Row: 0' line.
+    # Each reading parses the whole text, so only the first MAX_READINGS names are tried.
     readings = []
-    for order, name in enumerate(names):
+    for order, name in enumerate(names[:MAX_READINGS]):
         starts = _row_starts(lines, name + '=')
         dump = _parse_lines(lines, starts)
         unsplit = sum(1 for record in dump.records if not record.pairs) if dump.records else len(lines)
@@ -297,7 +300,7 @@ def _parse_lines(lines, starts):
             warnings.append('a provider error line inside the last row is kept as part of its values, since the row '
                             'without it does not hold the columns of this dump')
 
-    repeated = sorted({name for name in columns if columns.count(name) > 1})
+    repeated = sorted(name for name, count in collections.Counter(columns).items() if count > 1)
     names = set(columns)
     records = []
     for number, line, text in texts:

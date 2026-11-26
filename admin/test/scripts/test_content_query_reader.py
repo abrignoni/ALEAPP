@@ -94,6 +94,15 @@ class ParseRowsTest(unittest.TestCase):
         self.assertEqual(dump.columns, ('_id', 'body'))
         self.assertEqual(values(dump)[0]['body'], 'quoted:\nRow: 0 example=x\nRow: 1 example=y')
 
+    def test_large_dump_with_a_quoted_row_zero_is_read(self):
+        # The second reading makes the whole text one row of many names; the repeated-name check
+        # over that list was quadratic and did not finish on a dump of this size.
+        lines = [f'Row: {n} _id={n}, _data=/x/IMG_{n}.jpg, mime_type=image/jpeg' for n in range(20000)]
+        lines[5] += '\nRow: 0 quoted=x'
+        dump = reader.parse_text('\n'.join(lines) + '\n')
+        self.assertEqual(len(dump.records), 20000)
+        self.assertEqual(dump.columns[0], '_id')
+
     def test_delimiter_at_the_start_of_a_value_is_flagged(self):
         dump = reader.parse_text('Row: 0 _id=1, body=, seen=yes, read=1, seen=1\n'
                                  'Row: 1 _id=2, body=b, read=0, seen=0\nRow: 2 _id=3, body=c, read=1, seen=1\n')
