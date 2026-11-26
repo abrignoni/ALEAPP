@@ -4,24 +4,30 @@ __artifacts_v2__ = {
         "description": "Parses the EchoAppLaunchMetricsEvents table of the SimpleStorage database (com.google.android.as): timestamp, package name and launch location id",
         "author": "Kevin Pagano (@stark4n6), @AlexisBrignoni, Codex",
         "creation_date": "2022-12-13",
-        "last_update_date": "2026-10-06",
+        "last_update_date": "2026-11-26",
         "last_updated": "2025-09-12",
         "requirements": "none",
         "category": "Device Activity",
         "notes": "The query and the Launched From names for launchLocationId values 1, 2, 4, 7, 8, "
                  "12 and 1000 come from Josh Hickman's (@josh_hickman1) research and testing. No "
                  "published reference for them is cited here. Any other value is shown as stored. "
-                 "Every selected source row is retained, including repeated events. Raw Timestamp "
+                 "Every row the query selects is reported. On russell_pixel6a_a13 the file this artifact "
+                 "reads holds 114 rows. Each of its 38 combinations of timestampMillis, packageName and "
+                 "launchLocationId appears in three rows. Within a combination the rows differ in "
+                 "predictionSourceId and id, and in some combinations in predictionRank. This artifact "
+                 "does not report those columns, so the report shows each combination three times. "
+                 "Whether the three rows are one launch is not established here. Only the first "
+                 "SimpleStorage file found is read. This image holds a second one under data/user/10, "
+                 "which is not reported. Raw Timestamp "
                  "Millis and Launch Location ID preserve the source values beside the converted "
-                 "timestamp and credited label; the label meanings remain unverified here. Other "
-                 "sample counts predate duplicate retention and have not been remeasured.",
+                 "timestamp and credited label; the label meanings remain unverified here.",
         "paths": ('*/com.google.android.as/databases/SimpleStorage*'),
         "output_types": "standard",
         "artifact_icon": "loader",
         "sample_data": {
             "hc_pixel8pro_a16": "Android 16 | com.google.android.as vc 14926349 | 30 rows",
             "pixel7a_a14": "Android 14 | com.google.android.as vc 10790541 | 0 rows",
-            "russell_pixel6a_a13": "Android 13 | com.google.android.as vc 8828817 | 38 rows",
+            "russell_pixel6a_a13": "Android 13 | com.google.android.as vc 8828817 | 114 rows",
             "userb2_a13": "Android 13 | com.google.android.as vc 8997612 | 0 rows",
         },
     }
