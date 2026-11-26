@@ -6,7 +6,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-26",
         "last_update_date": "2026-11-26",
         "requirements": "none",
-        "category": "WhatsApp",
+        "category": "Messaging",
         "notes": "Lists files under com.whatsapp's WhatsApp/Media folder (the "
                  "Android/media/com.whatsapp location) whose path after the Media folder matches no "
                  "file_path value in any table of msgstore.db or status.db that has a file_path "
@@ -88,7 +88,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-26",
         "last_update_date": "2026-11-26",
         "requirements": "none",
-        "category": "WhatsApp Business",
+        "category": "Messaging",
         "notes": "Lists files under com.whatsapp.w4b's WhatsApp Business/Media folder (the "
                  "Android/media/com.whatsapp.w4b location) whose path after the Media folder matches "
                  "no file_path value in any table of msgstore.db or status.db that has a file_path "
