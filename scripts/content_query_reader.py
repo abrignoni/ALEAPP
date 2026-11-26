@@ -163,11 +163,11 @@ def _candidates(lines):
     return candidates
 
 
-def _row_zero_names(lines):
-    """The first-column names of the 'Row: 0' lines, in order, each once, up to MAX_READINGS:
-    no more are ever tried."""
+def _row_zero_names(candidates):
+    """The first-column names of the 'Row: 0' lines among ``candidates``, in order, each once, up
+    to MAX_READINGS: no more are ever tried."""
     names, seen = [], set()
-    for _index, number, rest in _candidates(lines):
+    for _index, number, rest in candidates:
         name = FIRST_NAME.match(rest)
         if number == 0 and name and name.group(1) not in seen:
             seen.add(name.group(1))
@@ -177,17 +177,16 @@ def _row_zero_names(lines):
     return names
 
 
-def _row_starts(lines, first=None):
-    """Indexes of the lines that open a row (see the module docstring, step 2), with ``first``
-    ('<name>=') as the first column when it is given."""
-    candidates = _candidates(lines)
+def _row_starts(candidates, first=None):
+    """Indexes of the lines that open a row (see the module docstring, step 2), from the
+    ``candidates`` of the text, with ``first`` ('<name>=') as the first column when it is given."""
     if not candidates:
         return []
     # Without ``first``, the first column is the one the first 'Row: 0' line names: row 0 is
     # printed before any value, so a line inside a value cannot come first. A vote over every
     # candidate is kept only for a text with no 'Row: 0' line.
     if first is None:
-        names = _row_zero_names(lines)
+        names = _row_zero_names(candidates)
         first = names[0] + '=' if names else None
     if first is None:
         first_names = collections.Counter()
@@ -239,23 +238,28 @@ def _ambiguous(pairs, names):
 def parse_text(text):
     """Reads the text of one content query output and returns a Dump."""
     lines = _lines(text)
-    names = _row_zero_names(lines)
+    # The row-like lines are found once and shared by the steps below.
+    candidates = _candidates(lines)
+    names = _row_zero_names(candidates)
     if len(names) < 2:
-        return _parse_lines(lines, _row_starts(lines))
+        starts = _row_starts(candidates, names[0] + '=' if names else None)
+        del candidates  # not needed while the rows are split
+        return _parse_lines(lines, starts)
     # The earliest 'Row: 0' line is row 0 when a 'Row: 1' line with the same first column
     # follows it: then the text holds at least two rows that way, and a sequence quoted later
     # inside a value cannot replace them.
-    starts = _row_starts(lines, names[0] + '=')
+    starts = _row_starts(candidates, names[0] + '=')
     if len(starts) > 1:
+        del candidates
         return _parse_lines(lines, starts)
     # Several 'Row: 0' lines name different first columns: a line before the rows, or a value
     # that quotes rows, looks like row 0 too. Each reading is tried, and the one kept has the
     # fewest rows that cannot be split, then the least text left before its first row; on a
     # tie, the earliest 'Row: 0' line.
-    # Each reading parses the whole text, so only the first MAX_READINGS names are tried.
+    # Each reading parses the whole text; _row_zero_names keeps at most MAX_READINGS names.
     readings = []
-    for order, name in enumerate(names[:MAX_READINGS]):
-        starts = _row_starts(lines, name + '=')
+    for order, name in enumerate(names):
+        starts = _row_starts(candidates, name + '=')
         dump = _parse_lines(lines, starts)
         unsplit = sum(1 for record in dump.records if not record.pairs) if dump.records else len(lines)
         before = sum(1 for line in lines[:starts[0]] if line.strip()) if starts else len(lines)

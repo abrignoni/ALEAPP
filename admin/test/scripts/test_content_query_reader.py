@@ -106,7 +106,7 @@ class ParseRowsTest(unittest.TestCase):
         # list membership test was quadratic (40,000 names took over ten seconds).
         text = ('Row: 0 _id=1, body=x\n' + ''.join(f'Row: 0 n{i}=x\n' for i in range(40000))
                 + 'Row: 1 _id=2, body=y\n')
-        self.assertEqual(len(reader._row_zero_names(reader._lines(text))), reader.MAX_READINGS)  # pylint: disable=protected-access
+        self.assertEqual(len(reader._row_zero_names(reader._candidates(reader._lines(text)))), reader.MAX_READINGS)  # pylint: disable=protected-access
         dump = reader.parse_text(text)
         self.assertEqual([row['_id'] for row in values(dump)], ['1', '2'])
 
