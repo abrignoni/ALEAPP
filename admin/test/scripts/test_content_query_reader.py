@@ -101,6 +101,15 @@ class ParseRowsTest(unittest.TestCase):
         self.assertEqual(len(dump.records), 3)
         self.assertEqual([record.number for record in dump.records], [0, 1, 2])
 
+    def test_many_distinct_row_zero_names_are_not_all_collected(self):
+        # Only the first MAX_READINGS names are ever tried; collecting every distinct name with a
+        # list membership test was quadratic (40,000 names took over ten seconds).
+        text = ('Row: 0 _id=1, body=x\n' + ''.join(f'Row: 0 n{i}=x\n' for i in range(40000))
+                + 'Row: 1 _id=2, body=y\n')
+        self.assertEqual(len(reader._row_zero_names(reader._lines(text))), reader.MAX_READINGS)  # pylint: disable=protected-access
+        dump = reader.parse_text(text)
+        self.assertEqual([row['_id'] for row in values(dump)], ['1', '2'])
+
     def test_large_dump_with_a_quoted_row_zero_is_read(self):
         # The second reading makes the whole text one row of many names; the repeated-name check
         # over that list was quadratic and did not finish on a dump of this size.

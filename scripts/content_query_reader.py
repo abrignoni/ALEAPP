@@ -164,12 +164,16 @@ def _candidates(lines):
 
 
 def _row_zero_names(lines):
-    """The first-column names of the 'Row: 0' lines, in order, each once."""
-    names = []
+    """The first-column names of the 'Row: 0' lines, in order, each once, up to MAX_READINGS:
+    no more are ever tried."""
+    names, seen = [], set()
     for _index, number, rest in _candidates(lines):
         name = FIRST_NAME.match(rest)
-        if number == 0 and name and name.group(1) not in names:
+        if number == 0 and name and name.group(1) not in seen:
+            seen.add(name.group(1))
             names.append(name.group(1))
+            if len(names) == MAX_READINGS:
+                break
     return names
 
 
