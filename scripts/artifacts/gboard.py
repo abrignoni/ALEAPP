@@ -120,7 +120,7 @@ def _decode(blob, typedef, file_found, table, row_id):
         data, _ = decode_protobuf(blob, typedef)
         return data if isinstance(data, dict) else {}
     except _DECODE_ERRORS as ex:
-        logfunc(f'gboard: payload of {table} row {row_id} in {os.path.basename(file_found)} did not decode '
+        logfunc(f'gboard: payload of {table} row {row_id} in {file_found} did not decode '
                 f'({ex}); its content is not reported')
         return {}
 
@@ -217,21 +217,10 @@ def _events_trainingcachev2(file_found):
             if data_proto:
                 data = _decode(data_proto, None, file_found, 'input_action_table', row['id'])
                 input_dict = data.get('6', None)
-                if input_dict:
+                if isinstance(input_dict, dict):
                     chars_items = input_dict.get('4', {})
-                    chars = ''
-                    if isinstance(chars_items, list):
-                        for item in chars_items:
-                            try:
-                                chars += item.get('1', b'').decode('utf8', 'ignore')
-                            except AttributeError:
-                                pass
-                    else:
-                        try:
-                            chars = chars_items.get('1', b'').decode('utf8', 'ignore')
-                        except AttributeError:
-                            pass
-                    ke.text += chars
+                    items = chars_items if isinstance(chars_items, list) else [chars_items]
+                    ke.text += ''.join(_text(item) for item in items)
         if ke and ke.text:
             events.append(ke)
     except (sqlite3.Error, TypeError, ValueError) as ex:

@@ -61,7 +61,9 @@ class TestGboardBadPayload(unittest.TestCase):
             '4': {'type': 'message', 'name': '', 'message_typedef': {'1': {'type': 'bytes', 'name': ''}}}}}}
         good = blackboxprotobuf.encode_message({'6': {'4': {'1': b'ok'}}}, typedef)
         db.execute('INSERT INTO session_table VALUES (1, ?, 1700000000000, 1)', (TRUNCATED,))
-        for number, payload in enumerate([good, TRUNCATED, good], 1):
+        # Field 6 holding bytes where a message is expected decodes without an error.
+        not_a_message = b'\x32\x02\x22\x01'
+        for number, payload in enumerate([good, TRUNCATED, not_a_message, good], 1):
             db.execute('INSERT INTO input_action_table VALUES (?, ?, 1700000000000, 1)', (number, payload))
         db.commit()
         db.close()
