@@ -175,7 +175,8 @@ def _is_mp4(path):
 
 
 def _saved_files(context):
-    """(Android user, video id, path) for every file carrying the app's save-name pattern."""
+    """(Android user, video id, path) for every file whose name fits SAVED_NAME, the name shape seen on a
+    video the app saved on the tested device."""
     out = []
     for found in unique_files(context):
         path = str(found).replace('\\', '/')
@@ -204,7 +205,8 @@ def _ms(value):
 
 
 def _int(value):
-    """The vse table stores every column as text. Return the number, or the raw value."""
+    """vse declares its duration and count columns TEXT (only its id column is INTEGER). Return the number,
+    or the raw value."""
     if value in (None, ''):
         return ''
     try:
