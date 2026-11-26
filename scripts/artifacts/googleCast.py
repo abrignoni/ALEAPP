@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "last_update_date": "2026-11-26",
         "requirements": "none",
         "category": "Smart Home & Connected Devices",
-        "notes": "When the extraction holds this database under more than one storage spelling (data/data, data/user/0, data_mirror) and the copies read differently, every differing copy is read and a row the copies share is reported once; a row only one copy holds is reported as well, and a row that differs between copies appears once per version. On hickman_a13 this added 1 row (1 to 2), the same device with different values in the two copies.",
+        "notes": "When the extraction holds this database under more than one storage path (for example data/data, data/user/0 and data_mirror) and the copies differ in their bytes or in their -wal or -journal content, every differing copy is read. Rows are compared on the reported columns. A row the copies share is reported once, a row only one copy holds is reported as well, and a row that differs between copies appears once per version. The Source column of a shared row names the first copy read. On hickman_a13 this added 1 row (1 to 2), the same device with different values in the two copies.",
         "paths": ('*/com.google.android.gms/databases/cast.db*'),
         "output_types": "standard",
         "artifact_icon": "cast",
@@ -26,8 +26,19 @@ __artifacts_v2__ = {
     }
 }
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
+import sqlite3
+
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone, logfunc
 from scripts.artifacts.storagePathViews import union_view_rows, unique_files
+
+
+def _query(db, sql, path):
+    """Rows of sql on one copy of the database, or none and a log line when the query fails there."""
+    try:
+        return db.execute(sql).fetchall()
+    except sqlite3.Error as error:
+        logfunc(f'Google Cast: query failed on {path}: {error}')
+        return []
 
 @artifact_processor
 def googleCast(context):
@@ -43,8 +54,7 @@ def googleCast(context):
             if db is None:
                 continue
             source_paths.add(file_found)
-            cursor = db.cursor()
-            cursor.execute('''
+            all_rows = _query(db, '''
             SELECT
             case last_published_timestamp_millis
                 when 0 then ''
@@ -72,9 +82,7 @@ def googleCast(context):
                 else datetime(last_discovered_by_ble_timestamp_millis/1000, 'unixepoch')
             end as "Last Discovered By BLE Timestamp"
             from DeviceInfo
-            ''')
-
-            all_rows = cursor.fetchall()
+            ''', context.get_relative_path(file_found))
             rows = []
             file_rows.append((file_found, rows))
             usageentries = len(all_rows)

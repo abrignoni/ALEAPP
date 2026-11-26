@@ -53,10 +53,11 @@ __artifacts_v2__ = {
                  "database; the data_mirror copy held 6 messages, none with it "
                  "set. "
                  "The row count is not a message count: a message with several "
-                 "attachments has one row per attachment. "
+                 "attachments has one row per attachment, and a message whose stored "
+                 "values differ between copies of the database has one row per version. "
                  "The source was read at that commit only; other app versions "
                  "were not checked. "
-                 "When the extraction holds this database under more than one storage spelling (data/data, data/user/0, data_mirror) and the copies read differently, every differing copy is read and a row the copies share is reported once; a row only one copy holds is reported as well, and a row that differs between copies appears once per version. On pixel3_a12 this added 4 rows (8 to 12).",
+                 "When the extraction holds this database under more than one storage path (for example data/data, data/user/0 and data_mirror) and the copies differ in their bytes or in their -wal or -journal content, every differing copy is read. Rows are compared on the reported columns. A row the copies share is reported once, a row only one copy holds is reported as well, and a row that differs between copies appears once per version. On pixel3_a12 this added 4 rows (8 to 12): each is a second version of one of the 8 messages, and no message was held only by the other copy.",
         "paths": ('*/ch.protonmail.android/databases/*-MessagesDatabase.db*',),
         "output_types": "standard",
         "artifact_icon": "mail",
@@ -76,8 +77,19 @@ __artifacts_v2__ = {
     }
 }
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_human_ts_to_utc, is_sqlite_sidecar
+import sqlite3
+
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_human_ts_to_utc, is_sqlite_sidecar, logfunc
 from scripts.artifacts.storagePathViews import union_view_rows, unique_files
+
+
+def _query(db, sql, path):
+    """Rows of sql on one copy of the database, or none and a log line when the query fails there."""
+    try:
+        return db.execute(sql).fetchall()
+    except sqlite3.Error as error:
+        logfunc(f'Proton Mail: query failed on {path}: {error}')
+        return []
 
 
 @artifact_processor
@@ -96,8 +108,7 @@ def get_protonmail_messages(context):
             if db is None:
                 continue
             source_paths.append(file_name)
-            cursor = db.cursor()
-            cursor.execute('''
+            all_rows = _query(db, '''
             SELECT
             datetime(messagev3.Time,'unixepoch') AS 'Message Timestamp',
             messagev3.Subject AS 'Subject',
@@ -153,9 +164,7 @@ def get_protonmail_messages(context):
             FROM messagev3
             LEFT JOIN attachmentv3 ON attachmentv3.message_id = messagev3.ID
             ORDER BY messagev3.Time ASC
-            ''')
-
-            all_rows = cursor.fetchall()
+            ''', context.get_relative_path(file_name))
             file_rows.append((file_name, [
                 (convert_human_ts_to_utc(row[0]), row[1], row[2], row[3], row[4], row[5],
                  convert_human_ts_to_utc(row[6]), row[7], row[8], row[9], row[10], row[11], row[12], row[13],

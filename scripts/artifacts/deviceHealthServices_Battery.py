@@ -15,7 +15,7 @@ __artifacts_v2__ = {
                  "source for their meaning was found, so they are not labelled. On the copies of "
                  "turbo.db in hc_pixel8pro_a16, pixel7a_a14 and russell_pixel6a_a13 (7,417 records "
                  "in four files) charge_type held 0, 1 or 2 and battery_saver held 2 on every record. "
-                 "When the extraction holds this database under more than one storage spelling (data/data, data/user/0, data_mirror) and the copies read differently, every differing copy is read and a row the copies share is reported once; a row only one copy holds is reported as well, and a row that differs between copies appears once per version. This added 2 rows on pixel3_a11, 2 on pixel3_a12 and 1 on hickman_a13.",
+                 "When the extraction holds this database under more than one storage path (for example data/data, data/user/0 and data_mirror) and the copies differ in their bytes or in their -wal or -journal content, every differing copy is read. Rows are compared on the reported columns. A row the copies share is reported once, a row only one copy holds is reported as well, and a row that differs between copies appears once per version. The Source column of a shared row names the first copy read. This added 2 rows on pixel3_a11, 2 on pixel3_a12 and 1 on hickman_a13.",
         "paths": ('*/com.google.android.apps.turbo/databases/turbo.db*',),
         "output_types": "standard",
         "artifact_icon": "battery-charging",
@@ -58,8 +58,18 @@ __artifacts_v2__ = {
 
 import os
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_ts_human_to_utc
+import sqlite3
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, convert_ts_human_to_utc, logfunc
 from scripts.artifacts.storagePathViews import union_view_rows, unique_files
+
+
+def _query(db, sql, path):
+    """Rows of sql on one copy of the database, or none and a log line when the query fails there."""
+    try:
+        return db.execute(sql).fetchall()
+    except sqlite3.Error as error:
+        logfunc(f'Turbo Battery: query failed on {path}: {error}')
+        return []
 
 @artifact_processor
 def Turbo_Battery(context):
@@ -77,8 +87,7 @@ def Turbo_Battery(context):
             if db is None:
                 continue
             source_paths.append(turbo_db)
-            cursor = db.cursor()
-            cursor.execute('''
+            all_rows = _query(db, '''
             select
             case timestamp_millis
                 when 0 then ''
@@ -89,9 +98,7 @@ def Turbo_Battery(context):
             battery_saver,
             timezone
             from battery_event
-            ''')
-
-            all_rows = cursor.fetchall()
+            ''', context.get_relative_path(file_found))
             rows = []
             file_rows.append((file_found, rows))
             usageentries = len(all_rows)

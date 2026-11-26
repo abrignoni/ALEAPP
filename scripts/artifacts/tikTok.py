@@ -207,17 +207,17 @@ __artifacts_v2__ = {
                  "Reference: Xiao Hu and Umit Karabiyik, 'Shopping while Watching: An "
                  "Updated Forensic Analysis of TikTok on Android and iOS', ISNCC 2024, "
                  "https://doi.org/10.1109/ISNCC62547.2024.10759027 "
-                 "When the extraction holds this database under more than one storage spelling (data/data, data/user/0, data_mirror) and the copies read differently, every differing copy is read and a row the copies share is reported once; a row only one copy holds is reported as well, and a row that differs between copies appears once per version. This added 4 rows on pixel3_a11 (24 to 28) and 4 on pixel3_a12 (2 to 6, three copies).",
+                 "When the extraction holds this database under more than one storage path (for example data/data, data/user/0 and data_mirror) and the copies differ in their bytes or in their -wal or -journal content, every differing copy is read. Rows are compared on the reported columns. A row the copies share is reported once, a row only one copy holds is reported as well, and a row that differs between copies appears once per version. The Source column of a shared row names the first copy read. This added 4 rows on pixel3_a11 (24 to 28) and 4 on pixel3_a12 (2 to 6, three copies).",
         "paths": ('*/com.zhiliaoapp.musically/databases/ss_app_log.db*',),
         "output_types": "standard",
         "artifact_icon": "activity",
         "sample_data": {
             "sharon_a14": "Android 14 | com.zhiliaoapp.musically vc 2023600040 | 107 rows",
-            "pixel3_a11": "Android 11 | 24 rows",
+            "pixel3_a11": "Android 11 | 28 rows",
             "russell_a14": "Android 14 | 15 rows",
             "sharon_a13": "Android 13 | 7 rows",
             "pixel7a_a14": "Android 14 | com.zhiliaoapp.musically vc 2023507030 | 6 rows",
-            "pixel3_a12": "Android 12 | 2 rows",
+            "pixel3_a12": "Android 12 | 6 rows",
             "anne_a15": "Android 15 | com.zhiliaoapp.musically vc 2024108030 | 2 rows",
             "galaxys10_a10": "Android 10 | com.zhiliaoapp.musically vc 2021809050 | 2 rows",
             "russell_pixel6a_a13": "Android 13 | com.zhiliaoapp.musically vc 2023000030 | 2 rows",

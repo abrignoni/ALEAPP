@@ -48,7 +48,7 @@ __artifacts_v2__ = {
         "last_update_date": "2026-11-26",
         "requirements": "none",
         "category": "Device Activity",
-        "notes": "When the extraction holds this database under more than one storage spelling (data/data, data/user/0, data_mirror) and the copies read differently, every differing copy is read and a row the copies share is reported once; a row only one copy holds is reported as well, and a row that differs between copies appears once per version. On emu_a15_oss_v2 this added 1 row (36 to 37).",
+        "notes": "When the extraction holds this database under more than one storage path (for example data/data, data/user/0 and data_mirror) and the copies differ in their bytes or in their -wal or -journal content, every differing copy is read. Rows are compared on the reported columns. A row the copies share is reported once, a row only one copy holds is reported as well, and a row that differs between copies appears once per version. On emu_a15_oss_v2 this added 1 row (36 to 37).",
         "paths": ('*/com.google.android.inputmethod.latin/databases/trainingcachev3.db*',),
         "output_types": "standard",
         "artifact_icon": "brand-chrome",

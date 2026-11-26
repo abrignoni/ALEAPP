@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Device Information",
         "notes": "Battery Status is labelled on the reading that the BatteryStatus column holds the AOSP BatteryManager status constants (1 Unknown, 2 Charging, 3 Discharging, 4 Not Charging, 5 Fully Charged); any other value is reported as the raw number. No source for what this database stores in that column is cited here. Reference: AOSP, 'BatteryManager status constants', https://developer.android.com/reference/android/os/BatteryManager "
-                 "When the extraction holds this database under more than one storage spelling (data/data, data/user/0, data_mirror) and the copies read differently, every differing copy is read and a row the copies share is reported once; a row only one copy holds is reported as well, and a row that differs between copies appears once per version. On pixel3_a12 this added 129 rows (8,514 to 8,643).",
+                 "When the extraction holds this database under more than one storage path (for example data/data, data/user/0 and data_mirror) and the copies differ in their bytes or in their -wal or -journal content, every differing copy is read. Rows are compared on the reported columns. A row the copies share is reported once, a row only one copy holds is reported as well, and a row that differs between copies appears once per version. On pixel3_a12 this added 129 rows (8,514 to 8,643).",
         "paths": ('*/com.google.android.settings.intelligence/databases/battery-usage-db-v4*',),
         "output_types": "standard",
         "artifact_icon": "battery",
@@ -23,8 +23,18 @@ __artifacts_v2__ = {
 
 import datetime
 
-from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
+import sqlite3
+from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, logfunc
 from scripts.artifacts.storagePathViews import union_view_rows, unique_files
+
+
+def _query(db, sql, path):
+    """Rows of sql on one copy of the database, or none and a log line when the query fails there."""
+    try:
+        return db.execute(sql).fetchall()
+    except sqlite3.Error as error:
+        logfunc(f'Battery Usage v4: query failed on {path}: {error}')
+        return []
 
 
 def _ms_to_utc(value):
@@ -48,8 +58,7 @@ def get_battery_usage_v4(context):
         if db is None:
             continue
         source_paths.append(file_name)
-        cursor = db.cursor()
-        cursor.execute('''
+        all_rows = _query(db, '''
             select
             timestamp,
             appLabel,
@@ -67,8 +76,7 @@ def get_battery_usage_v4(context):
                                when 4 then 'Not Charging' when 5 then 'Fully Charged'
                                else BatteryStatus end
             from BatteryState
-        ''')
-        all_rows = cursor.fetchall()
+        ''', context.get_relative_path(file_name))
         db.close()
 
         file_rows.append((file_name, [

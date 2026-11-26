@@ -44,15 +44,15 @@ different moment. By default the copy under the preferred spelling is the one re
 the others are not read. Measured 2026-08-27; on that image no artifact's row count changed
 as a result, and contacts2.db returns the same rows through all three views.
 
-That does not hold across the corpus. Over the registered Android images (listings of
-2026-11-26), 12,946 files are held under more than one spelling with a -wal or -journal
-beside at least one copy. In 238 of them the copies differ in the main file, the -wal or the
+That does not hold across the corpus. Over 95 of the 96 registered Android images (listings
+of 2026-11-26), 12,946 files on 25 images are held under more than one spelling with a -wal
+or -journal beside at least one copy. In 238 of them the copies differ in the main file, the -wal or the
 -journal. In 176 of those another copy
 holds rows the preferred copy does not, and in 153 each copy holds rows the other lacks, so
-no single copy is complete. In 4 the preferred copy does not open as a database while another
-copy does. An artifact that reads such a database passes keep_differing_views=True to
-unique_files, which then also keeps every copy that reads differently, and passes its rows
-through union_view_rows, which reports a row the copies share once. The option is off by
+no single copy is complete. In 4 the preferred copy did not open as a plain SQLite database;
+whether another copy opened was not recorded. An artifact can pass keep_differing_views=True
+to unique_files, which then also keeps every copy that differs, and pass its rows through
+union_view_rows, which reports a row the copies share once. Eight artifacts do so. The option is off by
 default because an artifact that keeps the extra copies without the union reports every
 shared row once per copy.
 
@@ -331,7 +331,8 @@ def user_files(context, name, files=None, keep_differing_views=False):
     Sidecar files (-wal, -shm, -journal) are not matched because name is compared in full.
     The duplicate storage views of one file are collapsed by unique_files, and a second
     Android user's copy is kept, so an artifact that reads every pair reads every user's
-    database once. A module that takes the first match instead reads one user's database
+    database once. With keep_differing_views a user can have more than one pair, one per
+    copy that reads differently. A module that takes the first match instead reads one user's database
     and silently leaves out the others, which is how a Secure Folder user's near-empty
     copy can hide the owner's data.
     """

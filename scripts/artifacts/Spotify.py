@@ -69,7 +69,7 @@ __artifacts_v2__ = {
                  "each snapshot is not included: it did not decode to a timestamp or a count and "
                  "its meaning is not established. A playlist absent from this file is not evidence "
                  "that it was absent from the account. "
-                 "When the extraction holds this file under more than one storage spelling (data/data, data/user/0, data_mirror) and the copies read differently, every differing copy is read and a row the copies share is reported once; a row only one copy holds is reported as well, and a row that differs between copies appears once per version. On hickman_a13 this added 1 row (4 to 5).",
+                 "When the extraction holds this file under more than one storage path (for example data/data, data/user/0 and data_mirror) and the copies differ in their bytes, every differing copy is read. Rows are compared on the reported columns. A row the copies share is reported once, a row only one copy holds is reported as well, and a row that differs between copies appears once per version. On hickman_a13 this added 1 row (4 to 5).",
         "paths": ('*/com.spotify.music/files/settings/Users/*/frecency.pb',),
         "output_types": ["standard"],
         "artifact_icon": "playlist",
@@ -122,11 +122,11 @@ __artifacts_v2__ = {
                  "the meaning of each of those values is not established. Purely numeric fields "
                  "(byte counts, bitrates, internal enum values) are not reported, since there is "
                  "no public schema to confirm what they mean. Where an extraction carries the "
-                 "app's data directory more than once, the duplicate storage views of one file are "
-                 "collapsed and each genuinely separate copy is read, so a second Android user's "
+                 "app's data directory more than once, the duplicate storage views of one file that "
+                 "hold the same content are collapsed and each genuinely separate copy is read, so a second Android user's "
                  "events are reported alongside the first user's with no column separating them; "
                  "the source paths listed for the artifact name every database the rows came from. "
-                 "When the extraction holds this database under more than one storage spelling (data/data, data/user/0, data_mirror) and the copies read differently, every differing copy is read and a row the copies share is reported once; a row only one copy holds is reported as well, and a row that differs between copies appears once per version. On hickman_a13 this added 3 rows (0 to 3).",
+                 "When the extraction holds this database under more than one storage path (for example data/data, data/user/0 and data_mirror) and the copies differ in their bytes or in their -wal or -journal content, every differing copy is read. Rows are compared on the reported columns. A row the copies share is reported once, a row only one copy holds is reported as well, and a row that differs between copies appears once per version. On hickman_a13 this added 3 rows (0 to 3).",
         "paths": ('*/com.spotify.music/databases/event-sender.db*',),
         "output_types": ["standard"],
         "artifact_icon": "player-play",
