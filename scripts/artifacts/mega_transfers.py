@@ -15,10 +15,10 @@ __artifacts_v2__ = {
                  "TYPE_LOCAL_TCP_DOWNLOAD, as Local TCP Download, and State follows STATE_NONE 0 to "
                  "STATE_FAILED 8. Any other value is shown as decrypted. A row that does not "
                  "decrypt is logged and not reported. Timestamp is read as Unix milliseconds. "
-                 "Both tested images returned 0 rows, so the decoding is code present and "
-                 "unexercised on the registered images. On hc_pixel8pro_a16, hc_pixel8pro_a17 and "
+                 "The three images named below returned 0 rows, so the decoding is code present "
+                 "and unexercised on them. On hc_pixel8pro_a16, hc_pixel8pro_a17 and "
                  "pixel7a_a14 megapreferences does not start with the SQLite header, so it is "
-                 "logged and not read. What format the file is in on those app versions is not "
+                 "logged and not read. What format the file is in on those images is not "
                  "established.",
         "paths": ('*/mega.privacy.android.app/databases/megapreferences',),
         "output_types": "standard",
