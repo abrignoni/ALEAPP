@@ -6,7 +6,7 @@ __artifacts_v2__ = {
                        "a tester did and when",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-11-09",
-        "last_update_date": "2026-11-09",
+        "last_update_date": "2026-11-27",
         "requirements": "none",
         "category": "KDL (Known-data logger)",
         "sample_data": {
@@ -22,23 +22,38 @@ __artifacts_v2__ = {
                   "known-data-logger v0.3.0): the highest revision_n of each entry_id, and an entry whose "
                   "latest version is a tombstone was removed in the app and is listed only in KDL Edit History. "
                   "Raw events from the capture service (kind auto_event) are in KDL Captured Events. Source and "
-                  "Kind are as stored. Reviewed is No only for an action a rule inferred that nobody accepted "
-                  "in the app (docs/DATABASE.md, known-data-logger v0.3.0); Detail says which rule, or which "
-                  "notification category, inferred it (CaptureService.kt). Time is the device clock at the "
-                  "action as stored in Unix milliseconds. A tester can change the clock as a test step, so the "
-                  "app orders entries by Boot Count, then Time Since Boot (ms). LAVA keeps whole seconds; the "
-                  "HTML and TSV keep the milliseconds. Edited is filled only for an entry with more than one "
-                  "version. Screenshot is the PNG the app took for the entry, or for the raw event it refers to "
+                  "Kind are as stored. Reviewed is No for an inferred action whose current version is not "
+                  "accepted: nobody accepted it, or the accept was undone in the app (docs/DATABASE.md and "
+                  "Repo.kt unaccept, known-data-logger v0.3.0); the undo case was not run on data. Detail "
+                  "says which rule, or which notification category, inferred it (CaptureService.kt). Time is the device clock when the "
+                  "entry was stamped, stored in Unix milliseconds (utc_ms, docs/SPEC.md, known-data-logger "
+                  "v0.3.0); Time Quality says how that stamp relates to the act (exact, after, before or "
+                  "approximate). A tester can change the clock as a test step, so the app orders entries by "
+                  "Boot Count, then Time Since Boot (ms). LAVA keeps whole seconds; the HTML and TSV keep the "
+                  "milliseconds. The app also stores network_time_ms, gnss_time_ms, tz_offset_min, account "
+                  "and profile_id on each entry; they are not reported here. On emu_a15_kdl_v1 network_time_ms "
+                  "and tz_offset_min were set on all 68 stored rows and gnss_time_ms and account on none. "
+                  "Edited is filled only when the current version is not the original (revision_n above 0). "
+                  "Screenshot is the PNG the app took for the entry, or for the raw event it refers to "
                   "(a mark, or a tap when the app was set to screenshot every tap), linked by the app's "
-                  "screenshots table or an export's manifest and checked against the SHA-256 the app stored at "
-                  "capture. Screenshot Check reports a match, a mismatch, a missing file, or a file linked only "
-                  "by its name when no record survives (the app names each file after its entry id, "
-                  "CaptureService.kt). The missing-file case has not been run on data. Tested on emu_a15_kdl_v1 "
+                  "screenshots table, the screenshot field of an actions.jsonl row, or an export's manifest, "
+                  "and checked against the SHA-256 the app stored at capture. Screenshot Check reports a match, "
+                  "a mismatch, a file not in the extraction, a record with no file or no stored hash, a file "
+                  "that is not a PNG, or a file linked only by its name when no record survives (the app names "
+                  "each file after its entry id, CaptureService.kt). The stored capture status is added when "
+                  "it is not ok: at the start when the file was found, in parentheses when it was not, and a "
+                  "file not in the extraction always shows it. On emu_a15_kdl_v1 every screenshot matched; the "
+                  "mismatch and no-record cases were run only on test trees built from it, and the other cases "
+                  "were not run. Android User is taken from the path layout. A path under data/data/ names no "
+                  "user and is reported as 0; any other layout that names no user gives a blank. A store with "
+                  "a blank user is read as its own log, so an export folder outside the "
+                  "known storage layouts can repeat rows already read from kl.db; this follows from the code "
+                  "and was not seen on data. Tested on emu_a15_kdl_v1 "
                   "(KDL 0.3.0, schema 3): 15 rows, 6 with a screenshot, all 6 matching their stored hash. In "
                   "that sample Conversation ID, Expected Artifacts and Window (s) had no value on any row, and "
-                  "Reviewed held Yes, Time Quality held exact, Time Zone held America/New_York, Boot Count held "
-                  "1, Scenario held clock_locate_01, Device Label held phoneA and Android User held 0 on all 15 "
-                  "rows. They are kept because they change between tests, sessions and users. Reading from the "
+                  "Reviewed, Time Quality, Time Zone, Boot Count, Scenario, Device Label and Android User each "
+                  "held one value on all 15 rows. They are kept because they can differ between tests, sessions "
+                  "and users. Reading from the "
                   "live copy or the exports, a removed entry, a second Android user, a screenshot whose bytes "
                   "differ from the stored hash and a screenshot with no record were each run on test trees "
                   "built from that image, not on another device. Only KDL 0.3.0 has been tested."),
@@ -56,30 +71,33 @@ __artifacts_v2__ = {
     "kdl_captured_events": {
         "name": "KDL Captured Events",
         "description": "Screens, taps, typed text, notifications and marks the KDL capture service "
-                       "recorded in the apps under test plus System UI and Settings",
+                       "recorded in the apps it was set to capture",
 
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-11-09",
-        "last_update_date": "2026-11-09",
+        "last_update_date": "2026-11-27",
         "requirements": "none",
         "category": "KDL (Known-data logger)",
         "sample_data": {
             "emu_a15_kdl_v1": "KDL 0.3.0 | 51 rows",
         },
-        "notes": ("Log entries of kind auto_event: the raw events KDL's accessibility service recorded in the "
-                  "apps under test (KDL Setup lists them) plus System UI and Settings, which KDL captures by "
-                  "default (Repo.kt, known-data-logger v0.3.0), read from the same store as KDL Known Data, "
-                  "with the same rule for the current version. Event is the stored action, for example screen, "
+        "notes": ("Log entries of kind auto_event: the raw events KDL's accessibility service recorded. By "
+                  "default that is the apps under test (KDL Setup lists them) plus System UI and Settings "
+                  "(Repo.kt, known-data-logger v0.3.0). With the app's capture_all_apps setting on, it is every "
+                  "app except KDL itself (CaptureService.kt); that setting was not run on data. Read from the "
+                  "same store as KDL Known Data, with the same rule for the current version. Event is the stored action, for example screen, "
                   "tap, typed_text, notification, field_cleared or mark. Text is the stored content: a screen "
-                  "title, a tap label, a notification's text, or a field's typed value, which the app records "
-                  "as the field's final value stamped at the last keystroke (README, known-data-logger v0.3.0). "
+                  "title, a tap label, a notification's text, a field's typed value, which the app records "
+                  "as the field's final value stamped at the last keystroke (README, known-data-logger v0.3.0), "
+                  "or the text a field held when it was cleared (CaptureService.kt). "
                   "On a phone where KDL ran, this table can hold what was typed and shown in the captured apps. "
                   "Detail is as stored, for example the view id or class the service reported. A MARK row "
                   "carries the screenshot taken when it was pressed, checked against the SHA-256 the app stored "
-                  "at capture. Tested on emu_a15_kdl_v1 (KDL 0.3.0): 51 rows, 5 of them marks with a screenshot "
-                  "matching its stored hash. In that sample Time Zone held America/New_York, Boot Count held 1, "
-                  "Scenario held clock_locate_01, Device Label held phoneA and Android User held 0 on all 51 "
-                  "rows."),
+                  "at capture. A tap row no rule matched carries one too when the app was set to screenshot "
+                  "every tap (CaptureService.kt); that case was not run on data. Tested on emu_a15_kdl_v1 "
+                  "(KDL 0.3.0): 51 rows, 5 of them marks with a screenshot matching its stored hash. In that "
+                  "sample Time Zone, Boot Count, Scenario, Device Label and Android User each held one value on "
+                  "all 51 rows."),
         "paths": (
             '*/com.abrignoni.knowndatalogger/databases/kl.db*',
             '*/com.abrignoni.knowndatalogger/files/screens/*',
@@ -96,7 +114,7 @@ __artifacts_v2__ = {
         "description": "Stored versions of KDL log entries that were edited, accepted or removed",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-11-09",
-        "last_update_date": "2026-11-09",
+        "last_update_date": "2026-11-27",
         "requirements": "none",
         "category": "KDL (Known-data logger)",
         "sample_data": {
@@ -105,12 +123,16 @@ __artifacts_v2__ = {
         "notes": ("Every stored version of each KDL log entry that has more than one version or was removed, in "
                   "the order the entries were first written. An edit in the app writes a new row with a higher "
                   "revision_n, and removing an entry writes a tombstone row, reported here as Change removed "
-                  "(docs/DATABASE.md, known-data-logger v0.3.0). Accepting an inferred action is an edit: on "
-                  "emu_a15_kdl_v1 both edited entries were messages the app inferred, one from a notification "
-                  "and one from a tap rule, Reviewed went from No to Yes, and Action Time stayed the same in "
-                  "both versions. Tested on emu_a15_kdl_v1 (KDL 0.3.0): 4 rows, 2 entries with an original and "
-                  "an edited version. In that sample App held com.google.android.apps.messaging, Source held "
-                  "auto_rule, Kind held action and Android User held 0 on all 4 rows. A removed entry was run "
+                  "(docs/DATABASE.md, known-data-logger v0.3.0). Edited is when that version was written "
+                  "(edited_utc_ms). On an original row the app writes the entry's own stamp there (Repo.kt, "
+                  "known-data-logger v0.3.0), so Edited equals Action Time; it is an edit time only on edited "
+                  "and removed rows. Accepting an inferred action is an edit: on emu_a15_kdl_v1 both edited "
+                  "entries were messages the app inferred, one from a notification and one from a rule on a "
+                  "cleared text field (google_messages_send in rules/default.json, known-data-logger v0.3.0), "
+                  "Reviewed went from No to Yes, and Action Time stayed the same in both versions. Tested on "
+                  "emu_a15_kdl_v1 (KDL 0.3.0): 4 rows, 2 entries with an original and an edited version. In "
+                  "that sample App, Source, Kind and Android User each held one value on all 4 rows. A removed "
+                  "entry was run "
                   "only on a test tree built from that image with a tombstone row added by hand, not on a real "
                   "removal."),
         "paths": (
@@ -125,23 +147,31 @@ __artifacts_v2__ = {
     "kdl_setup": {
         "name": "KDL Setup",
         "description": "KDL settings, the apps it was set to capture, its device snapshots and the "
-                       "result of checking the hash chain of each log it kept",
+                       "result of checking the hash chain of kl.db and its live copy",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-11-09",
-        "last_update_date": "2026-11-09",
+        "last_update_date": "2026-11-27",
         "requirements": "none",
         "category": "KDL (Known-data logger)",
         "sample_data": {
             "emu_a15_kdl_v1": "KDL 0.3.0 | 13 rows",
         },
-        "notes": ("Per Android user: the hash chain check of each KDL log in the extraction, which store the "
-                  "log tables were read from, and, from kl.db, the settings rows, the apps KDL was set to "
-                  "capture and its device snapshots. The chain is checked with the app's own rule "
+        "notes": ("Per Android user: the hash chain check of kl.db and of actions-live.jsonl (export folders "
+                  "are checked in KDL Exports), which store the log tables were read from, and, from kl.db, "
+                  "the settings rows, the apps KDL was set to capture and its device snapshots. The chain is "
+                  "checked with the app's own rule "
                   "(chain_canonical in tools/make_documentation.py, known-data-logger v0.3.0): a SHA-256 over "
                   "each row's fields and the previous row's hash, in seq order. BROKEN names the first row "
-                  "whose hash or link does not match. A row changed, removed or inserted after it was written "
-                  "breaks the chain there. So does a line the module could not parse (Detail gives the count), "
-                  "and a live copy that began before KDL 0.3, whose early rows carry no hash. On emu_a15_kdl_v1 "
+                  "whose hash or link does not match. A row changed, inserted or removed before the last row "
+                  "breaks the chain at or after that point. Rows removed from the end are not detected here: "
+                  "the module compares neither store with a row count or last hash. Intact "
+                  "means the stored hashes agree with each other: a log whose hashes were all rewritten also "
+                  "reads intact. A line the module could not parse is skipped and Detail gives the count. If "
+                  "that line was a stored row, the chain breaks at the next row, unless it was the last; an "
+                  "extra line that was never a row leaves the chain intact. Neither was run on data. A live copy that began "
+                  "before KDL 0.3 has early rows with no hash and reads BROKEN, and a log with no hashes at all "
+                  "reads not present; neither case was run on data. "
+                  "On emu_a15_kdl_v1 "
                   "the chains of kl.db and actions-live.jsonl were intact over 68 rows, and a test tree with "
                   "one row added by hand reported BROKEN at that row. Settings are listed as stored; "
                   "capture_session_active 1 means a capture session was started and not stopped (Repo.kt, "
@@ -163,15 +193,16 @@ __artifacts_v2__ = {
         "description": "KDL export folders found in the extraction, with their own integrity checks",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-11-09",
-        "last_update_date": "2026-11-09",
+        "last_update_date": "2026-11-27",
         "requirements": "none",
         "category": "KDL (Known-data logger)",
         "sample_data": {
             "emu_a15_kdl_v1": "KDL 0.3.0 | 2 rows",
         },
         "notes": ("One row per KDL export folder in the extraction: a folder whose name starts with kdl_ and "
-                  "holds a manifest.json whose format is known-data-logger. A folder renamed to anything else "
-                  "is not found, and a kdl_ folder with another format was ignored on a test tree. "
+                  "holds a manifest.json whose format is known-data-logger. A folder whose name no longer "
+                  "starts with kdl_ is not found, and a kdl_ folder with another format was ignored on a test "
+                  "tree. "
                   "actions.jsonl Check compares the file's SHA-256 with the one the manifest recorded. Hash "
                   "Chain checks the rows with the app's rule and against the row count and last hash the "
                   "manifest recorded. Screenshots counts the files the manifest lists that are present in the "
@@ -279,7 +310,7 @@ def _verify_chain(rows):
     """Check the hash chain the app writes over its rows, in seq order."""
     ordered = sorted(rows, key=lambda r: r.get('seq') or 0)
     if not ordered or all(r.get('row_hash') is None for r in ordered):
-        return 'not present (no row hashes stored; KDL before 0.3 wrote none)'
+        return 'not present (no row with a stored hash)'
     previous = ''
     for row in ordered:
         if row.get('prev_hash') != previous:
