@@ -164,6 +164,39 @@ def _candidates(lines):
     return candidates
 
 
+def _sequence_test(candidates):
+    """A test ``(name, index)``: whether the 'Row: 0' line ``index``, the first that names
+    ``name``, has a later 'Row: 1' line with the same first column.
+
+    It indexes the side with fewer named lines, so its memory grows with the smaller of the
+    'Row: 0' and 'Row: 1' line counts: the last 'Row: 1' line of each name, or the names of
+    the 'Row: 0' lines that have a later 'Row: 1' line."""
+    zero_lines = one_lines = 0
+    for _index, number, rest in candidates:
+        if number in (0, 1) and FIRST_NAME.match(rest):
+            if number == 0:
+                zero_lines += 1
+            else:
+                one_lines += 1
+    if one_lines <= zero_lines:
+        last_row_one = {}
+        for index, number, rest in candidates:
+            name = FIRST_NAME.match(rest) if number == 1 else None
+            if name:
+                last_row_one[name.group(1)] = index
+        return lambda name, index: last_row_one.get(name, index) > index
+    first_row_zero, in_sequence = {}, set()
+    for index, number, rest in candidates:
+        name = FIRST_NAME.match(rest) if number in (0, 1) else None
+        if not name:
+            continue
+        if number == 0:
+            first_row_zero.setdefault(name.group(1), index)
+        elif first_row_zero.get(name.group(1), index) < index:
+            in_sequence.add(name.group(1))
+    return lambda name, _index: name in in_sequence
+
+
 def _row_zero_names(candidates):
     """The first-column names of the 'Row: 0' lines among ``candidates``, in order, each once, at
     most MAX_READINGS: no more are ever tried. When there are more, the earliest is kept, then the
@@ -172,8 +205,8 @@ def _row_zero_names(candidates):
 
     Only those choices are kept while the lines are scanned, not every distinct name. When the
     'Row: 0' names fit in the shortlist they are returned without looking at the 'Row: 1'
-    lines. Otherwise the position of the last 'Row: 1' line of each name is found first, then
-    the 'Row: 0' lines are read in order. A name left out at its first 'Row: 0' line stays out:
+    lines. Otherwise which names form a sequence is found first (see _sequence_test), then the
+    'Row: 0' lines are read in order. A name left out at its first 'Row: 0' line stays out:
     its list was full, and a later line of a sequence name past its last 'Row: 1' line could
     only make it a fallback, which is not used when the sequence names fill the shortlist."""
     names = []
@@ -185,11 +218,7 @@ def _row_zero_names(candidates):
                 break
     else:
         return names
-    last_row_one = {}
-    for index, number, rest in candidates:
-        name = FIRST_NAME.match(rest) if number == 1 else None
-        if name:
-            last_row_one[name.group(1)] = index
+    forms_sequence = _sequence_test(candidates)
     earliest, in_sequence, others = None, [], []
     for index, number, rest in candidates:
         name = FIRST_NAME.match(rest) if number == 0 else None
@@ -201,7 +230,7 @@ def _row_zero_names(candidates):
             continue
         if name == earliest[1] or any(name == kept for _index, kept in in_sequence + others):
             continue
-        if last_row_one.get(name, index) > index:
+        if forms_sequence(name, index):
             if len(in_sequence) < MAX_READINGS - 1:
                 in_sequence.append((index, name))
         elif len(others) < MAX_READINGS - 1:
