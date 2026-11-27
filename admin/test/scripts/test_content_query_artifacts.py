@@ -256,6 +256,15 @@ class AlexPrfsTest(unittest.TestCase):
         self.assertEqual(addr['URI'], 'content://mms/addr')
         self.assertIn('the status file names content://mms/part, not the URI of this file name', addr['Detail'])
 
+    def test_status_of_another_uri_is_not_compared_with_the_text(self):
+        # A status file naming another URI describes another query: its status is shown as written
+        # and the URI mismatch flagged, but it is not compared with this file's text.
+        self.write('sms/sms', 'Row: 0 _id=12, body=Hi\n', '{"uri": "content://sms/inbox", "status": "empty"}')
+        _names, by_file, _no_name, _sources = self.files()
+        sms = by_file['sms/sms.txt']
+        self.assertEqual((sms['URI'], sms['Status'], sms['Tool Status']), ('content://sms', reader.ROWS, 'empty'))
+        self.assertEqual(sms['Detail'], 'the status file names content://sms/inbox, not the URI of this file name')
+
     def test_nested_prfs_folder_keeps_its_own_status_files(self):
         # A PRFS folder inside another: each folder takes only the status files of its own files.
         self.write('call_log/call_log_calls', 'No result found.\n', '{"status": "empty"}')
