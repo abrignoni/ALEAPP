@@ -546,7 +546,8 @@ def read_tool_status(path):
             f' ({error.strerror})' if error.strerror else '')
     try:
         data = json.loads(raw.decode('utf-8-sig'))
-    except (UnicodeDecodeError, ValueError) as error:
+    except (UnicodeDecodeError, ValueError, RecursionError) as error:
+        # RecursionError: json.loads on deeply nested arrays or objects.
         return '', f'status file is not JSON: {type(error).__name__}'
     status = data.get('status') if isinstance(data, dict) else None
     if not isinstance(status, str):

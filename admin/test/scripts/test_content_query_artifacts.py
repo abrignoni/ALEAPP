@@ -241,6 +241,19 @@ class AlexPrfsTest(unittest.TestCase):
         self.assertEqual([row[2] for row in no_file_name], ['content://com.android.calendar/events'])
         self.assertEqual(sorted(sources), sorted(self.paths))
 
+    def test_nested_prfs_folder_keeps_its_own_status_files(self):
+        # A PRFS folder inside another: each folder takes only the status files of its own files.
+        self.write('call_log/call_log_calls', 'No result found.\n', '{"status": "empty"}')
+        self.write('sms/x/extra/content_provider/sms/sms', 'Row: 0 _id=1, body=a\n', '{"status": "rows"}')
+        _headers, rows, _sources = contentQuery.content_query_files.__wrapped__(StubContext(self.folder.name,
+                                                                                          self.paths))
+        inner = 'extra/content_provider/sms/x/extra/content_provider'
+        by_folder_file = {(row[1], row[3]): row for row in rows if row[3]}
+        self.assertEqual(by_folder_file[(inner, 'sms/sms.txt')][4:6], (reader.ROWS, 'rows'))
+        self.assertEqual(by_folder_file[(inner, 'sms/sms.txt')][7], '')
+        self.assertEqual(by_folder_file[('extra/content_provider', 'call_log/call_log_calls.txt')][5], 'empty')
+        self.assertEqual([row for row in rows if row[1] == 'extra/content_provider' and 'x/extra' in row[3]], [])
+
     def test_only_status_files(self):
         self.write('sms/sms', None, '{"uri": "content://sms", "status": "error"}')
         _names, by_file, _no_name, _sources = self.files()

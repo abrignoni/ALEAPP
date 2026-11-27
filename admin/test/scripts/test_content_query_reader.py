@@ -286,6 +286,9 @@ class LayoutTest(unittest.TestCase):
             self.assertIn('not JSON', status_of(b'not json')[1])
             self.assertIn('no status text', status_of(b'{"uri": "content://sms"}')[1])
             self.assertIn('no status text', status_of(b'["rows"]')[1])
+            # Deep nesting makes json.loads raise RecursionError; it is reported for this file only.
+            self.assertEqual(status_of(b'[' * 100000 + b']' * 100000),
+                             ('', 'status file is not JSON: RecursionError'))
             self.assertIn('not readable', reader.read_tool_status(os.path.join(folder, 'missing.status.json'))[1])
         self.assertFalse(reader.tool_status_disagrees('rows', reader.ROWS))
         self.assertFalse(reader.tool_status_disagrees('empty', reader.NO_RESULT))

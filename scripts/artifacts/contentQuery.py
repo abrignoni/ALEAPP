@@ -966,7 +966,9 @@ def content_query_media_files(context):
 def content_query_files(context):
     headers = ('Layout', 'Folder', 'URI', 'File', 'Status', 'Tool Status', ('Rows', 'number'), 'Detail', 'Columns',
                'Read By')
-    folders, statuses = {}, {}
+    # Status files are kept per output folder, as status_file_of names it, so a PRFS folder found
+    # inside another one keeps its own.
+    folders, statuses_by_folder = {}, {}
     for path in context.get_files_found():
         layout = reader.layout_of(path)
         if layout is not None:
@@ -976,9 +978,10 @@ def content_query_files(context):
         if status_file is not None:
             layout_name, folder, output = status_file
             folders.setdefault((layout_name, folder), [])
-            statuses[_relative(context, output)] = path
+            statuses_by_folder.setdefault((layout_name, folder), {})[_relative(context, output)] = path
     rows, sources = [], []
     for (layout, folder), paths in sorted(folders.items()):
+        statuses = statuses_by_folder.get((layout, folder), {})
         by_name = {}
         for path in paths:
             uri = reader.uri_of(layout, path)
@@ -1008,9 +1011,10 @@ def content_query_files(context):
             rows.append(_file_row(context, layout, folder_relative, '', path, 'not read', statuses, sources))
             sources.append(path)
         prefix = folder_relative + '/'
-        for output in sorted(key for key in statuses if key.startswith(prefix)):
+        for output in sorted(statuses):
             status_path = statuses.pop(output)
-            rows.append(_status_only_row(layout, folder_relative, '', output[len(prefix):], status_path, 'not read'))
+            name = output[len(prefix):] if output.startswith(prefix) else output
+            rows.append(_status_only_row(layout, folder_relative, '', name, status_path, 'not read'))
             sources.append(status_path)
     return headers, rows, '\n'.join(sources)
 
