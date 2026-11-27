@@ -587,13 +587,14 @@ def get_usagestats(context):
                     uid_int = int(uid)
                 except ValueError:
                     continue # uid was not a number
+                # A Magisk mirror path presents the same store under a second path, so skip
+                # it rather than parse the same files twice. Skip it before recording the
+                # user, or a mirror seen first would block the real store.
+                if file_found.find('{0}mirror{0}'.format(slash)) >= 0:
+                    continue
                 if uid_int in uids_processed:
                     continue
                 uids_processed.add(uid_int)
-                # A Magisk mirror path presents the same store under a second path, so skip
-                # it rather than parse the same files twice.
-                if file_found.find('{0}mirror{0}'.format(slash)) >= 0:
-                    continue
                 source = source or file_found
                 data_list.extend(process_usagestats(file_found, uid, 2))
 

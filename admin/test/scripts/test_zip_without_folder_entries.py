@@ -121,6 +121,15 @@ class ZipWithoutFolderEntries(unittest.TestCase):
                 rows, outside = _run(members, False, pattern, function, case_folder)
                 self.assertEqual(len(rows), 1)
                 self.assertEqual(outside, [])
+    def test_mirror_copy_listed_first_does_not_hide_the_store(self):
+        members = _usagestats_members()
+        mirrored = {name.replace('system_ce/', 'mirror/data/system_ce/', 1): data
+                    for name, data in members.items()}
+        ordered = dict(mirrored)
+        ordered.update({name.replace('system_ce/', 'data/system_ce/', 1): data
+                        for name, data in members.items()})
+        rows = _rows(ordered, False, '*/system_ce/*/usagestats*', usagestats.get_usagestats)
+        self.assertEqual(len(rows), 1)
 
 
 if __name__ == '__main__':
