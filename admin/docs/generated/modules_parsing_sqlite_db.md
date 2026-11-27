@@ -169,6 +169,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | xiaohongshu |
 | yandexDisk |
 | youCamPerfect |
+| zalo |
 <!-- GET_RECORDS_END -->
 
 ### open_sqlite_db_readonly() Usage
