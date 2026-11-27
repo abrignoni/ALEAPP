@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         ),
         "author": "Alexis Brignoni, @AlexisBrignoni, Codex",
         "creation_date": "2020-02-25",
-        "last_update_date": "2026-11-20",
+        "last_update_date": "2026-11-27",
         "requirements": "none",
         "category": "Device Activity",
         "notes": (
@@ -522,6 +522,36 @@ def AddEntriesToDb(sourced, file_name_int, stats, db):
 
     db.commit()
 
+def _data_folder(context):
+    """The folder evidence is staged into, or None when the context does not say."""
+    getter = getattr(context, 'get_data_folder', None)
+    return getter() if getter else None
+
+def _folders_and_parents(files_found, data_folder=None):
+    """Each folder hit, and each folder above a hit, once, in first-seen order.
+
+    A zip that stores no folder entries gives only file hits, so the store folder this
+    artifact reads is never a hit itself; it is found as the parent of its files. The
+    walk stops at the staging folder, so the examiner's own folder names are never tested."""
+    root = os.path.normcase(os.path.abspath(data_folder)) if data_folder else None
+    seen = set()
+    for file_found in files_found:
+        path = str(file_found)
+        if not os.path.isdir(path):
+            path = os.path.dirname(path)
+        while path and path not in seen:
+            if root is not None:
+                full = os.path.normcase(os.path.abspath(path))
+                # Stop at the staging folder: the examiner's folders above it are not evidence.
+                if full == root or not full.startswith(root + os.sep):
+                    break
+            seen.add(path)
+            yield path
+            parent = os.path.dirname(path)
+            if parent == path:
+                break
+            path = parent
+
 @artifact_processor
 def get_usagestats(context):
     files_found = context.get_files_found()
@@ -534,8 +564,7 @@ def get_usagestats(context):
     data_list = []
     source = ''
 
-    for file_found in files_found:
-        file_found = str(file_found)
+    for file_found in _folders_and_parents(files_found, _data_folder(context)):
         parts = file_found.split(slash)
         if os.path.isdir(file_found): # filter for directory only.
             # Two store layouts are handled, selected by the shape of the path rather than
