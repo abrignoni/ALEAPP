@@ -42,15 +42,18 @@ __artifacts_v2__ = {
                  "(No result found. or an error). Either way, for ALEX a missing file is reported as unknown, since no "
                  "rows and an error look the same. From ed3d41eb ALEX's PRFS zip (layout 'ALEX PRFS zip') keeps the "
                  "same <key>/<name>.txt under extra/content_provider/, written for every URI ALEX queries, also when "
-                 "the output is empty or an error, so a file missing there was not kept in the extraction or the "
-                 "run stopped before that query. Beside each file ALEX writes <name>.status.json; Tool Status "
+                 "the output is empty or an error, unless the run stopped before that query; a file missing there "
+                 "is reported as not in the extraction. Beside each file ALEX writes <name>.status.json; Tool Status "
                  "shows its status as written (rows, empty or error) and is blank for the other layouts. ALEX "
                  "sets it with its own row parser: rows when it finds a row, empty when the output is blank or "
                  "exactly 'No result found.', error otherwise. Status still comes from the text, and Detail says "
                  "when ALEX's status does not stand for it (rows for rows; empty for 'No result found.' or an "
                  "empty file; error for access denied, provider error or text not recognised), when the status "
-                 "file is missing or cannot be read, and, on a row of its own, when a status file has no text "
-                 "file beside it. The <name>.json ALEX writes with JSON output on is not read. A row of a folder "
+                 "file is missing, cannot be read or holds no usable status (none, only white space, or text that "
+                 "cannot be written as UTF-8), and, on a row of its own, when a status file has no text file "
+                 "beside it. URI is the one the file name stands for; for a file no artifact reads, it is the URI "
+                 "the status file names, and Detail says so; a status file naming another URI than the file name "
+                 "is flagged in Detail. The <name>.json ALEX writes with JSON output on is not read. A row of a folder "
                  "can say 'not queried by this tool' when the layout has no file for "
                  "that URI (android_triage does not query SMS, MMS or the call log; ALEX does not query "
                  "content://com.android.calendar/events). Rows of a file ending with a provider error after its last "
@@ -83,7 +86,7 @@ __artifacts_v2__ = {
                  "its four error strings anywhere, so with it one such message body leaves no sms.txt at all; from "
                  "ed3d41eb (2026-11-25) it writes the file whenever the output holds a row. Content Query Files "
                  "reports a missing file as unknown; in an ALEX PRFS zip (from ed3d41eb), "
-                 "which holds the file of every URI ALEX queries, as not kept. "
+                 "which holds the file of every URI ALEX queries, as not in the extraction. "
                  "Date and Date Sent: the provider contract gives the type INTEGER (long) and no unit "
                  "(Telephony.TextBasedSmsColumns.DATE and DATE_SENT, "
                  "https://developer.android.com/reference/android/provider/Telephony.TextBasedSmsColumns#DATE). They "
@@ -167,7 +170,7 @@ __artifacts_v2__ = {
                  "another of its four error strings anywhere, including inside a value; from ed3d41eb (2026-11-25) it "
                  "writes the file whenever the output holds a row. Content Query Files reports a missing file as "
                  "unknown; in an ALEX PRFS zip (from ed3d41eb), "
-                 "which holds the file of every URI ALEX queries, as not kept. "
+                 "which holds the file of every URI ALEX queries, as not in the extraction. "
                  "Format: rows are read from the text that the content command prints (AOSP Content.java, lines 664 to "
                  "706 at "
                  "https://android.googlesource.com/platform/frameworks/base/+/8d2ed506045d5d6cf25ef7ef77a30da910733657/cmds/content/src/com/android/commands/content/Content.java): "
@@ -224,7 +227,7 @@ __artifacts_v2__ = {
                  "another of its four error strings anywhere, including inside a value; from ed3d41eb (2026-11-25) it "
                  "writes the file whenever the output holds a row. Content Query Files reports a missing file as "
                  "unknown; in an ALEX PRFS zip (from ed3d41eb), "
-                 "which holds the file of every URI ALEX queries, as not kept. "
+                 "which holds the file of every URI ALEX queries, as not in the extraction. "
                  "Format: rows are read from the text that the content command prints (AOSP Content.java, lines 664 to "
                  "706 at "
                  "https://android.googlesource.com/platform/frameworks/base/+/8d2ed506045d5d6cf25ef7ef77a30da910733657/cmds/content/src/com/android/commands/content/Content.java): "
@@ -266,7 +269,7 @@ __artifacts_v2__ = {
                  "another of its four error strings anywhere, including inside a value; from ed3d41eb (2026-11-25) it "
                  "writes the file whenever the output holds a row. Content Query Files reports a missing file as "
                  "unknown; in an ALEX PRFS zip (from ed3d41eb), "
-                 "which holds the file of every URI ALEX queries, as not kept. "
+                 "which holds the file of every URI ALEX queries, as not in the extraction. "
                  "Format: rows are read from the text that the content command prints (AOSP Content.java, lines 664 to "
                  "706 at "
                  "https://android.googlesource.com/platform/frameworks/base/+/8d2ed506045d5d6cf25ef7ef77a30da910733657/cmds/content/src/com/android/commands/content/Content.java): "
@@ -313,7 +316,7 @@ __artifacts_v2__ = {
                  "another of its four error strings anywhere, including inside a value; from ed3d41eb (2026-11-25) it "
                  "writes the file whenever the output holds a row. Content Query Files reports a missing file as "
                  "unknown; in an ALEX PRFS zip (from ed3d41eb), "
-                 "which holds the file of every URI ALEX queries, as not kept. "
+                 "which holds the file of every URI ALEX queries, as not in the extraction. "
                  "Format: rows are read from the text that the content command prints (AOSP Content.java, lines 664 to "
                  "706 at "
                  "https://android.googlesource.com/platform/frameworks/base/+/8d2ed506045d5d6cf25ef7ef77a30da910733657/cmds/content/src/com/android/commands/content/Content.java): "
@@ -360,7 +363,7 @@ __artifacts_v2__ = {
                  "another of its four error strings anywhere, including inside a value; from ed3d41eb (2026-11-25) it "
                  "writes the file whenever the output holds a row. Content Query Files reports a missing file as "
                  "unknown; in an ALEX PRFS zip (from ed3d41eb), "
-                 "which holds the file of every URI ALEX queries, as not kept. "
+                 "which holds the file of every URI ALEX queries, as not in the extraction. "
                  "Format: rows are read from the text that the content command prints (AOSP Content.java, lines 664 to "
                  "706 at "
                  "https://android.googlesource.com/platform/frameworks/base/+/8d2ed506045d5d6cf25ef7ef77a30da910733657/cmds/content/src/com/android/commands/content/Content.java): "
@@ -412,7 +415,7 @@ __artifacts_v2__ = {
                  "another of its four error strings anywhere, including inside a value; from ed3d41eb (2026-11-25) it "
                  "writes the file whenever the output holds a row. Content Query Files reports a missing file as "
                  "unknown; in an ALEX PRFS zip (from ed3d41eb), "
-                 "which holds the file of every URI ALEX queries, as not kept. "
+                 "which holds the file of every URI ALEX queries, as not in the extraction. "
                  "Format: rows are read from the text that the content command prints (AOSP Content.java, lines 664 to "
                  "706 at "
                  "https://android.googlesource.com/platform/frameworks/base/+/8d2ed506045d5d6cf25ef7ef77a30da910733657/cmds/content/src/com/android/commands/content/Content.java): "
@@ -505,7 +508,7 @@ __artifacts_v2__ = {
                  "another of its four error strings anywhere, including inside a value; from ed3d41eb (2026-11-25) it "
                  "writes the file whenever the output holds a row. Content Query Files reports a missing file as "
                  "unknown; in an ALEX PRFS zip (from ed3d41eb), "
-                 "which holds the file of every URI ALEX queries, as not kept. "
+                 "which holds the file of every URI ALEX queries, as not in the extraction. "
                  "Format: rows are read from the text that the content command prints (AOSP Content.java, lines 664 to "
                  "706 at "
                  "https://android.googlesource.com/platform/frameworks/base/+/8d2ed506045d5d6cf25ef7ef77a30da910733657/cmds/content/src/com/android/commands/content/Content.java): "
@@ -550,7 +553,7 @@ __artifacts_v2__ = {
                  "another of its four error strings anywhere, including inside a value; from ed3d41eb (2026-11-25) it "
                  "writes the file whenever the output holds a row. Content Query Files reports a missing file as "
                  "unknown; in an ALEX PRFS zip (from ed3d41eb), "
-                 "which holds the file of every URI ALEX queries, as not kept. "
+                 "which holds the file of every URI ALEX queries, as not in the extraction. "
                  "Format: rows are read from the text that the content command prints (AOSP Content.java, lines 664 to "
                  "706 at "
                  "https://android.googlesource.com/platform/frameworks/base/+/8d2ed506045d5d6cf25ef7ef77a30da910733657/cmds/content/src/com/android/commands/content/Content.java): "
@@ -602,7 +605,7 @@ __artifacts_v2__ = {
                  "another of its four error strings anywhere, including inside a value; from ed3d41eb (2026-11-25) it "
                  "writes the file whenever the output holds a row. Content Query Files reports a missing file as "
                  "unknown; in an ALEX PRFS zip (from ed3d41eb), "
-                 "which holds the file of every URI ALEX queries, as not kept. "
+                 "which holds the file of every URI ALEX queries, as not in the extraction. "
                  "Format: rows are read from the text that the content command prints (AOSP Content.java, lines 664 to "
                  "706 at "
                  "https://android.googlesource.com/platform/frameworks/base/+/8d2ed506045d5d6cf25ef7ef77a30da910733657/cmds/content/src/com/android/commands/content/Content.java): "
@@ -636,8 +639,9 @@ ADDRESS_CODES = ('137', '151', '130', '129')
 NOTE_ADDRESSES_UNKNOWN = ('addresses unknown: no mms/mms_addr.txt in this folder (ALEX writes none when the query '
                           'printed no row or an error, and up to commit 8f27e7a also when the output holds one of '
                           'its four error strings)')
-NOTE_ADDRESSES_NOT_KEPT = ('addresses unknown: no mms/mms_addr.txt in this folder (ALEX writes it into its PRFS zip '
-                           'for every query, so it was not kept in this extraction)')
+NOTE_ADDRESSES_ABSENT = ('addresses unknown: no mms/mms_addr.txt in this folder of the extraction (ALEX writes one '
+                         'into its PRFS zip for every query it runs)')
+NOTE_URI_FROM_STATUS = 'URI as the status file names it'
 NOTE_NO_ADDRESS_ROWS = 'no FROM, TO, CC or BCC rows for this message in mms_addr.txt'
 NOTE_ADDRESSES_INCOMPLETE = ('addresses unknown: no FROM, TO, CC or BCC row for this message was read, and '
                              'mms_addr.txt is incomplete ({reason})')
@@ -811,7 +815,7 @@ def _joined(context, key, layout, relative):
             logfunc(f'Content query {relative}: no mms_addr.txt in this folder, From, To, Cc and Bcc are unknown')
 
             def unknown(_values, notes):
-                notes.append(NOTE_ADDRESSES_NOT_KEPT if layout[0] == reader.ALEX_PRFS else NOTE_ADDRESSES_UNKNOWN)
+                notes.append(NOTE_ADDRESSES_ABSENT if layout[0] == reader.ALEX_PRFS else NOTE_ADDRESSES_UNKNOWN)
                 return ['', '', '', '']
             return unknown, None
         dump, reason = _sibling_dump(context, addr_path, relative, ('msg_id', 'type'))
@@ -1020,35 +1024,51 @@ def content_query_files(context):
 
 
 def _tool_status(layout, relative, statuses, sources):
-    """(ALEX's status of a PRFS zip file, problem) from the .status.json beside it; ('', '') for other layouts."""
+    """(ALEX's status, the URI it names, problem) from the .status.json beside a PRFS zip file; all '' for
+    the other layouts."""
     if layout != reader.ALEX_PRFS:
-        return '', ''
+        return '', '', ''
     status_path = statuses.pop(relative, None)
     if status_path is None:
-        return '', f'no {reader.STATUS_SUFFIX} beside this file'
+        return '', '', f'no {reader.STATUS_SUFFIX} beside this file'
     sources.append(status_path)
     return reader.read_tool_status(status_path)
 
 
+def _shown_uri(uri, tool_uri, notes):
+    """The URI of a row: the one its file name gives, or the one its status file names when the name
+    gives none (noted). A status file naming another URI than the file name gives is noted too."""
+    if not uri:
+        if tool_uri:
+            notes.append(NOTE_URI_FROM_STATUS)
+        return tool_uri
+    if tool_uri and tool_uri != uri:
+        notes.append(f'the status file names {tool_uri}, not the URI of this file name')
+    return uri
+
+
 def _status_only_row(layout, folder_relative, uri, name, status_path, read_by):
     """The row of a .status.json whose .txt is not in this extraction."""
-    tool_status, problem = reader.read_tool_status(status_path)
-    detail = '; '.join(filter(None, [f'the {reader.STATUS_SUFFIX} of this file is here but the file is not, so '
-                                     'it was not kept in this extraction', problem]))
+    tool_status, tool_uri, problem = reader.read_tool_status(status_path)
+    notes = [f'the {reader.STATUS_SUFFIX} of this file is in this extraction but the file is not']
+    uri = _shown_uri(uri, tool_uri, notes)
+    detail = '; '.join(filter(None, notes + [problem]))
     return (layout, folder_relative, uri, name, reader.NO_FILE, tool_status, '', detail, '', read_by)
 
 
 def _file_row(context, layout, folder_relative, uri, path, read_by, statuses, sources):
     relative = _relative(context, path)
     name = relative[len(folder_relative) + 1:] if relative.startswith(folder_relative + '/') else relative
-    tool_status, problem = _tool_status(layout, relative, statuses, sources)
+    tool_status, tool_uri, problem = _tool_status(layout, relative, statuses, sources)
+    uri_notes = []
+    uri = _shown_uri(uri, tool_uri, uri_notes)
     try:
         dump = reader.read_file(path, context.get_seeker())
     except OSError as error:
         logfunc(f'Content query {layout} {relative}: {_read_error(error)}')
-        detail = '; '.join(filter(None, [_read_error(error), problem]))
+        detail = '; '.join(filter(None, [_read_error(error)] + uri_notes + [problem]))
         return (layout, folder_relative, uri, name, reader.UNREADABLE, tool_status, '', detail, '', read_by)
-    notes = ([dump.detail] if dump.detail else []) + dump.warnings + ([problem] if problem else [])
+    notes = ([dump.detail] if dump.detail else []) + dump.warnings + uri_notes + ([problem] if problem else [])
     if reader.tool_status_disagrees(tool_status, dump.status):
         notes.append(f'ALEX wrote status {tool_status} for this file, which its own row parser sets; the text '
                      f'reads as {dump.status}')

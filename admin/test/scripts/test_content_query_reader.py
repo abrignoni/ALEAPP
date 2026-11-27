@@ -270,7 +270,7 @@ class LayoutTest(unittest.TestCase):
                          (reader.ALEX_PRFS, prfs, f'{prfs}/sms/sms.txt'))
         self.assertIsNone(reader.status_file_of('root/x/content_provider_SYNTH0001/sms/sms.status.json'))
         self.assertIsNone(reader.status_file_of(f'{prfs}/sms/sms.json'))
-        self.assertIn('not kept', reader.missing_file_detail(reader.ALEX_PRFS))
+        self.assertIn('not in this extraction', reader.missing_file_detail(reader.ALEX_PRFS))
         self.assertTrue(reader.missing_file_detail(reader.ALEX).startswith('unknown'))
 
     def test_tool_status(self):
@@ -280,21 +280,31 @@ class LayoutTest(unittest.TestCase):
                 with open(path, 'wb') as handle:
                     handle.write(raw)
                 return reader.read_tool_status(path)
-            self.assertEqual(status_of(b'{"uri": "content://sms", "status": "rows"}'), ('rows', ''))
-            self.assertEqual(status_of(b'\xef\xbb\xbf{"status": "empty"}'), ('empty', ''))
-            self.assertEqual(status_of(b'{"status": "pending"}'), ('pending', ''))
-            self.assertEqual(status_of(b'not json')[0], '')
-            self.assertIn('not JSON', status_of(b'not json')[1])
-            self.assertIn('no status text', status_of(b'{"uri": "content://sms"}')[1])
-            self.assertIn('no status text', status_of(b'["rows"]')[1])
+            no_status = 'status file holds no status text'
+            self.assertEqual(status_of(b'{"uri": "content://sms", "status": "rows"}'), ('rows', 'content://sms', ''))
+            self.assertEqual(status_of(b'\xef\xbb\xbf{"status": "empty"}'), ('empty', '', ''))
+            self.assertEqual(status_of(b'{"status": "pending"}'), ('pending', '', ''))
+            self.assertEqual(status_of(b'not json')[:2], ('', ''))
+            self.assertIn('not JSON', status_of(b'not json')[2])
+            self.assertEqual(status_of(b'{"uri": "content://sms"}'), ('', 'content://sms', no_status))
+            self.assertEqual(status_of(b'["rows"]'), ('', '', no_status))
+            # A status with nothing but white space is no status.
+            self.assertEqual(status_of(b'{"status": ""}'), ('', '', no_status))
+            self.assertEqual(status_of(b'{"status": " \\t\\n"}'), ('', '', no_status))
+            # An escaped lone surrogate cannot be written as UTF-8 by the report: it is not passed on.
+            self.assertEqual(status_of(b'{"status": "\\ud800"}'),
+                             ('', '', 'status file holds a status that is not valid text (a lone surrogate)'))
+            self.assertEqual(status_of(b'{"uri": "content://\\udfff", "status": "rows"}'),
+                             ('rows', '', 'status file holds a URI that is not valid text (a lone surrogate)'))
+            self.assertEqual(status_of(b'{"uri": 7, "status": "rows"}'), ('rows', '', ''))
             # Deep nesting: json.loads raises RecursionError up to Python 3.13 and reads the array from
             # 3.14 on. Either way the file gets a problem text and no status.
             self.assertIn(status_of(b'[' * 100000 + b']' * 100000),
-                          (('', 'status file is not JSON: RecursionError'), ('', 'status file holds no status text')))
+                          (('', '', 'status file is not JSON: RecursionError'), ('', '', no_status)))
             # The RecursionError path itself, on every Python version.
             with mock.patch.object(reader.json, 'loads', side_effect=RecursionError):
-                self.assertEqual(status_of(b'{"status": "rows"}'), ('', 'status file is not JSON: RecursionError'))
-            self.assertIn('not readable', reader.read_tool_status(os.path.join(folder, 'missing.status.json'))[1])
+                self.assertEqual(status_of(b'{"status": "rows"}'), ('', '', 'status file is not JSON: RecursionError'))
+            self.assertIn('not readable', reader.read_tool_status(os.path.join(folder, 'missing.status.json'))[2])
         self.assertFalse(reader.tool_status_disagrees('rows', reader.ROWS))
         self.assertFalse(reader.tool_status_disagrees('empty', reader.NO_RESULT))
         self.assertFalse(reader.tool_status_disagrees('empty', reader.EMPTY_FILE))

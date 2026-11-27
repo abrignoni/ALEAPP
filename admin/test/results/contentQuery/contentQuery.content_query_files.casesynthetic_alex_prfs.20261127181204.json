@@ -6,19 +6,19 @@
     "case_number": "casesynthetic_alex_prfs",
     "number_of_columns": 10,
     "number_of_rows": 12,
-    "total_data_size_bytes": 3046,
+    "total_data_size_bytes": 3071,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
     "input_zip_path": "admin\\test\\cases\\data\\contentQuery\\testdata.contentQuery.content_query_files.casesynthetic_alex_prfs.zip",
-    "start_time": "2026-11-27T15:19:09.579591+00:00",
-    "end_time": "2026-11-27T15:19:09.626903+00:00",
-    "run_time_seconds": 0.004309654235839844,
+    "start_time": "2026-11-27T18:12:04.011821+00:00",
+    "end_time": "2026-11-27T18:12:04.113302+00:00",
+    "run_time_seconds": 0.009489297866821289,
     "last_commit": {
-      "hash": "1935e2e683b64de1149bfd075fd3a5cc0445821f",
-      "author_name": "Brigs",
-      "author_email": "abrignoni@gmail.com",
-      "date": "2026-11-26T16:57:47-05:00",
-      "message": "Content query notes: say what file not readable covers and drop the projection cause"
+      "hash": "31055c613c5afaaddfd98558a38308d78ea08982",
+      "author_name": "Maximiliano Telmo",
+      "author_email": "50964800+Maxitelmo@users.noreply.github.com",
+      "date": "2026-11-27T12:52:54-03:00",
+      "message": "Content query: keep status files per PRFS folder, report a RecursionError per file"
     }
   },
   "headers": [
@@ -162,19 +162,19 @@
       "no file",
       "error",
       "",
-      "the .status.json of this file is here but the file is not, so it was not kept in this extraction",
+      "the .status.json of this file is in this extraction but the file is not",
       "",
       "MediaStore Files (content query)"
     ],
     [
       "ALEX PRFS zip",
       "ALEX_PRFS_SYNTH0006/extra/content_provider",
-      "",
+      "content://sms/inbox",
       "sms/sms_inbox.txt",
       "rows",
       "rows",
       5,
-      "",
+      "URI as the status file names it",
       "_id, thread_id, address, person, date, date_sent, read, status, type, subject, body, seen, sub_id, creator",
       "not read"
     ]

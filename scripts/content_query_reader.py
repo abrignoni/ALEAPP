@@ -536,23 +536,45 @@ def status_file_of(path):
     return layout[0], layout[1], output
 
 
+def _writable(text):
+    """True when ``text`` can be written as UTF-8: json.loads keeps an escaped lone surrogate (\\ud800)."""
+    try:
+        text.encode('utf-8')
+    except UnicodeEncodeError:
+        return False
+    return True
+
+
 def read_tool_status(path):
-    """(status, problem) of an ALEX .status.json: the status as written and '', or '' and why it was not read."""
+    """(status, uri, problem) of an ALEX .status.json.
+
+    status is the status as written, '' when there is none to show; uri is the URI the file
+    names, '' when it names none that can be shown; problem says why either is missing, or ''."""
     try:
         with open(path, 'rb') as handle:
             raw = handle.read()
     except OSError as error:
-        return '', 'status file not readable: ' + type(error).__name__ + (
+        return '', '', 'status file not readable: ' + type(error).__name__ + (
             f' ({error.strerror})' if error.strerror else '')
     try:
         data = json.loads(raw.decode('utf-8-sig'))
     except (UnicodeDecodeError, ValueError, RecursionError) as error:
-        # RecursionError: json.loads on deeply nested arrays or objects.
-        return '', f'status file is not JSON: {type(error).__name__}'
-    status = data.get('status') if isinstance(data, dict) else None
-    if not isinstance(status, str):
-        return '', 'status file holds no status text'
-    return status, ''
+        # RecursionError: json.loads on deeply nested arrays or objects (up to Python 3.13).
+        return '', '', f'status file is not JSON: {type(error).__name__}'
+    if not isinstance(data, dict):
+        return '', '', 'status file holds no status text'
+    uri, problems = data.get('uri'), []
+    if not isinstance(uri, str) or not uri.strip():
+        uri = ''
+    elif not _writable(uri):
+        uri = ''
+        problems.append('status file holds a URI that is not valid text (a lone surrogate)')
+    status = data.get('status')
+    if not isinstance(status, str) or not status.strip():
+        return '', uri, '; '.join(['status file holds no status text'] + problems)
+    if not _writable(status):
+        return '', uri, '; '.join(['status file holds a status that is not valid text (a lone surrogate)'] + problems)
+    return status, uri, '; '.join(problems)
 
 
 def tool_status_disagrees(tool_status, status):
@@ -582,8 +604,8 @@ def missing_file_detail(layout):
                 'query prints nothing, so the file was not kept in this extraction or the run stopped '
                 'before this query')
     if layout == ALEX_PRFS:
-        return ('ALEX writes the file of every URI it queries into its PRFS zip, also when the query printed no '
-                'row, so the file was not kept in this extraction or the run stopped before this query')
+        return ('the file is not in this extraction; ALEX writes the file of every URI it queries into its PRFS '
+                'zip, also when the query printed no row, unless the run stopped before this query')
     return ('unknown: ALEX writes no file when the query printed no row (No result found. or an error), and up to '
             'commit 8f27e7a also when the output holds one of its four error strings anywhere, including inside '
             'a value')

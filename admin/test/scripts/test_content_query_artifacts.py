@@ -223,7 +223,7 @@ class AlexPrfsTest(unittest.TestCase):
         addr = by_file['mms/mms_addr.txt']
         self.assertEqual((addr['Status'], addr['Tool Status'], addr['Read By']),
                          (reader.NO_FILE, 'empty', 'MMS Addresses (content query)'))
-        self.assertIn('not kept', addr['Detail'])
+        self.assertEqual(addr['Detail'], 'the .status.json of this file is in this extraction but the file is not')
         part = by_file['mms/mms_part.txt']
         self.assertEqual((part['Tool Status'], part['Detail']), ('', 'no .status.json beside this file'))
         contacts = by_file['com.android.contacts/com.android.contacts_contacts.txt']
@@ -231,15 +231,30 @@ class AlexPrfsTest(unittest.TestCase):
         self.assertIn('not JSON', contacts['Detail'])
         media = by_file['media/media_external_file.txt']
         self.assertEqual((media['Status'], media['Tool Status']), (reader.NO_FILE, ''))
-        self.assertIn('not kept', media['Detail'])
+        self.assertIn('not in this extraction', media['Detail'])
+        # A file no artifact reads takes its URI from the status file, and says so.
         inbox = by_file['sms/sms_inbox.txt']
-        self.assertEqual((inbox['URI'], inbox['Tool Status'], inbox['Read By']), ('', 'rows', 'not read'))
+        self.assertEqual((inbox['URI'], inbox['Tool Status'], inbox['Read By'], inbox['Detail']),
+                         ('content://sms/inbox', 'rows', 'not read', contentQuery.NOTE_URI_FROM_STATUS))
         sent = by_file['sms/sms_sent.txt']
         self.assertEqual((sent['URI'], sent['Status'], sent['Tool Status'], sent['Read By']),
-                         ('', reader.NO_FILE, 'empty', 'not read'))
+                         ('content://sms/sent', reader.NO_FILE, 'empty', 'not read'))
+        self.assertIn(contentQuery.NOTE_URI_FROM_STATUS, sent['Detail'])
         # ALEX queries content://com.android.calendar/events in neither layout.
         self.assertEqual([row[2] for row in no_file_name], ['content://com.android.calendar/events'])
         self.assertEqual(sorted(sources), sorted(self.paths))
+
+    def test_status_file_naming_another_uri_is_flagged(self):
+        # The URI of a known file comes from its name; a status file that names another one is flagged.
+        self.write('sms/sms', 'Row: 0 _id=12, body=Hi\n', '{"uri": "content://sms/inbox", "status": "rows"}')
+        self.write('mms/mms_addr', None, '{"uri": "content://mms/part", "status": "empty"}')
+        _names, by_file, _no_name, _sources = self.files()
+        sms = by_file['sms/sms.txt']
+        self.assertEqual((sms['URI'], sms['Tool Status']), ('content://sms', 'rows'))
+        self.assertEqual(sms['Detail'], 'the status file names content://sms/inbox, not the URI of this file name')
+        addr = by_file['mms/mms_addr.txt']
+        self.assertEqual(addr['URI'], 'content://mms/addr')
+        self.assertIn('the status file names content://mms/part, not the URI of this file name', addr['Detail'])
 
     def test_nested_prfs_folder_keeps_its_own_status_files(self):
         # A PRFS folder inside another: each folder takes only the status files of its own files.
@@ -280,7 +295,7 @@ class AlexPrfsTest(unittest.TestCase):
         _headers, rows, _sources = contentQuery._read(StubContext(self.folder.name, txt), 'sms')  # pylint: disable=protected-access
         self.assertEqual(len(rows), 1)
         _headers, rows, _sources = contentQuery._read(StubContext(self.folder.name, txt), 'mms')  # pylint: disable=protected-access
-        self.assertIn(contentQuery.NOTE_ADDRESSES_NOT_KEPT, rows[0][-3])  # Parse Note
+        self.assertIn(contentQuery.NOTE_ADDRESSES_ABSENT, rows[0][-3])  # Parse Note
 
 
 if __name__ == '__main__':
